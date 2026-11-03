@@ -1,0 +1,9 @@
+{
+  "name": "coin",
+  "character": "Two sine pings (1320 and 1760 Hz) 70 ms apart: a pickup.",
+  "generator": "coin",
+  "params": {},
+  "seconds": 2.0,
+  "note": "Shipped neutral default: the built-in recipe, unchanged. Copy it into a project (presets.py scaffold sfx NAME --from coin --project DIR) and tune it from your research.",
+  "sources": []
+}

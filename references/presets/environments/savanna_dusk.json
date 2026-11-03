@@ -1,0 +1,12 @@
+{
+  "name": "savanna_dusk",
+  "description": "Warm equatorial savanna sunset with gentle acacia breeze, evening crickets, and distant bird calls (example: copy into your project's presets/environments/ and tune it)",
+  "character": "Open dry grassland at sunset: a soft breeze bed, a close cricket chorus on the right and a far bird on the left.",
+  "atmosphere": {"temp_c": 24, "rh": 40},
+  "layers": [
+    {"name": "breeze", "primitive": "noise_bed", "kind": "bed", "gain_db": -22.0, "low_hz": 90, "high_hz": 2200, "pan": 0.0},
+    {"name": "crickets", "primitive": "cricket_chorus", "kind": "spot", "gain_db": -24.0, "spatial": {"azimuth": 40, "distance": 4}},
+    {"name": "far_bird", "primitive": "fm_chirp_cluster", "kind": "spot", "gain_db": -25.0, "event_rate": 0.3, "spatial": {"azimuth": -50, "distance": 12}}
+  ],
+  "blending": {"overall_gain_db": -22.0, "high_pass_hz": 80, "vocal_pocket_notch_hz": 1900, "vocal_pocket_notch_db": -3.0}
+}

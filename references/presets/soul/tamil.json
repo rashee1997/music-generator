@@ -1,0 +1,21 @@
+{
+  "feel": [
+    "temple and festival power",
+    "nadaswaram and thavil as one voice",
+    "communal"
+  ],
+  "breath_beats": 0.5,
+  "groove": "offbeat",
+  "call_response": true,
+  "ornament": true,
+  "cadence": false,
+  "tempo": [
+    90,
+    150
+  ],
+  "avoid_instruments": [
+    "oud",
+    "qanun"
+  ],
+  "name": "tamil"
+}

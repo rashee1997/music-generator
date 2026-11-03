@@ -1,0 +1,21 @@
+{
+  "_about": "Expression profile 'hopeful': partial override of defaults.json (design choice, not tuned by ear). Edit freely; blend with expression_intensity.",
+  "articulation": {
+    "attack_ms": 140,
+    "release_ms": 260
+  },
+  "vibrato": {
+    "depth_cents": 22,
+    "rate_hz": 5.6
+  },
+  "performance": {
+    "portamento_ms": 70,
+    "arch_cents": 7.0,
+    "end_sag_cents": 2.0
+  },
+  "dynamics": {
+    "phrase_arc_db": 3.5,
+    "arc_peak": 0.7,
+    "level_scale": 0.95
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "_about": "Expression profile 'ethereal': partial override of defaults.json (design choice, not tuned by ear). Edit freely; blend with expression_intensity.",
+  "articulation": {
+    "attack_ms": 400,
+    "release_ms": 600,
+    "phrase_end_tail_ms": 300
+  },
+  "vibrato": {
+    "depth_cents": 8,
+    "rate_hz": 5.0,
+    "delay_s": 1.0
+  },
+  "performance": {
+    "portamento_ms": 180
+  },
+  "dynamics": {
+    "phrase_arc_db": 2.0,
+    "flutter": 0.04,
+    "level_scale": 0.8
+  },
+  "source": {
+    "register": "head",
+    "breathiness": 0.06
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "gunshot",
+  "character": "A bright high-passed crack, a 75 Hz thump and a short mid tail.",
+  "generator": "gunshot",
+  "params": {},
+  "seconds": 2.0,
+  "note": "Shipped neutral default: the built-in recipe, unchanged. Copy it into a project (presets.py scaffold sfx NAME --from gunshot --project DIR) and tune it from your research.",
+  "sources": []
+}

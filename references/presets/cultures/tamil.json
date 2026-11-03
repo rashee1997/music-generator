@@ -1,0 +1,40 @@
+{
+  "scales": [
+    "raga_shankarabharanam",
+    "raga_mohanam",
+    "raga_kharaharapriya"
+  ],
+  "bpm": [
+    90,
+    150
+  ],
+  "meter": 4,
+  "pattern": "tamil_film",
+  "avoid_scales": [
+    "maqam_hijaz",
+    "phrygian_dominant"
+  ],
+  "avoid_instruments": [
+    "oud",
+    "qanun"
+  ],
+  "roles": {
+    "lead": [
+      "nadaswaram"
+    ],
+    "pluck": [
+      "veena"
+    ],
+    "pad": [
+      "harmonium"
+    ],
+    "lift": [
+      "nadaswaram"
+    ],
+    "chorus": [
+      "choir_formant"
+    ]
+  },
+  "note": "Nadaswaram and thavil in temple and festival music; the thavil is the rhythmic partner; communal chorus",
+  "name": "tamil"
+}

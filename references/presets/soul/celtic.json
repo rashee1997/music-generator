@@ -1,0 +1,22 @@
+{
+  "feel": [
+    "lilt",
+    "dance",
+    "drone under the tune",
+    "a fiddle that sings"
+  ],
+  "breath_beats": 0.25,
+  "groove": "offbeat",
+  "call_response": false,
+  "ornament": true,
+  "cadence": true,
+  "tempo": [
+    100,
+    132
+  ],
+  "avoid_instruments": [
+    "oud",
+    "qanun"
+  ],
+  "name": "celtic"
+}

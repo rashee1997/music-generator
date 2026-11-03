@@ -1,0 +1,15 @@
+{
+  "name": "dance",
+  "character": "dance / march / trailer drive: a steady kick and loop-based layers are the genre",
+  "extends": "melodic",
+  "flags": ["dance"],
+  "detect": {"keywords": ["edm", "techno", "house", "dance", "march", "trailer"]},
+  "rows": {
+    "pattern.four_on_floor": {"mode": "skip", "reason": "a kick on every beat is the genre; the groove row checks it is on the grid"},
+    "pattern.loop_short": {"mode": "relax", "max_period_bars": 2, "max_distinct": 2, "reason": "bass and arp loop; sections change by layers entering and leaving"},
+    "pattern.flat_dynamics": {"mode": "relax", "min_range_frac": 0.1, "reason": "steady drive; energy comes from layers, not a wide level range"},
+    "pattern.drums_few": {"mode": "relax", "distinct_div": 16, "reason": "a repeating drum bar is the groove"},
+    "pattern.flags_max": {"mode": "relax", "max": 8, "reason": "loop-based arrangement"},
+    "balance.vs_lead": {"mode": "apply", "fallback": "balance.layers"}
+  }
+}

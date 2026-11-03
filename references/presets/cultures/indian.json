@@ -1,0 +1,52 @@
+{
+  "scales": [
+    "raga_bhoopali",
+    "raga_khamaj",
+    "raga_kafi",
+    "raga_bilawal"
+  ],
+  "bpm": [
+    84,
+    132
+  ],
+  "meter": 6,
+  "pattern": "dadra",
+  "avoid_scales": [
+    "maqam_hijaz",
+    "maqam_bayati",
+    "maqam_saba",
+    "phrygian_dominant"
+  ],
+  "avoid_instruments": [
+    "oud",
+    "qanun",
+    "kanun",
+    "ney",
+    "nay",
+    "darbuka",
+    "zurna",
+    "mizmar",
+    "shehnai"
+  ],
+  "roles": {
+    "lead": [
+      "bansuri",
+      "sitar"
+    ],
+    "pluck": [
+      "sitar",
+      "santoor"
+    ],
+    "pad": [
+      "tanpura"
+    ],
+    "bass": [
+      "cello"
+    ],
+    "lift": [
+      "sarangi"
+    ]
+  },
+  "note": "Hindustani dadra (6 matras, two halves of 3); Bhupali is a five-note pentatonic (Sa Re Ga Pa Dha)",
+  "name": "indian"
+}

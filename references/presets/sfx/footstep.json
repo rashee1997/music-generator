@@ -1,0 +1,9 @@
+{
+  "name": "footstep",
+  "character": "A 110 Hz thump with low-passed noise (wood), or band-passed crunch (gravel).",
+  "generator": "footstep",
+  "params": {},
+  "seconds": 2.0,
+  "note": "Shipped neutral default: the built-in recipe, unchanged. Copy it into a project (presets.py scaffold sfx NAME --from footstep --project DIR) and tune it from your research.",
+  "sources": []
+}

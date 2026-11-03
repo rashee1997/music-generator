@@ -1,0 +1,17 @@
+{
+  "name": "indo_arab_desert",
+  "note": "Indo-Arab Desert Adventure: Driving Malfuf/Maqsum camel caravan pulse, Maqam Hijaz / Raga Bhairav augmented-second mystery, authentic Oud and Sitar dialogue, breathy Ney/Bansuri desert wind, crisp Darbuka and Daf frame drums, and grand cinematic string/horn adventure builds.",
+  "roles_add": {
+    "lead": ["ney", "oud", "sitar"],
+    "pluck": ["oud", "qanun"],
+    "lift": ["strings", "brass_section"],
+    "pad": ["slow_strings"],
+    "bass": ["acoustic_bass"],
+    "drum": ["drums"]
+  },
+  "sources": [
+    "Arabic Maqam Hijaz (D Eb F# G A Bb C D) & Indian Raga Bhairav / Basant Mukhari desert modes",
+    "Traditional desert rhythms: Malfuf (2/4 caravan pulse) and Maqsum (4/4 Egyptian/Bedouin groove) merged with Indian Dadra and Teental subdivisions",
+    "Acoustic orchestration: Oud, Ney, Sitar, Darbuka, Riq, Daf frame drum, and cinematic low strings"
+  ]
+}

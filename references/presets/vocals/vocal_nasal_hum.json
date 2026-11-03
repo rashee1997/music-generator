@@ -1,0 +1,29 @@
+{
+  "name": "vocal_nasal_hum",
+  "category": "closed_mouth_hum",
+  "phonetic_sound": "Mmm (intimate near-mic nasal resonance)",
+  "register_range": [
+    "D3",
+    "A3"
+  ],
+  "role": "intimate_grounding_drone",
+  "character": "a single closed-mouth hum, close to the microphone, breathing between phrases, warm and slightly shy",
+  "hum": true,
+  "expression": "intimate",
+  "humming": {
+    "brightness": 0.45,
+    "antiformant_hz": 960.0,
+    "airflow": 0.03
+  },
+  "articulation": {
+    "attack_ms": 220.0,
+    "release_ms": 400.0
+  },
+  "vibrato": {
+    "depth_cents": 12.0,
+    "rate_hz": 4.8
+  },
+  "ensemble": {
+    "voices": 1
+  }
+}

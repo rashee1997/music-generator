@@ -1,0 +1,74 @@
+{
+ "name": "ocean_wave",
+ "note": "A slow swell of brown noise; the foam (bright noise) rises with the same swell, 8 seconds per wave.",
+ "model": {
+  "seconds": 16,
+  "voices": [
+   {
+    "name": "surge",
+    "excite": {
+     "kind": "noise",
+     "color": "brown"
+    },
+    "resonator": {
+     "kind": "bandpass",
+     "band": [
+      60,
+      900
+     ]
+    },
+    "events": {
+     "kind": "continuous"
+    },
+    "control": {
+     "gain_db": [
+      {
+       "kind": "lfo",
+       "hz": 0.125,
+       "depth_db": 9,
+       "phase": 0.0
+      },
+      {
+       "kind": "ou",
+       "sigma_db": 2,
+       "tau_s": 3
+      }
+     ]
+    }
+   },
+   {
+    "name": "foam",
+    "excite": {
+     "kind": "noise",
+     "color": "white"
+    },
+    "resonator": {
+     "kind": "bandpass",
+     "band": [
+      1500,
+      6000
+     ]
+    },
+    "events": {
+     "kind": "continuous"
+    },
+    "control": {
+     "gain_db": [
+      {
+       "kind": "lfo",
+       "hz": 0.125,
+       "depth_db": 12,
+       "phase": 0.12
+      },
+      {
+       "kind": "ou",
+       "sigma_db": 3,
+       "tau_s": 1
+      }
+     ]
+    },
+    "gain_db": -5
+   }
+  ]
+ }
+}

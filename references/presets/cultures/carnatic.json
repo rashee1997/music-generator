@@ -1,0 +1,44 @@
+{
+  "scales": [
+    "raga_shankarabharanam",
+    "raga_mohanam",
+    "raga_kharaharapriya"
+  ],
+  "bpm": [
+    60,
+    140
+  ],
+  "meter": 4,
+  "pattern": "adi",
+  "avoid_scales": [
+    "maqam_hijaz",
+    "maqam_bayati",
+    "phrygian_dominant"
+  ],
+  "avoid_instruments": [
+    "oud",
+    "qanun",
+    "kanun",
+    "darbuka"
+  ],
+  "roles": {
+    "lead": [
+      "violin",
+      "flute"
+    ],
+    "pluck": [
+      "veena"
+    ],
+    "pad": [
+      "tanpura"
+    ],
+    "lift": [
+      "veena"
+    ],
+    "chorus": [
+      "hum_formant"
+    ]
+  },
+  "note": "Bhava and rasa: the raga is an emotion; gamaka and sahitya carry it; the mridangam adi tala is 4/4 on a 16-step grid",
+  "name": "carnatic"
+}

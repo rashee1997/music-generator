@@ -1,0 +1,69 @@
+{
+ "name": "tin_roof_rain",
+ "note": "Raindrops on a metal sheet: Poisson impacts on a plate-like modal bank; drop diameters from Marshall-Palmer at 20 mm/h.",
+ "model": {
+  "seconds": 6,
+  "voices": [
+   {
+    "name": "drops",
+    "excite": {
+     "kind": "impact",
+     "tau": 0.0004
+    },
+    "resonator": {
+     "kind": "modal",
+     "law": "power",
+     "f1": 900,
+     "n": 10,
+     "t60": 0.08,
+     "exponent": 1.4,
+     "damp_exp": 0.3,
+     "gain_exp": 0.2
+    },
+    "events": {
+     "kind": "poisson",
+     "rate": 700
+    },
+    "vary": {
+     "size": {
+      "dist": "marshall_palmer",
+      "rate_mm_h": 20
+     },
+     "pitch_exp": 0.3,
+     "amp_exp": 1.5,
+     "level_spread_db": 3
+    }
+   },
+   {
+    "name": "big_drops",
+    "excite": {
+     "kind": "impact",
+     "tau": 0.0006
+    },
+    "resonator": {
+     "kind": "modal",
+     "law": "power",
+     "f1": 600,
+     "n": 8,
+     "t60": 0.15,
+     "exponent": 1.4,
+     "damp_exp": 0.3,
+     "gain_exp": 0.2
+    },
+    "events": {
+     "kind": "poisson",
+     "rate": 40
+    },
+    "vary": {
+     "size": {
+      "dist": "lognormal",
+      "sigma": 0.3
+     },
+     "pitch_exp": 0.3,
+     "amp_exp": 1.5
+    },
+    "gain_db": -4
+   }
+  ]
+ }
+}

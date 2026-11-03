@@ -1,0 +1,49 @@
+{
+ "name": "clock_tick",
+ "note": "Tick and tock: two short hard impacts on small resonant parts, half a second apart.",
+ "model": {
+  "seconds": 4.0,
+  "voices": [
+   {
+    "name": "tick",
+    "excite": {
+     "kind": "impact",
+     "tau": 0.0002
+    },
+    "resonator": {
+     "kind": "modal",
+     "law": "power",
+     "f1": 2800,
+     "n": 3,
+     "t60": 0.03,
+     "exponent": 1.4
+    },
+    "events": {
+     "kind": "periodic",
+     "period": 1.0
+    }
+   },
+   {
+    "name": "tock",
+    "excite": {
+     "kind": "impact",
+     "tau": 0.0002
+    },
+    "resonator": {
+     "kind": "modal",
+     "law": "power",
+     "f1": 2100,
+     "n": 3,
+     "t60": 0.035,
+     "exponent": 1.4
+    },
+    "events": {
+     "kind": "periodic",
+     "period": 1.0,
+     "start": 0.5
+    },
+    "gain_db": -3
+   }
+  ]
+ }
+}

@@ -1,0 +1,58 @@
+{
+ "name": "gravel_footstep",
+ "note": "A low thud of the foot and a dense crunch of grains (many tiny hard impacts of different sizes).",
+ "model": {
+  "seconds": 0.9,
+  "voices": [
+   {
+    "name": "thud",
+    "excite": {
+     "kind": "impact",
+     "tau": 0.01
+    },
+    "resonator": {
+     "kind": "modal",
+     "law": "string",
+     "f1": 90,
+     "n": 1,
+     "t60": 0.12
+    },
+    "events": {
+     "kind": "single",
+     "at": 0.02
+    }
+   },
+   {
+    "name": "grains",
+    "excite": {
+     "kind": "impact",
+     "tau": 0.0004
+    },
+    "resonator": {
+     "kind": "modal",
+     "law": "power",
+     "f1": 2600,
+     "n": 3,
+     "t60": 0.015,
+     "exponent": 1.5
+    },
+    "events": {
+     "kind": "poisson",
+     "rate": 160,
+     "start": 0.03,
+     "end": 0.4
+    },
+    "vary": {
+     "size": {
+      "dist": "lognormal",
+      "sigma": 0.5
+     },
+     "pitch_exp": 0.7,
+     "amp_exp": 1.5,
+     "level_spread_db": 5
+    },
+    "gain_db": -4
+   }
+  ]
+ }
+}

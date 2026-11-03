@@ -1,0 +1,9 @@
+{
+  "name": "cinematic",
+  "character": "cinematic cue (build, hit, release): judged like a melodic piece, but may have no lead so it falls back to layer balance",
+  "extends": "melodic",
+  "detect": {"keywords": ["cinematic", "cue", "film", "score", "montage", "underscore", "trailer"]},
+  "rows": {
+    "balance.vs_lead": {"mode": "apply", "fallback": "balance.layers"}
+  }
+}

@@ -1,0 +1,38 @@
+{
+ "name": "leaf_rain",
+ "note": "Raindrops on soft leaves: short damped noise ticks, no ringing body, a lighter rate.",
+ "model": {
+  "seconds": 6,
+  "voices": [
+   {
+    "name": "ticks",
+    "excite": {
+     "kind": "noise",
+     "color": "white",
+     "attack": 0.0,
+     "tau": 0.003
+    },
+    "resonator": {
+     "kind": "bandpass",
+     "band": [
+      1500,
+      5500
+     ]
+    },
+    "events": {
+     "kind": "poisson",
+     "rate": 220
+    },
+    "vary": {
+     "size": {
+      "dist": "marshall_palmer",
+      "rate_mm_h": 2
+     },
+     "pitch_exp": 0.2,
+     "amp_exp": 1.0,
+     "level_spread_db": 4
+    }
+   }
+  ]
+ }
+}

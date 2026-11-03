@@ -1,0 +1,67 @@
+{
+  "name": "concert_hall_3d",
+  "kind": "spaces",
+  "character": "a 1400-seat shoebox concert hall: wood floor and stage, plaster walls, a full audience, a 2.1 s tail that arrives from the sides and above rather than from the source",
+  "note": "This is the geometry example: copy it into a project's presets/spaces/ and change the box, the listener and the materials. Remove \"geometry\" to fall back to the four fixed reflection taps.",
+  "room": {
+    "rt60": 2.1,
+    "pre_delay_ms": 22,
+    "hf_decay": 0.55,
+    "early_level": 0.4
+  },
+  "reflections": {
+    "path_physics": true,
+    "ref_m": 1.5,
+    "ground_delay_ms": 6.5,
+    "ground_gain": 0.5,
+    "ground_cutoff_hz": 4500,
+    "lateral_delay_ms": 14.0,
+    "lateral_gain": 0.48,
+    "lateral_cutoff_hz": 3600,
+    "ceiling_delay_ms": 15.0,
+    "ceiling_gain": 0.45,
+    "rear_delay_ms": 24.0,
+    "rear_gain": 0.4,
+    "geometry": {
+      "width_m": 22.0,
+      "depth_m": 38.0,
+      "height_m": 17.0,
+      "listener": {"x": 11.0, "y": 12.0, "z": 1.4},
+      "materials": {"floor": "wood", "ceiling": "plaster", "walls": "plaster"},
+      "material_set": "room_materials",
+      "max_order": 2,
+      "max_taps": 10,
+      "min_level_db": -32.0
+    },
+    "late": {
+      "enabled": true,
+      "rt60_s": 2.1,
+      "hf_decay": 0.55,
+      "level_db": -17.0,
+      "count": 8,
+      "spread_deg": 75.0,
+      "rise_s": 0.03,
+      "seed": 11,
+      "bands_hz": [125, 250, 500, 1000, 2000, 4000, 8000]
+    }
+  },
+  "distance": {
+    "ref_m": 1.5,
+    "falloff": 0.18,
+    "air_damping": 0.4,
+    "min_cutoff_hz": 3200,
+    "reverb_exponent": 0.65,
+    "pre_delay_law": {"base_ms": 32.0, "per_m": 3.5, "max_ms": 30.0},
+    "near_field": {
+      "enabled": true,
+      "max_m": 1.0,
+      "head_radius_m": 0.0875,
+      "strength": 1.0,
+      "lf_boost": 2.0,
+      "lf_hz": 700.0,
+      "min_gain": 0.35,
+      "max_gain": 3.0
+    }
+  },
+  "binaural": {"bed": false, "spot": true}
+}

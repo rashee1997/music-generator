@@ -1,0 +1,159 @@
+{
+ "name": "crowd_murmur",
+ "note": "Many unintelligible voices: a pulse train through vowel-like formants in short syllables, three voice types.",
+ "model": {
+  "seconds": 10,
+  "voices": [
+   {
+    "name": "talker_115",
+    "excite": {
+     "kind": "periodic",
+     "f0": 115,
+     "glide": [
+      103.5,
+      132.25
+     ],
+     "jitter": 0.05,
+     "harmonics": 30,
+     "noise_mix": 0.25,
+     "attack": 0.03,
+     "tau": 0.08,
+     "hold": 0.06
+    },
+    "resonator": {
+     "kind": "formant",
+     "formants": [
+      [
+       500,
+       120,
+       1
+      ],
+      [
+       1500,
+       150,
+       0.6
+      ],
+      [
+       2500,
+       200,
+       0.3
+      ]
+     ]
+    },
+    "events": {
+     "kind": "poisson",
+     "rate": 7
+    },
+    "vary": {
+     "size": {
+      "dist": "lognormal",
+      "sigma": 0.2
+     },
+     "pitch_exp": 1.0,
+     "level_spread_db": 4
+    },
+    "gain_db": 0
+   },
+   {
+    "name": "talker_210",
+    "excite": {
+     "kind": "periodic",
+     "f0": 210,
+     "glide": [
+      189.0,
+      241.49999999999997
+     ],
+     "jitter": 0.05,
+     "harmonics": 30,
+     "noise_mix": 0.25,
+     "attack": 0.03,
+     "tau": 0.08,
+     "hold": 0.06
+    },
+    "resonator": {
+     "kind": "formant",
+     "formants": [
+      [
+       650,
+       130,
+       1
+      ],
+      [
+       1700,
+       160,
+       0.6
+      ],
+      [
+       2700,
+       200,
+       0.3
+      ]
+     ]
+    },
+    "events": {
+     "kind": "poisson",
+     "rate": 6
+    },
+    "vary": {
+     "size": {
+      "dist": "lognormal",
+      "sigma": 0.2
+     },
+     "pitch_exp": 1.0,
+     "level_spread_db": 4
+    },
+    "gain_db": -2
+   },
+   {
+    "name": "talker_160",
+    "excite": {
+     "kind": "periodic",
+     "f0": 160,
+     "glide": [
+      144.0,
+      184.0
+     ],
+     "jitter": 0.05,
+     "harmonics": 30,
+     "noise_mix": 0.25,
+     "attack": 0.03,
+     "tau": 0.08,
+     "hold": 0.06
+    },
+    "resonator": {
+     "kind": "formant",
+     "formants": [
+      [
+       400,
+       110,
+       1
+      ],
+      [
+       1900,
+       150,
+       0.6
+      ],
+      [
+       2600,
+       200,
+       0.3
+      ]
+     ]
+    },
+    "events": {
+     "kind": "poisson",
+     "rate": 6
+    },
+    "vary": {
+     "size": {
+      "dist": "lognormal",
+      "sigma": 0.2
+     },
+     "pitch_exp": 1.0,
+     "level_spread_db": 4
+    },
+    "gain_db": -3
+   }
+  ]
+ }
+}

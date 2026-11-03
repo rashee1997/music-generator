@@ -1,0 +1,9 @@
+{
+  "name": "door_creak",
+  "character": "A wavering 170 Hz tone with a second partial and band noise: a slow hinge.",
+  "generator": "door_creak",
+  "params": {},
+  "seconds": 2.0,
+  "note": "Shipped neutral default: the built-in recipe, unchanged. Copy it into a project (presets.py scaffold sfx NAME --from door_creak --project DIR) and tune it from your research.",
+  "sources": []
+}

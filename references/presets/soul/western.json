@@ -1,0 +1,19 @@
+{
+  "feel": [
+    "tension and release",
+    "narrative",
+    "cadence resolves home",
+    "dynamic contrast"
+  ],
+  "breath_beats": 0.25,
+  "groove": null,
+  "call_response": false,
+  "ornament": false,
+  "cadence": true,
+  "tempo": [
+    60,
+    150
+  ],
+  "avoid_instruments": [],
+  "name": "western"
+}

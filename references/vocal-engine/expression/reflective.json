@@ -1,0 +1,20 @@
+{
+  "_about": "Expression profile 'reflective': partial override of defaults.json (design choice, not tuned by ear). Edit freely; blend with expression_intensity.",
+  "articulation": {
+    "attack_ms": 300,
+    "release_ms": 400,
+    "phrase_end_tail_ms": 200
+  },
+  "vibrato": {
+    "depth_cents": 14,
+    "rate_hz": 5.0
+  },
+  "performance": {
+    "portamento_ms": 140,
+    "end_sag_cents": 8.0
+  },
+  "dynamics": {
+    "phrase_arc_db": 2.5,
+    "level_scale": 0.85
+  }
+}

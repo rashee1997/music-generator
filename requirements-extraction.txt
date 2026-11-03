@@ -1,0 +1,8 @@
+# Own environment for scripts/extract_pipeline.py (.venv-extraction). Pure signal processing: no neural models, no torch.
+numpy==2.5.3
+scipy==1.18.1
+soundfile==0.14.0
+librosa==1.0.0
+pretty_midi==0.2.11.post0
+pyloudnorm==0.2.0
+pedalboard==0.9.26

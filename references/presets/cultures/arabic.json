@@ -1,0 +1,38 @@
+{
+  "scales": [
+    "maqam_rast",
+    "maqam_bayati",
+    "maqam_hijaz"
+  ],
+  "bpm": [
+    80,
+    110
+  ],
+  "meter": 4,
+  "pattern": "maqsum",
+  "avoid_scales": [],
+  "avoid_instruments": [],
+  "roles": {
+    "lead": [
+      "ney",
+      "violin"
+    ],
+    "pluck": [
+      "oud"
+    ],
+    "pad": [
+      "kanun"
+    ],
+    "bass": [
+      "contrabass"
+    ],
+    "lift": [
+      "ney"
+    ],
+    "chorus": [
+      "voice_formant"
+    ]
+  },
+  "note": "Maqam with a feeling (Rast pride, Bayati warmth, Hijaz longing); the iqa maqsum is in 4/4",
+  "name": "arabic"
+}

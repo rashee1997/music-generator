@@ -1,0 +1,23 @@
+{
+  "feel": [
+    "restraint",
+    "qi: breath in the phrase",
+    "yin and yang balance",
+    "nature imagery"
+  ],
+  "breath_beats": 2.0,
+  "groove": null,
+  "call_response": false,
+  "ornament": true,
+  "cadence": false,
+  "tempo": [
+    60,
+    110
+  ],
+  "avoid_instruments": [
+    "oud",
+    "qanun",
+    "darbuka"
+  ],
+  "name": "chinese"
+}

@@ -1,0 +1,22 @@
+{
+  "feel": [
+    "ma: the silence is part of the music",
+    "stillness",
+    "yo: a bright pentatonic"
+  ],
+  "breath_beats": 2.0,
+  "groove": null,
+  "call_response": false,
+  "ornament": true,
+  "cadence": false,
+  "tempo": [
+    60,
+    100
+  ],
+  "avoid_instruments": [
+    "oud",
+    "qanun",
+    "darbuka"
+  ],
+  "name": "japanese"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "glass_break",
+  "character": "Inharmonic partials (1 to 9.4 times a 1.8-2.6 kHz base) plus a scatter of small tinkles.",
+  "generator": "glass_break",
+  "params": {},
+  "seconds": 2.0,
+  "note": "Shipped neutral default: the built-in recipe, unchanged. Copy it into a project (presets.py scaffold sfx NAME --from glass_break --project DIR) and tune it from your research.",
+  "sources": []
+}

@@ -1,0 +1,68 @@
+{
+  "baseline": {
+    "arc_corr": 1.0,
+    "contours": [
+      "arch"
+    ],
+    "timing_std_ms": 0.0,
+    "timing_max_ms": 0.0,
+    "accent_db": 0.0,
+    "accent_range_db": 0.0,
+    "vib_onset_short_s": NaN,
+    "vib_extent_long_cents": 20.427711569982648,
+    "pitch_error_cents": 4.085130975310814,
+    "formant_onset_hz": 0.0,
+    "inhale_spread_ms": 7.343,
+    "inhale_spread_baseline_ms": null,
+    "intonation_cents": 7.305727503783991,
+    "countours_used": 2,
+    "rms_solo_db": -27.45730255746053,
+    "rms_choir_db": -27.384315092357312,
+    "peak": 0.1167457178235054,
+    "finite": true,
+    "phrasing_report": {
+      "contours": [
+        "arch"
+      ],
+      "timing_std_ms": 0.0,
+      "timing_max_ms": 0.0,
+      "accent_db": 0.0,
+      "inhale_spread_ms": null,
+      "tempo_bpm": 0.0
+    }
+  },
+  "expressive": {
+    "arc_corr": 0.07976382753221684,
+    "contours": [
+      "hairpin",
+      "rise"
+    ],
+    "timing_std_ms": 12.315539160389122,
+    "timing_max_ms": 35.12471655328798,
+    "accent_db": 2.261154874513857,
+    "accent_range_db": 0.003122225188880723,
+    "vib_onset_short_s": 0.3,
+    "vib_extent_long_cents": 32.35674738414099,
+    "pitch_error_cents": 4.804011391307922,
+    "formant_onset_hz": 16.455251499629185,
+    "inhale_spread_ms": 16.329,
+    "inhale_spread_baseline_ms": null,
+    "intonation_cents": 19.498293004491124,
+    "countours_used": 2,
+    "rms_solo_db": -27.788858882111413,
+    "rms_choir_db": -27.657562729117178,
+    "peak": 0.12441765516996384,
+    "finite": true,
+    "phrasing_report": {
+      "contours": [
+        "fall",
+        "hairpin"
+      ],
+      "timing_std_ms": 10.78,
+      "timing_max_ms": 30.295,
+      "accent_db": 2.295,
+      "inhale_spread_ms": null,
+      "tempo_bpm": 0.0
+    }
+  }
+}

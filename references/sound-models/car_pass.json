@@ -1,0 +1,139 @@
+{
+ "name": "car_pass",
+ "note": "An engine (harmonic pulse train through body formants) and tyre noise; the pitch falls and the level swells and fades as it passes (Doppler).",
+ "model": {
+  "seconds": 8,
+  "voices": [
+   {
+    "name": "engine",
+    "excite": {
+     "kind": "periodic",
+     "f0": 60,
+     "harmonics": 30,
+     "jitter": 0.01
+    },
+    "resonator": {
+     "kind": "formant",
+     "formants": [
+      [
+       180,
+       80,
+       1.0
+      ],
+      [
+       600,
+       200,
+       0.5
+      ]
+     ]
+    },
+    "events": {
+     "kind": "continuous"
+    },
+    "control": {
+     "pitch": [
+      {
+       "kind": "curve",
+       "points": [
+        [
+         0,
+         1.06
+        ],
+        [
+         3.5,
+         1.04
+        ],
+        [
+         4,
+         1.0
+        ],
+        [
+         4.5,
+         0.96
+        ],
+        [
+         8,
+         0.94
+        ]
+       ]
+      }
+     ],
+     "gain_db": [
+      {
+       "kind": "curve",
+       "points": [
+        [
+         0,
+         -28
+        ],
+        [
+         3,
+         -8
+        ],
+        [
+         4,
+         0
+        ],
+        [
+         5,
+         -8
+        ],
+        [
+         8,
+         -30
+        ]
+       ]
+      }
+     ]
+    }
+   },
+   {
+    "name": "tyres",
+    "excite": {
+     "kind": "noise",
+     "color": "pink"
+    },
+    "resonator": {
+     "kind": "bandpass",
+     "band": [
+      300,
+      3500
+     ]
+    },
+    "events": {
+     "kind": "continuous"
+    },
+    "control": {
+     "gain_db": [
+      {
+       "kind": "curve",
+       "points": [
+        [
+         0,
+         -30
+        ],
+        [
+         3,
+         -10
+        ],
+        [
+         4,
+         -2
+        ],
+        [
+         5,
+         -10
+        ],
+        [
+         8,
+         -32
+        ]
+       ]
+      }
+     ]
+    },
+    "gain_db": -6
+   }
+  ]
+ }
+}

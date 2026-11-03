@@ -1,0 +1,31 @@
+{
+  "schema": "music_db.effect_signatures/1",
+  "_about": "Rules that name a measured effect event. First rule whose limits all hold wins (file order). A limit key min_X / max_X tests the measured feature X. Edit or add rules freely; extraction never needs code changes for a new kind.",
+  "_features": {
+    "dur_s": "event length in seconds",
+    "centroid_hz": "mean spectral centroid",
+    "centroid_slope_oct_s": "change of the centroid in octaves per second (+ rising)",
+    "mod_rate_hz": "strongest 1-25 Hz rhythm in the loudness (scratch / stutter / gate speed)",
+    "mod_depth": "how deep that rhythm is, 0..1",
+    "flatness": "spectral flatness, 0 = tonal, 1 = noise",
+    "attack_s": "time from start to the loudest frame"
+  },
+  "rules": [
+    {"kind": "vinyl_scratch", "min_mod_rate_hz": 3.0, "min_mod_depth": 0.5, "min_centroid_hz": 300, "max_centroid_hz": 6000},
+    {"kind": "stutter", "min_mod_rate_hz": 6.0, "min_mod_depth": 0.8},
+    {"kind": "tape_stop", "max_centroid_slope_oct_s": -0.6, "max_dur_s": 2.5, "min_dur_s": 0.3},
+    {"kind": "riser", "min_centroid_slope_oct_s": 0.15, "min_dur_s": 0.8},
+    {"kind": "downlifter", "max_centroid_slope_oct_s": -0.15, "min_dur_s": 0.8},
+    {"kind": "sub_drop", "max_centroid_hz": 150, "max_attack_s": 0.1, "max_dur_s": 3.0},
+    {"kind": "impact", "max_attack_s": 0.03, "max_dur_s": 1.8},
+    {"kind": "whoosh", "min_flatness": 0.3, "min_dur_s": 0.4},
+    {"kind": "noise_burst", "min_flatness": 0.3},
+    {"kind": "sweep", "min_dur_s": 0.3}
+  ],
+  "ambient_kinds": [
+    {"kind": "rumble", "max_centroid_hz": 200},
+    {"kind": "room_tone", "max_centroid_hz": 1200},
+    {"kind": "tape_hiss", "min_flatness": 0.2},
+    {"kind": "air_hiss", "min_centroid_hz": 1200}
+  ]
+}

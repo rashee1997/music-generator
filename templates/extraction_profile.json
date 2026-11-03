@@ -1,0 +1,100 @@
+{
+  "_about": "Every knob of scripts/extract_pipeline.py. Copy it to <project>/profiles/NAME.json (keep only the keys you change), run with --profile NAME, or override one value with --set section.key=value. Unknown keys are rejected. Keys starting with _ are notes.",
+  "_free": ["drums.midi", "analysis.bands", "export.midi_programs"],
+  "music_db": {
+    "files": {"song": "song*.json", "instruments": "instruments*.json", "drums": "drums*.json", "effects": "effects*.json", "spatial": "spatial*.json"},
+    "schemas": {"song": "music_db.song/1", "instruments": "music_db.instruments/1", "drums": "music_db.drums/1", "effects": "music_db.effects/1", "spatial": "music_db.spatial/1"},
+    "grid_subdivision": 4,
+    "hit_offset_warn_steps": 0.2,
+    "min_hits_for_grid_check": 4,
+    "section_gap_tol_s": 0.05,
+    "section_bar_off_warn": 0.25,
+    "song_end_slack_s": 1.0,
+    "harmonics_count": 12,
+    "anchor_s": "auto",
+    "intro_names": ["intro", "pickup", "count_in", "prelude"],
+    "span_pad_s": 0.5,
+    "signature_fields": ["label", "family", "role", "similar_to", "range", "polyphony", "timbre", "envelope", "pitch_behavior", "articulation", "synthesis_hint", "confidence"]
+  },
+  "analysis": {
+    "sr": 44100,
+    "hop": 256,
+    "active_gate_db": -45,
+    "onset_match_tol_s": 0.04,
+    "bands": {"low_20_250": [20, 250], "mid_250_4k": [250, 4000], "high_4k_up": [4000, 20000]}
+  },
+  "tuning": {"analysis_s": 60, "resolution_semitones": 0.01, "agree_cents": 30, "policy": "measured"},
+  "spectrum": {
+    "cqt_sr": 22050, "hop": 512, "bins_per_octave": 36, "filter_scale": 1.0, "midi_lo": 24, "midi_hi": 108,
+    "compress": 0.6, "hpss": true, "hpss_margin": 2.0, "harmonics": 10, "harmonic_decay": 0.85
+  },
+  "notes": {
+    "max_poly": 6, "midi_min": 24, "midi_max": 96, "salience_floor_db": -40, "frame_floor_db": -18, "fund_min_rel": 0.5, "reference_percentile": 99,
+    "cancel_frac": 0.9, "harmonic_cap": 1.0, "min_note_ms": 90, "gap_ms": 250, "range_pad_semitones": 2,
+    "declared_only": false, "bridge_s": 1.0, "bridge_frac": 0.5, "leak_max_s": 0.3, "leak_semitones": 2, "leak_ratio": 1.5, "leak_touch_s": 0.05, "leak_strong_ratio": 3.0
+  },
+  "voices": {
+    "template_harmonics": 12, "edge_trim": 0.2, "template_percentile": 25, "min_notes_for_template": 3, "undeclared_distance": 0.12,
+    "undeclared_min_notes": 12, "undeclared_min_s": 6.0, "default_decay": 0.8, "midi_program": 0, "velocity_floor": 30
+  },
+  "separate": {
+    "n_fft": 4096, "hop": 1024, "hp_time_kernel": 17, "hp_freq_kernel": 17, "hp_margin": 1.5,
+    "halfwidth_frac": 0.02, "min_halfwidth_bins": 1.5, "max_freq_frac": 0.45, "share_power": 1.0, "smooth_frames": 3, "candidate_gate": 0.03, "max_atoms_per_frame": 60, "prune_frac": 0.03, "note_gap_s": 0.1, "note_min_s": 0.08
+  },
+  "drums": {
+    "onset_delta": 0.07, "min_gap_s": 0.04, "hit_window_s": 0.06, "pre_s": 0.005,
+    "nmf_error": 0.05, "nmf_elbow": 0.1, "nmf_iters": 200, "seed": 0, "member_frac": 0.25, "min_hits": 3, "max_pieces": 10, "tail_s": 0.25, "tail_floor": 0.05, "name_centroid_octaves": 1.5,
+    "midi": {"kick": 36, "snare": 38, "hat_closed": 42, "hat_open": 46, "rim": 37, "bongo": 60, "conga": 63, "tom": 45, "cymbal": 49, "clap": 39},
+    "default_midi": 39, "midi_note_s": 0.1
+  },
+  "effects": {
+    "n_fft": 2048, "hop": 512, "floor_percentile": 10, "floor_smooth_bins": 9, "floor_gain": 2.0,
+    "click_hp_hz": 2000, "click_window_ms": 10, "click_k": 5.0, "click_min_abs": 0.003, "click_dilate_ms": 0.5, "min_clicks_per_s": 1.0,
+    "background_s": 10.0, "background_percentile": 30, "detect_db": 6.0, "abs_floor_db": -60, "merge_gap_s": 1.0, "min_event_s": 0.4, "max_events": 24, "edge_frames": 3, "live_db": 20,
+    "mod_min_hz": 1.5, "mod_max_hz": 25, "pad_s": 0.05
+  },
+  "residual": {"max_rounds": 3, "stop_pct": 5.0, "min_gain": 0.9, "min_voice_pct": 3.0, "min_strength_rel": 0.05},
+  "spatial": {
+    "window_s": 0.5, "active_gate_db": -40, "itd_max_ms": 1.0, "itd_lowpass_hz": 1500, "haas_min_ms": 5, "haas_max_ms": 40,
+    "haas_corr": 0.6, "decorrelated_iacc": 0.4, "wide_side_ratio": 0.3, "mono_iacc": 0.9, "centre_deg": 8,
+    "move_deg": 15, "move_min_s": 1.0, "cut_drop_db": 20, "min_cut_events": 3, "rt60_max_s": 4.0, "rt60_fit_db": 25,
+    "rt60_min_r2": 0.9, "low_end_hz": 120, "disagree_deg": 25
+  },
+  "midi": {
+    "default_polyphony": 6, "range_pad_semitones": 1, "min_note_s": 0.08, "short_note_s": 0.12, "velocity_floor": 30,
+    "_about": "Cleaning of each voice's notes before they are synthesised: polyphony cap, declared range, overlap trimming."
+  },
+  "resynth": {
+    "seed": 1, "render": "auto", "sampler_min_samples": 4, "sampler_min_purity": 0.6, "sampler_max_semitones": 5.0, "sampler_min_covered": 0.5,
+    "follow_floor": 0.1, "follow_ceiling": 6.0, "reverb": true, "reverb_grid_db": [-99, -30, -26, -22, -18, -15, -12, -9, -6, -3, 0],
+    "reverb_default_rt60": 1.2, "reverb_max_rt60": 4.0, "reverb_predelay_ms": 20, "reverb_hf": 0.55, "reverb_early": 0.3, "reverb_seed": 3,
+    "min_voice_pct": 1.0, "min_notes": 6, "attack_ms_default": 8, "release_ms_default": 60, "drift_cents": 3.0, "drift_hz": 0.7,
+    "vibrato_scale": 1.0, "level_tilt": 0.1, "vibrato_delay_s": 0.25, "gain_fit": true, "noise": true, "noise_max_ratio": 0.25, "noise_min_ratio": 0.02,
+    "noise_smooth_frames": 5, "drum_oneshots": 5, "drum_oneshot_s": 0.4, "drum_align_ms": 30, "drum_isolation_s": 0.15,
+    "gain_window_s": 0.08, "bed_loop_s": 12.0, "event_fade_ms": 10, "mix_peak_dbfs": -1.0
+  },
+  "stages": ["listen", "voices", "separate", "residual", "drums", "effects", "spatial", "resynth", "gate", "export"],
+  "gate": {
+    "max_attempts": 3, "clip_peak": 0.999, "silent_rms_db": -70,
+    "magnitude_warn_pct": 50, "magnitude_fail_pct": 80, "mel_bands": 64, "fidelity_floor_db": -60, "active_floor_db": -40, "ambient_corr": 0.9, "fidelity_warn": 0.6, "fidelity_fail": 0.35, "level_tol_db": 3.0,
+    "band_tol_warn_db": 4.0, "band_tol_fail_db": 8.0, "loudness_tol_lu": 2.0, "click_ratio": 2.0, "click_min": 5, "rough_ratio": 1.5,
+    "drop_warn_pct": 40, "short_warn_pct": 30, "key_warn_pct": 70, "key_fail_pct": 45, "max_files": 24, "min_voice_pct": 1.0,
+    "modes": {"major": [0, 2, 4, 5, 7, 9, 11], "minor": [0, 2, 3, 5, 7, 8, 10], "dorian": [0, 2, 3, 5, 7, 9, 10], "phrygian": [0, 1, 3, 5, 7, 8, 10],
+              "lydian": [0, 2, 4, 6, 7, 9, 11], "mixolydian": [0, 2, 4, 5, 7, 9, 10]},
+    "lead_roles": ["lead", "counter_melody"], "bed_roles": ["chords", "pad", "arpeggio", "texture"],
+    "onset_delta": 0.07, "onset_warn_pct": 70, "onset_fail_pct": 40, "tempo_tol": 0.03,
+    "dropout_words": ["dropout", "pause", "break"], "dropout_min_s": 1.0, "dropout_max_hits": 2,
+    "tonal_warn_pct": 10, "tonal_fail_pct": 30,
+    "levers": [["separate.halfwidth_frac", 0.03], ["separate.candidate_gate", 0.01], ["separate.hp_margin", 1.0],
+               ["notes.salience_floor_db", -50], ["separate.n_fft", 8192]]
+  },
+  "enhance": {
+    "enabled": false, "highpass": true, "highpass_ratio": 0.8, "span_gate": true, "span_floor_db": -24, "span_smooth_s": 0.05,
+    "target_peak_dbfs": -1.0, "use_registry_chain": false
+  },
+  "export": {
+    "max_samples": 24, "min_note_s": 0.25, "max_sample_s": 3.0, "max_hits": 6, "hit_s": 0.5, "hit_isolation_s": 0.3,
+    "distance": {"near_m": 1.0, "far_m": 8.0, "tail_db_near": -30.0, "tail_db_far": -8.0, "default_m": 2.0},
+    "grow_knowledge": true, "test_render": true, "keep_raw": false
+  }
+}

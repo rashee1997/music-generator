@@ -1,0 +1,23 @@
+{
+  "feel": [
+    "communal",
+    "groove that pulls",
+    "call and response",
+    "polyrhythm"
+  ],
+  "breath_beats": 0.25,
+  "groove": "offbeat",
+  "call_response": true,
+  "ornament": true,
+  "cadence": false,
+  "tempo": [
+    90,
+    130
+  ],
+  "avoid_instruments": [
+    "oud",
+    "qanun",
+    "ney"
+  ],
+  "name": "west_african"
+}

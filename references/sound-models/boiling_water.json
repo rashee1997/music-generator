@@ -1,0 +1,62 @@
+{
+ "name": "boiling_water",
+ "note": "Many small bubbles (Minnaert resonance f = 3.26 / r) popping at random, over a soft steady hiss.",
+ "model": {
+  "seconds": 8,
+  "voices": [
+   {
+    "name": "bubbles",
+    "excite": {
+     "kind": "impact",
+     "tau": 0.0003
+    },
+    "resonator": {
+     "kind": "bubble",
+     "radius_mm": 2.5,
+     "t60": 0.04,
+     "rise": 0.12
+    },
+    "events": {
+     "kind": "poisson",
+     "rate": 90
+    },
+    "vary": {
+     "size": {
+      "dist": "lognormal",
+      "sigma": 0.45
+     },
+     "pitch_exp": 1.0,
+     "amp_exp": 1.5,
+     "level_spread_db": 3
+    }
+   },
+   {
+    "name": "hiss",
+    "excite": {
+     "kind": "noise",
+     "color": "pink"
+    },
+    "resonator": {
+     "kind": "bandpass",
+     "band": [
+      300,
+      3000
+     ]
+    },
+    "events": {
+     "kind": "continuous"
+    },
+    "control": {
+     "gain_db": [
+      {
+       "kind": "ou",
+       "sigma_db": 2,
+       "tau_s": 2
+      }
+     ]
+    },
+    "gain_db": -20
+   }
+  ]
+ }
+}

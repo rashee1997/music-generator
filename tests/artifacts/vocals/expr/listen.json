@@ -1,0 +1,31 @@
+{
+  "file": "tests/artifacts/vocals/expr/expressive_choir.wav",
+  "sheet": {},
+  "checks": [
+    {
+      "name": "loudness",
+      "status": "SKIP",
+      "detail": "-24.4 LUFS (no target in the direction sheet)",
+      "target": null
+    },
+    {
+      "name": "true_peak",
+      "status": "PASS",
+      "detail": "-14.7 dBTP, ceiling -1.0",
+      "target": -1.0
+    },
+    {
+      "name": "clipping",
+      "status": "PASS",
+      "detail": "0 samples at full scale",
+      "target": null
+    }
+  ],
+  "notes": {
+    "ears": "earshot is not installed or its models did not load, so the feel, instrument, pulse, tempo and key checks were skipped. Run scripts/setup_project.py --ears to install it."
+  },
+  "overall": "SKIP",
+  "lufs": -24.41850636652657,
+  "true_peak": -14.719154964020827,
+  "dur": 11.122018140589569
+}

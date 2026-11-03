@@ -1,0 +1,704 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Vocal preset / track vocal block",
+  "description": "Every key is optional. Legacy flat keys and old nested preset keys are migrated by scripts/vocal_engine/config.py. Defaults: references/vocal-engine/defaults.json. Out-of-range numbers are clamped with a warning, never an exception.",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "character": {
+      "type": "string",
+      "description": "one sentence: who sings, how, why"
+    },
+    "hum": {
+      "type": "boolean",
+      "description": "closed-mouth nasal humming model (also chosen per note by vowel 'm')"
+    },
+    "vowel": {
+      "enum": [
+        "a",
+        "e",
+        "i",
+        "m",
+        "o",
+        "u"
+      ],
+      "description": "default vowel; 'm' selects the hum"
+    },
+    "style": {
+      "type": "string",
+      "description": "a profile in styles.json or in this block's `styles`",
+      "examples": [
+        "african_polyphony",
+        "bulgarian_chant",
+        "classical_choir",
+        "gregorian_monastic",
+        "nordic_kulning",
+        "qawwali_devotional",
+        "tuvan_kargyraa",
+        "tuvan_sygyt"
+      ]
+    },
+    "styles": {
+      "type": "object",
+      "description": "extra / overriding style profiles: formants, bandwidths, subharmonic, whistle_overtone, harmonic_lock, register, vib_cents, vib_hz, vib_delay, breath, dsp_saturation_db"
+    },
+    "expression": {
+      "oneOf": [
+        {
+          "enum": [
+            "cinematic",
+            "devotional",
+            "ethereal",
+            "gentle",
+            "hopeful",
+            "intimate",
+            "melancholic",
+            "mysterious",
+            "powerful",
+            "reflective"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "inline profile: partial override of any section"
+        }
+      ],
+      "description": "named profile in references/vocal-engine/expression/ (or the project's), applied UNDER explicit values"
+    },
+    "expression_intensity": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 2,
+      "description": "0 = off, 1 = full, up to 2 exaggerates"
+    },
+    "formants": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "exclusiveMinimum": 0
+      },
+      "minItems": 1,
+      "description": "Hz, overrides the vowel/style"
+    },
+    "bandwidths": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "exclusiveMinimum": 0
+      }
+    },
+    "voices": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 64
+    },
+    "attack": {
+      "type": "number",
+      "description": "legacy, seconds"
+    },
+    "release": {
+      "type": "number",
+      "description": "legacy, seconds"
+    },
+    "breath": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 0.5
+    },
+    "vib_cents": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "vib_hz": {
+      "type": "number",
+      "minimum": 2,
+      "maximum": 14
+    },
+    "vib_delay": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5
+    },
+    "spread_cents": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "pan_width": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "formant_scale": {
+      "type": "number",
+      "minimum": 0.5,
+      "maximum": 2
+    },
+    "source": {
+      "type": "object",
+      "description": "glottal source",
+      "properties": {
+        "register": {
+          "enum": [
+            "breathy",
+            "chest",
+            "falsetto",
+            "head",
+            "hum",
+            "modal"
+          ]
+        },
+        "breathiness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.5
+        },
+        "aspiration_pulse_depth": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "subharmonic_weight": {
+          "type": "number"
+        },
+        "whistle_hz": {
+          "type": "number"
+        },
+        "whistle_weight": {
+          "type": "number"
+        },
+        "harmonic_lock_amount": {
+          "type": "number"
+        },
+        "max_harmonic_hz": {
+          "type": "number"
+        },
+        "registers": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "tract": {
+      "type": "object",
+      "description": "vocal tract: formant_scale, gains, bandwidths, vowels, formants",
+      "properties": {
+        "block_ms": {
+          "type": "number"
+        },
+        "formant_scale": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 2
+        }
+      },
+      "additionalProperties": true
+    },
+    "humming": {
+      "type": "object",
+      "description": "nasal hum: brightness, antiformant_hz/bw/depth, oral_coupling, lip_closure_hz, murmur_gain, airflow, nasal_poles",
+      "properties": {
+        "register": {},
+        "antiformant_hz": {
+          "type": "number"
+        },
+        "antiformant_bw": {
+          "type": "number"
+        },
+        "antiformant_depth": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "oral_coupling": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "lip_closure_hz": {
+          "type": "number"
+        },
+        "brightness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "murmur_gain": {
+          "type": "number"
+        },
+        "airflow": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.2
+        },
+        "airflow_hz": {
+          "type": "number"
+        },
+        "nasality_vowels": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "vibrato_cents": {
+          "type": "number"
+        },
+        "breathiness": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": true
+    },
+    "articulation": {
+      "type": "object",
+      "description": "mode legato|non_legato|detached, attack_ms, release_ms, dips, onset_scoop, phrase_end_tail_ms",
+      "properties": {
+        "mode": {
+          "enum": [
+            "legato",
+            "non_legato",
+            "detached"
+          ]
+        },
+        "attack_ms": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 3000
+        },
+        "release_ms": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 5000
+        },
+        "detach_ms": {
+          "type": "number"
+        },
+        "legato_dip": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "legato_dip_ms": {
+          "type": "number"
+        },
+        "non_legato_dip": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "non_legato_dip_ms": {
+          "type": "number"
+        },
+        "onset_scoop_cents": {
+          "type": "number"
+        },
+        "onset_scoop_ms": {
+          "type": "number"
+        },
+        "phrase_end_tail_ms": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2000
+        }
+      },
+      "additionalProperties": true
+    },
+    "performance": {
+      "type": "object",
+      "description": "pitch behaviour: portamento, anticipation, overshoot, drift, jitter, arch, end sag, pitch_stability, tuning",
+      "properties": {
+        "connect_gap_s": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "phrase_gap_s": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 5
+        },
+        "portamento_ms": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "non_legato_ms": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 500
+        },
+        "anticipation_ms": {
+          "type": "number"
+        },
+        "overshoot_cents": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 60
+        },
+        "overshoot_frac": {
+          "type": "number"
+        },
+        "settle_ms": {
+          "type": "number"
+        },
+        "drift_cents": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 60
+        },
+        "drift_hz": {
+          "type": "number"
+        },
+        "jitter_cents": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 30
+        },
+        "jitter_hz": {
+          "type": "number"
+        },
+        "arch_cents": {
+          "type": "number"
+        },
+        "end_sag_cents": {
+          "type": "number"
+        },
+        "end_sag_s": {
+          "type": "number"
+        },
+        "tuning_cents": {
+          "type": "number"
+        },
+        "pitch_stability": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "vowel_blend_ms": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": true
+    },
+    "vibrato": {
+      "type": "object",
+      "description": "depth_cents, rate_hz, delay_s, onset_s, rate/depth variation",
+      "properties": {
+        "depth_cents": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "rate_hz": {
+          "type": "number",
+          "minimum": 2,
+          "maximum": 14
+        },
+        "rate_var": {
+          "type": "number"
+        },
+        "depth_var": {
+          "type": "number"
+        },
+        "delay_s": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "onset_s": {
+          "type": "number",
+          "minimum": 0.01,
+          "maximum": 5
+        },
+        "carry_floor": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": true
+    },
+    "dynamics": {
+      "type": "object",
+      "description": "level_scale, velocity_exponent, phrase_arc_db, flutter, timbre_follow",
+      "properties": {
+        "ref_rms": {
+          "type": "number"
+        },
+        "velocity_exponent": {
+          "type": "number",
+          "minimum": 0.3,
+          "maximum": 3
+        },
+        "flutter": {
+          "type": "number"
+        },
+        "flutter_hz": {
+          "type": "number"
+        },
+        "phrase_arc_db": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "arc_peak": {
+          "type": "number"
+        },
+        "timbre_follow": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "level_scale": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 2
+        }
+      },
+      "additionalProperties": true
+    },
+    "breathing": {
+      "type": "object",
+      "description": "capacity_s, exhaustion, aspiration, inhale and release gains",
+      "properties": {
+        "capacity_s": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 60
+        },
+        "exhaust_start": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 1
+        },
+        "exhaust_breath": {
+          "type": "number"
+        },
+        "pressure_drop_db": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "aspirate_attack_ms": {
+          "type": "number"
+        },
+        "aspirate_gain": {
+          "type": "number"
+        },
+        "inhale_ms": {
+          "type": "number"
+        },
+        "inhale_gain": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "inhale_gap_frac": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.95,
+          "description": "share of a gap the inhalation fills; the rest is the air before the phrase"
+        },
+        "inhale_min_s": {"type": "number", "minimum": 0, "maximum": 3},
+        "inhale_max_s": {"type": "number", "minimum": 0.1, "maximum": 5},
+        "inhale_peak_db": {"type": "number", "minimum": -60, "maximum": -6},
+        "inhale_floor_db": {"type": "number", "minimum": -90, "maximum": -20},
+        "inhale_crossfade_ms": {"type": "number", "minimum": 0, "maximum": 300},
+        "release_peak_db": {"type": "number", "minimum": -60, "maximum": -12},
+        "inhale_body_hz": {
+          "type": "number",
+          "minimum": 80,
+          "maximum": 1200,
+          "description": "centre of the low body of an inhale; the air band above it is held down by inhale_tilt_db"
+        },
+        "inhale_tilt_db": {
+          "type": "number",
+          "minimum": -30,
+          "maximum": 0,
+          "description": "level of the air band relative to the body: 0 is flat hiss, -11 is air"
+        },
+        "turbulence_hz": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 40
+        },
+        "turbulence_depth": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "inhale_min_gap_s": {
+          "type": "number"
+        },
+        "inhale_lead_ms": {
+          "type": "number"
+        },
+        "release_breath_gain": {
+          "type": "number"
+        },
+        "release_breath_ms": {
+          "type": "number"
+        },
+        "inhale_timing_jitter_ms": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 120
+        },
+        "inhale_duration_var": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.6
+        },
+        "inhale_character_var": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "onset_puff_gain": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.5
+        },
+        "release_scale_by_phrase": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "phrasing": {
+      "type": "object",
+      "description": "Context-aware performance shaping. amount 0 = the previous phrase exactly. tempo_bpm 0 = unknown. contours are named level shapes [[position 0..1, level], ...]; role is melody|counter|chord|pad|arp|bass",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "tempo_bpm": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 300
+        },
+        "beats_per_bar": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        },
+        "role": {
+          "type": "string"
+        },
+        "contour_depth": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "contours": {
+          "type": "object",
+          "description": "name -> {points: [[position, level], ...], weight: positive number}"
+        },
+        "expression_bias": {
+          "type": "object",
+          "description": "expression name -> {contours: {name: weight multiplier}, amount, depth, timing, vibrato}"
+        },
+        "role_profiles": {
+          "type": "object",
+          "description": "role name -> {amount, depth, timing, vibrato} multipliers"
+        },
+        "accent": {
+          "type": "object"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "pitch": {
+          "type": "object"
+        },
+        "vibrato": {
+          "type": "object"
+        },
+        "formants": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "ensemble": {
+      "type": "object",
+      "description": "voices, cohesion 0..1, pitch_spread_cents, timing_spread_ms, pan_width, diversity, distance_m, singers[]",
+      "properties": {
+        "voices": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "cohesion": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "pitch_spread_cents": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "timing_spread_ms": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 300
+        },
+        "pan_width": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "diversity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "distance_m": {
+          "type": "number",
+          "minimum": 0.3,
+          "maximum": 50
+        },
+        "distance_spread_m": {
+          "type": "number"
+        },
+        "expression": {},
+        "expression_intensity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "singers": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "dsp": {
+      "type": "object",
+      "description": "pedalboard polish: highpass_hz, presence, air, compressor, saturation_db, chorus, harmonies, intensity",
+      "properties": {
+        "highpass_hz": {
+          "type": "number"
+        },
+        "saturation_db": {
+          "type": "number"
+        },
+        "intensity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

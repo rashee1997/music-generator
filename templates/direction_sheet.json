@@ -1,0 +1,118 @@
+{
+  "title": "Misty Western Ghats Valley",
+  "project": "TODO: client, film, album or game this cue belongs to",
+  "version": 1,
+  "medium": "film",
+  "brief": "TODO: the words the client actually used, verbatim",
+  "audience": "TODO: who hears it, where they hear it, and what they already know",
+  "purpose": "a continuous 90-second slow orchestral adagio over the misty green valleys of the Western Ghats at dawn",
+  "point_of_view": "narrator, not a character: the camera floats, it does not walk, so no pulse and no urgent register",
+  "job": [
+    "set the place before the first word of voice-over",
+    "hold one unbroken mood: no key change, no drum",
+    "leave the middle of the spectrum free for the narration",
+    "end on the note it began, so the cut out is not a shock"
+  ],
+  "story": "Mist, then a ridge, then the sun breaking over it, then the descent: one long breath with a single crest at 52 s.",
+  "duration_s": 90.0,
+  "in_point_s": 0.0,
+  "out_point_s": 90.0,
+  "ending": "tail_out",
+
+  "feel": ["breathtaking", "expansive", "misty", "still"],
+  "avoid_feel": ["synthetic", "robotic", "busy", "rushed", "harsh", "new-age cliche"],
+
+  "sections": [
+    {"name": "open on the valley", "start_s": 0.0, "end_s": 14.0, "energy": 0.15,
+     "action": "slow aerial push through moving mist, no editing",
+     "music": "one held flute note over string harmonics; nothing else enters",
+     "role": "place"},
+    {"name": "the ridge appears", "start_s": 14.0, "end_s": 32.0, "energy": 0.35,
+     "action": "the ridge resolves out of the mist",
+     "music": "the flute phrase answers itself a fifth lower; celli enter under it",
+     "role": "establish"},
+    {"name": "crest", "start_s": 32.0, "end_s": 52.0, "energy": 0.55,
+     "action": "the camera clears the ridge; the valley floor opens",
+     "music": "the low celli move to the tonic; strings widen; the dynamic crest lands at 52 s",
+     "role": "build"},
+    {"name": "sun", "start_s": 52.0, "end_s": 68.0, "energy": 0.80,
+     "action": "first light crosses the valley",
+     "music": "the widest string spread of the cue; the flute holds one long note, then rests",
+     "role": "peak"},
+    {"name": "descent", "start_s": 68.0, "end_s": 84.0, "energy": 0.45,
+     "action": "the camera drops toward the canopy",
+     "music": "the opening figure inverted, celli only, the mist bed returns",
+     "role": "transition"},
+    {"name": "final frame", "start_s": 84.0, "end_s": 90.0, "energy": 0.20,
+     "action": "fade to the last title",
+     "music": "solo flute on the tonic, one breath, then the room tail",
+     "role": "button"}
+  ],
+
+  "motifs": [
+    {"name": "dawn call", "first_at_s": 6.0, "shape": "three rising notes, bare fifth, no vibrato",
+     "returns": "answered a fifth lower at 18 s, inverted at 70 s, alone on the tonic at 86 s"}
+  ],
+
+  "instruments": ["flute", "cello", "strings", "environment"],
+  "avoid_sounds": ["drums", "synth pad", "choir", "bell"],
+  "pulse": "none",
+  "tempo_bpm": [52, 60],
+  "key": "C",
+  "mode": "lydian",
+  "energy": 0.3,
+  "space": "misty_western_ghats_valley",
+
+  "hits_at": [24.0, 38.0, 52.0],
+  "hits": [
+    {"t": 24.0, "kind": "motion", "sync": "soft", "sound": "a single bird crossing frame", "why": "a movement inside the shot, not an edit: a soft sync, so a few frames either way do not matter"},
+    {"t": 38.0, "kind": "cut", "sync": "hard", "sound": "cello low C under the strings", "why": "hard cut to the valley floor; a hard sync point, on the frame"},
+    {"t": 52.0, "kind": "musical", "sync": "soft", "sound": "strings reach their widest spread", "why": "the cue's own crest, one beat after the cut so the cut lands first"}
+  ],
+
+  "mix_intent": {
+    "hero": "flute",
+    "support": ["cello", "strings"],
+    "sits_under": ["voice-over"],
+    "must_hear": ["flute in the first 2 s", "cello low C at 38 s", "nothing masking 250-3800 Hz while the narration speaks"],
+    "leave_free_hz": [250, 3800]
+  },
+
+  "loudness_lufs": -18.0,
+  "true_peak_max": -1.5,
+  "delivery": {"format": "wav", "sample_rate": 48000, "bit_depth": 24, "stage": "broadcast"},
+
+  "references": [
+    "in words, not a track: a solo flute over slow celli, the colour of a nature documentary opening, no percussion",
+    "the crest behaves like a held breath released, not like a trailer hit"
+  ],
+
+  "spatial_staging": {
+    "flute": {"azimuth": 0.0, "elevation": 8.0, "distance": 1.4, "space": "misty_western_ghats_valley"},
+    "cello": {"azimuth": -32.0, "elevation": 2.0, "distance": 2.6, "space": "misty_western_ghats_valley"},
+    "strings": {"azimuth": -18.0, "elevation": 18.0, "distance": 3.2, "space": "misty_western_ghats_valley"},
+    "environment": {"azimuth": 0.0, "elevation": 0.0, "distance": 8.0, "space": "misty_western_ghats_valley"}
+  },
+
+  "piece_type": "cinematic",
+
+  "video": {
+    "enabled": false,
+    "source": null,
+    "in_s": 0.0,
+    "out_s": null,
+    "fps": null,
+    "duration_s": null,
+    "cuts": [],
+    "cut_source": null,
+    "motion_hits": 0,
+    "cut_sync": {"early_ms": 45, "late_ms": 125},
+    "dialogue": {"present": false, "duck_db": -9.0, "snr_min_db": 15.0},
+    "master_profile": null,
+    "deliverable": null,
+    "preset": "default",
+    "notes": "music-only sheet: leave enabled false. For a cue written against a cut, scripts/video_score.py fills this block from the picture (cuts, fps, sync windows, dialogue policy, delivery profile, mux target) and writes the hits with their kind; the music still follows every rule in the rest of this sheet."
+  },
+
+  "notes": "Every field is a target someone can check. feel and avoid_feel are what listen.py tests earshot against; sections is the cue's arc in seconds; hits_at is what listen.py looks for in the onset list, and hits is the same moments with a reason and a kind (cut, motion or musical). spatial_staging is the room seen from above: each preset must match its own spot. mix_intent says what must be audible and what must stay free. Write in plain English: earshot reads the words."
+}

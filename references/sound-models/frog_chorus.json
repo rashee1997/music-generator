@@ -1,0 +1,102 @@
+{
+ "name": "frog_chorus",
+ "note": "Pulsed frog calls, not tones: a rough (noisy) harmonic source gated into a train of pulses (28 per second for the low croaker, 55 for the high trill), through vowel-like formants, at clumped gaps.",
+ "model": {
+  "seconds": 12,
+  "voices": [
+   {
+    "name": "low_croaker",
+    "excite": {
+     "kind": "periodic",
+     "f0": 180,
+     "jitter": 0.05,
+     "harmonics": 24,
+     "noise_mix": 0.35,
+     "am_hz": 28,
+     "am_depth": 1.0,
+     "attack": 0.01,
+     "tau": 0.22,
+     "hold": 0.12
+    },
+    "resonator": {
+     "kind": "formant",
+     "formants": [
+      [
+       450,
+       160,
+       1.0
+      ],
+      [
+       1300,
+       260,
+       0.6
+      ],
+      [
+       2500,
+       400,
+       0.2
+      ]
+     ]
+    },
+    "events": {
+     "kind": "gamma",
+     "rate": 1.2,
+     "shape": 3
+    },
+    "vary": {
+     "size": {
+      "dist": "lognormal",
+      "sigma": 0.12
+     },
+     "pitch_exp": 1.0,
+     "amp_exp": 0.5,
+     "level_spread_db": 3
+    }
+   },
+   {
+    "name": "high_trill",
+    "excite": {
+     "kind": "periodic",
+     "f0": 2200,
+     "jitter": 0.04,
+     "harmonics": 4,
+     "noise_mix": 0.25,
+     "am_hz": 55,
+     "am_depth": 1.0,
+     "attack": 0.005,
+     "tau": 0.12,
+     "hold": 0.06
+    },
+    "resonator": {
+     "kind": "formant",
+     "formants": [
+      [
+       2400,
+       300,
+       1.0
+      ],
+      [
+       4200,
+       500,
+       0.4
+      ]
+     ]
+    },
+    "events": {
+     "kind": "gamma",
+     "rate": 2.5,
+     "shape": 2
+    },
+    "vary": {
+     "size": {
+      "dist": "lognormal",
+      "sigma": 0.1
+     },
+     "pitch_exp": 1.0,
+     "level_spread_db": 3
+    },
+    "gain_db": -6
+   }
+  ]
+ }
+}

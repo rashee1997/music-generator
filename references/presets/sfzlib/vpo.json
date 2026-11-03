@@ -1,0 +1,23 @@
+{
+  "name": "vpo",
+  "character": "Virtual Playing Orchestra 3.3: a free orchestra in SFZ built from the best free sample sets, with solo and section patches, key-switch patches and a mod-wheel performance variant",
+  "type": "library",
+  "licence": "Mixed Creative Commons (CC Sampling Plus 1.0, CC BY-SA 3.0/4.0, CC0) per source set; the author states no restriction on music made with it and asks that the library is not repackaged or sold",
+  "licence_url": "https://virtualplaying.com/virtual-playing-orchestra/",
+  "share_alike": true,
+  "attribution": "Virtual Playing Orchestra, Paul Battersby, virtualplaying.com (samples from Sonatina Symphonic Orchestra, No Budget Orchestra, VSCO 2 Community Edition, University of Iowa, Philharmonia Orchestra)",
+  "homepage": "https://virtualplaying.com/virtual-playing-orchestra/",
+  "source": {"kind": "zip"},
+  "entry": "Virtual-Playing-Orchestra3",
+  "parts": {
+    "scripts_standard": {"size_mb": 0.5, "what": "SFZ scripts, key velocity = loudness, articulations as patches or key-switches",
+                         "url": "https://virtualplaying.com/vp-downloads/Virtual-Playing-Orchestra3-3-standard-scripts.zip", "hosts": ["virtualplaying.com"]},
+    "scripts_performance": {"size_mb": 0.4, "what": "SFZ scripts, mod wheel = loudness, velocity picks the articulation",
+                            "url": "https://virtualplaying.com/vp-downloads/Virtual-Playing-Orchestra3-3-performance-scripts.zip", "hosts": ["virtualplaying.com"]},
+    "wave": {"size_mb": 603, "what": "the wave files (libs/ folder); required by both script sets",
+             "manual": "https://virtualplaying.com/virtual-playing-orchestra/",
+             "manual_note": "The author hosts these on OneDrive, which refuses scripted downloads. Open the page, download 'Wave Files (603 MB)', then run: sfz_libs.py install-local vpo <downloaded.zip> --project <dir>"}
+  },
+  "default_parts": ["scripts_standard", "wave"],
+  "notes": "Needs BOTH the wave files and one script set, unpacked into the same folder. Author: 'REVERB IS ESSENTIAL'. All sustain samples are looped."
+}

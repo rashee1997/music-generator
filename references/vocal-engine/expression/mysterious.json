@@ -1,0 +1,23 @@
+{
+  "_about": "Expression profile 'mysterious': partial override of defaults.json (design choice, not tuned by ear). Edit freely; blend with expression_intensity.",
+  "articulation": {
+    "attack_ms": 350,
+    "release_ms": 550,
+    "phrase_end_tail_ms": 300
+  },
+  "vibrato": {
+    "depth_cents": 12,
+    "rate_hz": 4.5,
+    "delay_s": 0.9
+  },
+  "performance": {
+    "portamento_ms": 200,
+    "jitter_cents": 5.0,
+    "drift_cents": 9.0,
+    "arch_cents": 2.0
+  },
+  "source": {
+    "register": "head",
+    "breathiness": 0.05
+  }
+}

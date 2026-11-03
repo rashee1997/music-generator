@@ -1,0 +1,157 @@
+{
+  "kind": "video",
+  "name": "default",
+  "character": "Cut-locked cue under picture and speech: hits land on the cuts, music ducks under dialogue, delivered to a streaming loudness target.",
+
+  "probe": {
+    "analysis_fps": 12,
+    "analysis_width": 320,
+    "analysis_height": 180,
+    "keyframe_probe": true,
+    "scene_cut": {"threshold": 10.0, "min_gap_s": 0.25},
+    "motion_hit": {"percentile": 92, "min_gap_s": 0.5}
+  },
+
+  "direction_map": {
+    "energy_curve_bins": 8,
+    "default_key": "D",
+    "default_ending": "tail_out",
+    "job": [
+      "follow the picture's own energy instead of a fixed arc",
+      "land the cuts on the frame; let movements inside a shot pass softly",
+      "never compete with the dialogue"
+    ],
+    "energy_sections": {
+      "enabled": true,
+      "names": [
+        {"below": 0.25, "name": "quiet"},
+        {"below": 0.5, "name": "settle"},
+        {"below": 0.8, "name": "build"},
+        {"below": 1.01, "name": "peak"}
+      ]
+    },
+    "tempo_from_cuts": {"min_bpm": 60, "max_bpm": 168, "quantise_bpm": 1, "prefer_frame_lock": true},
+    "luminance_to_mode": [{"below": 0.35, "mode": "minor"}, {"below": 1.01, "mode": "major"}],
+    "centre_of_motion_to_pan": {"range": [-0.7, 0.7], "max_azimuth_deg": 45.0},
+    "warmth_to_timbre": {"cold": "bright", "warm": "dark"}
+  },
+
+  "staging": {
+    "space": {
+      "name": "video_room",
+      "character": "A scored room for picture: short pre-delay and a 2.2 s tail, so hits read as events on screen and the bed sits behind dialogue without smearing it.",
+      "room": {"rt60": 2.2, "pre_delay_ms": 20, "hf_decay": 0.6, "early_level": 0.4},
+      "reflections": {"ground_delay_ms": 6.5, "ground_gain": 0.45, "ground_cutoff_hz": 4500,
+                      "lateral_delay_ms": 14.0, "lateral_gain": 0.45, "lateral_cutoff_hz": 3600,
+                      "reverb_decay_s": 2.2, "ceiling_delay_ms": 15.0, "ceiling_gain": 0.4,
+                      "rear_delay_ms": 24.0, "rear_gain": 0.35},
+      "distance": {"ref_m": 1.5, "falloff": 0.18, "air_damping": 0.4, "min_cutoff_hz": 3200,
+                   "reverb_exponent": 0.65, "pre_delay_law": {"base_ms": 32.0, "per_m": 3.5, "max_ms": 30.0}},
+      "binaural": {"bed": false, "spot": true}
+    },
+    "lead": {"elevation": 4.0, "distance": 1.4},
+    "pad": {"elevation": 12.0, "distance": 2.6},
+    "bass": {"elevation": -6.0, "distance": 1.2},
+    "drum": {"elevation": 0.0, "distance": 1.8}
+  },
+
+  "mix_preset": {
+    "name": "video_bed",
+    "character": "A cue written under picture: the lead keeps a narrow band above the bed so dialogue owns the middle, and the low end stays with the bass and the hits.",
+    "lead_band_hz": 2500,
+    "carve_db": -3.0,
+    "max_boost_db": 9.0,
+    "active_db": -55.0,
+    "lead_db_margin": 3.0,
+    "inst_eq": {},
+    "seating": {},
+    "level_by_role": {"lead": -2.0, "pad": -15.0, "chord": -13.0, "arp": -16.0, "bass": -9.0, "drum": -11.0, "sfx": -9.0},
+    "immersive": {"enabled": false}
+  },
+
+  "hits": {
+    "cut_sound": "sfx:impact",
+    "motion_sound": "sfx:whoosh",
+    "max_hits_per_minute": 24,
+    "min_gap_beats": 1.0,
+    "duration_s": 1.0,
+    "cut_velocity": 0.9,
+    "motion_velocity": 0.7
+  },
+
+  "mix": {
+    "voice_lufs": -16.0,
+    "bed_db": -10.0,
+    "duck_db": -9.0,
+    "music_bed_lufs": -20.0,
+    "tail_s": 1.5,
+    "speech_band_hz": [250, 3800],
+    "duck_depth_db": -6.0,
+    "attack_ms": 25,
+    "release_ms": 300,
+    "lookahead_ms": 60,
+    "low_end_protect_below_hz": 200,
+    "sfx_headroom_db": -8.0,
+    "voice_hp_hz": 80.0,
+    "voice_mud_hz": 500.0,
+    "voice_mud_db": -2.0,
+    "voice_presence_hz": 3500.0,
+    "voice_presence_db": 2.5,
+    "voice_sibilance_hz": 7000.0,
+    "voice_sibilance_db": -2.0,
+    "voice_comp_threshold_db": -24.0,
+    "voice_comp_ratio": 3.0,
+    "voice_comp_attack_ms": 3.0,
+    "voice_comp_release_ms": 40.0,
+    "voice_makeup_db": 3.0,
+    "speech_envelope_attack_ms": 5.0,
+    "speech_envelope_release_ms": 60.0,
+    "speech_threshold_db": -38.0,
+    "speech_hold_s": 0.35,
+    "speech_hold_frac": 0.02,
+    "duck_threshold": 0.02,
+    "duck_floor_db": -1.0,
+    "duck_smooth_s": 0.03,
+    "music_carve_hz": 3000.0,
+    "music_carve_db": -3.0,
+    "music_hp_hz": 60.0,
+    "fade_in_s": 0.3,
+    "fade_out_s": 1.2,
+    "loop_crossfade_max_s": 2.0,
+    "sfx_short_gain": 0.3,
+    "swell": {"enabled": true, "rise_s": 1.2, "pre_hit_db": 2.0, "release_s": 2.0}
+  },
+
+  "master": {"profile": "streaming", "sample_rate": 48000, "bit_depth": 24},
+
+  "master_profiles": {
+    "streaming": {"loudness_mode": "full_program", "lufs": -14.0, "true_peak_db": -1.5, "tolerance_lu": 1.0},
+    "broadcast": {"loudness_mode": "dialogue_gated", "lufs": -24.0, "true_peak_db": -2.0, "tolerance_lu": 2.0},
+    "cinema": {"loudness_mode": "dialogue_gated", "lufs": -27.0, "true_peak_db": -2.0, "tolerance_lu": 2.0}
+  },
+
+  "mux": {
+    "video_copy": true,
+    "container": "mp4",
+    "audio_codec": {"mp4": "aac", "mov": "pcm_s24le", "mkv": "aac", "webm": "libopus"},
+    "audio_bitrate": "320k",
+    "faststart": true,
+    "shortest": true
+  },
+
+  "gate": {
+    "duration_tolerance_ms": 50,
+    "cut_sync": {"early_ms": 45, "late_ms": 125, "aim_ms": 40},
+    "dialogue_snr_min_db": 15.0,
+    "loudness_tolerance_lu": 1.0
+  },
+
+  "sources": [
+    "https://www.atsc.org/wp-content/uploads/2026/07/A85-2026-07.pdf (dialogue as anchor element, long-form -24 LKFS +/-2, -2 dBTP)",
+    "https://www.production-expert.com/production-expert-1/how-to-optimise-an-audio-mix-for-delivery-to-netflix (Netflix -27 LKFS +/-2)",
+    "https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.1359-0-199802-S!!PDF-E.pdf (A/V sync: detectability +45 ms early to -125 ms late)",
+    "https://ffmpeg-cookbook.com/en/articles/scene-detect/ (scdet threshold 0-100, default 10, 8-14 for film; fades and dissolves missed)",
+    "https://openclip.app/learn/audio-ducking (duck depth 15-25 dB, attack 10-30 ms, release 200-500 ms)",
+    "references/mix-rules.md (voice-over contract: -8 to -14 dB duck, 25 ms attack, 250-350 ms release)"
+  ]
+}

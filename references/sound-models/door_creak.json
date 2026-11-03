@@ -1,0 +1,44 @@
+{
+ "name": "door_creak",
+ "note": "Stick-slip friction on a hinge: fractal noise read at a changing speed, saw-toothed by the slip, through a few body modes.",
+ "model": {
+  "seconds": 2.5,
+  "voices": [
+   {
+    "name": "hinge",
+    "excite": {
+     "kind": "friction",
+     "beta": -0.5,
+     "speed_curve": [
+      [
+       0,
+       1.0
+      ],
+      [
+       1.2,
+       3.0
+      ],
+      [
+       2.5,
+       1.5
+      ]
+     ],
+     "slip_hz": 14,
+     "slip_depth": 0.8
+    },
+    "resonator": {
+     "kind": "modal",
+     "law": "power",
+     "f1": 350,
+     "n": 8,
+     "t60": 0.06,
+     "exponent": 1.3,
+     "gain_exp": 0.3
+    },
+    "events": {
+     "kind": "continuous"
+    }
+   }
+  ]
+ }
+}

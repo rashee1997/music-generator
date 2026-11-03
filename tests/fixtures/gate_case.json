@@ -1,0 +1,9 @@
+{
+  "name": "arabic_oud_lute",
+  "instrument": "acoustic_guitar",
+  "character": "A test preset: the gate selftest needs one named instrument preset with its own place.",
+  "spatial": {
+    "azimuth": -25.0,
+    "distance": 2.0
+  }
+}

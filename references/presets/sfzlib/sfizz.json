@@ -1,0 +1,18 @@
+{
+  "name": "sfizz",
+  "character": "sfizz 1.2.3: the SFZ engine that renders a MIDI file through an .sfz file to a WAV, offline (BSD-2-Clause; the project is archived, so the version is pinned)",
+  "type": "engine",
+  "licence": "BSD-2-Clause",
+  "licence_url": "https://github.com/sfztools/sfizz/blob/develop/LICENSE",
+  "share_alike": false,
+  "attribution": "sfizz, SFZTools contributors, BSD-2-Clause",
+  "homepage": "https://github.com/sfztools/sfizz",
+  "platforms": {
+    "win32": {"url": "https://github.com/sfztools/sfizz/releases/download/1.2.3/sfizz-1.2.3-win64.zip", "hosts": ["github.com"], "size_mb": 8,
+              "sha256": "7431cbe9b7f2e71a9ff4b12fbbe82c766dbf75b1eedecca627e7506cb06a9fcc", "exe": "bin/Release/sfizz_render.exe"},
+    "darwin": {"url": "https://github.com/sfztools/sfizz/releases/download/1.2.3/sfizz-1.2.3-macos.tar.gz", "hosts": ["github.com"], "size_mb": 1,
+               "exe": null, "note": "macOS archive holds plugins, not sfizz_render. Build it (cmake -DSFIZZ_RENDER=ON) or set SFIZZ_RENDER=/path/to/sfizz_render"},
+    "linux": {"url": null, "exe": null, "note": "No prebuilt sfizz_render. Install sfizz from your package manager or build it, then set SFIZZ_RENDER=/path/to/sfizz_render"}
+  },
+  "notes": "Windows: bin/Release/sfizz_render.exe next to sfizz.dll. Measured on this laptop: renders are byte-identical across runs, including random round-robin."
+}

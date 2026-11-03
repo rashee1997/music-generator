@@ -1,0 +1,21 @@
+{
+  "_about": "Expression profile 'gentle': partial override of defaults.json (design choice, not tuned by ear). Edit freely; blend with expression_intensity.",
+  "articulation": {
+    "attack_ms": 260,
+    "release_ms": 320
+  },
+  "vibrato": {
+    "depth_cents": 12,
+    "delay_s": 0.6,
+    "onset_s": 1.0
+  },
+  "performance": {
+    "portamento_ms": 120,
+    "jitter_cents": 2.0
+  },
+  "dynamics": {
+    "phrase_arc_db": 1.5,
+    "flutter": 0.02,
+    "level_scale": 0.8
+  }
+}

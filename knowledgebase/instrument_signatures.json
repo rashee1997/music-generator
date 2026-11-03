@@ -1,0 +1,1089 @@
+{
+ "schema": "music_db.signatures/1",
+ "instruments": {
+  "bass": {
+   "family": "synth",
+   "range": {
+    "lowest_note": "D2",
+    "highest_note": "B2"
+   },
+   "pitch_behavior": {
+    "tuning_offset_cents": 35
+   },
+   "source": "listening_model_estimate",
+   "measured": {
+    "notes": 23,
+    "harmonics_rel": [
+     0.184,
+     0.007,
+     0.046,
+     0.023,
+     0.013,
+     0.047,
+     0.004,
+     0.002,
+     0.001,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "midi_lo": 36,
+    "midi_hi": 48,
+    "tuning_cents": 34.0,
+    "song": "song.wav",
+    "spatial": {
+     "azimuth": 1.0,
+     "distance": 2.0,
+     "width": 0.01
+    }
+   }
+  },
+  "lead": {
+   "family": "synth",
+   "range": {
+    "lowest_note": "A#4",
+    "highest_note": "A5"
+   },
+   "pitch_behavior": {
+    "tuning_offset_cents": 35
+   },
+   "source": "listening_model_estimate",
+   "measured": {
+    "notes": 7,
+    "harmonics_rel": [
+     1.0,
+     0.494,
+     0.285,
+     0.173,
+     0.1,
+     0.045,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "midi_lo": 72,
+    "midi_hi": 83,
+    "tuning_cents": 34.0,
+    "song": "song.wav",
+    "spatial": {
+     "azimuth": -36.3,
+     "distance": 1.0,
+     "width": 0.0
+    }
+   }
+  },
+  "pad": {
+   "family": "synth",
+   "range": {
+    "lowest_note": "D3",
+    "highest_note": "C#4"
+   },
+   "pitch_behavior": {
+    "tuning_offset_cents": 35
+   },
+   "source": "listening_model_estimate",
+   "measured": {
+    "notes": 5,
+    "harmonics_rel": [
+     1.0,
+     0.128,
+     0.062,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "midi_lo": 52,
+    "midi_hi": 59,
+    "tuning_cents": 34.0,
+    "song": "song.wav",
+    "spatial": {
+     "azimuth": 31.9,
+     "distance": 2.0,
+     "width": 0.03
+    }
+   }
+  },
+  "unknown_1": {
+   "source": "measured_only",
+   "label": "unknown_1",
+   "measured": {
+    "notes": 378,
+    "harmonics_rel": [
+     0.992,
+     0.4,
+     0.187,
+     0.131,
+     0.107,
+     0.068,
+     0.044,
+     0.051,
+     0.054,
+     0.058,
+     0.033,
+     0.042
+    ],
+    "midi_lo": 28,
+    "midi_hi": 70,
+    "tuning_cents": 47.0,
+    "song": "1-01. Return of the Tres (Intro).mp3",
+    "spatial": {
+     "azimuth": -2.2,
+     "distance": 1.0,
+     "width": 0.02
+    }
+   }
+  },
+  "low_brass_stab": {
+   "label": "Sampled Low Brass Section (Trombone/Tuba)",
+   "family": "brass",
+   "role": "rhythm",
+   "similar_to": [
+    "trombone_tuba_brass_section"
+   ],
+   "range": {
+    "lowest_note": "D#2",
+    "highest_note": "F#3",
+    "typical_low": "D#2",
+    "typical_high": "F#3"
+   },
+   "polyphony": 2,
+   "timbre": {
+    "harmonics_rel": [
+     1.0,
+     0.95,
+     0.85,
+     0.7,
+     0.55,
+     0.4,
+     0.25,
+     0.18,
+     0.12,
+     0.08,
+     0.04,
+     0.02
+    ],
+    "odd_even": "balanced",
+    "centroid_hz": {
+     "low": 350,
+     "high": 1100
+    },
+    "brightness": "warm",
+    "formants_hz": [
+     450,
+     950
+    ],
+    "noise_ratio_0_1": 0.12,
+    "noise_kind": "breath",
+    "inharmonicity": "low",
+    "distortion": "light"
+   },
+   "envelope": {
+    "attack_ms": {
+     "min": 15,
+     "max": 45
+    },
+    "decay": "short",
+    "sustain_level_0_1": 0.6,
+    "release_ms": 150,
+    "t60_s": 0.35
+   },
+   "pitch_behavior": {
+    "vibrato": {
+     "present": false,
+     "rate_hz": null,
+     "depth_cents": null,
+     "onset_delay_ms": null
+    },
+    "glides": "none",
+    "bends": false,
+    "pitch_stability": "natural",
+    "tuning_offset_cents": 35
+   },
+   "articulation": [
+    "staccato",
+    "marcato",
+    "accented"
+   ],
+   "synthesis_hint": {
+    "gm_program": 57,
+    "recipe": "Layered trombone and tuba sample, vintage band-pass 120 Hz - 3.5 kHz, light tape saturation"
+   },
+   "confidence": {
+    "identification": 0.9,
+    "timbre_numbers": 0.75
+   },
+   "source": "listening_model_estimate",
+   "measured": {
+    "notes": 82,
+    "harmonics_rel": [
+     0.949,
+     0.145,
+     0.056,
+     0.022,
+     0.035,
+     0.027,
+     0.021,
+     0.032,
+     0.028,
+     0.029,
+     0.022,
+     0.025
+    ],
+    "midi_lo": 37,
+    "midi_hi": 56,
+    "tuning_cents": 47.0,
+    "song": "1-01. Return of the Tres (Intro).mp3",
+    "spatial": {
+     "azimuth": 2.4,
+     "distance": 2.0,
+     "width": 0.01
+    }
+   }
+  },
+  "trumpet_lead": {
+   "label": "Sampled Mariachi Harmonized Trumpets",
+   "family": "brass",
+   "role": "lead",
+   "similar_to": [
+    "trumpet_muted_trumpet"
+   ],
+   "range": {
+    "lowest_note": "D#4",
+    "highest_note": "E6",
+    "typical_low": "G#4",
+    "typical_high": "B5"
+   },
+   "polyphony": 2,
+   "timbre": {
+    "harmonics_rel": [
+     0.8,
+     1.0,
+     0.95,
+     0.85,
+     0.75,
+     0.6,
+     0.45,
+     0.35,
+     0.25,
+     0.18,
+     0.12,
+     0.08
+    ],
+    "odd_even": "balanced",
+    "centroid_hz": {
+     "low": 1400,
+     "high": 3200
+    },
+    "brightness": "bright",
+    "formants_hz": [
+     1200,
+     2400
+    ],
+    "noise_ratio_0_1": 0.08,
+    "noise_kind": "breath",
+    "inharmonicity": "low",
+    "distortion": "light"
+   },
+   "envelope": {
+    "attack_ms": {
+     "min": 10,
+     "max": 35
+    },
+    "decay": "medium",
+    "sustain_level_0_1": 0.75,
+    "release_ms": 180,
+    "t60_s": 0.5
+   },
+   "pitch_behavior": {
+    "vibrato": {
+     "present": true,
+     "rate_hz": 6.0,
+     "depth_cents": 35,
+     "onset_delay_ms": 80
+    },
+    "glides": "occasional",
+    "bends": false,
+    "pitch_stability": "natural",
+    "tuning_offset_cents": 35
+   },
+   "articulation": [
+    "legato",
+    "staccato",
+    "vibrato"
+   ],
+   "synthesis_hint": {
+    "gm_program": 56,
+    "recipe": "Two bright trumpets in thirds with 6 Hz mariachi vibrato, vintage vinyl EQ roll-off above 10 kHz"
+   },
+   "confidence": {
+    "identification": 0.95,
+    "timbre_numbers": 0.8
+   },
+   "source": "listening_model_estimate",
+   "measured": {
+    "notes": 1401,
+    "harmonics_rel": [
+     0.736,
+     0.481,
+     0.262,
+     0.115,
+     0.093,
+     0.05,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "midi_lo": 61,
+    "midi_hi": 90,
+    "tuning_cents": 47.0,
+    "song": "1-01. Return of the Tres (Intro).mp3",
+    "spatial": {
+     "azimuth": -9.7,
+     "distance": 4.68,
+     "width": 0.08
+    }
+   }
+  },
+  "bass_guitar": {
+   "label": "Deep Electric / Sub Bass",
+   "family": "bass",
+   "role": "bass",
+   "similar_to": [
+    "finger_bass_pick_bass",
+    "sub_bass_forest_drone"
+   ],
+   "range": {
+    "lowest_note": "D#1",
+    "highest_note": "G#2",
+    "typical_low": "D#1",
+    "typical_high": "D#2"
+   },
+   "polyphony": 1,
+   "timbre": {
+    "harmonics_rel": [
+     1.0,
+     0.6,
+     0.25,
+     0.1,
+     0.04,
+     0.02,
+     0.01,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "odd_even": "even_heavy",
+    "centroid_hz": {
+     "low": 70,
+     "high": 180
+    },
+    "brightness": "dark",
+    "formants_hz": [],
+    "noise_ratio_0_1": 0.02,
+    "noise_kind": "none",
+    "inharmonicity": "none",
+    "distortion": "none"
+   },
+   "envelope": {
+    "attack_ms": {
+     "min": 10,
+     "max": 25
+    },
+    "decay": "medium",
+    "sustain_level_0_1": 0.8,
+    "release_ms": 120,
+    "t60_s": 0.25
+   },
+   "pitch_behavior": {
+    "vibrato": {
+     "present": false,
+     "rate_hz": null,
+     "depth_cents": null,
+     "onset_delay_ms": null
+    },
+    "glides": "none",
+    "bends": false,
+    "pitch_stability": "tight",
+    "tuning_offset_cents": 35
+   },
+   "articulation": [
+    "sustained",
+    "fingered"
+   ],
+   "synthesis_hint": {
+    "gm_program": 33,
+    "recipe": "Low-passed fingered electric bass at 250 Hz reinforced with warm sine sub-bass"
+   },
+   "confidence": {
+    "identification": 0.9,
+    "timbre_numbers": 0.85
+   },
+   "source": "listening_model_estimate",
+   "measured": {
+    "notes": 1929,
+    "harmonics_rel": [
+     0.35,
+     0.114,
+     0.011,
+     0.005,
+     0.006,
+     0.007,
+     0.004,
+     0.005,
+     0.003,
+     0.003,
+     0.004,
+     0.006
+    ],
+    "midi_lo": 25,
+    "midi_hi": 46,
+    "tuning_cents": 47.0,
+    "song": "1-01. Return of the Tres (Intro).mp3",
+    "spatial": {
+     "azimuth": -3.8,
+     "distance": 1.0,
+     "width": 0.01
+    }
+   }
+  },
+  "clean_guitar_chord": {
+   "label": "Sampled Vintage Rhythm Guitar",
+   "family": "strings_plucked",
+   "role": "chords",
+   "similar_to": [
+    "clean_guitar_muted",
+    "nylon_guitar"
+   ],
+   "range": {
+    "lowest_note": "G#2",
+    "highest_note": "D#4",
+    "typical_low": "B2",
+    "typical_high": "B3"
+   },
+   "polyphony": 4,
+   "timbre": {
+    "harmonics_rel": [
+     1.0,
+     0.7,
+     0.5,
+     0.35,
+     0.2,
+     0.12,
+     0.08,
+     0.04,
+     0.02,
+     0.01,
+     0.0,
+     0.0
+    ],
+    "odd_even": "balanced",
+    "centroid_hz": {
+     "low": 400,
+     "high": 1200
+    },
+    "brightness": "warm",
+    "formants_hz": [],
+    "noise_ratio_0_1": 0.1,
+    "noise_kind": "pick",
+    "inharmonicity": "low",
+    "distortion": "none"
+   },
+   "envelope": {
+    "attack_ms": {
+     "min": 5,
+     "max": 15
+    },
+    "decay": "short",
+    "sustain_level_0_1": 0.2,
+    "release_ms": 90,
+    "t60_s": 0.2
+   },
+   "pitch_behavior": {
+    "vibrato": {
+     "present": false,
+     "rate_hz": null,
+     "depth_cents": null,
+     "onset_delay_ms": null
+    },
+    "glides": "none",
+    "bends": false,
+    "pitch_stability": "tight",
+    "tuning_offset_cents": 35
+   },
+   "articulation": [
+    "muted",
+    "strummed"
+   ],
+   "synthesis_hint": {
+    "gm_program": 24,
+    "recipe": "Short muted acoustic/clean guitar chord strums band-passed 250 Hz to 3 kHz"
+   },
+   "confidence": {
+    "identification": 0.75,
+    "timbre_numbers": 0.65
+   },
+   "source": "listening_model_estimate",
+   "measured": {
+    "notes": 1333,
+    "harmonics_rel": [
+     1.0,
+     0.272,
+     0.066,
+     0.029,
+     0.03,
+     0.028,
+     0.033,
+     0.03,
+     0.037,
+     0.025,
+     0.028,
+     0.021
+    ],
+    "midi_lo": 42,
+    "midi_hi": 65,
+    "tuning_cents": 47.0,
+    "song": "1-01. Return of the Tres (Intro).mp3",
+    "spatial": {
+     "azimuth": 0.5,
+     "distance": 1.0,
+     "width": 0.01
+    }
+   }
+  },
+  "rap_vocal_ives": {
+   "label": "Lead Rap Vocal (Ives)",
+   "family": "voice",
+   "role": "lead",
+   "similar_to": [
+    "vocals"
+   ],
+   "range": {
+    "lowest_note": "C3",
+    "highest_note": "E4",
+    "typical_low": "D#3",
+    "typical_high": "C#4"
+   },
+   "polyphony": 1,
+   "timbre": {
+    "harmonics_rel": [
+     1.0,
+     0.9,
+     0.8,
+     0.7,
+     0.55,
+     0.45,
+     0.35,
+     0.25,
+     0.18,
+     0.12,
+     0.08,
+     0.05
+    ],
+    "odd_even": "balanced",
+    "centroid_hz": {
+     "low": 900,
+     "high": 2800
+    },
+    "brightness": "bright",
+    "formants_hz": [
+     650,
+     1700,
+     2700
+    ],
+    "noise_ratio_0_1": 0.15,
+    "noise_kind": "breath",
+    "inharmonicity": "low",
+    "distortion": "none"
+   },
+   "envelope": {
+    "attack_ms": {
+     "min": 8,
+     "max": 30
+    },
+    "decay": "short",
+    "sustain_level_0_1": 0.65,
+    "release_ms": 80,
+    "t60_s": 0.15
+   },
+   "pitch_behavior": {
+    "vibrato": {
+     "present": false,
+     "rate_hz": null,
+     "depth_cents": null,
+     "onset_delay_ms": null
+    },
+    "glides": "frequent",
+    "bends": true,
+    "pitch_stability": "loose",
+    "tuning_offset_cents": null
+   },
+   "articulation": [
+    "percussive",
+    "spoken",
+    "accented"
+   ],
+   "synthesis_hint": {
+    "gm_program": null,
+    "recipe": "Close-miked male tenor/baritone rap vocal, heavy FET compression, presence boost at 3.5 kHz"
+   },
+   "confidence": {
+    "identification": 0.95,
+    "timbre_numbers": 0.8
+   },
+   "source": "listening_model_estimate",
+   "measured": {
+    "notes": 192,
+    "harmonics_rel": [
+     0.395,
+     0.536,
+     0.529,
+     0.323,
+     0.309,
+     0.301,
+     0.159,
+     0.114,
+     0.118,
+     0.071,
+     0.039,
+     0.057
+    ],
+    "midi_lo": 46,
+    "midi_hi": 64,
+    "tuning_cents": 47.0,
+    "song": "1-01. Return of the Tres (Intro).mp3",
+    "spatial": {
+     "azimuth": -6.9,
+     "distance": 1.0,
+     "width": 0.1
+    }
+   }
+  },
+  "rap_vocal_kemo": {
+   "label": "Lead Rap Vocal (Kemo The Blaxican)",
+   "family": "voice",
+   "role": "lead",
+   "similar_to": [
+    "vocals"
+   ],
+   "range": {
+    "lowest_note": "G#2",
+    "highest_note": "B3",
+    "typical_low": "A#2",
+    "typical_high": "G#3"
+   },
+   "polyphony": 1,
+   "timbre": {
+    "harmonics_rel": [
+     1.0,
+     0.95,
+     0.8,
+     0.6,
+     0.45,
+     0.3,
+     0.2,
+     0.15,
+     0.1,
+     0.07,
+     0.04,
+     0.02
+    ],
+    "odd_even": "balanced",
+    "centroid_hz": {
+     "low": 600,
+     "high": 2100
+    },
+    "brightness": "warm",
+    "formants_hz": [
+     500,
+     1400,
+     2400
+    ],
+    "noise_ratio_0_1": 0.14,
+    "noise_kind": "breath",
+    "inharmonicity": "low",
+    "distortion": "none"
+   },
+   "envelope": {
+    "attack_ms": {
+     "min": 10,
+     "max": 35
+    },
+    "decay": "short",
+    "sustain_level_0_1": 0.7,
+    "release_ms": 90,
+    "t60_s": 0.15
+   },
+   "pitch_behavior": {
+    "vibrato": {
+     "present": false,
+     "rate_hz": null,
+     "depth_cents": null,
+     "onset_delay_ms": null
+    },
+    "glides": "frequent",
+    "bends": true,
+    "pitch_stability": "loose",
+    "tuning_offset_cents": null
+   },
+   "articulation": [
+    "percussive",
+    "spoken",
+    "rolled_r"
+   ],
+   "synthesis_hint": {
+    "gm_program": null,
+    "recipe": "Close-miked male baritone rap vocal with warm low-mid body around 250 Hz and tight compression"
+   },
+   "confidence": {
+    "identification": 0.95,
+    "timbre_numbers": 0.8
+   },
+   "source": "listening_model_estimate",
+   "measured": {
+    "notes": 134,
+    "harmonics_rel": [
+     0.29,
+     0.904,
+     0.105,
+     0.077,
+     0.114,
+     0.045,
+     0.034,
+     0.046,
+     0.031,
+     0.033,
+     0.019,
+     0.02
+    ],
+    "midi_lo": 42,
+    "midi_hi": 61,
+    "tuning_cents": 47.0,
+    "song": "1-01. Return of the Tres (Intro).mp3",
+    "spatial": {
+     "azimuth": -0.6,
+     "distance": 1.0,
+     "width": 0.07
+    }
+   }
+  },
+  "backing_vocals_hype": {
+   "label": "Hype Backing Vocals & Doubles",
+   "family": "voice",
+   "role": "stab",
+   "similar_to": [
+    "vocals"
+   ],
+   "range": {
+    "lowest_note": "A#2",
+    "highest_note": "E4",
+    "typical_low": "C3",
+    "typical_high": "C#4"
+   },
+   "polyphony": 2,
+   "timbre": {
+    "harmonics_rel": [
+     1.0,
+     0.9,
+     0.75,
+     0.6,
+     0.45,
+     0.35,
+     0.25,
+     0.18,
+     0.12,
+     0.08,
+     0.05,
+     0.03
+    ],
+    "odd_even": "balanced",
+    "centroid_hz": {
+     "low": 800,
+     "high": 2600
+    },
+    "brightness": "neutral",
+    "formants_hz": [
+     600,
+     1600,
+     2600
+    ],
+    "noise_ratio_0_1": 0.16,
+    "noise_kind": "breath",
+    "inharmonicity": "low",
+    "distortion": "none"
+   },
+   "envelope": {
+    "attack_ms": {
+     "min": 10,
+     "max": 30
+    },
+    "decay": "short",
+    "sustain_level_0_1": 0.6,
+    "release_ms": 100,
+    "t60_s": 0.2
+   },
+   "pitch_behavior": {
+    "vibrato": {
+     "present": false,
+     "rate_hz": null,
+     "depth_cents": null,
+     "onset_delay_ms": null
+    },
+    "glides": "frequent",
+    "bends": true,
+    "pitch_stability": "loose",
+    "tuning_offset_cents": null
+   },
+   "articulation": [
+    "shouted",
+    "accented"
+   ],
+   "synthesis_hint": {
+    "gm_program": null,
+    "recipe": "Double-tracked male vocal shouts panned left/right, high-passed at 180 Hz"
+   },
+   "confidence": {
+    "identification": 0.9,
+    "timbre_numbers": 0.75
+   },
+   "source": "listening_model_estimate",
+   "measured": {
+    "notes": 297,
+    "harmonics_rel": [
+     0.322,
+     0.825,
+     0.281,
+     0.267,
+     0.233,
+     0.102,
+     0.109,
+     0.085,
+     0.081,
+     0.048,
+     0.043,
+     0.048
+    ],
+    "midi_lo": 44,
+    "midi_hi": 64,
+    "tuning_cents": 47.0,
+    "song": "1-01. Return of the Tres (Intro).mp3",
+    "spatial": {
+     "azimuth": -4.4,
+     "distance": 1.0,
+     "width": 0.08
+    }
+   }
+  },
+  "turntable_scratch_vocals": {
+   "label": "DJ Turntable Scratched Vocal Samples",
+   "family": "texture",
+   "role": "fx_pitched",
+   "similar_to": [
+    "vocals",
+    "ambient_sfx"
+   ],
+   "range": {
+    "lowest_note": "C3",
+    "highest_note": "C6",
+    "typical_low": "G3",
+    "typical_high": "G5"
+   },
+   "polyphony": 1,
+   "timbre": {
+    "harmonics_rel": [
+     1.0,
+     0.85,
+     0.75,
+     0.65,
+     0.5,
+     0.4,
+     0.3,
+     0.25,
+     0.2,
+     0.15,
+     0.1,
+     0.08
+    ],
+    "odd_even": "balanced",
+    "centroid_hz": {
+     "low": 900,
+     "high": 3800
+    },
+    "brightness": "bright",
+    "formants_hz": [
+     800,
+     1900
+    ],
+    "noise_ratio_0_1": 0.3,
+    "noise_kind": "hiss",
+    "inharmonicity": "medium",
+    "distortion": "light"
+   },
+   "envelope": {
+    "attack_ms": {
+     "min": 2,
+     "max": 15
+    },
+    "decay": "short",
+    "sustain_level_0_1": 0.5,
+    "release_ms": 40,
+    "t60_s": 0.1
+   },
+   "pitch_behavior": {
+    "vibrato": {
+     "present": false,
+     "rate_hz": null,
+     "depth_cents": null,
+     "onset_delay_ms": null
+    },
+    "glides": "frequent",
+    "bends": true,
+    "pitch_stability": "loose",
+    "tuning_offset_cents": null
+   },
+   "articulation": [
+    "staccato",
+    "glissando",
+    "gated"
+   ],
+   "synthesis_hint": {
+    "gm_program": null,
+    "recipe": "Vocal sample buffer modulated by rapid bi-directional pitch/playback-rate envelopes and sharp VCA gate cuts"
+   },
+   "confidence": {
+    "identification": 0.95,
+    "timbre_numbers": 0.75
+   },
+   "source": "listening_model_estimate",
+   "measured": {
+    "notes": 783,
+    "harmonics_rel": [
+     0.436,
+     0.555,
+     0.454,
+     0.552,
+     0.344,
+     0.247,
+     0.122,
+     0.084,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "midi_lo": 46,
+    "midi_hi": 86,
+    "tuning_cents": 47.0,
+    "song": "1-01. Return of the Tres (Intro).mp3",
+    "spatial": {
+     "azimuth": -14.7,
+     "distance": 6.3,
+     "width": 0.09
+    }
+   }
+  },
+  "unknown_2": {
+   "source": "measured_only",
+   "label": "unknown_2",
+   "measured": {
+    "notes": 85,
+    "harmonics_rel": [
+     0.2,
+     0.391,
+     1.0,
+     0.024,
+     0.05,
+     0.108,
+     0.063,
+     0.093,
+     0.05,
+     0.01,
+     0.011,
+     0.01
+    ],
+    "midi_lo": 24,
+    "midi_hi": 24,
+    "tuning_cents": 47.0,
+    "song": "1-01. Return of the Tres (Intro).mp3",
+    "spatial": {
+     "azimuth": -0.1,
+     "distance": 1.0,
+     "width": 0.01
+    }
+   }
+  },
+  "unknown_3": {
+   "source": "measured_only",
+   "label": "unknown_3",
+   "measured": {
+    "notes": 191,
+    "harmonics_rel": [
+     0.3,
+     1.0,
+     0.161,
+     0.067,
+     0.267,
+     0.122,
+     0.041,
+     0.069,
+     0.097,
+     0.02,
+     0.081,
+     0.077
+    ],
+    "midi_lo": 24,
+    "midi_hi": 25,
+    "tuning_cents": 47.0,
+    "song": "1-01. Return of the Tres (Intro).mp3",
+    "spatial": {
+     "azimuth": -1.0,
+     "distance": 1.0,
+     "width": 0.02
+    }
+   }
+  },
+  "unknown_4": {
+   "source": "measured_only",
+   "label": "unknown_4",
+   "measured": {
+    "notes": 8,
+    "harmonics_rel": [
+     0.241,
+     1.0,
+     0.788,
+     0.085,
+     0.449,
+     0.06,
+     0.051,
+     0.059,
+     0.012,
+     0.02,
+     0.028,
+     0.033
+    ],
+    "midi_lo": 24,
+    "midi_hi": 24,
+    "tuning_cents": 47.0,
+    "song": "1-01. Return of the Tres (Intro).mp3",
+    "spatial": {
+     "azimuth": -2.4,
+     "distance": 1.0,
+     "width": 0.02
+    }
+   }
+  }
+ }
+}

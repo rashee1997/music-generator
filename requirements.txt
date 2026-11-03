@@ -1,0 +1,43 @@
+# Core requirements for the music-generator skill.
+# Easiest install: python3 scripts/setup_project.py   (creates .venv with uv, installs everything below)
+# By hand:         uv venv .venv  &&  uv pip install --python .venv/bin/python -r requirements.txt
+#
+# The versions are the ones this skill was tested with. If one will not install on your Python, relax the
+# pin to >= the same version and run scripts/setup_natural.py to check the render path still passes.
+
+# Core DSP, Audio I/O
+numpy==2.5.3
+scipy==1.18.1
+soundfile==0.14.0
+
+# Studio Mastering & Minimum-Phase Filtering (mixer.py)
+pedalboard==0.9.26
+
+# Loudness & EBU R128 Dynamic Range
+pyloudnorm==0.2.0
+
+# MIDI Parsing & Transcriptions
+pretty_midi==0.2.11.post0
+mido==1.3.3
+
+# Analysis & Visualizations
+matplotlib==3.11.2
+
+# Timbral analysis (clone_instrument.py)
+librosa==1.0.0
+
+# Music Theory & Modal Analysis
+music21==10.5.2
+
+# Measured-HRTF binaural rendering (scripts/spatial_hrtf, vendored from spaudiopy): h5py reads the HRTF files,
+# requests downloads them once, resampy makes the 48k / 96k copies.
+h5py==3.16.0
+requests==2.34.2
+resampy==0.4.3
+
+# Not listed on purpose: tinysoundfont==0.3.7 (the sample player). It must be installed with --no-deps,
+# because its optional audio-playback dependency needs system libraries. setup_project.py does that step.
+
+# System dependencies (not pip-installable):
+# - ffmpeg (required for video-mixer: video probing, muxing, dialogue extraction)
+

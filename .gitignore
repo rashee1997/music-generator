@@ -1,0 +1,92 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.venv-*/
+venv*/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Project specific
+*.log
+*.tmp
+*.bak
+*.wav
+*.mp3
+*.flac
+*.ogg
+out/
+stems/
+midi/
+reports/
+cache/
+temp/
+tmp/
+*.mid
+
+# Node (if any)
+node_modules/
+
+# Jupyter
+.ipynb_checkpoints
+
+# Large model/data files
+*.h5
+*.npz
+*.pkl
+*.joblib
+
+# Don't ignore LICENSE, README, etc.
+!LICENSE
+!README.md
+!AGENTS.md
+!SKILL.md
+!requirements*.txt
+
+# HRTF data
+scripts/spatial_hrtf/data/
+presets/hrtf/
+

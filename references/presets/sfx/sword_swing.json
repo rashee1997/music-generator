@@ -1,0 +1,9 @@
+{
+  "name": "sword_swing",
+  "character": "Band-passed noise sweep 900 to 2600 Hz with a faint falling tone: a blade through air.",
+  "generator": "sword_swing",
+  "params": {},
+  "seconds": 2.0,
+  "note": "Shipped neutral default: the built-in recipe, unchanged. Copy it into a project (presets.py scaffold sfx NAME --from sword_swing --project DIR) and tune it from your research.",
+  "sources": []
+}

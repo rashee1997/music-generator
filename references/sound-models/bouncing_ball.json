@@ -1,0 +1,29 @@
+{
+ "name": "bouncing_ball",
+ "note": "Membrane-like body struck on each bounce; gaps shrink by the restitution 0.7, level by 0.7 each time.",
+ "model": {
+  "seconds": 3.5,
+  "voices": [
+   {
+    "name": "ball",
+    "excite": {
+     "kind": "impact",
+     "tau": 0.004
+    },
+    "resonator": {
+     "kind": "modal",
+     "law": "membrane",
+     "f1": 180,
+     "n": 6,
+     "t60": 0.2
+    },
+    "events": {
+     "kind": "bounce",
+     "gap": 0.55,
+     "restitution": 0.7,
+     "n": 12
+    }
+   }
+  ]
+ }
+}

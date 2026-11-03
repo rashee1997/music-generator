@@ -1,0 +1,67 @@
+{
+ "name": "wind_in_trees",
+ "note": "Slowly wandering gusts of band-limited pink noise, with a faster, brighter leaf rustle on top.",
+ "model": {
+  "seconds": 10,
+  "voices": [
+   {
+    "name": "gusts",
+    "excite": {
+     "kind": "noise",
+     "color": "pink"
+    },
+    "resonator": {
+     "kind": "bandpass",
+     "band": [
+      200,
+      2500
+     ]
+    },
+    "events": {
+     "kind": "continuous"
+    },
+    "control": {
+     "gain_db": [
+      {
+       "kind": "ou",
+       "sigma_db": 5,
+       "tau_s": 4
+      },
+      {
+       "kind": "lfo",
+       "hz": 0.1,
+       "depth_db": 3
+      }
+     ]
+    }
+   },
+   {
+    "name": "rustle",
+    "excite": {
+     "kind": "noise",
+     "color": "white"
+    },
+    "resonator": {
+     "kind": "bandpass",
+     "band": [
+      3000,
+      7000
+     ]
+    },
+    "events": {
+     "kind": "continuous"
+    },
+    "control": {
+     "gain_db": [
+      {
+       "kind": "ou",
+       "sigma_db": 6,
+       "tau_s": 1.5
+      }
+     ]
+    },
+    "gain_db": -14
+   }
+  ]
+ }
+}

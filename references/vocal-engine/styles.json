@@ -1,0 +1,11 @@
+{
+  "_about": "Vocal style profiles. Identifiers are stable. Legacy keys (formants, bandwidths, vib_*, breath, subharmonic, whistle_overtone, harmonic_lock) keep their meaning; 'register' is new (design choice, not a claim of authenticity). These are configurable synthesis profiles, not reproductions of any tradition.",
+  "tuvan_kargyraa":      {"formants": [300, 820, 2200],  "bandwidths": [70.0, 95.0, 140.0],  "subharmonic": true,         "vib_cents": 8.0,  "vib_hz": 4.2, "breath": 0.05, "register": "chest"},
+  "tuvan_sygyt":         {"formants": [400, 1800, 2800], "bandwidths": [80.0, 45.0, 60.0],   "whistle_overtone": true,    "vib_cents": 6.0,  "vib_hz": 4.5, "breath": 0.02, "register": "modal"},
+  "bulgarian_chant":     {"formants": [650, 1600, 2700], "bandwidths": [85.0, 120.0, 160.0], "harmonic_lock": true,      "vib_cents": 3.0,  "vib_hz": 5.0, "breath": 0.02, "register": "chest"},
+  "nordic_kulning":      {"formants": [850, 2600, 3300], "bandwidths": [90.0, 100.0, 120.0], "vib_cents": 22.0, "vib_hz": 5.8, "vib_delay": 0.5, "breath": 0.03, "register": "head"},
+  "qawwali_devotional":  {"formants": [680, 1350, 2800], "bandwidths": [90.0, 110.0, 130.0], "vib_cents": 32.0, "vib_hz": 5.5, "breath": 0.04, "register": "chest", "dsp_saturation_db": 1.5},
+  "gregorian_monastic":  {"formants": [320, 850, 2300],  "bandwidths": [70.0, 90.0, 150.0],  "vib_cents": 0.0,  "vib_hz": 5.0, "breath": 0.01, "register": "modal"},
+  "african_polyphony":   {"formants": [700, 1250, 2600], "bandwidths": [95.0, 115.0, 150.0], "vib_cents": 12.0, "vib_hz": 5.2, "breath": 0.03, "register": "chest"},
+  "classical_choir":     {"formants": [730, 1090, 2440], "bandwidths": [90.0, 110.0, 150.0], "vib_cents": 26.0, "vib_hz": 5.3, "breath": 0.03, "register": "modal"}
+}

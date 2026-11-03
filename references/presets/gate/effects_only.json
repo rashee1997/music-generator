@@ -1,0 +1,26 @@
+{
+  "name": "effects_only",
+  "character": "sound effects and ambience only: no notes, no key, no melody, so note and melody rules do not apply; level and layer balance do",
+  "extends": "melodic",
+  "rows": {
+    "pattern.drums_few": {"mode": "skip", "reason": "no notes in the piece"},
+    "pattern.loop_short": {"mode": "skip", "reason": "no notes in the piece"},
+    "pattern.melody_notes": {"mode": "skip", "reason": "no melody"},
+    "pattern.bass_pitches": {"mode": "skip", "reason": "no bass line"},
+    "pattern.velocity_flat": {"mode": "skip", "reason": "no notes in the piece"},
+    "pattern.flat_dynamics": {"mode": "skip", "reason": "effects set their own level curve"},
+    "pattern.four_on_floor": {"mode": "skip", "reason": "no drums"},
+    "masking.vs_melody": {"mode": "skip", "reason": "no melody to unmask"},
+    "chroma.concordance": {"mode": "skip", "reason": "no musical key to clash with"},
+    "bow.breath_gap": {"mode": "skip", "reason": "no bowed or wind line"},
+    "kick.grid": {"mode": "skip", "reason": "no kick"},
+    "feel.contour": {"mode": "skip", "reason": "feel checks read notes"},
+    "feel.resolution": {"mode": "skip", "reason": "feel checks read notes"},
+    "feel.groove": {"mode": "skip", "reason": "feel checks read notes"},
+    "feel.effort": {"mode": "skip", "reason": "feel checks read notes"},
+    "feel.spiral": {"mode": "skip", "reason": "feel checks read notes"},
+    "feel.witek": {"mode": "skip", "reason": "feel checks read notes"},
+    "feel.entropy": {"mode": "skip", "reason": "feel checks read notes"},
+    "balance.vs_lead": {"mode": "apply", "fallback": "balance.layers"}
+  }
+}

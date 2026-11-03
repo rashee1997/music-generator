@@ -1,0 +1,40 @@
+{
+  "name": "desert_vast",
+  "kind": "spaces",
+  "character": "wide empty desert, hardly any reflection (shipped example: copy into your project's presets/spaces/ and tune it)",
+  "room": {
+    "rt60": 0.4,
+    "pre_delay_ms": 24.0,
+    "hf_decay": 0.55,
+    "early_level": 0.35
+  },
+  "reflections": {
+    "ground_delay_ms": 12.0,
+    "ground_gain": 0.4,
+    "ground_cutoff_hz": 3800,
+    "lateral_delay_ms": 38.0,
+    "lateral_gain": 0.08,
+    "lateral_cutoff_hz": 1500,
+    "reverb_decay_s": 0.4,
+    "ceiling_delay_ms": 60.0,
+    "ceiling_gain": 0.02,
+    "rear_delay_ms": 45.0,
+    "rear_gain": 0.05
+  },
+  "distance": {
+    "ref_m": 1.5,
+    "falloff": 0.18,
+    "air_damping": 0.4,
+    "min_cutoff_hz": 3200,
+    "reverb_exponent": 0.65,
+    "pre_delay_law": {
+      "base_ms": 32.0,
+      "per_m": 3.5,
+      "max_ms": 30.0
+    }
+  },
+  "binaural": {
+    "bed": false,
+    "spot": true
+  }
+}

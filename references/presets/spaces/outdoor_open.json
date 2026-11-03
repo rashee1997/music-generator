@@ -1,0 +1,40 @@
+{
+  "name": "outdoor_open",
+  "kind": "spaces",
+  "character": "open ground: a ground bounce and almost no tail (shipped example: copy into your project's presets/spaces/ and tune it)",
+  "room": {
+    "rt60": 0.6,
+    "pre_delay_ms": 17.0,
+    "hf_decay": 0.55,
+    "early_level": 0.35
+  },
+  "reflections": {
+    "ground_delay_ms": 8.5,
+    "ground_gain": 0.35,
+    "ground_cutoff_hz": 3200,
+    "lateral_delay_ms": 26.0,
+    "lateral_gain": 0.12,
+    "lateral_cutoff_hz": 2400,
+    "reverb_decay_s": 0.6,
+    "ceiling_delay_ms": 45.0,
+    "ceiling_gain": 0.04,
+    "rear_delay_ms": 35.0,
+    "rear_gain": 0.08
+  },
+  "distance": {
+    "ref_m": 1.5,
+    "falloff": 0.18,
+    "air_damping": 0.4,
+    "min_cutoff_hz": 3200,
+    "reverb_exponent": 0.65,
+    "pre_delay_law": {
+      "base_ms": 32.0,
+      "per_m": 3.5,
+      "max_ms": 30.0
+    }
+  },
+  "binaural": {
+    "bed": false,
+    "spot": true
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "_about": "Expression profile 'devotional': partial override of defaults.json (design choice, not tuned by ear). Edit freely; blend with expression_intensity.",
+  "articulation": {
+    "attack_ms": 200,
+    "release_ms": 300,
+    "onset_scoop_cents": 40
+  },
+  "vibrato": {
+    "depth_cents": 28,
+    "rate_hz": 5.6
+  },
+  "performance": {
+    "portamento_ms": 160
+  },
+  "dynamics": {
+    "phrase_arc_db": 2.0
+  },
+  "source": {
+    "register": "chest"
+  }
+}

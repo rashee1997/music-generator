@@ -1,0 +1,9 @@
+{
+  "name": "clock_tick",
+  "character": "A 2.5 kHz sine with an 8 ms decay: one tick.",
+  "generator": "clock_tick",
+  "params": {},
+  "seconds": 2.0,
+  "note": "Shipped neutral default: the built-in recipe, unchanged. Copy it into a project (presets.py scaffold sfx NAME --from clock_tick --project DIR) and tune it from your research.",
+  "sources": []
+}

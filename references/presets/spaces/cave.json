@@ -1,0 +1,27 @@
+{
+  "name": "cave",
+  "kind": "spaces",
+  "character": "cave: very long, dark tail (shipped example: copy into your project's presets/spaces/ and tune it)",
+  "room": {
+    "rt60": 6.5,
+    "pre_delay_ms": 60,
+    "hf_decay": 0.35,
+    "early_level": 0.2
+  },
+  "distance": {
+    "ref_m": 1.5,
+    "falloff": 0.18,
+    "air_damping": 0.4,
+    "min_cutoff_hz": 3200,
+    "reverb_exponent": 0.65,
+    "pre_delay_law": {
+      "base_ms": 32.0,
+      "per_m": 3.5,
+      "max_ms": 30.0
+    }
+  },
+  "binaural": {
+    "bed": false,
+    "spot": true
+  }
+}

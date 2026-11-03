@@ -1,0 +1,17 @@
+{
+  "name": "indo_afro_motivational",
+  "note": "Motivational Indo-Afro Fusion: Driving 12/8 cross-rhythms combining West African Djembe/Shekere with Indian Tabla/Tihai mathematics, soaring Raga Bhupali melodies (Sa Re Ga Pa Dha) on Sitar and Bansuri, punchy syncopated Afrobeat bassline, and triumphant cinematic brass and strings.",
+  "roles_add": {
+    "lead": ["bansuri", "sitar"],
+    "pluck": ["kalimba", "kora", "sitar"],
+    "lift": ["brass_section", "strings"],
+    "pad": ["slow_strings"],
+    "bass": ["acoustic_bass"],
+    "drum": ["drums"]
+  },
+  "sources": [
+    "Ethnomusicological research on West African 12/8 bell & djembe polyrhythms merged with Hindustani Tala & Dadra",
+    "Melodic bridge: Shared pentatonic framework of Raga Bhupali (C D E G A) and West African pentatonic",
+    "Motivational cinematic scoring standards: 112-120 BPM driving pulse, ascending melodic arcs, call-and-response, and dynamic build to an anthemic climax"
+  ]
+}

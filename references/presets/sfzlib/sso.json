@@ -1,0 +1,27 @@
+{
+  "name": "sso",
+  "character": "Sonatina Symphonic Orchestra: a free multisampled orchestra with sustain, staccato, legato, pizzicato and tremolo patches, key-switch patches, and performance (mod-wheel) variants",
+  "type": "library",
+  "licence": "CC Sampling Plus 1.0",
+  "licence_url": "https://creativecommons.org/licenses/sampling+/1.0/",
+  "share_alike": false,
+  "attribution": "Sonatina Symphonic Orchestra, Mattias Westlund and Peter Eastman, CC Sampling Plus 1.0",
+  "homepage": "https://github.com/peastman/sso",
+  "source": {"kind": "git", "repo": "https://github.com/peastman/sso.git", "ref": "master", "root": "Sonatina Symphonic Orchestra"},
+  "entry": "Sonatina Symphonic Orchestra",
+  "parts": {
+    "core": {"size_mb": 1, "what": "licence, readme and shared scripts (always fetched)", "paths": ["scripts", "/LICENSE", "/README.md"]},
+    "strings": {"size_mb": 553, "what": "violins, violas, cellos, basses, harp (notation + performance patches)",
+                "paths": ["Strings - Notation", "Strings - Performance", "Concert Harp.sfz", "Samples/1st Violins", "Samples/2nd Violins", "Samples/Violas", "Samples/Viola", "Samples/Violin", "Samples/Violin 2", "Samples/Celli", "Samples/Cello", "Samples/Basses", "Samples/Bass", "Samples/Harp", "Samples-looped/Violin", "Samples-looped/Violin 2", "Samples-looped/Cello"]},
+    "brass": {"size_mb": 155, "what": "horns, trumpets, trombones, tuba",
+              "paths": ["Brass - Notation", "Brass - Performance", "Samples/Horn", "Samples/Horns", "Samples/Trumpet", "Samples/Trumpets", "Samples/Tenor Trombone", "Samples/Trombones", "Samples/Bass Trombone", "Samples/Tuba", "Samples-looped/Horn", "Samples-looped/Horns", "Samples-looped/Trumpet", "Samples-looped/Trumpets", "Samples-looped/Tenor Trombone", "Samples-looped/Trombones", "Samples-looped/Bass Trombone", "Samples-looped/Tuba"]},
+    "woodwinds": {"size_mb": 309, "what": "flutes, oboes, clarinets, bassoons and relatives",
+                  "paths": ["Woodwinds - Notation", "Woodwinds - Performance", "Samples/Alto Flute", "Samples/Bass Clarinet", "Samples/Bassoon", "Samples/Bassoons", "Samples/Clarinet", "Samples/Clarinets", "Samples/Contrabassoon", "Samples/Cor Anglais", "Samples/Flute", "Samples/Flute 2", "Samples/Flutes", "Samples/Oboe", "Samples/Oboes", "Samples/Piccolo", "Samples-looped/Alto Flute", "Samples-looped/Bass Clarinet", "Samples-looped/Bassoon", "Samples-looped/Bassoons", "Samples-looped/Clarinet", "Samples-looped/Clarinets", "Samples-looped/Contrabassoon", "Samples-looped/Cor Anglais", "Samples-looped/Flute", "Samples-looped/Flutes", "Samples-looped/Oboe", "Samples-looped/Oboes", "Samples-looped/Piccolo"]},
+    "percussion": {"size_mb": 90, "what": "timpani, drums, cymbals, mallets, celeste",
+                   "paths": ["Percussion", "Samples/Percussion", "Samples-looped/Percussion", "Samples/Crotales", "Samples/Marimba", "Samples/Vibraphone", "Samples/Celeste"]},
+    "choir": {"size_mb": 118, "what": "chorus", "paths": ["Chorus - Notation", "Chorus - Performance", "Samples/Chorus", "Samples-looped/Chorus"]},
+    "keys": {"size_mb": 189, "what": "grand piano, harpsichord, organ", "paths": ["Grand Piano", "Harpsichord", "Organ", "Samples/Grand Piano", "Samples/Harpsichord", "Samples/Organ"]}
+  },
+  "default_parts": ["core", "strings"],
+  "notes": "Patch names: '<Section> <Articulation>.sfz' in '<Strings|Brass|Woodwinds|Chorus> - Notation' (key velocity = loudness; KS = key-switch patch) and '... - Performance' (mod wheel = loudness). The 'Legato' patches use the SFZ trigger=legato mechanism. Needs reverb to sit as one orchestra."
+}

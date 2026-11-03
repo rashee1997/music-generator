@@ -1,0 +1,19 @@
+{
+  "feel": [
+    "tarab: the listener is taken",
+    "the maqam decides the mood",
+    "longing (Hijaz)",
+    "pride (Rast)"
+  ],
+  "breath_beats": 0.5,
+  "groove": "cycle",
+  "call_response": true,
+  "ornament": true,
+  "cadence": false,
+  "tempo": [
+    80,
+    110
+  ],
+  "avoid_instruments": [],
+  "name": "arabic"
+}

@@ -1,0 +1,40 @@
+{
+  "scales": [
+    "mixolydian",
+    "pentatonic_minor",
+    "dorian"
+  ],
+  "bpm": [
+    92,
+    126
+  ],
+  "meter": 6,
+  "pattern": "bell12",
+  "avoid_scales": [
+    "maqam_hijaz"
+  ],
+  "avoid_instruments": [
+    "oud",
+    "qanun",
+    "ney"
+  ],
+  "roles": {
+    "lead": [
+      "trumpet"
+    ],
+    "pluck": [
+      "piano"
+    ],
+    "pad": [
+      "nylon_guitar"
+    ],
+    "bass": [
+      "acoustic_bass"
+    ],
+    "lift": [
+      "trumpet"
+    ]
+  },
+  "note": "The 12/8 bell family is the basis of the Cuban 6/8 clave",
+  "name": "afro_cuban"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "hit",
+  "character": "A high-passed click on a 190 Hz body: a short percussive hit.",
+  "generator": "hit",
+  "params": {},
+  "seconds": 2.0,
+  "note": "Shipped neutral default: the built-in recipe, unchanged. Copy it into a project (presets.py scaffold sfx NAME --from hit --project DIR) and tune it from your research.",
+  "sources": []
+}

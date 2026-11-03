@@ -1,0 +1,14 @@
+{
+  "name": "tense",
+  "character": "tense / dark / suspense: drones, ostinati and unresolved harmony are the point, so they are not defects",
+  "extends": "melodic",
+  "flags": ["tense"],
+  "detect": {"keywords": ["tense", "dark", "horror", "suspense", "mysterious", "anxious", "thriller", "action"]},
+  "rows": {
+    "pattern.loop_short": {"mode": "relax", "max_period_bars": 2, "max_distinct": 2, "reason": "ostinati and drones repeat on purpose; only a 1-2 bar exact loop is flagged"},
+    "pattern.flags_max": {"mode": "relax", "max": 8, "reason": "a sparse cue has fewer varied parts, so more flags are normal before it reads as a loop"},
+    "roughness": {"mode": "relax", "scale": 1.6, "outro_resolve": false, "reason": "dissonance is wanted, and a tense cue need not resolve at the end"},
+    "chroma.concordance": {"mode": "relax", "max_dissonance": 0.4, "reason": "clashing beds against the key are part of the colour"},
+    "balance.vs_lead": {"mode": "apply", "fallback": "balance.layers"}
+  }
+}

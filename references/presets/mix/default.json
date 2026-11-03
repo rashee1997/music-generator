@@ -1,0 +1,374 @@
+{
+  "lead_band_hz": 2000,
+  "carve_db": -4.0,
+  "max_boost_db": 12.0,
+  "active_db": -55.0,
+  "lead_db_margin": 3.0,
+  "inst_eq": {
+    "piano": [
+      {
+        "type": "peak",
+        "f": 180,
+        "gain": 1.5,
+        "q": 1.0
+      },
+      {
+        "type": "peak",
+        "f": 320,
+        "gain": -2.0,
+        "q": 1.0
+      },
+      {
+        "type": "peak",
+        "f": 4500,
+        "gain": 1.5,
+        "q": 1.0
+      }
+    ],
+    "sitar": [
+      {
+        "type": "peak",
+        "f": 3500,
+        "gain": -4.5,
+        "q": 2.0
+      },
+      {
+        "type": "peak",
+        "f": 2500,
+        "gain": -2.5,
+        "q": 1.8
+      },
+      {
+        "type": "peak",
+        "f": 220,
+        "gain": 2.0,
+        "q": 1.0
+      }
+    ],
+    "kora": [
+      {
+        "type": "peak",
+        "f": 2500,
+        "gain": -2.5,
+        "q": 1.8
+      },
+      {
+        "type": "peak",
+        "f": 220,
+        "gain": 2.0,
+        "q": 1.0
+      }
+    ],
+    "bansuri": [
+      {
+        "type": "peak",
+        "f": 3200,
+        "gain": -2.0,
+        "q": 1.0
+      },
+      {
+        "type": "highshelf",
+        "f": 10000,
+        "gain": 2.0,
+        "q": 0.7
+      }
+    ],
+    "flute": [
+      {
+        "type": "peak",
+        "f": 3200,
+        "gain": -2.0,
+        "q": 1.0
+      },
+      {
+        "type": "highshelf",
+        "f": 10000,
+        "gain": 2.0,
+        "q": 0.7
+      }
+    ],
+    "cello": [
+      {
+        "type": "peak",
+        "f": 80,
+        "gain": 2.5,
+        "q": 0.8
+      }
+    ],
+    "contrabass": [
+      {
+        "type": "peak",
+        "f": 80,
+        "gain": 2.5,
+        "q": 0.8
+      }
+    ],
+    "double_bass": [
+      {
+        "type": "peak",
+        "f": 80,
+        "gain": 2.5,
+        "q": 0.8
+      }
+    ],
+    "bass": [
+      {
+        "type": "peak",
+        "f": 80,
+        "gain": 2.5,
+        "q": 0.8
+      }
+    ],
+    "french_horn": [
+      {
+        "type": "peak",
+        "f": 800,
+        "gain": -2.0,
+        "q": 1.0
+      },
+      {
+        "type": "peak",
+        "f": 200,
+        "gain": 2.0,
+        "q": 1.0
+      },
+      {
+        "type": "peak",
+        "f": 3500,
+        "gain": -1.5,
+        "q": 1.0
+      }
+    ],
+    "horn": [
+      {
+        "type": "peak",
+        "f": 800,
+        "gain": -2.0,
+        "q": 1.0
+      },
+      {
+        "type": "peak",
+        "f": 200,
+        "gain": 2.0,
+        "q": 1.0
+      },
+      {
+        "type": "peak",
+        "f": 3500,
+        "gain": -1.5,
+        "q": 1.0
+      }
+    ],
+    "brass": [
+      {
+        "type": "peak",
+        "f": 800,
+        "gain": -2.0,
+        "q": 1.0
+      },
+      {
+        "type": "peak",
+        "f": 200,
+        "gain": 2.0,
+        "q": 1.0
+      },
+      {
+        "type": "peak",
+        "f": 3500,
+        "gain": -3.0,
+        "q": 1.0
+      },
+      {
+        "type": "peak",
+        "f": 5500,
+        "gain": -4.0,
+        "q": 1.2
+      }
+    ],
+    "brass_section": [
+      {
+        "type": "peak",
+        "f": 800,
+        "gain": -2.0,
+        "q": 1.0
+      },
+      {
+        "type": "peak",
+        "f": 200,
+        "gain": 2.0,
+        "q": 1.0
+      },
+      {
+        "type": "peak",
+        "f": 3500,
+        "gain": -3.0,
+        "q": 1.0
+      },
+      {
+        "type": "peak",
+        "f": 5500,
+        "gain": -4.0,
+        "q": 1.2
+      }
+    ],
+    "pan_flute": [
+      {
+        "type": "peak",
+        "f": 3400,
+        "gain": -2.5,
+        "q": 1.2
+      },
+      {
+        "type": "highshelf",
+        "f": 9500,
+        "gain": -1.5,
+        "q": 0.7
+      }
+    ],
+    "shakuhachi": [
+      {
+        "type": "peak",
+        "f": 3400,
+        "gain": -2.5,
+        "q": 1.2
+      },
+      {
+        "type": "highshelf",
+        "f": 9500,
+        "gain": -1.5,
+        "q": 0.7
+      }
+    ],
+    "quena": [
+      {
+        "type": "peak",
+        "f": 3400,
+        "gain": -2.5,
+        "q": 1.2
+      },
+      {
+        "type": "highshelf",
+        "f": 9500,
+        "gain": -1.5,
+        "q": 0.7
+      }
+    ],
+    "ney": [
+      {
+        "type": "peak",
+        "f": 3400,
+        "gain": -2.5,
+        "q": 1.2
+      },
+      {
+        "type": "highshelf",
+        "f": 9500,
+        "gain": -1.5,
+        "q": 0.7
+      }
+    ],
+    "nylon_guitar": [
+      {
+        "type": "peak",
+        "f": 3400,
+        "gain": -2.5,
+        "q": 1.2
+      },
+      {
+        "type": "highshelf",
+        "f": 9500,
+        "gain": -1.5,
+        "q": 0.7
+      }
+    ],
+    "acoustic_guitar": [
+      {
+        "type": "peak",
+        "f": 3400,
+        "gain": -2.5,
+        "q": 1.2
+      },
+      {
+        "type": "highshelf",
+        "f": 9500,
+        "gain": -1.5,
+        "q": 0.7
+      }
+    ]
+  },
+  "seating": {
+    "violin": -0.35,
+    "viola": -0.1,
+    "cello": 0.25,
+    "double_bass": 0.4,
+    "contrabass": 0.4,
+    "flute": -0.15,
+    "oboe": 0.05,
+    "clarinet": 0.2,
+    "bassoon": 0.3,
+    "horn": 0.35,
+    "french_horn": 0.35,
+    "trumpet": 0.3,
+    "trombone": 0.4,
+    "tuba": 0.45,
+    "harp": -0.45,
+    "piano": -0.1,
+    "nylon_guitar": 0.25,
+    "acoustic_guitar": -0.25,
+    "celesta": 0.3,
+    "glockenspiel": 0.35,
+    "vibraphone": 0.3,
+    "marimba": -0.3,
+    "kalimba": 0.3,
+    "koto": -0.3,
+    "sitar": -0.25,
+    "shakuhachi": 0.2,
+    "pan_flute": -0.2,
+    "ocarina": 0.2,
+    "harmonica": 0.2,
+    "accordion": -0.2,
+    "bansuri": 0.2,
+    "kora": -0.25,
+    "balafon": 0.25,
+    "tanpura": 0.0,
+    "tabla": -0.15,
+    "djembe": 0.15,
+    "taiko": 0.0
+  },
+  "level_by_role": {
+    "melody": -2,
+    "counter": -5,
+    "chord": -9,
+    "pad": -13,
+    "bass": -6,
+    "arp": -10,
+    "drum": -6,
+    "lift": -8,
+    "fx": -10,
+    "environment": -14.0
+  },
+  "widen_by_role": {
+    "pad": 0.55,
+    "chord": 0.25,
+    "melody": 0.0,
+    "counter": 0.15,
+    "bass": 0.0,
+    "arp": 0.3,
+    "drum": 0.1,
+    "fx": 0.3
+  },
+  "saturation": {
+    "cello": 1.5,
+    "contrabass": 1.5,
+    "double_bass": 1.5
+  },
+  "name": "default",
+  "spatial": {
+    "air_absorption_ref_distance": 1.5,
+    "air_absorption_damping": 0.4,
+    "min_air_cutoff_hz": 3200.0,
+    "direct_falloff_scale": 0.18,
+    "reverb_distance_scale": 0.65
+  },
+  "env_target_lufs": -24.0
+}

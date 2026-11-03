@@ -1,0 +1,42 @@
+{
+  "scales": [
+    "celtic_dorian",
+    "mixolydian",
+    "major"
+  ],
+  "bpm": [
+    100,
+    132
+  ],
+  "meter": 6,
+  "pattern": "jig",
+  "avoid_scales": [
+    "maqam_hijaz",
+    "phrygian_dominant"
+  ],
+  "avoid_instruments": [
+    "oud",
+    "qanun",
+    "ney"
+  ],
+  "roles": {
+    "lead": [
+      "fiddle",
+      "tin_whistle"
+    ],
+    "pluck": [
+      "acoustic_guitar"
+    ],
+    "pad": [
+      "accordion"
+    ],
+    "bass": [
+      "acoustic_bass"
+    ],
+    "lift": [
+      "bagpipes"
+    ]
+  },
+  "note": "Jig in 6/8: two strong beats per bar",
+  "name": "celtic"
+}

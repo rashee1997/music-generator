@@ -1,0 +1,646 @@
+{
+  "items": {
+    "env:amazon_rainforest": {
+      "bands": {
+        "300_3k": 0.2874,
+        "3k_7k": 0.5135,
+        "gt7k": 0.1381,
+        "lt300": 0.061
+      },
+      "centroid_hz": 3855.4,
+      "kind": "env",
+      "n": 264600,
+      "peak": 0.009577,
+      "rms_db": -58.802,
+      "seconds": 6.0,
+      "seed": 11,
+      "sha256": "f6964ae272eee0280c10c17e3e25057a67669f2075b0a4519280fa8bca76056d"
+    },
+    "env:savanna_dusk": {
+      "bands": {
+        "300_3k": 0.6791,
+        "3k_7k": 0.076,
+        "gt7k": 0.0003,
+        "lt300": 0.2446
+      },
+      "centroid_hz": 1232.6,
+      "kind": "env",
+      "n": 264600,
+      "peak": 0.003192,
+      "rms_db": -64.638,
+      "seconds": 6.0,
+      "seed": 11,
+      "sha256": "5da6ce5726ab58cc167ce5eb46ff2195d2fb551bc120faa9eb2cb7a6b353d1a9"
+    },
+    "model:boiling_water": {
+      "bands": {
+        "300_3k": 0.9693,
+        "3k_7k": 0.0091,
+        "gt7k": 0.0002,
+        "lt300": 0.0215
+      },
+      "centroid_hz": 1046.6,
+      "kind": "model",
+      "n": 352800,
+      "peak": 1.026388,
+      "rms_db": -22.251,
+      "seconds": null,
+      "seed": 3,
+      "sha256": "bf4f3a54be82b26079e8ab8d178baaa6e8f18fc163378474bfaf8f2245ef085d"
+    },
+    "model:bouncing_ball": {
+      "bands": {
+        "300_3k": 0.0134,
+        "3k_7k": 0.0,
+        "gt7k": 0.0,
+        "lt300": 0.9866
+      },
+      "centroid_hz": 163.0,
+      "kind": "model",
+      "n": 154350,
+      "peak": 1.0,
+      "rms_db": -26.533,
+      "seconds": null,
+      "seed": 3,
+      "sha256": "fe24f6452436c71d6cdeaa28fdf59610e49cdf57367b8e99f4c50a746555f4a2"
+    },
+    "model:car_pass": {
+      "bands": {
+        "300_3k": 0.1173,
+        "3k_7k": 0.0124,
+        "gt7k": 0.0004,
+        "lt300": 0.8699
+      },
+      "centroid_hz": 279.6,
+      "kind": "model",
+      "n": 352800,
+      "peak": 0.841897,
+      "rms_db": -19.987,
+      "seconds": null,
+      "seed": 3,
+      "sha256": "0309b9dfba24844af983498c45dc9ae912a1a084cd3304f9a474e5443d916613"
+    },
+    "model:clock_tick": {
+      "bands": {
+        "300_3k": 0.9675,
+        "3k_7k": 0.0265,
+        "gt7k": 0.002,
+        "lt300": 0.004
+      },
+      "centroid_hz": 2479.6,
+      "kind": "model",
+      "n": 176400,
+      "peak": 1.0,
+      "rms_db": -27.423,
+      "seconds": null,
+      "seed": 3,
+      "sha256": "48bdca0c0bac9858ac67f3ee7ef2e60abbe7d8ca4ebbe1fc3dd890ebff1c10a5"
+    },
+    "model:crowd_murmur": {
+      "bands": {
+        "300_3k": 0.5281,
+        "3k_7k": 0.0002,
+        "gt7k": 0.0,
+        "lt300": 0.4717
+      },
+      "centroid_hz": 389.3,
+      "kind": "model",
+      "n": 441000,
+      "peak": 1.325801,
+      "rms_db": -16.81,
+      "seconds": null,
+      "seed": 3,
+      "sha256": "f85202347a6ec41d0a8da51ed98c0721cf4a6a90f9ee0c7abcf777a0b2019177"
+    },
+    "model:door_creak": {
+      "bands": {
+        "300_3k": 0.6642,
+        "3k_7k": 0.0359,
+        "gt7k": 0.0008,
+        "lt300": 0.2992
+      },
+      "centroid_hz": 669.8,
+      "kind": "model",
+      "n": 110250,
+      "peak": 1.667703,
+      "rms_db": -12.041,
+      "seconds": null,
+      "seed": 3,
+      "sha256": "41f3d217d26bf50a93e09eca7e6aebb56c0ceedef00b590bc7e8e6d7988982c8"
+    },
+    "model:fire_crackle": {
+      "bands": {
+        "300_3k": 0.3014,
+        "3k_7k": 0.11,
+        "gt7k": 0.0158,
+        "lt300": 0.5727
+      },
+      "centroid_hz": 1014.1,
+      "kind": "model",
+      "n": 352800,
+      "peak": 0.994826,
+      "rms_db": -31.151,
+      "seconds": null,
+      "seed": 3,
+      "sha256": "775580039f4930b9e0156f9ccd7bc758a26770b07abbe73952bfcfae74de1bd9"
+    },
+    "model:frog_chorus": {
+      "bands": {
+        "300_3k": 0.7114,
+        "3k_7k": 0.0128,
+        "gt7k": 0.0001,
+        "lt300": 0.2757
+      },
+      "centroid_hz": 1177.0,
+      "kind": "model",
+      "n": 529200,
+      "peak": 1.027762,
+      "rms_db": -21.422,
+      "seconds": null,
+      "seed": 3,
+      "sha256": "d55f9877c380b6c875712af17929b9ac199dd63b0f997024dd0a6d78b19cb472"
+    },
+    "model:glass_break": {
+      "bands": {
+        "300_3k": 0.4678,
+        "3k_7k": 0.5185,
+        "gt7k": 0.0127,
+        "lt300": 0.001
+      },
+      "centroid_hz": 3139.1,
+      "kind": "model",
+      "n": 70560,
+      "peak": 1.0,
+      "rms_db": -18.956,
+      "seconds": null,
+      "seed": 3,
+      "sha256": "8eefb9f85cfdc11134e242216640876439243530a16e27108f013a1b57d1d5cd"
+    },
+    "model:gravel_footstep": {
+      "bands": {
+        "300_3k": 0.3071,
+        "3k_7k": 0.0044,
+        "gt7k": 0.0,
+        "lt300": 0.6885
+      },
+      "centroid_hz": 513.0,
+      "kind": "model",
+      "n": 39690,
+      "peak": 1.0,
+      "rms_db": -20.689,
+      "seconds": null,
+      "seed": 3,
+      "sha256": "35f8ab542e1af47c412789bc848b0022b0cef2121ffbefb6280efd8052fb0cf4"
+    },
+    "model:leaf_rain": {
+      "bands": {
+        "300_3k": 0.4419,
+        "3k_7k": 0.5254,
+        "gt7k": 0.0327,
+        "lt300": 0.0
+      },
+      "centroid_hz": 3377.3,
+      "kind": "model",
+      "n": 264600,
+      "peak": 1.0,
+      "rms_db": -25.405,
+      "seconds": null,
+      "seed": 3,
+      "sha256": "a27f008826870b65275243191a8c319b75e63f56fd364a81691ecbeec5a0bb51"
+    },
+    "model:ocean_wave": {
+      "bands": {
+        "300_3k": 0.1922,
+        "3k_7k": 0.2133,
+        "gt7k": 0.0269,
+        "lt300": 0.5676
+      },
+      "centroid_hz": 1554.9,
+      "kind": "model",
+      "n": 705600,
+      "peak": 5.54212,
+      "rms_db": -5.303,
+      "seconds": null,
+      "seed": 3,
+      "sha256": "7d66293e7ad3de52ac08d870f4adb26f964a29b77faebc1eae0b7a94f0a0065a"
+    },
+    "model:thunder": {
+      "bands": {
+        "300_3k": 0.0384,
+        "3k_7k": 0.0168,
+        "gt7k": 0.0011,
+        "lt300": 0.9436
+      },
+      "centroid_hz": 196.2,
+      "kind": "model",
+      "n": 264600,
+      "peak": 1.0,
+      "rms_db": -17.964,
+      "seconds": null,
+      "seed": 3,
+      "sha256": "371365cc88e7b06d5a769bfe727ab7fbc535a7ba7f9af87d5963767f6baab971"
+    },
+    "model:tin_roof_rain": {
+      "bands": {
+        "300_3k": 0.9376,
+        "3k_7k": 0.013,
+        "gt7k": 0.0,
+        "lt300": 0.0494
+      },
+      "centroid_hz": 887.8,
+      "kind": "model",
+      "n": 264600,
+      "peak": 1.174695,
+      "rms_db": -14.68,
+      "seconds": null,
+      "seed": 3,
+      "sha256": "10caa13130968908f6e20dc528ca5a738026fae460b3301f76eca0fda6b8f2a4"
+    },
+    "model:wind_in_trees": {
+      "bands": {
+        "300_3k": 0.7838,
+        "3k_7k": 0.0425,
+        "gt7k": 0.003,
+        "lt300": 0.1708
+      },
+      "centroid_hz": 1049.8,
+      "kind": "model",
+      "n": 441000,
+      "peak": 3.003269,
+      "rms_db": -7.556,
+      "seconds": null,
+      "seed": 3,
+      "sha256": "df0542e832621195e87cfe974e35a7c4b073cd2e2ae8f39528ad64def694a210"
+    },
+    "sfx:boom": {
+      "bands": {
+        "300_3k": 0.0001,
+        "3k_7k": 0.0,
+        "gt7k": 0.0,
+        "lt300": 0.9999
+      },
+      "centroid_hz": 39.3,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -12.866,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "c94e38a852da35df49e397eee4e8ad463f5e0a06ea5bbbcf740523bf1f1ca306"
+    },
+    "sfx:bouncing_ball": {
+      "bands": {
+        "300_3k": 0.0134,
+        "3k_7k": 0.0,
+        "gt7k": 0.0,
+        "lt300": 0.9866
+      },
+      "centroid_hz": 163.0,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -25.018,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "f0a603d747f0784b8f52db74d57aab8bed744dd9a49e8644ec65da6ad12ef275"
+    },
+    "sfx:car_pass": {
+      "bands": {
+        "300_3k": 0.122,
+        "3k_7k": 0.0128,
+        "gt7k": 0.0004,
+        "lt300": 0.8649
+      },
+      "centroid_hz": 290.6,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -15.34,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "0110c96c246976a41f20e330ad3c1fabc708b68796c23e849780dcde257ca71c"
+    },
+    "sfx:clock_tick": {
+      "bands": {
+        "300_3k": 1.0,
+        "3k_7k": 0.0,
+        "gt7k": 0.0,
+        "lt300": 0.0
+      },
+      "centroid_hz": 2500.0,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -30.724,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "e97539b24c592676967363c6c17f5d27938b19ead091127e08812ae8662445ac"
+    },
+    "sfx:coin": {
+      "bands": {
+        "300_3k": 0.9997,
+        "3k_7k": 0.0001,
+        "gt7k": 0.0,
+        "lt300": 0.0002
+      },
+      "centroid_hz": 1617.2,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -20.54,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "3ae67678955194340c791b0512cdea1ee831973b710526b79a7f6287fa8eb692"
+    },
+    "sfx:door_creak": {
+      "bands": {
+        "300_3k": 0.0476,
+        "3k_7k": 0.0008,
+        "gt7k": 0.0,
+        "lt300": 0.9515
+      },
+      "centroid_hz": 206.0,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -9.085,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "d81fcfd92cee84e233b3c449902c0635bcfaa0798db667b9c9c429313695582f"
+    },
+    "sfx:downlifter": {
+      "bands": {
+        "300_3k": 0.8965,
+        "3k_7k": 0.0868,
+        "gt7k": 0.0041,
+        "lt300": 0.0126
+      },
+      "centroid_hz": 1349.3,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -14.719,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "7d7c79c3af45eb3cff3dc99781ec2e6bb693e45bb578bdb7c4c75a48d9b20a03"
+    },
+    "sfx:explosion": {
+      "bands": {
+        "300_3k": 0.0447,
+        "3k_7k": 0.0098,
+        "gt7k": 0.0005,
+        "lt300": 0.945
+      },
+      "centroid_hz": 148.4,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -14.795,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "8b72f7a1c65c9d4d6c0cf5544d2e2ca9b0152322cf4fe7417d43e38932e20739"
+    },
+    "sfx:footstep": {
+      "bands": {
+        "300_3k": 0.0076,
+        "3k_7k": 0.0001,
+        "gt7k": 0.0,
+        "lt300": 0.9923
+      },
+      "centroid_hz": 116.2,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -23.149,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "965828141c248928cfdbfbfbb0b7d911155b302840fc431d07f1217fae7025cb"
+    },
+    "sfx:glass_break": {
+      "bands": {
+        "300_3k": 0.3601,
+        "3k_7k": 0.4088,
+        "gt7k": 0.2311,
+        "lt300": 0.0
+      },
+      "centroid_hz": 6115.5,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -27.427,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "7f5486b5e1028fc55deca7617e764ef1d56b925a29d4cd5f7ee57928d8159e98"
+    },
+    "sfx:gunshot": {
+      "bands": {
+        "300_3k": 0.209,
+        "3k_7k": 0.0246,
+        "gt7k": 0.0058,
+        "lt300": 0.7606
+      },
+      "centroid_hz": 552.8,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -29.314,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "a9e045bbff3133107d782d46266b9d01f2ec951cdfc34a44d5d762cda8a1eb5f"
+    },
+    "sfx:heartbeat": {
+      "bands": {
+        "300_3k": 0.0002,
+        "3k_7k": 0.0,
+        "gt7k": 0.0,
+        "lt300": 0.9998
+      },
+      "centroid_hz": 48.4,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -16.488,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "76c7a298e446aae225e12bad7aecac5aff9bfdea12c77b6ce05c10be292f39ba"
+    },
+    "sfx:hit": {
+      "bands": {
+        "300_3k": 0.0,
+        "3k_7k": 0.0,
+        "gt7k": 0.0002,
+        "lt300": 0.9998
+      },
+      "centroid_hz": 192.4,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -26.534,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "c5c9be25735e550bcaa4e404a298794f6b0dcbf7d6d226fe531fcafb01e581ed"
+    },
+    "sfx:impact": {
+      "bands": {
+        "300_3k": 0.0015,
+        "3k_7k": 0.0005,
+        "gt7k": 0.0,
+        "lt300": 0.998
+      },
+      "centroid_hz": 39.1,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -13.782,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "0aeb89225b9baf13fb8b8c00c21b51b6fc18020415b4afc0251fcb296d8813dc"
+    },
+    "sfx:laser": {
+      "bands": {
+        "300_3k": 0.9704,
+        "3k_7k": 0.0,
+        "gt7k": 0.0,
+        "lt300": 0.0296
+      },
+      "centroid_hz": 1083.1,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -9.307,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "ad4e02ac3a8dd603b74b003a16be3fe7860bf61c7cfdb8647b6f1c4db3da88bc"
+    },
+    "sfx:riser": {
+      "bands": {
+        "300_3k": 0.8266,
+        "3k_7k": 0.1096,
+        "gt7k": 0.0145,
+        "lt300": 0.0493
+      },
+      "centroid_hz": 1449.8,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -17.225,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "bc1089cc7cb3b35c0f96257e344d5a9910f2dfe33defbae68b0ec822081f8bf0"
+    },
+    "sfx:shutter": {
+      "bands": {
+        "300_3k": 0.9569,
+        "3k_7k": 0.0088,
+        "gt7k": 0.0343,
+        "lt300": 0.0
+      },
+      "centroid_hz": 2455.6,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -34.012,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "e6b95b3ef8e3055b680700db30c5f3acd2a122dd335bf260b4f4295e42f583f6"
+    },
+    "sfx:sword_swing": {
+      "bands": {
+        "300_3k": 0.9923,
+        "3k_7k": 0.0076,
+        "gt7k": 0.0001,
+        "lt300": 0.0
+      },
+      "centroid_hz": 1240.0,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -15.668,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "ca71a3a10d8b6ceb0a158d46568e016d5791a843b733be657ac7d6b6873dc355"
+    },
+    "sfx:thunder": {
+      "bands": {
+        "300_3k": 0.0906,
+        "3k_7k": 0.1546,
+        "gt7k": 0.5777,
+        "lt300": 0.1771
+      },
+      "centroid_hz": 9312.6,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -23.375,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "51ed3f185d4675a709f9f22d04907a7ae67ad759333c1fa1e7b19f831868e743"
+    },
+    "sfx:typewriter": {
+      "bands": {
+        "300_3k": 0.3766,
+        "3k_7k": 0.5966,
+        "gt7k": 0.0267,
+        "lt300": 0.0
+      },
+      "centroid_hz": 3631.8,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -28.738,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "677cce7ab09f4cb8998140940314243027e26e3679a07d0fbb4146533fa40462"
+    },
+    "sfx:ui_blip": {
+      "bands": {
+        "300_3k": 1.0,
+        "3k_7k": 0.0,
+        "gt7k": 0.0,
+        "lt300": 0.0
+      },
+      "centroid_hz": 1080.7,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -6.936,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "81c2662b4f0423186969b8a780a118bf58bb59bc0050369b7b63bfa4b8fd2398"
+    },
+    "sfx:water_drip": {
+      "bands": {
+        "300_3k": 0.9984,
+        "3k_7k": 0.0001,
+        "gt7k": 0.0,
+        "lt300": 0.0015
+      },
+      "centroid_hz": 1078.7,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -25.113,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "7170cfc932c9de2bdadda11dd999c5b064291750caa1f512689333f3656e3537"
+    },
+    "sfx:whoosh": {
+      "bands": {
+        "300_3k": 0.9073,
+        "3k_7k": 0.0913,
+        "gt7k": 0.0014,
+        "lt300": 0.0
+      },
+      "centroid_hz": 2024.3,
+      "kind": "sfx",
+      "n": 88200,
+      "peak": 0.9,
+      "rms_db": -17.841,
+      "seconds": 2.0,
+      "seed": 7,
+      "sha256": "ca8e4245ced8f275b80e6cedb179e506cf70dda4d55cc92ae1836639ba871519"
+    }
+  },
+  "note": "Frozen renders of the skill before the physical-sound upgrade. Regenerate only when a change is meant to alter a sound, and say so in STATUS-phys-sound.md.",
+  "sr": 44100
+}

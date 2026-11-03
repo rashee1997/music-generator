@@ -1,0 +1,43 @@
+{
+  "scales": [
+    "african_pentatonic",
+    "mbira_mixolydian"
+  ],
+  "bpm": [
+    90,
+    130
+  ],
+  "meter": 6,
+  "pattern": "bell12",
+  "avoid_scales": [
+    "maqam_hijaz",
+    "phrygian_dominant"
+  ],
+  "avoid_instruments": [
+    "oud",
+    "qanun",
+    "kanun",
+    "ney",
+    "darbuka"
+  ],
+  "roles": {
+    "lead": [
+      "balafon",
+      "kalimba"
+    ],
+    "pluck": [
+      "kora"
+    ],
+    "pad": [
+      "kora"
+    ],
+    "bass": [
+      "acoustic_bass"
+    ],
+    "lift": [
+      "kalimba"
+    ]
+  },
+  "note": "Standard 7-stroke bell over 12 pulses (12/8); kora: kumbengo thumbs, birimintingo index fingers",
+  "name": "west_african"
+}

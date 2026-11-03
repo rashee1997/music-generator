@@ -1,0 +1,12 @@
+{
+  "name": "amazon_rainforest",
+  "description": "Amazon rainforest canopy with exotic birds, insect texture, warm canopy breeze, and light rain drips (example: copy into your project's presets/environments/ and tune it)",
+  "character": "Humid canopy at dawn: a steady leaf-and-air bed, a wide insect hum, scattered rain drips and a few bird calls placed off to the left.",
+  "layers": [
+    {"name": "canopy_air", "primitive": "noise_bed", "kind": "bed", "gain_db": -22.0, "low_hz": 120, "high_hz": 2600, "pan": 0.0},
+    {"name": "insects", "primitive": "stridulation_bed", "kind": "bed", "gain_db": -25.0, "pan": 0.55},
+    {"name": "drips", "primitive": "impulse_cluster", "kind": "spot", "gain_db": -23.0, "event_rate": 10.0, "decorrelate": 0.6, "pan": 0.25},
+    {"name": "birds", "primitive": "fm_chirp_cluster", "kind": "spot", "gain_db": -19.0, "event_rate": 0.5, "spatial": {"azimuth": -25, "distance": 6}}
+  ],
+  "blending": {"overall_gain_db": -21.0, "high_pass_hz": 95, "vocal_pocket_notch_hz": 2100, "vocal_pocket_notch_db": -3.5}
+}

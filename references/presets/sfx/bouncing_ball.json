@@ -1,0 +1,32 @@
+{
+ "name": "bouncing_ball",
+ "character": "A ball bouncing on a hard floor: a membrane-like body struck at gaps that shrink by the restitution 0.7.",
+ "seconds": 3.5,
+ "model": {
+  "seconds": 3.5,
+  "voices": [
+   {
+    "name": "ball",
+    "excite": {
+     "kind": "impact",
+     "tau": 0.004
+    },
+    "resonator": {
+     "kind": "modal",
+     "law": "membrane",
+     "f1": 180,
+     "n": 6,
+     "t60": 0.2
+    },
+    "events": {
+     "kind": "bounce",
+     "gap": 0.55,
+     "restitution": 0.7,
+     "n": 12
+    }
+   }
+  ]
+ },
+ "sources": [],
+ "note": "Shipped neutral default made with sound_model.py. Copy into a project and tune from your research: presets.py scaffold sfx NAME --from bouncing_ball --project DIR"
+}

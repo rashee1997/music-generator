@@ -1,0 +1,22 @@
+{
+  "_about": "Expression profile 'cinematic': partial override of defaults.json (design choice, not tuned by ear). Edit freely; blend with expression_intensity.",
+  "articulation": {
+    "attack_ms": 320,
+    "release_ms": 480,
+    "phrase_end_tail_ms": 250
+  },
+  "vibrato": {
+    "depth_cents": 24,
+    "delay_s": 0.5
+  },
+  "performance": {
+    "portamento_ms": 130,
+    "overshoot_cents": 12
+  },
+  "dynamics": {
+    "phrase_arc_db": 6.0,
+    "arc_peak": 0.7,
+    "timbre_follow": 0.5,
+    "velocity_exponent": 1.2
+  }
+}

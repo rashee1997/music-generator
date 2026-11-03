@@ -1,0 +1,1611 @@
+{
+  "_schema_version": "3.0.0",
+  "description": "Instrument acoustic registry, stem presence thresholds, and Pedalboard DSP chains.",
+  "instruments": {
+    "vocals": {
+      "display_name": "Lead & Harmony Vocals (Default Stem)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -40.0,
+        "min_rms_dbfs": -50.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 80.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 320.0, "gain_db": -1.8, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3000.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 11000.0, "gain_db": 1.2},
+        {"plugin": "Compressor", "threshold_db": -16.0, "ratio": 2.0, "attack_ms": 25.0, "release_ms": 160.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -16.0
+    },
+    "bass": {
+      "display_name": "Bass (Default Stem)",
+      "role": "bass",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 30.0},
+        {"plugin": "LowShelfFilter", "cutoff_frequency_hz": 85.0, "gain_db": 1.5},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 250.0, "gain_db": -2.5, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 800.0, "gain_db": 1.2, "q": 0.9},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 4500.0},
+        {"plugin": "Compressor", "threshold_db": -16.0, "ratio": 2.8, "attack_ms": 22.0, "release_ms": 130.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.5
+    },
+    "drums": {
+      "display_name": "Drums & Percussion (Default Stem)",
+      "role": "drum",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -35.0,
+        "min_rms_dbfs": -45.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 28.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 65.0, "gain_db": 1.2, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 380.0, "gain_db": -2.0, "q": 1.1},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 9500.0, "gain_db": 1.0},
+        {"plugin": "Compressor", "threshold_db": -17.0, "ratio": 2.4, "attack_ms": 28.0, "release_ms": 90.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -16.0
+    },
+    "guitar": {
+      "display_name": "Acoustic & Electric Guitar (Default Stem)",
+      "role": "chord",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -38.0,
+        "min_rms_dbfs": -50.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 2.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 75.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 300.0, "gain_db": -2.2, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2800.0, "gain_db": 1.0, "q": 0.8},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 1.8, "attack_ms": 20.0, "release_ms": 150.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.0
+    },
+    "piano": {
+      "display_name": "Piano & Keys (Default Stem)",
+      "role": "chord",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -38.0,
+        "min_rms_dbfs": -50.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 2.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 40.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 320.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2500.0, "gain_db": -1.5, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 4500.0, "gain_db": 0.8, "q": 0.8},
+        {"plugin": "Compressor", "threshold_db": -19.0, "ratio": 1.8, "attack_ms": 25.0, "release_ms": 180.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.5
+    },
+    "strings_pad": {
+      "display_name": "Bowed Strings & Synth Pads (Default Decomposed Stem)",
+      "role": "pad",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -38.0,
+        "min_rms_dbfs": -52.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 2.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 90.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 320.0, "gain_db": -2.5, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2600.0, "gain_db": -2.2, "q": 1.0},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 8500.0, "gain_db": 1.0},
+        {"plugin": "Compressor", "threshold_db": -20.0, "ratio": 1.6, "attack_ms": 40.0, "release_ms": 250.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -19.0
+    },
+    "wind_flute": {
+      "display_name": "Woodwinds, Flutes & Reeds (Default Decomposed Stem)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -38.0,
+        "min_rms_dbfs": -52.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 2.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 140.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2200.0, "gain_db": -1.0, "q": 0.8},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 8000.0, "gain_db": 1.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 20.0, "release_ms": 150.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "other": {
+      "display_name": "Residual Harmonic Accompaniment (Default Stem)",
+      "role": "chord",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -40.0,
+        "min_rms_dbfs": -52.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 2.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 90.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 350.0, "gain_db": -2.2, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.5
+    },
+    "ambient_sfx": {
+      "display_name": "Stationary Ambient Floor & Room Tone (Default Decomposed Stem)",
+      "role": "environment",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -45.0,
+        "min_rms_dbfs": -58.0,
+        "min_active_ratio": 0.02,
+        "min_relative_presence_pct": 1.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 140.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 450.0, "gain_db": -2.5, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": -3.5, "q": 0.9},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 7200.0},
+        {"plugin": "Limiter", "threshold_db": -2.0}
+      ],
+      "target_lufs": -24.0
+    },
+    "solo_vox_soprano_tenor": {
+      "display_name": "Solo Soprano / Tenor Lead Voice (f0: 130-1050 Hz, Singer's Formant: 2.8-3.4 kHz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 115.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 280.0, "gain_db": -2.0, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3100.0, "gain_db": 1.5, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 6800.0, "gain_db": -2.0, "q": 2.0},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 11000.0, "gain_db": 1.5},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.2, "attack_ms": 20.0, "release_ms": 160.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -16.0
+    },
+    "vocal_arabic_desert_mawwal": {
+      "display_name": "Arabic Mawwal & Desert Vocal (Pharyngeal F1/F2 Proximity: 650 Hz / 1150 Hz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 100.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 260.0, "gain_db": -2.2, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 1150.0, "gain_db": 1.4, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3400.0, "gain_db": -2.5, "q": 1.4},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 9000.0, "gain_db": 1.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 25.0, "release_ms": 180.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -16.5
+    },
+    "vocal_qawwali_sufi": {
+      "display_name": "Sufi Qawwali Lead & Alaap Vocal (Chest Projection: 800-2200 Hz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -35.0,
+        "min_rms_dbfs": -47.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 95.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 340.0, "gain_db": -2.5, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 1600.0, "gain_db": 1.5, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3800.0, "gain_db": -2.8, "q": 1.5},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 10000.0},
+        {"plugin": "Compressor", "threshold_db": -17.0, "ratio": 2.4, "attack_ms": 18.0, "release_ms": 140.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -16.0
+    },
+    "vocal_tuvan_khoomei": {
+      "display_name": "Tuvan Khoomei / Sygyt Overtone Throat Singing (f0: 65-130 Hz, Whistle Harmonic: 1.4-3.2 kHz)",
+      "role": "counter",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -38.0,
+        "min_rms_dbfs": -50.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 2.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 55.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 110.0, "gain_db": 1.8, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 350.0, "gain_db": -3.0, "q": 1.2},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2100.0, "gain_db": 1.8, "q": 1.4},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 7500.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 30.0, "release_ms": 200.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.0
+    },
+    "vocal_kulning_nordic": {
+      "display_name": "Nordic Kulning Herding Call (High SPL Head Register: 600-1800 Hz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.03,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 250.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 1200.0, "gain_db": -1.8, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2800.0, "gain_db": -2.5, "q": 1.4},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 8500.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.4, "attack_ms": 12.0, "release_ms": 180.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.5
+    },
+    "choir_aahs": {
+      "display_name": "Mixed SATB Choir Aahs (Vowel Formants F1: 730 Hz, F2: 1090 Hz)",
+      "role": "pad",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -40.0,
+        "min_rms_dbfs": -52.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 2.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 110.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 320.0, "gain_db": -2.5, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": -2.5, "q": 1.0},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 9000.0, "gain_db": 1.2},
+        {"plugin": "Compressor", "threshold_db": -22.0, "ratio": 1.8, "attack_ms": 45.0, "release_ms": 280.0},
+        {"plugin": "Limiter", "threshold_db": -1.2}
+      ],
+      "target_lufs": -20.0
+    },
+    "voice_oohs": {
+      "display_name": "Choral Oohs & Hums (Closed Vowel Formants F1: 300 Hz, F2: 870 Hz)",
+      "role": "pad",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -42.0,
+        "min_rms_dbfs": -54.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 2.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 100.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 300.0, "gain_db": -3.5, "q": 1.3},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2200.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 6500.0},
+        {"plugin": "Compressor", "threshold_db": -22.0, "ratio": 1.6, "attack_ms": 50.0, "release_ms": 300.0},
+        {"plugin": "Limiter", "threshold_db": -1.5}
+      ],
+      "target_lufs": -21.0
+    },
+    "vocal_amazon_hum": {
+      "display_name": "Amazonian Chest Hum Drone (Notched at 300 Hz to Unmask D4 Quena Lead)",
+      "role": "pad",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -42.0,
+        "min_rms_dbfs": -54.0,
+        "min_active_ratio": 0.03,
+        "min_relative_presence_pct": 2.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 90.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 300.0, "gain_db": -3.8, "q": 1.4},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 620.0, "gain_db": 1.0, "q": 0.9},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 4000.0},
+        {"plugin": "Compressor", "threshold_db": -20.0, "ratio": 1.6, "attack_ms": 50.0, "release_ms": 300.0},
+        {"plugin": "Limiter", "threshold_db": -1.5}
+      ],
+      "target_lufs": -21.0
+    },
+    "pan_flute": {
+      "display_name": "Andean Zampoña / Siku Pan Flute (Closed-Pipe Odd Harmonics, Chiff: 2.5-6 kHz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 180.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 294.0, "gain_db": 1.2, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": 1.5, "q": 0.8},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 7500.0, "gain_db": -1.8},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 22.0, "release_ms": 150.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -16.5
+    },
+    "quena": {
+      "display_name": "Andean Quena Notched End-Blown Flute (f0: 293-2350 Hz, Strong 2nd/3rd Harmonics)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 220.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 580.0, "gain_db": -1.5, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2500.0, "gain_db": 1.4, "q": 0.8},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 8000.0, "gain_db": -1.5},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 20.0, "release_ms": 150.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -16.5
+    },
+    "bansuri": {
+      "display_name": "North Indian Bamboo Bansuri (Open-Hole Meend Glides, f0: 240-1600 Hz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 160.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 340.0, "gain_db": 1.4, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2300.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 7800.0, "gain_db": -1.5},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 25.0, "release_ms": 160.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -16.5
+    },
+    "ney": {
+      "display_name": "Arabic & Turkish Reed Ney (Bilabial Blowing, Breath Formant: 1.8-4.2 kHz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -37.0,
+        "min_rms_dbfs": -49.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 150.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 380.0, "gain_db": 1.0, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2100.0, "gain_db": 1.4, "q": 0.8},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 4500.0, "gain_db": -2.0, "q": 1.2},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 8500.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 25.0, "release_ms": 160.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "shakuhachi": {
+      "display_name": "Japanese Bamboo Shakuhachi (Muraiki Breath Explosions & Meri/Kari Pitch Bends)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -37.0,
+        "min_rms_dbfs": -49.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 170.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 320.0, "gain_db": 1.2, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2600.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 7200.0, "gain_db": -1.2},
+        {"plugin": "Compressor", "threshold_db": -19.0, "ratio": 1.8, "attack_ms": 28.0, "release_ms": 170.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "dizi": {
+      "display_name": "Chinese Transverse Dizi Flute (Dimo Reed Membrane Buzz: 2.8-5.5 kHz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 220.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3600.0, "gain_db": -2.8, "q": 1.5},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 7800.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 18.0, "release_ms": 140.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "tin_whistle": {
+      "display_name": "Celtic Fipple Tin Whistle & Ocarina (Narrow Bore: 587-2350 Hz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 400.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3200.0, "gain_db": -2.5, "q": 1.4},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 7500.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 18.0, "release_ms": 140.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.5
+    },
+    "flute": {
+      "display_name": "Western Boehm Concert Flute (f0: 261-2100 Hz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 200.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 450.0, "gain_db": -1.5, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2800.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 9000.0, "gain_db": 1.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 1.8, "attack_ms": 20.0, "release_ms": 140.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "duduk": {
+      "display_name": "Armenian Apricot-Wood Duduk (Double-Reed Vocal Formant: 450-1400 Hz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 150.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 680.0, "gain_db": 1.5, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2100.0, "gain_db": -2.0, "q": 1.2},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 5800.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 28.0, "release_ms": 180.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "nadaswaram_shehnai_mizmar": {
+      "display_name": "Conical Double-Reed Nadaswaram, Shehnai & Arabic Mizmar (Nasal Formant: 900-1600 Hz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -34.0,
+        "min_rms_dbfs": -46.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 210.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 1150.0, "gain_db": 1.8, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3200.0, "gain_db": -3.5, "q": 1.6},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 6200.0},
+        {"plugin": "Compressor", "threshold_db": -17.0, "ratio": 2.5, "attack_ms": 15.0, "release_ms": 120.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -16.5
+    },
+    "oboe_english_horn": {
+      "display_name": "Orchestral Oboe & Cor Anglais (Formant Peak: 1.1-2.8 kHz)",
+      "role": "counter",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 175.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 1100.0, "gain_db": 1.0, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2900.0, "gain_db": -2.0, "q": 1.2},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 7500.0},
+        {"plugin": "Compressor", "threshold_db": -19.0, "ratio": 1.8, "attack_ms": 22.0, "release_ms": 150.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.0
+    },
+    "clarinet_bassoon": {
+      "display_name": "Clarinet (Cylindrical Odd-Harmonic Chalumeau) & Bassoon",
+      "role": "counter",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 60.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 320.0, "gain_db": -1.8, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 1800.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 7800.0},
+        {"plugin": "Compressor", "threshold_db": -19.0, "ratio": 1.8, "attack_ms": 22.0, "release_ms": 150.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.0
+    },
+    "saxophone": {
+      "display_name": "Alto, Tenor & Soprano Saxophone (Conical Brass-Reed, Presence: 2.0-3.2 kHz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -35.0,
+        "min_rms_dbfs": -47.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 90.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 360.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": 1.5, "q": 0.8},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 7500.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.2, "attack_ms": 20.0, "release_ms": 140.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "sitar": {
+      "display_name": "Indian Sitar (Parabolic Jawari Bridge Grazing, Sympathetic Taraf Strings)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 110.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 260.0, "gain_db": 1.4, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3500.0, "gain_db": -3.5, "q": 1.8},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 7500.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 20.0, "release_ms": 150.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "sarod_veena": {
+      "display_name": "Fretless Metal-Plate Sarod & Carnatic Saraswati Veena",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 95.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 220.0, "gain_db": 1.5, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3200.0, "gain_db": -2.8, "q": 1.5},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 7200.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 18.0, "release_ms": 150.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "santoor_dulcimer": {
+      "display_name": "Kashmiri / Persian Hammered Santoor & Yangqin (Walnut Mallet Transients)",
+      "role": "arp",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 140.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 400.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3800.0, "gain_db": -2.5, "q": 1.4},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 9000.0, "gain_db": 0.8},
+        {"plugin": "Compressor", "threshold_db": -19.0, "ratio": 1.8, "attack_ms": 15.0, "release_ms": 140.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.5
+    },
+    "oud": {
+      "display_name": "Arabic & Turkish Fretless Oud (Cavity Helmholtz Resonance: 110-240 Hz)",
+      "role": "chord",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 70.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 195.0, "gain_db": 1.6, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 420.0, "gain_db": -2.2, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2600.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 6800.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 1.8, "attack_ms": 22.0, "release_ms": 140.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.5
+    },
+    "qanun": {
+      "display_name": "Arabic Plucked Trapezoidal Qanun (Mandal Lever Microtones, Fish-Skin Bridge)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 130.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 360.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3100.0, "gain_db": 1.2, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 5200.0, "gain_db": -2.0, "q": 1.3},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 1.8, "attack_ms": 18.0, "release_ms": 130.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.5
+    },
+    "saz_baglama_bouzouki": {
+      "display_name": "Anatolian Baglama Saz & Greek Bouzouki (Double/Triple Steel Courses)",
+      "role": "chord",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 95.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 340.0, "gain_db": -2.2, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2900.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 7500.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 1.8, "attack_ms": 20.0, "release_ms": 140.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.0
+    },
+    "kora": {
+      "display_name": "West African 21-String Calabash Kora (Gourd Resonance: 130-260 Hz)",
+      "role": "chord",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -38.0,
+        "min_rms_dbfs": -50.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 85.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 180.0, "gain_db": 1.4, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 380.0, "gain_db": -2.2, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2800.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 8000.0},
+        {"plugin": "Compressor", "threshold_db": -19.0, "ratio": 1.8, "attack_ms": 22.0, "release_ms": 160.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.5
+    },
+    "guzheng_koto": {
+      "display_name": "Chinese Guzheng & Japanese 13-String Paulownia Koto",
+      "role": "arp",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -38.0,
+        "min_rms_dbfs": -50.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 90.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 320.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": -1.5, "q": 1.0},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 8500.0, "gain_db": 1.0},
+        {"plugin": "Compressor", "threshold_db": -19.0, "ratio": 1.8, "attack_ms": 20.0, "release_ms": 150.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.5
+    },
+    "charango": {
+      "display_name": "Andean 5-Course Charango (Reduced 350-700 Hz Beating against Flute)",
+      "role": "arp",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -38.0,
+        "min_rms_dbfs": -50.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 2.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 190.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 520.0, "gain_db": -2.8, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3600.0, "gain_db": 1.0, "q": 0.9},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 8000.0},
+        {"plugin": "Compressor", "threshold_db": -19.0, "ratio": 1.8, "attack_ms": 18.0, "release_ms": 130.0},
+        {"plugin": "Limiter", "threshold_db": -1.2}
+      ],
+      "target_lufs": -19.0
+    },
+    "nylon_guitar": {
+      "display_name": "Classical Nylon-String Guitar (Body Air Mode A0: ~98 Hz, Top Plate T1: ~205 Hz)",
+      "role": "chord",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -37.0,
+        "min_rms_dbfs": -49.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 75.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 215.0, "gain_db": -2.5, "q": 1.2},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": -1.5, "q": 1.0},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 8500.0, "gain_db": 1.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 1.8, "attack_ms": 25.0, "release_ms": 150.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.0
+    },
+    "acoustic_guitar": {
+      "display_name": "Steel-String Dreadnought Guitar (Mud Cut: 320 Hz, Pick Shimmer: 10 kHz)",
+      "role": "chord",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 70.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 320.0, "gain_db": -3.0, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2600.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 10000.0, "gain_db": 1.5},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 20.0, "release_ms": 140.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.0
+    },
+    "clean_guitar_muted": {
+      "display_name": "Funk / Reggae / Afrobeat Clean & Palm-Muted Electric Guitar",
+      "role": "chord",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 95.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 380.0, "gain_db": -2.2, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2800.0, "gain_db": 1.2, "q": 0.9},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 7200.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.2, "attack_ms": 15.0, "release_ms": 120.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.0
+    },
+    "distortion_overdrive_guitar": {
+      "display_name": "Overdrive & High-Gain Distortion Guitar (Cabinet Fizz Roll-Off: 6.2 kHz)",
+      "role": "chord",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -32.0,
+        "min_rms_dbfs": -44.0,
+        "min_active_ratio": 0.06,
+        "min_relative_presence_pct": 4.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 90.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 420.0, "gain_db": -2.5, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3900.0, "gain_db": -2.2, "q": 1.4},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 6200.0},
+        {"plugin": "Compressor", "threshold_db": -16.0, "ratio": 2.2, "attack_ms": 15.0, "release_ms": 120.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -16.5
+    },
+    "harp": {
+      "display_name": "Orchestral Pedal Harp (Soundboard Resonance: 180-320 Hz)",
+      "role": "arp",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -38.0,
+        "min_rms_dbfs": -50.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 2.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 65.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 280.0, "gain_db": -2.5, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": -1.8, "q": 1.0},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 8000.0, "gain_db": 1.2},
+        {"plugin": "Compressor", "threshold_db": -20.0, "ratio": 1.6, "attack_ms": 30.0, "release_ms": 200.0},
+        {"plugin": "Limiter", "threshold_db": -1.2}
+      ],
+      "target_lufs": -19.0
+    },
+    "violin_fiddle": {
+      "display_name": "Solo Violin & Folk Fiddle (Bridge Hill Formant: 2.2-3.2 kHz, Bow Scratch Notch: 4.5 kHz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 175.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 280.0, "gain_db": 1.2, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2600.0, "gain_db": 1.4, "q": 0.8},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 4500.0, "gain_db": -2.2, "q": 1.4},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 8500.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 25.0, "release_ms": 150.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -16.5
+    },
+    "viola": {
+      "display_name": "Solo Viola (C-String Fundamental: 130.8 Hz, Woody Nasal Cavity: 650 Hz)",
+      "role": "counter",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 115.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 240.0, "gain_db": 1.2, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 680.0, "gain_db": -2.2, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2200.0, "gain_db": 1.0, "q": 0.8},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 7200.0},
+        {"plugin": "Compressor", "threshold_db": -19.0, "ratio": 1.8, "attack_ms": 28.0, "release_ms": 160.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.0
+    },
+    "cello": {
+      "display_name": "Solo Cello (C2 Fundamental: 65.4 Hz, Chest Resonance: 180-240 Hz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 58.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 200.0, "gain_db": 1.4, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 450.0, "gain_db": -2.5, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2100.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 6500.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 30.0, "release_ms": 160.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "erhu_sarangi_morin_khuur": {
+      "display_name": "Python-Skin Erhu, Sympathetic Sarangi & Horsehead Morin Khuur",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 135.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 400.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 1600.0, "gain_db": 1.4, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3600.0, "gain_db": -2.8, "q": 1.4},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 6800.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.2, "attack_ms": 20.0, "release_ms": 150.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "string_ensemble_slow_strings": {
+      "display_name": "Symphonic String Section & Tremolo Strings (Lead Pocket Carved at 2.4 kHz)",
+      "role": "pad",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -38.0,
+        "min_rms_dbfs": -50.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 85.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 320.0, "gain_db": -2.8, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": -2.5, "q": 1.0},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 9000.0, "gain_db": 1.0},
+        {"plugin": "Compressor", "threshold_db": -20.0, "ratio": 1.8, "attack_ms": 40.0, "release_ms": 240.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -19.5
+    },
+    "pizzicato_strings": {
+      "display_name": "Orchestral Pizzicato Strings (Plucked Finger Transient: 1.5-3.0 kHz)",
+      "role": "chord",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 75.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 220.0, "gain_db": 1.2, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 400.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2200.0, "gain_db": 1.0, "q": 0.8},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 15.0, "release_ms": 110.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.0
+    },
+    "french_horn": {
+      "display_name": "Orchestral French Horn (Warm Bell Formant: 250-650 Hz)",
+      "role": "counter",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -35.0,
+        "min_rms_dbfs": -47.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 65.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 240.0, "gain_db": 1.5, "q": 0.8},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 480.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2100.0, "gain_db": 1.0, "q": 0.8},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 5800.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 30.0, "release_ms": 180.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.0
+    },
+    "trumpet_muted_trumpet": {
+      "display_name": "Trumpet & Harmon Muted Jazz Trumpet (GM Harsh Bite Tamed at 4.8 kHz)",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -34.0,
+        "min_rms_dbfs": -46.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 140.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 420.0, "gain_db": -1.8, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 1800.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 4800.0, "gain_db": -2.8, "q": 1.4},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 7200.0},
+        {"plugin": "Compressor", "threshold_db": -17.0, "ratio": 2.4, "attack_ms": 18.0, "release_ms": 140.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "trombone_tuba_brass_section": {
+      "display_name": "Trombone, Low Tuba & Cinematic Brass Ensemble (Nonlinear Cuivre: 1.2-2.8 kHz)",
+      "role": "pad",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -33.0,
+        "min_rms_dbfs": -45.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 45.0},
+        {"plugin": "LowShelfFilter", "cutoff_frequency_hz": 110.0, "gain_db": 1.4},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 360.0, "gain_db": -2.2, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2200.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 6500.0},
+        {"plugin": "Compressor", "threshold_db": -17.0, "ratio": 2.2, "attack_ms": 25.0, "release_ms": 160.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.5
+    },
+    "epiano_rhodes_clavinet": {
+      "display_name": "Fender Rhodes Tine Piano, Wurlitzer Reed & Funk Clavinet",
+      "role": "chord",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 65.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 280.0, "gain_db": -2.5, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 1900.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 8000.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 1.8, "attack_ms": 20.0, "release_ms": 160.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.0
+    },
+    "organ_harmonium_accordion": {
+      "display_name": "Tonewheel Organ, Pipe Organ, Indian Harmonium & Accordion",
+      "role": "pad",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 60.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 330.0, "gain_db": -2.5, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": -1.8, "q": 0.9},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 6800.0},
+        {"plugin": "Compressor", "threshold_db": -20.0, "ratio": 1.6, "attack_ms": 30.0, "release_ms": 200.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.5
+    },
+    "marimba_balafon_xylophone": {
+      "display_name": "Rosewood Marimba, Gourd-Resonated West African Balafon & Xylophone",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 85.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 240.0, "gain_db": 1.2, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 420.0, "gain_db": -2.2, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2800.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 8500.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 1.8, "attack_ms": 14.0, "release_ms": 120.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.5
+    },
+    "vibraphone_kalimba": {
+      "display_name": "Aluminum Vibraphone & African Lamellophone Kalimba / Mbira",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 120.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 350.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3200.0, "gain_db": 1.0, "q": 0.8},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 8000.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 1.8, "attack_ms": 15.0, "release_ms": 140.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.0
+    },
+    "celesta_glockenspiel_music_box": {
+      "display_name": "Celesta, Glockenspiel & Music Box (High Register Sparkle: 1.5-8 kHz)",
+      "role": "arp",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -38.0,
+        "min_rms_dbfs": -52.0,
+        "min_active_ratio": 0.03,
+        "min_relative_presence_pct": 2.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 450.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3800.0, "gain_db": -2.5, "q": 1.4},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 9000.0, "gain_db": 1.0},
+        {"plugin": "Compressor", "threshold_db": -20.0, "ratio": 1.6, "attack_ms": 12.0, "release_ms": 150.0},
+        {"plugin": "Limiter", "threshold_db": -1.5}
+      ],
+      "target_lufs": -20.0
+    },
+    "gamelan_metallophone_gong": {
+      "display_name": "Javanese / Balinese Bronze Gamelan (Paired Ombak Beating & Gong Ageng)",
+      "role": "arp",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 65.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 320.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2800.0, "gain_db": -2.2, "q": 1.3},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 7500.0},
+        {"plugin": "Compressor", "threshold_db": -19.0, "ratio": 1.8, "attack_ms": 18.0, "release_ms": 160.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.5
+    },
+    "finger_bass_pick_bass": {
+      "display_name": "Electric Fingered & Picked Bass (Sub Weight: 60-90 Hz, Pluck Definition: 850 Hz)",
+      "role": "bass",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -34.0,
+        "min_rms_dbfs": -46.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 32.0},
+        {"plugin": "LowShelfFilter", "cutoff_frequency_hz": 85.0, "gain_db": 1.5},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 250.0, "gain_db": -3.0, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 850.0, "gain_db": 1.6, "q": 0.9},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 4500.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.8, "attack_ms": 22.0, "release_ms": 120.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "acoustic_bass_contrabass": {
+      "display_name": "Upright Acoustic Bass & Orchestral Double Bass (Pizzicato & Arco)",
+      "role": "bass",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 30.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 95.0, "gain_db": 1.5, "q": 0.8},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 260.0, "gain_db": -2.8, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 1100.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 4000.0},
+        {"plugin": "Compressor", "threshold_db": -19.0, "ratio": 2.4, "attack_ms": 28.0, "release_ms": 160.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.5
+    },
+    "synth_bass_reese_808": {
+      "display_name": "Analog Synth Bass, Detuned Reese Sub & 808 Bass",
+      "role": "bass",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -32.0,
+        "min_rms_dbfs": -44.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 5.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 26.0},
+        {"plugin": "LowShelfFilter", "cutoff_frequency_hz": 75.0, "gain_db": 1.8},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 240.0, "gain_db": -3.0, "q": 1.1},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 3200.0},
+        {"plugin": "Compressor", "threshold_db": -15.0, "ratio": 3.0, "attack_ms": 18.0, "release_ms": 130.0},
+        {"plugin": "Limiter", "threshold_db": -0.8}
+      ],
+      "target_lufs": -16.5
+    },
+    "guembri_guitarron": {
+      "display_name": "Moroccan Gnawa Camel-Skin Guembri & Mexican Acoustic Guitarron",
+      "role": "bass",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -35.0,
+        "min_rms_dbfs": -47.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 35.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 105.0, "gain_db": 1.8, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 280.0, "gain_db": -2.5, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 950.0, "gain_db": 1.2, "q": 0.9},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 3800.0},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.4, "attack_ms": 22.0, "release_ms": 140.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.5
+    },
+    "sub_bass_forest_drone": {
+      "display_name": "Low Fundamental Sub-Bass Pedal Drone (f0: 36-73 Hz, Zero Midrange Bleed)",
+      "role": "bass",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -34.0,
+        "min_rms_dbfs": -46.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 24.0},
+        {"plugin": "LowShelfFilter", "cutoff_frequency_hz": 65.0, "gain_db": 1.5},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 220.0},
+        {"plugin": "Compressor", "threshold_db": -16.0, "ratio": 2.5, "attack_ms": 30.0, "release_ms": 200.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.0
+    },
+    "tanpura_shruti_drone": {
+      "display_name": "Indian 4-String Tanpura & Shruti Box Harmonic Drone (Notched at 2.4 kHz for Lead)",
+      "role": "pad",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -42.0,
+        "min_rms_dbfs": -54.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 2.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 90.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 300.0, "gain_db": -2.5, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": -3.5, "q": 1.2},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 6000.0},
+        {"plugin": "Compressor", "threshold_db": -22.0, "ratio": 1.5, "attack_ms": 50.0, "release_ms": 300.0},
+        {"plugin": "Limiter", "threshold_db": -1.5}
+      ],
+      "target_lufs": -22.0
+    },
+    "tabla_dholak": {
+      "display_name": "Indian Tabla (Bayan Ge Sub: 75-110 Hz, Dayan Syahi Na/Tin: 280-1200 Hz) & Dholak",
+      "role": "drum",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -34.0,
+        "min_rms_dbfs": -46.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 42.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 88.0, "gain_db": 2.0, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 310.0, "gain_db": 1.4, "q": 1.3},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 620.0, "gain_db": -2.5, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3600.0, "gain_db": 1.5, "q": 0.9},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.2, "attack_ms": 16.0, "release_ms": 100.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "thavil_parai_urumi_dhol": {
+      "display_name": "Tamil Kuthu Thavil, Parai Frame Drum, Urumi Friction Drum & Punjabi Dhol",
+      "role": "drum",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -32.0,
+        "min_rms_dbfs": -44.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 38.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 75.0, "gain_db": 2.2, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 480.0, "gain_db": -2.8, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2900.0, "gain_db": 2.0, "q": 0.9},
+        {"plugin": "Compressor", "threshold_db": -16.0, "ratio": 2.8, "attack_ms": 15.0, "release_ms": 90.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -16.0
+    },
+    "darbuka_doumbek_riq": {
+      "display_name": "Arabic Goblet Darbuka (Doum: 110 Hz, Tek/Ka: 2.8-4.5 kHz) & Brass-Jingle Riq",
+      "role": "drum",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -34.0,
+        "min_rms_dbfs": -46.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 48.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 115.0, "gain_db": 1.8, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 440.0, "gain_db": -2.2, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3400.0, "gain_db": 1.6, "q": 0.9},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 8500.0, "gain_db": 1.2},
+        {"plugin": "Compressor", "threshold_db": -17.0, "ratio": 2.2, "attack_ms": 16.0, "release_ms": 100.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "djembe_conga_bongo_talking_drum": {
+      "display_name": "West African Djembe, Tamanin Talking Drum, Congas & Bongos",
+      "role": "drum",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -35.0,
+        "min_rms_dbfs": -47.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 55.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 130.0, "gain_db": 1.6, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 520.0, "gain_db": -2.2, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3100.0, "gain_db": 1.8, "q": 0.8},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 18.0, "release_ms": 100.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -17.0
+    },
+    "amazon_cajon_log_drum": {
+      "display_name": "Peruvian / Amazonian Cajon & Hollow Hardwood Slit Log Drum",
+      "role": "drum",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -36.0,
+        "min_rms_dbfs": -48.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 3.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 42.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 92.0, "gain_db": 1.8, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 320.0, "gain_db": 1.2, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 480.0, "gain_db": -2.5, "q": 1.2},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2500.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "Compressor", "threshold_db": -18.0, "ratio": 2.0, "attack_ms": 20.0, "release_ms": 110.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -18.0
+    },
+    "rainforest_shaker_agogo_shekere": {
+      "display_name": "Seed-Pod Shaker, Gourd Shekere, Cabasa & Double Iron Agogo Bell",
+      "role": "drum",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -38.0,
+        "min_rms_dbfs": -50.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 2.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 650.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 3200.0, "gain_db": -1.8, "q": 1.0},
+        {"plugin": "HighShelfFilter", "cutoff_frequency_hz": 8000.0, "gain_db": -1.0},
+        {"plugin": "Compressor", "threshold_db": -20.0, "ratio": 1.8, "attack_ms": 10.0, "release_ms": 70.0},
+        {"plugin": "Limiter", "threshold_db": -1.5}
+      ],
+      "target_lufs": -19.5
+    },
+    "taiko_orchestral_timpani": {
+      "display_name": "Japanese O-Daiko, Cinematic Taiko Ensemble & Tuned Copper Timpani",
+      "role": "drum",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -30.0,
+        "min_rms_dbfs": -44.0,
+        "min_active_ratio": 0.03,
+        "min_relative_presence_pct": 4.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 26.0},
+        {"plugin": "LowShelfFilter", "cutoff_frequency_hz": 68.0, "gain_db": 2.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 280.0, "gain_db": -3.0, "q": 1.1},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2200.0, "gain_db": 1.5, "q": 0.9},
+        {"plugin": "Compressor", "threshold_db": -16.0, "ratio": 2.5, "attack_ms": 30.0, "release_ms": 150.0},
+        {"plugin": "Limiter", "threshold_db": -0.8}
+      ],
+      "target_lufs": -16.0
+    },
+    "brush_kit_808_kit": {
+      "display_name": "Jazz Wire-Brush Drum Kit & Lo-Fi / Trap TR-808 Drum Kit",
+      "role": "drum",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -34.0,
+        "min_rms_dbfs": -46.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 28.0},
+        {"plugin": "LowShelfFilter", "cutoff_frequency_hz": 70.0, "gain_db": 1.5},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 360.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 4500.0, "gain_db": 1.2, "q": 0.9},
+        {"plugin": "Compressor", "threshold_db": -17.0, "ratio": 2.4, "attack_ms": 22.0, "release_ms": 95.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -16.5
+    },
+    "warm_pad_sweep_pad_polysynth": {
+      "display_name": "Analog Warm Pad, Halo Pad, Sweep Pad & Polysynth Chord Bed",
+      "role": "pad",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -38.0,
+        "min_rms_dbfs": -50.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 2.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 150.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 300.0, "gain_db": -3.0, "q": 0.9},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": -3.0, "q": 0.9},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 8500.0},
+        {"plugin": "Compressor", "threshold_db": -22.0, "ratio": 1.8, "attack_ms": 40.0, "release_ms": 300.0},
+        {"plugin": "Limiter", "threshold_db": -1.5}
+      ],
+      "target_lufs": -20.5
+    },
+    "saw_lead_square_lead": {
+      "display_name": "Analog Sawtooth & Pulse/Square Synth Lead",
+      "role": "melody",
+      "is_melodic": true,
+      "presence_detection": {
+        "min_peak_dbfs": -34.0,
+        "min_rms_dbfs": -46.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 4.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 120.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 380.0, "gain_db": -2.0, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2600.0, "gain_db": 1.2, "q": 0.8},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 8500.0},
+        {"plugin": "Compressor", "threshold_db": -17.0, "ratio": 2.2, "attack_ms": 15.0, "release_ms": 120.0},
+        {"plugin": "Limiter", "threshold_db": -1.0}
+      ],
+      "target_lufs": -16.5
+    },
+    "env_canopy_birds": {
+      "display_name": "Mindlin-Goller Syrinx Biphonation Bird Cluster (Episodic Duty-Cycle Thresholds)",
+      "role": "environment",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -42.0,
+        "min_rms_dbfs": -62.0,
+        "min_active_ratio": 0.01,
+        "min_relative_presence_pct": 0.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 1200.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": -2.5, "q": 1.1},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 9500.0},
+        {"plugin": "Limiter", "threshold_db": -2.0}
+      ],
+      "target_lufs": -24.0
+    },
+    "env_distant_river": {
+      "display_name": "Turbulent Water Flow & Minnaert Bubble Resonances (HF Hiss Damped at 6.5 kHz)",
+      "role": "environment",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -44.0,
+        "min_rms_dbfs": -56.0,
+        "min_active_ratio": 0.05,
+        "min_relative_presence_pct": 1.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 240.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 480.0, "gain_db": -2.5, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": -3.5, "q": 0.9},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 6500.0},
+        {"plugin": "Limiter", "threshold_db": -2.0}
+      ],
+      "target_lufs": -24.0
+    },
+    "env_rain_mist": {
+      "display_name": "Poisson Raindrop Impulses & Canopy Mist Bed",
+      "role": "environment",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -44.0,
+        "min_rms_dbfs": -60.0,
+        "min_active_ratio": 0.02,
+        "min_relative_presence_pct": 1.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 350.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2400.0, "gain_db": -3.5, "q": 1.0},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 6800.0},
+        {"plugin": "Limiter", "threshold_db": -2.0}
+      ],
+      "target_lufs": -25.0
+    },
+    "env_insects": {
+      "display_name": "High-Frequency Cicada & Cricket Stridulation Bed (5.2-8.5 kHz)",
+      "role": "environment",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -46.0,
+        "min_rms_dbfs": -58.0,
+        "min_active_ratio": 0.04,
+        "min_relative_presence_pct": 1.0
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 4200.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 6500.0, "gain_db": -2.0, "q": 1.2},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 9200.0},
+        {"plugin": "Limiter", "threshold_db": -2.5}
+      ],
+      "target_lufs": -26.0
+    },
+    "env_desert_wind_bazaar": {
+      "display_name": "Resonant Desert Drafts (Q=7 Swept Bandpass) & Formant Crowd Murmur",
+      "role": "environment",
+      "is_melodic": false,
+      "presence_detection": {
+        "min_peak_dbfs": -44.0,
+        "min_rms_dbfs": -56.0,
+        "min_active_ratio": 0.03,
+        "min_relative_presence_pct": 1.5
+      },
+      "dsp_chain": [
+        {"plugin": "HighpassFilter", "cutoff_frequency_hz": 180.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 500.0, "gain_db": -2.5, "q": 1.0},
+        {"plugin": "PeakFilter", "cutoff_frequency_hz": 2200.0, "gain_db": -3.5, "q": 0.9},
+        {"plugin": "LowpassFilter", "cutoff_frequency_hz": 6200.0},
+        {"plugin": "Limiter", "threshold_db": -2.0}
+      ],
+      "target_lufs": -24.0
+    }
+  }
+}

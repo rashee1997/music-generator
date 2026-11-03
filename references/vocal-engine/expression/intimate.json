@@ -1,0 +1,26 @@
+{
+  "_about": "Expression profile 'intimate': partial override of defaults.json (design choice, not tuned by ear). Edit freely; blend with expression_intensity.",
+  "articulation": {
+    "attack_ms": 200,
+    "release_ms": 300
+  },
+  "vibrato": {
+    "depth_cents": 8,
+    "delay_s": 0.7
+  },
+  "performance": {
+    "portamento_ms": 110
+  },
+  "dynamics": {
+    "phrase_arc_db": 1.5,
+    "level_scale": 0.65
+  },
+  "source": {
+    "register": "breathy",
+    "breathiness": 0.07
+  },
+  "breathing": {
+    "inhale_gain": 0.16,
+    "release_breath_gain": 0.06
+  }
+}

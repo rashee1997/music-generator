@@ -1,0 +1,29 @@
+{
+  "_about": "Expression profile 'melancholic': partial override of defaults.json (design choice, not tuned by ear). Edit freely; blend with expression_intensity.",
+  "articulation": {
+    "attack_ms": 280,
+    "release_ms": 500,
+    "onset_scoop_cents": 25,
+    "phrase_end_tail_ms": 260
+  },
+  "vibrato": {
+    "depth_cents": 10,
+    "rate_hz": 4.8,
+    "delay_s": 0.8
+  },
+  "performance": {
+    "portamento_ms": 160,
+    "overshoot_cents": 6,
+    "settle_ms": 140,
+    "end_sag_cents": 14.0
+  },
+  "dynamics": {
+    "phrase_arc_db": 1.5,
+    "arc_peak": 0.45,
+    "timbre_follow": 0.2,
+    "level_scale": 0.75
+  },
+  "source": {
+    "breathiness": 0.05
+  }
+}

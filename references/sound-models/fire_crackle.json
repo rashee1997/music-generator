@@ -1,0 +1,86 @@
+{
+ "name": "fire_crackle",
+ "note": "A low rumble, many tiny crackles of widely different loudness, and a few louder pops.",
+ "model": {
+  "seconds": 8,
+  "voices": [
+   {
+    "name": "rumble",
+    "excite": {
+     "kind": "noise",
+     "color": "brown"
+    },
+    "resonator": {
+     "kind": "bandpass",
+     "band": [
+      40,
+      300
+     ]
+    },
+    "events": {
+     "kind": "continuous"
+    },
+    "control": {
+     "gain_db": [
+      {
+       "kind": "ou",
+       "sigma_db": 3,
+       "tau_s": 2
+      }
+     ]
+    },
+    "gain_db": -24
+   },
+   {
+    "name": "crackle",
+    "excite": {
+     "kind": "burst",
+     "tau": 0.003
+    },
+    "resonator": {
+     "kind": "bandpass",
+     "band": [
+      800,
+      6000
+     ]
+    },
+    "events": {
+     "kind": "poisson",
+     "rate": 35
+    },
+    "vary": {
+     "level_spread_db": 8
+    }
+   },
+   {
+    "name": "pops",
+    "excite": {
+     "kind": "impact",
+     "tau": 0.001
+    },
+    "resonator": {
+     "kind": "modal",
+     "law": "power",
+     "f1": 700,
+     "n": 4,
+     "t60": 0.03,
+     "exponent": 1.5
+    },
+    "events": {
+     "kind": "poisson",
+     "rate": 3
+    },
+    "vary": {
+     "size": {
+      "dist": "lognormal",
+      "sigma": 0.3
+     },
+     "pitch_exp": 1.0,
+     "amp_exp": 1.0,
+     "level_spread_db": 4
+    },
+    "gain_db": -3
+   }
+  ]
+ }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "ambient",
+  "character": "ambient / calm / drone: slow beds that hold their level, little or no melody and no kick",
+  "extends": "melodic",
+  "flags": ["ambient"],
+  "detect": {"keywords": ["calm", "ambient", "meditative", "peaceful", "sleep", "drone", "minimal"], "pulse": ["free"], "traits": {"drone_ratio_min": 0.5}},
+  "rows": {
+    "pattern.loop_short": {"mode": "relax", "max_period_bars": 2, "max_distinct": 2, "reason": "beds and drones loop for long stretches by design"},
+    "pattern.flat_dynamics": {"mode": "relax", "min_range_frac": 0.1, "reason": "a bed holds its level; the change is in colour, not loudness"},
+    "pattern.velocity_flat": {"mode": "relax", "sd_frac": 0.02, "reason": "pads and drones are not accented"},
+    "pattern.melody_notes": {"mode": "relax", "min_lengths": 2, "on_beat_max": 1.0, "repeat_max": 0.6, "reason": "slow repeated tones are the style, with no beat grid to avoid"},
+    "pattern.flags_max": {"mode": "relax", "max": 8, "reason": "few parts, so fewer varied lines"},
+    "kick.grid": {"mode": "skip", "reason": "no kick is expected in an ambient piece"},
+    "balance.vs_lead": {"mode": "apply", "fallback": "balance.layers"}
+  }
+}

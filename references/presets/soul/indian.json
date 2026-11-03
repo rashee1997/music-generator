@@ -1,0 +1,23 @@
+{
+  "feel": [
+    "devotion",
+    "meditation",
+    "bhava: the emotional essence of a raga"
+  ],
+  "breath_beats": 1.0,
+  "groove": "cycle",
+  "call_response": false,
+  "ornament": true,
+  "cadence": false,
+  "tempo": [
+    84,
+    132
+  ],
+  "avoid_instruments": [
+    "oud",
+    "qanun",
+    "ney",
+    "darbuka"
+  ],
+  "name": "indian"
+}

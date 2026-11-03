@@ -1,0 +1,11 @@
+{
+  "name": "video_cinematic",
+  "character": "a cue scored to picture: cut-locked hits and delivery decide, the music rows stay those of a cinematic cue",
+  "extends": "cinematic",
+  "rows": {
+    "video.duration_lock": {"mode": "apply"},
+    "video.cut_sync": {"mode": "apply"},
+    "video.dialogue_snr": {"mode": "apply"},
+    "video.master_compliance": {"mode": "apply"}
+  }
+}

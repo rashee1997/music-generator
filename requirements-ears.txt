@@ -1,0 +1,12 @@
+# Optional: lets listen.py hear the music (earshot: open CLAP and AST models, runs on CPU).
+# Install with:  python3 scripts/setup_project.py --ears
+#
+# Not listed on purpose: torch. It must come from the PyTorch CPU index (about 200 MB instead of several GB
+# of CUDA), and setup_project.py installs torch==2.14.1 from https://download.pytorch.org/whl/cpu first.
+# The earshot model revisions are pinned inside earshot itself (its config.py), so nothing here needs them.
+earshot @ git+https://github.com/Leonxlnx/earshot@591fa3e028032e6dce56620a20e932e35667e8d8
+librosa==1.0.0
+transformers==5.21.0
+scikit-learn==1.9.1
+soxr==1.1.0
+pillow==13.0.0

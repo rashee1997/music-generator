@@ -1,0 +1,34 @@
+{
+  "name": "vocal_ululation",
+  "category": "ethnic_trill_call",
+  "phonetic_sound": "Lulu-li-li ...",
+  "register_range": [
+    "A4",
+    "E5"
+  ],
+  "role": "exultant_high_climax_trill",
+  "character": "a high celebratory tongue trill over a held tone, bright and open",
+  "vowel": "a",
+  "expression": "hopeful",
+  "formants": [
+    480,
+    1500,
+    2650
+  ],
+  "source": {
+    "register": "head"
+  },
+  "articulation": {
+    "attack_ms": 60.0,
+    "release_ms": 350.0
+  },
+  "vibrato": {
+    "rate_hz": 10.5,
+    "depth_cents": 70.0,
+    "delay_s": 0.05,
+    "onset_s": 0.1
+  },
+  "ensemble": {
+    "voices": 2
+  }
+}

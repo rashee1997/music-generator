@@ -1,0 +1,25 @@
+{
+  "_about": "Expression profile 'powerful': partial override of defaults.json (design choice, not tuned by ear). Edit freely; blend with expression_intensity.",
+  "articulation": {
+    "attack_ms": 90,
+    "release_ms": 200
+  },
+  "vibrato": {
+    "depth_cents": 26,
+    "rate_hz": 5.8,
+    "delay_s": 0.25
+  },
+  "performance": {
+    "portamento_ms": 60,
+    "jitter_cents": 2.0
+  },
+  "dynamics": {
+    "phrase_arc_db": 4.0,
+    "timbre_follow": 0.5,
+    "level_scale": 1.1
+  },
+  "source": {
+    "register": "chest",
+    "breathiness": 0.02
+  }
+}

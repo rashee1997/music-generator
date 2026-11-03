@@ -1,0 +1,35 @@
+{
+  "name": "vocal_tribal_staccato_chant",
+  "category": "rhythmic_chest_shout",
+  "phonetic_sound": "Hah! Hu! ...",
+  "register_range": [
+    "D3",
+    "D4"
+  ],
+  "role": "rhythmic_accent_chant",
+  "character": "short chest shouts on the beat, a group answering itself, no vibrato, each hit separate",
+  "vowel": "a",
+  "expression": "powerful",
+  "formants": [
+    680,
+    1220,
+    2420
+  ],
+  "source": {
+    "register": "chest",
+    "breathiness": 0.02
+  },
+  "articulation": {
+    "mode": "detached",
+    "attack_ms": 15.0,
+    "release_ms": 60.0,
+    "detach_ms": 40.0
+  },
+  "vibrato": {
+    "depth_cents": 0.0
+  },
+  "ensemble": {
+    "voices": 5,
+    "cohesion": 0.6
+  }
+}

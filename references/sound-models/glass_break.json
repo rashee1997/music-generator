@@ -1,0 +1,66 @@
+{
+ "name": "glass_break",
+ "note": "A struck glass body with inharmonic ratios, then a cluster of small shards ringing.",
+ "model": {
+  "seconds": 1.6,
+  "voices": [
+   {
+    "name": "body",
+    "excite": {
+     "kind": "impact",
+     "tau": 0.0003
+    },
+    "resonator": {
+     "kind": "modal",
+     "law": "free",
+     "f1": 2200,
+     "n": 5,
+     "t60": 0.45,
+     "ratios": [
+      1,
+      2.32,
+      4.25,
+      6.63,
+      9.38
+     ]
+    },
+    "events": {
+     "kind": "single"
+    }
+   },
+   {
+    "name": "shards",
+    "excite": {
+     "kind": "impact",
+     "tau": 0.0002
+    },
+    "resonator": {
+     "kind": "modal",
+     "law": "power",
+     "f1": 4500,
+     "n": 3,
+     "t60": 0.06,
+     "exponent": 1.6
+    },
+    "events": {
+     "kind": "cluster",
+     "rate": 8,
+     "per": 14,
+     "spread": 0.18,
+     "start": 0.03,
+     "end": 1.3
+    },
+    "vary": {
+     "size": {
+      "dist": "lognormal",
+      "sigma": 0.3
+     },
+     "pitch_exp": 1.0,
+     "amp_exp": 1.0,
+     "level_spread_db": 4
+    },
+    "gain_db": -6
+   }
+  ]
+ }
+}

@@ -1,0 +1,21 @@
+{
+  "feel": [
+    "clave-locked groove",
+    "call and response",
+    "montuno"
+  ],
+  "breath_beats": 0.25,
+  "groove": "offbeat",
+  "call_response": true,
+  "ornament": false,
+  "cadence": true,
+  "tempo": [
+    92,
+    126
+  ],
+  "avoid_instruments": [
+    "oud",
+    "qanun"
+  ],
+  "name": "afro_cuban"
+}
