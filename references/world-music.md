@@ -13,17 +13,17 @@ author's approximation, not measured on a corpus.
 
 ## 0. Authoritative Machine-Parsable Knowledge Base Index
 
-For exact acoustic models, microtonal cent offsets, frequency band allocations, and pure-Python synthesis code, consult the primary knowledge base files in [`knowledgebase/`](file:///D:/Vasima/.agents/skills/music-generator/knowledgebase):
+For exact acoustic models, microtonal cent offsets, frequency band allocations, and pure-Python synthesis code, consult the primary knowledge base files in [`knowledgebase/`](../knowledgebase):
 
-- **Pan-Indian Traditions & Hindustani 10 Thaats:** [`knowledgebase/PAN_INDIAN_MUSICAL.md`](file:///D:/Vasima/.agents/skills/music-generator/knowledgebase/PAN_INDIAN_MUSICAL.md)
-- **Tamil Folk, Kuthu & Carnatic Classical:** [`knowledgebase/tamil_music_dsp_knowledgebase.md`](file:///D:/Vasima/.agents/skills/music-generator/knowledgebase/tamil_music_dsp_knowledgebase.md)
-- **Arabic Desert Vocals & Magical Maqam Chords:** [`knowledgebase/The Arabic Desert Vocal.md`](file:///D:/Vasima/.agents/skills/music-generator/knowledgebase/The%20Arabic%20Desert%20Vocal.md)
-- **Pan-Arab Maqamat & Iqa'at Cycles:** [`knowledgebase/arabic_dsp_knowledge.md`](file:///D:/Vasima/.agents/skills/music-generator/knowledgebase/arabic_dsp_knowledge.md)
-- **East Asian (Chinese Wu Sheng & Japanese Onkai):** [`knowledgebase/chines_japanese_dsp_knowledge.md`](file:///D:/Vasima/.agents/skills/music-generator/knowledgebase/chines_japanese_dsp_knowledge.md)
-- **Sub-Saharan African Polyrhythms & Amapiano:** [`knowledgebase/afro_dsp_knowledge.md`](file:///D:/Vasima/.agents/skills/music-generator/knowledgebase/afro_dsp_knowledge.md)
-- **Americas, Brazil (Samba/Bossa) & Central Asian Throat Singing:** [`knowledgebase/rio_brazil_turkic_mogol_dsp_knowledge.md`](file:///D:/Vasima/.agents/skills/music-generator/knowledgebase/rio_brazil_turkic_mogol_dsp_knowledge.md)
-- **Global Humming Atlas, Celtic, Nordic, Balkan & Gamelan:** [`knowledgebase/world_music_dsp.md`](file:///D:/Vasima/.agents/skills/music-generator/knowledgebase/world_music_dsp.md)
-- **Western Classical, Orchestral, & Trailer Sound Design:** [`knowledgebase/western_dsp_knowledge.md`](file:///D:/Vasima/.agents/skills/music-generator/knowledgebase/western_dsp_knowledge.md)
+- **Pan-Indian Traditions & Hindustani 10 Thaats:** [`knowledgebase/PAN_INDIAN_MUSICAL.md`](../knowledgebase/PAN_INDIAN_MUSICAL.md)
+- **Tamil Folk, Kuthu & Carnatic Classical:** [`knowledgebase/tamil_music_dsp_knowledgebase.md`](../knowledgebase/tamil_music_dsp_knowledgebase.md)
+- **Arabic Desert Vocals & Magical Maqam Chords:** [`knowledgebase/The Arabic Desert Vocal.md`](../knowledgebase/The%20Arabic%20Desert%20Vocal.md)
+- **Pan-Arab Maqamat & Iqa'at Cycles:** [`knowledgebase/arabic_dsp_knowledge.md`](../knowledgebase/arabic_dsp_knowledge.md)
+- **East Asian (Chinese Wu Sheng & Japanese Onkai):** [`knowledgebase/chines_japanese_dsp_knowledge.md`](../knowledgebase/chines_japanese_dsp_knowledge.md)
+- **Sub-Saharan African Polyrhythms & Amapiano:** [`knowledgebase/afro_dsp_knowledge.md`](../knowledgebase/afro_dsp_knowledge.md)
+- **Americas, Brazil (Samba/Bossa) & Central Asian Throat Singing:** [`knowledgebase/rio_brazil_turkic_mogol_dsp_knowledge.md`](../knowledgebase/rio_brazil_turkic_mogol_dsp_knowledge.md)
+- **Global Humming Atlas, Celtic, Nordic, Balkan & Gamelan:** [`knowledgebase/world_music_dsp.md`](../knowledgebase/world_music_dsp.md)
+- **Western Classical, Orchestral, & Trailer Sound Design:** [`knowledgebase/western_dsp_knowledge.md`](../knowledgebase/western_dsp_knowledge.md)
 
 ---
 

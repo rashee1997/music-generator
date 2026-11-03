@@ -88,7 +88,7 @@ Never write monolithic custom scripts that hardcode synthesis, notes, EQ, and mi
 ### Critical Rules for AI Agents:
 1. **Never Monolithic (Anti-Pattern Ban):**
    - **FORBIDDEN:** Do NOT write 500-line monolithic scripts that synthesize raw waves or hardcode notes, EQ, and gains inside Python code.
-   - Author modular JSON presets in `presets/`, declarative scores in `scores/`, and direction sheets in `direction/`. Detailed schemas & spatial rules: [`references/spatial-presets-and-scoring.md`](references/spatial-presets-and-scoring.md).
+   - Author modular JSON presets in `presets/`, declarative scores in `scores/`, and direction sheets in `direction/`. Detailed schemas & spatial rules: [`spatial-presets-and-scoring.md`](spatial-presets-and-scoring.md).
 2. **Modular Presets Define Sound & 3D Space:**
    - Define instrument EQ, gains, reverbs, and 3D spatial coordinates (`azimuth`, `elevation`, `distance`, `space`) inside `presets/instruments/`, `presets/vocals/`, and `presets/environments/`.
    - In `scores/<title>_score.json`, tracks reference presets simply by name (`"instrument": "arabic_oud_lute"`). All acoustic and 3D spatial parameters are automatically inherited by `mixer.py`.

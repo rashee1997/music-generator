@@ -9,7 +9,7 @@ and `timeline()`, which lays effects on a stereo bed to sit under music or a vid
 point a caller uses; the facade only keeps the older return contract (`'preset'` where the engine says `'model'`).
 
 For advanced physical modeling of weather (mist, monsoon, ocean surf, desert wind, campfire, thunder shockwaves), bio-acoustics (avian syrinx dual-FM synthesis), and the **5 Zero-Overlap Blending Laws** (Key-Locked Harmonic Resonators, 3D Mid-Side geometry, and micro-foley quantization), consult:  
-👉 [`knowledgebase/PROCEDURAL_SFX_AMBIENCE.md`](file:///D:/Vasima/.agents/skills/music-generator/knowledgebase/PROCEDURAL_SFX_AMBIENCE.md).
+👉 [`knowledgebase/PROCEDURAL_SFX_AMBIENCE.md`](../knowledgebase/PROCEDURAL_SFX_AMBIENCE.md).
 
 ---
 

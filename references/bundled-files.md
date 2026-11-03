@@ -87,11 +87,11 @@ Moved verbatim from SKILL.md to keep the entry file short.
 
 ## The Music CI/CD Pipeline (pipeline.py)
 
-[`scripts/pipeline.py`](file:///D:/Vasima/.agents/skills/music-generator/scripts/pipeline.py) unifies the entire composition, pre-flight linting, humanization, rendering, Pedalboard mastering, and quality verification into a single executable command:
+[`scripts/pipeline.py`](../scripts/pipeline.py) unifies the entire composition, pre-flight linting, humanization, rendering, Pedalboard mastering, and quality verification into a single executable command:
 - **Stage 1 (Composition & Ingestion):** Ingests plain-language briefs (`"motivational trailer in D minor, 45s"`), brief JSONs, or score JSONs.
 - **Stage 2 (Acoustic Pre-Flight Linter):** Enforces the 6 Acoustic Laws (chord voicing, choked resonance, machine-gun percussion, flams, low mud, spatial glue) prior to rendering.
 - **Stage 3 (Humanization & Respiration):** Applies phrase respiration breath gaps, phrase velocity arches, swing, and rubato tempo maps.
-- **Stage 4 (Multi-Engine Stem Rendering):** High-fidelity rendering across SoundFonts, vocal formant choirs ([`vocals.py`](file:///D:/Vasima/.agents/skills/music-generator/scripts/vocals.py)), procedural nature soundscapes ([`environment.py`](file:///D:/Vasima/.agents/skills/music-generator/scripts/environment.py)), and cloned instruments.
+- **Stage 4 (Multi-Engine Stem Rendering):** High-fidelity rendering across SoundFonts, vocal formant choirs ([`vocals.py`](../scripts/vocals.py)), procedural nature soundscapes ([`environment.py`](../scripts/environment.py)), and cloned instruments.
 - **Stage 5 (High-Precision Mixing & Mastering):** Subtractive slot EQ, 2–4 kHz vocal pocket carving, shared room convolution reverb, and ITU-R BS.1770 broadcast limiting via `pb.BrickwallLimiter`.
 - **Stage 6 (Automated CI Quality Gate):** Objective verification across loudness tolerance, true peak, silence dropouts, click detection, 250–3,800 Hz speech masking corridor, 12-TET harmonic chroma concordance, 1–5 kHz mobile phone mono-phase check, and kick-drum beat-grid lock.
 - **Stage 7 (Release Packaging):** Delivers master WAV, MIDI, optional stems (`--stems`), and `ci_report.json` with a color-coded terminal scoreboard.
@@ -99,9 +99,9 @@ Moved verbatim from SKILL.md to keep the entry file short.
 ## Pedalboard DSP Engine & VST3 Architecture
 
 The pipeline integrates Spotify's **Pedalboard** C++ DSP library (JUCE-backed with GIL release) across mixing, vocal polishing, environmental acoustics, and sound effects:
-- **Mastering & Dynamic Limiting:** [`scripts/mixer.py`](file:///D:/Vasima/.agents/skills/music-generator/scripts/mixer.py) uses `pb.BrickwallLimiter(ceiling_db=..., true_peak=True)` with 4× oversampling and lookahead for strict ITU-R BS.1770 true-peak broadcast compliance, plus `pb.NoiseGate` for 80s gated reverb tails and `pb.Mix` for parallel compression.
-- **Vocal Harmonies & Chorus:** [`scripts/vocals.py`](file:///D:/Vasima/.agents/skills/music-generator/scripts/vocals.py) uses `pb.PitchShift` for instant multi-part backing harmonies (sub-octave, 5th, upper octave) and `pb.Chorus` for wide stereo vocal ensemble diffusion without phase cancellation.
-- **Procedural Sound Effects:** [`scripts/sfx.py`](file:///D:/Vasima/.agents/skills/music-generator/scripts/sfx.py) uses `pb.LadderFilter` for warm Moog 24 dB/oct resonant sweeps, `pb.Bitcrush` for vintage 8-bit / 12-bit sampler grit, `pb.GSMFullRateCompressor` / `pb.MP3Compressor` for codec degradation, and `pb.Delay` for tempo-synced stereo echoes.
-- **Environmental Acoustics:** [`scripts/environment.py`](file:///D:/Vasima/.agents/skills/music-generator/scripts/environment.py) uses `pb.Convolution` and distance air absorption filters (`LowpassFilter`, `HighShelfFilter`).
+- **Mastering & Dynamic Limiting:** [`scripts/mixer.py`](../scripts/mixer.py) uses `pb.BrickwallLimiter(ceiling_db=..., true_peak=True)` with 4× oversampling and lookahead for strict ITU-R BS.1770 true-peak broadcast compliance, plus `pb.NoiseGate` for 80s gated reverb tails and `pb.Mix` for parallel compression.
+- **Vocal Harmonies & Chorus:** [`scripts/vocals.py`](../scripts/vocals.py) uses `pb.PitchShift` for instant multi-part backing harmonies (sub-octave, 5th, upper octave) and `pb.Chorus` for wide stereo vocal ensemble diffusion without phase cancellation.
+- **Procedural Sound Effects:** [`scripts/sfx.py`](../scripts/sfx.py) uses `pb.LadderFilter` for warm Moog 24 dB/oct resonant sweeps, `pb.Bitcrush` for vintage 8-bit / 12-bit sampler grit, `pb.GSMFullRateCompressor` / `pb.MP3Compressor` for codec degradation, and `pb.Delay` for tempo-synced stereo echoes.
+- **Environmental Acoustics:** [`scripts/environment.py`](../scripts/environment.py) uses `pb.Convolution` and distance air absorption filters (`LowpassFilter`, `HighShelfFilter`).
 - **Array Layout Rule:** Pedalboard requires `(channels, samples)` arrays (`[2, N]`). Scripts automatically manage transposition between Scipy/Soundfile format (`[N, 2]`) and Pedalboard.
 - **Headless VST3 Hosting:** Any external VST3 instrument or effect plugin can be loaded headlessly via `pb.load_plugin(path)` and automated frame-by-frame in Python scripts.
