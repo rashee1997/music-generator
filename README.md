@@ -160,4 +160,29 @@ The engine implements formal models from peer-reviewed acoustic and cognitive li
 
 ## Documentation
 
-**[docs/](docs/)** — the workflow, the rules, the psychoacoustic foundations and every reference file.
+| Document | What it covers |
+|---|---|
+| [docs/README.md](docs/README.md) | Index of every document, plus the engine's known limitations |
+| [docs/PSYCHOACOUSTICS.md](docs/PSYCHOACOUSTICS.md) | The perceptual laws the gate enforces: thresholds, equations and peer-reviewed sources |
+| [docs/listen.html](docs/listen.html) | The Pages audio player for the rendered sample |
+| [SKILL.md](SKILL.md) | What the skill does and the eight-step workflow |
+| [AGENTS.md](AGENTS.md) | The rule book: read table, research, presets, gate profiles, self-check |
+| [references/](references/) | Brief reading, music direction, mixing and mastering, quality gate, vocals, spatial audio, SFZ, video scoring, troubleshooting |
+| [knowledgebase/](knowledgebase/) | Genre, culture and DSP knowledge |
+| [templates/](templates/) | Project, direction-sheet and score templates |
+
+## Limitations
+
+Stated plainly, because every delivery should carry them:
+
+- **The engine cannot hear.** Numbers and `listen.py` stand in for ears; the first render is a draft. Without earshot installed, the report is measurement only.
+- **Even with earshot it is an opinion.** Taste, whether a raga or maqam is correct, whether an instrument sounds convincing and how the music sits in picture are never measured.
+- **The default bank is General MIDI.** Good, not concert-grade. Symphonic work needs a multisampled SFZ library installed per project.
+- **No words.** Synthesised voices are texture — choirs, oohs and hums — with no consonants and no language; a hum-to-vowel change starts a new phrase.
+- **Traditional idioms are approximations** unless a preset or a user recording supplies the real instrument.
+- **Spatial depth is limited by preset.** Head-related delays and elevation apply only to presets with `spatial.binaural: true`; everything else gets pan, distance filtering, width and one shared room.
+- **Diagnostics report, they do not fix.** Mix measurements say what is masked or colliding; they cannot say what sounds good.
+- **Video audio is not auditioned.** Nothing in the video path listens to the bed under speech, and cut detection misses fades and dissolves.
+- **Loudness targets are starting points.** Verify against the current platform specification before publishing.
+
+The full list lives in [references/troubleshooting-and-limits.md](references/troubleshooting-and-limits.md).
