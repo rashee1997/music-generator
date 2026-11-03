@@ -75,12 +75,30 @@ python scripts/pipeline.py path/to/master.wav --check-only
 
 Reports loudness, true peak, balance, masking and grid problems in `reports/ci_report.json` without re-rendering or altering the audio.
 
+## Delivery: metadata and versions
+
+A render that passes every gate is certified, not merely written. Certification does three things after the musical gate passes:
+
+- **Versions the master.** Each certified render becomes `out/master_v01.wav`, `master_v02.wav`, … and `out/master.wav` is refreshed as a copy of the newest. An earlier master is never overwritten, so a previous take can always be recovered.
+- **Records the change.** `out/versions.json` lists every version with its timestamp, measurements and the gate failures it cleared (`cleared balance; kick.grid`, or `first certified render`). Inspect it with `python scripts/helpers/version_manager.py list --project <project>`.
+- **Tags the deliverable.** Standard tags come from `presets/metatdats/metadata.json` (artist, album, copyright, licence, publisher, ISRC, language), then from the score (title, genre, year, a factual `key · BPM · piece_type` comment), then from the project's own `metadata.json` overrides. They are written to `out/master.json` beside the audio.
+
+MP3 compression is deliberately **manual** and never part of the pipeline:
+
+```bash
+python scripts/helpers/compress_mp3.py out/master_v01.wav -o my-track.mp3 -b 320k
+```
+
+It carries the sidecar tags into the MP3. The gate rows `meta.tags` and `meta.version` only trace this record — they warn rather than fail, and report `INFO` on a piece's first render. A new project is scaffolded with `presets/gate/` for its gate profile and a `metadata.json` for its own tag overrides.
+
 ## Structure
 
 ```text
 music-generator/
 ├── scripts/         engine: pipeline, composing, mixing, gates, renderers
-├── presets/         default instrument, mix, space and vocal presets
+│   └── helpers/     metadata ingestion, master versioning, manual MP3 encoding
+├── presets/         default instrument, mix, space, vocal and metadata-preset files
+│   └── metatdats/   the standard delivery tags every render inherits
 ├── knowledgebase/   genre, culture and DSP research
 ├── references/      guides and schemas
 ├── templates/       project, direction-sheet and score templates
