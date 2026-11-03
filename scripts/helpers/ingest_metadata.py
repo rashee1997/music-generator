@@ -67,7 +67,7 @@ def score_comment(score):
     key = score.get('key')
     mode = score.get('mode')
     if key:
-        bits.append(f"{key} {mode}".strip())
+        bits.append(' '.join(str(x) for x in (key, mode) if x))
     if score.get('bpm'):
         bits.append(f"{float(score['bpm']):g} BPM")
     if score.get('piece_type'):
