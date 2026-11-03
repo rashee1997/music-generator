@@ -56,6 +56,8 @@ desktop.ini
 *.bak
 *.wav
 *.mp3
+# ...but committed demo samples are allowed
+!assets/samples/*.mp3
 *.flac
 *.ogg
 out/
