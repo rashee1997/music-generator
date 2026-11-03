@@ -58,6 +58,7 @@ if SCRIPTS_DIR not in sys.path:
 import cli_util
 import compose
 import envcheck
+from helpers import ingest_metadata, version_manager
 import humanize as hz
 import mixer
 import naturalness_check as nc
@@ -722,8 +723,21 @@ class MusicPipeline:
         # Stage 6: Automated CI Quality Suite
         ci_rows, fails, warns = self.stage6_ci_quality_suite(score, stems, draft_wav, out_midi=out_midi)
 
+        published = None
         if fails == 0:
-            os.replace(draft_wav, out_wav)
+            if project_dir:
+                # A certified render never destroys the previous one: it becomes master_vNN.wav and
+                # out/master.wav is refreshed as a copy of the newest version.
+                try:
+                    published = version_manager.publish(draft_wav, out_wav, score=score,
+                                                        attempts=prev_attempts)
+                    print(f"  [VERSION] master v{published['version']:02d}: {published['file']} "
+                          f"({published['change']})")
+                except Exception as exc:      # never lose a certified master over bookkeeping
+                    print(f"  [WARN] versioning failed ({exc}); promoting the draft without a version record")
+                    os.replace(draft_wav, out_wav)
+            else:
+                os.replace(draft_wav, out_wav)
         else:
             print(f"  [DRAFT] {fails} gate FAIL(s): the uncertified mix stays at {draft_wav}, {out_wav} is untouched")
 
@@ -738,6 +752,22 @@ class MusicPipeline:
             report['attempts'] = prev_attempts + [dict(attempt=len(prev_attempts) + 1, time=report['timestamp'],
                                                        fails=fails, failing=failing)]
             Path(json_report).write_text(json.dumps(report, indent=2), encoding='utf-8')
+
+        # Only a certified render gets a version record and standard metadata.
+        if published:
+            try:
+                version_manager.update_entry(Path(project_dir) / 'out', published['version'],
+                                             measurements=report.get('measurements'))
+                info = ingest_metadata.ingest(out_wav, score=score, project_dir=project_dir,
+                                              extra={'version': published['version'],
+                                                     'ci_report': os.path.basename(json_report or '')})
+                report['deliverables']['metadata'] = info['sidecar']
+                report['deliverables']['version'] = published['version']
+                report['deliverables']['versioned_master'] = published['file']
+                Path(json_report).write_text(json.dumps(report, indent=2), encoding='utf-8')
+                print(f"  [METADATA] {info['sidecar']}")
+            except Exception as exc:          # the audio is already certified and safe
+                print(f"  [WARN] metadata step failed ({exc})")
 
         elapsed = time.time() - t_start
         print("=" * 80)

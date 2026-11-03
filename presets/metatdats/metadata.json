@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "standard": {
+    "title": "",
+    "artist": "Music Generator",
+    "album": "",
+    "album_artist": "Music Generator",
+    "genre": "",
+    "year": "",
+    "track_number": "",
+    "composer": "",
+    "copyright": "Copyright (C) 2026 rasheedh",
+    "comment": "",
+    "publisher": "",
+    "isrc": "",
+    "language": "zxx",
+    "license": "AGPL-3.0-or-later"
+  },
+  "derive_from_score": {
+    "title": true,
+    "genre": true,
+    "comment": true,
+    "year": true
+  },
+  "project_overrides": {}
+}
