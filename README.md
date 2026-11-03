@@ -2,8 +2,12 @@
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
+[![Agent Skill](https://img.shields.io/badge/agent%20skill-SKILL.md-black.svg)](SKILL.md)
 
-A research-backed, measurement-driven procedural music generation system that composes, renders, mixes and validates original music against psychoacoustic principles.
+An agent skill that composes, renders, mixes and certifies original music against psychoacoustic law.
+
+Give it a mood, a scene, a duration, or a video file. It researches the idiom, writes a direction sheet,
+declares a score, renders it, and refuses to hand over the master until every quality gate passes.
 
 ## Listen
 
@@ -13,9 +17,87 @@ A research-backed, measurement-driven procedural music generation system that co
 
 GitHub strips `<audio>` tags from Markdown, so the player lives on the project's [Pages site](https://rashee1997.github.io/music-generator/docs/listen.html).
 
+## Install
+
+### As an agent skill
+
+Install with the open skills CLI. Requires **Node.js 22.20 or later**.
+
+```bash
+# install into the current project (.agents/skills/, .claude/skills/, …)
+npx skills add rashee1997/music-generator
+
+# or make it available to every project
+npx skills add rashee1997/music-generator -g
+
+# non-interactive, pick one agent
+npx skills add rashee1997/music-generator --skill music-generator -a claude-code -y
+```
+
+The repository exposes exactly one skill, `music-generator`, from its root `SKILL.md`.
+
+```bash
+npx skills list                      # confirm it is installed
+npx skills update music-generator    # pull the latest version from main
+```
+
+Installing the skill copies instructions only. The engine, presets and knowledge base are not fetched
+by the CLI — clone the repository next to your work and run the setup below.
+
+### As a standalone project
+
+```bash
+git clone https://github.com/rashee1997/music-generator.git
+cd music-generator
+python scripts/setup_project.py          # core: .venv, packages, SoundFont, smoke test
+python scripts/setup_project.py --ears   # also earshot, so listen.py can hear the mix (~1 GB)
+```
+
+`setup_project.py` uses [uv](https://docs.astral.sh/uv/) when available (`pip install uv`) and falls back
+to `python -m venv` + pip. It writes `.venv/`, installs the pinned packages from `requirements.txt`, places the
+GeneralUser GS SoundFont in `~/.cache/music-generator`, and runs a smoke test.
+
+Use the environment it created:
+
+```bash
+# Windows
+.venv/Scripts/python.exe scripts/pipeline.py --help
+# macOS / Linux
+.venv/bin/python scripts/pipeline.py --help
+```
+
+System dependency: **ffmpeg**, required only by `video-mixer/` for probing, muxing and dialogue extraction.
+
+## Quick start
+
+```bash
+python scripts/setup_project.py --new-project my-project --title "My Track"
+python scripts/pipeline.py my-project/scores/my_track_score.json --project my-project
+```
+
+If gates fail, the uncertified mix stays at `out/_draft_master.wav` and `out/master.wav` is untouched.
+Change one lever and run again.
+
+To let the skill drive it instead, just ask in your agent:
+
+> Compose a 60-second underscore for a slow reveal of a mountain range — cold, patient, no drums.
+
+It will read `SKILL.md`, open the references it needs, research the idiom, write the direction sheet,
+scaffold presets, write the score and iterate the pipeline until the gates are green.
+
+## Auditing existing music
+
+```bash
+python scripts/pipeline.py path/to/master.wav --check-only
+```
+
+Reports loudness, true peak, balance, masking and grid problems in `reports/ci_report.json` without
+re-rendering or altering the audio.
+
 ## The problem with code-generated music
 
-When LLMs or scripts generate music, they fail in ways that are predictable and audible, because a text model cannot hear what it writes:
+When LLMs or scripts generate music, they fail in ways that are predictable and audible, because a text
+model cannot hear what it writes:
 
 1. **Mechanical rigidity or random chaos.** Naive code locks notes to the grid with static velocities (a 1990s MIDI file). Told to "humanize", an LLM scatters notes unpredictably — zig-zag lines, unrecovered leaps, incoherent rhythm — passing simple rules while sounding unmusical.
 2. **Harmonic mud and voicing violations.** Voices clustered below middle C violate the low-interval limit, muddying 100–300 Hz. Closed-position major sevenths put the root and seventh adjacent in one register, producing a grating minor second.
@@ -25,7 +107,9 @@ When LLMs or scripts generate music, they fail in ways that are predictable and 
 
 ## What this system does instead
 
-Music generation is treated as a **CI/CD pipeline**: every piece is constrained by perceptual law, humanized from measurement rather than taste, staged in space, mixed from a preset, and certified by gates before anything is delivered.
+Music generation is treated as a **CI/CD pipeline**: every piece is constrained by perceptual law, humanized
+from measurement rather than taste, staged in space, mixed from a preset, and certified by gates before
+anything is delivered.
 
 ```text
 [Brief / Prompt / Score]
@@ -57,27 +141,25 @@ Music generation is treated as a **CI/CD pipeline**: every piece is constrained 
 - **Spatial staging** — per-stem azimuth, distance filtering, level, width and a shared room; measured-HRTF binaural and immersive height are opt-in per mix preset.
 - **Presets, never hardcoded** — sound, space, mix strategy, gate profile and every spatial number live in JSON; scripts only write notes.
 
-## Quick start
+## The eight-step workflow
 
-```bash
-python scripts/setup_project.py                                     # first time: venv + packages + soundfont
-python scripts/setup_project.py --new-project my-project --title "My Track"
-.venv/Scripts/python.exe scripts/pipeline.py my-project/scores/my_track_score.json --project my-project
-```
+The skill refuses to skip stages. Each step leaves an artifact you can inspect:
 
-If gates fail, the uncertified mix stays at `out/_draft_master.wav` and `out/master.wav` is untouched. Change one lever and run again.
-
-## Auditing existing music
-
-```bash
-python scripts/pipeline.py path/to/master.wav --check-only
-```
-
-Reports loudness, true peak, balance, masking and grid problems in `reports/ci_report.json` without re-rendering or altering the audio.
+| Step | Action | Artifact |
+|---|---|---|
+| 1 | Create project | `direction/`, `presets/`, `scores/`, `out/`, `reports/`, `STATUS.md` |
+| 2 | Research the idiom | `reports/research_<topic>.md` with KB citations and sources |
+| 3 | Write the direction sheet | `direction/direction_<title>.json` |
+| 4 | Scaffold presets | Instrument, vocal, space and mix presets with unique spatial placement |
+| 5 | Write the score | `scores/<title>_score.json`, referencing presets only |
+| 6 | Render and gate | `out/master_vNN.wav`, `stems/`, `midi/`, `reports/ci_report.json` |
+| 7 | Revise one lever | Re-render until 0 FAIL (max 5 attempts) |
+| 8 | Listen and deliver | `listen.py` report, then the self-check in `STATUS.md` |
 
 ## Delivery: metadata and versions
 
-A render that passes every gate is certified, not merely written. Certification does three things after the musical gate passes:
+A render that passes every gate is certified, not merely written. Certification does three things after the
+musical gate passes:
 
 - **Versions the master.** Each certified render becomes `out/master_v01.wav`, `master_v02.wav`, … and `out/master.wav` is refreshed as a copy of the newest. An earlier master is never overwritten, so a previous take can always be recovered.
 - **Records the change.** `out/versions.json` lists every version with its timestamp, measurements and the gate failures it cleared (`cleared balance; kick.grid`, or `first certified render`). Inspect it with `python scripts/helpers/version_manager.py list --project <project>`.
@@ -89,12 +171,16 @@ MP3 compression is deliberately **manual** and never part of the pipeline:
 python scripts/helpers/compress_mp3.py out/master_v01.wav -o my-track.mp3 -b 320k
 ```
 
-It carries the sidecar tags into the MP3. The gate rows `meta.tags` and `meta.version` only trace this record — they warn rather than fail, and report `INFO` on a piece's first render. A new project is scaffolded with `presets/gate/` for its gate profile and a `metadata.json` for its own tag overrides.
+It carries the sidecar tags into the MP3. The gate rows `meta.tags` and `meta.version` only trace this record —
+they warn rather than fail, and report `INFO` on a piece's first render. A new project is scaffolded with
+`presets/gate/` for its gate profile and a `metadata.json` for its own tag overrides.
 
 ## Structure
 
 ```text
 music-generator/
+├── SKILL.md         the skill entry point: when to use it, the eight-step workflow
+├── AGENTS.md        the rule book: read table, research, presets, gate profiles, self-check
 ├── scripts/         engine: pipeline, composing, mixing, gates, renderers
 │   └── helpers/     metadata ingestion, master versioning, manual MP3 encoding
 ├── presets/         default instrument, mix, space, vocal and metadata-preset files
@@ -104,8 +190,38 @@ music-generator/
 ├── templates/       project, direction-sheet and score templates
 ├── video-mixer/     cut detection, ducking and muxing
 ├── assets/samples/  rendered demo audio
+├── tests/           integrity, soul, spatial and pipeline tests
 └── docs/            theory and documentation
 ```
+
+## Documentation
+
+| Document | What it covers |
+|---|---|
+| [SKILL.md](SKILL.md) | What the skill does and the eight-step workflow |
+| [AGENTS.md](AGENTS.md) | The rule book: read table, research, presets, gate profiles, self-check |
+| [docs/README.md](docs/README.md) | Index of every document, plus the engine's known limitations |
+| [docs/PSYCHOACOUSTICS.md](docs/PSYCHOACOUSTICS.md) | The perceptual laws the gate enforces: thresholds, equations and peer-reviewed sources |
+| [docs/listen.html](docs/listen.html) | The Pages audio player for the rendered sample |
+| [references/](references/) | Brief reading, music direction, mixing and mastering, quality gate, vocals, spatial audio, SFZ, video scoring, troubleshooting |
+| [knowledgebase/](knowledgebase/) | Genre, culture and DSP knowledge |
+| [templates/](templates/) | Project, direction-sheet and score templates |
+
+## Limitations
+
+Stated plainly, because every delivery should carry them:
+
+- **The engine cannot hear.** Numbers and `listen.py` stand in for ears; the first render is a draft. Without earshot installed, the report is measurement only.
+- **Even with earshot it is an opinion.** Taste, whether a raga or maqam is correct, whether an instrument sounds convincing and how the music sits in picture are never measured.
+- **The default bank is General MIDI.** Good, not concert-grade. Symphonic work needs a multisampled SFZ library installed per project.
+- **No words.** Synthesised voices are texture — choirs, oohs and hums — with no consonants and no language; a hum-to-vowel change starts a new phrase.
+- **Traditional idioms are approximations** unless a preset or a user recording supplies the real instrument.
+- **Spatial depth is limited by preset.** Head-related delays and elevation apply only to presets with `spatial.binaural: true`; everything else gets pan, distance filtering, width and one shared room.
+- **Diagnostics report, they do not fix.** Mix measurements say what is masked or colliding; they cannot say what sounds good.
+- **Video audio is not auditioned.** Nothing in the video path listens to the bed under speech, and cut detection misses fades and dissolves.
+- **Loudness targets are starting points.** Verify against the current platform specification before publishing.
+
+The full list lives in [references/troubleshooting-and-limits.md](references/troubleshooting-and-limits.md).
 
 ## Credits
 
@@ -175,32 +291,3 @@ The engine implements formal models from peer-reviewed acoustic and cognitive li
 ## License
 
 [GNU AGPLv3](LICENSE) — Copyright (C) 2026 rasheedh
-
-## Documentation
-
-| Document | What it covers |
-|---|---|
-| [docs/README.md](docs/README.md) | Index of every document, plus the engine's known limitations |
-| [docs/PSYCHOACOUSTICS.md](docs/PSYCHOACOUSTICS.md) | The perceptual laws the gate enforces: thresholds, equations and peer-reviewed sources |
-| [docs/listen.html](docs/listen.html) | The Pages audio player for the rendered sample |
-| [SKILL.md](SKILL.md) | What the skill does and the eight-step workflow |
-| [AGENTS.md](AGENTS.md) | The rule book: read table, research, presets, gate profiles, self-check |
-| [references/](references/) | Brief reading, music direction, mixing and mastering, quality gate, vocals, spatial audio, SFZ, video scoring, troubleshooting |
-| [knowledgebase/](knowledgebase/) | Genre, culture and DSP knowledge |
-| [templates/](templates/) | Project, direction-sheet and score templates |
-
-## Limitations
-
-Stated plainly, because every delivery should carry them:
-
-- **The engine cannot hear.** Numbers and `listen.py` stand in for ears; the first render is a draft. Without earshot installed, the report is measurement only.
-- **Even with earshot it is an opinion.** Taste, whether a raga or maqam is correct, whether an instrument sounds convincing and how the music sits in picture are never measured.
-- **The default bank is General MIDI.** Good, not concert-grade. Symphonic work needs a multisampled SFZ library installed per project.
-- **No words.** Synthesised voices are texture — choirs, oohs and hums — with no consonants and no language; a hum-to-vowel change starts a new phrase.
-- **Traditional idioms are approximations** unless a preset or a user recording supplies the real instrument.
-- **Spatial depth is limited by preset.** Head-related delays and elevation apply only to presets with `spatial.binaural: true`; everything else gets pan, distance filtering, width and one shared room.
-- **Diagnostics report, they do not fix.** Mix measurements say what is masked or colliding; they cannot say what sounds good.
-- **Video audio is not auditioned.** Nothing in the video path listens to the bed under speech, and cut detection misses fades and dissolves.
-- **Loudness targets are starting points.** Verify against the current platform specification before publishing.
-
-The full list lives in [references/troubleshooting-and-limits.md](references/troubleshooting-and-limits.md).
