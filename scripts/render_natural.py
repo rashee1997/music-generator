@@ -804,10 +804,9 @@ def _mark_accompanied(tr, tracks):
 
 def build_stems(score, sfpath=None, seed=None, verbose=True):
     """Humanize + render every track. Returns (stems dict name->(N,2) float32, meta, tempo map)."""
-    if os.path.isdir('presets'):
-        presets.add_project('.')
-    elif os.path.isdir('safari_wildlife/presets'):
-        presets.add_project('safari_wildlife')
+    # The caller registers the project (pipeline.py in project mode, run_gate from the score path). This function
+    # must not guess one from the working directory: run from the skill folder it would adopt the skill's own
+    # presets as a project and demand a per-piece mix preset from a scratch test cue.
     sfpath = sfpath or sb.ensure_soundfont()
     seed = score.get('seed', 7) if seed is None else seed
     ts = score.get('ts', [4, 4])

@@ -40,8 +40,9 @@ You MUST complete every step. Tick each in `<project>/STATUS.md`. Do not skip ah
 - [ ] **1.3** Determine project type and fill in STATUS.md
 
 ### PHASE 2: SETUP
-- [ ] **2.1** Create project: `python scripts/setup_project.py --new-project <dir> --title "<Title>"` (only add `--ambience` if explicitly requested)
+- [ ] **2.1** Create project: `python scripts/setup_project.py --new-project <dir> --title "<Title>"` (only add `--ambience` if explicitly requested). The scaffold includes `presets/gate/` (for the piece's gate profile) and `<dir>/metadata.json` (delivery tags).
 - [ ] **2.2** NEVER write into skill folder. All outputs go to `<dir>/`
+- [ ] **2.3** Fill `<dir>/metadata.json` with the real delivery values (artist, album, year, publisher, ISRC, copyright, licence). These override the standard tags in `presets/metatdats/metadata.json`. Title and genre are derived from the score; do not hardcode tags in a script.
 
 ### PHASE 3: RESEARCH (MANDATORY - PIPELINE BLOCKS WITHOUT IT)
 - [ ] **3.1** **Read Music Direction Guide:** Read `references/music-direction.md` COMPLETELY during this research phase. This is required to understand how to properly direct and fill the direction sheet.
@@ -80,9 +81,12 @@ You MUST complete every step. Tick each in `<project>/STATUS.md`. Do not skip ah
 - [ ] **8.3** For immersive pieces, fix imm_* rows in presets/score, never loosen.
 
 ### PHASE 9: DELIVER
-- [ ] **9.1** Listen: `python scripts/listen.py out/master.wav --direction direction/<sheet>.json` (if missing, say so)
-- [ ] **9.2** Complete self-check in `references/self-check.md` in STATUS.md (all yes/no)
-- [ ] **9.3** Report: what was done, what was checked, what was NOT checked, gate results, any limitations. Update STATUS.md.
+- [ ] **9.1** Verify the delivery record: `python scripts/helpers/version_manager.py list --project <dir>`. Every certified render is kept as `out/master_vNN.wav` with its change in `out/versions.json`; `out/master.wav` is a copy of the newest. Never delete or overwrite a version file or a record.
+- [ ] **9.2** Metadata: `out/master.json` (written at certification from `presets/metatdats/metadata.json` + the score + the project overrides) carries the standard tags. If a tag is wrong, fix `<dir>/metadata.json` and re-run `python scripts/helpers/ingest_metadata.py out/master.wav --project <dir>`; never edit the sidecar by hand.
+- [ ] **9.3** MP3 is manual and NOT part of the pipeline: `python scripts/helpers/compress_mp3.py out/master_vNN.wav -o <file>.mp3 -b 320k`. Report the file you produced and its bitrate.
+- [ ] **9.5** Listen: `python scripts/listen.py out/master.wav --direction direction/<sheet>.json` (if missing, say so)
+- [ ] **9.6** Complete self-check in `references/self-check.md` in STATUS.md (all yes/no)
+- [ ] **9.7** Report: what was done, what was checked, what was NOT checked, gate results, the version number delivered, any limitations. Update STATUS.md.
 
 ---
 

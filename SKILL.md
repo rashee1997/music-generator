@@ -42,9 +42,27 @@ Follow these steps in order. Never skip steps.
 | 3 | **Direction sheet** | Copy `templates/direction_sheet.json` to `<dir>/direction/direction_<title>.json`. Fill all fields per [`references/music-direction.md`](references/music-direction.md). For video, run `scripts/video_score.py` first. | Complete sheet with job, feel, sections, motifs, hits, mix_intent, spatial_staging |
 | 4 | **Create presets** | `python scripts/presets.py scaffold instruments/vocals/environments/sfx <name> --project <dir>`. Each needs unique spatial placement. | Presets in project with character, spatial.azimuth/distance |
 | 5 | **Write score** | Create `<dir>/scores/<title>_score.json` (declarative, references presets). Use [`templates/custom_score_template.py`](templates/custom_score_template.py) for exact control. | Valid JSON with tracks referencing presets |
-| 6 | **Render & gate** | `python scripts/pipeline.py <dir>/scores/<title>_score.json --project <dir>` | `out/master.wav`, `stems/`, `midi/`, `reports/ci_report.json` with 0 FAIL |
+| 6 | **Render & gate** | `python scripts/pipeline.py <dir>/scores/<title>_score.json --project <dir>` | `out/master.wav` (a copy of the newest version), `out/master_vNN.wav`, `out/versions.json`, `<master>.json` tags, `stems/`, `midi/`, `reports/ci_report.json` with 0 FAIL |
 | 7 | **Revise** | Change ONE lever at a time ([`references/music-direction.md`](references/music-direction.md) §6). Re-run step 6 until green (max 5 attempts). | All gates pass |
 | 8 | **Listen & deliver** | `python scripts/listen.py out/master.wav --direction direction/<sheet>.json` | Verify and report results |
+
+## Delivery metadata and versions
+
+Certification writes three things automatically, after the musical gate passes:
+
+- **`out/master_vNN.wav`** — every certified render gets its own version file. Earlier versions are kept; a re-render never overwrites one.
+- **`out/master.wav`** — a copy of the newest version, for tools that expect a single master.
+- **`out/versions.json`** — each version with its timestamp, measurements and the **change** that earned it (the gate failures it cleared, or `first certified render`).
+- **`out/master.json`** — the standard tags written beside the master.
+
+Where the tags come from: defaults in `presets/metatdats/metadata.json` (artist, album, copyright, licence, publisher, ISRC, language), then values derived from the score (title, genre from `piece_type`, year, a factual `key · BPM · piece_type` comment), then the project's own `metadata.json` overrides. Write real values into `<project>/metadata.json` rather than into scripts.
+
+Rules for an agent:
+
+- Never delete or overwrite a `master_vNN.wav` or a `versions.json` record. If a delivery needs a clean take, it becomes a new version.
+- Check the record after a render: `python scripts/helpers/version_manager.py list --project <dir>`.
+- MP3 compression is **manual**, never part of the pipeline: `python scripts/helpers/compress_mp3.py out/master_vNN.wav -o <file>.mp3 -b 320k`. It carries the sidecar tags into the MP3.
+- The gate rows `meta.tags` and `meta.version` only trace this record. They warn, never fail, and are `INFO` on a piece's first render.
 
 ## Key Principles
 

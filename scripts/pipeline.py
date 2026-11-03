@@ -436,10 +436,14 @@ class MusicPipeline:
         candidates.extend(['presets', os.path.join('..', 'presets')])
 
         target_dir = None
+        skill_presets = os.path.abspath(os.path.join(SKILL_DIR, 'presets'))
         for c in candidates:
-            if os.path.exists(c) and os.path.isdir(c):
-                target_dir = c
-                break
+            if not (os.path.exists(c) and os.path.isdir(c)):
+                continue
+            if os.path.abspath(c) == skill_presets:
+                continue          # the skill's own presets are the base layer; they are never a project
+            target_dir = c
+            break
 
         if not target_dir:
             return score

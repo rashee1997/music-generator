@@ -115,6 +115,11 @@ ROWS = {
     # rendering naturalness (references/natural-instruments.md, humanization.md)
     'natural.aliasing':  dict(meaning='energy above 15 kHz that a transposed sample should not have (interpolation images)',
                               params={'max_hf_share_db': (-45.0, -70.0, -20.0)}),
+    # delivery traceability (scripts/helpers/, written at certification; the gate only reads it)
+    'meta.tags':     dict(meaning='standard metadata written beside the certified master',
+                          params={'max_missing': (0, 0, 12)}),
+    'meta.version':  dict(meaning='a version record for the certified master, and its versioned file still on disk',
+                          params={'max_missing': (0, 0, 5)}),
     # video delivery (scripts/video_score.py; measured by video-mixer/video_gate.py)
     'video.duration_lock':   dict(meaning='program length against the picture', params={'tolerance_ms': (50, 10, 200)}, protected=True),
     'video.cut_sync':        dict(meaning='every hit against its cut, early and late measured separately',

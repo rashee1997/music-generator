@@ -821,6 +821,21 @@ def _place_of(score, tr, imm):
     return az, el, sp, role, rendered
 
 
+def _has_staging(score, tr):
+    """True when a preset or the track itself says where this part sits. A generic test cue has neither, so there
+    is no placement to judge; a real project always has one, because its presets are required and each carries a spot."""
+    import presets
+    inst = str(tr.get('instrument') or '')
+    if inst:
+        try:
+            pc = presets.exact('instruments', inst) or presets.exact('vocals', inst) or {}
+        except Exception:
+            pc = {}
+        if pc.get('spatial'):
+            return True
+    return bool(tr.get('spatial'))
+
+
 def _wrap_deg(d):
     d = abs(float(d)) % 360.0
     return 360.0 - d if d > 180.0 else d
@@ -859,6 +874,8 @@ def spatial_separation_rows(score, stems=None, out=None, sr=44100):
     min_elev = float(gp.param('spatial.z_separation', 'min_elev_deg'))
     imm = _mix_immersive(score)
     where = {n: _place_of(score, tracks[n], imm) for n in frames}
+    staged = {n: _has_staging(score, tracks[n]) for n in frames}
+    unplaced = 0
 
     fights, closest = [], None
     names = sorted(frames)
@@ -867,6 +884,9 @@ def spatial_separation_rows(score, stems=None, out=None, sr=44100):
             fa, fb = frames[a][climax], frames[b][climax]
             on = (fa > fa.max() * 0.03) & (fb > fb.max() * 0.03)   # both within 30 dB of their own climax level
             if on.sum() < 4:
+                continue
+            if not (staged[a] or staged[b]):
+                unplaced += 1                      # nothing declares a spot, so there is no separation to measure
                 continue
             ov = float(np.mean(np.minimum(fa, fb)[on] / np.maximum(fa, fb)[on]))
             az_a, el_a, sp_a, role_a, h_a = where[a]
@@ -899,6 +919,10 @@ def spatial_separation_rows(score, stems=None, out=None, sr=44100):
         _row(out, 'PASS', 'spatial.z_separation',
              f'closest competing pair "{a}"/"{b}": band envelope overlap {ov:.2f} (limit {overlap_min:.2f}), {sep:.0f} deg apart '
              f'(azimuth {daz:.0f}, elevation {delev:.0f}); every pair that shares the midrange in the climax is separated')
+    elif unplaced:
+        _row(out, 'INFO', 'spatial.z_separation',
+             f'{unplaced} competing pair(s) carry no declared staging (a test-mode cue has no presets), so their '
+             f'separation is not judged; a project places every part in a preset')
     if out is not None:
         out.extend(rows)
     return rows
@@ -970,6 +994,81 @@ def equal_loudness_rows(score, stems=None, out=None, sr=44100):
     return rows
 
 
+def metadata_rows(score, out, project_dir=None):
+    """Delivery traceability: the certified master carries standard metadata (`<master>.json`, written by
+    scripts/helpers/ingest_metadata.py) and a version record in `out/versions.json` whose versioned file still
+    exists (scripts/helpers/version_manager.py). The gate only reads this; it never writes or repairs it.
+    These rows never FAIL: metadata is written after the musical gate passes, so a missing record is a WARN
+    about the delivery, not a reason to reject the music."""
+    import gate_profiles
+    gp = gate_profiles.resolve(score)
+    if not project_dir:
+        return
+    out_dir = os.path.join(project_dir, 'out')
+    master = os.path.join(out_dir, 'master.wav')
+    # The gate runs before certification writes the record, so the very first render has nothing to trace
+    # yet: report that as INFO rather than as a defect.
+    first_render = not os.path.isfile(master) and not os.path.isfile(os.path.join(out_dir, 'versions.json'))
+
+    if first_render:
+        if gp.on('meta.tags') or gp.on('meta.version'):
+            out.append(('INFO', 'meta', 'traceability: no certified master yet, tags and the version record are '
+                                      'written at certification'))
+        return
+
+    if gp.on('meta.tags'):
+        limit = int(gp.param('meta.tags', 'max_missing'))
+        sidecar = os.path.splitext(master)[0] + '.json'
+        missing = []
+        if not os.path.isfile(sidecar):
+            missing.append('no sidecar beside the master')
+        else:
+            try:
+                tags = (json.load(open(sidecar, encoding='utf-8')) or {}).get('metadata') or {}
+            except Exception:
+                tags = {}
+            if not tags:
+                missing.append('sidecar holds no tags')
+            if tags and score.get('title') and not tags.get('title'):
+                missing.append('sidecar has no title')
+            elif score.get('title') and tags.get('title') != score.get('title'):
+                missing.append(f'sidecar title "{tags.get("title")}" is not the score title "{score.get("title")}"')
+        lvl = 'PASS' if not missing else ('WARN' if len(missing) <= limit else 'WARN')
+        out.append((lvl, 'meta', 'metadata: standard tags present beside the master' if not missing
+                    else 'metadata: ' + '; '.join(missing) + ' (run scripts/helpers/ingest_metadata.py)'))
+
+    if gp.on('meta.version'):
+        limit = int(gp.param('meta.version', 'max_missing'))
+        index = os.path.join(out_dir, 'versions.json')
+        problems = []
+        entry = None
+        if not os.path.isfile(index):
+            problems.append('no versions.json')
+        else:
+            try:
+                data = json.load(open(index, encoding='utf-8'))
+                versions = data.get('versions') or []
+                entry = versions[-1] if versions else None
+            except Exception:
+                problems.append('versions.json is unreadable')
+            if entry is None and not problems:
+                problems.append('no version recorded')
+            elif entry:
+                versioned = os.path.join(out_dir, entry.get('file') or '')
+                if not entry.get('file'):
+                    problems.append('the latest record names no file')
+                elif not os.path.isfile(versioned):
+                    problems.append(f'the recorded file {entry.get("file")} is missing')
+                if entry.get('title') and score.get('title') and entry['title'] != score.get('title'):
+                    problems.append(f'version title "{entry["title"]}" is not the score title "{score["title"]}"')
+                if not entry.get('change'):
+                    problems.append('the latest version records no change')
+        lvl = 'PASS' if not problems else ('WARN' if len(problems) <= limit else 'WARN')
+        detail = (f"version v{entry['version']:02d} ({entry.get('file')}): {entry.get('change')}"
+                  if entry and not problems else 'version: ' + '; '.join(problems))
+        out.append((lvl, 'meta', detail))
+
+
 def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None):
     """refresh=False: the caller has just rendered this score in this process, so the renderer's counters are already
     current and the gate does not render the stems a second time (a full render takes minutes).
@@ -1014,6 +1113,8 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None):
     if stems is not None:
         out.extend(masking_rows(stems, score))
         out.extend(nc.modulation_flutter_check(stems, score))
+    project_dir = os.path.dirname(s_dir) if s_dir else None
+    metadata_rows(score, out, project_dir=project_dir)
     return out, rendered
 
 

@@ -93,11 +93,21 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
     mix_dir = presets_dir / 'mix'
     sfx_dir = presets_dir / 'sfx'            # one-hit effect presets (optional: the shipped defaults work without it)
     video_dir = presets_dir / 'video'        # scoring to picture: probe, direction map, mix, master, mux (scripts/video_score.py)
+    gate_dir = presets_dir / 'gate'          # this piece's gate profile (gate_profiles.py new <name> --project <dir>)
     ref_dir = proj_dir / 'reference'         # measured real-sound metrics (reference/<slug>.json), URLs and licences
     slug = ''.join(c if c.isalnum() else '_' for c in title.lower()).strip('_') or 'piece'
 
-    for d in (direction_dir, inst_dir, vocal_dir, spaces_dir, mix_dir, sfx_dir, video_dir, ref_dir, scores_dir, midi_dir, stems_dir, reports_dir, scripts_dir, out_dir) + ((env_dir,) if ambience else ()):
+    for d in (direction_dir, inst_dir, vocal_dir, spaces_dir, mix_dir, sfx_dir, video_dir, gate_dir, ref_dir, scores_dir, midi_dir, stems_dir, reports_dir, scripts_dir, out_dir) + ((env_dir,) if ambience else ()):
         d.mkdir(parents=True, exist_ok=True)
+
+    # Delivery metadata: the standard tags live in the skill (presets/metatdats/metadata.json); this file only
+    # overrides them for this piece. scripts/helpers/ingest_metadata.py reads both at certification.
+    meta_file = proj_dir / 'metadata.json'
+    if not meta_file.exists():
+        meta_file.write_text(json.dumps({
+            'overrides': {},
+            'derive_from_score': {'title': True, 'genre': True, 'comment': True, 'year': True},
+        }, indent=2) + '\n', encoding='utf-8')
     
     skill_scripts = (SKILL / 'scripts').resolve()
     skill_scripts_str = str(skill_scripts).replace('\\', '/')
@@ -516,6 +526,7 @@ The pipeline will not render until a note cites the knowledge base and lists at 
     print("      mix/                 (<title>_mix.json: character sentence + the strategies: gain staging, dynamics,")
     print("                            spectral profiles, space, sidechain, mastering profile; role_chains written out)")
     print("      sfx/                 (one-hit effects; empty: the shipped defaults work until you tune one)")
+    print("      gate/                (this piece's gate profile: gate_profiles.py new <name> --project <dir>)")
     if ambience:
         print("      environments/        (forest_canopy_3d.json)")
     print("    reference/             (measured real-sound metrics: reference/<slug>.json; empty until the research measures one)")
@@ -527,7 +538,11 @@ The pipeline will not render until a note cites the knowledge base and lists at 
     print("    reports/               (Research preflight & CI/CD quality reports)")
     print("      research_brief.md")
     print("      ci_report.json")
+    print("    metadata.json           (standard delivery tags: overrides only; the defaults live in the skill)")
     print("    out/                   (Master WAV and exported MIDI)")
+    print("      master.wav           (copy of the newest certified version)")
+    print("      master_vNN.wav       (every certified version; earlier ones are never overwritten)")
+    print("      versions.json        (each version with the gate failures it cleared)")
     print("    STATUS.md              (Project tracking and decisions)")
     print("\nNext: 2) research_kb.py  3) fill direction/  4) presets  5) score  6) pipeline.py (blocked until 2-4 are done):")
     print(f"  {venv_python(SKILL / '.venv')} {skill_scripts_str}/pipeline.py {scores_dir / 'main_score.json'} --project {proj_dir}")
