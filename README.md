@@ -9,10 +9,9 @@ A research-backed, measurement-driven procedural music generation system that co
 
 **Black Jaguar — cinematic chase** · D minor · 134 BPM · jungle ambience, stalking strings, chromatic pursuit, build and release
 
-<audio controls preload="none" src="https://cdn.jsdelivr.net/gh/rashee1997/music-generator@master/assets/samples/black-jaguar-cinematic-chase.mp3">
-</audio>
+▶ **[Listen in the browser](https://rashee1997.github.io/music-generator/docs/listen.html)** · [MP3, 320 kbps](assets/samples/black-jaguar-cinematic-chase.mp3)
 
-▶ [Play the sample (MP3, 320 kbps)](assets/samples/black-jaguar-cinematic-chase.mp3)
+GitHub strips `<audio>` tags from Markdown, so the player lives on the project's [Pages site](https://rashee1997.github.io/music-generator/docs/listen.html).
 
 ## The problem with code-generated music
 
@@ -89,6 +88,71 @@ music-generator/
 ├── assets/samples/  rendered demo audio
 └── docs/            theory and documentation
 ```
+
+## Credits
+
+- `scripts/spatial_hrtf/` contains a vendored copy of [spaudiopy](https://github.com/chris-hld/spaudiopy) by Chris Hold (MIT License, kept in `scripts/spatial_hrtf/LICENSE`) with the small changes listed in `scripts/spatial_hrtf/README.md`.
+- Head-Related Transfer Function data is from the **FABIAN HRTF Database**, TU Berlin, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) ([DOI: 10.14279/depositonce-5718.5](https://doi.org/10.14279/depositonce-5718.5)), downloaded via `setup_project.py` and not bundled in this repository.
+- SoundFont synthesis utilizes [tinysoundfont](https://github.com/schellingb/tinysoundfont) by Bernhard Schelling (MIT License) with the [GeneralUser GS SoundFont](https://schristiancollins.com/generaluser.php) by S. Christian Collins.
+
+## Third-party libraries, attributions and key equations
+
+All dependencies are used in accordance with their respective open-source licenses.
+
+### Core scientific computing
+
+| Library | License | Repository | Purpose and key mathematical operations |
+|---|---|---|---|
+| [NumPy](https://numpy.org/) | BSD-3-Clause | [GitHub](https://github.com/numpy/numpy) | Vectorized numerical computation, linear algebra, FFT operations for spectral analysis, windowing functions |
+| [SciPy](https://scipy.org/) | BSD-3-Clause | [GitHub](https://github.com/scipy/scipy) | Digital signal processing (`scipy.signal`), IIR/FIR filter design, Welch PSD, polyphase decimation (`resample_poly`) |
+
+### Audio I/O and processing
+
+| Library | License | Repository | Purpose and key algorithms |
+|---|---|---|---|
+| [soundfile](https://python-soundfile.readthedocs.io/) | BSD-3-Clause | [GitHub](https://github.com/bastibe/python-soundfile) | C-level audio I/O via libsndfile; bit-depth preservation (32-bit float streaming) |
+| [Pedalboard](https://spotify.github.io/pedalboard/) | GPL-3.0 | [GitHub](https://github.com/spotify/pedalboard) | Spotify DSP engine: true-peak brickwall limiting, dynamic compression, stereo spatialization |
+| [pyloudnorm](https://github.com/csteinmetz1/pyloudnorm) | MIT | [GitHub](https://github.com/csteinmetz1/pyloudnorm) | EBU R128 and ITU-R BS.1770-4 loudness measurement with K-weighting pre-filter |
+
+### MIDI and music theory
+
+| Library | License | Repository | Purpose and key algorithms |
+|---|---|---|---|
+| [pretty_midi](https://craffel.github.io/pretty-midi/) | MIT | [GitHub](https://github.com/craffel/pretty-midi) | MIDI 1.0 container parsing, timing quantization, note array extraction |
+| [mido](https://mido.readthedocs.io/) | MIT | [GitHub](https://github.com/mido/mido) | Real-time and file-based MIDI stream serialization |
+| [music21](https://web.mit.edu/music21/) | BSD-3-Clause / LGPL | [GitHub](https://github.com/cuthbertLab/music21) | Computational musicology, Roman numeral voice-leading analysis, tonal pitch class matrices |
+
+### Analysis and diagnostics
+
+| Library | License | Repository | Purpose and key algorithms |
+|---|---|---|---|
+| [librosa](https://librosa.org/) | ISC | [GitHub](https://github.com/librosa/librosa) | Short-Time Fourier Transform, constant-Q transform, 12-bin chroma profiling, onset envelope detection |
+| [matplotlib](https://matplotlib.org/) | PSF | [GitHub](https://github.com/matplotlib/matplotlib) | Offline diagnostic plots of spectral masking curves, roughness surfaces and rhythm trees |
+
+### Spatial audio and utilities
+
+| Library | License | Repository | Purpose and key algorithms |
+|---|---|---|---|
+| [h5py](https://www.h5py.org/) | BSD-3-Clause | [GitHub](https://github.com/h5py/h5py) | HDF5 access for multidimensional SOFA / FABIAN HRTF impulse response grids |
+| [requests](https://requests.readthedocs.io/) | Apache-2.0 | [GitHub](https://github.com/psf/requests) | HTTPS asset acquisition for soundbanks and acoustic impulse responses |
+| [resampy](https://github.com/bmcfee/resampy) | ISC | [GitHub](https://github.com/bmcfee/resampy) | High-order bandlimited sinc interpolation for sample-rate conversion |
+
+### Psychoacoustic and music theory foundations
+
+The engine implements formal models from peer-reviewed acoustic and cognitive literature:
+
+| Model | Citation | Purpose and defining formulation |
+|---|---|---|
+| **Low-Interval Limit** | Huron, D. (2001). [Tone and Voice: A Derivation of the Rules of Voice-Leading from Perceptual Principles](https://doi.org/10.1525/mp.2001.19.1.1). *Music Perception*, 19(1), 1–64. | Register-dependent frequency minimums that prevent basilar-membrane critical-band roughness in the low register ($f < 250$ Hz). |
+| **Krumhansl-Schmuckler key profiles** | Krumhansl, C. L. (1990). [*Cognitive Foundations of Musical Pitch*](https://global.oup.com/academic/product/cognitive-foundations-of-musical-pitch-9780195148367). Oxford University Press. | Tonal hierarchy correlation of pitch-class distributions against probe-tone ratings: $r = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum (x_i - \bar{x})^2 \sum (y_i - \bar{y})^2}}$. |
+| **Chew's spiral array** | Chew, E. (2000). [*Towards a Mathematical Model of Tonality*](https://dspace.mit.edu/handle/1721.1/9139). Doctoral dissertation, MIT. | Pitch classes mapped into a 3D helix where line-of-fifths intervals stay contiguous: $\mathbf{p}(k) = [r \sin(k\pi/2),\, r \cos(k\pi/2),\, k h]^T$; measures Tensile Strain and Cloud Momentum. |
+| **Plomp-Levelt sensory consonance** | Plomp, R., & Levelt, W. J. M. (1965). [Tonal Consonance and Critical Bandwidth](https://doi.org/10.1121/1.1909741). *JASA*, 38(4), 548–560. | Dissonance between partials as a function of critical bandwidth: $d(f_1, f_2) = e^{-a s \Delta f} - e^{-b s \Delta f}$, peaking near 25% of the critical band. |
+| **Sethares dissonance curves** | Sethares, W. A. (1998/2005). [*Tuning, Timbre, Spectrum, Scale*](https://doi.org/10.1007/978-1-84628-113-6). Springer-Verlag. | Generalizes sensory dissonance to non-harmonic spectra and microtonal temperaments by integrating all pairwise partial clashes. |
+| **Witek-Vuust syncopation curve** | Witek, M. A. G. et al. (2014). [Syncopation, Body-Movement and Pleasure in Groove Music](https://doi.org/10.1371/journal.pone.0094446). *PLOS ONE*, 9(4), e94446. | Inverted-U groove index across metric levels using the Bar Syncopation Index ($0.15 \le BSI \le 5.5$). |
+| **Moore-Glasberg ERB filters** | Moore, B. C. J., & Glasberg, B. R. (1983). [Suggested formulae for calculating auditory-filter bandwidths and excitation patterns](https://doi.org/10.1121/1.389861). *JASA*, 74(3), 750–753. | Equivalent Rectangular Bandwidth for masking pockets: $\text{ERB}(f) = 24.7\,(4.37 f/1000 + 1)$ Hz. |
+| **Meyer's gap-fill principle** | Meyer, L. B. (1956). [*Emotion and Meaning in Music*](https://press.uchicago.edu/ucp/books/book/chicago/E/bo5479468.html). University of Chicago Press. | Wide disjunct leaps ($\ge 5$ semitones) must resolve conjunctly in the opposite direction ($\ge 45\%$ step motion). |
+| **IDyOM information dynamics** | Pearce, M. T. (2005). [*The Construction and Evaluation of Statistical Models of Melodic Predictability*](https://qmro.qmul.ac.uk/xmlui/handle/123456789/1376). PhD thesis, City University London. | Variable-order Markov Shannon entropy ($1.2 \le H \le 3.8$ bits) and surprise ($I = -\log_2 P$) balancing predictability with cognitive interest. |
+| **ITU-R BS.1770-4 / EBU R128** | International Telecommunication Union (2015). [ITU-R BS.1770-4](https://www.itu.int/rec/R-REC-BS.1770-4-201510-I/en). | Loudness gating: $L_K = -0.691 + 10 \log_{10} \sum_i G_i z_i$ after K-weighting pre-filter. |
 
 ## License
 
