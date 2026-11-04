@@ -1,3 +1,12 @@
+---
+title: music21 analysis
+summary: The analysis hook a project can add, what it measures, and how its output is read.
+tags: [music21, analysis, hook, report, score]
+load_when:
+  - a project wants symbolic analysis
+  - reading the analysis report
+---
+
 # Dynamic Music Analysis with music21
 
 `music21` is an expansive, object-oriented toolkit for computational musicology, music theory, and symbolic musical intelligence developed at MIT. It is not a static validator or rigid rule-checker; it is a full musical computing environment.

@@ -1,3 +1,12 @@
+---
+title: Custom scores
+summary: The score schema and the helper calls that build one: tracks, notes, hits, arcs and tempo changes.
+tags: [score, json, track, notes, direct, schema, custom]
+load_when:
+  - writing a score by hand or with helpers
+  - a score fails schema validation
+---
+
 # Writing custom music scripts (for any kind of work)
 
 `compose.py` covers common moods. For everything else (a named theme, a chord sheet the user gave you, music that

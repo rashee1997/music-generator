@@ -2,15 +2,19 @@ name: references
 
 on:
   push:
+    paths: ["references/**", "scripts/find_references.py", "tests/check_references.py", "AGENTS.md", "SKILL.md"]
   pull_request:
+    paths: ["references/**", "scripts/find_references.py", "tests/check_references.py", "AGENTS.md", "SKILL.md"]
 
 jobs:
-  guard:
+  references:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-      - name: references/ holds instructions only
+          python-version: "3.11"
+      - name: No history, URLs, broken links or counts
         run: python tests/check_references.py
+      - name: Every file has front matter
+        run: python scripts/find_references.py --check

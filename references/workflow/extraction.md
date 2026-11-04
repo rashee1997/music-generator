@@ -1,3 +1,12 @@
+---
+title: Extraction
+summary: Pulling MIDI and stems from audio, and what the extraction gate will and will not certify.
+tags: [extract, midi, stems, transcribe, separate, audio]
+load_when:
+  - the user supplies audio to reuse
+  - stems or MIDI must be recovered
+---
+
 # Taking a song apart: notes first, then stems rebuilt from the notes
 
 Pure signal processing, no neural models, CPU only. **Scope: instruments (and humming), drums, space and ambience.**

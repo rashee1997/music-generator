@@ -38,7 +38,8 @@ Follow these steps in order. Never skip steps.
 | Step | Action | Output | Check |
 |---|---|---|---|
 | 1 | **Create project** | `python scripts/setup_project.py --new-project <dir> --title "<Title>"` (add `--ambience` only if requested) | Project structure with direction/, presets/, scores/, out/, reports/, STATUS.md |
-| 2 | **Research** | `python scripts/research_kb.py <dir> --topic "<topic>" --tags <tags>`. Add web sources via TinyFish. For ambience/effects, use `--sounds` and document real references with licenses/measurements. | `reports/research_<topic>.md` with KB citations and sources |
+| 2 | **Research** | `python scripts/research_kb.py <dir> --topic "<topic>" --tags <tags>`. Add web sources via TinyFish (see the `use-tinyfish` skill). For ambience/effects, use `--sounds` and document real references with licenses/measurements. | `reports/research_<topic>.md` with KB citations and sources |
+| 2b | **Load references** | `python scripts/find_references.py "<the brief in plain words>" --top 5`. Then open only the files it returns, and inside them only the sections it names. | The list of files you will actually open, and why |
 | 3 | **Direction sheet** | Copy `templates/direction_sheet.json` to `<dir>/direction/direction_<title>.json`. Fill all fields per [`references/workflow/music-direction.md`](references/workflow/music-direction.md). For video, run `scripts/video_score.py` first. | Complete sheet with job, feel, sections, motifs, hits, mix_intent, spatial_staging |
 | 4 | **Create presets** | `python scripts/presets.py scaffold instruments/vocals/environments/sfx <name> --project <dir>`. Each needs unique spatial placement. | Presets in project with character, spatial.azimuth/distance |
 | 5 | **Write score** | Create `<dir>/scores/<title>_score.json` (declarative, references presets). Use [`templates/custom_score_template.py`](templates/custom_score_template.py) for exact control. | Valid JSON with tracks referencing presets |
@@ -63,6 +64,26 @@ Rules for an agent:
 - Check the record after a render: `python scripts/helpers/version_manager.py list --project <dir>`.
 - MP3 compression is **manual**, never part of the pipeline: `python scripts/helpers/compress_mp3.py out/master_vNN.wav -o <file>.mp3 -b 320k`. It carries the sidecar tags into the MP3.
 - The gate rows `meta.tags` and `meta.version` only trace this record. They warn, never fail, and are `INFO` on a piece's first render.
+
+## References on demand
+
+`references/` is bigger than any one piece needs. Do not open it file by file: ask the finder, which indexes
+`references/**/*.md` at run time by keyword (no list of files is stored anywhere), and read only what comes back.
+
+```
+python scripts/find_references.py "carnatic violin over a lo-fi bed"
+python scripts/find_references.py --tags immersive
+python scripts/find_references.py --list      # every file, its summary and its tags
+python scripts/find_references.py --check     # front-matter audit; CI runs this
+```
+
+Every reference file carries YAML front matter (`title`, `summary`, `tags`, `load_when`). The finder scores the
+body, then the title and the tags, and prints the best section of each file with its line number: go to that line
+instead of reading the whole page. A query that returns nothing means the words were too vague; use the words of
+the brief, a culture, an instrument or a gate row.
+
+Do not read a reference file that the finder did not return, and do not paste its text into an answer: the file
+exists so the agent can decide values, not so it can be quoted.
 
 ## Key Principles
 

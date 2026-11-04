@@ -1,3 +1,12 @@
+---
+title: Creative composition
+summary: Writing a piece by hand: form, motif development, harmony and the checks before rendering.
+tags: [compose, motif, form, harmony, melody, development]
+load_when:
+  - writing a custom score
+  - a motif has to develop rather than repeat
+---
+
 # Creative composition: write music, do not fill in templates
 
 `compose.py` genres and moods are **scaffolds**. Each one repeats a one-bar pattern under a chord loop. Used alone they

@@ -1,3 +1,12 @@
+---
+title: Vocal performance engine
+summary: Every knob of the singing voice: formants, breathing, vibrato, expression, and the gate rows that judge it.
+tags: [vocal, formant, vowel, breath, vibrato, choir, singer, expression]
+load_when:
+  - a piece has a sung or hummed part
+  - a vocal gate row fails
+---
+
 # Vocal performance engine: how it works and how to configure it
 
 Code: `scripts/vocals.py` (public facade) and `scripts/vocal_engine/`. Data: `references/data/vocal-engine-data/`.
@@ -226,24 +235,3 @@ connect instead of dropping out; `c` now works in cents; chorus default mix 0.25
 saturation; `harmonic_lock`, `bandwidths` and style registers now act. The three shipped vocal presets were converted to the new
 schema (they had no effect before). `tests/legacy_vocals.py` keeps the old code for A/B and benchmarks.
 
-## 13. Commands and measured results
-
-```
-.venv/Scripts/python.exe scripts/vocals.py selftest | demo [out.wav] | hum [out.wav]
-.venv/Scripts/python.exe -m unittest tests.test_vocals_engine tests.test_vocal_gate
-.venv/Scripts/python.exe tests/render_vocal_artifacts.py old|new     # tests/artifacts/vocals/{old,new}_*.wav (loudness matched)
-.venv/Scripts/python.exe tests/compare_vocals.py                      # tests/artifacts/vocals/REPORT.md
-.venv/Scripts/python.exe tests/bench_vocals.py
-.venv/Scripts/python.exe tests/vocal_expression_report.py    # A/B before/after the phrasing work + WAVs + REPORT.md
-```
-
-Benchmark (this laptop, CPU, 11.1 s hum phrase; seconds to render):
-
-| voices | old | new |
-|---|---|---|
-| 1 | 1.82 | 1.05 |
-| 5 | 11.81 | 3.99 |
-| 16 | 38.31 | 10.81 |
-
-Cost: the new engine runs the source and filters once per phrase per singer (no per-harmonic sine loop, no O(n*k) noise
-convolution), plus a one-off timbre calibration per vowel and pitch (cached). Time-varying formants use 5 ms blocks.

@@ -1,10 +1,19 @@
+---
+title: Emotion and scoring
+summary: Which cue carries which feeling, the mood vocabulary the code understands, and the modifiers that change them.
+tags: [mood, emotion, feel, major, minor, tempo, energy, modifier]
+load_when:
+  - a brief names a feeling
+  - the forced choice reads the wrong mood
+---
+
 # Emotion and situational scoring
 
 How to make music that makes people FEEL a specific thing, and how to fit it to a scene, a cut, a voice-over
 or a game state. Read this before choosing key / tempo / instruments, then let `scripts/compose.py` (or your own
 script) apply it.
 
-## 1. What listeners actually hear as emotion (research summary)
+## 1. How listeners hear emotion
 
 Listener studies (Juslin & Laukka; Eerola, Friberg & Bresin 2013 "Emotional expression in music: contribution,
 linearity, and additivity of primary musical cues") found that a handful of cues carry most of the emotion, that
@@ -38,7 +47,7 @@ articulation, timbre**. So set these in this order, and make them all point the 
 
 `compose.py --list` shows the exact emotion names and aliases it understands. The `epic` preset is major or mixolydian (heroic). `dark_epic` is the minor version, for battle and dread. An earlier minor-leaning epic read as sad in tests, which is why the default changed (see `scene-recipes.md` section 1). Genres (hip hop, trap, dubstep, funk, metal and others) and the mood research are in `genres-and-moods.md`.
 
-**What the research does and does not say.** Eerola, Friberg & Bresin (2013) found mode the strongest cue for happy and sad,
+**What the evidence supports.** Mode is the strongest cue for happy and sad,
 dynamics the strongest for scary and peaceful, and the cues additive, on four excerpts with synthetic timbres. Treat the table as
 the starting point for a direction sheet, and check the result with `listen.py`, not with the table.
 

@@ -1,3 +1,12 @@
+---
+title: Global theory
+summary: Scales, modes and microtonal material across traditions, with the notes and intervals to use.
+tags: [scale, mode, raga, maqam, microtonal, interval, key]
+load_when:
+  - choosing a scale outside major and minor
+  - writing in a non-Western mode
+---
+
 # Global music theory knowledge base: what the skill uses, what was added, what does not hold
 
 Source: `global_music_theory_algorithmic_synthesis_guide.md` (in the skill folder), a user-supplied knowledge base with
@@ -83,15 +92,6 @@ already does the same job from the cycle table.
 | 4. Register separation for shared rhythm | nothing | not enforced; set octaves and pans by hand |
 | 5. Transition markers before a section change | nothing | not enforced |
 | 6. Contrast before a climax | `dynamics` arc in the score | you set the dip; nothing checks it |
-
-## 6. Problems found in the KB (not copied into the skill)
-
-1. **Hindolam is not the same as Hindol.** The KB's `raga_hindolam` has the Malkauns set `[0,3,5,8,10]`. The skill's `raga_hindol` is `[0,4,6,9,11]`. Both are kept. Do not treat them as one raga.
-2. **Keeravani has no separate set here.** Its set matches the harmonic-minor shape. Fine as a sound, but it is not a distinct raga in this table.
-3. **Rupaka** is given as "3 or 6 beats". The skill's `rupak` is the 7-beat Hindustani tala (3+2+2). They are different talas. Both names are kept.
-4. **Undefined helper.** `make_western_cinematic_chord` is used in the situational table and never written.
-5. **Gamaka first-note rule.** In `apply_indian_gamaka`, the random slide runs only on the first note (the `elif`). That is ported as written and marked as a shortcut in `theory.py`. It may have been meant for every note; check by ear.
-6. **Unsourced claims.** The vibe words ("autumnal", "sunrise", "spiritual"), the Carnatic and Hindustani equivalences beyond the ones already sourced, and the claim that a Yo scale has "stacked 4ths" are the author's. They are not verified here.
 
 ## 7. Limits
 

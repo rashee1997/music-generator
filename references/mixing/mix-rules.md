@@ -1,3 +1,12 @@
+---
+title: Mix rules
+summary: The short list of mix rules: one low-end owner, headroom, lane separation, and where the detail lives.
+tags: [mix, rules, headroom, low end, lanes, master]
+load_when:
+  - before touching a mix preset
+  - checking a mix against the basics
+---
+
 # Mix rules
 
 

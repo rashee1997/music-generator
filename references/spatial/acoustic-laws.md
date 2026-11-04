@@ -1,3 +1,12 @@
+---
+title: Acoustic laws
+summary: The physical numbers behind distance, air absorption and room behaviour, and where each is used.
+tags: [acoustic, distance, absorption, room, reverb, air, physics]
+load_when:
+  - setting distance or reverb by physics
+  - a spatial claim needs a number
+---
+
 # Acoustic laws and dynamic musical flow
 
 

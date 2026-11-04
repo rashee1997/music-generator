@@ -1,3 +1,12 @@
+---
+title: Cloning an instrument from audio
+summary: What to measure from a reference recording, in what order, and what the clone can and cannot promise.
+tags: [clone, sample, timbre, spectrum, pitch, formant, reference audio]
+load_when:
+  - the brief asks to sound like a recording
+  - a preset needs a measured character
+---
+
 # Cloning an instrument from a recording
 
 Goal: the user has a sound (a sitar, a family oud, a recorder, a toy piano, their own humming, a pan lid)

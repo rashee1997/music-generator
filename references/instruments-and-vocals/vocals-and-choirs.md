@@ -1,3 +1,12 @@
+---
+title: Hums and choirs
+summary: How a synthetic voice is built to read as a voice, and how to blend voices under or over a bed.
+tags: [vocal, choir, hum, voice, blend, vowel, stack]
+load_when:
+  - the brief asks for voices
+  - a choir bed masks the lead
+---
+
 # Hums and choirs in code: how they are made, and how they blend with music
 
 Used by `scripts/vocals.py` and the `scripts/vocal_engine/` package. Full technical reference, every setting, and the limits:

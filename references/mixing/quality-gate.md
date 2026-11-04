@@ -1,9 +1,18 @@
+---
+title: Quality gate
+summary: Every gate row, its threshold, the profile that turns it on, and the lever that fixes a failure.
+tags: [gate, threshold, fail, profile, verdict, rows, check]
+load_when:
+  - a gate row fails
+  - choosing or writing a gate profile
+---
+
 # The quality gate: bottlenecks in code-made music, what was fixed, and what a gate cannot prove
 
 `scripts/quality_gate.py` is the check a piece must pass before it is called finished. It measures what code can see.
 It does not prove that a piece is "100% natural": no code can, and the objective metrics that exist are weak proxies.
 
-## 1. Research: where code-made music goes wrong
+## 1. Where code-made music goes wrong
 
 - **Humanising is not random jitter.** Research and production sources (the Soundfly and Reddit threads on humanising
   MIDI) say MIDI sounds lifeless when it is quantised exactly and when velocity is constant. Real players move timing
@@ -124,7 +133,7 @@ numbers, come from a **gate profile**: a preset of kind `gate` (`references/data
   `tense`, `dance`) keep the old switches of the feel checks. `fallback: balance.layers` hands a row over when it has nothing to measure
   against (no lead): each layer against the median layer, WARN / FAIL at `warn_db` / `fail_db`.
 - Shipped starters: `melodic`, `tense`, `ambient`, `dance`, `cinematic`, `effects_only`. Their numbers are reasoned from the checks' own
-  logic, not measured on a corpus of real pieces. Adjust them with evidence in the project.
+  logic, not a measurement of real pieces. Adjust them with evidence in the project.
 - Report ids and profile ids are mapped by `gate_profiles.ALIASES` (`cochlear_roughness` → `roughness`, `kick_grid` → `kick.grid`,
   `harmonic_concordance` → `chroma.concordance`, `spiral_tension_arc` → `feel.spiral`, …). A relax/skip line names both, so a
   relaxed row can be found in the report under either name. `Profile.on/mode/param` accept either id.

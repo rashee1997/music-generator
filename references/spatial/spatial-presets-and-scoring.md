@@ -1,4 +1,13 @@
-# Modular Presets, Direction, Declarative Scores & 3D Spatial Mixing
+---
+title: Spatial presets and scoring
+summary: The preset fields for instruments, vocals, spaces and mix, and how a score stages them in 3D.
+tags: [spatial, azimuth, distance, preset, staging, pan, depth]
+load_when:
+  - writing any preset
+  - staging a score across azimuth and depth
+---
+
+# Spatial presets and scoring
 
 This document codifies the production architecture for realistic acoustic and spatial music scoring in this skill (modeled on the reference production in `amazon_3d_spatial`).
 

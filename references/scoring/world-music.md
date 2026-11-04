@@ -1,3 +1,12 @@
+---
+title: World music
+summary: Tempo, groove, instruments and scales for the world idioms, each with its playing rules.
+tags: [world, traditional, india, arabic, african, latin, celtic, gamelan]
+load_when:
+  - the brief names a non-Western idiom
+  - a culture's instruments and rhythm must be chosen
+---
+
 # World music: scales, instruments, rhythm and genres
 
 Use this file when the brief names a country, a tradition or a world instrument: Indian (Hindustani, Carnatic, Bollywood,
@@ -7,7 +16,7 @@ Caribbean, African, Andean, Celtic, flamenco, klezmer, and the older Western sty
 `render_natural.py`. `python3 scripts/world.py` prints every scale, cycle and genre it knows.
 
 Labels follow `genres-and-moods.md`: **sourced** = read for this skill (section 9); **practice** = common practice or the
-author's approximation, not measured on a corpus.
+author's approximation, to be confirmed by ear before it is called measured.
 
 ---
 

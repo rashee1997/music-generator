@@ -1,3 +1,12 @@
+---
+title: Blending and balance
+summary: The mix-preset keys that decide gain staging, ducking and spectral balance, and what each one does.
+tags: [mix, balance, ducking, sidechain, eq, gain, preset keys]
+load_when:
+  - writing or fixing a mix preset
+  - one part is inaudible or masks another
+---
+
 # Blending and balance (any music)
 
 How a human mixer makes layers sound like one piece. Applies to ambient, pop, film, game, anything. Sources: Salivity "Layering Field Recordings Under Ambient Beds", Sound On Sound "Depth of Field" (Heimer, 2025), SonusGearFlow "Designing Ambiences" (2026). Full notes: a project's `reports/research_mixing_blend.md`.

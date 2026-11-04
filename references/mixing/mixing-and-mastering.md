@@ -1,3 +1,12 @@
+---
+title: Mixing and mastering
+summary: The whole mix and master path: bus structure, dynamics, space, loudness targets and the embedded checks.
+tags: [mix, master, loudness, lufs, true peak, limiter, reverb, depth]
+load_when:
+  - building or auditing a mix preset
+  - loudness or true peak fails
+---
+
 # Mixing and mastering
 
 `scripts/mixer.py` does this for you (render_natural.py calls it). Read this page to decide settings, to

@@ -1,9 +1,18 @@
+---
+title: A.R. Rahman style
+summary: The production overlay: which instruments lead each role, and what it leaves alone.
+tags: [style, rahman, production, overlay, lead, arrangement]
+load_when:
+  - the brief names a production style
+  - a culture mix needs an arrangement voice
+---
+
 # A.R. Rahman style: what the production voice is
 
 A production style is an overlay on a culture mix (`scripts/fusion.py`, `STYLES`). It changes which instruments lead
 each role, not the cultures' scales, tempos or soul rules.
 
-## What the sources say
+## What the style does
 - **Lush strings married with the melody.** Rahman is known for lush string sounds married with Indian melody.
   (theconversation.com, "How A R Rahman brought Bollywood soundtracks to the Western world")
 - **Counterpoint, orchestration and the human voice.** His compositions use counterpoint, orchestration and voices,

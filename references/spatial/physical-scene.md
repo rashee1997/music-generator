@@ -1,3 +1,12 @@
+---
+title: Physical scene
+summary: Building a sound from materials, geometry and events, and which numbers are measured or estimates.
+tags: [physical, scene, material, geometry, event, foley, break, footstep]
+load_when:
+  - a sound has to be synthesised from a model
+  - a scene value needs a source
+---
+
 # A new sound is data: the physical scene
 
 Use this when a sound must be built or changed: a break, a footstep on a surface, rain on a material, a knock on an

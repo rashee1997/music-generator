@@ -1,3 +1,12 @@
+---
+title: Troubleshooting and limits
+summary: Symptom to cause for the common failures, and the honest limits to tell the user.
+tags: [troubleshoot, error, symptom, limit, failure, fix]
+load_when:
+  - a render or check misbehaves
+  - writing the limitations section
+---
+
 # Troubleshooting and limits
 
 ## Troubleshooting

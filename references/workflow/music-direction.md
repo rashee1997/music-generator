@@ -1,3 +1,12 @@
+---
+title: Music direction
+summary: The director's loop: brief, direction sheet, draft, listen, judge, change one lever.
+tags: [direction, sheet, spotting, hits, sections, revision, judge]
+load_when:
+  - before rendering any piece
+  - a target misses and one lever must change
+---
+
 # Music direction: decide what the piece must do, then judge what you made
 
 A generator makes something and hands it over. A director decides what the piece has to do, makes a draft,

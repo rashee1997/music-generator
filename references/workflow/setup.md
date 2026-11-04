@@ -1,3 +1,12 @@
+---
+title: Setup
+summary: One-time environment setup: the venv, the SoundFont, earshot and what each install buys.
+tags: [setup, install, venv, soundfont, earshot, environment]
+load_when:
+  - a fresh machine
+  - a dependency is missing
+---
+
 # One-time setup (venv, SoundFont, earshot)
 
 

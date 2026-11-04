@@ -1,3 +1,12 @@
+---
+title: Research step
+summary: The research a piece needs before direction: knowledge base first, web second, decisions written down.
+tags: [research, knowledge base, sources, decisions, brief]
+load_when:
+  - the start of any piece
+  - a culture, instrument or voice is unfamiliar
+---
+
 # Research step (knowledge base first, then web)
 
 

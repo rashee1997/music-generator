@@ -1,3 +1,12 @@
+---
+title: Video scoring
+summary: Scoring against a picture: cuts, hits, dialogue, the video block in the sheet and its four gate rows.
+tags: [video, picture, sync, cut, dialogue, fps, hits, spotting]
+load_when:
+  - the brief has a video file
+  - a video gate row fails
+---
+
 # Scoring to picture
 
 Music written against a film: the cuts set the tempo and the hits, the picture's own audio stays intelligible,

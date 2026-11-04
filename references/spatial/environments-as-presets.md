@@ -1,3 +1,12 @@
+---
+title: Environments as presets
+summary: How a space is declared: the preset fields, the scene model and the sources each one cites.
+tags: [environment, space, room, preset, scene, weather, ambience]
+load_when:
+  - a piece needs a space
+  - an environment preset must be written
+---
+
 # Ambience and rooms are project presets
 
 Ambience (a forest, rain, a bazaar) and the room the music sits in are **written for each project, from its research**.

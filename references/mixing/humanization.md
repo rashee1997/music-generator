@@ -1,3 +1,12 @@
+---
+title: Humanization
+summary: Where to add timing, velocity and articulation variation, and where not to.
+tags: [humanize, timing, velocity, swing, rubato, grid, performance]
+load_when:
+  - a render sounds mechanical
+  - a dance or techno grid must stay tight
+---
+
 # Humanization: why machines sound robotic and what to change
 
 A score where every note starts exactly on the grid, with the same loudness and the same length, sounds

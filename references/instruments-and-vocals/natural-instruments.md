@@ -1,3 +1,12 @@
+---
+title: Natural instrument sources
+summary: Which sampled or modelled source to use for a given sound, and the range and playing limits of each.
+tags: [instrument, range, articulation, soundfont, samples, realism]
+load_when:
+  - choosing a source for an instrument
+  - writing notes outside a comfortable range
+---
+
 # Natural instrument sources: what to use for which sound
 
 Real instruments have irregularities that a formula does not give for free: attack noise, body resonance, uneven

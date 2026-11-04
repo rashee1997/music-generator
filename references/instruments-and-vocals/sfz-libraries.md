@@ -1,3 +1,12 @@
+---
+title: SFZ libraries
+summary: Installing, finding and rendering multisampled libraries, and the mix and space they still need.
+tags: [sfz, orchestra, samples, library, sfizz, sonatina, multisample]
+load_when:
+  - the brief asks for real samples or a full orchestra
+  - a named library must be installed
+---
+
 # SFZ sample libraries (optional, per project)
 
 The default sound is the GM SoundFont. A track can instead be played by a multisampled **SFZ library** that lives in the project.

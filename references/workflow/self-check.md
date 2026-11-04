@@ -1,3 +1,12 @@
+---
+title: Self-check
+summary: The boxes to answer before delivering, and what to do when one is a no.
+tags: [check, delivery, verify, before, report]
+load_when:
+  - before replying with a finished piece
+  - deciding what was not checked
+---
+
 # Self-check before you reply
 
 Answer every box with yes/no in `<project>/STATUS.md`, then list in your reply what was **not** checked.

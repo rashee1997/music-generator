@@ -1,3 +1,12 @@
+---
+title: Immersive and height
+summary: Height, elevation and the immersive rows: what may be lifted, what must stay on the floor, and why.
+tags: [immersive, height, elevation, atmos, surround, binaural, 3d]
+load_when:
+  - the brief asks for immersive or height
+  - an imm gate row fails
+---
+
 # Immersive headphone spatial audio (height, front/back, room, width)
 
 "Immersive" here means one thing: the stereo headphone master gets real height, placement, room and width through the systems the skill already has

@@ -1,3 +1,12 @@
+---
+title: Scene recipes
+summary: One recipe per situation: trailer, sad voice-over, explainer, thriller, end card, game loop, jingle.
+tags: [recipe, trailer, explainer, thriller, jingle, game, advert]
+load_when:
+  - the brief names a situation rather than a genre
+  - a stock scene needs its settings
+---
+
 # Scene recipes: direction sheet, build, edits, listen
 
 Each recipe gives the direction (what the piece must do), a starting brief for `scripts/compose.py`, the edits a
@@ -18,7 +27,7 @@ not been listened to with earshot.
 
 ---
 
-## 1. Trailer or product reveal (tested)
+## 1. Trailer or product reveal
 
 **Direction.** Quiet start, a hard hit at 24 s, silence at 38 s, then a reveal with a brass fanfare. Feel: epic
 and triumphant. Major mode. A steady pulse under the whole cue, so it drives. Not sad, not calm.

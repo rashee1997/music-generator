@@ -1,3 +1,12 @@
+---
+title: Bundled files
+summary: What ships in this skill, what each file is for, and which ones a piece never touches.
+tags: [files, layout, scripts, presets, knowledgebase, index]
+load_when:
+  - finding where something lives
+  - a file's purpose is unclear
+---
+
 # Bundled files, pipeline stages and Pedalboard
 
 

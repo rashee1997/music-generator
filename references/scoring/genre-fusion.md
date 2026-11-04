@@ -1,3 +1,12 @@
+---
+title: Genre fusion
+summary: How to hold two traditions in one piece: one pulse, one key centre, and which role each side takes.
+tags: [fusion, hybrid, one hero, pocket, tradition, electronic, blend]
+load_when:
+  - the brief mixes two genres or cultures
+  - deciding which side leads
+---
+
 # Blending genres and country styles: how a fusion is made to sound natural
 
 Use this when the brief mixes two or more traditions (a raga over a backbeat, a Tejano accordion under a country shuffle,

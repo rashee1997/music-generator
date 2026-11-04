@@ -1,3 +1,12 @@
+---
+title: Cultural soul
+summary: What each tradition's music is for, so a culture is not reduced to a scale and a drum loop.
+tags: [culture, soul, traditional, authenticity, feel, phrase, rhythm]
+load_when:
+  - a piece uses a traditional idiom
+  - choosing what a culture's music must feel like
+---
+
 # Cultural soul: what makes each music feel alive
 
 The soul is the thing a listener recognises before they can name it. It is data, in `scripts/soul.py` (built-in table)

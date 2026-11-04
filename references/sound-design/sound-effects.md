@@ -1,3 +1,12 @@
+---
+title: Sound effects
+summary: Turning a sound name into a physical model: materials, gestures and the scene fields that carry them.
+tags: [sfx, effect, impact, riser, foley, physical, scene, material]
+load_when:
+  - the brief asks for an effect
+  - a sound must be built from a model, not a sample
+---
+
 # Sound effects: how they are made in code, and when a small model is used
 
 Used by `scripts/sfx.py`: 21 one-hit effect recipes with a shipped default preset each (`references/data/presets/sfx/`), plus 7 older ambience recipes
@@ -12,7 +21,7 @@ Weather, bio-acoustics and the Zero-Overlap blending laws: `references/mixing/mi
 
 ---
 
-## 1. What the research says
+## 1. What makes a sound read as physical
 
 - **Procedural audio is sound made at run time from parameters** (the GDC procedural-audio talk by Fournel: real-time
   synthesis with exposed controls; the Splice overview). A generator with a seed and named parameters is the same

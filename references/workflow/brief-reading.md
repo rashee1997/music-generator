@@ -1,3 +1,12 @@
+---
+title: Reading the brief
+summary: Separating the mood from the way of playing it, and what to do when the two disagree.
+tags: [brief, mood, modifier, read, request, energy]
+load_when:
+  - the start of any piece
+  - a brief is vague or contradictory
+---
+
 # Reading the brief (mood words, modifiers, numbers)
 
 

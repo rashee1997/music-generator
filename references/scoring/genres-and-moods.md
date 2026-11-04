@@ -1,44 +1,27 @@
-# Genres and moods: what the research says, and what the code does
+---
+title: Genres and moods
+summary: The genre table: tempo, groove and layers for each genre, and the mood aliases that map onto it.
+tags: [genre, tempo, groove, layers, mood, hip hop, techno, rock]
+load_when:
+  - the brief names a genre
+  - the brief names a mood that is not in the basic list
+---
+
+# Genres and moods: which genre, which tempo, which groove
 
 Use this file when the brief names a genre (hip hop, funk, metal) or a mood that is not in the basic list, or when
-the user asks what "epic" should sound like. It separates three kinds of claim:
-
-- **Research**: a finding from a source that was read for this skill (listed at the end).
-- **Practice**: common practice in composition and production, not from a measured source. Labelled as such.
-- **Tested**: what the renders and earshot readings showed (results in section 6).
+the user asks what "epic" should sound like. Pick the row, then set the layer and groove it names; the numbers are
+starting values, not measurements, and a brief that names its own tempo wins.
 
 ---
 
-## 0. Extended Sub-Feel & Dynamic Flow Ontologies (Knowledge Base Index)
+## 0. Where the deep material lives
 
-For deep psychophysical coordinate mappings, exact frequency allocations, and pure-Python synthesis models, consult the authoritative machine-parsable knowledge bases:
-
-* **Breaking the "Upbeat 4/4 Trap" & 22 Sub-Archetypes:**  
-  See [`knowledgebase/genre-and-feel/psychoacoustic-genre.md`](../../knowledgebase/genre-and-feel/psychoacoustic-genre.md).  
-  Covers the **5 Orthogonal Psychoacoustic Axes** (Melodic Interval Geometry, Harmonic Motion with Chromatic Mediants, Rhythmic Gravity, Spectral Centroid Trajectory, and Spatial Acoustic Envelopes) across:
-  - *Adventurous:* Forest Mystic (Dorian 3/4), Frontier (John Williams mixolydian ostinatos), High-Seas Swashbuckler (6/8 gallop), Ancient Desert Ruin (microtonal augmented-seconds), Cosmic Odyssey (Lydian #4).
-  - *Epic:* Colossal Hybrid Trailer (braams & sub-drops), Mythic Choral Tragedy (Gothic minor), Triumphant Ascension (major fanfare), Tribal War March (earth-shaking percussion).
-  - *Electronic:* Warehouse Techno (hypnotic minimal), Euphoric Progressive Festival (SuperSaw leads), Cyberpunk Midtempo, Organic Deep Sunset House, Neuro Kinetic D&B.
-  - *Pop:* Max Martin Radio-Tight Pocket, 80s Dreamy Synth, ASMR Bedroom Whisper, Sunshine Nu-Disco.
-  - *Celtic:* Tavern Reel (fiddle frenzy), Highland Lament (keening pipes), Fae SlipJig (9/8 slip), Battle Charge.
-
-* **The 7 Laws of Natural Flow & 24 Niche Sub-Archetypes:**  
-  See [`knowledgebase/genre-and-feel/dynamic-flow.md`](../../knowledgebase/genre-and-feel/dynamic-flow.md).  
-  Enforces the **7 Laws of Natural Flow** (Anti-Loop $A \rightarrow A' \rightarrow B \rightarrow A''$, Phrase Respiration, Energy Curve $E(t) \in [0, 1]$, Conversational Call-and-Response, Transition Physics, 5-Band Spectral Slots, Dynamic Parameter Interpolation) across:
-  - *Lo-Fi & Chill:* Tokyo Study (drunken quintuplet swing), Midnight Vinyl Crackle, Cozy Coffee Bossa, Vaporwave Mall.
-  - *Ambient & Atmospheric:* Deep Space Drone, Arctic Cello Shimmer, Biophilic Rainforest, Sacred Temple Bell.
-  - *Horror, Suspense & Dark:* Sub-Bass Dread, Microtonal Waterphone / Penderecki Cluster, Victorian Haunting Music Box, Industrial Cyber-Slasher.
-  - *Gaming & Boss Battles:* Elden Ring Gothic Choir/Brass, Cyberpunk 2077 Glitch Industrial, 8-Bit/16-Bit Chiptune, JRPG Overworld.
-
-* **Commercial, Corporate, Motivational & Modern Musicals:**  
-  See [`knowledgebase/genre-and-feel/commercial-promo.md`](../../knowledgebase/genre-and-feel/commercial-promo.md).  
-  Covers the **Dopamine Arc** (0–3s Thumb-Stop hook, 15–30s micro-lifts, logo stings), the **Voice-Over First Contract** (1.8 kHz notch, dynamic ducking), and archetypes across Silicon Valley Uplift, Fintech Minimal Pulse, Stomp-Clap Indie Rock, Fashion House, and Lin-Manuel Miranda syncopated rap-showtunes.
-
----
-
+Sub-archetypes, axis coordinates and synthesis models are in `knowledgebase/genre-and-feel/` (`psychoacoustic-genre.md`, `dynamic-flow.md`, `commercial-promo.md`). Read the one you need with
+`python scripts/find_references.py "<the words of the brief>"` rather than all three. This file stays
+the decision table: which genre, which tempo, which groove, which layers.
 ## 1. Epic: how big, and in which mode
 
-**Research.**
 - Bühler's account of epic film music, read through the "Day of Honour" paper, describes the epic as power, loudness,
   bombast and aggression, with a percussion battery, a synth bass and a choir as typical elements.
 - The braam (a low, stacked brass swell, often pitched down) is a trailer-era device; its history is in the Northwestern
@@ -48,7 +31,6 @@ For deep psychophysical coordinate mappings, exact frequency allocations, and pu
   separates "triumphant" from "dark".
 - No source found gives a settled epic tempo or a settled epic mode. The mode is a direction decision, not a fact.
 
-**Practice (the code's choices).**
 - `epic` (heroic, the default): major or mixolydian, 88-112 BPM, taiko percussion, brass and strings. Major because the
   cue table ties loud-fast-major to triumph, and because the earlier minor-leaning preset read as sad in tests.
 - `dark_epic`: aeolian or phrygian, 76-100 BPM, the same kit. Use it for battle, dread, villains and "dark and huge".
@@ -86,10 +68,8 @@ is the usual tool for it.
 
 ## 3. Genres: instrumentation, tempo and groove
 
-GTZAN-style genre features (Tzanetakis & Cook 2002) are three families: timbral texture (spectral shape, MFCCs), rhythmic
-content (beat strength, tempo) and pitch content. They are features for telling genres apart, not a recipe for making
-them. The table below is a recipe, and its tempo and groove numbers are **practice**, cross-checked against two
-tempo guides (musical-u and learningmusic). They are not measured on a corpus.
+The table is a recipe, not a measurement: tempo and groove are starting values that two tempo guides agree on.
+When a brief gives a tempo, that tempo wins.
 
 | Genre (`brief.genre`) | Tempo used (BPM) | Groove (`theory.GROOVES`) | Typical layers in the code | Label |
 |---|---|---|---|---|
@@ -107,7 +87,7 @@ tempo guides (musical-u and learningmusic). They are not measured on a corpus.
 | house | 118-128 | four_floor | stabs, synth bass, saw lead, electronic kit | practice (four_floor was already in the code) |
 | techno | 124-134 | four_floor | pad, ostinato stab, synth bass, square lead | practice |
 
-Added from the Pixabay pass (all practice values; none measured on a corpus):
+More genres (starting values, not measurements):
 
 | Genre | Tempo used (BPM) | Groove | Typical layers in the code |
 |---|---|---|---|
@@ -130,12 +110,12 @@ Added from the Pixabay pass (all practice values; none measured on a corpus):
 | comedy | 110-130 | march | pizzicato, bassoon, tuba, xylophone |
 | kids | 100-118 | shaker | nylon strum, xylophone, bass, glockenspiel, brush kit |
 
-`lofi` now uses the boom_bap groove with an 808 kit at 68-88 BPM.
+`lofi` uses the boom_bap groove with an 808 kit at 68-88 BPM.
 
-**World genres** (India, Arabic, Turkish, Persian, Chinese, Japanese, Korean and K-pop, Rio and Brazil, Latin, Caribbean, African, Celtic, flamenco and more, 79 in all) are in
-`references/scoring/world-music.md`. They are practice values and are not in the earshot tables below.
+**World genres** (India, Arabic, Turkish, Persian, Chinese, Japanese, Korean, Brazil, Latin, Caribbean, African,
+Celtic, flamenco) are in `references/scoring/world-music.md`, with the same starting-value status.
 
-The `cinematic` taiko pattern is now a hit on every beat (accents on 1 and 3) so epic cues have a steady pulse.
+The `cinematic` taiko pattern hits on every beat (accents on 1 and 3) so an epic cue has a steady pulse.
 
 **Groove rule.** A genre names its groove. The groove replaces the mood's drum default, unless the brief sets `drums`
 explicitly.
@@ -144,27 +124,19 @@ explicitly.
 when they overlap. When they do not overlap ("calm house", "motivational corporate"), the mood wins 2:1 (tempo is
 the second-strongest emotion cue after mode) and the score's `meta.mood_notes` says so; the genre's instruments,
 groove and mix still apply. Only a request with no recognised mood word is genre-driven, and if it carries modifier
-words ("slow", "uptempo") those still choose the mood and move the tempo. This is the fix for the old behaviour where
-every genre request came out at the genre's upbeat tempo.
+words ("slow", "uptempo") those still choose the mood and move the tempo. Without this rule a calm brief that names a fast genre comes out at the genre's upbeat tempo.
 
 **Grid caveat.** The grooves are 4/4 grids of 16 steps. In a 3/4 bar, hits past beat 3 are dropped, so use a 4/4 meter
 with genre grooves.
 
 ### 3a. Pixabay's genre list, and where each label goes
 
-The user asked for the genres Pixabay Music uses. What was and was not checked:
-
-- Pixabay's public API has **no music endpoint**. It covers images and videos only (`/api/` and `/api/videos/`); a request to
-  `/api/music/` returns 404. The API key the user supplied therefore could not list music genres, and it is not stored anywhere in this skill.
-- The pixabay.com/music pages sit behind a Cloudflare challenge in a shell, so a shell cannot read them (and the challenge is not worked around).
-  Genre labels were read through the session's page reader instead: locale pages, playlists, and the genre index pages. That is a **sample**
-  of the labels on track listings, not a complete catalogue, and some pages returned the same listing twice.
-- Labels seen in listings include: Upbeat, Pop, Funk, Soft House, Techno & Trance, Dubstep, Beats, Trap, Urban Latin, Motown & Old School Rnb,
-  Mystery, Build Up Scenes, and others summarised in the table below.
+A Pixabay label maps to the genre this skill renders. The list is a sample of what the site's listings use, not a
+complete catalogue; an unlisted label goes to the nearest row by tempo, groove and layers.
 
 | Pixabay label (as seen) | Genre in this skill (`brief.genre`) | Note |
 |---|---|---|
-| Upbeat, Commercial, Advertising, Vlog, Tutorials, Background | `pop` or `corporate` | `corporate` is tuned to a 120 BPM reference the user supplied |
+| Upbeat, Commercial, Advertising, Vlog, Tutorials, Background | `pop` or `corporate` | `corporate` is tuned to one measured 120 BPM reference |
 | Beats, Alternative Hip Hop | `hiphop` | |
 | Lo-fi, Chill Beats | `lofi` | |
 | Trap | `trap` | |
@@ -182,7 +154,7 @@ The user asked for the genres Pixabay Music uses. What was and was not checked:
 | Afrobeat, African | `afrobeat` | |
 | Reggae | `reggae` | |
 | Funk | `funk` | |
-| Rock, Indie Rock, Alternative, Sport | `rock` or `indie` | the sport/rock reference the user supplied was measured |
+| Rock, Indie Rock, Alternative, Sport | `rock` or `indie` | one measured reference render |
 | Metal, Thrash, Doom | `metal` | |
 | Powerful Percussion, Taiko | `percussion` | |
 | Comedy, Bloopers, Quirky, Cartoon | `comedy` | |
@@ -234,135 +206,5 @@ Grids use 16 steps per bar (step 0 = beat 1, each step a sixteenth). Numbers bel
   exist in `theory.TEXTURES`.
 - Groove: add an entry to `GROOVES` in `theory.py` with its label (`sourced` or `practice`), the grid and the weights.
   Use `name@tag` keys for a second hit with a different weight.
-
-## 6. What the test renders show
-
-- Every genre renders at 24 s and every instrument name resolves. Each genre's tempo range and groove take effect (the
-  renders' BPMs fall in the ranges above, and each has drum notes).
-- The three cinematic moods (`epic`, `dark_epic`, `passionate`) render at 45 s with a percussion track (70, 54 and 165
-  drum notes respectively, plus timpani). Before the threshold fix they had none.
-- Earshot forced choice: each render was tested for its own label against three other genre labels. Results are in
-  section 7.
-
-## 7. Earshot readings
-
-Each file is tested with `api.match` for its own label against three other labels from a pool of 16. p is the share of
-the forced choice the target wins; z is earshot's score. "Pass" here means p of 0.5 or more and z of 2.5 or more, the
-same rule `listen.py` uses for feel. These are one render per genre, one seed, 10 s, so treat them as a first reading.
-
-| Render | Target label | p | z | Verdict | Earshot's top readings |
-|---|---|---|---|---|---|
-| funk | funk | 1.00 | 3.2 | pass | celebratory, jazz, uplifting, funk (3rd) |
-| samba | samba | 1.00 | 3.7 | pass | jazz, celebratory, uplifting |
-| techno | techno | 1.00 | 3.8 | pass | techno, synthwave, chiptune |
-| bossa | bossa nova | 1.00 | 3.4 | pass | jazz, celebratory, ukulele |
-| reggae | reggae | 1.00 | 2.2 | CHECK (z under 2.5) | funk, music box, acoustic guitar |
-| house | house | 0.91 | 2.3 | pass | techno, synthwave |
-| rock | rock | 0.77 | 4.6 | pass | funk (1st), rock with electric guitars (2nd) |
-| trap | trap | 0.91 | 2.1 | CHECK (z under 2.5) | corporate pop, glockenspiel, sad |
-| rnb | R and B soul | 0.90 | 1.9 | CHECK (z under 2.5) | hip hop beat with heavy bass, funk |
-| dubstep | dubstep | 0.74 | 2.3 | CHECK | synthwave, corporate |
-| hiphop | hip hop | 0.70 | 1.6 | CHECK | playful, chiptune, hip hop beat (3rd) |
-| metal | heavy metal | 0.01 | 3.9 | **FAIL** | rock with electric guitars, funk, jazz |
-| dnb | drum and bass | 0.02 | 2.4 | **FAIL** | chiptune, synthwave, techno |
-| cinematic, epic (10 s, pre-fix render) | epic orchestral | 0.89 | 2.2 | pass, but top reading is "sad and melancholic" | sad, strings ensemble, string quartet |
-| cinematic, epic (45 s) | epic orchestral | 1.00 | 3.2 | pass | string quartet, sad, strings, cinematic |
-| cinematic, dark_epic (10 s, pre-fix) | dark epic orchestral | 0.10 | 2.0 | **FAIL** | sad, strings, string quartet |
-| cinematic, dark_epic (45 s) | dark epic orchestral | 0.19 | 2.9 | **FAIL** (loses to "epic orchestral") | string quartet, sad, strings |
-| cinematic, passionate (10 s, pre-fix) | passionate orchestral | 0.67 | 2.3 | pass | sad, strings, string quartet |
-| cinematic, passionate (45 s) | passionate orchestral | 0.76 | 2.6 | pass | sad, strings ensemble |
-
-What this says, plainly:
-
-- **Clear passes**: funk, samba, techno, bossa, rock, house, and the 45 s heroic epic. The cues that have a
-  characteristic instrument or groove that earshot can name are easy for it.
-- **Metal and DnB fail.** Earshot hears metal as rock and DnB as chiptune or synthwave. The metal render has a distorted
-  guitar and pick bass; my guess is that the tempo and the mix make it read as rock, but this is not tested. The DnB render's
-  lead and pad are bright synths, which earshot files under synth genres. Both need work (see "Next" below); neither
-  should be called done.
-- **The dark epic does not separate from the heroic epic.** At 45 s the dark_epic render loses its own forced choice
-  to "epic orchestral" (p 0.19). Earshot reads the cinematic strings as sad or as a string quartet, whatever the mode.
-  So the minor mode is not yet being heard as dark. Do not claim `dark_epic` works until a listen confirms it.
-- **The heroic epic reads sad at 10 s.** The pre-fix 10 s render's top reading is "sad and melancholic". The 45 s render
-  wins clearly. It is also longer, and the test did not separate length from percussion, so the cause is not yet known.
-  The trailer recipe recorded a related limit.
-- Earshot's own warning applies: mood labels are wrong about one time in five, and a forced choice only compares the
-  labels given. A pass is a reading, not a verdict.
-
-**Next, in order, if these are worth pursuing:** for metal, a faster grid (160-180) with a steady double kick and more
-distortion on the guitar layer; for DnB, replace the bright saw lead with a darker pad and a rougher reese; for dark
-epic, lower the register further, add a choir or drone, and test in a forced choice against "epic orchestral" before
-the next claim.
-
-## 7a. Earshot readings for every genre
-
-One 24 s render per genre, seed 3, one mood each. Two forced-choice tests, both with earshot (CLAP), p = share won, z = earshot's score.
-"pass" = p of 0.5 or more and z of 2.5 or more; "weak" = p of 0.5 or more with z under 2.5; "FAIL" = p under 0.5.
-
-- **Neighbour test**: the genre's own label against five labels picked by a fixed rotation. Many of those are close relatives
-  (house against deep house, salsa against cumbia, rock against funk), so a FAIL here can mean "read as a close cousin",
-  not "wrong".
-- **Family test**: the same label against one label from each of five other families (electronic, latin/world, hip hop/R&B,
-  rock/pop band, orchestral, solo piano). A FAIL here means the render does not even read as the right family.
-
-| Genre | Neighbour p / z | Verdict | Family p / z | Verdict | Pulse clarity |
-|---|---|---|---|---|---|
-| acoustic | 0.86 / +1.9 | weak | 0.24 / +1.9 | FAIL | 0.32 |
-| afrobeat | 0.03 / +1.7 | FAIL | 0.36 / +1.7 | FAIL | 0.29 |
-| ambient | 0.96 / +2.7 | pass | 0.96 / +2.7 | pass | 0.07 |
-| bossa | 0.93 / +3.0 | pass | 0.96 / +3.0 | pass | 0.35 |
-| cinematic | 0.98 / +3.0 | pass | 0.95 / +3.0 | pass | 0.17 |
-| comedy | 0.98 / +4.6 | pass | 0.98 / +4.6 | pass | 0.24 |
-| corporate | 0.90 / +2.6 | pass | 0.40 / +2.6 | FAIL | 0.48 |
-| cumbia | 0.11 / +3.4 | FAIL | 0.99 / +3.4 | pass | 0.41 |
-| dark | 1.00 / +2.8 | pass | 1.00 / +2.8 | pass | 0.11 |
-| darksynth | 0.07 / +3.3 | FAIL | 0.95 / +3.3 | pass | 0.43 |
-| deep_house | 0.48 / +3.1 | FAIL | 1.00 / +3.1 | pass | 0.73 |
-| dnb | 0.14 / +3.0 | FAIL | 0.93 / +3.0 | pass | 0.41 |
-| dubstep | 0.07 / +2.4 | FAIL | 0.59 / +2.4 | weak | 0.56 |
-| electronic | 0.36 / +2.2 | FAIL | 0.67 / +2.2 | weak | 0.85 |
-| folk | 0.93 / +1.8 | weak | 0.39 / +1.8 | FAIL | 0.15 |
-| forro | 0.98 / +3.5 | pass | 0.99 / +3.5 | pass | 0.38 |
-| funk | 0.36 / +4.1 | FAIL | 0.93 / +4.1 | pass | 0.41 |
-| futurebass | 0.28 / +1.7 | FAIL | 0.61 / +1.7 | weak | 0.66 |
-| halloween | 0.99 / +2.8 | pass | 0.99 / +2.8 | pass | 0.17 |
-| hardstyle | 0.00 / +2.4 | FAIL | 0.20 / +2.4 | FAIL | 0.85 |
-| hiphop | 0.98 / +2.1 | weak | 0.99 / +2.1 | weak | 0.48 |
-| house | 0.03 / +1.9 | FAIL | 0.60 / +1.9 | weak | 0.81 |
-| indie | 0.89 / +2.9 | pass | 0.83 / +2.9 | pass | 0.6 |
-| jazz | 0.43 / +3.1 | FAIL | 0.80 / +3.1 | pass | 0.34 |
-| kids | 0.95 / +2.8 | pass | 0.70 / +2.8 | pass | 0.26 |
-| lofi | 0.03 / +1.5 | FAIL | 0.79 / +1.5 | weak | 0.34 |
-| metal | 0.25 / +3.5 | FAIL | 0.63 / +3.5 | pass | 0.86 |
-| motown | 0.06 / +1.4 | FAIL | 0.02 / +1.4 | FAIL | 0.64 |
-| orchestral | 0.99 / +3.7 | pass | 0.99 / +3.7 | pass | 0.21 |
-| percussion | 0.95 / +2.9 | pass | 0.99 / +2.9 | pass | 0.7 |
-| piano | 1.00 / +3.1 | pass | 0.99 / +3.1 | pass | 0.1 |
-| pop | 0.11 / +2.3 | FAIL | 0.89 / +2.3 | weak | 0.41 |
-| reggae | 0.19 / +3.2 | FAIL | 0.97 / +3.2 | pass | 0.3 |
-| reggaeton | 0.24 / +2.7 | FAIL | 0.65 / +2.7 | pass | 0.4 |
-| rnb | 0.93 / +2.2 | weak | 0.99 / +2.2 | weak | 0.28 |
-| rock | 0.35 / +3.5 | FAIL | 0.86 / +3.5 | pass | 0.5 |
-| salsa | 0.26 / +4.3 | FAIL | 1.00 / +4.3 | pass | 0.42 |
-| samba | 0.93 / +4.0 | pass | 0.99 / +4.0 | pass | 0.71 |
-| synthpop | 0.97 / +3.3 | pass | 1.00 / +3.3 | pass | 0.57 |
-| techno | 0.97 / +3.5 | pass | 0.98 / +3.5 | pass | 0.67 |
-| trance | 0.97 / +3.2 | pass | 0.98 / +3.2 | pass | 0.81 |
-| trap | 0.45 / +2.2 | FAIL | 0.99 / +2.2 | weak | 0.63 |
-
-Pulse clarity: 0.30 or more is clear, under 0.15 is weak (earshot's own thresholds). Slow, pulse-less genres (ambient, piano,
-dark, halloween, orchestral) are meant to score low.
-
-**Still failing, so do not claim these work:**
-- **hardstyle** (family p 0.20): earshot hears synthwave or chiptune whatever the lead is.
-- **motown** (p near 0): reads as generic cheerful music or ukulele pop.
-- **afrobeat** (p 0.36 in the family test): reads as playful or joyful, not as afrobeat.
-- **acoustic, folk** (family p 0.24 and 0.39): a strummed guitar bed reads as pop or latin music against the other families.
-- **corporate** passes the neighbour test (p 0.89) but not the family test (p 0.40), so its reading depends on the competition.
-- **Weak only**: futurebass (z 1.7), house (z 1.9), lofi (z 1.5). lo-fi still does not read as "lo-fi hip hop beat" in the neighbour test.
-- `dark_epic` still does not separate from `epic` (section 7).
-
-Reference tracks the user supplied (corporate 120 BPM, pulse about 0.54; rock, pulse about 0.22) were measured, and the corporate
-render now has 120 BPM and pulse 0.48. No claim is made that either matches its reference by ear.
 
 ## Use

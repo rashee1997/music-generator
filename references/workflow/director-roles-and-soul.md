@@ -1,3 +1,12 @@
+---
+title: Director roles
+summary: The four hats a piece needs: what each one decides and which file holds the rule.
+tags: [director, roles, arranger, mixer, soul, decision]
+load_when:
+  - starting a piece
+  - unsure which role owns a decision
+---
+
 # Director roles, cultural soul and planned fusions
 
 
