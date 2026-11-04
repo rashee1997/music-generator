@@ -36,10 +36,9 @@ is left, and do not hide it.
 
 ## 2. Write the direction sheet the way a cue is decided
 
-The sheet is the brief turned into things that can be checked, in the order a cue is decided: the template
-`templates/direction_sheet.json`, copied to `<dir>/direction/direction_<title>.json` and filled. The project gate
-rejects a sheet whose `sections` overlap, whose `hits` disagree with `hits_at`, or whose `video` block names a picture
-it cannot find.
+The sheet is the brief turned into things that can be checked, in the order a cue is decided: `templates/direction_sheet.json`,
+copied to `<dir>/direction/direction_<title>.json` and filled. The project gate rejects overlapping `sections`, `hits`
+that disagree with `hits_at`, or a `video` block naming a picture it cannot find.
 
 ### 2.1 Decide in this order
 
@@ -109,7 +108,7 @@ The core targets. `listen.py` reads these directly, so fill them with words and 
 | `spatial_staging` | each part's azimuth, elevation and distance; the presets must match | `{"flute": {"azimuth": 0, "distance": 1.4}}` |
 
 `listen.py` checks `feel` against `avoid_feel` as a forced choice and looks for an onset within 0.3 s of every
-`hits_at`. Nothing else is a gate row, which is why the blocks below stop a green cue from being the wrong cue.
+`hits_at`; nothing else is a gate row, which is why the blocks below stop a green cue from being the wrong cue.
 
 **The director's blocks.** Each one answers a question a composer is asked out loud before writing:
 
@@ -130,8 +129,7 @@ The core targets. `listen.py` reads these directly, so fill them with words and 
 - **Bar-grid and timestamp math:** at `BPM` in `N/4` time one bar is `N * (60.0 / BPM)` seconds. Put section boundaries
   and structural hits on bar lines, and give every event one timestamp across `motifs[].first_at_s`, `hits[].t`,
   `hits_at` and `mix_intent.must_hear`.
-- **One canonical track name:** the keys in `spatial_staging` match the score's track `name` or preset name one to one,
-  so stage validation and Z-separation never miss a part.
+- **One canonical track name:** `spatial_staging` keys match the score's track names one to one.
 - **No false `avoid_sounds` collisions:** do not write a forbidden sound word into `sections[].action` or `music`.
 - **`leave_free_hz` is for speech only:** set the pocket (`[250, 3800]`) only when `video.dialogue.present` is `true`
   or a voice-over runs; for pure music leave it empty (`[]`) so the midrange is not hollowed out.
@@ -139,10 +137,10 @@ The core targets. `listen.py` reads these directly, so fill them with words and 
 ### 2.4 Size and ending follow the picture
 
 **The further the camera is from the subject, the bigger the music may be.** A wide of a mountain can hold a lot of
-orchestra; a close-up of a hand cannot. The practical reason is dialogue: the score drops in size whenever the camera
-is inside, because that is where the talking happens, and a cue that does not get softer for the quiet moments is
-pulled down by the dubbing mixer at the dub, so it loses its climax and nobody hears why. Write the shot into
-`sections[].action` and let `energy` follow it.
+orchestra; a close-up of a hand cannot. The reason is dialogue: the score drops in size whenever the camera is inside,
+because that is where the talking happens, and a cue that does not soften for the quiet moments is pulled down by the
+dubbing mixer at the dub, losing its climax with nobody hearing why. Write the shot into `sections[].action` and let
+`energy` follow it.
 
 ### 2.5 References in words, never a temp track
 
@@ -157,8 +155,8 @@ an original score feel wrong by comparison, and the reason composers are asked t
 
 **Read the brief's words before the sheet.** Separate the mood ("motivational", "adventure", "melancholy") from the way
 of playing it ("slow", "reverb", "sparse", "driving"): the mood sets mode and tempo, the modifiers set energy, room and
-density. When mood and genre disagree on tempo, the mood wins 2:1. Check `meta.mood_notes` before rendering; the
-mapping is in `emotion-and-scoring.md` section 1a.
+density. When mood and genre disagree on tempo, the mood wins 2:1; check `meta.mood_notes` (mapping:
+`emotion-and-scoring.md` section 1a).
 
 ### 2.6 Direction to picture: the `video` block
 
@@ -177,10 +175,9 @@ motion sets the lead and pad azimuth, and motion binned into sections labels `se
 | `dialogue` | `present`, `duck_db`, `snr_min_db` - whether the music has to get out of the way, and by how much |
 | `master_profile`, `deliverable` | `streaming`, `broadcast` or `cinema`, and the container/codec the mux writes |
 
-A music-only sheet keeps `enabled: false` and nulls. With `enabled: true` it must name its `source`, `fps`,
-`master_profile` and sync window. The four picture rows (`video.duration_lock`, `video.cut_sync`, `video.dialogue_snr`,
-`video.master_compliance`) run beside every music row, so nothing here relaxes anything; the full path and its limits
-are in `video-scoring.md`.
+A music-only sheet keeps `enabled: false` and nulls; with `enabled: true` it must name `source`, `fps`, `master_profile`
+and the sync window. The picture rows (`video.duration_lock`, `video.cut_sync`, `video.dialogue_snr`,
+`video.master_compliance`) run beside every music row; the full path and its limits are in `video-scoring.md`.
 
 ### 2.7 Stage the ensemble in 3D space and spectrum
 
@@ -204,8 +201,7 @@ later.
 ## 4. Build the picture's moments (hits, risers, silence)
 
 - **Hit:** a kick or taiko with its highs cut, layers stacked low to high (sub, boom, metal or orchestral percussion),
-  each EQ'd separately, then distortion, EQ, compression and reverb; the transient lands on the frame, the tail
-  carries it.
+  each EQ'd separately, then distortion, EQ, compression and reverb; the transient lands on the frame.
 - **Riser:** pitch or filter climbing over several bars, faster and louder, peaking on the cut.
 - **Silence before the hit:** end the riser, leave a short gap, then hit; the gap makes the hit land harder.
 - **Braam:** a long, loud, low brass note (C1-C2) stacked in octaves (C0, C1, C2), pitched down, distorted and
@@ -219,15 +215,14 @@ For custom placement use `direct.add_line` (a stab or fanfare) or `direct.add_pu
 
 A game hands timing to the player.
 
-- **Vertical layering:** one base loop runs always; stems fade in or out on events. A muted stem keeps looping in
-  sync, so it can return at any point.
+- **Vertical layering:** one base loop runs always; stems fade in or out on events, and a muted stem keeps looping in
+  sync so it can return at any point.
 - **Horizontal re-sequencing:** intro, loop and outro sections switch into one another, with fades to soften cuts.
 - Combine them: loopable stacked stems that switch sections and add layers. Sync transitions to a bar or beat, set
   tempo and meter once, keep the first beat after a transition clean, and write loops of one to two minutes.
 
-Direction: one key and one tempo for every state, three intensity states with
-`compose.py --intensity 0.3 / 0.6 / 0.95 --loop`, a sheet per state, and `listen.py` on each, since the calm state must
-not read tense and the intense state must not read sad.
+Direction: one key and one tempo for every state, three intensities with
+`compose.py --intensity 0.3 / 0.6 / 0.95 --loop`, a sheet per state, and `listen.py` on each.
 
 ## 6. Revision levers: what to change when a target misses
 
@@ -264,27 +259,20 @@ Two rules that stop revision from going round in circles:
 earshot listens with CLAP (text-audio similarity) and AST (AudioSet tags) plus measurements: a second opinion, not a
 human ear.
 
-**Use it for:** the forced choice (a feel word against its opposites; the wanted word must win more than half, and
-`listen.py` reports FAIL when an opposite wins), the ranked readings (genre, mood, instruments), pulse clarity, tempo,
-key, onsets (do the hits land), and comparing two versions.
+**Use it for:** the forced choice (the wanted word must win more than half; `listen.py` reports FAIL when an opposite
+wins), the ranked readings (genre, mood, instruments), pulse clarity, tempo, key, onsets and an A/B comparison.
 
 **Its limits:** mood labels are wrong about one time in five; readings are not exclusive (a piece can read triumphant
 and sad at once); tempo can read double or half, and with no pulse (clarity under 0.15) there is none to trust; key
 estimates with r under 0.6 are weak; it cannot judge taste, melody, lyrics, cultural fit or whether a synth is real,
 and an instrument it does not name is not proven absent.
 
-**Setup:** a separate install (torch, about 1 GB of models, ffmpeg on the path). `scripts/listen.py` works without it
-and says so; `python scripts/setup_project.py --ears` installs it.
-
-## 8. Directing by genre and situation
-
-Recipes per situation, each with a brief, the direct calls and a sheet: `references/workflow/scene-recipes.md`.
-
-## 9. Delivery
+## 8. Delivery
 
 Deliver the master WAV and the MIDI, the filled direction sheet, the `listen.py` report in plain words (which targets
 pass, which still check, what earshot heard), one or two named variations if the brief was open, and one line on what
-was not checked (taste, the real instruments, how it sits in the final video).
+was not checked (taste, the real instruments, how it sits in the final video). Situation recipes, each with a brief,
+the direct calls and a sheet: `references/workflow/scene-recipes.md`.
 
 Do not say "it sounds like an orchestra" or "it is natural". Say what the sheet asked for, what the report found, and
 what is left.
