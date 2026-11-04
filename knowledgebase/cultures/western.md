@@ -169,7 +169,7 @@ Modern Western popular music was born when West African rhythmic and microtonal 
 
 Drop these building blocks directly into your Python synthesis engine for instant Western harmonic, timbral, and rhythmic capabilities:
 
-### 5.1 The "SuperSaw" Stadium Lead & Pad Synthesizer (Anirudh / EDM / Trance Engine)
+### 5.1 The "SuperSaw" Stadium Lead & Pad Synthesizer (the film composer / EDM / Trance Engine)
 \`\`\`python
 import numpy as np
 

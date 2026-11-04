@@ -25,7 +25,7 @@ sources: []
   - [3.1 Arabic-Tamil Kuthu (The "Halamithi" / Middle-East Street Fusion)](#31-arabic-tamil-kuthu-the-halamithi--middle-east-street-fusion)
   - [3.2 Neo-classical / Baroque + Carnatic](#32-neo-classical--baroque--carnatic)
   - [3.3 Trap / Hip-Hop / Drill + Chennai Gaana (Santhosh Narayanan Style)](#33-trap--hip-hop--drill--chennai-gaana-paal-dabba--asal-kolaar--santhosh-narayanan-style)
-  - [3.4 EDM / Mass-Kuthu / Synthwave (Anirudh Ravichander Blueprint)](#34-edm--mass-kuthu--synthwave-anirudh-ravichander-blueprint)
+  - [3.4 EDM / Mass-Kuthu / Synthwave (the film composer Blueprint)](#34-edm--mass-kuthu--synthwave-anirudh-ravichander-blueprint)
   - [3.5 Jazz / R&B / Lo-Fi + Carnatic (Pradeep Kumar Style)](#35-jazz--rb--lo-fi--carnatic-pradeep-kumar--sean-roldan--karthik-style)
 - [4.0 Pure-Python Algorithmic Parameter Cheat Sheet](#4-pure-python-algorithmic-parameter-cheat-sheet)
   - [4.1 Scale Lookup Dictionary (Semitone Offsets from MIDI Root)](#41-scale-lookup-dictionary-semitone-offsets-from-midi-root)
@@ -144,7 +144,7 @@ When fusing Tamil genres with Western/Global styles in code, **Rule #1** is: *Ke
   * **Mid-Range Percussion (200Hz–4kHz):** Replace the Trap snare on beat 3 with a **tight, high-tuned Parai slap** and syncopated **Thavil** ghost notes.
   * **Hi-Hats:** Replace standard 16th-note trap hi-hats with **6/8 triplet Salangai (bell) rolls**.
 
-### 3.4 EDM / Mass-Kuthu / Synthwave (*Anirudh Ravichander Blueprint*)
+### 3.4 EDM / Mass-Kuthu / Synthwave (*the film composer Blueprint*)
 * **Why It Works:** Modern Tamil "Mass" cinema themes rely on **stadium-sized EDM drops** fused with **traditional folk hooks**.
 * **The Fusion Formula:**
   * **Lead Synth:** Layer a **SuperSaw / Brass synth** in octaves directly on top of a **Nadaswaram** sample/synth, both following the exact same pitch-bend automation curve.

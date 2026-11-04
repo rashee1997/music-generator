@@ -279,6 +279,6 @@ Since your engine specializes in cross-cultural algorithmic synthesis, here are 
 3. **Iraqi *Chobi* $\times$ Western Trap / Drill:**
    * **Why it's explosive:** The syncopated double-snare of Iraqi *Chobi* locks effortlessly into UK Drill 808 glides and triplet hi-hats.
    * **DSP Implementation:** Map a sliding **808 sub-bass** to *Maqam Saba* or *Hijaz*, and layer an Iraqi **Santur** (hammered dulcimer) playing dark 16th-note arpeggios in the high frequencies.
-4. **Levantine *Dabke* $\times$ Anirudh-Style Mass Stadium Brass:**
+4. **Levantine *Dabke* $\times$ modern Mass Stadium Brass:**
    * **Why it's explosive:** Levantine *Dabke* has the heaviest Beat-1 foot-stomp in Arabic music, and its double-reed **Mijwiz** sounds like a cousin of the Tamil **Nadaswaram**.
    * **DSP Implementation:** Harmonize a Levantine *Mijwiz* trill in octaves with a heavy distorted **Sub-Drop + Brass Synth** on Beat 1, followed by a fast *Darbuka + Thavil* percussion battle.
