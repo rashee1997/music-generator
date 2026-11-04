@@ -15,8 +15,7 @@ script) apply it.
 
 ## 1. How listeners hear emotion
 
-Listener studies (Juslin & Laukka; Eerola, Friberg & Bresin 2013 "Emotional expression in music: contribution,
-linearity, and additivity of primary musical cues") found that a handful of cues carry most of the emotion, that
+Listener studies found that a handful of cues carry most of the emotion, that
 they add up roughly linearly, and that **mode is the strongest, then tempo, then register, dynamics,
 articulation, timbre**. So set these in this order, and make them all point the same way.
 
@@ -33,7 +32,7 @@ articulation, timbre**. So set these in this order, and make them all point the 
 | Joyful / happy | major, I-V-vi-IV; bright | 108-130 | mid-high | medium-loud | staccato / bouncy | bright: pop kit, guitar, glock, pizzicato | syncopation, lively drums |
 | Playful / quirky | major / mixolydian, chromatic passing notes | 100-124 | high | medium | short staccato, pizzicato | pizzicato, woodwinds, marimba | off-beat accents, stops and starts |
 | Triumphant / epic (heroic) | major or mixolydian, big cadences; I-V-vi-IV, I-bVII-IV-I; pedal bass | 88-112 | wide: deep bass + high melody | loud, crescendo | broad, accented | brass, full strings, taiko, choir | big layered build, long final chord |
-| Dark epic / battle | aeolian or phrygian, big cadences; i-VI-III-VII, i-II-i-VII | 76-100 | wide, low | loud, crescendo | broad, accented | brass, low strings, taiko, timpani | slow huge build; power and anger go with minor (Micallef Grimaud & Eerola 2022) |
+| Dark epic / battle | aeolian or phrygian, big cadences; i-VI-III-VII, i-II-i-VII | 76-100 | wide, low | loud, crescendo | broad, accented | brass, low strings, taiko, timpani | slow huge build; power and anger go with minor |
 | Determined / heroic drive | minor / dorian; ostinato | 92-112 | low-mid | medium-loud | marcato | low strings, snare march, piano | driving 8ths/16ths, steady pulse |
 | Tense / suspense | minor, phrygian bII, tritone, clusters, unresolved dominant | 70-100 (or pulse-less) | low + sparse high | quiet with sudden loud | tremolo, staccato | tremolo strings, low piano, sub, glassy plinks | ostinato, rising pitch, silences, irregular hits |
 | Scary / dread | phrygian/locrian, dissonant, unpredictable | 48-68 | very low drones + very high | quiet <-> sudden loud | tremolo, sul pont. | contrabass, low drones, music box, choir | very sparse, long rests, slow swells, heartbeat |
@@ -167,9 +166,5 @@ puts the melody in the singing range of the lead instrument (flute C5-C6, violin
 4. Pick emotion + genre + key/mode + tempo from the table; write the brief.
 5. Render, run `scripts/listen.py` against a direction sheet, revise one lever, re-render (`music-direction.md` section 6). Offer 2 variations (different seed / genre) when the brief is open.
 
-Sources: Eerola, Friberg & Bresin (2013, Frontiers in Psychology); Juslin & Laukka (2003); Juslin's mechanism review (2008); film tension
-analyses (ostinato, thickening orchestration, register extremes, silence, tonal shift); OpenMontage
-`skills/creative/music-gen-usage.md` (BPM/key/mood tables); Lemo `TECHNIQUE.md` / `DIRECTOR.md` (score cue
-discipline).
 
 ---

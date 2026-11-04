@@ -118,8 +118,5 @@ track in a wet hall. The six rules and their numbers are in `SKILL.md` ("Six aco
 `custom-scripts.md` section 3a. One of them is about dynamics here: a track's velocity spread is judged against its
 own mean (sd at least 5 %), so a quiet shaker and a loud snare are held to the same standard.
 
-Sources: Goebl (2001) melody lead in piano performance; Friberg/Bresin/Sundberg KTH rule system; microtiming
-studies (drummer IBI, 1/f drift, anti-correlation); vibrato studies (5-6 Hz, 50-84 cents in singing); piano
-pedaling practice.
 
 ---

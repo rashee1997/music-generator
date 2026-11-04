@@ -20,7 +20,7 @@ each role, not the cultures' scales, tempos or soul rules.
 - **Symphonic themes with leitmotif.** Orchestral themes accompany his scores, with leitmotifs. (medium.com, WorldMuslimPedia)
 - **Ragas with electronic elements.** Classical ragas blended with modern production, without losing the soul.
   (liberalarts.dpu.edu.in, "Significance of Classical Music for Contemporary Film Songs")
-- **Choral and voice-led songs.** Choirs and vocal layers are part of the Tamil film sound (Roja, 1992).
+- **Choral and voice-led songs.** Choirs and vocal layers are part of the Tamil film sound.
   (instagram, "The genius of AR Rahman's early production")
 - **Western and Indian at once.** The Western orchestra and Indian melody share one song; the fusion is the signature.
   (ohiolink.edu thesis, Jackson 2010)

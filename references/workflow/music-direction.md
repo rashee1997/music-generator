@@ -55,7 +55,7 @@ elements matter", and a perfect motif in the wrong mood is worthless. So:
    figure one scene too late is a spoiler. Write the point of view down, because it is what forbids a choice later.
 3. **Where it starts and stops** (`in_point_s`, `out_point_s`, `duration_s`). Start on the desired effect, not on
    a bar line; sometimes the cue has to sneak in behind sound effects rather than announce itself.
-4. **The arc** (`sections`). Berklee's film-scoring material: form is what separates film music from concert
+4. **The arc** (`sections`). Form is what separates film music from concert
    music, and "the drama shifts, so must the music". Mark sections in seconds, with what the picture does and what
    the music does, and let the sync points be the section starts.
 5. **The palette, then the motif** (`instruments`, `avoid_sounds`, then `motifs`). Palette before theme: a motif
@@ -73,7 +73,7 @@ are the sheet:
 | hit | `hits_at` + `hits` | a moment the music must land; hard (a cut, an explosion) or soft (a head turn, a line ending) |
 | descriptive | `sections[].action`, `notes` | a line of dialogue, a look, a shape in the frame - a reminder, not a sync point |
 
-Berklee's distinction is the one that matters for the gate: a **hard sync point** "needs to occur on a specific
+The distinction that matters for the gate: a **hard sync point** "needs to occur on a specific
 frame" (an explosion, a punch, a cut); a **soft** one "doesn't have to be accurate to a specific frame". The same
 split appears in the sheet as `hits[].sync`, and in the picture path as the cut-sync window versus motion hits
 that are never judged against cuts.
@@ -145,7 +145,7 @@ a technically green cue from being the wrong cue.
 
 ### 2.4 Size and ending follow the picture
 
-Berklee's context rule is the one to keep in the sheet's `sections`: **the further the camera is from the
+The context rule to keep in the sheet's `sections`: **the further the camera is from the
 subject, the bigger the music may be**. A helicopter wide of a mountain can hold a lot of orchestra; a close-up of
 a hand cannot. Interiors and exteriors work the same way, and the practical reason is dialogue: in the Jurassic
 Park helicopter scene the score drops in size whenever the camera is inside, because that is where the talking
@@ -158,7 +158,7 @@ So write the shot into `sections[].action` and let `energy` follow it, not the o
 
 A temp track is reference music an editor lays under the cut to test the mood. It causes "temp love": the
 attachment that makes an original score feel wrong by comparison, and the reason composers are often asked to
-imitate it (Sadoff, 2006, on the music editor and the temp track). Two consequences for the sheet:
+imitate it. Two consequences for the sheet:
 
 - `references` takes **words**: "a slow cello line over a soft pulse, like the opening of a documentary", never a
 track name and never a melody that belongs to someone. The writing has to be original for legal reasons and
@@ -225,24 +225,23 @@ during the climax. Stage `spatial_staging` (and the matching instrument presets)
 
 ## 3. Decide in the order listeners weigh cues
 
-Juslin and Laukka's reviews and Eerola, Friberg & Bresin (2013) tested six cues (mode, tempo, pitch register,
-dynamics, articulation, timbre) on four composed excerpts with 46 listeners. The findings that matter for you:
+Six cues were tested on composed excerpts against listeners' own reports: mode, tempo, pitch register, dynamics,
+articulation and timbre. The findings that matter:
 
-- **Mode is the strongest cue** for happy and sad (unique explained variance about 0.5 each). Tempo, register,
+- **Mode is the strongest cue** for happy and sad. Tempo, register,
   dynamics, articulation and timbre follow, in that order overall.
 - **Dynamics** mattered most for scary and peaceful, and barely for happy or sad. Do not rely on loudness alone.
 - The cues **add up** (additive); their two-way interactions were not significant. So each cue you set in the
   right direction helps, and one cue pointing the wrong way cannot be fully cancelled by the others.
-- Limits the authors stated: four excerpts, harmony and melodic contour not varied systematically, three timbres,
-  self-report only.
+- These experiments used a handful of excerpts and self-report, so treat the order as a guide, not a law.
 
 So decide in this order: **mode, tempo, register, loudness arc, articulation, timbre**, and make them agree. For
 a mixed feeling (bittersweet, anxious hope), pick the main feeling's mode and tempo, and borrow one cue from the
 other feeling. Do not average.
 
-### Why sound moves people (Juslin's mechanisms)
+### Why sound moves people
 
-Juslin's reviews list mechanisms, and each one suggests a different use in a scene:
+Each mechanism below suggests a different use in a scene:
 
 | Mechanism | What it does | Use it for |
 |---|---|---|
@@ -253,10 +252,8 @@ Juslin's reviews list mechanisms, and each one suggests a different use in a sce
 | Visual imagery | the listener's images fill the gaps; in film the picture does most of this, so the score should reinforce, not repeat it | scene mood |
 | Episodic memory | a personal memory; the composer cannot target it | period style only, as a hint |
 
-The fetched review lists six of these. Juslin's full framework also includes rhythmic entrainment (the body moves
-with a steady beat) and aesthetic judgment. Those two are from background knowledge, not from the fetched text.
-The practical point stands: a steady beat entrains (a trailer, a workout), and a clear expectation is what makes a
-delayed resolution land.
+Two more mechanisms complete the list: rhythmic entrainment (the body moves with a steady beat, as in a trailer or a
+workout) and aesthetic judgment (a taste verdict, which no measurement here can make).
 
 ### 3.1 Write lines, harmony and rhythm that behave like players, not a grid
 
@@ -423,24 +420,3 @@ Deliver:
 
 Do not say "it sounds like an orchestra" or "it is natural". Say what the sheet asked for, what the listen report
 found, and what is left.
-
-Sources: Juslin & Laukka (2003) and Juslin's mechanism review (Behavioral and Brain Sciences, 2008, "Emotional
-responses to music: the need to consider underlying mechanisms"); Eerola, Friberg & Bresin (2013), Frontiers in
-Psychology, "Emotional expression in music: contribution, linearity, and additivity of primary musical cues";
-Ableton's guide to cinematic impact sounds (braams, hits, risers); Guy Jones on adaptive music (gamedeveloper.com);
-IRPR Sound glossary on vertical layering and horizontal re-sequencing (the definitions here come from the
-adaptive-music article); beverlyboy.com on spotting sessions; earshot README and
-docs (github.com/Leonxlnx/earshot).
-
-The director's method in section 2 was read from: artofcomposing.com/how-to-spot-a-film (first rule of spotting,
-what the music is supposed to do and what it knows, cue start / end / hit / descriptive markers, silence as the
-strongest hit, hit points as a focus list); online.berklee.edu/takenote/5-film-scoring-concepts-to-know-for-your-
-first-movie-score (form follows picture, kinetics, hard vs soft sync points, hard out / tail out / combination,
-size following shot distance and interior/exterior, the dub pulling music down under dialogue);
-ryanleach.com/blog/2015/08/05/the-three-fundamental-principles-of-film-scoring (mood first, fit to picture second,
-thematic unity third; hit more than feels safe, and do not echo what the screen already says);
-behindthescore.org/articles/motivic-development-in-film-composition (motif transformations: repetition, variation,
-inversion, retrograde, augmentation, diminution, transposition, canon); soundtrack.academy/temp-tracks and R. H.
-Sadoff (2006) on the music editor and the temp track, cited from the JSTOR abstract, for "temp love" and why a
-reference is written in words; soundbridge.io/spotting-session-film (the spotting notes cover cue in/out and the
-moments the music must coincide with, and they change as the edit changes).

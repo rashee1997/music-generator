@@ -9,10 +9,6 @@ load_when:
 
 # Global music theory knowledge base: what the skill uses, what was added, what does not hold
 
-Source: `global_music_theory_algorithmic_synthesis_guide.md` (in the skill folder), a user-supplied knowledge base with
-five pillars: pitch, rhythm, articulation, cross-cultural fusion, and situational mapping. This file records how it maps
-onto the code. Its scale table, rhythm table and helper code are the author's; the skill re-checks each claim it adds.
-Nothing in the KB is cited to a source, so every new value is labelled `practice` in `world.py`.
 
 ## 1. Where each pillar lives in the skill
 

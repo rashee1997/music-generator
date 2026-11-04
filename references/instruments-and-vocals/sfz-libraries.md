@@ -100,8 +100,6 @@ render does not finish. Never call the binary by hand without both.
 
 ## Slurred legato (the user's rule)
 
-Source: the user, after hearing a render where every note of a run sounded like a new bow stroke (détaché).
-The rule is for any `"art": "legato"` run on a bowed or blown legato patch:
 
 - Two or more consecutive `"art": "legato"` notes are **one bow stroke**. Overlap the first note's release into
   the next note's attack by **20-30 ms**.

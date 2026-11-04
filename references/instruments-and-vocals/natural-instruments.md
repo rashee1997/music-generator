@@ -84,7 +84,5 @@ Never claim it is indistinguishable from a real orchestra. Say what was done (re
 what `listen.py` reported. Offer the upgrade paths: a better SoundFont, the user's own recordings cloned into
 instruments, or the MIDI and stems for a person to finish in a DAW.
 
-Sources: GeneralUser GS (mrbumpy409/GeneralUser-GS); TinySoundFont; General MIDI program list; Lemo-Opuscar
-`core/audio/sampler.py` (velocity-layer picking, round-robin, grain-extended sustains, the reason for darker soft notes).
 
 ---

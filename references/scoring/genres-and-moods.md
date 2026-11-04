@@ -20,33 +20,32 @@ starting values, not measurements, and a brief that names its own tempo wins.
 Sub-archetypes, axis coordinates and synthesis models are in `knowledgebase/genre-and-feel/` (`psychoacoustic-genre.md`, `dynamic-flow.md`, `commercial-promo.md`). Read the one you need with
 `python scripts/find_references.py "<the words of the brief>"` rather than all three. This file stays
 the decision table: which genre, which tempo, which groove, which layers.
+
 ## 1. Epic: how big, and in which mode
 
-- Bühler's account of epic film music, read through the "Day of Honour" paper, describes the epic as power, loudness,
-  bombast and aggression, with a percussion battery, a synth bass and a choir as typical elements.
-- The braam (a low, stacked brass swell, often pitched down) is a trailer-era device; its history is in the Northwestern
-  braam page. It is a texture to add on a hit, not a whole-cue style.
-- Micallef Grimaud & Eerola (2022), a cue table for film music: **power and anger** go with minor mode, fast tempo and
-  loud dynamics; **triumph and joy** go with major mode, fast tempo and loud dynamics. The mode split is the cue that
-  separates "triumphant" from "dark".
-- No source found gives a settled epic tempo or a settled epic mode. The mode is a direction decision, not a fact.
+- An epic is power, loudness, bombast and aggression: a percussion battery, a synth bass and a choir are its typical
+  elements.
+- The braam (a low, stacked brass swell, often pitched down) is a trailer device. Add it on a hit, never as a whole-cue
+  style.
+- The film cue table: **power and anger** go with minor mode, fast tempo and loud dynamics; **triumph and joy** go with
+  major mode, fast tempo and loud dynamics. Mode is the cue that separates "triumphant" from "dark".
+- There is no settled epic tempo or mode. Treat both as direction decisions.
 
 - `epic` (heroic, the default): major or mixolydian, 88-112 BPM, taiko percussion, brass and strings. Major because the
-  cue table ties loud-fast-major to triumph, and because the earlier minor-leaning preset read as sad in tests.
+  cue table ties loud-fast-major to triumph.
 - `dark_epic`: aeolian or phrygian, 76-100 BPM, the same kit. Use it for battle, dread, villains and "dark and huge".
 - Use `epic` when the user says heroic, triumphant, victory or reveal. Use `dark_epic` when the user says battle, dark,
   menacing or war.
-- The percussion: a mood's own drums enter at intensity 0.35, so a build arc still gets its taiko or half-time pattern
-  in a 45 s cue (before this change the drum layer started too late for a short cue).
+- The percussion: a mood's own drums enter at intensity 0.35, so a build arc still gets its taiko or half-time pattern in a 45 s cue.
 
 ## 2. Mood models
 
 | Model | What it says | How the skill uses it |
 |---|---|---|
-| Eerola, Friberg & Bresin (2013) | Mode is the strongest cue for happy and sad; dynamics for scary and peaceful; cues add up | Order of decisions: mode, tempo, register, dynamics, articulation, timbre |
-| Micallef Grimaud & Eerola (2022) cue table | Power and anger: minor, fast, loud. Triumph and joy: major, fast, loud. | Mode choice for `epic` vs `dark_epic`, and for `triumphant` vs `angry` |
-| GEMS (Zentner et al. 2008, via the Wikipedia summary) | Nine factors: wonder, transcendence, tenderness, nostalgia, peacefulness, power, joyful activation, tension, sadness | Aliases so each factor maps to a preset (see table below) |
-| Basic emotions (factor-analysis study, abstract read via dovepress) | Happiness, sadness, anger, fear, tenderness and their factors | Presets `joyful`, `sad`, `angry`, `scary`, `tender` |
+| Cue studies | Mode is the strongest cue for happy and sad; dynamics for scary and peaceful; cues add up | Order of decisions: mode, tempo, register, dynamics, articulation, timbre |
+| Film cue table | Power and anger: minor, fast, loud. Triumph and joy: major, fast, loud. | Mode choice for `epic` vs `dark_epic`, and for `triumphant` vs `angry` |
+| GEMS | Nine factors: wonder, transcendence, tenderness, nostalgia, peacefulness, power, joyful activation, tension, sadness | Aliases so each factor maps to a preset (see table below) |
+| Basic emotions | Happiness, sadness, anger, fear, tenderness and their factors | Presets `joyful`, `sad`, `angry`, `scary`, `tender` |
 
 GEMS to preset (aliases in `compose.py`):
 

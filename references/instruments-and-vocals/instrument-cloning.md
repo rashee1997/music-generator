@@ -72,8 +72,8 @@ Checked on a stand-in recording (a SoundFont cello treated as the user's recordi
 
 ## Neural options (for the user's own GPU / later)
 
-- **DDSP** (Engel et al., ICLR 2020, Magenta): differentiable harmonic-plus-noise synthesiser + reverb driven by f0 and loudness; trains on a collection of recordings of one instrument; the best-known approach to "timbre transfer / instrument cloning".
-- **Few-shot DDSP** (DAFx 2022, "Neural audio synthesis with few examples"): a pre-trained model adapted to a new instrument from about 16 s of audio.
+- **DDSP**: differentiable harmonic-plus-noise synthesiser + reverb driven by f0 and loudness; trains on a collection of recordings of one instrument; the best-known approach to "timbre transfer / instrument cloning".
+- **Few-shot DDSP**: a pre-trained model adapted to a new instrument from about 16 s of audio.
 - **TokenSynth**: zero-shot instrument cloning from about 5 s of reference audio using a codec language model.
 - Sample-based commercial/open samplers (sforzando + the exported `.sfz`) are the practical bridge: use `clone_instrument.py sfz` and load into any DAW.
 Do not promise these results here; offer to prepare the data.

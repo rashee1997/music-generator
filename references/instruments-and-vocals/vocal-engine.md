@@ -132,12 +132,12 @@ and a release after each phrase that grows over 120 ms before decaying. The enve
 reaches zero, so a gap is air rather than digital silence with a burst in it — the failure mode that reads as a
 footstep, and the first version's measured gap profile was -240 dB (silence) for 2 s and then 0.28 s at -48 dB. Length
 and level follow the gap (`inhale_min_s`/`inhale_max_s`, `inhale_peak_db`, -6 dB per doubling of the breath), because
-singers shorten the inspiration as the phrase comes faster (Salomoni et al. 2016). Every singer shares that phase
+singers shorten the inspiration as the phrase comes faster. Every singer shares that phase
 (offset at most 12 ms), so a section breathes together instead of producing N unrelated events.
 
 The noise itself is shaped air: `inhale_body_hz` (520) is the low chest part, the air band (`inhale_band_hz`) sits
 above it held down by `inhale_tilt_db` (-11 dB) because real inhalation spectra fall with weak peaks below 3 kHz
-(Werner et al., JSLHR 2023), and `turbulence_hz`/`turbulence_depth` (10.5 Hz, 0.4) flutter the level. Measured on the
+and `turbulence_hz`/`turbulence_depth` (10.5 Hz, 0.4) flutter the level. Measured on the
 inhale alone: the old flat band had a centroid of 2211 Hz with as much energy above 2 kHz as below; the shaped breath
 sits at 719 Hz and puts the air band 17 dB down. A preset overrides any of those keys.
 
@@ -234,4 +234,3 @@ all still work (`config.resolve`). Differences a user can hear versus the old en
 connect instead of dropping out; `c` now works in cents; chorus default mix 0.25 (was 0.4); `qawwali_devotional` now gets its
 saturation; `harmonic_lock`, `bandwidths` and style registers now act. The three shipped vocal presets were converted to the new
 schema (they had no effect before). `tests/legacy_vocals.py` keeps the old code for A/B and benchmarks.
-

@@ -57,7 +57,7 @@ For complete mathematical definitions, instrument physics, frequency allocations
 
 ## Western tonal
 - **Tension and release:** dissonance and cadence create the narrative; the cadence lands home. (fretboardfoundation.com)
-- **Major and minor:** major mode conveys happy, bright or martial; minor, sad or tender (Bowling et al., 2012, pmc.ncbi.nlm.nih.gov).
+- **Major and minor:** major mode conveys happy, bright or martial; minor, sad or tender.
 - **Dynamic contrast and climax:** build, peak, release. (serenademagazine.com)
 - **Film cadences:** a cadence's placement shapes the emotional arc (Lehman, MTO 2013).
 

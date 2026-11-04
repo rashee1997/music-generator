@@ -79,7 +79,7 @@ load_when:
 | `templates/custom_score_template.py` | a runnable template for hand-written music |
 | `references/workflow/music-direction.md` | the director's workflow, the research on cues and mechanisms, the revision levers, earshot's limits |
 | `references/workflow/scene-recipes.md` | recipes by situation: trailer (tested), voice-over, calm, tense, end card, game loop, jingle, sleep, playful, traditional |
-| `references/scoring/genres-and-moods.md` | epic (heroic and dark), mood models (GEMS, Eerola 2013, cue table), the genres with tempo and groove, the Pixabay label map, earshot results for every genre, how to add a genre |
+| `references/scoring/genres-and-moods.md` | epic (heroic and dark), mood models, the genres with tempo and groove, the Pixabay label map, how to add a genre |
 | `references/scoring/emotion-and-scoring.md` | emotion table, arcs, tension toolkit, layers, motifs |
 | `references/workflow/custom-scripts.md` | the score format, helpers, recipes and debugging for custom scripts |
 | `references/instruments-and-vocals/natural-instruments.md` | which source for which sound, GM strengths, ranges, arrangement rules |

@@ -211,7 +211,3 @@ The mixing engine ([`scripts/mixer.py`](../../scripts/mixer.py)) uses Spotify's 
    - Combines dry stem transients with heavily compressed/saturated wet paths (New York drum compression: `pb.Compressor(threshold_db=-30, ratio=8.0, attack_ms=5)`) for punchy drums and fat bass without destroying dynamic range.
 4. **Data Contract**:
    - Pedalboard processes NumPy float32 arrays in `(channels, samples)` shape (`[2, N]`). Scripts automatically handle transposition between Scipy/Soundfile format (`[N, 2]`) and Pedalboard format.
-
-Sources: OpenMontage `skills/creative/sound-design.md` and `tools/audio/audio_mixer.py` (loudnorm/limiter, sidechain
-ducking); Lemo `styles/*/demo/mix.py` (voice-over ducking -9.5 dB, brightness lift for dark scores); Mindlin & Goller (2001) / Laje et al. (2002) physical models of avian vocalization; standard
-mixing EQ charts; ITU-R BS.1770 / EBU R128 loudness; platform loudness specs (YouTube, Spotify, Apple, TikTok); Spotify Pedalboard Audio Intelligence Lab.

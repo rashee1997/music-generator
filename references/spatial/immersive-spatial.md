@@ -95,8 +95,8 @@ Loudness, true peak, clicks and silence are the existing rows.
 
 - Reverberation and spectral detail in the direct sound are the two essential cues for externalising headphone sources, even with non-individual data (Li, Schlieper, Peissig 2019, Applied Sciences 9(3):460). Hence directional reflections.
 - Envelopment needs surrounding sound events arriving densely from spread directions, and sound from above is its own attribute (arXiv 2301.10210). Hence beds as pairs and a ceiling reflection; a multi-direction late tail is not built yet.
-- IACC alone does not predict envelopment, so `imm_envelopment` is a WARN. Spectral manipulation helps elevation with non-individual HRTFs (Rajendran & Gamper 2019; only the abstract was seen).
-- Methods already vendored: MagLS binaural decoding (Hold et al. 2023) in `spatial_hrtf`, FABIAN head data.
+- IACC alone does not predict envelopment, so `imm_envelopment` is a WARN. Spectral manipulation helps elevation with non-individual HRTFs.
+- Methods already vendored: MagLS binaural decoding in `spatial_hrtf`, FABIAN head data.
 
 ## 5. Limits (state them in the reply)
 

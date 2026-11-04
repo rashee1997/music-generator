@@ -9,7 +9,7 @@ load_when:
 
 # Blending and balance (any music)
 
-How a human mixer makes layers sound like one piece. Applies to ambient, pop, film, game, anything. Sources: Salivity "Layering Field Recordings Under Ambient Beds", Sound On Sound "Depth of Field" (Heimer, 2025), SonusGearFlow "Designing Ambiences" (2026). Full notes: a project's `reports/research_mixing_blend.md`.
+How a human mixer makes layers sound like one piece. Applies to ambient, pop, film, game, anything.
 
 ## Rules, and the score key that does each
 
