@@ -4,14 +4,14 @@ target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Syncopation_En
 schema_version: "2026.10.1"
 ---
 
-# 🌴🪶🔥 The Americas, Amazonia, Rio & "Hakan" (Māori *Haka* / Steppe *Khakan* / Anatolian) Psychoacoustic & Algorithmic DSP Knowledge Base
-**Scope:** Rio de Janeiro (*Samba Batucada, Bossa Nova, Phonk/Baile Funk*) $\rightarrow$ The Amazon Basin (*Indigenous Rainforest Flute/Rattle & Carimbó*) $\rightarrow$ Native American (*Plains Powwow, Woodlands Flute, Andean Sikuri/Huayno*) $\rightarrow$ *Hakan* Styles (*Māori Haka Ceremonial Stomp/Chant, Turkic-Mongol Khakan/Khöömei Overtone Throat Singing, & Turkish Makam/Electro-House*).  
+# The Americas, Amazonia, Rio & "Hakan" (Māori *Haka* / Steppe *Khakan* / Anatolian) Psychoacoustic & Algorithmic DSP Knowledge Base
+**Scope:** Rio de Janeiro (*Samba Batucada, Bossa Nova, Phonk/Baile Funk*) $\rightarrow$ The Amazon Basin (*Indigenous Rainforest Flute/Rattle & Carimbó*) $\rightarrow$ Native American (*Plains Powwow, Woodlands Flute, Andean Sikuri/Huayno*) $\rightarrow$ *Hakan* Styles (*Māori Haka Ceremonial Stomp/Chant, Turkic-Mongol Khakan/Khöömei Overtone Throat Singing, & Turkish Makam/Electro-House*).
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Non-Linear Micro-Swing ("The Brazilian Egg"), Formant/Overtone Vocal DSP, and Global World Fusions.
 
 ---
 
 
-## 📑 Table of Contents (Machine-Parsable Index)
+## Table of Contents (Machine-Parsable Index)
 - [1.0 Core Psychoacoustics: How These Ears Listen](#1-core-psychoacoustics-how-these-ears-listen)
 - [2.0 Brazil: Rio de Janeiro & The Northeast](#2-brazil-rio-de-janeiro-samba-bossa-nova-baile-funk--the-northeast-baio--maracatu)
   - [2.1 Mathematical Secret of Rio Samba: The Brazilian Egg (O Suingue)](#21-the-mathematical-secret-of-rio-samba-the-brazilian-egg-o-suingue)
@@ -36,7 +36,7 @@ schema_version: "2026.10.1"
 
 ---
 
-## 🧭 1. Core Psychoacoustics: How These Ears Listen
+## 1. Core Psychoacoustics: How These Ears Listen
 
 | Musical Tradition | Primary Psychoacoustic Focus | How the Ear Tracks Time & Pitch | Algorithmic / Python DSP Rule |
 | :--- | :--- | :--- | :--- |
@@ -96,7 +96,7 @@ A Rio Carnival *Bateria* is a living, acoustic club sound system divided into 5 
 
 ---
 
-## 🌿 3. The Amazon Basin (*Indigenous Rainforest Traditions & Northern Brazilian Carimbó*)
+## 3. The Amazon Basin (*Indigenous Rainforest Traditions & Northern Brazilian Carimbó*)
 
 ### 3.1 Indigenous Amazonian Music (*Xingu, Yanomami, Tukano, Asháninka, Shipibo*)
 * **Cultural & Acoustic DNA:** Music is not "entertainment"—it is **ecological communication and shamanic healing (*Ícaros*)**.
@@ -114,7 +114,7 @@ A Rio Carnival *Bateria* is a living, acoustic club sound system divided into 5 
 
 ---
 
-## 🪶 4. Native American Traditions (North American Plains/Woodlands & South American Andes)
+## 4. Native American Traditions (North American Plains/Woodlands & South American Andes)
 
 ### 4.1 Indigenous North America (*Plains Powwow, Lakota, Navajo, Pueblo, Eastern Woodlands*)
 
@@ -146,7 +146,7 @@ A Rio Carnival *Bateria* is a living, acoustic club sound system divided into 5 
 
 ---
 
-## 🔥 5. "Hakan" Styles: The 3 Global Musical Archetypes
+## 5. "Hakan" Styles: The 3 Global Musical Archetypes
 
 Depending on your fusion context, **"Hakan / Haka / Khakan"** refers to three powerhouse sonic traditions—all of which can be synthesized in pure Python:
 
@@ -183,7 +183,7 @@ Depending on your fusion context, **"Hakan / Haka / Khakan"** refers to three po
 
 ---
 
-## 💻 6. Pure-Python DSP & Algorithmic Parameter Cheat Sheet
+## 6. Pure-Python DSP & Algorithmic Parameter Cheat Sheet
 
 Drop these functions directly into your Python synthesis engine to generate **Rio Samba Swing**, **Native American Canyon Flutes**, **Māori Haka Stomps**, and **Steppe Throat-Singing Overtones**:
 
@@ -193,9 +193,9 @@ import numpy as np
 from scipy.signal import iirpeak, lfilter
 
 def synth_throat_singing_kargyraa_sygyt(
-    f0: float, 
-    harmonic_melody: list[int], 
-    duration_sec: float, 
+    f0: float,
+    harmonic_melody: list[int],
+    duration_sec: float,
     sr: int = 44100
 ) -> np.ndarray:
     """
@@ -206,7 +206,7 @@ def synth_throat_singing_kargyraa_sygyt(
     """
     N = int(sr * duration_sec)
     t = np.linspace(0, duration_sec, N, endpoint=False)
-    
+
     # 1. Glottal Pulse Train (True Vocal Cords at f0 + False Folds at 0.5*f0)
     f_sub = 0.5 * f0
     glottal = np.zeros_like(t)
@@ -215,22 +215,22 @@ def synth_throat_singing_kargyraa_sygyt(
         # Natural spectral tilt (-6dB/octave) with vocal tract boost around 600Hz-3kHz
         weight = (1.0 / (h ** 0.75)) if (h % 2 == 0) else (0.7 / (h ** 0.8))
         glottal += weight * np.sin(2.0 * np.pi * (f_sub * h) * t)
-        
+
     glottal = np.tanh(glottal * 1.4)
-    
+
     # 2. Isolate 'Sygyt' Whistle Overtones via Piecewise High-Q Formant Filtering
     whistle_layer = np.zeros_like(t)
     seg_len = N // len(harmonic_melody)
-    
+
     for i, harm_num in enumerate(harmonic_melody):
         start = i * seg_len
         end = N if (i == len(harmonic_melody) - 1) else (i + 1) * seg_len
         target_hz = np.clip(f0 * harm_num, 200.0, sr * 0.45)
-        
+
         # Ultra-high Q (Q=28) resonant peak isolating the single harmonic partial!
         b, a = iirpeak(target_hz / (sr / 2.0), Q=28.0)
         whistle_layer[start:end] = lfilter(b, a, glottal[start:end])
-        
+
     amp_env = (1.0 - np.exp(-t / 0.04)) * np.exp(-np.maximum(0, t - (duration_sec - 0.1)) / 0.04)
     return np.tanh((0.45 * glottal + 1.8 * whistle_layer) * amp_env)
 \`\`\`
@@ -246,18 +246,18 @@ def get_rio_samba_16th_grid(bpm: float, num_bars: int = 4) -> list[dict]:
     # The 'Egg' offsets (in seconds) and velocities for steps [0, 1, 2, 3] of every beat:
     egg_shift_sec = [0.000, -0.012, -0.005, +0.008]
     egg_velocity  = [0.85,   0.35,   0.55,   1.00]   # Step 3 ('a') leans hard into the next beat!
-    
+
     events = []
     for step in range(num_bars * 16):
         sub = step % 4
         beat_in_bar = (step // 4) % 4
         exact_time = (step * sixteenth_sec) + egg_shift_sec[sub]
-        
+
         # Surdo Rule: Beat 1 (0) & 3 (2) = Muted High Surdo; Beat 2 (1) & 4 (3) = Booming Open 60Hz Surdo!
         surdo_type = None
         if sub == 0:
             surdo_type = "surdo_open_60hz" if (beat_in_bar in [1, 3]) else "surdo_muted_90hz"
-            
+
         events.append({
             "step": step,
             "time_sec": max(0.0, exact_time),
@@ -308,7 +308,7 @@ GLOBAL_INDIGENOUS_GROOVES_16 = {
 
 ---
 
-## ⚡ 7. Mind-Blowing Cross-Cultural Fusion Blueprints
+## 7. Mind-Blowing Cross-Cultural Fusion Blueprints
 
 With this module added to your **Tamil**, **Arabic**, **African**, **Western**, and **Chinese/Japanese** library, look at the wild new fusions you can generate in pure Python:
 

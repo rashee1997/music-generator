@@ -4,12 +4,12 @@ target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Ethnomusicolog
 schema_version: "2026.10.4"
 ---
 
-# 🇮🇳🪕🥁 The Pan-Indian Music Psychoacoustic & Instrument DSP Knowledge Base (Hindustani, Punjabi, Rajasthani, Sufi, Bengali, Western, Northeastern & Non-Tamil South)
+# 🇮🇳 The Pan-Indian Music Psychoacoustic & Instrument DSP Knowledge Base (Hindustani, Punjabi, Rajasthani, Sufi, Bengali, Western, Northeastern & Non-Tamil South)
 **Purpose:** Complete the Indian Subcontinent musical architecture beyond Tamil Nadu. This document models **Hindustani Classical (*Raga, Thaat, Meend, Jawari, Tabla*)**, **Regional Folk Ecosystems (*Punjab, Rajasthan, Bengal, Gujarat, Maharashtra, Kerala, Assam, Kashmir, Odissi*)**, and **Modern Bollywood / Indie-Electronic Fusions**.
 
 ---
 
-## 📑 Table of Contents (Machine-Parsable Index)
+## Table of Contents (Machine-Parsable Index)
 - [1.0 Core Psychoacoustics: Hindustani (North) vs. Carnatic (South) Ear](#10-core-psychoacoustics-hindustani-north-vs-carnatic-south-ear)
 - [2.0 Hindustani Classical Architecture: The 10 *Thaats*, *Prahar* (Time Theory) & *Meend*](#20-hindustani-classical-architecture-the-10-thaats-prahar-time-theory--meend)
 - [3.0 Physics & Pure-Python DSP of Iconic Indian Instruments](#30-physics--pure-python-dsp-of-iconic-indian-instruments)

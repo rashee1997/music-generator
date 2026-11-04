@@ -4,14 +4,14 @@ target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Spatial_Audio_
 schema_version: "2026.10.3"
 ---
 
-# 🌧️⚡🦅 The Master Procedural SFX, World Ambience & Zero-Overlap Music Blending Knowledge Base
-**Purpose:** 
+# The Master Procedural SFX, World Ambience & Zero-Overlap Music Blending Knowledge Base
+**Purpose:**
 1. Synthesize **any natural, environmental, human-crowd, or cinematic SFX** in 100% pure Python (`NumPy`/`SciPy`) using physical and stochastic modeling (zero external `.wav` samples required).
 2. Enforce **5 Mathematical Zero-Overlap Blending Laws** so ambient beds and SFX **never mask, muddy, or clash** with musical instruments across frequency, time, pitch, or 3D space.
 
 ---
 
-## 📑 Table of Contents (Machine-Parsable Index)
+## Table of Contents (Machine-Parsable Index)
 - [1.0 The 5 Laws of Zero-Overlap SFX-to-Music Blending](#10-the-5-laws-of-zero-overlap-sfx-to-music-blending)
   - [1.1 LAW 1: Dynamic Spectral Notching (Real-Time Bark-Band Carving)](#11-law-1-dynamic-spectral-notching-real-time-bark-band-carving)
   - [1.2 LAW 2: Temporal Call-and-Response Gating (Transient Ducking & Gap-Filling)](#12-law-2-temporal-call-and-response-gating-transient-ducking--gap-filling)
@@ -174,19 +174,19 @@ class ProceduralSFXAndZeroOverlapBlender:
         white = np.random.normal(0, 1, N)
         b_bp, a_bp = butter(2, [350.0 / (self.sr/2), 5500.0 / (self.sr/2)], btype='band')
         bed = lfilter(b_bp, a_bp, white) * (0.12 * intensity)
-        
+
         # 2. Discrete Water Droplet Bubble Chirps (1.4kHz -> 2.9kHz over 4.5ms)
         num_drops = int(duration_sec * (18 + 45 * intensity))
         drop_len = int(0.005 * self.sr)
         t_d = np.linspace(0, 0.005, drop_len, endpoint=False)
-        
+
         for _ in range(num_drops):
             idx = np.random.randint(0, max(1, N - drop_len))
             f_start = np.random.uniform(1100.0, 1900.0)
             f_chirp = np.linspace(f_start, f_start * 1.9, drop_len)
             drop_sig = np.sin(2.0 * np.pi * np.cumsum(f_chirp) / self.sr) * np.exp(-t_d / 0.0015)
             bed[idx : idx + drop_len] += drop_sig * np.random.uniform(0.05, 0.22)
-            
+
         return np.tanh(bed)
 
     def synth_wind_and_sand(self, duration_sec: float, desert_sand: bool = True) -> np.ndarray:
@@ -194,21 +194,21 @@ class ProceduralSFXAndZeroOverlapBlender:
         N = int(self.sr * duration_sec)
         t = np.linspace(0, duration_sec, N, endpoint=False)
         white = np.random.normal(0, 1, N)
-        
+
         # Slow wind gust swell envelope (0.14 Hz + 0.31 Hz)
         gust_env = 0.45 + 0.35 * np.sin(2 * np.pi * 0.14 * t) + 0.20 * np.cos(2 * np.pi * 0.31 * t)
-        
+
         # Two whistling air formants (420Hz and 780Hz)
         b1, a1 = iirpeak(420.0 / (self.sr/2), Q=8.0)
         b2, a2 = iirpeak(780.0 / (self.sr/2), Q=10.0)
         wind = (lfilter(b1, a1, white) * 0.6 + lfilter(b2, a2, white) * 0.4) * gust_env
-        
+
         if desert_sand:
             # High-frequency crystalline sand-grain hiss (5kHz - 11kHz) surging on gust peaks!
             b_s, a_s = butter(2, [5000.0 / (self.sr/2), 11000.0 / (self.sr/2)], btype='band')
             sand_hiss = lfilter(b_s, a_s, white) * (gust_env ** 2.5) * 0.18
             wind += sand_hiss
-            
+
         return np.tanh(wind * 0.8)
 
     def synth_avian_syrinx_bird_call(self, base_freq: float = 2600.0, duration_sec: float = 0.45) -> np.ndarray:
@@ -217,7 +217,7 @@ class ProceduralSFXAndZeroOverlapBlender:
         out = np.zeros(N, dtype=np.float64)
         syl_len = N // 3
         t_s = np.linspace(0, syl_len / self.sr, syl_len, endpoint=False)
-        
+
         for s in range(3):
             # Exponential pitch arc per syllable
             f_arc = base_freq * (1.0 + 0.35 * np.sin(np.pi * (s + 1) * np.linspace(0, 1, syl_len)))
@@ -226,7 +226,7 @@ class ProceduralSFXAndZeroOverlapBlender:
             syrinx_mod = 0.45 * np.sin(2.0 * np.pi * 165.0 * t_s)
             env = np.sin(np.pi * np.linspace(0, 1, syl_len)) ** 2.0
             out[s * syl_len : (s + 1) * syl_len] = np.sin(phase + syrinx_mod) * env
-            
+
         return out * 0.45
 
     def synth_kuthu_street_whistle(self, duration_sec: float = 0.32) -> np.ndarray:
@@ -236,12 +236,12 @@ class ProceduralSFXAndZeroOverlapBlender:
         # Swoops sharply from 2650Hz up to 3420Hz and settles at 3150Hz with 25Hz tongue-trill!
         f_swoop = 2650.0 + 770.0 * (1.0 - np.exp(-t / 0.04)) - 250.0 * (t / duration_sec)
         f_trill = f_swoop + 45.0 * np.sin(2.0 * np.pi * 24.0 * t)
-        
+
         phase = 2.0 * np.pi * np.cumsum(f_trill) / self.sr
         # Add realistic lip-turbulence breath noise around 3kHz
         b_br, a_br = iirpeak(3100.0 / (self.sr/2), Q=6.0)
         breath = lfilter(b_br, a_br, np.random.normal(0, 0.25, N))
-        
+
         env = (1.0 - np.exp(-t / 0.015)) * np.exp(-np.maximum(0.0, t - (duration_sec - 0.06)) / 0.025)
         return np.tanh((np.sin(phase) * 0.75 + breath) * env)
 
@@ -258,13 +258,13 @@ class ProceduralSFXAndZeroOverlapBlender:
         resonated = np.zeros_like(raw_ambience)
         # Pick Root (0), 3rd/4th, 5th (7), and Octave (12)
         target_degrees = [0.0, scale_semitones[min(2, len(scale_semitones)-1)], 7.0, 12.0]
-        
+
         for semi in target_degrees:
             hz = root_hz * (2.0 ** ((semi + 12.0) / 12.0)) # Place in warm 300Hz-900Hz mid-register
             if 160.0 < hz < (self.sr * 0.4):
                 b_res, a_res = iirpeak(hz / (self.sr / 2.0), Q=32.0)
                 resonated += lfilter(b_res, a_res, raw_ambience) * 0.25
-                
+
         return (1.0 - wet_mix) * raw_ambience + (wet_mix * np.tanh(resonated * 2.2))
 
     def blend_ambience_and_sfx_zero_overlap(
@@ -286,33 +286,33 @@ class ProceduralSFXAndZeroOverlapBlender:
         """
         N = len(music_left)
         amb = continuous_ambience[:N] if len(continuous_ambience) >= N else np.pad(continuous_ambience, (0, N - len(continuous_ambience)))
-        
+
         # LAW 1A: Sub-Bass Protection (Strict High-Pass at 150Hz)
         b_hp, a_hp = butter(3, 150.0 / (self.sr / 2.0), btype='high')
         amb_clean = lfilter(b_hp, a_hp, amb)
-        
+
         # LAW 1B: Lead Melody Formant Protection (Carve notch at lead_center_hz)
         b_notch, a_notch = iirnotch(lead_center_hz / (self.sr / 2.0), Q=1.6)
         amb_notched = lfilter(b_notch, a_notch, amb_clean)
-        
+
         # LAW 3: Key-Lock the Ambience to the Musical Scale!
         amb_musical = self.key_lock_ambience_to_scale(amb_notched, root_hz, scale_semitones, wet_mix=0.30)
-        
+
         # LAW 2: Compute Smoothed Music Activity Envelope M_env(t) for Dynamic Ducking
         music_mono = 0.5 * ( np.abs(music_left) + np.abs(music_right) )
         win_len = int(0.08 * self.sr) # 80ms RMS window
         music_env = np.convolve(music_mono, np.ones(win_len) / win_len, mode='same')
         music_env_norm = np.clip(music_env / (np.max(music_env) + 1e-6), 0.0, 1.0)
-        
+
         # Inverse Ducking Curve: Ambience breathes up to 1.0 in rests, ducks to 0.35 during loud drops!
         duck_gain = 1.0 - (0.65 * (music_env_norm ** 1.2))
         amb_ducked = amb_musical * duck_gain
-        
+
         # LAW 4: 3D Mid-Side Halo & 11ms Haas Stereo Decorrelation
         haas_samples = int(0.011 * self.sr)
         amb_L = amb_ducked
         amb_R = np.roll(amb_ducked, haas_samples) * -0.85 # Inverted Side-rich phase for wide 360 dome!
-        
+
         # Place Discrete SFX Events (Whistles, Birds, Thunder) with Gap-Aware Gating
         sfx_L = np.zeros(N, dtype=np.float64)
         sfx_R = np.zeros(N, dtype=np.float64)
@@ -328,7 +328,7 @@ class ProceduralSFXAndZeroOverlapBlender:
                 angle = (pan + 1.0) * (np.pi / 4.0)
                 sfx_L[sample_pos:end_pos] += sfx_wave[:seg] * gap_gain * np.cos(angle)
                 sfx_R[sample_pos:end_pos] += sfx_wave[:seg] * gap_gain * np.sin(angle)
-                
+
         final_L = np.tanh(music_left  + (amb_L * 0.22) + (sfx_L * 0.45))
         final_R = np.tanh(music_right + (amb_R * 0.22) + (sfx_R * 0.45))
         return final_L, final_R

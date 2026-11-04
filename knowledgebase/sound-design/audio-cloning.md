@@ -4,13 +4,13 @@ target_consumers: ["AI_Audio_Agents", "Reverse_DSP_Engines", "MIR_Feature_Extrac
 schema_version: "2026.10.6"
 ---
 
-# 🔬🎛️ The Programmatic Music & Instrument Cloning Knowledge Base
-**Sub-title:** Mathematical Frameworks, Spectral Algorithms, and Pure-Python DSP for Reverse-Engineering Any Audio Reference Without Human Ears.  
+# The Programmatic Music & Instrument Cloning Knowledge Base
+**Sub-title:** Mathematical Frameworks, Spectral Algorithms, and Pure-Python DSP for Reverse-Engineering Any Audio Reference Without Human Ears.
 **Core Purpose:** Convert any arbitrary audio signal ($x[n]$) into an exact, reproducible procedural code recipe: Melodic Micro-Tuning, Harmonic Partials, Attack Transients, Formant Envelopes, Groove Micro-Shifts, and Reverb $T_{60}$ Decay.
 
 ---
 
-## 📑 Table of Contents (Machine-Parsable Index)
+## Table of Contents (Machine-Parsable Index)
 - [1.0 The 6-Stage Audio Reverse-Engineering Pipeline](#10-the-6-stage-audio-reverse-engineering-pipeline)
 - [2.0 Stage 1: Continuous Microtonal Pitch Extraction ($f_0$ Contours & Ornaments)](#20-stage-1-continuous-microtonal-pitch-extraction-f_0-contours--ornaments)
   - [2.1 Mathematical YIN / pYIN Algorithm (Sub-Sample Accurate Pitch Tracking)](#21-mathematical-yin--pyin-algorithm-sub-sample-accurate-pitch-tracking)
@@ -90,9 +90,9 @@ The YIN algorithm extracts fundamental frequency ($f_0$) by minimizing a normali
    $$d_t(\tau) = \sum_{j=1}^{W} \left( x[j] - x[j + \tau] \right)^2$$
    where $W$ is the integration window size (typically $20\text{ms}–40\text{ms}$) and $\tau$ is the lag.
 2. **Cumulative Mean Normalized Difference Function (CMNDF):**
-   $$d'_t(\tau) = \begin{cases} 
-   1 & \text{if } \tau = 0 \\ 
-   \frac{d_t(\tau)}{\frac{1}{\tau} \sum_{j=1}^{\tau} d_t(j)} & \text{otherwise} 
+   $$d'_t(\tau) = \begin{cases}
+   1 & \text{if } \tau = 0 \\
+   \frac{d_t(\tau)}{\frac{1}{\tau} \sum_{j=1}^{\tau} d_t(j)} & \text{otherwise}
    \end{cases}$$
 3. **Absolute Thresholding:** Find the smallest lag $\tau$ where $d'_t(\tau) < \text{threshold}$ (typically set to $0.10–0.15$).
 4. **Parabolic Interpolation for Sub-Sample Precision:**
@@ -173,7 +173,7 @@ $$\hat{x}[n] = -\sum_{i=1}^P a_i x[n - i]$$
 When cloning an entire composed track rather than an isolated lead, multiple notes sound simultaneously. The engine must extract the chord voicings without relying on human transcription.
 
 ### 4.1 Constant-Q Transform (CQT) & Pitch-Salience Matrices
-Standard STFT has linear frequency bins ($50\text{Hz}$ per bin across all frequencies), which gives terrible frequency resolution at bass frequencies and unnecessary resolution at high frequencies. 
+Standard STFT has linear frequency bins ($50\text{Hz}$ per bin across all frequencies), which gives terrible frequency resolution at bass frequencies and unnecessary resolution at high frequencies.
 
 The **Constant-Q Transform (CQT)** uses geometrically spaced frequency bins that match the logarithmic distribution of musical pitches:
 $$f_k = f_{\text{min}} \cdot 2^{k / B}$$

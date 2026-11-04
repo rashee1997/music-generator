@@ -5,9 +5,9 @@ schema_version: "2026.10.7"
 domain: "Frame-Accurate Video Scoring, Keyframe Hit Point Alignment, Motion Easing Sync, & Speech Corridor Carving"
 ---
 
-# 🎬 Motion Graphics & Video Scoring Architecture: Frame-Accurate DSP Ontology
+# Motion Graphics & Video Scoring Architecture: Frame-Accurate DSP Ontology
 
-## 📑 Table of Contents
+## Table of Contents
 1. [Theoretical Foundations: Frame-Rate Locked Musical Mathematics](#1-theoretical-foundations-frame-rate-locked-musical-mathematics)
 2. [The Universal Frame-to-BPM Quantization Matrix (24, 25, 29.97, 30, 60 FPS)](#2-the-universal-frame-to-bpm-quantization-matrix-24-25-2997-30-60-fps)
 3. [Visual Hit Points & Keyframe Synchronization Mechanics](#3-visual-hit-points--keyframe-synchronization-mechanics)

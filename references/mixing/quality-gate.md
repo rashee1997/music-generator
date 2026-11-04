@@ -207,7 +207,7 @@ not the master's; it cannot hear whether the brightness is intended. Listen befo
 ## 5c. One list of rows, whoever runs the gate
 
 There is one implementation of the row list: `quality_gate.run_gate`. `quality_gate.py <score> --wav <master>` calls it
-after rendering; `pipeline.py` calls the same function from stage 6 with the score it just rendered
+after rendering; `pipeline.py` calls the same function from stage 6 with the score it rendered
 (`run_gate(None, wav_path=..., stems=..., score=score)`), so a row can never exist in one path and not the other. If a row
 is missing from a pipeline run, it is skipped by the piece's gate profile, not by the pipeline.
 

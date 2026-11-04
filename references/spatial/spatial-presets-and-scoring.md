@@ -78,7 +78,7 @@ Defines the creative brief, musical targets, temporal landmarks, and 3D soundsta
 
 ### Stage 2: Modular JSON Presets (`presets/`)
 
-Presets define sound generation, EQ filters, humanization feel, and physical 3D spatial staging. Once defined, they are referenced simply by name in scores.
+Presets define sound generation, EQ filters, humanization feel, and physical 3D spatial staging. Once defined, they are referenced by name in scores.
 
 #### A. Instrument Preset (`presets/instruments/<name>.json`):
 ```json

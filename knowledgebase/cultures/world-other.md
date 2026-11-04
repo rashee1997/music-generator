@@ -4,14 +4,14 @@ target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Ethnomusicolog
 schema_version: "2026.10.1"
 ---
 
-# 🗣️🍀⚙️ The Global Vocal-Humming Atlas, Celtic, Germanic & Remaining World Traditions DSP Knowledge Base
-**Scope:** 10 Cultural Humming/Vocal-Tract Physics Models $\rightarrow$ Celtic & Nordic (*Irish, Scottish, Breton, Viking/Kulning*) $\rightarrow$ Germanic (*Wagnerian, Krautrock Motorik, Oompah, Berlin Techno*) $\rightarrow$ Flamenco, Balkan/Slavic *Aksak*, & Indonesian *Gamelan*.  
+# The Global Vocal-Humming Atlas, Celtic, Germanic & Remaining World Traditions DSP Knowledge Base
+**Scope:** 10 Cultural Humming/Vocal-Tract Physics Models $\rightarrow$ Celtic & Nordic (*Irish, Scottish, Breton, Viking/Kulning*) $\rightarrow$ Germanic (*Wagnerian, Krautrock Motorik, Oompah, Berlin Techno*) $\rightarrow$ Flamenco, Balkan/Slavic *Aksak*, & Indonesian *Gamelan*.
 **Target Application:** Pure-Code Formant/Glottal Vocal Synthesis (Python / NumPy / SciPy), Non-Isochronous Meter Matrices, and Global Cross-Cultural Fusions.
 
 ---
 
 
-## 📑 Table of Contents (Machine-Parsable Index)
+## Table of Contents (Machine-Parsable Index)
 - [1.0 Global Atlas of Humming & Non-Lexical Vocalizing](#1-the-global-atlas-of-humming--non-lexical-vocalizing-beyond-a-simple-hum)
 - [2.0 Celtic & Nordic Music (Ireland, Scotland, Brittany, Scandinavia)](#2-celtic--nordic-music-ireland-scotland-brittany-wales--scandinavia)
   - [2.1 Celtic Ear: Lilt, Cuts/Rolls & Modal Ambiguity](#21-how-the-celtic-ear-listens-lilt-cutsrolls--modal-ambiguity)
@@ -33,9 +33,9 @@ schema_version: "2026.10.1"
 
 ---
 
-## 🗣️ 1. The Global Atlas of Humming & Non-Lexical Vocalizing (Beyond a "Simple Hum")
+## 1. The Global Atlas of Humming & Non-Lexical Vocalizing (Beyond a "Simple Hum")
 
-A "simple hum" is just a closed-lip nasal tone (`F1 ≈ 280Hz, F2 attenuated`). Across world cultures, however, **humming and vocables** are complex acoustic instruments where the **velum (nasal port), glottis, tongue, and lips** modulate rapidly. 
+A "simple hum" is just a closed-lip nasal tone (`F1 ≈ 280Hz, F2 attenuated`). Across world cultures, however, **humming and vocables** are complex acoustic instruments where the **velum (nasal port), glottis, tongue, and lips** modulate rapidly.
 
 Here is how to synthesize **10 distinct cultural humming & vocal styles** in pure Python instead of a generic hum:
 
@@ -54,7 +54,7 @@ Here is how to synthesize **10 distinct cultural humming & vocal styles** in pur
 
 ---
 
-## 🍀 2. Celtic & Nordic Music (Ireland, Scotland, Brittany, Wales & Scandinavia)
+## 2. Celtic & Nordic Music (Ireland, Scotland, Brittany, Wales & Scandinavia)
 
 ### 2.1 How the "Celtic Ear" Listens: *Lilt*, *Cuts/Rolls*, & *Modal Ambiguity*
 In Celtic music, a fiddle, flute, or pipe player rarely uses vibrato! Because the **Uilleann Pipes** and **Highland Bagpipes** have a continuous airflow and cannot stop the sound between two identical notes (e.g., `D -> D`), Celtic musicians invented **Fingered Articulations (*Cuts, Strikes, Crans, and Rolls*)** that split identical notes using ultra-fast `20ms` grace notes!
@@ -86,7 +86,7 @@ In Celtic music, a fiddle, flute, or pipe player rarely uses vibrato! Because th
 
 ---
 
-## ⚙️ 3. Germanic Music (Germany & Austria: *Klassik/Romantik*, *Krautrock Motorik*, *Volksmusik*, & *Berlin Techno*)
+## 3. Germanic Music (Germany & Austria: *Klassik/Romantik*, *Krautrock Motorik*, *Volksmusik*, & *Berlin Techno*)
 
 Germanic music has shaped global sound design more than almost any other European region—from **Bach's mathematical fugues** and **Wagner's cinematic brass** to **Kraftwerk/Neu!'s *Motorik* machine pulse** and **Berlin's Berghain Industrial Techno**.
 
@@ -101,7 +101,7 @@ Germanic music has shaped global sound design more than almost any other Europea
 
 ---
 
-## 💃🎺🪘 4. The Final 3 Global Pillars (Iberian *Flamenco*, Balkan *Aksak*, & Indonesian *Gamelan*)
+## 4. The Final 3 Global Pillars (Iberian *Flamenco*, Balkan *Aksak*, & Indonesian *Gamelan*)
 
 To ensure **zero blind spots** in your algorithmic music engine, here are the three remaining mathematical wonders of world music:
 
@@ -128,7 +128,7 @@ To ensure **zero blind spots** in your algorithmic music engine, here are the th
 
 ---
 
-## 💻 5. Pure-Python DSP & Algorithmic Parameter Cheat Sheet
+## 5. Pure-Python DSP & Algorithmic Parameter Cheat Sheet
 
 Add these functions directly to your Python engine to unlock **Cultural Humming Synthesis**, **Celtic Pipe Rolls**, and **Berlin/Krautrock/Balkan Engines**:
 
@@ -145,7 +145,7 @@ def synth_cultural_vocal_hum(
     """
     Synthesizes realistic, culturally specific human humming & non-lexical vocalizing
     instead of a flat synthetic hum.
-    
+
     Styles:
     - 'tamil_aakaram': Morphs dynamically between closed-lip 'Mm' hum and open-throat 'Aa' with Gamaka warmth.
     - 'celtic_keening': Nasal lament hum with breathy air and terminal vocal-fry sob.
@@ -156,49 +156,49 @@ def synth_cultural_vocal_hum(
     """
     N = len(f0_array)
     t = np.arange(N) / sr
-    
+
     # 1. Generate Glottal Source (Rosenberg-style asymmetric vocal fold pulse)
     phase = 2.0 * np.pi * np.cumsum(f0_array) / sr
     glottal = np.zeros(N)
     max_harm = 18 if style != "nordic_kulning" else 10
     for k in range(1, max_harm + 1):
         glottal += (1.0 / (k ** 1.15)) * np.sin(k * phase)
-        
+
     # Add cultural partner voice or sub-glottal effects
     if style == "bulgarian_open":
         # Add second voice a Major 2nd (+200 cents) higher for classic Balkan diaphonic shimmer!
         phase2 = 2.0 * np.pi * np.cumsum(f0_array * (2.0 ** (200.0 / 1200.0))) / sr
         for k in range(1, 16):
             glottal += 0.85 * (1.0 / (k ** 1.1)) * np.sin(k * phase2)
-            
+
     # 2. Apply Vocal Tract Formant & Nasal Cavity Modeling
     if style == "tamil_aakaram":
         # Closed-lip 'Mm' (280Hz) opening smoothly into 'Aa' (730Hz, 1220Hz, 2600Hz)
         b_mm, a_mm = iirpeak(280.0 / (sr / 2), Q=5.0)
         b_zero, a_zero = iirnotch(1250.0 / (sr / 2), Q=3.0) # Nasal antiresonance zero!
         hum_part = lfilter(b_zero, a_zero, lfilter(b_mm, a_mm, glottal))
-        
+
         b_f1, a_f1 = iirpeak(730.0 / (sr / 2), Q=6.0)
         b_f2, a_f2 = iirpeak(1220.0 / (sr / 2), Q=8.0)
         aa_part = lfilter(b_f1, a_f1, glottal) + 0.7 * lfilter(b_f2, a_f2, glottal)
-        
+
         # Morph envelope: starts 'Mm', opens to 'Aa' in middle, closes to 'Mm'
         morph = np.sin(np.pi * np.linspace(0, 1, N)) ** 1.5
         vocal = (1.0 - morph) * hum_part + morph * aa_part
-        
+
     elif style == "arab_zaghrouta":
         # 12.5 Hz tongue-flick modulation between F2=1450Hz and F2=2350Hz
         lfo = 0.5 * (1.0 + np.sin(2.0 * np.pi * 12.5 * t))
         b1, a1 = iirpeak(1450.0 / (sr / 2), Q=9.0)
         b2, a2 = iirpeak(2350.0 / (sr / 2), Q=9.0)
         vocal = ((1.0 - lfo) * lfilter(b1, a1, glottal) + lfo * lfilter(b2, a2, glottal)) * (0.65 + 0.35 * lfo)
-        
+
     elif style == "nordic_kulning":
         # Lock Formant directly to 2 * mean(f0) for piercing 5km mountain projection
         f_lock = np.clip(np.mean(f0_array) * 2.0, 600.0, 3200.0)
         b_k, a_k = iirpeak(f_lock / (sr / 2), Q=14.0)
         vocal = lfilter(b_k, a_k, glottal)
-        
+
     elif style == "sufi_zikr_hu":
         # Deep 'Hu' [u] formant (320Hz, 680Hz) + rhythmic 4Hz breath chuff
         b1, a1 = iirpeak(310.0 / (sr / 2), Q=6.0)
@@ -206,13 +206,13 @@ def synth_cultural_vocal_hum(
         breath = np.random.uniform(-1, 1, N) * (np.sin(2.0 * np.pi * 2.0 * t) ** 4)
         b_br, a_br = iirpeak(850.0 / (sr / 2), Q=3.0)
         vocal = lfilter(b1, a1, glottal) + 0.5 * lfilter(b2, a2, glottal) + 0.35 * lfilter(b_br, a_br, breath)
-        
+
     else: # 'celtic_keening' or 'bulgarian_open'
         b1, a1 = iirpeak(480.0 / (sr / 2), Q=6.0)
         b2, a2 = iirpeak(1850.0 / (sr / 2), Q=8.0)
         b3, a3 = iirpeak(3100.0 / (sr / 2), Q=10.0) # Singer's Formant ring
         vocal = lfilter(b1, a1, glottal) + 0.6 * lfilter(b2, a2, glottal) + 0.5 * lfilter(b3, a3, glottal)
-        
+
     env = (1.0 - np.exp(-t / 0.035)) * np.exp(-np.maximum(0.0, t - (N/sr - 0.08)) / 0.04)
     return np.tanh(vocal * env * 1.4)
 \`\`\`
@@ -228,21 +228,21 @@ def generate_celtic_roll_f0_curve(f0: float, duration_sec: float, sr: int = 4410
     N = int(sr * duration_sec)
     f_arr = np.full(N, f0, dtype=np.float64)
     amp_mask = np.ones(N, dtype=np.float64)
-    
+
     if duration_sec >= 0.25:
         cut_start  = int(0.30 * N)
         cut_len    = int(0.018 * sr)
         strk_start = int(0.62 * N)
         strk_len   = int(0.018 * sr)
-        
+
         # Upper Grace-Note Cut (+2 semitones)
         f_arr[cut_start : cut_start + cut_len] = f0 * (2.0 ** (2.0 / 12.0))
         amp_mask[cut_start : cut_start + cut_len] = 0.75
-        
+
         # Lower Finger-Strike (-2 semitones)
         f_arr[strk_start : strk_start + strk_len] = f0 * (2.0 ** (-2.0 / 12.0))
         amp_mask[strk_start : strk_start + strk_len] = 0.70
-        
+
     return f_arr, amp_mask
 \`\`\`
 
@@ -255,18 +255,18 @@ def synth_berlin_rumble_kick(bpm: float, num_beats: int = 4, sr: int = 44100) ->
     beat_sec = 60.0 / bpm
     N_beat = int(sr * beat_sec)
     t_b = np.linspace(0, beat_sec, N_beat, endpoint=False)
-    
+
     # 1. Dry Punchy 909-style Kick (Pitch sweep 190Hz -> 52Hz in 35ms)
     f_kick = 52.0 + 138.0 * np.exp(-t_b / 0.022)
     kick_dry = np.tanh(np.sin(2.0 * np.pi * np.cumsum(f_kick) / sr) * np.exp(-t_b / 0.16) * 2.2)
-    
+
     # 2. Sub-Bass Rumble Tail (Delayed, low-passed, saturated reflection ducked under the dry kick)
     delay_samples = int(0.75 * N_beat / 2) # Dotted 16th-note rumble bounce
     rumble = np.roll(kick_dry, delay_samples) * 0.65 + np.roll(kick_dry, delay_samples * 2) * 0.45
     # Sidechain duck the rumble during the first 120ms of the dry kick!
     duck_env = 1.0 - np.exp(-t_b / 0.085)
     rumble_ducked = np.tanh(rumble * duck_env * 2.5) * 0.55
-    
+
     single_beat = np.tanh(kick_dry + rumble_ducked)
     return np.tile(single_beat, num_beats)
 \`\`\`
@@ -301,7 +301,7 @@ EUROPEAN_AND_GLOBAL_MATRICES = {
 
 ---
 
-## 🔥 6. Ultimate Cross-Cultural Fusion Ideas Using These New Modules
+## 6. Ultimate Cross-Cultural Fusion Ideas Using These New Modules
 
 1. **Tamil *Aakaram* Hum $\times$ Celtic *Keening* Hum $\times$ Nordic *Kulning*:**
    * Imagine an intro where a **Tamil Carnatic *Aakaram/Mm-karam* voice** (`style="tamil_aakaram"`) and an **Irish *Caoineadh* keening voice** (`style="celtic_keening"`) sing a call-and-response duet in Dorian mode (`Kharaharapriya`), before an **Arabic *Zaghrouta* ululation** (`style="arab_zaghrouta"`) triggers the beat drop!

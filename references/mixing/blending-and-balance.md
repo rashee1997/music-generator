@@ -76,5 +76,5 @@ Gate rows: `mix_preset` (exists, has a `character`, differs from default) and `b
 (`mixer.py --diagnose`, `mix_and_master(..., diagnose=True)`) are **not** gate rows: they report and never change the mix,
 so a WARN there is a question you answer in the preset or in STATUS.md, not a row to satisfy.
 
-## Not covered yet (say so in the reply)
+## What the balance check cannot see (say so in the reply)
 Frequency-selective ducking is researched but not built. Distance-dependent reverb pre-delay is in the project's space preset (`distance.pre_delay_law`); the chopped-note check is the `modulation_flutter` row (WARN only). The `balance` check uses plain RMS, not K-weighted loudness.

@@ -4,14 +4,14 @@ target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Polyrhythm_Eng
 schema_version: "2026.10.1"
 ---
 
-# 🌍 The Pan-African Music Psychoacoustic & Algorithmic DSP Knowledge Base
-**Scope:** Indigenous/Ancestral Traditions $\rightarrow$ Golden-Era Post-Colonial Grooves $\rightarrow$ 21st-Century Electronic & Global Club Movements.  
+# The Pan-African Music Psychoacoustic & Algorithmic DSP Knowledge Base
+**Scope:** Indigenous/Ancestral Traditions $\rightarrow$ Golden-Era Post-Colonial Grooves $\rightarrow$ 21st-Century Electronic & Global Club Movements.
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Polyrhythmic Timeline Matrices, Inharmonic/Buzzing Timbre Synthesis, and Cross-Cultural Fusion.
 
 ---
 
 
-## 📑 Table of Contents (Machine-Parsable Index)
+## Table of Contents (Machine-Parsable Index)
 - [1.0 Core Psychoacoustics: How the "African Ear" Listens](#1-core-psychoacoustics-how-the-african-ear-listens)
 - [2.0 Indigenous & Ancestral Traditions (Regional Deep-Dive)](#2-indigenous--ancestral-traditions-regional-deep-dive)
   - [2.1 West Africa: The Mande Griot & Savannah Tradition](#21-west-africa-the-mande-griot-jeliya--savannah-tradition)
@@ -34,7 +34,7 @@ schema_version: "2026.10.1"
 
 ---
 
-## 🧭 1. Core Psychoacoustics: How the "African Ear" Listens
+## 1. Core Psychoacoustics: How the "African Ear" Listens
 
 Across the vast diversity of Africa, indigenous and modern musical traditions share four foundational psychoacoustic principles that contrast sharply with Western and even Asian/Middle Eastern listening habits:
 
@@ -47,7 +47,7 @@ Across the vast diversity of Africa, indigenous and modern musical traditions sh
 
 ---
 
-## 🪘 2. Indigenous & Ancestral Traditions (Regional Deep-Dive)
+## 2. Indigenous & Ancestral Traditions (Regional Deep-Dive)
 
 Africa contains over 3,000 distinct ethnic groups. Below are the 6 major indigenous musical ecosystems and their mathematical/acoustic rules:
 
@@ -115,7 +115,7 @@ Africa contains over 3,000 distinct ethnic groups. Below are the 6 major indigen
 
 ---
 
-## 🎷 3. The Post-Colonial & Golden-Era Electric Evolution (1950s–1990s)
+## 3. The Post-Colonial & Golden-Era Electric Evolution (1950s–1990s)
 
 When electric guitars, brass sections, and drum kits arrived in African port cities, musicians fused indigenous timelines with Cuban *Son*, Jazz, and Funk:
 
@@ -130,7 +130,7 @@ When electric guitars, brass sections, and drum kits arrived in African port cit
 
 ---
 
-## 🔥 4. Modern 21st-Century Electronic & Global African Genres (2000s–2026)
+## 4. Modern 21st-Century Electronic & Global African Genres (2000s–2026)
 
 Today, African rhythms dominate global club and pop music—and almost all of them are built for **algorithmic/grid-based synthesis**:
 
@@ -176,7 +176,7 @@ Today, African rhythms dominate global club and pop music—and almost all of th
 
 ---
 
-## 💻 5. Pure-Python DSP & Algorithmic Parameter Cheat Sheet
+## 5. Pure-Python DSP & Algorithmic Parameter Cheat Sheet
 
 Copy these exact mathematical models into your Python script to synthesize authentic African timbres and polyrhythmic timelines:
 
@@ -190,22 +190,22 @@ def synth_amapiano_log_drum(f0: float, duration_sec: float, sr: int = 44100, kno
     Combines a fast pitch-drop wooden knock + decaying 2:1 FM tone + saturated sub-bass tail.
     """
     t = np.linspace(0, duration_sec, int(sr * duration_sec), endpoint=False)
-    
+
     # 1. Pitch Envelope: Rapid drop from 2.8*f0 down to f0 in 18ms (creates the woody 'knock')
     f_env = f0 + (f0 * 1.8 * knock_intensity) * np.exp(-t / 0.014)
     phase = 2.0 * np.pi * np.cumsum(f_env) / sr
-    
+
     # 2. FM Synthesis (2:1 Modulator with fast 30ms decay for hollow wooden timbre)
     mod_env = 2.5 * knock_intensity * np.exp(-t / 0.028)
     modulator = mod_env * np.sin(2.0 * phase)
     carrier = np.sin(phase + modulator)
-    
+
     # 3. Sub-Bass Fundamental Reinforcement
     sub = 0.8 * np.sin(phase)
-    
+
     # 4. Amplitude Envelope (Sharp attack, 280ms punchy decay)
     amp_env = (1.0 - np.exp(-t / 0.003)) * np.exp(-t / 0.22)
-    
+
     raw = (0.65 * carrier + 0.55 * sub) * amp_env
     return np.tanh(raw * 1.6)  # Warm saturation
 \`\`\`
@@ -220,13 +220,13 @@ def apply_african_mirliton_buzz(clean_signal: np.ndarray, sr: int = 44100, buzz_
     envelope = np.abs(clean_signal)
     # Threshold gate: only rattles when vibration is strong
     gate = np.clip((envelope - 0.05) * 3.0, 0.0, 1.0)
-    
+
     # High-frequency metallic/membrane rattle (modulated noise + hard-clipped harmonics)
     noise = np.random.uniform(-1.0, 1.0, len(clean_signal))
     # Simple 1st-order high-pass difference to emphasize 2kHz-6kHz sizzle
     high_noise = np.diff(noise, prepend=0.0)
     rattle = np.tanh(clean_signal * 8.0) * high_noise * gate
-    
+
     return clean_signal + (buzz_amount * rattle)
 \`\`\`
 
@@ -274,7 +274,7 @@ AFRICAN_POLYRHYTHMS = {
 
 ---
 
-## ⚡ 6. Cross-Cultural Fusion Blueprints (Africa $\times$ Tamil $\times$ Arabic)
+## 6. Cross-Cultural Fusion Blueprints (Africa $\times$ Tamil $\times$ Arabic)
 
 Because **West/Central African 12/8**, **Tamil 6/8 *Tisra Kuthu***, and **Gulf *Khaleeji Samri/Lewa*** all share the exact same **12-pulse compound grid**, fusing them creates an unstoppable rhythmic engine:
 

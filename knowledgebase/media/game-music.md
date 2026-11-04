@@ -5,9 +5,9 @@ schema_version: "2026.10.7"
 domain: "Interactive & Adaptive Video Game Music Architecture, Non-Linear Stems, State Machines, & Seamless Loop DSP"
 ---
 
-# 🎮 Interactive & Adaptive Video Game Music Architecture & DSP Ontology
+# Interactive & Adaptive Video Game Music Architecture & DSP Ontology
 
-## 📑 Table of Contents
+## Table of Contents
 1. [Theoretical Foundations: Non-Linear Player Agency vs Linear Composition](#1-theoretical-foundations-non-linear-player-agency-vs-linear-composition)
 2. [Vertical Layering (Stem Re-orchestration) Architecture](#2-vertical-layering-stem-re-orchestration-architecture)
 3. [Horizontal Re-Sequencing & Dynamic State Machines](#3-horizontal-re-sequencing--dynamic-state-machines)
@@ -125,9 +125,9 @@ flowchart LR
 ### Mathematical Implementation:
 Let $x[n]$ be the rendered audio of total length $N_{\text{total}} = N_{\text{loop}} + N_{\text{tail}}$:
 
-$$x_{\text{seamless}}[n] = \begin{cases} 
-x[n] + x[n + N_{\text{loop}}], & 0 \le n < N_{\text{tail}} \\ 
-x[n], & N_{\text{tail}} \le n < N_{\text{loop}} 
+$$x_{\text{seamless}}[n] = \begin{cases}
+x[n] + x[n + N_{\text{loop}}], & 0 \le n < N_{\text{tail}} \\
+x[n], & N_{\text{tail}} \le n < N_{\text{loop}}
 \end{cases}$$
 
 ### Low-Frequency Phase Boundary Verification:

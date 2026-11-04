@@ -34,7 +34,7 @@ brief (what, for whom, where it plays)
 Stop when every target passes, or when two revisions in a row do not move the failing target. Then say what
 is left, and do not hide it.
 
-## 2. Write the direction sheet the way a cue is actually decided
+## 2. Write the direction sheet the way a cue is decided
 
 The sheet is the brief turned into things that can be checked, in the order a cue is decided. It is the template
 `templates/direction_sheet.json`, copied to `<dir>/direction/direction_<title>.json` and filled. Nothing in it is
@@ -85,8 +85,8 @@ repeat-and-fade of a pop song.
 
 **Err toward more sync points than fewer, then thin them.** Leach: students afraid of "Mickey Mousing" end up
 hitting too little and "the music barely feels like it belongs at all"; a hit "doesn't have to be hit forcefully
-- simply acknowledging a moment with a chord change on time" is enough. The other half of the same rule: the music
-should not simply echo what the audience can already see. Hit the structure, not the emotion the actor is already
+- acknowledging a moment with a chord change on time" is enough. The other half of the same rule: the music
+should not echo what the audience can already see. Hit the structure, not the emotion the actor is already
 playing.
 
 No cut? Then spot what you were given: a script, a list of scenes, a mood brief. One sheet per cue, seconds written
@@ -163,7 +163,7 @@ imitate it. Two consequences for the sheet:
 - `references` takes **words**: "a slow cello line over a soft pulse, like the opening of a documentary", never a
 track name and never a melody that belongs to someone. The writing has to be original for legal reasons and
 because a copy is a locked door.
-- When the user sends a temp track, read what the brief actually wants from it (the texture, the tempo, the
+- When the user sends a temp track, read what the brief wants from it (the texture, the tempo, the
 space) and write that into the sheet. Then judge the draft against the sheet, not against the temp.
 
 **Read the brief's words before the sheet.** Separate the mood ("motivational", "adventure", "melancholy") from the

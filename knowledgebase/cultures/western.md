@@ -4,14 +4,14 @@ target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Cinematic_Engi
 schema_version: "2026.10.1"
 ---
 
-# 🎼 The Western Music Psychoacoustic & Algorithmic DSP Knowledge Base
-**Scope:** Medieval/Baroque/Classical/Romantic $\rightarrow$ Blues/Jazz/Funk/Rock $\rightarrow$ Hip-Hop/EDM/Synthwave/Modern Pop.  
+# The Western Music Psychoacoustic & Algorithmic DSP Knowledge Base
+**Scope:** Medieval/Baroque/Classical/Romantic $\rightarrow$ Blues/Jazz/Funk/Rock $\rightarrow$ Hip-Hop/EDM/Synthwave/Modern Pop.
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Functional Harmony & Voice-Leading Engines, Groove Micro-Timing, and Cross-Cultural World Fusions.
 
 ---
 
 
-## 📑 Table of Contents (Machine-Parsable Index)
+## Table of Contents (Machine-Parsable Index)
 - [1.0 Core Psychoacoustics: How the "Western Ear" Listens](#1-core-psychoacoustics-how-the-western-ear-listens)
 - [2.0 Classical Evolution (Medieval to Late-Romantic)](#2-the-classical-evolution-medieval--renaissance--times-rightarrow-20th-century)
   - [2.1 Medieval & Renaissance (Modal Polyphony)](#21-medieval--renaissance-900-1600-ad---modal-purity--polyphony)
@@ -36,7 +36,7 @@ schema_version: "2026.10.1"
 
 ---
 
-## 🧭 1. Core Psychoacoustics: How the "Western Ear" Listens
+## 1. Core Psychoacoustics: How the "Western Ear" Listens
 
 Unlike Tamil (*Raga/Gamaka*), Arabic (*Maqam/Heterophony*), or African (*Polyrhythmic Timeline/Speech-Tone*) music, the Western ear is conditioned over 1,000 years around **Vertical Functional Harmony, Counterpoint, and 12-Tone Equal Temperament (12-TET)**:
 
@@ -49,7 +49,7 @@ Unlike Tamil (*Raga/Gamaka*), Arabic (*Maqam/Heterophony*), or African (*Polyrhy
 
 ---
 
-## 🎻 2. The Classical Evolution (Medieval & Renaissance $\rightarrow$ 20th Century)
+## 2. The Classical Evolution (Medieval & Renaissance $\rightarrow$ 20th Century)
 
 ### 2.1 Medieval & Renaissance (900–1600 AD) — *Modal Purity & Polyphony*
 * **How the Ear Listens:** Floating, beatless, reverberant vocal/string spaces using **Gregorian Modes** (*Dorian, Phrygian, Lydian, Mixolydian*) and **Open Fifths ($1 : 1.5$ frequency ratio)** without 3rds.
@@ -85,7 +85,7 @@ Unlike Tamil (*Raga/Gamaka*), Arabic (*Maqam/Heterophony*), or African (*Polyrhy
 
 ---
 
-## 🎷 3. The African-American & 20th-Century Groove Revolution
+## 3. The African-American & 20th-Century Groove Revolution
 
 Modern Western popular music was born when West African rhythmic and microtonal sensibilities collided with European harmonic instruments in the Americas:
 
@@ -129,7 +129,7 @@ Modern Western popular music was born when West African rhythmic and microtonal 
 
 ---
 
-## 🎛️ 4. Modern Electronic, Hip-Hop & 21st-Century Pop (1980s–2026)
+## 4. Modern Electronic, Hip-Hop & 21st-Century Pop (1980s–2026)
 
 ### 4.1 Hip-Hop: Boom-Bap, J-Dilla Quintuplet Swing, Trap & UK Drill
 1. **90s Boom-Bap & Neo-Soul ("Drunken" J-Dilla Micro-Timing):**
@@ -161,7 +161,7 @@ Modern Western popular music was born when West African rhythmic and microtonal 
 
 ---
 
-## 💻 5. Pure-Python DSP & Algorithmic Parameter Cheat Sheet
+## 5. Pure-Python DSP & Algorithmic Parameter Cheat Sheet
 
 Drop these building blocks directly into your Python synthesis engine for instant Western harmonic, timbral, and rhythmic capabilities:
 
@@ -179,21 +179,21 @@ def synth_supersaw(f0: float, duration_sec: float, sr: int = 44100) -> tuple[np.
     detune_cents = np.array([-38.0, -22.0, -10.0, 0.0, +10.0, +22.0, +38.0])
     gains        = np.array([ 0.35,   0.55,   0.75, 1.0,  0.75,  0.55,  0.35])
     pans         = np.array([-0.9,   +0.7,   -0.4,  0.0, +0.4,  -0.7,  +0.9]) # Stereo spread
-    
+
     left = np.zeros_like(t)
     right = np.zeros_like(t)
-    
+
     for cents, gain, pan in zip(detune_cents, gains, pans):
         freq = f0 * (2.0 ** (cents / 1200.0))
         # Random initial phase prevents harsh laser-zap transient on attack!
         phase_offset = np.random.uniform(0, 1.0)
         saw = 2.0 * ((t * freq + phase_offset) % 1.0) - 1.0
-        
+
         # Constant-power stereo panning
         angle = (pan + 1.0) * (np.pi / 4.0)
         left  += saw * gain * np.cos(angle)
         right += saw * gain * np.sin(angle)
-        
+
     return left * 0.35, right * 0.35
 \`\`\`
 
@@ -207,14 +207,14 @@ def apply_sidechain_pump(signal: np.ndarray, kick_trigger_times: list[float], sr
     gain_env = np.ones(len(signal), dtype=np.float64)
     release_samples = int(release_sec * sr)
     recovery_curve = 1.0 - depth * np.exp(-np.linspace(0, 5.0, release_samples))
-    
+
     for t_kick in kick_trigger_times:
         idx = int(t_kick * sr)
         end_idx = min(idx + release_samples, len(signal))
         seg_len = end_idx - idx
         if seg_len > 0:
             gain_env[idx:end_idx] = np.minimum(gain_env[idx:end_idx], recovery_curve[:seg_len])
-            
+
     return signal * gain_env
 \`\`\`
 
@@ -266,7 +266,7 @@ WESTERN_GROOVES_16 = {
 
 ---
 
-## 🌐 6. The Grand Unified Synthesis: How to Combine ALL FOUR Worlds in Python
+## 6. The Grand Unified Synthesis: How to Combine ALL FOUR Worlds in Python
 *(Tamil $\times$ Arabic $\times$ African $\times$ Western)*
 
 Now that you have all 4 knowledge bases (**Tamil**, **Arabic**, **African**, and **Western**), you can assign each musical culture to the **frequency band and psychoacoustic role** it dominates best:

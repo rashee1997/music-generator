@@ -30,7 +30,10 @@ REF = os.path.join(ROOT, 'references')
 BANNED = re.compile(r'this session|this pass|TinyFish|Moved verbatim|Reference only|How to create / use'
                     r'|What changed|Before \| Now|written from memory|not fetched|could not be fetched'
                     r'|Arsenal|Thermodynamic|Sacred Lead|JUCE|Headless VST3|state-of-the-art|cutting-edge'
-                    r'|robust|seamless|powerful', re.I)
+                    r'|robust|seamless|powerful'
+                    r"|not (yet )?(added|covered|implemented)|have not been|haven't|TODO:|FIXME"
+                    r"|basically|obviously|needless to say|as you can see|it's worth noting|please note", re.I)
+EMOJI = re.compile('[🌀-🫿☀-➿⬀-⯿️]')
 URL = re.compile(r'https?://')
 # a count in prose: "42 genres", "9 scales", "16 rows" - a number followed by a plural noun of a thing the skill owns
 COUNT = re.compile(r'(?<![\w.])[0-9]+\s+(genres|scales|instruments|presets|documents|files|cultures|rows|moods'
@@ -72,6 +75,8 @@ def main():
             quoted = hit and any(a <= hit.start() and hit.end() <= b for a, b in spans)
             if hit and not quoted and not (hit.group(0) == 'Powerful' and 'Powerful Percussion' in line):
                 fails.append(f'{rel}:{i}: banned text: {hit.group(0).strip()}')
+            if EMOJI.search(line):
+                fails.append(f'{rel}:{i}: emoji in references')
             if URL.search(line):
                 fails.append(f'{rel}:{i}: URL in references')
             if COUNT.search(line):

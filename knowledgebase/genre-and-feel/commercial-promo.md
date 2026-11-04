@@ -4,13 +4,13 @@ target_consumers: ["AI_Music_Agents", "Commercial_Audio_Engines", "Python_DSP_Sy
 schema_version: "2026.10.5"
 ---
 
-# 🏢🚀🎭 The Commercial, Corporate, Motivational, Modern Musicals & Reverb DSP Knowledge Base
-**Scope:** Modern Tech Corporate $\rightarrow$ High-Energy Promotional/Adverts $\rightarrow$ Inspiring/Motivational Cinematic $\rightarrow$ Modern Musical Theater (Pop-Operetta / Lin-Manuel / Broadway) $\rightarrow$ Pure-Python Algorithmic Reverb Engines (*Schroeder/Moorer, Shimmer, Gated, Infinite Dune Hall*).  
+# The Commercial, Corporate, Motivational, Modern Musicals & Reverb DSP Knowledge Base
+**Scope:** Modern Tech Corporate $\rightarrow$ High-Energy Promotional/Adverts $\rightarrow$ Inspiring/Motivational Cinematic $\rightarrow$ Modern Musical Theater (Pop-Operetta / Lin-Manuel / Broadway) $\rightarrow$ Pure-Python Algorithmic Reverb Engines (*Schroeder/Moorer, Shimmer, Gated, Infinite Dune Hall*).
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Persuasion Psychoacoustics, Voice-Over (VO) Ducking Architecture, and Spatial Acoustics.
 
 ---
 
-## 📑 Table of Contents (Machine-Parsable Index)
+## Table of Contents (Machine-Parsable Index)
 - [1.0 Commercial Psychoacoustics: The Science of Musical Persuasion](#10-commercial-psychoacoustics-the-science-of-musical-persuasion)
   - [1.1 The "Voice-Over First" Contract (Anti-VO Masking)](#11-the-voice-over-first-contract-anti-vo-masking)
   - [1.2 The "Dopamine Arc" (Instant 3-Second Hook & Micro-Lifts)](#12-the-dopamine-arc-instant-3-second-hook--micro-lifts)
@@ -51,7 +51,7 @@ Commercial and corporate audio does **not** exist for passive artistic indulgenc
 ---
 
 ### 1.1 The "Voice-Over First" Contract (Anti-VO Masking)
-In 95% of commercials, YouTube ads, and corporate presentations, a spoken **Voice-Over (VO)** sits on top of the music. 
+In 95% of commercials, YouTube ads, and corporate presentations, a spoken **Voice-Over (VO)** sits on top of the music.
 * **The Problem:** The human voice concentrates its linguistic intelligibility between **`800Hz and 3,500Hz`** (formant frequencies for consonants and vowels). If the background music has heavy synths, distorted guitars, or loud snare drums in this band, the voice becomes unintelligible.
 * **The Algorithmic Solution:**
   1. **Static Spectral Carving:** Apply a permanent wide **Bell Notch Filter (`-4dB to -6dB`, `Q = 1.2`) centered at `1,800Hz`** across all chordal instruments (pianos, electric guitars, synth pads).
@@ -232,7 +232,7 @@ Invented by Manfred Schroeder and extended by James Moorer. Simulates room acous
 ### 6.2 The Shimmer Reverb Engine (The "Magical / Ethereal" Pad Maker)
 * **Acoustic Physics:** Popularized by Brian Eno and Daniel Lanois. A portion of the reverb decay tail is **pitch-shifted upward by an exact Octave (+12 semitones / $2 \times$ speed)** and fed back into the reverb tank!
 * **Psychoacoustic Effect:** Every note played on an acoustic guitar or piano causes a shimmering, angelic choir-like string pad to swell upward out of nowhere.
-* **DSP Algorithm:** 
+* **DSP Algorithm:**
   1. `Input` $\rightarrow$ `Reverb Tank (3.5s decay)`.
   2. Tap `15%` of the wet reverb output $\rightarrow$ Pitch-shift up by `+12 semitones` via granular delay or phase vocoder.
   3. Lowpass filter the pitch-shifted signal at `4.5kHz` (prevents harshness).

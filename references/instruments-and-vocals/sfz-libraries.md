@@ -78,7 +78,7 @@ line of each library used (and a share-alike reminder), and an SFZ track with no
 `<project_dir>/grand-canyon/` is an example project with a Grand Canyon style orchestra: `<project_dir>/grand-canyon/presets/mix/grand_canyon_mix.json`,
 `<project_dir>/grand-canyon/presets/spaces/canyon_open.json` and 13 instrument presets (`canyon_violins1`... `canyon_timpani`) on Sonatina patches.
 
-## Not covered
+## What these patches cannot do
 - True legato-transition samples (commercial libraries record them; the free sets here use the legato trigger on ordinary samples).
 - Convolution with a real hall impulse response (the `space` presets are the engine's own reverb).
 - Nothing here was auditioned by ear: levels and behaviour are measured.

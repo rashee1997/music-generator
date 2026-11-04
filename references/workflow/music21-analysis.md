@@ -13,8 +13,8 @@ load_when:
 
 ## 1. Core Rule: Dynamic, Custom Analysis Per Composition
 
-> **POLICY** (the pipeline always runs the default template; a piece-specific script is recommended, not required): 
-> Never use a predefined, rigid, or generic one-size-fits-all analysis script. 
+> **POLICY** (the pipeline always runs the default template; a piece-specific script is recommended, not required):
+> Never use a predefined, rigid, or generic one-size-fits-all analysis script.
 > Every composition must have an **authored, dynamic analysis script customized specifically for that piece's musical universe, cultural lineage, instrumentation, and emotional purpose.**
 
 When analyzing a piece with `music21`, first inspect the piece's specific targets:

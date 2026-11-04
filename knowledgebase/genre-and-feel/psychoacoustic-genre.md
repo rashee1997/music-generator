@@ -4,12 +4,12 @@ target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Algorithmic_Co
 schema_version: "2026.10"
 ---
 
-# 🧠🎛️ The Master Psychoacoustic Genre, Sub-Feel & Algorithmic Music Ontology
+# The Master Psychoacoustic Genre, Sub-Feel & Algorithmic Music Ontology
 **Purpose:** Prevent AI music generators from defaulting to generic "upbeat 4/4 block-chord" templates. Every genre and emotional sub-archetype possesses a unique **psychoacoustic contract** with the human ear—defined by **Interval Leap Geometry, Micro-Timing Gravity, Spectral Centroid Trajectory, Harmonic Voice-Leading, and Spatial Reverb Physics**.
 
 ---
 
-## 📑 Table of Contents (Machine-Parsable Index)
+## Table of Contents (Machine-Parsable Index)
 - [1.0 Core Agent Directive: Breaking the "Upbeat Trap"](#10-core-agent-directive-breaking-the-upbeat-trap)
 - [2.0 The "Adventurous" Ontology (5 Distinct Sub-Archetypes)](#20-the-adventurous-ontology-5-distinct-sub-archetypes)
   - [2.1 ARCHETYPE: Adventurous_Forest_Mystic (Woodland / Elven / Folklore)](#21-archetype-adventurous_forest_mystic-woodland--elven--folklore)

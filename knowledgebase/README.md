@@ -1,4 +1,4 @@
-# 📚 Algorithmic & DSP Music Knowledge Base
+# Algorithmic & DSP Music Knowledge Base
 
 This directory contains the foundational psychoacoustic, ethnomusicological, and Python DSP synthesis knowledge bases for the `music-generator` skill. The documents in this folder use YAML frontmatter (`document_id`, `target_consumers`, `schema_version`) and a table of contents.
 
@@ -7,7 +7,7 @@ Before creating any score, instrument preset, or synthesis model, the agent **MU
 
 ---
 
-## 🗺️ Machine-Parsable Knowledge Base Index
+## Machine-Parsable Knowledge Base Index
 
 | Knowledge File | `document_id` & Version | Domain & Cultural Coverage | Key DSP & Synthesis Models |
 | :--- | :--- | :--- | :--- |

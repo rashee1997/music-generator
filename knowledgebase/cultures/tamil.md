@@ -4,12 +4,12 @@ target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Ethnomusicolog
 schema_version: "2026.10.1"
 ---
 
-# 🎵 The Tamil Music Psychoacoustic & Algorithmic DSP Knowledge Base
+# The Tamil Music Psychoacoustic & Algorithmic DSP Knowledge Base
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Algorithmic Composition, Humanization Matrices, and Cross-Cultural Fusion.
 
 ---
 
-## 📑 Table of Contents (Machine-Parsable Index)
+## Table of Contents (Machine-Parsable Index)
 - [1.0 Core Psychoacoustics: How the "Tamil Ear" Listens vs. The "Western Ear"](#1-core-psychoacoustics-how-the-tamil-ear-listens-vs-the-western-ear)
 - [2.0 Complete Taxonomy of Tamil Genres (Feel, Physics & DSP Rules)](#2-complete-taxonomy-of-tamil-genres-feel-physics--dsp-rules)
   - [2.1 Dappankoothu (Kuthu) & Gaana (Chennai Street Folk)](#21-dappankoothu-kuthu--gaana-chennai-street-folk)
@@ -28,7 +28,7 @@ schema_version: "2026.10.1"
 
 ---
 
-## 🧭 1. Core Psychoacoustics: How the "Tamil Ear" Listens vs. The "Western Ear"
+## 1. Core Psychoacoustics: How the "Tamil Ear" Listens vs. The "Western Ear"
 
 Before coding specific genres, an algorithm must understand the fundamental perceptual differences between Western and Tamil musical conditioning:
 
@@ -41,17 +41,17 @@ Before coding specific genres, an algorithm must understand the fundamental perc
 
 ---
 
-## 🥁 2. Complete Taxonomy of Tamil Genres (Feel, Physics & DSP Rules)
+## 2. Complete Taxonomy of Tamil Genres (Feel, Physics & DSP Rules)
 
 ### 2.1 Dappankoothu (Kuthu) & Gaana (Chennai Street Folk)
 * **Cultural Origin:** Ancient Tamil *Parai* drum traditions + North Chennai working-class street poetry (*Gaana*), funerals (*oppari* celebration), and temple festivals (*Thiruvizha*).
 * **How the Ear Listens:** The ear ignores delicate chord changes and locks onto **sub-bass chest impact (60–100Hz)** and **ear-splitting skin-slap transients (2.5kHz–5kHz)**. It listens for the "gallop."
 * **Emotional Feel:** Primal, defiant, ecstatic, raw, communal, anti-elitist, kinetic (forces involuntary shoulder/foot movement).
-* **Rhythmic DNA:** 
+* **Rhythmic DNA:**
   * **6/8 *Tisra Nadai* (135–160 BPM):** `1 - & - a - 2 - & - a` (`Dhum - ka - ta | Dhum - ka - ta`).
   * **Syncopated Kuthu Clave:** Accent on Beat `1`, the `and-of-2` (or subdivision 4 in a 6-grid), and a rapid roll on subdivision `5–6`.
 * **Signature Timbres & Python Synthesis:**
-  1. **Parai / Tappu (Frame Drum):** High-pitched calfskin hit with a bamboo stick (*Chindu*) and bass hand slap (*Adi*). 
+  1. **Parai / Tappu (Frame Drum):** High-pitched calfskin hit with a bamboo stick (*Chindu*) and bass hand slap (*Adi*).
      * *DSP:* Combine a `280Hz` resonant membrane mode with a `3ms` white-noise burst filtered at `3.2kHz` for the stick crack.
   2. **Thavil (Barrel Drum):** Booming bass hand + metallic-sounding capped fingers (*Koodu*) on the treble side.
      * *DSP:* Sub-kick pitch-drop (`160Hz -> 62Hz` over `70ms`) + FM metallic transient (`fc=420Hz, fm=1120Hz`).
@@ -109,13 +109,13 @@ Before coding specific genres, an algorithm must understand the fundamental perc
 * **Cultural Origin:** Traditional funeral elegies sung by wailing performers, later transformed into cathartic dance tracks (e.g., *Santhosh Narayanan* style).
 * **How the Ear Listens:** Sensitive to **falling pitch contours**, microtonal flat 3rds/6ths, and raw vocal-like tremors.
 * **Emotional Feel:** Tragic yet liberating, dark, hypnotic, goosebump-inducing.
-* **DSP Implementation:** 
+* **DSP Implementation:**
   * Use **Shubhapantuvarali** `[0, 1, 3, 6, 7, 8, 11]` (Todi / Gypsy Minor).
   * Apply a **downward pitch-droop** (`-40 cents`) at the end of every phrase along with amplitude tremolo (`8Hz`) to simulate crying/sobbing breath.
 
 ---
 
-## 🌍 3. Western & Global Fusion Blueprints (How to Blend Without Losing Tamil Identity)
+## 3. Western & Global Fusion Blueprints (How to Blend Without Losing Tamil Identity)
 
 When fusing Tamil genres with Western/Global styles in code, **Rule #1** is: *Keep the micro-timing and melodic ornamentation Tamil, while letting the harmonic bed or frequency spectrum adopt the Western genre.*
 
@@ -155,7 +155,7 @@ When fusing Tamil genres with Western/Global styles in code, **Rule #1** is: *Ke
 
 ---
 
-## 💻 4. Pure-Python Algorithmic Parameter Cheat Sheet
+## 4. Pure-Python Algorithmic Parameter Cheat Sheet
 
 Use these exact mathematical constants and functions in your Python synthesis scripts (`NumPy` / `SciPy`) to dial in authentic Tamil feel:
 
@@ -213,5 +213,3 @@ To make pure code sound like a live Tamil festival rather than a sterile synth:
     slowly wandering bandpass filter (400Hz–1200Hz), and inject randomized
     high-Q sine chirps (2800Hz -> 3400Hz -> 2900Hz over 180ms) on bar
     transitions to simulate Kuthu finger-whistles (Visil).
-
-

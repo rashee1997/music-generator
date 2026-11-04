@@ -25,8 +25,8 @@ and wants to play new melodies with it. Use `scripts/clone_instrument.py`.
 
 ## The 6-Stage Reverse-Engineering Pipeline & Universal Acoustic Fingerprints
 
-For mathematical derivations, YIN/pYIN equations, LPC formant filters, CQT salience matrices, and pure-Python code, consult the master knowledge base:  
-👉 [`knowledgebase/sound-design/audio-cloning.md`](../../knowledgebase/sound-design/audio-cloning.md).
+For mathematical derivations, YIN/pYIN equations, LPC formant filters, CQT salience matrices, and pure-Python code, consult the master knowledge base:
+ [`knowledgebase/sound-design/audio-cloning.md`](../../knowledgebase/sound-design/audio-cloning.md).
 
 When reverse-engineering an instrument or reference audio file without human ears, follow the **6-Stage Deconstruction Pipeline**:
 1. **Continuous Microtonal Pitch Extraction:** Sub-sample accurate $f_0(t)$ tracking using pYIN, CMNDF, and parabolic peak interpolation; splits static notes from dynamic *Gamaka/Meend* bends.
@@ -42,7 +42,7 @@ When reverse-engineering an instrument or reference audio file without human ear
 
 1. Quiet room, microphone 10-30 cm from the instrument, no music/voice behind it, no reverb or effects (add reverb later).
 2. 44.1 kHz or higher, WAV/FLAC, no clipping, peaks around -6 dB.
-3. Play **single notes** with a gap between them, each held 1.5-3 s (plucked: let ring). 
+3. Play **single notes** with a gap between them, each held 1.5-3 s (plucked: let ring).
 4. Cover the range: a note every 3-4 semitones (minor third) is ideal; every 5-6 is the limit. Include lowest and highest comfortable notes.
 5. Two dynamics (soft and normal; three if possible). The tool assigns velocity layers from loudness.
 6. Two takes of the same note are welcome (used as round-robin alternates).

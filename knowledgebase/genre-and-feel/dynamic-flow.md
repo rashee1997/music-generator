@@ -4,14 +4,14 @@ target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Autonomous_Arr
 schema_version: "2026.10.2"
 ---
 
-# 🌊🧠 The Universal Dynamic Musical Flow Engine & Extended Genre Ontology (Lo-Fi, Ambient, Horror, Jazz, Rock, Gaming)
-**Purpose:** 
+# The Universal Dynamic Musical Flow Engine & Extended Genre Ontology (Lo-Fi, Ambient, Horror, Jazz, Rock, Gaming)
+**Purpose:**
 1. Expand the AI Agent's sub-feel vocabulary across **Lo-Fi, Ambient, Horror/Suspense, Jazz, Rock/Metal, and Gaming Boss Themes**.
 2. Provide **Universal General Instructions for Natural Musical Flow** so the engine generates music as a **living, breathing thermodynamic curve** rather than a static, copy-pasted loop.
 
 ---
 
-## 📑 Table of Contents (Machine-Parsable Index)
+## Table of Contents (Machine-Parsable Index)
 - [1.0 Universal General Instructions: The 7 Laws of Natural Musical Flow](#10-universal-general-instructions-the-7-laws-of-natural-musical-flow)
   - [1.1 LAW 1: The Anti-Loop Mandate (Mutation Over Repetition)](#11-law-1-the-anti-loop-mandate-mutation-over-repetition)
   - [1.2 LAW 2: Phrase Respiration (The Lung-Capacity Envelope)](#12-law-2-phrase-respiration-the-lung-capacity-envelope)
@@ -185,7 +185,7 @@ class DynamicMusicalFlowEngine:
         """
         x = np.linspace(0.0, 1.0, self.total_steps)
         energy = np.zeros_like(x)
-        
+
         for i, pos in enumerate(x):
             if pos < 0.15:   # Intro build-up
                 energy[i] = 0.25 + (pos / 0.15) * 0.40
@@ -207,7 +207,7 @@ class DynamicMusicalFlowEngine:
         phrase_role = bar_idx % 4
         mutated = list(base_bar_notes)
         n = len(mutated)
-        
+
         if phrase_role == 0:
             # Bar 1 (A): Statement — Play original motif clearly
             return mutated

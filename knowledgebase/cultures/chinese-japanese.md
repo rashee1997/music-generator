@@ -4,14 +4,14 @@ target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Pentatonic_Eng
 schema_version: "2026.10.1"
 ---
 
-# 🏮🐉 The East Asian (Chinese & Japanese) Music Psychoacoustic & Algorithmic DSP Knowledge Base
-**Scope:** Ancient Chinese (*Yayue, Guqin, Jiangnan, Opera*) & Japanese (*Gagaku, Zen Shakuhachi, Min'yō, Kabuki*) $\rightarrow$ Modern *Guofeng* Trap/EDM, J-Rock/Anime (*Royal Road*), City Pop, and Chiptune/Future Bass.  
+# The East Asian (Chinese & Japanese) Music Psychoacoustic & Algorithmic DSP Knowledge Base
+**Scope:** Ancient Chinese (*Yayue, Guqin, Jiangnan, Opera*) & Japanese (*Gagaku, Zen Shakuhachi, Min'yō, Kabuki*) $\rightarrow$ Modern *Guofeng* Trap/EDM, J-Rock/Anime (*Royal Road*), City Pop, and Chiptune/Future Bass.
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Pentatonic/Heptatonic Modal Engines, Acoustic Membrane/String Modeling, and Global World Fusions.
 
 ---
 
 
-## 📑 Table of Contents (Machine-Parsable Index)
+## Table of Contents (Machine-Parsable Index)
 - [1.0 Core Psychoacoustics: How the "East Asian Ear" Listens (Yun & Ma)](#1-core-psychoacoustics-how-the-east-asian-ear-listens-yun--ma)
 - [2.0 Chinese Music: From Imperial & Literati Traditions to Modern Guofeng](#2-chinese-music-from-imperial--literati-traditions-to-modern-guofeng)
   - [2.1 Mathematical Architecture of Chinese Wu Sheng (5-Tone) & Ya Yue (7-Tone) Modes](#21-the-mathematical-architecture-of-chinese-wu-sheng---5-tone--ya-yue-7-tone-modes)
@@ -31,7 +31,7 @@ schema_version: "2026.10.1"
 
 ---
 
-## 🧭 1. Core Psychoacoustics: How the "East Asian Ear" Listens (*Yun* 韵 & *Ma* 間)
+## 1. Core Psychoacoustics: How the "East Asian Ear" Listens (*Yun* 韵 & *Ma* 間)
 
 While Western music prioritizes vertical chord density and African/Tamil Kuthu music prioritizes continuous polyrhythmic momentum, Chinese and Japanese musical aesthetics revolve around **Timbral Micro-Evolution (*Qiyun* / *Sawari*)** and **Intentional Negative Space (*Liubai* 留白 / *Ma* 間)**:
 
@@ -44,7 +44,7 @@ While Western music prioritizes vertical chord density and African/Tamil Kuthu m
 
 ---
 
-## 🐉 2. Chinese Music: From Imperial & Literati Traditions to Modern *Guofeng* (国风)
+## 2. Chinese Music: From Imperial & Literati Traditions to Modern *Guofeng* (国风)
 
 ### 2.1 The Mathematical Architecture of Chinese *Wu Sheng* (五声 — 5-Tone) & *Ya Yue* (7-Tone) Modes
 Every traditional and modern *Guofeng* Chinese melody is built on five core notes—**Gong (宮), Shang (商), Jue (角), Zhi (徵), Yu (羽)**—generated mathematically via the ancient **Sanfen Sunyi (三分损益 — Cycle of Fifths $3:2$ ratio)**:
@@ -57,8 +57,8 @@ Every traditional and modern *Guofeng* Chinese melody is built on five core note
 | **Zhi Mode (徵调)** | `[0, 2, 5, 7, 9]` | Joyful, pastoral, folk festival, soaring mountain peaks. | Passing notes at `4` and `10` or `11`. |
 | **Yu Mode (羽调)** | `[0, 3, 5, 7, 10]` | Deeply emotional, romantic, Wuxia martial-arts drama, tearful. | Passing notes at `2` (9th) and `8` (b6). *(Most popular in modern C-Pop/Guofeng!)* |
 
-> **🔑 The Golden Algorithmic Rule of the Guzheng & Erhu ("Pressing the String" — *Rou Xian* / *An Yin*):**  
-> A Guzheng zither is tuned strictly to the 5 pentatonic notes `[0, 2, 4, 7, 9]`. There is **no physical string** for `5` (the 4th, *Fa*) or `11` (the 7th, *Ti*)! To play `5` or `11`, the player plucks `4` (*Mi*) or `9` (*La*) with the right hand and **presses the string down behind the bridge with the left hand**, bending the pitch up by `+100` to `+200 cents`!  
+> ** The Golden Algorithmic Rule of the Guzheng & Erhu ("Pressing the String" — *Rou Xian* / *An Yin*):**
+> A Guzheng zither is tuned strictly to the 5 pentatonic notes `[0, 2, 4, 7, 9]`. There is **no physical string** for `5` (the 4th, *Fa*) or `11` (the 7th, *Ti*)! To play `5` or `11`, the player plucks `4` (*Mi*) or `9` (*La*) with the right hand and **presses the string down behind the bridge with the left hand**, bending the pitch up by `+100` to `+200 cents`!
 > **In Python:** Never trigger scale degrees `5` or `11` with a fresh pluck transient—always glide into them from `4` or `9`!
 
 ---
@@ -101,7 +101,7 @@ Every traditional and modern *Guofeng* Chinese melody is built on five core note
 
 ---
 
-## 🏮 3. Japanese Music: From *Gagaku*, Zen & Samurai Folk to Anime, J-Rock & City Pop
+## 3. Japanese Music: From *Gagaku*, Zen & Samurai Folk to Anime, J-Rock & City Pop
 
 ### 3.1 The Mathematical Architecture of Japanese Scales (*Onkai* 音階)
 Japanese traditional music possesses some of the most recognizable, emotionally charged 5-note scales on Earth—immediately evoking temples, cherry blossoms, or samurai showdowns:
@@ -154,7 +154,7 @@ Japanese traditional music possesses some of the most recognizable, emotionally 
 
 ---
 
-## 💻 4. Pure-Python DSP & Algorithmic Parameter Cheat Sheet
+## 4. Pure-Python DSP & Algorithmic Parameter Cheat Sheet
 
 Copy these exact mathematical models into your Python script to synthesize authentic Chinese and Japanese instruments, scales, and grooves:
 
@@ -166,7 +166,7 @@ EAST_ASIAN_SCALES = {
     "china_yu_wuxia":       [0, 3, 5, 7, 10],         # Emotional Wuxia / Guofeng minor pentatonic
     "china_zhi_festival":   [0, 2, 5, 7, 9],          # Soaring pastoral / folk celebration
     "china_yayue_court_7":  [0, 2, 4, 6, 7, 9, 11],   # Ancient Imperial Court 7-tone (Lydian-like Bian-Zhi)
-    
+
     # Japanese Traditional Scales (Onkai)
     "japan_insen_samurai":  [0, 1, 5, 7, 10],         # Dark Samurai / Ninja / Zen Shakuhachi
     "japan_miyakobushi":    [0, 1, 5, 7, 8],          # Koto/Shamisen classic (Matches Tamil Revati!)
@@ -190,12 +190,12 @@ def synth_tsugaru_shamisen(f0: float, duration_sec: float, sr: int = 44100, sawa
     """
     N = int(sr * duration_sec)
     t = np.linspace(0, duration_sec, N, endpoint=False)
-    
+
     # 1. Bachi Plectrum Skin-Slap Transient (First 12ms)
     slap_env = np.exp(-t / 0.004)
     skin_thud = 0.65 * np.sin(2.0 * np.pi * 215.0 * t) * np.exp(-t / 0.018)
     wood_click = 0.5 * np.diff(np.random.uniform(-1, 1, N), prepend=0) * slap_env
-    
+
     # 2. Shamisen String Harmonics (Delayed by 4ms after Bachi hits skin!)
     t_str = np.maximum(0.0, t - 0.004)
     str_env = (1.0 - np.exp(-t_str / 0.002)) * np.exp(-t_str / 0.38)
@@ -204,10 +204,10 @@ def synth_tsugaru_shamisen(f0: float, duration_sec: float, sr: int = 44100, sawa
         # High odd/even harmonics with faster decay on upper partials
         partial_env = np.exp(-t_str / (0.40 / (k ** 0.7)))
         string_sig += (1.0 / (k ** 0.85)) * np.sin(2.0 * np.pi * (f0 * k) * t_str) * partial_env
-        
+
     # 3. Sawari Buzz (Non-linear sympathetic sizzle against neck notch)
     sawari = np.tanh(string_sig * 6.5) * np.sin(2.0 * np.pi * (f0 * 5.5) * t_str) * np.exp(-t_str / 0.25)
-    
+
     out = skin_thud + wood_click + (string_sig * str_env * 0.5) + (sawari * sawari_buzz)
     return np.tanh(out * 1.3)
 \`\`\`
@@ -221,7 +221,7 @@ def synth_chinese_opera_gong(gong_type: str = "da_luo", duration_sec: float = 0.
     - 'xiao_luo': Small high gong that slides upward in pitch (370Hz -> 485Hz).
     """
     t = np.linspace(0, duration_sec, int(sr * duration_sec), endpoint=False)
-    
+
     if gong_type == "da_luo":
         f_curve = 145.0 + 85.0 * np.exp(-t / 0.14)  # Dramatic downward pitch drop!
         decay = 0.55
@@ -230,12 +230,12 @@ def synth_chinese_opera_gong(gong_type: str = "da_luo", duration_sec: float = 0.
         f_curve = 485.0 - 115.0 * np.exp(-t / 0.065) # Crisp upward pitch scoop!
         decay = 0.28
         fm_index = 2.8
-        
+
     phase = 2.0 * np.pi * np.cumsum(f_curve) / sr
     # Inharmonic FM metallic partials (1 : 1.414 : 2.37)
     mod1 = np.sin(1.414 * phase) * fm_index * np.exp(-t / (decay * 0.7))
     mod2 = np.sin(2.370 * phase) * (fm_index * 0.6) * np.exp(-t / (decay * 0.4))
-    
+
     body = np.sin(phase + mod1 + mod2)
     amp_env = (1.0 - np.exp(-t / 0.003)) * np.exp(-t / decay)
     return np.tanh(body * amp_env * 1.5)
@@ -270,7 +270,7 @@ EAST_ASIAN_GROOVES = {
 
 ---
 
-## 🔥 5. High-Voltage Cross-Cultural Fusion Blueprints (East Asia $\times$ Tamil $\times$ Arabic $\times$ Africa)
+## 5. High-Voltage Cross-Cultural Fusion Blueprints (East Asia $\times$ Tamil $\times$ Arabic $\times$ Africa)
 
 Look at the mathematical bridges between your knowledge bases—some of these scales and instruments are **secret twins across continents**:
 

@@ -4,12 +4,12 @@ target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Microtonal_Eng
 schema_version: "2026.10.1"
 ---
 
-# 🕌 The Pan-Arab Music Psychoacoustic & Algorithmic DSP Knowledge Base
+# The Pan-Arab Music Psychoacoustic & Algorithmic DSP Knowledge Base
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Microtonal *Maqam* Modeling, Regional *Iqa'at* (Rhythmic Cycles), and Global/Indian/Western Fusions.
 
 ---
 
-## 📑 Table of Contents (Machine-Parsable Index)
+## Table of Contents (Machine-Parsable Index)
 - [1.0 Core Psychoacoustics: How the "Arab Ear" Listens (Tarab & Saltanah)](#1-core-psychoacoustics-how-the-arab-ear-listens-tarab--saltanah)
 - [2.0 The Mathematical Architecture of Maqamat (Scales & Quarter-Tones)](#2-the-mathematical-architecture-of-maqamat-scales--quarter-tones)
 - [3.0 Complete Regional Breakdown: The 6 Musical Worlds of the Arab World](#3-complete-regional-breakdown-the-6-musical-worlds-of-the-arab-world)
@@ -32,7 +32,7 @@ schema_version: "2026.10.1"
 
 ---
 
-## 🧭 1. Core Psychoacoustics: How the "Arab Ear" Listens (*Tarab* & *Saltanah*)
+## 1. Core Psychoacoustics: How the "Arab Ear" Listens (*Tarab* & *Saltanah*)
 
 In Arabic music, the ultimate psychoacoustic goal is **Tarab (طرب)**—a state of musical ecstasy, emotional enchantment, and time-suspension—achieved when the performer (or algorithm) reaches **Saltanah (سلطنة)** (complete modal immersion).
 
@@ -45,7 +45,7 @@ In Arabic music, the ultimate psychoacoustic goal is **Tarab (طرب)**—a stat
 
 ---
 
-## 🎼 2. The Mathematical Architecture of *Maqamat* (Scales & Quarter-Tones)
+## 2. The Mathematical Architecture of *Maqamat* (Scales & Quarter-Tones)
 
 Unlike a static 24-TET grid (where every quarter-tone is rigidly 50 cents), real Arabic intonation varies by **region**!
 * **Egyptian (Cairo) Intonation:** The neutral third (*Sikah*) sits slightly higher (`~355 to 360 cents` from the root, or `-40 to -45 cents` below a major 3rd).
@@ -67,7 +67,7 @@ Unlike a static 24-TET grid (where every quarter-tone is rigidly 50 cents), real
 
 ---
 
-## 🌍 3. Complete Regional Breakdown: The 6 Musical Worlds of the Arab World
+## 3. Complete Regional Breakdown: The 6 Musical Worlds of the Arab World
 
 Arabic music is **not a monolith**. A listener from Doha, Riyadh, Cairo, Beirut, Baghdad, or Marrakech hears rhythm, swing, and timbre in completely different ways.
 
@@ -76,7 +76,7 @@ Arabic music is **not a monolith**. A listener from Doha, Riyadh, Cairo, Beirut,
 ### 3.1 The Arabian Gulf — *Khaleeji* (الخليجي)
 * **Countries:** Qatar, Saudi Arabia, UAE, Kuwait, Bahrain, Oman.
 * **Cultural DNA:** Bedouin desert poetry (*Nabati*) + Pearl-diving sea shanties (*Fijiri / Bahri*) + Historic trade links across the Indian Ocean and East Africa (*Sawt* and *Lewa*).
-* **How the Khaleeji Ear Listens:** 
+* **How the Khaleeji Ear Listens:**
   * It does **not** listen to a straight 4/4 beat. It listens for a **rolling, polyrhythmic 6/8 or 12/8 compound swing** driven by interlocking group handclaps (*Safqa*) and deep frame drums (*Tar*).
   * The ear craves **warm, low-mid skin resonance** (heated frame drums) and **syncopated bass drops** on the *and-of-2*.
 * **Signature Khaleeji Rhythms (*Iqa'at*):**
@@ -157,7 +157,7 @@ Arabic music is **not a monolith**. A listener from Doha, Riyadh, Cairo, Beirut,
 
 ---
 
-## 🎻 4. Core Arabic Instruments: Physics & Pure-Python DSP Modeling
+## 4. Core Arabic Instruments: Physics & Pure-Python DSP Modeling
 
 To synthesize an authentic Arabic ensemble (*Takht*) in Python without external sample libraries, model these 5 core acoustic behaviors:
 
@@ -196,7 +196,7 @@ To synthesize an authentic Arabic ensemble (*Takht*) in Python without external 
 
 ---
 
-## 💻 5. Pure-Python Algorithmic Parameter Cheat Sheet
+## 5. Pure-Python Algorithmic Parameter Cheat Sheet
 
 Use these exact data structures in your Python script to switch between regional Arabic grooves and *Maqamat*:
 
@@ -262,7 +262,7 @@ REGIONAL_IQAAT = {
 
 ---
 
-## 🔥 6. Cross-Cultural Fusion Matrix: How to Fuse Regional Arabic with Tamil & Western Styles
+## 6. Cross-Cultural Fusion Matrix: How to Fuse Regional Arabic with Tamil & Western Styles
 
 Since your engine specializes in cross-cultural algorithmic synthesis, here are the **4 Ultimate Fusion Pairings**:
 

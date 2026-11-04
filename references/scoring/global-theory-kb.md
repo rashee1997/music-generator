@@ -30,8 +30,8 @@ interval set, not the name: the skill's `MODES` stores semitones, and the same s
 |---|---|---|
 | `raga_sankarabharanam` | `raga_shankarabharanam` | spelling |
 | `raga_charukesi` | `raga_charukeshi` | spelling |
-| `raga_keeravani` | no name; same set as `maqam_nahawand`, `harmonic_minor` | shape exists, name not added |
-| `raga_hindolam` | no name; same set as `raga_malkauns` | **conflicts** with `raga_hindol` in the skill (different set). See section 6 |
+| `raga_keeravani` | no name; same set as `maqam_nahawand`, `harmonic_minor` | shape exists, no name in the skill |
+| `raga_hindolam` | no name; same set as `raga_malkauns` | **conflicts** with `raga_hindol` in the skill (different set); pick one, never both |
 | `raga_suddha_dhanyasi` | same set as `chinese_yu`, `andean_minor` | |
 | `raga_simhendramadhyamam` | same set as `hungarian_minor` | |
 | `african_kora` | same set as `raga_harikambhoji`, `mbira_mixolydian` | |
@@ -55,7 +55,7 @@ interval set, not the name: the skill's `MODES` stores semitones, and the same s
 |---|---|---|
 | Adi tala 4+2+2 (8 beats) | `adi_8` (added) | accents on 1, 5, 7 |
 | Rupaka tala (3 beats, 1 + 2) | `rupaka_3` (added) | the KB's grouping. Carnatic rupaka is 3 beats; check the grouping against a source before relying on it |
-| Rupaka 6 beats | not added | not standard; the KB's "3 or 6" is unclear |
+| Rupaka 6 beats | none | not standard; the KB's "3 or 6" is unclear |
 | Khanda chapu 2+3, misra chapu 3+4 | `kanda_chapu`, `misra_chapu` | present |
 | Samai thaqil 10/8, 3+2+2+3 | `samai_thaqil` (added) | in a 5-beat bar, as the KB maps it |
 | West African 12/8 bell | `gankogui_12_8` (added) | 7 strokes on the 12 grid |
@@ -74,9 +74,8 @@ interval set, not the name: the skill's `MODES` stores semitones, and the same s
 Three of the four are covered by `tests/test_world_integrity.py`: the spine on a hijaz set, Sa and Pa left alone and a glide on the
 step in the gamaka, and the sweep's length, order and first pitch. `apply_meri` has no test.
 
-Not added: `make_western_cinematic_chord`, which the KB's situational table names but never defines. The KB's
-`make_arabic_iqa_bar` and `make_tihai_cadence` are not added either, because the skill's cycle engine (`cycle_notes`)
-already does the same job from the cycle table.
+`make_arabic_iqa_bar` and `make_tihai_cadence` are left out: the skill's cycle engine (`cycle_notes`) does the
+same job from the cycle table.
 
 ## 5. The six golden rules: what the code checks
 

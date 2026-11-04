@@ -6,14 +6,14 @@
 
 An AI agent skill and Python audio pipeline that composes, renders, mixes, and validates original music from text briefs, scores, or video files.
 
-🔊 **Demo:** **Black Jaguar (Cinematic Chase)** — *D minor · 134 BPM*  
+ **Demo:** **Black Jaguar (Cinematic Chase)** — *D minor · 134 BPM*
 ▶ **[Listen in Browser](https://rashee1997.github.io/music-generator/docs/listen.html)** · **[Download MP3 (320 kbps)](assets/samples/black-jaguar-cinematic-chase.mp3)**
 
 ---
 
 ## The Problem vs. What This Sorts Out
 
-### ❌ Why LLM-Generated Music Usually Fails
+### Why LLM-Generated Music Usually Fails
 
 * **Robotic Grid or Random Chaos:** Naive code locks MIDI notes to a rigid grid with static velocity. When told to "humanize," LLMs scatter notes randomly—creating unrecovered leaps and broken rhythm.
 * **Low-End Mud & Voicing Clashes:** Voices clustered below middle C violate low-interval limits, muddying 100–300 Hz. Closed-position chords create grating minor-second clashes.
@@ -21,7 +21,7 @@ An AI agent skill and Python audio pipeline that composes, renders, mixes, and v
 * **Spectral Masking:** Pads, guitars, and bass swallow lead instruments in the 250–500 Hz range when nothing carves out frequency pockets.
 * **Aimless Harmony:** Chord progressions either loop statically or jump between unrelated keys without voice leading or cadence resolution.
 
-### ✅ What `music-generator` Sorts Out
+### What `music-generator` Sorts Out
 
 * **Voice-Leading & Melodic Rules:** Enforces conjunct motion, leap recovery, chromatic tension resolution, and 3D spiral-array tonal tension.
 * **Groove That Breathes:** Evaluates metric-tree syncopation across 4/4, 3/4, 6/8, 5/4, 7/8, and 12/8—rejecting both robotic marches and rhythmic collapse.

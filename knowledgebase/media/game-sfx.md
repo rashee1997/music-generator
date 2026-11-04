@@ -5,9 +5,9 @@ schema_version: "2026.10.7"
 domain: "Real-Time Interactive Game SFX, Anti-Machine-Gun Procedural Systems, Combat Physics, & Locomotion Foley"
 ---
 
-# 🔊 Interactive Game Sound Effects & Physics DSP Systems
+# Interactive Game Sound Effects & Physics DSP Systems
 
-## 📑 Table of Contents
+## Table of Contents
 1. [The Anti-Machine-Gun System: Micro-Jitter & Procedural Variation](#1-the-anti-machine-gun-system-micro-jitter--procedural-variation)
 2. [Combat Audio Physics & Impact Acoustics](#2-combat-audio-physics--impact-acoustics)
    - [2.1 Bladed Weapons (Slashes, Clashes & Whooshes)](#21-bladed-weapons-slashes-clashes--whooshes)

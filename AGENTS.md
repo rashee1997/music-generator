@@ -2,7 +2,7 @@
 
 Read this file first and follow it.
 
-This file governs ALL music generation work in this skill. Read `SKILL.md` after this. 
+This file governs ALL music generation work in this skill. Read `SKILL.md` after this.
 
 **You cannot hear.** The pipeline's numbers and `listen.py` are your ears. The first render is a draft. Scripts execute decisions — you make them.
 
@@ -30,7 +30,7 @@ You MUST complete every step. Tick each in `<project>/STATUS.md`. Do not skip ah
 
 ### PHASE 0: PREPARATION
 - [ ] **0.1** Read `AGENTS.md` (this file) completely
-- [ ] **0.2** Read `SKILL.md` 
+- [ ] **0.2** Read `SKILL.md`
 - [ ] **0.3** Read `references/workflow/brief-reading.md`
 - [ ] **0.4** Determine request type from Section 3 (READ TABLE)
 

@@ -4,12 +4,12 @@ target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Formant_Vocal_
 schema_version: "2026.10.1"
 ---
 
-# 🏜️✨ The Arabic Desert Vocal ("Deep Ooooo / Aaaaah") & Magical *Maqam* Chord DSP Knowledge Base
+# The Arabic Desert Vocal ("Deep Ooooo / Aaaaah") & Magical *Maqam* Chord DSP Knowledge Base
 **Scope:** Acoustic & Anatomical Physics of the Deep Arabic Desert Voice (*Mawwal, Yaa Leil, Nahham, Sufi/Bedouin Desert Echo*) + The Mathematics of "Magical Desert Chords" + Pure-Python Synthesis Code.
 
 ---
 
-## 📑 Table of Contents (Machine-Parsable Index)
+## Table of Contents (Machine-Parsable Index)
 - [1.0 Why the Arabic "Ooooo — Aaaaah" Sounds Different from Every Other Vocal on Earth](#1-why-the-arabic-ooooo--aaaaah-sounds-different-from-every-other-vocal-on-earth)
 - [2.0 The Secret of "Magical Desert Chords" (Harmonizing Without Ruining the Maqam)](#2-the-secret-of-magical-desert-chords-how-to-harmonize-arabic-vocals-without-ruining-the-maqam)
   - [2.1 The 5 Magical Desert Chord Formulas](#21-the-5-magical-desert-chord-formulas-semitone--microtone-offsets-from-root-0)
@@ -19,7 +19,7 @@ schema_version: "2026.10.1"
 
 ---
 
-## 🧭 1. Why the Arabic "Ooooo — Aaaaah" Sounds Different from Every Other Vocal on Earth
+## 1. Why the Arabic "Ooooo — Aaaaah" Sounds Different from Every Other Vocal on Earth
 
 If you synthesize a standard Western `"Oooo"` (`[u]`) or `"Aaaah"` (`[a]`), it sounds like a church choir or an opera singer. The **Arabic Desert Vocal** triggers an immediate feeling of **ancient sand dunes, starlight, mirages, and deep spiritual longing (*Haneen*)** because of five specific anatomical and acoustic phenomena:
 
@@ -33,9 +33,9 @@ If you synthesize a standard Western `"Oooo"` (`[u]`) or `"Aaaah"` (`[a]`), it s
 
 ---
 
-## ✨ 2. The Secret of "Magical Desert Chords" (How to Harmonize Arabic Vocals Without Ruining the *Maqam*)
+## 2. The Secret of "Magical Desert Chords" (How to Harmonize Arabic Vocals Without Ruining the *Maqam*)
 
-Traditional Arabic music didn't use Western triads (`Major / Minor`), because a standard Major third (`400 cents`) or Minor third (`300 cents`) clashes with the desert mysticism of *Hijaz*, *Bayati*, and *Saba*. 
+Traditional Arabic music didn't use Western triads (`Major / Minor`), because a standard Major third (`400 cents`) or Minor third (`300 cents`) clashes with the desert mysticism of *Hijaz*, *Bayati*, and *Saba*.
 
 Modern cinematic and Arabic-fusion producers (from *A.R. Rahman* and *Hans Zimmer* to *Amr Diab* and *Khaleeji* orchestral arrangements) discovered **5 Magical Desert Chord Voicings** that make deep `"Ooooo / Aaaaah"` vocals sound colossal and otherworldly:
 
@@ -60,7 +60,7 @@ Modern cinematic and Arabic-fusion producers (from *A.R. Rahman* and *Hans Zimme
 
 ---
 
-## 🎙️ 3. The 4 Signature Arabic Vocal Melodic Ornaments (*Zakhrafa*)
+## 3. The 4 Signature Arabic Vocal Melodic Ornaments (*Zakhrafa*)
 
 To make your Python algorithm sing like a real human *Mutrib* (master vocalist) instead of a synth pad, apply these 4 pitch-and-breath contours to the lead vocal voice:
 
@@ -75,7 +75,7 @@ To make your Python algorithm sing like a real human *Mutrib* (master vocalist) 
 
 ---
 
-## 💻 4. Complete Pure-Python DSP Module: The Arabic Desert Vocal & Magical Chord Engine
+## 4. Complete Pure-Python DSP Module: The Arabic Desert Vocal & Magical Chord Engine
 
 You can drop this self-contained Python module (`NumPy` + `SciPy`) directly into your existing code. It includes:
 1. **`synth_arabic_desert_vocal()`**: Generates the deep pharyngeal `"Ooooo -> Aaaaah"` vocal with dynamic formant morphing, *Baha* sandy breathiness, *Buka'* weeping catches, and `5.5Hz` *Tarab* vibrato.
@@ -94,7 +94,7 @@ def synth_arabic_desert_vocal(
 ) -> np.ndarray:
     """
     Synthesizes the authentic Deep Arabic Desert Solo Vocal ('Ooooo -> Aaaaah' / 'Yaa Leil').
-    
+
     Features:
     - Dynamic Pharyngeal Formant Morphing: Deep hollow 'Ooooo' [310Hz, 690Hz] blooming into
       throaty Arabic Pharyngeal 'Aaaaah' [640Hz, 1040Hz, 2850Hz].
@@ -105,35 +105,35 @@ def synth_arabic_desert_vocal(
     N = len(f0_curve)
     t = np.arange(N) / sr
     dur = N / sr
-    
+
     # 1. Delayed Tarab Vibrato (5.4 Hz, +-38 cents) + Micro-Jitter for human realism
     vib_delay_env = np.clip((t - 0.20) / 0.35, 0.0, 1.0)
     vibrato_cents = 38.0 * vib_delay_env * np.sin(2.0 * np.pi * 5.4 * t)
     jitter_cents  = np.convolve(np.random.normal(0, 4.0, N), np.ones(80)/80, mode='same')
-    
+
     # Apply Glottal Scoop (-65 cents -> 0 in first 55ms)
     scoop_cents = -65.0 * np.exp(-t / 0.022)
     f_final = f0_curve * (2.0 ** ((vibrato_cents + jitter_cents + scoop_cents) / 1200.0))
-    
+
     # 2. Glottal Source + Sub-Octave Desert Chest Resonance (0.5 * f0)
     phase = 2.0 * np.pi * np.cumsum(f_final) / sr
     glottal = np.zeros(N, dtype=np.float64)
     for k in range(1, 24):
         # Rich odd & even harmonics with warm pharyngeal tilt
         glottal += (1.0 / (k ** 0.92)) * np.sin(k * phase)
-        
+
     # Add deep 0.5*f0 chest sub-harmonic (Nahham / Sufi depth)
     sub_chest = sub_chest_depth * (
         np.sin(0.5 * phase) + 0.4 * np.sin(1.5 * phase)
     )
-    
+
     # Add 'Baha' (Smoky desert breath noise modulated by glottal phase)
     raw_noise = np.random.uniform(-1.0, 1.0, N)
     b_n, a_n = butter(2, [700.0 / (sr/2), 3400.0 / (sr/2)], btype='band')
     baha_breath = lfilter(b_n, a_n, raw_noise) * (0.5 + 0.5 * np.sin(phase)) * baha_hoarseness
-    
+
     source = np.tanh((glottal * 0.45) + sub_chest + baha_breath)
-    
+
     # 3. Build the Two Formant States:
     # STATE A: Deep Desert Cave "Ooooo" (F1=310Hz, F2=680Hz, F3=2450Hz)
     b_o1, a_o1 = iirpeak(310.0 / (sr/2), Q=6.5)
@@ -144,7 +144,7 @@ def synth_arabic_desert_vocal(
         0.55 * lfilter(b_o2, a_o2, source) +
         0.20 * lfilter(b_o3, a_o3, source)
     )
-    
+
     # STATE B: Pharyngeal Desert "Aaaaah" ('Ayn/Ha constriction: F1=645Hz, F2=1030Hz, F3=2880Hz)
     b_a1, a_a1 = iirpeak(645.0 / (sr/2), Q=6.0)
     b_a2, a_a2 = iirpeak(1030.0 / (sr/2), Q=7.5) # Lowered F2 creates the dark Arabic throat color!
@@ -154,7 +154,7 @@ def synth_arabic_desert_vocal(
         0.85 * lfilter(b_a2, a_a2, source) +
         0.45 * lfilter(b_a3, a_a3, source)
     )
-    
+
     # 4. Dynamic "Ooooo -> Aaaaah -> Ooooo" Bloom Envelope
     if vowel_trajectory == "oooo_to_aaaa":
         # Starts as deep 'Ooooo' (0.0), blooms into wide 'Aaaaah' (1.0), closes gently at tail
@@ -163,9 +163,9 @@ def synth_arabic_desert_vocal(
         bloom = 0.15 * np.sin(np.pi * (t / dur))
     else: # 'aaaa_to_oooo'
         bloom = 1.0 - (np.sin(np.pi * 0.5 * (t / dur)) ** 1.2)
-        
+
     vocal_morphed = (1.0 - bloom) * vocal_oooo + bloom * vocal_aaaa
-    
+
     # 5. Amplitude Envelope + Subtle 'Tahcheen' Diaphragmatic Breath Swell
     amp_env = (1.0 - np.exp(-t / 0.045)) * np.exp(-np.maximum(0.0, t - (dur - 0.18)) / 0.085)
     return np.tanh(vocal_morphed * amp_env * 1.35)
@@ -178,18 +178,18 @@ def generate_yaa_leil_melody_curve(root_hz: float, duration_sec: float = 4.0, sr
     """
     N = int(sr * duration_sec)
     t = np.linspace(0, 1.0, N, endpoint=False)
-    
+
     # Maqam Hijaz semitone contour over normalized time [0.0 to 1.0]:
     # Starts on 5th (7.0), cries up to b6 (8.0), holds 5th (7.0), cascades down 5.0 -> 4.0 (F#) -> 1.0 (Eb) -> 0.0 (D)
     time_knots = [0.0, 0.12, 0.22, 0.50, 0.62, 0.74, 0.86, 1.0]
     semi_knots = [7.0, 8.0,  7.0,  7.0,  5.0,  4.0,  1.0,  0.0]
     smooth_semitones = np.interp(t, time_knots, semi_knots)
-    
+
     # Add 'Buka' (Weeping laryngeal pitch-catch spikes at note transitions: 0.62, 0.74, 0.86)
     for catch_t in [0.62, 0.74, 0.86]:
         catch_mask = np.exp(-((t - catch_t) ** 2) / (2 * (0.008 ** 2)))
         smooth_semitones += 1.2 * catch_mask # Brief upward sob-crack (+120 cents)
-        
+
     return root_hz * (2.0 ** (smooth_semitones / 12.0))
 
 
@@ -213,23 +213,23 @@ def synth_magical_desert_chord_pad(
     N = int(sr * duration_sec)
     left = np.zeros(N, dtype=np.float64)
     right = np.zeros(N, dtype=np.float64)
-    
+
     for idx, semi in enumerate(intervals):
         note_hz = root_hz * (2.0 ** (semi / 12.0))
         # Slight human drift per choir voice
         drift = np.sin(2.0 * np.pi * (0.25 + 0.07 * idx) * np.linspace(0, duration_sec, N)) * 0.08
         f_arr = np.full(N, note_hz) * (2.0 ** (drift / 12.0))
-        
+
         # Low voices sing deep 'Ooooo', upper voices bloom into 'Aaaaah'
         v_mode = "pure_deep_oooo" if semi <= 0.0 else "oooo_to_aaaa"
         voice_sig = synth_arabic_desert_vocal(f_arr, sr=sr, vowel_trajectory=v_mode, sub_chest_depth=0.2)
-        
+
         # Wide stereo dune panning
         pan = -0.75 + (1.5 * idx / max(1, len(intervals) - 1))
         angle = (pan + 1.0) * (np.pi / 4.0)
         left  += voice_sig * np.cos(angle) * 0.35
         right += voice_sig * np.sin(angle) * 0.35
-        
+
     # Add Golden-Ratio Dune Canyon Multi-Tap Echo (Warm 400Hz-2.4kHz reflections)
     for delay_ms, gain in [(230, 0.38), (372, 0.28), (602, 0.20), (974, 0.14)]:
         d_samp = int((delay_ms / 1000.0) * sr)
@@ -237,13 +237,13 @@ def synth_magical_desert_chord_pad(
             # Cross-pan reflections between Left and Right dunes!
             left[d_samp:]  += right[:-d_samp] * gain
             right[d_samp:] += left[:-d_samp]  * gain
-            
+
     return np.tanh(left), np.tanh(right)
 \`\`\`
 
 ---
 
-## 🔥 5. How to Use This in Your Arabic-Tamil Kuthu Track (v4.0 Idea!)
+## 5. How to Use This in Your Arabic-Tamil Kuthu Track (v4.0 Idea!)
 
 Imagine opening your track (`0:00 – 0:08`) or dropping the beat out in the middle (`0:22 – 0:25`) with:
 1. **`synth_magical_desert_chord_pad(root_hz=146.83, chord_type="hijaz_mirage")`** creating a wide, shimmering stereo desert `"Ooooo — Aaaaah"` mirage chord in D Hijaz (`D - A - D - Eb - F#`),

@@ -150,7 +150,7 @@ under the voice by default (`inhale_gain` 0.08 of `ref_rms`; it was 0.5 and loud
 
 Breaths are **per singer**, not per ensemble. `plan_inhales_detailed` decides *whether* a phrase gets a breath;
 the ensemble decides *when* (`inhale_timing_jitter_ms` 18), *how long* (`inhale_duration_var`) and *through which
-end* (`inhale_character_var`: −1 nasal and slow, +1 mouth and quick). A phrase that just lasted
+end* (`inhale_character_var`: −1 nasal and slow, +1 mouth and quick). A phrase that lasted
 `catch_breath_after_s` gets a quicker, brighter catch breath. A phrase with no room for an inhale gets an
 `onset_puff` — the air that escapes before the first voiced note — and the release after a long phrase carries
 `release_scale_by_phrase` more air than after a short one. With `phrasing.amount` 0 the plan is applied exactly

@@ -57,7 +57,7 @@ Per instrument starting points (cut / boost): piano cut 300-400 / boost 3-5 k ai
 Never exceed 0 dBFS; measure true peak with oversampling (mixer does). Keep the noise floor below -60 dB. Delivery
 sample rate 44.1 kHz (music) or 48 kHz (video, matches picture), 24-bit WAV; export MP3 192-320 kbps only for sharing.
 If the target LUFS cannot be reached without squashing a very dynamic piece, the master prints a note - a
-natural 18-20 dB crest piece should simply be a little quieter, not crushed.
+natural 18-20 dB crest piece should be a little quieter, not crushed.
 
 ## 4. Music under voice-over (OpenMontage, W3C, BBC practice & Commercial Contract)
 
@@ -186,7 +186,7 @@ stems and the bands named; a `WARN` is a question, not a verdict.
 The pipeline runs them on every render: stage 5 calls `mix_and_master(..., diagnose=True)` and stage 6 appends
 them to `reports/ci_report.json` as `mix:<row>`. There a diagnostic `FAIL` is printed as `WARN`, because the
 gate's own rows (true peak, clipping, silence) own the blocking verdicts and the diagnostics are advisory by
-contract. Stage 6 is one call to `quality_gate.run_gate(..., score=<the score it just rendered>)`, so the
+contract. Stage 6 is one call to `quality_gate.run_gate(..., score=<the score it rendered>)`, so the
 pipeline and `quality_gate.py <score>` produce the same rows and cannot drift apart.
 
 **Export validation.** `mix_and_master` re-reads the file it wrote and checks sample rate, channels,
