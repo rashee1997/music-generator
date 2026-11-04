@@ -1,0 +1,158 @@
+[
+  {
+    "pair": "01_semitone_262_pp_vs_ff",
+    "level_aware": [
+      0.0181,
+      0.0314
+    ],
+    "expected": "B",
+    "legacy": [
+      0.0939,
+      0.0939
+    ],
+    "legacy_expected": "same"
+  },
+  {
+    "pair": "02_semitone_523_pp_vs_ff",
+    "level_aware": [
+      0.0161,
+      0.0279
+    ],
+    "expected": "B",
+    "legacy": [
+      0.0914,
+      0.0914
+    ],
+    "legacy_expected": "same"
+  },
+  {
+    "pair": "03_semitone_1046_pp_vs_ff",
+    "level_aware": [
+      0.0116,
+      0.0201
+    ],
+    "expected": "B",
+    "legacy": [
+      0.0727,
+      0.0726
+    ],
+    "legacy_expected": "same"
+  },
+  {
+    "pair": "04_M2_440_pp_vs_ff",
+    "level_aware": [
+      0.0092,
+      0.016
+    ],
+    "expected": "B",
+    "legacy": [
+      0.0565,
+      0.0565
+    ],
+    "legacy_expected": "same"
+  },
+  {
+    "pair": "05_m3_262_pp_vs_ff",
+    "level_aware": [
+      0.0098,
+      0.0171
+    ],
+    "expected": "B",
+    "legacy": [
+      0.052,
+      0.052
+    ],
+    "legacy_expected": "same"
+  },
+  {
+    "pair": "06_P5_262_pp_vs_ff",
+    "level_aware": [
+      0.0024,
+      0.0042
+    ],
+    "expected": "B",
+    "legacy": [
+      0.0105,
+      0.0105
+    ],
+    "legacy_expected": "same"
+  },
+  {
+    "pair": "07_semitone_low_vs_high",
+    "level_aware": [
+      0.0334,
+      0.0206
+    ],
+    "expected": "A",
+    "legacy": [
+      0.0976,
+      0.1072
+    ],
+    "legacy_expected": "B"
+  },
+  {
+    "pair": "08_semitone_masked_vs_unmasked",
+    "level_aware": [
+      0.0313,
+      0.007
+    ],
+    "expected": "A",
+    "legacy": [
+      0.0939,
+      0.0379
+    ],
+    "legacy_expected": "A"
+  },
+  {
+    "pair": "09_cluster_vs_triad",
+    "level_aware": [
+      0.0347,
+      0.0092
+    ],
+    "expected": "A",
+    "legacy": [
+      0.1598,
+      0.0327
+    ],
+    "legacy_expected": "A"
+  },
+  {
+    "pair": "10_semitone_bed_vs_alone",
+    "level_aware": [
+      0.0313,
+      0.0331
+    ],
+    "expected": "B",
+    "legacy": [
+      0.0939,
+      0.1001
+    ],
+    "legacy_expected": "B"
+  },
+  {
+    "pair": "11_semitone_octave_masked",
+    "level_aware": [
+      0.0313,
+      0.0024
+    ],
+    "expected": "A",
+    "legacy": [
+      0.0939,
+      0.007
+    ],
+    "legacy_expected": "A"
+  },
+  {
+    "pair": "12_semitone_vs_tritone",
+    "level_aware": [
+      0.0313,
+      0.0119
+    ],
+    "expected": "A",
+    "legacy": [
+      0.0939,
+      0.0337
+    ],
+    "legacy_expected": "A"
+  }
+]

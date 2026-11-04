@@ -69,7 +69,20 @@ ROWS = {
     'pattern.four_on_floor': dict(meaning='a kick on every beat and nothing else'),
     'pattern.flags_max':     dict(meaning='how many pattern flags make a FAIL', params={'max': (6, 3, 12)}, no_skip=True),
     # audio / mix
-    'roughness':             dict(meaning='cochlear sensory roughness', params={'scale': (1.0, 0.5, 2.0), 'outro_resolve': (True,)}, no_skip=True),
+    # `model` switches the estimator: 'legacy' is the original Plomp-Levelt/Sethares pair weight with per-frame
+    # normalisation; 'level_aware' adds absolute partial level, simultaneous masking and the Vassilakis amplitude
+    # terms (knowledgebase/sound-design/roughness.md). Default stays 'legacy' until the listening check in
+    # docs/roughness_model.md is answered. The other params are read only by 'level_aware'.
+    'roughness':             dict(meaning='cochlear sensory roughness', params={
+        'scale': (1.0, 0.5, 2.0),
+        'outro_resolve': (True,),
+        'model': ('legacy', 'level_aware'),
+        'median': (0.024, 0.02, 0.40),                    # calibrated on tests/fixtures/roughness, not on a cue
+        'calib_spl_db': (70.0, 60.0, 80.0),              # Zwicker & Fastl measure roughness at 60-70 dB SPL
+        'mask_band_bark': (1.0, 0.5, 3.0),               # Daniel & Weber use 1-Bark filters
+        'mask_slope_up_db_bark': (10.5, 5.0, 20.0),      # measured upper masking slope, 64-70 dB near 450 Hz
+        'mask_slope_down_db_bark': (27.0, 15.0, 40.0),   # Daniel & Weber lower slope, -27 dB/Bark
+    }, no_skip=True),
     'ambient_bed':           dict(meaning='an ambient bed that drops out or pumps', params={'pump_db': (3.8, 3.0, 6.0)}, no_skip=True),
     'modulation_flutter':    dict(meaning='6-25 Hz amplitude flutter in a sustained part', params={'warn': (0.18, 0.10, 0.30)}, no_skip=True),
     # score checks (pattern_audit.acoustic_checks). No numbers to retune, but a type of music may legitimately have them:
@@ -203,6 +216,10 @@ def _check_range(row, name, val, problems, where):
     if isinstance(spec[0], bool):
         if not isinstance(val, bool):
             problems.append(f'{where}: {row}.{name} must be true or false')
+        return
+    if isinstance(spec[0], str):                     # an enumerated parameter: the tuple lists the allowed values
+        if val not in spec:
+            problems.append(f'{where}: {row}.{name} must be one of {list(spec)}, not {val!r}')
         return
     if isinstance(val, bool) or not isinstance(val, (int, float)):
         problems.append(f'{where}: {row}.{name} must be a number')
@@ -477,7 +494,7 @@ def cmd_list():
 
 def cmd_rows():
     for rid, r in ROWS.items():
-        ps = ', '.join(f'{k}={v[0]} ({v[1]}..{v[2]})' if len(v) == 3 else f'{k}={v[0]}' for k, v in (r.get('params') or {}).items())
+        ps = ', '.join(f'{k}={v[0]} ({v[1]}..{v[2]})' if len(v) == 3 and not isinstance(v[0], str) else f'{k}={"|".join(str(x) for x in v)}' for k, v in (r.get('params') or {}).items())
         print(f'{rid:22s} {"PROTECTED " if r.get("protected") else ""}{r["meaning"]}' + (f'  [{ps}]' if ps else ''))
 
 
