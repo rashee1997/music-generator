@@ -24,8 +24,8 @@ sources: []
 - [3.0 Western & Global Fusion Blueprints (How to Blend Without Losing Tamil Identity)](#3-western--global-fusion-blueprints-how-to-blend-without-losing-tamil-identity)
   - [3.1 Arabic-Tamil Kuthu (The "Halamithi" / Middle-East Street Fusion)](#31-arabic-tamil-kuthu-the-halamithi--middle-east-street-fusion)
   - [3.2 Neo-classical / Baroque + Carnatic](#32-neo-classical--baroque--carnatic)
-  - [3.3 Trap / Hip-Hop / Drill + Chennai Gaana (Santhosh Narayanan Style)](#33-trap--hip-hop--drill--chennai-gaana-paal-dabba--asal-kolaar--santhosh-narayanan-style)
-  - [3.4 EDM / Mass-Kuthu / Synthwave (the film composer Blueprint)](#34-edm--mass-kuthu--synthwave-anirudh-ravichander-blueprint)
+  - [3.3 Trap / hip-hop / drill + Chennai gaana](#33-trap--hip-hop--drill--chennai-gaana)
+  - [3.4 EDM / mass kuthu / synthwave](#34-edm--mass-kuthu--synthwave)
   - [3.5 Jazz / R&B / Lo-Fi + Carnatic (Pradeep Kumar Style)](#35-jazz--rb--lo-fi--carnatic-pradeep-kumar--sean-roldan--karthik-style)
 - [4.0 Pure-Python Algorithmic Parameter Cheat Sheet](#4-pure-python-algorithmic-parameter-cheat-sheet)
   - [4.1 Scale Lookup Dictionary (Semitone Offsets from MIDI Root)](#41-scale-lookup-dictionary-semitone-offsets-from-midi-root)
@@ -110,7 +110,7 @@ Before coding specific genres, an algorithm must understand the fundamental perc
 ---
 
 ### 2.5 Oppari (Ritual Lament / Dark Kuthu)
-* **Cultural Origin:** Traditional funeral elegies sung by wailing performers, later transformed into cathartic dance tracks (e.g., *Santhosh Narayanan* style).
+* **Cultural Origin:** Traditional funeral elegies sung by wailing performers, later transformed into cathartic dance tracks (in the modern film-song style).
 * **How the Ear Listens:** Sensitive to **falling pitch contours**, microtonal flat 3rds/6ths, and raw vocal-like tremors.
 * **Emotional Feel:** Tragic yet liberating, dark, hypnotic, goosebump-inducing.
 * **DSP Implementation:**
@@ -137,14 +137,14 @@ When fusing Tamil genres with Western/Global styles in code, **Rule #1** is: *Ke
   * **Harmony:** Western string section playing staccato 8th-note Triad inversions (`i - iv - V7 - i`) with a walking cello bassline.
   * **Critical Rule:** Never bend the Western chord strings—keep the chords 100% 12-TET quantized so the microtonal bends of the Tamil lead rub against the rigid grid for maximum emotional tension.
 
-### 3.3 Trap / Hip-Hop / Drill + Chennai Gaana (*Paal Dabba / Asal Kolaar / Santhosh Narayanan Style*)
+### 3.3 Trap / hip-hop / drill + Chennai gaana
 * **Why It Works:** UK Drill's **sliding 808s** and **triplet hi-hat flows** map directly onto the **Urumi drum pitch-slide** and **6/8 Gaana *Tisra* cadence**.
 * **The Fusion Formula:**
   * **Low End (20Hz–120Hz):** Western distorted 808 sub-bass with **100ms portamento glides** mimicking the *Urumi Melam*.
   * **Mid-Range Percussion (200Hz–4kHz):** Replace the Trap snare on beat 3 with a **tight, high-tuned Parai slap** and syncopated **Thavil** ghost notes.
   * **Hi-Hats:** Replace standard 16th-note trap hi-hats with **6/8 triplet Salangai (bell) rolls**.
 
-### 3.4 EDM / Mass-Kuthu / Synthwave (*the film composer Blueprint*)
+### 3.4 EDM / mass kuthu / synthwave
 * **Why It Works:** Modern Tamil "Mass" cinema themes rely on **stadium-sized EDM drops** fused with **traditional folk hooks**.
 * **The Fusion Formula:**
   * **Lead Synth:** Layer a **SuperSaw / Brass synth** in octaves directly on top of a **Nadaswaram** sample/synth, both following the exact same pitch-bend automation curve.
