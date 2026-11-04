@@ -27,19 +27,19 @@ own `vocal` block (any key or section of the vocal config). Notes take `c` (cent
   each formant is a two-pole resonator; cascade and parallel layouts are both used.
 - **Klatt-style formant synthesis** is the reference design (Praat's KlattGrid implements it). Singing uses the same tract
   with the pitch of the note. The engine's source is a parametric glottal flow pulse (Rosenberg / LF family); values are
-  literature-informed starting points listed in `references/data/vocal-engine-data/defaults.json`, not read from the knowledge base.
+  literature-informed starting points, listed in `references/data/vocal-engine-data/defaults.json`.
 - **Human imperfection.** A sung note is never a steady tone: pitch jitter (a few cents, slow), amplitude shimmer
-  (a few percent), vibrato that starts late and widens, breath at the onset, a glide into the note. The engine now builds these
-  across a whole phrase, with one continuous pitch curve, so notes connect instead of restarting.
+  (a few percent), vibrato that starts late and widens, breath at the onset, a glide into the note. The engine builds these across a whole phrase, with one continuous pitch curve, so notes connect instead of restarting.
 - **A real choir is many people.** Several singers slightly out of tune with each other, different vibrato phases and
   breathing, spread across the stereo field. Each singer here has their own identity (formant scale, vibrato, tuning, pitch
   stability, breath capacity, attack and release) derived from the seed, their own timing and their own pitch curve.
-- **Mix treatment** (production sources): high-pass a choir at 100-150 Hz, cut 200-400 Hz mud, glue the stacked voices
+- **Mix treatment:** high-pass a choir at 100-150 Hz, cut 200-400 Hz mud, glue the stacked voices
   with light compression. A choir stem goes through the same mixer as any other.
 
 ## 2. Vowel formants used
 
-Adult averages in the Peterson and Barney style; check them against a published table before a scientific claim. They live in `references/data/vocal-engine-data/defaults.json` (`tract.vowels`):
+Adult male averages (Peterson & Barney 1952, the /h_d/ words); women and children run higher, so raise every
+value by the singer's formant scale rather than the vowel. F3 is the paper's mean. They live in `references/data/vocal-engine-data/defaults.json` (`tract.vowels`):
 
 | Vowel | F1 Hz | F2 Hz | F3 Hz | Use |
 |---|---|---|---|---|
@@ -97,24 +97,23 @@ The expression comes from the preset's top-level `expression`; `role` is filled 
 `render_natural` renders it. `phrasing.amount: 0` is exactly the previous phrase behaviour (one arc, no accents, no
 micro-timing, no articulation glide, time-locked inhales) and is the switch to use for a byte-faithful old render.
 
-## 4. What was checked, and what was not
+## 4. What the gate can and cannot say
 
-- Checked (objective, phrase performance): contour correlation between phrases, micro-timing distribution and ordering, accent depth, vibrato extent by note length, formant movement at an onset, per-singer inhale spread, pitch error against the score, stem level. `tests/vocal_expression_report.py` prints them and writes `tests/artifacts/vocals/expr/` (WAVs, `REPORT.md`, `measurements.json`).
-- Checked (objective): spectral shape of the vowels and the hum; resonator gain and stability at 22.05, 44.1, 48 and 96 kHz;
-  pitch reaches its targets, connected notes glide, vibrato develops and keeps its phase across notes; no clicks at joins; level
-  follows velocity and does not depend on the pitch; 1, 2, 5 and 16 voices; reproducible by seed; singers are not copies of
-  one another; the old selftest. The gate's `vocal.*` rows run these measurements on a real render.
-- Not checked: **how it sounds.** No listening test has been run (`listen.py` has not run on a vocal render). The gate cannot
-  judge whether a voice is convincing, warm or moving. Say so when delivering.
+- The `vocal.*` rows measure the mechanics: pitch against the score, connected notes, vibrato extent by note length,
+  formant movement at an onset, per-singer inhale spread, level against velocity, and that two singers differ.
+- They cannot say whether a voice is convincing, warm or moving. Say that in the reply: the voice was measured, not
+  auditioned.
+- A phrase that runs past `breathing.capacity_s` raises `vocal.breath`: add a rest, or raise the capacity deliberately.
 
 ## 5. Pedalboard harmonies, chorus and polish (`add_vocal_harmonies`, `add_vocal_chorus`, `apply_vocal_dsp`)
 
 All three read their numbers from the `dsp` section (`references/data/vocal-engine-data/defaults.json`), imported on use:
 - **Harmonies:** `pb.PitchShift` copies at `dsp.harmonies.semitones` (default -12 and +7), mix 0.35.
-- **Chorus:** `pb.Chorus` rate 1 Hz, depth 0.25, **mix 0.25** (was 0.4: less smear, so single voices stay recognisable).
+- **Chorus:** `pb.Chorus` rate 1 Hz, depth 0.25, **mix 0.25**: enough smear to widen the stack, not enough to lose a
+  single voice.
 - **Polish:** high-pass 80 Hz, +1.8 dB presence at 3.2 kHz, +1.5 dB air at 10 kHz, 2.2:1 compression, and saturation from
   `dsp.saturation_db` or the style (`qawwali_devotional` has 1.5 dB; the old names `qawwali_sufi`, `arabic_desert_vocal` and
   `bulgarian_chant` still do). `dsp.intensity` 0..1 scales every gain and ratio. Output is DC-blocked, finite and soft-limited.
-- Mono input still returns `(N, 2)` (as before); pass `keep_shape=True` for the input's shape.
+- Mono input returns `(N, 2)`; pass `keep_shape=True` for the input's shape.
 
 ---

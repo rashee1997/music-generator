@@ -1,19 +1,17 @@
 ---
-title: Acoustic laws
-summary: The physical numbers behind distance, air absorption and room behaviour, and where each is used.
-tags: [acoustic, distance, absorption, room, reverb, air, physics]
+title: Natural flow laws
+summary: The laws that keep a programmed score from reading as MIDI, with the numbers the gate enforces.
+tags: [flow, loop, phrasing, energy, groove, dynamics, gate]
 load_when:
-  - setting distance or reverb by physics
-  - a spatial claim needs a number
+  - a render reads as MIDI or a loop
+  - a pattern or humanization row fails
 ---
 
-# Acoustic laws and dynamic musical flow
-
-
-## Acoustic Laws & Dynamic Musical Flow (so a score does not read as MIDI)
+# Natural flow laws
 
 `scripts/pattern_audit.py` carries these, `quality_gate.py` prints them as its own rows, and `--selftest` proves
-they fire on a MIDI-style score and stay quiet on a composed one. Enforce the **7 Universal Laws of Natural Musical Flow (`DYNAMIC_MUSICAL_FLOW_v2.md`)**:
+they fire on a MIDI-style score and stay quiet on a composed one. `scripts/pattern_audit.py` checks them, and the gate prints the failures as its own rows. They are numbered 1-13 below;
+the first seven are the flow laws, the rest are playing rules:
 
 1. **The Anti-Loop Mandate ($A \rightarrow A' \rightarrow B \rightarrow A''$).** Never repeat a 2-bar or 4-bar phrase identically. Human ears habituate within 6.5s. Bar 1 introduces motif; Bar 2 varies the final beat; Bar 3 shifts register up (+3 to +5 degrees) for tension; Bar 4 resolves and launches a rhythmic pickup fill into the next cycle.
 2. **Phrase Respiration (Lung-Capacity Envelope).** Maximum continuous melodic phrase is 2.5 to 4.5 seconds. Mandate $\ge 0.15$ to $0.25$ beat rests at phrase ends for breath or bow changes. Ascending phrases swell in velocity (+15%) and filter cutoff (+400 Hz); descending phrase ends soften (-20%).
