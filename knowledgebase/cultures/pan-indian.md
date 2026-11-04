@@ -1,13 +1,16 @@
 ---
-document_id: "PAN_INDIAN_MUSICAL_TRADITIONS_AND_INSTRUMENT_DSP_ONTOLOGY_V1"
-target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Ethnomusicology_Engines"]
-schema_version: "2026.10.4"
+id: pan-indian
+title: Indian traditions outside Tamil: Hindustani, Punjabi, Sufi, Bengali and others
+domain: culture
 status: unverified
 sources: []
+used_by: [AGENTS.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # 🇮🇳 The Pan-Indian Music Psychoacoustic & Instrument DSP Knowledge Base (Hindustani, Punjabi, Rajasthani, Sufi, Bengali, Western, Northeastern & Non-Tamil South)
 **Purpose:** Complete the Indian Subcontinent musical architecture beyond Tamil Nadu. This document models **Hindustani Classical (*Raga, Thaat, Meend, Jawari, Tabla*)**, **Regional Folk Ecosystems (*Punjab, Rajasthan, Bengal, Gujarat, Maharashtra, Kerala, Assam, Kashmir, Odissi*)**, and **Modern Bollywood / Indie-Electronic Fusions**.
 

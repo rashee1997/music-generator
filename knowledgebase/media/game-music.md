@@ -1,14 +1,16 @@
 ---
-document_id: GAME_MUSIC_ADAPTIVE_AND_INTERACTIVE_DSP_ONTOLOGY_V1
-target_consumers: [music-generator, sound-designer, game-audio-engineer, composer]
-schema_version: "2026.10.7"
-domain: "Interactive & Adaptive Video Game Music Architecture, Non-Linear Stems, State Machines, & Seamless Loop DSP"
+id: game-music
+title: Adaptive game music: layering, state machines and loops
+domain: media
 status: unverified
 sources: []
+used_by: [AGENTS.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # Interactive & Adaptive Video Game Music Architecture & DSP Ontology
 
 ## Table of Contents

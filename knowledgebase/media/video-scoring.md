@@ -1,14 +1,16 @@
 ---
-document_id: MOTION_GRAPHICS_VIDEO_SCORING_AND_KEYFRAME_SYNC_ONTOLOGY_V1
-target_consumers: [music-generator, motion-designer, video-editor, commercial-composer]
-schema_version: "2026.10.7"
-domain: "Frame-Accurate Video Scoring, Keyframe Hit Point Alignment, Motion Easing Sync, & Speech Corridor Carving"
+id: video-scoring
+title: Video scoring: frame-locked tempo, hit points and voice-over
+domain: media
 status: unverified
 sources: []
+used_by: [AGENTS.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # Motion Graphics & Video Scoring Architecture: Frame-Accurate DSP Ontology
 
 ## Table of Contents

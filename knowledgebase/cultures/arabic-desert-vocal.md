@@ -1,13 +1,16 @@
 ---
-document_id: "ARABIC_DESERT_VOCAL_AND_MAGICAL_CHORDS_ONTOLOGY_V1"
-target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Formant_Vocal_Engines"]
-schema_version: "2026.10.1"
+id: arabic-desert-vocal
+title: Arabic desert vocal and maqam harmonisation
+domain: culture
 status: unverified
 sources: []
+used_by: [AGENTS.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # The Arabic Desert Vocal ("Deep Ooooo / Aaaaah") & *Maqam* Chord DSP Knowledge Base
 **Scope:** Acoustic & Anatomical Physics of the Deep Arabic Desert Voice (*Mawwal, Yaa Leil, Nahham, Sufi/Bedouin Desert Echo*) + The Mathematics of "Desert Chords" + Pure-Python Synthesis Code.
 

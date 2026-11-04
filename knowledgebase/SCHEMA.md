@@ -81,7 +81,7 @@ Describe the set instead: "the documents in this folder", "the culture files".
 
 ## 7. Citing a document
 
-`scripts/research_kb.py` cites a document by its `document_id`, which is the `id` field above. Any
+`scripts/research_kb.py` cites a document by its `id`. Any
 change to an `id` breaks a citation in an existing project's research note, so change the file name
 and the `id` together, and only when the rename is worth it.
 

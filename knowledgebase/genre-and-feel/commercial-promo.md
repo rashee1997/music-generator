@@ -1,13 +1,16 @@
 ---
-document_id: "COMMERCIAL_CORPORATE_PROMO_MUSICALS_AND_REVERB_DSP_V1"
-target_consumers: ["AI_Music_Agents", "Commercial_Audio_Engines", "Python_DSP_Synthesizers"]
-schema_version: "2026.10.5"
+id: commercial-promo
+title: Commercial, corporate, motivational and musical-theatre audio
+domain: genre
 status: unverified
 sources: []
+used_by: [AGENTS.md, references/mixing/mixing-and-mastering.md, references/mixing/mix-rules.md, references/scoring/genres-and-moods.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # The Commercial, Corporate, Motivational, Modern Musicals & Reverb DSP Knowledge Base
 **Scope:** Modern Tech Corporate $\rightarrow$ High-Energy Promotional/Adverts $\rightarrow$ Inspiring/Motivational Cinematic $\rightarrow$ Modern Musical Theater (Pop-Operetta / Lin-Manuel / Broadway) $\rightarrow$ Pure-Python Algorithmic Reverb Engines (*Schroeder/Moorer, Shimmer, Gated, Infinite Dune Hall*).
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Persuasion Psychoacoustics, Voice-Over (VO) Ducking Architecture, and Spatial Acoustics.

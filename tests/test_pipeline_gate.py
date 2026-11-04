@@ -52,7 +52,7 @@ def make_project(td, research=True, direction=True, preset=True, ambience=False)
         f.unlink()
     project_presets(proj)
     if research:
-        (proj / 'reports' / 'research_t.md').write_text(f'## Knowledge base\n{KB_ID}\n## Web research\nhttps://example.org\n', encoding='utf-8')
+        (proj / 'reports' / 'research_t.md').write_text(f'## Knowledge base\n- id: {KB_ID}\n## Web research\nhttps://example.org\n', encoding='utf-8')
     if direction:
         sheet = proj / 'direction' / 'direction_sheet.json'
         sheet.write_text(sheet.read_text(encoding='utf-8').replace('TODO', 'x'), encoding='utf-8')
@@ -84,7 +84,7 @@ class ProjectGate(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             proj = make_project(td)
             note = proj / 'reports' / 'research_t.md'
-            note.write_text(f'## Knowledge base\n{KB_ID}\n## Web research\nTODO\n', encoding='utf-8')
+            note.write_text(f'## Knowledge base\n- id: {KB_ID}\n## Web research\nTODO\n', encoding='utf-8')
             self.assertTrue(any('URL' in p for p in project_gate.problems(None, proj)))
             note.write_text('## Web research\nhttps://example.org\n', encoding='utf-8')
             self.assertTrue(any('knowledge-base' in p for p in project_gate.problems(None, proj)))

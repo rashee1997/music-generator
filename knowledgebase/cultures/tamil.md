@@ -1,13 +1,16 @@
 ---
-document_id: "TAMIL_CARNATIC_KUTHU_DSP_ONTOLOGY_V1"
-target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Ethnomusicology_Engines"]
-schema_version: "2026.10.1"
+id: tamil
+title: Tamil folk, gaana and Carnatic
+domain: culture
 status: unverified
 sources: []
+used_by: [AGENTS.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # The Tamil Music Psychoacoustic & Algorithmic DSP Knowledge Base
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Algorithmic Composition, Humanization Matrices, and Cross-Cultural Fusion.
 

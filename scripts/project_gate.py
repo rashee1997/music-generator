@@ -18,7 +18,7 @@
 
 Checks (every problem is listed at once, nothing is guessed):
   1. scaffold folders exist (direction/ presets/ scores/ reports/)
-  2. a research note reports/research_*.md cites a knowledge-base document_id and lists web sources (a URL)
+  2. a research note reports/research_*.md cites a knowledge-base id and lists web sources (a URL)
   3. a direction sheet direction/*.json has the required fields
   4. every preset JSON in the project parses
   5. every non-built-in instrument / vocal track names a preset that exists exactly (no substring guessing)
@@ -59,12 +59,24 @@ _norm = presets._norm          # one implementation, in presets.py
 
 
 def kb_document_ids():
-    """document_id values from the frontmatter of every markdown file under knowledgebase/."""
+    """`id` values from the frontmatter of every markdown file under knowledgebase/."""
     ids = set()
     for p in (SKILL / 'knowledgebase').rglob('*.md'):
-        head = p.read_text(encoding='utf-8', errors='replace')[:2500]
-        ids.update(re.findall(r'document_id:\s*["\']?([A-Za-z0-9_\-.]+)', head))
+        text = p.read_text(encoding='utf-8', errors='replace')
+        head = text.split('---', 2)[1] if text.startswith('---') else ''
+        ids.update(re.findall(r'^id:\s*["\']?([A-Za-z0-9_\-.]+)', head, re.M))
     return ids
+
+
+KB_CITE = re.compile(r'\bid:\s*`?([A-Za-z0-9_.\-]+)`?')
+KB_PATH = re.compile(r'knowledgebase/[A-Za-z0-9_./-]+\.md')
+
+
+def cites_kb(text, ids):
+    """True when a note names a knowledge-base id (research_kb.py writes `- id: x`) or links its file."""
+    cited = set(KB_CITE.findall(text))
+    cited.update(os.path.splitext(os.path.basename(t))[0] for t in KB_PATH.findall(text))
+    return bool(cited & ids)
 
 
 def is_builtin(tr):
@@ -90,15 +102,15 @@ def research_problems(project):
     best = None                                   # the note closest to done, for a useful message
     for n in notes:
         t = n.read_text(encoding='utf-8', errors='replace')
-        cites_kb = any(i in t for i in ids)
+        cites = cites_kb(t, ids)
         m = WEB_MARK.search(t)
         web = bool(m and re.search(r'https?://', t[m.end():]))
-        if cites_kb and web:
+        if cites and web:
             return []
-        if best is None or (cites_kb, web) > best[1]:
-            best = (n, (cites_kb, web))
+        if best is None or (cites, web) > best[1]:
+            best = (n, (cites, web))
     n, (kb, web) = best
-    lack = [x for x, ok in (('a knowledge-base document_id citation (run research_kb.py)', kb),
+    lack = [x for x, ok in (('a knowledge-base id citation (run research_kb.py)', kb),
                             ('at least one URL under "Web research"', web)) if not ok]
     return [f'{n.name} lacks ' + ' and '.join(lack)]
 

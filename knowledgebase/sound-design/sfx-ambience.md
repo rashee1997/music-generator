@@ -1,13 +1,16 @@
 ---
-document_id: "PROCEDURAL_SFX_AMBIENCE_AND_ZERO_OVERLAP_MIXING_ONTOLOGY_V1"
-target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Spatial_Audio_Engines"]
-schema_version: "2026.10.3"
+id: sfx-ambience
+title: Procedural SFX and ambience, and blending them with music
+domain: sound-design
 status: unverified
 sources: []
+used_by: [AGENTS.md, references/mixing/mixing-and-mastering.md, references/sound-design/sound-effects.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # The Master Procedural SFX, World Ambience & Zero-Overlap Music Blending Knowledge Base
 **Purpose:**
 1. Synthesize **any natural, environmental, human-crowd, or cinematic SFX** in 100% pure Python (`NumPy`/`SciPy`) using physical and stochastic modeling (zero external `.wav` samples required).

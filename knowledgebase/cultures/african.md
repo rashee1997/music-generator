@@ -1,13 +1,16 @@
 ---
-document_id: "PAN_AFRICAN_POLYRHYTHM_AND_DSP_ONTOLOGY_V1"
-target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Polyrhythm_Engines"]
-schema_version: "2026.10.1"
+id: african
+title: African polyrhythm, griot traditions and modern club genres
+domain: culture
 status: unverified
 sources: []
+used_by: [AGENTS.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # The Pan-African Music Psychoacoustic & Algorithmic DSP Knowledge Base
 **Scope:** Indigenous/Ancestral Traditions $\rightarrow$ Golden-Era Post-Colonial Grooves $\rightarrow$ 21st-Century Electronic & Global Club Movements.
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Polyrhythmic Timeline Matrices, Inharmonic/Buzzing Timbre Synthesis, and Cross-Cultural Fusion.

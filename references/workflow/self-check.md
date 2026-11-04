@@ -13,7 +13,7 @@ Answer every box with yes/no in `<project>/STATUS.md`, then list in your reply w
 If any box is "no", do not deliver: fix it, or state plainly which step was skipped and why.
 
 - [ ] I read `AGENTS.md` and `SKILL.md`, and every file in my READ TABLE rows.
-- [ ] `reports/research_*.md` cites KB `document_id`s AND has web sources with URLs (or says why the web was not needed).
+- [ ] `reports/research_*.md` cites KB `id`s AND has web sources with URLs (or says why the web was not needed).
 - [ ] Every ambience (`env:`) and tuned effect (`sfx:`) in the score has a "Real-world references: <slug>" section (two sources, licence, measured or ESTIMATE with a reason) and lists the slug in its preset's `sources`. No ambience runs through `sfx:`.
 - [ ] If any track plays an SFZ library: it is installed in the project (`sfz_libs.py list`), the credit line is in the project credits, the space has reverb, the render finished inside its timeout (AGENTS.md section 3b.1), and I said the sound is a free sample set and was not auditioned.
 - [ ] I chose the gate profile from the brief (Step D2), wrote a project profile if the piece changes character, declared it as `piece_type`, and every relax/skip row has a reason that names a measurement.

@@ -1,31 +1,16 @@
 ---
-document_type: "algorithmic_knowledge_base"
-system_id: "ARR-GMKB-v4.0"
-domain: "computational_musicology_and_dsp"
-style_profile: "Indian film fusion (1990s to present: acoustic-electronic)"
-target_architecture: "Multi-Agent Python Symbolic & DSP Audio Engine"
-encoding: "UTF-8"
-ai_parsable: true
-research_foundations:
-  - "Two-Component Stage-Dance Gamaka Modeling (Subramanian et al.)"
-  - "Modal Jazz & Raga Vadi-Samvadi Pedal-Point Harmonization"
-  - "Rhythm-first composition and the syncopated ostinato bass"
-  - "Bus-separated recording and spectral carving in the film mix"
-python_dependencies:
-  - numpy>=1.24.0
-  - scipy>=1.10.0
-  - mido>=1.2.10
-  - librosa>=0.10.0
-  - pedalboard>=0.7.0
-document_id: "INDIAN-FILM-FUSION"
+id: indian-film-fusion
+title: Indian film fusion: rhythm-first layering
+domain: culture
 status: unverified
 sources: []
-target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers"]
-schema_version: "2026.11"
+used_by: []
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # Indian film fusion: the technique
 
 > The `*_engine.py` names in this document are code listings inside it, not scripts in `scripts/`.

@@ -1,13 +1,16 @@
 ---
-document_id: "AMERICAS_BRAZIL_CENTRAL_ASIAN_MONGOLIAN_DSP_ONTOLOGY_V1"
-target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Syncopation_Engines"]
-schema_version: "2026.10.1"
+id: brazil-turkic-mongolian
+title: Brazilian, Amazonian, Andean, haka and steppe traditions
+domain: culture
 status: unverified
 sources: []
+used_by: [AGENTS.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # The Americas, Amazonia, Rio & "Hakan" (Māori *Haka* / Steppe *Khakan* / Anatolian) Psychoacoustic & Algorithmic DSP Knowledge Base
 **Scope:** Rio de Janeiro (*Samba Batucada, Bossa Nova, Phonk/Baile Funk*) $\rightarrow$ The Amazon Basin (*Indigenous Rainforest Flute/Rattle & Carimbó*) $\rightarrow$ Native American (*Plains Powwow, Woodlands Flute, Andean Sikuri/Huayno*) $\rightarrow$ *Hakan* Styles (*Māori Haka Ceremonial Stomp/Chant, Turkic-Mongol Khakan/Khöömei Overtone Throat Singing, & Turkish Makam/Electro-House*).
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Non-Linear Micro-Swing ("The Brazilian Egg"), Formant/Overtone Vocal DSP, and Global World Fusions.

@@ -20,7 +20,7 @@ for that culture: `knowledgebase/README.md`.
 ## How to add a culture
 1. Research the soul: what the music is for, its rhythm, what the phrase does, what the rest means.
 2. Write `references/data/presets/soul/<culture>.json` with the fields in `scripts/soul.py`, citing the knowledge
-   base `document_id` the values come from.
+   base `id` the values come from.
 3. Add its scales, tempo and instruments to `scripts/fusion.py` (CULTURES).
 4. Run `soul_check.py` on a piece in that culture before release.
 

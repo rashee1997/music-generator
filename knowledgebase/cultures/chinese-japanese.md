@@ -1,13 +1,16 @@
 ---
-document_id: "EAST_ASIAN_CHINESE_JAPANESE_DSP_ONTOLOGY_V1"
-target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Pentatonic_Engines"]
-schema_version: "2026.10.1"
+id: chinese-japanese
+title: Chinese and Japanese scales, instruments and modern genres
+domain: culture
 status: unverified
 sources: []
+used_by: [AGENTS.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # The East Asian (Chinese & Japanese) Music Psychoacoustic & Algorithmic DSP Knowledge Base
 **Scope:** Ancient Chinese (*Yayue, Guqin, Jiangnan, Opera*) & Japanese (*Gagaku, Zen Shakuhachi, Min'yō, Kabuki*) $\rightarrow$ Modern *Guofeng* Trap/EDM, J-Rock/Anime (*Royal Road*), City Pop, and Chiptune/Future Bass.
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Pentatonic/Heptatonic Modal Engines, Acoustic Membrane/String Modeling, and Global World Fusions.

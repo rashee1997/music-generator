@@ -850,7 +850,7 @@ def gate_selftest():
         assert any('research' in x for x in probs) and any('arabic_oud_lute' in x for x in probs), probs
         assert not any('slow_strings' in x for x in probs), "built-in GM name must not need a preset"
         (proj / 'reports' / 'research_t.md').write_text(
-            f"# R\n## Knowledge base\n{kb_id}\n## Web research\nhttps://example.org/oud\n", encoding='utf-8')
+            f"# R\n## Knowledge base\n- id: {kb_id}\n## Web research\nhttps://example.org/oud\n", encoding='utf-8')
         fixture = Path(__file__).resolve().parent.parent / 'tests' / 'fixtures' / 'gate_case.json'
         (proj / 'presets' / 'instruments' / 'arabic_oud_lute.json').write_text(
             fixture.read_text(encoding='utf-8'), encoding='utf-8')

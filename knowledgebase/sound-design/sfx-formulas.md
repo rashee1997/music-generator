@@ -1,13 +1,16 @@
 ---
-document_id: "SFX_MODEL_FORMULAS_EXCITATION_RESONATOR_EVENTS_V1"
-target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers"]
-schema_version: "2026.11.1"
+id: sfx-formulas
+title: Formulas behind sound_model.py: excitation, resonator, event process, texture statistics
+domain: sound-design
 status: unverified
 sources: []
+used_by: [AGENTS.md, references/sound-design/sound-effects.md, scripts/sound_model.py]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # Formulas behind `sound_model.py`: excitation, resonator, event process, texture statistics
 
 Every sound effect and ambience in the skill is a stack of voices: excitation -> resonator -> time process -> space. This note holds the

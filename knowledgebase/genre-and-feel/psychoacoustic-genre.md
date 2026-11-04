@@ -1,13 +1,16 @@
 ---
-document_id: "PSYCHOACOUSTIC_GENRE_AND_FEEL_ONTOLOGY_V1"
-target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Algorithmic_Composers"]
-schema_version: "2026.10"
+id: psychoacoustic-genre
+title: Genre and mood archetypes: tempo, intervals, timbre and space
+domain: genre
 status: unverified
 sources: []
+used_by: [AGENTS.md, references/scoring/genres-and-moods.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # The Master Psychoacoustic Genre, Sub-Feel & Algorithmic Music Ontology
 **Purpose:** Prevent AI music generators from defaulting to generic "upbeat 4/4 block-chord" templates. Every genre and emotional sub-archetype possesses a unique **psychoacoustic contract** with the human ear—defined by **Interval Leap Geometry, Micro-Timing Gravity, Spectral Centroid Trajectory, Harmonic Voice-Leading, and Spatial Reverb Physics**.
 

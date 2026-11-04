@@ -1,13 +1,16 @@
 ---
-document_id: "PAN_ARAB_MAQAM_IQAAT_DSP_ONTOLOGY_V1"
-target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Microtonal_Engines"]
-schema_version: "2026.10.1"
+id: arabic
+title: Pan-Arab maqam, iqa'at and instruments
+domain: culture
 status: unverified
 sources: []
+used_by: [AGENTS.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # The Pan-Arab Music Psychoacoustic & Algorithmic DSP Knowledge Base
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Microtonal *Maqam* Modeling, Regional *Iqa'at* (Rhythmic Cycles), and Global/Indian/Western Fusions.
 

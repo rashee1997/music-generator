@@ -1,14 +1,16 @@
 ---
-document_id: GAME_SFX_INTERACTIVE_SYSTEMS_AND_PHYSICS_DSP_ONTOLOGY_V1
-target_consumers: [music-generator, sound-effects-designer, game-audio-engineer]
-schema_version: "2026.10.7"
-domain: "Real-Time Interactive Game SFX, Anti-Machine-Gun Procedural Systems, Combat Physics, & Locomotion Foley"
+id: game-sfx
+title: Game sound effects: variation, impact, locomotion and interface
+domain: media
 status: unverified
 sources: []
+used_by: [AGENTS.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # Interactive Game Sound Effects & Physics DSP Systems
 
 ## Table of Contents

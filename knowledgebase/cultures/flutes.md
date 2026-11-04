@@ -1,38 +1,16 @@
 ---
-document_id: "global_flute_procedural_dsp_kb_v1"
-title: "Global Flute Procedural Synthesis & Cultural Soul Knowledge Base"
-version: "1.0.0"
-target_engine: "Pure-Python Procedural DSP & CI/CD Audio Quality Gate Engine"
-zero_sample_policy: true
-default_sample_rate_hz: 44100
-default_master_lufs: -16.0
-default_true_peak_dbtp: -1.2
-schema_sections:
-  - universal_dsp_physics
-  - cultural_flute_profiles
-  - soul_ornamentation_grammars
-  - cicd_quality_gate_assertions
-  - python_reference_interpreter
-regions_covered:
-  - South Asia (India)
-  - East Asia (China, Japan)
-  - Indigenous North America
-  - Nordic / Scandinavia (Norway)
-  - Middle East / Anatolia / Persia
-  - Andean South America
-  - Carpathian / Balkan Eastern Europe
-  - West Africa (Guinea / Senegal)
-  - Celtic / Ireland
-  - Oceania / Aotearoa (Māori)
-  - Polar / Antarctica (Glacial & Avian Bone Acoustics)
+id: flutes
+title: Flute physics, technique and regional playing
+domain: culture
 status: unverified
 sources: []
-target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers"]
-schema_version: "2026.11"
+used_by: [AGENTS.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # Global Flute Procedural Synthesis & Cultural Soul Knowledge Base
 
 ## Table of Contents

@@ -1,13 +1,16 @@
 ---
-document_id: "WESTERN_CLASSICAL_CINEMATIC_TRAILER_DSP_ONTOLOGY_V1"
-target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Cinematic_Engines"]
-schema_version: "2026.10.1"
+id: western
+title: Western harmony, film and trailer conventions
+domain: culture
 status: unverified
 sources: []
+used_by: [AGENTS.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # The Western Music Psychoacoustic & Algorithmic DSP Knowledge Base
 **Scope:** Medieval/Baroque/Classical/Romantic $\rightarrow$ Blues/Jazz/Funk/Rock $\rightarrow$ Hip-Hop/EDM/Synthwave/Modern Pop.
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Functional Harmony & Voice-Leading Engines, Groove Micro-Timing, and Cross-Cultural World Fusions.

@@ -1,13 +1,16 @@
 ---
-document_id: "GLOBAL_HUMMING_CELTIC_GERMANIC_BALKAN_GAMELAN_DSP_ONTOLOGY_V1"
-target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Ethnomusicology_Engines"]
-schema_version: "2026.10.1"
+id: world-other
+title: Humming, Celtic, Germanic and remaining world traditions
+domain: culture
 status: unverified
 sources: []
+used_by: [AGENTS.md]
+updated: 2026-11-04
 ---
 
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+
 # The Global Vocal-Humming Atlas, Celtic, Germanic & Remaining World Traditions DSP Knowledge Base
 **Scope:** 10 Cultural Humming/Vocal-Tract Physics Models $\rightarrow$ Celtic & Nordic (*Irish, Scottish, Breton, Viking/Kulning*) $\rightarrow$ Germanic (*Wagnerian, Krautrock Motorik, Oompah, Berlin Techno*) $\rightarrow$ Flamenco, Balkan/Slavic *Aksak*, & Indonesian *Gamelan*.
 **Target Application:** Pure-Code Formant/Glottal Vocal Synthesis (Python / NumPy / SciPy), Non-Isochronous Meter Matrices, and Global Cross-Cultural Fusions.
