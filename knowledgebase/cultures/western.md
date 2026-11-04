@@ -81,7 +81,7 @@ Unlike Tamil (*Raga/Gamaka*), Arabic (*Maqam/Heterophony*), or African (*Polyrhy
 ---
 
 ### 2.4 The Romantic & Cinematic Late-Romantic Era (1820–1910 — *Chopin, Wagner, Tchaikovsky, Debussy*)
-* **How the Ear Listens:** Yearns for **emotional extremes, tempo elasticity (*Rubato*), lush chromaticism, and massive orchestral color**. (This is the direct ancestor of **Hollywood Film Scores** and **Ilaiyaraaja's Orchestral Arrangements**!).
+* **How the Ear Listens:** Yearns for **emotional extremes, tempo elasticity (*Rubato*), lush chromaticism, and massive orchestral color**. (the ancestor of **Hollywood film scores** and **Tamil film orchestral arrangements**).
 * **Algorithmic Rules:**
   1. **Tempo *Rubato* (Elastic Time Curve):** Modulate the global clock/BPM using a slow sine wave ($\pm 8\%$ speed variation over 4 bars)—speeding up slightly as melody pitch rises (*Stringendo*) and slowing down at phrase peaks (*Ritardando*).
   2. **Chromatic Mediants (The "Epic Cinema" Chord Shift):** Move directly from a **C Minor** chord `[0, 3, 7]` to **Ab Major** `[8, 0, 3]` or **E Minor** `[4, 7, 11]` (roots a 3rd apart sharing 1 common tone). This instantly triggers awe, magic, or tragedy in the human brain.

@@ -343,7 +343,7 @@ class ProceduralSFXAndZeroOverlapBlender:
 ## 8.0 Summary of Your Complete 8-File AI Music Production Brain
 
 Your AI agent now possesses a complete, modular **8-Document Knowledge Architecture**:
-1. `tamil_music_dsp_knowledgebase.md` *(Carnatic, Kuthu, Gaana, Oppari, Ilaiyaraaja/Anirudh DSP)*
+1. `knowledgebase/cultures/tamil.md` *(Carnatic, kuthu, gaana, oppari and film-song DSP)*
 2. `pan_arab_music_dsp_knowledgebase.md` *(Khaleeji, Egyptian, Levantine, Iraqi, Maghrebi Maqamat & Iqa'at)*
 3. `pan_african_music_dsp_knowledgebase.md` *(Mande, Ewe 12/8, Shona Mbira, Ethio-Modes, Amapiano Log Drum, Afrobeats)*
 4. `western_music_dsp_knowledgebase.md` *(Baroque to Romantic, Jazz, Funk, Rock, Hip-Hop, EDM/Techno)*
