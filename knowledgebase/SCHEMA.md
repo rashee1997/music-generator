@@ -1,8 +1,7 @@
 # Knowledge base schema and rules
 
 The one place that says how a document in `knowledgebase/` or `references/` is written, filed and
-cited. Every file added from now on follows it; the files moved in the phase 3 reorganisation are
-being brought into line with it.
+cited. Every file follows it.
 
 ## 1. One home per topic
 

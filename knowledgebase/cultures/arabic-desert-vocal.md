@@ -35,20 +35,20 @@ Cinematic and Arabic-fusion arrangements use **5 desert chord voicings** that ma
 
 1. **The "Mirage Sus(b2)" Chord (*Hijaz / Phrygian Mystery*):**
    * **Voicing:** `[-12, 0, 7, 12, 13, 19]` *(Sub-Root, Root, 5th, Octave, **Flat-9th `b2`**, High 5th)*
-   * **Why It's Magical:** By omitting the 3rd in the low register and placing the **minor 2nd (`13` = `b9`)** high up against the open 5ths (`7` and `19`), it creates a shimmering, heat-haze tension that never sounds muddy!
+   * **Why it works:** By omitting the 3rd in the low register and placing the **minor 2nd (`13` = `b9`)** high up against the open 5ths (`7` and `19`), it creates a shimmering, heat-haze tension that never sounds muddy!
 2. **The "Golden Dune" *Hijaz Maj7(b9)* Chord:**
    * **Voicing:** `[-12, 0, 4, 7, 13, 16]` *(Sub-Root, Root, **Major 3rd `4`**, 5th, **Flat-9th `13`**, High Major 3rd `16`)*
-   * **Why It's Magical:** This captures the exact augmented-second interval of **Maqam Hijaz** (`b2 = 1` and `3 = 4` ringing *simultaneously* across octaves!). When a solo `"Aaaaah"` vocal slides between `4` (`F#`) and `5` (`G`) over this chord, it gives instant goosebumps.
+   * **Why it works:** This captures the exact augmented-second interval of **Maqam Hijaz** (`b2 = 1` and `3 = 4` ringing *simultaneously* across octaves!). When a solo `"Aaaaah"` vocal slides between `4` (`F#`) and `5` (`G`) over this chord, it gives instant goosebumps.
 3. **The "Bedouin Starlight" *Bayati* Quarter-Tone Cluster Chord:**
    * **Voicing:** `[-12, 0, 5, 7, 10, 13.5]` *(Sub-Root, Root, 4th, 5th, b7, and **Neutral Quarter-Tone 9th `13.5`!**)*
-   * **Why It's Magical:** A `7sus4` chord is completely compatible with Arabic quarter-tones! Placing a single humming voice on the **150-cent Neutral 2nd (`1.5` / `13.5`)** floating inside a `Root - 4th - 5th - b7` drone cloud creates a hypnotic, ancient Bedouin atmosphere.
+   * **Why it works:** A `7sus4` chord is completely compatible with Arabic quarter-tones! Placing a single humming voice on the **150-cent Neutral 2nd (`1.5` / `13.5`)** floating inside a `Root - 4th - 5th - b7` drone cloud creates a hypnotic, ancient Bedouin atmosphere.
 4. **The "Oasis Sunrise" Modal Shift (`I(b2)` $\rightarrow$ `bII Maj7#11`):**
    * **Chord 1 (Root `D`):** `D Phrygian/Hijaz Drone` `[0, 7, 12, 16]`
    * **Chord 2 (Step up +1 semitone to `Eb`!):** `Eb Lydian Maj7(#11)` `[1, 5, 8, 12, 15]`
-   * **Why It's Magical:** Because the `bII` chord (`Eb`) contains all the exact notes of `D Hijaz` (`Eb, G, Bb, D, F#`!), shifting the bass note up by just **1 semitone (`0 -> 1`)** turns a dark, mysterious desert chant into a blindingly radiant, floating oasis!
+   * **Why it works:** Because the `bII` chord (`Eb`) contains all the exact notes of `D Hijaz` (`Eb, G, Bb, D, F#`!), shifting the bass note up by just **1 semitone (`0 -> 1`)** turns a dark, mysterious desert chant into a blindingly radiant, floating oasis!
 5. **The Gulf *Nahham* (Pearl-Diver) Sub-Drone Stack:**
    * **Voicing:** `[-24, -12, -5, 0, 7]` *(Double-Sub Root, Sub-Root, Low 5th, Root, 5th)*
-   * **Why It's Magical:** Used in Qatari, Kuwaiti, and Bahraini *Fijiri* sea/desert prayers—a wall of deep male chest-hums (`"Hoooo — Yaaa — Maaaal"`) vibrating at `55Hz` and `110Hz` while a single high tenor cries out in *Maqam Saba* or *Hijaz* above them.
+   * **Why it works:** Used in Qatari, Kuwaiti, and Bahraini *Fijiri* sea/desert prayers—a wall of deep male chest-hums (`"Hoooo — Yaaa — Maaaal"`) vibrating at `55Hz` and `110Hz` while a single high tenor cries out in *Maqam Saba* or *Hijaz* above them.
 
 ## 3. The 4 Signature Arabic Vocal Melodic Ornaments (*Zakhrafa*)
 
@@ -67,7 +67,7 @@ To make your Python algorithm sing like a real human *Mutrib* (master vocalist) 
 
 You can drop this self-contained Python module (`NumPy` + `SciPy`) directly into your existing code. It includes:
 1. **`synth_arabic_desert_vocal()`**: Generates the deep pharyngeal `"Ooooo -> Aaaaah"` vocal with dynamic formant morphing, *Baha* sandy breathiness, *Buka'* weeping catches, and `5.5Hz` *Tarab* vibrato.
-2. **`synth_magical_desert_chord_pad()`**: Generates the lush, microtonal `"Ooooo"` desert choir chord bed with dune-canyon shimmer reverb.
+2. **`synth_desert_chord_pad()`**: Generates the lush, microtonal `"Ooooo"` desert choir chord bed with dune-canyon shimmer reverb.
 
 \`\`\`python
 import numpy as np
@@ -179,7 +179,7 @@ def generate_yaa_leil_melody_curve(root_hz: float, duration_sec: float = 4.0, sr
 
     return root_hz * (2.0 ** (smooth_semitones / 12.0))
 
-def synth_magical_desert_chord_pad(
+def synth_desert_chord_pad(
     root_hz: float,
     chord_type: str = "hijaz_mirage",
     duration_sec: float = 4.0,
@@ -230,6 +230,6 @@ def synth_magical_desert_chord_pad(
 ## 5. How to Use This in Your Arabic-Tamil Kuthu Track (v4.0 Idea!)
 
 Imagine opening your track (`0:00 – 0:08`) or dropping the beat out in the middle (`0:22 – 0:25`) with:
-1. **`synth_magical_desert_chord_pad(root_hz=146.83, chord_type="hijaz_mirage")`** creating a wide, shimmering stereo desert `"Ooooo — Aaaaah"` mirage chord in D Hijaz (`D - A - D - Eb - F#`),
+1. **`synth_desert_chord_pad(root_hz=146.83, chord_type="hijaz_mirage")`** creating a wide, shimmering stereo desert `"Ooooo — Aaaaah"` mirage chord in D Hijaz (`D - A - D - Eb - F#`),
 2. While **`synth_arabic_desert_vocal(generate_yaa_leil_melody_curve(293.66))`** cries out a solo pharyngeal *"Ooooo $\rightarrow$ Aaaaah"* *Mawwal* phrase with weeping *Buka'* catches,
 3. Right before the **Tamil *Urumi* sweep + *Parai/Thavil* Kuthu beat** slams back in!

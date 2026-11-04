@@ -74,7 +74,7 @@ Before coding specific genres, an algorithm must understand the fundamental perc
 
 ### 2.4 Tamil melodrama / pathos
 * **Cultural origin:** the form the 1970s-1990s Tamil film song settled into.
-* **How the Ear Listens:** Tracks **two independent melodies simultaneously** (e.g., a solo violin/flute playing a Carnatic Raga counter-melody against a Western Bach-style string quartet bassline).
+* **How the Ear Listens:** Tracks **two independent melodies simultaneously** (e.g., a solo violin/flute playing a Carnatic Raga counter-melody against a Western counterpoint-style string quartet bassline).
 * **Emotional Feel:** Heartbreak, longing (*Pirivu*), monsoon rain nostalgia, cinematic grandeur.
 * **Algorithmic Rules:**
   * **Counterpoint fill:** During every rest in the main melody (`bar 2, beats 3–4`), trigger a fast 16th-note string/flute arpeggio run that bridges into the next chord.
@@ -100,7 +100,7 @@ When fusing Tamil genres with Western/Global styles in code, **Rule #1** is: *Ke
   * **Psychoacoustic Glue:** Layer Arabic **Riq (tambourine)** over Tamil **Salangai (ankle bells)** in the `8kHz–12kHz` band.
 
 ### 3.2 Neo-classical / Baroque + Carnatic
-* **Why It Works:** Both Baroque music (Bach/Vivaldi) and Carnatic music are **contrapuntal and linear** rather than block-chordal.
+* **Why It Works:** Both Baroque music and Carnatic music are **contrapuntal and linear** rather than block-chordal.
 * **The Fusion Formula:**
   * **Melody:** Pure Carnatic Raga (e.g., *Kalyani* or *Keeravani* `[0, 2, 3, 5, 7, 8, 11]`) with full *Gamaka* pitch-bends on Flute or Solo Violin.
   * **Harmony:** Western string section playing staccato 8th-note Triad inversions (`i - iv - V7 - i`) with a walking cello bassline.
@@ -130,57 +130,41 @@ When fusing Tamil genres with Western/Global styles in code, **Rule #1** is: *Ke
 
 Use these exact mathematical constants and functions in your Python synthesis scripts (`NumPy` / `SciPy`) to dial in authentic Tamil feel:
 
-### 4.1 Scale Lookup Dictionary (Semitone Offsets from MIDI Root)
-```python
-TAMIL_RAGAS = {
-    "mayamalavagowla_kuthu": [0, 1, 4, 5, 7, 8, 11],     # Classic Kuthu / Temple / Mystic
-    "vakulabharanam_arabic": [0, 1, 4, 5, 7, 8, 10],     # Arabic Hijaz + Tamil Fusion
-    "simhendramadhyamam":    [0, 2, 3, 6, 7, 8, 11],     # Intense Mass Hero / Dark Arabic
-    "shubhapantuvarali":     [0, 1, 3, 6, 7, 8, 11],     # Oppari / Pathos / Raw Emotion
-    "keeravani_cinematic":   [0, 2, 3, 5, 7, 8, 11],     # Melodramatic minor
-    "kharaharapriya_soul":   [0, 2, 3, 5, 7, 9, 10],     # Gaana / Folk-Soul / Dorian
-    "mohanam_gramiya":       [0, 2, 4, 7, 9],            # Village Folk / Flute / Uplifting
-    "kalyani_grand":         [0, 2, 4, 6, 7, 9, 11],     # Euphoric / Wedding / Festival
-}
+### 4.1 Scale lookup (semitone offsets from the MIDI root)
 
-4.2 The Gamaka (Microtonal Pitch-Curve) Generator
+| Key | Semitones | Use |
+|---|---|---|
+| `mayamalavagowla_kuthu` | `[0, 1, 4, 5, 7, 8, 11]` | Kuthu, temple, mystic |
+| `vakulabharanam_arabic` | `[0, 1, 4, 5, 7, 8, 10]` | Arabic Hijaz and Tamil fusion |
+| `simhendramadhyamam` | `[0, 2, 3, 6, 7, 8, 11]` | Mass hero, dark Arabic |
+| `shubhapantuvarali` | `[0, 1, 3, 6, 7, 8, 11]` | Oppari, pathos |
+| `keeravani_cinematic` | `[0, 2, 3, 5, 7, 8, 11]` | Melodramatic minor |
+| `kharaharapriya_soul` | `[0, 2, 3, 5, 7, 9, 10]` | Gaana, folk-soul, Dorian |
+| `mohanam_gramiya` | `[0, 2, 4, 7, 9]` | Village folk, flute, uplifting |
+| `kalyani_grand` | `[0, 2, 4, 6, 7, 9, 11]` | Euphoric, wedding, festival |
 
-Instead of generating a constant frequency array f = np.full(N, f_target), wrap
-lead notes in one of three Tamil articulation envelopes:
+### 4.2 Gamaka pitch curves
 
-1.  The Eduppu Scoop (Attack Slide): Start at f_target * (2 ** (-45 / 1200))
-    (-45 cents) and reach f_target at t = 0.045s using 1 - np.exp(-t / 0.015).
-2.  The Kampita Oscillation (Carnatic Shake): On scale degrees 1, 3, 6, or 11,
-    modulate frequency between the current note and the next scale degree up at
-    5.5 Hz to 7.0 Hz.
-3.  The Oppari Release Droop: Over the final 60ms of a held note, drop pitch
-    exponentially by -35 cents.
+Wrap lead notes in one of three articulation envelopes instead of holding a constant frequency:
 
-4.3 The Kuthu 12-Step (6/8 Tisra) Probability & Velocity Matrix
+1. **Eduppu scoop (attack slide):** start at `f_target * 2^(-45/1200)` (-45 cents) and reach `f_target` at `t = 0.045 s` with `1 - exp(-t / 0.015)`.
+2. **Kampita oscillation (Carnatic shake):** on scale degrees 1, 3, 6 or 11, modulate between the note and the next scale degree up at `5.5-7.0 Hz`.
+3. **Oppari release droop:** over the final `60 ms` of a held note, drop pitch exponentially by `-35 cents`.
 
-For a 12-subdivision bar (index 0 to 11, representing two groups of 6 sixteenths
-in 6/8 time):
+### 4.3 Kuthu 12-step (6/8 tisra) grid
 
-KUTHU_GRID_12 = {
-    # Index:       0     1     2     3     4     5     6     7     8     9    10    11
-    "thavil_bass":[1.0,  0.0,  0.0,  0.75, 0.0,  0.0,  0.85, 0.0,  0.4,  0.0,  0.0,  0.0],
-    "parai_slap": [0.0,  0.0,  0.8,  0.0,  0.9,  0.4,  0.0,  0.0,  0.85, 0.0,  0.95, 0.7],
-    "salangai":   [0.9,  0.4,  0.6,  0.8,  0.4,  0.6,  0.9,  0.4,  0.6,  0.8,  0.5,  0.7],
-    "micro_shift":[0.0, +4.0, -3.0,  0.0, +5.0, -2.0,  0.0, +4.0, -3.0,  0.0, +3.0, -4.0] # in milliseconds
-}
+Velocity per subdivision, twelve subdivisions a bar (two groups of six), with the micro-shift in milliseconds:
 
-  - Notice the micro_shift array: In authentic Tamil Kuthu, subdivisions 1 and 4
-    are pushed slightly late (+4ms), while subdivision 2 snaps slightly early
-    (-3ms), creating the signature forward-leaning street groove.
+| Row | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| `thavil_bass` | 1.0 | 0.0 | 0.0 | 0.75 | 0.0 | 0.0 | 0.85 | 0.0 | 0.4 | 0.0 | 0.0 | 0.0 |
+| `parai_slap` | 0.0 | 0.0 | 0.8 | 0.0 | 0.9 | 0.4 | 0.0 | 0.0 | 0.85 | 0.0 | 0.95 | 0.7 |
+| `salangai` | 0.9 | 0.4 | 0.6 | 0.8 | 0.4 | 0.6 | 0.9 | 0.4 | 0.6 | 0.8 | 0.5 | 0.7 |
+| `micro_shift` (ms) | 0 | +4 | -3 | 0 | +5 | -2 | 0 | +4 | -3 | 0 | +3 | -4 |
 
-4.4 Spatial & Ambient Street Engine ("Thiruvizha" Psychoacoustics)
+Subdivisions 1 and 4 sit `+4 ms` late and subdivision 2 `-3 ms` early: the forward-leaning street groove.
 
-To make pure code sound like a live Tamil festival rather than a sterile synth:
+### 4.4 Street ambience ("Thiruvizha")
 
-  - Frequency Masking Rule: Carve a -4dB dip at 1.2kHz–2.5kHz in all chord/pad
-    instruments so the Nadaswaram / Ney / Parai stick crack owns the human ear's
-    most sensitive Fletcher-Munson region (2kHz–4kHz).
-  - Procedural Crowd/Street Bed: Generate pink noise (-32dB), pass through a
-    slowly wandering bandpass filter (400Hz–1200Hz), and inject randomized
-    high-Q sine chirps (2800Hz -> 3400Hz -> 2900Hz over 180ms) on bar
-    transitions to simulate Kuthu finger-whistles (Visil).
+- Carve a `-4 dB` dip at `1.2 kHz - 2.5 kHz` in every chord and pad so the nadaswaram, ney and parai stick own `2 kHz - 4 kHz`.
+- Street bed: pink noise at `-32 dB` through a slowly wandering `400 Hz - 1200 Hz` bandpass, with randomised impulse accents (claps, feet, distant chatter) so the bed never loops.

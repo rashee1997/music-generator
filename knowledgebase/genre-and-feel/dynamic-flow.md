@@ -51,7 +51,7 @@ At any given millisecond, no two instruments may fight for the same frequency ba
 1. **Band 1 (`35Hz–100Hz`, Center `0.0`):** Owned 100% by Sub-Bass / Kick / *Surdo* / *Thavil Doum*. High-pass all other instruments above `130Hz`!
 2. **Band 2 (`120Hz–350Hz`, Slight L/R `±0.25`):** Warm body of chords, cellos, or rhythm drums.
 3. **Band 3 (`400Hz–1.0kHz`, Wide L/R `±0.65`):** Counter-melodies, plucked strings, harmonic pads.
-4. **Band 4 (`1.1kHz–3.8kHz`, Center-Focused `±0.15`):** **The Sacred Lead & Vocal Formant Zone.** Carve a `-4dB` notch here in all background pads!
+4. **Band 4 (`1.1kHz–3.8kHz`, Center-Focused `±0.15`):** **The lead and vocal formant zone.** Carve a `-4dB` notch here in all background pads!
 5. **Band 5 (`4.5kHz–16kHz`, Ultra-Wide `±0.80`):** Air, shakers, *Salangai* bells, breath noise, vinyl crackle.
 
 ### 1.7 LAW 7: Dynamic Parameter Interpolation (Creating Any Unseen Genre on the Fly)
@@ -121,7 +121,7 @@ If a prompt asks for a mood or fusion not explicitly hardcoded in a dictionary (
 | Sub-Archetype | BPM & Meter | Melodic & Harmonic Engine | Signature Gaming Timbre |
 | :--- | :--- | :--- | :--- |
 | **7.1 `Gaming_16Bit_SNES_JRPG_Battle`** *(Nobuo Uematsu / Chrono / Retro)* | `150–168 BPM` (`4/4` or `7/8` intro!). Fast, relentless 16th-note driving bassline (`Root - Octave - Root - Octave`). | **Aeolian / Harmonic Minor with Chromatic Mediant Shifts:** `i` $\rightarrow$ `bVII` $\rightarrow$ `bVI` $\rightarrow$ `bII` $\rightarrow$ `V7`. | **8-Bit/16-Bit Pulse Wave (`12.5%` & `25%` duty cycle)** with rapid **3-note Arpeggio Chords (`0 -> 4 -> 7` cycling every `18ms` / `55Hz`)** + FM Slap Bass! |
-| **7.2 `Gaming_FinalBoss_Phase2_LatinChoir`** *(Sephiroth / Elden Ring / Overdrive)* | `145–160 BPM` alternating between **`7/8` (`2+2+3`)** and **`4/4`**. | **Octatonic (Diminished Scale `[0, 1, 3, 4, 6, 7, 9, 10]`)** + **Phrygian Dominant**. | Staccato **Synthesized Choir (`"Sa! Ka! Ta! Ra!"`)** + frantic Pipe Organ arpeggios + double-kick drums + soaring brass. |
+| **7.2 `Gaming_FinalBoss_Phase2_LatinChoir`** (final-boss overdrive) | `145–160 BPM` alternating between **`7/8` (`2+2+3`)** and **`4/4`**. | **Octatonic (Diminished Scale `[0, 1, 3, 4, 6, 7, 9, 10]`)** + **Phrygian Dominant**. | Staccato **Synthesized Choir (`"Sa! Ka! Ta! Ra!"`)** + frantic Pipe Organ arpeggios + double-kick drums + soaring brass. |
 | **7.3 `Gaming_Cozy_Village_Town_Theme`** *(Zelda / Animal Crossing / Stardew)* | `104–116 BPM` (`3/4` Waltz or bouncy `4/4` with `Beat 1 & 3` tuba/bass oom-pah). | **Ionian (Major) with Borrowed `IV -> iv` Minor Plagal Cadence** (creates warm, nostalgic charm!). | Plucked **Acoustic Guitar / Mandolin + Ocarina / Recorder Flute + Marimba + Accordion + Tambourine**. |
 | **7.4 `Gaming_Cyber_Stealth_Infiltration`** *(Metal Gear / Cyberpunk / Hacker)* | `110–125 BPM` (`5/4` Mission-Impossible meter `[1,0,0, 1,0,0, 1,0, 1,0]` OR `4/4` breakbeat). | **Dorian #4 (*Ukrainian Dorian* `[0, 2, 3, 6, 7, 9, 10]`)**. | Muted pulsing synth bass + metallic sonar pings (`2.4kHz` sine droplet with long feedback delay) + glitchy hi-hat ratchets. |
 
@@ -226,6 +226,6 @@ class DynamicMusicalFlowEngine:
 ## 9.0 How Your AI Agent Combines Everything Dynamically
 
 When generating any track in Python, your agent executes a **3-Stage Pipeline**:
-1. **Stage 1 — Cultural & Genre DNA Selection:** Pulls the scale, microtonal rules, and instrument timbres from your **Regional Knowledge Bases** (*Tamil, Arabic, African, Western, Chinese/Japanese, Brazilian/Amazonian/Native/Hakan, Celtic/Germanic*).
-2. **Stage 2 — Sub-Feel Archetype Configuration:** Pulls the exact `meter_steps`, `chord_progression`, `melody_leap_weights`, and `reverb_decay_sec` from the **Genre & Sub-Feel Ontology** (e.g., `adventurous_forest_mystic` vs. `adventurous_highseas_swashbuckler` vs. `lofi_rainy_tokyo_study`).
+1. **Stage 1 — Cultural & Genre DNA Selection:** Pulls the scale, microtonal rules and instrument timbres from the culture files (*Tamil, Arabic, African, Western, Chinese/Japanese, Brazilian/Amazonian/Native/Hakan, Celtic/Germanic*).
+2. **Stage 2 — Sub-Feel Archetype Configuration:** Pulls the exact `meter_steps`, `chord_progression`, `melody_leap_weights`, and `reverb_decay_sec` from the genre and sub-feel values (e.g., `adventurous_forest_mystic` vs. `adventurous_highseas_swashbuckler` vs. `lofi_rainy_tokyo_study`).
 3. **Stage 3 — `DynamicMusicalFlowEngine` Execution:** Passes the generated motifs through **The 7 Laws of Natural Musical Flow** (`A -> A' -> B -> A''` mutation, lung-capacity phrasing, call-and-response gating, thermodynamic energy curve $E(t)$, and pre-drop vacuums) before rendering the final waveform.

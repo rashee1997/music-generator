@@ -43,235 +43,36 @@ No human flautist holds a constant frequency, constant breath pressure, or const
 * **The Soul & Emotional Feel:** Serene, pastoral, deeply vocal, and meditative. In Hindustani and Carnatic music, the Bansuri seeks *Gayaki Ang* (the style of the singing human voice). Notes rarely start or end on flat, discrete steps; they emerge from a tonic drone via fluid pitch glides (*Meend*) and gentle microtonal oscillations (*Gamaka*).
 * **Acoustic Mechanics:** Side-blown, thin-walled seasoned Assam bamboo cylinder, stopped at one end with a cork, 6 or 7 open finger holes. Because the fingers partially shade large tone holes during *Meend*, the effective acoustic radiation impedance changes continuously during slides.
 
-\`\`\`yaml
-flute_profile:
-  id: "bansuri_bamboo_flute"
-  culture: "South Asian (Hindustani / Carnatic)"
-  material: "thin_walled_assam_bamboo"
-  bore_type: "open_cylindrical_transverse"
-  pitch_range_midi: [55, 86] # G3 to D6 (Bass E/G Bansuri to Medium Bansuri)
-  preferred_scales:
-    raga_charukeshi_cents: [0, 204, 386, 498, 702, 814, 996]
-    raga_yaman_cents: [0, 204, 386, 590, 702, 906, 1088]
-    raga_bhairavi_cents: [0, 112, 316, 498, 702, 814, 1018]
-  dsp_synthesis_params:
-    harmonic_amplitudes: [1.00, 0.68, 0.28, 0.12, 0.05, 0.02, 0.01, 0.005]
-    jet_asymmetry_bias_b0: 0.28
-    cubic_nonlinearity_alpha: 0.16
-    key_tracked_tilt_base: 1.35
-    key_tracked_tilt_slope: 0.048
-    subharmonic_ghost_gain_db: -32.0 # Active when MIDI >= 74
-    breath_noise:
-      steady_ratio: 0.11
-      chiff_duration_ms: 32.0
-      chiff_boost_mult: 2.1
-      bandpass_f0_mult: [0.9, 2.6]
-      turbulence_am_hz: 95.0
-      turbulence_am_depth: 0.09
-    body_formants_hz:
-      - { freq: 440.0, gain_db: 3.5, q: 2.2 }  # Bamboo chamber warmth
-      - { freq: 1350.0, gain_db: 2.0, q: 3.0 } # Woody mid presence
-      - { freq: 2850.0, gain_db: -5.5, q: 2.5 } # Ear-canal anti-piercing dip
-    dipole_radiation:
-      enabled: true
-      hole_delay_ms_range: [0.65, 1.55]
-      wet_mix: 0.35
-  soul_articulation_rules:
-    default_legato_glide_ms: 140.0 # Long vocal Meend
-    gamaka_oscillation:
-      prob: 0.45
-      rate_hz: 6.2
-      depth_cents: 45.0
-    murki_turn_ornament:
-      prob: 0.25
-      step_duration_ms: 42.0
-    vibrato:
-      delay_ms: 220.0
-      rate_hz: 5.1
-      depth_cents: 14.0
-    finger_hole_thump_db: -26.0
-  cicd_quality_gates:
-    spectral_centroid_hz_range: [550.0, 1650.0]
-    spectral_flatness_range: [0.004, 0.035]
-    max_piercing_ratio_2k5_to_3k8: 0.20
-    min_h2_to_h1_ratio: 0.40
-\`\`\`
+```yaml
+{flute_profile: {id: bansuri_bamboo_flute, culture: South Asian (Hindustani / Carnatic), material: thin_walled_assam_bamboo, bore_type: open_cylindrical_transverse, pitch_range_midi: [55, 86], preferred_scales: {raga_charukeshi_cents: [0, 204, 386, 498, 702, 814, 996], raga_yaman_cents: [0, 204, 386, 590, 702, 906, 1088], raga_bhairavi_cents: [0, 112, 316, 498, 702, 814, 1018]}, dsp_synthesis_params: {harmonic_amplitudes: [1.0, 0.68, 0.28, 0.12, 0.05, 0.02, 0.01, 0.005], jet_asymmetry_bias_b0: 0.28, cubic_nonlinearity_alpha: 0.16, key_tracked_tilt_base: 1.35, key_tracked_tilt_slope: 0.048, subharmonic_ghost_gain_db: -32.0, breath_noise: {steady_ratio: 0.11, chiff_duration_ms: 32.0, chiff_boost_mult: 2.1, bandpass_f0_mult: [0.9, 2.6], turbulence_am_hz: 95.0, turbulence_am_depth: 0.09}, body_formants_hz: [{freq: 440.0, gain_db: 3.5, q: 2.2}, {freq: 1350.0, gain_db: 2.0, q: 3.0}, {freq: 2850.0, gain_db: -5.5, q: 2.5}], dipole_radiation: {enabled: true, hole_delay_ms_range: [0.65, 1.55], wet_mix: 0.35}}, soul_articulation_rules: {default_legato_glide_ms: 140.0, gamaka_oscillation: {prob: 0.45, rate_hz: 6.2, depth_cents: 45.0}, murki_turn_ornament: {prob: 0.25, step_duration_ms: 42.0}, vibrato: {delay_ms: 220.0, rate_hz: 5.1, depth_cents: 14.0}, finger_hole_thump_db: -26.0}, cicd_quality_gates: {spectral_centroid_hz_range: [550.0, 1650.0], spectral_flatness_range: [0.004, 0.035], max_piercing_ratio_2k5_to_3k8: 0.2, min_h2_to_h1_ratio: 0.4}}}
+```
 
 ### 2.2 Chinese Dizi with Dimo Membrane (East Asia)
 
 * **The Soul & Emotional Feel:** Crisp, radiant, heroic, and soaring across mountain valleys (Jiangnan silk-and-bamboo lyrical style *Qudi* or northern virtuosic *Bangdi*). Its unmistakable soul comes from the **Dimo**—a paper-thin inner membrane of bamboo reed glued over a dedicated hole between the embouchure and the finger holes.
 * **Acoustic Mechanics:** As the air column vibrates, the *Dimo* membrane buzzes nonlinearly against the air pressure, acting as a mechanical **rectifier + high-frequency ring modulator**. It injects rich upper harmonics (`1.8 kHz – 4.5 kHz`) that bloom dynamically only when air pressure exceeds a threshold (so soft notes are pure bamboo, and loud notes sizzle with golden membrane buzz).
 
-\`\`\`yaml
-flute_profile:
-  id: "chinese_dizi_membrane"
-  culture: "East Asian (Chinese Traditional Jiangnan / Northern)"
-  material: "aged_bitter_bamboo_with_dimo_reed_membrane"
-  bore_type: "open_cylindrical_membrane_coupled"
-  pitch_range_midi: [62, 93] # D4 to A6
-  preferred_scales:
-    gong_pentatonic_cents: [0, 204, 386, 702, 906]
-    yu_minor_pentatonic_cents: [0, 316, 498, 702, 1018]
-  dsp_synthesis_params:
-    harmonic_amplitudes: [1.00, 0.85, 0.62, 0.44, 0.30, 0.21, 0.14, 0.09]
-    jet_asymmetry_bias_b0: 0.35
-    cubic_nonlinearity_alpha: 0.22
-    key_tracked_tilt_base: 1.08
-    key_tracked_tilt_slope: 0.055
-    dimo_membrane_modulator:
-      enabled: true
-      activation_velocity_threshold: 55
-      membrane_resonance_hz: 2350.0
-      membrane_q: 6.5
-      nonlinear_rectification_mix: 0.24 # Adds |x(t)| * sin(w_dimo * t) buzz
-      pressure_bloom_attack_ms: 45.0
-    breath_noise:
-      steady_ratio: 0.08
-      chiff_duration_ms: 18.0
-      chiff_boost_mult: 2.8
-      bandpass_f0_mult: [1.2, 3.5]
-      turbulence_am_hz: 130.0
-      turbulence_am_depth: 0.12
-    body_formants_hz:
-      - { freq: 620.0, gain_db: 2.0, q: 2.5 }
-      - { freq: 2350.0, gain_db: 4.5, q: 4.0 } # Dimo buzz formant peak
-      - { freq: 3400.0, gain_db: -6.0, q: 2.0 } # Tames harshness above Dimo peak
-  soul_articulation_rules:
-    default_legato_glide_ms: 65.0 # Huayin (expressive pitch bend)
-    duoyin_trill:
-      prob: 0.35
-      rate_hz: 11.5
-      interval_semitones: 2
-    flutter_tongue_huashe:
-      prob: 0.15
-      am_rate_hz: 26.0
-      am_depth: 0.35
-    vibrato:
-      delay_ms: 150.0
-      rate_hz: 6.0
-      depth_cents: 18.0
-  cicd_quality_gates:
-    spectral_centroid_hz_range: [950.0, 2400.0]
-    spectral_flatness_range: [0.005, 0.045]
-    max_piercing_ratio_2k5_to_3k8: 0.28 # Higher ceiling allowed for Dimo buzz
-    min_h3_to_h1_ratio: 0.35
-\`\`\`
+```yaml
+{flute_profile: {id: chinese_dizi_membrane, culture: East Asian (Chinese Traditional Jiangnan / Northern), material: aged_bitter_bamboo_with_dimo_reed_membrane, bore_type: open_cylindrical_membrane_coupled, pitch_range_midi: [62, 93], preferred_scales: {gong_pentatonic_cents: [0, 204, 386, 702, 906], yu_minor_pentatonic_cents: [0, 316, 498, 702, 1018]}, dsp_synthesis_params: {harmonic_amplitudes: [1.0, 0.85, 0.62, 0.44, 0.3, 0.21, 0.14, 0.09], jet_asymmetry_bias_b0: 0.35, cubic_nonlinearity_alpha: 0.22, key_tracked_tilt_base: 1.08, key_tracked_tilt_slope: 0.055, dimo_membrane_modulator: {enabled: true, activation_velocity_threshold: 55, membrane_resonance_hz: 2350.0, membrane_q: 6.5, nonlinear_rectification_mix: 0.24, pressure_bloom_attack_ms: 45.0}, breath_noise: {steady_ratio: 0.08, chiff_duration_ms: 18.0, chiff_boost_mult: 2.8, bandpass_f0_mult: [1.2, 3.5], turbulence_am_hz: 130.0, turbulence_am_depth: 0.12}, body_formants_hz: [{freq: 620.0, gain_db: 2.0, q: 2.5}, {freq: 2350.0, gain_db: 4.5, q: 4.0}, {freq: 3400.0, gain_db: -6.0, q: 2.0}]}, soul_articulation_rules: {default_legato_glide_ms: 65.0, duoyin_trill: {prob: 0.35, rate_hz: 11.5, interval_semitones: 2}, flutter_tongue_huashe: {prob: 0.15, am_rate_hz: 26.0, am_depth: 0.35}, vibrato: {delay_ms: 150.0, rate_hz: 6.0, depth_cents: 18.0}}, cicd_quality_gates: {spectral_centroid_hz_range: [950.0, 2400.0], spectral_flatness_range: [0.005, 0.045], max_piercing_ratio_2k5_to_3k8: 0.28, min_h3_to_h1_ratio: 0.35}}}
+```
 
 ### 2.3 Japanese Shakuhachi — Suizen Zen Flute (East Asia)
 
 * **The Soul & Emotional Feel:** Wabi-sabi, austere, raw, and existential (*Honkyoku* solo Zen Buddhist meditation repertoire). In Shakuhachi music, **breath noise is equal in status to pitched tone** ("Ichion Jōbutsu" — attaining enlightenment in a single sound). A single sustained note is a complete drama: starting in pure air, blooming into a clear bamboo tone, dipping flatward into a dark, husky whisper (*Meri*), and erupting into a violent wind roar (*Muraiki*).
 * **Acoustic Mechanics:** End-blown thick root-end *Madake* bamboo with a sharp oblique *Utaguchi* blowing edge and a lacquered *Ji* bore interior. Because the player's chin covers the top of the pipe, tilting the head down (*Meri*) lowers pitch by `100–200 cents` while simultaneously closing the embouchure aperture—causing a dramatic `-10 dB` drop in upper harmonics and a `2.5x` surge in turbulent air noise.
 
-\`\`\`yaml
-flute_profile:
-  id: "japanese_shakuhachi_zen"
-  culture: "East Asian (Japanese Komusō Zen Honkyoku)"
-  material: "thick_root_madake_bamboo_lacquered_bore"
-  bore_type: "open_conical_irregular_end_blown"
-  pitch_range_midi: [62, 88] # D4 (1.8 shaku Ro) to E6
-  preferred_scales:
-    in_sen_pentatonic_cents: [0, 100, 500, 702, 1000]
-    hon_kumoi_joshi_cents: [0, 100, 500, 702, 800]
-  dsp_synthesis_params:
-    harmonic_amplitudes: [1.00, 0.74, 0.45, 0.22, 0.11, 0.06, 0.03, 0.01]
-    jet_asymmetry_bias_b0: 0.32
-    cubic_nonlinearity_alpha: 0.25
-    key_tracked_tilt_base: 1.25
-    key_tracked_tilt_slope: 0.050
-    meri_kari_coupled_physics:
-      enabled: true
-      meri_pitch_bend_cents: -120.0
-      meri_lowpass_cutoff_mult: 0.45  # Darkens spectrum drastically during Meri
-      meri_breath_noise_mult: 2.40    # Doubles airiness during Meri
-      kari_pitch_bend_cents: +25.0
-      kari_harmonic_bright_mult: 1.35
-    muraiki_breath_explosion:
-      enabled: true
-      velocity_threshold: 92
-      noise_burst_gain_db: +4.5
-      duration_ms: 110.0
-      overblow_h2_surge: 1.8
-    breath_noise:
-      steady_ratio: 0.26 # Very high organic breath presence
-      chiff_duration_ms: 55.0
-      chiff_boost_mult: 3.2
-      bandpass_f0_mult: [0.7, 3.2]
-      turbulence_am_hz: 75.0
-      turbulence_am_depth: 0.18
-    body_formants_hz:
-      - { freq: 380.0, gain_db: 4.0, q: 1.8 } # Deep root-bamboo cavity
-      - { freq: 1150.0, gain_db: 2.5, q: 2.8 }
-      - { freq: 2700.0, gain_db: -6.5, q: 2.2 }
-  soul_articulation_rules:
-    default_legato_glide_ms: 180.0
-    atari_finger_pop:
-      prob: 0.40
-      transient_ms: 12.0
-      pitch_spike_cents: 65.0
-    yuri_head_shake_vibrato:
-      delay_ms: 350.0
-      rate_hz: 4.4
-      pitch_depth_cents: 32.0
-      am_depth: 0.22 # Coupled pitch + amplitude vibrato
-  cicd_quality_gates:
-    spectral_centroid_hz_range: [480.0, 1550.0]
-    spectral_flatness_range: [0.015, 0.085] # Must contain high breath entropy!
-    max_piercing_ratio_2k5_to_3k8: 0.18
-\`\`\`
+```yaml
+{flute_profile: {id: japanese_shakuhachi_zen, culture: "East Asian (Japanese Komus\u014D Zen Honkyoku)", material: thick_root_madake_bamboo_lacquered_bore, bore_type: open_conical_irregular_end_blown, pitch_range_midi: [62, 88], preferred_scales: {in_sen_pentatonic_cents: [0, 100, 500, 702, 1000], hon_kumoi_joshi_cents: [0, 100, 500, 702, 800]}, dsp_synthesis_params: {harmonic_amplitudes: [1.0, 0.74, 0.45, 0.22, 0.11, 0.06, 0.03, 0.01], jet_asymmetry_bias_b0: 0.32, cubic_nonlinearity_alpha: 0.25, key_tracked_tilt_base: 1.25, key_tracked_tilt_slope: 0.05, meri_kari_coupled_physics: {enabled: true, meri_pitch_bend_cents: -120.0, meri_lowpass_cutoff_mult: 0.45, meri_breath_noise_mult: 2.4, kari_pitch_bend_cents: 25.0, kari_harmonic_bright_mult: 1.35}, muraiki_breath_explosion: {enabled: true, velocity_threshold: 92, noise_burst_gain_db: 4.5, duration_ms: 110.0, overblow_h2_surge: 1.8}, breath_noise: {steady_ratio: 0.26, chiff_duration_ms: 55.0, chiff_boost_mult: 3.2, bandpass_f0_mult: [0.7, 3.2], turbulence_am_hz: 75.0, turbulence_am_depth: 0.18}, body_formants_hz: [{freq: 380.0, gain_db: 4.0, q: 1.8}, {freq: 1150.0, gain_db: 2.5, q: 2.8}, {freq: 2700.0, gain_db: -6.5, q: 2.2}]}, soul_articulation_rules: {default_legato_glide_ms: 180.0, atari_finger_pop: {prob: 0.4, transient_ms: 12.0, pitch_spike_cents: 65.0}, yuri_head_shake_vibrato: {delay_ms: 350.0, rate_hz: 4.4, pitch_depth_cents: 32.0, am_depth: 0.22}}, cicd_quality_gates: {spectral_centroid_hz_range: [480.0, 1550.0], spectral_flatness_range: [0.015, 0.085], max_piercing_ratio_2k5_to_3k8: 0.18}}}
+```
 
 ### 2.4 Native American Cedar Courting Flute (Indigenous North America)
 
 * **The Soul & Emotional Feel:** Intimate, warm, weeping, and canyon-resonant. Designed historically for solo courting and personal reflection in the quiet dusk, its voice is gentle, wooden, and completely free of harsh upper overtones.
 * **Acoustic Mechanics:** A dual-chamber **fipple/duct flute** carved from aromatic soft Western Red Cedar or Redwood. Because the air stream is guided through a fixed shallow flue channel beneath a carved block ("bird" / fetish) straight into the splitting edge (`b0 ≈ 0.05`), the excitation is nearly symmetric: **the 2nd harmonic ($2f_0$) is weak, while the 1st ($f_0$) and 3rd ($3f_0$) harmonics dominate**, creating a clarinet-like hollow woody warmth.
 
-\`\`\`yaml
-flute_profile:
-  id: "native_american_cedar_flute"
-  culture: "Indigenous North American (Plains / Southwest Woodland)"
-  material: "soft_aromatic_red_cedar"
-  bore_type: "dual_chamber_fipple_duct_symmetric"
-  pitch_range_midi: [60, 79] # C4 to G5 (Typically 1.25 octave range)
-  preferred_scales:
-    minor_pentatonic_just_cents: [0, 316, 498, 702, 1018]
-  dsp_synthesis_params:
-    harmonic_amplitudes: [1.00, 0.18, 0.48, 0.08, 0.14, 0.03, 0.04, 0.01] # Odd-harmonic dominant!
-    jet_asymmetry_bias_b0: 0.06 # Symmetric fipple channel -> low even harmonics
-    cubic_nonlinearity_alpha: 0.14
-    key_tracked_tilt_base: 1.65 # Very warm, rapid upper-harmonic absorption in soft cedar
-    key_tracked_tilt_slope: 0.060
-    bark_onset_ornament:
-      enabled: true
-      velocity_threshold: 80
-      initial_h2_h3_spike_ms: 28.0
-      pitch_scoop_cents: +35.0 # Brief upward "bark" settling into warm fundamental
-    breath_noise:
-      steady_ratio: 0.09
-      chiff_duration_ms: 22.0
-      chiff_boost_mult: 1.4 # Fipple duct has softer chiff than lip-blown flutes
-      bandpass_f0_mult: [0.8, 2.0]
-      turbulence_am_hz: 60.0
-      turbulence_am_depth: 0.06
-    body_formants_hz:
-      - { freq: 390.0, gain_db: 4.5, q: 2.0 } # Cedar chamber warmth
-      - { freq: 980.0, gain_db: 2.0, q: 2.5 }
-      - { freq: 2400.0, gain_db: -8.0, q: 1.8 } # Deep rolloff of any piercing highs
-  soul_articulation_rules:
-    default_legato_glide_ms: 95.0
-    weeping_phrase_release:
-      enabled: true
-      release_drop_cents: -85.0
-      release_duration_ms: 140.0
-    diaphragm_pulse_vibrato:
-      delay_ms: 180.0
-      rate_hz: 4.6
-      depth_cents: 12.0
-      am_depth: 0.18 # Heartbeat-like diaphragm amplitude pulse
-  cicd_quality_gates:
-    spectral_centroid_hz_range: [380.0, 1150.0]
-    spectral_flatness_range: [0.002, 0.022]
-    max_piercing_ratio_2k5_to_3k8: 0.09 # Strictly warm, zero ear-canal harshness
-    min_h3_to_h2_ratio: 1.40 # Enforces symmetric fipple odd-harmonic warmth!
-\`\`\`
+```yaml
+{flute_profile: {id: native_american_cedar_flute, culture: Indigenous North American (Plains / Southwest Woodland), material: soft_aromatic_red_cedar, bore_type: dual_chamber_fipple_duct_symmetric, pitch_range_midi: [60, 79], preferred_scales: {minor_pentatonic_just_cents: [0, 316, 498, 702, 1018]}, dsp_synthesis_params: {harmonic_amplitudes: [1.0, 0.18, 0.48, 0.08, 0.14, 0.03, 0.04, 0.01], jet_asymmetry_bias_b0: 0.06, cubic_nonlinearity_alpha: 0.14, key_tracked_tilt_base: 1.65, key_tracked_tilt_slope: 0.06, bark_onset_ornament: {enabled: true, velocity_threshold: 80, initial_h2_h3_spike_ms: 28.0, pitch_scoop_cents: 35.0}, breath_noise: {steady_ratio: 0.09, chiff_duration_ms: 22.0, chiff_boost_mult: 1.4, bandpass_f0_mult: [0.8, 2.0], turbulence_am_hz: 60.0, turbulence_am_depth: 0.06}, body_formants_hz: [{freq: 390.0, gain_db: 4.5, q: 2.0}, {freq: 980.0, gain_db: 2.0, q: 2.5}, {freq: 2400.0, gain_db: -8.0, q: 1.8}]}, soul_articulation_rules: {default_legato_glide_ms: 95.0, weeping_phrase_release: {enabled: true, release_drop_cents: -85.0, release_duration_ms: 140.0}, diaphragm_pulse_vibrato: {delay_ms: 180.0, rate_hz: 4.6, depth_cents: 12.0, am_depth: 0.18}}, cicd_quality_gates: {spectral_centroid_hz_range: [380.0, 1150.0], spectral_flatness_range: [0.002, 0.022], max_piercing_ratio_2k5_to_3k8: 0.09, min_h3_to_h2_ratio: 1.4}}}
+```
 
 ### 2.5 Norwegian Seljefløyte — Willow Overtone Flute (Nordic)
 
@@ -282,105 +83,18 @@ flute_profile:
      * **Open End:** Plays even and odd multiples of fundamental $f_0$ ($2f_0, 3f_0, 4f_0...$).
      * **Stopped End:** Converts the pipe into a quarter-wave resonator, shifting strictly to **odd multiples of $\frac{1}{2}f_0$** ($1.5 f_0, 2.5 f_0, 3.5 f_0, 4.5 f_0...$) and dropping the spectral brightness!
 
-\`\`\`yaml
-flute_profile:
-  id: "norwegian_seljefloyte_willow"
-  culture: "Nordic / Scandinavian (Norwegian Traditional Folk)"
-  material: "fresh_peeled_willow_bark_tube"
-  bore_type: "holeless_overtone_open_closed_hybrid"
-  pitch_range_midi: [62, 91] # Overtones of a low D3/E3 fundamental tube
-  preferred_scales:
-    seljefloyte_overtone_scale_cents: [0, 204, 386, 551, 702, 841, 969, 1088] # Notice 551c (11th partial) & 969c (7th partial)!
-  dsp_synthesis_params:
-    harmonic_amplitudes: [1.00, 0.55, 0.38, 0.20, 0.12, 0.06, 0.03, 0.01]
-    jet_asymmetry_bias_b0: 0.20
-    cubic_nonlinearity_alpha: 0.19
-    key_tracked_tilt_base: 1.28
-    key_tracked_tilt_slope: 0.042
-    overtone_pipe_physics:
-      enabled: true
-      tube_fundamental_hz: 146.83 # D3 base tube
-      stopped_end_odd_mode_filter_db: -3.5 # Slightly muffled when finger closes far end
-      harmonic_jump_chiff_spike: 1.65 # Brief whistle transient when jumping partials
-    breath_noise:
-      steady_ratio: 0.15
-      chiff_duration_ms: 28.0
-      chiff_boost_mult: 2.5
-      bandpass_f0_mult: [1.0, 3.0]
-      turbulence_am_hz: 105.0
-      turbulence_am_depth: 0.11
-    body_formants_hz:
-      - { freq: 520.0, gain_db: 3.0, q: 2.4 }
-      - { freq: 1480.0, gain_db: 2.5, q: 3.2 }
-      - { freq: 2900.0, gain_db: -5.0, q: 2.2 }
-  soul_articulation_rules:
-    default_legato_glide_ms: 25.0 # Snaps cleanly between natural harmonic nodes!
-    overtone_cascade_grace:
-      prob: 0.50
-      step_duration_ms: 32.0 # Rapid willow-flute harmonic flick
-    vibrato:
-      delay_ms: 240.0
-      rate_hz: 5.4
-      depth_cents: 10.0 # Air-pressure vibrato (mostly AM + slight sharp pitch)
-      am_depth: 0.16
-  cicd_quality_gates:
-    spectral_centroid_hz_range: [650.0, 1850.0]
-    spectral_flatness_range: [0.006, 0.040]
-    max_piercing_ratio_2k5_to_3k8: 0.22
-\`\`\`
+```yaml
+{flute_profile: {id: norwegian_seljefloyte_willow, culture: Nordic / Scandinavian (Norwegian Traditional Folk), material: fresh_peeled_willow_bark_tube, bore_type: holeless_overtone_open_closed_hybrid, pitch_range_midi: [62, 91], preferred_scales: {seljefloyte_overtone_scale_cents: [0, 204, 386, 551, 702, 841, 969, 1088]}, dsp_synthesis_params: {harmonic_amplitudes: [1.0, 0.55, 0.38, 0.2, 0.12, 0.06, 0.03, 0.01], jet_asymmetry_bias_b0: 0.2, cubic_nonlinearity_alpha: 0.19, key_tracked_tilt_base: 1.28, key_tracked_tilt_slope: 0.042, overtone_pipe_physics: {enabled: true, tube_fundamental_hz: 146.83, stopped_end_odd_mode_filter_db: -3.5, harmonic_jump_chiff_spike: 1.65}, breath_noise: {steady_ratio: 0.15, chiff_duration_ms: 28.0, chiff_boost_mult: 2.5, bandpass_f0_mult: [1.0, 3.0], turbulence_am_hz: 105.0, turbulence_am_depth: 0.11}, body_formants_hz: [{freq: 520.0, gain_db: 3.0, q: 2.4}, {freq: 1480.0, gain_db: 2.5, q: 3.2}, {freq: 2900.0, gain_db: -5.0, q: 2.2}]}, soul_articulation_rules: {default_legato_glide_ms: 25.0, overtone_cascade_grace: {prob: 0.5, step_duration_ms: 32.0}, vibrato: {delay_ms: 240.0, rate_hz: 5.4, depth_cents: 10.0, am_depth: 0.16}}, cicd_quality_gates: {spectral_centroid_hz_range: [650.0, 1850.0], spectral_flatness_range: [0.006, 0.04], max_piercing_ratio_2k5_to_3k8: 0.22}}}
+```
 
 ### 2.6 Middle Eastern Reed Ney (Persia / Turkey / Levant)
 
 * **The Soul & Emotional Feel:** Mystical, aching spiritual longing (immortalized in Rumi’s *Masnavi*: *"Listen to the reed and the tale it tells, how it sings of separation"*). The Ney is the breathiest, most human-voice-like wind instrument on earth: a blend of desert wind, smoky low throat resonance, and crying microtonal *Maqam* inflections.
 * **Acoustic Mechanics:** Rim-blown giant river reed (*Arundo donax*) divided by internal bamboo-like nodes. The air jet splits against the sharp inner rim while the player shapes their oral cavity as a **coupled Helmholtz pre-resonator**. In the low register (*Bam*), the fundamental is accompanied by a strong **bilabial wind hiss (`1.2–2.8 kHz`)** and a rich **3rd harmonic (12th interval)** that co-exists with the fundamental.
 
-\`\`\`yaml
-flute_profile:
-  id: "middle_eastern_reed_ney"
-  culture: "Middle Eastern (Sufi Turkish / Persian / Arabic Maqam)"
-  material: "arundo_donax_nine_node_giant_reed"
-  bore_type: "open_cylindrical_oblique_rim_blown"
-  pitch_range_midi: [57, 86] # A3 to D6
-  preferred_scales:
-    maqam_bayati_cents: [0, 150, 300, 498, 702, 800, 1000] # 150c neutral 2nd!
-    maqam_hijaz_cents: [0, 112, 386, 498, 702, 814, 1018]
-    maqam_saba_cents: [0, 150, 300, 400, 702, 800, 1000]
-  dsp_synthesis_params:
-    harmonic_amplitudes: [0.85, 0.90, 1.00, 0.55, 0.32, 0.18, 0.09, 0.04] # 2nd & 3rd partials often stronger than fundamental!
-    jet_asymmetry_bias_b0: 0.18
-    cubic_nonlinearity_alpha: 0.28
-    key_tracked_tilt_base: 1.18
-    key_tracked_tilt_slope: 0.045
-    oral_cavity_pre_resonator:
-      enabled: true
-      throat_formant_hz: 720.0
-      throat_formant_q: 3.5
-      sub_drone_fifth_mix: 0.14 # Subtle multiphonic 5th/octave undertone
-    breath_noise:
-      steady_ratio: 0.38 # Signature smoky Sufi reed hiss!
-      chiff_duration_ms: 48.0
-      chiff_boost_mult: 2.6
-      bandpass_f0_mult: [0.8, 3.8]
-      turbulence_am_hz: 85.0
-      turbulence_am_depth: 0.22
-    body_formants_hz:
-      - { freq: 540.0, gain_db: 3.0, q: 2.2 }
-      - { freq: 1650.0, gain_db: 4.0, q: 3.2 } # Reedy nasal presence
-      - { freq: 3100.0, gain_db: -5.5, q: 2.0 }
-  soul_articulation_rules:
-    default_legato_glide_ms: 115.0
-    tahrik_octave_breath_leap:
-      prob: 0.35
-      initial_fifth_or_octave_ms: 45.0 # Jumps to 3f0/2f0 on attack before settling
-    vibrato:
-      delay_ms: 200.0
-      rate_hz: 5.5
-      depth_cents: 22.0
-  cicd_quality_gates:
-    spectral_centroid_hz_range: [750.0, 2100.0]
-    spectral_flatness_range: [0.025, 0.110] # Must maintain high smoky breath ratio
-    max_piercing_ratio_2k5_to_3k8: 0.24
-\`\`\`
+```yaml
+{flute_profile: {id: middle_eastern_reed_ney, culture: Middle Eastern (Sufi Turkish / Persian / Arabic Maqam), material: arundo_donax_nine_node_giant_reed, bore_type: open_cylindrical_oblique_rim_blown, pitch_range_midi: [57, 86], preferred_scales: {maqam_bayati_cents: [0, 150, 300, 498, 702, 800, 1000], maqam_hijaz_cents: [0, 112, 386, 498, 702, 814, 1018], maqam_saba_cents: [0, 150, 300, 400, 702, 800, 1000]}, dsp_synthesis_params: {harmonic_amplitudes: [0.85, 0.9, 1.0, 0.55, 0.32, 0.18, 0.09, 0.04], jet_asymmetry_bias_b0: 0.18, cubic_nonlinearity_alpha: 0.28, key_tracked_tilt_base: 1.18, key_tracked_tilt_slope: 0.045, oral_cavity_pre_resonator: {enabled: true, throat_formant_hz: 720.0, throat_formant_q: 3.5, sub_drone_fifth_mix: 0.14}, breath_noise: {steady_ratio: 0.38, chiff_duration_ms: 48.0, chiff_boost_mult: 2.6, bandpass_f0_mult: [0.8, 3.8], turbulence_am_hz: 85.0, turbulence_am_depth: 0.22}, body_formants_hz: [{freq: 540.0, gain_db: 3.0, q: 2.2}, {freq: 1650.0, gain_db: 4.0, q: 3.2}, {freq: 3100.0, gain_db: -5.5, q: 2.0}]}, soul_articulation_rules: {default_legato_glide_ms: 115.0, tahrik_octave_breath_leap: {prob: 0.35, initial_fifth_or_octave_ms: 45.0}, vibrato: {delay_ms: 200.0, rate_hz: 5.5, depth_cents: 22.0}}, cicd_quality_gates: {spectral_centroid_hz_range: [750.0, 2100.0], spectral_flatness_range: [0.025, 0.11], max_piercing_ratio_2k5_to_3k8: 0.24}}}
+```
 
 ### 2.7 Andean Quena & Siku Panpipes (South America)
 
@@ -389,205 +103,36 @@ flute_profile:
   * **Quena:** End-blown U/V-notched wide-bore bamboo/bone cylinder with a thumb hole underneath. The deep notch focuses the air jet into a high-intensity beam, creating strong 2nd and 3rd harmonics and a soaring `1.8 kHz` crying formant.
   * **Siku (Stopped Panpipe):** Closed at the bottom end ($\lambda = 4L$). Stopped pipes produce **strictly odd harmonics ($1f_0, 3f_0, 5f_0$)** and a prominent **12th-interval ($3f_0$) attack chiff** on every breath pulse!
 
-\`\`\`yaml
-flute_profile:
-  id: "andean_quena_siku"
-  culture: "Andean South American (Quechua / Aymara Altiplano)"
-  material: "high_altitude_bamboo_and_condor_bone"
-  bore_type: "notched_end_blown_quena_and_stopped_siku_hybrid"
-  pitch_range_midi: [64, 91] # E4 to G6
-  preferred_scales:
-    andean_minor_pentatonic_cents: [0, 316, 498, 702, 1018]
-    huayno_dorian_hexatonic_cents: [0, 204, 316, 498, 702, 906]
-  dsp_synthesis_params:
-    harmonic_amplitudes: [1.00, 0.72, 0.58, 0.25, 0.19, 0.07, 0.05, 0.02]
-    siku_stopped_pipe_mode_amplitudes: [1.00, 0.04, 0.52, 0.02, 0.21, 0.01, 0.08, 0.00]
-    jet_asymmetry_bias_b0: 0.26
-    cubic_nonlinearity_alpha: 0.21
-    key_tracked_tilt_base: 1.22
-    key_tracked_tilt_slope: 0.052
-    breath_noise:
-      steady_ratio: 0.19
-      chiff_duration_ms: 35.0
-      chiff_boost_mult: 2.9 # Strong panpipe/quena edge chiff
-      bandpass_f0_mult: [1.0, 3.0]
-      turbulence_am_hz: 115.0
-      turbulence_am_depth: 0.15
-    body_formants_hz:
-      - { freq: 580.0, gain_db: 2.5, q: 2.0 }
-      - { freq: 1820.0, gain_db: 3.5, q: 2.8 } # Quena crying notch formant
-      - { freq: 2950.0, gain_db: -6.0, q: 2.2 }
-  soul_articulation_rules:
-    default_legato_glide_ms: 55.0
-    llanto_crying_fall_off:
-      prob: 0.45
-      fall_cents: -150.0
-      duration_ms: 90.0 # Signature Andean falling cry at phrase endings
-    vibrato:
-      delay_ms: 120.0
-      rate_hz: 6.4 # Fast, energetic Andean diaphragm vibrato
-      depth_cents: 20.0
-      am_depth: 0.20
-  cicd_quality_gates:
-    spectral_centroid_hz_range: [700.0, 1950.0]
-    spectral_flatness_range: [0.010, 0.055]
-    max_piercing_ratio_2k5_to_3k8: 0.23
-\`\`\`
+```yaml
+{flute_profile: {id: andean_quena_siku, culture: Andean South American (Quechua / Aymara Altiplano), material: high_altitude_bamboo_and_condor_bone, bore_type: notched_end_blown_quena_and_stopped_siku_hybrid, pitch_range_midi: [64, 91], preferred_scales: {andean_minor_pentatonic_cents: [0, 316, 498, 702, 1018], huayno_dorian_hexatonic_cents: [0, 204, 316, 498, 702, 906]}, dsp_synthesis_params: {harmonic_amplitudes: [1.0, 0.72, 0.58, 0.25, 0.19, 0.07, 0.05, 0.02], siku_stopped_pipe_mode_amplitudes: [1.0, 0.04, 0.52, 0.02, 0.21, 0.01, 0.08, 0.0], jet_asymmetry_bias_b0: 0.26, cubic_nonlinearity_alpha: 0.21, key_tracked_tilt_base: 1.22, key_tracked_tilt_slope: 0.052, breath_noise: {steady_ratio: 0.19, chiff_duration_ms: 35.0, chiff_boost_mult: 2.9, bandpass_f0_mult: [1.0, 3.0], turbulence_am_hz: 115.0, turbulence_am_depth: 0.15}, body_formants_hz: [{freq: 580.0, gain_db: 2.5, q: 2.0}, {freq: 1820.0, gain_db: 3.5, q: 2.8}, {freq: 2950.0, gain_db: -6.0, q: 2.2}]}, soul_articulation_rules: {default_legato_glide_ms: 55.0, llanto_crying_fall_off: {prob: 0.45, fall_cents: -150.0, duration_ms: 90.0}, vibrato: {delay_ms: 120.0, rate_hz: 6.4, depth_cents: 20.0, am_depth: 0.2}}, cicd_quality_gates: {spectral_centroid_hz_range: [700.0, 1950.0], spectral_flatness_range: [0.01, 0.055], max_piercing_ratio_2k5_to_3k8: 0.23}}}
+```
 
 ### 2.8 Slovak Fujara & Balkan Kaval (Eastern Europe)
 
 * **The Soul & Emotional Feel:** Majestic pastoral solitude of Carpathian mountain shepherds. The **Fujara** is a giant (`1.7m`) bass overtone flute that begins with a shimmering, metallic cascade of high overtones (*Rozfuk*) before dropping down into a warm, cello-like, burbling bass voice. The **Kaval** is famous for its *Kaba* register—a smoky, growling low register where the 1st, 2nd, and 3rd harmonics lock together into a rich multiphonic chord.
 * **Acoustic Mechanics:** Because the Fujara's bore is huge (`L ≈ 1.6m`, $f_0 \approx 65\text{–}98\text{ Hz}$) with a narrow diameter, the fundamental is weak while partials $n = 2..10$ are tightly spaced and easily excited by small breath-pressure changes.
 
-\`\`\`yaml
-flute_profile:
-  id: "carpathian_fujara_kaval"
-  culture: "Eastern European (Slovak Carpathian / Bulgarian Balkan)"
-  material: "elderberry_hardwood_long_bore"
-  bore_type: "giant_bass_overtone_fipple_and_kaba_rim"
-  pitch_range_midi: [43, 81] # G2 to A5
-  preferred_scales:
-    lydian_dominant_overtone_cents: [0, 204, 386, 590, 702, 906, 996]
-    balkan_hijaz_kaval_cents: [0, 112, 386, 498, 702, 814, 1018]
-  dsp_synthesis_params:
-    harmonic_amplitudes: [0.65, 1.00, 0.92, 0.68, 0.45, 0.28, 0.16, 0.09] # Kaba/Fujara rich 2nd & 3rd partials!
-    jet_asymmetry_bias_b0: 0.34
-    cubic_nonlinearity_alpha: 0.26
-    key_tracked_tilt_base: 1.15
-    key_tracked_tilt_slope: 0.045
-    rozfuk_overtone_burst:
-      enabled: true
-      phrase_start_sweep_partials: [7, 6, 5, 4, 3, 2]
-      step_ms: 45.0
-    breath_noise:
-      steady_ratio: 0.20
-      chiff_duration_ms: 40.0
-      chiff_boost_mult: 2.7
-      bandpass_f0_mult: [1.5, 4.0]
-      turbulence_am_hz: 65.0
-      turbulence_am_depth: 0.16
-    body_formants_hz:
-      - { freq: 260.0, gain_db: 4.5, q: 2.0 } # Giant elderwood bass resonance
-      - { freq: 880.0, gain_db: 3.0, q: 2.8 } # Kaba throat formant
-      - { freq: 2650.0, gain_db: -5.5, q: 2.0 }
-  soul_articulation_rules:
-    default_legato_glide_ms: 40.0
-    mordent_balkan_flick:
-      prob: 0.55
-      step_duration_ms: 24.0
-    vibrato:
-      delay_ms: 200.0
-      rate_hz: 5.2
-      depth_cents: 16.0
-  cicd_quality_gates:
-    spectral_centroid_hz_range: [420.0, 1600.0]
-    spectral_flatness_range: [0.008, 0.050]
-    max_piercing_ratio_2k5_to_3k8: 0.19
-\`\`\`
+```yaml
+{flute_profile: {id: carpathian_fujara_kaval, culture: Eastern European (Slovak Carpathian / Bulgarian Balkan), material: elderberry_hardwood_long_bore, bore_type: giant_bass_overtone_fipple_and_kaba_rim, pitch_range_midi: [43, 81], preferred_scales: {lydian_dominant_overtone_cents: [0, 204, 386, 590, 702, 906, 996], balkan_hijaz_kaval_cents: [0, 112, 386, 498, 702, 814, 1018]}, dsp_synthesis_params: {harmonic_amplitudes: [0.65, 1.0, 0.92, 0.68, 0.45, 0.28, 0.16, 0.09], jet_asymmetry_bias_b0: 0.34, cubic_nonlinearity_alpha: 0.26, key_tracked_tilt_base: 1.15, key_tracked_tilt_slope: 0.045, rozfuk_overtone_burst: {enabled: true, phrase_start_sweep_partials: [7, 6, 5, 4, 3, 2], step_ms: 45.0}, breath_noise: {steady_ratio: 0.2, chiff_duration_ms: 40.0, chiff_boost_mult: 2.7, bandpass_f0_mult: [1.5, 4.0], turbulence_am_hz: 65.0, turbulence_am_depth: 0.16}, body_formants_hz: [{freq: 260.0, gain_db: 4.5, q: 2.0}, {freq: 880.0, gain_db: 3.0, q: 2.8}, {freq: 2650.0, gain_db: -5.5, q: 2.0}]}, soul_articulation_rules: {default_legato_glide_ms: 40.0, mordent_balkan_flick: {prob: 0.55, step_duration_ms: 24.0}, vibrato: {delay_ms: 200.0, rate_hz: 5.2, depth_cents: 16.0}}, cicd_quality_gates: {spectral_centroid_hz_range: [420.0, 1600.0], spectral_flatness_range: [0.008, 0.05], max_piercing_ratio_2k5_to_3k8: 0.19}}}
+```
 
 ### 2.9 West African Fula Tambin — Vocal-Flute Ring Modulation (Guinea/Senegal)
 
 * **The Soul & Emotional Feel:** Electrifying, percussive, joyous, and fiercely human. Played by Fulani (*Peul*) herders of the Fouta Djallon highlands, the **Tambin** is never played passively—the flautist **sings, shouts, and growls directly into the embouchure hole while blowing**, turning the flute and human vocal cords into a single coupled instrument.
 * **Acoustic Mechanics:** When the player vocalizes at frequency $f_{\text{voice}}$ (`120–350 Hz` glottal pulse) while the flute oscillates at $f_{\text{flute}}$ (`500–1800 Hz`), the vocal pressure waves modulate the air-jet velocity entering the nonlinear labium ($x - \alpha x^3$). In DSP terms, this creates **true acoustic Ring Modulation and Intermodulation Sidebands ($f_{\text{flute}} \pm k \cdot f_{\text{voice}}$)**, giving the flute a gritty, talking, sax-like growl!
 
-\`\`\`yaml
-flute_profile:
-  id: "west_african_fula_tambin"
-  culture: "West African (Fulani / Peul Fouta Djallon)"
-  material: "hollowed_vine_wood_and_brass_lip_plate"
-  bore_type: "conical_vine_vocal_coupled_transverse"
-  pitch_range_midi: [62, 91] # D4 to G6
-  preferred_scales:
-    fula_hemitonic_pentatonic_cents: [0, 112, 498, 702, 814]
-    mixolydian_afro_modal_cents: [0, 204, 386, 498, 702, 906, 996]
-  dsp_synthesis_params:
-    harmonic_amplitudes: [1.00, 0.80, 0.55, 0.35, 0.22, 0.12, 0.06, 0.03]
-    jet_asymmetry_bias_b0: 0.30
-    cubic_nonlinearity_alpha: 0.28
-    key_tracked_tilt_base: 1.20
-    key_tracked_tilt_slope: 0.048
-    vocal_glottal_ring_modulator:
-      enabled: true
-      voice_pitch_tracking_ratio: 0.50 # Sings an octave or 10th below flute pitch (or fixed drone)
-      glottal_pulse_harmonics: [1.0, 0.6, 0.3]
-      ring_mod_depth: 0.32 # Multiplies air-jet by (1 + 0.32 * glottal_wave) BEFORE x - x^3!
-      throat_growl_roughness_hz: 75.0
-    breath_noise:
-      steady_ratio: 0.18
-      chiff_duration_ms: 14.0 # Hyper-percussive tongue-slap attack!
-      chiff_boost_mult: 3.8
-      bandpass_f0_mult: [1.0, 3.2]
-      turbulence_am_hz: 140.0
-      turbulence_am_depth: 0.20
-    body_formants_hz:
-      - { freq: 510.0, gain_db: 3.5, q: 2.2 }
-      - { freq: 1420.0, gain_db: 3.0, q: 2.8 }
-      - { freq: 2800.0, gain_db: -5.0, q: 2.0 }
-  soul_articulation_rules:
-    default_legato_glide_ms: 30.0
-    percussive_tongue_slap:
-      prob: 0.65
-      impulse_ms: 8.0
-      pitch_kick_cents: +80.0
-    vibrato:
-      delay_ms: 100.0
-      rate_hz: 6.8
-      depth_cents: 24.0
-  cicd_quality_gates:
-    spectral_centroid_hz_range: [680.0, 2050.0]
-    spectral_flatness_range: [0.012, 0.075] # Sidebands + growl increase spectral richness
-    max_piercing_ratio_2k5_to_3k8: 0.24
-\`\`\`
+```yaml
+{flute_profile: {id: west_african_fula_tambin, culture: West African (Fulani / Peul Fouta Djallon), material: hollowed_vine_wood_and_brass_lip_plate, bore_type: conical_vine_vocal_coupled_transverse, pitch_range_midi: [62, 91], preferred_scales: {fula_hemitonic_pentatonic_cents: [0, 112, 498, 702, 814], mixolydian_afro_modal_cents: [0, 204, 386, 498, 702, 906, 996]}, dsp_synthesis_params: {harmonic_amplitudes: [1.0, 0.8, 0.55, 0.35, 0.22, 0.12, 0.06, 0.03], jet_asymmetry_bias_b0: 0.3, cubic_nonlinearity_alpha: 0.28, key_tracked_tilt_base: 1.2, key_tracked_tilt_slope: 0.048, vocal_glottal_ring_modulator: {enabled: true, voice_pitch_tracking_ratio: 0.5, glottal_pulse_harmonics: [1.0, 0.6, 0.3], ring_mod_depth: 0.32, throat_growl_roughness_hz: 75.0}, breath_noise: {steady_ratio: 0.18, chiff_duration_ms: 14.0, chiff_boost_mult: 3.8, bandpass_f0_mult: [1.0, 3.2], turbulence_am_hz: 140.0, turbulence_am_depth: 0.2}, body_formants_hz: [{freq: 510.0, gain_db: 3.5, q: 2.2}, {freq: 1420.0, gain_db: 3.0, q: 2.8}, {freq: 2800.0, gain_db: -5.0, q: 2.0}]}, soul_articulation_rules: {default_legato_glide_ms: 30.0, percussive_tongue_slap: {prob: 0.65, impulse_ms: 8.0, pitch_kick_cents: 80.0}, vibrato: {delay_ms: 100.0, rate_hz: 6.8, depth_cents: 24.0}}, cicd_quality_gates: {spectral_centroid_hz_range: [680.0, 2050.0], spectral_flatness_range: [0.012, 0.075], max_piercing_ratio_2k5_to_3k8: 0.24}}}
+```
 
 ### 2.10 Celtic Simple-System Wooden Flute (Ireland)
 
 * **The Soul & Emotional Feel:** Driving, rhythmic, woody, and dance-infused (Jigs, Reels, and haunting Slow Airs). Unlike classical silver Boehm flutes (which use vibrato and tonguing for expression), traditional Irish flute players **almost never tongue consecutive notes**—instead, they divide a single continuous stream of breath using lightning-fast **fingered articulations: Cuts, Strikes (Taps), and Rolls**.
 * **Acoustic Mechanics:** Inverse-conical bore turned from dense **African Blackwood (Grenadilla)** with large, unkeyed tone holes. In the bottom octave ("Hard D", `D4–G4`), the conical bore + large embouchure produces a dark, reedy, cello-like buzz (`H2` and `H3` stronger than `H1`).
 
-\`\`\`yaml
-flute_profile:
-  id: "celtic_wooden_pratten_flute"
-  culture: "Celtic / Irish Traditional (Sligo / Roscommon Style)"
-  material: "dense_african_blackwood_grenadilla"
-  bore_type: "inverse_conical_large_hole_transverse"
-  pitch_range_midi: [62, 88] # D4 to E6
-  preferred_scales:
-    d_major_dorian_mixolydian_cents: [0, 204, 386, 498, 702, 906, 996]
-  dsp_synthesis_params:
-    harmonic_amplitudes: [0.88, 1.00, 0.72, 0.38, 0.18, 0.08, 0.03, 0.01] # Reedy "Hard D" 2nd/3rd partial weight!
-    jet_asymmetry_bias_b0: 0.36
-    cubic_nonlinearity_alpha: 0.24
-    key_tracked_tilt_base: 1.32
-    key_tracked_tilt_slope: 0.050
-    breath_noise:
-      steady_ratio: 0.13
-      chiff_duration_ms: 26.0 # Diaphragm "Huh" pulse rather than hard "Tu" tongue
-      chiff_boost_mult: 2.0
-      bandpass_f0_mult: [0.9, 2.5]
-      turbulence_am_hz: 90.0
-      turbulence_am_depth: 0.10
-    body_formants_hz:
-      - { freq: 480.0, gain_db: 4.0, q: 2.4 } # Woody blackwood chest resonance
-      - { freq: 1220.0, gain_db: 2.5, q: 3.0 } # Reedy conical core
-      - { freq: 2750.0, gain_db: -6.0, q: 2.2 }
-  soul_articulation_rules:
-    default_legato_glide_ms: 18.0 # Snappy finger transitions
-    celtic_roll_ornament:
-      prob: 0.40
-      cut_offset_semitones: +2
-      cut_duration_ms: 22.0
-      strike_offset_semitones: -2
-      strike_duration_ms: 20.0
-      finger_thump_boost_db: +4.0 # Audible wooden finger-slap on strikes!
-    vibrato:
-      delay_ms: 400.0 # Finger vibrato used only on long slow-air notes!
-      rate_hz: 4.8
-      depth_cents: 15.0
-  cicd_quality_gates:
-    spectral_centroid_hz_range: [520.0, 1620.0]
-    spectral_flatness_range: [0.005, 0.038]
-    max_piercing_ratio_2k5_to_3k8: 0.19
-\`\`\`
+```yaml
+{flute_profile: {id: celtic_wooden_pratten_flute, culture: Celtic / Irish Traditional (Sligo / Roscommon Style), material: dense_african_blackwood_grenadilla, bore_type: inverse_conical_large_hole_transverse, pitch_range_midi: [62, 88], preferred_scales: {d_major_dorian_mixolydian_cents: [0, 204, 386, 498, 702, 906, 996]}, dsp_synthesis_params: {harmonic_amplitudes: [0.88, 1.0, 0.72, 0.38, 0.18, 0.08, 0.03, 0.01], jet_asymmetry_bias_b0: 0.36, cubic_nonlinearity_alpha: 0.24, key_tracked_tilt_base: 1.32, key_tracked_tilt_slope: 0.05, breath_noise: {steady_ratio: 0.13, chiff_duration_ms: 26.0, chiff_boost_mult: 2.0, bandpass_f0_mult: [0.9, 2.5], turbulence_am_hz: 90.0, turbulence_am_depth: 0.1}, body_formants_hz: [{freq: 480.0, gain_db: 4.0, q: 2.4}, {freq: 1220.0, gain_db: 2.5, q: 3.0}, {freq: 2750.0, gain_db: -6.0, q: 2.2}]}, soul_articulation_rules: {default_legato_glide_ms: 18.0, celtic_roll_ornament: {prob: 0.4, cut_offset_semitones: 2, cut_duration_ms: 22.0, strike_offset_semitones: -2, strike_duration_ms: 20.0, finger_thump_boost_db: 4.0}, vibrato: {delay_ms: 400.0, rate_hz: 4.8, depth_cents: 15.0}}, cicd_quality_gates: {spectral_centroid_hz_range: [520.0, 1620.0], spectral_flatness_range: [0.005, 0.038], max_piercing_ratio_2k5_to_3k8: 0.19}}}
+```
 
 ### 2.11 Māori Kōauau & Pūtōrino (Aotearoa / Oceania)
 
@@ -596,48 +141,9 @@ flute_profile:
   * **Kōauau:** Short (`12–20 cm`), wide-bore flute carved from albatross wing bone or *Matai* wood, blown obliquely across the top rim.
   * **Pūtōrino:** A unique **cocoon-shaped (fusiform) bore** that swells wide in the center (where a carved figure-8 mouth opening sits) and tapers narrow at the bottom. This non-cylindrical bulge shifts the overtone modes away from integer multiples ($f_2 \approx 2.12 f_0$), creating a ghostly, hollow dual-voice resonance (*Hine Raukatauri*, the case-moth goddess).
 
-\`\`\`yaml
-flute_profile:
-  id: "maori_putorino_koauau"
-  culture: "Oceanian (Māori Taonga Pūoro — Aotearoa)"
-  material: "matai_heartwood_and_toroa_albatross_bone"
-  bore_type: "fusiform_cocoon_cavity_and_short_wide_rim"
-  pitch_range_midi: [65, 86] # F4 to D6
-  preferred_scales:
-    taonga_microtonal_cluster_cents: [0, 95, 190, 285, 386, 498] # Narrow microtonal step inflections!
-  dsp_synthesis_params:
-    harmonic_amplitudes: [1.00, 0.42, 0.35, 0.14, 0.06, 0.02, 0.01, 0.00]
-    fusiform_inharmonic_stretch: 1.035 # Stretches partials slightly ($k^{1.035} f_0$) for cocoon-cavity physics!
-    jet_asymmetry_bias_b0: 0.14
-    cubic_nonlinearity_alpha: 0.17
-    key_tracked_tilt_base: 1.48
-    key_tracked_tilt_slope: 0.055
-    breath_noise:
-      steady_ratio: 0.24
-      chiff_duration_ms: 38.0
-      chiff_boost_mult: 2.2
-      bandpass_f0_mult: [0.8, 2.4]
-      turbulence_am_hz: 70.0
-      turbulence_am_depth: 0.15
-    body_formants_hz:
-      - { freq: 460.0, gain_db: 5.0, q: 3.2 } # Central cocoon Helmholtz resonance
-      - { freq: 1180.0, gain_db: 2.0, q: 2.5 }
-      - { freq: 2500.0, gain_db: -7.0, q: 2.0 }
-  soul_articulation_rules:
-    default_legato_glide_ms: 165.0 # Continuous shading of holes
-    korimako_flutter_trill:
-      prob: 0.45
-      rate_hz: 9.5
-      depth_cents: 55.0
-    vibrato:
-      delay_ms: 150.0
-      rate_hz: 5.0
-      depth_cents: 26.0
-  cicd_quality_gates:
-    spectral_centroid_hz_range: [450.0, 1380.0]
-    spectral_flatness_range: [0.010, 0.055]
-    max_piercing_ratio_2k5_to_3k8: 0.14
-\`\`\`
+```yaml
+{flute_profile: {id: maori_putorino_koauau, culture: "Oceanian (M\u0101ori Taonga P\u016Boro \u2014 Aotearoa)", material: matai_heartwood_and_toroa_albatross_bone, bore_type: fusiform_cocoon_cavity_and_short_wide_rim, pitch_range_midi: [65, 86], preferred_scales: {taonga_microtonal_cluster_cents: [0, 95, 190, 285, 386, 498]}, dsp_synthesis_params: {harmonic_amplitudes: [1.0, 0.42, 0.35, 0.14, 0.06, 0.02, 0.01, 0.0], fusiform_inharmonic_stretch: 1.035, jet_asymmetry_bias_b0: 0.14, cubic_nonlinearity_alpha: 0.17, key_tracked_tilt_base: 1.48, key_tracked_tilt_slope: 0.055, breath_noise: {steady_ratio: 0.24, chiff_duration_ms: 38.0, chiff_boost_mult: 2.2, bandpass_f0_mult: [0.8, 2.4], turbulence_am_hz: 70.0, turbulence_am_depth: 0.15}, body_formants_hz: [{freq: 460.0, gain_db: 5.0, q: 3.2}, {freq: 1180.0, gain_db: 2.0, q: 2.5}, {freq: 2500.0, gain_db: -7.0, q: 2.0}]}, soul_articulation_rules: {default_legato_glide_ms: 165.0, korimako_flutter_trill: {prob: 0.45, rate_hz: 9.5, depth_cents: 55.0}, vibrato: {delay_ms: 150.0, rate_hz: 5.0, depth_cents: 26.0}}, cicd_quality_gates: {spectral_centroid_hz_range: [450.0, 1380.0], spectral_flatness_range: [0.01, 0.055], max_piercing_ratio_2k5_to_3k8: 0.14}}}
+```
 
 ### 2.12 Antarctic Glacial Ice-Bore & Albatross-Bone Flute (Polar)
 
@@ -646,101 +152,23 @@ flute_profile:
   1. **Cryogenic Speed of Sound Drop:** At `-20°C`, the speed of sound in air drops from `343 m/s` to `318.9 m/s`, causing a natural adiabatic pitch drift (`-125 cents` relative to warm breath as the tube cools between phrases, or rising `+15 cents` across a long note as warm human breath heats the ice bore!).
   2. **Glacial Crystalline Wall Reflection:** Smooth frozen ice walls have near-zero porosity, producing glassy, bell-like upper partials ($H_3, H_5$) paired with a haunting **sub-harmonic crevasse wind resonance ($0.5 f_0$)** and tiny stochastic **thermal ice-microfracture pings** when warm breath hits `-20°C` ice.
 
-\`\`\`yaml
-flute_profile:
-  id: "antarctic_glacial_ice_flute"
-  culture: "Polar / Antarctic (Cryogenic Ice-Bore & Southern Ocean Bone)"
-  material: "compressed_glacial_blue_ice_and_albatross_bone"
-  bore_type: "cryogenic_crystalline_tube_with_katabatic_sub_bore"
-  pitch_range_midi: [60, 88] # C4 to E6
-  preferred_scales:
-    polar_lydian_cryo_cents: [0, 204, 386, 610, 702, 906, 1088] # Shimmering raised #4 (610c)
-    antarctic_aeolian_cents: [0, 204, 316, 498, 702, 814, 1018]
-  dsp_synthesis_params:
-    harmonic_amplitudes: [1.00, 0.35, 0.52, 0.15, 0.24, 0.06, 0.09, 0.02] # Crystalline odd-harmonic shimmer (H1, H3, H5)
-    jet_asymmetry_bias_b0: 0.12
-    cubic_nonlinearity_alpha: 0.12
-    key_tracked_tilt_base: 1.26
-    key_tracked_tilt_slope: 0.058 # Prevents ear-canal piercing while keeping glassy lows/mids
-    cryogenic_thermal_physics:
-      enabled: true
-      warm_breath_pitch_drift_cents_per_sec: +3.5 # Breath slightly warms the ice tube over long notes!
-      subharmonic_crevasse_drone_db: -24.0 # Strong 0.5*f0 hollow ice-tunnel undertone
-      micro_ice_crystalline_shimmer_hz: 1850.0
-      micro_ice_shimmer_q: 9.0 # High-Q glassy ice resonance (below the 2.8kHz piercing band!)
-    breath_noise:
-      steady_ratio: 0.22
-      chiff_duration_ms: 42.0
-      chiff_boost_mult: 1.9
-      bandpass_f0_mult: [0.5, 2.2] # Deep, cold hollow wind breath
-      turbulence_am_hz: 45.0 # Slow katabatic wind undulation
-      turbulence_am_depth: 0.16
-    body_formants_hz:
-      - { freq: 340.0, gain_db: 4.5, q: 2.5 }  # Deep ice-cave resonance
-      - { freq: 1850.0, gain_db: 3.0, q: 5.5 } # Crystalline glassy ring (safe below 2.2kHz!)
-      - { freq: 2900.0, gain_db: -7.5, q: 2.0 } # Strict anti-piercing notch
-  soul_articulation_rules:
-    default_legato_glide_ms: 210.0 # Slow, frozen, haunting pitch transitions
-    katabatic_whistle_harmonic_ghost:
-      prob: 0.35
-      harmonic_partial: 3
-      swell_duration_ms: 320.0
-    vibrato:
-      delay_ms: 450.0 # Very still, cold initial tone before slow shiver vibrato
-      rate_hz: 4.1
-      depth_cents: 11.0
-  cicd_quality_gates:
-    spectral_centroid_hz_range: [420.0, 1450.0]
-    spectral_flatness_range: [0.008, 0.048]
-    max_piercing_ratio_2k5_to_3k8: 0.12 # Glassy without ever being piercing!
-\`\`\`
+```yaml
+{flute_profile: {id: antarctic_glacial_ice_flute, culture: Polar / Antarctic (Cryogenic Ice-Bore & Southern Ocean Bone), material: compressed_glacial_blue_ice_and_albatross_bone, bore_type: cryogenic_crystalline_tube_with_katabatic_sub_bore, pitch_range_midi: [60, 88], preferred_scales: {polar_lydian_cryo_cents: [0, 204, 386, 610, 702, 906, 1088], antarctic_aeolian_cents: [0, 204, 316, 498, 702, 814, 1018]}, dsp_synthesis_params: {harmonic_amplitudes: [1.0, 0.35, 0.52, 0.15, 0.24, 0.06, 0.09, 0.02], jet_asymmetry_bias_b0: 0.12, cubic_nonlinearity_alpha: 0.12, key_tracked_tilt_base: 1.26, key_tracked_tilt_slope: 0.058, cryogenic_thermal_physics: {enabled: true, warm_breath_pitch_drift_cents_per_sec: 3.5, subharmonic_crevasse_drone_db: -24.0, micro_ice_crystalline_shimmer_hz: 1850.0, micro_ice_shimmer_q: 9.0}, breath_noise: {steady_ratio: 0.22, chiff_duration_ms: 42.0, chiff_boost_mult: 1.9, bandpass_f0_mult: [0.5, 2.2], turbulence_am_hz: 45.0, turbulence_am_depth: 0.16}, body_formants_hz: [{freq: 340.0, gain_db: 4.5, q: 2.5}, {freq: 1850.0, gain_db: 3.0, q: 5.5}, {freq: 2900.0, gain_db: -7.5, q: 2.0}]}, soul_articulation_rules: {default_legato_glide_ms: 210.0, katabatic_whistle_harmonic_ghost: {prob: 0.35, harmonic_partial: 3, swell_duration_ms: 320.0}, vibrato: {delay_ms: 450.0, rate_hz: 4.1, depth_cents: 11.0}}, cicd_quality_gates: {spectral_centroid_hz_range: [420.0, 1450.0], spectral_flatness_range: [0.008, 0.048], max_piercing_ratio_2k5_to_3k8: 0.12}}}
+```
 
 ## 3. Cross-Cultural Micro-Ornamentation State Machines
 
 To make a JSON score (`notes: [{t, d, p, v}, ...]`) automatically breathe with cultural soul **without manually writing thousands of tiny MIDI notes**, your Python pre-processor can apply a **Cultural Ornamentation Grammar** to the note stream before synthesis:
 
-\`\`\`yaml
-ornamentation_grammars:
-  indian_meend_and_murki:
-    applies_to: ["bansuri_bamboo_flute"]
-    rules:
-      - name: "continuous_meend_bridge"
-        condition: "gap_between_notes_beats <= 0.15 and abs(p_next - p_curr) in [1, 2, 3, 4, 5]"
-        action: "interpolate_continuous_cosine_pitch_curve(duration_pct=0.35)"
-      - name: "nyas_sustained_turn"
-        condition: "note_duration_beats >= 1.5"
-        action: "inject_pre_onset_grace_cluster([p+2, p, p-1, p], step_ms=40)"
-
-  celtic_cut_strike_roll:
-    applies_to: ["celtic_wooden_pratten_flute"]
-    rules:
-      - name: "long_note_irish_roll"
-        condition: "note_duration_beats >= 1.2 and velocity >= 75"
-        action: "split_sustained_air_column([p, p+2, p, p-2, p], durations=[0.30, 0.04, 0.28, 0.04, 0.34], retrigger_chiff=False, inject_finger_thump=True)"
-
-  japanese_suizen_meri_muraiki:
-    applies_to: ["japanese_shakuhachi_zen"]
-    rules:
-      - name: "phrase_ending_meri_sigh"
-        condition: "gap_after_note_beats >= 0.8"
-        action: "tail_pitch_bend(cents=-110, last_pct=0.30, cutoff_mult=0.45, breath_mult=2.2)"
-      - name: "climax_muraiki_roar"
-        condition: "velocity >= 92"
-        action: "onset_turbulence_explosion(ms=110, noise_db=+4.5, h2_overblow=1.8)"
-
-  nordic_willow_harmonic_flick:
-    applies_to: ["norwegian_seljefloyte_willow"]
-    rules:
-      - name: "overtone_node_flick"
-        condition: "note_duration_beats >= 1.0"
-        action: "inject_onset_turn([p, p+2, p-2, p], step_ms=32, retrigger_chiff=False)"
-\`\`\`
+```yaml
+{ornamentation_grammars: {indian_meend_and_murki: {applies_to: [bansuri_bamboo_flute], rules: [{name: continuous_meend_bridge, condition: 'gap_between_notes_beats <= 0.15 and abs(p_next - p_curr) in [1, 2, 3, 4, 5]', action: interpolate_continuous_cosine_pitch_curve(duration_pct=0.35)}, {name: nyas_sustained_turn, condition: note_duration_beats >= 1.5, action: 'inject_pre_onset_grace_cluster([p+2, p, p-1, p], step_ms=40)'}]}, celtic_cut_strike_roll: {applies_to: [celtic_wooden_pratten_flute], rules: [{name: long_note_irish_roll, condition: note_duration_beats >= 1.2 and velocity >= 75, action: 'split_sustained_air_column([p, p+2, p, p-2, p], durations=[0.30, 0.04, 0.28, 0.04, 0.34], retrigger_chiff=False, inject_finger_thump=True)'}]}, japanese_suizen_meri_muraiki: {applies_to: [japanese_shakuhachi_zen], rules: [{name: phrase_ending_meri_sigh, condition: gap_after_note_beats >= 0.8, action: 'tail_pitch_bend(cents=-110, last_pct=0.30, cutoff_mult=0.45, breath_mult=2.2)'}, {name: climax_muraiki_roar, condition: velocity >= 92, action: 'onset_turbulence_explosion(ms=110, noise_db=+4.5, h2_overblow=1.8)'}]}, nordic_willow_harmonic_flick: {applies_to: [norwegian_seljefloyte_willow], rules: [{name: overtone_node_flick, condition: note_duration_beats >= 1.0, action: 'inject_onset_turn([p, p+2, p-2, p], step_ms=32, retrigger_chiff=False)'}]}}}
+```
 
 ## 4. CI/CD Audio Quality Gate Specification for Procedural Flutes
 
 Because your engine uses CI/CD quality gates that adapt dynamically to the active preset, here are the **6 mathematical gate assertions** that guarantee every synthesized flute stem sounds natural, non-piercing, and culturally authentic:
 
-\`\`\`json
+```json
 {
   "cicd_flute_quality_gates": {
     "gate_1_anti_piercing_ear_canal_index": {
@@ -781,20 +209,20 @@ Because your engine uses CI/CD quality gates that adapt dynamically to the activ
     }
   }
 }
-\`\`\`
+```
 
 ## 5. Pure-Python Universal Cultural Flute Interpreter & Gate Validator
 
 Below is the drop-in, zero-sample Python engine module that reads **any of the 12 cultural YAML profiles above**, synthesizes a continuous phrase with stateful bore physics (Dimo membrane, Meri head-tilt, Fula vocal ring-mod, or Cryogenic ice shimmer), and runs the **CI/CD Quality Gate** on the rendered buffer:
 
-\`\`\`python
+```python
 import numpy as np
 from scipy.signal import butter, lfilter, sosfilt, iirpeak, welch
 
 class CulturalFluteDSPEngine:
     """
     Pure-Python, Zero-Sample Cultural Flute Synthesizer + CI/CD Quality Gate Validator.
-    Ingests any `flute_profile` dictionary from the Global Flute Knowledge Base.
+    Reads a `flute_profile` dictionary.
     """
 
     def __init__(self, profile: dict, sr: int = 44100, seed: int = 1973):
@@ -998,4 +426,4 @@ class CulturalFluteDSPEngine:
             },
             "failures": failures,
         }
-\`\`\`
+```

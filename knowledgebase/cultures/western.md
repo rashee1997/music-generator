@@ -32,25 +32,25 @@ Unlike Tamil (*Raga/Gamaka*), Arabic (*Maqam/Heterophony*), or African (*Polyrhy
   * **Organum & Drone:** Sustain bare `[0, 7, 12]` (Root, 5th, Octave) intervals with a long `3.5-second` cathedral convolution/Schroeder reverb tail.
   * **Imitative Counterpoint (Palestrina Style):** Voice 2 enters 2 bars after Voice 1 with the exact same melody transposed up a 5th (`+7 semitones`), moving mostly stepwise (`1–2 semitones`), following every large leap (`>4 semitones`) with stepwise motion in the opposite direction.
 
-### 2.2 The Baroque Era (1600–1750 — *Bach, Vivaldi, Handel*)
+### 2.2 The Baroque era (1600–1750)
 * **Cultural & Mathematical DNA:** The birth of **Equal Temperament** and **Counterpoint (Fugue & Canon)**. Music operates like an intricate mechanical clock.
 * **How the Ear Listens:** Tracks **2 to 4 independent melodic lines simultaneously** (Soprano, Alto, Tenor, Bass) locked to a continuous chugging 8th- or 16th-note pulse (**Basso Continuo**).
 * **Algorithmic Rules for Python:**
-  1. **The Circle-of-Fifths Sequence (Vivaldi/Bach Engine):** Cycle roots through `[0, 5, 11, 4, 9, 2, 7, 0]` (`i -> iv -> VII -> III -> VI -> ii° -> V7 -> i` in Harmonic Minor) while running continuous 16th-note arpeggios (`[Root, 3rd, 5th, 3rd]`).
+  1. **The circle-of-fifths sequence:** Cycle roots through `[0, 5, 11, 4, 9, 2, 7, 0]` (`i -> iv -> VII -> III -> VI -> ii° -> V7 -> i` in Harmonic Minor) while running continuous 16th-note arpeggios (`[Root, 3rd, 5th, 3rd]`).
   2. **The *Picardy Third* (*Tierce de Picardie*):** Run the entire piece in a dark Minor key (`[0, 2, 3, 5, 7, 8, 11]`), and on the **final held chord**, raise the minor 3rd (`3`) to a **Major 3rd (`4`)** for a blindingly radiant resolution!
   3. **Harpsichord DSP:** Plucked string (Karplus-Strong) with **zero velocity sensitivity** (fixed amplitude regardless of note force) + a sharp `2.5kHz` plectrum click on both note-on and note-off.
 
-### 2.3 The Classical Era (1750–1820 — *Mozart, Haydn, Early Beethoven*)
+### 2.3 The Classical era (1750–1820)
 * **How the Ear Listens:** Rejects dense Baroque polyphony in favor of **crystal-clear melody over accompaniment (*Homophony*)**, symmetry (`4-bar Question + 4-bar Answer`), and **Sonata Form** (Exposition $\rightarrow$ Development $\rightarrow$ Recapitulation).
 * **The *Alberti Bass* (Algorithmic Left-Hand Accompaniment):**
   * Instead of block chords, arpeggiate every chord in 16th notes using the pattern: **`[Lowest, Highest, Middle, Highest]`** (e.g., `[0, 7, 4, 7]` in semitones).
 
-### 2.4 The Romantic & Cinematic Late-Romantic Era (1820–1910 — *Chopin, Wagner, Tchaikovsky, Debussy*)
+### 2.4 The Romantic and late-Romantic era (1820–1910)
 * **How the Ear Listens:** Yearns for **emotional extremes, tempo elasticity (*Rubato*), lush chromaticism, and massive orchestral color**. (the ancestor of **Hollywood film scores** and **Tamil film orchestral arrangements**).
 * **Algorithmic Rules:**
   1. **Tempo *Rubato* (Elastic Time Curve):** Modulate the global clock/BPM using a slow sine wave ($\pm 8\%$ speed variation over 4 bars)—speeding up slightly as melody pitch rises (*Stringendo*) and slowing down at phrase peaks (*Ritardando*).
   2. **Chromatic Mediants (The "Epic Cinema" Chord Shift):** Move directly from a **C Minor** chord `[0, 3, 7]` to **Ab Major** `[8, 0, 3]` or **E Minor** `[4, 7, 11]` (roots a 3rd apart sharing 1 common tone). This instantly triggers awe, magic, or tragedy in the human brain.
-  3. **Impressionism (Debussy/Ravel):** Use the **Whole-Tone Scale** `[0, 2, 4, 6, 8, 10]` (zero half-steps, floating/dreamlike) and parallel **Major 9th chords** `[0, 4, 7, 11, 14]`.
+  3. **Impressionism:** Use the **Whole-Tone Scale** `[0, 2, 4, 6, 8, 10]` (zero half-steps, floating/dreamlike) and parallel **Major 9th chords** `[0, 4, 7, 11, 14]`.
 
 ## 3. The African-American & 20th-Century Groove Revolution
 
@@ -185,7 +185,7 @@ WESTERN_CHORD_VOICINGS = {
     "hendrix_7sharp9":  [0, 4, 10, 15],       # Blues/Funk/Rock 'Purple Haze' chord
     # Rock / Metal / Cinematic
     "power_chord_5th":  [0, 7, 12],           # Safe for heavy tanh/clipping distortion!
-    "hans_zimmer_sus2": [-12, 0, 2, 7, 12],   # Wide cinematic brass/string stack
+    "cinematic_sus2": [-12, 0, 2, 7, 12],   # Wide cinematic brass/string stack
 }
 \`\`\`
 
@@ -218,7 +218,7 @@ WESTERN_GROOVES_16 = {
 ## 6. The Grand Unified Synthesis: How to Combine ALL FOUR Worlds in Python
 *(Tamil $\times$ Arabic $\times$ African $\times$ Western)*
 
-Now that you have all 4 knowledge bases (**Tamil**, **Arabic**, **African**, and **Western**), you can assign each musical culture to the **frequency band and psychoacoustic role** it dominates best:
+Assign each culture the frequency band and role it dominates:
 
 | Frequency Band / Role | Best Cultural Engine | Why It Works Psychoacoustically |
 | :--- | :--- | :--- |

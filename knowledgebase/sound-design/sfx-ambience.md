@@ -30,7 +30,7 @@ Discrete SFX (bird calls, Kuthu street whistles, thunder cracks, wolf howls, swo
 * **Result:** Birdsong, street whistles, and distant calls naturally **step forward during musical rests, intros, breakdowns, and phrase tails**, and automatically quiet down (`-10dB`) during busy musical climaxes!
 
 ### 1.3 LAW 3: Key-Locked Harmonic Resonator Bank ("Making the Wind & Rain Sing")
-Why does wind or rain in a movie score sound magical, whereas raw pink noise sounds like television static?
+Why does wind or rain in a movie score sound alive, whereas raw pink noise sounds like television static?
 * **The Secret:** Pass `25% to 40%` of the raw wind, rain, or ocean noise through a **Parallel Bank of High-Q Bandpass Resonators (`Q = 25.0 to 45.0`) tuned to the exact Root, 5th, Octave, and Modal 3rd/7th of the track's current scale**!
 * **Psychoacoustic Effect:** The listener's brain still hears natural wind or rain, but the air itself subtly **hums in the exact Raga / Maqam / Key of the song**, eliminating dissonance between noise and music!
 
@@ -107,16 +107,16 @@ Instead of letting musical sections collide, synthesize these **3 Zero-Overlap T
 | :--- | :--- | :--- | :--- |
 | **Tamil Kuthu / Arabic-Kuthu** | Open-air *Thiruvizha* street crowd murmur + warm night air (`>180Hz`). | **Street Finger-Whistles (*Visil*)**, *Zaghrouta* ululation, Temple/Festival Bell on transitions. | Heavy broadband rain/white-noise (washes out *Salangai* ankle bells and *Parai* stick crack!). |
 | **Arabic Desert / *Mawwal* / Khaleeji** | **Key-Locked Desert Wind** (resonating in *Maqam Hijaz/Bayati*) + crackling campfire. | Distant falcon/desert bird call, soft sand footsteps on Beat 1/3, brass *Souq* shimmer. | Urban traffic or high-density cicada hiss (clashes with breathy *Ney* flute & *Baha* vocal air!). |
-| **Adventurous Forest / Celtic Fae** | Dappled **Woodland Breeze** (key-locked to Dorian/Lydian) + distant stream babble. | **Dual-FM Songbird calls** in melodic rests, soft leaf-footsteps, magical chime sweeps. | Low-frequency thunder/industrial rumbles (destroys the light, airy woodland floor). |
+| **Adventurous Forest / Celtic Fae** | Dappled **Woodland Breeze** (key-locked to Dorian/Lydian) + distant stream babble. | **Dual-FM Songbird calls** in melodic rests, soft leaf-footsteps, chime sweeps. | Low-frequency thunder/industrial rumbles (destroys the light, airy woodland floor). |
 | **Lo-Fi Study / Cozy Bossa / Noir Jazz** | **Gentle Rain Patter** (`lowpassed @ 4.5kHz`) + **Vinyl Dust Crackle** + tape wow. | Soft distant thunder roll (in breakdowns), porcelain café cup clinks, page turns. | Piercing whistles or sharp 3kHz bird screeches (breaks the warm, sleepy `2.8kHz` ceiling). |
 | **Epic Hybrid Trailer / Gaming Boss** | **Dark Subterranean Cavern Air** + crackling embers. | **Sub-Vacuum Reverse Suck**, Anvil metallic strikes, Doppler Whooshes, Distant Thunder. | Continuous mid-range crowd/water noise (muddies the fast 16th-note staccato string ostinatos). |
 | **African Amapiano / Afrobeats** | Warm tropical night breeze + soft **Night Cricket Choir (`4.2kHz`)**. | Township whistle chirps, wooden shaker/pod rattles quantized to the 16th-note groove. | Mid-range `100Hz–300Hz` rumble SFX (must leave `60Hz–250Hz` 100% clean for the **Log Drum**!). |
 
 ## 7.0 SFX and blending listing
 
-Drop this self-contained Python class (`ProceduralSFXAndZeroOverlapBlender`) directly into your existing script. It generates **Rain, Key-Locked Desert/Forest Wind, Syrinx Birdsong, Crickets, Campfire, Kuthu Street Whistles, and Cinematic Whooshes**, and blends them into your stereo music array with **0% spectral or temporal masking**:
+The listing below (`ProceduralSFXAndZeroOverlapBlender`) generates **Rain, Key-Locked Desert/Forest Wind, Syrinx Birdsong, Crickets, Campfire, Kuthu Street Whistles, and Cinematic Whooshes**, and blends them into your stereo music array with **0% spectral or temporal masking**:
 
-\`\`\`python
+```python
 import numpy as np
 from scipy.signal import butter, iirnotch, iirpeak, lfilter
 
@@ -296,28 +296,4 @@ class ProceduralSFXAndZeroOverlapBlender:
         final_L = np.tanh(music_left  + (amb_L * 0.22) + (sfx_L * 0.45))
         final_R = np.tanh(music_right + (amb_R * 0.22) + (sfx_R * 0.45))
         return final_L, final_R
-\`\`\`
-
-## 8.0 Summary of Your Complete 8-File AI Music Production Brain
-
-Your AI agent now possesses a complete, modular **8-Document Knowledge Architecture**:
-1. `knowledgebase/cultures/tamil.md` *(Carnatic, kuthu, gaana, oppari and film-song DSP)*
-2. `pan_arab_music_dsp_knowledgebase.md` *(Khaleeji, Egyptian, Levantine, Iraqi, Maghrebi Maqamat & Iqa'at)*
-3. `pan_african_music_dsp_knowledgebase.md` *(Mande, Ewe 12/8, Shona Mbira, Ethio-Modes, Amapiano Log Drum, Afrobeats)*
-4. `western_music_dsp_knowledgebase.md` *(Baroque to Romantic, Jazz, Funk, Rock, Hip-Hop, EDM/Techno)*
-5. `east_asian_chinese_japanese_dsp_knowledgebase.md` *(Wu Sheng, Guofeng, Shamisen Sawari, Shakuhachi, Anime Royal Road)*
-6. `americas_brazil_native_hakan_dsp_knowledgebase.md` *(Rio Samba Egg, Baile Funk, Amazonia, Powwow, Haka, Throat-Singing)*
-7. `global_humming_celtic_germanic_dsp_knowledgebase.md` *(10 Cultural Humming Models, Arabic Deep Oooo/Aaaah, Celtic, Motorik, Balkan, Gamelan)*
-8. `procedural_sfx_ambience_zero_overlap_ontology.md` *(Genre Sub-Archetypes + 7 Laws of Dynamic Flow + Zero-Overlap SFX/Ambience Engine)*
-## Realism models added 2026-10-31 (sources fetched, formulas implemented in `scripts/environment.py`, `scripts/airabs.py`)
-
-| Sound | Model | Preset keys |
-|---|---|---|
-| Rain | Drop sizes N(D)=N0 exp(-L D), N0=8000 m^-3 mm^-1, L=4.1 R^-0.21 mm^-1 (Marshall-Palmer 1948); fall speed v=3.778 D^0.67 m/s. Each drop = damped impact ring (1-16 kHz); on water, some drops also leave a Minnaert bubble, f = 3.26/a (a in m), rising a few % while it rings (Cheng et al., SIGGRAPH 2019). Solid surfaces: impact only. | `primitive: "rain_physical"`, `rate_mm_h`, `surface` water/solid/leaf, `bubble_prob`, `drops_per_s` |
-| Wind | Band-limited noise whose strength and whistle pitch follow one turbulence series, PSD ~ f^-5/3 above a corner (von Karman/Kaimal). A sine LFO sounds periodic. | gust layer: `turbulence: true`, `mod_rate_hz` = corner |
-| Crickets | A chirp = N amplitude-ramped pure-tone syllables (example: 8 x 17 ms, 2 ms gaps, ~2.3 kHz). Chirp rate = (deg F - 40)/15 per s (Dolbear; reliable only for the snowy tree cricket). | `primitive: "cricket_chorus"` or `crickets` + `species: "cricket"`, `temp_c`, `voices`, `carrier_hz`, `syllables` |
-| Birds | Syrinx = nonlinear labial oscillator (already in `fm_chirp_cluster`). Species share the spectrum by splitting it into bands (Krause's acoustic niche hypothesis); a dawn chorus builds from first light. | `primitive: "bird_chorus"`, `species`, `f_lo`, `f_hi`, `dawn_s` |
-| Distance | ISO 9613-1: ~5 dB/km at 1 kHz, ~160 dB/km at 10 kHz (20 C, 50 % RH); humidity changes it non-monotonically. Level loss from 1/r is separate. | `atmosphere: {temp_c, rh}` on the preset or a layer; mixer `spatial: {temp_c, rh}` |
-| Width | Cascaded allpass biquads on an ERB scale (L and R get different random sets) decorrelate a bed: L/R correlation ~0.35, mono sum within ~2 dB. Haas delays (5-30 ms) instead leave comb notches in mono. | layer `decorrelate: 0..1` (beds only, not sharp transients) |
-
-Honest limits: drop rate and impact frequency ranges are tuned by ear; forest-specific attenuation/reverb is not modelled; nothing here was compared with a field recording.
+```

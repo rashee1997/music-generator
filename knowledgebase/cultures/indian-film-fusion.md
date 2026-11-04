@@ -23,22 +23,6 @@ palette under a melody kept plain and direct.
 
 To prevent the "robotic MIDI" uncanny valley, this architecture decouples **Discrete Symbolic Events** from **Continuous Microtonal and Psychoacoustic Space** across five sequential Python engines:
 
-```
-[Module 3: Groove & Tala Engine]      --> Generates polyrhythmic grid + 1/f Pink Noise micro-timing
-               |
-               v
-[Module 1: Raga & Gamaka Engine]      --> Generates asymmetric Markov melody + Continuous Pitch-Bend Splines
-               |
-               v
-[Module 2: Modal Harmony Engine]      --> Generates Raga-safe Slash Chords + Counter-Melodies + Bass Ostinatos
-               |
-               v
-[Module 4: Arrangement Graph Engine]  --> Applies density curves, "Pre-Chorus Vacuum Drops", & Call-Response
-               |
-               v
-[Module 5: film-mix DSP engine] --> Applies dynamic spectral carving, Haas widening, & sub-bass alignment
-```
-
 ## 2. Raga, pitch and two-component gamaka
 
 ### 2.1 Raga-Mode Mapping & Vadi/Samvadi Weights

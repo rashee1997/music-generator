@@ -74,7 +74,7 @@ Unlike a classical symphony that can take 5 minutes to develop, commercial track
 
 ## 3.0 Promotional & High-Energy Advert Architecture
 
-### 3.1 ARCHETYPE: `Promo_Stomp_Clap_IndieRock` (The "Black Keys / Miller Lite" Viral Ad Drive)
+### 3.1 ARCHETYPE: `Promo_Stomp_Clap_IndieRock` (viral stomp-clap ad drive)
 * **Target:** Retail sales, truck commercials, beverage promos, high-energy festival announcements.
 * **Psychoacoustic Profile:** Raw, muscular, infectious, swaggering, foot-stomping.
 * **Musical Mathematics:**
@@ -123,28 +123,28 @@ Unlike a classical symphony that can take 5 minutes to develop, commercial track
   * **Chord Engine:** `I` $\rightarrow$ `V/7th` $\rightarrow$ `vi` $\rightarrow$ `iii` $\rightarrow$ `IV` $\rightarrow$ `I/3rd` $\rightarrow$ `ii7` $\rightarrow$ `V(sus4 -> 3)`.
   * **The "Triumph" Fanfare:** Brass horns leaping **upward by an Octave (`+12`) or Major 6th (`+9`)**, holding the note with a rich `5.2Hz` vibrato while snare drums roll beneath.
 
-## 5.0 Modern Musical Theater (Broadway & West End) Architecture
+## 5.0 Modern musical theatre architecture
 
 Modern musical theater is one of the most musically sophisticated commercial genres in existence—it blends **operatic leitmotifs, Golden-Age counterpoint, and hyper-modern pop, hip-hop, and rock production**.
 
-### 5.1 ARCHETYPE: `Musical_LinManuel_Syncopated_History` (*Hamilton* / *In The Heights* Style)
-* **The Genius Concept:** Telling dramatic, historical, or cultural stories by fusing **Broadway showtune harmony with Golden-Era 90s Boom-Bap, Trap, and Salsa/Afro-Caribbean polyrhythms**.
+### 5.1 ARCHETYPE: `Musical_Syncopated_History` (rap-showtune style)
+* **The concept:** Telling dramatic, historical, or cultural stories by fusing **showtune harmony with Golden-Era 90s Boom-Bap, Trap, and Salsa/Afro-Caribbean polyrhythms**.
 * **Musical Mathematics:**
   * **BPM & Meter:** `92 – 102 BPM` (`4/4` with dense 16th-note syllabic grids).
   * **Scale:** **Dorian** `[0, 2, 3, 5, 7, 9, 10]` or **Harmonic Minor** `[0, 2, 3, 5, 7, 8, 11]`.
-  * **The "Hamilton Vamp":** Fast, syncopated harpsichord, upright piano, or cello playing staccato 16th-note riffs (`[0, 0, 12, 10, 7, 5, 3, 0]`) locked tightly with a crisp 90s hip-hop kick and snappy snare.
+  * **The syncopated history vamp:** Fast, syncopated harpsichord, upright piano, or cello playing staccato 16th-note riffs (`[0, 0, 12, 10, 7, 5, 3, 0]`) locked tightly with a crisp 90s hip-hop kick and snappy snare.
   * **The Polyrhythmic Vocal Ensemble:** 3 to 4 characters singing completely different lyrics simultaneously in interlocking rhythmic meters (Hocketing), suddenly locking into a single **shouted unison punch on Beat 4!**
 
-### 5.2 ARCHETYPE: `Musical_PasekPaul_PopBelter` (*Dear Evan Hansen* / *The Greatest Showman* Style)
+### 5.2 ARCHETYPE: `Musical_PopBelter` (pop-belter style)
 * **The Genius Concept:** Modern radio pop power-ballad structure infused with theatrical character vulnerability and massive, stadium-sized vocal climaxes.
 * **Musical Mathematics:**
   * **BPM & Meter:** `74 – 86 BPM` (Ballad) accelerating to `120 BPM` on the anthemic chorus.
   * **Harmonic Engine — The "Vulnerable Belter" Progression:**
     * **Verse:** `vi7` $\rightarrow$ `IV(add9)` $\rightarrow$ `I` $\rightarrow$ `V(sus4)`.
     * **Chorus:** `I` $\rightarrow$ `V` $\rightarrow$ `vi7` $\rightarrow$ `IV(add9)` with the melody soaring to the **Chest-Voice High Belt Register (`G4 to C5` for males, `C5 to F5` for females)**!
-  * **The Dramatic "Pasek & Paul" Modulatory Shift:** In the final chorus, shift the entire key **up by a Minor 3rd (`+3 semitones`) or Whole Step (`+2 semitones`)** on the downbeat of the climax!
+  * **The dramatic modulatory shift:** In the final chorus, shift the entire key **up by a Minor 3rd (`+3 semitones`) or Whole Step (`+2 semitones`)** on the downbeat of the climax!
 
-### 5.3 ARCHETYPE: `Musical_Sondheim_Neurotic_Vamp` (Complex Syncopation / Patter)
+### 5.3 ARCHETYPE: `Musical_Neurotic_Vamp` (Complex Syncopation / Patter)
 * **The Genius Concept:** Expressing inner human psychology, anxiety, and intellectual conflict through **asymmetrical meters, dissonant chromatic inner voices, and rapid-fire patter songs**.
 * **Musical Mathematics:**
   * **Meter:** Alternating bars of `5/8` (`2+3`) and `6/8` (`3+3`) or rapid `12/8`.
@@ -341,62 +341,9 @@ class CommercialAudioAndReverbDSP:
 
 ## 8.0 Commercial and musical routing matrix
 
-```python
-COMMERCIAL_AND_THEATER_CONFIG_DB = {
-    # Silicon Valley Clean Corporate Demo
-    "corporate_silicon_valley": {
-        "bpm": 120,
-        "meter": "4/4",
-        "scale": [0, 2, 4, 5, 7, 9, 11], # C Major
-        "chords": [[0, 4, 7, 14], [7, 11, 14, 17], [9, 12, 16, 19], [5, 9, 12, 16]], # I(add9) -> V -> vi -> IV
-        "lead_timbre": "muted_acoustic_guitar_plus_marimba_and_glockenspiel",
-        "ducking_required": True,
-        "reverb_mode": "clean_room",
-        "reverb_t60": 1.4
-    },
-    # Viral Stomp-Clap Indie Ad
-    "promo_stomp_clap_drive": {
-        "bpm": 122,
-        "meter": "4/4_swung_58",
-        "scale": [0, 3, 5, 6, 7, 10], # Minor Blues
-        "rhythm_grid": ["stomp", "rest", "rest", "rest", "clap", "rest", "rest", "rest"],
-        "lead_timbre": "overdriven_fuzz_bass_plus_garage_rock_riff",
-        "reverb_mode": "gated_80s",
-        "reverb_t60": 0.8
-    },
-    # Lin-Manuel Modern Musical Theater (Rap-Showtune)
-    "musical_lin_manuel_vamp": {
-        "bpm": 96,
-        "meter": "4/4",
-        "scale": [0, 2, 3, 5, 7, 9, 10], # Dorian
-        "vamp_pattern": [0, 0, 12, 10, 7, 5, 3, 0], # 16th-note staccato ostinato
-        "lead_timbre": "staccato_harpsichord_upright_piano_plus_boom_bap_drums",
-        "reverb_mode": "clean_room",
-        "reverb_t60": 1.8
-    },
-    # Inspiring Olympic / Keynote Climax
-    "motivational_olympic_triumph": {
-        "bpm": 84,
-        "meter": "4/4",
-        "scale": [0, 2, 4, 6, 7, 9, 11], # Lydian
-        "chords": [[0, 4, 7, 11], [2, 6, 9, 13], [5, 9, 12, 16], [7, 11, 14, 17]],
-        "lead_timbre": "soaring_french_horns_plus_orchestral_strings_and_timpani",
-        "reverb_mode": "shimmer",
-        "reverb_t60": 3.8
-    }
-}
-```
-
-## 9.0 The Grand Complete 10-Document Knowledge Architecture
-
-With this document integrated, your algorithmic engine and AI agents now possess a complete **10-Module Global Audio Encyclopedia**:
-1. `tamil_music_dsp_knowledgebase.md` *(Carnatic, Kuthu, Gaana, Oppari, Cinema DSP)*
-2. `pan_indian_music_dsp_knowledgebase.md` *(Hindustani 10 Thaats, Bhangra Chaal, Manganiyar, Qawwali, Baul, Sitar/Tabla DSP)*
-3. `pan_arab_music_dsp_knowledgebase.md` *(Khaleeji, Egyptian, Levantine, Iraqi, Maghrebi Maqamat & Iqa'at)*
-4. `pan_african_music_dsp_knowledgebase.md` *(Mande, Ewe 12/8, Shona Mbira, Ethio-Modes, Amapiano Log Drum, Afrobeats)*
-5. `western_music_dsp_knowledgebase.md` *(Baroque to Romantic, Jazz, Funk, Rock, Hip-Hop, EDM/Techno)*
-6. `east_asian_chinese_japanese_dsp_knowledgebase.md` *(Wu Sheng, Guofeng, Shamisen Sawari, Shakuhachi, Anime Royal Road)*
-7. `americas_brazil_native_hakan_dsp_knowledgebase.md` *(Rio Samba Egg, Baile Funk, Amazonia, Powwow, Haka, Throat-Singing)*
-8. `global_humming_celtic_germanic_dsp_knowledgebase.md` *(10 Cultural Humming Models, Arabic Deep Oooo/Aaaah, Celtic, Motorik, Balkan, Gamelan)*
-9. `procedural_sfx_ambience_zero_overlap_ontology.md` *(Genre Sub-Archetypes + 7 Laws of Dynamic Flow + Zero-Overlap SFX/Ambience Engine)*
-10. `commercial_corporate_promo_musicals_reverb_dsp.md` *(Corporate Tech, Stomp-Clap Ads, Motivational, Modern Broadway/Lin-Manuel, & Pure-Python Reverb Engines)*
+| Archetype | BPM | Meter | Scale | Chords or rhythm | Lead timbre | Reverb | T60 (s) |
+|---|---|---|---|---|---|---|---|
+| `corporate_silicon_valley` | 120 | 4/4 | `[0, 2, 4, 5, 7, 9, 11]` | I(add9) `[0, 4, 7, 14]` -> V `[7, 11, 14, 17]` -> vi `[9, 12, 16, 19]` -> IV `[5, 9, 12, 16]` | muted acoustic guitar with marimba and glockenspiel | `clean_room` | 1.4 |
+| `promo_stomp_clap_drive` | 122 | 4/4 swung 58 | `[0, 3, 5, 6, 7, 10]` | stomp, rest, rest, rest, clap, rest, rest, rest | overdriven fuzz bass with garage rock riff | `gated_80s` | 0.8 |
+| `musical_syncopated_vamp` | 96 | 4/4 | `[0, 2, 3, 5, 7, 9, 10]` | 16th-note staccato ostinato `[0, 0, 12, 10, 7, 5, 3, 0]` | staccato harpsichord, upright piano, boom-bap drums | `clean_room` | 1.8 |
+| `motivational_olympic_triumph` | 84 | 4/4 | `[0, 2, 4, 6, 7, 9, 11]` | `[0, 4, 7, 11]` -> `[2, 6, 9, 13]` -> `[5, 9, 12, 16]` -> `[7, 11, 14, 17]` | french horns with orchestral strings and timpani | `shimmer` | 3.8 |

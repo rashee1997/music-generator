@@ -337,72 +337,16 @@ class PanIndianInstrumentEngine:
                     out_loop[step_idx:end] += tilli_sample[: end - step_idx] * vel
                     
         return np.tanh(out_loop)
+```
 
-7.0 Master Pan-Indian Rhythm & Scale Lookup Reference
+## 7.0 Taal cycles
 
-7.1 North Indian Classical Taal Cycles
+| Cycle | Beats | Claps | Khali | Bols / divisions |
+|---|---|---|---|---|
+| `teentaal_16` | 16 | 1, 5, 13 | 9 | Dha Dhin Dhin Dha / Dha Dhin Dhin Dha / Dha Tin Tin Ta / Ta Dhin Dhin Dha |
+| `ektaal_12` | 12 | 1, 5, 9, 11 | 3, 7 | divisions 2+2+2+2+2+2 |
+| `jhaptaal_10` | 10 | 1, 3, 8 | 6 | Dhi Na Dhi Dhi Na / Ti Na Dhi Dhi Na |
+| `keherwa_8` | 8 | - | - | Dha Ge Na Ti Na Ke Dhi Na |
+| `dadra_6` | 6 | - | - | Dha Dhi Na / Dha Tu Na |
 
-HINDUSTANI_TAALS = {
-    # 1. TEENTAAL (16 Beats: 4+4+4+4 — The King of Classical Rhythms)
-    # Bols: Dha Dhin Dhin Dha | Dha Dhin Dhin Dha | Dha Tin Tin Ta | Ta Dhin Dhin Dha
-    # Claps on 1 (Sam), 5, 13; Khali (Wave) on 9!
-    "teentaal_16": {
-        "beats": 16,
-        "claps": [1, 5, 13],
-        "khali": [9],
-        "bols": ["Dha", "Dhin", "Dhin", "Dha", "Dha", "Dhin", "Dhin", "Dha",
-                 "Dha", "Tin",  "Tin",  "Ta",  "Ta",  "Dhin", "Dhin", "Dha"]
-    },
-    # 2. EKDHAAL (12 Beats: 2+2+2+2+2+2 — Fast Khyal & Drut Pieces)
-    # Bols: Dhin Dhin | DhaGe Tirikit | Tu Na | Kat Ta | DhaGe Tirikit | Dhi Na
-    "ektaal_12": {
-        "beats": 12,
-        "claps": [1, 5, 9, 11],
-        "khali": [3, 7],
-        "divisions": [2, 2, 2, 2, 2, 2]
-    },
-    # 3. Jhaptaal (10 Beats: 2+3+2+3 — Asymmetrical Devotional/Classical Cycle)
-    "jhaptaal_10": {
-        "beats": 10,
-        "claps": [1, 3, 8],
-        "khali": [6],
-        "bols": ["Dhi", "Na", "Dhi", "Dhi", "Na", "Ti", "Na", "Dhi", "Dhi", "Na"]
-    },
-    # 4. Keherwa (8 Beats: 4/4 Folk, Bhajan, Qawwali & Filmi Backbone)
-    "keherwa_8": {
-        "beats": 8,
-        "bols": ["Dha", "Ge", "Na", "Ti", "Na", "Ke", "Dhi", "Na"]
-    },
-    # 5. Dadra (6 Beats: 3+3 Light-Classical, Thumri & Ghazal Swing)
-    "dadra_6": {
-        "beats": 6,
-        "bols": ["Dha", "Dhi", "Na", "Dha", "Tu", "Na"]
-    }
-}
-
-7.2 The 10 Parent Thaat Scales (Semitones from Root 0)
-
-HINDUSTANI_THAAT_SCALES = {
-    "bilawal": [0, 2, 4, 5, 7, 9, 11],     # Major / Morning Clarity
-    "kalyan":  [0, 2, 4, 6, 7, 9, 11],     # Lydian / Sunset Majesty (Teevra Ma: 6)
-    "khamaj":  [0, 2, 4, 5, 7, 9, 10],     # Mixolydian / Romantic Seduction (Komal Ni: 10)
-    "kafi":    [0, 2, 3, 5, 7, 9, 10],     # Dorian / Spring & Folk Grounding
-    "asavari": [0, 2, 3, 5, 7, 8, 10],     # Aeolian / Pathos & Monsoons
-    "bhairav": [0, 1, 4, 5, 7, 8, 11],     # Double Harmonic / Dawn Devotion
-    "bhairavi":[0, 1, 3, 5, 7, 8, 10],     # Phrygian / Universal Surrender
-    "todi":    [0, 1, 3, 6, 7, 8, 11],     # Minor Lydian / Spiritual Desolation
-    "purvi":   [0, 1, 4, 6, 7, 8, 11],     # Dusk Tension (Teevra Ma + Komal Re)
-    "marwa":   [0, 1, 4, 6, 9, 11],        # Restless Dusk / Omit 5th (No Pa!)
-}
-
-### Summary of the Complete 9-Document Knowledge Architecture
-With this document integrated, the knowledge base covers:
-1. `tamil_music_dsp_knowledgebase.md` *(Tamil Carnatic, Kuthu, Gaana, Oppari, Film DSP)*
-2. `pan_indian_music_dsp_knowledgebase.md` *(Hindustani Classical, 10 Thaats, Punjabi Bhangra Chaal, Rajasthani Manganiyar, Bengali Baul, Sufi Qawwali, Sitar/Tabla/Dhol DSP)*
-3. `pan_arab_music_dsp_knowledgebase.md` *(Khaleeji, Egyptian, Levantine, Iraqi, Maghrebi Maqamat & Iqa'at)*
-4. `pan_african_music_dsp_knowledgebase.md` *(Mande, Ewe 12/8, Shona Mbira, Ethio-Modes, Amapiano Log Drum, Afrobeats)*
-5. `western_music_dsp_knowledgebase.md` *(Baroque to Romantic, Jazz, Funk, Rock, Hip-Hop, EDM/Techno)*
-6. `east_asian_chinese_japanese_dsp_knowledgebase.md` *(Wu Sheng, Guofeng, Shamisen Sawari, Shakuhachi, Anime Royal Road)*
-7. `americas_brazil_native_hakan_dsp_knowledgebase.md` *(Rio Samba Egg, Baile Funk, Amazonia, Powwow, Haka, Throat-Singing)*
-8. `global_humming_celtic_germanic_dsp_knowledgebase.md` *(10 Cultural Humming Models, Arabic Deep Oooo/Aaaah, Celtic, Motorik, Balkan, Gamelan)*
-9. `procedural_sfx_ambience_zero_overlap_ontology.md` *(Genre Sub-Archetypes + 7 Laws of Dynamic Flow + Zero-Overlap SFX/Ambience Engine)*
+The ten parent thaats and their semitones are in section 2.1.

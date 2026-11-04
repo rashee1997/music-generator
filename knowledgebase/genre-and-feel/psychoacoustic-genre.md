@@ -22,7 +22,7 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
 2. **Harmonic Motion Type:** Diatonic root movement (`I -> IV -> V`) feels *predictable/pop*; **Chromatic Mediants** (`i -> bVI`, `I -> bIII`, `I -> bVII`) bypass rational logic and trigger *wonder, magic, and cinematic scale*.
 3. **Rhythmic Gravity (Where the Weight Sits):** Front-heavy (`Beat 1` stomp) feels *marching/grounded*; Back-heavy (`Beats 2 & 4`) feels *dancing/urban*; Compound (`6/8, 9/8, 12/8` triplet roll) feels *galloping/seafaring/folklore*; Beatless/Pulse-Arpeggio feels *floating/forest/cosmic*.
 4. **Spectral Centroid & Transient Sharpness:** Soft `40ms` attacks with `1.2kHz` centroid feel *ancient/misty/warm*; `2ms` transients with `4.5kHz` presence feel *modern/aggressive/urgent*.
-5. **Spatial Acoustic Envelope:** Short dry room (`120ms` ER) feels *inside the listener's head*; Pre-delayed `60ms` + `3.5s` hall feels *wide-screen cinema*; High-passed shimmer tail (`+12 semitone pitch-shifted reverb`) feels *magical/ethereal*.
+5. **Spatial Acoustic Envelope:** Short dry room (`120ms` ER) feels *inside the listener's head*; Pre-delayed `60ms` + `3.5s` hall feels *wide-screen cinema*; High-passed shimmer tail (`+12 semitone pitch-shifted reverb`) feels *ethereal*.
 
 ## 2.0 Adventurous archetypes
 
@@ -44,7 +44,7 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
 * **Musical Mathematics:**
   * **Meter & Tempo:** `4/4` (with `12/8` triplet string ostinatos) at `116 – 126 BPM`.
   * **Scale:** **Mixolydian** (`[0, 2, 4, 5, 7, 9, 10]`) or **Lydian** (`[0, 2, 4, 6, 7, 9, 11]`).
-  * **Chord Engine (The John Williams / Howard Shore Frontier Shift):** `I` $\rightarrow$ `bVII` $\rightarrow$ `IV` $\rightarrow$ `I` (e.g., `C Major -> Bb Major -> F Major -> C Major`) or `I -> II7 (#4) -> IV -> I`.
+  * **The frontier shift chord move:** `I` $\rightarrow$ `bVII` $\rightarrow$ `IV` $\rightarrow$ `I` (e.g., `C Major -> Bb Major -> F Major -> C Major`) or `I -> II7 (#4) -> IV -> I`.
   * **Melodic Rule:** Start on a pickup beat (`Beat 4`), leap **`0 -> 7` (Perfect 5th)** on `Beat 1`, hold for 2.5 beats, then soar up to `12` (Octave) or `14` (9th).
   * **Percussion:** Orchestral **Timpani** tuned to `Root` and `5th` + rolling orchestral snare on transitions + bright crash cymbals on 8-bar peaks.
 
@@ -59,7 +59,7 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
 
 ### 2.4 ARCHETYPE: `Adventurous_Ancient_Desert_Ruin` (Archaeological / Mirage / Dune)
 * **How the Ear Listens:** Listens for **microtonal/augmented-second tension**, dry skin/wood percussion (*Darbuka, Frame Drum, Shaker*), plucked fretless strings (*Oud, Bouzouki*), and **heat-shimmer drones** (`Root + 5th` sustaining continuously while the melody explores above).
-* **How the Body Feels:** Heat haze, ancient secrets buried under sand, cautious footsteps, sacred awe.
+* **How the Body Feels:** Heat haze, ancient secrets buried under sand, cautious footsteps, awe.
 * **Musical Mathematics:**
   * **Meter & Tempo:** `4/4` (*Malfuf* `3+3+2` pulse) or `7/8` (`2+2+3`) at `95 – 110 BPM`.
   * **Scale:** **Phrygian Dominant (*Hijaz*)** `[0, 1, 4, 5, 7, 8, 10]` or **Double Harmonic (*Mayamalavagowla*)** `[0, 1, 4, 5, 7, 8, 11]`.
@@ -121,10 +121,10 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
 
 | Sub-Archetype | BPM & Groove Pocket | Harmonic Palette | Arrangement & Timbral Signature |
 | :--- | :--- | :--- | :--- |
-| **5.1 `Pop_MaxMartin_Pocket_Drive`** *(Dua Lipa / Weeknd / Radio Pop)* | `114–122 BPM`. Tight `4/4` kick + **Syncopated Pluck/Slap Bass** hitting `Steps 0, 3, 6, 10, 14` with crisp `16th-note` mute gaps! | **Dorian (`i7 - IV7`)** or **Minor Pop (`i - bVI - bVII - v`)**—never cheesy nursery-rhyme Major! | **Pre-Chorus Subtraction:** Strip out the kick drum for 4 bars before the chorus, then drop a massive stereo bass + tight clap on Beat 1 of the Chorus. |
+| **5.1 `Pop_Pocket_Drive`** (radio pop) | `114–122 BPM`. Tight `4/4` kick + **Syncopated Pluck/Slap Bass** hitting `Steps 0, 3, 6, 10, 14` with crisp `16th-note` mute gaps! | **Dorian (`i7 - IV7`)** or **Minor Pop (`i - bVI - bVII - v`)**—never cheesy nursery-rhyme Major! | **Pre-Chorus Subtraction:** Strip out the kick drum for 4 bars before the chorus, then drop a massive stereo bass + tight clap on Beat 1 of the Chorus. |
 | **5.2 `Pop_Dreamy_Nostalgic_Synth`** *(Midnight 80s / Dream-Pop / Indie)* | `100–110 BPM`. Straight 8th-note driving bassline (`[1,1,1,1,1,1,1,1]`) + 80s Gated Reverb Snare on `2` & `4`. | **Lydian / Major 7th & Add9 Voicings** (`IVMaj7 -> V6 -> I(add9) -> vi7`). | Chorus-drenched Juno-106 pads (`0.6Hz` stereo pitch wobble), shimmering electric guitar arpeggios, bittersweet nostalgia. |
 | **5.3 `Pop_Bedroom_Intimate_Whisper`** *(Billie Eilish / Finneas / Alt-Pop)* | `75–95 BPM` (or `120 BPM` minimal). **Bone-dry, close-mic acoustics** (zero hall reverb!). | Dark Minor + **Resolved/Unresolved Diminished/Harmonic Minor `V7` chord** (`i -> iv -> V7 -> i`). | Deep, clean sub-bass (`45Hz` pure sine) + finger snaps / rim clicks + whispered vocal hum (`200ms` away from the ear) with high breath noise. |
-| **5.4 `Pop_Sunshine_Funk_NuDisco`** *(Bruno Mars / Daft Punk / Parcels)* | `110–118 BPM`. Heavy `16th-note` swing (`57%`) with a loud kick+bass hit on **Beat 1 ("The One")** and ghost-snare syncopation. | **Jazz-Funk Extended Chords:** `ii9` $\rightarrow$ `V13` $\rightarrow$ `IMaj9` $\rightarrow$ `VI7(#9)`. | Clean Nile Rodgers-style 16th-note Stratocaster guitar chucks (`1.5kHz–3.5kHz`) + envelope-filtered synth/slap bass + tight brass section stabs. |
+| **5.4 `Pop_Sunshine_Funk_NuDisco`** (nu-disco) | `110–118 BPM`. Heavy `16th-note` swing (`57%`) with a loud kick+bass hit on **Beat 1 ("The One")** and ghost-snare syncopation. | **Jazz-Funk Extended Chords:** `ii9` $\rightarrow$ `V13` $\rightarrow$ `IMaj9` $\rightarrow$ `VI7(#9)`. | Clean Nile Rodgers-style 16th-note Stratocaster guitar chucks (`1.5kHz–3.5kHz`) + envelope-filtered synth/slap bass + tight brass section stabs. |
 
 ## 6.0 Celtic archetypes
 
@@ -261,7 +261,7 @@ GENRE_FEEL_ENGINE_DB = {
 
 When a user prompts your Python music agent:
 1. **Parse the Primary Genre + Secondary Environment/Feel Modifier:**
-   * *Example Prompt:* `"Create an adventurous track in a magical forest"` $\rightarrow$ Do **NOT** load `128 BPM 4/4 drums`. Route to `adventurous_forest_mystic` (`6/8` or `3/4`, Dorian/Lydian `IV` chord, `kick_weight=0.15`, Harp/Celesta/Flute).
+   * *Example Prompt:* `"Create an adventurous track in an enchanted forest"` $\rightarrow$ Do **NOT** load `128 BPM 4/4 drums`. Route to `adventurous_forest_mystic` (`6/8` or `3/4`, Dorian/Lydian `IV` chord, `kick_weight=0.15`, Harp/Celesta/Flute).
    * *Example Prompt:* `"Create an adventurous pirate battle"` $\rightarrow$ Route to `adventurous_highseas_swashbuckler` (`140 BPM 6/8` gallop, Harmonic Minor `i -> bVII -> bVI -> V7`, Spiccato Cello/Violin).
    * *Example Prompt:* `"Create an electronic track for a dark club"` $\rightarrow$ Route to `electronic_hypnotic_warehouse` (`136 BPM`, Berlin Rumble Kick, 6-step over 16-step polymetric loop, zero pop chord changes).
 2. **Enforce the 5 Orthogonal Axes:**

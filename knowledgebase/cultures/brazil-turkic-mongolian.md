@@ -47,7 +47,7 @@ A Rio Carnival *Bateria* is a living, acoustic club sound system divided into 5 
    * **Tamborim:** Tiny 6-inch frame drum tuned rock-hard and whipped with a split nylon stick (*Baqueta*), cutting through 300 drums at `1.8kHz`.
    * **Agogô:** Two-tone conical iron bell tuned a **Major 3rd (`4 semitones`) or Perfect 4th (`5 semitones`)** apart.
 
-### 2.3 Bossa Nova (1950s–60s Rio — *João Gilberto & Antônio Carlos Jobim*)
+### 2.3 Bossa nova (1950s–60s Rio)
 * **How the Ear Listens:** Intimate, whispered, coastal sunset nostalgia (**Saudade**).
 * **The Algorithmic Formula:**
   * Strip away the entire 300-person *Samba Bateria* and reduce it to a **single Nylon-String Classical Guitar (*Violão*)**:
@@ -68,7 +68,7 @@ A Rio Carnival *Bateria* is a living, acoustic club sound system divided into 5 
 ### 3.1 Indigenous Amazonian Music (*Xingu, Yanomami, Tukano, Asháninka, Shipibo*)
 * **Cultural & Acoustic DNA:** Music is not "entertainment"—it is **ecological communication and shamanic healing (*Ícaros*)**.
 * **How the Amazonian Ear Listens:**
-  1. **Giant Sacred Bamboo Flutes (*Uruá / Jacuí / Jurupari*):**
+  1. **Giant bamboo flutes (*Uruá / Jacuí / Jurupari*):**
      * Up to 2 to 3 meters long, played in **interlocking male pairs (Hocketing)**. Player A plays `[Root, 5th]`, Player B plays `[Minor 3rd, Flat 7th]` in the gaps, accompanied by heavy rhythmic foot-stamping on the forest floor.
      * *Timbre:* Deep, woody, overblown harmonic series (`f0, 2*f0, 3*f0`) with a strong breath-chuff (`180Hz` low-frequency air transient) on every note attack.
   2. **Shamanic *Ícaros* & *Maraca / Chakapa* Leaf-Bundle Rhythm:**
@@ -116,7 +116,7 @@ Depending on your fusion context, **"Hakan / Haka / Khakan"** refers to three po
 * **The 3 Sonic Layers of a *Haka* Engine:**
   1. **Waewae Takahia (The Earth-Stomp):** Unison bare-foot stomps on the ground (`65Hz–110Hz` low-frequency thud) on Beats `1` and `3`.
   2. **Pakipaki / Uma (Thigh & Chest Slaps):** Razor-sharp skin slaps against the chest and thighs (`800Hz–3.2kHz` flesh transient) in rapid syncopated 16th-note bursts (`[1, 0, 1, 1, 0, 1, 0, 0]`).
-  3. **Pūkana & Peruperu Vocal Cadence:** A solo leader (*Kaea*) calls out a high-intensity rhythmic phrase hovering around a central reciting tone (`f0`) with a **sharp upward pitch-cry (`+5` semitones) on the penultimate syllable and a guttural downward glottal drop (`-7` semitones) on the final syllable** (*"Ka mate! Ka mate! $\rightarrow$ Ka ora! Ka ora!"*).
+  3. **Pūkana & Peruperu Vocal Cadence:** A solo leader (*Kaea*) calls out a high-intensity rhythmic phrase hovering around a central reciting tone (`f0`) with a **sharp upward pitch-cry (`+5` semitones) on the second-to-last syllable and a guttural downward glottal drop (`-7` semitones) on the final syllable** (*"Ka mate! Ka mate! $\rightarrow$ Ka ora! Ka ora!"*).
   4. **Pūtātara & Pūkāea (Conch Shell & Wooden War Trumpet):** Deep, brassy, growling drone horn (`145Hz` sawtooth + formant filter).
 
 ### 5.2 Turkic-Mongol Steppe *"Khakan / Khagan"* & *Khakass* Style (*Khöömei, Sygyt, Kargyraa* Throat Singing & "Hunnu Rock")
@@ -223,7 +223,7 @@ def get_rio_samba_16th_grid(bpm: float, num_bars: int = 4) -> list[dict]:
 ### 6.3 Scale and rhythm matrices (Brazil, Amazon, Native American, Steppe)
 \`\`\`python
 AMERICAS_AND_STEPPE_SCALES = {
-    "rio_bossa_dorian_b9":     [0, 2, 3, 5, 7, 9, 10],    # Jobim melancholic coastal jazz-samba
+    "rio_bossa_dorian_b9":     [0, 2, 3, 5, 7, 9, 10],    # melancholic coastal jazz-samba
     "nordeste_baiao_mixolyd4": [0, 2, 4, 6, 7, 9, 10],    # Brazilian Northeast 'Nordestina' scale (#4 AND b7!)
     "amazon_icaro_pentatonic": [0, 3, 5, 7, 10],          # Rainforest flute & shamanic chant mode
     "native_cedar_flute":      [0, 3, 5, 6, 7, 10],       # Lakota/Woodlands 6-hole flute with blue-note 6!

@@ -75,7 +75,7 @@ Africa contains over 3,000 distinct ethnic groups. Below are the 6 major indigen
   2. **Tizita Minor (Deep Melancholy):** `[0, 2, 3, 7, 8]` *(Notice the big leap from `3 -> 7` and `8 -> 12`!)*
   3. **Bati Major:** `[0, 4, 5, 7, 11]`
   4. **Bati Minor:** `[0, 3, 5, 7, 10]`
-  5. **Ambassel (Mystical/Sacred):** `[0, 1, 5, 7, 8]` *(Shares the `0, 1, 5, 7, 8` DNA with Japanese In-Sen and South Indian Bhupalam/Revati!)*
+  5. **Ambassel (contemplative):** `[0, 1, 5, 7, 8]` *(Shares the `0, 1, 5, 7, 8` DNA with Japanese In-Sen and South Indian Bhupalam/Revati!)*
   6. **Anchihoye (Festival/Trance):** `[0, 1, 4, 6, 9]`
 * **Uganda (*Amadinda* & *Akadinda* Log Xylophones):**
   * Giant banana-stem-mounted wooden keys played by 3 to 6 musicians sitting on opposite sides. Player 1 plays an equidistant 5-tone cycle (`Okunaga`), Player 2 inserts a second melody *exactly halfway* between Player 1's strokes (`Okwawula`), resulting in a blazing `300+ BPM` interlocking stream (`10+ notes per second`).
@@ -90,7 +90,7 @@ When electric guitars, brass sections, and drum kits arrived in African port cit
 | **Afrobeat** *(1970s Nigeria — Fela Kuti & Tony Allen)* | **Tony Allen's Polyrhythmic Drum Kit:** Light, conversational snare ghost-notes, constant 16th-note hi-hat openings on off-beats, and a syncopated **Clave-locked Bassline** that never changes for 10 minutes. | **Tenor Guitar (*Tenor Mute*):** A repetitive, hypnotic single-note staccato scratch pattern around `800Hz` + aggressive **Baritone/Tenor Sax + Trumpet** unison stabs in Dorian/Minor Pentatonic. |
 | **Soukous / Ndombolo / Congolese Rumba** *(DRC / Congo)* | **The *Sebene* (Climax Acceleration):** Song starts as a slow, romantic Cuban-style rumba, then drops the vocals for the *Sebene*—a relentless four-on-the-floor kick + syncopated snare on the `and-of-2` and `4` (`Dembow/Cavacha` ancestor!). | **The *Mi-Solo* & *Lead* Guitar:** Clean Fender-style electric guitar with subtle chorus and heavy compression, picked with thumb and index finger at `130–145 BPM` in continuous cascading 16th-note arpeggios (`I - IV - V - IV`). |
 | **Mbalax** *(Senegal — Youssou N'Dour)* | **Sabar Drum Polyrhythms:** Ultra-fast, explosive stick-and-hand *Sabar* and *Tama* breaks interrupting a funky, syncopated 12/8 or 4/4 groove. | Bass guitar plays high-register melodic *Balafon/Xalam* runs, while electric keyboards mimic the percussive wooden pluck of a *Balafon*. |
-| **Chimurenga** *(Zimbabwe — Thomas Mapfumo)* | **Electric *Mbira* Translation:** Translates the 12/8 sacred Shona *Mbira* patterns directly onto palm-muted electric guitars and hi-hats. | Heavy, relentless **Hosho (gourd rattle)** triplet pulse (`1 - 2 - 3 | 1 - 2 - 3`) in the high frequencies (`5kHz–10kHz`) driving a hypnotic bassline. |
+| **Chimurenga** *(Zimbabwe — Thomas Mapfumo)* | **Electric *Mbira* Translation:** Translates the 12/8 Shona *mbira* patterns directly onto palm-muted electric guitars and hi-hats. | Heavy, relentless **Hosho (gourd rattle)** triplet pulse (`1 - 2 - 3 | 1 - 2 - 3`) in the high frequencies (`5kHz–10kHz`) driving a hypnotic bassline. |
 | **Ethio-Jazz** *(1960s–70s Ethiopia — Mulatu Astatke)* | **6/8 *Chikchika* Groove** + **Tizita Minor / Bati** modes. | Vibraphone + muted trumpet + Farfisa organ + upright bass playing dark, smoky, minor-second/major-third modal riffs over a gentle 6/8 conga/snare shuffle. |
 
 ## 4. Modern 21st-Century Electronic & Global African Genres (2000s–2026)
@@ -110,7 +110,7 @@ Today, African rhythms dominate global club and pop music—and almost all of th
      * Kick hits lightly or drops out entirely on Beat 1; rimshots and congas dance around steps `0, 3, 6, 10, 12, 14` (or in modern **3-Step**, three heavy kicks per bar at steps `0, 6, 12` creating a `3-against-4` tension!).
   4. **Lush Jazz Chords:** Fender Rhodes / FM Electric Piano playing sustained **Minor 9th (`m9`) and Minor 11th (`m11`)** chords with a subtle high-pitched **Township Whistle (`2.8kHz` sine glide)** floating on top.
 
-### 4.2 Afrobeats / Afro-Fusion (Nigeria & Ghana — *Wizkid, Burna Boy, Rema, Asake*)
+### 4.2 Afrobeats / Afro-Fusion (Nigeria and Ghana)
 * **Tempo:** `98 – 108 BPM` (Mid-tempo, warm, infectious hip-swaying pocket; or `112–116 BPM` when fused with Amapiano into *"Afro-Piano"*).
 * **Core Rhythmic Engine — The Modern *Kpanlogo / Shaku* Rimshot Groove:**
   * On a 16-step 4/4 grid:
@@ -118,7 +118,7 @@ Today, African rhythms dominate global club and pop music—and almost all of th
     * **Woody Rimshot / Clave:** `[0, 0, 0, 1,  0, 0, 1, 0,  0, 0, 0, 0,  1, 0, 0, 0]` *(Steps `3`, `6`, `12` — the modern West African pop clave!)*
 * **Signature Elements:**
   * **Shekere & Conga Percolation:** Constant 16th-note organic hand percussion panned wide.
-  * **Asake-Style *Fuji + Amapiano* Crossover:** Combines Yoruba **Talking Drum (*Dùndún*)** speech-melody slides + call-and-response street choir chants + South African **Log Drum** bass drops.
+  * **Fuji and amapiano crossover:** Combines Yoruba **Talking Drum (*Dùndún*)** speech-melody slides + call-and-response street choir chants + South African **Log Drum** bass drops.
 
 ### 4.3 Gqom (Durban, South Africa — *Dark, Broken-Beat Hypnosis*)
 * **Tempo:** `124 – 130 BPM`.
@@ -202,7 +202,7 @@ AFRICAN_SCALES = {
 AFRICAN_POLYRHYTHMS = {
     # 1. WEST AFRICAN 12/8 AGBAZDA / FUME-FUME (3-against-2 Master Polyrhythm)
     "west_africa_12_8": {
-        "gankogui_bell": [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1], # The Sacred 12/8 African Bell Timeline
+        "gankogui_bell": [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1], # The 12/8 African bell timeline
         "axatse_shaker": [1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
         "dundun_cross4": [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0], # 4-beat cross-rhythm against 3-beat feel!
         "djembe_slap":   [0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0],

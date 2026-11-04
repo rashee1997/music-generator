@@ -15,7 +15,7 @@ updated: 2026-11-04
 
 ## 1. Core Psychoacoustics: How the "Arab Ear" Listens (*Tarab* & *Saltanah*)
 
-In Arabic music, the ultimate psychoacoustic goal is **Tarab (طرب)**—a state of musical ecstasy, emotional enchantment, and time-suspension—achieved when the performer (or algorithm) reaches **Saltanah (سلطنة)** (complete modal immersion).
+In Arabic music, the central psychoacoustic goal is **Tarab (طرب)**—a state of musical ecstasy, emotional enchantment, and time-suspension—achieved when the performer (or algorithm) reaches **Saltanah (سلطنة)** (complete modal immersion).
 
 | Perceptual Dimension | Western Ear Conditioning | Arab Ear Conditioning | Algorithmic / Python DSP Rule |
 | :--- | :--- | :--- | :--- |
