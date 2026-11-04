@@ -121,6 +121,26 @@ Only `vocal.integrity` is protected. The others relax or skip only through a gat
 placeholder `character`). Negative controls for every row are in `tests/test_vocal_gate.py`. The rows measure faults. They cannot say whether the
 voice sounds human, warm or moving: listen (`listen.py`) and say if it did not run. Detail: `references/instruments-and-vocals/vocal-engine.md`.
 
+## 3e. Rows the score decides (lines, harmony, rhythm)
+
+These read the score, not the render. Fix them in the notes; the threshold is the gate's, not a target to tune.
+
+| Row | Fails when | Lever |
+|---|---|---|
+| `melodic_contour_feel` | under 45 % of intervals are stepwise (`<= 3` semitones), or direction reverses on nearly every note | rewrite the line as 2-4 note arches in one direction; recover a leap of 5 or more semitones by step in the opposite direction |
+| `melodic_information_entropy` | interval entropy under 1.15 bits, or too few distinct interval sizes | use 4-5 interval sizes across the phrase; follow a large surprise leap with 2-3 stepwise notes |
+| `pattern.melody_notes` | under 3 note lengths, or 85 % or more of the notes on the beat | mix durations; start some phrases on a pickup |
+| `bow.breath_gap` | no rest of 0.15-0.30 beat at phrase ends (at least once every 4 bars) on winds, brass, bowed strings and voices | add the rest at the phrase end |
+| `kinematic_effort_feel` | velocity does not rise as the phrase climbs to its peak | raise velocity 5-12 % toward the peak |
+| `harmonic_resolution_feel` | a tension note does not resolve by step on the next note, or the last 2 bars do not close on the tonic | resolve by 1-2 semitones; close on the tonic triad unless the cue is a deliberate cliffhanger |
+| `spiral_tension_arc` | the tonal centre teleports between sections (momentum over 1.45) | hold a common tone or pedal across the boundary, or insert a pivot chord |
+| `groove_pocket_lock` | 1- or 2-bar autocorrelation under 0.30 | keep the figure consistent from bar to bar |
+| `witek_groove_curve` | syncopation index (BSI) outside 0.4-5.5 per bar | add off-beat pickups when under; anchor beats 1 and 3 when over |
+| `pattern.loop_short` | an ostinato or drum loop runs unchanged for the whole cue | vary it every 4-8 bars; thin or drop the percussion at the peak |
+| `erb_binaural_masking` | a bed masks the lead inside one ERB band of 250-4000 Hz | widen the azimuth gap; cut -3 dB at the flagged frequency on the bed |
+| `spatial.z_separation` | a midrange pair in the climax is under `min_sep_deg` apart in azimuth and under `min_elev_deg` in elevation (25 and 15 by default) | widen the azimuth to 28 deg, or give the higher part an elevated arc |
+| `ambient_bed` | a dropout in the active body, or pumping over 3.8 dB between half-second windows | smooth the gain curve; `release_ms >= 1600`, `duck_db >= -3.5` |
+
 ## 3c. The gate adapts to the type of piece (gate profiles)
 
 Rules tuned on melodies false-flag a tense drone, an ambient bed, a dance loop or an effects-only piece. So which rows run, and their
