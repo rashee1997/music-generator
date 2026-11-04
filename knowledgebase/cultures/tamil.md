@@ -19,7 +19,7 @@ sources: []
   - [2.1 Dappankoothu (Kuthu) & Gaana (Chennai Street Folk)](#21-dappankoothu-kuthu--gaana-chennai-street-folk)
   - [2.2 Carnatic Classical & Semi-Classical (Ragam-Tanam-Pallavi)](#22-carnatic-classical--semi-classical-ragam-tanam-pallavi)
   - [2.3 Gramiya Isai (Rural Village Folk / Oyilattam / Karagattam)](#23-gramiya-isai-rural-village-folk--oyilattam--karagattam)
-  - [2.4 Tamil Melodrama / "Pathos" & Ilaiyaraaja-Style Symphony Folk](#24-tamil-melodrama--pathos--ilaiyaraaja-style-symphony-folk)
+  - [2.4 Tamil melodrama / pathos](#24-tamil-melodrama--pathos)
   - [2.5 Oppari (Ritual Lament / Dark Kuthu)](#25-oppari-ritual-lament--dark-kuthu)
 - [3.0 Western & Global Fusion Blueprints (How to Blend Without Losing Tamil Identity)](#3-western--global-fusion-blueprints-how-to-blend-without-losing-tamil-identity)
   - [3.1 Arabic-Tamil Kuthu (The "Halamithi" / Middle-East Street Fusion)](#31-arabic-tamil-kuthu-the-halamithi--middle-east-street-fusion)
@@ -99,12 +99,12 @@ Before coding specific genres, an algorithm must understand the fundamental perc
 
 ---
 
-### 2.4 Tamil Melodrama / "Pathos" & Ilaiyaraaja-Style Symphony Folk
-* **Cultural Origin:** The Golden Era of Tamil Cinema (1970s–1990s), pioneered by M.S. Viswanathan and perfected by Ilaiyaraaja.
+### 2.4 Tamil melodrama / pathos
+* **Cultural origin:** the form the 1970s-1990s Tamil film song settled into.
 * **How the Ear Listens:** Tracks **two independent melodies simultaneously** (e.g., a solo violin/flute playing a Carnatic Raga counter-melody against a Western Bach-style string quartet bassline).
 * **Emotional Feel:** Heartbreak, longing (*Pirivu*), monsoon rain nostalgia, cinematic grandeur.
 * **Algorithmic Rules:**
-  * **Ilaiyaraaja Counterpoint:** During every rest in the main melody (`bar 2, beats 3–4`), trigger a fast 16th-note string/flute arpeggio run that bridges into the next chord.
+  * **Counterpoint fill:** During every rest in the main melody (`bar 2, beats 3–4`), trigger a fast 16th-note string/flute arpeggio run that bridges into the next chord.
   * **Bassline:** Melodic electric bass playing syncopated octave leaps (`Root -> 5th -> Octave`) rather than static roots.
 
 ---
@@ -170,7 +170,7 @@ TAMIL_RAGAS = {
     "vakulabharanam_arabic": [0, 1, 4, 5, 7, 8, 10],     # Arabic Hijaz + Tamil Fusion
     "simhendramadhyamam":    [0, 2, 3, 6, 7, 8, 11],     # Intense Mass Hero / Dark Arabic
     "shubhapantuvarali":     [0, 1, 3, 6, 7, 8, 11],     # Oppari / Pathos / Raw Emotion
-    "keeravani_cinematic":   [0, 2, 3, 5, 7, 8, 11],     # Ilaiyaraaja / Melodramatic Minor
+    "keeravani_cinematic":   [0, 2, 3, 5, 7, 8, 11],     # Melodramatic minor
     "kharaharapriya_soul":   [0, 2, 3, 5, 7, 9, 10],     # Gaana / Folk-Soul / Dorian
     "mohanam_gramiya":       [0, 2, 4, 7, 9],            # Village Folk / Flute / Uplifting
     "kalyani_grand":         [0, 2, 4, 6, 7, 9, 11],     # Euphoric / Wedding / Festival
