@@ -2,8 +2,12 @@
 document_id: "GLOBAL_HUMMING_CELTIC_GERMANIC_BALKAN_GAMELAN_DSP_ONTOLOGY_V1"
 target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Ethnomusicology_Engines"]
 schema_version: "2026.10.1"
+status: unverified
+sources: []
 ---
 
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 # The Global Vocal-Humming Atlas, Celtic, Germanic & Remaining World Traditions DSP Knowledge Base
 **Scope:** 10 Cultural Humming/Vocal-Tract Physics Models $\rightarrow$ Celtic & Nordic (*Irish, Scottish, Breton, Viking/Kulning*) $\rightarrow$ Germanic (*Wagnerian, Krautrock Motorik, Oompah, Berlin Techno*) $\rightarrow$ Flamenco, Balkan/Slavic *Aksak*, & Indonesian *Gamelan*.
 **Target Application:** Pure-Code Formant/Glottal Vocal Synthesis (Python / NumPy / SciPy), Non-Isochronous Meter Matrices, and Global Cross-Cultural Fusions.
@@ -29,7 +33,7 @@ schema_version: "2026.10.1"
   - [5.2 The Celtic Long Roll Ornament Generator](#52-the-celtic-long-roll-ornament-generator-uilleann-pipes--tin-whistle--fiddle)
   - [5.3 The Berlin Techno Rumble Kick Synthesizer](#53-the-berlin-techno-rumble-kick-synthesizer)
   - [5.4 Master Matrices: Celtic, Germanic, Flamenco, & Balkan Odd-Meters](#54-master-matrices-celtic-germanic-flamenco--balkan-odd-meters)
-- [6.0 Ultimate Cross-Cultural Fusion Ideas](#6-ultimate-cross-cultural-fusion-ideas-using-these-new-modules)
+- [6.0 Cross-Cultural Fusion Ideas](#6-ultimate-cross-cultural-fusion-ideas-using-these-new-modules)
 
 ---
 
@@ -46,7 +50,7 @@ Here is how to synthesize **10 distinct cultural humming & vocal styles** in pur
 | **3. Celtic *Lilting / Puirt à Beul* ("Mouth Music" — Ireland & Scotland)** | When fiddles and pipes were banned or unavailable, Celts hummed/sang dance tunes using rapid **dental/palatal consonant bounces** (`"Diddle-dee-dum, दिरि-दिरी"` — `[d]`, `[l]`, `[n]`, `[r]`). | Joyful, nimble, tavern-dance bounce, fairy-like agility. | Insert **`18ms` amplitude dips + `1.8kHz` tongue-tip clicks** between every 16th-note of the hum while alternating formants rapidly between `[i]` (`[300, 2200]`) and `[ʌ]` (`[600, 1150]`). |
 | **4. Celtic *Caoineadh* (Irish Keening / Lament Hum) & *Sean-nós*** | Nasal, high-pressure closed-throat hum sliding into an open wail, characterized by a **glottal catch/sob (creaky voice / vocal fry)** at the end of held notes. | Ancient grief, misty cliffs, ancestral memory, goosebumps. | Add **sub-cycle jitter (`±3%` random period perturbation)** on the last `150ms` of held notes + a slow `4.5Hz` wide vibrato (`±45 cents`). |
 | **5. Nordic / Scandinavian *Kulning* (Ancient Herding Call)** | Sung/hummed by women in mountain forests to call cattle across 5 kilometers! Uses **zero vibrato**, extreme vocal-fold closure (pressed phonation), and locks the **1st Formant ($F_1$) directly onto the Fundamental ($f_0$) or 2nd Harmonic ($2 f_0$)** at `700Hz–1.4kHz` (`110 dB`!). | Piercing, crystalline, icy fjords, elfin/otherworldly siren call. | Set `f0` high (`550Hz–1100Hz`), set **Vibrato = `0.0`**, and lock a high-Q (`Q=15`) resonant filter directly to `1.0 * f0` and `2.0 * f0` with long canyon reverb! |
-| **6. Arab & North African *Zaghrouta* (Ululation) & *Mawwal* Hum** | High-pitched open-throat sustained tone (`800Hz–1.2kHz`) while the tongue flicks rapidly left-to-right against the upper lip/teeth at **`11Hz to 14Hz`**, modulating both amplitude and the `F2` formant (`1.4kHz <-> 2.4kHz`). | Ecstatic wedding/festival joy, desert celebration, adrenaline spike. | Apply a **`12.5 Hz` square-sine LFO** to both the `F2` formant frequency and amplitude (`40%` depth) + a slight `±30 cent` pitch warble. |
+| **6. Arab & North African *Zaghrouta* (Ululation) & *Mawwal* Hum** | High-pitched open-throat sustained tone (`800Hz–1.2kHz`) while the tongue flicks rapidly left-to-right against the upper lip/teeth at **`11Hz to 14Hz`** (starting value), modulating both amplitude and the `F2` formant (`1.4kHz <-> 2.4kHz`). | Ecstatic wedding/festival joy, desert celebration, adrenaline spike. | Apply a **`12.5 Hz` square-sine LFO** to both the `F2` formant frequency and amplitude (`40%` depth) + a slight `±30 cent` pitch warble. |
 | **7. Inuit / Circumpolar *Katajjaq* (Throat-Humming Game)** | Two voices face-to-face using each other's mouths as resonators! Alternates rapidly (`16th notes`) between **voiced chest hum (exhaled)** and **unvoiced breathy grunt/hum (inhaled)** (`"Hamma-hamma-humma"`). | Primal, rhythmic, hypnotic arctic trance, percussive breath. | Alternate every `120ms` between a **voiced low formant hum (`140Hz`)** and an **inhaled formant-filtered pink-noise burst (`F1=500Hz, F2=1500Hz`)**. |
 | **8. Central/Southern African *Mbube* Bass-Hum & Pygmy *Hindewhu*** | **Mbube (Zulu):** Silky 4-part male closed-lip bass harmony (`65Hz–220Hz`) with warm nasal resonance (`[m]` / `[ŋ]`). **Hindewhu:** Alternating a 1-note papaya-stem whistle with a hummed vocal note (`Hocket`). | Warm earth embrace (*Mbube*) or joyful forest interlocking (*Hindewhu*). | For *Mbube*, sum 4 glottal bass voices in `[0, 4, 7, 12]` intervals through a warm `260Hz` low-formant filter + `1.1kHz` nasal notch. |
 | **9. Bulgarian / Slavic *Balkan Open-Throat* Diaphonic Drone-Hum** | Chest-register female voices humming/singing in **clashing Major 2nds (`2 semitones` apart, e.g., `D` and `E` simultaneously!)** with a metallic, forward-placed nasal/pharyngeal ring (`2.8kHz–3.8kHz` "Singer's Formant"). | Shimmering, brassy, supernatural, acoustic beating. | Trigger two voices `200 cents` apart (`f0` and `f0 * 1.122`), boost `3.2kHz` (`+8dB`), and add a sharp upward **glottal hiccup (`+12 semitones` for `30ms`)** at phrase ends! |
@@ -301,7 +305,7 @@ EUROPEAN_AND_GLOBAL_MATRICES = {
 
 ---
 
-## 6. Ultimate Cross-Cultural Fusion Ideas Using These New Modules
+## 6. Cross-Cultural Fusion Ideas Using These New Modules
 
 1. **Tamil *Aakaram* Hum $\times$ Celtic *Keening* Hum $\times$ Nordic *Kulning*:**
    * Imagine an intro where a **Tamil Carnatic *Aakaram/Mm-karam* voice** (`style="tamil_aakaram"`) and an **Irish *Caoineadh* keening voice** (`style="celtic_keening"`) sing a call-and-response duet in Dorian mode (`Kharaharapriya`), before an **Arabic *Zaghrouta* ululation** (`style="arab_zaghrouta"`) triggers the beat drop!

@@ -84,3 +84,14 @@ Describe the set instead: "the documents in this folder", "the culture files".
 `scripts/research_kb.py` cites a document by its `document_id`, which is the `id` field above. Any
 change to an `id` breaks a citation in an existing project's research note, so change the file name
 and the `id` together, and only when the rename is worth it.
+
+## Status and sources
+
+Every file carries `status` and `sources` in its front matter.
+
+- `status: unverified` means the numbers are starting points from practice. The file opens with a
+  **Not verified** note, and a piece that uses one of its numbers calls it a starting value.
+- `status: sourced` means every number is cited in `sources`; an empty list under `sourced` fails
+  `tests/check_kb.py`.
+- A number added later gets a source or the words "starting value" on the same line.
+- A new file also gets a row in `README.md` with its status.

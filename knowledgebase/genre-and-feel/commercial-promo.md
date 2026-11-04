@@ -2,8 +2,12 @@
 document_id: "COMMERCIAL_CORPORATE_PROMO_MUSICALS_AND_REVERB_DSP_V1"
 target_consumers: ["AI_Music_Agents", "Commercial_Audio_Engines", "Python_DSP_Synthesizers"]
 schema_version: "2026.10.5"
+status: unverified
+sources: []
 ---
 
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 # The Commercial, Corporate, Motivational, Modern Musicals & Reverb DSP Knowledge Base
 **Scope:** Modern Tech Corporate $\rightarrow$ High-Energy Promotional/Adverts $\rightarrow$ Inspiring/Motivational Cinematic $\rightarrow$ Modern Musical Theater (Pop-Operetta / Lin-Manuel / Broadway) $\rightarrow$ Pure-Python Algorithmic Reverb Engines (*Schroeder/Moorer, Shimmer, Gated, Infinite Dune Hall*).
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Persuasion Psychoacoustics, Voice-Over (VO) Ducking Architecture, and Spatial Acoustics.
@@ -229,7 +233,7 @@ Invented by Manfred Schroeder and extended by James Moorer. Simulates room acous
 
 ---
 
-### 6.2 The Shimmer Reverb Engine (The "Magical / Ethereal" Pad Maker)
+### 6.2 The Shimmer Reverb Engine (The "/ Ethereal" Pad Maker)
 * **Acoustic Physics:** Popularized by Brian Eno and Daniel Lanois. A portion of the reverb decay tail is **pitch-shifted upward by an exact Octave (+12 semitones / $2 \times$ speed)** and fed back into the reverb tank!
 * **Psychoacoustic Effect:** Every note played on an acoustic guitar or piano causes a shimmering, angelic choir-like string pad to swell upward out of nowhere.
 * **DSP Algorithm:**

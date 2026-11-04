@@ -2,8 +2,12 @@
 document_id: "PROCEDURAL_SFX_AMBIENCE_AND_ZERO_OVERLAP_MIXING_ONTOLOGY_V1"
 target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Spatial_Audio_Engines"]
 schema_version: "2026.10.3"
+status: unverified
+sources: []
 ---
 
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 # The Master Procedural SFX, World Ambience & Zero-Overlap Music Blending Knowledge Base
 **Purpose:**
 1. Synthesize **any natural, environmental, human-crowd, or cinematic SFX** in 100% pure Python (`NumPy`/`SciPy`) using physical and stochastic modeling (zero external `.wav` samples required).
@@ -130,7 +134,7 @@ Instead of letting musical sections collide, synthesize these **3 Zero-Overlap T
    * Bandpass noise whose center frequency sweeps exponentially `180Hz -> 2,400Hz -> 140Hz` over `0.8 seconds` while panning smoothly from **100% Left (`-1.0`) to 100% Right (`+1.0`)**!
 2. **The "Sub-Vacuum Reverse Suck" (Pre-Drop Tension Builder):**
    * Over the final `2 beats` before a Climax Drop, mute the drums and play a **Reversed Exponential Noise + Sub-Sine Swell** (`55Hz -> 180Hz`, amplitude `0.01 -> 1.0`) that cuts off at `0.0` on the exact millisecond the Beat-1 Kick hits!
-3. **The "Crystalline Shimmer Riser" (Magical / Forest / Anime Transition):**
+3. **The "Crystalline Shimmer Riser" (/ Forest / Anime Transition):**
    * A cluster of 8 high-register sine waves tuned to the track's pentatonic/modal scale (`1.5kHz – 6kHz`) gliding upward by `+12 semitones` over 2 bars with `16th-note` stereo tremolo.
 
 ---

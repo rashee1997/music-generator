@@ -3,8 +3,12 @@ document_id: GAME_SFX_INTERACTIVE_SYSTEMS_AND_PHYSICS_DSP_ONTOLOGY_V1
 target_consumers: [music-generator, sound-effects-designer, game-audio-engineer]
 schema_version: "2026.10.7"
 domain: "Real-Time Interactive Game SFX, Anti-Machine-Gun Procedural Systems, Combat Physics, & Locomotion Foley"
+status: unverified
+sources: []
 ---
 
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 # Interactive Game Sound Effects & Physics DSP Systems
 
 ## Table of Contents
@@ -12,7 +16,7 @@ domain: "Real-Time Interactive Game SFX, Anti-Machine-Gun Procedural Systems, Co
 2. [Combat Audio Physics & Impact Acoustics](#2-combat-audio-physics--impact-acoustics)
    - [2.1 Bladed Weapons (Slashes, Clashes & Whooshes)](#21-bladed-weapons-slashes-clashes--whooshes)
    - [2.2 Blunt Weapons (Body Resonance & Heavy Impacts)](#22-blunt-weapons-body-resonance--heavy-impacts)
-   - [2.3 Projectiles, Lasers & Magical Spells](#23-projectiles-lasers--magical-spells)
+   - [2.3 Projectiles, Lasers & Spells](#23-projectiles-lasers--magical-spells)
    - [2.4 Multi-Stage Explosion Physics & Shockwave Propagation](#24-multi-stage-explosion-physics--shockwave-propagation)
 3. [Player Locomotion & Terrain Foley Physics](#3-player-locomotion--terrain-foley-physics)
    - [3.1 The Dual-Impulse Footstep Paradigm (Heel Strike & Toe Push)](#31-the-dual-impulse-footstep-paradigm-heel-strike--toe-push)
@@ -72,10 +76,10 @@ Combat sound design requires balancing **physical realism** (transient impact me
 - **Wood / Bone Snap:** High-frequency, sharp transient spike ($< 3\text{ ms}$, crest factor $> 18\text{ dB}$, bandpassed at $1.8-4.2\text{ kHz}$).
 - **Body Thump:** Formant-filtered noise burst centered at $280\text{ Hz}$ with $Q = 4.0$.
 
-### 2.3 Projectiles, Lasers & Magical Spells
+### 2.3 Projectiles, Lasers & Spells
 - **Sci-Fi Laser:** Fast downward linear or exponential FM chirp:
   $$f(t) = f_{\text{start}} \cdot e^{-k \cdot t}, \quad f_{\text{start}} = 3500\text{ Hz} \rightarrow 200\text{ Hz in } 90\text{ ms}$$
-- **Magical Energy Charge:** Upward frequency sweep coupled with a $12\text{ Hz}$ amplitude-modulated sinusoidal shimmer.
+- **Energy Charge:** Upward frequency sweep coupled with a $12\text{ Hz}$ amplitude-modulated sinusoidal shimmer.
 - **Bullet Flyby (Whiz):** High-speed Doppler whoosh passing within centimeters of the listener's ear with instant frequency inversion.
 
 ### 2.4 Multi-Stage Explosion Physics & Shockwave Propagation

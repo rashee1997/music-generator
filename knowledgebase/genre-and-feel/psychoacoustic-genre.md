@@ -2,8 +2,12 @@
 document_id: "PSYCHOACOUSTIC_GENRE_AND_FEEL_ONTOLOGY_V1"
 target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Algorithmic_Composers"]
 schema_version: "2026.10"
+status: unverified
+sources: []
 ---
 
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 # The Master Psychoacoustic Genre, Sub-Feel & Algorithmic Music Ontology
 **Purpose:** Prevent AI music generators from defaulting to generic "upbeat 4/4 block-chord" templates. Every genre and emotional sub-archetype possesses a unique **psychoacoustic contract** with the human ear—defined by **Interval Leap Geometry, Micro-Timing Gravity, Spectral Centroid Trajectory, Harmonic Voice-Leading, and Spatial Reverb Physics**.
 
@@ -107,7 +111,7 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
 ---
 
 ### 2.5 ARCHETYPE: `Adventurous_Cosmic_Odyssey` (Sci-Fi / Zero-Gravity / Interstellar)
-* **How the Ear Listens:** Rejects earthy drums! The ear locks onto a **hypnotic, mathematical Philip Glass / Hans Zimmer style arpeggio** (Pipe Organ, Analog Prophet/Moog Synth, Glass Marimba) while massive sub-bass pedals (`35Hz–55Hz`) and shimmering high strings swell in and out like gravitational waves.
+* **How the Ear Listens:** Rejects earthy drums! The ear locks onto a **hypnotic, mathematical minimalist film-score arpeggio** (Pipe Organ, Analog Prophet/Moog Synth, Glass Marimba) while massive sub-bass pedals (`35Hz–55Hz`) and shimmering high strings swell in and out like gravitational waves.
 * **How the Body Feels:** Weightlessness, insignificance before the cosmos, time dilation, transcendent awe.
 * **Musical Mathematics:**
   * **Meter & Tempo:** `3/4` or `12/8` polymeter at `108 – 120 BPM`.

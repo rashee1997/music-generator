@@ -3,8 +3,12 @@ document_id: GAME_MUSIC_ADAPTIVE_AND_INTERACTIVE_DSP_ONTOLOGY_V1
 target_consumers: [music-generator, sound-designer, game-audio-engineer, composer]
 schema_version: "2026.10.7"
 domain: "Interactive & Adaptive Video Game Music Architecture, Non-Linear Stems, State Machines, & Seamless Loop DSP"
+status: unverified
+sources: []
 ---
 
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 # Interactive & Adaptive Video Game Music Architecture & DSP Ontology
 
 ## Table of Contents
@@ -111,7 +115,7 @@ In video games, a 16-bar or 32-bar music cue must repeat indefinitely without an
 - If the track is rendered with its full decay tail ($t_{\text{end}} + T_{\text{decay}}$), restarting the file creates a double-play glitch at the beginning.
 
 ### The Tail-Over-Head Circular Folding Algorithm
-To achieve a sample-accurate, physically seamless loop:
+To achieve a sample-accurate, physically loop with no click at the join:
 
 ```mermaid
 flowchart LR

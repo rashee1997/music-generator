@@ -2,8 +2,12 @@
 document_id: "PAN_ARAB_MAQAM_IQAAT_DSP_ONTOLOGY_V1"
 target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Microtonal_Engines"]
 schema_version: "2026.10.1"
+status: unverified
+sources: []
 ---
 
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 # The Pan-Arab Music Psychoacoustic & Algorithmic DSP Knowledge Base
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Microtonal *Maqam* Modeling, Regional *Iqa'at* (Rhythmic Cycles), and Global/Indian/Western Fusions.
 
@@ -264,7 +268,7 @@ REGIONAL_IQAAT = {
 
 ## 6. Cross-Cultural Fusion Matrix: How to Fuse Regional Arabic with Tamil & Western Styles
 
-Since your engine specializes in cross-cultural algorithmic synthesis, here are the **4 Ultimate Fusion Pairings**:
+Since your engine specializes in cross-cultural algorithmic synthesis, here are the **4 Fusion Pairings**:
 
 1. **Gulf *Khaleeji Samri/Bandari* (6/8) $\times$ Tamil *Dappankoothu* (6/8):**
    * **Why it's explosive:** Both Gulf *Bandari/Samri* and Tamil *Kuthu* operate on a galloping **6/8 (12-step) compound meter** and share historical Indian Ocean maritime roots!

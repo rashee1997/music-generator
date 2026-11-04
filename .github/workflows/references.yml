@@ -18,3 +18,5 @@ jobs:
         run: python tests/check_references.py
       - name: Every file has front matter
         run: python scripts/find_references.py --check
+      - name: Knowledge base files are listed, sourced and linked
+        run: python tests/check_kb.py

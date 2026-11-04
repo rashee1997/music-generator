@@ -2,8 +2,12 @@
 document_id: "DYNAMIC_MUSICAL_FLOW_AND_EXTENDED_GENRE_ONTOLOGY_V2"
 target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Autonomous_Arrangers"]
 schema_version: "2026.10.2"
+status: unverified
+sources: []
 ---
 
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 # The Universal Dynamic Musical Flow Engine & Extended Genre Ontology (Lo-Fi, Ambient, Horror, Jazz, Rock, Gaming)
 **Purpose:**
 1. Expand the AI Agent's sub-feel vocabulary across **Lo-Fi, Ambient, Horror/Suspense, Jazz, Rock/Metal, and Gaming Boss Themes**.

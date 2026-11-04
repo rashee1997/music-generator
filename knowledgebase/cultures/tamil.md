@@ -2,8 +2,12 @@
 document_id: "TAMIL_CARNATIC_KUTHU_DSP_ONTOLOGY_V1"
 target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Ethnomusicology_Engines"]
 schema_version: "2026.10.1"
+status: unverified
+sources: []
 ---
 
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 # The Tamil Music Psychoacoustic & Algorithmic DSP Knowledge Base
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Algorithmic Composition, Humanization Matrices, and Cross-Cultural Fusion.
 
@@ -19,7 +23,7 @@ schema_version: "2026.10.1"
   - [2.5 Oppari (Ritual Lament / Dark Kuthu)](#25-oppari-ritual-lament--dark-kuthu)
 - [3.0 Western & Global Fusion Blueprints (How to Blend Without Losing Tamil Identity)](#3-western--global-fusion-blueprints-how-to-blend-without-losing-tamil-identity)
   - [3.1 Arabic-Tamil Kuthu (The "Halamithi" / Middle-East Street Fusion)](#31-arabic-tamil-kuthu-the-halamithi--middle-east-street-fusion)
-  - [3.2 Neo-Classical / Baroque + Carnatic (Ilaiyaraaja / A.R. Rahman Blueprint)](#32-neo-classical--baroque--carnatic-ilaiyaraaja--ar-rahman-blueprint)
+  - [3.2 Neo-classical / Baroque + Carnatic](#32-neo-classical--baroque--carnatic)
   - [3.3 Trap / Hip-Hop / Drill + Chennai Gaana (Santhosh Narayanan Style)](#33-trap--hip-hop--drill--chennai-gaana-paal-dabba--asal-kolaar--santhosh-narayanan-style)
   - [3.4 EDM / Mass-Kuthu / Synthwave (Anirudh Ravichander Blueprint)](#34-edm--mass-kuthu--synthwave-anirudh-ravichander-blueprint)
   - [3.5 Jazz / R&B / Lo-Fi + Carnatic (Pradeep Kumar Style)](#35-jazz--rb--lo-fi--carnatic-pradeep-kumar--sean-roldan--karthik-style)
@@ -126,7 +130,7 @@ When fusing Tamil genres with Western/Global styles in code, **Rule #1** is: *Ke
   * **Drop:** Transition from 4/4 Arabic *Malfuf* into **6/8 Tamil Dappankoothu** (*Parai + Thavil + Urumi*) while keeping an **Arabic Ney (breathy flute) or Mizmar** trading phrases with a **Tamil Nadaswaram**.
   * **Psychoacoustic Glue:** Layer Arabic **Riq (tambourine)** over Tamil **Salangai (ankle bells)** in the `8kHz–12kHz` band.
 
-### 3.2 Neo-Classical / Baroque + Carnatic (*Ilaiyaraaja / A.R. Rahman Blueprint*)
+### 3.2 Neo-classical / Baroque + Carnatic
 * **Why It Works:** Both Baroque music (Bach/Vivaldi) and Carnatic music are **contrapuntal and linear** rather than block-chordal.
 * **The Fusion Formula:**
   * **Melody:** Pure Carnatic Raga (e.g., *Kalyani* or *Keeravani* `[0, 2, 3, 5, 7, 8, 11]`) with full *Gamaka* pitch-bends on Flute or Solo Violin.

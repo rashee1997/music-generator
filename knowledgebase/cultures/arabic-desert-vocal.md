@@ -2,19 +2,23 @@
 document_id: "ARABIC_DESERT_VOCAL_AND_MAGICAL_CHORDS_ONTOLOGY_V1"
 target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Formant_Vocal_Engines"]
 schema_version: "2026.10.1"
+status: unverified
+sources: []
 ---
 
-# The Arabic Desert Vocal ("Deep Ooooo / Aaaaah") & Magical *Maqam* Chord DSP Knowledge Base
-**Scope:** Acoustic & Anatomical Physics of the Deep Arabic Desert Voice (*Mawwal, Yaa Leil, Nahham, Sufi/Bedouin Desert Echo*) + The Mathematics of "Magical Desert Chords" + Pure-Python Synthesis Code.
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+# The Arabic Desert Vocal ("Deep Ooooo / Aaaaah") & *Maqam* Chord DSP Knowledge Base
+**Scope:** Acoustic & Anatomical Physics of the Deep Arabic Desert Voice (*Mawwal, Yaa Leil, Nahham, Sufi/Bedouin Desert Echo*) + The Mathematics of "Desert Chords" + Pure-Python Synthesis Code.
 
 ---
 
 ## Table of Contents (Machine-Parsable Index)
 - [1.0 Why the Arabic "Ooooo — Aaaaah" Sounds Different from Every Other Vocal on Earth](#1-why-the-arabic-ooooo--aaaaah-sounds-different-from-every-other-vocal-on-earth)
-- [2.0 The Secret of "Magical Desert Chords" (Harmonizing Without Ruining the Maqam)](#2-the-secret-of-magical-desert-chords-how-to-harmonize-arabic-vocals-without-ruining-the-maqam)
-  - [2.1 The 5 Magical Desert Chord Formulas](#21-the-5-magical-desert-chord-formulas-semitone--microtone-offsets-from-root-0)
+- [2.0 "Desert Chords" (Harmonizing Without Ruining the Maqam)](#2-the-secret-of-magical-desert-chords-how-to-harmonize-arabic-vocals-without-ruining-the-maqam)
+  - [2.1 The 5 Desert Chord Formulas](#21-the-5-magical-desert-chord-formulas-semitone--microtone-offsets-from-root-0)
 - [3.0 The 4 Signature Arabic Vocal Melodic Ornaments (Zakhrafa)](#3-the-4-signature-arabic-vocal-melodic-ornaments-zakhrafa)
-- [4.0 Complete Pure-Python DSP Module: The Arabic Desert Vocal & Magical Chord Engine](#4-complete-pure-python-dsp-module-the-arabic-desert-vocal--magical-chord-engine)
+- [4.0 Complete Pure-Python DSP Module: The Arabic Desert Vocal & Chord Engine](#4-complete-pure-python-dsp-module-the-arabic-desert-vocal--magical-chord-engine)
 - [5.0 Application Architecture & Cross-Cultural Fusion](#5-how-to-use-this-in-your-arabic-tamil-kuthu-track-v40-idea)
 
 ---
@@ -33,13 +37,13 @@ If you synthesize a standard Western `"Oooo"` (`[u]`) or `"Aaaah"` (`[a]`), it s
 
 ---
 
-## 2. The Secret of "Magical Desert Chords" (How to Harmonize Arabic Vocals Without Ruining the *Maqam*)
+## 2. "Desert Chords" (How to Harmonize Arabic Vocals Without Ruining the *Maqam*)
 
 Traditional Arabic music didn't use Western triads (`Major / Minor`), because a standard Major third (`400 cents`) or Minor third (`300 cents`) clashes with the desert mysticism of *Hijaz*, *Bayati*, and *Saba*.
 
-Modern cinematic and Arabic-fusion producers (from *A.R. Rahman* and *Hans Zimmer* to *Amr Diab* and *Khaleeji* orchestral arrangements) discovered **5 Magical Desert Chord Voicings** that make deep `"Ooooo / Aaaaah"` vocals sound colossal and otherworldly:
+Cinematic and Arabic-fusion arrangements use **5 desert chord voicings** that make deep `"Ooooo / Aaaaah"` vocals sound colossal and otherworldly:
 
-### 2.1 The 5 Magical Desert Chord Formulas (Semitone & Microtone Offsets from Root `0`)
+### 2.1 The 5 Desert Chord Formulas (Semitone & Microtone Offsets from Root `0`)
 
 1. **The "Mirage Sus(b2)" Chord (*Hijaz / Phrygian Mystery*):**
    * **Voicing:** `[-12, 0, 7, 12, 13, 19]` *(Sub-Root, Root, 5th, Octave, **Flat-9th `b2`**, High 5th)*
@@ -68,14 +72,14 @@ To make your Python algorithm sing like a real human *Mutrib* (master vocalist) 
    * Starts on the **5th (`7.0`)** with a closed `"Yaaa/Oooo"`, scoops up to the **b6 (`8.0`)** for `180ms`, settles back onto the **5th (`7.0`)** blooming into a wide pharyngeal `"Aaaaah"` with deep `5.5Hz` vibrato, then cascades down through `5 -> 4 -> 1 -> 0` with a `25ms` sob-catch on each step!
 2. **The *Tahcheen* (Throaty Aspirated H-Pulse):**
    * Instead of sliding smoothly through a fast run, the singer pulses their diaphragm with rapid aspirate `"Ha-ha-ha-ha"` breath bursts (`5.5 pulses per second`) synchronized with the pitch steps.
-3. **The *Qafla* (The Magical Cadence Resolution):**
+3. **The *Qafla* (The Cadence Resolution):**
    * Before landing on the final Root note (`0.0`), the voice drops below the root to the **Sub-Tone (`-2.0` or `-1.0`)**, pauses for a micro-breath (`40ms`), leaps up to the **3rd (`4.0` or `1.5`)**, and melts down into `0.0`.
 4. **Formant-Tracked Breath Whisper (*Baha* بحة — Vocal Hoarseness):**
    * In Arabic aesthetics, a crystal-clear voice is considered less emotional than a voice with **Baha** (a warm, smoky, sandy hoarseness in the `1.8kHz–3.5kHz` band that sounds like desert wind inside the throat).
 
 ---
 
-## 4. Complete Pure-Python DSP Module: The Arabic Desert Vocal & Magical Chord Engine
+## 4. Complete Pure-Python DSP Module: The Arabic Desert Vocal & Chord Engine
 
 You can drop this self-contained Python module (`NumPy` + `SciPy`) directly into your existing code. It includes:
 1. **`synth_arabic_desert_vocal()`**: Generates the deep pharyngeal `"Ooooo -> Aaaaah"` vocal with dynamic formant morphing, *Baha* sandy breathiness, *Buka'* weeping catches, and `5.5Hz` *Tarab* vibrato.
@@ -200,7 +204,7 @@ def synth_magical_desert_chord_pad(
     sr: int = 44100
 ) -> tuple[np.ndarray, np.ndarray]:
     """
-    Synthesizes the stereo 'Magical Desert Vocal Chord Pad' — a lush choir of deep male/female
+    Synthesizes the stereo 'Desert Vocal Chord Pad' — a lush choir of deep male/female
     desert 'Ooooo' & 'Aaaaah' voices tuned to exact Maqam intervals with Dune Canyon Reverb.
     """
     DESERT_CHORDS = {

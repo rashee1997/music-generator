@@ -2,8 +2,12 @@
 document_id: "EAST_ASIAN_CHINESE_JAPANESE_DSP_ONTOLOGY_V1"
 target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Pentatonic_Engines"]
 schema_version: "2026.10.1"
+status: unverified
+sources: []
 ---
 
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 # The East Asian (Chinese & Japanese) Music Psychoacoustic & Algorithmic DSP Knowledge Base
 **Scope:** Ancient Chinese (*Yayue, Guqin, Jiangnan, Opera*) & Japanese (*Gagaku, Zen Shakuhachi, Min'yō, Kabuki*) $\rightarrow$ Modern *Guofeng* Trap/EDM, J-Rock/Anime (*Royal Road*), City Pop, and Chiptune/Future Bass.
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Pentatonic/Heptatonic Modal Engines, Acoustic Membrane/String Modeling, and Global World Fusions.
@@ -27,7 +31,7 @@ schema_version: "2026.10.1"
   - [4.2 The Japanese Tsugaru Shamisen Synthesizer](#42-the-japanese-tsugaru-shamisen-synthesizer-bachi-skin-slap--sawari-neck-buzz)
   - [4.3 The Chinese Beijing Opera Gong (Da Luo & Xiao Luo)](#43-the-chinese-beijing-opera-gong-da-luo-downward-pitch-crash--xiao-luo-upward-slide)
   - [4.4 East Asian Rhythmic & Groove Matrices](#44-east-asian-rhythmic--groove-matrices-16-step--12-step)
-- [5.0 High-Voltage Cross-Cultural Fusion Blueprints](#5-high-voltage-cross-cultural-fusion-blueprints-east-asia--times-tamil--times-arabic--times-africa)
+- [5.0 Cross-cultural Fusion Blueprints](#5-high-voltage-cross-cultural-fusion-blueprints-east-asia--times-tamil--times-arabic--times-africa)
 
 ---
 
@@ -57,7 +61,7 @@ Every traditional and modern *Guofeng* Chinese melody is built on five core note
 | **Zhi Mode (徵调)** | `[0, 2, 5, 7, 9]` | Joyful, pastoral, folk festival, soaring mountain peaks. | Passing notes at `4` and `10` or `11`. |
 | **Yu Mode (羽调)** | `[0, 3, 5, 7, 10]` | Deeply emotional, romantic, Wuxia martial-arts drama, tearful. | Passing notes at `2` (9th) and `8` (b6). *(Most popular in modern C-Pop/Guofeng!)* |
 
-> ** The Golden Algorithmic Rule of the Guzheng & Erhu ("Pressing the String" — *Rou Xian* / *An Yin*):**
+> ** The Rule for the Guzheng & Erhu ("Pressing the String" — *Rou Xian* / *An Yin*):**
 > A Guzheng zither is tuned strictly to the 5 pentatonic notes `[0, 2, 4, 7, 9]`. There is **no physical string** for `5` (the 4th, *Fa*) or `11` (the 7th, *Ti*)! To play `5` or `11`, the player plucks `4` (*Mi*) or `9` (*La*) with the right hand and **presses the string down behind the bridge with the left hand**, bending the pitch up by `+100` to `+200 cents`!
 > **In Python:** Never trigger scale degrees `5` or `11` with a fresh pluck transient—always glide into them from `4` or `9`!
 
@@ -270,7 +274,7 @@ EAST_ASIAN_GROOVES = {
 
 ---
 
-## 5. High-Voltage Cross-Cultural Fusion Blueprints (East Asia $\times$ Tamil $\times$ Arabic $\times$ Africa)
+## 5. Cross-cultural Fusion Blueprints (East Asia $\times$ Tamil $\times$ Arabic $\times$ Africa)
 
 Look at the mathematical bridges between your knowledge bases—some of these scales and instruments are **secret twins across continents**:
 

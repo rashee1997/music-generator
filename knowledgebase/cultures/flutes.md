@@ -25,8 +25,14 @@ regions_covered:
   - Celtic / Ireland
   - Oceania / Aotearoa (Māori)
   - Polar / Antarctica (Glacial & Avian Bone Acoustics)
+status: unverified
+sources: []
+target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers"]
+schema_version: "2026.11"
 ---
 
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 # Global Flute Procedural Synthesis & Cultural Soul Knowledge Base
 
 ## Table of Contents

@@ -2,8 +2,12 @@
 document_id: "PROGRAMMATIC_AUDIO_CLONING_AND_TIMBRAL_ANALYSIS_ONTOLOGY_V1"
 target_consumers: ["AI_Audio_Agents", "Reverse_DSP_Engines", "MIR_Feature_Extractors"]
 schema_version: "2026.10.6"
+status: unverified
+sources: []
 ---
 
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 # The Programmatic Music & Instrument Cloning Knowledge Base
 **Sub-title:** Mathematical Frameworks, Spectral Algorithms, and Pure-Python DSP for Reverse-Engineering Any Audio Reference Without Human Ears.
 **Core Purpose:** Convert any arbitrary audio signal ($x[n]$) into an exact, reproducible procedural code recipe: Melodic Micro-Tuning, Harmonic Partials, Attack Transients, Formant Envelopes, Groove Micro-Shifts, and Reverb $T_{60}$ Decay.

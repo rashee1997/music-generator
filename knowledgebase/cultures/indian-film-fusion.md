@@ -2,24 +2,31 @@
 document_type: "algorithmic_knowledge_base"
 system_id: "ARR-GMKB-v4.0"
 domain: "computational_musicology_and_dsp"
-style_profile: "A.R. Rahman (90s–Present Acoustic-Electronic Fusion Aesthetic)"
+style_profile: "Indian film fusion (1990s to present: acoustic-electronic)"
 target_architecture: "Multi-Agent Python Symbolic & DSP Audio Engine"
 encoding: "UTF-8"
 ai_parsable: true
 research_foundations:
   - "Two-Component Stage-Dance Gamaka Modeling (Subramanian et al.)"
   - "Modal Jazz & Raga Vadi-Samvadi Pedal-Point Harmonization"
-  - "Rhythm-First Composition & Keith Peters Syncopated Ostinato Bass Topology"
-  - "H. Sridhar / Panchathan Record Inn Psychoacoustic Mixing & Spectral Carving"
+  - "Rhythm-first composition and the syncopated ostinato bass"
+  - "Bus-separated recording and spectral carving in the film mix"
 python_dependencies:
   - numpy>=1.24.0
   - scipy>=1.10.0
   - mido>=1.2.10
   - librosa>=0.10.0
   - pedalboard>=0.7.0
+document_id: "INDIAN-FILM-FUSION"
+status: unverified
+sources: []
+target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers"]
+schema_version: "2026.11"
 ---
 
-# A.R. Rahman Generative Music Knowledge Base (ARR-GMKB)
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
+# Indian film fusion: the technique
 
 > The `*_engine.py` names in this document are code listings inside it, not scripts in `scripts/`.
 > The skill's own versions of these ideas live in `theory.py`, `world.py`, `humanize.py`, `compose.py` and `direct.py`.
@@ -30,14 +37,15 @@ python_dependencies:
 3. [Module 2: Modal Harmony, Slash Chords & Counterpoint Engine](#3-module-2-modal-harmony-slash-chords--counterpoint-engine)
 4. [Module 3: Tala, Euclidean Polyrhythms & Ostinato Bass Engine](#4-module-3-tala-euclidean-polyrhythms--ostinato-bass-engine)
 5. [Module 4: Macro-Structure, Layering & Jingle-Drop Arrangement Engine](#5-module-4-macro-structure-layering--jingle-drop-arrangement-engine)
-6. [Module 5: H. Sridhar Psychoacoustic DSP & Spatial Mixing Engine](#6-module-5-h-sridhar-psychoacoustic-dsp--spatial-mixing-engine)
+6. [Module 5: the film-mix DSP engine](#6-module-5-the-film-mix-dsp-engine)
 7. [Master JSON Schema & Pipeline Orchestrator](#7-master-json-schema--pipeline-orchestrator)
 
 ---
 
 ## 1. System Architecture & Execution Pipeline
 
-Unlike conventional composers who begin exclusively with a linear melody, A.R. Rahman frequently initiates composition from **rhythm and sonic texture**, building a dense, multi-layered palette designed to "fully occupy the listener's mind" while keeping the core melody pure and emotionally direct.
+These scores often begin from **rhythm and sonic texture** rather than a finished melody, building a dense, multi-layered
+palette under a melody kept plain and direct.
 
 To prevent the "robotic MIDI" uncanny valley, this architecture decouples **Discrete Symbolic Events** from **Continuous Microtonal and Psychoacoustic Space** across five sequential Python engines:
 
@@ -54,7 +62,7 @@ To prevent the "robotic MIDI" uncanny valley, this architecture decouples **Disc
 [Module 4: Arrangement Graph Engine]  --> Applies density curves, "Pre-Chorus Vacuum Drops", & Call-Response
                |
                v
-[Module 5: Sridhar DSP Mixing Engine] --> Applies dynamic spectral carving, Haas widening, & sub-bass alignment
+[Module 5: film-mix DSP engine] --> Applies dynamic spectral carving, Haas widening, & sub-bass alignment
 ```
 
 ---
@@ -62,7 +70,7 @@ To prevent the "robotic MIDI" uncanny valley, this architecture decouples **Disc
 ## 2. Module 1: Raga, Pitch & Two-Component Gamaka Engine
 
 ### 2.1 Raga-Mode Mapping & Vadi/Samvadi Weights
-Rahman bridges Indian classical music and global genres by selecting Carnatic/Hindustani ragas that naturally accommodate modal chord substitutions. Notes are weighted by **Vadi** (King note, probability multiplier $\approx 1.8\times$) and **Samvadi** (Queen note, multiplier $\approx 1.4\times$).
+The technique bridges Indian classical music and global genres by selecting Carnatic/Hindustani ragas that naturally accommodate modal chord substitutions. Notes are weighted by **Vadi** (King note, probability multiplier $\approx 1.8\times$) and **Samvadi** (Queen note, multiplier $\approx 1.4\times$).
 
 | Raga Name | Western Modal Equivalent | Semitone Array $S$ (Root = 0) | Vadi / Samvadi | Signature Mood & Musical Reference |
 | :--- | :--- | :--- | :--- | :--- |
@@ -91,7 +99,7 @@ Standard MIDI pitch quantization destroys the soul of Indian melodies. We model 
    $$f_{\text{dance}}(t) = A_{\text{cents}} \cdot \sin\left(\frac{\pi t}{T_{\text{dur}}}\right) \cdot \sin(2\pi \nu_{\text{gam}} t)$$
    Where $\nu_{\text{gam}} \in [4.8, 5.8]\text{ Hz}$ mimics the human vocal / bansuri flute oscillation rate.
 
-### 2.4 Implementation listing (`raga_gamaka_engine.py`; not a shipped script)
+### 2.4 Implementation listing (`raga_gamaka_engine (listed below)`; not a shipped script)
 
 ```python
 import numpy as np
@@ -211,12 +219,12 @@ class RagaGamakaEngine:
 ## 3. Module 2: Modal Harmony, Slash Chords & Counterpoint Engine
 
 ### 3.1 Raga-Safe Harmonic Voicing Rules
-Western functional harmony ($ii \rightarrow V^7 \rightarrow I$) often clashes with Indian Ragas because dominant 7th chords introduce chromatic leading tones that destroy the Raga's modal identity. Rahman solves this through three core harmonic devices:
+Western functional harmony ($ii \rightarrow V^7 \rightarrow I$) often clashes with Indian Ragas because dominant 7th chords introduce chromatic leading tones that destroy the Raga's modal identity. Three harmonic devices solve this:
 
 1. **Pedal-Point Slash Chords:** Keeping the bass note locked on the tonic (*Sa*, `0`) or fifth (*Pa*, `7`) while shifting upper triads derived strictly from the Raga's pitch set.
    * *Example in C Kalyani (Lydian):* $C\text{maj9} \rightarrow D/C \rightarrow Bm7/C \rightarrow C\text{sus2}$.
 2. **Quartal & Suspended Voicings (`sus2` / `sus4` / `add9`):** Omitting the 3rd in keyboard pads (`[0, 2, 7]` or `[0, 5, 7]`). Because the 3rd (*Ga*) and 7th (*Ni*) in Indian music carry heavy microtonal *Kampita* oscillations, leaving them out of the fixed-pitch backing chords prevents dissonance and creates an open, airy acoustic space.
-3. **Chromatic Modal Borrowing (The "Surprise Bridge" Shift):** In the *Charanam* (verse/bridge), Rahman frequently modulates temporarily to the $\flat VI$ or $\flat III$ major chord to create a sudden cinematic lift before smoothly resolving back to the Raga's tonic via a suspended chord.
+3. **Chromatic Modal Borrowing (The "Surprise Bridge" Shift):** In the *Charanam* (verse/bridge), The score often modulates temporarily to the $\flat VI$ or $\flat III$ major chord to create a sudden cinematic lift before smoothly resolving back to the Raga's tonic via a suspended chord.
 
 ### 3.2 Mathematical Voicing Cost Function
 To select the optimal chord voicing $C_t = \{c_1, c_2, c_3, c_4\}$ for a melody note $m_t$, the engine minimizes a multi-objective cost function:
@@ -227,7 +235,7 @@ $$J(C_t, C_{t-1}, m_t) = w_{\text{vl}} \sum_{k=1}^{4} |c_{t,k} - c_{t-1,k}| + w_
 * $w_{\text{clash}}$: Heavy penalty for minor-2nd ($1$ semitone) clashes against the active melody note.
 * $w_{\text{sus}}$: Reward for `sus2`, `sus4`, and slash-pedal voicings.
 
-### 3.3 Implementation listing (`harmony_voicing_engine.py`; not a shipped script)
+### 3.3 Implementation listing (`harmony_voicing_engine (listed below)`; not a shipped script)
 
 ```python
 import numpy as np
@@ -310,7 +318,7 @@ class HarmonyVoicingEngine:
 ## 4. Module 3: Tala, Euclidean Polyrhythms & Ostinato Bass Engine
 
 ### 4.1 Rhythm-First Architecture & Carnatic Tala Grids
-Rahman often builds a track starting with an unconventional percussive groove. He superimposes asymmetric Indian *Talas* over Western electronic breakbeats, Reggae skanks, or New Jack Swing grooves:
+The arrangement often starts with an unconventional percussive groove. He superimposes asymmetric Indian *Talas* over Western electronic breakbeats, Reggae skanks, or New Jack Swing grooves:
 
 * **Adi Tala (8 beats / 32 sixteenth-note ticks):** Subdivided as $4 + 2 + 2$, or internally accented via *Tisra Nadai* ($3+3+2$ Euclidean-style pulse).
 * **Rupaka Tala (6 beats / 24 ticks):** Subdivided as $2 + 4$ (Used in swaying ballads like *Vennilave* or *Tu Hi Re*).
@@ -325,12 +333,12 @@ Quantized drum machines sound sterile. Human drummers (such as Sivamani or tradi
    Given a discrete onset time $t_i$, the humanized timestamp $\hat{t}_i$ is computed by filtering Gaussian white noise $w[i] \sim \mathcal{N}(0, 1)$ through a $1/f^{\alpha/2}$ spectral shaping filter ($\alpha \approx 1.0$):
    $$\hat{t}_i = t_i + \sigma_{\text{ms}} \cdot \mathcal{F}^{-1}\left\{ \frac{\mathcal{F}\{w\}(f)}{\sqrt{f}} \right\}_i + \Delta_{\text{swing}}(i)$$
 
-### 4.3 The "Keith Peters" Syncopated Bass Ostinato
-A defining hallmark of 90s and 2000s Rahman tracks (*Muqabala*, *Hamma Hamma*, *Urvasi*, *Dil Se*) is the interplay between acoustic/electric bass (often played by his longtime bassist Keith Peters) and the drum groove. The bassline uses:
+### 4.3 The syncopated bass ostinato
+A defining hallmark of 1990s and 2000s film tracks is the interplay between acoustic/electric bass  and the drum groove. The bassline uses:
 * **Sixteenth-note Ghost Notes:** Percussive muted plucks immediately preceding strong beats.
 * **Octave & Fifth Syncopation:** Jumping from the root ($0$) to the octave ($+12$) or flat-7th ($+10$) on off-beat sixteenth subdivisions (`tick % 4 in [1, 3]`).
 
-### 4.4 Implementation listing (`groove_tala_engine.py`; not a shipped script)
+### 4.4 Implementation listing (`groove_tala_engine (listed below)`; not a shipped script)
 
 ```python
 import numpy as np
@@ -414,7 +422,7 @@ class GrooveTalaEngine:
                 "vel": int(np.clip(shaker_vel + np.random.randint(-8, 8), 35, 120))
             })
 
-            # 4. Keith Peters Syncopated Bass Ostinato
+            # 4. Syncopated bass ostinato
             if local_step in self.tala["accents"]:
                 # Choose Root, Fifth (+7), or Octave (+12) on off-beats
                 interval = 0 if local_step == 0 else np.random.choice([0, 7, 10, 12], p=[0.45, 0.25, 0.15, 0.15])
@@ -443,16 +451,16 @@ class GrooveTalaEngine:
 ## 5. Module 4: Macro-Structure, Layering & Jingle-Drop Arrangement Engine
 
 ### 5.1 Non-Linear Song Topology & Layering Philosophy
-Rahman famously stated that modern listeners think in multiple layers, so he designs arrangements with evolving counter-melodies and textures beneath the lead vocal to keep the brain occupied. Furthermore, drawing from his early career composing 30-second advertising jingles, he disrupted the rigid Indian *Pallavi – Anupallavi – Charanam* template with three structural innovations:
+the arrangement famously stated that modern listeners think in multiple layers, so he designs arrangements with evolving counter-melodies and textures beneath the lead vocal to keep the brain occupied. Furthermore, drawing from his early career composing 30-second advertising jingles, he disrupted the rigid Indian *Pallavi – Anupallavi – Charanam* template with three structural innovations:
 
 1. **The "Pre-Chorus Vacuum Drop" (Acoustic Silence Hook):**
    Immediately before the main *Pallavi* (Chorus) hook or at the end of a buildup, all percussion and bass tracks are muted for $0.5$ to $1.0$ bars ($2\text{ to }4\text{ beats}$), leaving only a solo vocal syllable, a breathy flute decay, or a reversed reverb tail before the full rhythm section slams back in (e.g., *Muqabala*, *Urvasi*, *Chaiyya Chaiyya*).
 2. **Asymmetric Interludes (BGM 1 vs. BGM 2):**
-   In pre-Rahman cinema, Interlude 1 and Interlude 2 often used similar orchestral templates. In Rahman's scores, if Interlude 1 is a soaring acoustic solo (e.g., Naveen Kumar's flute or solo violin), Interlude 2 contrasts it entirely with a Sufi *Qawwali* vocal *Alaap*, a Continuum Fingerboard slide, or a polyrhythmic percussion breakdown.
+   In earlier cinema, Interlude 1 and Interlude 2 often used similar orchestral templates. In the score's scores, if Interlude 1 is a soaring acoustic solo (a solo bansuri or violin), Interlude 2 contrasts it entirely with a Sufi *Qawwali* vocal *Alaap*, a Continuum Fingerboard slide, or a polyrhythmic percussion breakdown.
 3. **End-of-Line Instrumental Call-and-Response (*Nadais*):**
    Whenever the lead vocal rests at the end of a lyrical phrase (typically bars 2 and 4), a solo acoustic instrument (flute, *Shenai*, *Santoor*, or nylon guitar) immediately fills the gap with a 4-to-6 note micro-ornament.
 
-### 5.2 Implementation listing (`arrangement_graph_engine.py`; not a shipped script)
+### 5.2 Implementation listing (`arrangement_graph_engine (listed below)`; not a shipped script)
 
 ```python
 class ArrangementGraphEngine:
@@ -506,7 +514,7 @@ class ArrangementGraphEngine:
     def apply_vacuum_drop(self, events, section_end_time_sec, beat_duration_sec, drop_beats):
         """
         Mutes all rhythmic and bass events during the final `drop_beats` of a section
-        to create the signature A.R. Rahman pre-hook silence.
+        to create the pre-hook silence.
         """
         if drop_beats <= 0:
             return events
@@ -520,15 +528,16 @@ class ArrangementGraphEngine:
 
 ---
 
-## 6. Module 5: H. Sridhar Psychoacoustic DSP & Spatial Mixing Engine
+## 6. Module 5: the film-mix DSP engine
 
 ### 6.1 The Panchathan Record Inn Sonic Signature
-The reason A.R. Rahman's 1990s scores (*Roja*, *Bombay*, *Dil Se*, *Taal*) sound like modern audiophile recordings is due to the groundbreaking engineering of the late **H. Sridhar** (a mathematics graduate turned chief audio engineer) and Rahman at Panchathan Record Inn. They replaced muddy, single-room orchestral recordings with multi-track acoustic isolation and precise frequency allocation:
+1990s Indian film scores that still sound like modern audiophile recordings used bus-separated recording and
+precise frequency allocation instead of one room:
 
 1. **Dynamic Spectral Carving (Anti-Masking EQ):**
    To allow dense layering without muddiness, backing pads and strings are dynamically scooped in the vocal presence band ($1.2\text{ kHz} - 3.8\text{ kHz}$) proportional to the instantaneous RMS envelope of the lead vocal/melody.
 2. **Bimodal Frequency Smile (Sub-Bass Punch + Shimmering Air):**
-   * **Sub-Bass ($40\text{ Hz} - 90\text{ Hz}$):** Tight, phase-locked mono low-end (Rahman famously installed specialized Bag End subwoofers at Panchathan to monitor deep sub-bass extension).
+   * **Sub-Bass ($40\text{ Hz} - 90\text{ Hz}$):** Tight, phase-locked mono low-end (the arrangement famously installed specialized Bag End subwoofers at Panchathan to monitor deep sub-bass extension).
    * **Mud Cut ($220\text{ Hz} - 380\text{ Hz}$):** Aggressive attenuation of boxiness in acoustic drums and guitars.
    * **Crystalline Air Shelf ($> 10\text{ kHz}$):** A $+3.5\text{ dB}$ high-shelf boost on shakers, *ghungroos*, acoustic guitar transients, and breathy vocal harmonics.
 3. **Psychoacoustic Haas Stereo Widening:**
@@ -543,13 +552,13 @@ For backing textures, we boost $S(t)$ by gain $\gamma_{\text{side}} \approx 1.35
 
 $$G_{\text{dB}}(t) = -6.0 \cdot \min\left(1.0, \frac{E_{\text{lead}}(t)}{\theta_{\text{thresh}}}\right)$$
 
-### 6.3 Implementation listing (`sridhar_dsp_engine.py`; not a shipped script)
+### 6.3 Implementation listing (`film_mix_dsp_engine (listed below)`; not a shipped script)
 
 ```python
 import numpy as np
 from scipy.signal import butter, sosfilt, hilbert
 
-class SridharDSPEngine:
+class FilmMixDSPEngine:
     def __init__(self, sample_rate=44100):
         self.sr = sample_rate
 
@@ -570,7 +579,7 @@ class SridharDSPEngine:
 
     def apply_panchathan_spectral_curve(self, audio_stereo):
         """
-        Applies H. Sridhar's signature EQ curve:
+        Applies the film-mix EQ curve (starting values):
         1. High-pass rumble below 32 Hz
         2. Cut lower-mid mud (250 Hz - 360 Hz)
         3. Boost crystalline high-air (> 10 kHz)
@@ -650,7 +659,7 @@ To connect all five modules into an automated AI/Python pipeline, the system exc
 }
 ```
 
-### 7.2 Orchestration listing (`main_arr_generator.py`; not a shipped script)
+### 7.2 Orchestration listing (`main_arr_generator (listed below)`; not a shipped script)
 
 ```python
 import json
@@ -711,7 +720,7 @@ module_id: "ARR-GMKB-Module-6"
 module_name: "Acoustic Physical Modeling & Anti-Piercing Timbre Engine"
 version: "4.0.0"
 domain: "physical_audio_synthesis_and_psychoacoustics"
-style_profile: "A.R. Rahman Organic Acoustic Core (Naveen Kumar Bansuri, Keith Peters Bass, Continuum/Esraj Strings)"
+style_profile: "Indian film acoustic core (bansuri, bass, continuum/esraj strings)"
 encoding: "UTF-8"
 ai_parsable: true
 purpose: "Eliminate plastic MIDI stiffness, static oscillator buzz, brick-wall transients, and ear-piercing 2.5kHz-4.5kHz digital glare"
@@ -726,11 +735,11 @@ python_dependencies:
 ## Table of Contents
 1. [Root-Cause Analysis: Why Standard MIDI Sounds Piercing & Fake](#1-root-cause-analysis-why-standard-midi-sounds-piercing--fake)
 2. [Mathematical Foundations of Organic Acoustic Synthesis](#2-mathematical-foundations-of-organic-acoustic-synthesis)
-3. [Instrument 1: Naveen Kumar-Style Breathy Bansuri Flute Model](#3-instrument-1-naveen-kumar-style-breathy-bansuri-flute-model)
+3. [Instrument 1: breathy bansuri flute model](#3-instrument-1-breathy-bansuri-flute-model)
 4. [Instrument 2: Continuum / Esraj / Bowed String Formant Model](#4-instrument-2-continuum--esraj--bowed-string-formant-model)
 5. [Instrument 3: Extended Karplus-Strong Plucked Veena / Acoustic Guitar](#5-instrument-3-extended-karplus-strong-plucked-veena--acoustic-guitar)
 6. [The Psychoacoustic Anti-Piercing Filter (Fletcher-Munson + Tape Warmth)](#6-the-psychoacoustic-anti-piercing-filter-fletcher-munson--tape-warmth)
-7. [Complete implementation listing: `organic_acoustic_synth.py`](#7-complete-implementation-listing-organic_acoustic_synthpy-not-a-shipped-script)
+7. [Complete implementation listing: `organic_acoustic_synth (listed below)`](#7-complete-implementation-listing-organic_acoustic_synthpy-not-a-shipped-script)
 
 ---
 
@@ -775,9 +784,9 @@ Where $\gamma_1 = 1.0$, $\gamma_2 = 1.6$, $\gamma_3 = 2.4$, and $\gamma_4 = 3.5$
 
 ---
 
-## 3. Instrument 1: Naveen Kumar-Style Breathy Bansuri Flute Model
+## 3. Instrument 1: breathy bansuri flute model
 
-Flautist Naveen Kumar is one of the defining voices of A.R. Rahman's 90s scores (*Roja*, *Bombay*, *Gentleman*). His sound is characterized by:
+The bansuri in these scores (*Roja*, *Bombay*, *Gentleman*) has a sound characterised by:
 1. **Heavy Embouchure Chiff:** Audible breath rush at the start of every phrase.
 2. **Cylindrical Bamboo Bore Harmonics:** Strong fundamental ($k=1$), rich octave ($k=2$, amplitude $0.45$), and soft twelfth ($k=3$, amplitude $0.15$), with almost zero harsh upper harmonics above $4\text{ kHz}$.
 3. **End-of-Note Pitch Dip:** As breath pressure drops at the end of a held note, the pitch naturally dips by $-12\text{ cents}$.
@@ -786,7 +795,7 @@ Flautist Naveen Kumar is one of the defining voices of A.R. Rahman's 90s scores 
 
 ## 4. Instrument 2: Continuum / Esraj / Bowed String Formant Model
 
-Rahman frequently uses the **Haken Continuum Fingerboard**, **Esraj**, **Dilruba**, or solo **Carnatic Violin** for deeply emotional, crying melodies (*Dil Se*, *Taal*, *Lagaan*).
+the arrangement frequently uses the **Haken Continuum Fingerboard**, **Esraj**, **Dilruba**, or solo **Carnatic Violin** for deeply emotional, crying melodies (*Dil Se*, *Taal*, *Lagaan*).
 * Unlike a flute, bowed strings contain rich odd and even harmonics ($a_k = 1/k$), which **will sound like a piercing buzzsaw** unless passed through a **Wooden Body Formant Filter Bank**.
 * We model the resonant spruce/skin cavity using three parallel biquad bandpass resonators centered at:
   * **Formant 1 (Hollow Body Air Cavity):** $285\text{ Hz}$ ($Q = 3.5$)
@@ -820,7 +829,7 @@ Before any synthesized stem leaves Module 6, it passes through a mandatory 3-sta
 
 ---
 
-## 7. Complete implementation listing (`organic_acoustic_synth.py`; not a shipped script)
+## 7. Complete implementation listing (`organic_acoustic_synth (listed below)`; not a shipped script)
 
 This complete, self-contained Python module implements all three physical instrument models and the psychoacoustic anti-piercing filter chain.
 

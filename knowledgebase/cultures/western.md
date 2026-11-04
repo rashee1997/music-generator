@@ -2,8 +2,12 @@
 document_id: "WESTERN_CLASSICAL_CINEMATIC_TRAILER_DSP_ONTOLOGY_V1"
 target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Cinematic_Engines"]
 schema_version: "2026.10.1"
+status: unverified
+sources: []
 ---
 
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 # The Western Music Psychoacoustic & Algorithmic DSP Knowledge Base
 **Scope:** Medieval/Baroque/Classical/Romantic $\rightarrow$ Blues/Jazz/Funk/Rock $\rightarrow$ Hip-Hop/EDM/Synthwave/Modern Pop.
 **Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Functional Harmony & Voice-Leading Engines, Groove Micro-Timing, and Cross-Cultural World Fusions.
@@ -275,5 +279,5 @@ Now that you have all 4 knowledge bases (**Tamil**, **Arabic**, **African**, and
 | :--- | :--- | :--- |
 | **Sub-Bass (`35Hz–110Hz`)** | **Western Trap/Drill Sliding 808** OR **South African Amapiano Log Drum** | Western & South African club genres engineered the cleanest, hardest-hitting sub-bass envelopes in music history. |
 | **Low-Mid & High Percussion (`120Hz–8kHz`)** | **Tamil Kuthu (*Thavil, Parai, Urumi*)** $\times$ **West African 12/8 Bell** $\times$ **Gulf *Safqa* Claps** | Creates an interlocking 3D polyrhythmic street-festival groove that no standard Western 4/4 drum kit can match. |
-| **Chordal Bed / Harmony (`200Hz–1.2kHz`)** | **Western Neo-Soul (`m9`/`m11`)** OR **Baroque/Hans Zimmer Strings** + **Sidechain Pump** | Gives the Western ear the lush vertical chord progressions and cinematic space it craves, while ducking out of the way of the drums. |
+| **Chordal Bed / Harmony (`200Hz–1.2kHz`)** | **Western Neo-Soul (`m9`/`m11`)** OR **Baroque/film strings** + **Sidechain Pump** | Gives the Western ear the lush vertical chord progressions and cinematic space it craves, while ducking out of the way of the drums. |
 | **Lead Melody (`800Hz–4.5kHz`)** | **Tamil *Nadaswaram*** + **Arabic *Ney / Oud*** (with *Gamakas* & *Maqam* Quarter-Tones) + **SuperSaw Octave Layer** | The human ear locks onto the vocal-like microtonal pitch-bends of Tamil & Arabic leads, while a subtle Western SuperSaw layer gives it stadium-sized width. |

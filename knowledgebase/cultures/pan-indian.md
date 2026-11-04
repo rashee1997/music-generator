@@ -2,8 +2,12 @@
 document_id: "PAN_INDIAN_MUSICAL_TRADITIONS_AND_INSTRUMENT_DSP_ONTOLOGY_V1"
 target_consumers: ["AI_Music_Agents", "Python_DSP_Synthesizers", "Ethnomusicology_Engines"]
 schema_version: "2026.10.4"
+status: unverified
+sources: []
 ---
 
+> **Not verified.** These values are a starting point from practice, not a measurement.
+> Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 # 🇮🇳 The Pan-Indian Music Psychoacoustic & Instrument DSP Knowledge Base (Hindustani, Punjabi, Rajasthani, Sufi, Bengali, Western, Northeastern & Non-Tamil South)
 **Purpose:** Complete the Indian Subcontinent musical architecture beyond Tamil Nadu. This document models **Hindustani Classical (*Raga, Thaat, Meend, Jawari, Tabla*)**, **Regional Folk Ecosystems (*Punjab, Rajasthan, Bengal, Gujarat, Maharashtra, Kerala, Assam, Kashmir, Odissi*)**, and **Modern Bollywood / Indie-Electronic Fusions**.
 
@@ -37,7 +41,7 @@ An AI agent must never confuse **Hindustani (North Indian)** and **Carnatic (Sou
 
 | Perceptual Dimension | Carnatic (South India | Carnatic (South Indian / Tamil) | Hindustani (North Indian) | Pure-Python Algorithmic / DSP Rule |
 | :--- | :--- | :--- | :--- |
-| **Pitch Movement Paradigm** | **Oscillatory (*Kampita* / Angular *Gamakas*):** Notes shake vigorously between scale steps; ornaments are fast, rhythmic, and strictly articulated. | **Glissando (*Meend* / Linear Bends):** Notes glide smoothly like silk between intervals without intermediate steps; emphasizes the fluid space between notes. | Replace discrete Carnatic multi-point interpolation with smooth parabolic/cubic-spline glides (`scipy.interpolate.CubicSpline`) with lengths of `150ms–600ms`. |
+| **Pitch movement** | **Oscillatory (*Kampita* / Angular *Gamakas*):** Notes shake vigorously between scale steps; ornaments are fast, rhythmic, and strictly articulated. | **Glissando (*Meend* / Linear Bends):** Notes glide smoothly like silk between intervals without intermediate steps; emphasizes the fluid space between notes. | Replace discrete Carnatic multi-point interpolation with smooth parabolic/cubic-spline glides (`scipy.interpolate.CubicSpline`) with lengths of `150ms–600ms`. |
 | **Rhythmic Architecture** | **Additive & Exacting (*Kanakku* / Calculation):** Polyrhythmic subdivisions (*Nadai*), complex metric shifts, and intricate mathematical resolutions (*Korvais*). | **Cyclic Balance (*Sam* Gravity & Dynamic *Khali*):** Rhythms revolve around a cycle (*Avartan*). Tension builds in the wave-off (*Khali*) and resolves into the primary downbeat (*Sam*). | In Hindustani cycles (e.g., *Teentaal*), program the *Khali* (Step 9 of 16) with open, non-resonant bass, contrasting with the heavy resonant *Ghe* on *Sam* (Step 1). |
 | **Acoustic Drone Ideal** | **Static Foundation:** The Tanpura provides a continuous harmonic reference for horizontal scale tension. | **Sympathetic Resonance Halo (*Jawari* & *Taraf*):** The drone and lead instruments trigger physical overtones in sympathetic strings, filling the room with high-order harmonics. | Add a sympathetic resonator bank (11–13 tuned bandpass filters) that rings continuously based on input from the lead melody. |
 | **Structural Progression** | Structured and through-composed compositions (*Kritis*) with balanced composed sections (*Pallavi, Anupallavi, Charanam*). | **Expansive Structural Evolution:** Slow, unmeasured exposition (*Alaap* $\rightarrow$ *Jor* $\rightarrow$ *Jhala*) accelerating organically into composed sections (*Gat/Bandish*). | Structure tracks with an unmetered, tempo-free intro (30% of duration), moving to a steady pulse (*Jor*), then high-speed strumming (*Jhala*), followed by the percussion drop. |

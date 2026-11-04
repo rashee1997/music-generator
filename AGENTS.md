@@ -197,7 +197,11 @@ If none match, open `knowledgebase/README.md` and `references/workflow/bundled-f
 12. **Python via venv only** - Skill venv or project's uv venv. Nothing global. Ship .ps1 with .sh.
 13. **Mix decisions in presets** - Gain staging, dynamics, spectral, sidechain, space, mastering are in mix preset (`mix_schema.py`). Change in preset, not `mixer.py`. Don't add hardcoded fallbacks for preset keys. Both `legacy` and `adaptive` are valid.
 14. **Diagnostics report, don't act** - `mix_diagnostics.py` reports. Never "fix" WARN by loosening thresholds, never let it edit mix, never claim audible improvement from numbers.
-15. **Sounds are data** - Materials/geometry/interactions/events go in preset `scene`. Writing new Python generator for new sound name is forbidden. Unknown fields = error, no fallback. No normalization erasing physical intensity differences.
+15. **Sounds are data** - Materials/geometry/interactions/events go in preset `scene`.
+16. **A number needs a status** - Any number added to a knowledge base file carries a source, or the words
+    "starting value" on the same line. A new KB file gets a row in `knowledgebase/README.md` and the standard
+    header (`document_id`, `target_consumers`, `schema_version`, `status`, `sources`), and
+    `python tests/check_kb.py` must pass. Writing new Python generator for new sound name is forbidden. Unknown fields = error, no fallback. No normalization erasing physical intensity differences.
 
 ---
 
