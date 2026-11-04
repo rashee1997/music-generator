@@ -11,7 +11,6 @@ Moved verbatim from SKILL.md to keep the entry file short.
 | `scripts/research_kb.py` | pulls the matching `knowledgebase/*.md` sections into `reports/research_<topic>.md` with `document_id` citations and an empty Web research section |
 | `scripts/fusion.py` | plans a multi-culture mix: shared scale, tempo overlap, meter, instruments by role (`"fusion": [...]` in a brief) |
 | `scripts/soul.py` / `scripts/soul_check.py` | culture soul profiles (breath, groove, call-and-response, ornament, cadence) and the release check that FAILs a flat piece |
-| `references/legacy-workflow.md` | archive of the previous SKILL.md loop and contract; superseded by the project flow in SKILL.md |
 | `scripts/presets.py` | preset layers (skill, then project): `list`, `show`, `validate`, `scaffold instruments\|vocals\|environments <name> --project <dir>`, `ingest`; `exact()` and `STRICT` for no-guess lookups |
 | `scripts/world.py` | world-instrument names (oud, kora, ney ...) mapped to GM stand-ins, scales and idioms; stand-in names need a preset in a project |
 | `templates/analyze_music21_template.py` | default Stage 6 music21 analysis; copy to `<project>/scripts/analyze_music21.py` to customise |

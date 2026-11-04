@@ -9,6 +9,7 @@ Everything a reader or an agent needs beyond the front page. Each entry below is
 | [README.md](README.md) | This index — the map of every document, plus the engine's known limits. | First, to find the right file. |
 | [PSYCHOACOUSTICS.md](PSYCHOACOUSTICS.md) | The perceptual laws the gate enforces: thresholds, equations and the peer-reviewed sources behind each one (Chew, Huron, Moore–Glasberg, Plomp–Levelt, Sethares, Witek, Krumhansl, Pearce, Meyer, ITU-R BS.1770). | When a gate row cites a perceptual rule, or when you need the citation for one. |
 | [listen.html](listen.html) | The audio player page served by GitHub Pages, because GitHub strips `<audio>` from Markdown. Plays `../assets/samples/black-jaguar-cinematic-chase.mp3`. | When you want to hear a rendered demo. |
+| [audits/2026-11-03-mixer-video.md](audits/2026-11-03-mixer-video.md) | The mixer, DSP, gate and `video-mixer/` audit from 2026-11-03: every number measured on this machine during the pass, and no code changed for it. | When you need the evidence behind a mixing or video-path number. |
 
 ## Documents outside this folder
 

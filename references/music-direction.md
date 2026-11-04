@@ -379,7 +379,8 @@ earshot (MIT, github.com/Leonxlnx/earshot) listens with two open models: CLAP (t
 sound like X") and AST (AudioSet tags), plus measurements. It is a real second opinion, and it is not a human ear.
 
 **Use it for:**
-- the forced choice: a feel word against the opposite words, as a percentage, which is the sharpest test;
+- the forced choice: a feel word against the opposite words, as a percentage, which is the sharpest test (the
+  wanted word has to win more than half of it; `listen.py` reports FAIL when an opposite word wins);
 - what the piece sounds like in ranked readings (genre, mood, instruments);
 - pulse clarity (is there a steady beat?), tempo, key, onsets (do the hits land?);
 - comparing two versions of the same cue, A against B.
