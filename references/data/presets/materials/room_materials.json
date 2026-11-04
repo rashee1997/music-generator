@@ -20,6 +20,6 @@
   },
   "sources": [
     "Everest & Pohlmann, Master Handbook of Acoustics, absorption-coefficient tables",
-    "https://en.wikipedia.org/wiki/Absorption_(acoustics) (cross-check of the same table values)"
+    "cross-checked against a second published absorption table"
   ]
 }
