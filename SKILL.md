@@ -97,6 +97,34 @@ Rules for an agent:
 - MP3 compression is **manual**, never part of the pipeline: `python scripts/helpers/compress_mp3.py out/master_vNN.wav -o <file>.mp3 -b 320k`. It carries the sidecar tags into the MP3.
 - The gate rows `meta.tags` and `meta.version` only trace this record. They warn, never fail, and are `INFO` on a piece's first render.
 
+## Deliverable formats
+
+A score names what it wants built; the engine builds only that, never every format at once.
+
+```
+"output_targets": "stereo"                     one target
+"output_targets": ["immersive_7_1_4", "stereo"]  these, in order; the first is the certified master
+"output_targets": "all"                       every target the engine can build
+(absent)                                      the default (presets/outputs/_default.json)
+```
+
+| Target | Channels | Layout | Ceiling |
+|---|---|---|---|
+| `stereo` | 2 | direct L/R | -1.5 dBTP |
+| `binaural` | 2 | headphone render (not buildable yet) | -1.5 dBTP |
+| `immersive_7_1` | 8 | ITU-R BS.2051 System H | -3.0 dBTP |
+| `immersive_7_1_4` | 12 | ITU-R BS.2051 System J | -3.0 dBTP |
+
+Every number lives in `references/data/presets/outputs/` (format) and `references/data/presets/layouts/` (speaker
+positions, crossover, fold-down), loaded through `presets.py`, so a project can add its own format with two JSON files.
+A target with `"renderer": null` is described but cannot be built: naming it blocks the render (no silent downgrade),
+and `"all"` reports it as skipped. The CLI can override the score: `--targets stereo` or `--targets all`.
+
+`scripts/spatial_engine/` holds the model behind the multichannel targets: vector base amplitude panning over the
+layout's own speakers (Pulkki 1997), a 4th-order Linkwitz-Riley crossover and low-frequency send (Linkwitz 1976),
+all-pass decorrelation for the surround and height channels (Kendall 1995), and the ITU-R BS.775 two-channel fold.
+The gate rows in `scripts/spatial_gate.py` run only for the formats that were requested.
+
 ## References on demand
 
 `references/` is bigger than any one piece needs. Do not open it file by file: ask the finder, which indexes

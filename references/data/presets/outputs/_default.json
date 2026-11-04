@@ -1,0 +1,8 @@
+{
+  "name": "_default",
+  "note": "What a score that names no output_targets is delivered as. A project can override this file (presets/outputs/_default.json) to change its own default without touching the engine.",
+  "targets": ["stereo"],
+  "sources": [
+    "The engine's default is the deliverable it can build and certify today: the two-channel master. A target the engine cannot build is never a default."
+  ]
+}

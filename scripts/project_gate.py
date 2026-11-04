@@ -652,13 +652,19 @@ def gate_problems(score, project):
     return out
 
 
+def output_problems(score):
+    """The score's `output_targets` must name formats the engine can build; nothing renders for a target it cannot."""
+    import render_targets
+    return render_targets.problems(score)
+
+
 def problems(score, project):
     project = Path(project).resolve()
     out = [f'missing folder {d}/ (run: setup_project.py --new-project <dir>)' for d in SCAFFOLD if not (project / d).is_dir()]
     out += research_problems(project) + direction_problems(project) + preset_file_problems(project)
     if score is not None:
         out += track_problems(score, project) + stage_problems(score, project) + ambience_problems(score, project) + reference_problems(score, project) + space_problems(score, project) + immersive_problems(score, project)
-        out += gate_problems(score, project)
+        out += gate_problems(score, project) + output_problems(score)
     return out
 
 

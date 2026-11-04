@@ -58,8 +58,10 @@ KINDS = {
     'environments': dict(required=[]),
     'spaces': dict(required=['room', 'distance']),
     'materials': dict(required=['bands_hz', 'surfaces']),   # surface absorption library a space's geometry names
-    'sfx': dict(required=['character']),       # a one-hit effect; ambience (rain, wind, ...) is an environments preset        'gate': dict(required=['character']),      # a piece type for the quality gate (scripts/gate_profiles.py)
-        'materials': dict(required=['bands_hz', 'surfaces']),   # surface absorption library a space's geometry names
+    'sfx': dict(required=['character']),       # a one-hit effect; ambience (rain, wind, ...) is an environments preset
+    'gate': dict(required=['character']),      # a piece type for the quality gate (scripts/gate_profiles.py)
+    'outputs': dict(required=[]),              # one deliverable format: channels, order, file, ceiling (scripts/render_targets.py)
+    'layouts': dict(required=['channels', 'speakers']),   # where the loudspeakers of a multichannel format sit
     'sfzlib': dict(required=['character', 'licence', 'type']),   # a downloadable SFZ library or engine (scripts/sfz_libs.py)
     'video': dict(required=['character', 'probe', 'direction_map', 'staging', 'mix_preset', 'mix', 'master', 'mux']),   # scoring to picture (scripts/video_score.py)
 }
@@ -178,6 +180,9 @@ def validate():
             if kind == 'mix':                         # unknown key, bad range, malformed EQ band, unknown profile
                 import mix_schema
                 problems += [f'mix/{name}: {w} ({p.get("_source")})' for w in mix_schema.validate(p)]
+        if kind == 'outputs':                         # a target names a real layout, renderer, ceiling; files are unique
+            import render_targets
+            problems += [f'outputs: {w}' for w in render_targets.manifest_problems()]
     return problems
 
 
@@ -330,6 +335,20 @@ def scaffold(kind, name, project_dir, from_name=None):
                       gate=dict(duration_tolerance_ms=50, cut_sync=dict(early_ms=45, late_ms=125, aim_ms=40),
                                 dialogue_snr_min_db=15.0, loudness_tolerance_lu=1.0),
                       sources=[]),
+        # one deliverable format. `renderer` names the engine route that builds it; a null renderer is a format the
+        # engine describes but cannot build yet (asking for it by name blocks the render rather than downgrading it).
+        'outputs': dict(name=name, character='ONE SENTENCE: the format, who listens to it and why its ceiling suits it',
+                        label=name, order=99, channels=2, channel_order=['L', 'R'], file=name + '.wav',
+                        renderer=None, true_peak_dbtp=-1.5, layout=None, lfe=None, sources=[],
+                        unavailable_reason='the engine has no renderer for this target yet'),
+        # a multichannel loudspeaker layout: one entry per channel, in the delivered channel order. `azimuth` is degrees
+        # clockwise from front centre, `elevation` degrees above the listener's ear level.
+        'layouts': dict(name=name, character='ONE SENTENCE: which standard layout this is and what it is used for',
+                        channels=2, speakers=[dict(name='L', azimuth=-30.0, elevation=0.0),
+                                              dict(name='R', azimuth=30.0, elevation=0.0)],
+                        lfe=dict(channel=None, lowpass_hz=80.0, stopband_hz=120.0, stopband_db=-45.0, send_db=-10.0),
+                        downmix=dict(L=[1.0, 0.0], R=[0.0, 1.0]),
+                        sources=[]),
         # a space is one place: how long its tail is, where its reflections come from, how distance changes a sound in it
         'spaces': dict(name=name, character='ONE SENTENCE: the place and why its tail, walls and distance law suit this piece',
                        room=dict(rt60=1.8, pre_delay_ms=18.0, hf_decay=0.55, early_level=0.35),

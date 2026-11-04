@@ -56,6 +56,41 @@ ROWS = {
     'clipping':    dict(meaning='clipped bends / samples', protected=True),
     'silence':     dict(meaning='silent gap in the middle', protected=True),
     'clicks':      dict(meaning='single-sample jumps', protected=True),
+    # stem gate (scripts/stem_gate.py, before mixing)
+    'stem.clicks': dict(meaning='click/impulse on one stem (high-pass MAD + LPC residual)', params={
+        'mad_z': (8.0, 5.0, 15.0), 'floor_fs': (0.02, 0.005, 0.1),
+        'cluster_gap_ms': (1.5, 0.5, 5.0), 'isolate_ms': (10.0, 5.0, 30.0)}, no_skip=True),
+    'stem.dropout': dict(meaning='a short hole in one stem', params={
+        'min_ms': (20.0, 5.0, 50.0), 'max_ms': (1000.0, 500.0, 2000.0), 'floor_below_db': (45.0, 30.0, 60.0)}),
+    'stem.cut': dict(meaning='a level step with no release at a section boundary or the end', params={
+        'drop_db': (12.0, 8.0, 20.0), 'location_ms': (75.0, 25.0, 200.0)}),
+    'stem.end': dict(meaning='a stem truncated at full level', params={
+        'min_decay_db': (12.0, 8.0, 20.0), 'floor_db': (-45.0, -60.0, -30.0)}),
+    'stem.edge': dict(meaning='a stem starts or stops away from its own score notes', params={
+        'max_silence_ms': (25.0, 5.0, 100.0)}),
+    'stem.tick': dict(meaning='a periodic tick in a stem that should have no beat', params={
+        'rho': (0.35, 0.2, 0.6), 'min_events': (6, 3, 12), 'cv_max': (0.05, 0.01, 0.2)}),
+    'stem.dead': dict(meaning='a part missing/dropped against the score dynamics', params={
+        'under_db': (12.0, 6.0, 24.0), 'floor_db': (-70.0, -80.0, -50.0)}),
+    'stem.clipping': dict(meaning='clipped samples on one stem', protected=True),
+    'stem.dc': dict(meaning='DC offset on one stem', params={'dc_max': (0.001, 0.0005, 0.01)}),
+    'stem.flatness': dict(meaning='a noise burst in a tonal stem', params={
+        'threshold': (0.10, 0.03, 0.4), 'min_ms': (50.0, 20.0, 200.0)}),
+    'stem.vocal': dict(meaning='vocal stem integrity (finite, DC, clicks)'),
+    'stem.present': dict(meaning='every score track with notes has a stem'),
+    'stem.duplicate': dict(meaning='two stems are the same signal', params={'max_corr': (0.999, 0.99, 1.0)}),
+    # master rows added by the mix gate
+    'dropout': dict(meaning='a short hole in the master', params={
+        'min_ms': (20.0, 5.0, 50.0), 'max_ms': (1000.0, 500.0, 2000.0), 'floor_below_db': (45.0, 30.0, 60.0)}),
+    'cut.hard': dict(meaning='a hard cut at a boundary/end in the master', params={
+        'drop_db': (12.0, 8.0, 20.0), 'location_ms': (75.0, 25.0, 200.0)}),
+    'end.abrupt': dict(meaning='the master ends at full level with no release', params={
+        'min_decay_db': (12.0, 8.0, 20.0), 'floor_db': (-45.0, -60.0, -30.0)}),
+    'master.dc': dict(meaning='DC offset on the master', params={'dc_max': (0.001, 0.0005, 0.01)}),
+    'tempo.audio': dict(meaning='measured tempo against the score/sheet', params={
+        'tol_bpm': (2.0, 1.0, 5.0), 'tol_pct': (2.0, 1.0, 5.0), 'drift_bpm': (2.0, 1.0, 5.0)}),
+    'section.energy': dict(meaning='section level against the promised energy arc', params={
+        'fail_rho': (0.5, 0.3, 0.8), 'warn_rho': (0.7, 0.5, 0.9)}),
     'channels':    dict(meaning='note started on a channel still sounding', protected=True),
     # score patterns (pattern_audit.audit)
     'pattern.drums_few':     dict(meaning='drums play only a few different bars', params={'distinct_div': (8, 2, 32)}),

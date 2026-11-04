@@ -1,0 +1,274 @@
+{
+  "no_skip": [
+    "ambient_bed",
+    "modulation_flutter",
+    "pattern.flags_max",
+    "roughness",
+    "stem.clicks"
+  ],
+  "protected": [
+    "channels",
+    "clicks",
+    "clipping",
+    "loudness",
+    "silence",
+    "stem.clipping",
+    "true_peak",
+    "video.duration_lock",
+    "video.master_compliance",
+    "vocal.integrity"
+  ],
+  "rows": {
+    "ambient_bed": {
+      "pump_db": 3.8
+    },
+    "balance.layers": {
+      "fail_db": 15.0,
+      "warn_db": 9.0
+    },
+    "balance.vs_lead": {
+      "fail_over_db": 6.0,
+      "warn_over_db": 3.0
+    },
+    "bow.breath_gap": {
+      "gap_beats": 0.08
+    },
+    "channels": {},
+    "choked_resonance": {},
+    "chord_voicing_and_strum": {},
+    "chroma.concordance": {
+      "max_dissonance": 0.28
+    },
+    "clicks": {},
+    "clipping": {},
+    "cut.hard": {
+      "drop_db": 12.0,
+      "location_ms": 75.0
+    },
+    "delivery.bit_depth": {},
+    "delivery.channels": {},
+    "delivery.duration": {
+      "tolerance_s": 0.5
+    },
+    "delivery.sample_rate": {},
+    "dropout": {
+      "floor_below_db": 45.0,
+      "max_ms": 1000.0,
+      "min_ms": 20.0
+    },
+    "end.abrupt": {
+      "floor_db": -45.0,
+      "min_decay_db": 12.0
+    },
+    "feel.contour": {},
+    "feel.effort": {},
+    "feel.entropy": {},
+    "feel.groove": {},
+    "feel.resolution": {},
+    "feel.spiral": {},
+    "feel.witek": {},
+    "imm.band": {
+      "min_hf_frac": 0.003
+    },
+    "imm.coloration": {
+      "hi_hz": 5000.0,
+      "lo_hz": 500.0,
+      "max_dev_db": 3.5
+    },
+    "imm.cues": {
+      "min_ild_db": 8.0,
+      "min_itd_ms": 0.3
+    },
+    "imm.elevation": {
+      "min_tilt_db": 3.0
+    },
+    "imm.envelopment": {
+      "max_late_iacc": 0.4
+    },
+    "imm.externalization": {
+      "max_db": -3.0,
+      "min_db": -30.0,
+      "min_directions": 3
+    },
+    "imm.foldown": {
+      "max_lu": 3.0
+    },
+    "imm.frontback": {
+      "min_tilt_db": 2.0
+    },
+    "imm.height_rules": {},
+    "imm.route_parity": {
+      "max_ild_db": 3.0,
+      "max_itd_ms": 0.2
+    },
+    "imm.width": {
+      "max_corr": 0.95
+    },
+    "key.mode": {},
+    "kick.grid": {
+      "min_lock": 0.7
+    },
+    "loudness": {},
+    "low_interval_mud": {},
+    "machine_gun_percussion": {},
+    "masking.vs_melody": {
+      "margin_db": 3.0
+    },
+    "master.dc": {
+      "dc_max": 0.001
+    },
+    "meta.tags": {
+      "max_missing": 0
+    },
+    "meta.version": {
+      "max_missing": 0
+    },
+    "modulation_flutter": {
+      "warn": 0.18
+    },
+    "natural.aliasing": {
+      "max_hf_share_db": -45.0
+    },
+    "note_collision": {},
+    "pattern.bass_pitches": {
+      "max_classes": 3
+    },
+    "pattern.drums_few": {
+      "distinct_div": 8
+    },
+    "pattern.flags_max": {
+      "max": 6
+    },
+    "pattern.flat_dynamics": {
+      "min_range_frac": 0.25
+    },
+    "pattern.four_on_floor": {},
+    "pattern.loop_short": {
+      "max_distinct": 4,
+      "max_period_bars": 4,
+      "min_bars": 16
+    },
+    "pattern.melody_notes": {
+      "min_lengths": 3,
+      "on_beat_max": 0.9,
+      "repeat_max": 0.35
+    },
+    "pattern.velocity_flat": {
+      "sd_frac": 0.05
+    },
+    "percussion_flam": {},
+    "roughness": {
+      "calib_spl_db": 70.0,
+      "mask_band_bark": 1.0,
+      "mask_slope_down_db_bark": 27.0,
+      "mask_slope_up_db_bark": 10.5,
+      "median": 0.024,
+      "model": "legacy",
+      "outro_resolve": true,
+      "scale": 1.0
+    },
+    "section.energy": {
+      "fail_rho": 0.5,
+      "warn_rho": 0.7
+    },
+    "silence": {},
+    "spatial.z_separation": {
+      "min_elev_deg": 15.0,
+      "min_sep_deg": 25.0,
+      "overlap_min": 0.5
+    },
+    "spectral.equal_loudness": {
+      "band_hi_hz": 5000.0,
+      "band_lo_hz": 2500.0,
+      "fail_db": 10.0,
+      "max_trim_db": 3.0,
+      "warn_db": 6.0
+    },
+    "stem.clicks": {
+      "cluster_gap_ms": 1.5,
+      "floor_fs": 0.02,
+      "isolate_ms": 10.0,
+      "mad_z": 8.0
+    },
+    "stem.clipping": {},
+    "stem.cut": {
+      "drop_db": 12.0,
+      "location_ms": 75.0
+    },
+    "stem.dc": {
+      "dc_max": 0.001
+    },
+    "stem.dead": {
+      "floor_db": -70.0,
+      "under_db": 12.0
+    },
+    "stem.dropout": {
+      "floor_below_db": 45.0,
+      "max_ms": 1000.0,
+      "min_ms": 20.0
+    },
+    "stem.duplicate": {
+      "max_corr": 0.999
+    },
+    "stem.edge": {
+      "max_silence_ms": 25.0
+    },
+    "stem.end": {
+      "floor_db": -45.0,
+      "min_decay_db": 12.0
+    },
+    "stem.flatness": {
+      "min_ms": 50.0,
+      "threshold": 0.1
+    },
+    "stem.present": {},
+    "stem.tick": {
+      "cv_max": 0.05,
+      "min_events": 6,
+      "rho": 0.35
+    },
+    "stem.vocal": {},
+    "tempo.audio": {
+      "drift_bpm": 2.0,
+      "tol_bpm": 2.0,
+      "tol_pct": 2.0
+    },
+    "tempo.bpm": {},
+    "true_peak": {},
+    "video.cut_sync": {
+      "aim_ms": 40,
+      "early_ms": 45,
+      "late_ms": 125
+    },
+    "video.dialogue_snr": {
+      "min_db": 15.0
+    },
+    "video.duration_lock": {
+      "tolerance_ms": 50
+    },
+    "video.master_compliance": {
+      "tolerance_lu": 1.0
+    },
+    "vocal.breath": {
+      "over_capacity_factor": 1.0
+    },
+    "vocal.clicks": {
+      "max_clicks": 0
+    },
+    "vocal.dynamics": {
+      "min_corr": 0.5
+    },
+    "vocal.ensemble": {
+      "max_corr": 0.6
+    },
+    "vocal.hum_tone": {
+      "max_hf_frac": 0.02
+    },
+    "vocal.integrity": {
+      "dc_max": 0.005
+    },
+    "vocal.intonation": {
+      "max_cents": 60.0
+    }
+  }
+}

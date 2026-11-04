@@ -1,0 +1,22 @@
+{
+  "name": "immersive_7_1",
+  "character": "Discrete 7.1 surround for a listener-level ring of eight loudspeakers, with a dedicated low-frequency channel.",
+  "label": "7.1 surround (ITU-R BS.2051 System H)",
+  "order": 3,
+  "aliases": ["7.1", "7_1", "surround"],
+  "channels": 8,
+  "channel_order": ["FL", "FR", "FC", "LFE", "BL", "BR", "SL", "SR"],
+  "file": "master_7_1.wav",
+  "renderer": null,
+  "true_peak_dbtp": -3.0,
+  "layout": "itu_bs2051_system_h",
+  "lfe": {"channel": 4, "send_db": -10.0, "lowpass_hz": 80.0, "stopband_hz": 120.0, "stopband_db": -45.0,
+          "roles": ["bass", "sub_bass", "sub_brass", "drone", "kick"]},
+  "gate": {"stereo_correlation_min": 0.15},
+  "unavailable_reason": "no multichannel renderer yet: mixer.mix_stems allocates a stereo bus and gate_audio reads two channels, so this format is defined but cannot be built. scripts/spatial_engine/ holds the layout, panning, bass-management and fold-down code; when its renderer is wired into the pipeline, name it here",
+  "sources": [
+    "ITU-R BS.2051-3: System H is the 7.1 loudspeaker layout (FL FR FC LFE BL BR SL SR)",
+    "ITU-R BS.1770-4: the LFE channel is excluded from the loudness measurement",
+    "The -3.0 dBTP ceiling is this project's delivery policy for a multichannel file that carries an LFE channel, not a measured acoustic value"
+  ]
+}

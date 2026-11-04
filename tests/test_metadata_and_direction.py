@@ -2,7 +2,8 @@
 
 Covers: RIFF tags written into the WAV (samples untouched), the description from the direction sheet, the
 sidecar for the versioned master, a tagging failure reported instead of swallowed, and the new direction rows
-(wrong sample rate, wrong tempo, key mismatch as WARN, no sheet as INFO) plus stage 0's piece_type/gate_reason.
+(wrong sample rate, wrong tempo, a key mismatch as FAIL in certify mode and WARN in draft, a missing sheet as FAIL in
+certify mode and INFO in draft) plus stage 0's piece_type/gate_reason.
 """
 import json
 import os
@@ -144,9 +145,9 @@ class DirectionRows(unittest.TestCase):
     def sheet(self, data):
         (self.proj / 'direction' / 'direction_x.json').write_text(json.dumps(data), encoding='utf-8')
 
-    def rows(self, score):
+    def rows(self, score, mode='full'):
         out = []
-        qg.direction_rows(score, out, project_dir=str(self.proj), wav_path=str(self.wav))
+        qg.direction_rows(score, out, project_dir=str(self.proj), wav_path=str(self.wav), mode=mode)
         return out
 
     def test_a_delivered_rate_that_breaks_the_sheet_fails(self):
@@ -171,16 +172,20 @@ class DirectionRows(unittest.TestCase):
         rows = self.rows({'bpm': 84, 'key': 'D', 'mode': 'minor'})
         self.assertEqual(rows_of(rows, 'tempo.bpm')[0][0], 'PASS')
 
-    def test_a_key_mismatch_only_warns(self):
+    def test_a_key_mismatch_fails_in_certify_mode_and_warns_in_draft(self):
         rows = self.rows({'bpm': 84, 'key': 'E', 'mode': 'minor'})
         key = rows_of(rows, 'key.mode')
-        self.assertEqual(key[0][0], 'WARN', key)
+        self.assertEqual(key[0][0], 'FAIL', key)
+        draft = self.rows({'bpm': 84, 'key': 'E', 'mode': 'minor'}, mode='draft')
+        self.assertEqual(rows_of(draft, 'key.mode')[0][0], 'WARN', draft)
 
-    def test_no_sheet_is_info_not_a_failure(self):
+    def test_no_sheet_fails_in_certify_mode_and_is_info_in_draft(self):
         (self.proj / 'direction' / 'direction_x.json').unlink()
-        rows = self.rows({'bpm': 84})
-        self.assertTrue(all(r[0] == 'INFO' for r in rows), rows)
-        self.assertIn('no direction', rows[0][2])
+        draft = self.rows({'bpm': 84}, mode='draft')
+        self.assertTrue(all(r[0] == 'INFO' for r in draft), draft)
+        self.assertIn('no direction', draft[0][2])
+        full = self.rows({'bpm': 84})
+        self.assertEqual(rows_of(full, 'delivery.direction')[0][0], 'FAIL', full)
 
 
 class StageZeroNeedsAReason(unittest.TestCase):

@@ -1,0 +1,28 @@
+{
+  "name": "itu_bs2051_system_h",
+  "character": "ITU-R BS.2051 System H: the eight-loudspeaker 7.1 ring at listener ear level, azimuths clockwise from front centre.",
+  "channels": 8,
+  "speakers": [
+    {"name": "FL", "azimuth": -30.0, "elevation": 0.0, "loudness_weight_db": 0.0},
+    {"name": "FR", "azimuth": 30.0, "elevation": 0.0, "loudness_weight_db": 0.0},
+    {"name": "FC", "azimuth": 0.0, "elevation": 0.0, "loudness_weight_db": 0.0},
+    {"name": "LFE", "azimuth": 0.0, "elevation": 0.0, "lfe": true},
+    {"name": "BL", "azimuth": -135.0, "elevation": 0.0, "loudness_weight_db": 1.5},
+    {"name": "BR", "azimuth": 135.0, "elevation": 0.0, "loudness_weight_db": 1.5},
+    {"name": "SL", "azimuth": -90.0, "elevation": 0.0, "loudness_weight_db": 1.5},
+    {"name": "SR", "azimuth": 90.0, "elevation": 0.0, "loudness_weight_db": 1.5}
+  ],
+  "lfe": {"channel": "LFE", "lowpass_hz": 80.0, "stopband_hz": 120.0, "stopband_db": -45.0, "send_db": -10.0},
+  "downmix": {"FL": [1.0, 0.0], "FR": [0.0, 1.0], "FC": [0.7071, 0.7071],
+              "LFE": [0.0, 0.0], "BL": [0.7071, 0.0], "BR": [0.0, 0.7071],
+              "SL": [0.7071, 0.0], "SR": [0.0, 0.7071]},
+  "decorrelation": {"enabled": true, "amount": 0.18, "max_delay_ms": 12.0,
+                    "exempt": ["FL", "FR", "FC"]},
+  "gate": {"surround_ratio_db": [-9.0, -2.0], "height_max_rel_db": -4.0,
+           "stereo_correlation_min": 0.15},
+  "sources": [
+    "ITU-R BS.2051-3: System H loudspeaker positions (starting values: azimuths -30/30/0/135/90 degrees, elevation 0)",
+    "ITU-R BS.1770-4: +1.5 dB weighting for the surround channels in the loudness measurement",
+    "ITU-R BS.775-3 Annex: fold-down coefficients 1.0 for front L/R, 0.7071 for centre and each surround; LFE is left out of the two-channel fold"
+  ]
+}
