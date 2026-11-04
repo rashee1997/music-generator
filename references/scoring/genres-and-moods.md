@@ -128,45 +128,13 @@ words ("slow", "uptempo") those still choose the mood and move the tempo. Withou
 **Grid caveat.** The grooves are 4/4 grids of 16 steps. In a 3/4 bar, hits past beat 3 are dropped, so use a 4/4 meter
 with genre grooves.
 
-### 3a. Pixabay's genre list, and where each label goes
+### 3a. Label to genre
 
-A Pixabay label maps to the genre this skill renders. The list is a sample of what the site's listings use, not a
-complete catalogue; an unlisted label goes to the nearest row by tempo, groove and layers.
+Labels from stock and streaming catalogues resolve through `GENRE_ALIASES` in `compose.py`: `--genre "Soft House"`
+and `--genre future-bass` both work, and a label outside the table is taken as the nearest row by tempo, groove and
+layers.
 
-| Pixabay label (as seen) | Genre in this skill (`brief.genre`) | Note |
-|---|---|---|
-| Upbeat, Commercial, Advertising, Vlog, Tutorials, Background | `pop` or `corporate` | `corporate` is tuned to one measured 120 BPM reference |
-| Beats, Alternative Hip Hop | `hiphop` | |
-| Lo-fi, Chill Beats | `lofi` | |
-| Trap | `trap` | |
-| Dubstep | `dubstep` | |
-| Future Bass | `futurebass` | |
-| Techno & Trance | `techno` or `trance` | gabber and hardstyle labels map to `hardstyle` |
-| Soft House, Deep House | `deep_house` | |
-| House, Dance | `house` | |
-| Synthpop, Synthwave, Retrowave | `synthpop` | |
-| Cyberpunk, Dark Synth | `darksynth` | |
-| Motown & Old School Rnb | `motown` | |
-| R&B | `rnb` | |
-| Urban Latin | `reggaeton` (and `cumbia`, `salsa`) | cumbia is a separate genre here |
-| Brazilian | `samba` or `forro` | |
-| Afrobeat, African | `afrobeat` | |
-| Reggae | `reggae` | |
-| Funk | `funk` | |
-| Rock, Indie Rock, Alternative, Sport | `rock` or `indie` | one measured reference render |
-| Metal, Thrash, Doom | `metal` | |
-| Powerful Percussion, Taiko | `percussion` | |
-| Comedy, Bloopers, Quirky, Cartoon | `comedy` | |
-| Children's, Kids | `kids` | |
-| Scary Children's Tunes, Spooky | `halloween` | |
-| Modern Classical | `piano` | |
-| Classical, Epic Classical, Adventure | `orchestral` or `cinematic`, with `emotion: adventure` | Pixabay's "Adventure" is a mood (84-104, lydian/major, half-time) rather than a war-sized `epic`. Use `epic` only for trailer/triumph material |
-| Main Title, Trailer, Build Up Scenes | `cinematic` | |
-| Mystery | `dark` | |
-| Ambient, Meditation, Yoga, Sleep, Nature | `ambient` | |
-| Jazz, Bossa Nova, Folk, Acoustic | the genres of the same names | |
-
-Every alias is in `GENRE_ALIASES` in `compose.py`, so `--genre "Soft House"` and `--genre future-bass` both work.
+Every alias is in `GENRE_ALIASES` in `compose.py`.
 Mood words from Pixabay playlists (relax, peace, mellow, laid-back, focus, energise, stimulating, spooky, haunting) are
 in `EMOTION_ALIASES`; `motivational` maps to `hopeful` and `adventure / quest / journey / expedition` map to the
 `adventure` preset. Words that describe how to play it rather than what it feels like (`slow`, `reverb`, `sparse`,
@@ -205,5 +173,3 @@ Grids use 16 steps per bar (step 0 = beat 1, each step a sixteenth). Numbers bel
   exist in `theory.TEXTURES`.
 - Groove: add an entry to `GROOVES` in `theory.py` with its label (`sourced` or `practice`), the grid and the weights.
   Use `name@tag` keys for a second hit with a different weight.
-
-## Use
