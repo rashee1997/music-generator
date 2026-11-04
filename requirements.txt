@@ -3,7 +3,7 @@
 # By hand:         uv venv .venv  &&  uv pip install --python .venv/bin/python -r requirements.txt
 #
 # The versions are the ones this skill was tested with. If one will not install on your Python, relax the
-# pin to >= the same version and run scripts/setup_natural.py to check the render path still passes.
+# pin to >= the same version and run scripts/setup_project.py to check the render path still passes.
 
 # Core DSP, Audio I/O
 numpy==2.5.3

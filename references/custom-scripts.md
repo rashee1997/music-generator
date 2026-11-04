@@ -33,7 +33,7 @@ A custom script is optional. It may only generate the score JSON; sound and spac
 3. **`out/` is for Final Deliverables ONLY:**
    - `out/master.wav`; the MIDI goes to `midi/` and the stems to `stems/`.
 4. **Flexible `music21` Quality Gate in `scripts/`:**
-   - Place dynamic music theory checks in `<project>/scripts/analyze_music21.py` or `<project>/scripts/analyze.py`.
+   - Place dynamic music theory checks in `<project>/scripts/analyze_music21.py`.
    - `pipeline.py` automatically detects and executes this script during Stage 6, merging custom musical analysis rows into the final Quality Scoreboard.
 
 ### Scaffolding in One Command:

@@ -1193,7 +1193,7 @@ def vocal_rows(score, stems=None, out=None, sr=44100, report=None):
 
 
 def chroma_concordance_rows(score, rendered_path, stems=None, out=None, sr=44100):
-    """Harmonic Concordance Check (from tonal.py):
+    """Harmonic Concordance Check:
     Verifies that ambient beds / nature tracks do not introduce dissonant semitone collisions
     (minor 2nd intervals) against the song's root tonic or active chord tones."""
     rows = []
@@ -1232,7 +1232,7 @@ def chroma_concordance_rows(score, rendered_path, stems=None, out=None, sr=44100
 
 
 def kick_grid_rows(score, stems=None, out=None, sr=44100):
-    """Kick-Drum Beat-Grid Lock (from beats.py):
+    """Kick-Drum Beat-Grid Lock:
     Calculates low-frequency transient arrival times and checks them against the tempo grid."""
     rows = []
     import gate_profiles

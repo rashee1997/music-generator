@@ -66,8 +66,8 @@ Project gate: an SFZ track needs its library installed, the patch to exist, and 
 line of each library used (and a share-alike reminder), and an SFZ track with no reverb. The mix of such a piece still needs its own `mix_preset`.
 
 ## Example
-`<project_dir>/grand-canyon/` is an example project with a Grand Canyon style orchestra: `presets/mix/grand_canyon_mix.json`,
-`presets/spaces/canyon_open.json` and 13 instrument presets (`canyon_violins1`... `canyon_timpani`) on Sonatina patches.
+`<project_dir>/grand-canyon/` is an example project with a Grand Canyon style orchestra: `<project_dir>/grand-canyon/presets/mix/grand_canyon_mix.json`,
+`<project_dir>/grand-canyon/presets/spaces/canyon_open.json` and 13 instrument presets (`canyon_violins1`... `canyon_timpani`) on Sonatina patches.
 
 ## Not covered
 - True legato-transition samples (commercial libraries record them; the free sets here use the legato trigger on ordinary samples).

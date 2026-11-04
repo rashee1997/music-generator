@@ -55,11 +55,11 @@ SR = 44100
 
 
 # ------------------------------------------------------------------------------------------------
-# pitch tracking (YIN, de Cheveigne & Kawahara 2002) & acoustic analysis (from tonal.py / beats.py)
+# pitch tracking (YIN, de Cheveigne & Kawahara 2002) & acoustic analysis (shared with naturalness_check.py)
 # ------------------------------------------------------------------------------------------------
 
 def extract_spectral_onsets(x, sr, hop=256):
-    """Spectral-flux transient onset times in seconds (from beats.py / naturalness_check.py)."""
+    """Spectral-flux transient onset times in seconds (as in naturalness_check.py)."""
     mono = x.mean(1) if x.ndim > 1 else x
     f, t, S = signal.stft(mono, sr, nperseg=1024, noverlap=1024 - hop)
     mag = np.log1p(np.abs(S) * 50)
@@ -70,7 +70,7 @@ def extract_spectral_onsets(x, sr, hop=256):
 
 
 def extract_harmonic_partials(x, sr, f0, n_fft=8192):
-    """8192-point FFT harmonic partial extraction (from tonal.py).
+    """8192-point FFT harmonic partial extraction.
     Extracts peak partials rising >= 12 dB over the local median floor.
     """
     mono = x.mean(1) if x.ndim > 1 else x
@@ -394,7 +394,7 @@ def build_harmonic(path, name, out_dir):
         if m.any() and F[m].max() > 3 * np.median(F[1:]):
             vr = float(fq[m][np.argmax(F[m])])
             vd = float(np.std(fc) * 1.414)
-    # Extract top 16 harmonic partials via 8192-point FFT (tonal.py method)
+    # Extract top 16 harmonic partials via 8192-point FFT
     partials = extract_harmonic_partials(xm, sr, f0)
     meta = dict(type='harmonic', name=name, sr=sr, f0=round(f0, 2), midi=round(float(hz2midi(f0)), 2), B=B,
                 partials=partials,

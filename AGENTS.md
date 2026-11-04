@@ -42,7 +42,7 @@ You MUST complete every step. Tick each in `<project>/STATUS.md`. Do not skip ah
 ### PHASE 2: SETUP
 - [ ] **2.1** Create project: `python scripts/setup_project.py --new-project <dir> --title "<Title>"` (only add `--ambience` if explicitly requested). The scaffold includes `presets/gate/` (for the piece's gate profile) and `<dir>/metadata.json` (delivery tags).
 - [ ] **2.2** NEVER write into skill folder. All outputs go to `<dir>/`
-- [ ] **2.3** Fill `<dir>/metadata.json` with the real delivery values (artist, album, year, publisher, ISRC, copyright, licence). These override the standard tags in `presets/metatdats/metadata.json`. Title and genre are derived from the score; do not hardcode tags in a script.
+- [ ] **2.3** Fill `<dir>/metadata.json` with the real delivery values (artist, album, year, publisher, ISRC, copyright, licence). These override the standard tags in `presets/metadata/metadata.json`. Title and genre are derived from the score; do not hardcode tags in a script.
 
 ### PHASE 3: RESEARCH (MANDATORY - PIPELINE BLOCKS WITHOUT IT)
 - [ ] **3.1** **Read Music Direction Guide:** Read `references/music-direction.md` COMPLETELY during this research phase. This is required to understand how to properly direct and fill the direction sheet.
@@ -82,7 +82,7 @@ You MUST complete every step. Tick each in `<project>/STATUS.md`. Do not skip ah
 
 ### PHASE 9: DELIVER
 - [ ] **9.1** Verify the delivery record: `python scripts/helpers/version_manager.py list --project <dir>`. Every certified render is kept as `out/master_vNN.wav` with its change in `out/versions.json`; `out/master.wav` is a copy of the newest. Never delete or overwrite a version file or a record.
-- [ ] **9.2** Metadata: `out/master.json` (written at certification from `presets/metatdats/metadata.json` + the score + the project overrides) carries the standard tags. If a tag is wrong, fix `<dir>/metadata.json` and re-run `python scripts/helpers/ingest_metadata.py out/master.wav --project <dir>`; never edit the sidecar by hand.
+- [ ] **9.2** Metadata: `out/master.json` (written at certification from `presets/metadata/metadata.json` + the score + the project overrides) carries the standard tags. If a tag is wrong, fix `<dir>/metadata.json` and re-run `python scripts/helpers/ingest_metadata.py out/master.wav --project <dir>`; never edit the sidecar by hand.
 - [ ] **9.3** MP3 is manual and NOT part of the pipeline: `python scripts/helpers/compress_mp3.py out/master_vNN.wav -o <file>.mp3 -b 320k`. Report the file you produced and its bitrate.
 - [ ] **9.5** Listen: `python scripts/listen.py out/master.wav --direction direction/<sheet>.json` (if missing, say so)
 - [ ] **9.6** Complete self-check in `references/self-check.md` in STATUS.md (all yes/no)
@@ -104,7 +104,7 @@ You MUST complete every step. Tick each in `<project>/STATUS.md`. Do not skip ah
 | **Indian/Carnatic/Tamil/Hindustani** | `knowledgebase/PAN_INDIAN_MUSICAL.md`, `knowledgebase/tamil_music_dsp_knowledgebase.md`, `references/cultural-soul.md`, `references/world-music.md`, `references/director-roles-and-soul.md` |
 | **Arabic/Middle East/Desert** | `knowledgebase/arabic_dsp_knowledge.md`, `knowledgebase/The Arabic Desert Vocal.md`, `references/cultural-soul.md`, `references/world-music.md` |
 | **African/Afro** | `knowledgebase/afro_dsp_knowledge.md`, `knowledgebase/world_music_dsp.md`, `references/world-music.md`, `references/cultural-soul.md` |
-| **East Asian (Chinese/Japanese)** | `knowledgebase/chines_japanese_dsp_knowledge.md`, `references/world-music.md` |
+| **East Asian (Chinese/Japanese)** | `knowledgebase/chinese_japanese_dsp_knowledge.md`, `references/world-music.md` |
 | **Latin/Brazil/Turkic/Mongol** | `knowledgebase/rio_brazil_turkic_mogol_dsp_knowledge.md`, `references/world-music.md` |
 | **Western/classical/folk/country/Celtic** | `knowledgebase/western_dsp_knowledge.md`, `knowledgebase/world_music_dsp.md`, `references/world-music.md` |
 | **Flutes/wind** | `knowledgebase/global_flute_procedural_dsp_kb_v1.md`, `references/natural-instruments.md` |

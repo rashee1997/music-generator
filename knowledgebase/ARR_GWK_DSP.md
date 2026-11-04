@@ -21,6 +21,9 @@ python_dependencies:
 
 # A.R. Rahman Generative Music Knowledge Base (ARR-GMKB)
 
+> The `*_engine.py` names in this document are code listings inside it, not scripts in `scripts/`.
+> The skill's own versions of these ideas live in `theory.py`, `world.py`, `humanize.py`, `compose.py` and `direct.py`.
+
 ## Table of Contents
 1. [System Architecture & Execution Pipeline](#1-system-architecture--execution-pipeline)
 2. [Module 1: Raga, Pitch & Two-Component Gamaka Engine](#2-module-1-raga-pitch--two-component-gamaka-engine)
@@ -88,7 +91,7 @@ Standard MIDI pitch quantization destroys the soul of Indian melodies. We model 
    $$f_{\text{dance}}(t) = A_{\text{cents}} \cdot \sin\left(\frac{\pi t}{T_{\text{dur}}}\right) \cdot \sin(2\pi \nu_{\text{gam}} t)$$
    Where $\nu_{\text{gam}} \in [4.8, 5.8]\text{ Hz}$ mimics the human vocal / bansuri flute oscillation rate.
 
-### 2.4 Python Implementation: `raga_gamaka_engine.py`
+### 2.4 Implementation listing (`raga_gamaka_engine.py`; not a shipped script)
 
 ```python
 import numpy as np
@@ -224,7 +227,7 @@ $$J(C_t, C_{t-1}, m_t) = w_{\text{vl}} \sum_{k=1}^{4} |c_{t,k} - c_{t-1,k}| + w_
 * $w_{\text{clash}}$: Heavy penalty for minor-2nd ($1$ semitone) clashes against the active melody note.
 * $w_{\text{sus}}$: Reward for `sus2`, `sus4`, and slash-pedal voicings.
 
-### 3.3 Python Implementation: `harmony_voicing_engine.py`
+### 3.3 Implementation listing (`harmony_voicing_engine.py`; not a shipped script)
 
 ```python
 import numpy as np
@@ -327,7 +330,7 @@ A defining hallmark of 90s and 2000s Rahman tracks (*Muqabala*, *Hamma Hamma*, *
 * **Sixteenth-note Ghost Notes:** Percussive muted plucks immediately preceding strong beats.
 * **Octave & Fifth Syncopation:** Jumping from the root ($0$) to the octave ($+12$) or flat-7th ($+10$) on off-beat sixteenth subdivisions (`tick % 4 in [1, 3]`).
 
-### 4.4 Python Implementation: `groove_tala_engine.py`
+### 4.4 Implementation listing (`groove_tala_engine.py`; not a shipped script)
 
 ```python
 import numpy as np
@@ -449,7 +452,7 @@ Rahman famously stated that modern listeners think in multiple layers, so he des
 3. **End-of-Line Instrumental Call-and-Response (*Nadais*):**
    Whenever the lead vocal rests at the end of a lyrical phrase (typically bars 2 and 4), a solo acoustic instrument (flute, *Shenai*, *Santoor*, or nylon guitar) immediately fills the gap with a 4-to-6 note micro-ornament.
 
-### 5.2 Python Implementation: `arrangement_graph_engine.py`
+### 5.2 Implementation listing (`arrangement_graph_engine.py`; not a shipped script)
 
 ```python
 class ArrangementGraphEngine:
@@ -540,7 +543,7 @@ For backing textures, we boost $S(t)$ by gain $\gamma_{\text{side}} \approx 1.35
 
 $$G_{\text{dB}}(t) = -6.0 \cdot \min\left(1.0, \frac{E_{\text{lead}}(t)}{\theta_{\text{thresh}}}\right)$$
 
-### 6.3 Python Implementation: `sridhar_dsp_engine.py`
+### 6.3 Implementation listing (`sridhar_dsp_engine.py`; not a shipped script)
 
 ```python
 import numpy as np
@@ -647,7 +650,7 @@ To connect all five modules into an automated AI/Python pipeline, the system exc
 }
 ```
 
-### 7.2 Master Orchestrator Script: `main_arr_generator.py`
+### 7.2 Orchestration listing (`main_arr_generator.py`; not a shipped script)
 
 ```python
 import json
@@ -727,7 +730,7 @@ python_dependencies:
 4. [Instrument 2: Continuum / Esraj / Bowed String Formant Model](#4-instrument-2-continuum--esraj--bowed-string-formant-model)
 5. [Instrument 3: Extended Karplus-Strong Plucked Veena / Acoustic Guitar](#5-instrument-3-extended-karplus-strong-plucked-veena--acoustic-guitar)
 6. [The Psychoacoustic Anti-Piercing Filter (Fletcher-Munson + Tape Warmth)](#6-the-psychoacoustic-anti-piercing-filter-fletcher-munson--tape-warmth)
-7. [Complete Python Implementation: `organic_acoustic_synth.py`](#7-complete-python-implementation-organic_acoustic_synthpy)
+7. [Complete implementation listing: `organic_acoustic_synth.py`](#7-complete-implementation-listing-organic_acoustic_synthpy-not-a-shipped-script)
 
 ---
 
@@ -817,7 +820,7 @@ Before any synthesized stem leaves Module 6, it passes through a mandatory 3-sta
 
 ---
 
-## 7. Complete Python Implementation: `organic_acoustic_synth.py`
+## 7. Complete implementation listing (`organic_acoustic_synth.py`; not a shipped script)
 
 This complete, self-contained Python module implements all three physical instrument models and the psychoacoustic anti-piercing filter chain.
 

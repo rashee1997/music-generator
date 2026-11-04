@@ -279,7 +279,7 @@ class MusicPipeline:
 
     def discover_and_run_music21_analysis(self, score, out_wav, out_midi=None):
         """Auto-discovers and attaches a flexible music21 analysis script from the project's scripts/ folder.
-        If a project provides its own scripts/analyze_music21.py (or scripts/analyze.py), it runs it.
+        If a project provides its own scripts/analyze_music21.py, it runs it.
         Otherwise, falls back to the dynamic music21 analysis engine in templates/analyze_music21_template.py.
         """
         candidates = []

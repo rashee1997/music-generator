@@ -55,7 +55,7 @@ Certification writes three things automatically, after the musical gate passes:
 - **`out/versions.json`** — each version with its timestamp, measurements and the **change** that earned it (the gate failures it cleared, or `first certified render`).
 - **`out/master.json`** — the standard tags written beside the master.
 
-Where the tags come from: defaults in `presets/metatdats/metadata.json` (artist, album, copyright, licence, publisher, ISRC, language), then values derived from the score (title, genre from `piece_type`, year, a factual `key · BPM · piece_type` comment), then the project's own `metadata.json` overrides. Write real values into `<project>/metadata.json` rather than into scripts.
+Where the tags come from: defaults in `presets/metadata/metadata.json` (artist, album, copyright, licence, publisher, ISRC, language), then values derived from the score (title, genre from `piece_type`, year, a factual `key · BPM · piece_type` comment), then the project's own `metadata.json` overrides. Write real values into `<project>/metadata.json` rather than into scripts.
 
 Rules for an agent:
 

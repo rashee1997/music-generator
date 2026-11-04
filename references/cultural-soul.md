@@ -9,7 +9,7 @@ For complete mathematical definitions, instrument physics, frequency allocations
 - Tamil Folk, Kuthu & Carnatic: [`knowledgebase/tamil_music_dsp_knowledgebase.md`](../knowledgebase/tamil_music_dsp_knowledgebase.md)
 - Arabic Desert Vocals & Magical Chords: [`knowledgebase/The Arabic Desert Vocal.md`](../knowledgebase/The%20Arabic%20Desert%20Vocal.md)
 - Pan-Arab Maqamat & Iqa'at: [`knowledgebase/arabic_dsp_knowledge.md`](../knowledgebase/arabic_dsp_knowledge.md)
-- East Asian (China & Japan): [`knowledgebase/chines_japanese_dsp_knowledge.md`](../knowledgebase/chines_japanese_dsp_knowledge.md)
+- East Asian (China & Japan): [`knowledgebase/chinese_japanese_dsp_knowledge.md`](../knowledgebase/chinese_japanese_dsp_knowledge.md)
 - Sub-Saharan & West African Polyrhythms: [`knowledgebase/afro_dsp_knowledge.md`](../knowledgebase/afro_dsp_knowledge.md)
 - Americas, Brazil (Samba/Bossa) & Central Asian Throat-Singing: [`knowledgebase/rio_brazil_turkic_mogol_dsp_knowledge.md`](../knowledgebase/rio_brazil_turkic_mogol_dsp_knowledge.md)
 - Global Humming Atlas, Celtic, Nordic, Balkan & Gamelan: [`knowledgebase/world_music_dsp.md`](../knowledgebase/world_music_dsp.md)

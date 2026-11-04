@@ -66,8 +66,8 @@ interval set, not the name: the skill's `MODES` stores semitones, and the same s
 | `apply_meri(notes, breath)` | shakuhachi scoop on notes of 1 beat or more, and a breath gap at the end | 4C |
 | `guzheng_sweep(t0, dur, tonic, scale, direction, octaves)` | a run through a scale over two octaves | 5B |
 
-All four are checked in `scripts/check_world.py`: the spine on a hijaz set, Sa and Pa left alone and a glide on the
-step in the gamaka, and the sweep's length, order and first pitch.
+Three of the four are covered by `tests/test_world_integrity.py`: the spine on a hijaz set, Sa and Pa left alone and a glide on the
+step in the gamaka, and the sweep's length, order and first pitch. `apply_meri` has no test.
 
 Not added: `make_western_cinematic_chord`, which the KB's situational table names but never defines. The KB's
 `make_arabic_iqa_bar` and `make_tihai_cadence` are not added either, because the skill's cycle engine (`cycle_notes`)
@@ -95,7 +95,7 @@ already does the same job from the cycle table.
 
 ## 7. Limits
 
-- No rendered test of the new helpers beyond the self-checks in `check_world.py`. No listening test of the new cycles or scales.
+- No rendered test of the new helpers beyond `tests/test_world_integrity.py`. No listening test of the new cycles or scales.
 - The `practice` labels mean the values are the author's approximations. The skill does not present them as sourced.
 - The KB names are kept in table 2 so a user can ask for them, but the skill's own names are the ones in the code.
 

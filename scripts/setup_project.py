@@ -24,7 +24,7 @@ What it does, in order:
   2. installs requirements.txt into it
   3. installs tinysoundfont with --no-deps (see requirements.txt for why)
   4. with --ears: installs torch (CPU build), then requirements-ears.txt, then downloads earshot's models
-  5. runs scripts/setup_natural.py inside the environment: SoundFont download and a render smoke test
+  5. runs the SoundFont download and a render smoke test inside the environment
   6. downloads the measured head data for "binaural": "hrtf" (scripts/spatial_hrtf, about 150 MB once; failure is not fatal)
 
 Only the standard library is used, so this runs before anything else is installed. Needs Python 3.10 or newer.
@@ -100,7 +100,7 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
     for d in (direction_dir, inst_dir, vocal_dir, spaces_dir, mix_dir, sfx_dir, video_dir, gate_dir, ref_dir, scores_dir, midi_dir, stems_dir, reports_dir, scripts_dir, out_dir) + ((env_dir,) if ambience else ()):
         d.mkdir(parents=True, exist_ok=True)
 
-    # Delivery metadata: the standard tags live in the skill (presets/metatdats/metadata.json); this file only
+    # Delivery metadata: the standard tags live in the skill (presets/metadata/metadata.json); this file only
     # overrides them for this piece. scripts/helpers/ingest_metadata.py reads both at certification.
     meta_file = proj_dir / 'metadata.json'
     if not meta_file.exists():

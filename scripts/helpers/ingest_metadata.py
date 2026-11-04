@@ -15,7 +15,7 @@
 
 """Metadata engine.
 
-The standard tags live in `presets/metatdats/metadata.json`; a project may add
+The standard tags live in `presets/metadata/metadata.json`; a project may add
 `<project>/metadata.json` with an `overrides` map, and the score supplies the
 title, genre and a factual comment. `ingest()` writes the merged result beside
 the audio as `<name>.json`, which the MP3 compressor and the report read.
@@ -30,7 +30,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 SKILL = Path(__file__).resolve().parents[2]
-DEFAULTS_PATH = SKILL / 'presets' / 'metatdats' / 'metadata.json'
+DEFAULTS_PATH = SKILL / 'presets' / 'metadata' / 'metadata.json'
 
 
 def load_standard(project_dir=None):

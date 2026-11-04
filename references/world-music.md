@@ -4,7 +4,7 @@ Use this file when the brief names a country, a tradition or a world instrument:
 bhangra), Arabic, Turkish, Persian, Greek, Chinese, Japanese, K-pop and Korean, Indonesian, Rio and Brazilian, Latin,
 Caribbean, African, Andean, Celtic, flamenco, klezmer, and the older Western styles. Everything here lives in
 `scripts/world.py` (data) and is merged into `compose.py`, `theory.py`, `soundbank.py`, `humanize.py` and
-`render_natural.py`. `python3 scripts/check_world.py` proves every name resolves.
+`render_natural.py`. `python3 scripts/world.py` prints every scale, cycle and genre it knows.
 
 Labels follow `genres-and-moods.md`: **sourced** = read for this skill (section 9); **practice** = common practice or the
 author's approximation, not measured on a corpus.
@@ -19,7 +19,7 @@ For exact acoustic models, microtonal cent offsets, frequency band allocations, 
 - **Tamil Folk, Kuthu & Carnatic Classical:** [`knowledgebase/tamil_music_dsp_knowledgebase.md`](../knowledgebase/tamil_music_dsp_knowledgebase.md)
 - **Arabic Desert Vocals & Magical Maqam Chords:** [`knowledgebase/The Arabic Desert Vocal.md`](../knowledgebase/The%20Arabic%20Desert%20Vocal.md)
 - **Pan-Arab Maqamat & Iqa'at Cycles:** [`knowledgebase/arabic_dsp_knowledge.md`](../knowledgebase/arabic_dsp_knowledge.md)
-- **East Asian (Chinese Wu Sheng & Japanese Onkai):** [`knowledgebase/chines_japanese_dsp_knowledge.md`](../knowledgebase/chines_japanese_dsp_knowledge.md)
+- **East Asian (Chinese Wu Sheng & Japanese Onkai):** [`knowledgebase/chinese_japanese_dsp_knowledge.md`](../knowledgebase/chinese_japanese_dsp_knowledge.md)
 - **Sub-Saharan African Polyrhythms & Amapiano:** [`knowledgebase/afro_dsp_knowledge.md`](../knowledgebase/afro_dsp_knowledge.md)
 - **Americas, Brazil (Samba/Bossa) & Central Asian Throat Singing:** [`knowledgebase/rio_brazil_turkic_mogol_dsp_knowledge.md`](../knowledgebase/rio_brazil_turkic_mogol_dsp_knowledge.md)
 - **Global Humming Atlas, Celtic, Nordic, Balkan & Gamelan:** [`knowledgebase/world_music_dsp.md`](../knowledgebase/world_music_dsp.md)

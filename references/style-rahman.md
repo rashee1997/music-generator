@@ -33,6 +33,6 @@ on the piece, and the mix gate checks the lead's band.
 ## How to create / use
 
 Use or make a production style:
-1. Use: `"style": "rahman"` in the brief (the overlay lives in `references/presets/styles/rahman.json`).
+1. Use: `"style": "rahman"` in the brief (the overlay lives in `references/styles/rahman.json`).
 2. Make another: `python scripts/presets.py scaffold styles <name> --project <project>` and fill `roles_add` (which instruments lead each role) and `sources`.
 3. Research the artist first (`research_kb.py` then web); styles change instruments, not scales or soul rules.

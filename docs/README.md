@@ -21,7 +21,7 @@ The README links here rather than repeating these:
 | [../references/](../references/) | The reference set — brief reading, music direction, mixing and mastering, quality gate, vocals, spatial audio, SFZ libraries, video scoring, troubleshooting. |
 | [../knowledgebase/](../knowledgebase/) | Genre, culture and DSP knowledge: Indian, Arabic, African, East Asian, Latin, Western, electronic, game, video. |
 | [../templates/](../templates/) | Project scaffold, direction sheet and custom score templates. |
-| [../scripts/helpers/](../scripts/helpers/) | Certification helpers: standard metadata (`presets/metatdats/metadata.json`), master versioning into `out/master_vNN.wav` with `out/versions.json`, and manual MP3 compression. |
+| [../scripts/helpers/](../scripts/helpers/) | Certification helpers: standard metadata (`presets/metadata/metadata.json`), master versioning into `out/master_vNN.wav` with `out/versions.json`, and manual MP3 compression. |
 
 ## Limitations
 

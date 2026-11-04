@@ -17,7 +17,7 @@ Where a source could not be read in full, this file says so.
 | Ableton, "Learn how to make high-impact sounds for movies and trailers" (fr locale) | Hits (layers low to high, transient plus reverb tail), risers (pitch and filter automation, peak then hit or silence), braams (octave-stacked low brass, pitched down), sub drops, silence before impact | The trailer construction in `music-direction.md` section 4. Downlifters and reverse cymbals were not covered by this page, so they are not described |
 | Guy Jones on adaptive game music (gamedeveloper.com) | Vertical layering (base loop plus stems that fade), horizontal re-sequencing, synced transitions, loopable stems, 1-2 minute loops | The adaptive-music section and the three-state game recipe |
 | beverlyboy.com, "What is a spotting session in film" | Who attends, the decisions (timing, emotional purpose, style, problem areas, timeline), cue construction against click tracks | The spotting section (how to turn a rough cut into direction sheets) |
-| earshot (github.com/Leonxlnx/earshot, MIT), README, docs, skills, source | Two open models (CLAP text-audio similarity, AST AudioSet tags), measurements, forced-choice matching, timeline and pulse clarity (thresholds 0.30 clear, 0.15 weak), and its own warnings that mood labels are wrong about 1 in 5 and key estimates are weak | `scripts/listen.py` (the ears), the limits in `music-direction.md` section 7, and the install note in `setup_natural.py` |
+| earshot (github.com/Leonxlnx/earshot, MIT), README, docs, skills, source | Two open models (CLAP text-audio similarity, AST AudioSet tags), measurements, forced-choice matching, timeline and pulse clarity (thresholds 0.30 clear, 0.15 weak), and its own warnings that mood labels are wrong about 1 in 5 and key estimates are weak | `scripts/listen.py` (the ears), the limits in `music-direction.md` section 7, and the install note in `setup_project.py` |
 
 Not read in full: the IRPR Sound glossary on vertical layering (the redirect was not followed; the adaptive
 definitions here come from the gamedeveloper article), and a Frontiers HTML page that was not on the allowlist (the
@@ -159,10 +159,10 @@ The user supplied `global_music_theory_algorithmic_synthesis_guide.md` (in the s
 | 55 KB scales against `world.MODES` and `theory.MODES` by interval set | 52 already present under another name or as a shape; 3 new | `ethiopian_tizita_maj`, `ethiopian_bati`, `western_octatonic` added |
 | KB rhythm cycles against `world.CYCLES` | Most present; 4 missing | `adi_8`, `rupaka_3`, `samai_thaqil`, `gankogui_12_8` added (the rupaka grouping is the KB's and is unverified) |
 | KB drum names (dum, tak, ka, riq, daf, taiko_don, ghatam, mridangam, bendir, talking_drum) | all in `soundbank` | none |
-| KB section 8 helpers against the code | gamaka, meri, guzheng sweep and pentatonic spine missing; strum spread and phrase arch present in `humanize.py` | four helpers added to `theory.py`, self-checked in `check_world.py` |
+| KB section 8 helpers against the code | gamaka, meri, guzheng sweep and pentatonic spine missing; strum spread and phrase arch present in `humanize.py` | four helpers added to `theory.py`, covered by `tests/test_world_integrity.py` |
 | KB section 10 golden rules against `humanize.py`, `pattern_audit.py`, `naturalness_check.py` | rules 2 and 3 enforced; 1, 4 and 5 not enforced; 6 by hand | listed in `global-theory-kb.md` section 5, not coded |
 
-Not checked: a listening test of the new cycles and scales, and any render using the new helpers. `check_world.py` passes (79 genres, 37 cycles, 207 aliases).
+Not checked: a listening test of the new cycles and scales, and any render using the new helpers. `tests/test_world_integrity.py` passes.
 
 ## 11. Voices, choirs, sound effects and the quality gate (ninth pass)
 
