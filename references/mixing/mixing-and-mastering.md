@@ -61,9 +61,8 @@ natural 18-20 dB crest piece should be a little quieter, not crushed.
 
 ## 4. Music under voice-over (OpenMontage, W3C, BBC practice & Commercial Contract)
 
-- **The Voice-Over First Contract:** In commercials, explainers, and corporate media, speech intelligibility is sacred. Consult [`knowledgebase/genre-and-feel/commercial-promo.md`](../../knowledgebase/genre-and-feel/commercial-promo.md) for complete mathematical ducking curves and commercial persuasion psychoacoustics:
-  - Apply a static -4 to -6 dB bell notch filter ($Q = 1.2$) centered at 1,800 Hz across all chordal/pad beds (pianos, electric guitars, synth pads).
-  - Dynamically duck the music bed by -8 to -14 dB whenever vocal activity is detected (25 ms attack, 250–350 ms release).
+- **The Voice-Over First Contract:** the contract, its ducking depths and the persuasion rules live in
+  [`knowledgebase/genre-and-feel/commercial-promo.md`](../../knowledgebase/genre-and-feel/commercial-promo.md); this section only says how to apply it.
 - Voice: high-pass 80 Hz, cut ~500 Hz, boost 2-5 kHz, tame 6-8 kHz sibilance, compress 3:1 (1-5 ms attack, 10-20 ms release).
 - Music peak 18-20 dB under the voice when speaking (W3C: 20 dB lower for accessibility; BBC: go a further 4 dB lower than looks right); duck 6-12 dB while speech is active (up to 22 for complex narration).
 - Cut 2-4 kHz on the music bed. Use instrumental only. Avoid bright busy hi-hats under speech.
@@ -124,12 +123,9 @@ Deliver: master WAV, instrumental/underscore version, stems, MIDI.
 
 ## 8. Ambient & Nature Fusion (The 5 Zero-Overlap Blending Laws)
 
-For mathematical derivations, weather physics (mist, monsoon, ocean surf, desert simoom, fire, thunder), and bio-acoustics (avian syrinx FM synthesis), see [`knowledgebase/sound-design/sfx-ambience.md`](../../knowledgebase/sound-design/sfx-ambience.md). Enforce the **5 Laws of Zero-Overlap Blending**:
-1. **Dynamic Spectral Notching:** 4th-order Butterworth high-pass at 140 Hz (sub-bass protection) + -8 to -14 dB notch on ambient beds at the lead instrument's instantaneous $f_0(t)$ and $2f_0(t)$.
-2. **Temporal Call-and-Response Gating:** Discrete SFX (birds, drops, whistles) trigger with inverse-envelope probability $P \propto (1 - M_{env})^2$ during musical pauses.
-3. **Key-Locked Harmonic Resonators ("Singing Ambience"):** Pass 25–40% of raw wind/rain/surf noise through a parallel bank of high-Q resonators ($Q = 25–45$) tuned to the song's root, 5th, and mode so nature naturally hums in key.
-4. **3D Spherical Mid-Side & Haas Separation:** Mid channel attenuated -6 dB, Side boosted +3 dB with 7–13 ms Haas delay so ambience forms a 360° dome around the listener, leaving the center clear for drums, bass, and lead.
-5. **Rhythmic Quantization of Micro-Foley:** Snap 75% of nature/foley transients to within $\pm 15\text{ ms}$ of the 16th/12th rhythmic grid.
+The five zero-overlap laws, the weather and bio-acoustic models belong to
+[`knowledgebase/sound-design/sfx-ambience.md`](../../knowledgebase/sound-design/sfx-ambience.md); this section only says how to
+place the result in the mix.
 
 1. **The Shared Acoustic Space Rule (Eliminating the Dry vs Wet Perception Gap)**:
    - *Why it sounds artificial:* If the instruments (guitar, flute, drums) sound like bone-dry studio recordings while nature sounds have wide outdoor reverberance, the brain immediately detects two separate unrelated audio files playing at the same time.

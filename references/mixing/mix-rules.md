@@ -40,7 +40,7 @@ These are enforced by `scripts/mixer.py` and checked by `scripts/quality_gate.py
 8. **Anti-piercing natural tone.** Never voice lead melodies in screeching high registers (avoid octave 6 in GM). General MIDI brass,
    sitar, and synths require subtractive notches (e.g. sitar 3.5 kHz metallic ping) and low-pass roll-offs (4.5–7 kHz) so they
    blend like warm acoustic instruments rather than piercing digital synthesis.
-9. **The Voice-Over First Contract (`knowledgebase/genre-and-feel/commercial-promo.md`).** Whenever narration or speech sits over music, speech intelligibility (800 Hz – 3.5 kHz) takes absolute precedence:
+9. **The Voice-Over First Contract.** The contract lives in `knowledgebase/genre-and-feel/commercial-promo.md`; apply it here. Whenever narration or speech sits over music, speech intelligibility (800 Hz – 3.5 kHz) takes absolute precedence:
    - Apply a static -4 to -6 dB bell notch filter ($Q = 1.2$) centered at 1,800 Hz across all chordal beds (pianos, pads, guitars).
    - Dynamically duck the entire music bed by -8 to -14 dB during vocal phrases (25 ms attack, 250–350 ms release).
    - Commercial temporal milestones: 0–3s thumb-stop hook, 15–30s micro-lifts (glock, claps, staccatos), and final 3s logo mnemonic ringing into silence.
