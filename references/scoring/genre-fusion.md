@@ -65,20 +65,17 @@ scale, meter and patterns; the mood owns tempo, energy and dynamics.
 
 ## 3. Country sub-styles: what each one is made of
 
-Country is a family of styles that already borrowed from each other. The PBS "Branches of Country Music" essays and the
-Wikipedia entry for Americana give the lineage; the instrument and rhythm columns are from common practice and the
-skill's own instrument names.
-
+Country is a family of styles that already borrowed from each other. 
 | Sub-style | Core sound | Skill instruments | Feel and rhythm | Borrowed from |
 |---|---|---|---|---|
-| Bluegrass | Acoustic, fast, high tenor harmony, instrumental breaks | `banjo`, `fiddle`, `mandolin`, `guitar` (rhythm), `finger_bass` or `cello` | Driving 2/4 or 4/4, fast breaks; `bluegrass` genre (120-160 BPM) | Appalachian mix of Scots-Irish fiddle, African-American banjo roots, and blues (PBS, WNPT) |
+| Bluegrass | Acoustic, fast, high tenor harmony, instrumental breaks | `banjo`, `fiddle`, `mandolin`, `guitar` (rhythm), `finger_bass` or `cello` | Driving 2/4 or 4/4, fast breaks; `bluegrass` genre (120-160 BPM) | Appalachian mix of Scots-Irish fiddle, African-American banjo roots, and blues |
 | Honky-tonk | Piano-led, a bar room sound, twang | `piano`, `steel_guitar` or `pedal_steel`, `guitar`, `finger_bass` | Shuffle, a steady backbeat | Piano-driven saloon music (Kaitlin Bove, Superprof) |
-| Western swing | Dance band with fiddle, steel and horns | `fiddle`, `pedal_steel`, `trumpet`, `alto_sax`, `piano` | Swing feel (`swing` about 0.54, the value the `country` genre uses); a jazz-style two-beat | Jazz and big band (PBS "Texas Shuffle" and Western swing) |
-| Rockabilly | Slap bass, slapback echo, a fast shuffle | `finger_bass` (slapped), `guitar`, drums | Shuffle, fast two-feel | Rhythm and blues and early rock (PBS) |
-| Nashville sound | Strings, smooth vocals, polished | `violin`, `cello`, `piano`, `guitar` | Slow to mid tempo, even pulse | Pop orchestration (PBS "Countrypolitan") |
-| Bakersfield / outlaw | Electric and rough, rock drums | `guitar` (electric, twang), drums, `finger_bass` | Straight backbeat | Rock (PBS "Outlaws" and "Bakersfield Sound") |
-| Americana | Folk-rooted mix | Any of the above | Varies | Country, bluegrass, folk, blues, gospel, rhythm and blues, roots rock and southern soul (Wikipedia) |
-| Tejano (Texas-Mexican) | Accordion and a 12-string bass guitar, electric bass and drum kit | `accordion`, `guitar` (stand-in for the bajo sexto), `finger_bass`, drums | Polka, cumbia, ranchera or bolero rhythm; `cumbia` groove exists in the skill | Norteño polka, corrido ballads, Anglo fiddle, mariachi (Kennedy Center, Melodigging, Smithsonian, TSHA) |
+| Western swing | Dance band with fiddle, steel and horns | `fiddle`, `pedal_steel`, `trumpet`, `alto_sax`, `piano` | Swing feel (`swing` about 0.54, the value the `country` genre uses); a jazz-style two-beat | Jazz and big band |
+| Rockabilly | Slap bass, slapback echo, a fast shuffle | `finger_bass` (slapped), `guitar`, drums | Shuffle, fast two-feel | Rhythm and blues and early rock |
+| Nashville sound | Strings, smooth vocals, polished | `violin`, `cello`, `piano`, `guitar` | Slow to mid tempo, even pulse | Pop orchestration |
+| Bakersfield / outlaw | Electric and rough, rock drums | `guitar` (electric, twang), drums, `finger_bass` | Straight backbeat | Rock |
+| Americana | Folk-rooted mix | Any of the above | Varies | Country, bluegrass, folk, blues, gospel, rhythm and blues, roots rock and southern soul |
+| Tejano (Texas-Mexican) | Accordion and a 12-string bass guitar, electric bass and drum kit | `accordion`, `guitar` (stand-in for the bajo sexto), `finger_bass`, drums | Polka, cumbia, ranchera or bolero rhythm; `cumbia` groove exists in the skill | Norteño polka, corrido ballads, Anglo fiddle, mariachi |
 
 Notes:
 - The skill has no bajo sexto. Use `guitar` with a low register and a 12-string feel only if the tone is later checked by ear;

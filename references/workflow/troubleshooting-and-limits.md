@@ -50,9 +50,11 @@ load_when:
 - The sampled bank is good, not concert-grade. Do not claim it is indistinguishable from a real orchestra.
 - No sung words. Choir and "oohs" are texture only.
 - Cloning needs a clean recording of single notes; neural cloning needs a GPU and is not run here.
-- Genre readings are uneven: hardstyle, motown and afrobeat fail the family test, acoustic and folk read weakly, and a
-  dark epic does not separate from a heroic epic. See
-  `references/scoring/genres-and-moods.md` section 7a before you claim a genre works, and check your render with `listen.py`.
+- Genre readings are uneven and none is verified by ear: hardstyle, motown and afrobeat fail the family test, acoustic
+  and folk read weakly, and a dark epic does not separate from a heroic epic. Check your render with `listen.py`.
+- No taqsim, alap or free improvisation: the output is metered and phrase-structured.
+- Chords are equal temperament; microtonal modes use drones and sus2 chords on purpose.
+- Cultural fit is a human judgement: offer a version to check with someone from the tradition.
 - earshot is a model's opinion. It reads feel, instruments, pulse and tempo roughly; it cannot judge taste, melody,
   or whether a raga or maqam is correct. Its mood labels are wrong about one time in five by its own account.
 - Traditional idioms are approximations with GM instruments unless the user supplies a recording.

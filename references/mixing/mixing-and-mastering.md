@@ -47,7 +47,7 @@ Per instrument starting points (cut / boost): piano cut 300-400 / boost 3-5 k ai
 | Target | Integrated LUFS | True peak |
 |---|---|---|
 | YouTube / YouTube Shorts | -14 | -1.5 dBTP |
-| TikTok / Instagram Reels | -14 | -1 dBTP (check on a phone speaker; push 2-4 kHz) |
+| TikTok / Reels | -14 | -1 dBTP (check on a phone speaker; push 2-4 kHz) |
 | Spotify / streaming | -14 | -2 dBTP |
 | Podcasts (Apple) | -16 | -1 dBTP |
 | Film / cinematic underscore | -18 to -16 (leave dynamics) | -1.5 dBTP |

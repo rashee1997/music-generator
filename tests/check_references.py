@@ -20,6 +20,7 @@ not there, or a count in prose (counts go stale; name the thing, not how many). 
 
 Run: python tests/check_references.py            (repo root or anywhere)
 """
+import json
 import os
 import re
 import sys
@@ -27,7 +28,10 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REF = os.path.join(ROOT, 'references')
 
-BANNED = re.compile(r'this session|this pass|TinyFish|Moved verbatim|Reference only|How to create / use'
+PROVENANCE = re.compile(r'instagram|medium\.com|wikipedia|study\.com|pressbooks|general sources|ohiolink'
+                        r'|Ryan Leach|Berklee|ArtofComposing|What was read|Not verified|section 7a', re.I)
+BANNED = re.compile(PROVENANCE.pattern +
+                    r'|this session|this pass|TinyFish|Moved verbatim|Reference only|How to create / use'
                     r'|What changed|Before \| Now|written from memory|not fetched|could not be fetched'
                     r'|Arsenal|Thermodynamic|Sacred Lead|JUCE|Headless VST3|state-of-the-art|cutting-edge'
                     r'|robust|seamless|powerful'
@@ -88,8 +92,27 @@ def main():
                 if target.startswith(PREFIXES) and not resolves(target, path):
                     fails.append(f'{rel}:{i}: path that does not exist: {target}')
         n = len(text.splitlines())
-        if n > 250:
+        if n > 300:
+            fails.append(f'{rel}: {n} lines (limit 300)')
+        elif n > 250:
             warns.append(f'{rel}: {n} lines')
+
+    # a style overlay may name what it changes, not where the idea was read
+    styles = os.path.join(REF, 'data', 'styles')
+    for name in sorted(os.listdir(styles)) if os.path.isdir(styles) else []:
+        if not name.endswith('.json'):
+            continue
+        rel = f'references/data/styles/{name}'
+        try:
+            data = json.load(open(os.path.join(styles, name), encoding='utf-8'))
+        except ValueError as exc:
+            fails.append(f'{rel}: invalid JSON: {exc}')
+            continue
+        for key in ('sources', 'source'):
+            for value in data.get(key) or []:
+                hit = PROVENANCE.search(str(value))
+                if hit:
+                    fails.append(f'{rel}: {key} cites {hit.group(0).strip()}')
 
     for w in warns:
         print(f'warn: {w}')
