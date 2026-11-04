@@ -47,6 +47,38 @@ Follow these steps in order. Never skip steps.
 | 7 | **Revise** | Change ONE lever at a time ([`references/workflow/music-direction.md`](references/workflow/music-direction.md) §6). Re-run step 6 until green (max 5 attempts). | All gates pass |
 | 8 | **Listen & deliver** | `python scripts/listen.py out/master.wav --direction direction/<sheet>.json` | Verify and report results |
 
+## Scripts you run
+
+One line each; every path is under `scripts/` unless it says otherwise.
+
+| Script | What it does |
+|---|---|
+| `setup_project.py` | create a project: uv venv, packages, SoundFont, `--ears` for earshot |
+| `pipeline.py` | render and certify: stages 1-7, the gate, version files, tags |
+| `compose.py` | brief to score; `--list`, `--render`, `--midi`, `--energy`, `--space`, `--voiceover` |
+| `render_natural.py` | score to stems and master, per-note expression |
+| `mixer.py` | the mix and master engine |
+| `mix_diagnostics.py` | the mixing diagnostics table; reports, never edits the mix |
+| `quality_gate.py` | the gate rows for a score and a rendered master |
+| `gate_profiles.py` | gate profiles: `list`, `rows`, `explain`, `new`, `check` |
+| `presets.py` | `list`, `show`, `validate`, `scaffold`, `ingest` |
+| `direct.py` | director edits on a score: pulse, lines, arcs, gains, tempo |
+| `listen.py` | earshot readings and measurements against a direction sheet |
+| `research_kb.py` | knowledge-base sections into `reports/research_<topic>.md` |
+| `find_references.py` | the reference finder: `--tags`, `--list`, `--check` |
+| `soundbank.py` | SoundFont discovery, instrument names and drum keys (`--list`) |
+| `world.py` | prints every scale, cycle and genre |
+| `sfx.py` | one-hit effects from presets (`list`, `make`) |
+| `environment.py` | ambience from presets and physical scenes |
+| `physical.py` | the physical scene engine: `laws`, `check`, `render`, `verify` |
+| `video_score.py` | score a video end to end (`--selftest`) |
+| `clone_instrument.py` | clone an instrument from a recording, export an SFZ |
+| `extract_pipeline.py` | song to MIDI and stems: `setup`, `run`, `status`, `kb` |
+| `sfz_libs.py`, `sfz_render.py` | optional SFZ libraries and the renderer that plays them |
+| `helpers/version_manager.py` | the delivery record (`list --project <dir>`) |
+| `helpers/ingest_metadata.py` | rewrite the tags beside a master |
+| `helpers/compress_mp3.py` | manual MP3 encode of a certified version |
+
 ## Delivery metadata and versions
 
 Certification writes three things automatically, after the musical gate passes:
