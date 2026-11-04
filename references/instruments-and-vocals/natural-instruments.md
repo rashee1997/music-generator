@@ -10,7 +10,7 @@ from the user's own recording. Choose the source from this table.
 | Piano, strings, winds, brass, guitar, bass, harp, mallets, choir, orchestral and pop drums | **SoundFont samples** (GeneralUser GS via `tinysoundfont`) | `"instrument": "cello"` (names: `python3 scripts/soundbank.py --list`) |
 | Instrument the user can record (sitar, oud, a voice, a toy, a tabla loop) | **cloned** instrument | `clone_instrument.py analyze ...`, then `"instrument": "clone:path"` |
 | Music-box, kalimba, glass or bell colours | GM presets: Music Box (10), Glockenspiel (9), Vibraphone (11), Marimba (12), Tubular bells (14) | `"instrument": "marimba"` etc. |
-| Traditional timbres (sitar, bansuri, santoor, oud, qanun, ney, erhu, guzheng, pipa, koto, shamisen, kora, charango, bouzouki...) | a cloned instrument for the real sound; otherwise the **150+ named stand-ins** in `references/world-music.md` section 4 (`"instrument": "oud"` plays a nylon guitar with microtonal bends) | say the approximation in the reply |
+| Traditional timbres (sitar, bansuri, santoor, oud, qanun, ney, erhu, guzheng, pipa, koto, shamisen, kora, charango, bouzouki...) | a cloned instrument for the real sound; otherwise the **150+ named stand-ins** in `references/scoring/world-music.md` section 4 (`"instrument": "oud"` plays a nylon guitar with microtonal bends) | say the approximation in the reply |
 | Tabla, dhol, darbuka, riq, taiko, surdo, tamborim, cuica, cajon, djembe, palmas | the 77 world drum names (`soundbank.py --list`), mapped to GM percussion keys | stylised, not recordings |
 | Realistic singing with words | not possible here | say so; use choir or "oohs" as texture (GM 52/53) |
 | Sound effects (whooshes, risers, UI clicks) | use the GM percussion and the hit points in `compose.py`; for a custom riser use `direct.add_line` with a reverse-feeling phrase | synthesis of effects is out of scope now |
@@ -86,4 +86,4 @@ Add an instrument the bank does not have:
 1. Pick the closest GM sound: `python scripts/soundbank.py --list`.
 2. `python scripts/presets.py scaffold instruments <name> --project <project>`; set `gm` (that GM name), `role`, `humanize`, `spatial`, `eq`, `gain_db`, `reverb`.
 3. In the score use `"instrument": "<name>"` exactly. A misspelt name is an error in a project, not a guess.
-4. For the real sound, clone a recording instead: `references/instrument-cloning.md` (`"instrument": "clone:<file>"`).
+4. For the real sound, clone a recording instead: `references/instruments-and-vocals/instrument-cloning.md` (`"instrument": "clone:<file>"`).

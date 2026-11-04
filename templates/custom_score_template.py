@@ -24,7 +24,7 @@ instrument line-up, or any piece where you (Claude) want full control.
     python3 my_piece.py                                   # -> my_piece.wav, my_piece.mid, my_piece.json
 
 The workflow is always the same five steps:
-  1. decide      emotion, tempo, key/mode, form, instruments, what changes over time (see references/emotion-and-scoring.md)
+  1. decide      emotion, tempo, key/mode, form, instruments, what changes over time (see references/scoring/emotion-and-scoring.md)
   2. write       notes as dicts {"t": beat, "d": beats, "p": MIDI, "v": 0..1}   (helpers below make this easy)
   3. assemble    a score dict: tracks (instrument + role + notes), dynamics curve, room, master target
   4. execute     pipeline.MusicPipeline().execute (humanize, render, mix, master, and run full CI quality gate)

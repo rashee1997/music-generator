@@ -21,7 +21,7 @@ energy, the expression profile and the track's role in the arrangement. This mod
 render (`analyse`) and once per phrase (`phrase_context`); render_phrase only reads the dictionary.
 
 Nothing here changes the sound by itself. It is input to the choices in performance.py, and every number it
-uses comes from cfg['phrasing'] (references/vocal-engine/defaults.json).
+uses comes from cfg['phrasing'] (references/data/vocal-engine-data/defaults.json).
 """
 import numpy as np
 

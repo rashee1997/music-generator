@@ -39,10 +39,10 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import theory  # noqa: E402  (its MODES include the world scales)
-import soul    # noqa: E402  (what each culture needs to feel alive; see references/cultural-soul.md)
+import soul    # noqa: E402  (what each culture needs to feel alive; see references/scoring/cultural-soul.md)
 
 # Sources for the rhythm and scale facts are listed in references/cultures-fusion.md.
-import presets  # noqa: E402  (every tunable value comes from the presets: references/presets, and each project's presets/)
+import presets  # noqa: E402  (every tunable value comes from the presets: references/data/presets, and each project's presets/)
 
 
 def _cultures_from_presets():
@@ -58,7 +58,7 @@ CULTURES = _cultures_from_presets()
 
 
 # A style is an overlay on the planned roles: the same cultures, a different production voice. Each style is a JSON file
-# in references/styles/ (name, note, roles_add, sources). Adding a style is adding a file, not changing code.
+# in references/data/styles/ (name, note, roles_add, sources). Adding a style is adding a file, not changing code.
 SKILL_REFS = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'references')
 PRESET_ROOTS = []                       # project preset folders (<project>/presets); the latest one added wins
 
@@ -72,7 +72,7 @@ def use_project(project_dir):
 
 
 def load_styles():
-    """Every style, keyed by name: the skill's references/styles, then the project's presets/styles."""
+    """Every style, keyed by name: the skill's references/data/styles, then the project's presets/styles."""
     return presets.load('styles')
 
 
@@ -156,7 +156,7 @@ def plan(cultures, key='D', style=None, pocket=False):
     if style:
         styles = load_styles()
         if style not in styles:
-            raise ValueError(f'unknown style "{style}". Known: {sorted(styles)} (add references/styles/{style}.json)')
+            raise ValueError(f'unknown style "{style}". Known: {sorted(styles)} (add references/data/styles/{style}.json)')
         for role, names in styles[style]['roles_add'].items():
             roles[role] = list(dict.fromkeys(names + roles.get(role, [])))
 

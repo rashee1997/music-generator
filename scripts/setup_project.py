@@ -115,7 +115,7 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
     # 1. Generate direction/direction_sheet.json: a director's sheet, not a checklist.
     #    Every block is one a director decides before a note exists (spotting: where the cue starts and stops, the
     #    arc, the motif plan, the hits with a reason, how it ends). The gate rejects a sheet whose sections overlap,
-    #    whose hits disagree with hits_at, or whose video block names no picture. Detail: references/music-direction.md.
+    #    whose hits disagree with hits_at, or whose video block names no picture. Detail: references/workflow/music-direction.md.
     room = f'{slug}_room'
     direction_content = {
         "title": title,
@@ -167,7 +167,7 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
         "true_peak_max": -1.5,
         "delivery": {"format": "wav", "sample_rate": 48000, "bit_depth": 24,
                      "stage": "TODO: web, broadcast or cinema"},
-        "references": ["TODO: in words, never a copyrighted track (references/music-direction.md section 2)"],
+        "references": ["TODO: in words, never a copyrighted track (references/workflow/music-direction.md section 2)"],
         "spatial_staging": {
             "lead_flute": {"azimuth": 0.0, "elevation": 4.0, "distance": 1.4, "space": room},
             "warm_piano": {"azimuth": -45.0, "elevation": 0.0, "distance": 2.0, "space": room},
@@ -272,7 +272,7 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
             json.dump(env_preset, f, indent=2)
 
     # a room and a mix preset of this project: the gate blocks until their "character" sentences are written
-    shipped_hall = json.loads((SKILL / 'references' / 'presets' / 'spaces' / 'hall.json').read_text(encoding='utf-8'))
+    shipped_hall = json.loads((SKILL / 'references' / 'data' / 'presets' / 'spaces' / 'hall.json').read_text(encoding='utf-8'))
     shipped_hall.update(name=f'{slug}_room', character='ONE SENTENCE: the place and why its tail, walls and distance law suit this piece')
     shipped_hall.pop('kind', None)
     with open(spaces_dir / f'{slug}_room.json', 'w', encoding='utf-8') as f:
@@ -280,8 +280,8 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
     import mix_schema              # stdlib-only, like this file: the role chains and spectral profiles are data a project edits
     mix_preset = {"name": f"{slug}_mix", "character": "ONE SENTENCE: what this music is (genre, mood, density) and why the mix below suits it",
                   "carve_db": -4.0, "max_boost_db": 12.0,
-                  "note": "only list what differs: everything else comes from references/presets/mix/default.json",
-                  # the strategies (references/mixing-and-mastering.md, section 8b); the defaults are the old behaviour
+                  "note": "only list what differs: everything else comes from references/data/presets/mix/default.json",
+                  # the strategies (references/mixing/mixing-and-mastering.md, section 8b); the defaults are the old behaviour
                   "gain_staging": {"strategy": "legacy", "ref_lufs": -24.0, "block_s": 0.4,
                                    "max_cut_db": 24.0, "peak_headroom_db": -1.0},
                   "dynamics": {"engine": "pedalboard", "knee_db": 0.0, "detector": "peak",

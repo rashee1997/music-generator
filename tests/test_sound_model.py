@@ -179,7 +179,7 @@ class Pulsed(unittest.TestCase):
 
 class Rules(unittest.TestCase):
     def test_same_seed_same_samples_different_seed_differs(self):
-        m = json.load(open(next(iter(glob.glob(str(HERE.parent / 'references' / 'sound-models' / 'tin_roof_rain.json')))), encoding='utf-8'))['model']
+        m = json.load(open(next(iter(glob.glob(str(HERE.parent / 'references' / 'data' / 'sound-models' / 'tin_roof_rain.json')))), encoding='utf-8'))['model']
         a, b, c = sm.render(m, SR, 4), sm.render(m, SR, 4), sm.render(m, SR, 5)
         self.assertTrue(np.array_equal(a, b))
         self.assertFalse(np.array_equal(a, c))
@@ -203,14 +203,14 @@ class Rules(unittest.TestCase):
         self.assertTrue(any('estimated work' in p for p in sm.problems(m)))
 
     def test_a_normal_render_is_fast_enough(self):
-        m = json.load(open(HERE.parent / 'references' / 'sound-models' / 'tin_roof_rain.json', encoding='utf-8'))['model']
+        m = json.load(open(HERE.parent / 'references' / 'data' / 'sound-models' / 'tin_roof_rain.json', encoding='utf-8'))['model']
         t = time.time()
         sm.render(m, SR, 1)
         self.assertLess(time.time() - t, 5.0)
 
 
 class CoverageSet(unittest.TestCase):
-    FILES = sorted(glob.glob(str(HERE.parent / 'references' / 'sound-models' / '*.json')))
+    FILES = sorted(glob.glob(str(HERE.parent / 'references' / 'data' / 'sound-models' / '*.json')))
 
     def test_there_are_fifteen_and_all_are_valid(self):
         self.assertEqual(len(self.FILES), 15)
@@ -228,7 +228,7 @@ class CoverageSet(unittest.TestCase):
             self.assertTrue(np.array_equal(a, sm.render(d['model'], SR, 2)), d['name'])
 
     def test_physical_targets_of_the_set(self):
-        load = lambda n: json.load(open(HERE.parent / 'references' / 'sound-models' / f'{n}.json', encoding='utf-8'))['model']
+        load = lambda n: json.load(open(HERE.parent / 'references' / 'data' / 'sound-models' / f'{n}.json', encoding='utf-8'))['model']
         # bouncing ball: onsets shrink by 0.7
         ev = load('bouncing_ball')['voices'][0]['events']
         t, _ = sm.event_times(dict(sm._d(ev, sm.EVENTS), kind='bounce'), 3.5, np.random.default_rng(0))
@@ -260,7 +260,7 @@ class WiredIn(unittest.TestCase):
         import tempfile
         with tempfile.TemporaryDirectory() as td:
             (Path(td) / 'presets' / 'sfx').mkdir(parents=True)
-            model = json.load(open(HERE.parent / 'references' / 'sound-models' / 'glass_break.json', encoding='utf-8'))['model']
+            model = json.load(open(HERE.parent / 'references' / 'data' / 'sound-models' / 'glass_break.json', encoding='utf-8'))['model']
             (Path(td) / 'presets' / 'sfx' / 'glass_x.json').write_text(json.dumps(dict(name='glass_x', character='x', model=model)), encoding='utf-8')
             presets.PROJECT_ROOTS.clear()
             presets.add_project(td)
@@ -278,7 +278,7 @@ class WiredIn(unittest.TestCase):
                 presets.PROJECT_ROOTS.clear()
 
     def test_environment_model_layer_renders_and_validates(self):
-        voices = json.load(open(HERE.parent / 'references' / 'sound-models' / 'leaf_rain.json', encoding='utf-8'))['model']['voices']
+        voices = json.load(open(HERE.parent / 'references' / 'data' / 'sound-models' / 'leaf_rain.json', encoding='utf-8'))['model']['voices']
         cfg = {'layers': [dict(primitive='model_layer', kind='bed', gain_db=-18, voices=voices)]}
         self.assertEqual(env.preset_problems(cfg), [])
         a = env.render_environment_preset(cfg, duration_s=3, seed=4)

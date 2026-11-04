@@ -32,10 +32,10 @@ Order of operations (what a mix engineer does, and the order this file follows):
   8. SIDECHAIN      - optional ducking, band-limited by default.
   9. MASTER         - glue, tone, limiter, loudness to a target with a true-peak ceiling.
 
-Configuration: every number comes from a mix preset (references/presets/mix/default.json, plus the
+Configuration: every number comes from a mix preset (references/data/presets/mix/default.json, plus the
 project's own) with the schema defaults in mix_schema.py underneath. `mix_context.resolve()` resolves a
 piece's configuration once; the module-level names below are views of it, kept because the rest of the
-skill and the tests read them. See references/mixing-and-mastering.md.
+skill and the tests read them. See references/mixing/mixing-and-mastering.md.
 """
 import argparse
 import json

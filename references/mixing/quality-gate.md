@@ -110,12 +110,12 @@ stem. Seven rows, all in `gate_profiles.ROWS`:
 Only `vocal.integrity` is protected. The others relax or skip only through a gate profile or the score's `gate` block, with a reason.
 `project_gate` also validates vocal presets and a track's `vocal` block (unknown style, register, vowel or expression, out-of-range numbers,
 placeholder `character`). Negative controls for every row are in `tests/test_vocal_gate.py`. The rows measure faults. They cannot say whether the
-voice sounds human, warm or moving: listen (`listen.py`) and say if it did not run. Detail: `references/vocal-engine.md`.
+voice sounds human, warm or moving: listen (`listen.py`) and say if it did not run. Detail: `references/instruments-and-vocals/vocal-engine.md`.
 
 ## 3c. The gate adapts to the type of piece (gate profiles)
 
 Rules tuned on melodies false-flag a tense drone, an ambient bed, a dance loop or an effects-only piece. So which rows run, and their
-numbers, come from a **gate profile**: a preset of kind `gate` (`references/presets/gate/`, project `presets/gate/` wins; `scripts/gate_profiles.py`).
+numbers, come from a **gate profile**: a preset of kind `gate` (`references/data/presets/gate/`, project `presets/gate/` wins; `scripts/gate_profiles.py`).
 
 - Pick the type: `"piece_type": "tense"` in the score (a list merges in order, later wins; `compose.py` carries it from the brief; the
   direction sheet has the key). Not declared: each profile's `detect` (keywords, pulse words, drone ratio) is matched and the gate prints
@@ -171,7 +171,7 @@ numbers, come from a **gate profile**: a preset of kind `gate` (`references/pres
 
 `imm_cues`, `imm_elevation`, `imm_height_rules`, `imm_externalization`, `imm_foldown` FAIL; `imm_frontback`, `imm_band`, `imm_envelopment`, `imm_width` WARN.
 Probes run through the measured-head route the mixer forces, with the numbers from `tests/test_hrtf.py`. What each row means, the height rules and the
-limits: `references/immersive-spatial.md`. A failing row is fixed in the score or presets (raise a pad, give the space a ceiling reflection, lower a bass), never by loosening the row.
+limits: `references/spatial/immersive-spatial.md`. A failing row is fixed in the score or presets (raise a pad, give the space a ceiling reflection, lower a bass), never by loosening the row.
 
 ## 5d. Z-axis separation and equal-loudness harshness
 
@@ -216,4 +216,4 @@ It imports `naturalness_check.analyse` / `verdicts` / `cochlear_roughness_check`
 `masking_rows`, runs them on the rebuilt mix and on the original, and counts a fault only when the original does not have
 it too (a bright, hot or narrow master is not the rebuild's fault). `naturalness_check.analyse(..., audio=(samples, sr))`
 measures an array in memory for this. Waveforms are never subtracted: the rebuild has its own phase, so spectra, levels
-and statistics are compared. See `references/extraction.md` for the rows.
+and statistics are compared. See `references/workflow/extraction.md` for the rows.

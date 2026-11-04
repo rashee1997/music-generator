@@ -768,7 +768,7 @@ def render_environment_preset(name_or_dict, duration_s=30.0, sr=SR, seed=42):
     else:
         cfg = presets.find_environment(name_or_dict)
         if not cfg:
-            preset_file = os.path.join(os.path.dirname(__file__), '..', 'references', 'presets', 'environments', f'{name_or_dict}.json')
+            preset_file = os.path.join(os.path.dirname(__file__), '..', 'references', 'data', 'presets', 'environments', f'{name_or_dict}.json')
             if os.path.exists(preset_file):
                 with open(preset_file, 'r', encoding='utf-8') as f:
                     cfg = json.load(f)

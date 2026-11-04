@@ -172,13 +172,24 @@ def render(events, sr=44100, cfg=None, seed=1, hum=False, default_vowel=None, vo
                 elif shift < 0:
                     air = np.concatenate([air[-shift:], np.zeros(-shift)])[:N]
                 air = air * gain * (1.0 + 0.10 * amt * rs.uniform(-1.0, 1.0))
+                if amt > 0:
+                    # a phrase with no room to breathe still gets the air that escapes at its attack; the bed's
+                    # inhale covers the gaps, so a puff is only added where the gap was too short for one
+                    rng_p = np.random.default_rng([int(seed) & 0xFFFFFFFF, j, li, 901])
+                    for i, (t0, _t1) in enumerate(spans):
+                        gap = t0 - spans[i - 1][1] if i else 0.0
+                        if i and gap >= float(B['inhale_min_s']) * 0.6:
+                            continue
+                        puff = breath.onset_puff(sr, rng_p, scfg['breathing'], ref, level_scale=amt)
+                        k = int(round(t0 * sr))
+                        air[k:k + len(puff)] += puff[:max(0, N - k)]
                 brs[j] += air[:N]
                 R['inhales'] += sum(1 for i in range(len(spans) - 1)
                                     if spans[i + 1][0] - spans[i][1] >= float(B['inhale_min_s']) * 0.6)
                 R['no_room_phrases'] += sum(1 for i in range(len(spans) - 1)
                                             if spans[i + 1][0] - spans[i][1] < float(B['inhale_min_s']) * 0.6)
                 if spans:
-                    R['inhale_map'].setdefault((li, len(spans) - 1), []).append(spans[-1][0])
+                    R['inhale_map'].setdefault((li, len(spans) - 1), []).append(spans[-1][0] + shift / float(sr))
         out[:, 0] += (dry[j] + brs[j]) * gl
         out[:, 1] += (dry[j] + brs[j]) * gr
         dist = max(0.3, E['distance_m'] + rs.normal(0.0, E['distance_spread_m']))

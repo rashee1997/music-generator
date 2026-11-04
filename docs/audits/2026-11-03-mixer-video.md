@@ -6,7 +6,7 @@ to and no mix was re-rendered.
 
 Scope: `scripts/mixer.py`, `scripts/dsp.py`, `scripts/mix_schema.py`, `scripts/mix_diagnostics.py`,
 `scripts/pipeline.py` (stages 5-6), `scripts/quality_gate.py` (balance/loudness rows), the whole of
-`video-mixer/` and `scripts/video_score.py`, plus `references/presets/video/default.json`.
+`video-mixer/` and `scripts/video_score.py`, plus `references/data/presets/video/default.json`.
 
 ## 1. What is already sound
 
@@ -69,7 +69,7 @@ Acceptable if intended; it should be stated in the preset schema.
 
 ## 4. Video findings
 
-**V1 - the dialogue-gated loudness mode is a label, not a measurement.** `references/presets/video/default.json`
+**V1 - the dialogue-gated loudness mode is a label, not a measurement.** `references/data/presets/video/default.json`
 declares `"loudness_mode": "dialogue_gated"` for `broadcast` and `cinema`, and `video_gate.master_row`
 prints it. A grep of `scripts/` and `video-mixer/` finds **no implementation** - only the literals in
 `scripts/presets.py`. The voice is normalised by full-file `mx.lufs(v, sr)` in
@@ -137,7 +137,7 @@ Loudness and delivery
 - Netflix branded sound mix, -27 LKFS dialogue-gated +/-2 LU, -2 dBTP:
   <https://studiopartner.netflix.net/studio/branded-sound-mix-spec-and-best-practices>
 - ATSC A/85, dialogue as the anchor element, long-form -24 LKFS +/-2, -2 dBTP
-  (already cited in `references/presets/video/default.json`)
+  (already cited in `references/data/presets/video/default.json`)
 - Streaming targets and when to use -2 dBTP: <https://mazufa.com/loudness-reference/>
 - pyloudnorm accuracy and speed against ffmpeg and libebur128:
   <https://csteinmetz1.github.io/pyloudnorm-eval/paper/pyloudnorm_preprint.pdf>

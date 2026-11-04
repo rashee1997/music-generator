@@ -22,7 +22,7 @@
 
 All generators use deterministic synthesis and physical DSP, fully reproducible per seed.
 Every generator returns a mono float array at `sr`, peak about 0.9 unless normalize=False.
-Research notes: references/sound-effects.md.
+Research notes: references/sound-design/sound-effects.md.
 """
 import argparse
 import os

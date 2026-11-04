@@ -24,11 +24,11 @@ Public facade over scripts/vocal_engine/. The old names still work; the engine b
   sing(midi, dur, ...)          -> one note through the same engine (legacy, peak-normalised like before)
   add_vocal_harmonies / add_vocal_chorus / apply_vocal_dsp  -> pedalboard polish, numbers from the `dsp` config
 
-Configuration (all optional, all JSON): see references/vocal-engine.md and references/vocal-engine/vocal.schema.json.
+Configuration (all optional, all JSON): see references/instruments-and-vocals/vocal-engine.md and references/data/vocal-engine-data/vocal.schema.json.
 Legacy flat keys (voices, attack, vib_cents, ...) and the old nested preset keys keep working.
 
 Styles (tuvan_kargyraa, tuvan_sygyt, bulgarian_chant, nordic_kulning, qawwali_devotional, gregorian_monastic,
-african_polyphony, classical_choir) are configurable synthesis profiles in references/vocal-engine/styles.json,
+african_polyphony, classical_choir) are configurable synthesis profiles in references/data/vocal-engine-data/styles.json,
 not claims of authentic reproduction.
 
     python3 scripts/vocals.py selftest | demo [out.wav] | hum [out.wav]

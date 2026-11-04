@@ -177,7 +177,7 @@ decisions. `scripts/video_score.py` probes the file and fills the same sheet the
 | horizontal centre of motion | `spatial_staging` azimuth of lead and pad | so the music follows the action across the frame |
 | motion, binned | `sections` | labelled from `direction_map.energy_sections` |
 
-What the block carries (all of it from `references/presets/video/default.json`, none of it from code):
+What the block carries (all of it from `references/data/presets/video/default.json`, none of it from code):
 
 | Key | Holds |
 |---|---|
@@ -399,7 +399,7 @@ works without it and says so (measurements only). See `scripts/setup_project.py`
 
 ## 8. Directing by genre and situation
 
-The concrete recipes (with brief JSON, direct calls and a sheet for each) are in `references/scene-recipes.md`:
+The concrete recipes (with brief JSON, direct calls and a sheet for each) are in `references/workflow/scene-recipes.md`:
 trailer or reveal, sad voice-over, calm explainer, tense thriller, joyful end card, adaptive game loop, jingle,
 sleep and meditation, playful, and traditional idioms (with the limits named).
 

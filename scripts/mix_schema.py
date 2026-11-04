@@ -198,7 +198,7 @@ DEFAULTS = {
         'validate_export': True,       # check the written file: peak, true peak, length, channels
         'report': True,
     },
-    # headphone immersion (references/immersive-spatial.md). Off by default, so an older piece mixes exactly as before.
+    # headphone immersion (references/spatial/immersive-spatial.md). Off by default, so an older piece mixes exactly as before.
     # `pair` is how a stereo stem keeps its width: two sources at +-width/2, level normalised for input coherence.
     'immersive': {
         'enabled': False,

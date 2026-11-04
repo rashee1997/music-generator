@@ -183,7 +183,7 @@ class ConfigLayer(unittest.TestCase):
         self.assertTrue(np.isfinite(y).all() and np.abs(y).max() > 0.02)
 
     def test_every_shipped_vocal_preset_renders(self):
-        files = sorted(glob.glob(os.path.join(ROOT, 'references', 'presets', 'vocals', '*.json')))
+        files = sorted(glob.glob(os.path.join(ROOT, 'references', 'data', 'presets', 'vocals', '*.json')))
         self.assertGreaterEqual(len(files), 3)
         for f in files:
             cfg = json.load(open(f, encoding='utf-8'))

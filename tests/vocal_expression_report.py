@@ -17,7 +17,7 @@
 
 Baseline = `phrasing.amount = 0`: the phrase engine exactly as it behaved before this change (one static
 arc, no accents, no micro-timing, no articulation glide, time-locked ensemble inhales).
-Expressive = the defaults in references/vocal-engine/defaults.json.
+Expressive = the defaults in references/data/vocal-engine-data/defaults.json.
 
 Everything here is measured from the same renders: the contour correlation between the first and last phrase
 of a line, the micro-timing distribution, accents, vibrato depth by note length, formant articulation,

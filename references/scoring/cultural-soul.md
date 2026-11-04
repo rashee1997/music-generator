@@ -1,19 +1,19 @@
 # Cultural soul: what makes each music feel alive
 
 The soul is the thing a listener recognises before they can name it. It is data, in `scripts/soul.py` (built-in table)
-and `references/presets/soul/<culture>.json` and each project's `presets/soul/` (editable, one file per culture). `scripts/soul_check.py` checks a score against it
+and `references/data/presets/soul/<culture>.json` and each project's `presets/soul/` (editable, one file per culture). `scripts/soul_check.py` checks a score against it
 before release.
 
 For complete mathematical definitions, instrument physics, frequency allocations, and pure-Python DSP algorithms, consult the authoritative machine-parsable knowledge bases in [`knowledgebase/`](../knowledgebase):
-- Pan-Indian & Hindustani Traditions: [`knowledgebase/PAN_INDIAN_MUSICAL.md`](../knowledgebase/PAN_INDIAN_MUSICAL.md)
-- Tamil Folk, Kuthu & Carnatic: [`knowledgebase/tamil_music_dsp_knowledgebase.md`](../knowledgebase/tamil_music_dsp_knowledgebase.md)
-- Arabic Desert Vocals & Magical Chords: [`knowledgebase/The Arabic Desert Vocal.md`](../knowledgebase/The%20Arabic%20Desert%20Vocal.md)
-- Pan-Arab Maqamat & Iqa'at: [`knowledgebase/arabic_dsp_knowledge.md`](../knowledgebase/arabic_dsp_knowledge.md)
-- East Asian (China & Japan): [`knowledgebase/chinese_japanese_dsp_knowledge.md`](../knowledgebase/chinese_japanese_dsp_knowledge.md)
-- Sub-Saharan & West African Polyrhythms: [`knowledgebase/afro_dsp_knowledge.md`](../knowledgebase/afro_dsp_knowledge.md)
-- Americas, Brazil (Samba/Bossa) & Central Asian Throat-Singing: [`knowledgebase/rio_brazil_turkic_mogol_dsp_knowledge.md`](../knowledgebase/rio_brazil_turkic_mogol_dsp_knowledge.md)
-- Global Humming Atlas, Celtic, Nordic, Balkan & Gamelan: [`knowledgebase/world_music_dsp.md`](../knowledgebase/world_music_dsp.md)
-- Western Classical, Film & Trailer Scoring: [`knowledgebase/western_dsp_knowledge.md`](../knowledgebase/western_dsp_knowledge.md)
+- Pan-Indian & Hindustani Traditions: [`knowledgebase/cultures/pan-indian.md`](../knowledgebase/cultures/pan-indian.md)
+- Tamil Folk, Kuthu & Carnatic: [`knowledgebase/cultures/tamil.md`](../knowledgebase/cultures/tamil.md)
+- Arabic Desert Vocals & Magical Chords: [`knowledgebase/cultures/arabic-desert-vocal.md`](../knowledgebase/cultures/arabic-desert-vocal.md)
+- Pan-Arab Maqamat & Iqa'at: [`knowledgebase/cultures/arabic.md`](../knowledgebase/cultures/arabic.md)
+- East Asian (China & Japan): [`knowledgebase/cultures/chinese-japanese.md`](../knowledgebase/cultures/chinese-japanese.md)
+- Sub-Saharan & West African Polyrhythms: [`knowledgebase/cultures/african.md`](../knowledgebase/cultures/african.md)
+- Americas, Brazil (Samba/Bossa) & Central Asian Throat-Singing: [`knowledgebase/cultures/brazil-turkic-mongolian.md`](../knowledgebase/cultures/brazil-turkic-mongolian.md)
+- Global Humming Atlas, Celtic, Nordic, Balkan & Gamelan: [`knowledgebase/cultures/world-other.md`](../knowledgebase/cultures/world-other.md)
+- Western Classical, Film & Trailer Scoring: [`knowledgebase/cultures/western.md`](../knowledgebase/cultures/western.md)
 
 ---
 
@@ -22,7 +22,7 @@ For complete mathematical definitions, instrument physics, frequency allocations
 - **The 10 Thaats & Prahar:** Bilawal (Ionian), Kalyan (Lydian), Khamaj (Mixolydian), Kafi (Dorian), Asavari (Aeolian), Bhairav (Double Harmonic), Bhairavi (Phrygian), Todi, Purvi, Marwa. Each thaat commands a specific time of day (*Prahar*).
 - **Sitar & Tanpura Jawari:** Parabolic bridge buzz (*Jawari*) produces dynamic non-linear overtones up to 12 kHz, triggering sympathetic resonance in 11–13 *Taraf* steel strings running beneath frets.
 - **Tabla Physics:** Center black tuning paste (*Syahi*) loads the membrane non-uniformly, tuning circular Bessel modes into near-integer harmonic ratios. Left-hand *Bayan* delivers non-linear pitch bends.
-- **Regional Folk Ecosystems:** Punjab *Dhol Chaal* (3+3+2 triplet bounce), Rajasthan Manganiyar *Kamaicha* & *Khartal*, Bengal Baul (*Ektara/Khamak*), Sufi Qawwali claps and harmonium ecstasy. Detailed in [`knowledgebase/PAN_INDIAN_MUSICAL.md`](../knowledgebase/PAN_INDIAN_MUSICAL.md).
+- **Regional Folk Ecosystems:** Punjab *Dhol Chaal* (3+3+2 triplet bounce), Rajasthan Manganiyar *Kamaicha* & *Khartal*, Bengal Baul (*Ektara/Khamak*), Sufi Qawwali claps and harmonium ecstasy. Detailed in [`knowledgebase/cultures/pan-indian.md`](../knowledgebase/cultures/pan-indian.md).
 
 ## Tamil (temple and festival)
 - **Nadaswaram and thavil:** a melodic wind and a barrel drum in partnership; the thavil is the rhythmic partner
@@ -90,5 +90,5 @@ For complete mathematical definitions, instrument physics, frequency allocations
 Create a culture's soul (a preset, not code):
 1. Research it first: `python scripts/research_kb.py <project> --topic "<culture>" --tags <culture>`, then add web sources.
 2. `python scripts/presets.py scaffold soul <culture> --project <project>` writes `<project>/presets/soul/<culture>.json`
-   (feel, breath_beats, groove, call_response, ornament, cadence, tempo, avoid_instruments). A project preset wins over the skill's `references/presets/soul/`.
+   (feel, breath_beats, groove, call_response, ornament, cadence, tempo, avoid_instruments). A project preset wins over the skill's `references/data/presets/soul/`.
 3. Name the culture in the brief (`"fusion": ["<culture>"]` or `soul_cultures`), then check: `python scripts/presets.py validate` and `python scripts/soul_check.py score.json`.

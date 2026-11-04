@@ -12,8 +12,8 @@ Nothing in the KB is cited to a source, so every new value is labelled `practice
 | Pitch and modes (raga, maqam, Japanese, Chinese, African, Western) | `world.py` section 1 (`MODES`, `MICRO`), `theory.py` (`MODES`) | Covered. 55 KB scales map to existing shapes (table 2); 3 shapes added |
 | Rhythm cycles (tala, iqa'at, bell, samai) | `world.py` section 5 (`CYCLES`) | Covered, plus 4 added (table 3) |
 | Articulation (gamaka, meri, strum spread, phrase arch) | `theory.py` helpers (new), `humanize.py` (strum spread, phrase arch) | Strum and arch covered; gamaka, meri, guzheng sweep added |
-| Fusion laws (common tones, one pulse, spectral slots, call and response) | `references/genre-fusion.md`, `references/creative-composition.md` section 3, `theory.pentatonic_spine` (new) | Laws 1 to 4 in `genre-fusion.md`; Law 1 spine is code |
-| Situational mapping (scene to mode, tempo, groove) | `references/scene-recipes.md`, `references/genres-and-moods.md`, `world.GENRES` | Covered by the earlier passes |
+| Fusion laws (common tones, one pulse, spectral slots, call and response) | `references/scoring/genre-fusion.md`, `references/workflow/creative-composition.md` section 3, `theory.pentatonic_spine` (new) | Laws 1 to 4 in `genre-fusion.md`; Law 1 spine is code |
+| Situational mapping (scene to mode, tempo, groove) | `references/workflow/scene-recipes.md`, `references/scoring/genres-and-moods.md`, `world.GENRES` | Covered by the earlier passes |
 | Six golden rules (naturalness) | `humanize.py`, `pattern_audit.py`, `naturalness_check.py` | Partly enforced (section 5) |
 
 ## 2. KB scale names and where they live in the skill

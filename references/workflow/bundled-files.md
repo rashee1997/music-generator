@@ -25,10 +25,10 @@ Moved verbatim from SKILL.md to keep the entry file short.
 | `scripts/environment.py` | public entry point for ambience (facade over `env_engine/`): JSON layer presets or a physical `scene`/`scene_layers`, with ISO 9613-1 distance absorption |
 | `scripts/vocals.py` | public facade of the vocal engine: `render_choir` (phrase-based, independent singers, true nasal hum, breath, expression, stems and a gate report), `sing`, Pedalboard harmonies / chorus / polish with numbers from config |
 | `scripts/vocal_engine/` | the engine: `config` (defaults, old-key migration, validation), `source` (glottal pulse), `tract` (resonators), `nasal` (hum), `voice`, `performance` (phrases), `breath`, `expression`, `singer`, `ensemble` |
-| `references/vocal-engine/` | all engine data: `defaults.json` (+ `ranges`, sources), `styles.json` (8 styles), `expression/*.json` (10 profiles), `vocal.schema.json` |
-| `references/vocal-engine.md` | the vocal engine reference: signal path, hum model, breath, expression, ensemble, stems for the spatial engine, gate rows, limits, benchmark |
+| `references/data/vocal-engine-data/` | all engine data: `defaults.json` (+ `ranges`, sources), `styles.json` (8 styles), `expression/*.json` (10 profiles), `vocal.schema.json` |
+| `references/instruments-and-vocals/vocal-engine.md` | the vocal engine reference: signal path, hum model, breath, expression, ensemble, stems for the spatial engine, gate rows, limits, benchmark |
 | `tests/test_vocals_engine.py`, `tests/test_vocal_gate.py` | 73 vocal tests; `tests/legacy_vocals.py` (old engine kept for A/B), `tests/render_vocal_artifacts.py`, `tests/compare_vocals.py`, `tests/bench_vocals.py`, `tests/artifacts/vocals/` (old and new WAVs, `REPORT.md`) |
-| `scripts/sfx.py` | public entry point for one-hit effects (facade over `sfx_engine/`); a preset may be a physical `scene`, a `model`, a `spec` or a legacy `generator`. (score route: instrument `sfx:<name>`, one note = one hit) 21 one-hit effects, each with a shipped default preset in `references/presets/sfx/` (project `presets/sfx/` overrides it), 7 older ambience recipes kept for old scores (ambience is an `env:` preset) + Pedalboard analog sweeps (`LadderFilter`), lo-fi (`Bitcrush`/`GSM`/`MP3`), and stereo delays |
+| `scripts/sfx.py` | public entry point for one-hit effects (facade over `sfx_engine/`); a preset may be a physical `scene`, a `model`, a `spec` or a legacy `generator`. (score route: instrument `sfx:<name>`, one note = one hit) 21 one-hit effects, each with a shipped default preset in `references/data/presets/sfx/` (project `presets/sfx/` overrides it), 7 older ambience recipes kept for old scores (ambience is an `env:` preset) + Pedalboard analog sweeps (`LadderFilter`), lo-fi (`Bitcrush`/`GSM`/`MP3`), and stereo delays |
 | `scripts/sound_model.py` | any sound effect or ambience as data: voices of excitation, resonator and event process (`laws`, `check`, `render`); used by `sfx:` model presets and the `model_layer` environment primitive |
 | `scripts/physical.py` | orchestrator for the physical sound engine: `laws`, `check`, `render`, `baseline`, `verify`. A scene is data - sources, objects, materials, events, propagation - and an unknown or not-yet-wired field is an error that names its stage |
 | `scripts/phys_core/` | the shared physical layer that both `env:` and `sfx:` use, so neither presentation owns the physics: materials (`materials.py`), geometry to modes (`geometry.py`), excitation (`excite.py`), resonators and porous absorption (`resonate.py`), fracture (`fracture.py`), gait (`gait.py`), vegetation (`vegetation.py`), one propagation law (`propagate.py`), energy calibration (`calibrate.py`), scene schema + validator (`scene.py`), renderer (`render.py`), mechanism registry (`registry.py`), frozen-render check (`baseline.py`) |
@@ -49,10 +49,10 @@ Moved verbatim from SKILL.md to keep the entry file short.
 | `scripts/video_score.py` | score a real video end to end: probe → direction → render → program mix → mux → gate; `--selftest` |
 | `video-mixer/video_program_mix.py` | voice-over, music and effects to a platform loudness, with the music-under-speech report |
 | `video-mixer/video_probe.py`, `video_direction.py`, `video_mux.py`, `video_gate.py`, `video_selftest.py` | picture telemetry, probe→direction, lossless mux, the four `video.*` gate rows, the 17-check selftest |
-| `references/presets/video/default.json`, `references/video-scoring.md` | every number the video path uses, and how the path works |
+| `references/data/presets/video/default.json`, `references/scoring/video-scoring.md` | every number the video path uses, and how the path works |
 | `scripts/extract_pipeline.py` | orchestrator for pure-DSP song extraction: `setup`, `check-db`, `run`, `status`, `kb`; code in `scripts/extraction/` |
 | `templates/extraction_profile.json`, `templates/gemini_listener_prompts.md` | every extraction setting; the prompts that make a listening model write the `music_db` |
-| `references/extraction.md` | how a song becomes MIDI and stems rebuilt from it, what each stage does, the gate, the limits |
+| `references/workflow/extraction.md` | how a song becomes MIDI and stems rebuilt from it, what each stage does, the gate, the limits |
 | `scripts/extraction/midi_clean.py`, `resynth.py`, `gate.py` | MIDI repair, stem rebuild (sampler / additive / drums / ambience / room), the extraction gate (borrows `naturalness_check.py` and `quality_gate.py`) |
 | `scripts/clone_instrument.py` | clone an instrument from a recording (spectral-flux onset attack slicing, 8192-pt FFT harmonic partials, export SFZ) |
 | `knowledgebase/instruments_registry.json` | dynamic updatable database of instrument auditioning thresholds, presence criteria, role mappings, and sequential studio mastering biquad chains |
@@ -62,27 +62,27 @@ Moved verbatim from SKILL.md to keep the entry file short.
 | `scripts/section_report.py` | per-section loudness, active tracks and lead from a render, for comparing two versions on the same numbers |
 | `tests/test_composition.py` | unit tests for the plan, the mood reading, the acoustic laws, the lead and arch rules, compose determinism, and widening stability: `python3 -m unittest discover -s tests` from the skill folder |
 | `scripts/humanize.py` | timing, velocity, articulation, strum and tempo-map humanizer (melody arch only, lead only when accompanied, phrase-end breath) |
-| `references/expressive-research.md` | the research behind the plan and the humanizer, tagged established / practice / heuristic, and what it does not license |
+| `references/workflow/expressive-research.md` | the research behind the plan and the humanizer, tagged established / practice / heuristic, and what it does not license |
 | `scripts/theory.py` | keys and modes, chords, voice leading, textures, bass lines, drum bars, phrases; the voicing, strum, fill and grid-accent laws |
 | `scripts/pattern_audit.py` | the six acoustic laws plus copy-paste/flatness flags: `pattern_audit.py score.json [--strict]` |
-| `scripts/sfz_libs.py`, `scripts/sfz_render.py` | optional SFZ sample libraries kept in the project (`libs/sfz/`): downloader with flags, checks, lock + licence files; a track plays through `sfizz_render` when its instrument is `sfz:<lib>/<patch>` or its preset has an `sfz` block (`references/sfz-libraries.md`) |
-| `scripts/gate_profiles.py` | the quality gate by type of piece: row registry, `gate` presets (`references/presets/gate/`: melodic, tense, ambient, dance, cinematic, effects_only), `piece_type` in the score, `list / rows / explain / new / check` |
+| `scripts/sfz_libs.py`, `scripts/sfz_render.py` | optional SFZ sample libraries kept in the project (`libs/sfz/`): downloader with flags, checks, lock + licence files; a track plays through `sfizz_render` when its instrument is `sfz:<lib>/<patch>` or its preset has an `sfz` block (`references/instruments-and-vocals/sfz-libraries.md`) |
+| `scripts/gate_profiles.py` | the quality gate by type of piece: row registry, `gate` presets (`references/data/presets/gate/`: melodic, tense, ambient, dance, cinematic, effects_only), `piece_type` in the score, `list / rows / explain / new / check` |
 | `scripts/quality_gate.py` | the gate rows: score (including the acoustic laws), speech corridor masking, harmonic concordance, mobile mono, render and audio checks. `run_gate(score_path, ..., score=<dict>)` is the one list of rows; the pipeline calls it with its in-memory score |
 | `templates/direction_sheet.json` | the director's sheet: targets for listen.py, plus the arc, motifs, hits with reasons, delivery and the `video` block |
 | `templates/custom_score_template.py` | a runnable template for hand-written music |
-| `references/music-direction.md` | the director's workflow, the research on cues and mechanisms, the revision levers, earshot's limits |
-| `references/scene-recipes.md` | recipes by situation: trailer (tested), voice-over, calm, tense, end card, game loop, jingle, sleep, playful, traditional |
-| `references/genres-and-moods.md` | epic (heroic and dark), mood models (GEMS, Eerola 2013, cue table), the 42 genres with tempo and groove, the Pixabay label map, earshot results for every genre, how to add a genre |
-| `references/emotion-and-scoring.md` | emotion table, arcs, tension toolkit, layers, motifs |
-| `references/custom-scripts.md` | the score format, helpers, recipes and debugging for custom scripts |
-| `references/natural-instruments.md` | which source for which sound, GM strengths, ranges, arrangement rules |
-| `references/humanization.md` | why music sounds robotic and the numbers that fix it |
-| `references/instrument-cloning.md` | recording guide, methods, limits, neural options, rights |
-| `references/mixing-and-mastering.md` | mix order, EQ chart, loudness targets, voice-over rules, rooms, fix table |
-| `references/research-sources.md` | what was read, and what it changed |
-| `references/music21-analysis.md` | dynamic, non-rigid musical computing with `music21`: tonality, chordification, melodic contour, voice leading, polyrhythmic analysis |
-| `references/immersive-spatial.md` | headphone immersion inside the existing system: mix-preset `immersive` block, height rules, what the mixer changes, Stage 0 and Stage 6 `imm_*` rows, research, limits |
-| `references/spatial-presets-and-scoring.md` | the 5-stage modular architecture (`direction/`, `presets/`, `scores/`), 3D spatial staging schemas, ISO 9613-1 air absorption, and DRR physical realism |
+| `references/workflow/music-direction.md` | the director's workflow, the research on cues and mechanisms, the revision levers, earshot's limits |
+| `references/workflow/scene-recipes.md` | recipes by situation: trailer (tested), voice-over, calm, tense, end card, game loop, jingle, sleep, playful, traditional |
+| `references/scoring/genres-and-moods.md` | epic (heroic and dark), mood models (GEMS, Eerola 2013, cue table), the 42 genres with tempo and groove, the Pixabay label map, earshot results for every genre, how to add a genre |
+| `references/scoring/emotion-and-scoring.md` | emotion table, arcs, tension toolkit, layers, motifs |
+| `references/workflow/custom-scripts.md` | the score format, helpers, recipes and debugging for custom scripts |
+| `references/instruments-and-vocals/natural-instruments.md` | which source for which sound, GM strengths, ranges, arrangement rules |
+| `references/mixing/humanization.md` | why music sounds robotic and the numbers that fix it |
+| `references/instruments-and-vocals/instrument-cloning.md` | recording guide, methods, limits, neural options, rights |
+| `references/mixing/mixing-and-mastering.md` | mix order, EQ chart, loudness targets, voice-over rules, rooms, fix table |
+| `references/sources/research-sources.md` | what was read, and what it changed |
+| `references/workflow/music21-analysis.md` | dynamic, non-rigid musical computing with `music21`: tonality, chordification, melodic contour, voice leading, polyrhythmic analysis |
+| `references/spatial/immersive-spatial.md` | headphone immersion inside the existing system: mix-preset `immersive` block, height rules, what the mixer changes, Stage 0 and Stage 6 `imm_*` rows, research, limits |
+| `references/spatial/spatial-presets-and-scoring.md` | the 5-stage modular architecture (`direction/`, `presets/`, `scores/`), 3D spatial staging schemas, ISO 9613-1 air absorption, and DRR physical realism |
 
 ## The Music CI/CD Pipeline (pipeline.py)
 

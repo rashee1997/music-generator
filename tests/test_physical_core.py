@@ -35,7 +35,7 @@ import physical
 import sound_model as sm
 
 SR = 44100
-BALL = HERE.parent / 'references' / 'sound-models' / 'bouncing_ball.json'
+BALL = HERE.parent / 'references' / 'data' / 'sound-models' / 'bouncing_ball.json'
 
 
 def _ball_model():

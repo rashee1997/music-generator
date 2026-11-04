@@ -21,7 +21,7 @@ import os
 
 from .config import SK, jload
 
-KB = os.path.join(SK, 'knowledgebase')
+KB = os.path.join(SK, 'knowledgebase', 'data')
 EFFECTS = os.path.join(KB, 'effect_signatures.json')
 
 

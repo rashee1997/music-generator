@@ -27,7 +27,7 @@
     python3 scripts/sfz_libs.py remove sso --project D
     python3 scripts/sfz_libs.py registry                          # validate the library presets (shipped + project)
 
-The library list is a preset kind (references/presets/sfzlib/, project presets/sfzlib/ overrides or adds). Nothing is
+The library list is a preset kind (references/data/presets/sfzlib/, project presets/sfzlib/ overrides or adds). Nothing is
 downloaded unless you run `get` or `engine`. Downloads: https only, from the hosts named in the preset; archives are
 unpacked with path-escape and size checks; nothing downloaded is ever executed. The first download of a part records its
 checksum in libs/sfz/lock.json (a preset sha256, or --sha256, is checked first); `verify` compares later.

@@ -29,7 +29,7 @@ Safety: https only, only the hosts named in the preset, every redirect must be h
 unpack size is capped, nothing downloaded is executed. The first download of a part records its checksum in `libs/sfz/lock.json`;
 a later different file is refused unless `--force`. `libs/sfz/LICENCES.md` lists each library's licence and credit line.
 
-## Libraries in the registry (`references/presets/sfzlib/`, project `presets/sfzlib/` adds or overrides)
+## Libraries in the registry (`references/data/presets/sfzlib/`, project `presets/sfzlib/` adds or overrides)
 - **sso**: Sonatina Symphonic Orchestra, CC Sampling Plus 1.0, from GitHub (git sparse checkout: `--part strings,brass,woodwinds,percussion,choir,keys`;
   strings about 550 MB, whole library about 1.4 GB). Patches: sustain, staccato, marcato, pizzicato, tremolo, key-switch (KS) and `Legato`
   (the SFZ `trigger=legato` mechanism: overlapping notes of a line), in "Notation" (velocity = loudness) and "Performance" (mod wheel = loudness) folders.

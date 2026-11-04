@@ -19,7 +19,7 @@
     python3 render_natural.py score.json --out song.wav            # full pipeline: humanize -> stems -> mix -> master
     python3 render_natural.py score.json --stems-only --stems-dir stems/
 
-What it does for each track (see references/natural-instruments.md):
+What it does for each track (see references/instruments-and-vocals/natural-instruments.md):
   1. humanize the notes (timing drift, melody lead, velocity shaping, strum, legato) - humanize.py
   2. play them through a SoundFont with tinysoundfont, using
        * a separate MIDI channel per sustained note, so each note gets its own

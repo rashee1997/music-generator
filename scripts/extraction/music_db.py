@@ -28,8 +28,8 @@ from .config import SK, jload
 
 NOTE_RE = re.compile(r'^([A-Ga-g])([#b]?)(-?\d)$')
 PC = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11}
-SIGNATURES = os.path.join(SK, 'knowledgebase', 'instrument_signatures.json')
-REGISTRY = os.path.join(SK, 'knowledgebase', 'instruments_registry.json')
+SIGNATURES = os.path.join(SK, 'knowledgebase', 'data', 'instrument_signatures.json')
+REGISTRY = os.path.join(SK, 'knowledgebase', 'data', 'instruments_registry.json')
 
 
 def note_to_midi(name):

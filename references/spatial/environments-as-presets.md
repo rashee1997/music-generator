@@ -1,7 +1,7 @@
 # Ambience and rooms are project presets
 
 Ambience (a forest, rain, a bazaar) and the room the music sits in are **written for each project, from its research**.
-The skill ships examples (`references/presets/environments/`, `references/presets/spaces/`); they are fallbacks and starting
+The skill ships examples (`references/data/presets/environments/`, `references/data/presets/spaces/`); they are fallbacks and starting
 points, never the answer. Add ambience to a score only when the user asked for it. `setup_project.py --new-project` makes none
 unless you pass `--ambience`.
 
@@ -63,7 +63,7 @@ is valid, never a fallback. `physical.py verify` re-renders the 40 frozen fixtur
 refactor can be separated from a sound change.
 
 Surface matters through the material, not a switch: the same drop pattern on tin, on leaves and on water differs
-because stiffness, loss factor and flow resistivity differ. Schema: `references/physical-scene.md`.
+because stiffness, loss factor and flow resistivity differ. Schema: `references/spatial/physical-scene.md`.
 
 ## Starting values by place
 

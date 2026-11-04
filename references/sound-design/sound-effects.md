@@ -1,6 +1,6 @@
 # Sound effects: how they are made in code, and when a small model is used
 
-Used by `scripts/sfx.py`: 21 one-hit effect recipes with a shipped default preset each (`references/presets/sfx/`), plus 7 older ambience recipes
+Used by `scripts/sfx.py`: 21 one-hit effect recipes with a shipped default preset each (`references/data/presets/sfx/`), plus 7 older ambience recipes
 (rain, wind, ocean, fire, crickets, birdsong, electric_hum) kept only so old scores render (`python3 scripts/sfx.py list`), a `make` command,
 and `timeline()`, which lays effects on a stereo bed to sit under music or a video.
 
@@ -9,7 +9,7 @@ and `timeline()`, which lays effects on a stereo bed to sit under music or a vid
 point a caller uses; the facade only keeps the older return contract (`'preset'` where the engine says `'model'`).
 
 For advanced physical modeling of weather (mist, monsoon, ocean surf, desert wind, campfire, thunder shockwaves), bio-acoustics (avian syrinx dual-FM synthesis), and the **5 Zero-Overlap Blending Laws** (Key-Locked Harmonic Resonators, 3D Mid-Side geometry, and micro-foley quantization), consult:  
-👉 [`knowledgebase/PROCEDURAL_SFX_AMBIENCE.md`](../knowledgebase/PROCEDURAL_SFX_AMBIENCE.md).
+👉 [`knowledgebase/sound-design/sfx-ambience.md`](../knowledgebase/sound-design/sfx-ambience.md).
 
 ---
 
@@ -68,9 +68,9 @@ A sound is a stack of voices, each `excite -> resonator -> events`:
 | control | `gain_db`: curve, lfo, ou (random walk), env; `pitch`: curve (continuous periodic voices) |
 
 Use it as a one-hit effect (`presets/sfx/<name>.json` with `"model"`) or as ambience (an environments layer `{"primitive": "model_layer", "voices": [...]}`).
-Fifteen worked models are in `references/sound-models/` (door creak, glass break, bouncing ball, gravel footstep, clock tick, tin-roof rain, leaf rain,
+Fifteen worked models are in `references/data/sound-models/` (door creak, glass break, bouncing ball, gravel footstep, clock tick, tin-roof rain, leaf rain,
 wind in trees, ocean wave, fire crackle, frog chorus, crowd murmur, car pass, thunder, boiling water): starting values, not answers. Their formulas and where
-each comes from: `knowledgebase/SFX_MODEL_FORMULAS.md`. Unknown keys, out-of-range values and models that would take too long to render are errors.
+each comes from: `knowledgebase/sound-design/sfx-formulas.md`. Unknown keys, out-of-range values and models that would take too long to render are errors.
 
 To match a real recording: `ambience_reference.py measure <wav> --slug <slug> --project <dir> [--modes N]` stores spectrum, bands, texture statistics
 (reduced McDermott-Simoncelli set) and, for a struck object, its resonances. Write `"free": {"voices.0.resonator.f1": [min, max], ...}` in the model, then
@@ -99,8 +99,8 @@ python scripts/physical.py verify                      # 40 frozen renders: noth
 
 There is no name-to-sound table: an unknown interaction, material or key is an error that lists what is valid. Two
 materials on one object are two different sounds (a glass knock rings and is bright, an oak one is dull and short),
-and a grain size turns gravel into sand. Details: `references/physical-scene.md`. Formulas and their read-status:
-`knowledgebase/SFX_MODEL_FORMULAS.md` sections 8-11.
+and a grain size turns gravel into sand. Details: `references/spatial/physical-scene.md`. Formulas and their read-status:
+`knowledgebase/sound-design/sfx-formulas.md` sections 8-11.
 
 ## 3. Pure Procedural DSP & Acoustic Validity
 
@@ -154,4 +154,4 @@ The numbers in a primitive are tuned by ear unless a preset cites a real recordi
 5. In the score, give the `env:<name>` track `spatial: {"distance": ..., "temp_c": ..., "rh": ...}` to use the same filter in the mixer. Set distance in the preset or the mixer, not both.
 6. Check: `python -m unittest tests.test_ambience_realism`, then the CI gate. Listening is still needed.
 
-Formulas and sources: `knowledgebase/PROCEDURAL_SFX_AMBIENCE.md`.
+Formulas and sources: `knowledgebase/sound-design/sfx-ambience.md`.

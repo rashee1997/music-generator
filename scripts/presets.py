@@ -17,7 +17,7 @@
 """presets.py - every tunable value of the skill, read from preset files. Nothing musical is hard-coded in the scripts.
 
 Layers (later wins, merged key by key, so a project only writes what it changes):
-  1. the skill's presets:    references/presets/<kind>/*.json
+  1. the skill's presets:    references/data/presets/<kind>/*.json
   2. each project's presets: <project>/presets/<kind>/*.json   (added with use_project)
 
 Kinds (each file is one named preset; the file's "name" or its filename is the key):
@@ -45,7 +45,7 @@ import sys
 import deep_merge
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SKILL_PRESETS = os.path.abspath(os.path.join(HERE, '..', 'references', 'presets'))
+SKILL_PRESETS = os.path.abspath(os.path.join(HERE, '..', 'references', 'data', 'presets'))
 PROJECT_ROOTS = []                       # the latest project added wins, over the skill
 
 KINDS = {
@@ -194,8 +194,8 @@ def scaffold(kind, name, project_dir, from_name=None):
         'mix': dict(name=name, character='ONE SENTENCE: what this music is (genre, mood, density) and why the mix below suits it', lead_band_hz=2000, carve_db=-4.0, max_boost_db=12.0, active_db=-55.0,
                     lead_db_margin=3.0, inst_eq={}, seating={}, level_by_role={},
                     note='every key is written out, including role_chains and spectral.profiles: change the ones this piece needs. '
-                         'An unlisted key comes from references/presets/mix/default.json',
-                    # the strategies (references/mixing-and-mastering.md, section 8b). The defaults are what this engine
+                         'An unlisted key comes from references/data/presets/mix/default.json',
+                    # the strategies (references/mixing/mixing-and-mastering.md, section 8b). The defaults are what this engine
                     # always did; switch one on per piece rather than loosening a gate row.
                     gain_staging=dict(strategy='legacy', ref_lufs=-24.0, block_s=0.4, max_cut_db=24.0,
                                       peak_headroom_db=-1.0, crest_preserve_db=0.0, sparse_active_frac=0.0,
@@ -210,7 +210,7 @@ def scaffold(kind, name, project_dir, from_name=None):
                     automation=dict(curve='linear'),                                                   # linear|cosine|exponential
                     mastering=dict(profile='default'),                                                 # naming a profile in mastering.profiles
                     # headphone immersion: heights by role, every placed track on the measured-head route, reflections from their own
-                    # directions. Off by default; set enabled true for a piece that should surround and lift (references/immersive-spatial.md)
+                    # directions. Off by default; set enabled true for a piece that should surround and lift (references/spatial/immersive-spatial.md)
                     immersive=dict(enabled=False, height_by_role=dict(melody=6, pad=15, environment=40, chord=0, bass=0, drum=0),
                                    max_elevation=60, min_height_tracks=1,
                                    pair=dict(width_deg_bed=40.0, width_deg_stereo=12.0),
@@ -226,7 +226,7 @@ def scaffold(kind, name, project_dir, from_name=None):
                             # plucked does not overlap); mechanics_class: which table row of the mix preset's
                             # `render.mechanics` supplies the key/bow/breath noise
                             articulation=dict(overlap_ms=30.0, gate=1.0, release_ms=180.0), mechanics_class='keys'),
-        # Every key is optional (defaults: references/vocal-engine/defaults.json; all ranges in its "ranges"). The old flat keys
+        # Every key is optional (defaults: references/data/vocal-engine-data/defaults.json; all ranges in its "ranges"). The old flat keys
         # (voices, attack/release in seconds, vib_*, breath, formants, bandwidths, style) still work next to the sections.
         # expression: gentle reflective melancholic hopeful ethereal cinematic devotional powerful intimate mysterious
         # style: tuvan_kargyraa tuvan_sygyt bulgarian_chant nordic_kulning qawwali_devotional gregorian_monastic ...
@@ -264,7 +264,7 @@ def scaffold(kind, name, project_dir, from_name=None):
                         events=dict(kind='single', at=0.0), gain_db=0.0)])),
         # a piece type for the quality gate: which rows are applied, relaxed (with new numbers) or skipped, each with a reason.
         # `python scripts/gate_profiles.py rows` lists every row and its parameter limits. "extends" inherits; "detect" infers the type.
-        # a surface-absorption library a space preset's geometry names (references/presets/materials/room_materials.json)
+        # a surface-absorption library a space preset's geometry names (references/data/presets/materials/room_materials.json)
         'materials': dict(name=name, character='ONE SENTENCE: which surfaces this library describes and where the coefficients come from',
                           bands_hz=[125, 250, 500, 1000, 2000, 4000, 8000],
                           surfaces=dict(wood=[0.15, 0.11, 0.10, 0.07, 0.06, 0.07, 0.09],
@@ -274,7 +274,7 @@ def scaffold(kind, name, project_dir, from_name=None):
                      flags=[], detect=dict(keywords=[], pulse=[], traits={}),
                      rows={'pattern.loop_short': dict(mode='relax', max_period_bars=2, max_distinct=2, reason='say why this music repeats on purpose')}),
         # scoring to picture: every number the video path uses. A project preset of the same name deep-merges over this one,
-        # so an override can be five lines (references/video-scoring.md).
+        # so an override can be five lines (references/scoring/video-scoring.md).
         'video': dict(name=name, character='ONE SENTENCE: what the video is and why these numbers suit it',
                       probe=dict(analysis_fps=12, analysis_width=320, analysis_height=180,
                                  scene_cut=dict(threshold=10.0, min_gap_s=0.25),      # scdet: 0-100 scale, 8-14 for film
@@ -337,7 +337,7 @@ def scaffold(kind, name, project_dir, from_name=None):
                                         lateral_gain=0.2, lateral_cutoff_hz=2400, reverb_decay_s=1.8, ceiling_delay_ms=25.0,
                                         ceiling_gain=0.15, rear_delay_ms=30.0, rear_gain=0.1, path_physics=True, ref_m=1.5,
                                         # a shoebox room instead of the four fixed taps: real path lengths, one absorption
-                                        # filter per surface (references/presets/materials/room_materials.json). Remove the
+                                        # filter per surface (references/data/presets/materials/room_materials.json). Remove the
                                         # block to go back to the four keys above.
                                         geometry=dict(width_m=10.0, depth_m=14.0, height_m=6.0,
                                                       listener=dict(x=5.0, y=4.0, z=1.5),

@@ -24,7 +24,7 @@ score, so every existing gate row still applies to it.
 
 ## The preset
 
-`references/presets/video/default.json` holds every number the path uses. A project preset of the same name in
+`references/data/presets/video/default.json` holds every number the path uses. A project preset of the same name in
 `<project>/presets/video/` deep-merges over it, so an override can be five lines:
 
 ```json

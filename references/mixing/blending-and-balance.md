@@ -59,7 +59,7 @@ The gate FAILS a score with no custom mix preset. Do not use `default`, and do n
 
    `python scripts/presets.py validate` rejects an unknown mix key or an out-of-range value, and `python scripts/presets.py
    show mix default` prints every key with its shipped value. A single track can also carry `spectral_profile`,
-   `preserve_spectrum`, `ref_lufs`, `dynamics` or `pan_law`. Full detail: `references/mixing-and-mastering.md` section 8b.
+   `preserve_spectrum`, `ref_lufs`, `dynamics` or `pan_law`. Full detail: `references/mixing/mixing-and-mastering.md` section 8b.
 4. Add `"mix_preset": "<name>"` to the score.
 5. Run the pipeline. A `balance` FAIL prints how many dB to lower a track; change that preset value or the track's `gain_db`.
 

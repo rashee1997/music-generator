@@ -14,7 +14,7 @@ the user asks what "epic" should sound like. It separates three kinds of claim:
 For deep psychophysical coordinate mappings, exact frequency allocations, and pure-Python synthesis models, consult the authoritative machine-parsable knowledge bases:
 
 * **Breaking the "Upbeat 4/4 Trap" & 22 Sub-Archetypes:**  
-  See [`knowledgebase/PSYCHOACOUSTIC_GENRE.md`](../knowledgebase/PSYCHOACOUSTIC_GENRE.md).  
+  See [`knowledgebase/genre-and-feel/psychoacoustic-genre.md`](../knowledgebase/genre-and-feel/psychoacoustic-genre.md).  
   Covers the **5 Orthogonal Psychoacoustic Axes** (Melodic Interval Geometry, Harmonic Motion with Chromatic Mediants, Rhythmic Gravity, Spectral Centroid Trajectory, and Spatial Acoustic Envelopes) across:
   - *Adventurous:* Forest Mystic (Dorian 3/4), Frontier (John Williams mixolydian ostinatos), High-Seas Swashbuckler (6/8 gallop), Ancient Desert Ruin (microtonal augmented-seconds), Cosmic Odyssey (Lydian #4).
   - *Epic:* Colossal Hybrid Trailer (braams & sub-drops), Mythic Choral Tragedy (Gothic minor), Triumphant Ascension (major fanfare), Tribal War March (earth-shaking percussion).
@@ -23,7 +23,7 @@ For deep psychophysical coordinate mappings, exact frequency allocations, and pu
   - *Celtic:* Tavern Reel (fiddle frenzy), Highland Lament (keening pipes), Fae SlipJig (9/8 slip), Battle Charge.
 
 * **The 7 Laws of Natural Flow & 24 Niche Sub-Archetypes:**  
-  See [`knowledgebase/DYNAMIC_MUSICAL_FLOW_v2.md`](../knowledgebase/DYNAMIC_MUSICAL_FLOW_v2.md).  
+  See [`knowledgebase/genre-and-feel/dynamic-flow.md`](../knowledgebase/genre-and-feel/dynamic-flow.md).  
   Enforces the **7 Laws of Natural Flow** (Anti-Loop $A \rightarrow A' \rightarrow B \rightarrow A''$, Phrase Respiration, Energy Curve $E(t) \in [0, 1]$, Conversational Call-and-Response, Transition Physics, 5-Band Spectral Slots, Dynamic Parameter Interpolation) across:
   - *Lo-Fi & Chill:* Tokyo Study (drunken quintuplet swing), Midnight Vinyl Crackle, Cozy Coffee Bossa, Vaporwave Mall.
   - *Ambient & Atmospheric:* Deep Space Drone, Arctic Cello Shimmer, Biophilic Rainforest, Sacred Temple Bell.
@@ -31,7 +31,7 @@ For deep psychophysical coordinate mappings, exact frequency allocations, and pu
   - *Gaming & Boss Battles:* Elden Ring Gothic Choir/Brass, Cyberpunk 2077 Glitch Industrial, 8-Bit/16-Bit Chiptune, JRPG Overworld.
 
 * **Commercial, Corporate, Motivational & Modern Musicals:**  
-  See [`knowledgebase/COMMERCIAL_CORPORATE_PROMO.md`](../knowledgebase/COMMERCIAL_CORPORATE_PROMO.md).  
+  See [`knowledgebase/genre-and-feel/commercial-promo.md`](../knowledgebase/genre-and-feel/commercial-promo.md).  
   Covers the **Dopamine Arc** (0–3s Thumb-Stop hook, 15–30s micro-lifts, logo stings), the **Voice-Over First Contract** (1.8 kHz notch, dynamic ducking), and archetypes across Silicon Valley Uplift, Fintech Minimal Pulse, Stomp-Clap Indie Rock, Fashion House, and Lin-Manuel Miranda syncopated rap-showtunes.
 
 ---
@@ -133,7 +133,7 @@ Added from the Pixabay pass (all practice values; none measured on a corpus):
 `lofi` now uses the boom_bap groove with an 808 kit at 68-88 BPM.
 
 **World genres** (India, Arabic, Turkish, Persian, Chinese, Japanese, Korean and K-pop, Rio and Brazil, Latin, Caribbean, African, Celtic, flamenco and more, 79 in all) are in
-`references/world-music.md`. They are practice values and are not in the earshot tables below.
+`references/scoring/world-music.md`. They are practice values and are not in the earshot tables below.
 
 Genres older than this pass: piano, cinematic, ambient, acoustic, lofi, orchestral, folk, jazz, pop, dark, electronic.
 The `cinematic` taiko pattern is now a hit on every beat (accents on 1 and 3) so epic cues have a steady pulse.

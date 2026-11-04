@@ -1,7 +1,7 @@
 # Vocal performance engine: how it works and how to configure it
 
-Code: `scripts/vocals.py` (public facade) and `scripts/vocal_engine/`. Data: `references/vocal-engine/`.
-Short version for a project: `references/vocals-and-choirs.md`. Everything here is synthesised from maths: no samples, no
+Code: `scripts/vocals.py` (public facade) and `scripts/vocal_engine/`. Data: `references/data/vocal-engine-data/`.
+Short version for a project: `references/instruments-and-vocals/vocals-and-choirs.md`. Everything here is synthesised from maths: no samples, no
 recordings, no models, no network. Whether it sounds human has **not** been listened to (see section 11).
 
 ## 1. What changed, in one paragraph
@@ -25,10 +25,10 @@ signature and still returns `(N,2) float32`.
 | Phrase | `vocal_engine/performance.py` | pitch curve, portamento, overshoot, vibrato, articulation, dynamics, phrase contours, micro-timing |
 | Context | `vocal_engine/context.py` | tempo, phrase position, direction, register, energy, expression, role: the input to the phrasing choices |
 | Breath | `vocal_engine/breath.py` | aspiration, exhaustion, inhale and release events |
-| Expression | `vocal_engine/expression.py` | profiles from `references/vocal-engine/expression/*.json` |
+| Expression | `vocal_engine/expression.py` | profiles from `references/data/vocal-engine-data/expression/*.json` |
 | Singer | `vocal_engine/singer.py` | per-singer identity from `singer_variation` |
 | Ensemble | `vocal_engine/ensemble.py` | independent singers, cohesion, stems, report, soft limiter |
-| Data | `references/vocal-engine/{defaults,styles}.json`, `expression/*.json`, `vocal.schema.json` | every number |
+| Data | `references/data/vocal-engine-data/{defaults,styles}.json`, `expression/*.json`, `vocal.schema.json` | every number |
 
 ## 3. Signal path
 
@@ -158,7 +158,7 @@ as before (one character, no jitter).
 ## 7. Expression (`expression`, `expression_intensity`)
 
 `gentle reflective melancholic hopeful ethereal cinematic devotional powerful intimate mysterious` are JSON files in
-`references/vocal-engine/expression/` (a project adds or overrides one with `<project>/presets/vocals/expression/<name>.json`, found
+`references/data/vocal-engine-data/expression/` (a project adds or overrides one with `<project>/presets/vocals/expression/<name>.json`, found
 automatically once the project is added; or give an inline object). Each moves several sections: attack and release, vibrato depth/rate/delay, portamento, overshoot, phrase
 arc, level scale, register, breathiness, breathing, scoop, tail. `expression_intensity` blends every number between the current
 value (0) and the profile (1), and can exceed 1. **Order:** defaults, then the profile, then the preset's explicit values, so a

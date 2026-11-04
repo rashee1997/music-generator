@@ -28,7 +28,7 @@ This is the only video file in `scripts/`. Everything it calls lives in `video-m
   video_gate.py         four delivery rows appended to reports/ci_report.json
 
 The music itself is rendered by the normal engine (`pipeline.py`), unchanged, so every music rule still applies.
-Numbers come from `references/presets/video/<name>.json`, deep-merged with `<project>/presets/video/<name>.json`.
+Numbers come from `references/data/presets/video/<name>.json`, deep-merged with `<project>/presets/video/<name>.json`.
 """
 import argparse
 import json

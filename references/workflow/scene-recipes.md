@@ -175,7 +175,7 @@ notes. Stops and starts.
 **Direction.** The tradition decides the scale, the ornaments and the instruments. Use the tradition's own scale
 and the closest instrument, and say plainly what is an approximation.
 
-**Start from `references/world-music.md`.** It has 69 scales (35 with real microtones), 167 world instrument names,
+**Start from `references/scoring/world-music.md`.** It has 69 scales (35 with real microtones), 167 world instrument names,
 90 drum names, 67 grooves, 37 rhythm cycles and 79 ready genres for India, the Arabic world, Turkey, Persia, Greece,
 China, Japan, Korea (K-pop, trot), Indonesia, Rio and Brazil, Latin America, the Caribbean, Africa, the Andes, Europe
 and the Americas. Brief: `{"genre": "tarab", "mode": "maqam_sikah", "key": "D", "duration_s": 60}`.
@@ -245,7 +245,7 @@ energy, so a slow or reflective fusion is not forced to 108-130 BPM.
 **Brief:** `{"fusion":["indian","west_african"],"emotion":"slow reflective","duration_s":45,"seed":7}` gave
 `melancholy` at 67 BPM. Without a mood word the same fusion is `focused` at 88 BPM and `meta.mood_notes` says the
 mood was not named. A culture style can be added with `"style": "<name>"` (the style must exist in
-`references/styles/`; `compose.main` loads them from the brief).
+`references/data/styles/`; `compose.main` loads them from the brief).
 
 **Sheet:** the usual fields, plus `feel` from the mood, `tempo_bpm` from the fusion plan (+-7 BPM), and a `notes`
 line naming the cultures. Check `fusion.plan` warnings: a non-overlapping tempo or a scale not shared by every

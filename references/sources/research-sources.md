@@ -152,7 +152,7 @@ Not read: Smithsonian and TSHA conjunto pages (search snippets only); the Wikipe
 
 ## 10. Global music theory knowledge base (eighth pass)
 
-The user supplied `global_music_theory_algorithmic_synthesis_guide.md` (in the skill folder) and asked for the skill to be updated from it. It is one author's document with no citations, so nothing from it is marked as sourced; the values added are labelled `practice` in `world.py`. The full mapping, the errors found and the gaps are in `references/global-theory-kb.md`.
+The user supplied `global_music_theory_algorithmic_synthesis_guide.md` (in the skill folder) and asked for the skill to be updated from it. It is one author's document with no citations, so nothing from it is marked as sourced; the values added are labelled `practice` in `world.py`. The full mapping, the errors found and the gaps are in `references/scoring/global-theory-kb.md`.
 
 | What was checked | Result | What changed |
 |---|---|---|

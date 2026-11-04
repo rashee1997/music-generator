@@ -23,7 +23,7 @@ carry its own "soul" block, which overrides either. Nothing here is hard-coded t
     req = merged(['indian', 'west_african'])     # the union of the requirements, for a fusion
 
 Fields
-  feel             words for the emotional core (the soul), from references/cultural-soul.md
+  feel             words for the emotional core (the soul), from references/scoring/cultural-soul.md
   breath_beats     the silence that must sit between phrases (ma); 0 = no requirement
   groove           'offbeat' (accents off the beat must be present), 'cycle' (a repeating tala), or None
   call_response    True: a leader and an answer must alternate
@@ -38,8 +38,8 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 SOUL_DIR = os.path.join(HERE, '..', 'references', 'soul')
 
-# Sources for each entry: references/cultural-soul.md (researched with TinyFish, June 2026 notes).
-import presets  # noqa: E402  (soul profiles are the 'soul' presets: references/presets/soul and each project's presets/soul)
+# Sources for each entry: references/scoring/cultural-soul.md (researched with TinyFish, June 2026 notes).
+import presets  # noqa: E402  (soul profiles are the 'soul' presets: references/data/presets/soul and each project's presets/soul)
 
 
 def profile(culture):

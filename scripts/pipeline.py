@@ -791,7 +791,7 @@ class MusicPipeline:
                     print(f"    - {f_}")
             else:
                 print(f"  CONTINUE: attempt {n}/{max_attempts}, {fails} FAIL. Change ONE lever "
-                      f"(references/music-direction.md section 6) and run again.")
+                      f"(references/workflow/music-direction.md section 6) and run again.")
         print("=" * 80)
         return report
 

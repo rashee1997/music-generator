@@ -22,7 +22,7 @@
     python3 scripts/gate_profiles.py check [--project D]          # validate every profile (project_gate calls the same)
     python3 scripts/gate_profiles.py rows                         # every gate row, its parameters and limits
 
-A profile (references/presets/gate/<name>.json, or <project>/presets/gate/) says, per gate row, `apply`, `relax`
+A profile (references/data/presets/gate/<name>.json, or <project>/presets/gate/) says, per gate row, `apply`, `relax`
 (new parameter values) or `skip`, and every relax/skip carries a reason. `extends` inherits another profile. `detect`
 (keywords, pulse words, drone ratio) lets the gate infer a type when the score does not declare one. `flags` keep the
 old feel-check switches (ambient / tense / dance). The score picks with "piece_type": "tense" or a list; a one-off row
@@ -93,7 +93,7 @@ ROWS = {
     'bow.breath_gap':        dict(meaning='bowed/wind melody has a breath or bow gap', params={'gap_beats': (0.08, 0.02, 0.2)}),
     'chroma.concordance':    dict(meaning='ambient beds against the key (semitone clash)', params={'max_dissonance': (0.28, 0.1, 0.5)}),
     'kick.grid':             dict(meaning='kick transients locked to the beat grid', params={'min_lock': (0.70, 0.3, 0.9)}),
-    # immersive headphone route (scripts/quality_gate.py::immersive_rows, references/immersive-spatial.md). Registered here
+    # immersive headphone route (scripts/quality_gate.py::immersive_rows, references/spatial/immersive-spatial.md). Registered here
     # so a type of piece can skip or relax one with a measured reason; the numbers below are the gate's starting points.
     'imm.cues':          dict(meaning='binaural probe at +-60 deg: level difference and which ear arrives first',
                               params={'min_ild_db': (8.0, 4.0, 20.0), 'min_itd_ms': (0.3, 0.1, 1.0)}),
@@ -112,7 +112,7 @@ ROWS = {
                                       'hi_hz': (5000.0, 3000.0, 10000.0)}),
     'imm.route_parity':  dict(meaning='the measured-head route and the analytic route agree on level and time difference',
                               params={'max_ild_db': (3.0, 1.0, 8.0), 'max_itd_ms': (0.20, 0.05, 0.6)}),
-    # rendering naturalness (references/natural-instruments.md, humanization.md)
+    # rendering naturalness (references/instruments-and-vocals/natural-instruments.md, humanization.md)
     'natural.aliasing':  dict(meaning='energy above 15 kHz that a transposed sample should not have (interpolation images)',
                               params={'max_hf_share_db': (-45.0, -70.0, -20.0)}),
     # delivery traceability (scripts/helpers/, written at certification; the gate only reads it)
@@ -286,7 +286,7 @@ def profile_problems(name, p, all_profiles):
 
 def shipped_names():
     """Names of the profiles shipped with the skill (from the folder, so a project profile can never look shipped)."""
-    folder = os.path.join(os.path.dirname(HERE), 'references', 'presets', 'gate')
+    folder = os.path.join(os.path.dirname(HERE), 'references', 'data', 'presets', 'gate')
     try:
         return {os.path.splitext(f)[0] for f in os.listdir(folder) if f.endswith('.json')}
     except OSError:
@@ -300,7 +300,7 @@ def problems(project_dirs=()):
     retune the whole type in every piece of the project at once, which is exactly how a gate gets quietly switched off.
     """
     shipped = shipped_names()
-    shipped_dir = os.path.join(os.path.dirname(HERE), 'references', 'presets', 'gate').replace('\\', '/')
+    shipped_dir = os.path.join(os.path.dirname(HERE), 'references', 'data', 'presets', 'gate').replace('\\', '/')
     for d in project_dirs:
         presets.add_project(d)
     allp = presets.load('gate')

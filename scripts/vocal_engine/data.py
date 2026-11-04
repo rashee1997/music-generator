@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-"""Loads the engine's JSON data from references/vocal-engine/. Nothing musical is hard-coded in the scripts."""
+"""Loads the engine's JSON data from references/data/vocal-engine-data/. Nothing musical is hard-coded in the scripts."""
 import copy
 import json
 import os
@@ -21,7 +21,7 @@ from functools import lru_cache
 
 import deep_merge as _merge
 
-DIR = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'references', 'vocal-engine'))
+DIR = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'references', 'data', 'vocal-engine-data'))
 
 
 @lru_cache(maxsize=None)

@@ -24,7 +24,7 @@ Exit code 1 on any FAIL. The gate measures faults that code can see: copy-paste 
 play, shared channels, clipping, missed loudness, silent gaps, clicks, flat dynamics, breathless winds and bows.
 It cannot judge phrasing, taste or cultural correctness: listen (listen.py, earshot) and check the direction sheet.
 A PASS means the measurable faults are absent. It does not mean the music is natural.
-Research behind these checks: references/quality-gate.md."""
+Research behind these checks: references/mixing/quality-gate.md."""
 import argparse
 import json
 import os
@@ -82,7 +82,7 @@ def mix_preset_row(score, out):
     name = score.get('mix_preset')
     if not name or name == 'default':
         _row(out, 'FAIL', 'mix_preset', 'score has no custom "mix_preset". Create one: python scripts/presets.py scaffold mix <name>, '
-             'set its values for this music (references/blending-and-balance.md section "Mix preset"), then add "mix_preset": "<name>" to the score')
+             'set its values for this music (references/mixing/blending-and-balance.md section "Mix preset"), then add "mix_preset": "<name>" to the score')
         return
     try:
         mine = presets.get('mix', name)
@@ -322,7 +322,7 @@ def immersive_rows(score, path, stems, out):
                 bad.append(f'{tname}: {role} at {el:g} deg')
             if abs(el) > mx:
                 bad.append(f'{tname}: {el:g} deg beyond {mx:g}')
-            lifted += el >= 3.0
+            lifted += el >= 3.0 and role not in ('bass', 'drum')      # the mixer keeps those on the floor
         if lifted < int(cfg.get('min_height_tracks', 1)):
             bad.append(f'only {lifted} lifted track(s), want {cfg.get("min_height_tracks", 1)}')
         _row(out, 'FAIL' if bad else 'PASS', 'imm_height_rules', '; '.join(bad[:4]) if bad else f'{lifted} lifted track(s), all within {mx:g} deg, bass/drums level, none left on plain pan')
@@ -1331,7 +1331,7 @@ def selftest():
     burst[sr // 2:sr // 2 + 40] += 0.7 * np.sign(np.sin(np.arange(40) * 2.5))   # a dense burst: not a click
     assert len(find_clicks(burst)) == 0, 'a cymbal-like burst was counted as a click'
     print('ok: clean tone and a fast-attack kick give no clicks; an isolated jump is found; a dense burst is not')
-    # 4. the acoustic rules (references/quality-gate.md, SKILL.md): a score written like a MIDI file trips every
+    # 4. the acoustic rules (references/mixing/quality-gate.md, SKILL.md): a score written like a MIDI file trips every
     # FAIL row, and a score from compose.py trips none. Both directions matter: a rule that never fires is dead.
     bad = dict(ts=[4, 4], room='hall', tracks=[
         dict(name='keys', instrument='piano', role='chord',

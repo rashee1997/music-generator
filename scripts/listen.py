@@ -30,7 +30,7 @@ Two layers, both reported:
      about one time in five on test material, so treat a single FAIL as a question, not a verdict.
 
 Each target in the direction sheet becomes one PASS / CHECK / FAIL line, with the numbers behind
-it and the levers from references/music-direction.md that usually fix that kind of miss.
+it and the levers from references/workflow/music-direction.md that usually fix that kind of miss.
 """
 import argparse
 import json

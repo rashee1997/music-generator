@@ -1,4 +1,3 @@
-
 # music-generator
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
@@ -15,6 +14,7 @@ An AI agent skill and Python audio pipeline that composes, renders, mixes, and v
 ## The Problem vs. What This Sorts Out
 
 ### ❌ Why LLM-Generated Music Usually Fails
+
 * **Robotic Grid or Random Chaos:** Naive code locks MIDI notes to a rigid grid with static velocity. When told to "humanize," LLMs scatter notes randomly—creating unrecovered leaps and broken rhythm.
 * **Low-End Mud & Voicing Clashes:** Voices clustered below middle C violate low-interval limits, muddying 100–300 Hz. Closed-position chords create grating minor-second clashes.
 * **Ear Fatigue (Cochlear Roughness):** Stacked overtones colliding within a critical bandwidth cause harsh acoustic beating.
@@ -22,6 +22,7 @@ An AI agent skill and Python audio pipeline that composes, renders, mixes, and v
 * **Aimless Harmony:** Chord progressions either loop statically or jump between unrelated keys without voice leading or cadence resolution.
 
 ### ✅ What `music-generator` Sorts Out
+
 * **Voice-Leading & Melodic Rules:** Enforces conjunct motion, leap recovery, chromatic tension resolution, and 3D spiral-array tonal tension.
 * **Groove That Breathes:** Evaluates metric-tree syncopation across 4/4, 3/4, 6/8, 5/4, 7/8, and 12/8—rejecting both robotic marches and rhythmic collapse.
 * **Measured Humanization:** Separates shared ensemble tempo drift from individual player motor error, scales drum push with tempo, couples velocity to note duration, and adds note-on/note-off mechanism noise.
@@ -52,6 +53,7 @@ npx skills add rashee1997/music-generator --skill music-generator -a claude-code
 ```
 
 Manage the skill:
+
 ```bash
 npx skills list                      # Verify installation
 npx skills update music-generator    # Pull latest version
@@ -77,7 +79,9 @@ python scripts/setup_project.py --ears
 ## Quick Start
 
 ### Using with an AI Agent
+
 Prompt your agent naturally:
+
 > *"Compose a 60-second underscore for a slow reveal of a mountain range — cold, patient, no drums."*
 
 The agent will automatically read `SKILL.md`, research the style, generate a direction sheet and presets, write the score, and iterate through the rendering pipeline until all quality gates pass.
@@ -121,16 +125,16 @@ python scripts/helpers/compress_mp3.py out/master_v01.wav -o my-track.mp3 -b 320
 
 ### The 8-Step Agent Workflow
 
-| Step | Action | Output Artifact |
-| :--- | :--- | :--- |
-| **1** | Scaffold project | `direction/`, `presets/`, `scores/`, `out/`, `reports/`, `STATUS.md` |
-| **2** | Research idiom | `reports/research_<topic>.md` |
-| **3** | Write direction sheet | `direction/direction_<title>.json` |
-| **4** | Configure presets | Instrument, vocal, space, and mix JSON presets |
-| **5** | Write score | `scores/<title>_score.json` |
-| **6** | Render & gate | `out/master_vNN.wav`, `stems/`, `midi/`, `reports/ci_report.json` |
-| **7** | Iterate fixes | Adjusts one parameter per run until 0 FAIL (max 5 attempts) |
-| **8** | Verify & deliver | `listen.py` evaluation and final checklist in `STATUS.md` |
+| Step  | Action                | Output Artifact                                                      |
+|:----- |:--------------------- |:-------------------------------------------------------------------- |
+| **1** | Scaffold project      | `direction/`, `presets/`, `scores/`, `out/`, `reports/`, `STATUS.md` |
+| **2** | Research idiom        | `reports/research_<topic>.md`                                        |
+| **3** | Write direction sheet | `direction/direction_<title>.json`                                   |
+| **4** | Configure presets     | Instrument, vocal, space, and mix JSON presets                       |
+| **5** | Write score           | `scores/<title>_score.json`                                          |
+| **6** | Render & gate         | `out/master_vNN.wav`, `stems/`, `midi/`, `reports/ci_report.json`    |
+| **7** | Iterate fixes         | Adjusts one parameter per run until 0 FAIL (max 5 attempts)          |
+| **8** | Verify & deliver      | `listen.py` evaluation and final checklist in `STATUS.md`            |
 
 Every certified render is versioned (`master_v01.wav`, `master_v02.wav`) in `out/versions.json` so previous takes are never overwritten, with metadata sidecars written to `out/master.json`.
 
@@ -163,7 +167,7 @@ music-generator/
 * **Opt-In Binaural Processing:** Full HRTF elevation and head-shadowing only apply when `spatial.binaural: true` is enabled in the mix preset.
 * **Basic Video Sync:** Cut detection misses gradual fades/dissolves and ducks dialogue by level rather than semantic context.
 
-See [references/troubleshooting-and-limits.md](references/troubleshooting-and-limits.md) and [docs/PSYCHOACOUSTICS.md](docs/PSYCHOACOUSTICS.md) for full details.
+See [references/workflow/troubleshooting-and-limits.md](references/workflow/troubleshooting-and-limits.md) and [docs/PSYCHOACOUSTICS.md](docs/PSYCHOACOUSTICS.md) for full details.
 
 ---
 
@@ -176,4 +180,3 @@ See [references/troubleshooting-and-limits.md](references/troubleshooting-and-li
 ## License
 
 [GNU AGPLv3](LICENSE) — Copyright (C) 2026 rasheedh
-```

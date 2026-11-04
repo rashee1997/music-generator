@@ -35,7 +35,7 @@ import env_engine.render as er         # noqa: E402
 import phys_core.scene as scene_mod    # noqa: E402
 import project_gate                    # noqa: E402
 
-MODEL = json.load(open(HERE / '..' / 'references' / 'sound-models' / 'leaf_rain.json', encoding='utf-8'))['model']
+MODEL = json.load(open(HERE / '..' / 'references' / 'data' / 'sound-models' / 'leaf_rain.json', encoding='utf-8'))['model']
 SCENE = dict(seconds=1.0, voices=MODEL['voices'])          # a valid scene that sounds once (no timeline)
 
 

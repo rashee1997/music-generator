@@ -18,7 +18,7 @@
 
 Why this exists: a MIDI score where every note lands exactly on the grid with the same velocity
 sounds like a machine no matter how good the samples are. Real players differ from the grid in
-structured ways (research summary in references/humanization.md):
+structured ways (research summary in references/mixing/humanization.md):
 
   * the melody leads the accompaniment by ~15-30 ms and is played louder (Goebl 2001)
   * timing error is NOT white noise: it drifts slowly (1/f-like) and neighbouring errors are

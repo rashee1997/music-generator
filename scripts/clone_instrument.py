@@ -39,7 +39,7 @@ Use it in a score:   {"name":"lead","instrument":"clone:clones/my_sitar","role":
 Honest limits: monophonic source recordings work best (one note at a time); chords/mixes cannot be
 split into notes by this tool. Do not clone someone else's copyrighted sample pack or a specific
 person's voice without permission. A neural cloner (DDSP, few-shot timbre models) can reproduce more
-detail but needs a GPU and training - see references/instrument-cloning.md.
+detail but needs a GPU and training - see references/instruments-and-vocals/instrument-cloning.md.
 """
 import argparse
 import json

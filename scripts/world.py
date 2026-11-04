@@ -19,7 +19,7 @@ rhythm cycles and ready genre presets. Pure data plus two small helpers; compose
 soundbank.py, humanize.py and render_natural.py merge it in at import.
 
 Labels (same convention as genres-and-moods.md): 'sourced' = read for this skill (listed in
-references/world-music.md section 9); 'practice' = common practice or the author's approximation.
+references/scoring/world-music.md section 9); 'practice' = common practice or the author's approximation.
 
     python3 world.py            # prints what is in here
     from world import cycle_notes
@@ -393,7 +393,7 @@ GROOVES.update({
 # ------------------------------------------------------------------------------------------------
 # 5. rhythm cycles of any length. One cycle = `beats` matras (counting units; set the bpm to the matra,
 #    and the score's ts to [beats, 4]). hits are (position in matras, drum name, weight). 'sourced' lengths and
-#    stroke names come from the pages in references/world-music.md; patterns of 12 are the common accent maps.
+#    stroke names come from the pages in references/scoring/world-music.md; patterns of 12 are the common accent maps.
 # ------------------------------------------------------------------------------------------------
 def _hits(pattern):
     """'D..T.D..' style strings -> hit lists. D=dum/bass, T=tak/treble, t=soft, k=mute, X=accent, .=rest"""
@@ -461,7 +461,7 @@ CYCLES.update({
 
 
 def cycle_notes(name, bars=1, start=0.0, vel=0.7, matra=0.5, rng=None):
-    """A named cycle as drum notes {'t','d','p','v'} for a custom score (see references/world-music.md section 6).
+    """A named cycle as drum notes {'t','d','p','v'} for a custom score (see references/scoring/world-music.md section 6).
     `matra` is how many score beats one counting unit lasts (0.5 = an eighth of a quarter-note beat).
     The score's ts should be [beats, 4] with the bpm counted in matras, or write the notes into a 4/4 score and
     accept the offset. Returns notes you can put straight into a drum track."""

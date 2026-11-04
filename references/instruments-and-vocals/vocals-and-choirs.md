@@ -1,7 +1,7 @@
 # Hums and choirs in code: how they are made, and how they blend with music
 
 Used by `scripts/vocals.py` and the `scripts/vocal_engine/` package. Full technical reference, every setting, and the limits:
-**`references/vocal-engine.md`**. This file is the working guide for a project.
+**`references/instruments-and-vocals/vocal-engine.md`**. This file is the working guide for a project.
 
 A score routes to the engine by the instrument names `choir_formant`, `hum_formant`, `voice_formant`, `throat_formant` and
 `chant_formant` (built in, no preset needed), or by the name of a `presets/vocals/<name>.json` preset (`render_natural.py`,
@@ -19,7 +19,7 @@ Research read for this pass (TinyFish search, and pages fetched where the text c
   each formant is a two-pole resonator; cascade and parallel layouts are both used.
 - **Klatt-style formant synthesis** is the reference design (Praat's KlattGrid implements it). Singing uses the same tract
   with the pitch of the note. The engine's source is a parametric glottal flow pulse (Rosenberg / LF family); values are
-  literature-informed starting points listed in `references/vocal-engine/defaults.json`, not read from the knowledge base.
+  literature-informed starting points listed in `references/data/vocal-engine-data/defaults.json`, not read from the knowledge base.
 - **Human imperfection.** A sung note is never a steady tone: pitch jitter (a few cents, slow), amplitude shimmer
   (a few percent), vibrato that starts late and widens, breath at the onset, a glide into the note. The engine now builds these
   across a whole phrase, with one continuous pitch curve, so notes connect instead of restarting.
@@ -32,7 +32,7 @@ Research read for this pass (TinyFish search, and pages fetched where the text c
 ## 2. Vowel formants used
 
 Adult averages in the Peterson and Barney style, written from memory (not fetched; check against a table before a
-scientific claim). They live in `references/vocal-engine/defaults.json` (`tract.vowels`):
+scientific claim). They live in `references/data/vocal-engine-data/defaults.json` (`tract.vowels`):
 
 | Vowel | F1 Hz | F2 Hz | F3 Hz | Use |
 |---|---|---|---|---|
@@ -79,7 +79,7 @@ lead). What it adds, all scaled by `phrasing.amount`:
   character; a catch breath after a long phrase; air before an unaccompanied first note; a bigger release after a
   long phrase.
 
-Use it in a preset (every key is optional, defaults in `references/vocal-engine/defaults.json`):
+Use it in a preset (every key is optional, defaults in `references/data/vocal-engine-data/defaults.json`):
 
 ```json
 {"character": "...", "phrasing": {"amount": 1.0, "role": "melody",
@@ -102,7 +102,7 @@ micro-timing, no articulation glide, time-locked inhales) and is the switch to u
 
 ## 5. Pedalboard harmonies, chorus and polish (`add_vocal_harmonies`, `add_vocal_chorus`, `apply_vocal_dsp`)
 
-All three read their numbers from the `dsp` section (`references/vocal-engine/defaults.json`), imported on use:
+All three read their numbers from the `dsp` section (`references/data/vocal-engine-data/defaults.json`), imported on use:
 - **Harmonies:** `pb.PitchShift` copies at `dsp.harmonies.semitones` (default -12 and +7), mix 0.35.
 - **Chorus:** `pb.Chorus` rate 1 Hz, depth 0.25, **mix 0.25** (was 0.4: less smear, so single voices stay recognisable).
 - **Polish:** high-pass 80 Hz, +1.8 dB presence at 3.2 kHz, +1.5 dB air at 10 kHz, 2.2:1 compression, and saturation from
@@ -117,7 +117,7 @@ All three read their numbers from the `dsp` section (`references/vocal-engine/de
 Create a voice:
 1. `python scripts/presets.py scaffold vocals <name> --project <project>`. Every key is optional; the template shows the sections
    (`source`, `humming`, `vibrato`, `articulation`, `performance`, `breathing`, `ensemble`) and the `expression` field. Write a real
-   `character` sentence (the project gate blocks the placeholder). The schema is `references/vocal-engine/vocal.schema.json`.
+   `character` sentence (the project gate blocks the placeholder). The schema is `references/data/vocal-engine-data/vocal.schema.json`.
 2. In the score: `{"name": "<track>", "instrument": "<name>", "role": "pad", "notes": [...]}`. Built-in voices needing no preset:
    `choir_formant`, `hum_formant`, `voice_formant`, `throat_formant`, `chant_formant`.
 3. A humming performance in one preset:

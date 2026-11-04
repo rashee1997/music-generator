@@ -78,7 +78,7 @@ def _load(path):
     if not os.path.isfile(path):
         sys.exit(f'no such scene file: {path}')
     doc = json.load(open(path, encoding='utf-8'))
-    for key in ('scene', 'model'):                 # {"scene": ..}, a references/sound-models file, or a bare scene
+    for key in ('scene', 'model'):                 # {"scene": ..}, a references/data/sound-models file, or a bare scene
         if isinstance(doc.get(key), dict):
             return doc[key]
     return doc

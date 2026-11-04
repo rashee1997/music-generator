@@ -811,7 +811,7 @@ def guzheng_sweep(t0, dur, tonic_midi, scale, direction='up', vel=0.72, octaves=
 # cultural idioms. A culture recipe uses its own scale, its own ornament and its own timeline; a neighbour's
 # scale (say Arabic Hijaz in an Indian brief) is not a substitute.
 # ------------------------------------------------------------------------------------------------
-CULTURE_SCALES = {   # the Cultural Scale & Idiom Compatibility table (see references/genres-and-moods.md)
+CULTURE_SCALES = {   # the Cultural Scale & Idiom Compatibility table (see references/scoring/genres-and-moods.md)
     'indo_afro': ['raga_khamaj', 'raga_bhoopali', 'raga_kafi'],   # NOT charukeshi / hijaz: those read Arabic in fast runs
     'indian': ['raga_bhoopali', 'raga_khamaj', 'raga_kafi', 'raga_bilawal', 'raga_yaman'],
     'arabic': ['maqam_rast', 'maqam_bayati', 'maqam_hijaz', 'maqam_saba'],

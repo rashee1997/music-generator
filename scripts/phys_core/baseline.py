@@ -24,7 +24,7 @@ render and call it fine. A hash says whether *any* sample moved, and the metrics
 honest answer to "did Stage 2 change the falling rain that already worked?".
 
 What is frozen: every shipped one-hit effect preset (`sfx:<name>`), every shipped environments preset (`env:<name>`)
-and every worked model in references/sound-models/ (`model:<stem>`). Each is rendered at a fixed seed and length, so
+and every worked model in references/data/sound-models/ (`model:<stem>`). Each is rendered at a fixed seed and length, so
 run to run is byte-identical unless the code changed.
 
 The manifest keeps a SHA-256 of the samples and a few level and spectrum numbers. WAVs are optional (--wav) and are
@@ -93,7 +93,7 @@ def _env_targets():
 
 def _model_targets():
     out = []
-    for path in sorted(glob.glob(os.path.join(_SKILL, 'references', 'sound-models', '*.json'))):
+    for path in sorted(glob.glob(os.path.join(_SKILL, 'references', 'data', 'sound-models', '*.json'))):
         stem = os.path.splitext(os.path.basename(path))[0]
         out.append(dict(name=f'model:{stem}', kind='model', seed=MODEL_SEED, path=path))
     return out

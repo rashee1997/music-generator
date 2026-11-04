@@ -45,7 +45,7 @@ brief.json (all keys optional except emotion or scene):
   "seed": 7, "humanize": "natural"
 }
 Output is a natural score for render_natural.py. EDIT IT: change instruments, swap bars, retune - or write
-your own score from scratch (see references/custom-scripts.md); compose.py is a starting point, not a cage.
+your own score from scratch (see references/workflow/custom-scripts.md); compose.py is a starting point, not a cage.
 """
 import argparse
 import copy
@@ -63,7 +63,7 @@ import presets
 import world
 
 # ------------------------------------------------------------------------------------------------
-# emotion table.  Based on listener-perception research (see references/emotion-and-scoring.md):
+# emotion table.  Based on listener-perception research (see references/scoring/emotion-and-scoring.md):
 #   mode strongest cue (major=happy, minor=sad) > tempo > register > dynamics > articulation > timbre
 # ------------------------------------------------------------------------------------------------
 EMOTIONS = {
@@ -190,7 +190,7 @@ EMOTION_ALIASES = {
     'explainer': 'focused', 'tutorial': 'focused', 'corporate': 'focused', 'productive': 'focused', 'upbeat': 'energetic',
     'workout': 'energetic', 'sport': 'energetic', 'hype': 'energetic', 'regal': 'majestic', 'grand': 'majestic',
     'noble': 'majestic', 'ceremony': 'majestic',
-    # GEMS factors (Zentner et al.) and basic emotions, mapped to the nearest preset; see references/genres-and-moods.md
+    # GEMS factors (Zentner et al.) and basic emotions, mapped to the nearest preset; see references/scoring/genres-and-moods.md
     'power': 'epic', 'transcendence': 'wonder', 'transcendent': 'wonder', 'sensual': 'tender',
     'passion': 'passionate', 'depressed': 'sad', 'depression': 'sad', 'sadness': 'sad',
     'joy': 'joyful', 'happiness': 'joyful', 'anger': 'angry', 'tenderness': 'tender',

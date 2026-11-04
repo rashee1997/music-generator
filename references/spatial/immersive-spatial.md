@@ -55,7 +55,7 @@ Distance, air loss and the shared reverb are unchanged.
 
 A moving source now updates its filter in the STFT domain every 256 samples (`spatial_hrtf/binaural.py::_stft_place`) instead of
 interpolating harmonic gains 20 times a second, and `doppler` (default true) resamples the path length, so a crossing source
-gets its time-varying cue and its pitch shift together. `references/presets/spaces/concert_hall_3d.json` is the worked
+gets its time-varying cue and its pitch shift together. `references/data/presets/spaces/concert_hall_3d.json` is the worked
 example: copy it into a project and change the box.
 
 ## 3. Stage 0 (project gate) and Stage 6 rows

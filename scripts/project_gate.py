@@ -59,9 +59,9 @@ _norm = presets._norm          # one implementation, in presets.py
 
 
 def kb_document_ids():
-    """document_id values from the frontmatter of knowledgebase/*.md."""
+    """document_id values from the frontmatter of every markdown file under knowledgebase/."""
     ids = set()
-    for p in (SKILL / 'knowledgebase').glob('*.md'):
+    for p in (SKILL / 'knowledgebase').rglob('*.md'):
         head = p.read_text(encoding='utf-8', errors='replace')[:2500]
         ids.update(re.findall(r'document_id:\s*["\']?([A-Za-z0-9_\-.]+)', head))
     return ids
@@ -501,7 +501,9 @@ def stage_problems(score, project):
 
 
 def effective_elevations(score, cfg, project):
-    """{track name: (role, elevation)} as the mixer will apply it: track spatial, else instrument preset, else height_by_role."""
+    """{track name: (role, elevation, spatial, instrument)} as the score asks for it: track spatial, else instrument
+    preset, else height_by_role. The mixer floors bass and drums at 0 deg; the value here stays the requested one so
+    the gate can tell the writer it will be ignored."""
     presets.add_project(str(project))
     out = {}
     imm = cfg if (cfg or {}).get('enabled') else None
@@ -518,8 +520,6 @@ def effective_elevations(score, cfg, project):
             el = sp['elevation']
         else:
             el = (cfg.get('height_by_role') or {}).get(role, 0.0) if cfg else 0.0
-        if imm and role in ('bass', 'drum'):
-            el = 0.0
         out[tr.get('name', f'track{i}')] = (role, float(el), sp, inst)
     return out
 
@@ -549,6 +549,7 @@ def immersive_problems(score, project):
     for tname, (role, el, sp, inst) in effective_elevations(score, cfg, project).items():
         if role in ('bass', 'drum') and el != 0:
             out.append(f'track "{tname}": a {role} at elevation {el:g} cannot be placed by ear (no pinna cue at low frequency); set it to 0')
+            el = 0.0                                                    # the mixer floors it, so it is not a lifted track
         if abs(el) > mx:
             out.append(f'track "{tname}": elevation {el:g} is beyond max_elevation {mx:g}')
         want = staging.get(_norm(tname)) or staging.get(_norm(inst))

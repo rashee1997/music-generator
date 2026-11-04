@@ -18,7 +18,7 @@
 
     python3 video-mixer/video_probe.py clips/source.mp4 --preset default --out reports/video_probe.json
 
-Three passes, all numbers from the video preset (`references/presets/video/<name>.json`):
+Three passes, all numbers from the video preset (`references/data/presets/video/<name>.json`):
   ffprobe    container and stream facts, plus keyframe times
   scdet      scene-change candidates (ffmpeg's luma-change score, 0-100 scale)
   rawvideo   every frame at analysis_fps, downscaled, piped to numpy:

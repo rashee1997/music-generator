@@ -152,6 +152,6 @@
     "https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.1359-0-199802-S!!PDF-E.pdf (A/V sync: detectability +45 ms early to -125 ms late)",
     "https://ffmpeg-cookbook.com/en/articles/scene-detect/ (scdet threshold 0-100, default 10, 8-14 for film; fades and dissolves missed)",
     "https://openclip.app/learn/audio-ducking (duck depth 15-25 dB, attack 10-30 ms, release 200-500 ms)",
-    "references/mix-rules.md (voice-over contract: -8 to -14 dB duck, 25 ms attack, 250-350 ms release)"
+    "references/mixing/mix-rules.md (voice-over contract: -8 to -14 dB duck, 25 ms attack, 250-350 ms release)"
   ]
 }

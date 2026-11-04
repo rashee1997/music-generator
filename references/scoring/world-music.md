@@ -15,15 +15,15 @@ author's approximation, not measured on a corpus.
 
 For exact acoustic models, microtonal cent offsets, frequency band allocations, and pure-Python synthesis code, consult the primary knowledge base files in [`knowledgebase/`](../knowledgebase):
 
-- **Pan-Indian Traditions & Hindustani 10 Thaats:** [`knowledgebase/PAN_INDIAN_MUSICAL.md`](../knowledgebase/PAN_INDIAN_MUSICAL.md)
-- **Tamil Folk, Kuthu & Carnatic Classical:** [`knowledgebase/tamil_music_dsp_knowledgebase.md`](../knowledgebase/tamil_music_dsp_knowledgebase.md)
-- **Arabic Desert Vocals & Magical Maqam Chords:** [`knowledgebase/The Arabic Desert Vocal.md`](../knowledgebase/The%20Arabic%20Desert%20Vocal.md)
-- **Pan-Arab Maqamat & Iqa'at Cycles:** [`knowledgebase/arabic_dsp_knowledge.md`](../knowledgebase/arabic_dsp_knowledge.md)
-- **East Asian (Chinese Wu Sheng & Japanese Onkai):** [`knowledgebase/chinese_japanese_dsp_knowledge.md`](../knowledgebase/chinese_japanese_dsp_knowledge.md)
-- **Sub-Saharan African Polyrhythms & Amapiano:** [`knowledgebase/afro_dsp_knowledge.md`](../knowledgebase/afro_dsp_knowledge.md)
-- **Americas, Brazil (Samba/Bossa) & Central Asian Throat Singing:** [`knowledgebase/rio_brazil_turkic_mogol_dsp_knowledge.md`](../knowledgebase/rio_brazil_turkic_mogol_dsp_knowledge.md)
-- **Global Humming Atlas, Celtic, Nordic, Balkan & Gamelan:** [`knowledgebase/world_music_dsp.md`](../knowledgebase/world_music_dsp.md)
-- **Western Classical, Orchestral, & Trailer Sound Design:** [`knowledgebase/western_dsp_knowledge.md`](../knowledgebase/western_dsp_knowledge.md)
+- **Pan-Indian Traditions & Hindustani 10 Thaats:** [`knowledgebase/cultures/pan-indian.md`](../knowledgebase/cultures/pan-indian.md)
+- **Tamil Folk, Kuthu & Carnatic Classical:** [`knowledgebase/cultures/tamil.md`](../knowledgebase/cultures/tamil.md)
+- **Arabic Desert Vocals & Magical Maqam Chords:** [`knowledgebase/cultures/arabic-desert-vocal.md`](../knowledgebase/cultures/arabic-desert-vocal.md)
+- **Pan-Arab Maqamat & Iqa'at Cycles:** [`knowledgebase/cultures/arabic.md`](../knowledgebase/cultures/arabic.md)
+- **East Asian (Chinese Wu Sheng & Japanese Onkai):** [`knowledgebase/cultures/chinese-japanese.md`](../knowledgebase/cultures/chinese-japanese.md)
+- **Sub-Saharan African Polyrhythms & Amapiano:** [`knowledgebase/cultures/african.md`](../knowledgebase/cultures/african.md)
+- **Americas, Brazil (Samba/Bossa) & Central Asian Throat Singing:** [`knowledgebase/cultures/brazil-turkic-mongolian.md`](../knowledgebase/cultures/brazil-turkic-mongolian.md)
+- **Global Humming Atlas, Celtic, Nordic, Balkan & Gamelan:** [`knowledgebase/cultures/world-other.md`](../knowledgebase/cultures/world-other.md)
+- **Western Classical, Orchestral, & Trailer Sound Design:** [`knowledgebase/cultures/western.md`](../knowledgebase/cultures/western.md)
 
 ---
 
@@ -229,7 +229,7 @@ Rules that make them correct:
 
 ### Cycles of any length (`world.CYCLES`, `world.cycle_notes`)
 For anything that is not 4/4: Turkish usul and Indian tala. One cycle is `beats` counting units (matras). Set the score bpm to the matra, `ts` to `[beats, 4]`,
-and use the helper in a custom score (`references/custom-scripts.md`):
+and use the helper in a custom score (`references/workflow/custom-scripts.md`):
 ```python
 import sys; sys.path.insert(0, 'scripts'); from world import cycle_notes
 drums = cycle_notes('aksak', bars=16, vel=.7, matra=1.0)       # 9 matras per bar, matra = one score beat
@@ -328,7 +328,7 @@ For any non-Western cue the sheet should say: the tradition, the mode, the instr
 ## 8. Getting real instruments
 
 The honest upgrade paths, in order of effort:
-1. **Clone a recording** the user owns (`scripts/clone_instrument.py`, `references/instrument-cloning.md`).
+1. **Clone a recording** the user owns (`scripts/clone_instrument.py`, `references/instruments-and-vocals/instrument-cloning.md`).
 2. **A SoundFont with the instruments.** Set `MUSICGEN_SF2=/path/file.sf2`. The 128 GM slots then play the bank's sounds, so a world-instrument SoundFont must be GM-mapped
    to be a drop-in; otherwise use one instrument per track with `program` numbers. Sources seen (not downloaded or tested here): polyphone.io has a "ethnic / world"
    category with a "can be used for commercial purposes" filter (check each file's licence); DSK Music's free SF2 set includes a 13-instrument world-strings bank (Celtic

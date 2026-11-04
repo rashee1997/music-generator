@@ -29,7 +29,7 @@ A model is {"seconds": 2.0, "voices": [voice, ...]}. A voice:
      "vary":      {"size": {"dist": "lognormal", "sigma": 0.2}, "pitch_exp": 1.0, "amp_exp": 2.0, "level_spread_db": 3},
      "control":   {"gain_db": [{"kind": "ou", "sigma_db": 3, "tau_s": 4}]}}
 
-Formulas and where each comes from: knowledgebase/SFX_MODEL_FORMULAS.md (modal bank and impact pulse after van den Doel, Kry and
+Formulas and where each comes from: knowledgebase/sound-design/sfx-formulas.md (modal bank and impact pulse after van den Doel, Kry and
 Pai 2001; fractal-noise scraping from the same paper; Marshall-Palmer drop sizes; Minnaert bubbles). Every random choice is seeded, so a
 model and a seed always give the same samples. Unknown keys and out-of-range values are errors; a work estimate stops a runaway model.
 """
