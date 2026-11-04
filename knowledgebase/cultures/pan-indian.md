@@ -11,32 +11,7 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# 🇮🇳 The Pan-Indian Music Psychoacoustic & Instrument DSP Knowledge Base (Hindustani, Punjabi, Rajasthani, Sufi, Bengali, Western, Northeastern & Non-Tamil South)
-**Purpose:** Complete the Indian Subcontinent musical architecture beyond Tamil Nadu. This document models **Hindustani Classical (*Raga, Thaat, Meend, Jawari, Tabla*)**, **Regional Folk Ecosystems (*Punjab, Rajasthan, Bengal, Gujarat, Maharashtra, Kerala, Assam, Kashmir, Odissi*)**, and **Modern Bollywood / Indie-Electronic Fusions**.
-
----
-
-## Table of Contents (Machine-Parsable Index)
-- [1.0 Core Psychoacoustics: Hindustani (North) vs. Carnatic (South) Ear](#10-core-psychoacoustics-hindustani-north-vs-carnatic-south-ear)
-- [2.0 Hindustani Classical Architecture: The 10 *Thaats*, *Prahar* (Time Theory) & *Meend*](#20-hindustani-classical-architecture-the-10-thaats-prahar-time-theory--meend)
-- [3.0 Physics & Pure-Python DSP of Iconic Indian Instruments](#30-physics--pure-python-dsp-of-iconic-indian-instruments)
-  - [3.1 Sitar & Tanpura: The *Jawari* (Parabolic Bridge Buzz) & *Taraf* Sympathetic Strings](#31-sitar--tanpura-the-jawari-parabolic-bridge-buzz--taraf-sympathetic-strings)
-  - [3.2 Sarod & Santoor: Fretless Metal-Plate Glides & 100-String Shimmer](#32-sarod--santoor-fretless-metal-plate-glides--100-string-shimmer)
-  - [3.3 Tabla (*Dayan* & *Bayan*): Harmonic *Syahi* Overtones & Left-Hand Pitch-Bend](#33-tabla-dayan--bayan-harmonic-syahi-overtones--left-hand-pitch-bend)
-  - [3.4 Bansuri, Shehnai & Harmonium: North Indian Wind & Reed Physics](#34-bansuri-shehnai--harmonium-north-indian-wind--reed-physics)
-- [4.0 Complete Regional Folk & Ritual Ecosystems Across India](#40-complete-regional-folk--ritual-ecosystems-across-india)
-  - [4.1 PUNJAB: *Bhangra, Giddha, Dhol (Chaal), Tumbi & Algoza*](#41-punjab-bhangra-giddha-dhol-chaal-tumbi--algoza)
-  - [4.2 RAJASTHAN & KUTCH: *Manganiyar/Langa Desert Folk, Kamaicha, Khartal & Morchang*](#42-rajasthan--kutch-manganiyarlanga-desert-folk-kamaicha-khartal--morchang)
-  - [4.3 SUFI QAWWALI (Delhi/Punjab/Ajmer): *Dholak, Claps, Harmonium & Ecstatic Build*](#43-sufi-qawwali-delhipunjabajmer-dholak-claps-harmonium--ecstatic-build)
-  - [4.4 BENGAL & EASTERN INDIA: *Baul Mystic Folk (Ektara, Dotara, Khamak) & Rabindra Sangeet*](#44-bengal--eastern-india-baul-mystic-folk-ektara-dotara-khamak--rabindra-sangeet)
-  - [4.5 MAHARASHTRA & GOA: *Lavani (Dholki), Powada & Puneri Dhol-Tasha*](#45-maharashtra--goa-lavani-dholki-powada--puneri-dhol-tasha)
-  - [4.6 GUJARAT: *Garba, Dandiya Raas & Dakla (Tribal Trance Drum)*](#46-gujarat-garba-dandiya-raas--dakla-tribal-trance-drum)
-  - [4.7 KERALA, KARNATAKA & ANDHRA/TELANGANA: *Chenda Melam, Yakshagana & Teenmaar*](#47-kerala-karnataka--andhratelangana-chenda-melam-yakshagana--teenmaar)
-  - [4.8 KASHMIR, HIMACHAL & NORTHEAST (Assam *Bihu*, Nagaland, Manipur *Pung*)](#48-kashmir-himachal--northeast-assam-bihu-nagaland-manipur-pung)
-- [5.0 Modern Pan-Indian Fusions (Bollywood, Punjabi Trap, Indian Electronica)](#50-modern-pan-indian-fusions-bollywood-punjabi-trap-indian-electronica)
-- [6.0 Pure-Python DSP Module: Sitar *Jawari*, Tabla *Bayan-Dayan*, & Punjabi *Dhol*](#60-pure-python-dsp-module-sitar-jawari-tabla-bayan-dayan--punjabi-dhol)
-
----
+# Indian traditions outside Tamil: Hindustani, Punjabi, Sufi, Bengali and others
 
 ## 1.0 Core Psychoacoustics: Hindustani (North) vs. Carnatic (South) Ear
 
@@ -48,8 +23,6 @@ An AI agent must never confuse **Hindustani (North Indian)** and **Carnatic (Sou
 | **Rhythmic Architecture** | **Additive & Exacting (*Kanakku* / Calculation):** Polyrhythmic subdivisions (*Nadai*), complex metric shifts, and intricate mathematical resolutions (*Korvais*). | **Cyclic Balance (*Sam* Gravity & Dynamic *Khali*):** Rhythms revolve around a cycle (*Avartan*). Tension builds in the wave-off (*Khali*) and resolves into the primary downbeat (*Sam*). | In Hindustani cycles (e.g., *Teentaal*), program the *Khali* (Step 9 of 16) with open, non-resonant bass, contrasting with the heavy resonant *Ghe* on *Sam* (Step 1). |
 | **Acoustic Drone Ideal** | **Static Foundation:** The Tanpura provides a continuous harmonic reference for horizontal scale tension. | **Sympathetic Resonance Halo (*Jawari* & *Taraf*):** The drone and lead instruments trigger physical overtones in sympathetic strings, filling the room with high-order harmonics. | Add a sympathetic resonator bank (11–13 tuned bandpass filters) that rings continuously based on input from the lead melody. |
 | **Structural Progression** | Structured and through-composed compositions (*Kritis*) with balanced composed sections (*Pallavi, Anupallavi, Charanam*). | **Expansive Structural Evolution:** Slow, unmeasured exposition (*Alaap* $\rightarrow$ *Jor* $\rightarrow$ *Jhala*) accelerating organically into composed sections (*Gat/Bandish*). | Structure tracks with an unmetered, tempo-free intro (30% of duration), moving to a steady pulse (*Jor*), then high-speed strumming (*Jhala*), followed by the percussion drop. |
-
----
 
 ## 2.0 Hindustani Classical Architecture: The 10 *Thaats*, *Prahar* (Time Theory) & *Meend*
 
@@ -76,8 +49,6 @@ Unlike Western pitch quantization or fast Carnatic shakes, *Meend* is an **unbro
   $$f(t) = f_{\text{start}} + (f_{\text{target}} - f_{\text{start}}) \cdot \frac{1}{1 + e^{-k(t - t_0)}}$$
   where $k$ controls the bend velocity and $t_0$ marks the midpoint of the bend duration.
 * **The *Khatka* / *Murki* (Micro-Grace Accents):** A rapid 3- or 4-note circular ornament (e.g., $D \rightarrow E \rightarrow D \rightarrow C$) executing in under `45ms`, functioning as a decorative punctuation mark at phrase endings.
-
----
 
 ## 3.0 Physics & Pure-Python DSP of Iconic Indian Instruments
 
@@ -118,11 +89,7 @@ The Tabla consists of two drums, whose tuning approaches harmonic ratios unusual
 * **Harmonium (Hand-Pumped Free-Reed Aerophone):**
   * Air driven by bellows across brass reeds within wood chambers. Tuning often reflects equal temperament with slight variations, characterized by an accordion-like rasp (`sawtooth + narrow bandpass`) and a low-frequency bellows pump cycle around `0.3Hz–0.5Hz`.
 
----
-
 ## 4.0 Complete Regional Folk & Ritual Ecosystems Across India
-
----
 
 ### 4.1 PUNJAB: *Bhangra, Giddha, Dhol (Chaal), Tumbi & Algoza*
 * **Rhythmic Core — The *Chaal* (8-Step 4/4 Triplet Gallop):**
@@ -137,8 +104,6 @@ The Tabla consists of two drums, whose tuning approaches harmonic ratios unusual
   * **Chimta:** Large iron tongs mounted with brass jingle bells, providing metallic rhythmic clashes on strong beats.
   * **Bugchu / Toombi:** Hourglass friction-string drum producing sudden pitch drops.
 
----
-
 ### 4.2 RAJASTHAN & KUTCH: *Manganiyar/Langa Desert Folk, Kamaicha, Khartal & Morchang*
 * **Psychoacoustic Profile:** Desert music defined by broad spatial reflection, high vocal delivery designed to carry over open sand, and metallic idiophones cutting through dry wind.
 * **Signature Instruments:**
@@ -146,8 +111,6 @@ The Tabla consists of two drums, whose tuning approaches harmonic ratios unusual
   * **Khartal:** Two pairs of polished teak wood clappers held loosely in each hand. Virtuosic players generate micro-rolls and subdivisions up to 32nd notes (`18 strikes/second`), marked by a sharp wooden transient (`1.4kHz–2.6kHz`).
   * **Morchang (Rajasthani Jaw Harp):** Steel frame and vibrating reed held against the teeth, using the mouth cavity to modulate vocal formants ($F_1, F_2$) and create syncopated rhythmic bursts (*"Twaing-kwa-kwa-twaing"*).
   * **Ravanahatha:** Ancient bowed chordophone with a coconut-shell bowl resonator and high, rustic tone.
-
----
 
 ### 4.3 SUFI QAWWALI (Delhi/Punjab/Ajmer): *Dholak, Claps, Harmonium & Ecstatic Build*
 * **The Performance Dynamic (*Hal / Wajad* — Ecstatic Trance):**
@@ -157,8 +120,6 @@ The Tabla consists of two drums, whose tuning approaches harmonic ratios unusual
   * **Dholak:** Barrel-shaped drum using a finger-slide technique on the bass head and sharp open rim shots on the treble head, avoiding the classical damping of the Tabla in favor of dynamic drive.
   * **Harmonium Call-and-Response:** Rapid, cyclical melodic loops that alternate between lead vocal improvisation and choral unison answers.
 
----
-
 ### 4.4 BENGAL & EASTERN INDIA: *Baul Mystic Folk & Rabindra Sangeet*
 * **Philosophy:** Wandering mystic troubadours of rural Bengal singing ecstatic, introspective songs centered on the divine within (*Moner Manush*).
 * **Signature Instruments:**
@@ -166,8 +127,6 @@ The Tabla consists of two drums, whose tuning approaches harmonic ratios unusual
   * **Dotara:** Fretless 4- to 5-stringed plucked folk lute strung with silk or steel over skin, providing a bright, rhythmic, banjo-like percussive tone.
   * **Khamak (Anandalahari):** Variable-tension tension drum. A string runs from inside a small wooden cylinder to an external hand-held cup; pulling the cup while striking the string generates rapid upward and downward pitch sweeps.
   * **Khol / Mridanga:** Clay drum with asymmetrical heads used in Vaishnavite *Kirtan* ceremonies, yielding high, ringing metallic treble slaps (*"Ta"*) and resonant, boomy bass hits (*"Dhi"*).
-
----
 
 ### 4.5 MAHARASHTRA & GOA: *Lavani (Dholki), Powada & Puneri Dhol-Tasha*
 * **Lavani Rhythm:** Rapid, syncopated folk dance meter (`140–165 BPM`) driven by the **Dholki** (a slender, high-tension barrel drum).
@@ -177,8 +136,6 @@ The Tabla consists of two drums, whose tuning approaches harmonic ratios unusual
   * **Dhol:** Giant wood-barrel drum struck with heavy wooden mallets (*Tipru*), creating high-pressure sub-bass thumps near `55Hz–75Hz`.
   * **Tasha:** Shallow, copper/brass-bowl snare drum played with thin, flexible cane sticks, cutting across outdoor environments with an aggressive, buzzing rim crack (`3.5kHz–6kHz`).
 
----
-
 ### 4.6 GUJARAT: *Garba, Dandiya Raas & Dakla (Tribal Trance Drum)*
 * **Garba Rhythmic Pattern (6/8 or 3/4 Swing):**
   * Structured around a 3-clap circular dance (*Tran Taali Garba*).
@@ -186,8 +143,6 @@ The Tabla consists of two drums, whose tuning approaches harmonic ratios unusual
 * **Dakla (Goddess Trance Drum):**
   * Hourglass-shaped drum laced with thick chords, associated with tantric rituals and trance invocations for the goddess *Amba/Mataji*.
   * Played using rapid, wrist-modulated friction strokes that produce dynamic, ominous sub-frequency pitch drops (`80Hz -> 45Hz`) designed to induce trance states (*Dhuni*).
-
----
 
 ### 4.7 KERALA, KARNATAKA & ANDHRA/TELANGANA: *Chenda Melam, Yakshagana & Teenmaar*
 * **Kerala *Panchari / Pandi Melam* (Temple Percussion):**
@@ -197,8 +152,6 @@ The Tabla consists of two drums, whose tuning approaches harmonic ratios unusual
   * **Elathalam:** Heavy bronze hand cymbals keeping the structural pulse with bright, metallic clangs.
 * **Andhra & Telangana *Teenmaar* Beats:**
   * High-tempo street rhythm driven by the brass **Tasha** and **Dappu** (flat frame drum), driving festival processions and wedding dancing.
-
----
 
 ### 4.8 KASHMIR, HIMACHAL & NORTHEAST (Assam *Bihu*, Nagaland, Manipur *Pung*)
 * **Kashmir (*Sufiana Kalam* & *Chakri*):**
@@ -210,8 +163,6 @@ The Tabla consists of two drums, whose tuning approaches harmonic ratios unusual
 * **Manipur (*Pung Cholom*):**
   * Dynamic acrobatic dance accompanied by the **Pung** (clay/wood hand drum), moving from delicate finger articulations to full acrobatic leaps while drumming.
 
----
-
 ## 5.0 Modern Pan-Indian Fusions (Bollywood, Punjabi Trap, Indian Electronica)
 
 Modern Indian fusion pairs traditional acoustic instruments with contemporary production grids:
@@ -222,8 +173,6 @@ Modern Indian fusion pairs traditional acoustic instruments with contemporary pr
 | **Bollywood Mass Dance** *(Pritam, Vishal-Shekhar, Sachin-Jigar)* | Stacked brass fanfares + unison **Dholak** + **Puneri Dhol** + **Tabla** transitions. | Four-on-the-floor EDM kick (`126–130 BPM`) + layered synth chord pads. | High-pass the Dholak and apply sidechain ducking under the primary four-on-the-floor kick, letting the Dholak take the syncopated off-beats. |
 | **Indian Electronica / Folktronica** *(Nucleya, Karsh Kale, Sandunes)* | Fretless **Sarod** glides, **Bansuri** melodies, or classical **Khayal/Thumri** vocals. | Midtempo Glitch, Dubstep, Halftime, or UK Garage drum grids. | Use the Bansuri or Sarod as the main melodic hook, layering short, pitch-shifted vocal chops treated with granular delay. |
 | **Sufi-Rock / Qawwali Anthem** *(Junoon, Coke Studio style)* | Dual **Harmonium** + **Dholak** + passionate, wide-open lead vocal. | Distorted rock guitars (open fifth power chords) + energetic drum kit. | Pan harmoniums to wide stereo channels (`±60°`); keep distorted guitars locked to the low mids, and seat the vocal dry and upfront in the center. |
-
----
 
 ## 6.0 Pure-Python DSP Module: Sitar *Jawari*, Tabla *Bayan-Dayan*, & Punjabi *Dhol*
 
@@ -445,7 +394,6 @@ HINDUSTANI_THAAT_SCALES = {
     "purvi":   [0, 1, 4, 6, 7, 8, 11],     # Dusk Tension (Teevra Ma + Komal Re)
     "marwa":   [0, 1, 4, 6, 9, 11],        # Restless Dusk / Omit 5th (No Pa!)
 }
-
 
 ### Summary of the Complete 9-Document Knowledge Architecture
 With this document integrated, the knowledge base covers:

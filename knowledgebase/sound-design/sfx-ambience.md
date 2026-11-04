@@ -11,42 +11,11 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# The Master Procedural SFX, World Ambience & Zero-Overlap Music Blending Knowledge Base
-**Purpose:**
-1. Synthesize **any natural, environmental, human-crowd, or cinematic SFX** in 100% pure Python (`NumPy`/`SciPy`) using physical and stochastic modeling (zero external `.wav` samples required).
-2. Enforce **5 Mathematical Zero-Overlap Blending Laws** so ambient beds and SFX **never mask, muddy, or clash** with musical instruments across frequency, time, pitch, or 3D space.
-
----
-
-## Table of Contents (Machine-Parsable Index)
-- [1.0 The 5 Laws of Zero-Overlap SFX-to-Music Blending](#10-the-5-laws-of-zero-overlap-sfx-to-music-blending)
-  - [1.1 LAW 1: Dynamic Spectral Notching (Real-Time Bark-Band Carving)](#11-law-1-dynamic-spectral-notching-real-time-bark-band-carving)
-  - [1.2 LAW 2: Temporal Call-and-Response Gating (Transient Ducking & Gap-Filling)](#12-law-2-temporal-call-and-response-gating-transient-ducking--gap-filling)
-  - [1.3 LAW 3: Key-Locked Harmonic Resonator Bank ("Singing Ambience")](#13-law-3-key-locked-harmonic-resonator-bank-singing-ambience)
-  - [1.4 LAW 4: 3D Spherical Mid-Side & Haas Depth Separation](#14-law-4-3d-spherical-mid-side--haas-depth-separation)
-  - [1.5 LAW 5: Rhythmic Quantization of Micro-Foley (Groove-Locked Nature)](#15-law-5-rhythmic-quantization-of-micro-foley-groove-locked-nature)
-- [2.0 Procedural Weather & Elemental Physics (Pure-Python Models)](#20-procedural-weather--elemental-physics-pure-python-models)
-  - [2.1 Water & Rain Taxonomy (Mist, Patter, Downpour, Ocean Waves, Cave Drips)](#21-water--rain-taxonomy-mist-patter-downpour-ocean-waves-cave-drips)
-  - [2.2 Wind & Air Taxonomy (Desert Simoom, Canyon Howl, Forest Breeze)](#22-wind--air-taxonomy-desert-simoom-canyon-howl-forest-breeze)
-  - [2.3 Fire, Crackling Embers & Thunder Physics](#23-fire-crackling-embers--thunder-physics)
-- [3.0 Procedural Bio-Acoustics (Birds, Insects, Jungle, Night Animals)](#30-procedural-bio-acoustics-birds-insects-jungle-night-animals)
-  - [3.1 Avian Syrinx Dual-FM Synthesis (Songbirds, Eagles, Tropical Calls)](#31-avian-syrinx-dual-fm-synthesis-songbirds-eagles-tropical-calls)
-  - [3.2 Stridulation Physics (Crickets, Cicadas, Rainforest Swarms)](#32-stridulation-physics-crickets-cicadas-rainforest-swarms)
-- [4.0 Procedural Cultural & Urban World Ambiences](#40-procedural-cultural--urban-world-ambiences)
-  - [4.1 Indian *Thiruvizha* / Street Festival (Whistles, Crowd Murmur, Temple Bells)](#41-indian-thiruvizha--street-festival-whistles-crowd-murmur-temple-bells)
-  - [4.2 Middle Eastern *Souq* & Desert Campfire](#42-middle-eastern-souq--desert-campfire)
-  - [4.3 Cozy Café, Vinyl Dust, Tape Mechanics & Footsteps](#43-cozy-café-vinyl-dust-tape-mechanics--footsteps)
-- [5.0 Procedural Cinematic & Gaming Transitions (Whooshes, Risers, Impacts)](#50-procedural-cinematic--gaming-transitions-whooshes-risers-impacts)
-- [6.0 Genre-to-Ambience Pairing Matrix (What Belongs Where)](#60-genre-to-ambience-pairing-matrix-what-belongs-where)
-- [7.0 Complete Pure-Python SFX & Zero-Overlap Blender Engine](#70-complete-pure-python-sfx--zero-overlap-blender-engine)
-
----
+# Procedural SFX and ambience, and blending them with music
 
 ## 1.0 The 5 Laws of Zero-Overlap SFX-to-Music Blending
 
 > **CRITICAL AGENT DIRECTIVE:** Raw environmental sounds (rain, wind, crowds, ocean surf, fire) are **broadband stochastic signals** spanning `20Hz to 20,000Hz`. If you simply mix them at `-12dB` underneath music, they destroy drum punch and mask lead melodies. **Every ambient or SFX track MUST pass through these 5 mathematical processors before summing with music:**
-
----
 
 ### 1.1 LAW 1: Dynamic Spectral Notching (The "Complementarity Contract")
 Divide the audible spectrum into **Protected Musical Zones** and carve them out of the Ambience/SFX layer in real time:
@@ -78,8 +47,6 @@ When blending transient nature/world sounds (fire crackles, water drops, footste
 * **Do NOT place them at 100% random timestamps!** Random transients fight the drum groove and make the beat sound sloppy.
 * **The Soft-Quantize Rule (`75% Grid Attraction`):** Snap micro-foley transients to within `±15ms` of the track's **16th-note or 12th-note (triplet) subdivisions**! When raindrops, fire pops, or footsteps subtly lock into the pocket of a Lo-Fi, Kuthu, or Celtic beat, the human brain experiences intense rhythmic satisfaction.
 
----
-
 ## 2.0 Procedural Weather & Elemental Physics (Pure-Python Models)
 
 Never use static white/pink noise for weather. Every element has a distinct **multi-layer physical equation**:
@@ -92,8 +59,6 @@ Never use static white/pink noise for weather. Every element has a distinct **mu
 | **2.4 Desert Wind (*Simoom*) / Canyon Howl** | Brown noise (`1/f^2`) for deep air mass movement. | **2 to 3 Wandering Whistle Formants (`Q = 12.0`):** Center frequencies drift slowly between `280Hz` and `1,150Hz` via Perlin/Random-Walk LFOs. | High-frequency **Sand-Grain Hiss (`4.5kHz–11kHz`)** whose amplitude surges whenever the wind formant frequency peaks! |
 | **2.5 Campfire / Hearth Crackle** | Warm low-mid air roar (`Bandpass 140Hz–320Hz` modulated by `3Hz` flame flicker). | Soft hissing steam (`2.5kHz–6kHz` gated bursts). | **Wood Resin Pops:** Ultra-sharp `1.5ms` Dirac-like impulses filtered at `1.8kHz` and `4.8kHz` with random exponential cluster bursts! |
 | **2.6 Distant Rolling Thunder** | **Non-Linear Shockwave:** Generate a jagged random-walk burst, hard-clip it (`np.tanh(x * 8.0)`). | Pass through a **Time-Varying Lowpass Filter** that starts at `1,800Hz` (the initial crack) and exponentially closes down to `65Hz` over `4.5 seconds`! | Multiply by a bumpy `4Hz–9Hz` cloud-reflection amplitude envelope so it rumbles across the sky (`40Hz–110Hz`). |
-
----
 
 ## 3.0 Procedural Bio-Acoustics (Birds, Insects, Jungle, Night Animals)
 
@@ -113,8 +78,6 @@ Insects produce sound by scraping a hardened scraper (*plectrum*) across a ribbe
 * **Tropical / Japanese Summer Cicada (*Minminzemi / Higurashi* — `3.5kHz – 7.5kHz`):**
   * Bandpass-filtered noise + FM tone (`4.8kHz`) driven by a rapid `18Hz` abdominal contraction pulse that swells in pitch and volume over `3 seconds` before dropping off.
 
----
-
 ## 4.0 Procedural Cultural & Urban World Ambiences
 
 1. **Tamil *Thiruvizha* / Indian Street Festival Ambience:**
@@ -127,8 +90,6 @@ Insects produce sound by scraping a hardened scraper (*plectrum*) across a ribbe
    * **Vinyl Surface Dust & Needle Groove Roar:** Low-level sub-surface rumble (`180Hz` bandpass noise at `-38dB`) + asymmetric **Electrostatic Dust Crackle** (`0.5ms` high-passed impulses at `5kHz–12kHz`).
    * **Porcelain Cup & Spoon Clink:** Two high-Q damped sine modes (`2,150Hz` and `5,480Hz`, `45ms` decay) triggered sparsely on restful bars.
 
----
-
 ## 5.0 Procedural Cinematic & Gaming Transitions (SFX That Glue Sections Together)
 
 Instead of letting musical sections collide, synthesize these **3 Zero-Overlap Transition SFX**:
@@ -139,8 +100,6 @@ Instead of letting musical sections collide, synthesize these **3 Zero-Overlap T
    * Over the final `2 beats` before a Climax Drop, mute the drums and play a **Reversed Exponential Noise + Sub-Sine Swell** (`55Hz -> 180Hz`, amplitude `0.01 -> 1.0`) that cuts off at `0.0` on the exact millisecond the Beat-1 Kick hits!
 3. **The "Crystalline Shimmer Riser" (/ Forest / Anime Transition):**
    * A cluster of 8 high-register sine waves tuned to the track's pentatonic/modal scale (`1.5kHz – 6kHz`) gliding upward by `+12 semitones` over 2 bars with `16th-note` stereo tremolo.
-
----
 
 ## 6.0 Genre-to-Ambience Pairing Matrix (AI-Agent Routing Table)
 
@@ -153,9 +112,7 @@ Instead of letting musical sections collide, synthesize these **3 Zero-Overlap T
 | **Epic Hybrid Trailer / Gaming Boss** | **Dark Subterranean Cavern Air** + crackling embers. | **Sub-Vacuum Reverse Suck**, Anvil metallic strikes, Doppler Whooshes, Distant Thunder. | Continuous mid-range crowd/water noise (muddies the fast 16th-note staccato string ostinatos). |
 | **African Amapiano / Afrobeats** | Warm tropical night breeze + soft **Night Cricket Choir (`4.2kHz`)**. | Township whistle chirps, wooden shaker/pod rattles quantized to the 16th-note groove. | Mid-range `100Hz–300Hz` rumble SFX (must leave `60Hz–250Hz` 100% clean for the **Log Drum**!). |
 
----
-
-## 7.0 Complete Pure-Python SFX & Zero-Overlap Blender Engine
+## 7.0 SFX and blending listing
 
 Drop this self-contained Python class (`ProceduralSFXAndZeroOverlapBlender`) directly into your existing script. It generates **Rain, Key-Locked Desert/Forest Wind, Syrinx Birdsong, Crickets, Campfire, Kuthu Street Whistles, and Cinematic Whooshes**, and blends them into your stereo music array with **0% spectral or temporal masking**:
 
@@ -340,8 +297,6 @@ class ProceduralSFXAndZeroOverlapBlender:
         final_R = np.tanh(music_right + (amb_R * 0.22) + (sfx_R * 0.45))
         return final_L, final_R
 \`\`\`
-
----
 
 ## 8.0 Summary of Your Complete 8-File AI Music Production Brain
 

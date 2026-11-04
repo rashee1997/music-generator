@@ -11,48 +11,11 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# Interactive Game Sound Effects & Physics DSP Systems
-
-## Table of Contents
-1. [The Anti-Machine-Gun System: Micro-Jitter & Procedural Variation](#1-the-anti-machine-gun-system-micro-jitter--procedural-variation)
-2. [Combat Audio Physics & Impact Acoustics](#2-combat-audio-physics--impact-acoustics)
-   - [2.1 Bladed Weapons (Slashes, Clashes & Whooshes)](#21-bladed-weapons-slashes-clashes--whooshes)
-   - [2.2 Blunt Weapons (Body Resonance & Heavy Impacts)](#22-blunt-weapons-body-resonance--heavy-impacts)
-   - [2.3 Projectiles, Lasers & Spells](#23-projectiles-lasers--magical-spells)
-   - [2.4 Multi-Stage Explosion Physics & Shockwave Propagation](#24-multi-stage-explosion-physics--shockwave-propagation)
-3. [Player Locomotion & Terrain Foley Physics](#3-player-locomotion--terrain-foley-physics)
-   - [3.1 The Dual-Impulse Footstep Paradigm (Heel Strike & Toe Push)](#31-the-dual-impulse-footstep-paradigm-heel-strike--toe-push)
-   - [3.2 Surface Material Acoustic Impedance Table](#32-surface-material-acoustic-impedance-table)
-   - [3.3 Armor Clank & Clothing Friction Synthesis](#33-armor-clank--clothing-friction-synthesis)
-4. [Diegetic HUD & User Interface Audio Systems](#4-diegetic-hud--user-interface-audio-systems)
-   - [4.1 Interface Psychoacoustics & The Non-Fatigue Corridor](#41-interface-psychoacoustics--the-non-fatigue-corridor)
-   - [4.2 Semantic Feedback Grammar: Reward vs Denial](#42-semantic-feedback-grammar-reward-vs-denial)
-   - [4.3 Auditory Tunnel Vision & Critical Health Lowpass Resonators](#43-auditory-tunnel-vision--critical-health-lowpass-resonators)
-5. [Audio Sprite Sheets, Voice Budgets & Priority Stealing](#5-audio-sprite-sheets-voice-budgets--priority-stealing)
-6. [Production Python DSP Implementation](#6-production-python-dsp-implementation)
-
----
+# Game sound effects: variation, impact, locomotion and interface
 
 ## 1. The Anti-Machine-Gun System: Micro-Jitter & Procedural Variation
 
 When a sound effect is triggered repeatedly in rapid succession (e.g., player footsteps, assault rifle bursts, sword slashes, enemy hit reactions), playing the identical audio sample produces an immediate psychoacoustic illusion known as the **"machine-gun effect"**. The human auditory cortex detects the exact identical phase and spectral signature, instantly breaking player immersion.
-
-```mermaid
-flowchart TD
-    Trigger["Game Event Trigger (e.g. Footstep / Sword Hit)"] --> RNG["DSP Procedural Parameter Generator"]
-    
-    RNG --> P1["Pitch Jitter (Gaussian Delta Cents)<br/>C_jitter ~ N(0, sigma_cents^2)"]
-    RNG --> P2["Velocity-to-Cutoff Filter<br/>f_c = f_min * (f_max / f_min)^v^1.5"]
-    RNG --> P3["Micro-Timing Displacement<br/>delta_t ~ Uniform(0, 15 ms)"]
-    RNG --> P4["Resonance & Material Variance<br/>Q_res and decay scaling +/- 10%"]
-
-    P1 --> DSP["Real-Time Procedural DSP Synthesis Engine"]
-    P2 --> DSP
-    P3 --> DSP
-    P4 --> DSP
-
-    DSP --> Out["Artifact-Free Unique Audio Event"]
-```
 
 ### The 4 Laws of Anti-Machine-Gun Randomization
 1. **Gaussian Pitch Jitter:** Pitch must not be uniform-random (which causes occasional jarring leaps). It must follow a zero-mean Gaussian distribution with standard deviation $\sigma \in [25, 55]\text{ cents}$:
@@ -61,8 +24,6 @@ flowchart TD
    $$f_c(v) = f_{\min} \cdot \left(\frac{f_{\max}}{f_{\min}}\right)^{v^{1.4}}$$
 3. **Micro-Attack Timing Offset:** An attack offset between $0$ and $12\text{ ms}$ breaks mechanical phase repetition across stereo channels.
 4. **Round-Robin History Exclusion:** Never repeat the same variation twice in a row ($P(\text{var}_k \mid \text{var}_{k-1} = k) = 0$).
-
----
 
 ## 2. Combat Audio Physics & Impact Acoustics
 
@@ -87,21 +48,12 @@ Combat sound design requires balancing **physical realism** (transient impact me
 ### 2.4 Multi-Stage Explosion Physics & Shockwave Propagation
 An authentic physical explosion is not a single generic "boom" sample; it is a sequence of **4 distinct acoustic stages**:
 
-```mermaid
-timeline
-    title Physical 4-Stage Explosion Timeline
-    0 ms : Stage 1 Initial Shockwave Transient (< 4 ms) : Ultrasonic crack & air ionization
-    15 ms : Stage 2 Sub-Bass Blast Wave (30 - 70 Hz) : Ground-shaking expansion displacement
-    80 ms : Stage 3 Debris Scatter & Environmental Splinters : Poisson-distributed granular impacts
-    450 ms : Stage 4 Cavern / Horizon Reverb Tail + Proximity Tinnitus : 4 kHz pure tone if close (< 5m)
-```
+Stage onsets sit at about 0 ms (shockwave), 15 ms (sub-bass blast), 80 ms (debris) and 450 ms (tail).
 
 1. **Stage 1 (Initial Shockwave):** Extremely sharp, unclipped compression spike ($< 3\text{ ms}$ rise time), cutting through the entire mix.
 2. **Stage 2 (Sub-Bass Expansion):** Large volume of expanding gas producing pure low-frequency energy ($30-65\text{ Hz}$) lasting $400-900\text{ ms}$.
 3. **Stage 3 (Debris & Shrapnel):** Stochastic Poisson-distributed impulse cluster scattered across stereo space.
 4. **Stage 4 (Proximity Tinnitus):** If the explosion occurs $< 5\text{ meters}$ from the player, the engine attenuates master audio by $-18\text{ dB}$ (temporary threshold shift) and introduces a decaying $4.0\text{ kHz}$ sinusoidal sine ring.
-
----
 
 ## 3. Player Locomotion & Terrain Foley Physics
 
@@ -112,13 +64,7 @@ A natural human footstep is never a single thump. It consists of **two distinct 
 1. **Impulse 1 (Heel Strike, $t = 0$):** High mechanical impact, deeper resonant thump, shorter transient. Carries $70\%$ of the downward body weight.
 2. **Impulse 2 (Toe Push-off, $t \approx 70-110\text{ ms}$):** Lighter, higher-frequency scrape or gravel shift as the foot rolls forward and pushes off.
 
-```mermaid
-flowchart LR
-    Step["Footstep Event"] --> Heel["Heel Strike (t = 0 ms)<br/>Sub Thump: 60 - 140 Hz<br/>Impact Level: 1.0"]
-    Step --> Toe["Toe Roll / Push (t = 85 ms)<br/>Surface Texture Granules: 800 - 4500 Hz<br/>Impact Level: 0.45"]
-    Heel --> Sum["Binaural Summation"]
-    Toe --> Sum
-```
+A stone footstep reads as a 60-140 Hz heel thump at full level and 800-4500 Hz toe granules at 0.45, about 85 ms after the heel.
 
 ### 3.2 Surface Material Acoustic Impedance Table
 
@@ -135,8 +81,6 @@ flowchart LR
 Tied directly to movement speed ($v$):
 - **Cloth Rustle:** Band-limited pink noise ($400 - 2800\text{ Hz}$) amplitude-modulated by a half-sine envelope on every footstep.
 - **Chainmail / Plate Armor:** Metallic jitter bursts ($Q \approx 12.0$ at $3.2\text{ kHz}$ and $5.8\text{ kHz}$) delayed by $25-40\text{ ms}$ after the heel strike, simulating loose armor settling under gravity.
-
----
 
 ## 4. Diegetic HUD & User Interface Audio Systems
 
@@ -160,8 +104,6 @@ When player health drops below $20\%$:
    - Thump 2 (Dub): $45\text{ Hz}$ sine drop, gain $0.7$, delayed by $180\text{ ms}$.
    - Pulse rate increases dynamically as health approaches zero.
 
----
-
 ## 5. Audio Sprite Sheets, Voice Budgets & Priority Stealing
 
 To guarantee optimal real-time performance on mobile, console, or web targets:
@@ -171,8 +113,6 @@ To guarantee optimal real-time performance on mobile, console, or web targets:
   - Priority 3: Distant environmental foley, ambient bird chirps, background particle effects.
   - When the hardware voice budget ($N_{\max} = 32\text{ or } 64$ voices) is exceeded, the oldest Priority 3 voice is stolen using a rapid $5\text{ ms}$ linear fade-out to prevent clicks.
 - **Audio Sprite Sheets:** Combining multiple related variations into a single contiguous WAV file, indexed by sub-sample cue markers in JSON.
-
----
 
 ## 6. Production Python DSP Implementation
 
@@ -218,7 +158,6 @@ def apply_anti_machine_gun_jitter(audio, velocity=1.0, sigma_cents=45.0, sr=4410
         out = filtered
         
     return out.astype(np.float32)
-
 
 def synth_dual_impulse_footstep(surface='stone', velocity=1.0, sr=44100, seed=None):
     """Synthesizes an authentic dual-impulse footstep (heel strike + toe push-off)

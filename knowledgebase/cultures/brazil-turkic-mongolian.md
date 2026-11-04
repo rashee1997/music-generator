@@ -11,37 +11,7 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# The Americas, Amazonia, Rio & "Hakan" (Māori *Haka* / Steppe *Khakan* / Anatolian) Psychoacoustic & Algorithmic DSP Knowledge Base
-**Scope:** Rio de Janeiro (*Samba Batucada, Bossa Nova, Phonk/Baile Funk*) $\rightarrow$ The Amazon Basin (*Indigenous Rainforest Flute/Rattle & Carimbó*) $\rightarrow$ Native American (*Plains Powwow, Woodlands Flute, Andean Sikuri/Huayno*) $\rightarrow$ *Hakan* Styles (*Māori Haka Ceremonial Stomp/Chant, Turkic-Mongol Khakan/Khöömei Overtone Throat Singing, & Turkish Makam/Electro-House*).
-**Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Non-Linear Micro-Swing ("The Brazilian Egg"), Formant/Overtone Vocal DSP, and Global World Fusions.
-
----
-
-
-## Table of Contents (Machine-Parsable Index)
-- [1.0 Core Psychoacoustics: How These Ears Listen](#1-core-psychoacoustics-how-these-ears-listen)
-- [2.0 Brazil: Rio de Janeiro & The Northeast](#2-brazil-rio-de-janeiro-samba-bossa-nova-baile-funk--the-northeast-baio--maracatu)
-  - [2.1 Mathematical Secret of Rio Samba: The Brazilian Egg (O Suingue)](#21-the-mathematical-secret-of-rio-samba-the-brazilian-egg-o-suingue)
-  - [2.2 Rio Samba Batucada Frequency & Instrument Architecture](#22-the-rio-samba-batucada-frequency--instrument-architecture)
-  - [2.3 Bossa Nova (Jobim & Gilberto Harmony)](#23-bossa-nova-1950s-60s-rio---joo-gilberto--antnio-carlos-jobim)
-  - [2.4 Modern Rio: Baile Funk / Funk Carioca / Brazilian Phonk](#24-modern-rio-baile-funk--funk-carioca--brazilian-phonk-130---135-bpm)
-- [3.0 The Amazon Basin: Indigenous Traditions & Carimbó](#3-the-amazon-basin-indigenous-rainforest-traditions--northern-brazilian-carimb)
-  - [3.1 Indigenous Amazonian Music (Yanomami, Ashaninka, Shipibo)](#31-indigenous-amazonian-music-xingu-yanomami-tukano-ashninka-shipibo)
-  - [3.2 Modern Amazonian Groove: Carimbó, Guitarrada & Tecnobrega](#32-modern-amazonian-groove-carimb-guitarrada--tecnobrega-belm-do-par)
-- [4.0 Native American Traditions (Plains & Andes)](#4-native-american-traditions-north-american-plainswoodlands--south-american-andes)
-  - [4.1 Indigenous North America (Plains Powwow, Navajo, Pueblo)](#41-indigenous-north-america-plains-powwow-lakota-navajo-pueblo-eastern-woodlands)
-  - [4.2 Indigenous Andean South America (Quechua & Aymara)](#42-indigenous-andean-south-america-quechua--aymara---peru-bolivia-ecuador)
-- [5.0 Hakan Styles: The 3 Global Musical Archetypes](#5-hakan-styles-the-3-global-musical-archetypes)
-  - [5.1 Indigenous Polynesian / Maori Haka](#51-indigenous-polynesian--maori-haka-new-zealand---ceremonial-warunity-stomp--chant)
-  - [5.2 Turkic-Mongol Steppe Khagan Style (Throat Singing & Hunnu Rock)](#52-turkic-mongol-steppe-khakan--khagan--khakass-style-khmei-sygyt-kargyraa-throat-singing--hunnu-rock)
-  - [5.3 Anatolian / Turkish Hakan Style](#53-anatolian--turkish-hakan-style-turkish-arabesque--makam-times-deep-oriental-afro-house)
-- [6.0 Pure-Python DSP & Algorithmic Parameter Cheat Sheet](#6-pure-python-dsp--algorithmic-parameter-cheat-sheet)
-  - [6.1 The Khakan Throat-Singing Synthesizer (Kargyraa + Sygyt)](#61-the-khakan-throat-singing-synthesizer-kargyraa-sub-growl--sygyt-whistle-harmonics)
-  - [6.2 The Rio Samba "Brazilian Egg" Engine](#62-the-rio-samba-brazilian-egg-micro-timing--velocity-engine)
-  - [6.3 Master Scale & Rhythmic Matrices](#63-master-scale--rhythmic-matrices-brazil-amazon-native-american-steppe)
-- [7.0 Cross-Cultural Fusion Blueprints](#7-mind-blowing-cross-cultural-fusion-blueprints)
-
----
+# Brazilian, Amazonian, Andean, haka and steppe traditions
 
 ## 1. Core Psychoacoustics: How These Ears Listen
 
@@ -52,9 +22,7 @@ updated: 2026-11-04
 | **Native American (North & Andes)** | **Heartbeat Drum + Descending Pentatonic Contour:** Melodies almost universally **start at their highest pitch and terrace downward** to the earth/root! | **The "Honor Beat" (Double-Pulse):** Steady 1-2-1-2 buffalo-hide frame/powwow drum where accent pulses leap out in pairs (`LOUD-soft-LOUD-soft -> LOUD-LOUD`). | Generate melodic contours using a **Descending Terrace Algorithm** (Start on Octave `[12]`, step down through `[10, 7, 5, 3, 0]`) over a `65Hz–90Hz` unison powwow drum heartbeat. |
 | **Hakan Styles (*Haka* / *Khakan-Khöömei* / *Turkish*)** | **Visceral Somatic Chest Impact & Vocal Formant Locking:** Using the human vocal tract, chest slap, and foot stomp as a resonant synthesizer. | **Sub-Harmonic Undertones ($f_0 / 2$) & Whistle Overtones ($6 f_0$ to $12 f_0$):** The ear hears two pitches from a single throat—a `60Hz` growl and a `1.5kHz` flute-whistle! | Synthesize **Sub-Harmonic *Kargyraa* (`f0` + `0.5*f0`)** passed through a **sweeping high-Q Bandpass Formant Filter** (`Q = 18.0`) that isolates harmonics `6, 8, 9, 10, 12`. |
 
----
-
-## 🇧🇷 2. Brazil: Rio de Janeiro (*Samba, Bossa Nova, Baile Funk*) & The Northeast (*Baião / Maracatu*)
+##  2. Brazil: Rio de Janeiro (*Samba, Bossa Nova, Baile Funk*) & The Northeast (*Baião / Maracatu*)
 
 ### 2.1 The Mathematical Secret of Rio Samba: "The Brazilian Egg" (*O Suingue*)
 If you program a 16th-note shaker (*Ganza / Chocalho*) or *Tamborim* on a quantized grid `[0.0, 0.25, 0.50, 0.75]`, it sounds like a machine gun. In Rio de Janeiro *Bateria* (Samba schools), the 4 sixteenth-notes of every beat (`1 - e - & - a`) are spaced like an **oval egg rolling down a hill**:
@@ -62,8 +30,6 @@ If you program a 16th-note shaker (*Ganza / Chocalho*) or *Tamborim* on a quanti
 * **Step 1 (`e`):** Pulled **early by `-10ms to -14ms`**, **Ghost Velocity (`0.35`)**.
 * **Step 2 (`&`):** Slightly **early by `-4ms to -7ms`**, **Medium Velocity (`0.55`)**.
 * **Step 3 (`a`):** Pushed **late by `+6ms to +10ms`**, **STRONGEST ACCENT (`1.00`)** leaning right into the next beat!
-
----
 
 ### 2.2 The Rio *Samba Batucada* Frequency & Instrument Architecture
 A Rio Carnival *Bateria* is a living, acoustic club sound system divided into 5 strict frequency zones:
@@ -81,8 +47,6 @@ A Rio Carnival *Bateria* is a living, acoustic club sound system divided into 5 
    * **Tamborim:** Tiny 6-inch frame drum tuned rock-hard and whipped with a split nylon stick (*Baqueta*), cutting through 300 drums at `1.8kHz`.
    * **Agogô:** Two-tone conical iron bell tuned a **Major 3rd (`4 semitones`) or Perfect 4th (`5 semitones`)** apart.
 
----
-
 ### 2.3 Bossa Nova (1950s–60s Rio — *João Gilberto & Antônio Carlos Jobim*)
 * **How the Ear Listens:** Intimate, whispered, coastal sunset nostalgia (**Saudade**).
 * **The Algorithmic Formula:**
@@ -91,8 +55,6 @@ A Rio Carnival *Bateria* is a living, acoustic club sound system divided into 5 
     * **Fingers (Chords):** Pluck **Jazz-Extended Chords (`Maj9, m9, 7(b9, b13), m7(b5)`)** on the syncopated *Tamborim* clave (`Steps 0, 3, 6, 10, 13` on a 16-grid).
   * **Voice Leading Rule:** Move inner guitar chord voices by **1 semitone (chromatic descending inner line)** every 2 beats while the melody floats on the **9th, 11th, or 13th** of the chord!
 
----
-
 ### 2.4 Modern Rio: *Baile Funk / Funk Carioca / Brazilian Phonk* (`130 – 135 BPM`)
 * **The Most Viral Rhythmic Pattern of the 2020s ("Tamborzão" & "Montagem"):**
   * Born in Rio's favelas (*Bailes*) from Miami Bass (`Roland TR-808`) fused with Afro-Brazilian *Maculelê* and *Candomblé* (*Atabaque*) rhythms!
@@ -100,8 +62,6 @@ A Rio Carnival *Bateria* is a living, acoustic club sound system divided into 5 
     * **Booming 808 Sub-Kick:** `Step 0` and `Step 10` (or `0, 7, 10`).
     * **Atabaque / Snare / Rim Crack:** **`[0, 0, 0, 1,  0, 0, 1, 0,  0, 1, 0, 0,  1, 0, 0, 0]`** (`Steps 3, 6, 9, 12` — a relentless series of dotted-16th `3-step` syncopations: *"Cha - ka - cha - ka - CHA!"*).
   * **2024–2026 *Brazilian Phonk / Krushfunk* Evolution:** Takes the 16-step *Tamborzão* rhythm, applies **heavy hard-clipping distortion (`np.clip(x * 4.0, -1, 1)`)** to the kick and cowbell/chopped vocal sample, creating an aggressive, blown-out gym/phonk aesthetic.
-
----
 
 ## 3. The Amazon Basin (*Indigenous Rainforest Traditions & Northern Brazilian Carimbó*)
 
@@ -118,8 +78,6 @@ A Rio Carnival *Bateria* is a living, acoustic club sound system divided into 5 
 ### 3.2 Modern Amazonian Groove: *Carimbó*, *Guitarrada* & *Tecnobrega* (Belém do Pará)
 * **Carimbó:** Named after the **Curimbó**—huge hollowed-out Amazonian tree trunks played by hand while dancers spin in circular rhythms (`6/8` and `2/4` polyrhythm) accompanied by bamboo flutes, *Maracas*, and banjo.
 * **Guitarrada & Tecnobrega:** Fuses Amazonian *Carimbó* percussion with Caribbean *Cumbia / Calypso* clean electric guitar melodies (heavy spring reverb + slapback delay) and modern electronic synth basslines.
-
----
 
 ## 4. Native American Traditions (North American Plains/Woodlands & South American Andes)
 
@@ -138,8 +96,6 @@ A Rio Carnival *Bateria* is a living, acoustic club sound system divided into 5 
 3. **Iroquois / Woodlands "Stomp Dance" & Water Drum:**
    * Call-and-response antiphonal chanting driven by **Turtle-Shell Ankle Rattles** and a small **Cedar Water Drum** (whose pitch bends slightly upward as the wet hide absorbs water droplets during performance).
 
----
-
 ### 4.2 Indigenous Andean South America (*Quechua & Aymara — Peru, Bolivia, Ecuador*)
 * **How the Andean Ear Listens:** Tuned to **high-altitude mountain wind (4,000m elevation)**—breathy, woody, pentatonic (`[0, 3, 5, 7, 10]`), and built around the **Huayno** gallop!
 * **The *Huayno* Rhythmic Cell (2/4 or 4/4):**
@@ -151,13 +107,9 @@ A Rio Carnival *Bateria* is a living, acoustic club sound system divided into 5 
      * Split into **two halves played by two people**: Player 1 (*Ira*, 6 pipes) has scale degrees `[0, 5, 10]`, Player 2 (*Arca*, 7 pipes) has `[3, 7, 12]`. Neither player can play a scale alone—they must alternate notes in **100% interlocking hocket**!
   3. **Charango:** 10-stringed (5 double-courses) miniature lute (traditionally armadillo-shell backed) strummed in rapid `32nd-note` tremolos (*Repique*) around `1.5kHz–5kHz`.
 
----
-
 ## 5. "Hakan" Styles: The 3 Global Musical Archetypes
 
 Depending on your fusion context, **"Hakan / Haka / Khakan"** refers to three powerhouse sonic traditions—all of which can be synthesized in pure Python:
-
----
 
 ### 5.1 Indigenous Polynesian / Māori *Haka* (New Zealand — *Ceremonial War/Unity Stomp & Chant*)
 * **Psychoacoustic Power:** Designed to intimidate, unify, and summon ancestral power (*Mana*) through **synchronized bodily percussion and microtonal vocal declamation**.
@@ -166,8 +118,6 @@ Depending on your fusion context, **"Hakan / Haka / Khakan"** refers to three po
   2. **Pakipaki / Uma (Thigh & Chest Slaps):** Razor-sharp skin slaps against the chest and thighs (`800Hz–3.2kHz` flesh transient) in rapid syncopated 16th-note bursts (`[1, 0, 1, 1, 0, 1, 0, 0]`).
   3. **Pūkana & Peruperu Vocal Cadence:** A solo leader (*Kaea*) calls out a high-intensity rhythmic phrase hovering around a central reciting tone (`f0`) with a **sharp upward pitch-cry (`+5` semitones) on the penultimate syllable and a guttural downward glottal drop (`-7` semitones) on the final syllable** (*"Ka mate! Ka mate! $\rightarrow$ Ka ora! Ka ora!"*).
   4. **Pūtātara & Pūkāea (Conch Shell & Wooden War Trumpet):** Deep, brassy, growling drone horn (`145Hz` sawtooth + formant filter).
-
----
 
 ### 5.2 Turkic-Mongol Steppe *"Khakan / Khagan"* & *Khakass* Style (*Khöömei, Sygyt, Kargyraa* Throat Singing & "Hunnu Rock")
 * **Cultural Origin:** The music of the ancient **Khakan / Khagan** (Great Khan / Steppe Emperors of Tuva, Khakassia, Altai, and Mongolia—modernized globally by bands like *The HU*, *Huun-Huur-Tu*, and *Altai Kai*).
@@ -180,15 +130,11 @@ Depending on your fusion context, **"Hakan / Haka / Khakan"** refers to three po
   3. **The *Morin Khuur* (Horsehead Fiddle) Gallop:**
      * Bowed two-stringed cello-like instrument playing the **Steppe Horse Gallop** (`Sixteenth – Sixteenth – Eighth`: `[1, 1, 1, 0,  1, 1, 1, 0]`) on open 4ths/5ths with neighing upward glissandos.
 
----
-
 ### 5.3 Anatolian / Turkish *"Hakan"* Style (*Turkish Arabesque / Makam* $\times$ *Deep Oriental Afro-House*)
 * **Cultural Context:** Associated both with Turkish *Arabesque/Makam* masters (like *Hakan Altun*, *Hakan Taşıyan*, *Hakan Güngör* on Kanun) and modern Istanbul **Oriental Deep/Afro-House** (like *Hakan Akkuş*).
 * **The Anatolian-Electronic Fusion Formula:**
   * **Rhythm:** `120–124 BPM` Deep/Afro-House 4/4 kick + **Turkish 9/8 *Karsilama* (`2 + 2 + 2 + 3`)** or **4/4 *Çiftetelli*** Darbuka/Bendir percussion.
   * **Melody:** Weeping **Turkish Clarinet (*Gırnata*), Bağlama (Saz), or Fretless Oud/Cümbüş** playing **Hicaz** or **Uşşak** Makam with heavy sobbing pitch-bends over a deep rolling sub-bassline.
-
----
 
 ## 6. Pure-Python DSP & Algorithmic Parameter Cheat Sheet
 
@@ -242,7 +188,7 @@ def synth_throat_singing_kargyraa_sygyt(
     return np.tanh((0.45 * glottal + 1.8 * whistle_layer) * amp_env)
 \`\`\`
 
-### 6.2 The Rio Samba "Brazilian Egg" Micro-Timing & Velocity Engine
+### 6.2 Rio samba "Brazilian egg" micro-timing and velocity
 \`\`\`python
 def get_rio_samba_16th_grid(bpm: float, num_bars: int = 4) -> list[dict]:
     """
@@ -274,7 +220,7 @@ def get_rio_samba_16th_grid(bpm: float, num_bars: int = 4) -> list[dict]:
     return events
 \`\`\`
 
-### 6.3 Master Scale & Rhythmic Matrices (Brazil, Amazon, Native American, Steppe)
+### 6.3 Scale and rhythm matrices (Brazil, Amazon, Native American, Steppe)
 \`\`\`python
 AMERICAS_AND_STEPPE_SCALES = {
     "rio_bossa_dorian_b9":     [0, 2, 3, 5, 7, 9, 10],    # Jobim melancholic coastal jazz-samba
@@ -313,9 +259,7 @@ GLOBAL_INDIGENOUS_GROOVES_16 = {
 }
 \`\`\`
 
----
-
-## 7. Cross-cultural Fusion Blueprints
+## 7. Fusion patterns
 
 With this module added to your **Tamil**, **Arabic**, **African**, **Western**, and **Chinese/Japanese** library, look at the wild new fusions you can generate in pure Python:
 

@@ -11,29 +11,7 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# The Tamil Music Psychoacoustic & Algorithmic DSP Knowledge Base
-**Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Algorithmic Composition, Humanization Matrices, and Cross-Cultural Fusion.
-
----
-
-## Table of Contents (Machine-Parsable Index)
-- [1.0 Core Psychoacoustics: How the "Tamil Ear" Listens vs. The "Western Ear"](#1-core-psychoacoustics-how-the-tamil-ear-listens-vs-the-western-ear)
-- [2.0 Complete Taxonomy of Tamil Genres (Feel, Physics & DSP Rules)](#2-complete-taxonomy-of-tamil-genres-feel-physics--dsp-rules)
-  - [2.1 Dappankoothu (Kuthu) & Gaana (Chennai Street Folk)](#21-dappankoothu-kuthu--gaana-chennai-street-folk)
-  - [2.2 Carnatic Classical & Semi-Classical (Ragam-Tanam-Pallavi)](#22-carnatic-classical--semi-classical-ragam-tanam-pallavi)
-  - [2.3 Gramiya Isai (Rural Village Folk / Oyilattam / Karagattam)](#23-gramiya-isai-rural-village-folk--oyilattam--karagattam)
-  - [2.4 Tamil melodrama / pathos](#24-tamil-melodrama--pathos)
-  - [2.5 Oppari (Ritual Lament / Dark Kuthu)](#25-oppari-ritual-lament--dark-kuthu)
-- [3.0 Western & Global Fusion Blueprints (How to Blend Without Losing Tamil Identity)](#3-western--global-fusion-blueprints-how-to-blend-without-losing-tamil-identity)
-  - [3.1 Arabic-Tamil Kuthu (The "Halamithi" / Middle-East Street Fusion)](#31-arabic-tamil-kuthu-the-halamithi--middle-east-street-fusion)
-  - [3.2 Neo-classical / Baroque + Carnatic](#32-neo-classical--baroque--carnatic)
-  - [3.3 Trap / hip-hop / drill + Chennai gaana](#33-trap--hip-hop--drill--chennai-gaana)
-  - [3.4 EDM / mass kuthu / synthwave](#34-edm--mass-kuthu--synthwave)
-  - [3.5 Jazz / R&B / Lo-Fi + Carnatic (Pradeep Kumar Style)](#35-jazz--rb--lo-fi--carnatic-pradeep-kumar--sean-roldan--karthik-style)
-- [4.0 Pure-Python Algorithmic Parameter Cheat Sheet](#4-pure-python-algorithmic-parameter-cheat-sheet)
-  - [4.1 Scale Lookup Dictionary (Semitone Offsets from MIDI Root)](#41-scale-lookup-dictionary-semitone-offsets-from-midi-root)
-
----
+# Tamil folk, gaana and Carnatic
 
 ## 1. Core Psychoacoustics: How the "Tamil Ear" Listens vs. The "Western Ear"
 
@@ -45,8 +23,6 @@ Before coding specific genres, an algorithm must understand the fundamental perc
 | **Harmony vs. Drone** | **Vertical (Chords):** Emotion comes from chord progressions (I–V–vi–IV). | **Horizontal (Raga against *Sruti*):** Emotion comes from how scale degrees rub against a constant root/fifth drone ($Sa - Pa$). | Keep a subtle, continuous harmonic drone ($f_0$ and $1.5 \times f_0$) at `-24dB` or anchor basslines heavily to the root and 5th rather than complex jazz voice-leading. |
 | **Rhythm (Time)** | **Divisive & Metronomic:** 4/4 or 3/4 grid with backbeat accents (2 and 4). | **Additive & Cyclical (*Tala / Nadai*):** Grouped in pulses of 3 (*Tisra*), 4 (*Chatusra*), 5 (*Khanda*), or 7 (*Misra*), resolving on *Sam* (Beat 1). | Build rhythm generators using additive pulse arrays (e.g., `[3, 3, 2]` or `[3, 3, 3, 3]`) with heavy accent weights on index `0` and syncopated *Karvai* (rests/holds). |
 | **Timbre Preference** | **Warm & Smooth:** Rounded sine/triangle leads, clean pianos, controlled mid-range. | **Nasal, Formant-Rich & Transient-Heavy:** High odd-harmonics (1kHz–3.5kHz) that mimic the human voice crying, celebrating, or calling out in an open street. | Use sawtooth/pulse waves passed through multi-peak Bandpass Formant Filters (`800Hz`, `1.8kHz`, `3.2kHz`) and asymmetric wave-shaping. |
-
----
 
 ## 2. Complete Taxonomy of Tamil Genres (Feel, Physics & DSP Rules)
 
@@ -67,8 +43,6 @@ Before coding specific genres, an algorithm must understand the fundamental perc
   4. **Nadaswaram (Double-Reed Horn):** Piercing, nasal, celebratory horn.
      * *DSP:* Pulse wave (`duty=0.3`) + Formant filters at `950Hz` and `2400Hz` + `6.5Hz` pitch vibrato + `40ms` upward pitch-scoop on attack.
 
----
-
 ### 2.2 Carnatic Classical & Semi-Classical (*Ragam-Tanam-Pallavi*)
 * **Cultural Origin:** Temple and royal court traditions of Tamil Nadu (*Thevaram*, Trinity of Carnatic Music).
 * **How the Ear Listens:** Hyper-focused on **microtonal inflection (*Sruti*)** and **mathematical rhythmic resolution (*Korvai / Mora*)**. A single flat note breaks the illusion.
@@ -86,8 +60,6 @@ Before coding specific genres, an algorithm must understand the fundamental perc
   2. **Mridangam:** Tuned double-headed drum with a black iron-paste spot (*Soru/Karanai*) that produces harmonic overtones ($1 : 2 : 3 : 4$ instead of Bessel function disharmonics).
      * *DSP:* Sum of harmonic sine partials (`f0`, `2*f0`, `3*f0`) with independent exponential decay times (`Nam` = strong `2*f0`, `Chapu` = strong `3*f0`).
 
----
-
 ### 2.3 Gramiya Isai (Rural Village Folk / Oyilattam / Karagattam)
 * **Cultural Origin:** Agrarian harvest songs, rain prayers, village deity (*Kula Deivam*) worship in Madurai, Theni, and Kongu regions.
 * **How the Ear Listens:** Listens for **breath, wood, and open-air space**. It rejects overly compressed, synthetic EDM highs in favor of earthy mid-range warmth (`300Hz–1.5kHz`).
@@ -100,8 +72,6 @@ Before coding specific genres, an algorithm must understand the fundamental perc
   * **Udukkai & Pambai:** Talking-drum pitch bends + twin cylindrical drums (one brass, one wood).
   * **Salangai (Ankle Bells):** Clustered metallic jingles (`6kHz–12kHz`) slightly staggered by `5–15ms` per bell.
 
----
-
 ### 2.4 Tamil melodrama / pathos
 * **Cultural origin:** the form the 1970s-1990s Tamil film song settled into.
 * **How the Ear Listens:** Tracks **two independent melodies simultaneously** (e.g., a solo violin/flute playing a Carnatic Raga counter-melody against a Western Bach-style string quartet bassline).
@@ -109,8 +79,6 @@ Before coding specific genres, an algorithm must understand the fundamental perc
 * **Algorithmic Rules:**
   * **Counterpoint fill:** During every rest in the main melody (`bar 2, beats 3–4`), trigger a fast 16th-note string/flute arpeggio run that bridges into the next chord.
   * **Bassline:** Melodic electric bass playing syncopated octave leaps (`Root -> 5th -> Octave`) rather than static roots.
-
----
 
 ### 2.5 Oppari (Ritual Lament / Dark Kuthu)
 * **Cultural Origin:** Traditional funeral elegies sung by wailing performers, later transformed into cathartic dance tracks (in the modern film-song style).
@@ -120,9 +88,7 @@ Before coding specific genres, an algorithm must understand the fundamental perc
   * Use **Shubhapantuvarali** `[0, 1, 3, 6, 7, 8, 11]` (Todi / Gypsy Minor).
   * Apply a **downward pitch-droop** (`-40 cents`) at the end of every phrase along with amplitude tremolo (`8Hz`) to simulate crying/sobbing breath.
 
----
-
-## 3. Western & Global Fusion Blueprints (How to Blend Without Losing Tamil Identity)
+## 3. Fusion with Western and global styles
 
 When fusing Tamil genres with Western/Global styles in code, **Rule #1** is: *Keep the micro-timing and melodic ornamentation Tamil, while letting the harmonic bed or frequency spectrum adopt the Western genre.*
 
@@ -159,8 +125,6 @@ When fusing Tamil genres with Western/Global styles in code, **Rule #1** is: *Ke
 * **The Fusion Formula:**
   * **Chords:** Fender Rhodes electric piano playing **Min9, Maj7#11, and Sus13** voicings with a gentle tremolo.
   * **Drums:** Laid-back boom-bap kick/snare (snare delayed by `+12ms` for drunken Dilla swing) layered with a soft **Kanjira** (South Indian lizard-skin frame drum with a pitch-drop when pressed).
-
----
 
 ## 4. Pure-Python Algorithmic Parameter Cheat Sheet
 

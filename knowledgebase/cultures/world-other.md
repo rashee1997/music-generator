@@ -11,34 +11,7 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# The Global Vocal-Humming Atlas, Celtic, Germanic & Remaining World Traditions DSP Knowledge Base
-**Scope:** 10 Cultural Humming/Vocal-Tract Physics Models $\rightarrow$ Celtic & Nordic (*Irish, Scottish, Breton, Viking/Kulning*) $\rightarrow$ Germanic (*Wagnerian, Krautrock Motorik, Oompah, Berlin Techno*) $\rightarrow$ Flamenco, Balkan/Slavic *Aksak*, & Indonesian *Gamelan*.
-**Target Application:** Pure-Code Formant/Glottal Vocal Synthesis (Python / NumPy / SciPy), Non-Isochronous Meter Matrices, and Global Cross-Cultural Fusions.
-
----
-
-
-## Table of Contents (Machine-Parsable Index)
-- [1.0 Global Atlas of Humming & Non-Lexical Vocalizing](#1-the-global-atlas-of-humming--non-lexical-vocalizing-beyond-a-simple-hum)
-- [2.0 Celtic & Nordic Music (Ireland, Scotland, Brittany, Scandinavia)](#2-celtic--nordic-music-ireland-scotland-brittany-wales--scandinavia)
-  - [2.1 Celtic Ear: Lilt, Cuts/Rolls & Modal Ambiguity](#21-how-the-celtic-ear-listens-lilt-cutsrolls--modal-ambiguity)
-  - [2.2 Celtic Scales & Modal DNA](#22-celtic-scales--modal-dna)
-  - [2.3 The 4 Sacred Celtic Rhythms (12-Step & 16-Step)](#23-the-4-sacred-celtic-rhythms-12-step--16-step-engines)
-  - [2.4 Core Celtic & Nordic Instruments: Physics & Python DSP](#24-core-celtic--nordic-instruments-physics--python-dsp)
-- [3.0 Germanic Music (Klassik, Krautrock Motorik, Berlin Techno)](#3-germanic-music-germany--austria-klassikromantik-krautrock-motorik-volksmusik--berlin-techno)
-  - [3.1 Germanic Ear: Präzision, Schwere & Spannung](#31-how-the-germanic-ear-listens-przision-precision-schwere-weight--spannung-harmonicmechanical-tension)
-- [4.0 Global Pillars: Flamenco, Balkan Aksak & Indonesian Gamelan](#4-the-final-3-global-pillars-iberian-flamenco-balkan-aksak--indonesian-gamelan)
-  - [4.1 Spain: Flamenco (Toque, Cante, Compás)](#41-spain-flamenco-toque-cante-comps)
-  - [4.2 The Balkans: Aksak Limping Odd Meters](#42-the-balkans-slavic--romani-brass-aksak-limping-odd-meters)
-  - [4.3 Southeast Asia: Indonesian Gamelan (Bali & Java Shimmer)](#43-southeast-asia-indonesian-gamelan-bali--java---inharmonic-bronze-shimmer)
-- [5.0 Pure-Python DSP & Algorithmic Parameter Cheat Sheet](#5-pure-python-dsp--algorithmic-parameter-cheat-sheet)
-  - [5.1 The Multi-Cultural Vocal Humming & Formant Synthesizer](#51-the-multi-cultural-vocal-humming--formant-synthesizer-supports-6-cultural-hum-modes)
-  - [5.2 The Celtic Long Roll Ornament Generator](#52-the-celtic-long-roll-ornament-generator-uilleann-pipes--tin-whistle--fiddle)
-  - [5.3 The Berlin Techno Rumble Kick Synthesizer](#53-the-berlin-techno-rumble-kick-synthesizer)
-  - [5.4 Master Matrices: Celtic, Germanic, Flamenco, & Balkan Odd-Meters](#54-master-matrices-celtic-germanic-flamenco--balkan-odd-meters)
-- [6.0 Cross-Cultural Fusion Ideas](#6-ultimate-cross-cultural-fusion-ideas-using-these-new-modules)
-
----
+# Humming, Celtic, Germanic and remaining world traditions
 
 ## 1. The Global Atlas of Humming & Non-Lexical Vocalizing (Beyond a "Simple Hum")
 
@@ -59,8 +32,6 @@ Here is how to synthesize **10 distinct cultural humming & vocal styles** in pur
 | **9. Bulgarian / Slavic *Balkan Open-Throat* Diaphonic Drone-Hum** | Chest-register female voices humming/singing in **clashing Major 2nds (`2 semitones` apart, e.g., `D` and `E` simultaneously!)** with a metallic, forward-placed nasal/pharyngeal ring (`2.8kHz–3.8kHz` "Singer's Formant"). | Shimmering, brassy, supernatural, acoustic beating. | Trigger two voices `200 cents` apart (`f0` and `f0 * 1.122`), boost `3.2kHz` (`+8dB`), and add a sharp upward **glottal hiccup (`+12 semitones` for `30ms`)** at phrase ends! |
 | **10. Georgian Polyphonic Bass-Hum & Alpine *Zäuerli* (Yodel-Hum)** | **Georgian:** 3-part microtonal male humming using neutral 3rds and parallel 5ths (`[0, 7, 14]`). **Swiss *Zäuerli*:** Wordless, slow, meditative choir humming that flips smoothly across the laryngeal *Passaggio* (chest voice `[o]` $\rightarrow$ falsetto `[u]`). | Sacred mountain cathedrals, timeless peace. | On intervals $>5$ semitones, abruptly switch the glottal waveform from **Sawtooth (Chest Voice, rich harmonics)** to **Pure Sine + Breath (Falsetto/Head Voice)**! |
 
----
-
 ## 2. Celtic & Nordic Music (Ireland, Scotland, Brittany, Wales & Scandinavia)
 
 ### 2.1 How the "Celtic Ear" Listens: *Lilt*, *Cuts/Rolls*, & *Modal Ambiguity*
@@ -71,7 +42,7 @@ In Celtic music, a fiddle, flute, or pipe player rarely uses vibrato! Because th
 * **Mixolydian Mode (`G` or `A Mixolydian` — `[0, 2, 4, 5, 7, 9, 10]`):** The signature Highland Bagpipe scale! Because bagpipe chanters have a **flattened 7th (`10`)**, melodies constantly rock back and forth between a **Major tonic triad (`G Major: [0, 4, 7]`)** and a **Major whole-step-below triad (`F Major: [-2, 2, 5]`)**—called the **"Celtic Double-Tonic Shift"**!
 * **Pentatonic / Hexatonic Gap Scales (`[0, 2, 4, 7, 9]` or `[0, 2, 3, 5, 7, 10]`):** Used in slow airs (*Sean-nós*) and Scottish Skye boat ballads.
 
-### 2.3 The 4 Sacred Celtic Rhythms (12-Step & 16-Step Engines)
+### 2.3 Celtic rhythms (12-step and 16-step)
 1. **The Double Jig (`6/8` — `120–130 BPM`):**
    * Spoken as: **`"Rash-ers andap-ples"` / `"Jig-get-y Jig-get-y"`** (`[1, 0, 1, 0, 1, 0 | 1, 0, 1, 0, 1, 0]`).
    * **The Celtic Jig Swing:** Unlike a straight 6/8 (`1.0 : 1.0 : 1.0`), an Irish Jig stretches the **1st eighth note slightly longer (`38%`)**, makes the **2nd eighth note short (`28%`)**, and gives the **3rd eighth note a springy lift (`34%`)**!
@@ -91,8 +62,6 @@ In Celtic music, a fiddle, flute, or pipe player rarely uses vibrato! Because th
 3. **Nordic *Tagelharpa / Talharpa* (Viking Bowed Horsehair Lyre):**
    * *Physics:* Coarse horsehair strings bowed with a high-friction rosined horsehair bow—producing a gritty, aggressive, breathy cello-drone (`Sawtooth + 20% amplitude-modulated bandpass noise at 1.5kHz`) in open 5ths (`[0, 7]`).
 
----
-
 ## 3. Germanic Music (Germany & Austria: *Klassik/Romantik*, *Krautrock Motorik*, *Volksmusik*, & *Berlin Techno*)
 
 Germanic music has shaped global sound design more than almost any other European region—from **Bach's mathematical fugues** and **Wagner's cinematic brass** to **Kraftwerk/Neu!'s *Motorik* machine pulse** and **Berlin's Berghain Industrial Techno**.
@@ -105,8 +74,6 @@ Germanic music has shaped global sound design more than almost any other Europea
 | **2. 1970s *Krautrock / Kosmische Musik* (*Neu!, Can, Kraftwerk, Tangerine Dream*)** | **The *Motorik* Beat (`4/4` @ `125–138 BPM`):** Invented by Klaus Dinger (*Neu!*). Rejects American blues/funk syncopation in favor of a **hypnotic, forward-driving highway machine pulse** ("The Apache Beat"). | **Motorik Drum Matrix:** Continuous, un-swung 8th-note hi-hats (`[1,1,1,1,1,1,1,1]`), Kick on every 8th note *except* under the snare (`[1,1,0,1, 1,1,0,1]`), Snare strictly on Beats `2` and `4`, with an expansive **2-bar Cymbal Splash + Drone Bass** that stays on a single root note for 8 minutes! |
 | **3. Alpine/Bavarian *Volksmusik*, *Polka*, *Ländler* & *Schlager*** | **The *Oompah* (`2/4` Polka) & *3/4 Ländler/Waltz* Bounce:** Extreme low-to-high register alternation: **Tuba** hits a short, fat `65Hz` staccato Root on Beat 1 (`"OOM"`), and **Accordion / Clarinet** hits a bright `800Hz` staccato chord on Beat 2 (`"PAH"`), followed by Beat 3 Tuba on the **5th (`-5` semitones)**! | **Steirische Harmonika (Alpine Accordion) DSP:** Detune 3 reed oscillators by `[-12 cents, 0 cents, +14 cents]` (*Musette / Schwebung* wet-tuning) so they produce a warm, beating acoustic shimmer at `4Hz`! |
 | **4. Berlin Techno, *Schranz*, & *Neue Deutsche Härte* (*Berghain / Rammstein*)** | **The "Rumble Kick" (Sub-Bass Reverb Convolution):** In Berlin Techno (`132–145 BPM`), there is **no separate bassline note**! Instead, the bassline is created by feeding the `4/4` Kick Drum into a **dark, distorted delay/reverb tank** and ducking it under the dry kick! | **Berlin Rumble Kick Recipe:** `Dry Kick` (`55Hz`) $\rightarrow$ `16th-Note Delay (3 taps)` $\rightarrow$ `Dense Reverb` $\rightarrow$ `Lowpass Filter at 110Hz` $\rightarrow$ `Heavy Tanh Distortion` $\rightarrow$ `Sidechain Duck against Dry Kick`! |
-
----
 
 ## 4. The Final 3 Global Pillars (Iberian *Flamenco*, Balkan *Aksak*, & Indonesian *Gamelan*)
 
@@ -132,8 +99,6 @@ To ensure **zero blind spots** in your algorithmic music engine, here are the th
   * **Slendro (5-Tone Equidistant):** `[0.0, 2.4, 4.8, 7.2, 9.6, 12.15]` (Notice the octave is slightly stretched by `+15 cents` to match the inharmonic overtones of thick bronze bars/pots!).
   * **Pelog (7-Tone Asymmetrical):** `[0.0, 1.2, 2.7, 5.4, 6.8, 7.9, 10.3]` (Usually played in 5-note subsets like *Pelog Selisir* `[0.0, 1.2, 2.7, 6.8, 7.9]`).
   * **Balinese *Ombak* (Paired Detuning):** Every bronze metallophone has a twin partner tuned **exactly `+6Hz to +8Hz` higher** (not cents—a fixed **Hz** difference!) so that low gongs and high metallophones throb at the **exact same `7Hz` wave speed**!
-
----
 
 ## 5. Pure-Python DSP & Algorithmic Parameter Cheat Sheet
 
@@ -278,7 +243,7 @@ def synth_berlin_rumble_kick(bpm: float, num_beats: int = 4, sr: int = 44100) ->
     return np.tile(single_beat, num_beats)
 \`\`\`
 
-### 5.4 Master Matrices: Celtic, Germanic, Flamenco, & Balkan Odd-Meters
+### 5.4 Scale and rhythm matrices: Celtic, Germanic, flamenco, Balkan odd metres
 \`\`\`python
 EUROPEAN_AND_GLOBAL_MATRICES = {
     # 1. CELTIC 6/8 DOUBLE JIG (12-Step Grid with 38%-28%-34% Irish Lilt!)
@@ -305,8 +270,6 @@ EUROPEAN_AND_GLOBAL_MATRICES = {
     }
 }
 \`\`\`
-
----
 
 ## 6. Cross-Cultural Fusion Ideas Using These New Modules
 

@@ -11,50 +11,15 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# Interactive & Adaptive Video Game Music Architecture & DSP Ontology
-
-## Table of Contents
-1. [Theoretical Foundations: Non-Linear Player Agency vs Linear Composition](#1-theoretical-foundations-non-linear-player-agency-vs-linear-composition)
-2. [Vertical Layering (Stem Re-orchestration) Architecture](#2-vertical-layering-stem-re-orchestration-architecture)
-3. [Horizontal Re-Sequencing & Dynamic State Machines](#3-horizontal-re-sequencing--dynamic-state-machines)
-4. [Mathematical Loop Engineering: Tail-Over-Head Circular Folding & Phase Continuity](#4-mathematical-loop-engineering-tail-over-head-circular-folding--phase-continuity)
-5. [Genre Ontologies & Historical Synthesis Implementations](#5-genre-ontologies--historical-synthesis-implementations)
-   - [5.1 Retro 8-Bit NES / Famicom (Ricoh 2A03 Architecture)](#51-retro-8-bit-nes--famicom-ricoh-2a03-architecture)
-   - [5.2 16-Bit SNES (Sony SPC700 & Gaussian Interpolation)](#52-16-bit-snes-sony-spc700--gaussian-interpolation)
-   - [5.3 Cyberpunk & Metroidvania Synthwave Ostinato](#53-cyberpunk--metroidvania-synthwave-ostinato)
-   - [5.4 Dark Fantasy / Souls-like Orchestral Boss Cues](#54-dark-fantasy--souls-like-orchestral-boss-cues)
-6. [Middleware & Game Engine Parameter Mapping Schemas](#6-middleware--game-engine-parameter-mapping-schemas)
-7. [Production Python DSP Implementation](#7-production-python-dsp-implementation)
-
----
+# Adaptive game music: layering, state machines and loops
 
 ## 1. Theoretical Foundations: Non-Linear Player Agency vs Linear Composition
 
 Unlike film, broadcast, or pop music where the narrative progression is fixed on a linear timeline ($t \in [0, T]$), video game music exists in a non-deterministic temporal state governed by **player agency**. A player may spend 30 seconds or 45 minutes in a single dungeon room, sprint past enemies, or enter sudden high-stakes combat.
 
-```mermaid
-flowchart TD
-    subgraph Non-Linear Game State Flow
-        Explore["Exploration State (Low Tension)<br/>Stems: Ambient Pad + Acoustic Arp"]
-        Alert["Alert / Suspense State<br/>Stems: + Pulse Bass + Tension Strings"]
-        Combat["Combat State (High Intensity)<br/>Stems: + War Drums + Distorted Brass Lead"]
-        Boss["Boss Climax State<br/>Stems: + Choir Swells + Polyrhythmic Percussion"]
-        Victory["Victory Stinger<br/>Bar-Quantized Interruption"]
-    end
-
-    Explore -->|Player approaches enemy| Alert
-    Alert -->|Detection confirmed| Combat
-    Combat -->|Health drop < 25%| Boss
-    Combat -->|Enemy defeated| Victory
-    Alert -->|Player escapes stealthily| Explore
-    Victory -->|Return to field| Explore
-```
-
 ### The Two Core Pillars of Interactive Audio
 1. **Vertical Re-Orchestration (Layering):** Multiple audio stems play continuously in strict tempo, phase, and measure synchronization. The game engine dynamically adjusts the gain ($G_k(t) \in [0, 1]$) of each stem based on real-time game variables (threat level, speed, proximity).
 2. **Horizontal Re-Sequencing (Branching):** The music transitions between distinct musical segments (cues) at predefined musical boundaries (next beat, next bar, or at designated transition markers), often bridged by transition fills or short stingers.
-
----
 
 ## 2. Vertical Layering (Stem Re-orchestration) Architecture
 
@@ -76,37 +41,17 @@ $$G_{\text{out}}(t) = \cos\left(\frac{\pi}{2} \cdot \alpha(t)\right), \quad G_{\
 
 Where $\alpha(t) \in [0, 1]$ represents the normalized transition progress over transition duration $T_{\text{trans}}$.
 
----
-
 ## 3. Horizontal Re-Sequencing & Dynamic State Machines
 
 When jumping between completely different musical movements (e.g. peaceful town theme to sudden dragon attack), vertical layering is insufficient. The engine executes **Horizontal Re-Sequencing**.
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Game as Game Engine (Enemy Agro Trigger)
-    participant State as Audio State Machine
-    participant OldSeg as Active Cue: Exploration (100 BPM)
-    participant Bridge as Transition Stinger (1 Bar)
-    participant NewSeg as Target Cue: Combat (140 BPM)
-
-    Game->>State: Trigger: ENTER_COMBAT
-    State->>OldSeg: Await next Measure Boundary (Bar Line)
-    OldSeg-->>State: Bar Boundary Reached (Sample n_bar)
-    State->>Bridge: Fire Brass Riser / Cymbal Choke Stinger
-    OldSeg->>OldSeg: Apply Fast Release (50 ms)
-    State->>NewSeg: Start Playback at Beat 1
-    Bridge->>NewSeg: Stinger Decay Overlaps Combat Intro
-```
+The outgoing cue is released fast (about 50 ms) while the stinger decays over its first bar.
 
 ### Transition Synchronization Modes:
 1. **Immediate (Asynchronous):** Cuts instantly with a fast $10-30\text{ ms}$ crossfade. Used only for instant death, jumpscares, or catastrophic failures.
 2. **Beat-Quantized:** Waits for the next quarter-note beat ($t_{\text{beat}} = n \cdot \frac{60}{\text{BPM}}$).
 3. **Bar-Quantized:** Waits for the downbeat of the next measure ($t_{\text{bar}} = n \cdot \frac{60 \cdot \text{BeatsPerBar}}{\text{BPM}}$). Preserves musical phrasing and prevents rhythmic stumbling.
 4. **Custom Transition Matrix:** A dedicated transition segment (bridge cue, drum fill, or pitch riser) connects Cue A and Cue B harmonically.
-
----
 
 ## 4. Mathematical Loop Engineering: Tail-Over-Head Circular Folding & Phase Continuity
 
@@ -118,15 +63,6 @@ In video games, a 16-bar or 32-bar music cue must repeat indefinitely without an
 
 ### The Tail-Over-Head Circular Folding Algorithm
 To achieve a sample-accurate, physically loop with no click at the join:
-
-```mermaid
-flowchart LR
-    A["Render Score for N Bars + Full Decay Tail<br/>Length: L_total = L_loop + L_tail"] --> B["Slice Region A: 0 to L_loop (Core Loop)"]
-    A --> C["Slice Region B: L_loop to L_total (Decay Tail)"]
-    C --> D["Fold & Sum Tail onto Head:<br/>Audio[0 : L_tail] += Region B"]
-    B --> E["Final Seamless Audio Buffer<br/>Exact Length: L_loop"]
-    D --> E
-```
 
 ### Mathematical Implementation:
 Let $x[n]$ be the rendered audio of total length $N_{\text{total}} = N_{\text{loop}} + N_{\text{tail}}$:
@@ -143,9 +79,7 @@ At the loop wrap boundary ($n = N_{\text{loop}} - 1 \rightarrow n = 0$):
    $$\left.\frac{dx}{dn}\right|_{n=0} \approx \left.\frac{dx}{dn}\right|_{n=N_{\text{loop}}-1}$$
    Discontinuous derivatives cause audible high-frequency clicks.
 
----
-
-## 5. Genre Ontologies & Historical Synthesis Implementations
+## 5. Genre synthesis conventions
 
 ### 5.1 Retro 8-Bit NES / Famicom (Ricoh 2A03 Architecture)
 The Ricoh 2A03 sound chip contains 5 hardware audio channels:
@@ -178,8 +112,6 @@ The Super Nintendo sound system featured 8 independent polyphonic hardware voice
 - **Metric Dissonance:** Non-isochronous time signatures ($5/4 = 3+2$, $7/8 = 2+2+3$) destabilizing player rhythmic expectation.
 - **Harmonic Horror:** Minor second clusters ($\text{C} - \text{C}\sharp$), tritone leaps ($\text{C} \rightarrow \text{F}\sharp$), and octatonic scales (half-step / whole-step alternation).
 - **Brass Swells:** French horn and tuba clusters utilizing Pedalboard `Distortion(drive_db=6.0)` to emulate overblown, raspy orchestral fortississimo ($ffff$).
-
----
 
 ## 6. Middleware & Game Engine Parameter Mapping Schemas
 
@@ -239,8 +171,6 @@ In modern game audio architectures, dynamic score systems accept real-time telem
 }
 ```
 
----
-
 ## 7. Production Python DSP Implementation
 
 The following production code implements **tail-over-head circular loop folding** and **equal-power multi-stem adaptive mixing**:
@@ -280,7 +210,6 @@ def create_seamless_loop(rendered_audio, loop_duration_s, sr=44100, fade_samples
         core[:fade_samples] = core[:fade_samples] * ramp_in + core[-fade_samples:] * (1.0 - ramp_in)
         
     return core.astype(np.float32)
-
 
 def render_adaptive_vertical_mix(stems_dict, control_variable, fade_curves, sr=44100):
     """Mixes vertical stems dynamically based on an environmental or gameplay control variable.

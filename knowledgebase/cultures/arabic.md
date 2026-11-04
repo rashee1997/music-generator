@@ -11,33 +11,7 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# The Pan-Arab Music Psychoacoustic & Algorithmic DSP Knowledge Base
-**Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Microtonal *Maqam* Modeling, Regional *Iqa'at* (Rhythmic Cycles), and Global/Indian/Western Fusions.
-
----
-
-## Table of Contents (Machine-Parsable Index)
-- [1.0 Core Psychoacoustics: How the "Arab Ear" Listens (Tarab & Saltanah)](#1-core-psychoacoustics-how-the-arab-ear-listens-tarab--saltanah)
-- [2.0 The Mathematical Architecture of Maqamat (Scales & Quarter-Tones)](#2-the-mathematical-architecture-of-maqamat-scales--quarter-tones)
-- [3.0 Complete Regional Breakdown: The 6 Musical Worlds of the Arab World](#3-complete-regional-breakdown-the-6-musical-worlds-of-the-arab-world)
-  - [3.1 The Arabian Gulf - Khaleeji](#31-the-arabian-gulf---khaleeji)
-  - [3.2 Egypt - Masri (Tarab, Baladi, Shaabi & Mahraganat)](#32-egypt---masri-tarab-baladi-shaabi--mahraganat)
-  - [3.3 The Levant - Shami (Lebanon, Syria, Palestine, Jordan)](#33-the-levant---shami-lebanon-syria-palestine-jordan)
-  - [3.4 Iraq - Mesopotamian / Rafidain (Maqam Iraqi & Chobi)](#34-iraq---mesopotamian--rafidain-maqam-iraqi--chobi)
-  - [3.5 North Africa - Al-Maghreb (Morocco, Algeria, Tunisia, Libya)](#35-north-africa---al-maghreb-morocco-algeria-tunisia-libya)
-  - [3.6 Sudan & Yemen - The Southern Crossroads](#36-sudan--yemen---the-southern-crossroads)
-- [4.0 Core Arabic Instruments: Physics & Pure-Python DSP Modeling](#4-core-arabic-instruments-physics--pure-python-dsp-modeling)
-  - [4.1 Oud (Fretless Pear-Shaped Lute)](#41-oud---fretless-pear-shaped-lute)
-  - [4.2 Qanun (78-String Trapezoidal Zither)](#42-qanun---78-string-trapezoidal-zither)
-  - [4.3 Ney (End-Blown Reed Flute)](#43-ney---end-blown-reed-flute)
-  - [4.4 Darbuka / Tabla (Goblet Drum)](#44-darbuka--tabla---goblet-drum)
-  - [4.5 Riq (Virtuosic Classical Tambourine)](#45-riq---virtuosic-classical-tambourine)
-- [5.0 Pure-Python Algorithmic Parameter Cheat Sheet](#5-pure-python-algorithmic-parameter-cheat-sheet)
-  - [5.1 Microtonal Maqam Frequency Calculator](#51-microtonal-maqam-frequency-calculator-supports-quarter-tones)
-  - [5.2 Regional Iqa'at (Rhythmic Matrices)](#52-regional-iqaat-rhythmic-matrices---16-step--12-step-grids)
-- [6.0 Cross-Cultural Fusion Matrix: How to Fuse Regional Arabic with Tamil & Western Styles](#6-cross-cultural-fusion-matrix-how-to-fuse-regional-arabic-with-tamil--western-styles)
-
----
+# Pan-Arab maqam, iqa'at and instruments
 
 ## 1. Core Psychoacoustics: How the "Arab Ear" Listens (*Tarab* & *Saltanah*)
 
@@ -49,8 +23,6 @@ In Arabic music, the ultimate psychoacoustic goal is **Tarab (طرب)**—a stat
 | **Structural Unit** | **The Scale (Octave):** 7 notes repeating identically every octave. | **The *Jins* (Tetrachord/Pentachord):** A *Maqam* is built by stacking two 3-, 4-, or 5-note mini-scales (*Ajnas*, singular *Jins*) with distinct emotional flavors. | Generate melodies inside a 4-note **Lower *Jins* (Root to 4th)** for 70% of the phrase before modulating to the **Upper *Jins* (4th/5th to Octave)**. |
 | **Harmony vs. Heterophony** | **Polyphony/Chords:** Multiple instruments play different chord notes simultaneously. | **Heterophony:** Multiple instruments (e.g., *Oud*, *Qanun*, *Ney*, *Violin*) play the **same melody simultaneously**, each adding its own idiomatic ornaments, trills, and micro-delays. | Layer 2–3 lead synths on the *same* melody line, but offset their timing by `±12ms` and give each a different ornamentation algorithm (e.g., tremolo on Qanun, pitch-slide on Violin). |
 | **Rhythmic Polarity** | **Kick vs. Snare:** Low vs. mid-range backbeat. | ***Doum* (دم) vs. *Tak* (تك):** Deep, resonant center-skin chest thump (*Doum*) vs. razor-sharp, metallic rim slap (*Tak*) and muted finger roll (*Ka*). | Separate percussion strictly into `65Hz–110Hz` resonant *Doum* and `2.8kHz–6kHz` transient *Tak* with zero muddy `400Hz` overlap. |
-
----
 
 ## 2. The Mathematical Architecture of *Maqamat* (Scales & Quarter-Tones)
 
@@ -72,13 +44,9 @@ Unlike a static 24-TET grid (where every quarter-tone is rigidly 50 cents), real
 | **Kurd (كرد)** | `[0.0, 1.0, 3.0, 5.0, 7.0, 8.0, 10.0, 12.0]` | Smooth, modern, nostalgic, romantic, Spanish/Andalusian vibe. | Modern Arabic Pop (Amr Diab style), Maghreb |
 | **Nikriz (نكريز)** | `[0.0, 2.0, 3.0, 6.0, 7.0, 9.0, 10.0, 12.0]` | Playful, storytelling, theatrical, mischievous. | Egypt, Levant *(Similar to Tamil Simhendramadhyamam)* |
 
----
-
 ## 3. Complete Regional Breakdown: The 6 Musical Worlds of the Arab World
 
 Arabic music is **not a monolith**. A listener from Doha, Riyadh, Cairo, Beirut, Baghdad, or Marrakech hears rhythm, swing, and timbre in completely different ways.
-
----
 
 ### 3.1 The Arabian Gulf — *Khaleeji* (الخليجي)
 * **Countries:** Qatar, Saudi Arabia, UAE, Kuwait, Bahrain, Oman.
@@ -98,8 +66,6 @@ Arabic music is **not a monolith**. A listener from Doha, Riyadh, Cairo, Beirut,
   * **Safqa (صفقة - Interlocking Claps):** 3 to 5 layers of handclaps panned wide (`-45°` to `+45°`), bandpass filtered between `900Hz–2.8kHz`, with `8–18ms` human timing scatter.
   * **Khaleeji Oud:** Tuned lower (`C - F - A - D - G - C` or `F - A - D - G - C`), played with heavy thumb-strokes and percussive finger taps (*Risha*) on the wooden soundboard.
 
----
-
 ### 3.2 Egypt — *Masri* (المصري: *Tarab*, *Baladi*, *Shaabi* & *Mahraganat*)
 * **Cultural DNA:** Nile Valley agrarian folk (*Sa'idi* from Upper Egypt), Cairo Golden-Age Orchestral *Tarab* (Umm Kulthum, Abdel Halim Hafez), and raw working-class Cairo street celebrations (*Shaabi* and electronic *Mahraganat*).
 * **How the Egyptian Ear Listens:**
@@ -114,8 +80,6 @@ Arabic music is **not a monolith**. A listener from Doha, Riyadh, Cairo, Beirut,
   * **The Egyptian Equivalent of Tamil Kuthu/Gaana!** Born in working-class Cairo weddings.
   * Uses **130–145 BPM** compressed electronic *Darbuka* loops, distorted *Malfuf/Baladi* kicks, microtonal **Quarter-Tone Keyboard Lead** (Korg Pa-series style *Mizmar* synth), and heavily Auto-Tuned rapid-fire vocal chants.
 
----
-
 ### 3.3 The Levant — *Shami* (الشامي: Lebanon, Syria, Palestine, Jordan)
 * **Cultural DNA:** Mountain village line-dancing (**Dabke - دبكة**), Aleppo classical *Muwashahat* (Andalusian-Syrian poetic courts), and Beirut cosmopolitan synth-pop.
 * **How the Levantine Ear Listens:**
@@ -127,8 +91,6 @@ Arabic music is **not a monolith**. A listener from Doha, Riyadh, Cairo, Beirut,
   * **Mijwiz (مجوز) & Arghul (يرغول):** Double-pipe single-reed bamboo clarinets played with circular breathing.
     * *DSP:* Two detuned pulse waves (`f0` and `f0 + 4 cents` for natural chorus beating, or `f0` + continuous drone pipe at root) passed through a sharp `1.4kHz` nasal formant filter with rapid `16th-note` finger-trill pitch modulation.
   * **Buzuq (بزق):** Long-necked fretted lute with bright, metallic double-courses of strings.
-
----
 
 ### 3.4 Iraq — *Mesopotamian / Rafidain* (العراقي: *Maqam Iraqi* & *Chobi*)
 * **Cultural DNA:** Ancient Baghdad court music (*Al-Maqam Al-Iraqi*) and high-energy rural/tribal line-dancing (**Chobi - الجوبي**).
@@ -143,8 +105,6 @@ Arabic music is **not a monolith**. A listener from Doha, Riyadh, Cairo, Beirut,
   * **Santur (سنطور):** Hammered dulcimer (72–100 metallic strings hit with wooden mallets) creating shimmering cascades of microtonal tremolos.
   * **Joza (جوزة):** Four-stringed spike fiddle made from a coconut shell, sounding remarkably like a weeping human voice.
 
----
-
 ### 3.5 North Africa — *Al-Maghreb* (المغرب العربي: Morocco, Algeria, Tunisia, Libya)
 * **Cultural DNA:** Amazigh (Berber) polyrhythms + Andalusian *Nuba* classical music + Sub-Saharan *Gnawa* spiritual trance + Algerian *Raï*.
 * **How the Maghrebi Ear Listens:**
@@ -156,13 +116,9 @@ Arabic music is **not a monolith**. A listener from Doha, Riyadh, Cairo, Beirut,
   * **Guembri / Sintir (كمبري):** 3-stringed camel-skin bass lute played by *Gnawa* masters. *DSP:* Deep, woody, fretless upright-bass pluck (`70Hz–250Hz`) with a percussive finger-tap on the skin head.
   * **Qraqeb (قراقب):** Heavy iron castanets playing relentless `6/8` triplet metallic clanks (`2kHz–9kHz`).
 
----
-
 ### 3.6 Sudan & Yemen — *The Southern Crossroads*
 * **Sudan:** Uses **5-note Anhemitonic Pentatonic scales** `[0, 2, 4, 7, 9]` (zero quarter-tones!) combined with swinging **6/8 *Tum-Tum* and *Daluka* clay-drum rhythms**, lush jazz-style saxophone/brass harmonies, and accordion.
 * **Yemen (*Sana'ani*, *Hadrami*, *Adani*):** The ancestral homeland of many Gulf rhythms! Features the **Qanbus** (carved wooden skin-bellied lute), rhythmic copper tray percussion (**Sahn Nuhasi** held on the thumbs), and complex `7/8` (*Daasa*) and `11/8` cycles.
-
----
 
 ## 4. Core Arabic Instruments: Physics & Pure-Python DSP Modeling
 
@@ -200,8 +156,6 @@ To synthesize an authentic Arabic ensemble (*Takht*) in Python without external 
 ### 4.5 Riq (رق - Virtuosic Classical Tambourine)
 * **Acoustic Physics:** Frame drum with 5 double-pairs of thick brass cymbals (*Sagat*).
 * **Python DSP Recipe:** High-passed FM metallic clusters (`4.5kHz`, `7.2kHz`, `11.4kHz`) with two modes: *Open Jingle* (`120ms` decay) and *Cash/Muted Shake* (`18ms` tight decay).
-
----
 
 ## 5. Pure-Python Algorithmic Parameter Cheat Sheet
 
@@ -266,8 +220,6 @@ REGIONAL_IQAAT = {
     }
 }
 \`\`\`
-
----
 
 ## 6. Cross-Cultural Fusion Matrix: How to Fuse Regional Arabic with Tamil & Western Styles
 

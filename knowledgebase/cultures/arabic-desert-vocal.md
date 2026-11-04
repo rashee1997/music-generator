@@ -11,20 +11,7 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# The Arabic Desert Vocal ("Deep Ooooo / Aaaaah") & *Maqam* Chord DSP Knowledge Base
-**Scope:** Acoustic & Anatomical Physics of the Deep Arabic Desert Voice (*Mawwal, Yaa Leil, Nahham, Sufi/Bedouin Desert Echo*) + The Mathematics of "Desert Chords" + Pure-Python Synthesis Code.
-
----
-
-## Table of Contents (Machine-Parsable Index)
-- [1.0 Why the Arabic "Ooooo — Aaaaah" Sounds Different from Every Other Vocal on Earth](#1-why-the-arabic-ooooo--aaaaah-sounds-different-from-every-other-vocal-on-earth)
-- [2.0 "Desert Chords" (Harmonizing Without Ruining the Maqam)](#2-the-secret-of-magical-desert-chords-how-to-harmonize-arabic-vocals-without-ruining-the-maqam)
-  - [2.1 The 5 Desert Chord Formulas](#21-the-5-magical-desert-chord-formulas-semitone--microtone-offsets-from-root-0)
-- [3.0 The 4 Signature Arabic Vocal Melodic Ornaments (Zakhrafa)](#3-the-4-signature-arabic-vocal-melodic-ornaments-zakhrafa)
-- [4.0 Complete Pure-Python DSP Module: The Arabic Desert Vocal & Chord Engine](#4-complete-pure-python-dsp-module-the-arabic-desert-vocal--magical-chord-engine)
-- [5.0 Application Architecture & Cross-Cultural Fusion](#5-how-to-use-this-in-your-arabic-tamil-kuthu-track-v40-idea)
-
----
+# Arabic desert vocal and maqam harmonisation
 
 ## 1. Why the Arabic "Ooooo — Aaaaah" Sounds Different from Every Other Vocal on Earth
 
@@ -37,8 +24,6 @@ If you synthesize a standard Western `"Oooo"` (`[u]`) or `"Aaaah"` (`[a]`), it s
 | **3. The Glottal *'Ayn / Hamza* Attack & *Buka'* (Weeping Break)** | Smooth fade-in attack (`100ms`). | Starts with a **soft glottal catch + `-60 cent` pitch scoop**, and when stepping between notes, uses a `25ms` **Laryngeal Sob / Yodel-Crack (*Kisar*)** where amplitude dips by `-8dB` while pitch snaps across a half-step! | Multiply the attack by a `12ms` glottal click/scoop, and insert a `25ms` amplitude notch + `+150 cent` micro-spike on note transitions. |
 | **4. Sub-Octave Chest & Nasal *Ghunnah* Layer** | Pure fundamental ($f_0$) and upper harmonics. | Gulf (*Nahham*) and Sufi desert singers project a **massive chest sub-harmonic ($0.5 \times f_0$)** alongside a high nasal shimmer (**Ghunnah** around `2.8kHz–3.4kHz`) that carries for miles across open desert sand. | Mix a `-9dB` sub-octave sine/triangle (`0.5 * f0`) with a high-Q `3.1kHz` **Desert Singer's Ring Formant**. |
 | **5. Infinite Dune Canyon Reverb (Formant-Preserving Echo)** | Bright plate or hall reverb. | Warm sand and rock absorb harsh high frequencies (`>4kHz`) and muddy lows (`<180Hz`), leaving **only the `500Hz–2.5kHz` vocal formants echoing across 4 to 6 seconds** in stereo ping-pong reflections! | Bandpass the reverb send strictly to `350Hz–2.6kHz` with multi-tap golden-ratio delays (`230ms, 372ms, 602ms, 974ms`). |
-
----
 
 ## 2. "Desert Chords" (How to Harmonize Arabic Vocals Without Ruining the *Maqam*)
 
@@ -65,8 +50,6 @@ Cinematic and Arabic-fusion arrangements use **5 desert chord voicings** that ma
    * **Voicing:** `[-24, -12, -5, 0, 7]` *(Double-Sub Root, Sub-Root, Low 5th, Root, 5th)*
    * **Why It's Magical:** Used in Qatari, Kuwaiti, and Bahraini *Fijiri* sea/desert prayers—a wall of deep male chest-hums (`"Hoooo — Yaaa — Maaaal"`) vibrating at `55Hz` and `110Hz` while a single high tenor cries out in *Maqam Saba* or *Hijaz* above them.
 
----
-
 ## 3. The 4 Signature Arabic Vocal Melodic Ornaments (*Zakhrafa*)
 
 To make your Python algorithm sing like a real human *Mutrib* (master vocalist) instead of a synth pad, apply these 4 pitch-and-breath contours to the lead vocal voice:
@@ -80,9 +63,7 @@ To make your Python algorithm sing like a real human *Mutrib* (master vocalist) 
 4. **Formant-Tracked Breath Whisper (*Baha* بحة — Vocal Hoarseness):**
    * In Arabic aesthetics, a crystal-clear voice is considered less emotional than a voice with **Baha** (a warm, smoky, sandy hoarseness in the `1.8kHz–3.5kHz` band that sounds like desert wind inside the throat).
 
----
-
-## 4. Complete Pure-Python DSP Module: The Arabic Desert Vocal & Chord Engine
+## 4. Desert vocal and chord listing
 
 You can drop this self-contained Python module (`NumPy` + `SciPy`) directly into your existing code. It includes:
 1. **`synth_arabic_desert_vocal()`**: Generates the deep pharyngeal `"Ooooo -> Aaaaah"` vocal with dynamic formant morphing, *Baha* sandy breathiness, *Buka'* weeping catches, and `5.5Hz` *Tarab* vibrato.
@@ -177,7 +158,6 @@ def synth_arabic_desert_vocal(
     amp_env = (1.0 - np.exp(-t / 0.045)) * np.exp(-np.maximum(0.0, t - (dur - 0.18)) / 0.085)
     return np.tanh(vocal_morphed * amp_env * 1.35)
 
-
 def generate_yaa_leil_melody_curve(root_hz: float, duration_sec: float = 4.0, sr: int = 44100) -> np.ndarray:
     """
     Generates an authentic improvisational Arabic 'Yaa Leil / Mawwal' pitch curve in Maqam Hijaz,
@@ -198,7 +178,6 @@ def generate_yaa_leil_melody_curve(root_hz: float, duration_sec: float = 4.0, sr
         smooth_semitones += 1.2 * catch_mask # Brief upward sob-crack (+120 cents)
 
     return root_hz * (2.0 ** (smooth_semitones / 12.0))
-
 
 def synth_magical_desert_chord_pad(
     root_hz: float,
@@ -247,8 +226,6 @@ def synth_magical_desert_chord_pad(
 
     return np.tanh(left), np.tanh(right)
 \`\`\`
-
----
 
 ## 5. How to Use This in Your Arabic-Tamil Kuthu Track (v4.0 Idea!)
 

@@ -11,36 +11,11 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# Motion Graphics & Video Scoring Architecture: Frame-Accurate DSP Ontology
-
-## Table of Contents
-1. [Theoretical Foundations: Frame-Rate Locked Musical Mathematics](#1-theoretical-foundations-frame-rate-locked-musical-mathematics)
-2. [The Universal Frame-to-BPM Quantization Matrix (24, 25, 29.97, 30, 60 FPS)](#2-the-universal-frame-to-bpm-quantization-matrix-24-25-2997-30-60-fps)
-3. [Visual Hit Points & Keyframe Synchronization Mechanics](#3-visual-hit-points--keyframe-synchronization-mechanics)
-   - [3.1 The ±2 Frame Psychoacoustic Perceptual Window](#31-the-2-frame-psychoacoustic-perceptual-window)
-   - [3.2 Pre-Roll Riser & Transition Math](#32-pre-roll-riser--transition-math)
-   - [3.3 Post-Transition Downlifters & Braams](#33-post-transition-downlifters--braams)
-4. [Dynamic Voice-Over Ducking & Speech Corridor Carving (250–3800 Hz)](#4-dynamic-voice-over-ducking--speech-corridor-carving-2503800-hz)
-5. [Motion Graphics Narrative Arcs & Kinetic Easing Synchronization](#5-motion-graphics-narrative-arcs--kinetic-easing-synchronization)
-   - [5.1 The 15s / 30s / 60s Commercial Promo Motion Arc](#51-the-15s--30s--60s-commercial-promo-motion-arc)
-   - [5.2 Mirroring Animation Bezier Easing Curves (Cubic-Bezier to DSP Envelopes)](#52-mirroring-animation-bezier-easing-curves-cubic-bezier-to-dsp-envelopes)
-6. [Sonic Branding & Audio Logo Stinger Architecture (2 to 6 Seconds)](#6-sonic-branding--audio-logo-stinger-architecture-2-to-6-seconds)
-7. [Production Python DSP Implementation](#7-production-python-dsp-implementation)
-
----
+# Video scoring: frame-locked tempo, hit points and voice-over
 
 ## 1. Theoretical Foundations: Frame-Rate Locked Musical Mathematics
 
 In commercial motion graphics, explainer videos, brand trailers, and social video ads, audio and video must operate in **strict mathematical harmony**. In traditional linear music production, tempo is dictated solely by musical groove (BPM). In motion design, visual time is strictly quantized into discrete picture frames dictated by the project frame rate ($\text{FPS} \in \{24, 25, 29.97, 30, 60\}$).
-
-```mermaid
-flowchart LR
-    A["Video Frame Grid (e.g. 30 FPS)<br/>1 Frame = 33.333 ms"] --> Match{"Mathematical Alignment?"}
-    B["Musical Beat Grid (BPM)<br/>1 Beat = 60 / BPM seconds"] --> Match
-    
-    Match -->|Arbitrary BPM (e.g. 128 BPM)| Desync["Visual Jitter & Frame Drift<br/>Beats land on fractional frames (e.g. Frame 14.06)<br/>Subconscious perception of desync"]
-    Match -->|Quantized BPM (e.g. 120 BPM)| PerfectSync["Frame-Accurate Lock<br/>Every beat lands on exact integer frame (15, 30, 45)<br/>Visual cuts snap dead-on the musical transient"]
-```
 
 ### The Fundamental Quantization Formula
 To ensure that musical quarter-note beats, eighth-note pulses, or measures land exactly on integer video frames without temporal drift:
@@ -48,8 +23,6 @@ To ensure that musical quarter-note beats, eighth-note pulses, or measures land 
 $$F_{\text{beat}} = \frac{\text{FPS} \cdot 60}{\text{BPM}} \in \mathbb{Z}^+ \quad \iff \quad \text{BPM} = \frac{\text{FPS} \cdot 60}{F_{\text{beat}}}$$
 
 Where $F_{\text{beat}}$ is the exact integer number of video frames per musical beat.
-
----
 
 ## 2. The Universal Frame-to-BPM Quantization Matrix (24, 25, 29.97, 30, 60 FPS)
 
@@ -73,8 +46,6 @@ Composers and sound designers working in motion graphics should select tempos fr
 > - For **24 FPS**: **$120.0\text{ BPM}$** ($12\text{ frames/beat}$), **$96.0\text{ BPM}$** ($15\text{ frames/beat}$), and **$72.0\text{ BPM}$** ($20\text{ frames/beat}$).
 > - For **60 FPS**: **$120.0\text{ BPM}$** ($30\text{ frames/beat}$) and **$150.0\text{ BPM}$** ($24\text{ frames/beat}$).
 
----
-
 ## 3. Visual Hit Points & Keyframe Synchronization Mechanics
 
 ### 3.1 The ±2 Frame Psychoacoustic Perceptual Window
@@ -85,21 +56,12 @@ Cognitive studies in cross-modal temporal integration reveal that the human brai
 ### 3.2 Pre-Roll Riser & Transition Math
 A riser (noise sweep, pitch glide, reverse cymbal) must peak **exactly on the first frame of the new scene**, not a fraction of a beat early or late.
 
-```mermaid
-timeline
-    title Frame-Accurate Pre-Roll Riser Timeline (Target Cut at Frame 90)
-    Frame 60 : Start Pre-Roll Riser (1.0 sec = 30 frames at 30 FPS) : Sub-bass cut, exponential amplitude curve
-    Frame 75 : Tension Buildup (+6 dB / octave) : Filter cutoff sweeps 400 Hz -> 8 kHz
-    Frame 89 : Pre-Drop Vacuum (1 frame silence) : Amplitude drops to zero (33 ms vacuum)
-    Frame 90 : VISUAL CUT & IMPACT DOWNBEAT : Full bass impact, crash, kick, scene transition
-```
+At 30 fps with the cut on frame 90: the riser starts at frame 60, the filter has swept 400 Hz to 8 kHz by frame 75 (+6 dB/octave), frame 89 is one frame of silence, and frame 90 is the cut and the impact.
 
 ### 3.3 Post-Transition Downlifters & Braams
 Following a major visual transition or brand title drop:
 1. **Downlifter / Sub-Drop:** Exponential pitch glide downward ($120\text{ Hz} \rightarrow 35\text{ Hz}$ over $1.5\text{s}$) releasing visual kinetic energy.
 2. **Trailer Braam:** Heavy distorted low brass and reese synth hit with high harmonic saturation, followed by an expansive $3.0\text{s}$ stereo reverb tail.
-
----
 
 ## 4. Dynamic Voice-Over Ducking & Speech Corridor Carving (250–3800 Hz)
 
@@ -110,29 +72,12 @@ The human voice carries $85\%$ of its acoustic energy and $95\%$ of its intellig
 - Vowel formants ($F1, F2$): $300\text{ Hz} - 2500\text{ Hz}$.
 - Consonant fricatives and plosives ($s, t, k, p$): $2500\text{ Hz} - 4500\text{ Hz}$.
 
-```mermaid
-flowchart TD
-    MusicBus["Full Music Mix Bus"] --> Splitter["3-Band Crossover Splitter"]
-    
-    Splitter --> Bass["Band 1: Sub & Bass (< 200 Hz)<br/>Kick & Bass Drive<br/>Ducking: 0 dB (UNDUCKED)"]
-    Splitter --> Mid["Band 2: Speech Corridor (250 - 3800 Hz)<br/>Melodies, Synths, Guitars<br/>Ducking: -8 to -14 dB (ACTIVE VO SIDECHAIN)"]
-    Splitter --> High["Band 3: Air & Sparkle (> 4000 Hz)<br/>Hi-Hats, Shimmer, Reverb Air<br/>Ducking: -2 dB (GENTLE SHELF)"]
-
-    VoiceOver["Voiceover Microphone Signal"] --> Sidechain["RMS Detector + Lookahead (60 ms)"]
-    Sidechain --> Mid
-
-    Bass --> Recombine["Master Summer"]
-    Mid --> Recombine
-    High --> Recombine
-    Recombine --> Out["Punchy, Energetic Commercial Master with 100% Intelligible Voiceover"]
-```
+Three-band duck: below 200 Hz unducked, 250-3800 Hz ducked -8 to -14 dB under the voice, above 4000 Hz ducked about -2 dB.
 
 ### Lookahead Ducking Formula:
 A voice consonant takes $30-60\text{ ms}$ to reach peak acoustic energy. If ducking reacts reactively, the opening consonant is masked. The engine must employ **$60\text{ ms}$ lookahead sidechain detection**:
 
 $$G_{\text{mid}}(t) = 1.0 - (1.0 - G_{\min}) \cdot \sigma\left(\frac{E_{\text{VO}}(t + t_{\text{lookahead}}) - \text{threshold}}{\text{knee}}\right)$$
-
----
 
 ## 5. Motion Graphics Narrative Arcs & Kinetic Easing Synchronization
 
@@ -156,29 +101,17 @@ A sound effect or riser amplitude envelope $A(t)$ must match the velocity curve 
 
 $$A(t) = A_0 + (A_1 - A_0) \cdot \left(\frac{t}{T}\right)^k$$
 
----
-
 ## 6. Sonic Branding & Audio Logo Stinger Architecture (2 to 6 Seconds)
 
 An audio logo (mnemonic / stinger) must distill a company’s entire brand essence into **2 to 5 seconds**.
 
-```mermaid
-flowchart LR
-    Stinger["Sonic Logo Architecture (3.5 Seconds)"]
-    
-    Stinger --> L1["Layer 1: The Ambient Intro (0.0 - 1.2s)<br/>Whoosh, reverse sparkle, or atmospheric swell"]
-    Stinger --> L2["Layer 2: The Mnemonic Melody (1.0 - 2.5s)<br/>3 to 5 memorable notes (e.g. Major Pentatonic chime)"]
-    Stinger --> L3["Layer 3: The Anchor Hit (2.2s)<br/>Deep sub-bass thumb (50 Hz) + crystalline bell strike"]
-    Stinger --> L4["Layer 4: The Pristine Reverb Tail (2.5 - 4.5s)<br/>Decaying shimmer tail into silence (-60 dB)"]
-```
+A 3.5 s audio logo runs as four layers: ambient intro 0.0-1.2 s, mnemonic melody 1.0-2.5 s, anchor hit at 2.2 s (50 Hz sub plus bell), reverb tail 2.5-4.5 s decaying to -60 dB.
 
 ### The 4 Pillars of a Successful Audio Logo:
 1. **Unambiguous Tonal Anchor:** A clear root note (often $\text{C}$ or $\text{E}$) grounded by sub-bass.
 2. **Pristine Spectral Balance:** Sub-bass punch ($40-80\text{ Hz}$), acoustic warmth ($300-800\text{ Hz}$), vocal-range melody ($1.2-3.0\text{ kHz}$), and air shimmer ($8-16\text{ kHz}$).
 3. **Instant Attack Transient:** The hero chord or chime strike must have zero phase lag.
 4. **Tail Integrity:** The tail must decay smoothly to silence without clicks, dc-offsets, or truncated room reverb.
-
----
 
 ## 7. Production Python DSP Implementation
 
@@ -198,7 +131,6 @@ def calculate_frame_locked_tempo(target_bpm, fps=30.0):
     quantized_bpm = (fps * 60.0) / integer_fpb
     ms_per_beat = (60.0 / quantized_bpm) * 1000.0
     return quantized_bpm, integer_fpb, ms_per_beat
-
 
 def place_transition_riser(music_bed, target_frame, riser_duration_frames, fps=30.0, sr=44100, vacuum_frames=1):
     """Places an exponential build riser so that it peaks exactly on target_frame.
@@ -238,7 +170,6 @@ def place_transition_riser(music_bed, target_frame, riser_duration_frames, fps=3
             out[target_sample - vacuum_samples:target_sample] *= 0.05
             
     return out
-
 
 def apply_speech_corridor_ducking(music, voiceover, sr=44100, max_duck_db=-12.0, lookahead_ms=60):
     """Applies frequency-bracketed ducking: selectively cuts 250 - 3800 Hz speech corridor

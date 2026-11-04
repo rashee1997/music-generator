@@ -11,21 +11,10 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# Indian film fusion: the technique
+# Indian film fusion: rhythm-first layering
 
 > The `*_engine.py` names in this document are code listings inside it, not scripts in `scripts/`.
 > The skill's own versions of these ideas live in `theory.py`, `world.py`, `humanize.py`, `compose.py` and `direct.py`.
-
-## Table of Contents
-1. [System Architecture & Execution Pipeline](#1-system-architecture--execution-pipeline)
-2. [Module 1: Raga, Pitch & Two-Component Gamaka Engine](#2-module-1-raga-pitch--two-component-gamaka-engine)
-3. [Module 2: Modal Harmony, Slash Chords & Counterpoint Engine](#3-module-2-modal-harmony-slash-chords--counterpoint-engine)
-4. [Module 3: Tala, Euclidean Polyrhythms & Ostinato Bass Engine](#4-module-3-tala-euclidean-polyrhythms--ostinato-bass-engine)
-5. [Module 4: Macro-Structure, Layering & Jingle-Drop Arrangement Engine](#5-module-4-macro-structure-layering--jingle-drop-arrangement-engine)
-6. [Module 5: the film-mix DSP engine](#6-module-5-the-film-mix-dsp-engine)
-7. [Master JSON Schema & Pipeline Orchestrator](#7-master-json-schema--pipeline-orchestrator)
-
----
 
 ## 1. System Architecture & Execution Pipeline
 
@@ -50,9 +39,7 @@ To prevent the "robotic MIDI" uncanny valley, this architecture decouples **Disc
 [Module 5: film-mix DSP engine] --> Applies dynamic spectral carving, Haas widening, & sub-bass alignment
 ```
 
----
-
-## 2. Module 1: Raga, Pitch & Two-Component Gamaka Engine
+## 2. Raga, pitch and two-component gamaka
 
 ### 2.1 Raga-Mode Mapping & Vadi/Samvadi Weights
 The technique bridges Indian classical music and global genres by selecting Carnatic/Hindustani ragas that naturally accommodate modal chord substitutions. Notes are weighted by **Vadi** (King note, probability multiplier $\approx 1.8\times$) and **Samvadi** (Queen note, multiplier $\approx 1.4\times$).
@@ -84,7 +71,7 @@ Standard MIDI pitch quantization destroys the soul of Indian melodies. We model 
    $$f_{\text{dance}}(t) = A_{\text{cents}} \cdot \sin\left(\frac{\pi t}{T_{\text{dur}}}\right) \cdot \sin(2\pi \nu_{\text{gam}} t)$$
    Where $\nu_{\text{gam}} \in [4.8, 5.8]\text{ Hz}$ mimics the human vocal / bansuri flute oscillation rate.
 
-### 2.4 Implementation listing (`raga_gamaka_engine (listed below)`; not a shipped script)
+### 2.4 Implementation listing (not a shipped script)
 
 ```python
 import numpy as np
@@ -199,9 +186,7 @@ class RagaGamakaEngine:
         return t_axis.tolist(), pitch_cents.tolist()
 ```
 
----
-
-## 3. Module 2: Modal Harmony, Slash Chords & Counterpoint Engine
+## 3. Modal harmony, slash chords and counterpoint
 
 ### 3.1 Raga-Safe Harmonic Voicing Rules
 Western functional harmony ($ii \rightarrow V^7 \rightarrow I$) often clashes with Indian Ragas because dominant 7th chords introduce chromatic leading tones that destroy the Raga's modal identity. Three harmonic devices solve this:
@@ -220,7 +205,7 @@ $$J(C_t, C_{t-1}, m_t) = w_{\text{vl}} \sum_{k=1}^{4} |c_{t,k} - c_{t-1,k}| + w_
 * $w_{\text{clash}}$: Heavy penalty for minor-2nd ($1$ semitone) clashes against the active melody note.
 * $w_{\text{sus}}$: Reward for `sus2`, `sus4`, and slash-pedal voicings.
 
-### 3.3 Implementation listing (`harmony_voicing_engine (listed below)`; not a shipped script)
+### 3.3 Implementation listing (not a shipped script)
 
 ```python
 import numpy as np
@@ -298,9 +283,7 @@ class HarmonyVoicingEngine:
         return progression
 ```
 
----
-
-## 4. Module 3: Tala, Euclidean Polyrhythms & Ostinato Bass Engine
+## 4. Tala, Euclidean polyrhythms and ostinato bass
 
 ### 4.1 Rhythm-First Architecture & Carnatic Tala Grids
 The arrangement often starts with an unconventional percussive groove. He superimposes asymmetric Indian *Talas* over Western electronic breakbeats, Reggae skanks, or New Jack Swing grooves:
@@ -323,7 +306,7 @@ A defining hallmark of 1990s and 2000s film tracks is the interplay between acou
 * **Sixteenth-note Ghost Notes:** Percussive muted plucks immediately preceding strong beats.
 * **Octave & Fifth Syncopation:** Jumping from the root ($0$) to the octave ($+12$) or flat-7th ($+10$) on off-beat sixteenth subdivisions (`tick % 4 in [1, 3]`).
 
-### 4.4 Implementation listing (`groove_tala_engine (listed below)`; not a shipped script)
+### 4.4 Implementation listing (not a shipped script)
 
 ```python
 import numpy as np
@@ -431,9 +414,7 @@ class GrooveTalaEngine:
         return drum_events, bass_events
 ```
 
----
-
-## 5. Module 4: Macro-Structure, Layering & Jingle-Drop Arrangement Engine
+## 5. Macro-structure, layering and jingle-drop arrangement
 
 ### 5.1 Non-Linear Song Topology & Layering Philosophy
 the arrangement famously stated that modern listeners think in multiple layers, so he designs arrangements with evolving counter-melodies and textures beneath the lead vocal to keep the brain occupied. Furthermore, drawing from his early career composing 30-second advertising jingles, he disrupted the rigid Indian *Pallavi – Anupallavi – Charanam* template with three structural innovations:
@@ -445,7 +426,7 @@ the arrangement famously stated that modern listeners think in multiple layers, 
 3. **End-of-Line Instrumental Call-and-Response (*Nadais*):**
    Whenever the lead vocal rests at the end of a lyrical phrase (typically bars 2 and 4), a solo acoustic instrument (flute, *Shenai*, *Santoor*, or nylon guitar) immediately fills the gap with a 4-to-6 note micro-ornament.
 
-### 5.2 Implementation listing (`arrangement_graph_engine (listed below)`; not a shipped script)
+### 5.2 Implementation listing (not a shipped script)
 
 ```python
 class ArrangementGraphEngine:
@@ -511,9 +492,7 @@ class ArrangementGraphEngine:
         return filtered_events
 ```
 
----
-
-## 6. Module 5: the film-mix DSP engine
+## 6. Film-mix carving
 
 ### 6.1 The Panchathan Record Inn Sonic Signature
 1990s Indian film scores that still sound like modern audiophile recordings used bus-separated recording and
@@ -537,7 +516,7 @@ For backing textures, we boost $S(t)$ by gain $\gamma_{\text{side}} \approx 1.35
 
 $$G_{\text{dB}}(t) = -6.0 \cdot \min\left(1.0, \frac{E_{\text{lead}}(t)}{\theta_{\text{thresh}}}\right)$$
 
-### 6.3 Implementation listing (`film_mix_dsp_engine (listed below)`; not a shipped script)
+### 6.3 Implementation listing (not a shipped script)
 
 ```python
 import numpy as np
@@ -607,9 +586,7 @@ class FilmMixDSPEngine:
         return unmasked_backing
 ```
 
----
-
-## 7. Master JSON Schema & Pipeline Orchestrator
+## 7. Fingerprint schema and pipeline order
 
 To connect all five modules into an automated AI/Python pipeline, the system exchanges a standardized JSON state payload (`ARR_Score_State.json`).
 
@@ -699,7 +676,6 @@ if __name__ == "__main__":
     print(json.dumps(composition_data, indent=2))
 ```
 
----
 document_type: "algorithmic_knowledge_base_module"
 module_id: "ARR-GMKB-Module-6"
 module_name: "Acoustic Physical Modeling & Anti-Piercing Timbre Engine"
@@ -713,20 +689,8 @@ python_dependencies:
   - numpy>=1.24.0
   - scipy>=1.10.0
   - soundfile>=0.12.1
----
 
-# Module 6: Acoustic Physical Modeling & Anti-Piercing Timbre Engine
-
-## Table of Contents
-1. [Root-Cause Analysis: Why Standard MIDI Sounds Piercing & Fake](#1-root-cause-analysis-why-standard-midi-sounds-piercing--fake)
-2. [Mathematical Foundations of Organic Acoustic Synthesis](#2-mathematical-foundations-of-organic-acoustic-synthesis)
-3. [Instrument 1: breathy bansuri flute model](#3-instrument-1-breathy-bansuri-flute-model)
-4. [Instrument 2: Continuum / Esraj / Bowed String Formant Model](#4-instrument-2-continuum--esraj--bowed-string-formant-model)
-5. [Instrument 3: Extended Karplus-Strong Plucked Veena / Acoustic Guitar](#5-instrument-3-extended-karplus-strong-plucked-veena--acoustic-guitar)
-6. [The Psychoacoustic Anti-Piercing Filter (Fletcher-Munson + Tape Warmth)](#6-the-psychoacoustic-anti-piercing-filter-fletcher-munson--tape-warmth)
-7. [Complete implementation listing: `organic_acoustic_synth (listed below)`](#7-complete-implementation-listing-organic_acoustic_synthpy-not-a-shipped-script)
-
----
+# Module 6: acoustic modelling and anti-piercing timbre
 
 ## 1. Root-Cause Analysis: Why Standard MIDI Sounds Piercing & Fake
 
@@ -738,8 +702,6 @@ Even when a melody has human timing (Module 3) and microtonal pitch bends (Modul
 | **2. Brick-Wall Step Transients** | Triggering `NoteOn` jumps amplitude instantly or linearly, causing a subtle digital click and unnatural stiffness. | **Beta-Function Breath/Bow Arch + Chiff Injection:** Every note swells in using an asymmetric human lung/arm curve $t^\alpha (1-t)^\beta$ accompanied by a $40\text{ ms}$ burst of band-passed pink friction noise. |
 | **3. Missing Wooden/Vocal Formants** | Raw waveforms lack the resonant acoustic cavities of a wooden violin body, bamboo flute bore, or human throat. | **Multi-Peak Formant Filter Bank:** Passes raw excitations through fixed biquad resonant peaks ($F_1, F_2, F_3$) that simulate bamboo and spruce wood cavities. |
 | **4. 3.2 kHz Fletcher-Munson Glare** | The human ear canal naturally amplifies frequencies between $2.5\text{ kHz}$ and $4.2\text{ kHz}$. Digital synths overload this band, causing immediate ear fatigue. | **Fletcher-Munson Comfort Dip + Analog Tape Saturation:** Applies a $-4.5\text{ dB}$ dynamic notch at $3.2\text{ kHz}$ and rounds off sharp digital waveform edges via $\tanh$ soft-clipping. |
-
----
 
 ## 2. Mathematical Foundations of Organic Acoustic Synthesis
 
@@ -767,16 +729,12 @@ $$x_{\text{raw}}(t) = \sum_{k=1}^{K} a_k \cdot \left[E(t)\right]^{\gamma_k} \cdo
 
 Where $\gamma_1 = 1.0$, $\gamma_2 = 1.6$, $\gamma_3 = 2.4$, and $\gamma_4 = 3.5$. When the melody is quiet ($E(t) < 0.3$), higher harmonics virtually vanish, producing an ultra-warm, non-piercing tone.
 
----
-
 ## 3. Instrument 1: breathy bansuri flute model
 
 The bansuri in these scores (*Roja*, *Bombay*, *Gentleman*) has a sound characterised by:
 1. **Heavy Embouchure Chiff:** Audible breath rush at the start of every phrase.
 2. **Cylindrical Bamboo Bore Harmonics:** Strong fundamental ($k=1$), rich octave ($k=2$, amplitude $0.45$), and soft twelfth ($k=3$, amplitude $0.15$), with almost zero harsh upper harmonics above $4\text{ kHz}$.
 3. **End-of-Note Pitch Dip:** As breath pressure drops at the end of a held note, the pitch naturally dips by $-12\text{ cents}$.
-
----
 
 ## 4. Instrument 2: Continuum / Esraj / Bowed String Formant Model
 
@@ -788,8 +746,6 @@ the arrangement frequently uses the **Haken Continuum Fingerboard**, **Esraj**, 
   * **Formant 3 (Vocal/Nasal Sing Zone):** $1850\text{ Hz}$ ($Q = 4.5$)
 * All frequencies above $3200\text{ Hz}$ are rolled off at $-18\text{ dB/octave}$ to eliminate digital buzz.
 
----
-
 ## 5. Instrument 3: Extended Karplus-Strong Plucked Veena / Acoustic Guitar
 
 For plucked arpeggios and call-and-response fills (*Chinna Chinna Aasai*, *Vennilave*, *Swades*), standard MIDI guitars sound plastic. We use an **Extended Digital Waveguide (Karplus-Strong)** algorithm with three anti-piercing upgrades:
@@ -797,8 +753,6 @@ For plucked arpeggios and call-and-response fills (*Chinna Chinna Aasai*, *Venni
 2. **One-Pole Loop Damping Filter:** Inside the feedback loop of length $L = \lfloor f_s / f_0 \rfloor$, high frequencies decay faster than low frequencies, just like a real nylon or bronze string:
    $$y[n] = g \cdot \left( (1 - s) \cdot y[n - L] + s \cdot y[n - L - 1] \right)$$
    Where $g \approx 0.995$ controls sustain and $s \in [0.35, 0.50]$ controls string softness.
-
----
 
 ## 6. The Psychoacoustic Anti-Piercing Filter (Fletcher-Munson + Tape Warmth)
 
@@ -811,8 +765,6 @@ Before any synthesized stem leaves Module 6, it passes through a mandatory 3-sta
    Human hearing is maximally sensitive around $3.2\text{ kHz}$ (the resonant frequency of the ear canal). Cutting this zone by $-4.5\text{ dB}$ ($Q = 1.8$) immediately removes the "piercing digital synth" sensation while preserving warmth and air.
 3. **Stage 3 — Velvet Acoustic Room Early Reflections:**
    Dry synthesized signals sound unnaturally "inside your skull." Convolving the signal with a dense, exponentially decaying Velvet-Noise wooden studio impulse response ($T_{60} \approx 0.42\text{ s}$) places the instrument inside a warm acoustic room (like Panchathan Record Inn).
-
----
 
 ## 7. Complete implementation listing (`organic_acoustic_synth (listed below)`; not a shipped script)
 
@@ -1086,7 +1038,6 @@ class OrganicAcousticSynth:
         # Final peak-safe normalization (-1.0 dBFS headroom)
         final_peak = np.max(np.abs(final_audio)) + 1e-8
         return (final_audio / final_peak) * 0.89
-
 
 # =============================================================================
 # STANDALONE VERIFICATION & WAV EXPORT DEMO

@@ -11,34 +11,7 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# The Programmatic Music & Instrument Cloning Knowledge Base
-**Sub-title:** Mathematical Frameworks, Spectral Algorithms, and Pure-Python DSP for Reverse-Engineering Any Audio Reference Without Human Ears.
-**Core Purpose:** Convert any arbitrary audio signal ($x[n]$) into an exact, reproducible procedural code recipe: Melodic Micro-Tuning, Harmonic Partials, Attack Transients, Formant Envelopes, Groove Micro-Shifts, and Reverb $T_{60}$ Decay.
-
----
-
-## Table of Contents (Machine-Parsable Index)
-- [1.0 The 6-Stage Audio Reverse-Engineering Pipeline](#10-the-6-stage-audio-reverse-engineering-pipeline)
-- [2.0 Stage 1: Continuous Microtonal Pitch Extraction ($f_0$ Contours & Ornaments)](#20-stage-1-continuous-microtonal-pitch-extraction-f_0-contours--ornaments)
-  - [2.1 Mathematical YIN / pYIN Algorithm (Sub-Sample Accurate Pitch Tracking)](#21-mathematical-yin--pyin-algorithm-sub-sample-accurate-pitch-tracking)
-  - [2.2 Ornament & Bend Decomposition (Splitting Pitch into Steady State vs. Gamaka/Meend)](#22-ornament--bend-decomposition-splitting-pitch-into-steady-state-vs-gamakameend)
-- [3.0 Stage 2: Timbral Cloning via Spectral Modeling Synthesis (SMS)](#30-stage-2-timbral-cloning-via-spectral-modeling-synthesis-sms)
-  - [3.1 Deterministic Layer Extraction (Harmonic Peak Tracking & Phase Alignment)](#31-deterministic-layer-extraction-harmonic-peak-tracking--phase-alignment)
-  - [3.2 Stochastic Residual Extraction (Breath, Friction, Bow Noise & Attack Clicks)](#32-stochastic-residual-extraction-breath-friction-bow-noise--attack-clicks)
-  - [3.3 Acoustic Body & Formant Estimation via Linear Predictive Coding (LPC)](#33-acoustic-body--formant-estimation-via-linear-predictive-coding-lpc)
-- [4.0 Stage 3: Polyphonic & Harmonic Reverse-Engineering](#40-stage-3-polyphonic--harmonic-reverse-engineering)
-  - [4.1 Constant-Q Transform (CQT) & Pitch-Salience Matrices](#41-constant-q-transform-cqt--pitch-salience-matrices)
-  - [4.2 Chord Extraction, Inversion Detection & Non-12-TET Microtonal Voicings](#42-chord-extraction-inversion-detection--non-12-tet-microtonal-voicings)
-- [5.0 Stage 4: Micro-Timing, Groove & Dynamic Envelope Extraction](#50-stage-4-micro-timing-groove--dynamic-envelope-extraction)
-  - [5.1 Spectral Flux Onset Detection Function (ODF)](#51-spectral-flux-onset-detection-function-odf)
-  - [5.2 Groove Profiling: Extracting the `micro_shift_ms` Vector & Velocity Dynamics](#52-groove-profiling-extracting-the-micro_shift_ms-vector--velocity-dynamics)
-- [6.0 Stage 5: Reverse-Engineering Room Acoustics & Reverb Parameters](#60-stage-5-reverse-engineering-room-acoustics--reverb-parameters)
-  - [6.1 Schroeder Backward Integration ($T_{60}$ Energy Decay Curve Extraction)](#61-schroeder-backward-integration-t_60-energy-decay-curve-extraction)
-  - [6.2 Stereo Panning Azimuth ($\theta$) & Direct-to-Reverberant Ratio (DRR)](#62-stereo-panning-azimuth-theta--direct-to-reverberant-ratio-drr)
-- [7.0 The Universal "Acoustic Fingerprint" JSON Specification](#70-the-universal-acoustic-fingerprint-json-specification)
-- [8.0 Pure-Python Instrument & Music Cloner Implementation](#80-pure-python-instrument--music-cloner-implementation)
-
----
+# Audio cloning: pitch, timbre, groove and room extraction
 
 ## 1.0 The 6-Stage Audio Reverse-Engineering Pipeline
 
@@ -84,8 +57,6 @@ To clone an instrument or an entire composition from an audio file without human
              └─────────────────────────────────────────────────┘
 ```
 
----
-
 ## 2.0 Stage 1: Continuous Microtonal Pitch Extraction ($f_0$ Contours & Ornaments)
 
 Text models often assume notes are discrete integers (MIDI pitches: `60, 62, 64`). Real instruments (*Nadaswaram, Sitar, Ney, Violin, Erhu, Vocals*) move through **continuous frequency trajectories**.
@@ -116,8 +87,6 @@ Once $f_0(t)$ is extracted as a continuous curve across time, the AI Agent isola
   * **Vibrato Frequency ($F_{\text{vib}}$):** Prominent peak in the $4.5\text{Hz}–7.5\text{Hz}$ range.
   * **Vibrato Depth ($D_{\text{cents}}$):** Peak-to-peak amplitude (e.g., $\pm 35\text{ cents}$).
 * **Glide & Attack Identification:** If $|\frac{d}{dt} f_0(t)| > 40\text{ semitones/sec}$ during the first $60\text{ms}$ of an onset, flag this note as an **Ascending Scoop** or **Descending Fall**.
-
----
 
 ## 3.0 Stage 2: Timbral Cloning via Spectral Modeling Synthesis (SMS)
 
@@ -173,8 +142,6 @@ $$\hat{x}[n] = -\sum_{i=1}^P a_i x[n - i]$$
    * **Formant Bandwidth:** $B_i = -\frac{f_s}{\pi} \ln(r_i)$
 3. **Result:** An exact parametric recreation of the instrument's wooden or metallic resonant body that can filter any raw synthesized excitation source.
 
----
-
 ## 4.0 Stage 3: Polyphonic & Harmonic Reverse-Engineering
 
 When cloning an entire composed track rather than an isolated lead, multiple notes sound simultaneously. The engine must extract the chord voicings without relying on human transcription.
@@ -195,8 +162,6 @@ where $B$ is the number of bins per octave (set $B = 36$ or $B = 72$ for high-pr
 1. **Bass Note Identification:** Search for the lowest prominent spectral peak in the CQT below $250\text{Hz}$. This defines the bass inversion (e.g., whether a C Major chord is in root position, 1st inversion `/E`, or 2nd inversion `/G`).
 2. **Template Matching:** Cross-correlate the chroma vector against an archetype dictionary of over 60 chord templates (*Major, Minor, Dominant 7th, Half-Diminished, Sus4, Altered 9ths/11ths, and Microtonal Maqam/Raga clusters*).
 3. **Microtonal Cents Offset:** If a prominent chroma peak sits between standard bins (e.g., at $+150\text{ cents}$), flag the chord as containing an intentional microtonal neutral interval (e.g., *Arabic Bayati neutral 3rd*).
-
----
 
 ## 5.0 Stage 4: Micro-Timing, Groove & Dynamic Envelope Extraction
 
@@ -219,8 +184,6 @@ where $H(x) = \frac{x + |x|}{2}$ is the Half-Wave Rectifier (only registering en
    * *Example Output (J-Dilla Drummer Snare):* `[0.0, 0.0, 0.0, 0.0, +16.2, 0.0, 0.0, 0.0]` ms.
 4. **Dynamic Velocity Mapping:** Extract the peak amplitude of each onset, normalize to $[0.0, 1.0]$, and output the rhythmic velocity pattern:
    $$\text{velocity\_grid} = [v_0, v_1, \dots, v_{S-1}]$$
-
----
 
 ## 6.0 Stage 5: Reverse-Engineering Room Acoustics & Reverb Parameters
 
@@ -253,8 +216,6 @@ For a stereo input track ($x_L[n], x_R[n]$):
    $$\text{DRR}_{\text{dB}} = 10 \log_{10} \left( \frac{\sum_{n=0}^{0.05 f_s} x^2[n]}{\sum_{n=0.05 f_s}^{M} x^2[n]} \right)$$
    * High DRR ($>15\text{dB}$): Bone-dry close-mic recording (Pop / ASMR).
    * Low DRR ($<3\text{dB}$): Distant cathedral or canyon acoustics.
-
----
 
 ## 7.0 The Universal "Acoustic Fingerprint" JSON Specification
 
@@ -291,8 +252,6 @@ This is the standard structured data output produced by the analysis engine. An 
   }
 }
 ```
-
----
 
 ## 8.0 Pure-Python Instrument & Music Cloner Implementation
 
@@ -484,8 +443,6 @@ class ProgrammaticAudioCloner:
         
         return np.tanh(cloned_audio / (np.max(np.abs(cloned_audio)) + 1e-6))
 ```
-
----
 
 ## 9.0 How an AI Agent Uses This to Clone Full Tracks
 

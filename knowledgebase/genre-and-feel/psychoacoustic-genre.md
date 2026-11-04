@@ -11,45 +11,9 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# The Master Psychoacoustic Genre, Sub-Feel & Algorithmic Music Ontology
-**Purpose:** Prevent AI music generators from defaulting to generic "upbeat 4/4 block-chord" templates. Every genre and emotional sub-archetype possesses a unique **psychoacoustic contract** with the human ear—defined by **Interval Leap Geometry, Micro-Timing Gravity, Spectral Centroid Trajectory, Harmonic Voice-Leading, and Spatial Reverb Physics**.
+# Genre and mood archetypes: tempo, intervals, timbre and space
 
----
-
-## Table of Contents (Machine-Parsable Index)
-- [1.0 Core Agent Directive: Breaking the "Upbeat Trap"](#10-core-agent-directive-breaking-the-upbeat-trap)
-- [2.0 The "Adventurous" Ontology (5 Distinct Sub-Archetypes)](#20-the-adventurous-ontology-5-distinct-sub-archetypes)
-  - [2.1 ARCHETYPE: Adventurous_Forest_Mystic (Woodland / Elven / Folklore)](#21-archetype-adventurous_forest_mystic-woodland--elven--folklore)
-  - [2.2 ARCHETYPE: Adventurous_Cinematic_Frontier (Wide-Screen Horizon / Discovery)](#22-archetype-adventurous_cinematic_frontier-wide-screen-horizon--discovery)
-  - [2.3 ARCHETYPE: Adventurous_HighSeas_Swashbuckler (Maritime / Pirate / Kinetic)](#23-archetype-adventurous_highseas_swashbuckler-maritime--pirate--kinetic)
-  - [2.4 ARCHETYPE: Adventurous_Ancient_Desert_Ruin (Archaeological / Mirage / Dune)](#24-archetype-adventurous_ancient_desert_ruin-archaeological--mirage--dune)
-  - [2.5 ARCHETYPE: Adventurous_Cosmic_Odyssey (Sci-Fi / Zero-Gravity / Interstellar)](#25-archetype-adventurous_cosmic_odyssey-sci-fi--zero-gravity--interstellar)
-- [3.0 The "Epic" Ontology (4 Distinct Sub-Archetypes)](#30-the-epic-ontology-4-distinct-sub-archetypes)
-  - [3.1 ARCHETYPE: Epic_Colossal_Hybrid_Trailer (Braaam / Titan / Modern Cinema)](#31-archetype-epic_colossal_hybrid_trailer-braaam--titan--modern-cinema)
-  - [3.2 ARCHETYPE: Epic_Mythic_Choral_Tragedy (Soulsborne / Gothic / Apocalyptic)](#32-archetype-epic_mythic_choral_tragedy-soulsborne--gothic--apocalyptic)
-  - [3.3 ARCHETYPE: Epic_Triumphant_Ascension (Coronation / Victory / Stadium Mass)](#33-archetype-epic_triumphant_ascension-coronation--victory--stadium-mass)
-  - [3.4 ARCHETYPE: Epic_Tribal_War_March (Primal / Phalanx / Earth-Shaking)](#34-archetype-epic_tribal_war_march-primal--phalanx--earth-shaking)
-- [4.0 The "Electronic" Ontology (5 Distinct Sub-Archetypes)](#40-the-electronic-ontology-5-distinct-sub-archetypes)
-  - [4.1 ARCHETYPE: Electronic_Hypnotic_Warehouse (Berlin Minimal / Rolling Techno)](#41-archetype-electronic_hypnotic_warehouse-berlin-minimal--rolling-techno)
-  - [4.2 ARCHETYPE: Electronic_Euphoric_Festival (Progressive / Melodic / SuperSaw)](#42-archetype-electronic_euphoric_festival-progressive--melodic--supersaw)
-  - [4.3 ARCHETYPE: Electronic_Cyberpunk_Midtempo (Dystopian / Gritty / Industrial)](#43-archetype-electronic_cyberpunk_midtempo-dystopian--gritty--industrial)
-  - [4.4 ARCHETYPE: Electronic_Organic_Deep_Sunset (Melodic House / Desert / Afro-Deep)](#44-archetype-electronic_organic_deep_sunset-melodic-house--desert--afro-deep)
-  - [4.5 ARCHETYPE: Electronic_Neuro_Kinetic_Bass (Drum & Bass / Halftime / Glitch)](#45-archetype-electronic_neuro_kinetic_bass-drum--bass--halftime--glitch)
-- [5.0 The "Pop" Ontology (4 Distinct Sub-Archetypes)](#50-the-pop-ontology-4-distinct-sub-archetypes)
-  - [5.1 ARCHETYPE: Pop_MaxMartin_Pocket_Drive (Crisp / Syncopated / Radio-Tight)](#51-archetype-pop_maxmartin_pocket_drive-crisp--syncopated--radio-tight)
-  - [5.2 ARCHETYPE: Pop_Dreamy_Nostalgic_Synth (Midnight / 80s Retro / Bittersweet)](#52-archetype-pop_dreamy_nostalgic_synth-midnight--80s-retro--bittersweet)
-  - [5.3 ARCHETYPE: Pop_Bedroom_Intimate_Whisper (ASMR / Lo-Fi / Billie-Style)](#53-archetype-pop_bedroom_intimate_whisper-asmr--lo-fi--billie-style)
-  - [5.4 ARCHETYPE: Pop_Sunshine_Funk_NuDisco (Strut / Slap-Bass / Uplifting)](#54-archetype-pop_sunshine_funk_nudisco-strut--slap-bass--uplifting)
-- [6.0 The "Celtic" Ontology (4 Distinct Sub-Archetypes)](#60-the-celtic-ontology-4-distinct-sub-archetypes)
-  - [6.1 ARCHETYPE: Celtic_Tavern_Reel_Frenzy (Foot-Stomping / Fiddle / Joyful)](#61-archetype-celtic_tavern_reel_frenzy-foot-stomping--fiddle--joyful)
-  - [6.2 ARCHETYPE: Celtic_Misty_Highland_Lament (Ancient / Cliffside / Keening)](#62-archetype-celtic_misty_highland_lament-ancient--cliffside--keening)
-  - [6.3 ARCHETYPE: Celtic_Fae_Woodland_SlipJig (Enchanted / 9-8 Meter / Harp)](#63-archetype-celtic_fae_woodland_slipjig-enchanted--9-8-meter--harp)
-  - [6.4 ARCHETYPE: Celtic_Highland_Battle_Charge (Bagpipe Drone / War Drums / Fierce)](#64-archetype-celtic_highland_battle_charge-bagpipe-drone--war-drums--fierce)
-- [7.0 Agent Decision Matrix & Python Parameter Schema](#70-agent-decision-matrix--python-parameter-schema)
-
----
-
-## 1.0 Core Agent Directive: Breaking the "Upbeat Trap"
+## 1.0 Avoid the default upbeat 4/4
 
 When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or *"epic"*, naive algorithms default to the same broken formula: `128 BPM + 4/4 Kick-Snare + I-V-vi-IV Major Chords + Stepwise 8th-Note Melody`.
 
@@ -60,13 +24,9 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
 4. **Spectral Centroid & Transient Sharpness:** Soft `40ms` attacks with `1.2kHz` centroid feel *ancient/misty/warm*; `2ms` transients with `4.5kHz` presence feel *modern/aggressive/urgent*.
 5. **Spatial Acoustic Envelope:** Short dry room (`120ms` ER) feels *inside the listener's head*; Pre-delayed `60ms` + `3.5s` hall feels *wide-screen cinema*; High-passed shimmer tail (`+12 semitone pitch-shifted reverb`) feels *magical/ethereal*.
 
----
-
-## 2.0 The "Adventurous" Ontology (5 Distinct Sub-Archetypes)
+## 2.0 Adventurous archetypes
 
 > **CRITICAL RULE:** "Adventurous" is **NOT** "Upbeat Pop". Adventure requires **curiosity, spatial vastness, modal color (Lydian `#4` or Mixolydian `b7`), and forward momentum without claustrophobic four-on-the-floor club kicks**.
-
----
 
 ### 2.1 ARCHETYPE: `Adventurous_Forest_Mystic` (Woodland / Elven / Folklore)
 * **How the Ear Listens:** The ear listens for **pointillistic, plucked wooden/metallic droplets** (*Celesta, Harp, Pizzicato Strings, Dulcimer*) dancing around a breathy solo wind instrument (*Alto Flute, Oboe, Ocarina*). Heavy sub-bass (`<70Hz`) ruins this feel—the low end must be warm, woody, and airy (`90Hz–200Hz` upright bass pizzicato or low harp).
@@ -78,8 +38,6 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
   * **Melodic Rule:** Arpeggiated 5ths and 9ths (`[0 -> 7 -> 14 -> 10 -> 7]`) with crisp grace-note flicks; leave **30% rest space** between phrases so forest echoes can ring out.
   * **Percussion:** Zero kick/snare kit! Use **shakers, finger cymbals, light frame-drum (*Bodhrán/Duff*) rim taps, and pizzicato cello**.
 
----
-
 ### 2.2 ARCHETYPE: `Adventurous_Cinematic_Frontier` (Wide-Screen Horizon / Discovery)
 * **How the Ear Listens:** The ear tracks a **Dual-Speed Engine**: fast, bustling 16th-note string/woodwind *ostinatos* in the mid-range (`400Hz–2kHz`) paired with a **slow, majestic, half-note French Horn melody** (`200Hz–800Hz`) that leaps upward by Perfect 5ths (`0 -> 7`) and Major 6ths (`0 -> 9`).
 * **How the Body Feels:** Chest expanding, cresting a mountain ridge to see a vast unknown valley, wind in the face, heroic optimism.
@@ -90,8 +48,6 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
   * **Melodic Rule:** Start on a pickup beat (`Beat 4`), leap **`0 -> 7` (Perfect 5th)** on `Beat 1`, hold for 2.5 beats, then soar up to `12` (Octave) or `14` (9th).
   * **Percussion:** Orchestral **Timpani** tuned to `Root` and `5th` + rolling orchestral snare on transitions + bright crash cymbals on 8-bar peaks.
 
----
-
 ### 2.3 ARCHETYPE: `Adventurous_HighSeas_Swashbuckler` (Maritime / Pirate / Kinetic)
 * **How the Ear Listens:** Locked 100% into a **heavy, lurching `6/8` or `12/8` compound gallop** (mimicking the pitch and roll of a wooden ship deck on ocean waves). The ear craves **aggressive, dry bowed string staccatos (*Spiccato* Cello/Violin)**, accordion/hurdy-gurdy drones, and brass fanfare stabs.
 * **How the Body Feels:** Adrenaline, swagger, physical momentum, swinging from ropes, reckless danger.
@@ -101,8 +57,6 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
   * **Chord Engine:** `i` $\rightarrow$ `bVII` $\rightarrow$ `bVI` $\rightarrow$ `V7` (The classic *Andalusian/Pirate* cadence: `Dm -> C -> Bb -> A7`).
   * **Melodic Rule:** Rapid triplet runs (`[0, 2, 3, 2, 0, -1, 0]`) punctuated by heavy staccato unison hits on Beat 1 and Beat 4 (in 6/8).
 
----
-
 ### 2.4 ARCHETYPE: `Adventurous_Ancient_Desert_Ruin` (Archaeological / Mirage / Dune)
 * **How the Ear Listens:** Listens for **microtonal/augmented-second tension**, dry skin/wood percussion (*Darbuka, Frame Drum, Shaker*), plucked fretless strings (*Oud, Bouzouki*), and **heat-shimmer drones** (`Root + 5th` sustaining continuously while the melody explores above).
 * **How the Body Feels:** Heat haze, ancient secrets buried under sand, cautious footsteps, sacred awe.
@@ -110,8 +64,6 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
   * **Meter & Tempo:** `4/4` (*Malfuf* `3+3+2` pulse) or `7/8` (`2+2+3`) at `95 – 110 BPM`.
   * **Scale:** **Phrygian Dominant (*Hijaz*)** `[0, 1, 4, 5, 7, 8, 10]` or **Double Harmonic (*Mayamalavagowla*)** `[0, 1, 4, 5, 7, 8, 11]`.
   * **Chord Engine:** Static pedal bass on `0` (`Root`) while upper voices shift slowly between `[0, 4, 7]` (`I`) and `[1, 5, 8]` (`bII`).
-
----
 
 ### 2.5 ARCHETYPE: `Adventurous_Cosmic_Odyssey` (Sci-Fi / Zero-Gravity / Interstellar)
 * **How the Ear Listens:** Rejects earthy drums! The ear locks onto a **hypnotic, mathematical minimalist film-score arpeggio** (Pipe Organ, Analog Prophet/Moog Synth, Glass Marimba) while massive sub-bass pedals (`35Hz–55Hz`) and shimmering high strings swell in and out like gravitational waves.
@@ -121,13 +73,9 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
   * **Scale:** **Aeolian / Lydian** bi-modal ambiguity.
   * **Chord Engine (Chromatic Mediant / Interstellar Engine):** `VI Maj7` $\rightarrow$ `v7` $\rightarrow$ `i9` $\rightarrow$ `VII6` (or `Am -> F -> C -> G` with a constant high `E` `[4]` and `B` `[11]` pedal tone ringing inside every single chord!).
 
----
-
-## 3.0 The "Epic" Ontology (4 Distinct Sub-Archetypes)
+## 3.0 Epic archetypes
 
 > **CRITICAL RULE:** "Epic" is defined by **Apparent Acoustic Mass (Sub-50Hz weight + >8kHz air)** and **Macro-Dynamic Patience**. If everything is fast and loud, nothing feels big. Big things move **slowly** with massive inertia.
-
----
 
 ### 3.1 ARCHETYPE: `Epic_Colossal_Hybrid_Trailer` (Braaam / Titan / Modern Cinema)
 * **How the Ear Listens:** Listens for **Extreme Frequency Polarization**—an earth-shattering low-brass/synth **BRAAAM** (`38Hz–180Hz` sawtooth stack with waveshaping distortion) answered by razor-sharp **Metallic Anvil/Taiko Impacts** (`2.5kHz–8kHz`) and a relentless **16th-note Staccato String Ostinato** that climbs 1 semitone higher every 4 bars!
@@ -137,8 +85,6 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
   * **Chord Engine:** **Minor Chromatic Mediant**: `i` (`C minor`) $\rightarrow$ `bvi` (`Ab minor`! Notice *minor*, not major—this creates dark, colossal sci-fi/trailer dread!).
   * **Structural Rule — The "Pre-Climax Vacuum":** At Bar 15.5, **cut all audio to -80dB silence for 2 beats** (leaving only a sub-bass reverse-suck sweep), then slam Beat 1 of Bar 17 with maximum amplitude.
 
----
-
 ### 3.2 ARCHETYPE: `Epic_Mythic_Choral_Tragedy` (Soulsborne / Gothic / Apocalyptic)
 * **How the Ear Listens:** No synth basses or modern club drums! Dominated by **Operatic Choir Formants (`Aa / Oh / Ee`)**, **Pipe Organ**, **Solo Cello/Violin weeping in the high register**, and ** frantic, irregular orchestral timpani/snare rolls**.
 * **How the Body Feels:** Tragic grandeur, fighting a fallen god in a ruined cathedral, sorrow mixed with terror.
@@ -147,23 +93,17 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
   * **Scale:** **Harmonic Minor** `[0, 2, 3, 5, 7, 8, 11]` + **Neapolitan Flat-2 (`bII` = `1`)**.
   * **Chord Engine:** `i` $\rightarrow$ `bII` (Neapolitan Major!) $\rightarrow$ `V7(b9)` $\rightarrow$ `i` (e.g., `Dm -> Eb Major -> A7(b9) -> Dm`).
 
----
-
 ### 3.3 ARCHETYPE: `Epic_Triumphant_Ascension` (Coronation / Victory / Stadium Mass)
 * **How the Ear Listens:** Tracks an **unstoppable ascending bassline** (`0 -> 2 -> 4 -> 5 -> 7 -> 9`) while brass horns and high strings play soaring **suspended-4th (`sus4 -> Major 3rd`) resolutions**.
 * **How the Body Feels:** Tears of joy, overcoming impossible odds, stadium-sized euphoria.
 * **Musical Mathematics:**
   * **Chord Engine (The "Hero's Ascent"):** `vi` $\rightarrow$ `IV` $\rightarrow$ `I(add9)/3rd` $\rightarrow$ `V(sus4 -> 3)`.
 
----
-
 ### 3.4 ARCHETYPE: `Epic_Tribal_War_March` (Primal / Phalanx / Earth-Shaking)
 * **How the Ear Listens:** Zero lush chords! Pure **Unison / Octave / Open-Fifth (`[0, 7, 12]`)** low brass, war horns (*Nadaswaram, Conch, Carnyx, Didgeridoo*), throat-singing/warrior chants, and **stacked multi-cultural war drums (*Taiko + Thavil + Urumi + Frame Drums*)**.
 * **How the Body Feels:** Primal rage, fearless unity, adrenaline surge.
 
----
-
-## 4.0 The "Electronic" Ontology (5 Distinct Sub-Archetypes)
+## 4.0 Electronic archetypes
 
 > **CRITICAL RULE:** "Electronic" is not a single genre—it is a set of distinct **Groove-to-Spectrum Contracts**. A Berlin Techno listener will reject a bright EDM SuperSaw melody; a Progressive House listener will feel bored by a static 1-note techno loop.
 
@@ -175,9 +115,7 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
 | **4.4 `Electronic_Organic_Deep_Sunset`** *(Anjunadeep / Tulum / Afro-Melodic)* | `118–122 BPM` (`4/4` with `12/8` percussion) | Warm, rounded `58Hz` sine kick (soft attack!) + deep, smooth Moog sub-bass playing sustained `m9` root notes. | Lush, low-passed **Minor 9th (`[0, 3, 7, 10, 14]`)** warm Juno pads + plucked wooden marimba/kalimba/oud arpeggios with long tape delay. | Panned organic shakers, woodblocks, breathy vocal `"Oooo"` pads, and vinyl/rain/desert-wind ambience. |
 | **4.5 `Electronic_Neuro_Kinetic_Bass`** *(Drum & Bass / Liquid / Neurofunk)* | `172–176 BPM` (`4/4` Two-Step Break) | Kick on Step `0` & `10`; Snare on Step `4` & `12` (`200Hz` fundamental pop) + **Reese Bass** (detuned phasing sawtooths with moving notch filters). | Either ultra-lush Jazz/Soul Rhodes `m11` chords (*Liquid DnB*) OR dark sci-fi pitch-gliding bass growls (*Neurofunk*). | High-speed `174 BPM` breakbeat energy contrasted against slow, floating half-time chord pads (`87 BPM` harmonic feel). |
 
----
-
-## 5.0 The "Pop" Ontology (4 Distinct Sub-Archetypes)
+## 5.0 Pop archetypes
 
 > **CRITICAL RULE:** Modern Pop is **Vocal-Centric & Pocket-Driven**. The instruments must leave a carved spectral pocket at `1kHz–3.5kHz` and rely on **syncopated bass-to-kick interplay** rather than cluttered wall-of-sound arrangements.
 
@@ -188,9 +126,7 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
 | **5.3 `Pop_Bedroom_Intimate_Whisper`** *(Billie Eilish / Finneas / Alt-Pop)* | `75–95 BPM` (or `120 BPM` minimal). **Bone-dry, close-mic acoustics** (zero hall reverb!). | Dark Minor + **Resolved/Unresolved Diminished/Harmonic Minor `V7` chord** (`i -> iv -> V7 -> i`). | Deep, clean sub-bass (`45Hz` pure sine) + finger snaps / rim clicks + whispered vocal hum (`200ms` away from the ear) with high breath noise. |
 | **5.4 `Pop_Sunshine_Funk_NuDisco`** *(Bruno Mars / Daft Punk / Parcels)* | `110–118 BPM`. Heavy `16th-note` swing (`57%`) with a loud kick+bass hit on **Beat 1 ("The One")** and ghost-snare syncopation. | **Jazz-Funk Extended Chords:** `ii9` $\rightarrow$ `V13` $\rightarrow$ `IMaj9` $\rightarrow$ `VI7(#9)`. | Clean Nile Rodgers-style 16th-note Stratocaster guitar chucks (`1.5kHz–3.5kHz`) + envelope-filtered synth/slap bass + tight brass section stabs. |
 
----
-
-## 6.0 The "Celtic" Ontology (4 Distinct Sub-Archetypes)
+## 6.0 Celtic archetypes
 
 > **CRITICAL RULE:** "Celtic" has 4 completely different emotional worlds—do not play a fast Tavern Reel when the prompt asks for a Misty Highland Lament or an Enchanted Fae Forest!
 
@@ -201,14 +137,12 @@ When an AI agent is prompted for *"energetic"*, *"adventurous"*, *"upbeat"*, or 
 | **6.3 `Celtic_Fae_Woodland_SlipJig`** *(Enchanted / Elven / Mythic)* | **`9/8` Slip Jig** (`3 + 3 + 3` leaping triplet meter at `120 BPM`). | **Lydian** `[0, 2, 4, 6, 7, 9, 11]` or **Dorian** `[0, 2, 3, 5, 7, 9, 10]`. | **Celtic Lever Harp (*Cláirseach*)** playing cascading 9/8 arpeggios + breathy **Wooden Flute** + soft finger-cymbal/bell sparkles. |
 | **6.4 `Celtic_Highland_Battle_Charge`** *(Scottish Clan / Braveheart / Fierce)* | `4/4` or `6/8` War March (`118–132 BPM`). | **A Mixolydian (Highland Bagpipe Scale)** rocking between **A Major `[0, 4, 7]`** and **G Major `[-2, 2, 5]`** (The *Double-Tonic Shift*!). | **Great Highland Bagpipe** (piercing nasal chanter + 3 roaring bass/tenor drones) + **Scottish *Scotch Snap* (`16th-Dotted-8th`)** snare corps + booming war drums. |
 
----
-
 ## 7.0 Agent Decision Matrix & Python Parameter Schema
 
 An AI Agent or Python script can directly load and execute this dictionary to configure its **Scale, Rhythm Grid, Chord Progression, Melodic Leap Profile, and Spectral/Spatial DSP** for any requested genre + sub-feel:
 
 \`\`\`python
-# MASTER AI-AGENT GENRE & SUB-FEEL CONFIGURATION SCHEMA
+# Genre and sub-feel configuration schema
 GENRE_FEEL_ENGINE_DB = {
     # ================= ADVENTUROUS SUB-ARCHETYPES =================
     "adventurous_forest_mystic": {
@@ -323,9 +257,7 @@ GENRE_FEEL_ENGINE_DB = {
 }
 \`\`\`
 
----
-
-## 8.0 How Your AI Agent Should Route Prompts Using This Ontology
+## 8.0 Routing a prompt to an archetype
 
 When a user prompts your Python music agent:
 1. **Parse the Primary Genre + Secondary Environment/Feel Modifier:**

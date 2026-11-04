@@ -11,32 +11,7 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# The East Asian (Chinese & Japanese) Music Psychoacoustic & Algorithmic DSP Knowledge Base
-**Scope:** Ancient Chinese (*Yayue, Guqin, Jiangnan, Opera*) & Japanese (*Gagaku, Zen Shakuhachi, Min'yō, Kabuki*) $\rightarrow$ Modern *Guofeng* Trap/EDM, J-Rock/Anime (*Royal Road*), City Pop, and Chiptune/Future Bass.
-**Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Pentatonic/Heptatonic Modal Engines, Acoustic Membrane/String Modeling, and Global World Fusions.
-
----
-
-
-## Table of Contents (Machine-Parsable Index)
-- [1.0 Core Psychoacoustics: How the "East Asian Ear" Listens (Yun & Ma)](#1-core-psychoacoustics-how-the-east-asian-ear-listens-yun--ma)
-- [2.0 Chinese Music: From Imperial & Literati Traditions to Modern Guofeng](#2-chinese-music-from-imperial--literati-traditions-to-modern-guofeng)
-  - [2.1 Mathematical Architecture of Chinese Wu Sheng (5-Tone) & Ya Yue (7-Tone) Modes](#21-the-mathematical-architecture-of-chinese-wu-sheng---5-tone--ya-yue-7-tone-modes)
-  - [2.2 Regional Chinese Styles & Rhythmic Engines](#22-regional-chinese-styles--rhythmic-engines)
-  - [2.3 Core Chinese Instruments: Physics & Pure-Python DSP Modeling](#23-core-chinese-instruments-physics--pure-python-dsp-modeling)
-  - [2.4 Modern Chinese Fusions: Guofeng, Zhongguofeng C-Pop & Chinoiserie Trap/EDM](#24-modern-chinese-fusions-guofeng-zhongguofeng-c-pop--chinoiserie-trapedm)
-- [3.0 Japanese Music: From Gagaku, Zen & Samurai Folk to Anime, J-Rock & City Pop](#3-japanese-music-from-gagaku-zen--samurai-folk-to-anime-j-rock--city-pop)
-  - [3.1 Mathematical Architecture of Japanese Scales (Onkai)](#31-the-mathematical-architecture-of-japanese-scales-onkai)
-  - [3.2 Core Japanese Instruments: Physics & Pure-Python DSP Modeling](#32-core-japanese-instruments-physics--pure-python-dsp-modeling)
-  - [3.3 Modern Japanese Genres: J-Pop / Anime (Odo Shinko), City Pop & Kawaii Future Bass](#33-modern-japanese-genres-j-pop--anime-odo-shinko-city-pop--kawaii-future-bass)
-- [4.0 Pure-Python DSP & Algorithmic Parameter Cheat Sheet](#4-pure-python-dsp--algorithmic-parameter-cheat-sheet)
-  - [4.1 East Asian Scale & Mode Lookup Dictionary (Semitone Offsets)](#41-east-asian-scale--mode-lookup-dictionary-semitone-offsets)
-  - [4.2 The Japanese Tsugaru Shamisen Synthesizer](#42-the-japanese-tsugaru-shamisen-synthesizer-bachi-skin-slap--sawari-neck-buzz)
-  - [4.3 The Chinese Beijing Opera Gong (Da Luo & Xiao Luo)](#43-the-chinese-beijing-opera-gong-da-luo-downward-pitch-crash--xiao-luo-upward-slide)
-  - [4.4 East Asian Rhythmic & Groove Matrices](#44-east-asian-rhythmic--groove-matrices-16-step--12-step)
-- [5.0 Cross-cultural Fusion Blueprints](#5-high-voltage-cross-cultural-fusion-blueprints-east-asia--times-tamil--times-arabic--times-africa)
-
----
+# Chinese and Japanese scales, instruments and modern genres
 
 ## 1. Core Psychoacoustics: How the "East Asian Ear" Listens (*Yun* 韵 & *Ma* 間)
 
@@ -48,8 +23,6 @@ While Western music prioritizes vertical chord density and African/Tamil Kuthu m
 | **Time & Tempo** | Constant BPM grid (`120.0 BPM` from start to finish). | **Elastic Tempo Curve (*Sanban* $\rightarrow$ *Manban* $\rightarrow$ *Kuaiban*):** Music starts in free, beatless time (*Sanban*), locks into a slow groove, and accelerates to a frantic climax. | ***Jo-Ha-Kyū* (序破急):** Universal 3-phase arc—*Jo* (slow, auspicious introduction), *Ha* (breaking/developing groove), *Kyū* (rapid, breathless rushing climax, then abrupt stop). | Program global BPM as a piecewise curve: `Free/Rubato (0:00–0:08)` $\rightarrow$ `Mid-Tempo (0:08–0:35)` $\rightarrow$ ` +25% Acceleration Climax (0:35–0:52)` $\rightarrow$ `Sudden Silence`. |
 | **Scale Architecture** | Heptatonic (7-note) scales with strong leading-tone half-steps (`7 -> 8`). | **Anhemitonic Pentatonic (*Wu Sheng* 五声):** Pure 5-note core `[0, 2, 4, 7, 9]` with zero half-steps, using the 4th (`5`) and 7th (`11` or `10`) only as **bent/ornamental passing notes (*Pian Yin*)**! | **Hemitonic Pentatonic (*In / Miyako-bushi* & *Yo*):** Stark, dramatic 5-note scales containing **razor-sharp half-steps** (`[0, 1, 5, 7, 8]`) that create instant samurai/zen tension. | In Chinese modes, generate 90% of notes from the 5 core tones and produce the 4th/7th **only by bending up from the 3rd (`4->5`) or 6th (`9->11`)**! In Japanese modes, emphasize the `0 -> 1` and `7 -> 8` half-step rub. |
 | **Texture** | Homophony (Melody + Chords) or Polyphony. | **Silk & Bamboo Heterophony (*Sizhu* 丝竹):** Plucked strings (*Silk*) and flutes (*Bamboo*) play the same melody simultaneously—Strings play staccato tremolos while Flutes play legato slides. | **Sparse Sankyoku / Chamber Interlock:** Koto, Shamisen, and Shakuhachi shadow each other with deliberate **50ms–120ms phase offsets** so every attack transient is heard clearly. | Offset simultaneous melody layers by `35ms–90ms` rather than quantizing them to the exact same sample index. |
-
----
 
 ## 2. Chinese Music: From Imperial & Literati Traditions to Modern *Guofeng* (国风)
 
@@ -68,9 +41,7 @@ Every traditional and modern *Guofeng* Chinese melody is built on five core note
 > A Guzheng zither is tuned strictly to the 5 pentatonic notes `[0, 2, 4, 7, 9]`. There is **no physical string** for `5` (the 4th, *Fa*) or `11` (the 7th, *Ti*)! To play `5` or `11`, the player plucks `4` (*Mi*) or `9` (*La*) with the right hand and **presses the string down behind the bridge with the left hand**, bending the pitch up by `+100` to `+200 cents`!
 > **In Python:** Never trigger scale degrees `5` or `11` with a fresh pluck transient—always glide into them from `4` or `9`!
 
----
-
-### 2.2 Regional Chinese Styles & Rhythmic Engines
+### 2.2 Regional Chinese styles and rhythms
 1. **Jiangnan Sizhu (江南丝竹 — Southern "Silk & Bamboo", Suzhou/Hangzhou/Shanghai):**
    * *Vibe:* Flowing water, tea houses, misty canals, delicate and ornate.
    * *Algorithmic Rule — "Adding Flowers" (*Jia Hua* 加花):* Take a slow 4/4 skeleton melody and algorithmically fill every long note with rapid 16th-note neighbor-tone ornaments (`Note -> Upper Pentatonic Neighbor -> Note`).
@@ -81,8 +52,6 @@ Every traditional and modern *Guofeng* Chinese melody is built on five core note
      * **Xiao Luo (Small Opera Gong):** Pitch **slides upward** (`380Hz -> 490Hz` over `180ms`) with a bright comedic/heroic "boing-shimmer"!
 3. **Northwest (*Xibei* / Silk Road — Xinjiang, Dunhuang, Shaanxi *Qinqiang*):**
    * Bridging China and Central Asia/Persia! Uses heptatonic scales with a **bitter/passionate neutral or minor 7th (`10`) and raised 4th (`6`)**, backed by **7/8 and 4/4 frame-drum (*Dap*)** and **Pipa** rhythms.
-
----
 
 ### 2.3 Core Chinese Instruments: Physics & Pure-Python DSP Modeling
 1. **Erhu (二胡 — 2-Stringed Python-Skin Bowed Spike Fiddle):**
@@ -98,15 +67,11 @@ Every traditional and modern *Guofeng* Chinese melody is built on five core note
    * *Acoustic Physics:* Has an extra hole between the blowhole and finger holes covered with a **paper-thin reed membrane (*Dimo* 笛膜)**. When blown, the membrane vibrates sympathetically, adding a bright, reedy, buzzing harmonic halo (`2.5kHz–6kHz`) that no Western silver flute possesses!
    * *Python DSP:* Sine + 2nd/3rd harmonics + **Dimo Membrane Modulator** (apply `np.tanh(signal * 4.5)` strictly to a high-passed `2.8kHz` parallel branch mixed at `30%`).
 
----
-
 ### 2.4 Modern Chinese Fusions: *Guofeng* (国风), *Zhongguofeng* C-Pop & *Chinoiserie* Trap/EDM
 * **Zhongguofeng R&B/Pop (Jay Chou / Fang Wenshan Blueprint):**
   * Combines **Western R&B/Hip-Hop boom-bap drums + Piano/Strings (`vi - IV - I - V`)** with a strictly **5-note *Yu* or *Gong* pentatonic vocal/Erhu/Guzheng melody** that avoids half-steps completely.
 * **Modern *Guofeng* Electronic & Wuxia Trap (2018–2026 — *GAI, Lay Zhang, HOYO-Mix / Black Myth: Wukong Style*):**
   * **The Formula:** Hard-hitting **808 Trap Sub-Bass + Drill/Trap Hi-Hat Rolls** (`140 BPM`) fused with an aggressive **Pipa *Lun Zhi* tremolo riff**, **Suona** (piercing Chinese double-reed horn—the twin brother of the Tamil *Nadaswaram*!), and **Beijing Opera *Da Luo* Gong drops** on Beat 1!
-
----
 
 ## 3. Japanese Music: From *Gagaku*, Zen & Samurai Folk to Anime, J-Rock & City Pop
 
@@ -120,8 +85,6 @@ Japanese traditional music possesses some of the most recognizable, emotionally 
 | **Iwato (岩戸)** | `[0, 1, 5, 6, 10]` | Eerie, subterranean, mythological cave of the Sun Goddess, dark trap. | Contains a **Tritone (`6`)** and two minor-2nd intervals (`0->1`, `5->6`)! |
 | **Yo-Scale (陽旋法 — *Min'yō* Folk / Festival)** | `[0, 2, 5, 7, 9]` *(or `[0, 3, 5, 7, 10]`)* | Energetic *Matsuri* (street festival), *Taiko* drumming, heroic Shonen anime. | Contains **zero half-steps**, sounding bold, earthy, and communal. |
 | **Ryukyu / Okinawa Scale (琉球音階)** | `[0, 4, 5, 7, 11]` | Tropical island sunshine, ocean breeze, bittersweet joy (*Sanshin* lute). | Skips the 2nd (`2`) and 6th (`9`), locking onto the bright Major 3rd (`4`) and Major 7th (`11`). |
-
----
 
 ### 3.2 Core Japanese Instruments: Physics & Pure-Python DSP Modeling
 
@@ -145,8 +108,6 @@ Japanese traditional music possesses some of the most recognizable, emotionally 
      * **Shime-Daiko:** Rope-tensioned snare-like high drum playing accelerating *Ji-uchi* (`Don-oko-Don-oko` `12/8` swing rolls).
      * **Kakegoe (掛け声):** Energetic martial vocal shouts (*"So-re!", "Yo-i!", "Ha!"*) placed in the rhythmic rests!
 
----
-
 ### 3.3 Modern Japanese Genres: J-Pop / Anime (*Odo Shinkō*), City Pop & Kawaii Future Bass
 
 1. **The "Royal Road" Progression (*Ōdō Shinkō* 王道進行 — The Heart of J-Pop, J-Rock & Anime Themes):**
@@ -158,8 +119,6 @@ Japanese traditional music possesses some of the most recognizable, emotionally 
    * **Timbral DNA:** Slap Bass octave pops + crisp Nile Rodgers-style clean Stratocaster 16th-note scratches + Yamaha DX7 FM Electric Piano + tight 80s gated snare + soaring brass section stabs.
 3. **Wagakki-Rock / "Samurai Trap" / Anime Boss Music (*Naruto / Demon Slayer / Wagakki Band Style*):**
    * Fuses a **165 BPM Double-Kick Heavy Metal / J-Rock drum kit** (or **140 BPM Hard Trap 808s**) with a **Tsugaru Shamisen** shredding 16th-note *In-Sen* `[0, 1, 5, 7, 10]` riffs, **Shakuhachi *Muraiki*** blasts, and **Taiko + Kakegoe ("Yo-oh!")** rhythmic breaks!
-
----
 
 ## 4. Pure-Python DSP & Algorithmic Parameter Cheat Sheet
 
@@ -275,9 +234,7 @@ EAST_ASIAN_GROOVES = {
 }
 \`\`\`
 
----
-
-## 5. Cross-cultural Fusion Blueprints (East Asia $\times$ Tamil $\times$ Arabic $\times$ Africa)
+## 5. Fusion patterns (East Asia, Tamil, Arabic, Africa)
 
 Look at the mathematical bridges between your knowledge bases—some of these scales and instruments are **secret twins across continents**:
 

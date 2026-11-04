@@ -11,37 +11,11 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# The Universal Dynamic Musical Flow Engine & Extended Genre Ontology (Lo-Fi, Ambient, Horror, Jazz, Rock, Gaming)
-**Purpose:**
-1. Expand the AI Agent's sub-feel vocabulary across **Lo-Fi, Ambient, Horror/Suspense, Jazz, Rock/Metal, and Gaming Boss Themes**.
-2. Provide **Universal General Instructions for Natural Musical Flow** so the engine generates music as a **living, breathing thermodynamic curve** rather than a static, copy-pasted loop.
-
----
-
-## Table of Contents (Machine-Parsable Index)
-- [1.0 Universal General Instructions: The 7 Laws of Natural Musical Flow](#10-universal-general-instructions-the-7-laws-of-natural-musical-flow)
-  - [1.1 LAW 1: The Anti-Loop Mandate (Mutation Over Repetition)](#11-law-1-the-anti-loop-mandate-mutation-over-repetition)
-  - [1.2 LAW 2: Phrase Respiration (The Lung-Capacity Envelope)](#12-law-2-phrase-respiration-the-lung-capacity-envelope)
-  - [1.3 LAW 3: Thermodynamic Energy Conservation (Tension vs. Density)](#13-law-3-thermodynamic-energy-conservation-tension-vs-density)
-  - [1.4 LAW 4: Conversational Call-and-Response (Zero Simultaneous Clutter)](#14-law-4-conversational-call-and-response-zero-simultaneous-clutter)
-  - [1.5 LAW 5: Transition Physics (Pre-Drop Vacuums & Pickups)](#15-law-5-transition-physics-pre-drop-vacuums--pickups)
-  - [1.6 LAW 6: Spectral Slot Allocation (Anti-Mud Masking)](#16-law-6-spectral-slot-allocation-anti-mud-masking)
-  - [1.7 LAW 7: Dynamic Parameter Interpolation (For Any Unseen Genre)](#17-law-7-dynamic-parameter-interpolation-for-any-unseen-genre)
-- [2.0 The "Lo-Fi & Chill" Ontology (4 Distinct Sub-Archetypes)](#20-the-lo-fi--chill-ontology-4-distinct-sub-archetypes)
-- [3.0 The "Ambient & Atmospheric" Ontology (4 Distinct Sub-Archetypes)](#30-the-ambient--atmospheric-ontology-4-distinct-sub-archetypes)
-- [4.0 The "Horror, Suspense & Dark" Ontology (4 Distinct Sub-Archetypes)](#40-the-horror-suspense--dark-ontology-4-distinct-sub-archetypes)
-- [5.0 The "Jazz, Soul & Groove" Ontology (4 Distinct Sub-Archetypes)](#50-the-jazz-soul--groove-ontology-4-distinct-sub-archetypes)
-- [6.0 The "Rock, Metal & Punk" Ontology (4 Distinct Sub-Archetypes)](#60-the-rock-metal--punk-ontology-4-distinct-sub-archetypes)
-- [7.0 The "Gaming & Boss Battle" Ontology (4 Distinct Sub-Archetypes)](#70-the-gaming--boss-battle-ontology-4-distinct-sub-archetypes)
-- [8.0 Dynamic Flow Engine: Pure-Python Implementation](#80-dynamic-flow-engine-pure-python-implementation)
-
----
+# Musical flow rules and lo-fi, ambient, horror, jazz, rock and game archetypes
 
 ## 1.0 Universal General Instructions: The 7 Laws of Natural Musical Flow
 
 > **SYSTEM DIRECTIVE FOR AI AGENTS:** Never treat a musical track as a static grid where `Bar 1 == Bar 2 == Bar 3 == Bar 4`. Human ears habituate to exact repetition within **6.5 seconds**, causing the brain to tune out the music as "robotic background noise." To create **Natural Flow** in any genre on Earth, enforce these **7 Universal Laws**:
-
----
 
 ### 1.1 LAW 1: The Anti-Loop Mandate (`A -> A' -> B -> A''` Fractal Architecture)
 Never repeat a 2-bar or 4-bar phrase identically. Every 4-bar cycle must follow the **Universal Narrative Arc**:
@@ -87,9 +61,7 @@ If a prompt asks for a mood or fusion not explicitly hardcoded in a dictionary (
 * `Harmonic_Darkness` (`Lydian #4` [Brightest] $\rightarrow$ `Major` $\rightarrow$ `Mixolydian` $\rightarrow$ `Dorian` $\rightarrow$ `Aeolian` $\rightarrow$ `Phrygian` $\rightarrow$ `Locrian b5` [Darkest])
 * `Transient_Hardness` (`0.05` = Ambient Pad $\leftrightarrow$ `0.95` = Industrial/Kuthu Slap)
 
----
-
-## 2.0 The "Lo-Fi & Chill" Ontology (4 Distinct Sub-Archetypes)
+## 2.0 Lo-fi and chill archetypes
 
 > **CRITICAL RULE:** Lo-Fi is defined by **Intentional Imperfection (Pitch Wow/Flutter, High-Frequency Roll-Off above `6.5kHz`, and Un-Quantized Micro-Timing)**. A crystal-clear, quantized 4/4 beat destroys Lo-Fi immediately.
 
@@ -100,9 +72,7 @@ If a prompt asks for a mood or fusion not explicitly hardcoded in a dictionary (
 | **2.3 `LoFi_Cozy_Coffee_Bossa`** *(Acoustic / Sunday Morning / Warm)* | `102–112 BPM`. Uses the **Rio Bossa Nova Clave** (`Steps 0, 3, 6, 10, 13`) with soft brush-snare swishes. | **Jobim Bossa Harmony:** `IMaj9` $\rightarrow$ `II13` $\rightarrow$ `ii9` $\rightarrow$ `V7(b13)`. | Nylon-string acoustic guitar (finger-plucked) + breathy flute or muted trumpet + quiet café/cup-clink room ambience. |
 | **2.4 `LoFi_Vaporwave_Mall_Nostalgia`** *(80s/90s Liminal Space / Slowed)* | `65–78 BPM` (Sounds like a `105 BPM` 80s Boogie/City-Pop track **pitched down `-5 semitones` and slowed by `30%`**!). | **Lydian / Major 9th Sus4** (`IVMaj9 -> V11 -> iii7 -> vi9`). | Chorus-drenched DX7 FM Rhodes + gated snare slowed down into a massive `600ms` low-passed splash + lush 4-second hall reverb. |
 
----
-
-## 3.0 The "Ambient & Atmospheric" Ontology (4 Distinct Sub-Archetypes)
+## 3.0 Ambient and atmospheric archetypes
 
 > **CRITICAL RULE:** Ambient music replaces **Rhythmic Grid Time** with **Spectral Evolution Time**. There are no standard drum beats; movement comes from **slow LFO modulation (`0.05Hz to 0.25Hz`), phase-beating between long loops, and harmonic overtone shifts**.
 
@@ -113,9 +83,7 @@ If a prompt asks for a mood or fusion not explicitly hardcoded in a dictionary (
 | **3.3 `Ambient_Bioluminescent_Ocean`** *(Underwater / Nature / Weightless)* | Slow `3/4` or `12/8` wave-swell pulse (`55 BPM`, no drums). | **Mixolydian / Dorian** (`I(add9) <-> v7` rocking motion like ocean tides). | **Resonant Lowpass Filter (`400Hz <-> 1.6kHz`)** driven by a slow `0.12Hz` wave + harp/marimba droplets with ping-pong delay (`375ms`). |
 | **3.4 `Ambient_Generative_Tape_Loops`** *(Brian Eno / Disintegration Loops)* | **Incommensurable Loop Lengths!** Voice 1 loops every `5.3s`, Voice 2 every `7.1s`, Voice 3 every `11.7s`—never aligning twice! | **Major Pentatonic** `[0, 2, 4, 7, 9]` with an occasional `Maj7 (11)`. | Soft felt-piano notes (high-cut at `1.5kHz` + `15ms` wooden hammer thud) + warm tape saturation. |
 
----
-
-## 4.0 The "Horror, Suspense & Dark" Ontology (4 Distinct Sub-Archetypes)
+## 4.0 Horror, suspense and dark archetypes
 
 > **CRITICAL RULE:** Fear in the human auditory cortex is triggered by **Violation of Harmonic & Temporal Expectation**: non-linear vocal/string shrieks (mimicking distress calls), infrasonic pressure (`<40Hz`), and **unpredictable silence**.
 
@@ -126,9 +94,7 @@ If a prompt asks for a mood or fusion not explicitly hardcoded in a dictionary (
 | **4.3 `Horror_Cosmic_Lovecraft_Dread`** *(Alien / Void / Insanity)* | **The Shepard-Risset Glissando Illusion** (A tone that appears to rise or fall infinitely without ever getting higher or lower!). | **Atonal Microtonal Cluster:** 6 voices starting on `0.0` and fanning outward in `35-cent` increments (`[0.0, 0.35, 0.70, 1.05, 1.40]`). | Brass + Choir Formants sliding slowly apart in pitch while a `36Hz` sub-bass pulse throbs at `0.5Hz`. |
 | **4.4 `Horror_Slasher_Industrial_Panic`** *(Chase / Adrenaline / Terror)* | **Polyrhythmic Stutter Panic (`155 BPM`)** with sudden 1-beat dead silences followed by `+0dB` metallic jump-scare stabs. | **Tritone & Minor-9th Stabs (`[0, 6, 13]`)** (The most dissonant 3-note chord in acoustics!). | **Waterphone / Bowed Metal:** Sum of 15 inharmonic sine waves (`f0 * [1.0, 1.37, 1.83, 2.41...]`) with rapid upward pitch-bends + distorted industrial anvil hits. |
 
----
-
-## 5.0 The "Jazz, Soul & Groove" Ontology (4 Distinct Sub-Archetypes)
+## 5.0 Jazz, soul and groove archetypes
 
 > **CRITICAL RULE:** Jazz is defined by **Walking Bass Gravity (Beats 1, 2, 3, 4), Ride Cymbal Swing (`1 — 2-a — 3 — 4-a`), and Guide-Tone Voice Leading (3rds and 7ths resolving smoothly by half-steps)**.
 
@@ -139,9 +105,7 @@ If a prompt asks for a mood or fusion not explicitly hardcoded in a dictionary (
 | **5.3 `Jazz_NeoSoul_Velvet_Pocket`** *(D'Angelo / Erykah Badu / Robert Glasper)* | `82–92 BPM`. **Extreme Laid-Back Pocket:** Snare hits `+15ms to +22ms` *behind* the grid beat; bass hits `+10ms` behind the kick. | **Clustered Rhodes Voicings:** `m11` and `Maj9(#11)` where the **2nd (`2`) and Minor 3rd (`3`) rub right next to each other** in the middle register (`[0, 10, 14, 15, 19]`). | Warm electric bass with fast hammer-on grace notes (`0 -> 2` in `30ms`) + silky vocal/synth hums. |
 | **5.4 `Jazz_Gypsy_Manouche_Swing`** *(Django Reinhardt / Paris Café)* | `165–190 BPM` (`4/4`). **La Pompe Rhythm Guitar** (Zero drums! Acoustic guitars strum a percussive muted `"Chuk-CHA, Chuk-CHA"` on every beat). | **Minor Swing:** `i6` (`[0, 3, 7, 9]`) $\rightarrow$ `iv6` (`[5, 8, 12, 14]`) $\rightarrow$ `V7(b9)` $\rightarrow$ `i6`. | Acoustic guitar + Solo Violin shredding rapid **Diminished 7th arpeggios** (`[2, 5, 8, 11, 14, 17]`) over the `V7` chord! |
 
----
-
-## 6.0 The "Rock, Metal & Punk" Ontology (4 Distinct Sub-Archetypes)
+## 6.0 Rock, metal and punk archetypes
 
 > **CRITICAL RULE:** Rock and Metal rely on **Guitar Amp Non-Linearity (`tanh` / asymmetric tube clipping)**, **Power Chords (`[0, 7, 12]`)**, and **Live Drum Kit Room Bleed**. Never send full 4-note jazz chords into heavy distortion!
 
@@ -152,9 +116,7 @@ If a prompt asks for a mood or fusion not explicitly hardcoded in a dictionary (
 | **6.3 `Metal_Djent_Cyber_Aggression`** *(DOOM Eternal / Meshuggah / Modern Metal)* | `135–150 BPM`. **Polyrhythmic Kick + China Cymbal:** China cymbal hits steady 4/4 quarter notes while Kick + 8-String Guitar hammer a **`5/16` or `7/16` Euclidean syncopation**! | **Low-Tuned Phrygian/Chromatic Chug (`F1 = 43.65 Hz`):** Palm-muted `0 - 0 - 1 - 0` semitone chugs interrupted by dissonant minor-2nd pitch-scream harmonics. | Ultra-tight **Noise Gate** that snaps shut in `3ms` after every palm-muted chug so the silences between hits are surgical! |
 | **6.4 `Rock_Surf_Spaghetti_Western`** *(Tarantino / Morricone / Reverb Twang)* | `145–160 BPM` (`4/4` Driving Tom/Snare gallop: `1-e-&-a 2-& 3-e-&-a 4-&`). | **Harmonic/Natural Minor:** `i` $\rightarrow$ `bVII` $\rightarrow$ `bVI` $\rightarrow$ `V7` with dramatic pause breaks. | Fender Jaguar-style single-coil guitar picked near the bridge (`bright 2.5kHz–5kHz`) through a **Dripping Wet Spring Reverb tank** + whistling/trumpet lead. |
 
----
-
-## 7.0 The "Gaming & Boss Battle" Ontology (4 Distinct Sub-Archetypes)
+## 7.0 Game and boss-battle archetypes
 
 | Sub-Archetype | BPM & Meter | Melodic & Harmonic Engine | Signature Gaming Timbre |
 | :--- | :--- | :--- | :--- |
@@ -163,9 +125,7 @@ If a prompt asks for a mood or fusion not explicitly hardcoded in a dictionary (
 | **7.3 `Gaming_Cozy_Village_Town_Theme`** *(Zelda / Animal Crossing / Stardew)* | `104–116 BPM` (`3/4` Waltz or bouncy `4/4` with `Beat 1 & 3` tuba/bass oom-pah). | **Ionian (Major) with Borrowed `IV -> iv` Minor Plagal Cadence** (creates warm, nostalgic charm!). | Plucked **Acoustic Guitar / Mandolin + Ocarina / Recorder Flute + Marimba + Accordion + Tambourine**. |
 | **7.4 `Gaming_Cyber_Stealth_Infiltration`** *(Metal Gear / Cyberpunk / Hacker)* | `110–125 BPM` (`5/4` Mission-Impossible meter `[1,0,0, 1,0,0, 1,0, 1,0]` OR `4/4` breakbeat). | **Dorian #4 (*Ukrainian Dorian* `[0, 2, 3, 6, 7, 9, 10]`)**. | Muted pulsing synth bass + metallic sonar pings (`2.4kHz` sine droplet with long feedback delay) + glitchy hi-hat ratchets. |
 
----
-
-## 8.0 Dynamic Flow Engine: Pure-Python Implementation
+## 8.0 Flow arranger listing
 
 Copy this **Universal Dynamic Flow Arranger** into your Python codebase. It implements **The 7 Laws of Natural Musical Flow** (`A -> A' -> B -> A''` motif mutation, lung-capacity phrasing, thermodynamic energy curves $E(t)$, conversational call-and-response, and pre-drop vacuums) for **any genre dictionary**:
 
@@ -262,8 +222,6 @@ class DynamicMusicalFlowEngine:
             return True
         return False
 \`\`\`
-
----
 
 ## 9.0 How Your AI Agent Combines Everything Dynamically
 

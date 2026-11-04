@@ -11,39 +11,7 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# The Commercial, Corporate, Motivational, Modern Musicals & Reverb DSP Knowledge Base
-**Scope:** Modern Tech Corporate $\rightarrow$ High-Energy Promotional/Adverts $\rightarrow$ Inspiring/Motivational Cinematic $\rightarrow$ Modern Musical Theater (Pop-Operetta / Lin-Manuel / Broadway) $\rightarrow$ Pure-Python Algorithmic Reverb Engines (*Schroeder/Moorer, Shimmer, Gated, Infinite Dune Hall*).
-**Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Persuasion Psychoacoustics, Voice-Over (VO) Ducking Architecture, and Spatial Acoustics.
-
----
-
-## Table of Contents (Machine-Parsable Index)
-- [1.0 Commercial Psychoacoustics: The Science of Musical Persuasion](#10-commercial-psychoacoustics-the-science-of-musical-persuasion)
-  - [1.1 The "Voice-Over First" Contract (Anti-VO Masking)](#11-the-voice-over-first-contract-anti-vo-masking)
-  - [1.2 The "Dopamine Arc" (Instant 3-Second Hook & Micro-Lifts)](#12-the-dopamine-arc-instant-3-second-hook--micro-lifts)
-- [2.0 Corporate & Tech Audio Architecture](#20-corporate--tech-audio-architecture)
-  - [2.1 ARCHETYPE: Corporate_SiliconValley_Uplift (Clean / Glitch / Acoustic)](#21-archetype-corporate_siliconvalley_uplift-clean--glitch--acoustic)
-  - [2.2 ARCHETYPE: Corporate_Fintech_Minimal_Pulse (Sleek / Serious / Trust)](#22-archetype-corporate_fintech_minimal_pulse-sleek--serious--trust)
-  - [2.3 ARCHETYPE: Corporate_Green_Eco_Acoustic (Organic / Fingerpicking / Earth)](#23-archetype-corporate_green_eco_acoustic-organic--fingerpicking--earth)
-- [3.0 Promotional & High-Energy Advert Architecture](#30-promotional--high-energy-advert-architecture)
-  - [3.1 ARCHETYPE: Promo_Stomp_Clap_IndieRock (The Black Keys / Viral Ad Drive)](#31-archetype-promo_stomp_clap_indierock-the-black-keys--viral-ad-drive)
-  - [3.2 ARCHETYPE: Promo_Fashion_Luxury_House (Deep Chic / Bassline Strut)](#32-archetype-promo_fashion_luxury_house-deep-chic--bassline-strut)
-  - [3.3 ARCHETYPE: Promo_Automotive_Cyber_Drive (Pounding Industrial Hybrid)](#33-archetype-promo_automotive_cyber_drive-pounding-industrial-hybrid)
-- [4.0 Motivational & Inspiring Cinematic Architecture](#40-motivational--inspiring-cinematic-architecture)
-  - [4.1 ARCHETYPE: Motivational_TedTalk_Ascent (Minimal Piano to Orchestral Swell)](#41-archetype-motivational_tedtalk_ascent-minimal-piano-to-orchestral-swell)
-  - [4.2 ARCHETYPE: Motivational_Olympic_Triumph (Heroic Horns / Stadium Euphoria)](#42-archetype-motivational_olympic_triumph-heroic-horns--stadium-euphoria)
-- [5.0 Modern Musical Theater (Broadway & West End) Architecture](#50-modern-musical-theater-broadway--west-end-architecture)
-  - [5.1 ARCHETYPE: Musical_LinManuel_Syncopated_History (Hamilton / Rap-Showtune)](#51-archetype-musical_linmanuel_syncopated_history-hamilton--rap-showtune)
-  - [5.2 ARCHETYPE: Musical_PasekPaul_PopBelter (Dear Evan Hansen / Greatest Showman)](#52-archetype-musical_pasekpaul_popbelter-dear-evan-hansen--greatest-showman)
-  - [5.3 ARCHETYPE: Musical_Sondheim_Neurotic_Vamp (Complex Syncopation / Patter)](#53-archetype-musical_sondheim_neurotic_vamp-complex-syncopation--patter)
-- [6.0 The Complete Algorithmic Reverb Encyclopedia (DSP Physics)](#60-the-complete-algorithmic-reverb-encyclopedia-dsp-physics)
-  - [6.1 Schroeder / Moorer Reverb Topology (Comb + All-Pass Networks)](#61-schroeder--moorer-reverb-topology-comb--all-pass-networks)
-  - [6.2 The Shimmer Reverb Engine (Pitch-Shifted Feedback Loop)](#62-the-shimmer-reverb-engine-pitch-shifted-feedback-loop)
-  - [6.3 80s Phil Collins Gated Reverb](#63-80s-phil-collins-gated-reverb)
-  - [6.4 The "Infinite Dune / Cathedral" Reverb Topology](#64-the-infinite-dune--cathedral-reverb-topology)
-- [7.0 Pure-Python DSP Module: Voice-Over Ducking & Multi-Reverb Engine](#70-pure-python-dsp-module-voice-over-ducking--multi-reverb-engine)
-
----
+# Commercial, corporate, motivational and musical-theatre audio
 
 ## 1.0 Commercial Psychoacoustics: The Science of Musical Persuasion
 
@@ -55,16 +23,12 @@ Commercial and corporate audio does **not** exist for passive artistic indulgenc
 | **Optimism & Forward Movement** | **Ascending Stepwise Arpeggios & Metric Acceleration:** Upward melodic leaps trigger micro-dopamine releases in the prefrontal cortex. | **The "Lydian Lift" (`#4 = 6` semitones):** Lydian hints at limitless possibility, futuristic innovation, and technological breakthrough. | Program repeating 16th-note ostinatos (*Muted Acoustic Guitar, Marimba, Glockenspiel*) that climb `0 -> 2 -> 4 -> 7 -> 9` steps. |
 | **Inclusivity & Human Connection** | **Organic Body Foley (Claps, Snaps, Whistles, Footsteps):** Activates mirror neurons; simulates a communal group working together. | **Simple Pentatonic Hooks (`[0, 2, 4, 7, 9]`):** Universally singable by any human across all cultural backgrounds. | Layer multi-tracked human handclaps (`Bandpass 1.1kHz–2.6kHz`) with slight human timing scatter (`±14ms`) on beats 2 and 4. |
 
----
-
 ### 1.1 The "Voice-Over First" Contract (Anti-VO Masking)
 In 95% of commercials, YouTube ads, and corporate presentations, a spoken **Voice-Over (VO)** sits on top of the music.
 * **The Problem:** The human voice concentrates its linguistic intelligibility between **`800Hz and 3,500Hz`** (formant frequencies for consonants and vowels). If the background music has heavy synths, distorted guitars, or loud snare drums in this band, the voice becomes unintelligible.
 * **The Algorithmic Solution:**
   1. **Static Spectral Carving:** Apply a permanent wide **Bell Notch Filter (`-4dB to -6dB`, `Q = 1.2`) centered at `1,800Hz`** across all chordal instruments (pianos, electric guitars, synth pads).
   2. **Automated Ducking Envelope:** Whenever voice activity is detected, smoothly attenuate the entire music bed by **`-8dB to -14dB`** using an attack of `25ms` and a release of `250ms–350ms`.
-
----
 
 ### 1.2 The "Dopamine Arc" (Instant 3-Second Hook & Micro-Lifts)
 Unlike a classical symphony that can take 5 minutes to develop, commercial tracks must obey strict **temporal milestones**:
@@ -74,11 +38,7 @@ Unlike a classical symphony that can take 5 minutes to develop, commercial track
 * **Seconds 30.0 – 45.0 (The Climax / "Call to Action"):** Bring in full drums, driving bass, and soaring major chords.
 * **Final 3 Seconds (The Logo Sting):** A sharp rhythmic cutoff followed by a clean, isolated **3- or 4-note Brand Audio Logo (Mnemonic)** ringing out into pristine silence.
 
----
-
 ## 2.0 Corporate & Tech Audio Architecture
-
----
 
 ### 2.1 ARCHETYPE: `Corporate_SiliconValley_Uplift` (Clean / Glitch / Acoustic)
 * **Target:** Apple/Google product launches, SaaS platform demos, startup pitch videos.
@@ -92,8 +52,6 @@ Unlike a classical symphony that can take 5 minutes to develop, commercial track
     * **Percussion:** Subtle electronic micro-glitches (`10ms` high-passed clicks at `4kHz`) + light wooden rim-click + deep, gentle sine kick (`55Hz`, zero distortion).
     * **The "Uplift" Bell:** Glockenspiel or Celesta hitting high bell notes on the upbeats (`"ands"` of beats 2 and 4).
 
----
-
 ### 2.2 ARCHETYPE: `Corporate_Fintech_Minimal_Pulse` (Sleek / Serious / Trust)
 * **Target:** Wealth management, enterprise cybersecurity, AI infrastructure, B2B presentations.
 * **Psychoacoustic Profile:** Sophisticated, authoritative, precise, unhurried, reassuring.
@@ -106,8 +64,6 @@ Unlike a classical symphony that can take 5 minutes to develop, commercial track
     * **Felt Piano:** Acoustic piano filtered at `2.2kHz` with amplified mechanical hammer thud.
     * **Subtle Stereo Ping-Pong Delay:** Single-note muted guitar or synth plucks bouncing between Left (`180ms`) and Right (`360ms`).
 
----
-
 ### 2.3 ARCHETYPE: `Corporate_Green_Eco_Acoustic` (Organic / Fingerpicking / Earth)
 * **Target:** Environmental sustainability reports, outdoor lifestyle, organic agriculture.
 * **Psychoacoustic Profile:** Human, unhurried, pastoral, honest, hand-crafted.
@@ -116,11 +72,7 @@ Unlike a classical symphony that can take 5 minutes to develop, commercial track
   * **Scale:** **Major Pentatonic** `[0, 2, 4, 7, 9]`.
   * **Instrumentation:** Dual finger-picked steel-string acoustic guitars (panned 80% Left and 80% Right in `DADGAD` open tuning) + gentle upright bass + soft foot-stomp + cajon brush strokes.
 
----
-
 ## 3.0 Promotional & High-Energy Advert Architecture
-
----
 
 ### 3.1 ARCHETYPE: `Promo_Stomp_Clap_IndieRock` (The "Black Keys / Miller Lite" Viral Ad Drive)
 * **Target:** Retail sales, truck commercials, beverage promos, high-energy festival announcements.
@@ -135,8 +87,6 @@ Unlike a classical symphony that can take 5 minutes to develop, commercial track
     * **Step 12 (`Beat 4`):** Massive handclap + vocal shout (*"HEY!"*).
   * **Riff Engine:** Overdriven fuzz bass (`np.tanh(x * 3.5)`) doubling a gritty electric guitar riff in octaves.
 
----
-
 ### 3.2 ARCHETYPE: `Promo_Fashion_Luxury_House` (Deep Chic / Bassline Strut)
 * **Target:** Perfume ads, runway recaps, luxury cosmetics, sports-car evening commercials.
 * **Psychoacoustic Profile:** Exclusive, seductive, European, velvet, hypnotic.
@@ -146,8 +96,6 @@ Unlike a classical symphony that can take 5 minutes to develop, commercial track
   * **Rhythmic Engine:** Four-on-the-floor kick (`52Hz`) ducking a clean, syncopated **Korg M1 Organ / FM Slap Bass** that dances around the 16th-note off-beats (`Steps 2, 5, 8, 11, 14`).
   * **Spatial Ambiance:** Soft whispered female French/English vocables + open hi-hats treated with short, ultra-wide stereo plate reverb (`1.2s`).
 
----
-
 ### 3.3 ARCHETYPE: `Promo_Automotive_Cyber_Drive` (Pounding Industrial Hybrid)
 * **Target:** Electric vehicle launches, athletic training gear, extreme sports.
 * **Psychoacoustic Profile:** High torque, futuristic precision, relentless power, adrenaline.
@@ -156,11 +104,7 @@ Unlike a classical symphony that can take 5 minutes to develop, commercial track
   * **Scale:** **Phrygian** `[0, 1, 3, 5, 7, 8, 10]`.
   * **DSP Profile:** Aggressive wave-folded reese bass + metallic engine-gear transient clicks + accelerating 32nd-note snare builds exploding into a heavy sub-drop.
 
----
-
 ## 4.0 Motivational & Inspiring Cinematic Architecture
-
----
 
 ### 4.1 ARCHETYPE: `Motivational_TedTalk_Ascent` (Minimal Piano to Orchestral Swell)
 * **Target:** Keynote presentations, biographical documentaries, corporate vision manifestos.
@@ -171,8 +115,6 @@ Unlike a classical symphony that can take 5 minutes to develop, commercial track
   3. **Phase 3 (The Breakthrough — 0:45 to 1:15):** Cinematic tom-drum roll brings in a wide French horn section playing the main theme, backed by a driving 8th-note live drum kit.
   4. **Phase 4 (The Triumph / Climax — 1:15 to End):** Full orchestral strings playing soaring octaves, crashes on every chord change, choir pad, and an upward resolving cadence (`IV -> V -> I(add9)`).
 
----
-
 ### 4.2 ARCHETYPE: `Motivational_Olympic_Triumph` (Heroic Horns / Stadium Euphoria)
 * **Target:** Sports championship montages, space exploration milestones, national ceremonies.
 * **Psychoacoustic Profile:** Goosebumps, tears of pride, monumental achievement.
@@ -181,13 +123,9 @@ Unlike a classical symphony that can take 5 minutes to develop, commercial track
   * **Chord Engine:** `I` $\rightarrow$ `V/7th` $\rightarrow$ `vi` $\rightarrow$ `iii` $\rightarrow$ `IV` $\rightarrow$ `I/3rd` $\rightarrow$ `ii7` $\rightarrow$ `V(sus4 -> 3)`.
   * **The "Triumph" Fanfare:** Brass horns leaping **upward by an Octave (`+12`) or Major 6th (`+9`)**, holding the note with a rich `5.2Hz` vibrato while snare drums roll beneath.
 
----
-
 ## 5.0 Modern Musical Theater (Broadway & West End) Architecture
 
 Modern musical theater is one of the most musically sophisticated commercial genres in existence—it blends **operatic leitmotifs, Golden-Age counterpoint, and hyper-modern pop, hip-hop, and rock production**.
-
----
 
 ### 5.1 ARCHETYPE: `Musical_LinManuel_Syncopated_History` (*Hamilton* / *In The Heights* Style)
 * **The Genius Concept:** Telling dramatic, historical, or cultural stories by fusing **Broadway showtune harmony with Golden-Era 90s Boom-Bap, Trap, and Salsa/Afro-Caribbean polyrhythms**.
@@ -196,8 +134,6 @@ Modern musical theater is one of the most musically sophisticated commercial gen
   * **Scale:** **Dorian** `[0, 2, 3, 5, 7, 9, 10]` or **Harmonic Minor** `[0, 2, 3, 5, 7, 8, 11]`.
   * **The "Hamilton Vamp":** Fast, syncopated harpsichord, upright piano, or cello playing staccato 16th-note riffs (`[0, 0, 12, 10, 7, 5, 3, 0]`) locked tightly with a crisp 90s hip-hop kick and snappy snare.
   * **The Polyrhythmic Vocal Ensemble:** 3 to 4 characters singing completely different lyrics simultaneously in interlocking rhythmic meters (Hocketing), suddenly locking into a single **shouted unison punch on Beat 4!**
-
----
 
 ### 5.2 ARCHETYPE: `Musical_PasekPaul_PopBelter` (*Dear Evan Hansen* / *The Greatest Showman* Style)
 * **The Genius Concept:** Modern radio pop power-ballad structure infused with theatrical character vulnerability and massive, stadium-sized vocal climaxes.
@@ -208,8 +144,6 @@ Modern musical theater is one of the most musically sophisticated commercial gen
     * **Chorus:** `I` $\rightarrow$ `V` $\rightarrow$ `vi7` $\rightarrow$ `IV(add9)` with the melody soaring to the **Chest-Voice High Belt Register (`G4 to C5` for males, `C5 to F5` for females)**!
   * **The Dramatic "Pasek & Paul" Modulatory Shift:** In the final chorus, shift the entire key **up by a Minor 3rd (`+3 semitones`) or Whole Step (`+2 semitones`)** on the downbeat of the climax!
 
----
-
 ### 5.3 ARCHETYPE: `Musical_Sondheim_Neurotic_Vamp` (Complex Syncopation / Patter)
 * **The Genius Concept:** Expressing inner human psychology, anxiety, and intellectual conflict through **asymmetrical meters, dissonant chromatic inner voices, and rapid-fire patter songs**.
 * **Musical Mathematics:**
@@ -217,13 +151,9 @@ Modern musical theater is one of the most musically sophisticated commercial gen
   * **Harmony:** Heavy use of **Major 7ths with augmented 4ths (`Maj7#11`)** and **chromatically shifting vamp chords** (e.g., `C Major -> C# diminished -> D minor -> D# diminished`).
   * **The Patter Riff:** Staccato woodwinds (Clarinet, Bassoon, Oboe) playing continuous 16th-note oscillations like an intricate clockwork machine.
 
----
-
 ## 6.0 The Complete Algorithmic Reverb Encyclopedia (DSP Physics)
 
 In algorithmic audio synthesis, you must never rely on black-box plugins. Here is the mathematical architecture of the **4 essential reverb topologies**:
-
----
 
 ### 6.1 Schroeder / Moorer Reverb Topology (The Foundation)
 Invented by Manfred Schroeder and extended by James Moorer. Simulates room acoustic density without eating CPU:
@@ -234,9 +164,7 @@ Invented by Manfred Schroeder and extended by James Moorer. Simulates room acous
 * **All-Pass Filter (Increases Echo Density without Coloration):**
   $$y[n] = -g \cdot x[n] + x[n - D] + g \cdot y[n - D]$$
 
----
-
-### 6.2 The Shimmer Reverb Engine (The "/ Ethereal" Pad Maker)
+### 6.2 Shimmer reverb (ethereal pads)
 * **Acoustic Physics:** Popularized by Brian Eno and Daniel Lanois. A portion of the reverb decay tail is **pitch-shifted upward by an exact Octave (+12 semitones / $2 \times$ speed)** and fed back into the reverb tank!
 * **Psychoacoustic Effect:** Every note played on an acoustic guitar or piano causes a shimmering, angelic choir-like string pad to swell upward out of nowhere.
 * **DSP Algorithm:**
@@ -245,8 +173,6 @@ Invented by Manfred Schroeder and extended by James Moorer. Simulates room acous
   3. Lowpass filter the pitch-shifted signal at `4.5kHz` (prevents harshness).
   4. Feed back into the input of the reverb tank with a gain of `0.35`!
 
----
-
 ### 6.3 80s Phil Collins Gated Reverb (The Punch Machine)
 * **Acoustic Physics:** Born accidentally in 1979 at Townhouse Studios (Hugh Padgham & Phil Collins). A massive, explosive drum room reverb is **slammed shut by a hard noise gate** before it can naturally decay.
 * **DSP Algorithm:**
@@ -254,17 +180,13 @@ Invented by Manfred Schroeder and extended by James Moorer. Simulates room acous
   2. At `t = 200ms`, drop the gain of the reverb tail from `1.0` to **`0.0001` (`-80dB`) over a sharp `15ms` slope**!
   3. Result: Massive stadium-sized impact that leaves zero mud in the mix!
 
----
-
 ### 6.4 The "Infinite Dune / Cathedral" Reverb Topology
 * **Acoustic Physics:** Simulates acoustic waves traveling across open desert canyons or massive stone cathedrals where reflections linger for **6 to 12 seconds**.
 * **DSP Algorithm:**
   * Uses an **All-Pass Feedback Delay Network (FDN)** with an orthonormal feedback matrix (e.g., Householder reflection matrix).
   * High-frequency damping filter (`Lowpass @ 2.2kHz` inside the loop) simulates the acoustic absorption of desert sand and cool air, keeping the low-mid frequencies (`300Hz–1kHz`) floating infinitely.
 
----
-
-## 7.0 Pure-Python DSP Module: Voice-Over Ducking & Multi-Reverb Engine
+## 7.0 Voice-over ducking and multi-reverb listing
 
 Drop this self-contained Python class into your engine. It contains:
 1. **`apply_voiceover_ducking()`**: Dynamic anti-masking processor that ducks background music beds automatically when vocal dialog is present.
@@ -417,9 +339,7 @@ class CommercialAudioAndReverbDSP:
         return np.tanh(out_L), np.tanh(out_R)
 ```
 
----
-
-## 8.0 Master Commercial & Musical Routing Matrix (AI-Agent Ready)
+## 8.0 Commercial and musical routing matrix
 
 ```python
 COMMERCIAL_AND_THEATER_CONFIG_DB = {
@@ -466,8 +386,6 @@ COMMERCIAL_AND_THEATER_CONFIG_DB = {
     }
 }
 ```
-
----
 
 ## 9.0 The Grand Complete 10-Document Knowledge Architecture
 

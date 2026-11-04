@@ -11,35 +11,7 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# The Pan-African Music Psychoacoustic & Algorithmic DSP Knowledge Base
-**Scope:** Indigenous/Ancestral Traditions $\rightarrow$ Golden-Era Post-Colonial Grooves $\rightarrow$ 21st-Century Electronic & Global Club Movements.
-**Target Application:** Pure-Code Audio Synthesis (Python / NumPy / SciPy), Polyrhythmic Timeline Matrices, Inharmonic/Buzzing Timbre Synthesis, and Cross-Cultural Fusion.
-
----
-
-
-## Table of Contents (Machine-Parsable Index)
-- [1.0 Core Psychoacoustics: How the "African Ear" Listens](#1-core-psychoacoustics-how-the-african-ear-listens)
-- [2.0 Indigenous & Ancestral Traditions (Regional Deep-Dive)](#2-indigenous--ancestral-traditions-regional-deep-dive)
-  - [2.1 West Africa: The Mande Griot & Savannah Tradition](#21-west-africa-the-mande-griot-jeliya--savannah-tradition)
-  - [2.2 West Africa: The Coastal Forest Belt (Ewe, Akan, Yoruba, Fon)](#22-west-africa-the-coastal-forest-belt-ewe-akan-yoruba-fon)
-  - [2.3 Central Africa: Rainforest Pygmy & Bantu Traditions](#23-central-africa-the-rainforest-pygmy-aka--baaka--mbuti--bantu-traditions)
-  - [2.4 Southern Africa: Shona Mbira & Zulu Isicathamiya](#24-southern-africa-shona-mbira-zimbabwe--nguni--zulu-isicathamiya--maskandi)
-  - [2.5 East Africa & The Horn: Ethio-Modes (Kinit) & Buganda Xylophones](#25-east-africa--the-horn-ethio-modes-kinit-nilotic-lyres--buganda-xylophones)
-- [3.0 Post-Colonial & Golden-Era Electric Evolution (1950s-1990s)](#3-the-post-colonial--golden-era-electric-evolution-1950s-1990s)
-- [4.0 Modern 21st-Century Electronic & Global African Genres](#4-modern-21st-century-electronic--global-african-genres-2000s-2026)
-  - [4.1 Amapiano & 3-Step (The Log Drum Revolution)](#41-amapiano--3-step-south-africa---the-log-drum-revolution)
-  - [4.2 Afrobeats / Afro-Fusion (Nigeria & Ghana)](#42-afrobeats--afro-fusion-nigeria--ghana---wizkid-burna-boy-rema-asake)
-  - [4.3 Gqom (Durban Broken-Beat Hypnosis)](#43-gqom-durban-south-africa---dark-broken-beat-hypnosis)
-  - [4.4 Kuduro, Afro-House & Singeli](#44-kuduro--afro-house-angola--singeli-tanzania)
-- [5.0 Pure-Python DSP & Algorithmic Parameter Cheat Sheet](#5-pure-python-dsp--algorithmic-parameter-cheat-sheet)
-  - [5.1 The Amapiano "Log Drum" Synthesizer](#51-the-amapiano-log-drum-synthesizer-pure-numpy-function)
-  - [5.2 The West African Balafon / Mbira "Mirliton Buzz" Processor](#52-the-west-african-balafon--mbira-mirliton-buzz-processor)
-  - [5.3 Pan-African Scale & Kinit Dictionary](#53-pan-african-scale--kinit-dictionary-semitone-offsets)
-  - [5.4 Master Polyrhythmic Timeline Matrices (12-Step & 16-Step)](#54-master-polyrhythmic-timeline-matrices-12-step--16-step)
-- [6.0 Cross-Cultural Fusion Blueprints (Africa x Tamil x Arabic)](#6-cross-cultural-fusion-blueprints-africa--times-tamil--times-arabic)
-
----
+# African polyrhythm, griot traditions and modern club genres
 
 ## 1. Core Psychoacoustics: How the "African Ear" Listens
 
@@ -52,13 +24,9 @@ Across the vast diversity of Africa, indigenous and modern musical traditions sh
 | **Melody vs. Speech** | **Abstract Pitch:** Melody is independent of spoken language. | **Tonal Speech Surrogacy (*Talking Instruments*):** Because many Niger-Congo languages (Yoruba, Igbo, Twi, Ewe) are **tonal** (High, Mid, Low pitch + glides change word meaning), drums and flutes literally "speak" proverbs through pitch-contours. | Program basslines and drum solos (*Dundun*, *Tama*, *Log Drum*) using **3-level speech contours** (`Low`, `Mid`, `High` + rapid upward/downward pitch inflections). |
 | **Form & Texture** | **Linear Narrative:** Intro $\rightarrow$ Verse $\rightarrow$ Chorus $\rightarrow$ Bridge $\rightarrow$ End. | **Interlocking Hocketing & Cyclical Accumulation:** Each instrument plays a short, simple 2- or 4-note cell in the **gaps** of another instrument, forming an emergent, hypnotic composite melody. | Use **Complementary Masking Matrices** (`Instrument_B_Gate = 1 - Instrument_A_Gate`) so short rhythmic cells interlock like gears without overlapping. |
 
----
-
 ## 2. Indigenous & Ancestral Traditions (Regional Deep-Dive)
 
 Africa contains over 3,000 distinct ethnic groups. Below are the 6 major indigenous musical ecosystems and their mathematical/acoustic rules:
-
----
 
 ### 2.1 West Africa: The *Mande* Griot (*Jeliya*) & Savannah Tradition
 * **Countries / Peoples:** Mali, Guinea, Senegal, Gambia, Burkina Faso (*Mandinka, Bambara, Wolof*).
@@ -72,8 +40,6 @@ Africa contains over 3,000 distinct ethnic groups. Below are the 6 major indigen
   3. **Djembe & Dundun Trio (*Dundunba, Sangban, Kenkeni*):** High-tension goblet skin drum (*Bass, Tone, Slap*) backed by three cylindrical bass drums played with sticks and mounted iron bells.
   4. **Tama / Talking Drum (*Dùndún* in Yoruba):** Hourglass tension drum held under the arm; squeezing the leather cords bends pitch across an entire octave (`90Hz -> 240Hz`).
 
----
-
 ### 2.2 West Africa: The Coastal Forest Belt (*Ewe, Akan, Yoruba, Fon*)
 * **Countries:** Ghana, Togo, Benin, Nigeria.
 * **Psychoacoustic Focus:** The absolute pinnacle of **Polyrhythmic Timeline Architecture** (*Agbadza*, *Atsia*, *Bata*).
@@ -82,8 +48,6 @@ Africa contains over 3,000 distinct ethnic groups. Below are the 6 major indigen
   * 12-Step Binary Array: `[1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1]` (or rotated as `[1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1]`, intervals: `2 - 2 - 1 - 2 - 2 - 2 - 1`).
   * Against this 12-step bell, the **Axatse** (beaded gourd rattle) hits downward on the bell strokes and upward against the palm in the spaces, while the **Atsimevu** (master drum) plays cross-rhythms in groups of 4 (`0, 3, 6, 9`).
 * **Yoruba *Bata* Drum Choir (Nigeria):** Conical double-headed drums (*Iya Ilu, Itotele, Okonkolo*) that converse in interlocking tonal Yoruba proverbs using three distinct strokes: open tone, muted tone, and sharp leather-strap slap.
-
----
 
 ### 2.3 Central Africa: The Rainforest Pygmy (*Aka / BaAka / Mbuti*) & Bantu Traditions
 * **Countries:** Congo Basin (DRC, Republic of Congo, CAR, Cameroon, Gabon).
@@ -95,8 +59,6 @@ Africa contains over 3,000 distinct ethnic groups. Below are the 6 major indigen
   * **Likembe / Sanza:** Lamellophone (thumb piano) with flat metal tongues mounted on a wooden box resonator.
   * **Ngoma & Lokole (Slit Log Drum):** Hollowed hardwood tree trunk with two lips of different thicknesses producing a `Low` (`130Hz`) and `High` (`195Hz`, a perfect 5th) woody knock.
 
----
-
 ### 2.4 Southern Africa: Shona *Mbira* (Zimbabwe) & Nguni / Zulu *Isicathamiya* & *Maskandi*
 * **Countries:** Zimbabwe, South Africa, Mozambique, Botswana.
 * **Shona *Mbira Dzavadzimu* (Zimbabwe):**
@@ -105,8 +67,6 @@ Africa contains over 3,000 distinct ethnic groups. Below are the 6 major indigen
 * **South African Indigenous Traditions:**
   * **Xhosa *Uhadi* & *Umrhubhe* (Musical Bows):** A single string struck or bowed while the player uses their mouth cavity or a gourd pressed against their chest as a **variable formant filter**, isolating harmonics `3, 4, 5, 6` (`f0 * 3`, `f0 * 4`, `f0 * 5`) over two fundamental roots a whole-tone apart (`F` and `G`).
   * **Zulu *Isicathamiya* & *Mbube*:** Rich, velvet 4-part male bass-heavy choral harmony with synchronized soft-shoe foot stomps.
-
----
 
 ### 2.5 East Africa & The Horn: *Ethio-Modes (Kiñit)*, *Nilotic Lyres* & *Buganda Xylophones*
 * **Ethiopia & Eritrea (*Kiñit* — The 4 Unique Pentatonic Modes):**
@@ -119,8 +79,6 @@ Africa contains over 3,000 distinct ethnic groups. Below are the 6 major indigen
   6. **Anchihoye (Festival/Trance):** `[0, 1, 4, 6, 9]`
 * **Uganda (*Amadinda* & *Akadinda* Log Xylophones):**
   * Giant banana-stem-mounted wooden keys played by 3 to 6 musicians sitting on opposite sides. Player 1 plays an equidistant 5-tone cycle (`Okunaga`), Player 2 inserts a second melody *exactly halfway* between Player 1's strokes (`Okwawula`), resulting in a blazing `300+ BPM` interlocking stream (`10+ notes per second`).
-
----
 
 ## 3. The Post-Colonial & Golden-Era Electric Evolution (1950s–1990s)
 
@@ -135,13 +93,9 @@ When electric guitars, brass sections, and drum kits arrived in African port cit
 | **Chimurenga** *(Zimbabwe — Thomas Mapfumo)* | **Electric *Mbira* Translation:** Translates the 12/8 sacred Shona *Mbira* patterns directly onto palm-muted electric guitars and hi-hats. | Heavy, relentless **Hosho (gourd rattle)** triplet pulse (`1 - 2 - 3 | 1 - 2 - 3`) in the high frequencies (`5kHz–10kHz`) driving a hypnotic bassline. |
 | **Ethio-Jazz** *(1960s–70s Ethiopia — Mulatu Astatke)* | **6/8 *Chikchika* Groove** + **Tizita Minor / Bati** modes. | Vibraphone + muted trumpet + Farfisa organ + upright bass playing dark, smoky, minor-second/major-third modal riffs over a gentle 6/8 conga/snare shuffle. |
 
----
-
 ## 4. Modern 21st-Century Electronic & Global African Genres (2000s–2026)
 
 Today, African rhythms dominate global club and pop music—and almost all of them are built for **algorithmic/grid-based synthesis**:
-
----
 
 ### 4.1 Amapiano & *3-Step* (South Africa — *The Log Drum Revolution*)
 * **Origin:** South African townships (Pretoria/Johannesburg), evolving from *Kwaito*, *Deep House*, and *Bacardi House* (and by 2024–2026 evolving into **3-Step / Afro-Tech**).
@@ -156,8 +110,6 @@ Today, African rhythms dominate global club and pop music—and almost all of th
      * Kick hits lightly or drops out entirely on Beat 1; rimshots and congas dance around steps `0, 3, 6, 10, 12, 14` (or in modern **3-Step**, three heavy kicks per bar at steps `0, 6, 12` creating a `3-against-4` tension!).
   4. **Lush Jazz Chords:** Fender Rhodes / FM Electric Piano playing sustained **Minor 9th (`m9`) and Minor 11th (`m11`)** chords with a subtle high-pitched **Township Whistle (`2.8kHz` sine glide)** floating on top.
 
----
-
 ### 4.2 Afrobeats / Afro-Fusion (Nigeria & Ghana — *Wizkid, Burna Boy, Rema, Asake*)
 * **Tempo:** `98 – 108 BPM` (Mid-tempo, warm, infectious hip-swaying pocket; or `112–116 BPM` when fused with Amapiano into *"Afro-Piano"*).
 * **Core Rhythmic Engine — The Modern *Kpanlogo / Shaku* Rimshot Groove:**
@@ -168,20 +120,14 @@ Today, African rhythms dominate global club and pop music—and almost all of th
   * **Shekere & Conga Percolation:** Constant 16th-note organic hand percussion panned wide.
   * **Asake-Style *Fuji + Amapiano* Crossover:** Combines Yoruba **Talking Drum (*Dùndún*)** speech-melody slides + call-and-response street choir chants + South African **Log Drum** bass drops.
 
----
-
 ### 4.3 Gqom (Durban, South Africa — *Dark, Broken-Beat Hypnosis*)
 * **Tempo:** `124 – 130 BPM`.
 * **Feel:** Dark, menacing, sparse, industrial yet deeply tribal (featured in *Black Panther*).
 * **Rhythmic DNA:** **Broken 3-Step / Syncopated Stomp**—no four-on-the-floor kick! Instead, heavy, reverberant tom-kicks hit on `Step 0, 3, 6, 9, 12, 14` (a relentless `3+3+3+3+2+2` pulse) accompanied by dark one-note synth sirens and vocal chants.
 
----
-
 ### 4.4 Kuduro & Afro-House (Angola) & Singeli (Tanzania)
 * **Kuduro (Luanda, Angola — `130–140 BPM`):** Hyper-kinetic, aggressive Lusophone electronic dance music combining Angolan *Semba/Kilapanga* rhythms with sharp, metallic synth stabs, cowbells, and rapid-fire snare rolls.
 * **Singeli (Dar es Salaam, Tanzania — `180–220 BPM`!):** The fastest electronic genre on Earth! Takes traditional Tanzanian *Mchiriku* and *Taarab* wedding drum loops, speeds them up to `200 BPM` in lo-fi software, and layers frantic, joyful cyclical synth melodies over polyrhythmic *Ngoma* rolls.
-
----
 
 ## 5. Pure-Python DSP & Algorithmic Parameter Cheat Sheet
 
@@ -251,7 +197,7 @@ AFRICAN_SCALES = {
 }
 \`\`\`
 
-### 5.4 Master Polyrhythmic Timeline Matrices (12-Step & 16-Step)
+### 5.4 Polyrhythmic timeline matrices (12-step and 16-step)
 \`\`\`python
 AFRICAN_POLYRHYTHMS = {
     # 1. WEST AFRICAN 12/8 AGBAZDA / FUME-FUME (3-against-2 Master Polyrhythm)
@@ -279,9 +225,7 @@ AFRICAN_POLYRHYTHMS = {
 }
 \`\`\`
 
----
-
-## 6. Cross-Cultural Fusion Blueprints (Africa $\times$ Tamil $\times$ Arabic)
+## 6. Fusion patterns (Africa, Tamil, Arabic)
 
 Because **West/Central African 12/8**, **Tamil 6/8 *Tisra Kuthu***, and **Gulf *Khaleeji Samri/Lewa*** all share the exact same **12-pulse compound grid**, fusing them creates an unstoppable rhythmic engine:
 

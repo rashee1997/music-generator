@@ -11,31 +11,7 @@ updated: 2026-11-04
 > **Not verified.** These values are a starting point from practice, not a measurement.
 > Cite a source before presenting one as established, and say "starting value" when a piece uses one.
 
-# Global Flute Procedural Synthesis & Cultural Soul Knowledge Base
-
-## Table of Contents
-1. [Universal Mathematical Architecture of a Flute's "Soul"](#1-universal-mathematical-architecture-of-a-flutes-soul)
-   - [1.1 Jet-Edge Nonlinearity & Asymmetry (Even vs. Odd Harmonics)](#11-jet-edge-nonlinearity--asymmetry-even-vs-odd-harmonics)
-   - [1.2 Bore Geometry & Boundary-Layer Visco-Thermal Losses](#12-bore-geometry--boundary-layer-visco-thermal-losses)
-   - [1.3 "Soul" as a Stateful Time-Varying Trajectory (Not Static Notes)](#13-soul-as-a-stateful-time-varying-trajectory-not-static-notes)
-2. [Cultural Flute Database (12 Global Archetypes)](#2-cultural-flute-database-12-global-archetypes)
-   - [2.1 Indian Bansuri (South Asia)](#21-indian-bansuri-south-asia)
-   - [2.2 Chinese Dizi with Dimo Membrane (East Asia)](#22-chinese-dizi-with-dimo-membrane-east-asia)
-   - [2.3 Japanese Shakuhachi — Suizen Zen Flute (East Asia)](#23-japanese-shakuhachi--suizen-zen-flute-east-asia)
-   - [2.4 Native American Cedar Courting Flute (Indigenous North America)](#24-native-american-cedar-courting-flute-indigenous-north-america)
-   - [2.5 Norwegian Seljefløyte — Willow Overtone Flute (Nordic)](#25-norwegian-seljefløyte--willow-overtone-flute-nordic)
-   - [2.6 Middle Eastern Reed Ney (Persia / Turkey / Levant)](#26-middle-eastern-reed-ney-persia--turkey--levant)
-   - [2.7 Andean Quena & Siku Panpipes (South America)](#27-andean-quena--siku-panpipes-south-america)
-   - [2.8 Slovak Fujara & Balkan Kaval (Eastern Europe)](#28-slovak-fujara--balkan-kaval-eastern-europe)
-   - [2.9 West African Fula Tambin — Vocal-Flute Ring Modulation (Guinea/Senegal)](#29-west-african-fula-tambin--vocal-flute-ring-modulation-guineasenegal)
-   - [2.10 Celtic Simple-System Wooden Flute (Ireland)](#210-celtic-simple-system-wooden-flute-ireland)
-   - [2.11 Māori Kōauau & Pūtōrino (Aotearoa / Oceania)](#211-māori-kōauau--pūtōrino-aotearoa--oceania)
-   - [2.12 Antarctic Glacial Ice-Bore & Albatross-Bone Flute (Polar)](#212-antarctic-glacial-ice-bore--albatross-bone-flute-polar)
-3. [Cross-Cultural Micro-Ornamentation State Machines](#3-cross-cultural-micro-ornamentation-state-machines)
-4. [CI/CD Audio Quality Gate Specification for Procedural Flutes](#4-cicd-audio-quality-gate-specification-for-procedural-flutes)
-5. [Pure-Python Universal Cultural Flute Interpreter & Gate Validator](#5-pure-python-universal-cultural-flute-interpreter--gate-validator)
-
----
+# Flute physics, technique and regional playing
 
 ## 1. Universal Mathematical Architecture of a Flute's "Soul"
 
@@ -60,11 +36,7 @@ No human flautist holds a constant frequency, constant breath pressure, or const
 2. **Pressure-Pitch Coupling (Overblow & Bark Law):** Increasing air velocity pushes pitch slightly sharp (`+4 to +12 cents`) while boosting the 2nd and 3rd harmonics relative to the fundamental.
 3. **Lung Depletion Phrase Envelope:** Across a multi-note phrase between rests, lung capacity $L(t) \in [1.0 \to 0.25]$ decays linearly, gradually widening vibrato depth and increasing breath effort.
 
----
-
 ## 2. Cultural Flute Database (12 Global Archetypes)
-
----
 
 ### 2.1 Indian Bansuri (South Asia)
 
@@ -125,8 +97,6 @@ flute_profile:
     min_h2_to_h1_ratio: 0.40
 \`\`\`
 
----
-
 ### 2.2 Chinese Dizi with Dimo Membrane (East Asia)
 
 * **The Soul & Emotional Feel:** Crisp, radiant, heroic, and soaring across mountain valleys (Jiangnan silk-and-bamboo lyrical style *Qudi* or northern virtuosic *Bangdi*). Its unmistakable soul comes from the **Dimo**—a paper-thin inner membrane of bamboo reed glued over a dedicated hole between the embouchure and the finger holes.
@@ -186,8 +156,6 @@ flute_profile:
     max_piercing_ratio_2k5_to_3k8: 0.28 # Higher ceiling allowed for Dimo buzz
     min_h3_to_h1_ratio: 0.35
 \`\`\`
-
----
 
 ### 2.3 Japanese Shakuhachi — Suizen Zen Flute (East Asia)
 
@@ -251,8 +219,6 @@ flute_profile:
     max_piercing_ratio_2k5_to_3k8: 0.18
 \`\`\`
 
----
-
 ### 2.4 Native American Cedar Courting Flute (Indigenous North America)
 
 * **The Soul & Emotional Feel:** Intimate, warm, weeping, and canyon-resonant. Designed historically for solo courting and personal reflection in the quiet dusk, its voice is gentle, wooden, and completely free of harsh upper overtones.
@@ -306,8 +272,6 @@ flute_profile:
     max_piercing_ratio_2k5_to_3k8: 0.09 # Strictly warm, zero ear-canal harshness
     min_h3_to_h2_ratio: 1.40 # Enforces symmetric fipple odd-harmonic warmth!
 \`\`\`
-
----
 
 ### 2.5 Norwegian Seljefløyte — Willow Overtone Flute (Nordic)
 
@@ -365,8 +329,6 @@ flute_profile:
     max_piercing_ratio_2k5_to_3k8: 0.22
 \`\`\`
 
----
-
 ### 2.6 Middle Eastern Reed Ney (Persia / Turkey / Levant)
 
 * **The Soul & Emotional Feel:** Mystical, aching spiritual longing (immortalized in Rumi’s *Masnavi*: *"Listen to the reed and the tale it tells, how it sings of separation"*). The Ney is the breathiest, most human-voice-like wind instrument on earth: a blend of desert wind, smoky low throat resonance, and crying microtonal *Maqam* inflections.
@@ -420,8 +382,6 @@ flute_profile:
     max_piercing_ratio_2k5_to_3k8: 0.24
 \`\`\`
 
----
-
 ### 2.7 Andean Quena & Siku Panpipes (South America)
 
 * **The Soul & Emotional Feel:** High-altitude Altiplano wind, bright sun over stone peaks, and deep ancestral melancholy (*Huayno* and *Yaraví*). The **Quena** has a piercing yet velvety crying projection, while the **Siku (Zampoña)** breathes with a chugging, hypnotic, stopped-pipe wind pulse.
@@ -474,8 +434,6 @@ flute_profile:
     max_piercing_ratio_2k5_to_3k8: 0.23
 \`\`\`
 
----
-
 ### 2.8 Slovak Fujara & Balkan Kaval (Eastern Europe)
 
 * **The Soul & Emotional Feel:** Majestic pastoral solitude of Carpathian mountain shepherds. The **Fujara** is a giant (`1.7m`) bass overtone flute that begins with a shimmering, metallic cascade of high overtones (*Rozfuk*) before dropping down into a warm, cello-like, burbling bass voice. The **Kaval** is famous for its *Kaba* register—a smoky, growling low register where the 1st, 2nd, and 3rd harmonics lock together into a rich multiphonic chord.
@@ -526,8 +484,6 @@ flute_profile:
     spectral_flatness_range: [0.008, 0.050]
     max_piercing_ratio_2k5_to_3k8: 0.19
 \`\`\`
-
----
 
 ### 2.9 West African Fula Tambin — Vocal-Flute Ring Modulation (Guinea/Senegal)
 
@@ -583,8 +539,6 @@ flute_profile:
     max_piercing_ratio_2k5_to_3k8: 0.24
 \`\`\`
 
----
-
 ### 2.10 Celtic Simple-System Wooden Flute (Ireland)
 
 * **The Soul & Emotional Feel:** Driving, rhythmic, woody, and dance-infused (Jigs, Reels, and haunting Slow Airs). Unlike classical silver Boehm flutes (which use vibrato and tonguing for expression), traditional Irish flute players **almost never tongue consecutive notes**—instead, they divide a single continuous stream of breath using lightning-fast **fingered articulations: Cuts, Strikes (Taps), and Rolls**.
@@ -635,8 +589,6 @@ flute_profile:
     max_piercing_ratio_2k5_to_3k8: 0.19
 \`\`\`
 
----
-
 ### 2.11 Māori Kōauau & Pūtōrino (Aotearoa / Oceania)
 
 * **The Soul & Emotional Feel:** Haunting, ancestral, and deeply intertwined with wind, birds, and the spirit world (*Taonga Pūoro*). Rather than leaping between wide intervals, traditional *Kōauau* and *Pūtōrino* melodies hover hypnotic and microtonal within a narrow 3- to 4-semitone compass—weeping, fluttering like the bellbird (*Korimako*), and dissolving into whispered breath.
@@ -686,8 +638,6 @@ flute_profile:
     spectral_flatness_range: [0.010, 0.055]
     max_piercing_ratio_2k5_to_3k8: 0.14
 \`\`\`
-
----
 
 ### 2.12 Antarctic Glacial Ice-Bore & Albatross-Bone Flute (Polar)
 
@@ -745,8 +695,6 @@ flute_profile:
     max_piercing_ratio_2k5_to_3k8: 0.12 # Glassy without ever being piercing!
 \`\`\`
 
----
-
 ## 3. Cross-Cultural Micro-Ornamentation State Machines
 
 To make a JSON score (`notes: [{t, d, p, v}, ...]`) automatically breathe with cultural soul **without manually writing thousands of tiny MIDI notes**, your Python pre-processor can apply a **Cultural Ornamentation Grammar** to the note stream before synthesis:
@@ -787,8 +735,6 @@ ornamentation_grammars:
         condition: "note_duration_beats >= 1.0"
         action: "inject_onset_turn([p, p+2, p-2, p], step_ms=32, retrigger_chiff=False)"
 \`\`\`
-
----
 
 ## 4. CI/CD Audio Quality Gate Specification for Procedural Flutes
 
@@ -837,8 +783,6 @@ Because your engine uses CI/CD quality gates that adapt dynamically to the activ
 }
 \`\`\`
 
----
-
 ## 5. Pure-Python Universal Cultural Flute Interpreter & Gate Validator
 
 Below is the drop-in, zero-sample Python engine module that reads **any of the 12 cultural YAML profiles above**, synthesizes a continuous phrase with stateful bore physics (Dimo membrane, Meri head-tilt, Fula vocal ring-mod, or Cryogenic ice shimmer), and runs the **CI/CD Quality Gate** on the rendered buffer:
@@ -846,7 +790,6 @@ Below is the drop-in, zero-sample Python engine module that reads **any of the 1
 \`\`\`python
 import numpy as np
 from scipy.signal import butter, lfilter, sosfilt, iirpeak, welch
-
 
 class CulturalFluteDSPEngine:
     """
