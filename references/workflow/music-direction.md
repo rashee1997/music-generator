@@ -109,8 +109,7 @@ The core targets. `listen.py` reads these directly, so fill them with words and 
 | `spatial_staging` | each part's azimuth, elevation and distance; the presets must match | `{"flute": {"azimuth": 0, "distance": 1.4}}` |
 
 `listen.py` checks `feel` against `avoid_feel` as a forced choice and looks for an onset within 0.3 s of every
-`hits_at`. Nothing else in the sheet is a gate row, and that is why the blocks below matter: they are what stops
-a technically green cue from being the wrong cue.
+`hits_at`. Nothing else is a gate row, which is why the blocks below stop a green cue from being the wrong cue.
 
 **The director's blocks.** Each one answers a question a composer is asked out loud before writing:
 
@@ -128,10 +127,14 @@ a technically green cue from being the wrong cue.
 | `video` | the picture this cue was written against, when there is one (2.6) |
 
 **Sheet internal consistency (check before writing the score):**
-- **Bar-grid and timestamp math:** At a fixed `BPM` in `N/4` time, one bar is `N * (60.0 / BPM)` seconds. Align section boundaries and structural downbeat hits to exact bar lines, and verify that `motifs[].first_at_s`, `hits[].t`, `hits_at`, and `mix_intent.must_hear` all state the exact same timestamp for an event (never say a motif enters at 18 s in `motifs` while logging its first strike at 15 s in `hits`).
-- **One canonical track name:** The keys in `spatial_staging` must match the track `name` (or custom preset name) in the score 1-to-1 so stage validation and Z-separation checks never miss a part.
-- **No false `avoid_sounds` collisions in `action`:** Do not write a forbidden sound word (from `avoid_sounds`) into positive descriptive fields (`sections[].action` or `music`) where a parser or reader could mistake it for a requested cue element.
-- **`leave_free_hz` is for speech only:** Only set a broad midrange pocket (such as `[250, 3800]`) when `video.dialogue.present` is `true` or a voice-over is present. For pure music cues, leave `leave_free_hz` empty (`[]`) so the fundamental midrange of strings, winds, and horns is not hollowed out.
+- **Bar-grid and timestamp math:** at `BPM` in `N/4` time one bar is `N * (60.0 / BPM)` seconds. Put section boundaries
+  and structural hits on bar lines, and give every event one timestamp across `motifs[].first_at_s`, `hits[].t`,
+  `hits_at` and `mix_intent.must_hear`.
+- **One canonical track name:** the keys in `spatial_staging` match the score's track `name` or preset name one to one,
+  so stage validation and Z-separation never miss a part.
+- **No false `avoid_sounds` collisions:** do not write a forbidden sound word into `sections[].action` or `music`.
+- **`leave_free_hz` is for speech only:** set the pocket (`[250, 3800]`) only when `video.dialogue.present` is `true`
+  or a voice-over runs; for pure music leave it empty (`[]`) so the midrange is not hollowed out.
 
 ### 2.4 Size and ending follow the picture
 
@@ -219,9 +222,8 @@ A game hands timing to the player.
 - **Vertical layering:** one base loop runs always; stems fade in or out on events. A muted stem keeps looping in
   sync, so it can return at any point.
 - **Horizontal re-sequencing:** intro, loop and outro sections switch into one another, with fades to soften cuts.
-- Combine them: loopable stacked stems that switch sections and add layers. Sync every transition to a bar or beat, set
-  tempo and meter once, and make the first beat after a transition clean. Write loops of one to two minutes that can
-  start at almost any bar.
+- Combine them: loopable stacked stems that switch sections and add layers. Sync transitions to a bar or beat, set
+  tempo and meter once, keep the first beat after a transition clean, and write loops of one to two minutes.
 
 Direction: one key and one tempo for every state, three intensity states with
 `compose.py --intensity 0.3 / 0.6 / 0.95 --loop`, a sheet per state, and `listen.py` on each, since the calm state must
@@ -252,10 +254,10 @@ Gate rows, thresholds and levers: see `references/mixing/quality-gate.md`.
 
 Two rules that stop revision from going round in circles:
 
-1. **A second change to the same target that does not move it means the lever is wrong.** Try a different lever
-   from the same row, or the row below it.
-2. **A FAIL on `feel` is a question, not a verdict.** earshot is a model. Listen to the file yourself if you can,
-   or tell the user what the numbers say and ask them to listen.
+1. **A second change to the same target that does not move it means the lever is wrong.** Try another lever from the
+   same row, or the row below it.
+2. **A FAIL on `feel` is a question, not a verdict.** earshot is a model: listen yourself, or tell the user what the
+   numbers say and ask them to listen.
 
 ## 7. What earshot can and cannot hear
 
@@ -267,9 +269,9 @@ human ear.
 key, onsets (do the hits land), and comparing two versions.
 
 **Its limits:** mood labels are wrong about one time in five; readings are not exclusive (a piece can read triumphant
-and sad at once); tempo can read double or half, and with no pulse (clarity under 0.15) there is no tempo to trust;
-key estimates with r under 0.6 are weak; it cannot judge taste, melody, lyrics, cultural fit (a raga or a maqam) or
-whether a clean synth tone is real; an instrument it does not name is not proven absent.
+and sad at once); tempo can read double or half, and with no pulse (clarity under 0.15) there is none to trust; key
+estimates with r under 0.6 are weak; it cannot judge taste, melody, lyrics, cultural fit or whether a synth is real,
+and an instrument it does not name is not proven absent.
 
 **Setup:** a separate install (torch, about 1 GB of models, ffmpeg on the path). `scripts/listen.py` works without it
 and says so; `python scripts/setup_project.py --ears` installs it.
