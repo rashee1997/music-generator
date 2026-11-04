@@ -19,7 +19,7 @@ rhythm cycles and ready genre presets. Pure data plus two small helpers; compose
 soundbank.py, humanize.py and render_natural.py merge it in at import.
 
 Labels (same convention as genres-and-moods.md): 'sourced' = read for this skill (listed in
-references/scoring/world-music.md section 9); 'practice' = common practice or the author's approximation.
+references/scoring/world-music.md section 2); 'practice' = common practice or the author's approximation.
 
     python3 world.py            # prints what is in here
     from world import cycle_notes
@@ -461,7 +461,7 @@ CYCLES.update({
 
 
 def cycle_notes(name, bars=1, start=0.0, vel=0.7, matra=0.5, rng=None):
-    """A named cycle as drum notes {'t','d','p','v'} for a custom score (see references/scoring/world-music.md section 6).
+    """A named cycle as drum notes {'t','d','p','v'} for a custom score (see references/scoring/world-music.md section 4).
     `matra` is how many score beats one counting unit lasts (0.5 = an eighth of a quarter-note beat).
     The score's ts should be [beats, 4] with the bpm counted in matras, or write the notes into a 4/4 score and
     accept the offset. Returns notes you can put straight into a drum track."""
