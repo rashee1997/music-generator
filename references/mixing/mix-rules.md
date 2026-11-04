@@ -1,6 +1,5 @@
 # Mix rules
 
-Moved verbatim from SKILL.md to keep the entry file short.
 
 ## Mix rules (so the mix stays clear)
 
@@ -36,10 +35,5 @@ These are enforced by `scripts/mixer.py` and checked by `scripts/quality_gate.py
    - Apply a static -4 to -6 dB bell notch filter ($Q = 1.2$) centered at 1,800 Hz across all chordal beds (pianos, pads, guitars).
    - Dynamically duck the entire music bed by -8 to -14 dB during vocal phrases (25 ms attack, 250–350 ms release).
    - Commercial temporal milestones: 0–3s thumb-stop hook, 15–30s micro-lifts (glock, claps, staccatos), and final 3s logo mnemonic ringing into silence.
-10. **The 5 Zero-Overlap Blending Laws for Ambience & SFX (`PROCEDURAL_SFX_AMBIENCE.md`).** Environmental textures must never mask music:
-   - *Sub-Bass Protection:* High-pass all continuous ambience at 140 Hz (4th-order Butterworth).
-   - *Dynamic Lead Formant Notch:* Carve -8 to -14 dB ($Q = 1.8$) on ambient beds at the lead's fundamental $f_0(t)$ and $2f_0(t)$.
-   - *Inverse-Envelope Gating:* Discrete SFX (birds, whistles, water drops) trigger with probability $P \propto (1 - M_{env})^2$ during musical pauses and breath tails.
-   - *Key-Locked Harmonic Resonators:* Pass 25–40% of ambient wind, rain, or surf through high-Q bandpass resonators ($Q = 25–45$) tuned to the song's root, 5th, and mode so the environment subtly sings in key.
-   - *3D Mid-Side & Haas Geometry:* Attenuate Mid channel by -6 dB, boost Side by +3 dB with 7–13 ms Haas delay so ambience wraps around the head leaving the center open for music.
-   - *Soft-Quantize Micro-Foley:* Snap nature/foley transients to within $\pm 15\text{ ms}$ of the 16th/12th grid.
+10. **Ambience and SFX blending.** The laws, their numbers and the order to apply them are in
+    `references/mixing/mixing-and-mastering.md` section 8. Do not restate them here.

@@ -33,7 +33,7 @@ image, because the cues that do it are individual.
 
 ## 2. What the mixer does when `enabled` is true
 
-| Before | Now |
+| Without immersive | With immersive |
 |---|---|
 | `elevation` and `space` ignored unless the track opted in with `binaural` | every track with a `spatial` block uses the measured-head route (`binaural: "hrtf"`); `binaural: false` is the only opt-out |
 | stereo stems folded to mono | stereo stems become two sources at azimuth -/+ half-width (the mix preset's `immersive.pair` sets `width_deg_bed` and `width_deg_stereo`; `spatial.half_width_deg` overrides per track) |
@@ -58,7 +58,7 @@ interpolating harmonic gains 20 times a second, and `doppler` (default true) res
 gets its time-varying cue and its pitch shift together. `references/data/presets/spaces/concert_hall_3d.json` is the worked
 example: copy it into a project and change the box.
 
-## 3. Stage 0 (project gate) and Stage 6 rows
+## 3. Stage 0 (project gate) and the Stage 6 immersion rows
 
 Stage 0 blocks when immersive is on and: the mix preset lacks `height_by_role`/`max_elevation` or a real `character`; the head data is not downloaded
 (`python -m spatial_hrtf.data`); a bass/drum is lifted; an elevation exceeds `max_elevation` or disagrees with the direction sheet; fewer than `min_height_tracks` are lifted.
@@ -82,7 +82,7 @@ All nine rows are gate-profile rows (`imm.*` in `gate_profiles.py`, reported und
 Thresholds other than the `test_hrtf.py` numbers are provisional: calibrate on a real piece, then freeze them; never loosen one to get green.
 Loudness, true peak, clicks and silence are the existing rows.
 
-## 4. Research behind it (sources read with TinyFish)
+## 4. Why these cues
 
 - Reverberation and spectral detail in the direct sound are the two essential cues for externalising headphone sources, even with non-individual data (Li, Schlieper, Peissig 2019, Applied Sciences 9(3):460). Hence directional reflections.
 - Envelopment needs surrounding sound events arriving densely from spread directions, and sound from above is its own attribute (arXiv 2301.10210). Hence beds as pairs and a ceiling reflection; a multi-direction late tail is not built yet.

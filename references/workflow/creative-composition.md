@@ -79,10 +79,3 @@ The renderer plays General MIDI samples. The templates are patterns, not underst
 in notes, not whether a tune is good. A person has to listen to judge taste.
 
 ---
-
-## How to create / use
-
-Compose a specific piece:
-1. State the idea in one sentence in `direction/*.json` (`concept`).
-2. Copy `templates/custom_score_template.py` to `<project>/scripts/compose_main.py`, generate notes into `scores/<title>_score.json` only (sound lives in presets).
-3. Check: `python scripts/pattern_audit.py scores/<title>_score.json`, then `pipeline.py ... --project <project>`.

@@ -1,6 +1,5 @@
 # Reading the brief (mood words, modifiers, numbers)
 
-Moved verbatim from SKILL.md to keep the entry file short.
 
 ## Read the brief before you score it
 

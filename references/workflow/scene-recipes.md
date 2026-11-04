@@ -11,11 +11,10 @@ python3 scripts/render_natural.py score2.json --out cue.wav
 python3 scripts/listen.py cue.wav --direction sheet.json
 ```
 
-**Status.** The trailer recipe (section 1) was built and listened to end to end in this session. The others are
-starting points written from the research in `music-direction.md`; run them through `listen.py` before you deliver
-and treat the first render as a draft. Recipes 11-14 (motivational, adventure, slow reverb, fusion under a mood) were
-run through `compose.py` and `quality_gate.score_checks` in this pass: 0 FAIL on the score, but they have not been
-listened to with earshot.
+**Status.** The trailer recipe (section 1) has been listened to end to end. The others are starting points written
+from the research in `music-direction.md`; run them through `listen.py` before you deliver and treat the first render
+as a draft. Recipes 11-14 (motivational, adventure, slow reverb, fusion under a mood) pass the score checks but have
+not been listened to with earshot.
 
 ---
 
@@ -44,7 +43,7 @@ json.dump(s, open('score2.json','w'))
 **Sheet.** `templates/direction_sheet.json` (feel epic + triumphant, avoid sad + calm, instruments taiko + brass +
 strings, pulse steady, 96-112 BPM, major, -16 LUFS, hits at 24 and 38).
 
-**What happened (this session, three steps).**
+**What happens, in three steps.**
 
 | Version | Feel: epic | Feel: triumphant | Pulse | Result |
 |---|---|---|---|---|
@@ -175,13 +174,13 @@ notes. Stops and starts.
 **Direction.** The tradition decides the scale, the ornaments and the instruments. Use the tradition's own scale
 and the closest instrument, and say plainly what is an approximation.
 
-**Start from `references/scoring/world-music.md`.** It has 69 scales (35 with real microtones), 167 world instrument names,
-90 drum names, 67 grooves, 37 rhythm cycles and 79 ready genres for India, the Arabic world, Turkey, Persia, Greece,
+**Start from `references/scoring/world-music.md`.** It has the scales (most with real microtones), the world instrument names,
+the drum names, the grooves, the rhythm cycles and the ready genres for India, the Arabic world, Turkey, Persia, Greece,
 China, Japan, Korea (K-pop, trot), Indonesia, Rio and Brazil, Latin America, the Caribbean, Africa, the Andes, Europe
 and the Americas. Brief: `{"genre": "tarab", "mode": "maqam_sikah", "key": "D", "duration_s": 60}`.
 
 **What the tools can and cannot do.**
-- Instruments are stand-ins: the SoundFont has 128 sounds, so an oud is a nylon guitar, an erhu a violin with wide
+- Instruments are stand-ins: the SoundFont is a fixed General MIDI set, so an oud is a nylon guitar, an erhu a violin with wide
   vibrato and slides. They are stylised, not authentic. Name that in the reply.
 - A recording the user owns can be cloned (`scripts/clone_instrument.py`), and that is the honest route to a real
   sitar, oud or santoor timbre. A SoundFont with the real instrument also works (`MUSICGEN_SF2`).
@@ -200,13 +199,13 @@ layer-by-layer build, energy around 0.65. Avoid: epic/war (taiko, brass fanfare)
 
 **Brief:** `{"emotion":"motivational","genre":"cinematic","duration_s":45,"seed":7,"arc":"build"}`
 `motivational` resolves to `hopeful`. Add `"genre":"corporate"` for a corporate film: the mood then wins the tempo
-2:1 (102 BPM in this pass, not corporate's 126) and the note says so.
+2:1 (102 BPM here, not corporate's 126) and the note says so.
 
 **Sheet:** `feel: ["motivational","uplifting"]`, `avoid_feel: ["epic","sad"]`, `energy: 0.65`,
 `tempo_bpm: [76, 98]`, `mode: "major"`. Edits: usually none; if it reads cute, lower the keyboard sparkle and raise
 the low strings 2 dB.
 
-**Verified in this pass:** `compose.py` + `quality_gate.score_checks` at 45 s: 0 FAIL, 85 BPM, 29 notes/bar.
+**Score check:** `compose.py` + `quality_gate.score_checks` at 45 s: 0 FAIL, 85 BPM, 29 notes/bar.
 Not yet listened to with earshot.
 
 ## 12. Adventure, travel or quest (a journey, not a battle)
@@ -220,7 +219,7 @@ notes. It opens outward instead of attacking. Avoid: taiko, war drums, 120+ BPM,
 **Sheet:** `feel: ["adventurous","wonder"]`, `avoid_feel: ["epic","tense"]`, `instruments: ["strings","horn","flute"]`,
 `energy: 0.6`, `space: "large_hall"`, `tempo_bpm: [84, 104]`, `mode: "major"`.
 
-**Verified in this pass:** 45 s, 0 FAIL, 85 BPM, half-time kit. Not yet listened to with earshot.
+**Score check:** 45 s, 0 FAIL, 85 BPM, half-time kit. Not yet listened to with earshot.
 
 ## 13. Slow, reflective, reverb-washed ("slow reverb mix")
 
@@ -235,7 +234,7 @@ Few notes, long tails, nothing busy. Avoid: a drum groove that pushes, staccato 
 `space: "large_hall"`, `tempo_bpm: [58, 76]`, `pulse: "none"` or `"loose"`. If it is still busy, add `"sparse": true`
 or `--energy 0.3`; if it smears, use `hall` instead of `large_hall` and shorten the tails.
 
-**Verified in this pass:** 45 s, 0 FAIL, 9.2 notes/bar, room `large_hall`.
+**Score check:** 45 s, 0 FAIL, 9.2 notes/bar, room `large_hall`.
 
 ## 14. Fusion under a mood ("any fusion, but not upbeat")
 
@@ -251,7 +250,7 @@ mood was not named. A culture style can be added with `"style": "<name>"` (the s
 line naming the cultures. Check `fusion.plan` warnings: a non-overlapping tempo or a scale not shared by every
 culture is printed there.
 
-**Verified in this pass:** both fusion cases 0 FAIL on score checks. Not yet listened to with earshot.
+**Score check:** both fusion cases 0 FAIL on score checks. Not yet listened to with earshot.
 
 ---
 

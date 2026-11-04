@@ -13,41 +13,19 @@ author's approximation, not measured on a corpus.
 
 ## 0. Authoritative Machine-Parsable Knowledge Base Index
 
-For exact acoustic models, microtonal cent offsets, frequency band allocations, and pure-Python synthesis code, consult the primary knowledge base files in [`knowledgebase/`](../knowledgebase):
+For exact acoustic models, microtonal cent offsets, frequency band allocations, and pure-Python synthesis code, consult the primary knowledge base files in [`knowledgebase/`](../../knowledgebase/README.md):
 
-- **Pan-Indian Traditions & Hindustani 10 Thaats:** [`knowledgebase/cultures/pan-indian.md`](../knowledgebase/cultures/pan-indian.md)
-- **Tamil Folk, Kuthu & Carnatic Classical:** [`knowledgebase/cultures/tamil.md`](../knowledgebase/cultures/tamil.md)
-- **Arabic Desert Vocals & Magical Maqam Chords:** [`knowledgebase/cultures/arabic-desert-vocal.md`](../knowledgebase/cultures/arabic-desert-vocal.md)
-- **Pan-Arab Maqamat & Iqa'at Cycles:** [`knowledgebase/cultures/arabic.md`](../knowledgebase/cultures/arabic.md)
-- **East Asian (Chinese Wu Sheng & Japanese Onkai):** [`knowledgebase/cultures/chinese-japanese.md`](../knowledgebase/cultures/chinese-japanese.md)
-- **Sub-Saharan African Polyrhythms & Amapiano:** [`knowledgebase/cultures/african.md`](../knowledgebase/cultures/african.md)
-- **Americas, Brazil (Samba/Bossa) & Central Asian Throat Singing:** [`knowledgebase/cultures/brazil-turkic-mongolian.md`](../knowledgebase/cultures/brazil-turkic-mongolian.md)
-- **Global Humming Atlas, Celtic, Nordic, Balkan & Gamelan:** [`knowledgebase/cultures/world-other.md`](../knowledgebase/cultures/world-other.md)
-- **Western Classical, Orchestral, & Trailer Sound Design:** [`knowledgebase/cultures/western.md`](../knowledgebase/cultures/western.md)
+- **Pan-Indian Traditions & Hindustani 10 Thaats:** [`knowledgebase/cultures/pan-indian.md`](../../knowledgebase/cultures/pan-indian.md)
+- **Tamil Folk, Kuthu & Carnatic Classical:** [`knowledgebase/cultures/tamil.md`](../../knowledgebase/cultures/tamil.md)
+- **Arabic Desert Vocals & Magical Maqam Chords:** [`knowledgebase/cultures/arabic-desert-vocal.md`](../../knowledgebase/cultures/arabic-desert-vocal.md)
+- **Pan-Arab Maqamat & Iqa'at Cycles:** [`knowledgebase/cultures/arabic.md`](../../knowledgebase/cultures/arabic.md)
+- **East Asian (Chinese Wu Sheng & Japanese Onkai):** [`knowledgebase/cultures/chinese-japanese.md`](../../knowledgebase/cultures/chinese-japanese.md)
+- **Sub-Saharan African Polyrhythms & Amapiano:** [`knowledgebase/cultures/african.md`](../../knowledgebase/cultures/african.md)
+- **Americas, Brazil (Samba/Bossa) & Central Asian Throat Singing:** [`knowledgebase/cultures/brazil-turkic-mongolian.md`](../../knowledgebase/cultures/brazil-turkic-mongolian.md)
+- **Global Humming Atlas, Celtic, Nordic, Balkan & Gamelan:** [`knowledgebase/cultures/world-other.md`](../../knowledgebase/cultures/world-other.md)
+- **Western Classical, Orchestral, & Trailer Sound Design:** [`knowledgebase/cultures/western.md`](../../knowledgebase/cultures/western.md)
 
 ---
-
-## 1. What changed and what did not
-
-| Before | Now |
-|---|---|
-| 128 General MIDI sounds, a handful of "traditional" ones | 167 named world instruments, each a **stand-in** on a GM sound (section 4) |
-| 12-note equal-temperament scales only | 69 scales, 35 of them with **cents** (quarter-tones, just intonation) that the renderer plays as a pitch bend |
-| 4/4 drum grids | 77 drum names (tabla, dhol, darbuka, riq, taiko, surdo, tamborim, cuica, cajon, djembe...), 51 grooves, 30 **cycles of any length** (aksak 9, rupak 7, flamenco 12...) |
-| 42 genres, mostly Western and Latin | 121 genres: 79 new ones (22 of them Indian), 207 aliases |
-| No slides into notes | `gl` (glide-in, cents): meend, kan, erhu and violin portamento |
-
-Not changed: the sound source. It is still the General MIDI SoundFont. **A sitar here is a sitar-like plucked string, not a
-recording.** For the real timbre use a clone of a recording (`clone_instrument.py`) or a SoundFont that has the instrument
-(`MUSICGEN_SF2`, section 8). Say so in the reply every time.
-
-```bash
-python3 scripts/compose.py --genre tarab --mode maqam_sikah --key D --duration 60 --render tarab.wav
-python3 scripts/compose.py --genre kpop_dance --duration 45 --render k.wav
-python3 scripts/compose.py --list           # genres, aliases, modes
-python3 scripts/world.py                    # scales and cycles
-```
-A real genre name always beats an alias (so `country`, `disco` and `deep_house` are now genres of their own).
 
 ## 2. Pick by region
 
@@ -184,7 +162,7 @@ leave the chords out and let the drone and the percussion carry the harmony. The
 ## 4. Instruments (stand-ins)
 
 `python3 scripts/soundbank.py --list` prints every name. Use them as `"instrument": "oud"` in a track or a genre layer.
-Quality is **good for the GM family, stylised for the tradition**: the SoundFont has 128 sounds, so each name below is played
+Quality is **good for the GM family, stylised for the tradition**: the SoundFont is a fixed General MIDI set, so each name below is played
 by the nearest General MIDI sound. Plucked world instruments get flat loudness; bowed and blown ones get bow or breath
 swell and a wide, slow vibrato (erhu 30 cents, sarangi 34, ney 12...).
 
@@ -337,7 +315,6 @@ The honest upgrade paths, in order of effort:
 
 ## 9. What was read, and what was not
 
-Read for this file (TinyFish search and fetch): maqamworld.com (iqa'at index and the lengths of maqsum, baladi, saidi, malfuf, wahda, ayyub, zaffa, masmudi kabir); microtonaltheory.com
 (Turkish makam, 53 commas); ritmik.net (nine Turkish usuller with their dum/tek patterns); compmusic.upf.edu (duyek 8/8, aksak 9/8); ragajunglism.org (tala lengths);
 raag-hindustani.com and the search results (ten thaats); masterthescore.com (Japanese scales, koto and shakuhachi); the search results for Chinese pentatonic modes (ISMIR 2022
 paper, CUNY open textbook, Chinese musicology); lumbeat.com (Brazilian rhythms, tempos and instruments); melodigging.com and songbrain.ai (K-pop structure and sound);

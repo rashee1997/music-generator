@@ -8,8 +8,7 @@ and `timeline()`, which lays effects on a stereo bed to sit under music or a vid
 `scripts/phys_core/` owns the physics. `make()` exists once, so the same preset returns the same bytes whichever entry
 point a caller uses; the facade only keeps the older return contract (`'preset'` where the engine says `'model'`).
 
-For advanced physical modeling of weather (mist, monsoon, ocean surf, desert wind, campfire, thunder shockwaves), bio-acoustics (avian syrinx dual-FM synthesis), and the **5 Zero-Overlap Blending Laws** (Key-Locked Harmonic Resonators, 3D Mid-Side geometry, and micro-foley quantization), consult:  
-👉 [`knowledgebase/sound-design/sfx-ambience.md`](../knowledgebase/sound-design/sfx-ambience.md).
+Weather, bio-acoustics and the Zero-Overlap blending laws: `references/mixing/mixing-and-mastering.md` section 8.
 
 ---
 
@@ -128,13 +127,6 @@ Integrated in `scripts/sfx.py`:
    - Uses `pb.Delay(delay_seconds=..., feedback=..., mix=...)` for cavernous dub echoes and sci-fi UI repeats.
 
 ---
-
-## How to create / use
-
-Make an effect or ambience:
-1. Named effect: `python scripts/sfx.py list`, then `python scripts/sfx.py make riser --seconds 3 --out out/riser.wav`.
-2. A place (rain, canopy, river), only if the user asked for it: `python scripts/presets.py scaffold environments <name> --project <project>` (steps: `environments-as-presets.md`), edit its `layers`, use `"instrument": "env:<name>"`, `"role": "environment"` in the score.
-3. Check by ear-proxies: the `Environmental Bed Stability` and masking rows in the Stage 6 scoreboard.
 
 ## 6. Ambience is a place, and a place is a preset
 

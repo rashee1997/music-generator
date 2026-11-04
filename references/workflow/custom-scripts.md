@@ -73,7 +73,7 @@ score = dict(
   mix=dict(reverb_return=1.0),            # 1.5 for a "reverb mix"; 0.6 for dry and close
   meta=dict(mood_notes=["read: dreamy, slow, large_hall"]),   # what you read from the brief; printed by describe()
   master=dict(lufs=-16, true_peak=-1.5, tone="warm"),   # tone: neutral | warm | bright
-  loop_seconds=None,                      # set for seamless loops (and rubato=0, ritard=0)
+  loop_seconds=None,                      # set for gapless loops (and rubato=0, ritard=0)
   tracks=[dict(name="cello", instrument="cello", role="melody", notes=[...],
                gain_db=-3, pan=0.2, reverb=0.2, widen=0.0,
                eq=[dict(type="peak", f=3000, gain=-3, q=1)], comp=dict(thr=-22, ratio=2.5),
@@ -125,7 +125,7 @@ processed = board(audio.T.copy(), sr).T
 sf.write("processed.wav", processed, sr)
 ```
 
-### 2. Loading Headless VST3 Plugins
+### 2. Loading VST3 plugins
 Any commercial or open-source VST3 instrument or effect plugin can be loaded and automated:
 ```python
 vst = pb.load_plugin("C:/Program Files/Common Files/VST3/Surge XT.vst3")

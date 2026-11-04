@@ -164,10 +164,3 @@ analyses (ostinato, thickening orchestration, register extremes, silence, tonal 
 discipline).
 
 ---
-
-## How to create / use
-
-Apply an emotion:
-1. Put `emotion`, `energy`, `space`, `arc`, `hit_points` in the brief (`python scripts/compose.py --list` shows names) or in the direction sheet.
-2. `python scripts/compose.py --brief brief.json --out scores/<title>_score.json`; read `meta.mood_notes`.
-3. Check with `python scripts/listen.py out/master.wav --direction direction/<sheet>.json`.

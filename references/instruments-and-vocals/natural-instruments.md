@@ -79,11 +79,3 @@ Sources: GeneralUser GS (mrbumpy409/GeneralUser-GS); TinySoundFont; General MIDI
 `core/audio/sampler.py` (velocity-layer picking, round-robin, grain-extended sustains, the reason for darker soft notes).
 
 ---
-
-## How to create / use
-
-Add an instrument the bank does not have:
-1. Pick the closest GM sound: `python scripts/soundbank.py --list`.
-2. `python scripts/presets.py scaffold instruments <name> --project <project>`; set `gm` (that GM name), `role`, `humanize`, `spatial`, `eq`, `gain_db`, `reverb`.
-3. In the score use `"instrument": "<name>"` exactly. A misspelt name is an error in a project, not a guess.
-4. For the real sound, clone a recording instead: `references/instruments-and-vocals/instrument-cloning.md` (`"instrument": "clone:<file>"`).

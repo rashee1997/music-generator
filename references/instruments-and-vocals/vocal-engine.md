@@ -4,14 +4,6 @@ Code: `scripts/vocals.py` (public facade) and `scripts/vocal_engine/`. Data: `re
 Short version for a project: `references/instruments-and-vocals/vocals-and-choirs.md`. Everything here is synthesised from maths: no samples, no
 recordings, no models, no network. Whether it sounds human has **not** been listened to (see section 11).
 
-## 1. What changed, in one paragraph
-
-The old engine rendered every note on its own (a sum of sines through three filters, peak-normalised, with its own attack
-and release) and a "choir" was one note repeated with a few cents of detune. The new engine renders **phrases**: one
-continuous pitch curve and one continuous source phase per phrase, vibrato that never restarts, dynamics and articulation as
-separate curves, a real nasal hum model, breath, expression profiles, and independent singers. `render_choir` keeps its
-signature and still returns `(N,2) float32`.
-
 ## 2. Files
 
 | Part | File | Job |

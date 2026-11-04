@@ -100,7 +100,3 @@ already does the same job from the cycle table.
 - The KB names are kept in table 2 so a user can ask for them, but the skill's own names are the ones in the code.
 
 ---
-
-## How to create / use
-
-Reference only: records how an outside theory document maps onto `world.py` / `theory.py`. There is nothing to create here; research for a new piece goes through `research_kb.py`.

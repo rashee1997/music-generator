@@ -68,10 +68,10 @@ Label each one in the row or sentence that carries it:
 - **standard result** — a textbook result, cited as such;
 - **starting value, untested** — chosen to start from, not measured or cited.
 
-`knowledgebase/sound-design/sfx-formulas.md` and `references/sources/research-sources.md` are the
+`knowledgebase/sound-design/sfx-formulas.md` is the
 model: each row says what was read and what was not.
 
-`references/sources/research-sources.md` also records what was read and what was **not**, so an
+This is the record of what was read and what was **not**, so an
 "unverified" status is a statement about the work, not a mark of shame.
 
 ## 6. No count in prose

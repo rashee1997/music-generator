@@ -114,10 +114,3 @@ studies (drummer IBI, 1/f drift, anti-correlation); vibrato studies (5-6 Hz, 50-
 pedaling practice.
 
 ---
-
-## How to create / use
-
-Tune or write it:
-1. Whole piece: `"humanize": "natural"` (tight | natural | loose | rubato | a dict, see `humanize.PRESETS`) in the score; per track: `"humanize": {...}` or a preset's `humanize` block.
-2. Phrase breath and arch come from `humanize.py` automatically; per-track `swing`, `detune_cents`, `strum` override.
-3. Check: `python scripts/pattern_audit.py scores/<title>_score.json` (flat dynamics, machine-gun hits) and the `witek_groove_curve` / `groove_pocket_lock` rows in the pipeline.

@@ -1,6 +1,5 @@
 # Bundled files, pipeline stages and Pedalboard
 
-Moved verbatim from SKILL.md to keep the entry file short.
 
 ## Bundled files
 
@@ -55,14 +54,13 @@ Moved verbatim from SKILL.md to keep the entry file short.
 | `references/workflow/extraction.md` | how a song becomes MIDI and stems rebuilt from it, what each stage does, the gate, the limits |
 | `scripts/extraction/midi_clean.py`, `resynth.py`, `gate.py` | MIDI repair, stem rebuild (sampler / additive / drums / ambience / room), the extraction gate (borrows `naturalness_check.py` and `quality_gate.py`) |
 | `scripts/clone_instrument.py` | clone an instrument from a recording (spectral-flux onset attack slicing, 8192-pt FFT harmonic partials, export SFZ) |
-| `knowledgebase/instruments_registry.json` | dynamic updatable database of instrument auditioning thresholds, presence criteria, role mappings, and sequential studio mastering biquad chains |
+| `knowledgebase/data/instruments_registry.json` | dynamic updatable database of instrument auditioning thresholds, presence criteria, role mappings, and sequential studio mastering biquad chains |
 | `scripts/naturalness_check.py` | the measurements used by listen.py (loudness, peaks, dynamics, balance, stereo, mobile phone mono fold-down, chroma) |
 | `scripts/soundbank.py` | SoundFont discovery and download, instrument names to GM programs, drum keys |
 | `scripts/plan.py` | the section plan (open, develop, build, climax, hush, reveal, release): separate loudness, density, lead and register per bar; `check_plan` validation |
 | `scripts/section_report.py` | per-section loudness, active tracks and lead from a render, for comparing two versions on the same numbers |
 | `tests/test_composition.py` | unit tests for the plan, the mood reading, the acoustic laws, the lead and arch rules, compose determinism, and widening stability: `python3 -m unittest discover -s tests` from the skill folder |
 | `scripts/humanize.py` | timing, velocity, articulation, strum and tempo-map humanizer (melody arch only, lead only when accompanied, phrase-end breath) |
-| `references/workflow/expressive-research.md` | the research behind the plan and the humanizer, tagged established / practice / heuristic, and what it does not license |
 | `scripts/theory.py` | keys and modes, chords, voice leading, textures, bass lines, drum bars, phrases; the voicing, strum, fill and grid-accent laws |
 | `scripts/pattern_audit.py` | the six acoustic laws plus copy-paste/flatness flags: `pattern_audit.py score.json [--strict]` |
 | `scripts/sfz_libs.py`, `scripts/sfz_render.py` | optional SFZ sample libraries kept in the project (`libs/sfz/`): downloader with flags, checks, lock + licence files; a track plays through `sfizz_render` when its instrument is `sfz:<lib>/<patch>` or its preset has an `sfz` block (`references/instruments-and-vocals/sfz-libraries.md`) |
@@ -72,35 +70,34 @@ Moved verbatim from SKILL.md to keep the entry file short.
 | `templates/custom_score_template.py` | a runnable template for hand-written music |
 | `references/workflow/music-direction.md` | the director's workflow, the research on cues and mechanisms, the revision levers, earshot's limits |
 | `references/workflow/scene-recipes.md` | recipes by situation: trailer (tested), voice-over, calm, tense, end card, game loop, jingle, sleep, playful, traditional |
-| `references/scoring/genres-and-moods.md` | epic (heroic and dark), mood models (GEMS, Eerola 2013, cue table), the 42 genres with tempo and groove, the Pixabay label map, earshot results for every genre, how to add a genre |
+| `references/scoring/genres-and-moods.md` | epic (heroic and dark), mood models (GEMS, Eerola 2013, cue table), the genres with tempo and groove, the Pixabay label map, earshot results for every genre, how to add a genre |
 | `references/scoring/emotion-and-scoring.md` | emotion table, arcs, tension toolkit, layers, motifs |
 | `references/workflow/custom-scripts.md` | the score format, helpers, recipes and debugging for custom scripts |
 | `references/instruments-and-vocals/natural-instruments.md` | which source for which sound, GM strengths, ranges, arrangement rules |
 | `references/mixing/humanization.md` | why music sounds robotic and the numbers that fix it |
 | `references/instruments-and-vocals/instrument-cloning.md` | recording guide, methods, limits, neural options, rights |
 | `references/mixing/mixing-and-mastering.md` | mix order, EQ chart, loudness targets, voice-over rules, rooms, fix table |
-| `references/sources/research-sources.md` | what was read, and what it changed |
 | `references/workflow/music21-analysis.md` | dynamic, non-rigid musical computing with `music21`: tonality, chordification, melodic contour, voice leading, polyrhythmic analysis |
 | `references/spatial/immersive-spatial.md` | headphone immersion inside the existing system: mix-preset `immersive` block, height rules, what the mixer changes, Stage 0 and Stage 6 `imm_*` rows, research, limits |
 | `references/spatial/spatial-presets-and-scoring.md` | the 5-stage modular architecture (`direction/`, `presets/`, `scores/`), 3D spatial staging schemas, ISO 9613-1 air absorption, and DRR physical realism |
 
 ## The Music CI/CD Pipeline (pipeline.py)
 
-[`scripts/pipeline.py`](../scripts/pipeline.py) unifies the entire composition, pre-flight linting, humanization, rendering, Pedalboard mastering, and quality verification into a single executable command:
+[`scripts/pipeline.py`](../../scripts/pipeline.py) unifies the entire composition, pre-flight linting, humanization, rendering, Pedalboard mastering, and quality verification into a single executable command:
 - **Stage 1 (Composition & Ingestion):** Ingests plain-language briefs (`"motivational trailer in D minor, 45s"`), brief JSONs, or score JSONs.
 - **Stage 2 (Acoustic Pre-Flight Linter):** Enforces the 6 Acoustic Laws (chord voicing, choked resonance, machine-gun percussion, flams, low mud, spatial glue) prior to rendering.
 - **Stage 3 (Humanization & Respiration):** Applies phrase respiration breath gaps, phrase velocity arches, swing, and rubato tempo maps.
-- **Stage 4 (Multi-Engine Stem Rendering):** High-fidelity rendering across SoundFonts, vocal formant choirs ([`vocals.py`](../scripts/vocals.py)), procedural nature soundscapes ([`environment.py`](../scripts/environment.py)), and cloned instruments.
+- **Stage 4 (Multi-Engine Stem Rendering):** High-fidelity rendering across SoundFonts, vocal formant choirs ([`vocals.py`](../../scripts/vocals.py)), procedural nature soundscapes ([`environment.py`](../../scripts/environment.py)), and cloned instruments.
 - **Stage 5 (High-Precision Mixing & Mastering):** Subtractive slot EQ, 2–4 kHz vocal pocket carving, shared room convolution reverb, and ITU-R BS.1770 broadcast limiting via `pb.BrickwallLimiter`.
 - **Stage 6 (Automated CI Quality Gate):** Objective verification across loudness tolerance, true peak, silence dropouts, click detection, 250–3,800 Hz speech masking corridor, 12-TET harmonic chroma concordance, 1–5 kHz mobile phone mono-phase check, and kick-drum beat-grid lock.
 - **Stage 7 (Release Packaging):** Delivers master WAV, MIDI, optional stems (`--stems`), and `ci_report.json` with a color-coded terminal scoreboard.
 
 ## Pedalboard DSP Engine & VST3 Architecture
 
-The pipeline integrates Spotify's **Pedalboard** C++ DSP library (JUCE-backed with GIL release) across mixing, vocal polishing, environmental acoustics, and sound effects:
-- **Mastering & Dynamic Limiting:** [`scripts/mixer.py`](../scripts/mixer.py) uses `pb.BrickwallLimiter(ceiling_db=..., true_peak=True)` with 4× oversampling and lookahead for strict ITU-R BS.1770 true-peak broadcast compliance, plus `pb.NoiseGate` for 80s gated reverb tails and `pb.Mix` for parallel compression.
-- **Vocal Harmonies & Chorus:** [`scripts/vocals.py`](../scripts/vocals.py) uses `pb.PitchShift` for instant multi-part backing harmonies (sub-octave, 5th, upper octave) and `pb.Chorus` for wide stereo vocal ensemble diffusion without phase cancellation.
-- **Procedural Sound Effects:** [`scripts/sfx.py`](../scripts/sfx.py) uses `pb.LadderFilter` for warm Moog 24 dB/oct resonant sweeps, `pb.Bitcrush` for vintage 8-bit / 12-bit sampler grit, `pb.GSMFullRateCompressor` / `pb.MP3Compressor` for codec degradation, and `pb.Delay` for tempo-synced stereo echoes.
-- **Environmental Acoustics:** [`scripts/environment.py`](../scripts/environment.py) uses `pb.Convolution` and distance air absorption filters (`LowpassFilter`, `HighShelfFilter`).
+The pipeline uses Spotify's **Pedalboard** DSP library across mixing, vocal polishing, environments and effects:
+- **Mastering & Dynamic Limiting:** [`scripts/mixer.py`](../../scripts/mixer.py) uses `pb.BrickwallLimiter(ceiling_db=..., true_peak=True)` with 4× oversampling and lookahead for strict ITU-R BS.1770 true-peak broadcast compliance, plus `pb.NoiseGate` for 80s gated reverb tails and `pb.Mix` for parallel compression.
+- **Vocal Harmonies & Chorus:** [`scripts/vocals.py`](../../scripts/vocals.py) uses `pb.PitchShift` for instant multi-part backing harmonies (sub-octave, 5th, upper octave) and `pb.Chorus` for wide stereo vocal ensemble diffusion without phase cancellation.
+- **Procedural Sound Effects:** [`scripts/sfx.py`](../../scripts/sfx.py) uses `pb.LadderFilter` for warm Moog 24 dB/oct resonant sweeps, `pb.Bitcrush` for vintage 8-bit / 12-bit sampler grit, `pb.GSMFullRateCompressor` / `pb.MP3Compressor` for codec degradation, and `pb.Delay` for tempo-synced stereo echoes.
+- **Environmental Acoustics:** [`scripts/environment.py`](../../scripts/environment.py) uses `pb.Convolution` and distance air absorption filters (`LowpassFilter`, `HighShelfFilter`).
 - **Array Layout Rule:** Pedalboard requires `(channels, samples)` arrays (`[2, N]`). Scripts automatically manage transposition between Scipy/Soundfile format (`[N, 2]`) and Pedalboard.
-- **Headless VST3 Hosting:** Any external VST3 instrument or effect plugin can be loaded headlessly via `pb.load_plugin(path)` and automated frame-by-frame in Python scripts.
+- **VST3 plugins:** an external VST3 instrument or effect can be loaded via `pb.load_plugin(path)` and automated in Python.

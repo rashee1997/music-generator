@@ -1,6 +1,5 @@
 # One-time setup (venv, SoundFont, earshot)
 
-Moved verbatim from SKILL.md to keep the entry file short.
 
 ## One-time setup
 
@@ -10,7 +9,7 @@ One command, from the skill folder:
 python3 scripts/setup_project.py          # core: .venv, packages, SoundFont, smoke test
 python3 scripts/setup_project.py --ears   # also earshot (listen.py hears the music) and its models, about 1 GB
 ```
-The script uses uv (https://docs.astral.sh/uv/), which is quick to install (`pip install uv`). Without uv it uses
+The script uses uv, which is quick to install (`pip install uv`). Without uv it uses
 `python -m venv` and pip. Then use the environment: `source .venv/bin/activate` (Windows: `.venv\Scripts\activate`), or
 call `.venv/bin/python` directly.
 

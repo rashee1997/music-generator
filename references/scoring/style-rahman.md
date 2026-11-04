@@ -1,7 +1,7 @@
 # A.R. Rahman style: what the production voice is
 
 A production style is an overlay on a culture mix (`scripts/fusion.py`, `STYLES`). It changes which instruments lead
-each role, not the cultures' scales, tempos or soul rules. Researched with TinyFish search, June 2026.
+each role, not the cultures' scales, tempos or soul rules.
 
 ## What the sources say
 - **Lush strings married with the melody.** Rahman is known for lush string sounds married with Indian melody.
@@ -29,10 +29,3 @@ on the piece, and the mix gate checks the lead's band.
 - Sung words. The choir and hum are texture only (see SKILL.md limits).
 
 ---
-
-## How to create / use
-
-Use or make a production style:
-1. Use: `"style": "rahman"` in the brief (the overlay lives in `references/data/styles/rahman.json`).
-2. Make another: `python scripts/presets.py scaffold styles <name> --project <project>` and fill `roles_add` (which instruments lead each role) and `sources`.
-3. Research the artist first (`research_kb.py` then web); styles change instruments, not scales or soul rules.

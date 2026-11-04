@@ -419,8 +419,8 @@ Sources: Juslin & Laukka (2003) and Juslin's mechanism review (Behavioral and Br
 responses to music: the need to consider underlying mechanisms"); Eerola, Friberg & Bresin (2013), Frontiers in
 Psychology, "Emotional expression in music: contribution, linearity, and additivity of primary musical cues";
 Ableton's guide to cinematic impact sounds (braams, hits, risers); Guy Jones on adaptive music (gamedeveloper.com);
-IRPR Sound glossary on vertical layering and horizontal re-sequencing (could not be fetched in this session; the
-definitions here come from the adaptive-music article); beverlyboy.com on spotting sessions; earshot README and
+IRPR Sound glossary on vertical layering and horizontal re-sequencing (the definitions here come from the
+adaptive-music article); beverlyboy.com on spotting sessions; earshot README and
 docs (github.com/Leonxlnx/earshot).
 
 The director's method in section 2 was read from: artofcomposing.com/how-to-spot-a-film (first rule of spotting,

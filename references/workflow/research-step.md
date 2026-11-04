@@ -1,6 +1,5 @@
 # Research step (knowledge base first, then web)
 
-Moved verbatim from the old SKILL.md loop, step 0.
 
 0. **Research Preflight (Mandatory before authoring presets or custom scores):**
    Before creating or scaffolding any instrument, vocal style, cultural fusion soul, DSP synthesis model, or ambient soundscape preset, conduct grounded ethnomusicological, acoustic, and environmental research in two distinct, sequential steps:
@@ -17,7 +16,7 @@ Moved verbatim from the old SKILL.md loop, step 0.
    - **Step 0.2 - Supplemental Web Research (Second):** Perform targeted web search to augment and cross-reference anything missing, contemporary production techniques (e.g., modern Anirudh/Rahman studio mixing tricks), specific artist aesthetics, or hyper-local folklore nuances not captured in the knowledgebase.
    - **Step 0.2b - Real ambient sounds and effects (required for every `env:` and `sfx:` sound in the score):** the knowledge base gives formulas,
      not measured real sounds. For each sound, the report gets a section `## Real-world references: <slug>` (create the stubs with
-     `research_kb.py <project> --topic ... --sounds rain_roof,frog_chorus`). Find, with TinyFish `search` then `fetch_content`:
+     `research_kb.py <project> --topic ... --sounds rain_roof,frog_chorus`). Find, with a web search and then a page fetch:
      - at least two sources of the real sound, of these kinds: a published acoustics or bioacoustics paper (drop-size distribution, impact
        frequencies, call rates, spectra); the page of a field recording (place, equipment, season, distance, weather); a measured spectrum;
      - the place matters: rain on leaves, on a tin roof and on a lake are three different sounds, so cite the surface and the rate you are making;

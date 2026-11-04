@@ -207,7 +207,7 @@ Two groups sit on top of the gate rows:
 - **`mix:` rows** — the mixing diagnostics (`scripts/mix_diagnostics.py`), collected because stage 5 mixes with
   `diagnose=True`. They are advisory by contract, so a diagnostic `FAIL` appears here as `WARN`; the gate's own
   true-peak, clipping and silence rows own the blocking verdicts. Fix what they name rather than ignoring them.
-- **`music21_hook`** — a project's own `scripts/analyze_music21.py`, if present.
+- **`music21_hook`** — the `analyze_music21.py` in a project's own `scripts/` folder, if present.
 
 ## 6. The extraction gate borrows this gate
 

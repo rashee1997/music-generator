@@ -17,7 +17,7 @@ and wants to play new melodies with it. Use `scripts/clone_instrument.py`.
 ## The 6-Stage Reverse-Engineering Pipeline & Universal Acoustic Fingerprints
 
 For mathematical derivations, YIN/pYIN equations, LPC formant filters, CQT salience matrices, and pure-Python code, consult the master knowledge base:  
-👉 [`knowledgebase/sound-design/audio-cloning.md`](../knowledgebase/sound-design/audio-cloning.md).
+👉 [`knowledgebase/sound-design/audio-cloning.md`](../../knowledgebase/sound-design/audio-cloning.md).
 
 When reverse-engineering an instrument or reference audio file without human ears, follow the **6-Stage Deconstruction Pipeline**:
 1. **Continuous Microtonal Pitch Extraction:** Sub-sample accurate $f_0(t)$ tracking using pYIN, CMNDF, and parabolic peak interpolation; splits static notes from dynamic *Gamaka/Meend* bends.

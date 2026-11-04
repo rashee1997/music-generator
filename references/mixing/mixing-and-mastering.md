@@ -52,7 +52,7 @@ natural 18-20 dB crest piece should simply be a little quieter, not crushed.
 
 ## 4. Music under voice-over (OpenMontage, W3C, BBC practice & Commercial Contract)
 
-- **The Voice-Over First Contract:** In commercials, explainers, and corporate media, speech intelligibility is sacred. Consult [`knowledgebase/genre-and-feel/commercial-promo.md`](../knowledgebase/genre-and-feel/commercial-promo.md) for complete mathematical ducking curves and commercial persuasion psychoacoustics:
+- **The Voice-Over First Contract:** In commercials, explainers, and corporate media, speech intelligibility is sacred. Consult [`knowledgebase/genre-and-feel/commercial-promo.md`](../../knowledgebase/genre-and-feel/commercial-promo.md) for complete mathematical ducking curves and commercial persuasion psychoacoustics:
   - Apply a static -4 to -6 dB bell notch filter ($Q = 1.2$) centered at 1,800 Hz across all chordal/pad beds (pianos, electric guitars, synth pads).
   - Dynamically duck the music bed by -8 to -14 dB whenever vocal activity is detected (25 ms attack, 250–350 ms release).
 - Voice: high-pass 80 Hz, cut ~500 Hz, boost 2-5 kHz, tame 6-8 kHz sibilance, compress 3:1 (1-5 ms attack, 10-20 ms release).
@@ -65,7 +65,7 @@ Use `video-mixer/video_program_mix.py` - it does all of the above and prints how
 
 ## 5. Reverb, Space & Algorithmic Engines
 
-For pure-Python algorithmic reverb synthesis models and topologies, see [`knowledgebase/genre-and-feel/commercial-promo.md`](../knowledgebase/genre-and-feel/commercial-promo.md) Section 6.0:
+For pure-Python algorithmic reverb synthesis models and topologies, see [`knowledgebase/genre-and-feel/commercial-promo.md`](../../knowledgebase/genre-and-feel/commercial-promo.md) Section 6.0:
 - **Schroeder/Moorer Comb & All-Pass Networks:** Dense natural room diffusion.
 - **The Shimmer Reverb Engine:** Granular octave-up pitch-shifted feedback loop ($+12\text{ semitones}$) for ethereal, celestial swells.
 - **80s Phil Collins Gated Reverb:** High-energy non-linear cutoff at 220 ms.
@@ -115,7 +115,7 @@ Deliver: master WAV, instrumental/underscore version, stems, MIDI.
 
 ## 8. Ambient & Nature Fusion (The 5 Zero-Overlap Blending Laws)
 
-For mathematical derivations, weather physics (mist, monsoon, ocean surf, desert simoom, fire, thunder), and bio-acoustics (avian syrinx FM synthesis), see [`knowledgebase/sound-design/sfx-ambience.md`](../knowledgebase/sound-design/sfx-ambience.md). Enforce the **5 Laws of Zero-Overlap Blending**:
+For mathematical derivations, weather physics (mist, monsoon, ocean surf, desert simoom, fire, thunder), and bio-acoustics (avian syrinx FM synthesis), see [`knowledgebase/sound-design/sfx-ambience.md`](../../knowledgebase/sound-design/sfx-ambience.md). Enforce the **5 Laws of Zero-Overlap Blending**:
 1. **Dynamic Spectral Notching:** 4th-order Butterworth high-pass at 140 Hz (sub-bass protection) + -8 to -14 dB notch on ambient beds at the lead instrument's instantaneous $f_0(t)$ and $2f_0(t)$.
 2. **Temporal Call-and-Response Gating:** Discrete SFX (birds, drops, whistles) trigger with inverse-envelope probability $P \propto (1 - M_{env})^2$ during musical pauses.
 3. **Key-Locked Harmonic Resonators ("Singing Ambience"):** Pass 25–40% of raw wind/rain/surf noise through a parallel bank of high-Q resonators ($Q = 25–45$) tuned to the song's root, 5th, and mode so nature naturally hums in key.
@@ -191,7 +191,7 @@ row in that table by itself proves the mix sounds better.
 
 ## 9. Spotify Pedalboard DSP Architecture & Broadcast Mastering
 
-The mixing engine ([`scripts/mixer.py`](../scripts/mixer.py)) uses Spotify's **Pedalboard** C++ library (built on JUCE with GIL release) for SIMD-accelerated stem filtering, dynamics, and master limiting:
+The mixing engine ([`scripts/mixer.py`](../../scripts/mixer.py)) uses Spotify's **Pedalboard** library for stem filtering, dynamics and master limiting:
 
 1. **ITU-R BS.1770 Broadcast Mastering via `pb.BrickwallLimiter`**:
    - Enforces a precise true-peak ceiling (e.g. `-1.5 dBTP`) using lookahead delay lines and exponential release envelopes without unwanted makeup gain or hard-clipping distortion.

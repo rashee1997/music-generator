@@ -1,6 +1,6 @@
-# AGENTS.md — STRICT RULES FOR AI AGENTS
+# AGENTS.md — rules for AI agents
 
-**READ THIS FILE FIRST. READ IT COMPLETELY. FOLLOW EVERY RULE. NO EXCEPTIONS.**
+Read this file first and follow it.
 
 This file governs ALL music generation work in this skill. Read `SKILL.md` after this. 
 

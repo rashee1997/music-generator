@@ -11,7 +11,6 @@ own `vocal` block (any key or section of the vocal config). Notes take `c` (cent
 
 ## 1. What makes a synthetic voice sound like a voice
 
-Research read for this pass (TinyFish search, and pages fetched where the text came back):
 - **Source-filter model.** A voice is a source (the vocal folds, a periodic pulse train with a falling spectrum) shaped
   by the vocal tract, which adds resonances called formants. The ear identifies vowels from the formants, and the
   pitch from the source. CCRMA's vocal-model comparison: FM voices are cheap but hard to make convincing; formant
@@ -31,8 +30,7 @@ Research read for this pass (TinyFish search, and pages fetched where the text c
 
 ## 2. Vowel formants used
 
-Adult averages in the Peterson and Barney style, written from memory (not fetched; check against a table before a
-scientific claim). They live in `references/data/vocal-engine-data/defaults.json` (`tract.vowels`):
+Adult averages in the Peterson and Barney style; check them against a published table before a scientific claim. They live in `references/data/vocal-engine-data/defaults.json` (`tract.vowels`):
 
 | Vowel | F1 Hz | F2 Hz | F3 Hz | Use |
 |---|---|---|---|---|
@@ -111,19 +109,3 @@ All three read their numbers from the `dsp` section (`references/data/vocal-engi
 - Mono input still returns `(N, 2)` (as before); pass `keep_shape=True` for the input's shape.
 
 ---
-
-## How to create / use
-
-Create a voice:
-1. `python scripts/presets.py scaffold vocals <name> --project <project>`. Every key is optional; the template shows the sections
-   (`source`, `humming`, `vibrato`, `articulation`, `performance`, `breathing`, `ensemble`) and the `expression` field. Write a real
-   `character` sentence (the project gate blocks the placeholder). The schema is `references/data/vocal-engine-data/vocal.schema.json`.
-2. In the score: `{"name": "<track>", "instrument": "<name>", "role": "pad", "notes": [...]}`. Built-in voices needing no preset:
-   `choir_formant`, `hum_formant`, `voice_formant`, `throat_formant`, `chant_formant`.
-3. A humming performance in one preset:
-   `{"name": "my_hum", "character": "...", "hum": true, "expression": "melancholic", "ensemble": {"voices": 1}, "humming": {"brightness": 0.4}}`.
-4. A new tradition without code: add `"styles": {"my_tradition": {"formants": [...], "register": "chest", "subharmonic": true}}` and
-   `"style": "my_tradition"`.
-5. Check: `python scripts/presets.py validate`, the project gate, then the quality gate's `vocal.*` rows (integrity, clicks, breath,
-   ensemble, intonation, dynamics, hum tone), the `erb_binaural_masking` row (the lead keeps its band), and `soul` rows if a culture
-   is named. Then listen.

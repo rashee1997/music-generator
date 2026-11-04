@@ -18,7 +18,7 @@ Then dynamically author the piece's custom analysis script to interrogate those 
 
 ---
 
-## 2. The Vast Analytical Arsenal of music21
+## 2. What music21 can analyse
 
 ### A. Tonality, Modality & Modal Affect
 * `score.analyze('key')`: Krumhansl-Schmuckler, Temperley-Kostka-Payne (`key.temperley`), and folk-weighted tonal determination.
@@ -75,12 +75,3 @@ Whenever a composition is created or revised:
 5. Print an intelligible, empirical report and use the findings to drive exact musical revisions.
 
 ---
-
-## How to create / use
-
-Stage 6 runs a music21 analysis for every project. Default: `templates/analyze_music21_template.py` (key, bass register, voice separation, contour, harmonic rhythm).
-To tailor it to the piece (recommended when the culture or mode is unusual):
-1. `cp templates/analyze_music21_template.py <project>/scripts/analyze_music21.py`.
-2. Keep `analyze(score, out_wav=None, out_midi=None, reports_dir=None)` returning rows `(level, name, detail)` with level PASS | WARN | FAIL.
-3. A crash in your script is reported as a FAIL row (never silently skipped). Run `pipeline.py ... --project <project>` and read the `music21_*` rows.
-(The policy line above about a mandatory custom script is relaxed: the default template always runs; a custom one is optional.)

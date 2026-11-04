@@ -1,6 +1,5 @@
 # Director roles, cultural soul and planned fusions
 
-Moved verbatim from SKILL.md to keep the entry file short.
 
 ## Music director: the roles the skill plays
 

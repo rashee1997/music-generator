@@ -2,7 +2,7 @@
 
 Use this when the brief mixes two or more traditions (a raga over a backbeat, a Tejano accordion under a country shuffle,
 an Arabic maqam with trap drums), or when one country sub-style should borrow from another. Sources are in
-`research-sources.md` section 9. Where a point is background knowledge rather than a fetched source, it says so.
+the cell's own note. Where a point is background knowledge rather than a fetched source, it says so.
 
 ## 1. What makes a fusion sound like one piece
 
@@ -36,7 +36,6 @@ pasted when two complete systems compete. The rules below are the ones the sourc
 **The mood still decides tempo and energy.** A fusion used to set `joyful` (108-130 BPM) whenever the brief named no
 mood, which is why every blend came out upbeat. Now the plan's tempo is a hint with a +-7 BPM window, and the mood and
 any modifier word move it: `{"fusion":["indian","west_african"],"emotion":"slow reflective"}` produced `melancholy`
-at 67 BPM in this pass, while the same blend with no mood word was `focused` at 88 BPM and said so in
 `meta.mood_notes`. When the mood's band and the plan's ±7 BPM window do not overlap at all (e.g. `calm` with a
 110 BPM fusion), the same 2:1 mood-wins tiebreak used for mood-vs-genre applies and the pick is logged in
 `meta.mood_notes` ("mood tempo ... and fusion tempo ... do not overlap; using N BPM"). The cultures still own the
@@ -110,7 +109,6 @@ call and response with guitar. Interleave one ambient interlude per 8 bars.
 
 ## 6. Limits
 
-- The sources are web articles and a few museum or encyclopedia pages, read with TinyFish. None is a controlled listening
   study of fusion. The claims about masking, register and consonance are background knowledge.
 - No recipe here has been rendered and listened to yet, except the Arabic desert piece and the Tamil-Carnatic sample,
   which use the layer rules but not the country recipes. R1 to R3 are hypotheses until someone listens.
@@ -137,11 +135,3 @@ When blending two or more cultures, traditions or genres, follow these mandatory
    - Keep lead instruments in warm singing octaves (octaves 3 to 5), strictly avoiding shrill octave 6 notes.
 
 ---
-
-## How to create / use
-
-Create a fusion:
-1. Add `"fusion": ["carnatic", "arabic"]` (cultures that exist under `presets/cultures/`) to the brief JSON; `python scripts/compose.py --brief brief.json --out scores/<title>_score.json`.
-2. Read `meta.mood_notes` and the printed plan: one scale, one tempo in the overlap, one lead at a time.
-3. New style overlay: `python scripts/presets.py scaffold styles <name> --project <project>`, set `"style": "<name>"` in the brief.
-4. Prove it: `python scripts/pipeline.py scores/<title>_score.json --project <project>` (soul rows appear in the Stage 6 scoreboard).
