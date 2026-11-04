@@ -132,7 +132,7 @@ Pass the name as `--mode` or `"mode"` in the brief. Chord symbols are read again
 | Indonesia | `slendro` (five near-equal steps, 240 cents if exactly equal), `pelog` (shown as its 5-note subset) | cents for slendro: +40, -20, +20, -40 |
 | Andes, Africa, Celtic | `andean_minor`, `african_pentatonic`, `mbira_mixolydian`, `celtic_dorian` | |
 
-Older names still work: `hijaz`, `double_harmonic`, `blues`, `pentatonic_major`, `pentatonic_minor`, `whole_tone`, the seven modes.
+Older names still work: `hijaz`, `double_harmonic`, `blues`, `pentatonic_major`, `pentatonic_minor`, `whole_tone`, the seven modes. Knowledge-base spellings differ (`japanese_hirajoshi`, `raga_charukesi`): use the names in this table.
 
 ### Microtones and slides in your own score
 
