@@ -38,7 +38,7 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 SOUL_DIR = os.path.join(HERE, '..', 'references', 'soul')
 
-# Sources for each entry: references/scoring/cultural-soul.md (researched with TinyFish, June 2026 notes).
+# Per-culture feel rules: references/scoring/cultural-soul.md
 import presets  # noqa: E402  (soul profiles are the 'soul' presets: references/data/presets/soul and each project's presets/soul)
 
 
