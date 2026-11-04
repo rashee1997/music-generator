@@ -5,12 +5,5 @@
     "pad": ["slow_strings"],
     "lift": ["violin"],
     "chorus": ["choir_formant"]
-  },
-  "sources": [
-    "theconversation.com: lush string sounds married with Indian melody (2015)",
-    "en.wikipedia.org, A. R. Rahman: counterpoint, orchestration and the human voice",
-    "medium.com, WorldMuslimPedia: symphonic orchestral themes with leitmotif",
-    "liberalarts.dpu.edu.in: ragas blended with electronic elements",
-    "instagram, 'The genius of AR Rahman's early production': choral and vocal layers (Roja, 1992)"
-  ]
+  }
 }
