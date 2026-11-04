@@ -762,16 +762,33 @@ class MusicPipeline:
             try:
                 version_manager.update_entry(Path(project_dir) / 'out', published['version'],
                                              measurements=report.get('measurements'))
+                sheet = ingest_metadata.find_direction(project_dir)
+                numbers = {'version': published['version'],
+                           'ci_report': os.path.basename(json_report or '')}
                 info = ingest_metadata.ingest(out_wav, score=score, project_dir=project_dir,
-                                              extra={'version': published['version'],
-                                                     'ci_report': os.path.basename(json_report or '')})
+                                              extra=numbers, direction=sheet)
                 report['deliverables']['metadata'] = info['sidecar']
                 report['deliverables']['version'] = published['version']
                 report['deliverables']['versioned_master'] = published['file']
+                report['deliverables']['metadata_tagged'] = info['tagged']
+                if info['tag_error']:
+                    report['deliverables']['metadata_tag_error'] = info['tag_error']
+                    print(f"  [WARN] tags were NOT written into {out_wav}: {info['tag_error']}")
+                    print(f"         the audio is certified; fix the file and run: python scripts/helpers/ingest_metadata.py "
+                          f"\"{out_wav}\" --project \"{project_dir}\"")
+                versioned_wav = os.path.join(project_dir, 'out', published['file'])
+                vinfo = ingest_metadata.ingest(versioned_wav, score=score, project_dir=project_dir,
+                                              extra=dict(numbers, version=published['version']), direction=sheet)
+                report['deliverables']['versioned_metadata'] = vinfo['sidecar']
+                if vinfo['tag_error']:
+                    report['deliverables']['versioned_metadata_tag_error'] = vinfo['tag_error']
+                    print(f"  [WARN] tags were NOT written into {published['file']}: {vinfo['tag_error']}")
                 Path(json_report).write_text(json.dumps(report, indent=2), encoding='utf-8')
                 print(f"  [METADATA] {info['sidecar']}")
             except Exception as exc:          # the audio is already certified and safe
+                report['deliverables']['metadata_error'] = str(exc)
                 print(f"  [WARN] metadata step failed ({exc})")
+                Path(json_report).write_text(json.dumps(report, indent=2), encoding='utf-8') if json_report else None
 
         elapsed = time.time() - t_start
         print("=" * 80)

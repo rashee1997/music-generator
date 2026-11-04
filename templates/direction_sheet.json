@@ -95,6 +95,7 @@
   },
 
   "piece_type": "cinematic",
+  "gate_reason": "TODO: one line on why this gate profile fits this piece; the gate runs it",
 
   "video": {
     "enabled": false,

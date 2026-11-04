@@ -994,48 +994,186 @@ def equal_loudness_rows(score, stems=None, out=None, sr=44100):
     return rows
 
 
-def metadata_rows(score, out, project_dir=None):
-    """Delivery traceability: the certified master carries standard metadata (`<master>.json`, written by
-    scripts/helpers/ingest_metadata.py) and a version record in `out/versions.json` whose versioned file still
-    exists (scripts/helpers/version_manager.py). The gate only reads this; it never writes or repairs it.
-    These rows never FAIL: metadata is written after the musical gate passes, so a missing record is a WARN
-    about the delivery, not a reason to reject the music."""
+SUBTYPE_BITS = {'PCM_U8': 8, 'PCM_16': 16, 'PCM_24': 24, 'PCM_32': 32, 'FLOAT': 32, 'DOUBLE': 64}
+
+
+def _direction_sheet(project_dir):
+    """The project's direction sheet (first parseable direction/*.json), or {}."""
+    if not project_dir:
+        return {}
+    folder = os.path.join(project_dir, 'direction')
+    if not os.path.isdir(folder):
+        return {}
+    for name in sorted(os.listdir(folder)):
+        if not name.endswith('.json'):
+            continue
+        try:
+            data = json.load(open(os.path.join(folder, name), encoding='utf-8'))
+        except Exception:
+            continue
+        if isinstance(data, dict):
+            return data
+    return {}
+
+
+def direction_rows(score, out, project_dir=None, wav_path=None):
+    """The direction sheet is a promise about the delivery, so the gate judges the delivered file against it.
+
+    Rows: delivery.sample_rate, delivery.bit_depth, delivery.channels and delivery.duration against
+    sheet["delivery"] and duration_s (FAIL on a mismatch), tempo.bpm against sheet["tempo_bpm"] (FAIL when the
+    score's tempo is outside the promised range), key.mode against sheet["key"]/["mode"] (WARN: a transposition
+    is a decision, not a defect). No sheet: one INFO row and no judgement, so projects written before the sheet
+    existed keep working. The gate only reads; it never edits the sheet or the audio.
+    """
     import gate_profiles
+    gp = gate_profiles.resolve(score)
+    if not project_dir:
+        out.append(('INFO', 'delivery.direction', 'no project folder, so no direction sheet: the delivery is '
+                    'not judged against one'))
+        return
+    sheet = _direction_sheet(project_dir)
+    if not sheet:
+        out.append(('INFO', 'delivery.direction',
+                    'no direction/*.json: the delivered file is not judged against a sheet (sample rate, bit depth, '
+                    'channels, length, tempo and key are unchecked)'))
+        return
+    delivery = sheet.get('delivery') or {}
+    info = None
+    if wav_path and os.path.isfile(wav_path):
+        try:
+            import soundfile as sf
+            info = sf.info(wav_path)
+        except Exception as exc:
+            out.append(('WARN', 'delivery.sample_rate', f'cannot read {os.path.basename(wav_path)} to compare it with the sheet ({exc})'))
+    name = os.path.basename(wav_path) if wav_path else 'the master'
+    if info is not None:
+        if gp.on('delivery.sample_rate') and delivery.get('sample_rate'):
+            want = int(delivery['sample_rate'])
+            if int(info.samplerate) != want:
+                out.append(('FAIL', 'delivery.sample_rate',
+                            f'{name} is {info.samplerate} Hz but direction sheet.delivery.sample_rate is {want} Hz: '
+                            f'deliver at the promised rate (render at {want} Hz) or correct the sheet'))
+            else:
+                out.append(('PASS', 'delivery.sample_rate', f'{info.samplerate} Hz matches the direction sheet'))
+        if gp.on('delivery.bit_depth') and delivery.get('bit_depth'):
+            want = int(delivery['bit_depth'])
+            got = SUBTYPE_BITS.get(str(info.subtype))
+            if got is None:
+                out.append(('WARN', 'delivery.bit_depth', f'{name} subtype {info.subtype} has no known bit depth to compare with the sheet'))
+            elif got != want:
+                out.append(('FAIL', 'delivery.bit_depth',
+                            f'{name} is {got}-bit ({info.subtype}) but direction sheet.delivery.bit_depth is {want}-bit'))
+            else:
+                out.append(('PASS', 'delivery.bit_depth', f'{got}-bit matches the direction sheet'))
+        if gp.on('delivery.channels') and delivery.get('channels'):
+            want = int(delivery['channels'])
+            if int(info.channels) != want:
+                out.append(('FAIL', 'delivery.channels',
+                            f'{name} has {info.channels} channel(s) but direction sheet.delivery.channels is {want}'))
+            else:
+                out.append(('PASS', 'delivery.channels', f'{info.channels} channel(s) match the direction sheet'))
+    if gp.on('delivery.duration') and info is not None:
+        want = sheet.get('duration_s', sheet.get('duration_seconds'))
+        try:
+            want = float(want) if want is not None else None
+        except (TypeError, ValueError):
+            want = None
+        if want:
+            tol = float(gp.param('delivery.duration', 'tolerance_s'))
+            got = float(info.frames) / float(info.samplerate)
+            if abs(got - want) > tol:
+                out.append(('FAIL', 'delivery.duration',
+                            f'{name} is {got:.2f} s but direction sheet.duration_s is {want:g} s (tolerance {tol:g} s): '
+                            f'render the promised length or correct the sheet'))
+            else:
+                out.append(('PASS', 'delivery.duration', f'{got:.2f} s matches duration_s {want:g} s'))
+    if gp.on('tempo.bpm'):
+        want_bpm = sheet.get('tempo_bpm', sheet.get('bpm'))
+        bpm = score.get('bpm')
+        if want_bpm and bpm:
+            lo, hi = (want_bpm if isinstance(want_bpm, (list, tuple)) else [want_bpm, want_bpm])
+            try:
+                lo, hi = float(lo), float(hi)
+            except (TypeError, ValueError):
+                lo = hi = None
+            if lo is not None:
+                if not (lo - 1e-6 <= float(bpm) <= hi + 1e-6):
+                    out.append(('FAIL', 'tempo.bpm',
+                                f'score bpm {float(bpm):g} is outside direction sheet.tempo_bpm {lo:g}-{hi:g}: '
+                                f'change the tempo or correct the sheet (the sheet is the promise)'))
+                else:
+                    out.append(('PASS', 'tempo.bpm', f'{float(bpm):g} BPM is inside {lo:g}-{hi:g}'))
+    if gp.on('key.mode'):
+        sk, sm = sheet.get('key'), sheet.get('mode')
+        if sk and score.get('key'):
+            key_ok = str(score.get('key')).strip().lower() == str(sk).strip().lower()
+            mode_ok = (not sm) or str(score.get('mode') or '').strip().lower() == str(sm).strip().lower()
+            if key_ok and mode_ok:
+                out.append(('PASS', 'key.mode', f'{score.get("key")} {score.get("mode") or ""}'.strip() + ' matches the direction sheet'))
+            else:
+                out.append(('WARN', 'key.mode',
+                            f'score is {score.get("key")} {score.get("mode") or ""}'.strip() + f' but direction sheet says '
+                            f'{sk} {sm or ""}'.strip() + ': WARN, not FAIL - a transposition is a decision, but the sheet '
+                            'and the score disagree and one of them is out of date'))
+
+
+def metadata_rows(score, out, project_dir=None, wav_path=None):
+    """Delivery traceability: the standard tags are inside the delivered WAV (RIFF INFO) *and* in a sidecar
+    (`<master>.json`), the versioned master has a sidecar of its own, and `out/versions.json` names a file that
+    still exists. The gate only reads; it never writes or repairs anything.
+
+    These rows never FAIL: metadata is written after the musical gate passes, so a missing or mismatched tag is a
+    WARN about the delivery, with the exact command that fixes it.
+    """
+    import gate_profiles
+    from helpers import ingest_metadata
     gp = gate_profiles.resolve(score)
     if not project_dir:
         return
     out_dir = os.path.join(project_dir, 'out')
-    master = os.path.join(out_dir, 'master.wav')
-    # The gate runs before certification writes the record, so the very first render has nothing to trace
-    # yet: report that as INFO rather than as a defect.
+    master = wav_path or os.path.join(out_dir, 'master.wav')
     first_render = not os.path.isfile(master) and not os.path.isfile(os.path.join(out_dir, 'versions.json'))
 
     if first_render:
         if gp.on('meta.tags') or gp.on('meta.version'):
             out.append(('INFO', 'meta', 'traceability: no certified master yet, tags and the version record are '
-                                      'written at certification'))
+                                        'written at certification'))
         return
 
     if gp.on('meta.tags'):
         limit = int(gp.param('meta.tags', 'max_missing'))
         sidecar = os.path.splitext(master)[0] + '.json'
-        missing = []
+        problems = []
+        tags = {}
         if not os.path.isfile(sidecar):
-            missing.append('no sidecar beside the master')
+            problems.append('no sidecar beside the master')
         else:
             try:
                 tags = (json.load(open(sidecar, encoding='utf-8')) or {}).get('metadata') or {}
             except Exception:
                 tags = {}
             if not tags:
-                missing.append('sidecar holds no tags')
+                problems.append('sidecar holds no tags')
             if tags and score.get('title') and not tags.get('title'):
-                missing.append('sidecar has no title')
+                problems.append('sidecar has no title')
             elif score.get('title') and tags.get('title') != score.get('title'):
-                missing.append(f'sidecar title "{tags.get("title")}" is not the score title "{score.get("title")}"')
-        lvl = 'PASS' if not missing else ('WARN' if len(missing) <= limit else 'WARN')
-        out.append((lvl, 'meta', 'metadata: standard tags present beside the master' if not missing
-                    else 'metadata: ' + '; '.join(missing) + ' (run scripts/helpers/ingest_metadata.py)'))
+                problems.append(f'sidecar title "{tags.get("title")}" is not the score title "{score.get("title")}"')
+        in_file = {}
+        if os.path.isfile(master):
+            try:
+                in_file = ingest_metadata.read_wav_tags(master)
+            except Exception as exc:
+                problems.append(f'{os.path.basename(master)} cannot be read for tags ({exc})')
+            if not in_file:
+                problems.append(f'the WAV itself carries no tags (a delivered file must: title, artist, ... inside it)')
+            else:
+                for key in sorted(tags):
+                    if key in ingest_metadata.INFO_TAGS and str(tags.get(key)) != str(in_file.get(key, '')):
+                        problems.append(f'in-file {key} "{in_file.get(key, "")}" != sidecar "{tags.get(key)}"')
+        fix = f'python scripts/helpers/ingest_metadata.py "{master}" --project "{project_dir}"'
+        out.append(('PASS' if not problems else 'WARN', 'meta',
+                    ('metadata: tags are inside the master and match the sidecar' if not problems
+                     else 'metadata: ' + '; '.join(problems) + f' (fix: {fix})')))
 
     if gp.on('meta.version'):
         limit = int(gp.param('meta.version', 'max_missing'))
@@ -1059,14 +1197,16 @@ def metadata_rows(score, out, project_dir=None):
                     problems.append('the latest record names no file')
                 elif not os.path.isfile(versioned):
                     problems.append(f'the recorded file {entry.get("file")} is missing')
-                if entry.get('title') and score.get('title') and entry['title'] != score.get('title'):
+                elif not os.path.isfile(os.path.splitext(versioned)[0] + '.json'):
+                    problems.append(f'the versioned master {entry.get("file")} has no sidecar of its own '
+                                    f'(fix: python scripts/helpers/ingest_metadata.py "{versioned}" --project "{project_dir}")')
+                if entry.get('title') and score.get('title') and entry['title'] != score['title']:
                     problems.append(f'version title "{entry["title"]}" is not the score title "{score["title"]}"')
                 if not entry.get('change'):
                     problems.append('the latest version records no change')
-        lvl = 'PASS' if not problems else ('WARN' if len(problems) <= limit else 'WARN')
-        detail = (f"version v{entry['version']:02d} ({entry.get('file')}): {entry.get('change')}"
-                  if entry and not problems else 'version: ' + '; '.join(problems))
-        out.append((lvl, 'meta', detail))
+        out.append(('PASS' if not problems else 'WARN', 'meta',
+                    (f"version v{entry['version']:02d} ({entry.get('file')}): {entry.get('change')}"
+                     if entry and not problems else 'version: ' + '; '.join(problems))))
 
 
 def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None):
@@ -1114,7 +1254,8 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None):
         out.extend(masking_rows(stems, score))
         out.extend(nc.modulation_flutter_check(stems, score))
     project_dir = os.path.dirname(s_dir) if s_dir else None
-    metadata_rows(score, out, project_dir=project_dir)
+    metadata_rows(score, out, project_dir=project_dir, wav_path=rendered)
+    direction_rows(score, out, project_dir=project_dir, wav_path=rendered)
     return out, rendered
 
 

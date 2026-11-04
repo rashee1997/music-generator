@@ -131,6 +131,14 @@ ROWS = {
     # delivery traceability (scripts/helpers/, written at certification; the gate only reads it)
     'meta.tags':     dict(meaning='standard metadata written beside the certified master',
                           params={'max_missing': (0, 0, 12)}),
+    # the direction sheet is the promise the delivery is judged against (scripts/quality_gate.py direction_rows)
+    'delivery.sample_rate': dict(meaning='delivered sample rate against the direction sheet'),
+    'delivery.bit_depth':   dict(meaning='delivered bit depth against the direction sheet'),
+    'delivery.channels':    dict(meaning='delivered channel count against the direction sheet'),
+    'delivery.duration':    dict(meaning='delivered length against the direction sheet',
+                                  params={'tolerance_s': (0.5, 0.1, 5.0)}),
+    'tempo.bpm':            dict(meaning='score tempo inside the range the direction sheet promises'),
+    'key.mode':             dict(meaning='score key and mode against the direction sheet'),
     'meta.version':  dict(meaning='a version record for the certified master, and its versioned file still on disk',
                           params={'max_missing': (0, 0, 5)}),
     # video delivery (scripts/video_score.py; measured by video-mixer/video_gate.py)
