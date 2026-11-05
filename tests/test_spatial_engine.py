@@ -71,6 +71,12 @@ class Bass(unittest.TestCase):
         bus = bass.lfe_bus([tone], SR, cfg)
         self.assertLess(bass.stopband_leak_db(bus, SR, cfg, reference=tone), -45.0)
 
+    def test_a_leaking_low_channel_is_caught(self):
+        cfg = config.lfe_cfg('itu_bs2051_system_h', 'immersive_7_1')
+        t = np.arange(SR) / SR
+        leak = 0.5 * np.sin(2 * np.pi * 1000.0 * t)
+        self.assertGreater(bass.stopband_leak_db(leak, SR, cfg, reference=leak), -3.0)
+
     def test_crossover_passes_its_own_band(self):
         cfg = config.lfe_cfg('itu_bs2051_system_h', 'immersive_7_1')
         t = np.arange(SR) / SR
@@ -127,6 +133,81 @@ class FoldDown(unittest.TestCase):
         fold = downmix.fold(audio, 'itu_bs2051_system_h')
         self.assertAlmostEqual(float(fold[:, 0].mean()), float(fold[:, 1].mean()), places=6)
         self.assertAlmostEqual(float(fold[:, 0].mean()), 0.7071, places=4)
+
+
+class DiscreteBus(unittest.TestCase):
+    def test_the_bus_places_height_and_keeps_the_low_end_out_of_the_mains(self):
+        n = SR // 2
+        t = np.arange(n) / SR
+        bus = render.LayoutBus('itu_bs2051_system_j', 'immersive_7_1_4', SR)
+        bus.add('flute', 0.2 * np.sin(2 * np.pi * 220.0 * t), dict(role='melody', azimuth=-30.0, elevation=30.0))
+        bus.add('sub', 0.4 * np.sin(2 * np.pi * 40.0 * t), dict(role='bass', azimuth=0.0, elevation=0.0))
+        audio = bus.result()
+        names = config.channel_names('itu_bs2051_system_j')
+
+        def rms(name):
+            return float(np.sqrt(np.mean(audio[:, names.index(name)] ** 2)))
+
+        self.assertEqual(audio.shape, (n, 12))
+        self.assertTrue(np.isfinite(audio).all())
+        self.assertGreater(rms('TFL'), 5.0 * rms('FL'))      # the flute lives overhead, not in the front pair
+        self.assertGreater(rms('LFE'), 0.01)                 # the bass reached the low-frequency channel
+        self.assertLess(rms('FC'), 0.02)                      # and its mains are high-passed away
+
+    def test_the_reverb_return_follows_the_layout(self):
+        bus = render.LayoutBus('itu_bs2051_system_h', 'immersive_7_1', SR)
+        n = SR // 10
+        bus.add_reverb(np.full((n, 2), 0.1))
+        audio = bus.result()
+        names = config.channel_names('itu_bs2051_system_h')
+
+        def rms(name):
+            return float(np.sqrt(np.mean(audio[:, names.index(name)] ** 2)))
+
+        self.assertGreater(rms('FL'), 0.0)
+        self.assertAlmostEqual(rms('BL') / rms('FL'), 0.5, delta=0.12)   # surround -6 dB, per the layout
+
+
+class MultichannelMaster(unittest.TestCase):
+    def test_every_channel_stays_under_the_target_ceiling(self):
+        from spatial_engine import master
+        audio = (np.random.default_rng(5).standard_normal((SR // 2, 12)) * 0.4).astype(np.float32)
+        target = render_targets.get('immersive_7_1_4')
+        out = master.master(audio, dict(master=dict(lufs=-18)), target, SR)
+        self.assertEqual(out.shape[1], 12)
+        self.assertLessEqual(max(master.channel_peaks(out, SR)), float(target['true_peak_dbtp']) + 0.1)
+
+
+class Deliverables(unittest.TestCase):
+    @staticmethod
+    def _score():
+        return dict(title='t', bpm=90, tracks=[dict(name='cello', role='melody', instrument='cello',
+                                                     notes=[dict(t=0, d=1, v=100)])])
+
+    @staticmethod
+    def _stems():
+        t = np.arange(SR // 2) / SR
+        return {'cello': 0.1 * np.sin(2 * np.pi * 220.0 * t)}
+
+    def test_spatial_target_writes_the_layout_channel_count(self):
+        import os
+        import tempfile
+        import soundfile as sf
+        with tempfile.TemporaryDirectory() as td:
+            path = os.path.join(td, 'master_7_1_4.wav')
+            render.render_deliverable(self._score(), self._stems(), 'immersive_7_1_4', path, SR)
+            self.assertEqual(sf.info(path).channels, 12)
+            audio, _ = sf.read(path)
+            self.assertLessEqual(float(np.max(np.abs(audio))), 0.9)
+
+    def test_binaural_target_writes_two_channels(self):
+        import os
+        import tempfile
+        import soundfile as sf
+        with tempfile.TemporaryDirectory() as td:
+            path = os.path.join(td, 'master_binaural.wav')
+            render.render_deliverable(self._score(), self._stems(), 'binaural', path, SR)
+            self.assertEqual(sf.info(path).channels, 2)
 
 
 if __name__ == '__main__':

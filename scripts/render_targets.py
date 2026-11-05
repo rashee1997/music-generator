@@ -33,7 +33,7 @@ SCORE_KEY = 'output_targets'
 LEGACY_SCORE_KEY = 'outputs'
 ALL = 'all'
 # The renderers that exist in the engine today. A preset naming anything else is a data error, not a fallback.
-ENGINE_RENDERERS = ('mix_master',)
+ENGINE_RENDERERS = ('mix_master', 'spatial', 'binaural')
 REQUIRED = ('channels', 'channel_order', 'file', 'renderer', 'true_peak_dbtp')
 
 

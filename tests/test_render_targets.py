@@ -30,8 +30,12 @@ class Targets(unittest.TestCase):
 
     def test_named_targets_exist(self):
         self.assertEqual(render_targets.names(),
-                         ['stereo', 'binaural', 'immersive_7_1', 'immersive_7_1_4'])
+                         ['stereo', 'binaural', 'immersive_7_1', 'immersive_7_1_4', 'immersive_7_1_2'])
         self.assertEqual(render_targets.default(), ['stereo'])
+
+    def test_every_shipped_target_is_buildable(self):
+        for name in render_targets.names():
+            self.assertTrue(render_targets.buildable(name), msg=f'{name} names a missing renderer')
 
     def test_no_output_key_builds_the_default(self):
         r = render_targets.resolve(dict(title='t'))
@@ -53,17 +57,17 @@ class Targets(unittest.TestCase):
         self.assertEqual(render_targets.channels('stereo'), 2)
         self.assertEqual(render_targets.true_peak('stereo'), -1.5)
 
-    def test_all_builds_what_it_can_and_lists_the_rest(self):
+    def test_all_builds_every_target(self):
         r = render_targets.resolve(dict(output_targets='all'))
-        self.assertEqual(r['selected'], ['stereo'])
-        self.assertEqual(sorted(s['target'] for s in r['skipped']),
-                         ['binaural', 'immersive_7_1', 'immersive_7_1_4'])
+        self.assertEqual(r['selected'], render_targets.names())
+        self.assertEqual(r['skipped'], [])
         self.assertEqual(r['problems'], [])
 
-    def test_alias_is_understood_but_blocks_when_unbuildable(self):
-        r = render_targets.resolve(dict(output_targets='7.1'))
-        self.assertEqual(r['selected'], [])
-        self.assertTrue(any('immersive_7_1' in p for p in r['problems']))
+    def test_alias_resolves_to_its_target(self):
+        for alias, target in (('7.1', 'immersive_7_1'), ('7.1.2', 'immersive_7_1_2'), ('immersive', 'immersive_7_1_4')):
+            r = render_targets.resolve(dict(output_targets=alias))
+            self.assertEqual(r['selected'], [target], msg=alias)
+            self.assertEqual(r['problems'], [], msg=alias)
 
     def test_unknown_name_blocks(self):
         r = render_targets.resolve(dict(output_targets='octaphonic'))
@@ -99,11 +103,12 @@ class Targets(unittest.TestCase):
             self.assertEqual(render_targets.filename('immersive_7_1_2'), 'master_7_1_2.wav')
             self.assertEqual(render_targets.manifest_problems(), [])
 
-    def test_project_gate_blocks_a_format_the_engine_cannot_build(self):
+    def test_project_gate_blocks_a_format_that_is_not_a_target(self):
         import project_gate
-        problems = project_gate.output_problems(dict(output_targets='immersive_7_1_4'))
+        problems = project_gate.output_problems(dict(output_targets='octaphonic'))
         self.assertTrue(problems)
         self.assertEqual(project_gate.output_problems(dict(output_targets='stereo')), [])
+        self.assertEqual(project_gate.output_problems(dict(output_targets='immersive_7_1_4')), [])
 
 
 if __name__ == '__main__':

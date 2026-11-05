@@ -1143,8 +1143,14 @@ def _context_for(score, ctx=None):
     return ctx
 
 
-def mix_stems(score, stems, sr=SR, ctx=None):
-    """Return the pre-master stereo mix (float32)."""
+def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
+    """Return the pre-master mix (float32).
+
+    `bus` is an object with add(name, signal, spec), add_reverb(signal) and result(); when it is given, every
+    finished track signal and the shared reverb return are handed to it instead of being summed to stereo, and its
+    result is returned. That is the seam the discrete multichannel renderer uses: every mixing decision stays here,
+    and only the summing target changes.
+    """
     if not stems:
         raise ValueError('mix_stems needs at least one stem')
     ctx = _context_for(score, ctx)
@@ -1269,7 +1275,10 @@ def mix_stems(score, stems, sr=SR, ctx=None):
     law = _space().get('distance', {}).get('pre_delay_law') if _space_owned(_space()) else None
     STATE['sends'] = {}
     for name, y in processed.items():
-        dry += y
+        if bus is not None:
+            bus.add(name, y, specs[name])
+        else:
+            dry += y
         send_level = reverb_send_level(specs[name], mx, _space())
         STATE['sends'][name] = send_level
         ys = y * send_level
@@ -1282,14 +1291,17 @@ def mix_stems(score, stems, sr=SR, ctx=None):
         send += ys
     room = _space() if _space().get('room') else score.get('room', 'hall')
     if space_name != 'none' and send.any():
-        ret = reverb_bus(send, room, sr)
-        total = len(ret)
-        mix = np.zeros((max(n, total), 2), np.float32)
-        mix[:n] += dry
-        mix[:total] += ret * float(score.get('mix', {}).get('reverb_return', 1.0))
+        ret = reverb_bus(send, room, sr) * float(score.get('mix', {}).get('reverb_return', 1.0))
+        if bus is not None:
+            bus.add_reverb(ret)
+        else:
+            total = len(ret)
+            mix = np.zeros((max(n, total), 2), np.float32)
+            mix[:n] += dry
+            mix[:total] += ret
     else:
         mix = dry
-    return mix
+    return bus.result() if bus is not None else mix
 
 
 def trim_tail(x, sr=SR, floor_db=None):
@@ -1301,7 +1313,7 @@ def trim_tail(x, sr=SR, floor_db=None):
 
 
 def fades(x, sr=SR, fin=0.02, fout=0.6):
-    n_in, n_out = int(fin * sr), int(fout * sr)
+    n_in, n_out = min(int(fin * sr), len(x)), min(int(fout * sr), len(x))
     x = x.copy()
     if n_in > 0:
         x[:n_in] *= np.linspace(0, 1, n_in)[:, None]

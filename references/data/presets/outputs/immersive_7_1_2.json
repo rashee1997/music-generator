@@ -1,0 +1,21 @@
+{
+  "name": "immersive_7_1_2",
+  "character": "Discrete 7.1.2 immersive audio: the 7.1 ring plus a front overhead pair, the smallest true-height format.",
+  "label": "7.1.2 immersive (ITU-R BS.2051 System I)",
+  "order": 5,
+  "aliases": ["7.1.2", "7_1_2"],
+  "channels": 10,
+  "channel_order": ["FL", "FR", "FC", "LFE", "BL", "BR", "SL", "SR", "TFL", "TFR"],
+  "file": "master_7_1_2.wav",
+  "renderer": "spatial",
+  "true_peak_dbtp": -3.0,
+  "layout": "itu_bs2051_system_i",
+  "lfe": {"channel": 4, "send_db": -10.0, "lowpass_hz": 80.0, "stopband_hz": 120.0, "stopband_db": -45.0,
+          "roles": ["bass", "sub_bass", "sub_brass", "drone", "kick"]},
+  "gate": {"stereo_correlation_min": 0.15},
+  "sources": [
+    "ITU-R BS.2051-3: System I is the 7.1.2 loudspeaker layout (System H plus a front overhead pair at +30 degrees)",
+    "ITU-R BS.1770-4: the LFE channel is excluded from the loudness measurement",
+    "The -3.0 dBTP ceiling is this project's delivery policy for a multichannel file that carries an LFE channel, not a measured acoustic value"
+  ]
+}

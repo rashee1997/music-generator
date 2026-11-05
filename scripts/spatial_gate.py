@@ -73,6 +73,8 @@ def output_rows(score, wav_path, out):
         order = list(tgt.get('channel_order') or [])
         # low-frequency channel: nothing above the stopband may leave it
         idx = cfg.get('channel')
+        if isinstance(idx, str):                      # the layout names its channel; the target may give an index
+            idx = (order.index(idx) + 1) if idx in order else None
         if idx is not None and cfg.get('stopband_hz'):
             i = int(idx) - 1
             if 0 <= i < n_ch:
@@ -81,7 +83,7 @@ def output_rows(score, wav_path, out):
                 limit = float(cfg.get('stopband_db', -45.0))
                 _row(out, 'FAIL' if leak > limit else 'PASS', 'imm.lfe_stopband',
                      f'{name}: low-frequency channel energy above {float(cfg["stopband_hz"]):g} Hz is {leak:+.1f} dB '
-                     f'relative to the channel (limit {limit:+.1f} dB)'
+                     f'relative to the programme (limit {limit:+.1f} dB)'
                      + ('; check the send and the mains high-pass' if leak > limit else ''))
         gate = config.threshold(lay_name, 'surround_ratio_db')
         surrounds = [n for n in order if n in ('BL', 'BR', 'SL', 'SR')]

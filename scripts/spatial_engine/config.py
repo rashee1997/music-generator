@@ -105,6 +105,11 @@ def problems(layout_name=None):
                 pass
         if not any(sp.get('lfe') for sp in sps):
             out.append(f'{name}: no LFE speaker')
+        rv = lay.get('reverb') or {}
+        for key in ('front_azimuth_max', 'front_db', 'surround_db', 'height_db'):
+            if key not in rv:
+                out.append(f'{name}: reverb return has no "{key}" (the shared reverb would be dropped)')
+                break
         dm = lay.get('downmix') or {}
         for sp in sps:
             if sp['name'] not in dm:

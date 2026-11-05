@@ -394,6 +394,19 @@ def audio_checks(path, score, out, metrics=None):
     lufs_tol = master.get('lufs_tolerance', master.get('tolerance_lu', 2.5))
     tp_target = master.get('true_peak', -1.5)
     r = nc.analyse(path, target_lufs=target)
+    x, sr = nc.load(path)
+    # A surround master is judged on its BS.775 fold-down, not on the mean of its channels: the fold is what a
+    # listener without the room hears, and a channel mean changes with the channel count. nc.load returns two
+    # channels, so the real channel count is read from the file itself.
+    import render_targets
+    import soundfile as _sf
+    _multi, _multi_sr = _sf.read(path, always_2d=True)
+    for _name in render_targets.resolve(score)['selected']:
+        _tgt = render_targets.get(_name) or {}
+        if _tgt.get('layout') and render_targets.channels(_name) == _multi.shape[1]:
+            from spatial_engine import master as _spatial_master
+            r['lufs'] = _spatial_master.fold_lufs(_multi, _tgt['layout'])
+            break
     spatial_check(path, score, out)
     for level, msg in nc.verdicts(r, target=target):
         _row(out, level, 'audio', msg)
@@ -403,7 +416,6 @@ def audio_checks(path, score, out, metrics=None):
                                       'target under the limiter. Lower the target or the dynamics range, or accept it and say so')
     if r['true_peak'] > tp_target + 0.3:
         _row(out, 'FAIL', 'true peak', f"{r['true_peak']:.2f} dBTP is above the ceiling {tp_target}")
-    x, sr = nc.load(path)
     mono = x.mean(axis=1) if x.ndim == 2 else x
     # silent gap: a run of 1 s or more under -60 dBFS, away from the start and end
     win = int(0.25 * sr)

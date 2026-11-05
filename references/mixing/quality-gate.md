@@ -211,6 +211,9 @@ against the target it claims to be. A format that was not requested is never che
 | `imm.height_arc` | layouts with overhead speakers | height energy against the listener-level beds | layout `gate.height_max_rel_db` |
 | `imm.fold_coherence` | multichannel | correlation of the ITU-R BS.775 fold | layout `gate.stereo_correlation_min` |
 
+For a multichannel delivery the `loudness` row is measured on the layout's BS.775 two-channel fold, not on the mean of
+the channels: the fold is what a listener without the room hears, and a channel mean changes with the channel count.
+
 A `FAIL` here names the channel or the ratio that broke, so the fix is a preset send level or a track's position - not
 a loosened threshold. The low-frequency row is an upper limit, so the guard in `spatial_engine/bass.py` is a low-pass at
 the stopband: a high-pass there would strip the band the channel exists to carry.

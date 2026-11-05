@@ -270,13 +270,27 @@ class MusicPipeline:
     # -----------------------------------------------------------------------------------------
     # Stage 5: Mixing & Mastering
     # -----------------------------------------------------------------------------------------
-    def stage5_mix_and_master(self, score, stems, out_wav):
-        """Stage 5: Subtractive EQ, pocket carving, shared room, and true-peak limiting."""
+    def stage5_mix_and_master(self, score, stems, out_wav, target=None):
+        """Stage 5: mix and master one deliverable; the target preset's `renderer` names the route."""
         self.log(5, "Mixing & Mastering (Pedalboard DSP + BrickwallLimiter)")
         os.makedirs(os.path.dirname(os.path.abspath(out_wav)), exist_ok=True)
-        mixer.mix_and_master(score, stems, out_wav, diagnose=True)   # mixer.STATE['diagnostics'] -> stage 6 rows
+        import render_targets
+        from spatial_engine import render as spatial_render
+        name = target or ((render_targets.resolve(score)['selected'] or ['stereo'])[0])
+        renderer = (render_targets.get(name) or {}).get('renderer')
+        if renderer in ('spatial', 'binaural'):
+            spatial_render.render_deliverable(score, stems, name, out_wav)
+            try:                       # the same advisory diagnostics the stereo path leaves for the gate
+                import mix_diagnostics
+                mixer.STATE['diagnostics'] = mix_diagnostics.analyse(
+                    score, mixer.STATE.get('processed') or stems, mix=mixer._mix(),
+                    master=mixer.STATE.get('master'))
+            except Exception as exc:
+                print(f"  [WARN] mixing diagnostics did not run for {name} ({exc})")
+        else:
+            mixer.mix_and_master(score, stems, out_wav, diagnose=True)
         if self.verbose:
-            print(f"  Wrote master audio: {out_wav}")
+            print(f"  Wrote {name} deliverable: {out_wav}")
         return out_wav
 
     def discover_and_run_music21_analysis(self, score, out_wav, out_midi=None):
@@ -808,11 +822,36 @@ class MusicPipeline:
         else:
             print(f"  [DRAFT] {fails} gate FAIL(s): the uncertified mix stays at {draft_wav}, {out_wav} is untouched")
 
+        # Additional requested formats: rendered only after the primary is certified, so one format's failure never
+        # takes the certified master with it; each is checked against its own format rows before it enters out/.
+        extra_paths = []
+        if fails == 0 and not draft and project_dir and len(outputs['selected']) > 1:
+            self.log('5b', 'Additional deliverable formats')
+            import spatial_gate
+            from spatial_engine import render as spatial_render
+            for extra in outputs['selected'][1:]:
+                rel = render_targets.filename(extra)
+                extra_draft = os.path.join(os.path.dirname(out_wav) or '.', '_draft_' + rel)
+                spatial_render.render_deliverable(score, stems, extra, extra_draft)
+                rows = []
+                spatial_gate.output_rows(score, extra_draft, rows)
+                bad = [(n, d) for lvl, n, d in rows if lvl == 'FAIL']
+                if bad:
+                    for n, d in bad:
+                        print(f"  [FAIL] {n}: {d}")
+                    print(f"  [WARN] {extra} did not pass its own format rows; its file stays at {extra_draft}")
+                    continue
+                final = os.path.join(project_dir, 'out', rel)
+                os.replace(extra_draft, final)
+                extra_paths.append(final)
+                print(f"  [OUTPUT] {extra}: {final}")
+
         # Stage 7: Packaging & Report
         report = self.stage7_package_release(score, out_wav if fails == 0 else draft_wav, ci_rows, fails, warns,
                                             out_midi=out_midi, json_report=json_report)
         report['deliverables']['outputs'] = outputs['selected']
         report['deliverables']['outputs_skipped'] = outputs['skipped']
+        report['deliverables']['output_files'] = extra_paths if project_dir and fails == 0 else []
         report['mode'] = 'project' if project_dir else 'test'
         report['gate'] = dict(mode='draft' if draft else 'full', stopped=None,
                               stages=dict(stem=stem_meta,

@@ -100,3 +100,172 @@ def write(path, audio, sr=44100, subtype='PCM_24'):
 
 def fold_to_stereo(audio, layout_name):
     return downmix.fold(audio, layout_name)
+
+
+# ---------------------------------------------------------------------------------------------
+# The discrete deliverable: mixer.mix_stems hands every finished track signal to a LayoutBus.
+# ---------------------------------------------------------------------------------------------
+
+def _mono_fold(y):
+    """One channel from a finished stereo track without losing level when the track is hard-panned.
+
+    A legacy-panned stereo stem is two copies of one signal, scaled so gL^2 + gR^2 is constant. The energy fold
+    sqrt((L^2 + R^2) / 2) returns the original amplitude at every pan position, where a plain (L+R) sum would make a
+    centred track 3 dB louder than a hard-panned one. The sign keeps the polarity of the summed signal.
+    """
+    y = np.asarray(y, dtype=np.float64)
+    if y.ndim == 1:
+        return y
+    if y.shape[1] == 1:
+        return y[:, 0]
+    left, right = y[:, 0], y[:, 1]
+    return np.sign(left + right) * np.sqrt((left * left + right * right) / 2.0)
+
+
+class LayoutBus:
+    """The summing target for a discrete deliverable.
+
+    mixer.mix_stems owns every per-track decision (gain staging, EQ, dynamics, ducking, the reverb send); this object
+    only places the finished signals on the layout's loudspeakers, sends the low-frequency roles to the low-frequency
+    channel, spreads the shared reverb return by the layout's own data, and decorrelates the surround beds.
+
+    The interface is the one `bus` in mix_stems expects: add(name, signal, spec), add_reverb(signal), result().
+    """
+
+    def __init__(self, layout_name, target_name=None, sr=44100):
+        problems = config.problems(layout_name)
+        if problems:
+            raise ValueError('layout "' + layout_name + '" is not usable: ' + '; '.join(problems))
+        self.layout_name = layout_name
+        self.target_name = target_name
+        self.sr = int(sr)
+        layout = config.layout(layout_name)
+        self.names = config.channel_names(layout_name)
+        self.speakers = config.speakers(layout_name)
+        self.lfe_speaker = config.lfe_speaker(layout_name)
+        self.lfe = config.lfe_cfg(layout_name, target_name)
+        self.roles = set(self.lfe.get('roles') or [])
+        self.reverb = layout.get('reverb') or {}
+        self.decorrelation = layout.get('decorrelation') or {}
+        self.parts = {name: [] for name in self.names}
+        self.low_sends = []
+
+    def _add(self, channel, signal):
+        signal = np.asarray(signal, dtype=np.float64)
+        if signal.size:
+            self.parts[channel].append(signal)
+
+    def add(self, name, y, spec):
+        """Place one finished track: mains by VBAP, low-frequency roles through the low-frequency channel."""
+        mono = _mono_fold(y)
+        if mono.size == 0:
+            return
+        spec = dict(spec or {})
+        role = str(spec.get('role') or '')
+        cutoff = self.lfe.get('lowpass_hz')
+        if role in self.roles and cutoff:
+            self.low_sends.append(mono)
+            mains = bass.highpass(mono, self.sr, float(cutoff))
+        else:
+            mains = mono
+        extra = spec.get('lfe_send_db')            # an optional complement send for a full-range track
+        if extra is not None and cutoff:
+            self.low_sends.append(mono * bass.send_gain(float(extra)))
+        azimuth = float(spec.get('azimuth', 0.0))
+        elevation = float(spec.get('elevation', 0.0))
+        for speaker, gain in pan.gains(azimuth, elevation, self.speakers).items():
+            if gain:
+                self._add(speaker, mains * gain)
+
+    def add_reverb(self, ret):
+        """Spread the shared reverb return: the layout says how loud it sits in front, around and above."""
+        if ret is None or not len(ret) or not self.reverb:
+            return
+        mono = _mono_fold(ret)
+        front_max = float(self.reverb.get('front_azimuth_max'))
+        gains = {'front': bass.send_gain(self.reverb.get('front_db')),
+                 'surround': bass.send_gain(self.reverb.get('surround_db')),
+                 'height': bass.send_gain(self.reverb.get('height_db'))}
+        for speaker in self.speakers:
+            if float(speaker.get('elevation', 0.0)) > 0.0:
+                group = 'height'
+            elif abs(float(speaker.get('azimuth', 0.0))) <= front_max:
+                group = 'front'
+            else:
+                group = 'surround'
+            self._add(speaker['name'], mono * gains[group])
+
+    def result(self):
+        """(N, channels) float64 in the layout's channel order, with the low-frequency send applied."""
+        n = max((len(s) for parts in self.parts.values() for s in parts), default=0)
+        mix = {name: np.zeros(n, dtype=np.float64) for name in self.names}
+        for name, parts in self.parts.items():
+            for signal in parts:
+                mix[name][:len(signal)] += signal
+        if self.lfe_speaker is not None and self.low_sends:
+            low = bass.lfe_bus(self.low_sends, self.sr, self.lfe)
+            mix[self.lfe_speaker['name']][:len(low)] += low
+        # The low-frequency channel is never decorrelated: it is not a spatial channel, and phase-scrambling a sub
+        # only smears it. (decorrelate.bus treats `names` as the channels to leave alone.)
+        skip = [self.lfe_speaker['name']] if self.lfe_speaker else None
+        mix = decorrelate.bus(mix, self.decorrelation, self.sr, names=skip)
+        return np.stack([mix[name] for name in self.names], axis=1)
+
+
+def spatial_mix(score, stems, target_name, sr=44100, ctx=None):
+    """Mix a piece into one discrete target: the whole mixer, a different summing bus."""
+    import mixer
+    target = config.target(target_name) or {}
+    layout_name = target.get('layout')
+    if not layout_name:
+        raise ValueError(f'deliverable "{target_name}" has no layout: it is not a spatial format')
+    bus = LayoutBus(layout_name, target_name, sr)
+    mixer.mix_stems(score, stems, sr, ctx, bus=bus)
+    return bus.result()
+
+
+def binaural_mix(score, stems, sr=44100, ctx=None):
+    """The headphone deliverable: the same mix with the head-related route switched on for the whole piece.
+
+    The route itself is the mixer's existing immersive placement (measured head data when spatial_hrtf is available,
+    spatial.py when it is not); only the switch belongs to the deliverable, not to the score's stereo mix preset.
+    """
+    import mix_context
+    import mix_schema
+    import mixer
+    ctx = mixer._context_for(score, ctx)
+    previous = mix_context.current()
+    bctx = mix_context.clone(ctx)
+    immersive = dict(mix_schema.DEFAULTS.get('immersive') or {})
+    immersive.update(ctx.mix.get('immersive') or {})
+    immersive['enabled'] = True
+    bctx.mix['immersive'] = immersive
+    mix_context.make_current(bctx)
+    try:
+        mix = mixer.mix_stems(score, stems, sr, bctx)
+        mix = mixer.trim_tail(mix, sr)
+        master_cfg = dict(score.get('master') or {})
+        out = mixer.master_chain(mix, master_cfg, sr, bctx)
+        out = mixer.fades(out, sr, fout=float(master_cfg.get('fade_out', 0.6)))
+    finally:
+        mix_context.make_current(previous)
+    return out
+
+
+def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None):
+    """Build one requested deliverable and write it. The target preset's `renderer` names the route."""
+    target = config.target(target_name) or {}
+    renderer = target.get('renderer')
+    if renderer == 'spatial':
+        from . import master
+        audio = master.master(spatial_mix(score, stems, target_name, sr, ctx), score, target, sr)
+    elif renderer == 'binaural':
+        audio = binaural_mix(score, stems, sr, ctx)
+    elif renderer == 'mix_master':
+        import mixer
+        mixer.mix_and_master(score, stems, path, sr=sr, ctx=ctx)
+        return path
+    else:
+        raise ValueError(f'deliverable "{target_name}" names renderer {renderer!r}, which the engine does not have')
+    write(path, audio, sr, subtype=str(target.get('subtype') or 'PCM_24'))
+    return path

@@ -111,14 +111,16 @@ A score names what it wants built; the engine builds only that, never every form
 | Target | Channels | Layout | Ceiling |
 |---|---|---|---|
 | `stereo` | 2 | direct L/R | -1.5 dBTP |
-| `binaural` | 2 | headphone render (not buildable yet) | -1.5 dBTP |
+| `binaural` | 2 | headphone render (measured HRIRs, spatial.py when absent) | -1.5 dBTP |
 | `immersive_7_1` | 8 | ITU-R BS.2051 System H | -3.0 dBTP |
 | `immersive_7_1_4` | 12 | ITU-R BS.2051 System J | -3.0 dBTP |
+| `immersive_7_1_2` | 10 | ITU-R BS.2051 System I | -3.0 dBTP |
 
 Every number lives in `references/data/presets/outputs/` (format) and `references/data/presets/layouts/` (speaker
 positions, crossover, fold-down), loaded through `presets.py`, so a project can add its own format with two JSON files.
-A target with `"renderer": null` is described but cannot be built: naming it blocks the render (no silent downgrade),
-and `"all"` reports it as skipped. The CLI can override the score: `--targets stereo` or `--targets all`.
+Every shipped target names a renderer the engine has (`mix_master`, `spatial`, `binaural`). A project's own target with
+`"renderer": null` is described but cannot be built: naming it blocks the render (no silent downgrade), and `"all"`
+reports it as skipped. The CLI can override the score: `--targets stereo` or `--targets all`.
 
 `scripts/spatial_engine/` holds the model behind the multichannel targets: vector base amplitude panning over the
 layout's own speakers (Pulkki 1997), a 4th-order Linkwitz-Riley crossover and low-frequency send (Linkwitz 1976),

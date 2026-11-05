@@ -1,18 +1,17 @@
 {
   "name": "binaural",
-  "character": "A two-channel headphone render: every placed track goes through the head-related filters (the per-track route mix.immersive switches on).",
+  "character": "A two-channel headphone render: the whole mix placed with head-related filters, so height and behind-the-head positions survive on headphones.",
   "label": "binaural headphone render",
   "order": 2,
   "channels": 2,
   "channel_order": ["L", "R"],
   "file": "master_binaural.wav",
-  "renderer": null,
+  "renderer": "binaural",
   "true_peak_dbtp": -1.5,
   "layout": null,
   "gate": {"stereo_correlation_min": 0.15},
-  "unavailable_reason": "no whole-piece binaural renderer: the headphone route today is a per-track switch inside the stereo mix (mix.immersive); a second, separate binaural deliverable needs scripts/spatial_engine/render.py to write it, then set that renderer name here",
   "sources": [
     "ITU-R BS.775-3: a two-channel deliverable carries the same -1.5 dBTP policy as stereo",
-    "Head-related filtering: references/spatial/immersive-spatial.md and scripts/spatial_hrtf"
+    "Head-related filtering: spatial_hrtf places each track with the measured FABIAN head data when it is present, and spatial.py when it is not (references/spatial/immersive-spatial.md)"
   ]
 }
