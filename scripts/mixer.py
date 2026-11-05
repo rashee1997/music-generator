@@ -1096,6 +1096,68 @@ def carve_for_lead(specs, mx=None):
     return specs
 
 
+def _band_center_q(lo, hi):
+    """The centre and Q that make dsp.dynamic_eq span exactly [lo, hi].
+
+    dynamic_eq's band runs f / (1 + 1/2q) .. f * (1 + 1/2q), so the requested edges fix both: the geometric
+    centre is sqrt(lo*hi) and the half-width ratio gives q = 1 / (2 * (ratio - 1)).
+    """
+    lo, hi = float(lo), float(hi)
+    if lo <= 0.0 or hi <= lo:
+        raise ValueError('lead_carve.bands_hz needs pairs with 0 < lo < hi')
+    f = float(np.sqrt(lo * hi))
+    ratio = float(np.sqrt(hi / lo))
+    return f, 1.0 / (2.0 * (ratio - 1.0))
+
+
+def apply_lead_carve(processed, specs, mx=None, sr=SR):
+    """Carve the beds only while the lead is actually sounding in the band they share.
+
+    carve_for_lead() is a decision taken from the score: one fixed dip, for the whole piece, in one band, whether
+    or not the lead is there (which is why it can only be small). This is the same rule driven by the lead's own
+    signal: each band of each bed is keyed by the band-passed lead, so a bed keeps its body while the lead rests
+    and yields only where the two actually collide. Roles the sidechain already ducks under the same source are
+    skipped, so nothing is moved twice.
+
+    Mutates and returns `processed` (the same dict STATE['processed'] points at).
+    """
+    mx = mx or _mix()
+    cfg = mx.get('lead_carve') or {}
+    if not cfg.get('enabled'):
+        return processed
+    if cfg.get('source'):
+        lead = str(cfg['source'])
+    else:
+        leads = [n for n, sp in specs.items() if sp.get('role') == 'melody']
+        if not leads:
+            return processed                              # no lead, nothing to make room for
+        lead = max(leads, key=lambda n: float(specs[n].get('gain_db', 0.0)))
+    if lead not in processed or lead not in specs:
+        return processed
+    src = to_stereo(processed[lead])
+    roles = tuple(cfg.get('roles') or DUCK_BAND_ROLES)
+    ratio = max(1.0, float(cfg.get('ratio', 2.0)))
+    thr = float(cfg.get('threshold_db', -30.0))
+    att = float(cfg.get('attack_ms', 6.0))
+    rel = float(cfg.get('release_ms', 120.0))
+    for pair in (cfg.get('bands_hz') or []):
+        lo, hi = float(pair[0]), float(pair[1])
+        f, q = _band_center_q(lo, hi)
+        sos = signal.butter(2, [lo, hi], btype='band', fs=sr, output='sos')
+        sc = signal.sosfiltfilt(sos, src.mean(axis=1)).astype(np.float32)
+        for name, sp in specs.items():
+            if name == lead or sp.get('role') not in roles or name not in processed:
+                continue
+            if cfg.get('skip_ducked', True) and sp.get('duck_by'):
+                continue
+            # gain_db stays 0: the band is only reduced while the sidechain is over threshold, so a bed
+            # keeps its body in the rests and yields only where the lead is actually there.
+            processed[name] = dsp.dynamic_eq(
+                to_stereo(processed[name]), sr, f=f, q=q, threshold_db=thr, ratio=ratio,
+                attack_ms=att, release_ms=rel, sidechain=sc)
+    return processed
+
+
 def use_mix(name=None, space=None):
     """Make `name` the active mix preset: the default with that preset laid over it, so a preset only lists
     what differs. name=None or 'default' restores the default. Returns the resolved mix dict."""
@@ -1201,6 +1263,7 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
     processed = {}
     for name, x in stems.items():
         processed[name] = fit(process_stem(name, x, specs[name], sr, ctx), n)
+    apply_lead_carve(processed, specs, mx, sr)  # the dynamic half of the lead rule, keyed by the lead itself
     STATE['processed'] = processed              # what the mix actually plays: the gate measures this
     STATE['specs'] = specs
 

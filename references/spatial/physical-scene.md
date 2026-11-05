@@ -87,14 +87,25 @@ material and the geometry (a bar's `sqrt(E/rho) * h / L^2`, a plate's `0.469 * h
 
 ```json
 "calibration": {"normalize": "energy", "level_db": -10},
-"propagation": {"distance_m": 8.0, "atmosphere": {"temp_c": 18, "rh": 70}, "canopy_density": 0.2},
+"propagation": {"distance_m": 8.0, "atmosphere": {"temp_c": 18, "rh": 70}, "canopy_density": 0.2,
+                "occluder": {"material": "oak", "thickness_m": 0.04, "edge_offset_m": 0.3, "coverage": 0.7}}
 "spatial": {"azimuth": -20}
 ```
 
 `normalize` is a declared choice, never silent: `energy` (default; the radiated energy decides the level), `none`,
 `peak`, `rms`. Intensity relationships survive unless the scene asks otherwise. `level_db` trims; it is not a fix for
 a wrong physical parameter. Propagation is one law for every sound: 1/r spreading, ISO 9613-1 air absorption, canopy
-loss and one ground reflection.
+loss, an optional barrier and one ground reflection.
+
+`propagation.occluder` puts something between the source and the listener, which is what makes a sound read as
+*behind* something. It is not a EQ move: the transmitted and diffracted paths are summed as energies per frequency.
+`material` + `thickness_m` give the transmission path through the field-incidence mass law,
+`TL = 20 log10(m'' f) - 47` dB (Sharp 1978), and `edge_offset_m` gives the extra path around the edge, which the
+Maekawa/Kurze-Anderson curve turns into insertion loss, `IL = 5 + 20 log10(sqrt(2 pi N)/tanh(sqrt(2 pi N)))` with
+`N = 2 delta f / c` (Maekawa 1968; the thin-screen result quoted by ISO 9613-2). `coverage` is the share of the
+direct line the barrier blocks, so 0 is a clear line and 1 is fully behind it; a partly covered line keeps the
+unblocked share, which is why a doorway sounds like a doorway. A closed door that muffles the highs too much is a
+wrong `material` or `thickness_m`, not a filter to tune by ear.
 
 ## Worked example
 
