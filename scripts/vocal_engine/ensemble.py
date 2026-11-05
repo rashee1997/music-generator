@@ -185,12 +185,12 @@ def render(events, sr=44100, cfg=None, seed=1, hum=False, default_vowel=None, vo
                 R['over_capacity'] += int(r['voiced_end'] - r['t0'] > cap)
                 R['dev'] += r['dev_cents']
                 R['note_v'] += r['note_v']
-                nr = list(r['note_rms'])
-                if nr:
-                    mnr = float(np.mean(nr))
-                    if mnr > 1e-18:
-                        nr = [x / mnr for x in nr]
-                R['note_rms'] += nr
+                # Raw levels, not per-line normalised. Rescaling one singer's line and not its
+                # velocities broke the pairing the dynamics row measures: two singers with different
+                # calibration cancelled to a correlation of 0.00 on a line that was perfectly
+                # dynamic (measured on a 2-voice preset). note_rms is already relative (it is divided
+                # by the phrase arc and breath pressure when it is taken).
+                R['note_rms'] += list(r['note_rms'])
             # one continuous airflow for the whole line: floor in the gaps, a gap-proportional rise into each
             # phrase, a release after it. Nothing is dropped into silence as a short event.
             if float(scfg['breathing'].get('inhale_gain', 0.0)) > 0:
@@ -229,6 +229,14 @@ def render(events, sr=44100, cfg=None, seed=1, hum=False, default_vowel=None, vo
                                    detune_cents=float(detune), timing_bias_ms=float(t_bias * 1e3), group='choir',
                                    identity=ident))
     mixed = np.stack([dc_block(out[:, 0]), dc_block(out[:, 1])], axis=1)
+    # Opt-in: `peak_trim` (a ceiling, e.g. 0.9) caps a hot ensemble sum before the limiter. A two-voice
+    # preset that sums above the knee otherwise saturates: one project measured 11830 samples at
+    # 0.999 FS. Off by default, so presets without the key render exactly as before.
+    _ceil = float((cfg or {}).get('peak_trim', 0.0) or 0.0)
+    if _ceil > 0:
+        _peak = float(np.max(np.abs(mixed))) if mixed.size else 0.0
+        if _peak > _ceil:
+            mixed = mixed * (_ceil / _peak)
     out = soft_limit(mixed).astype(np.float32)
     info['report'] = report(R, dry, mixed, out, sr)
     if not stems:

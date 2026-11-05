@@ -95,6 +95,8 @@ def _flat(cfg, key, v, warn):
         cfg['styles'] = copy.deepcopy(v)
     elif key == 'seed':
         pass
+    elif key == 'peak_trim':                                 # opt-in: cap a hot ensemble sum before the limiter
+        cfg['peak_trim'] = float(v)
     elif key not in IGNORED:
         warn.append(f'unknown vocal key "{key}" ignored')
 

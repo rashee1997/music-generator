@@ -553,6 +553,11 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
             threshold=res['threshold'], margin=res['margin'], worst_times_s=[], calibrated=False, detail=res['detail'])
 
     bpm_ref = score.get('bpm')
+    # every other master row asks the piece's profile first; this one used to judge regardless, so a
+    # measured, reasoned `tempo.audio` skip in a project's gate profile had no effect at all.
+    import gate_profiles as _gprof
+    if not _gprof.resolve(score).on('tempo.audio'):
+        bpm_ref = None
     if bpm_ref and not _score_has_pulse(score):
         _row(out, 'INFO', 'tempo.audio',
              f'score.bpm {float(bpm_ref):g} is declared, but the score has no percussion and no isochronous part: a beat '
