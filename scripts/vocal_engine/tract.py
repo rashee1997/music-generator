@@ -69,6 +69,24 @@ def resonate(x, f, bw, sr, block=220):
     return y
 
 
+def ring_cluster(F, amount, ring):
+    """The singer's formant: pull F3-F5 toward their own targets so they bunch at 2.8-3.2 kHz.
+
+    `amount` is technique.singer_formant (0..1); `ring` is the data block (target_hz, shares). It is a *movement of the
+    three poles*, not an added boost: a narrow extra pole at 3 kHz would break /i/ and /u/ identity, which is exactly
+    what a real squillo does not do (Sundberg 1987). A 4-formant or shorter tract is returned unchanged."""
+    F = np.array(F, dtype=float, copy=True)
+    a = float(np.clip(amount, 0.0, 1.0))
+    if a <= 0.0 or len(F) < 5 or not ring or not ring.get('enabled', True):
+        return F
+    tgt = np.asarray(ring['target_hz'], dtype=float)
+    share = np.asarray(ring['shares'], dtype=float)
+    if tgt.shape != (3,) or share.shape != (3,):
+        return F
+    F[2:5] = F[2:5] + a * share * (tgt - F[2:5])
+    return F
+
+
 def lock_to_harmonics(F, f0, amount):
     """Pull formant centres toward the nearest harmonic of f0 (amount 0..1). F, f0 broadcastable arrays."""
     F, f0 = np.asarray(F, dtype=float), np.maximum(np.asarray(f0, dtype=float), 20.0)

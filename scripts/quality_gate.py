@@ -1495,6 +1495,68 @@ def vocal_rows(score, stems=None, out=None, sr=44100, report=None):
             f = v['hum_hf_frac']
             rows.append(('WARN' if f > lim else 'PASS', 'vocal', f'{tag}: hum energy above 1.5 kHz {f:.1e} (limit {lim})'
                          + ('; too bright for a closed-mouth hum: lower humming.brightness' if f > lim else '')))
+        # --- timbre naturalness. Each row reads a measurement the engine made
+        # on the signal it produced, never the config that asked for it.
+        if gp.on('vocal.ring') and v.get('ring_spread_hz') is not None:
+            # the cluster is geometric: a component of the movement (singer_formant 0.5) is not a failure, so the
+            # limit grows with the part of the ring the preset actually asked for
+            lim = gp.param('vocal.ring', 'max_spread_hz') + (1.0 - float(v.get('ring_amount', 1.0))) \
+                * gp.param('vocal.ring', 'spread_at_zero_hz')
+            s = v['ring_spread_hz']
+            rows.append(('FAIL' if s > lim else 'PASS', 'vocal',
+                         f'{tag}: singer-formant cluster F3-F5 spans {s:.0f} Hz (limit {lim:.0f})'
+                         + ('; F3-F5 are not converging: check tract.ring.target_hz/shares' if s > lim else '')))
+        if gp.on('vocal.formant_tuning') and v.get('tuning_deficit_db') is not None:
+            lim = gp.param('vocal.formant_tuning', 'max_deficit_db')
+            d = v['tuning_deficit_db']
+            rows.append(('FAIL' if d > lim else 'PASS', 'vocal',
+                         f'{tag}: level at f0 sits {d:.1f} dB under the F1 band on notes above F1 (limit {lim:.0f})'
+                         + ('; the fundamental is falling into a spectral valley: raise technique.formant_tuning' if d > lim else '')))
+        if gp.on('vocal.consonant') and v.get('consonants'):
+            c = v['consonants']
+            tol = gp.param('vocal.consonant', 'vot_tol')
+            declared, measured = c.get('declared_vot_ms'), c.get('measured_vot_ms')
+            vot_ok = True if not declared else abs(measured - declared) <= tol * declared
+            ok = bool(c.get('centroid_ok', True)) and vot_ok
+            rows.append(('FAIL' if not ok else 'PASS', 'vocal',
+                         f'{tag}: {c.get("n", 0)} consonant(s) {c.get("codes")}; '
+                         + (f'VOT {measured:.0f} ms vs {declared:.0f} ms declared, ' if declared else 'no stop VOT, ')
+                         + f'band centroid {"inside" if c.get("centroid_ok", True) else "OUTSIDE"} the declared band'
+                         + ('' if ok else '; a consonant outside its band is not the phoneme the score asked for')))
+        if gp.on('vocal.coarticulation') and v.get('coart_lead_ms') is not None:
+            lim = gp.param('vocal.coarticulation', 'min_lead_ms')
+            lead = v['coart_lead_ms']
+            rows.append(('FAIL' if lead and lead < lim else 'PASS', 'vocal',
+                         f'{tag}: formant motion starts {lead:.0f} ms before the boundary (min {lim:.0f})'
+                         + ('; the vowel changes on the note boundary like a filter switch: raise '
+                            'phrasing.formants.coarticulation.anticipate_ms' if lead and lead < lim else '')))
+        if gp.on('vocal.perturbation') and v.get('jitter_pct') is not None:
+            lo, hi = gp.param('vocal.perturbation', 'min_pct'), gp.param('vocal.perturbation', 'max_pct')
+            j = v['jitter_pct']
+            rows.append(('FAIL' if not (lo <= j <= hi) else 'PASS', 'vocal',
+                         f'{tag}: measured period jitter {j:.2f} % (normal {lo:.1f}-{hi:.1f} %)'
+                         + ('' if lo <= j <= hi else '; outside the human range: check source.jitter_period_pct')))
+        if gp.on('vocal.passaggio') and v.get('passaggio_step') is not None:
+            lim = gp.param('vocal.passaggio', 'max_step')
+            st = v['passaggio_step']
+            rows.append(('FAIL' if st > lim else 'PASS', 'vocal',
+                         f'{tag}: largest open-quotient step {st:.4f} per sample (limit {lim:.3f})'
+                         + ('; the register switches instead of blending' if st > lim else '')))
+        if gp.on('vocal.vibrato') and v.get('vib_am_corr') is not None:
+            lim = gp.param('vocal.vibrato', 'min_corr')
+            min_db = gp.param('vocal.vibrato', 'min_db')
+            r, depth = v['vib_am_corr'], v.get('vib_am_db', 0.0)
+            ok = r >= lim and depth >= min_db
+            rows.append(('FAIL' if not ok else 'PASS', 'vocal',
+                         f'{tag}: vibrato amplitude modulation {depth:.2f} dB, correlation with f0 {r:.2f} (min {lim})'
+                         + ('' if ok else '; vibrato is f0-only: raise vibrato.amplitude_db')))
+        if gp.on('vocal.identity') and v.get('identity_pct') is not None and v.get('voices', 1) >= 2:
+            lim = gp.param('vocal.identity', 'min_pct')
+            pct = v['identity_pct']
+            rows.append(('FAIL' if pct < lim else 'PASS', 'vocal',
+                         f'{tag}: tract length differs by {pct:.1f} % between singers (min {lim:.1f} %)'
+                         + ('; the singers share one tract: raise ensemble.diversity or the singer_variation ranges'
+                            if pct < lim else '')))
     if out is not None:
         out.extend(rows)
     return rows

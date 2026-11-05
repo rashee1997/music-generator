@@ -190,8 +190,10 @@ class VibratoAndArticulation(unittest.TestCase):
         onset = F[:, int(0.01 * SR)]
         steady = F[:, int(1.5 * SR)]
         self.assertGreater(float(np.max(np.abs(onset - steady))), 5.0)
-        flat = _phrase([dict(t=0.0, dur=2.5, p=62, v=80)], _cfg(amount=0.0))
-        self.assertEqual(np.asarray(flat['formants']).ndim, 1)   # the old path is unchanged
+        flat_cfg = _cfg(amount=0.0)
+        flat_cfg['vibrato']['formant_pct'] = 0.0      # isolate phrasing: formant vibrato is technique, not shaping
+        flat = np.asarray(_phrase([dict(t=0.0, dur=2.5, p=62, v=80)], flat_cfg)['formants'])
+        self.assertLess(float(np.max(np.ptp(flat, axis=-1))), 1e-6)   # no shaping: one frozen vowel, unchanged
 
     def test_role_profile_keeps_a_pad_calmer_than_a_lead(self):
         lead = _phrase(MEL, _cfg(), ctx=dict(role='melody'))

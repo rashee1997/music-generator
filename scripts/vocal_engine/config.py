@@ -28,8 +28,8 @@ import copy
 
 from . import data, expression
 
-SECTIONS = ('source', 'tract', 'humming', 'articulation', 'performance', 'vibrato', 'dynamics', 'breathing',
-            'phrasing', 'ensemble', 'dsp', 'singer_variation')
+SECTIONS = ('source', 'tract', 'technique', 'consonants', 'humming', 'articulation', 'performance', 'vibrato',
+            'dynamics', 'breathing', 'phrasing', 'ensemble', 'dsp', 'singer_variation')
 IGNORED = {'name', 'description', 'character', 'category', 'phonetic_sound', 'register_range', 'role', 'synthesis',
            'spatial', 'gain_db', 'reverb', 'eq', 'pan', 'sends', 'kind', '_source', '_about', 'humanize', 'gm',
            'instrument', 'seating', 'width_ms', 'widen', 'mix',
@@ -201,6 +201,28 @@ def check(cfg):
         v = cfg['tract'].get(k)
         if v is not None and (not isinstance(v, list) or not v or any(x <= 0 for x in v)):
             out.append(f'tract.{k} must be a list of positive numbers')
+    for k in ('gains', 'bandwidths'):
+        v = cfg['tract'].get(k)
+        if isinstance(v, list) and any(len(F) > len(v) for F in cfg['tract']['vowels'].values()):
+            out.append(f'tract.{k} is shorter than a vowel: the bank is sliced to {len(v)} formants')
+    for name, tgt in (cfg['tract'].get('cover_map') or {}).items():
+        if name.startswith('_'):
+            continue
+        if name not in cfg['tract']['vowels']:
+            out.append(f'tract.cover_map."{name}" is not a vowel; known: {sorted(cfg["tract"]["vowels"])}')
+        elif tgt not in cfg['tract']['vowels']:
+            out.append(f'tract.cover_map."{name}" -> "{tgt}" is not a vowel')
+    ring = cfg['tract'].get('ring') or {}
+    if ring.get('enabled', True) and (len(ring.get('target_hz') or []) != 3 or len(ring.get('shares') or []) != 3):
+        out.append('tract.ring needs three target_hz and three shares (F3, F4, F5)')
+    ladder = cfg['source'].get('register_ladder') or []
+    for r in ladder:
+        if r not in cfg['source']['registers']:
+            out.append(f'source.register_ladder "{r}" is not one of {sorted(cfg["source"]["registers"])}')
+    inv = (cfg.get('consonants') or {}).get('inventory') or {}
+    for c in ((cfg.get('consonants') or {}).get('onsets') or []):
+        if c not in inv:
+            out.append(f'consonants.onsets "{c}" is not in consonants.inventory; known: {sorted(K for K in inv if not K.startswith("_"))}')
     if cfg.get('vowel') and cfg['vowel'] not in cfg['tract']['vowels'] and not isinstance(cfg['vowel'], (list, tuple)):
         out.append(f'unknown vowel "{cfg["vowel"]}"; known: {sorted(cfg["tract"]["vowels"])}')
     table = (cfg.get('phrasing') or {}).get('contours')

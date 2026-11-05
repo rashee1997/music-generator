@@ -568,6 +568,38 @@
       },
       "additionalProperties": true
     },
+    "technique": {
+      "type": "object",
+      "description": "what the singer does with the tract (defaults in defaults.json `technique`)",
+      "properties": {
+        "singer_formant": {"type": "number", "minimum": 0, "maximum": 1, "description": "F3-F5 cluster toward 2.8-3.2 kHz (Sundberg 1987); 0 is a plain tract"},
+        "formant_tuning": {"type": "number", "minimum": 0, "maximum": 1, "description": "raise F1 toward f0 when f0 approaches F1 (Sundberg 1975)"},
+        "tuning_threshold": {"type": "number", "minimum": 0.5, "maximum": 1.5},
+        "tuning_f2_share": {"type": "number", "minimum": 0, "maximum": 1},
+        "cover": {"type": "number", "minimum": 0, "maximum": 1, "description": "vowel modification toward the covered neighbour above the passaggio"},
+        "cover_start_midi": {"type": "number"},
+        "cover_span_semitones": {"type": "number"},
+        "creak": {"type": "number", "minimum": 0, "maximum": 1},
+        "creak_ms": {"type": "number"},
+        "creak_floor_hz": {"type": "number"}
+      },
+      "additionalProperties": true
+    },
+    "consonants": {
+      "type": "object",
+      "description": "the syllable layer: an inventory of physical recipes, placement before the voiced onset",
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "auto": {"type": "boolean", "description": "assign onsets round-robin from `onsets` (deterministic; default off)"},
+        "onsets": {"type": "array", "items": {"type": "string"}},
+        "codas": {"type": "boolean"},
+        "min_note_s": {"type": "number"},
+        "gain_db": {"type": "number", "minimum": -40, "maximum": 0},
+        "closure_floor_db": {"type": "number"},
+        "inventory": {"type": "object", "description": "code -> {type: stop|fricative|nasal|liquid|trill, band, vot_ms, dur_ms, ...}"}
+      },
+      "additionalProperties": true
+    },
     "phrasing": {
       "type": "object",
       "description": "Context-aware performance shaping. amount 0 = the previous phrase exactly. tempo_bpm 0 = unknown. contours are named level shapes [[position 0..1, level], ...]; role is melody|counter|chord|pad|arp|bass",
