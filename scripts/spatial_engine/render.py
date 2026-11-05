@@ -107,19 +107,20 @@ def fold_to_stereo(audio, layout_name):
 # ---------------------------------------------------------------------------------------------
 
 def _mono_fold(y):
-    """One channel from a finished stereo track without losing level when the track is hard-panned.
+    """One channel from a finished stereo track: the linear mid, 0.5 * (L + R).
 
-    A legacy-panned stereo stem is two copies of one signal, scaled so gL^2 + gR^2 is constant. The energy fold
-    sqrt((L^2 + R^2) / 2) returns the original amplitude at every pan position, where a plain (L+R) sum would make a
-    centred track 3 dB louder than a hard-panned one. The sign keeps the polarity of the summed signal.
+    A loudspeaker gets one feed, so a stereo track has to become mono first. The mid is what every downmixer uses and
+    it leaves the track's own spectrum alone. (An earlier energy fold, sign(L + R) * sqrt((L^2 + R^2) / 2), held a
+    hard-panned track at full level, but it squared off the waveform as soon as L and R differed: measured on one 7.1
+    delivery, stems that all sat at -56 dB or below relative 15-22 kHz came out of the fold at -20 dB, and those
+    broadband edges are what the click and aliasing rows counted.)
     """
     y = np.asarray(y, dtype=np.float64)
     if y.ndim == 1:
         return y
     if y.shape[1] == 1:
         return y[:, 0]
-    left, right = y[:, 0], y[:, 1]
-    return np.sign(left + right) * np.sqrt((left * left + right * right) / 2.0)
+    return 0.5 * (y[:, 0] + y[:, 1])
 
 
 class LayoutBus:
@@ -171,8 +172,11 @@ class LayoutBus:
         extra = spec.get('lfe_send_db')            # an optional complement send for a full-range track
         if extra is not None and cutoff:
             self.low_sends.append(mono * bass.send_gain(float(extra)))
-        azimuth = float(spec.get('azimuth', 0.0))
-        elevation = float(spec.get('elevation', 0.0))
+        # The mixer keeps a track's place in `spatial`; a flat azimuth/elevation is still accepted for a caller
+        # that hands raw specs. Reading only the flat pair put every track at 0 deg (front centre).
+        sp = spec.get('spatial') or {}
+        azimuth = float(sp.get('azimuth', spec.get('azimuth', 0.0)))
+        elevation = float(sp.get('elevation', spec.get('elevation', 0.0)))
         for speaker, gain in pan.gains(azimuth, elevation, self.speakers).items():
             if gain:
                 self._add(speaker, mains * gain)

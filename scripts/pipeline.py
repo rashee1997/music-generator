@@ -481,6 +481,14 @@ class MusicPipeline:
             preset_map[name] = data
             preset_map[pf.stem] = data
 
+        # Sound and place live in the preset, never in the score, so these keys replace whatever a track already
+        # says: a stale t['spatial'] must not shadow a later edit of presets/*.json.
+        preset_owns = ('spatial', 'synthesis', 'vocal', 'environment', 'formants', 'bandwidths', 'source',
+                       'vibrato', 'articulation', 'performance', 'breathing', 'ensemble', 'humming', 'hum',
+                       'atmosphere', 'layers', 'blending', 'character', 'vowel', 'expression', 'register_range',
+                       'category', 'phonetic_sound', 'program', 'bank', 'gm')
+        bookkeeping = ('name', 'kind', 'note', 'notes', 'sources')      # identity and prose stay in the preset file
+
         adopted = []
         for t in score.get('tracks', []):
             name = t.get('name')
@@ -488,10 +496,11 @@ class MusicPipeline:
             matched = preset_map.get(name) or preset_map.get(inst)
             if matched:
                 adopted.append(name or inst)
-                for k in ('spatial', 'eq', 'humanize', 'gain_db', 'reverb', 'role', 'description', 'program', 'bank',
-                          'gm', 'synthesis', 'vocal', 'environment'):
-                    if k in matched and k not in t:
-                        t[k] = matched[k]
+                for k, v in matched.items():
+                    if k in bookkeeping:
+                        continue
+                    if k in preset_owns or k not in t:     # the rest (eq, humanize, gain_db, reverb, role) only fills a gap
+                        t[k] = v
 
         if self.verbose:
             print(f"  Adopted {len(adopted)} preset definitions from: {target_dir}")

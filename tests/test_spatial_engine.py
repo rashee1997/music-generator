@@ -136,6 +136,37 @@ class FoldDown(unittest.TestCase):
 
 
 class DiscreteBus(unittest.TestCase):
+    def test_the_mono_fold_is_linear_so_a_stereo_track_keeps_its_spectrum(self):
+        """A loudspeaker gets one feed, so the pair is folded. The fold must not manufacture energy: an earlier
+        sign-based energy fold put +35 dB of 15-22 kHz on stems that measure -56 dB or lower."""
+        n = SR // 2
+        t = np.arange(n) / SR
+        a = np.sin(2 * np.pi * 440.0 * t)
+        pair = np.stack([a, -0.8 * a + 0.2 * np.sin(2 * np.pi * 660.0 * t)], axis=1)
+        out = render._mono_fold(pair)
+        spec = np.abs(np.fft.rfft(out)) ** 2
+        f = np.fft.rfftfreq(n, 1.0 / SR)
+        hf = float(spec[f > 5000.0].sum() / (spec.sum() + 1e-30))
+        self.assertLess(hf, 1e-6)                              # both inputs are below 700 Hz
+        self.assertLess(float(np.max(np.abs(out))), 1.0)        # and an anti-phased content cancels, it does not flip
+
+    def test_the_multichannel_master_removes_sub_audio_but_keeps_the_lfe_band(self):
+        """The stereo chain starts with a 24 Hz high-pass; this path had none, so a residual offset in the stems
+        reached the deliverable (measured: a 1 s block mean wandered 0.015 FS in FL, limit 0.001)."""
+        from spatial_engine import master
+        n = SR
+        names = config.channel_names('itu_bs2051_system_h')
+        lfe = names.index('LFE')
+        t = np.arange(n) / SR
+        x = np.full((n, len(names)), 0.05, dtype=np.float32)        # a residual offset in every channel
+        x[:, lfe] += 0.2 * np.sin(2 * np.pi * 40.0 * t)             # the LFE's own band must survive
+        y = master._dc_block(x, 'itu_bs2051_system_h', SR)
+        for i in range(len(names)):
+            if i == lfe:
+                self.assertGreater(float(np.std(y[:, i])), 0.1)
+            else:
+                self.assertLess(abs(float(np.mean(y[n // 10:, i]))), 1e-3)
+
     def test_the_bus_places_height_and_keeps_the_low_end_out_of_the_mains(self):
         n = SR // 2
         t = np.arange(n) / SR
@@ -153,6 +184,21 @@ class DiscreteBus(unittest.TestCase):
         self.assertGreater(rms('TFL'), 5.0 * rms('FL'))      # the flute lives overhead, not in the front pair
         self.assertGreater(rms('LFE'), 0.01)                 # the bass reached the low-frequency channel
         self.assertLess(rms('FC'), 0.02)                      # and its mains are high-passed away
+
+    def test_a_track_sits_where_its_spatial_block_says(self):
+        """The mixer hands every track a `spatial` block; reading only the flat azimuth put the whole piece in FC."""
+        n = SR // 4
+        t = np.arange(n) / SR
+        bus = render.LayoutBus('itu_bs2051_system_h', 'immersive_7_1', SR)
+        bus.add('left', 0.2 * np.sin(2 * np.pi * 220.0 * t), dict(role='melody', spatial=dict(azimuth=-30.0, elevation=0.0)))
+        audio = bus.result()
+        names = config.channel_names('itu_bs2051_system_h')
+
+        def rms(name):
+            return float(np.sqrt(np.mean(audio[:, names.index(name)] ** 2)))
+
+        self.assertGreater(rms('FL'), 10.0 * rms('FC'))
+        self.assertGreater(rms('FL'), 10.0 * rms('FR'))
 
     def test_the_reverb_return_follows_the_layout(self):
         bus = render.LayoutBus('itu_bs2051_system_h', 'immersive_7_1', SR)

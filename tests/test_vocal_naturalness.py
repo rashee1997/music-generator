@@ -131,6 +131,17 @@ class FormantTuning(unittest.TestCase):
         b = phrase([dict(t=0, dur=1.0, p=45, v=90)], cfg(technique=dict(formant_tuning=0.0)))['signal']
         self.assertTrue(np.array_equal(a, b))
 
+    def test_tuning_does_not_make_the_level_follow_the_pitch(self):
+        """The calibration must be measured through the tract that is sung through. Measuring the untuned F1 and then
+        synthesising the tuned one made `note_rms` swing 7 dB between neighbouring pitches, so the level stopped
+        following velocity and the gate read the resulting level/pitch correlation as a broken dynamic."""
+        c = cfg(technique=dict(formant_tuning=1.0))
+        db = []
+        for p in (74, 76, 77, 79, 81):
+            r = phrase([dict(t=0, dur=1.2, p=p, v=80)], c)
+            db.append(20 * np.log10(r['note_rms'][0]))
+        self.assertLess(np.ptp(db), 2.0)
+
 
 class Coarticulation(unittest.TestCase):
     def test_formant_moves_before_the_note_boundary(self):

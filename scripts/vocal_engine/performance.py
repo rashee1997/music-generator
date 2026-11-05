@@ -261,6 +261,27 @@ def _calibration(sr, cfg, hum, F, BW, style, register, nasality, hz=220.0):
     return _CAL[key]
 
 
+def _tuned_formants(F, f0, cfg):
+    """The formants a singer's tract actually has at pitch `f0`: F1 follows f0 when f0 climbs into it (Sundberg's
+    formant tuning), F2 follows by `tuning_f2_share`, and F1 stays under F2.
+
+    One implementation for two callers: the per-sample track below and the calibration that sets the timbre's gain.
+    Measured on a real phrase, calibrating the untuned F1 (430 Hz) while synthesising the tuned one (766 Hz at
+    f0 784 Hz) put a 7 dB pitch-dependent error on `note_rms`, so the level no longer followed velocity.
+    """
+    F = np.array(F, dtype=float)
+    te = cfg.get('technique') or {}
+    tune = float(te.get('formant_tuning', 0.0))
+    if tune <= 0 or F.size < 2:
+        return F
+    f0 = np.asarray(f0, dtype=float)
+    over = f0 > float(te.get('tuning_threshold', 0.9)) * F[0]
+    d = np.where(over, tune * (f0 - F[0]), 0.0)
+    F[1] = F[1] + float(te.get('tuning_f2_share', 0.5)) * d
+    F[0] = np.minimum(F[0] + d, 0.95 * F[1])
+    return F
+
+
 # ---------------------------------------------------------------- performance helpers
 def _smoothed(x, n_smooth):
     """Gentle moving-average so a piecewise-linear contour has no corners."""
@@ -596,10 +617,15 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
     BW = np.array(style.get('bandwidths') or cfg['tract']['bandwidths'], dtype=float)[:K]
     reg = register or style.get('register')
     comp = float(D['pitch_compensation'])        # singers even out the level between pitches; harmonics near a formant would not
+    TE = cfg.get('technique') or {}
+    # calibrate on the tract the synthesis will use, not the untuned one: `formant_tuning` moves F1 toward a high f0,
+    # so measuring the gain at F1 430 Hz and then singing through F1 766 Hz makes the level depend on pitch
+    TFn = [_tuned_formants(F, 440.0 * 2 ** ((b / 100.0 - 69) / 12), cfg) if not hum else np.asarray(F, dtype=float)
+           for F, b in zip(Fn, base)]
     c220 = [_calibration(sr, cfg, hum, F, BW, style, reg, nasality) for F in Fn]
     cals = c220 if comp <= 0 else [
         _calibration(sr, cfg, hum, F, BW, style, reg, nasality, hz=440.0 * 2 ** ((b / 100.0 - 69) / 12)) ** comp * c0 ** (1 - comp)
-        for F, b, c0 in zip(Fn, base, c220)]
+        for F, b, c0 in zip(TFn, base, c220)]
     wv = int(P['vowel_blend_ms'] * 1e-3 * sr)
     FH = PH.get('formants') or {}
     CO = FH.get('coarticulation') or {}
@@ -646,18 +672,13 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
     F_track = np.asarray(F_track, dtype=float)
     if F_track.ndim == 1:                              # per-sample track: a frozen vowel is still one formant set
         F_track = np.repeat(F_track[:, None], n, axis=1)   # the technique blocks below move it in time
-    TE = cfg.get('technique') or {}
     tune = float(TE.get('formant_tuning', 0.0))
     if tune > 0 and F_track.size >= 2 and not hum:
-        over = f0 > float(TE.get('tuning_threshold', 0.9)) * F_track[0]
-        d = np.where(over, tune * (f0 - F_track[0]), 0.0)
-        if np.any(d > 0):
+        F_track = np.asarray(F_track, dtype=float)
+        if np.any(f0 > float(TE.get('tuning_threshold', 0.9)) * F_track[0]):
             if F_track.ndim == 1:                     # a frozen vowel only becomes a track when tuning moves it
                 F_track = np.repeat(F_track[:, None], n, axis=1)
-            F_track = F_track.copy()
-            F2n = F_track[1] + float(TE.get('tuning_f2_share', 0.5)) * d
-            F_track[0] = np.minimum(F_track[0] + d, 0.95 * F2n)   # F1 follows f0 but stays under F2
-            F_track[1] = F2n
+            F_track = _tuned_formants(F_track, f0, cfg)
     if fmt_pct > 0 and not hum and np.any(vib_norm) and F_track.size >= 2:
         F_track = F_track.copy()
         F_track[0] *= 1.0 + fmt_pct * vib_norm

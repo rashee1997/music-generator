@@ -39,6 +39,29 @@ def channel_peaks(audio, sr):
     return [float(dsp.true_peak_db(y[:, i], sr)) for i in range(y.shape[1])]
 
 
+def _dc_block(audio, layout_name, sr, hz=24.0):
+    """Remove sub-audio content from every main channel; LFE keeps its band.
+
+    The stereo master chain starts with a 24 Hz high-pass (mixer.master_chain). This path had no filter of any kind, so a
+    residual offset or very slow drift in the stems reached the deliverable unfiltered, scaled by one gain. Measured on a
+    7.1 delivery: a 1 s block mean wandered 0.015 FS in FL (limit 0.001) while every stem passed the same row at
+    0.0007 or below. LFE is skipped: its band is 20-120 Hz by definition.
+    """
+    from scipy.signal import butter, sosfilt
+    from . import config
+    try:
+        names = list(config.channel_names(layout_name))
+    except Exception:
+        names = []
+    out = np.array(audio, dtype=np.float64, copy=True)
+    sos = butter(2, hz, btype='highpass', fs=sr, output='sos')
+    for i in range(out.shape[1]):
+        if i < len(names) and names[i] == 'LFE':
+            continue
+        out[:, i] = sosfilt(sos, out[:, i])
+    return out
+
+
 def master(audio, score, target, sr=44100):
     """Trim, gain and fade a multichannel programme for delivery. Returns float32 (N, channels)."""
     import mixer
@@ -55,6 +78,7 @@ def master(audio, score, target, sr=44100):
     except Exception:                     # a bare score with no context: the engine's own delivery target
         lufs_target, fade_out = -14.0, 0.6
     y = mixer.trim_tail(np.asarray(audio, dtype=np.float32), sr)
+    y = _dc_block(y, layout_name, sr).astype(np.float32)
     gain_db = lufs_target - fold_lufs(y, layout_name)
     for _ in range(6):
         out = y * np.float32(10.0 ** (gain_db / 20.0))
