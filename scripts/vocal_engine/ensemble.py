@@ -59,12 +59,34 @@ def report(R, dry, mixed, out, sr):
         hf = float(sp[fr > 1500].sum() / (sp.sum() + 1e-20))
     tim = np.asarray(R.get('timing_ms') or [0.0], dtype=float)
     spreads = [np.asarray(t, dtype=float) for t in (R.get('inhale_map') or {}).values() if len(t) >= 2]
+    tv = R.get('technique') or {}
+    tech = {k: float(np.mean(v)) for k, v in tv.items() if v}
+    vdb, vcr = tv.get('vib_am_db') or [], tv.get('vib_am_corr') or []
+    if vdb and len(vdb) == len(vcr):
+        # vibrato coupling is read where it is fully developed and measurable: averaging in phrases whose
+        # vibrato has not started would report the measurement window, not the singing.
+        score = [d * max(c, 0.0) for d, c in zip(vdb, vcr)]
+        j = int(np.argmax(score)) if max(score) > 0 else int(np.argmax(vdb))
+        tech['vib_am_db'], tech['vib_am_corr'] = float(vdb[j]), float(vcr[j])
+    cons = R.get('consonants') or []
+    cons_rep = None
+    if cons:
+        bad = [c for c in cons if c.get('band') and not (0.5 * float(c['band'][0]) <= c.get('centroid_hz', 0.0)
+                                                         <= 2.0 * float(c['band'][1]))]
+        vot = [c for c in cons if c.get('vot_ms')]
+        cons_rep = dict(n=len(cons), centroid_bad=len(bad), centroid_ok=not bad,
+                        codes=sorted({c['code'] for c in cons}),
+                        declared_vot_ms=float(np.mean([c['vot_ms'] for c in vot])) if vot else None,
+                        measured_vot_ms=float(np.mean([c['dur_ms'] for c in vot])) if vot else None)
+    ids = np.asarray(R.get('identity') or [], dtype=float)
+    identity_pct = float((ids.max() - ids.min()) / max(float(ids.mean()), 1e-9) * 100.0) if len(ids) > 1 else None
     return dict(voices=len(dry), phrases=R['phrases'], joins=R['joins'], longest_phrase_s=round(R['longest_phrase_s'], 2),
                 capacity_s=R['capacity_s'], over_capacity=R['over_capacity'], inhales=R['inhales'],
                 no_room_phrases=R['no_room_phrases'], mean_abs_dev_cents=float(np.mean(np.abs(dev))),
                 max_abs_dev_cents=float(np.max(np.abs(dev))), dyn_corr=dyn, max_corr=corr, hum_hf_frac=hf,
                 finite=bool(np.isfinite(mixed).all()), dc=float(np.abs(mixed.mean(0)).max()),
                 peak_pre_limit=float(np.abs(mixed).max()), peak=float(np.abs(out).max()),
+                technique=tech, consonants=cons_rep, identity_pct=identity_pct, **tech,
                 phrasing=dict(contours=sorted(set(R.get('contours') or [])),
                               timing_std_ms=round(float(np.std(tim)), 3),
                               timing_max_ms=round(float(np.max(np.abs(tim))), 3),
@@ -102,11 +124,13 @@ def render(events, sr=44100, cfg=None, seed=1, hum=False, default_vowel=None, vo
     piece = context.analyse(events, cfg)
     R = dict(phrases=0, joins=0, longest_phrase_s=0.0, capacity_s=None, over_capacity=0, inhales=0, no_room_phrases=0,
              dev=[], note_v=[], note_rms=[], hum=hum, contours=[], timing_ms=[], accents_db=[], inhale_map={},
-             tempo_bpm=piece['tempo_bpm'])
+             technique={}, consonants=[], identity=[], tempo_bpm=piece['tempo_bpm'])
     div = E['diversity'] * (1.0 - 0.5 * coh)
 
     for j in range(n_total):
         scfg, ident = singer.make_singer(cfg, j, seed, diversity=div)
+        R['identity'].append(float(ident.get('tract.formant_scale', 1.0)) * float(ident.get('tract.length_scale', 1.0))
+                             * float(ident.get('tract.pharynx_scale', 1.0)))
         pos = _pos(j, n_total)
         rs = np.random.default_rng([int(seed) & 0xFFFFFFFF, j, 31337])
         t_bias = rs.normal(0.0, E['timing_spread_ms'] * 1e-3 * (1 - coh) * 0.5)
@@ -137,7 +161,11 @@ def render(events, sr=44100, cfg=None, seed=1, hum=False, default_vowel=None, vo
                 r = pf.render_phrase(ph, sr, rng, scfg, hum=is_hum, style=st, ctx=pctx,
                                      nasality=scfg['humming']['nasality_vowels'] if not is_hum else 0.0)
                 a = int(round(r['t0'] * sr))
-                sig = r['signal'][:max(0, N - a)] * gain
+                sig = r['signal']
+                if a < 0:                                      # a consonant before t=0: keep what fits on the timeline
+                    sig = sig[-a:]
+                    a = 0
+                sig = sig[:max(0, N - a)] * gain
                 dry[j][a:a + len(sig)] += sig
                 spans.append((r['t0'], r['voiced_end']))
                 if j == 0:
@@ -147,18 +175,22 @@ def render(events, sr=44100, cfg=None, seed=1, hum=False, default_vowel=None, vo
                     R['timing_ms'] += r['timing_ms']
                     if r['accents_db']:
                         R['accents_db'].append(float(np.max(np.abs(r['accents_db']))))
+                    for _k, _v in (r.get('technique') or {}).items():
+                        if _v is not None:
+                            R['technique'].setdefault(_k, []).append(float(_v))
+                    R['consonants'] += r.get('consonants') or []
                 R['longest_phrase_s'] = max(R['longest_phrase_s'], r['voiced_end'] - r['t0'])
                 cap = scfg['breathing']['capacity_s']
                 R['capacity_s'] = cap if R['capacity_s'] is None else min(R['capacity_s'], cap)
                 R['over_capacity'] += int(r['voiced_end'] - r['t0'] > cap)
                 R['dev'] += r['dev_cents']
                 R['note_v'] += r['note_v']
-                nr = list(r['note_rms'])
-                if nr:
-                    mnr = float(np.mean(nr))
-                    if mnr > 1e-18:
-                        nr = [x / mnr for x in nr]
-                R['note_rms'] += nr
+                # Raw levels, not per-line normalised. Rescaling one singer's line and not its
+                # velocities broke the pairing the dynamics row measures: two singers with different
+                # calibration cancelled to a correlation of 0.00 on a line that was perfectly
+                # dynamic (measured on a 2-voice preset). note_rms is already relative (it is divided
+                # by the phrase arc and breath pressure when it is taken).
+                R['note_rms'] += list(r['note_rms'])
             # one continuous airflow for the whole line: floor in the gaps, a gap-proportional rise into each
             # phrase, a release after it. Nothing is dropped into silence as a short event.
             if float(scfg['breathing'].get('inhale_gain', 0.0)) > 0:
@@ -197,6 +229,14 @@ def render(events, sr=44100, cfg=None, seed=1, hum=False, default_vowel=None, vo
                                    detune_cents=float(detune), timing_bias_ms=float(t_bias * 1e3), group='choir',
                                    identity=ident))
     mixed = np.stack([dc_block(out[:, 0]), dc_block(out[:, 1])], axis=1)
+    # Opt-in: `peak_trim` (a ceiling, e.g. 0.9) caps a hot ensemble sum before the limiter. A two-voice
+    # preset that sums above the knee otherwise saturates: one project measured 11830 samples at
+    # 0.999 FS. Off by default, so presets without the key render exactly as before.
+    _ceil = float((cfg or {}).get('peak_trim', 0.0) or 0.0)
+    if _ceil > 0:
+        _peak = float(np.max(np.abs(mixed))) if mixed.size else 0.0
+        if _peak > _ceil:
+            mixed = mixed * (_ceil / _peak)
     out = soft_limit(mixed).astype(np.float32)
     info['report'] = report(R, dry, mixed, out, sr)
     if not stems:

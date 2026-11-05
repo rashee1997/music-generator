@@ -1,0 +1,327 @@
+{
+  "consonant": [
+    0.001,
+    0.001,
+    0.001,
+    0.0069,
+    0.0069,
+    0.0069,
+    0.0207,
+    0.0207,
+    0.0207
+  ],
+  "consonant_p95": 0.0207,
+  "level_within_file": {
+    "ff_frames": [
+      0.0347,
+      0.0347,
+      0.0347
+    ],
+    "pp_frames": [
+      0.02,
+      0.02,
+      0.02
+    ],
+    "ratio": 1.735
+  },
+  "masking": {
+    "legacy_masked": 0.0379,
+    "legacy_unmasked": 0.0939,
+    "masked": 0.007,
+    "unmasked": 0.0313
+  },
+  "median": 0.024,
+  "rows": {
+    "high/M2/ff": {
+      "legacy_mean": 0.0235,
+      "level_aware_mean": 0.0059
+    },
+    "high/M2/mf": {
+      "legacy_mean": 0.0235,
+      "level_aware_mean": 0.0059
+    },
+    "high/M2/pp": {
+      "legacy_mean": 0.0235,
+      "level_aware_mean": 0.0059
+    },
+    "high/M3/ff": {
+      "legacy_mean": 0.0016,
+      "level_aware_mean": 0.0003
+    },
+    "high/M3/mf": {
+      "legacy_mean": 0.0016,
+      "level_aware_mean": 0.0003
+    },
+    "high/M3/pp": {
+      "legacy_mean": 0.0016,
+      "level_aware_mean": 0.0003
+    },
+    "high/P5/ff": {
+      "legacy_mean": 0.0019,
+      "level_aware_mean": 0.0001
+    },
+    "high/P5/mf": {
+      "legacy_mean": 0.0019,
+      "level_aware_mean": 0.0001
+    },
+    "high/P5/pp": {
+      "legacy_mean": 0.0019,
+      "level_aware_mean": 0.0001
+    },
+    "high/m2/ff": {
+      "legacy_mean": 0.0727,
+      "level_aware_mean": 0.0201
+    },
+    "high/m2/mf": {
+      "legacy_mean": 0.0727,
+      "level_aware_mean": 0.0201
+    },
+    "high/m2/pp": {
+      "legacy_mean": 0.0727,
+      "level_aware_mean": 0.0201
+    },
+    "high/m3/ff": {
+      "legacy_mean": 0.0062,
+      "level_aware_mean": 0.0015
+    },
+    "high/m3/mf": {
+      "legacy_mean": 0.0062,
+      "level_aware_mean": 0.0015
+    },
+    "high/m3/pp": {
+      "legacy_mean": 0.0062,
+      "level_aware_mean": 0.0015
+    },
+    "high/tritone/ff": {
+      "legacy_mean": 0.009,
+      "level_aware_mean": 0.0015
+    },
+    "high/tritone/mf": {
+      "legacy_mean": 0.009,
+      "level_aware_mean": 0.0015
+    },
+    "high/tritone/pp": {
+      "legacy_mean": 0.009,
+      "level_aware_mean": 0.0015
+    },
+    "high/unison/ff": {
+      "legacy_mean": 0.0,
+      "level_aware_mean": 0.0
+    },
+    "high/unison/mf": {
+      "legacy_mean": 0.0,
+      "level_aware_mean": 0.0
+    },
+    "high/unison/pp": {
+      "legacy_mean": 0.0,
+      "level_aware_mean": 0.0
+    },
+    "low/M2/ff": {
+      "legacy_mean": 0.0868,
+      "level_aware_mean": 0.0268
+    },
+    "low/M2/mf": {
+      "legacy_mean": 0.0868,
+      "level_aware_mean": 0.0268
+    },
+    "low/M2/pp": {
+      "legacy_mean": 0.0868,
+      "level_aware_mean": 0.0268
+    },
+    "low/M3/ff": {
+      "legacy_mean": 0.0481,
+      "level_aware_mean": 0.0174
+    },
+    "low/M3/mf": {
+      "legacy_mean": 0.0481,
+      "level_aware_mean": 0.0174
+    },
+    "low/M3/pp": {
+      "legacy_mean": 0.0481,
+      "level_aware_mean": 0.0174
+    },
+    "low/P5/ff": {
+      "legacy_mean": 0.0144,
+      "level_aware_mean": 0.005
+    },
+    "low/P5/mf": {
+      "legacy_mean": 0.0144,
+      "level_aware_mean": 0.005
+    },
+    "low/P5/pp": {
+      "legacy_mean": 0.0144,
+      "level_aware_mean": 0.005
+    },
+    "low/m2/ff": {
+      "legacy_mean": 0.0976,
+      "level_aware_mean": 0.0334
+    },
+    "low/m2/mf": {
+      "legacy_mean": 0.0976,
+      "level_aware_mean": 0.0334
+    },
+    "low/m2/pp": {
+      "legacy_mean": 0.0976,
+      "level_aware_mean": 0.0334
+    },
+    "low/m3/ff": {
+      "legacy_mean": 0.0611,
+      "level_aware_mean": 0.0209
+    },
+    "low/m3/mf": {
+      "legacy_mean": 0.0611,
+      "level_aware_mean": 0.0209
+    },
+    "low/m3/pp": {
+      "legacy_mean": 0.0611,
+      "level_aware_mean": 0.0209
+    },
+    "low/tritone/ff": {
+      "legacy_mean": 0.04,
+      "level_aware_mean": 0.0138
+    },
+    "low/tritone/mf": {
+      "legacy_mean": 0.04,
+      "level_aware_mean": 0.0138
+    },
+    "low/tritone/pp": {
+      "legacy_mean": 0.04,
+      "level_aware_mean": 0.0138
+    },
+    "low/unison/ff": {
+      "legacy_mean": 0.0028,
+      "level_aware_mean": 0.0039
+    },
+    "low/unison/mf": {
+      "legacy_mean": 0.0028,
+      "level_aware_mean": 0.0039
+    },
+    "low/unison/pp": {
+      "legacy_mean": 0.0028,
+      "level_aware_mean": 0.0039
+    },
+    "mid/M2/ff": {
+      "legacy_mean": 0.0478,
+      "level_aware_mean": 0.0131
+    },
+    "mid/M2/mf": {
+      "legacy_mean": 0.0478,
+      "level_aware_mean": 0.0131
+    },
+    "mid/M2/pp": {
+      "legacy_mean": 0.0478,
+      "level_aware_mean": 0.0131
+    },
+    "mid/M3/ff": {
+      "legacy_mean": 0.0225,
+      "level_aware_mean": 0.0089
+    },
+    "mid/M3/mf": {
+      "legacy_mean": 0.0225,
+      "level_aware_mean": 0.0089
+    },
+    "mid/M3/pp": {
+      "legacy_mean": 0.0225,
+      "level_aware_mean": 0.0089
+    },
+    "mid/P5/ff": {
+      "legacy_mean": 0.0052,
+      "level_aware_mean": 0.0017
+    },
+    "mid/P5/mf": {
+      "legacy_mean": 0.0052,
+      "level_aware_mean": 0.0017
+    },
+    "mid/P5/pp": {
+      "legacy_mean": 0.0052,
+      "level_aware_mean": 0.0017
+    },
+    "mid/m2/ff": {
+      "legacy_mean": 0.0914,
+      "level_aware_mean": 0.0278
+    },
+    "mid/m2/mf": {
+      "legacy_mean": 0.0914,
+      "level_aware_mean": 0.0278
+    },
+    "mid/m2/pp": {
+      "legacy_mean": 0.0914,
+      "level_aware_mean": 0.0278
+    },
+    "mid/m3/ff": {
+      "legacy_mean": 0.027,
+      "level_aware_mean": 0.0094
+    },
+    "mid/m3/mf": {
+      "legacy_mean": 0.027,
+      "level_aware_mean": 0.0094
+    },
+    "mid/m3/pp": {
+      "legacy_mean": 0.027,
+      "level_aware_mean": 0.0094
+    },
+    "mid/tritone/ff": {
+      "legacy_mean": 0.0225,
+      "level_aware_mean": 0.008
+    },
+    "mid/tritone/mf": {
+      "legacy_mean": 0.0225,
+      "level_aware_mean": 0.008
+    },
+    "mid/tritone/pp": {
+      "legacy_mean": 0.0225,
+      "level_aware_mean": 0.008
+    },
+    "mid/unison/ff": {
+      "legacy_mean": 0.0003,
+      "level_aware_mean": 0.0003
+    },
+    "mid/unison/mf": {
+      "legacy_mean": 0.0003,
+      "level_aware_mean": 0.0003
+    },
+    "mid/unison/pp": {
+      "legacy_mean": 0.0003,
+      "level_aware_mean": 0.0003
+    }
+  },
+  "semitone": [
+    0.0201,
+    0.0201,
+    0.0201,
+    0.0278,
+    0.0278,
+    0.0278,
+    0.0334,
+    0.0334,
+    0.0334
+  ],
+  "semitone_p05": 0.0201,
+  "shape": {
+    "1000": {
+      "at_one_cb": 0.0028,
+      "cb_hz": 162.2,
+      "peak_df": 30.4,
+      "peak_ratio_of_cb": 0.187,
+      "peak_value": 0.0315
+    },
+    "2093": {
+      "at_one_cb": 0.0027,
+      "cb_hz": 315.9,
+      "peak_df": 73.1,
+      "peak_ratio_of_cb": 0.231,
+      "peak_value": 0.0365
+    },
+    "220": {
+      "at_one_cb": 0.0072,
+      "cb_hz": 103.5,
+      "peak_df": 14.9,
+      "peak_ratio_of_cb": 0.144,
+      "peak_value": 0.0337
+    }
+  },
+  "unison": {
+    "legacy": 0.0011,
+    "level_aware": 0.0014
+  }
+}

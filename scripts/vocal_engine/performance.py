@@ -38,7 +38,7 @@ import json
 
 import numpy as np
 
-from . import breath, voice
+from . import breath, consonant, tract, voice
 from .utils import smooth_noise
 
 _CAL = {}
@@ -119,18 +119,131 @@ def split_phrases(notes, cfg, default_hum=False):
     return out
 
 
+def _vowel_name(ev, default='a'):
+    """(onset vowel, diphthong target) from a note. A list of *names* is a diphthong; a list of numbers is formants."""
+    v = ev.get('vowel', default)
+    if isinstance(v, (list, tuple)):
+        if v and all(isinstance(x, str) for x in v):
+            return v[0], (v[1] if len(v) > 1 else None)
+        return None, None
+    return str(v), None
+
+
+def _pharynx(F, scale):
+    """Pharynx scaling: shortening raises F1 more than F2 (non-uniform, unlike a uniform tract length)."""
+    s = float(scale)
+    if abs(s - 1.0) < 1e-9 or len(F) < 2:
+        return F
+    F = np.array(F, dtype=float, copy=True)
+    F[0] *= s
+    F[1] *= 1.0 + 0.5 * (s - 1.0)
+    return F
+
+
+def _cover(F, ev, cfg, scale, K):
+    """Vowel modification: above the passaggio a vowel is sung closer to its covered neighbour."""
+    te = cfg.get('technique') or {}
+    c = float(te.get('cover', 0.0))
+    if c <= 0.0 or len(F) < 3:
+        return F
+    pitch = float(ev.get('p', 60.0))
+    w = c * float(np.clip((pitch - float(te.get('cover_start_midi', 64.0)))
+                          / max(float(te.get('cover_span_semitones', 3.0)), 1e-3), 0.0, 1.0))
+    name = _vowel_name(ev)[0]
+    tgt = (cfg['tract'].get('cover_map') or {}).get(name) if name else None
+    if w <= 0.0 or not tgt or tgt not in cfg['tract']['vowels']:
+        return F
+    T = _pharynx(np.array(list(cfg['tract']['vowels'][tgt])[:K], dtype=float) * scale,
+                 cfg['tract'].get('pharynx_scale', 1.0))
+    if len(T) != len(F):
+        return F
+    return (1.0 - w) * F + w * T
+
+
 def _formants(ev, cfg, style):
-    k = 3
+    """Note -> formant targets. Five when the tract offers five (Klatt's cascade uses five); a preset that declares
+    three keeps three, because the bank is sliced to the shortest of formants / gains / bandwidths."""
+    tr = cfg['tract']
+    K = min(len(tr['gains']), len(style.get('bandwidths') or tr['bandwidths']))
     if ev.get('formants'):
         F = list(ev['formants'])
-    elif cfg['tract'].get('formants'):
-        F = list(cfg['tract']['formants'])
+    elif tr.get('formants'):
+        F = list(tr['formants'])
     elif style.get('formants'):
         F = list(style['formants'])
     else:
         v = ev.get('vowel', 'a')
-        F = list(v) if isinstance(v, (list, tuple)) else list(cfg['tract']['vowels'].get(v, cfg['tract']['vowels']['a']))
-    return np.array(F[:k], dtype=float) * float(ev.get('formant_scale', 1.0)) * float(cfg['tract']['formant_scale'])
+        if isinstance(v, (list, tuple)) and v and all(isinstance(x, str) for x in v):
+            F = list(tr['vowels'].get(v[0], tr['vowels']['a']))
+        elif isinstance(v, (list, tuple)):
+            F = list(v)
+        else:
+            F = list(tr['vowels'].get(v, tr['vowels']['a']))
+    m = float(ev.get('formant_scale', 1.0)) * float(tr['formant_scale']) * float(tr.get('length_scale', 1.0))
+    F = _pharynx(np.array(F[:K], dtype=float) * m, tr.get('pharynx_scale', 1.0))
+    F = tract.ring_cluster(F, float((cfg.get('technique') or {}).get('singer_formant', 0.0)), tr.get('ring'))
+    return _cover(F, ev, cfg, m, K)
+
+
+def _diph_target(ev, cfg, style, onset):
+    """The vowel a note glides to (a diphthong), or the onset formants when there is none."""
+    name = _vowel_name(ev)[1] or ev.get('vowel_to')
+    if not name or name not in cfg['tract']['vowels']:
+        return onset
+    tr = cfg['tract']
+    K = len(onset)
+    m = float(ev.get('formant_scale', 1.0)) * float(tr['formant_scale']) * float(tr.get('length_scale', 1.0))
+    F = _pharynx(np.array(list(tr['vowels'][name])[:K], dtype=float) * m, tr.get('pharynx_scale', 1.0))
+    return tract.ring_cluster(F, float((cfg.get('technique') or {}).get('singer_formant', 0.0)), tr.get('ring'))
+
+
+def _note_consonants(notes, cn):
+    """The onset consonant of each note ('' = none). A note's own key wins; `consonants.auto` fills the rest from
+    `onsets` round-robin - deterministic, never random, so the same score always sings the same syllables."""
+    if not cn or not cn.get('enabled', True):
+        return [''] * len(notes)
+    inv = cn.get('inventory') or {}
+    onsets = list(cn.get('onsets') or [])
+    min_s = float(cn.get('min_note_s', 0.25))
+    out, j = [], 0
+    for e in notes:
+        c = e.get('consonant')
+        if isinstance(c, (list, tuple)):
+            c = c[-1] if c else ''
+        if c:
+            out.append(str(c) if str(c) in inv else '')
+        elif cn.get('auto') and onsets and float(e.get('dur', 0.0)) >= min_s:
+            out.append(str(onsets[j % len(onsets)]))
+            j += 1
+        else:
+            out.append('')
+    return out
+
+
+def _formant_track(n, sr, s, e_, Fn, steady, vsteps, dip_start, dip_n):
+    """Formant track with a diphthong glide inside a note. Only used when a note has a diphthong target: the plain
+    vowel-change path still goes through step_curve, so a score without diphthongs renders exactly as before."""
+    k = len(Fn)
+    xs, ys = [0.0], [np.asarray(Fn[0], dtype=float)]
+    for i in range(k):
+        if not np.allclose(steady[i], Fn[i]):
+            t0 = float(max(0, s[i] + dip_start))
+            t1 = float(max(t0 + 4, min(s[i] + dip_start + dip_n, s[i] + 0.8 * (e_[i] - s[i]))))
+            xs += [t0, t1]
+            ys += [np.asarray(Fn[i], dtype=float), np.asarray(steady[i], dtype=float)]
+        if i < k - 1:
+            c, w, _ = vsteps[i]
+            xs += [float(max(0, c - w // 2)), float(max(1, c + w // 2))]
+            ys += [np.asarray(steady[i], dtype=float), np.asarray(Fn[i + 1], dtype=float)]
+    order = np.argsort(np.asarray(xs), kind='stable')
+    X = np.asarray(xs, dtype=float)[order]
+    Y = np.stack([np.asarray(y, dtype=float) for y in ys])[order]
+    raw = np.stack([np.interp(np.arange(n), X, Y[:, d]) for d in range(Y.shape[1])])
+    w = max(8, min(int(0.012 * sr), max(8, n // 8)))
+    ker = np.hanning(w + 2)[1:-1]
+    ker /= ker.sum()
+    pad = w // 2
+    return np.stack([np.convolve(np.pad(row, (pad, pad), mode='edge'), ker, mode='valid')[:n] for row in raw])
 
 
 def _calibration(sr, cfg, hum, F, BW, style, register, nasality, hz=220.0):
@@ -146,6 +259,27 @@ def _calibration(sr, cfg, hum, F, BW, style, register, nasality, hz=220.0):
         r = float(np.sqrt(np.mean(y[n // 4:] ** 2))) + 1e-12
         _CAL[key] = cfg['dynamics']['ref_rms'] / r
     return _CAL[key]
+
+
+def _tuned_formants(F, f0, cfg):
+    """The formants a singer's tract actually has at pitch `f0`: F1 follows f0 when f0 climbs into it (Sundberg's
+    formant tuning), F2 follows by `tuning_f2_share`, and F1 stays under F2.
+
+    One implementation for two callers: the per-sample track below and the calibration that sets the timbre's gain.
+    Measured on a real phrase, calibrating the untuned F1 (430 Hz) while synthesising the tuned one (766 Hz at
+    f0 784 Hz) put a 7 dB pitch-dependent error on `note_rms`, so the level no longer followed velocity.
+    """
+    F = np.array(F, dtype=float)
+    te = cfg.get('technique') or {}
+    tune = float(te.get('formant_tuning', 0.0))
+    if tune <= 0 or F.size < 2:
+        return F
+    f0 = np.asarray(f0, dtype=float)
+    over = f0 > float(te.get('tuning_threshold', 0.9)) * F[0]
+    d = np.where(over, tune * (f0 - F[0]), 0.0)
+    F[1] = F[1] + float(te.get('tuning_f2_share', 0.5)) * d
+    F[0] = np.minimum(F[0] + d, 0.95 * F[1])
+    return F
 
 
 # ---------------------------------------------------------------- performance helpers
@@ -230,7 +364,10 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
     stab = float(P['pitch_stability'])
     t0 = min(e['t'] for e in notes)
     tail = A['phrase_end_tail_ms'] * 1e-3
-    s = [int(round((e['t'] - t0) * sr)) for e in notes]
+    CN = cfg.get('consonants') or {}
+    codes = _note_consonants(notes, CN)
+    pad = int(round(max([consonant.length_s(CN, c) for c in codes if c] or [0.0]) * sr))
+    s = [pad + int(round((e['t'] - t0) * sr)) for e in notes]
     e_ = [si + max(int(round(e['dur'] * sr)), 8) for si, e in zip(s, notes)]
     for i in range(len(notes) - 1):                         # overlap -> next note takes over
         e_[i] = min(e_[i], s[i + 1] + int(0.02 * sr)) if e_[i] > s[i + 1] else e_[i]
@@ -370,7 +507,14 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
 
     depth_t = _per_note(depth_i)
     rate_t = _per_note(rate_i) * (1 + V['rate_var'] * 0.5 * smooth_noise(rng, n, sr, 0.6))
-    vib_phase = 2 * np.pi * rng.random() + np.cumsum(2 * np.pi * rate_t / sr)
+    cyc = np.cumsum(rate_t) / sr
+    walk = float(V.get('phase_walk', 0.0))
+    if walk > 0:                                          # a random-walk phase, not a perfect LFO
+        ci = np.floor(cyc).astype(int)
+        rw = np.concatenate([[0.0], np.cumsum(rng.standard_normal(int(ci[-1]) + 1))]) * walk
+        vib_phase = 2 * np.pi * rng.random() + 2 * np.pi * cyc + 2 * np.pi * rw[ci]
+    else:
+        vib_phase = 2 * np.pi * rng.random() + 2 * np.pi * cyc
     wave = np.sin(vib_phase)
     asym = amt * float((PH.get('vibrato') or {}).get('asymmetry', 0.0))
     if asym:
@@ -379,8 +523,17 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
     if amt > 0:
         depth_mod = depth_mod * (1.0 + amt * float((PH.get('vibrato') or {}).get('swell', 0.0))
                                  * smooth_noise(rng, n, sr, 0.35))
-    cents += depth_t * env * depth_mod * wave
+    vib_curve = depth_t * env * depth_mod * wave
+    cents += vib_curve
     f0 = 440.0 * 2.0 ** ((cents - 6900.0) / 1200.0)
+    # vibrato is not F0-only: subglottal pressure oscillates with the rate, so level and formants move too
+    vib_depth = depth_t * env * depth_mod
+    vib_max = max(float(np.max(np.abs(vib_depth))), 1e-9)
+    vib_norm = vib_curve / vib_max
+    am_db = float(V.get('amplitude_db', 0.0))
+    vib_am = 10.0 ** (am_db * vib_norm / 20.0) if am_db > 0 else None
+    vib_gate = np.abs(vib_depth) >= 0.5 * vib_max if vib_am is not None else None   # where the vibrato is developed
+    fmt_pct = float(V.get('formant_pct', 0.0))
 
     # ---- level (dynamics), phrase contour and accents
     vexp = D['velocity_exponent']
@@ -459,18 +612,41 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
 
     # ---- timbre tracks
     Fn = [_formants(e, cfg, style) for e in notes]
-    BW = np.array(style.get('bandwidths') or cfg['tract']['bandwidths'][:3], dtype=float)
+    K = min([len(f) for f in Fn] + [len(cfg['tract']['gains'])])
+    Fn = [f[:K] for f in Fn]
+    BW = np.array(style.get('bandwidths') or cfg['tract']['bandwidths'], dtype=float)[:K]
     reg = register or style.get('register')
     comp = float(D['pitch_compensation'])        # singers even out the level between pitches; harmonics near a formant would not
+    TE = cfg.get('technique') or {}
+    # calibrate on the tract the synthesis will use, not the untuned one: `formant_tuning` moves F1 toward a high f0,
+    # so measuring the gain at F1 430 Hz and then singing through F1 766 Hz makes the level depend on pitch
+    TFn = [_tuned_formants(F, 440.0 * 2 ** ((b / 100.0 - 69) / 12), cfg) if not hum else np.asarray(F, dtype=float)
+           for F, b in zip(Fn, base)]
     c220 = [_calibration(sr, cfg, hum, F, BW, style, reg, nasality) for F in Fn]
     cals = c220 if comp <= 0 else [
         _calibration(sr, cfg, hum, F, BW, style, reg, nasality, hz=440.0 * 2 ** ((b / 100.0 - 69) / 12)) ** comp * c0 ** (1 - comp)
-        for F, b, c0 in zip(Fn, base, c220)]
+        for F, b, c0 in zip(TFn, base, c220)]
     wv = int(P['vowel_blend_ms'] * 1e-3 * sr)
-    vsteps = [((s[i + 1] - ant) if connected[i] else (e_[i] + s[i + 1]) // 2, wv if connected[i] else 4, Fn[i + 1] - Fn[i])
-              for i in range(k - 1)]
-    F_track = step_curve(n, Fn[0], vsteps) if not np.allclose(np.diff(np.array(Fn), axis=0), 0) else Fn[0]
     FH = PH.get('formants') or {}
+    CO = FH.get('coarticulation') or {}
+    co_lead = int(float(CO.get('anticipate_ms', 0.0)) * 1e-3 * sr)
+    co_settle = int(float(CO.get('settle_ms', 0.0)) * 1e-3 * sr)
+    vsteps = []
+    for i in range(k - 1):
+        if connected[i] and (co_lead or co_settle):
+            w = max(4, co_lead + co_settle)               # anticipatory coarticulation: the tract is already
+            c = s[i + 1] - ant - co_lead + (co_settle - co_lead) // 2   # moving before the note boundary
+        else:
+            w, c = (wv, s[i + 1] - ant) if connected[i] else (4, (e_[i] + s[i + 1]) // 2)
+        vsteps.append((c, w, Fn[i + 1] - Fn[i]))
+    Fn_to = [_diph_target(e, cfg, style, Fn[i]) for i, e in enumerate(notes)]
+    if any(not np.allclose(Fn_to[i], Fn[i]) for i in range(k)):
+        steady = [Fn_to[i] if not np.allclose(Fn_to[i], Fn[i]) else Fn[i] for i in range(k)]
+        F_track = _formant_track(n, sr, s, e_, Fn, steady, vsteps,
+                                 int(float(FH.get('diphthong_start_ms', 0.0)) * 1e-3 * sr),
+                                 max(4, int(float(FH.get('diphthong_ms', 150.0)) * 1e-3 * sr)))
+    else:
+        F_track = step_curve(n, Fn[0], vsteps) if not np.allclose(np.diff(np.array(Fn), axis=0), 0) else Fn[0]
     if amt > 0 and float(FH.get('onset_glide', 0.0)) > 0:
         F_track = np.asarray(F_track, dtype=float)
         if F_track.ndim == 1:                              # a frozen vowel still articulates its onset
@@ -482,7 +658,8 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
             if m <= 4:
                 continue
             scale_i = float(notes[i].get('formant_scale', 1.0)) * float(cfg['tract']['formant_scale'])
-            neutral = np.array(FH.get('neutral', [500.0, 1500.0, 2500.0]), dtype=float) * scale_i
+            nv = list(FH.get('neutral', [500.0, 1500.0, 2500.0]))
+            neutral = np.array((nv + list(Fn[i]))[:len(Fn[i])], dtype=float) * scale_i
             ref = Fn[i - 1] if i > 0 else neutral
             ramp = np.exp(-np.arange(m) / (0.35 * m))
             F_track[:, a0:a0 + m] += amt * float(FH['onset_glide']) * (ref - Fn[i])[:, None] * ramp[None, :]
@@ -491,9 +668,24 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
                 drift = np.linspace(0.0, 1.0, ln) ** 2
                 F_track[:, a0:a0 + ln] += amt * float(FH.get('long_note_drift', 0.0)) \
                     * (neutral - Fn[i])[:, None] * drift[None, :]
+    # ---- formant tuning and formant vibrato (a real singer moves F1 toward f0 and lets the vibrato reach the tract)
+    F_track = np.asarray(F_track, dtype=float)
+    if F_track.ndim == 1:                              # per-sample track: a frozen vowel is still one formant set
+        F_track = np.repeat(F_track[:, None], n, axis=1)   # the technique blocks below move it in time
+    tune = float(TE.get('formant_tuning', 0.0))
+    if tune > 0 and F_track.size >= 2 and not hum:
+        F_track = np.asarray(F_track, dtype=float)
+        if np.any(f0 > float(TE.get('tuning_threshold', 0.9)) * F_track[0]):
+            if F_track.ndim == 1:                     # a frozen vowel only becomes a track when tuning moves it
+                F_track = np.repeat(F_track[:, None], n, axis=1)
+            F_track = _tuned_formants(F_track, f0, cfg)
+    if fmt_pct > 0 and not hum and np.any(vib_norm) and F_track.size >= 2:
+        F_track = F_track.copy()
+        F_track[0] *= 1.0 + fmt_pct * vib_norm
+        F_track[1] *= 1.0 + 0.5 * fmt_pct * vib_norm
     cal = step_curve(n, cals[0], [(c, w, cals[i + 1] - cals[i]) for i, (c, w, _) in enumerate(vsteps)])
-    reg_cfg = voice.resolve_register(cfg, reg or (cfg['humming']['register'] if hum else None))
-    tilt = reg_cfg['tilt_hz'] * 2.0 ** (D['timbre_follow'] * (np.clip(level, 0, 1) - 0.5) * 2.0)
+    reg_cfg = voice.register_track(cfg, reg or (cfg['humming']['register'] if hum else None), f0)
+    tilt = np.asarray(reg_cfg['tilt_hz'], dtype=float) * 2.0 ** (D['timbre_follow'] * (np.clip(level, 0, 1) - 0.5) * 2.0)
     B = cfg['breathing']
     if breath_track is not None:
         br = breath_track
@@ -511,8 +703,26 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
         acc_norm /= (acc_norm.max() + 1e-9)
         cents = cents + amt * float((PH.get('pitch') or {}).get('stress_cents', 0.0)) * acc_norm
         f0 = 440.0 * 2.0 ** ((cents - 6900.0) / 1200.0)
+    creak = float(TE.get('creak', 0.0))
+    creak_env = 0.0
+    if creak > 0:                                         # vocal fry: phrase ends and the bottom of the range
+        cm = int(float(TE.get('creak_ms', 90.0)) * 1e-3 * sr)
+        creak_env = np.zeros(n)
+        if cm > 4 and e_[-1] > cm:
+            creak_env[e_[-1] - cm:e_[-1]] = _ramp(cm)
+        floor_hz = max(float(TE.get('creak_floor_hz', 100.0)), 1.0)
+        creak_env = np.maximum(creak_env, np.clip((floor_hz - f0) / (0.25 * floor_hz), 0.0, 1.0))
+        creak_env = creak * creak_env
+    vstats = {}
+    sg = vib_gate                                         # creak is level movement of its own, not vibrato
+    if sg is not None and np.ndim(creak_env):
+        sg = sg & (np.asarray(creak_env) < 0.1)
+    note_id = np.full(n, -1, dtype=int)                   # the vibrato lives inside a note, never across a step
+    for _i in range(k):
+        note_id[s[_i]:e_[_i]] = _i
     sig, _ = voice.synth(f0, sr, rng, cfg, formants=F_track, bandwidths=BW, hum=hum, nasality=nasality, register=reg,
-                         style=style, breathiness=br, tilt_hz=tilt)
+                         style=style, breathiness=br, tilt_hz=tilt, creak=creak_env, stats=vstats, vib_am=vib_am,
+                         stats_gate=sg, stats_notes=note_id)
     press = breath.pressure_curve(n, sr, B)
     pre_contour = sig * cal * level * flutter * (10 ** (acc_db / 20.0)) * gate
     note_rms, note_v, dev = [], [], []
@@ -526,8 +736,172 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
             note_v.append(float(e.get('v', 80)))
             dev.append(float(np.mean(cents_nov[a:b]) - base[i]))
     sig = sig * cal * level * arc * flutter * (10 ** (acc_db / 20.0)) * gate * press
-    return dict(signal=sig, t0=t0, t1=t0 + n / sr, f0=f0, gate=gate, level=level, connected=connected, s=s, e=e_,
-                voiced_end=t0 + max(e_) / sr, ref_rms=D['ref_rms'] * D['level_scale'],
+    cons_report = _place_consonants(sig, codes, CN, sr, rng, f0, s, e_, Fn, lv, n, notes)
+    tech = _technique_report(sig, sr, f0, F_track, s, e_, k, reg, cfg, vib_am, src_stats=vstats)
+    p0 = t0 - pad / sr                                   # the consonant sits before the scored onset
+    return dict(signal=sig, t0=p0, t1=p0 + n / sr, f0=f0, gate=gate, level=level, connected=connected, s=s, e=e_,
+                voiced_end=p0 + max(e_) / sr, ref_rms=D['ref_rms'] * D['level_scale'],
                 note_rms=note_rms, note_v=note_v, dev_cents=dev, n_joins=int(sum(connected)),
                 contour=contour, arc_db=arc_db_curve, timing_ms=[float(x) for x in timing_ms],
-                accents_db=[float(x) for x in acc_db], formants=F_track)
+                accents_db=[float(x) for x in acc_db], formants=F_track,
+                technique=tech, consonants=cons_report)
+
+
+# ---------------------------------------------------------------- technique report and consonant placement
+
+def _longest_note(s, e_):
+    i = int(np.argmax([b - a for a, b in zip(s, e_)]))
+    return s[i], e_[i]
+
+
+def _detrend(x, w):
+    w = max(3, min(int(w), max(3, len(x) // 2)))
+    pad = w // 2
+    ker = np.ones(w) / w
+    return x - np.convolve(np.pad(x, (pad, pad), mode='edge'), ker, mode='valid')[:len(x)]
+
+
+def _local_jitter(sig, f0, sr):
+    """Local period perturbation measured on the rendered signal (Titze 1994 / Praat: mean |T(i+1)-T(i)| / mean T).
+    One glottal closure instant per cycle (the loudest |sample| inside the cycle) gives the period sequence."""
+    if len(sig) < 64:
+        return None
+    cyc = np.cumsum(np.maximum(np.asarray(f0, dtype=float), 20.0)) / sr
+    idx = np.floor(cyc).astype(int)
+    m = int(idx[-1]) + 1
+    if m < 12:
+        return None
+    bounds = np.append(np.searchsorted(idx, np.arange(m), side='left'), len(idx))
+    a = np.abs(sig)
+    pos = []
+    for j in range(m):
+        lo, hi = int(bounds[j]), int(bounds[j + 1])
+        if hi - lo < 3:
+            continue
+        k = lo + int(np.argmax(a[lo:hi]))
+        if lo < k < len(a) - 1:                       # sub-sample peak: one sample is ~0.9 % of a period here
+            den = a[k - 1] - 2.0 * a[k] + a[k + 1]
+            k = k + (0.5 * (a[k - 1] - a[k + 1]) / den if den < 0 else 0.0)
+        pos.append(float(k))
+    T = np.diff(np.asarray(pos, dtype=float))
+    T = T[T > 0]
+    if len(T) < 10:
+        return None
+    return float(np.mean(np.abs(np.diff(T))) / (np.mean(T) + 1e-12) * 100.0)
+
+
+def _place_consonants(sig, codes, cn, sr, rng, f0, s, e_, Fn, lv, n, notes):
+    """Add the consonant segments into the phrase buffer. A consonant is part of the word, not of the breath, so it
+    goes into the voice signal (before the voiced onset by its own VOT), never into the breath stem."""
+    out = []
+    if not codes or not any(codes):
+        return out
+    gain = 10.0 ** (float(cn.get('gain_db', 0.0)) / 20.0)
+    for i, code in enumerate(codes):
+        if not code:
+            continue
+        a, b = s[i], max(s[i] + 8, e_[i])
+        f0i = float(np.mean(f0[a:b]))
+        lvl = float(lv[min(i, len(lv) - 1)])
+        y, meta = consonant.render(code, cn, sr, rng, f0=f0i, vowel=list(Fn[i]))
+        if len(y):
+            at = a - len(y)
+            if at < 0:
+                y = y[-at:]
+                at = 0
+            m = min(len(y), n - at)
+            if m > 8:
+                sig[at:at + m] += gain * lvl * y[:m]
+                meas = consonant.measure(y[:m], sr)
+                out.append(dict(code=meta['code'], type=meta.get('type'), band=meta.get('band'),
+                                vot_ms=meta.get('vot_ms'), centroid_hz=meas['centroid_hz'], dur_ms=meas['dur_ms']))
+        c = notes[i].get('consonant')
+        if cn.get('codas') and isinstance(c, (list, tuple)) and len(c) > 1:
+            y2, meta2 = consonant.render(c[0], cn, sr, rng, f0=f0i, vowel=list(Fn[i]))
+            if len(y2):
+                at = max(0, e_[i] - len(y2))
+                m = min(len(y2), n - at)
+                if m > 8:
+                    sig[at:at + m] += gain * lvl * y2[:m]
+                    meas = consonant.measure(y2[:m], sr)
+                    out.append(dict(code=str(c[0]), type=meta2.get('type'), band=meta2.get('band'), vot_ms=None,
+                                    centroid_hz=meas['centroid_hz'], dur_ms=meas['dur_ms']))
+    return out
+
+
+def _technique_report(sig, sr, f0, F_track, s, e_, k, reg, cfg, vib_am, src_stats=None):
+    """Objective measurements of what the technique actually produced. The gate reads these, never the config."""
+    te = cfg.get('technique') or {}
+    out = {}
+    F_track = np.asarray(F_track, dtype=float)
+    if F_track.ndim == 1:                                  # a frozen vowel: one formant set for the whole phrase
+        F_track = np.repeat(F_track[:, None], max(1, len(f0)), axis=1)
+    if float(te.get('singer_formant', 0.0)) > 0 and F_track.shape[0] >= 5:
+        out['ring_spread_hz'] = float(np.median(F_track[4] - F_track[2]))
+        out['ring_amount'] = float(te.get('singer_formant'))
+    if float(te.get('formant_tuning', 0.0)) > 0 and F_track.shape[0] >= 2:
+        defs, lo_hz = [], float(te.get('tuning_threshold', 0.9))
+        for i in range(k):
+            a, b = s[i], e_[i]
+            m0 = a + (b - a) // 3
+            m1 = min(b, m0 + 4096)
+            if m1 - m0 < 512:
+                continue
+            f0i = float(np.mean(f0[m0:m1]))
+            f1i = float(np.mean(F_track[0][m0:m1]))
+            if f0i <= lo_hz * f1i:
+                continue                                  # only a note whose f0 is up at F1 is a tuning case
+            spec = np.abs(np.fft.rfft(sig[m0:m1] * np.hanning(m1 - m0)))
+            fr = np.fft.rfftfreq(m1 - m0, 1 / sr)
+
+            def _lvl(c, w):
+                sel = (fr >= c - w) & (fr <= c + w)
+                return 20.0 * np.log10(max(float(spec[sel].max()) if np.any(sel) else 1e-12, 1e-12))
+
+            defs.append(_lvl(f1i, max(25.0, f1i * 0.06)) - _lvl(f0i, max(20.0, f0i * 0.03)))
+        out['tuning_deficit_db'] = float(np.mean(defs)) if defs else None
+    if F_track.shape[0] >= 2:
+        co, found = 0.0, False
+        for i in range(k - 1):
+            j = s[i + 1]
+            start = float(F_track[1][s[i]])
+            end = float(F_track[1][j])
+            d = abs(end - start)
+            if d < 100.0:
+                continue                                  # not a vowel change worth calling coarticulation
+            found = True
+            lo = max(0, j - int(0.3 * sr))
+            seg = F_track[1][lo:j]
+            moved = np.where(np.abs(seg - start) > 0.05 * d)[0]
+            if len(moved):
+                co = max(co, (j - (lo + int(moved[0]))) / sr * 1e3)
+        out['coart_lead_ms'] = float(co) if found else None
+    p = cfg['source'].get('passaggio') or {}
+    if p.get('enabled'):
+        oq = np.asarray(voice.register_track(cfg, reg, f0)['open_quotient'], dtype=float)
+        if oq.ndim and oq.size > 1:
+            out['passaggio_step'] = float(np.max(np.abs(np.diff(oq))))
+    if float(cfg['source'].get('jitter_period_pct', 0.0)) > 0:
+        mis = (src_stats or {}).get('jitter_pct')           # the periods the source really played
+        if mis is None:
+            a, b = _longest_note(s, e_)
+            q0, q1 = a + (b - a) // 4, b - (b - a) // 4
+            mis = _local_jitter(sig[q0:q1], f0[q0:q1], sr)
+        out['jitter_pct'] = mis
+    if vib_am is not None and float(np.ptp(np.asarray(vib_am))) > 1e-3:   # no vibrato: nothing to judge
+        out['vib_am_db'] = float((src_stats or {}).get('vib_am_db',
+                                                      20.0 * np.log10(max(float(np.max(vib_am)), 1e-9)
+                                                                      / max(float(np.min(vib_am)), 1e-9))))
+        a, b = _longest_note(s, e_)
+        i0, i1 = a + int(0.2 * (b - a)), b - int(0.2 * (b - a))   # skip attack and release: the level swings 60+ dB
+        seg = sig[i0:i1]
+        w = max(16, int(0.01 * sr))
+        if len(seg) > 4 * w:
+            p = w // 2
+            env = np.sqrt(np.convolve(np.pad(seg ** 2, (p, p), mode='edge'),
+                                      np.ones(w) / w, mode='valid')[:len(seg)] + 1e-18)
+            e1 = _detrend(np.log(env + 1e-12), int(0.05 * sr))
+            f1 = _detrend(f0[i0:i1], int(0.05 * sr))
+            if e1.std() > 0 and f1.std() > 0:
+                out['vib_am_corr'] = float((src_stats or {}).get('vib_am_corr', np.corrcoef(e1, f1)[0, 1]))
+    return out

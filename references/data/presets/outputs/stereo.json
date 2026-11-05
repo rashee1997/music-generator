@@ -1,0 +1,17 @@
+{
+  "name": "stereo",
+  "character": "The direct two-channel studio mix: every track panned onto the L/R stage, no headphone filtering. This is what the engine builds and certifies today.",
+  "label": "stereo master",
+  "order": 1,
+  "channels": 2,
+  "channel_order": ["L", "R"],
+  "file": "master.wav",
+  "renderer": "mix_master",
+  "true_peak_dbtp": -1.5,
+  "layout": null,
+  "gate": {"stereo_correlation_min": 0.15},
+  "sources": [
+    "ITU-R BS.775-3: the two-channel fold-down of a multichannel programme is delivered as L/R",
+    "The -1.5 dBTP ceiling is this project's delivery policy for a two-channel file (references/mixing/quality-gate.md), not a measured acoustic value"
+  ]
+}

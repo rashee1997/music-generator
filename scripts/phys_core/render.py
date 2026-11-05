@@ -43,7 +43,7 @@ def render_scene(scene, sr=44100, seed=1, seconds=None):
     out = np.zeros(n)
     for i, act in enumerate(scene.get('timeline') or []):
         out += _action(act, ctx, seed, i, n, 0)
-    out = propagate.apply(out, sr, scene.get('propagation'))
+    out = propagate.apply(out, sr, scene.get('propagation'), ctx['materials'])
     out, report = calibrate.apply(out, scene.get('calibration'), sr)
     return out, report
 

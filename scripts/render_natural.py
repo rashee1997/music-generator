@@ -49,6 +49,7 @@ Score format (JSON). Times are BEATS. Pitches are MIDI numbers (drums may use na
 }
 """
 import argparse
+import glob
 import hashlib
 import json
 import os
@@ -695,13 +696,22 @@ _RENDERER_VERSION = 'natural-7'   # bump when the renderer changes what a stem s
 _CODE_HASH = None
 
 
+# Every module whose code can change a stem's bytes. The five files this used to hash left the vocal engine,
+# the physical-scene core, the sound model, the spatial engine and the presets loader out: editing any of them
+# returned a stale stem from the cache, which is the one thing a cache keyed on code must never do.
+_RENDER_CODE = ('render_natural.py', 'dsp.py', 'sfz_render.py', 'environment.py', 'humanize.py', 'vocals.py',
+                'sound_model.py', 'clone_instrument.py', 'spatial.py', 'airabs.py', 'mechanics.py', 'world.py',
+                'soundbank.py', 'presets.py', 'mix_schema.py', 'cli_util.py')
+_RENDER_PACKAGES = ('vocal_engine', 'phys_core', 'env_engine', 'sfx_engine', 'spatial_hrtf', 'spatial_engine')
+
+
 def _code_hash():
     """Identity of the code that makes the bytes: a cache must never return a stem from another renderer version."""
     global _CODE_HASH
     if _CODE_HASH is None:
         h = hashlib.sha1()
         here = os.path.dirname(os.path.abspath(__file__))
-        for f in ('render_natural.py', 'dsp.py', 'sfz_render.py', 'environment.py', 'humanize.py'):
+        for f in _RENDER_CODE:
             p = os.path.join(here, f)
             try:
                 with open(p, 'rb') as fh:
@@ -709,6 +719,14 @@ def _code_hash():
                     h.update(fh.read())
             except OSError:
                 h.update(b'missing:' + f.encode('utf-8'))
+        for pkg in _RENDER_PACKAGES:                     # a package's modules are code too, not data
+            for p in sorted(glob.glob(os.path.join(here, pkg, '*.py'))):
+                try:
+                    with open(p, 'rb') as fh:
+                        h.update(os.path.relpath(p, here).replace(os.sep, '/').encode('utf-8'))
+                        h.update(fh.read())
+                except OSError:
+                    h.update(b'missing:' + p.encode('utf-8'))
         _CODE_HASH = h.hexdigest()
     return _CODE_HASH
 

@@ -1,0 +1,122 @@
+{
+  "fixture": {
+    "seconds": 8.0,
+    "sr": 44100,
+    "stems": [
+      "bass",
+      "drums",
+      "lead",
+      "pad"
+    ]
+  },
+  "mix_draft": {
+    "cold_ms": 3197.3,
+    "score": {
+      "median_ms": 58.1,
+      "p95_ms": 103.0,
+      "min_ms": 39.2,
+      "runs": 5
+    },
+    "render": {
+      "median_ms": 0.0,
+      "p95_ms": 0.0,
+      "min_ms": 0.0,
+      "runs": 5
+    },
+    "audio": {
+      "median_ms": 1004.8,
+      "p95_ms": 1154.7,
+      "min_ms": 662.0,
+      "runs": 5
+    },
+    "master_extra": {
+      "median_ms": 422.9,
+      "p95_ms": 636.8,
+      "min_ms": 111.1,
+      "runs": 5
+    },
+    "tier2": {
+      "median_ms": 0.0,
+      "p95_ms": 0.0,
+      "min_ms": 0.0,
+      "runs": 5
+    },
+    "metadata": {
+      "median_ms": 11.1,
+      "p95_ms": 14.6,
+      "min_ms": 5.3,
+      "runs": 5
+    },
+    "direction": {
+      "median_ms": 9.3,
+      "p95_ms": 12.8,
+      "min_ms": 4.7,
+      "runs": 5
+    },
+    "total": {
+      "median_ms": 1652.2,
+      "p95_ms": 1913.7,
+      "min_ms": 822.6,
+      "runs": 5
+    }
+  },
+  "mix_full": {
+    "cold_ms": 2445.7,
+    "score": {
+      "median_ms": 48.1,
+      "p95_ms": 98.5,
+      "min_ms": 40.9,
+      "runs": 5
+    },
+    "render": {
+      "median_ms": 0.0,
+      "p95_ms": 0.0,
+      "min_ms": 0.0,
+      "runs": 5
+    },
+    "audio": {
+      "median_ms": 1013.7,
+      "p95_ms": 1341.4,
+      "min_ms": 748.8,
+      "runs": 5
+    },
+    "master_extra": {
+      "median_ms": 484.5,
+      "p95_ms": 499.4,
+      "min_ms": 126.3,
+      "runs": 5
+    },
+    "tier2": {
+      "median_ms": 64.1,
+      "p95_ms": 73.0,
+      "min_ms": 33.5,
+      "runs": 5
+    },
+    "metadata": {
+      "median_ms": 4.6,
+      "p95_ms": 8.2,
+      "min_ms": 4.1,
+      "runs": 5
+    },
+    "direction": {
+      "median_ms": 5.0,
+      "p95_ms": 8.1,
+      "min_ms": 3.6,
+      "runs": 5
+    },
+    "total": {
+      "median_ms": 1673.0,
+      "p95_ms": 1988.1,
+      "min_ms": 965.3,
+      "runs": 5
+    }
+  },
+  "stem_gate": {
+    "cold_ms": 878.1,
+    "median_ms": 1086.8,
+    "p95_ms": 1404.3,
+    "min_ms": 878.1,
+    "runs": 5,
+    "workers": 2
+  }
+}

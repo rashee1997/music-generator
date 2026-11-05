@@ -196,6 +196,28 @@ numbers, come from a **gate profile**: a preset of kind `gate` (`references/data
   `low_interval_mud` and the mix's mud row.
 - The silent-gap test looks at 0.25 s windows, so a gap shorter than one second is not reported.
 
+## 5b. Deliverable-format rows (only for the formats the score asked for)
+
+`spatial_gate.output_rows` reads the score's `output_targets` through `render_targets` and checks the delivered file
+against the target it claims to be. A format that was not requested is never checked and can never fail.
+
+| Row | Applies to | What is measured | Where the limit comes from |
+|---|---|---|---|
+| `delivery.true_peak` | every target | worst channel true peak after 4x oversampling | the target preset's `true_peak_dbtp` (-1.5 dBTP two-channel, -3.0 dBTP multichannel) |
+| `delivery.format` | every target | channel count against the requested targets | `render_targets.channels()` |
+| `stereo.correlation` | 2-channel targets | `corr(L, R)` - below the floor the centre is cancelling | target preset `gate.stereo_correlation_min` |
+| `imm.lfe_stopband` | multichannel | energy above the stopband, relative to the programme RMS | layout `lfe.stopband_hz` / `stopband_db` |
+| `imm.surround_ratio` | multichannel | surround energy (BL+BR+SL+SR) against the front stage (FL+FR+FC) | layout `gate.surround_ratio_db` |
+| `imm.height_arc` | layouts with overhead speakers | height energy against the listener-level beds | layout `gate.height_max_rel_db` |
+| `imm.fold_coherence` | multichannel | correlation of the ITU-R BS.775 fold | layout `gate.stereo_correlation_min` |
+
+For a multichannel delivery the `loudness` row is measured on the layout's BS.775 two-channel fold, not on the mean of
+the channels: the fold is what a listener without the room hears, and a channel mean changes with the channel count.
+
+A `FAIL` here names the channel or the ratio that broke, so the fix is a preset send level or a track's position - not
+a loosened threshold. The low-frequency row is an upper limit, so the guard in `spatial_engine/bass.py` is a low-pass at
+the stopband: a high-pass there would strip the band the channel exists to carry.
+
 ## 5b. Immersive rows (only when the mix preset has `immersive.enabled`)
 
 `imm_cues`, `imm_elevation`, `imm_height_rules`, `imm_externalization`, `imm_foldown` FAIL; `imm_frontback`, `imm_band`, `imm_envelopment`, `imm_width` WARN.
@@ -225,6 +247,38 @@ This is a K-weighted/equal-loudness **approximation**, not a certified ISO 226 l
 not the master's; it cannot hear whether the brightness is intended. Listen before cutting.
 
 ## 5c. One list of rows, whoever runs the gate
+
+### Two stages: stems before the mix, master after
+
+The gate runs twice on a generated piece:
+
+1. **`stem_gate.run_stem_gate(score, stems)`** runs in pipeline stage 4b, on each stem alone, before `mixer.mix_and_master`.
+   It measures clicks, dropout, hard cut at a section boundary, abrupt end, clipping, DC, spectral flatness, vocal
+   integrity, duplicate/present stems and a dead part against the score's dynamics. Any `stem.*` FAIL stops the run:
+   nothing is mixed and `out/` is untouched. Each stem is measured in its own thread (`GATE_WORKERS` / `--gate-workers`,
+   default 2), and the per-stem and total timings go into the report.
+2. **`quality_gate.run_gate`** runs after mixing on the draft WAV and certifies. It adds the same detectors on the master
+   under unsuffixed ids (`clicks`, `dropout`, `cut.hard`, `end.abrupt`, `clipping`, `master.dc`), plus measured-against-
+   sheet `tempo.audio` and `section.energy`. Only 0 FAIL publishes a version.
+
+`--draft` keeps stage 1 and the tier-1 master rows and skips masking, roughness, immersive, chroma, kick grid, equal
+loudness, flutter, ambience-reference and sfx rows; it never publishes. The formulas, windows and calibration status of
+every new row are in `references/mixing/gate-maths.md`.
+
+Every row also produces a number record: `out/ci_report.json` has `gate.mode`, `gate.stopped` and `gate.stages.{stem,mix}`,
+and each stage's `metrics` lists `row`, `stem`, `level`, `value`, `threshold`, `margin`, `unit`, `worst_times_s`,
+`calibrated` and `detail`. `scripts/gate_report.py` writes a PNG beside a `.txt` and `.json` for the waveform with section
+boundaries and flags, the log spectrogram, the short-term level, stereo correlation, per-stem level against the dynamics
+curve and section energy against the sheet, under `<project>/reports/gate/`.
+
+Every stem row is a gate-profile row too. `stem_gate.run_stem_gate` resolves the same profile as the mix gate
+(`gate_profiles.resolve(score)`), so the piece's `piece_type` decides whether `stem.clicks`, `stem.dropout`, `stem.cut`,
+`stem.end`, `stem.edge`, `stem.tick`, `stem.dead`, `stem.flatness`, `stem.dc`, `stem.clipping`, `stem.vocal`,
+`stem.present` and `stem.duplicate` apply, uses the profile's parameter values for each, and a `skip`/`relax` needs the
+profile's written reason. A skipped row is printed (`[INFO] stem.<row>: SKIPPED by profile <label>: <reason>`), never
+silently dropped, and an unknown `piece_type` is a FAIL in both stages. The chosen profile label is in
+`reports/gate/stem_gate.json` and `ci_report.json`. `quality_gate.py <score> --timings` prints the per-group wall time of
+a local mix-gate run.
 
 There is one implementation of the row list: `quality_gate.run_gate`. `quality_gate.py <score> --wav <master>` calls it
 after rendering; `pipeline.py` calls the same function from stage 6 with the score it rendered

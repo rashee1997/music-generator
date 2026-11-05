@@ -94,6 +94,35 @@ score = dict(
 Instrument strings: GM names (`python3 scripts/soundbank.py --list`) or `"clone:path"` for a cloned instrument.
 Roles: `melody counter chord pad bass arp drum fx` (they set the humanizing and the mix defaults).
 
+### Deliverable formats (`output_targets`)
+
+The score says which files to build; the engine builds only those. Add one key:
+
+```python
+score["output_targets"] = "stereo"                       # one target
+score["output_targets"] = ["immersive_7_1", "stereo"]    # these, in this order; the first is the certified master
+score["output_targets"] = "all"                          # every target the engine can build
+# absent: the default preset's list (references/data/presets/outputs/_default.json)
+```
+
+Targets ship as presets of the kind `outputs` (`references/data/presets/outputs/`): `stereo`, `binaural`,
+`immersive_7_1` (8 channels, ITU-R BS.2051 System H), `immersive_7_1_4` (12 channels, System J) and
+`immersive_7_1_2` (10 channels, System I). Each preset carries
+its channel count, channel order, file name, true-peak ceiling and the renderer that builds it; the loudspeaker
+positions are presets of the kind `layouts`. A project adds a format (7.1.2, a room-specific ring) by writing
+`<project>/presets/outputs/<name>.json` and `<project>/presets/layouts/<name>.json` - no Python change.
+
+- A target whose `renderer` is null is defined but cannot be built yet. Naming it in the score is a **blocking**
+  problem (the render never starts); `"all"` lists it as skipped. There is never a silent downgrade to stereo.
+- The shipped renderers are `mix_master` (the stereo bus), `spatial` (the discrete bus in `spatial_engine/render.py`,
+  which reuses `mixer.mix_stems` for every track decision and only changes the summing target) and `binaural` (the same
+  mix with the head-related route on). A project target may name any of the three.
+- The legacy score key `"outputs"` and the aliases `7.1` / `7.1.4` still resolve.
+- The CLI overrides the score for one run: `--targets stereo` or `--targets all` (comma separated).
+- The certified master is `out/<file of the first selected target>`, e.g. `out/master.wav` for stereo.
+- The gate only checks formats that were requested: `scripts/spatial_gate.py` runs the target's ceiling and the
+  layout's low-frequency stopband, surround-energy window and height ceiling on the file that was delivered.
+
 ## 3. Helpers (import from `scripts/`)
 
 | Module | Useful calls |

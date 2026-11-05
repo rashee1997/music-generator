@@ -122,6 +122,19 @@ DEFAULTS = {
         'sparse_active_frac': 0.0,     # adaptive only: below this share of playing windows, halve the boost
         'env_fallback_rms_scale': 0.5,
     },
+    # Carve the beds only while the lead is sounding in the band they share. Off by default because it is a
+    # decision about the piece, not a house rule: a preset that enables it states which roles yield and how far.
+    'lead_carve': {
+        'enabled': False,
+        'source': None,                # a track name; None = the loudest melody track
+        'bands_hz': [[250.0, 1200.0], [1200.0, 4500.0]],
+        'ratio': 2.0,
+        'threshold_db': -30.0,
+        'attack_ms': 6.0,
+        'release_ms': 120.0,
+        'roles': ['chord', 'pad', 'arp', 'counter'],
+        'skip_ducked': True,           # a role the sidechain already moves under the lead is not carved twice
+    },
     'dynamics': {
         'engine': 'pedalboard',        # pedalboard (threshold/ratio/attack/release) | dsp (the full set)
         'knee_db': 0.0,
@@ -271,6 +284,10 @@ RANGES = {
     ('render', 'oversample'): ('num', 1, 8),
     ('sidechain', 'residual'): ('num', 0.0, 1.0),
     ('sidechain', 'threshold'): ('num', 0.0, 1.0),
+    ('lead_carve', 'ratio'): ('num', 1.0, 20.0),
+    ('lead_carve', 'threshold_db'): ('db', -60.0, 0.0),
+    ('lead_carve', 'attack_ms'): ('num', 0.0, 100.0),
+    ('lead_carve', 'release_ms'): ('num', 5.0, 2000.0),
     ('mastering', 'crest_floor_db'): ('num', 0.0, 30.0),
     ('immersive', 'max_elevation'): ('num', 0.0, 90.0),
     ('immersive', 'min_height_tracks'): ('num', 0.0, 24.0),

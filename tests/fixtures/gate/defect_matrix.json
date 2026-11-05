@@ -1,0 +1,220 @@
+{
+  "generated": "2026-11-04T18:23:10",
+  "baseline_fails": 0,
+  "rows": [
+    {
+      "stage": "stem",
+      "defect": "baseline",
+      "expect": "none",
+      "level": "PASS",
+      "caught": true,
+      "rows_failed": [],
+      "collateral": []
+    },
+    {
+      "stage": "stem",
+      "defect": "click",
+      "expect": "stem.clicks",
+      "level": "FAIL",
+      "caught": true,
+      "rows_failed": [
+        "stem.clicks"
+      ],
+      "collateral": []
+    },
+    {
+      "stage": "stem",
+      "defect": "dropout",
+      "expect": "stem.dropout",
+      "level": "FAIL",
+      "caught": true,
+      "rows_failed": [
+        "stem.clicks",
+        "stem.dropout"
+      ],
+      "collateral": [
+        "stem.clicks"
+      ]
+    },
+    {
+      "stage": "stem",
+      "defect": "cut",
+      "expect": "stem.cut",
+      "level": "FAIL",
+      "caught": true,
+      "rows_failed": [
+        "stem.dropout",
+        "stem.cut",
+        "stem.dead"
+      ],
+      "collateral": [
+        "stem.dropout",
+        "stem.dead"
+      ]
+    },
+    {
+      "stage": "stem",
+      "defect": "truncate",
+      "expect": "stem.end",
+      "level": "FAIL",
+      "caught": true,
+      "rows_failed": [
+        "stem.end",
+        "stem.edge"
+      ],
+      "collateral": [
+        "stem.edge"
+      ]
+    },
+    {
+      "stage": "stem",
+      "defect": "late_start",
+      "expect": "stem.edge",
+      "level": "FAIL",
+      "caught": true,
+      "rows_failed": [
+        "stem.edge"
+      ],
+      "collateral": []
+    },
+    {
+      "stage": "stem",
+      "defect": "dc",
+      "expect": "stem.dc",
+      "level": "FAIL",
+      "caught": true,
+      "rows_failed": [
+        "stem.dc"
+      ],
+      "collateral": []
+    },
+    {
+      "stage": "stem",
+      "defect": "clip",
+      "expect": "stem.clipping",
+      "level": "FAIL",
+      "caught": true,
+      "rows_failed": [
+        "stem.clipping"
+      ],
+      "collateral": []
+    },
+    {
+      "stage": "stem",
+      "defect": "noise",
+      "expect": "stem.flatness",
+      "level": "FAIL",
+      "caught": true,
+      "rows_failed": [
+        "stem.flatness"
+      ],
+      "collateral": []
+    },
+    {
+      "stage": "stem",
+      "defect": "tick",
+      "expect": "stem.tick",
+      "level": "FAIL",
+      "caught": true,
+      "rows_failed": [
+        "stem.tick"
+      ],
+      "collateral": []
+    },
+    {
+      "stage": "stem",
+      "defect": "dead",
+      "expect": "stem.dead",
+      "level": "FAIL",
+      "caught": true,
+      "rows_failed": [
+        "stem.dead"
+      ],
+      "collateral": []
+    },
+    {
+      "stage": "mix",
+      "defect": "baseline",
+      "expect": "none",
+      "level": "PASS",
+      "caught": true,
+      "rows_failed": [],
+      "collateral": []
+    },
+    {
+      "stage": "mix",
+      "defect": "click",
+      "expect": "clicks",
+      "level": "FAIL",
+      "caught": true,
+      "rows_failed": [
+        "clicks"
+      ],
+      "collateral": []
+    },
+    {
+      "stage": "mix",
+      "defect": "dropout",
+      "expect": "dropout",
+      "level": "FAIL",
+      "caught": true,
+      "rows_failed": [
+        "clicks",
+        "dropout",
+        "section.energy"
+      ],
+      "collateral": [
+        "clicks",
+        "section.energy"
+      ]
+    },
+    {
+      "stage": "mix",
+      "defect": "dc",
+      "expect": "master.dc",
+      "level": "FAIL",
+      "caught": true,
+      "rows_failed": [
+        "end.abrupt",
+        "master.dc"
+      ],
+      "collateral": [
+        "end.abrupt"
+      ]
+    },
+    {
+      "stage": "mix",
+      "defect": "truncate",
+      "expect": "end.abrupt",
+      "level": "FAIL",
+      "caught": true,
+      "rows_failed": [
+        "end.abrupt"
+      ],
+      "collateral": []
+    },
+    {
+      "stage": "mix",
+      "defect": "clip",
+      "expect": "clipping",
+      "level": "FAIL",
+      "caught": true,
+      "rows_failed": [
+        "audio",
+        "loudness",
+        "true peak",
+        "clipping",
+        "master.dc",
+        "tempo.audio"
+      ],
+      "collateral": [
+        "audio",
+        "loudness",
+        "true peak",
+        "master.dc",
+        "tempo.audio"
+      ]
+    }
+  ],
+  "missed": []
+}

@@ -36,6 +36,9 @@ try:
 except Exception:
     median_filter = None
 
+import gate_checks as gc
+from gate_audio import GateAudio
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import naturalness_check as nc
 import pattern_audit
@@ -384,13 +387,26 @@ def immersive_rows(score, path, stems, out):
                  + ('phase cancellation will thin it on phone speakers' if drop > lim else 'holds up on a phone speaker'))
 
 
-def audio_checks(path, score, out):
+def audio_checks(path, score, out, metrics=None):
     """Measurements of the rendered file against the score's own targets."""
     master = score.get('master', {})
     target = master.get('lufs', -14.0)
     lufs_tol = master.get('lufs_tolerance', master.get('tolerance_lu', 2.5))
     tp_target = master.get('true_peak', -1.5)
     r = nc.analyse(path, target_lufs=target)
+    x, sr = nc.load(path)
+    # A surround master is judged on its BS.775 fold-down, not on the mean of its channels: the fold is what a
+    # listener without the room hears, and a channel mean changes with the channel count. nc.load returns two
+    # channels, so the real channel count is read from the file itself.
+    import render_targets
+    import soundfile as _sf
+    _multi, _multi_sr = _sf.read(path, always_2d=True)
+    for _name in render_targets.resolve(score)['selected']:
+        _tgt = render_targets.get(_name) or {}
+        if _tgt.get('layout') and render_targets.channels(_name) == _multi.shape[1]:
+            from spatial_engine import master as _spatial_master
+            r['lufs'] = _spatial_master.fold_lufs(_multi, _tgt['layout'])
+            break
     spatial_check(path, score, out)
     for level, msg in nc.verdicts(r, target=target):
         _row(out, level, 'audio', msg)
@@ -400,7 +416,6 @@ def audio_checks(path, score, out):
                                       'target under the limiter. Lower the target or the dynamics range, or accept it and say so')
     if r['true_peak'] > tp_target + 0.3:
         _row(out, 'FAIL', 'true peak', f"{r['true_peak']:.2f} dBTP is above the ceiling {tp_target}")
-    x, sr = nc.load(path)
     mono = x.mean(axis=1) if x.ndim == 2 else x
     # silent gap: a run of 1 s or more under -60 dBFS, away from the start and end
     win = int(0.25 * sr)
@@ -418,12 +433,32 @@ def audio_checks(path, score, out):
     else:
         _row(out, 'PASS', 'silence', 'no silent gap in the middle of the piece')
     clicks = find_clicks(mono)
-    if len(clicks):
+    gate_clicks = gc.check_clicks(GateAudio(path))
+    n_clicks = max(len(clicks), int(gate_clicks.get('mad_count', 0)))
+    if n_clicks:
         when = ', '.join(f'{i / sr:.3f}s' for i in clicks[:5])
-        _row(out, 'WARN', 'clicks', f'{len(clicks)} single-sample jump(s) above {CLICK_STEP} of full scale, first at {when}. '
-                                    'Check the sample start or add a 2-5 ms fade-in at that note')
+        detail = (f'{n_clicks} click event(s): {len(clicks)} single-sample jump(s) above {CLICK_STEP} FS'
+                  + (f', first at {when}' if len(clicks) else '')
+                  + f'; high-pass MAD found {gate_clicks.get("mad_count", 0)} and LPC {gate_clicks.get("lpc_count", 0)}')
+        _row(out, 'FAIL', 'clicks', detail + '. Check the sample start or add a 2-5 ms fade-in at that note')
     else:
-        _row(out, 'PASS', 'clicks', f'no single-sample jump above {CLICK_STEP} of full scale')
+        _row(out, 'PASS', 'clicks',
+             f'no click: no single-sample jump above {CLICK_STEP} FS and no high-pass/LPC impulse event')
+    if metrics is not None:
+        metrics.append(dict(row='clicks', stage='mix', stem=None, level='FAIL' if n_clicks else 'PASS',
+                            value=float(n_clicks), unit='events', threshold=0.0, margin=float(n_clicks),
+                            worst_times_s=[round(float(t), 4) for t in gate_clicks.get('times', [])][:8],
+                            calibrated=True, detail=gate_clicks['detail']))
+        metrics.append(dict(row='loudness', stage='mix', stem=None,
+                            level='FAIL' if abs(d) > lufs_tol else 'PASS',
+                            value=float(r['lufs']), unit='LUFS', threshold=float(target),
+                            margin=float(abs(d) - lufs_tol), worst_times_s=[], calibrated=True,
+                            detail=f'{r["lufs"]:.1f} LUFS vs target {target} (tolerance {lufs_tol} LU)'))
+        metrics.append(dict(row='true peak', stage='mix', stem=None,
+                            level='FAIL' if r['true_peak'] > tp_target + 0.3 else 'PASS',
+                            value=float(r['true_peak']), unit='dBTP', threshold=float(tp_target),
+                            margin=float(r['true_peak'] - tp_target), worst_times_s=[], calibrated=True,
+                            detail=f'{r["true_peak"]:.2f} dBTP vs ceiling {tp_target}'))
     import gate_profiles
     gp = gate_profiles.resolve(score)
     if gp.on('natural.aliasing'):
@@ -441,6 +476,107 @@ def audio_checks(path, score, out):
     rough_rows, _ = nc.cochlear_roughness_check(x, sr=sr, score=score)
     for l, n, d in rough_rows:
         _row(out, l, n, d)
+
+
+def _metric(metrics, **kw):
+    if metrics is not None:
+        metrics.append(kw)
+
+
+def _score_has_pulse(score):
+    """True when some part actually plays a pulse: a percussive track, or 6+ note starts with a steady interval.
+
+    `tempo.audio` measures the audio; on a rubato or arpeggiated cue a beat tracker reports a subdivision (a real project
+    run measured 152 BPM for a written 84), so the row is only judged where a pulse exists to measure.
+    """
+    bpm = float(score.get('bpm') or 120.0)
+    for tr in score.get('tracks', []):
+        role = str(tr.get('role') or '').lower()
+        inst = str(tr.get('instrument') or '').lower()
+        blob = f'{role} {inst} {tr.get("name", "")}'.lower()
+        if role == 'drum' or any(h in blob for h in ('drum', 'percussion', 'kit', 'kick', 'snare', 'hat', 'shaker')):
+            return True
+        starts = []
+        for n in tr.get('notes', []):
+            try:
+                starts.append(float(n['t']) * 60.0 / bpm)
+            except (KeyError, TypeError, ValueError):
+                continue
+        if len(starts) >= 6:
+            ioi = [b - a for a, b in zip(sorted(starts), sorted(starts)[1:]) if b > a]
+            if ioi and float(np.std(ioi) / (np.mean(ioi) + 1e-12)) <= 0.05:
+                return True
+    return False
+
+
+def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
+    """The master rows the mix gate shares with the stem gate: dropout, cut, end, DC, tempo, section energy.
+
+    A defect injected into the summed mix must have a row to fail; these are the unsuffixed master ids.
+    """
+    sig = GateAudio(wav_path)
+    sheet = _direction_sheet(project_dir) if project_dir else {}
+    secs = gc.section_bounds(score, sig.dur, sheet)
+    boundaries = [s['start_s'] for s in secs if s['start_s'] > 0.05]
+
+    res = gc.check_dropout(sig)
+    level = 'FAIL' if res.get('holes') else 'PASS'
+    _row(out, level, 'dropout', res['detail'])
+    _metric(metrics, row='dropout', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
+            threshold=res['threshold'], margin=res['margin'], worst_times_s=res['times'][:8], calibrated=False,
+            detail=res['detail'])
+
+    res = gc.check_cut(sig, boundaries)
+    level = 'FAIL' if res['value'] > res['threshold'] else 'PASS'
+    _row(out, level, 'cut.hard', res['detail'])
+    _metric(metrics, row='cut.hard', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
+            threshold=res['threshold'], margin=res['margin'], worst_times_s=res['times'][:8], calibrated=False,
+            detail=res['detail'])
+
+    res = gc.check_abrupt_end(sig)
+    level = 'FAIL' if res.get('fail') else 'PASS'
+    _row(out, level, 'end.abrupt', res['detail'])
+    _metric(metrics, row='end.abrupt', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
+            threshold=res['threshold'], margin=res['threshold'] - res['value'], worst_times_s=res['times'][:8],
+            calibrated=False, detail=res['detail'])
+
+    res = gc.check_clipping(sig)
+    level = 'FAIL' if res['value'] > 0 else 'PASS'
+    _row(out, level, 'clipping', res['detail'])
+    _metric(metrics, row='clipping', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
+            threshold=res['threshold'], margin=res['margin'], worst_times_s=[], calibrated=True, detail=res['detail'])
+
+    res = gc.check_dc(sig)
+    level = 'FAIL' if res['value'] > res['threshold'] else 'PASS'
+    _row(out, level, 'master.dc', res['detail'])
+    _metric(metrics, row='master.dc', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
+            threshold=res['threshold'], margin=res['margin'], worst_times_s=[], calibrated=False, detail=res['detail'])
+
+    bpm_ref = score.get('bpm')
+    # every other master row asks the piece's profile first; this one used to judge regardless, so a
+    # measured, reasoned `tempo.audio` skip in a project's gate profile had no effect at all.
+    import gate_profiles as _gprof
+    if not _gprof.resolve(score).on('tempo.audio'):
+        bpm_ref = None
+    if bpm_ref and not _score_has_pulse(score):
+        _row(out, 'INFO', 'tempo.audio',
+             f'score.bpm {float(bpm_ref):g} is declared, but the score has no percussion and no isochronous part: a beat '
+             'tracker cannot measure a pulse the music does not play, so the tempo is not judged')
+    elif bpm_ref:
+        res = gc.check_tempo(sig, float(bpm_ref))
+        if not res.get('skipped'):
+            level = 'FAIL' if res.get('fail') else 'PASS'
+            _row(out, level, 'tempo.audio', res['detail'])
+            _metric(metrics, row='tempo.audio', stage='mix', stem=None, level=level, value=res['value'],
+                    unit=res['unit'], threshold=res['threshold'], margin=res['margin'], worst_times_s=[],
+                    calibrated=False, detail=res['detail'])
+
+    res = gc.section_energy(sig, score, sheet)
+    level = res.pop('level', 'PASS')
+    _row(out, level, 'section.energy', res['detail'])
+    _metric(metrics, row='section.energy', stage='mix', stem=None, level=level, value=res['value'],
+            unit=res['unit'], threshold=res['threshold'], margin=res['margin'], worst_times_s=[],
+            calibrated=False, detail=res['detail'], table=res.get('table'))
 
 
 MASK_WIN_S = 4.0            # the congestion check looks at 4-second windows
@@ -994,48 +1130,195 @@ def equal_loudness_rows(score, stems=None, out=None, sr=44100):
     return rows
 
 
-def metadata_rows(score, out, project_dir=None):
-    """Delivery traceability: the certified master carries standard metadata (`<master>.json`, written by
-    scripts/helpers/ingest_metadata.py) and a version record in `out/versions.json` whose versioned file still
-    exists (scripts/helpers/version_manager.py). The gate only reads this; it never writes or repairs it.
-    These rows never FAIL: metadata is written after the musical gate passes, so a missing record is a WARN
-    about the delivery, not a reason to reject the music."""
+SUBTYPE_BITS = {'PCM_U8': 8, 'PCM_16': 16, 'PCM_24': 24, 'PCM_32': 32, 'FLOAT': 32, 'DOUBLE': 64}
+
+
+def _direction_sheet(project_dir):
+    """The project's direction sheet (first parseable direction/*.json), or {}."""
+    if not project_dir:
+        return {}
+    folder = os.path.join(project_dir, 'direction')
+    if not os.path.isdir(folder):
+        return {}
+    for name in sorted(os.listdir(folder)):
+        if not name.endswith('.json'):
+            continue
+        try:
+            data = json.load(open(os.path.join(folder, name), encoding='utf-8'))
+        except Exception:
+            continue
+        if isinstance(data, dict):
+            return data
+    return {}
+
+
+def direction_rows(score, out, project_dir=None, wav_path=None, mode='full'):
+    """The direction sheet is a promise about the delivery, so the gate judges the delivered file against it.
+
+    Rows: delivery.sample_rate, delivery.bit_depth, delivery.channels and delivery.duration against
+    sheet["delivery"] and duration_s (FAIL on a mismatch), tempo.bpm against sheet["tempo_bpm"] (FAIL when the
+    score's tempo is outside the promised range), key.mode against sheet["key"]/["mode"] (FAIL in certify mode, WARN in
+    draft: a certified delivery must not contradict its sheet). A project run with no sheet in certify mode FAILs
+    delivery.direction: it cannot certify what it cannot compare. A scratch render with no project folder stays INFO, and
+    draft keeps the old INFO. The gate only reads; it never edits the sheet or the audio.
+    """
     import gate_profiles
+    gp = gate_profiles.resolve(score)
+    if not project_dir:
+        out.append(('INFO', 'delivery.direction', 'no project folder, so no direction sheet: the delivery is '
+                    'not judged against one'))
+        return
+    sheet = _direction_sheet(project_dir)
+    if not sheet:
+        if mode == 'full':
+            out.append(('FAIL', 'delivery.direction',
+                        'no direction/*.json in this project: a certified delivery must be compared with its sheet '
+                        '(sample rate, bit depth, channels, length, tempo and key). Write the sheet, or run --draft'))
+        else:
+            out.append(('INFO', 'delivery.direction',
+                        'no direction/*.json: the delivered file is not judged against a sheet (draft run)'))
+        return
+    delivery = sheet.get('delivery') or {}
+    info = None
+    if wav_path and os.path.isfile(wav_path):
+        try:
+            import soundfile as sf
+            info = sf.info(wav_path)
+        except Exception as exc:
+            out.append(('WARN', 'delivery.sample_rate', f'cannot read {os.path.basename(wav_path)} to compare it with the sheet ({exc})'))
+    name = os.path.basename(wav_path) if wav_path else 'the master'
+    if info is not None:
+        if gp.on('delivery.sample_rate') and delivery.get('sample_rate'):
+            want = int(delivery['sample_rate'])
+            if int(info.samplerate) != want:
+                out.append(('FAIL', 'delivery.sample_rate',
+                            f'{name} is {info.samplerate} Hz but direction sheet.delivery.sample_rate is {want} Hz: '
+                            f'deliver at the promised rate (render at {want} Hz) or correct the sheet'))
+            else:
+                out.append(('PASS', 'delivery.sample_rate', f'{info.samplerate} Hz matches the direction sheet'))
+        if gp.on('delivery.bit_depth') and delivery.get('bit_depth'):
+            want = int(delivery['bit_depth'])
+            got = SUBTYPE_BITS.get(str(info.subtype))
+            if got is None:
+                out.append(('WARN', 'delivery.bit_depth', f'{name} subtype {info.subtype} has no known bit depth to compare with the sheet'))
+            elif got != want:
+                out.append(('FAIL', 'delivery.bit_depth',
+                            f'{name} is {got}-bit ({info.subtype}) but direction sheet.delivery.bit_depth is {want}-bit'))
+            else:
+                out.append(('PASS', 'delivery.bit_depth', f'{got}-bit matches the direction sheet'))
+        if gp.on('delivery.channels') and delivery.get('channels'):
+            want = int(delivery['channels'])
+            if int(info.channels) != want:
+                out.append(('FAIL', 'delivery.channels',
+                            f'{name} has {info.channels} channel(s) but direction sheet.delivery.channels is {want}'))
+            else:
+                out.append(('PASS', 'delivery.channels', f'{info.channels} channel(s) match the direction sheet'))
+    if gp.on('delivery.duration') and info is not None:
+        want = sheet.get('duration_s', sheet.get('duration_seconds'))
+        try:
+            want = float(want) if want is not None else None
+        except (TypeError, ValueError):
+            want = None
+        if want:
+            tol = float(gp.param('delivery.duration', 'tolerance_s'))
+            got = float(info.frames) / float(info.samplerate)
+            if abs(got - want) > tol:
+                out.append(('FAIL', 'delivery.duration',
+                            f'{name} is {got:.2f} s but direction sheet.duration_s is {want:g} s (tolerance {tol:g} s): '
+                            f'render the promised length or correct the sheet'))
+            else:
+                out.append(('PASS', 'delivery.duration', f'{got:.2f} s matches duration_s {want:g} s'))
+    if gp.on('tempo.bpm'):
+        want_bpm = sheet.get('tempo_bpm', sheet.get('bpm'))
+        bpm = score.get('bpm')
+        if want_bpm and bpm:
+            lo, hi = (want_bpm if isinstance(want_bpm, (list, tuple)) else [want_bpm, want_bpm])
+            try:
+                lo, hi = float(lo), float(hi)
+            except (TypeError, ValueError):
+                lo = hi = None
+            if lo is not None:
+                if not (lo - 1e-6 <= float(bpm) <= hi + 1e-6):
+                    out.append(('FAIL', 'tempo.bpm',
+                                f'score bpm {float(bpm):g} is outside direction sheet.tempo_bpm {lo:g}-{hi:g}: '
+                                f'change the tempo or correct the sheet (the sheet is the promise)'))
+                else:
+                    out.append(('PASS', 'tempo.bpm', f'{float(bpm):g} BPM is inside {lo:g}-{hi:g}'))
+    if gp.on('key.mode'):
+        sk, sm = sheet.get('key'), sheet.get('mode')
+        if sk and score.get('key'):
+            key_ok = str(score.get('key')).strip().lower() == str(sk).strip().lower()
+            mode_ok = (not sm) or str(score.get('mode') or '').strip().lower() == str(sm).strip().lower()
+            if key_ok and mode_ok:
+                out.append(('PASS', 'key.mode', f'{score.get("key")} {score.get("mode") or ""}'.strip() + ' matches the direction sheet'))
+            else:
+                level = 'FAIL' if mode == 'full' else 'WARN'
+                tail = (': the certified delivery must not contradict its sheet - fix the score or the sheet'
+                        if mode == 'full' else
+                        ': WARN in draft, not FAIL - a transposition is a decision, but the sheet and the score '
+                        'disagree and one of them is out of date')
+                out.append((level, 'key.mode',
+                            f'score is {score.get("key")} {score.get("mode") or ""}'.strip() + f' but direction sheet says '
+                            f'{sk} {sm or ""}'.strip() + tail))
+
+
+def metadata_rows(score, out, project_dir=None, wav_path=None):
+    """Delivery traceability: the standard tags are inside the delivered WAV (RIFF INFO) *and* in a sidecar
+    (`<master>.json`), the versioned master has a sidecar of its own, and `out/versions.json` names a file that
+    still exists. The gate only reads; it never writes or repairs anything.
+
+    These rows never FAIL: metadata is written after the musical gate passes, so a missing or mismatched tag is a
+    WARN about the delivery, with the exact command that fixes it.
+    """
+    import gate_profiles
+    from helpers import ingest_metadata
     gp = gate_profiles.resolve(score)
     if not project_dir:
         return
     out_dir = os.path.join(project_dir, 'out')
-    master = os.path.join(out_dir, 'master.wav')
-    # The gate runs before certification writes the record, so the very first render has nothing to trace
-    # yet: report that as INFO rather than as a defect.
+    master = wav_path or os.path.join(out_dir, 'master.wav')
     first_render = not os.path.isfile(master) and not os.path.isfile(os.path.join(out_dir, 'versions.json'))
 
     if first_render:
         if gp.on('meta.tags') or gp.on('meta.version'):
             out.append(('INFO', 'meta', 'traceability: no certified master yet, tags and the version record are '
-                                      'written at certification'))
+                                        'written at certification'))
         return
 
     if gp.on('meta.tags'):
         limit = int(gp.param('meta.tags', 'max_missing'))
         sidecar = os.path.splitext(master)[0] + '.json'
-        missing = []
+        problems = []
+        tags = {}
         if not os.path.isfile(sidecar):
-            missing.append('no sidecar beside the master')
+            problems.append('no sidecar beside the master')
         else:
             try:
                 tags = (json.load(open(sidecar, encoding='utf-8')) or {}).get('metadata') or {}
             except Exception:
                 tags = {}
             if not tags:
-                missing.append('sidecar holds no tags')
+                problems.append('sidecar holds no tags')
             if tags and score.get('title') and not tags.get('title'):
-                missing.append('sidecar has no title')
+                problems.append('sidecar has no title')
             elif score.get('title') and tags.get('title') != score.get('title'):
-                missing.append(f'sidecar title "{tags.get("title")}" is not the score title "{score.get("title")}"')
-        lvl = 'PASS' if not missing else ('WARN' if len(missing) <= limit else 'WARN')
-        out.append((lvl, 'meta', 'metadata: standard tags present beside the master' if not missing
-                    else 'metadata: ' + '; '.join(missing) + ' (run scripts/helpers/ingest_metadata.py)'))
+                problems.append(f'sidecar title "{tags.get("title")}" is not the score title "{score.get("title")}"')
+        in_file = {}
+        if os.path.isfile(master):
+            try:
+                in_file = ingest_metadata.read_wav_tags(master)
+            except Exception as exc:
+                problems.append(f'{os.path.basename(master)} cannot be read for tags ({exc})')
+            if not in_file:
+                problems.append(f'the WAV itself carries no tags (a delivered file must: title, artist, ... inside it)')
+            else:
+                for key in sorted(tags):
+                    if key in ingest_metadata.INFO_TAGS and str(tags.get(key)) != str(in_file.get(key, '')):
+                        problems.append(f'in-file {key} "{in_file.get(key, "")}" != sidecar "{tags.get(key)}"')
+        fix = f'python scripts/helpers/ingest_metadata.py "{master}" --project "{project_dir}"'
+        out.append(('PASS' if not problems else 'WARN', 'meta',
+                    ('metadata: tags are inside the master and match the sidecar' if not problems
+                     else 'metadata: ' + '; '.join(problems) + f' (fix: {fix})')))
 
     if gp.on('meta.version'):
         limit = int(gp.param('meta.version', 'max_missing'))
@@ -1059,17 +1342,20 @@ def metadata_rows(score, out, project_dir=None):
                     problems.append('the latest record names no file')
                 elif not os.path.isfile(versioned):
                     problems.append(f'the recorded file {entry.get("file")} is missing')
-                if entry.get('title') and score.get('title') and entry['title'] != score.get('title'):
+                elif not os.path.isfile(os.path.splitext(versioned)[0] + '.json'):
+                    problems.append(f'the versioned master {entry.get("file")} has no sidecar of its own '
+                                    f'(fix: python scripts/helpers/ingest_metadata.py "{versioned}" --project "{project_dir}")')
+                if entry.get('title') and score.get('title') and entry['title'] != score['title']:
                     problems.append(f'version title "{entry["title"]}" is not the score title "{score["title"]}"')
                 if not entry.get('change'):
                     problems.append('the latest version records no change')
-        lvl = 'PASS' if not problems else ('WARN' if len(problems) <= limit else 'WARN')
-        detail = (f"version v{entry['version']:02d} ({entry.get('file')}): {entry.get('change')}"
-                  if entry and not problems else 'version: ' + '; '.join(problems))
-        out.append((lvl, 'meta', detail))
+        out.append(('PASS' if not problems else 'WARN', 'meta',
+                    (f"version v{entry['version']:02d} ({entry.get('file')}): {entry.get('change')}"
+                     if entry and not problems else 'version: ' + '; '.join(problems))))
 
 
-def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None):
+def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mode='full', metrics=None,
+             timings=None):
     """refresh=False: the caller has just rendered this score in this process, so the renderer's counters are already
     current and the gate does not render the stems a second time (a full render takes minutes).
 
@@ -1092,29 +1378,56 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None):
         mixer.mix_and_master(score, stems, rendered)
     elif refresh:
         rn.build_stems(score, verbose=False)          # refresh the renderer counters for this score
+    import time
+    timers = {}
+
+    def _timed(label, fn):
+        if timings is None:
+            return fn()
+        t0 = time.perf_counter()
+        try:
+            return fn()
+        finally:
+            timers[label] = round((time.perf_counter() - t0) * 1000.0, 1)
+
     out = []
-    score_checks(score, out)
-    render_checks(out)
-    audio_checks(rendered, score, out)
-    immersive_rows(score, rendered, stems, out)
-    ambient_fusion_rows(score, rendered, stems, out=out)
-    import ambience_reference as ar                     # WARN only: a render far from its measured real recordings
-    dirs = [d for d in (s_dir, os.path.dirname(s_dir) if s_dir else None) if d]
-    out.extend(ar.gate_rows(score, stems, dirs))
-    import sfx_eval                                     # WARN only: a sound that behaves unlike its own physics
-    out.extend(sfx_eval.gate_rows(score, stems))
-    balance_rows(score, stems, out=out)
-    spatial_separation_rows(score, stems, out=out)
-    equal_loudness_rows(score, stems, out=out)
-    vocal_rows(score, stems, out=out)
-    chroma_concordance_rows(score, rendered, stems, out=out)
-    kick_grid_rows(score, stems, out=out)
-    soul_rows(score, out)
-    if stems is not None:
-        out.extend(masking_rows(stems, score))
-        out.extend(nc.modulation_flutter_check(stems, score))
+    _timed('score', lambda: score_checks(score, out))
+    _timed('render', lambda: render_checks(out))
+    _timed('audio', lambda: audio_checks(rendered, score, out, metrics=metrics))
+    # Deliverable rows: only the formats this score asked for, measured against the target's own data.
+    import spatial_gate
+    _timed('outputs', lambda: spatial_gate.output_rows(score, rendered, out))
     project_dir = os.path.dirname(s_dir) if s_dir else None
-    metadata_rows(score, out, project_dir=project_dir)
+    _timed('master_extra', lambda: master_extra_rows(score, rendered, out, metrics=metrics,
+                                                     project_dir=project_dir))
+    t_tier = time.perf_counter() if timings is not None else 0.0
+    if mode != 'draft':
+        immersive_rows(score, rendered, stems, out)
+        ambient_fusion_rows(score, rendered, stems, out=out)
+        import ambience_reference as ar                 # WARN only: a render far from its measured real recordings
+        dirs = [d for d in (s_dir, os.path.dirname(s_dir) if s_dir else None) if d]
+        out.extend(ar.gate_rows(score, stems, dirs))
+        import sfx_eval                                 # WARN only: a sound that behaves unlike its own physics
+        out.extend(sfx_eval.gate_rows(score, stems))
+        balance_rows(score, stems, out=out)
+        spatial_separation_rows(score, stems, out=out)
+        equal_loudness_rows(score, stems, out=out)
+        vocal_rows(score, stems, out=out)
+        chroma_concordance_rows(score, rendered, stems, out=out)
+        kick_grid_rows(score, stems, out=out)
+        soul_rows(score, out)
+        if stems is not None:
+            out.extend(masking_rows(stems, score))
+            out.extend(nc.modulation_flutter_check(stems, score))
+    else:
+        out.append(('INFO', 'gate_draft', 'draft mode: tier 2 rows (masking, roughness, immersive, chroma, kick, '
+                                         'equal loudness, flutter, ambience_reference, sfx) did not run'))
+    if timings is not None:
+        timers['tier2'] = round((time.perf_counter() - t_tier) * 1000.0, 1)
+    _timed('metadata', lambda: metadata_rows(score, out, project_dir=project_dir, wav_path=rendered))
+    _timed('direction', lambda: direction_rows(score, out, project_dir=project_dir, wav_path=rendered, mode=mode))
+    if timings is not None:
+        timings.update(timers)
     return out, rendered
 
 
@@ -1187,6 +1500,68 @@ def vocal_rows(score, stems=None, out=None, sr=44100, report=None):
             f = v['hum_hf_frac']
             rows.append(('WARN' if f > lim else 'PASS', 'vocal', f'{tag}: hum energy above 1.5 kHz {f:.1e} (limit {lim})'
                          + ('; too bright for a closed-mouth hum: lower humming.brightness' if f > lim else '')))
+        # --- timbre naturalness. Each row reads a measurement the engine made
+        # on the signal it produced, never the config that asked for it.
+        if gp.on('vocal.ring') and v.get('ring_spread_hz') is not None:
+            # the cluster is geometric: a component of the movement (singer_formant 0.5) is not a failure, so the
+            # limit grows with the part of the ring the preset actually asked for
+            lim = gp.param('vocal.ring', 'max_spread_hz') + (1.0 - float(v.get('ring_amount', 1.0))) \
+                * gp.param('vocal.ring', 'spread_at_zero_hz')
+            s = v['ring_spread_hz']
+            rows.append(('FAIL' if s > lim else 'PASS', 'vocal',
+                         f'{tag}: singer-formant cluster F3-F5 spans {s:.0f} Hz (limit {lim:.0f})'
+                         + ('; F3-F5 are not converging: check tract.ring.target_hz/shares' if s > lim else '')))
+        if gp.on('vocal.formant_tuning') and v.get('tuning_deficit_db') is not None:
+            lim = gp.param('vocal.formant_tuning', 'max_deficit_db')
+            d = v['tuning_deficit_db']
+            rows.append(('FAIL' if d > lim else 'PASS', 'vocal',
+                         f'{tag}: level at f0 sits {d:.1f} dB under the F1 band on notes above F1 (limit {lim:.0f})'
+                         + ('; the fundamental is falling into a spectral valley: raise technique.formant_tuning' if d > lim else '')))
+        if gp.on('vocal.consonant') and v.get('consonants'):
+            c = v['consonants']
+            tol = gp.param('vocal.consonant', 'vot_tol')
+            declared, measured = c.get('declared_vot_ms'), c.get('measured_vot_ms')
+            vot_ok = True if not declared else abs(measured - declared) <= tol * declared
+            ok = bool(c.get('centroid_ok', True)) and vot_ok
+            rows.append(('FAIL' if not ok else 'PASS', 'vocal',
+                         f'{tag}: {c.get("n", 0)} consonant(s) {c.get("codes")}; '
+                         + (f'VOT {measured:.0f} ms vs {declared:.0f} ms declared, ' if declared else 'no stop VOT, ')
+                         + f'band centroid {"inside" if c.get("centroid_ok", True) else "OUTSIDE"} the declared band'
+                         + ('' if ok else '; a consonant outside its band is not the phoneme the score asked for')))
+        if gp.on('vocal.coarticulation') and v.get('coart_lead_ms') is not None:
+            lim = gp.param('vocal.coarticulation', 'min_lead_ms')
+            lead = v['coart_lead_ms']
+            rows.append(('FAIL' if lead and lead < lim else 'PASS', 'vocal',
+                         f'{tag}: formant motion starts {lead:.0f} ms before the boundary (min {lim:.0f})'
+                         + ('; the vowel changes on the note boundary like a filter switch: raise '
+                            'phrasing.formants.coarticulation.anticipate_ms' if lead and lead < lim else '')))
+        if gp.on('vocal.perturbation') and v.get('jitter_pct') is not None:
+            lo, hi = gp.param('vocal.perturbation', 'min_pct'), gp.param('vocal.perturbation', 'max_pct')
+            j = v['jitter_pct']
+            rows.append(('FAIL' if not (lo <= j <= hi) else 'PASS', 'vocal',
+                         f'{tag}: measured period jitter {j:.2f} % (normal {lo:.1f}-{hi:.1f} %)'
+                         + ('' if lo <= j <= hi else '; outside the human range: check source.jitter_period_pct')))
+        if gp.on('vocal.passaggio') and v.get('passaggio_step') is not None:
+            lim = gp.param('vocal.passaggio', 'max_step')
+            st = v['passaggio_step']
+            rows.append(('FAIL' if st > lim else 'PASS', 'vocal',
+                         f'{tag}: largest open-quotient step {st:.4f} per sample (limit {lim:.3f})'
+                         + ('; the register switches instead of blending' if st > lim else '')))
+        if gp.on('vocal.vibrato') and v.get('vib_am_corr') is not None:
+            lim = gp.param('vocal.vibrato', 'min_corr')
+            min_db = gp.param('vocal.vibrato', 'min_db')
+            r, depth = v['vib_am_corr'], v.get('vib_am_db', 0.0)
+            ok = r >= lim and depth >= min_db
+            rows.append(('FAIL' if not ok else 'PASS', 'vocal',
+                         f'{tag}: vibrato amplitude modulation {depth:.2f} dB, correlation with f0 {r:.2f} (min {lim})'
+                         + ('' if ok else '; vibrato is f0-only: raise vibrato.amplitude_db')))
+        if gp.on('vocal.identity') and v.get('identity_pct') is not None and v.get('voices', 1) >= 2:
+            lim = gp.param('vocal.identity', 'min_pct')
+            pct = v['identity_pct']
+            rows.append(('FAIL' if pct < lim else 'PASS', 'vocal',
+                         f'{tag}: tract length differs by {pct:.1f} % between singers (min {lim:.1f} %)'
+                         + ('; the singers share one tract: raise ensemble.diversity or the singer_variation ranges'
+                            if pct < lim else '')))
     if out is not None:
         out.extend(rows)
     return rows
@@ -1419,14 +1794,22 @@ def main():
     ap.add_argument('score', nargs='?')
     ap.add_argument('wav', nargs='?')
     ap.add_argument('--selftest', action='store_true')
+    ap.add_argument('--timings', action='store_true', help='print per-group wall time (ms) after the rows')
     a = ap.parse_args()
     if a.selftest:
         selftest()
         return
     if not a.score:
         ap.error('give a score.json (and optionally its rendered wav), or --selftest')
-    out, rendered = run_gate(a.score, a.wav)
-    sys.exit(1 if report(out, rendered) else 0)
+    timing = {} if a.timings else None
+    out, rendered = run_gate(a.score, a.wav, timings=timing)
+    ok = report(out, rendered)
+    if timing is not None:
+        print('\ntimings (ms, this machine, this run):')
+        for name, ms in sorted(timing.items(), key=lambda kv: -kv[1]):
+            print(f'  {name:14s} {ms:8.1f}')
+        print(f'  {"total":14s} {sum(timing.values()):8.1f}')
+    sys.exit(1 if not ok else 0)
 
 
 if __name__ == '__main__':

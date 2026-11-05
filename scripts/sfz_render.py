@@ -187,6 +187,33 @@ def render(ev, offs, tm, blk, dyn_level, sr, project=None, quality=10, polyphony
             i0 = int(round((t0 - LEAD_S) * sr))
             if 0 <= i0 < len(x) - fade_n:
                 x[i0:i0 + fade_n] *= ramp[:, None]
+    # Opt-in: `dc_hp_hz` in a track's sfz block removes a patch's own DC offset and very slow drift,
+    # which the stem trim would otherwise multiply (measured on one project: mean -0.0014 FS on a
+    # trumpet stem at +33 dB trim, which the stem gate rejects above 0.001 FS). Off unless asked, so
+    # nothing changes for a project that has not measured the problem.
+    hp_hz = float(blk.get('dc_hp_hz', 0.0) or 0.0)
+    if hp_hz > 0:
+        try:
+            from scipy.signal import butter, sosfilt
+            x = sosfilt(butter(2, hp_hz, btype='highpass', fs=sr, output='sos'), x, axis=0).astype(np.float32)
+        except Exception:
+            x = (x - x.mean(axis=0, keepdims=True)).astype(np.float32)
+    # Opt-in: `attack_fade_s` ramps each note onset, for a library whose samples begin on a hard
+    # step (one project measured a clustered impulse at every onset with no single-sample jump).
+    # Default 0 keeps every existing render bit-identical.
+    n_fade = int(round(float(blk.get('attack_fade_s', 0.0) or 0.0) * sr))
+    if n_fade >= 2:
+        ramp = (0.5 - 0.5 * np.cos(np.pi * np.linspace(0.0, 1.0, n_fade))).astype(np.float32)[:, None]
+        peak_x = float(np.max(np.abs(x))) if x.size else 0.0
+        for e in ev:
+            i0 = int(round(float(e['t']) * sr))
+            if not (0 < i0 < len(x) - n_fade):
+                continue
+            # only where the note really starts from silence: at a legato join the previous note is
+            # still ringing, and ramping it down from that level is itself a click.
+            if float(np.max(np.abs(x[max(0, i0 - 1):i0]))) > 0.02 * peak_x:
+                continue
+            x[i0:i0 + n_fade] *= ramp
     entry = sfz_libs.registry().get(blk['library'], {})
     trim = float(blk.get('trim_db', entry.get('trim_db', 0.0)))
     return (x * 10 ** (trim / 20.0)).astype(np.float32)

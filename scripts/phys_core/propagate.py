@@ -80,6 +80,104 @@ def ground(x, sr, distance_m, gain=0.35, delay_ms=7.0, cutoff_hz=3500.0):
     return out
 
 
+def fresnel_number(path_diff_m, freq_hz):
+    """Fresnel-Kirchhoff diffraction parameter N = 2 * delta / lambda (Maekawa 1968).
+
+    delta is the extra path length around the barrier edge over the direct line, so a sound barely
+    blocked (delta near 0) sits near N = 0 and a sound well screened has a large N.
+    """
+    d = max(0.0, float(path_diff_m))
+    f = np.maximum(np.asarray(freq_hz, dtype=float), 1.0)
+    return 2.0 * d * f / 343.0
+
+
+def maekawa_il(path_diff_m, freq_hz):
+    """Insertion loss of a thin barrier, dB, from the Maekawa/Kurze-Anderson curve.
+
+        IL(N) = 5 + 20 log10( sqrt(2 pi N) / tanh( sqrt(2 pi N) ) )      for N > 0
+        IL(N) = 0                                                        for N <= 0
+
+    The 5 dB term is the edge's own floor, and the shape is the standard barrier result quoted by
+    ISO 9613-2 for a thin screen. Capped at 40 dB: beyond that the model, not the world, is talking.
+    """
+    n = np.asarray(fresnel_number(path_diff_m, freq_hz), dtype=float)
+    arg = np.sqrt(2.0 * np.pi * np.maximum(n, 0.0))
+    with np.errstate(divide='ignore', invalid='ignore'):
+        il = 5.0 + 20.0 * np.log10(arg / np.tanh(np.maximum(arg, 1e-9)))
+    return np.where(n > 0.0, np.clip(il, 0.0, 40.0), 0.0)
+
+
+def path_difference_m(total_m, edge_offset_m):
+    """Extra path around a barrier edge, m, for a source and listener `total_m` apart and an edge
+    `edge_offset_m` out of the straight line (assumed halfway: the worst case a scene can state).
+
+    sqrt(a^2 + h^2) + sqrt(b^2 + h^2) - (a + b) with a = b = total / 2.
+    """
+    d = max(0.0, float(total_m))
+    h = max(0.0, float(edge_offset_m))
+    half = d / 2.0
+    return float(2.0 * np.sqrt(half * half + h * h) - d)
+
+
+def mass_law_tl(density_kg_m3, thickness_m, freq_hz):
+    """Transmission loss through a partition, dB, from the field-incidence mass law.
+
+        TL = 20 log10(m'' f) - 47        m'' = density * thickness  (kg/m^2)
+
+    The standard field-incidence form (Sharp 1978); a real wall's coincidence dip is not modelled, so
+    this over-estimates loss near the critical frequency. Negative values are clamped to 0: a thin
+    membrane does not amplify.
+    """
+    m_s = max(float(density_kg_m3) * float(thickness_m), 1e-3)
+    f = np.maximum(np.asarray(freq_hz, dtype=float), 1.0)
+    return np.clip(20.0 * np.log10(m_s * f) - 47.0, 0.0, None)
+
+
+def occlusion(x, sr, cfg, materials):
+    """A barrier between the source and the listener: transmission through it plus diffraction round its edge.
+
+    cfg is a scene's `propagation.occluder` block:
+
+        {"material": "oak", "thickness_m": 0.03, "edge_offset_m": 0.15,
+         "coverage": 1.0, "transmission": true}
+
+    `coverage` is the share of the barrier that blocks the direct line (1 = fully behind it); the
+    transmitted and diffracted energies add, which is what makes a door between two rooms sound like
+    *some* of the sound and not like a low-pass filter with an arbitrary cutoff. Both are applied per
+    frequency, zero phase: two paths, not a tone control.
+    """
+    cfg = cfg or {}
+    x = np.asarray(x, dtype=float)
+    if x.size < 16:
+        return x
+    total = float(cfg.get('distance_m', 1.0))
+    edge = float(cfg.get('edge_offset_m', 0.0))
+    coverage = float(np.clip(float(cfg.get('coverage', 1.0)), 0.0, 1.0))
+    if edge <= 0.0 and coverage <= 0.0:
+        return x
+    n = x.size
+    f = np.fft.rfftfreq(n, 1.0 / sr)
+    f[0] = max(f[1] if len(f) > 1 else 1.0, 1.0)
+    delta = path_difference_m(total, edge)
+    diff = maekawa_il(delta, f) if delta > 0.0 else np.zeros_like(f)
+    # The line is blocked by `coverage`; sound still arrives two ways, and their energies add:
+    #   the unblocked remainder, and the part that goes through or round the barrier. A barrier with no edge
+    #   to go round (edge_offset 0) offers only its transmission path: a wall, not a screen.
+    energy = 1.0 - coverage
+    if edge > 0.0:
+        energy = energy + coverage * 10.0 ** (-diff / 10.0)
+    if cfg.get('transmission', True):
+        mat = materials.get(str(cfg.get('material') or ''), {}) if isinstance(materials, dict) else {}
+        density = float(mat.get('density', 600.0))
+        thick = float(cfg.get('thickness_m', 0.02))
+        tl = mass_law_tl(density, thick, f)
+        energy = energy + coverage * 10.0 ** (-tl / 10.0)
+    # energy is a ratio, so the floor is a numerical one, not a tonal choice: a thick wall really does stop
+    # 60+ dB at 8 kHz, and a -24 dB cap would make every barrier sound like the same thin curtain.
+    atten = np.clip(10.0 * np.log10(np.maximum(energy, 1e-9)), -90.0, 0.0)
+    return np.fft.irfft(np.fft.rfft(x) * 10.0 ** (atten / 20.0), n)
+
+
 def pan(mono, azimuth_deg=0.0, elevation_deg=0.0):
     """Constant-power stereo placement from an azimuth (elevation is carried, not yet rendered as height)."""
     a = np.radians(np.clip(float(azimuth_deg), -180.0, 180.0))
@@ -89,15 +187,23 @@ def pan(mono, azimuth_deg=0.0, elevation_deg=0.0):
     return np.stack([m * np.cos(ang), m * np.sin(ang)], axis=1)
 
 
-def apply(mono, sr, cfg=None):
-    """The whole chain for one layer: spreading, air, canopy and ground. cfg is the scene's `propagation` block."""
+def apply(mono, sr, cfg=None, materials=None):
+    """The whole chain for one layer: spreading, air, canopy, barrier and ground.
+
+    cfg is the scene's `propagation` block; `materials` is the scene's material table, needed only when a
+    barrier is declared (a barrier's transmission loss comes from its material, not from a number here).
+    """
     cfg = cfg or {}
+    materials = materials or {}
     x = np.asarray(mono, dtype=float)
     d = float(cfg.get('distance_m', REF_DISTANCE_M))
     x = x * distance_gain(d)
     atm = cfg.get('atmosphere') or {}
     x = air(x, sr, d, atm.get('temp_c', 20.0), atm.get('rh', 50.0))
     x = canopy(x, sr, d, float(cfg.get('canopy_density', 0.0)))
+    occ = cfg.get('occluder')
+    if isinstance(occ, dict) and occ:
+        x = occlusion(x, sr, dict(occ, distance_m=occ.get('distance_m', d)), materials)
     x = ground(x, sr, d, float(cfg.get('ground_gain', 0.35)), float(cfg.get('ground_delay_ms', 7.0)),
                float(cfg.get('ground_cutoff_hz', 3500.0)))
     return x

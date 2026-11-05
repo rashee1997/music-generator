@@ -761,6 +761,31 @@ def _pan_stereo(mono, pan_val):
     return np.stack([mono * np.cos(angle), mono * np.sin(angle)], axis=1).astype(np.float32)
 
 
+def _match_lufs(x, target_lufs, sr=SR):
+    """Bring a bed to its preset's loudness target, measured, then guard the peak.
+
+    The old conversion (10 ** (lufs / 20) * 0.5) treated LUFS as an RMS: it is not, so a preset that asked for
+    -28 LUFS was never delivered at -28, and the error grew with the bed's spectrum. This measures with the
+    same K-weighted meter the mixer uses and applies one scalar, so the bed's internal balance is untouched.
+    """
+    import dsp
+    orig = np.asarray(x, dtype=np.float32)
+    probe = orig
+    if probe.size < int(0.5 * sr):                     # the meter needs half a second; the bed keeps its length
+        probe = np.pad(probe, ((0, int(0.5 * sr) - probe.size), (0, 0)))
+    try:
+        cur = float(dsp.meter(sr).integrated_loudness(np.asarray(probe, dtype=np.float64)))
+    except Exception:
+        return orig                                    # a bed too short or silent to meter: leave it as rendered
+    if not np.isfinite(cur) or cur < -60.0:
+        return orig
+    y = orig * np.float32(10.0 ** ((float(target_lufs) - cur) / 20.0))
+    peak = float(np.abs(y).max())
+    if peak > 0.89:                                     # about -1 dBFS sample peak: the master owns the ceiling
+        y = y * np.float32(0.89 / peak)
+    return y.astype(np.float32)
+
+
 def render_environment_preset(name_or_dict, duration_s=30.0, sr=SR, seed=42):
     """Renders any environmental soundscape preset driven entirely by JSON configuration."""
     if isinstance(name_or_dict, dict):
@@ -880,10 +905,7 @@ def render_environment_preset(name_or_dict, duration_s=30.0, sr=SR, seed=42):
     # Target loudness or gain scaling from preset
     target_lufs = blend.get('target_lufs')
     if target_lufs is not None:
-        target_rms = 10.0 ** (float(target_lufs) / 20.0) * 0.5
-        current_rms = np.sqrt(np.mean(out_stereo ** 2) + 1e-12)
-        if current_rms > 1e-6:
-            out_stereo *= (target_rms / current_rms)
+        out_stereo = _match_lufs(out_stereo, float(target_lufs), sr)
     else:
         overall_db = float(blend.get('overall_gain_db', 0.0))
         out_stereo *= (10.0 ** (overall_db / 20.0))

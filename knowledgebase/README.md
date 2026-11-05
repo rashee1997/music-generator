@@ -26,6 +26,7 @@ Read one file at a time. `scripts/research_kb.py` pulls the file a piece needs.
 | `media/game-sfx.md` | Hit variation, impact stages, footstep surfaces and interface tones | unverified |
 | `media/video-scoring.md` | Frame-locked tempo, hit windows and voice-over ducking bands | unverified |
 | `sound-design/audio-cloning.md` | Pitch, timbre, groove and room values read from a recording | unverified |
+| `sound-design/roughness.md` | Auditory roughness: level, masking, critical-band and register values, and the pair model | partly-sourced |
 | `sound-design/sfx-ambience.md` | Weather, bio-acoustic and street ambience models, and blending laws | unverified |
 | `sound-design/sfx-formulas.md` | The formulas behind `sound_model.py`, each labelled with where it came from | unverified |
 

@@ -58,6 +58,8 @@ if SCRIPTS_DIR not in sys.path:
 import cli_util
 import compose
 import envcheck
+import gate_report
+import stem_gate
 from helpers import ingest_metadata, version_manager
 import humanize as hz
 import mixer
@@ -268,13 +270,27 @@ class MusicPipeline:
     # -----------------------------------------------------------------------------------------
     # Stage 5: Mixing & Mastering
     # -----------------------------------------------------------------------------------------
-    def stage5_mix_and_master(self, score, stems, out_wav):
-        """Stage 5: Subtractive EQ, pocket carving, shared room, and true-peak limiting."""
+    def stage5_mix_and_master(self, score, stems, out_wav, target=None):
+        """Stage 5: mix and master one deliverable; the target preset's `renderer` names the route."""
         self.log(5, "Mixing & Mastering (Pedalboard DSP + BrickwallLimiter)")
         os.makedirs(os.path.dirname(os.path.abspath(out_wav)), exist_ok=True)
-        mixer.mix_and_master(score, stems, out_wav, diagnose=True)   # mixer.STATE['diagnostics'] -> stage 6 rows
+        import render_targets
+        from spatial_engine import render as spatial_render
+        name = target or ((render_targets.resolve(score)['selected'] or ['stereo'])[0])
+        renderer = (render_targets.get(name) or {}).get('renderer')
+        if renderer in ('spatial', 'binaural'):
+            spatial_render.render_deliverable(score, stems, name, out_wav)
+            try:                       # the same advisory diagnostics the stereo path leaves for the gate
+                import mix_diagnostics
+                mixer.STATE['diagnostics'] = mix_diagnostics.analyse(
+                    score, mixer.STATE.get('processed') or stems, mix=mixer._mix(),
+                    master=mixer.STATE.get('master'))
+            except Exception as exc:
+                print(f"  [WARN] mixing diagnostics did not run for {name} ({exc})")
+        else:
+            mixer.mix_and_master(score, stems, out_wav, diagnose=True)
         if self.verbose:
-            print(f"  Wrote master audio: {out_wav}")
+            print(f"  Wrote {name} deliverable: {out_wav}")
         return out_wav
 
     def discover_and_run_music21_analysis(self, score, out_wav, out_midi=None):
@@ -330,7 +346,7 @@ class MusicPipeline:
     # -----------------------------------------------------------------------------------------
     # Stage 6: Automated CI/CD Quality Gate Suite
     # -----------------------------------------------------------------------------------------
-    def stage6_ci_quality_suite(self, score, stems, out_wav, out_midi=None):
+    def stage6_ci_quality_suite(self, score, stems, out_wav, out_midi=None, stem_rows=None, mode='full'):
         """Stage 6: Exhaustive battery of objective audio & mix tests.
 
         One call to quality_gate.run_gate, not a hand-copied subset of it: every row the gate knows (score and render
@@ -338,7 +354,12 @@ class MusicPipeline:
         chroma, kick grid, soul, masking) runs here, so `pipeline.py <score>` and `quality_gate.py <score>` cannot drift.
         The mixing diagnostics go on top as advisory `mix:` rows."""
         self.log(6, "Automated CI/CD Quality Gate Suite")
-        ci_rows, _ = qg.run_gate(None, wav_path=out_wav, refresh=False, stems=stems, score=score)
+        mix_metrics = []
+        ci_rows, _ = qg.run_gate(None, wav_path=out_wav, refresh=False, stems=stems, score=score,
+                                 mode=mode, metrics=mix_metrics)
+        self.mix_metrics = mix_metrics
+        if stem_rows:
+            ci_rows = list(stem_rows) + ci_rows          # stem rows first: the earlier stage owns the first verdict
 
         # Mixing diagnostics (mixer.STATE, written by stage 5). Advisory by contract: the gate's own rows own the
         # blocking verdicts (true peak, clipping, silence), so a diagnostic FAIL is reported here as a WARN.
@@ -460,6 +481,14 @@ class MusicPipeline:
             preset_map[name] = data
             preset_map[pf.stem] = data
 
+        # Sound and place live in the preset, never in the score, so these keys replace whatever a track already
+        # says: a stale t['spatial'] must not shadow a later edit of presets/*.json.
+        preset_owns = ('spatial', 'synthesis', 'vocal', 'environment', 'formants', 'bandwidths', 'source',
+                       'vibrato', 'articulation', 'performance', 'breathing', 'ensemble', 'humming', 'hum',
+                       'atmosphere', 'layers', 'blending', 'character', 'vowel', 'expression', 'register_range',
+                       'category', 'phonetic_sound', 'program', 'bank', 'gm')
+        bookkeeping = ('name', 'kind', 'note', 'notes', 'sources')      # identity and prose stay in the preset file
+
         adopted = []
         for t in score.get('tracks', []):
             name = t.get('name')
@@ -467,10 +496,11 @@ class MusicPipeline:
             matched = preset_map.get(name) or preset_map.get(inst)
             if matched:
                 adopted.append(name or inst)
-                for k in ('spatial', 'eq', 'humanize', 'gain_db', 'reverb', 'role', 'description', 'program', 'bank',
-                          'gm', 'synthesis', 'vocal', 'environment'):
-                    if k in matched and k not in t:
-                        t[k] = matched[k]
+                for k, v in matched.items():
+                    if k in bookkeeping:
+                        continue
+                    if k in preset_owns or k not in t:     # the rest (eq, humanize, gain_db, reverb, role) only fills a gap
+                        t[k] = v
 
         if self.verbose:
             print(f"  Adopted {len(adopted)} preset definitions from: {target_dir}")
@@ -560,7 +590,7 @@ class MusicPipeline:
     def execute(self, input_spec=None, out_wav=None, out_midi=None, stems_dir=None,
                 strict=False, json_report=None, check_only=False, score_path=None,
                 presets_dir=None, adopt_presets=True, wav_path=None, project=None, test=False,
-                max_attempts=5, no_stems=False, stems_full=False, **overrides):
+                max_attempts=5, no_stems=False, stems_full=False, draft=False, targets=None, **overrides):
         """Execute the complete CI/CD Music Pipeline or Quality Check existing productions."""
         t_start = time.time()
         explicit_out = out_wav is not None
@@ -682,6 +712,21 @@ class MusicPipeline:
         # Stage 1: Ingestion
         score = self.stage1_ingest(input_spec, **overrides)
 
+        # Output formats: the score (a project file) names the deliverables and the presets hold every number about
+        # them. Build only what was asked for; block rather than silently downgrade a format the engine cannot build.
+        import render_targets
+        if targets:
+            score['output_targets'] = [t.strip() for t in str(targets).split(',') if t.strip()]
+        outputs = render_targets.resolve(score)
+        if outputs['problems']:
+            for pr in outputs['problems']:
+                print(f"  [BLOCKED] {pr}")
+            raise SystemExit(f"Output target blocked the render: {len(outputs['problems'])} problem(s) above.")
+        if project_dir and not explicit_out and outputs['selected']:
+            out_wav = os.path.join(project_dir, 'out', render_targets.filename(outputs['selected'][0]))
+        skipped = ''.join(f"; skipped {s['target']} (cannot be built yet)" for s in outputs['skipped'])
+        print(f"  [OUTPUTS] {', '.join(outputs['selected']) or 'nothing'}{skipped}")
+
         # Stage 0: project gate (needs the score to check its tracks), before any audio is made
         if project_dir:
             self.log("1b", "Project Gate (scaffold, research, direction, exact presets)")
@@ -719,16 +764,55 @@ class MusicPipeline:
         # Stage 4: Multi-Engine Stem Rendering (stems are written here, before mixing)
         stems, tm = self.stage4_render_stems(score, stems_dir=stems_dir, stems_full=stems_full)
 
+        # Stage 4b: stem gate. A stem FAIL stops here: the mixer would only average the defect into the master.
+        self.log('4b', 'Stem Gate (each stem measured alone, before the mix)')
+        stem_rows, stem_meta = stem_gate.run_stem_gate(
+            score, stems, sr=SR, workers=int(os.environ.get('GATE_WORKERS', '2')),
+            report_dir=(os.path.join(project_dir, 'reports', 'gate') if project_dir else None),
+            mode='draft' if draft else 'full')
+        self.stem_meta = stem_meta
+        if self.verbose:
+            for lvl, name, detail in stem_rows:
+                print(f"  [{lvl:4s}] {name:26s} {detail}")
+            print(f"  stem gate: {stem_meta['fails']} FAIL, {stem_meta['warns']} WARN, "
+                  f"{len(stem_rows)} rows, {stem_meta['total_ms']:.0f} ms on {stem_meta['workers']} worker(s)")
+        if stem_meta['fails']:
+            print(f"  [BLOCKED] {stem_meta['fails']} stem FAIL(s): mixing is not allowed until they are fixed")
+            failing = [f"{n}: {d}" for l, n, d in stem_rows if l == 'FAIL']
+            report = dict(timestamp=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), status='FAILED',
+                          mode='project' if project_dir else 'test',
+                          deliverables=dict(master_wav=None, stems_dir=stems_dir, stem_count=len(stems)),
+                          ci_summary=dict(pass_=sum(1 for l, _, _ in stem_rows if l == 'PASS'),
+                                          warn=stem_meta['warns'], fail=stem_meta['fails']),
+                          ci_checks=[dict(level=l, name=n, detail=d) for l, n, d in stem_rows],
+                          gate=dict(mode='draft' if draft else 'full', stopped='stem',
+                                    stages=dict(stem=stem_meta, mix=None)))
+            if project_dir and json_report:
+                report['attempts'] = prev_attempts + [dict(attempt=len(prev_attempts) + 1, time=report['timestamp'],
+                                                           fails=stem_meta['fails'], failing=failing)]
+                Path(json_report).write_text(json.dumps(report, indent=2), encoding='utf-8')
+            return report
+
         # Stage 5: Mixing & Mastering. Written to a draft path: out/ only receives a master the gate
         # has certified, so a file sitting in out/ is always a finished one, never a stub.
         draft_wav = os.path.join(os.path.dirname(out_wav) or '.', '_draft_' + os.path.basename(out_wav))
         self.stage5_mix_and_master(score, stems, draft_wav)
 
         # Stage 6: Automated CI Quality Suite
-        ci_rows, fails, warns = self.stage6_ci_quality_suite(score, stems, draft_wav, out_midi=out_midi)
+        ci_rows, fails, warns = self.stage6_ci_quality_suite(
+            score, stems, draft_wav, out_midi=out_midi, stem_rows=stem_rows,
+            mode='draft' if draft else 'full')
+
+        if project_dir:
+            try:
+                gate_report.write_reports(draft_wav, score, os.path.join(project_dir, 'reports', 'gate'),
+                                          stem_meta=stem_meta,
+                                          mix_meta=dict(stage='mix', metrics=self.mix_metrics))
+            except Exception as exc:              # the gate verdict stands even if a figure could not be drawn
+                print(f"  [WARN] gate report figures not written ({exc})")
 
         published = None
-        if fails == 0:
+        if fails == 0 and not draft:
             if project_dir:
                 # A certified render never destroys the previous one: it becomes master_vNN.wav and
                 # out/master.wav is refreshed as a copy of the newest version.
@@ -742,19 +826,55 @@ class MusicPipeline:
                     os.replace(draft_wav, out_wav)
             else:
                 os.replace(draft_wav, out_wav)
+        elif draft:
+            print(f"  [DRAFT] --draft run: {fails} FAIL, {warns} WARN. The mix stays at {draft_wav}; nothing was published")
         else:
             print(f"  [DRAFT] {fails} gate FAIL(s): the uncertified mix stays at {draft_wav}, {out_wav} is untouched")
+
+        # Additional requested formats: rendered only after the primary is certified, so one format's failure never
+        # takes the certified master with it; each is checked against its own format rows before it enters out/.
+        extra_paths = []
+        if fails == 0 and not draft and project_dir and len(outputs['selected']) > 1:
+            self.log('5b', 'Additional deliverable formats')
+            import spatial_gate
+            from spatial_engine import render as spatial_render
+            for extra in outputs['selected'][1:]:
+                rel = render_targets.filename(extra)
+                extra_draft = os.path.join(os.path.dirname(out_wav) or '.', '_draft_' + rel)
+                spatial_render.render_deliverable(score, stems, extra, extra_draft)
+                rows = []
+                spatial_gate.output_rows(score, extra_draft, rows)
+                bad = [(n, d) for lvl, n, d in rows if lvl == 'FAIL']
+                if bad:
+                    for n, d in bad:
+                        print(f"  [FAIL] {n}: {d}")
+                    print(f"  [WARN] {extra} did not pass its own format rows; its file stays at {extra_draft}")
+                    continue
+                final = os.path.join(project_dir, 'out', rel)
+                os.replace(extra_draft, final)
+                extra_paths.append(final)
+                print(f"  [OUTPUT] {extra}: {final}")
 
         # Stage 7: Packaging & Report
         report = self.stage7_package_release(score, out_wav if fails == 0 else draft_wav, ci_rows, fails, warns,
                                             out_midi=out_midi, json_report=json_report)
+        report['deliverables']['outputs'] = outputs['selected']
+        report['deliverables']['outputs_skipped'] = outputs['skipped']
+        report['deliverables']['output_files'] = extra_paths if project_dir and fails == 0 else []
         report['mode'] = 'project' if project_dir else 'test'
+        report['gate'] = dict(mode='draft' if draft else 'full', stopped=None,
+                              stages=dict(stem=stem_meta,
+                                          mix=dict(stage='mix', fails=fails, warns=warns,
+                                                   metrics=self.mix_metrics,
+                                                   images=(os.path.join(project_dir, 'reports', 'gate')
+                                                           if project_dir else None))))
         report['deliverables']['stems_dir'] = stems_dir
         report['deliverables']['stem_count'] = len(stems) if stems_dir else 0
         if project_dir:
             failing = [f"{n}: {d}" for l, n, d in ci_rows if l == 'FAIL']
             report['attempts'] = prev_attempts + [dict(attempt=len(prev_attempts) + 1, time=report['timestamp'],
                                                        fails=fails, failing=failing)]
+        if json_report:            # stage 7 wrote its dict before the gate block existed; write the complete record
             Path(json_report).write_text(json.dumps(report, indent=2), encoding='utf-8')
 
         # Only a certified render gets a version record and standard metadata.
@@ -762,16 +882,33 @@ class MusicPipeline:
             try:
                 version_manager.update_entry(Path(project_dir) / 'out', published['version'],
                                              measurements=report.get('measurements'))
+                sheet = ingest_metadata.find_direction(project_dir)
+                numbers = {'version': published['version'],
+                           'ci_report': os.path.basename(json_report or '')}
                 info = ingest_metadata.ingest(out_wav, score=score, project_dir=project_dir,
-                                              extra={'version': published['version'],
-                                                     'ci_report': os.path.basename(json_report or '')})
+                                              extra=numbers, direction=sheet)
                 report['deliverables']['metadata'] = info['sidecar']
                 report['deliverables']['version'] = published['version']
                 report['deliverables']['versioned_master'] = published['file']
+                report['deliverables']['metadata_tagged'] = info['tagged']
+                if info['tag_error']:
+                    report['deliverables']['metadata_tag_error'] = info['tag_error']
+                    print(f"  [WARN] tags were NOT written into {out_wav}: {info['tag_error']}")
+                    print(f"         the audio is certified; fix the file and run: python scripts/helpers/ingest_metadata.py "
+                          f"\"{out_wav}\" --project \"{project_dir}\"")
+                versioned_wav = os.path.join(project_dir, 'out', published['file'])
+                vinfo = ingest_metadata.ingest(versioned_wav, score=score, project_dir=project_dir,
+                                              extra=dict(numbers, version=published['version']), direction=sheet)
+                report['deliverables']['versioned_metadata'] = vinfo['sidecar']
+                if vinfo['tag_error']:
+                    report['deliverables']['versioned_metadata_tag_error'] = vinfo['tag_error']
+                    print(f"  [WARN] tags were NOT written into {published['file']}: {vinfo['tag_error']}")
                 Path(json_report).write_text(json.dumps(report, indent=2), encoding='utf-8')
                 print(f"  [METADATA] {info['sidecar']}")
             except Exception as exc:          # the audio is already certified and safe
+                report['deliverables']['metadata_error'] = str(exc)
                 print(f"  [WARN] metadata step failed ({exc})")
+                Path(json_report).write_text(json.dumps(report, indent=2), encoding='utf-8') if json_report else None
 
         elapsed = time.time() - t_start
         print("=" * 80)
@@ -896,7 +1033,13 @@ def main():
     ap.add_argument('--no-stems', action='store_true', help='Do not write stems/ (project mode writes them by default)')
     ap.add_argument('--stems-full', action='store_true', help='Export every stem full length and aligned (default: only the part where each stem sounds, with stems.json)')
     ap.add_argument('--max-attempts', type=int, default=5, help='Attempt count after which a failing run says STOP (default 5)')
+    ap.add_argument('--draft', action='store_true', help='Fast check: skip tier 2 rows and never publish to out/')
+    ap.add_argument('--targets', default=None,
+                    help='Deliverable formats, comma separated, overriding the score: stereo, binaural, immersive_7_1, immersive_7_1_4, or all')
+    ap.add_argument('--gate-workers', type=int, default=None, help='Threads for the per-stem gate rows (default 2 or $GATE_WORKERS)')
     a = ap.parse_args()
+    if a.gate_workers:
+        os.environ['GATE_WORKERS'] = str(a.gate_workers)
     sys.stdout.reconfigure(line_buffering=True)     # a redirected log must show each stage as it runs
     for w in envcheck.mismatches():
         print(f"  [WARN] package: {w}")
@@ -914,7 +1057,8 @@ def main():
                        strict=a.strict, json_report=a.report, bpm=a.bpm, key=a.key,
                        check_only=a.check_only, score_path=a.score, presets_dir=a.presets_dir,
                        adopt_presets=a.adopt_presets, wav_path=a.wav, project=a.project, test=a.test,
-                       max_attempts=a.max_attempts, no_stems=a.no_stems, stems_full=a.stems_full)
+                       max_attempts=a.max_attempts, no_stems=a.no_stems, stems_full=a.stems_full, draft=a.draft,
+                       targets=a.targets)
     sys.exit(1 if rep['ci_summary']['fail'] else 0)        # an agent calling this must see a failed gate
 
 

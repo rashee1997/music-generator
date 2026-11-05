@@ -28,8 +28,14 @@ own `vocal` block (any key or section of the vocal config). Notes take `c` (cent
 - **Klatt-style formant synthesis** is the reference design (Praat's KlattGrid implements it). Singing uses the same tract
   with the pitch of the note. The engine's source is a parametric glottal flow pulse (Rosenberg / LF family); values are
   literature-informed starting points, listed in `references/data/vocal-engine-data/defaults.json`.
-- **Human imperfection.** A sung note is never a steady tone: pitch jitter (a few cents, slow), amplitude shimmer
-  (a few percent), vibrato that starts late and widens, breath at the onset, a glide into the note. The engine builds these across a whole phrase, with one continuous pitch curve, so notes connect instead of restarting.
+- **Human imperfection.** A sung note is never a steady tone: period jitter (cycle to cycle, about 0.6 %), amplitude
+  shimmer (a few percent, correlated with the jitter), vibrato that starts late, widens and carries amplitude and formant
+  modulation, breath at the onset, a glide into the note. The engine builds these across a whole phrase, with one continuous
+  pitch curve, so notes connect instead of restarting.
+- **Syllables.** A line with no consonants has no words in it. `consonants.inventory` holds a physical recipe per code
+  (stop with a closure, burst and voice-onset time; fricative with its noise band; nasal with its anti-formant; liquid;
+  trill), placed before the voiced onset. `consonants.auto` assigns them round-robin from `onsets` (default off); a note
+  can name its own with `consonant: "s"`.
 - **A real choir is many people.** Several singers slightly out of tune with each other, different vibrato phases and
   breathing, spread across the stereo field. Each singer here has their own identity (formant scale, vibrato, tuning, pitch
   stability, breath capacity, attack and release) derived from the seed, their own timing and their own pitch curve.
@@ -38,19 +44,28 @@ own `vocal` block (any key or section of the vocal config). Notes take `c` (cent
 
 ## 2. Vowel formants used
 
-Adult male averages (Peterson & Barney 1952, the /h_d/ words); women and children run higher, so raise every
-value by the singer's formant scale rather than the vowel. F3 is the paper's mean. They live in `references/data/vocal-engine-data/defaults.json` (`tract.vowels`):
+Adult male averages (Peterson & Barney 1952, the /h_d/ words) for F1-F3, with F4/F5 from Klatt's reference synthesiser;
+women and children run higher, so raise every value by the singer's formant scale rather than the vowel. They live in
+`references/data/vocal-engine-data/defaults.json` (`tract.vowels`):
 
-| Vowel | F1 Hz | F2 Hz | F3 Hz | Use |
-|---|---|---|---|---|
-| a | 730 | 1090 | 2440 | open choir "aah" |
-| e | 530 | 1840 | 2480 | |
-| i | 270 | 2290 | 3010 | bright, high F2 (the "singer's" brightness sits near 2-3 kHz) |
-| o | 570 | 840 | 2410 | |
-| u | 300 | 870 | 2240 | dark |
-| m | 250 | 1000 | 2100 | selects the **hum model** (closed mouth, nasal), not three ordinary resonators |
+| Vowel | F1 | F2 | F3 | F4 | F5 | Use |
+|---|---|---|---|---|---|---|
+| a | 730 | 1090 | 2440 | 3400 | 4500 | open choir "aah" |
+| e | 530 | 1840 | 2480 | 3500 | 4500 | |
+| i | 270 | 2290 | 3010 | 3500 | 4200 | bright, high F2 |
+| o | 570 | 840 | 2410 | 3300 | 4400 | |
+| u | 300 | 870 | 2240 | 3300 | 4350 | dark |
+| m | 250 | 1000 | 2100 | 3400 | 4500 | selects the **hum model** (closed mouth, nasal), not five ordinary resonators |
+| ae / E / I / O | | | | | | the covered neighbours `technique.cover` moves toward above the passaggio |
 
-Bandwidths 90, 110 and 150 Hz; each resonator has exactly unit gain at its own formant. The self-test checks the ordering: "i"
+Five formants, not three: F4/F5 carry the voice's identity and the singer's formant. A preset that declares three formants
+still renders three (the bank is sliced). Bandwidths start at 90/110/150/200/260 Hz; each resonator has exactly unit gain at
+its own formant.
+
+`technique.singer_formant` does **not** add a 3 kHz boost: it pulls F3, F4 and F5 toward 2.85/3.0/3.1 kHz so they bunch
+(Sundberg 1987). `technique.formant_tuning` raises F1 toward f0 when a high note's fundamental reaches F1, so the fundamental
+stops falling into a spectral valley. Both default to off/on respectively: ring 0 by default, tuning on but only audible at
+the top of the range. The self-test checks the ordering: "i"
 has at least 1.5 times the energy above 1.5 kHz of "u", and the hum is darker than "a".
 
 ## 3. Blending voices with a music bed

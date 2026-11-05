@@ -1,0 +1,169 @@
+{
+  "name": "itu_bs2051_system_j",
+  "character": "ITU-R BS.2051 System J: the 7.1 ring plus four overhead loudspeakers at +30 degrees, giving real height channels.",
+  "channels": 12,
+  "speakers": [
+    {
+      "name": "FL",
+      "azimuth": -30.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "FR",
+      "azimuth": 30.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "FC",
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "LFE",
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "lfe": true
+    },
+    {
+      "name": "BL",
+      "azimuth": -135.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 1.5
+    },
+    {
+      "name": "BR",
+      "azimuth": 135.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 1.5
+    },
+    {
+      "name": "SL",
+      "azimuth": -90.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 1.5
+    },
+    {
+      "name": "SR",
+      "azimuth": 90.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 1.5
+    },
+    {
+      "name": "TFL",
+      "azimuth": -30.0,
+      "elevation": 30.0,
+      "loudness_weight_db": 1.5
+    },
+    {
+      "name": "TFR",
+      "azimuth": 30.0,
+      "elevation": 30.0,
+      "loudness_weight_db": 1.5
+    },
+    {
+      "name": "TBL",
+      "azimuth": -135.0,
+      "elevation": 30.0,
+      "loudness_weight_db": 1.5
+    },
+    {
+      "name": "TBR",
+      "azimuth": 135.0,
+      "elevation": 30.0,
+      "loudness_weight_db": 1.5
+    }
+  ],
+  "lfe": {
+    "channel": "LFE",
+    "lowpass_hz": 80.0,
+    "stopband_hz": 120.0,
+    "stopband_db": -45.0,
+    "send_db": -10.0,
+    "guard_order": 4,
+    "release_ms": 10.0
+  },
+  "downmix": {
+    "FL": [
+      1.0,
+      0.0
+    ],
+    "FR": [
+      0.0,
+      1.0
+    ],
+    "FC": [
+      0.7071,
+      0.7071
+    ],
+    "LFE": [
+      0.0,
+      0.0
+    ],
+    "BL": [
+      0.7071,
+      0.0
+    ],
+    "BR": [
+      0.0,
+      0.7071
+    ],
+    "SL": [
+      0.7071,
+      0.0
+    ],
+    "SR": [
+      0.0,
+      0.7071
+    ],
+    "TFL": [
+      0.7071,
+      0.0
+    ],
+    "TFR": [
+      0.0,
+      0.7071
+    ],
+    "TBL": [
+      0.5,
+      0.0
+    ],
+    "TBR": [
+      0.0,
+      0.5
+    ]
+  },
+  "reverb": {
+    "front_azimuth_max": 30.0,
+    "front_db": 0.0,
+    "surround_db": -6.0,
+    "height_db": -12.0
+  },
+  "decorrelation": {
+    "enabled": true,
+    "amount": 0.18,
+    "max_delay_ms": 12.0,
+    "exempt": [
+      "FL",
+      "FR",
+      "FC"
+    ]
+  },
+  "gate": {
+    "surround_ratio_db": [
+      -9.0,
+      -2.0
+    ],
+    "height_max_rel_db": -4.0,
+    "stereo_correlation_min": 0.15
+  },
+  "sources": [
+    "ITU-R BS.2051-3: System J loudspeaker positions (starting values: System H plus overhead channels at +30 degrees)",
+    "ITU-R BS.1770-4: +1.5 dB weighting for surround and height channels in the loudness measurement",
+    "ITU-R BS.775-3 Annex: fold-down coefficients 1.0 for front L/R, 0.7071 for centre and each surround, 0.5 for the rear overhead pair; LFE is left out of the two-channel fold",
+    "The shared-reverb spread (front 0 dB, surround -6 dB, height -12 dB, anything within 30 degrees of front centre counted as front) is a starting value for this engine's level balance, not a measured acoustic value",
+    "The low-frequency release fade (10 ms) and the guard depth (4 cascaded Linkwitz-Riley sections at the stopband) are starting values for this engine's filters, not measured acoustic values"
+  ]
+}

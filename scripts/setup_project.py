@@ -174,7 +174,8 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
             "acoustic_bass": {"azimuth": 0.0, "elevation": -6.0, "distance": 1.2, "space": room},
             "vocal_hum": {"azimuth": 45.0, "elevation": 8.0, "distance": 2.8, "space": room}
         },
-        "piece_type": "TODO: melodic, cinematic, ambient, dance, tense, effects_only, or your own profile name",
+        "piece_type": "melodic",
+        "gate_reason": "TODO: one line on why this gate profile fits this piece; the gate runs it",
         "video": {"enabled": False, "source": None, "fps": None, "cuts": [], "cut_source": None,
                   "cut_sync": {"early_ms": 45, "late_ms": 125},
                   "dialogue": {"present": False, "duck_db": -9.0, "snr_min_db": 15.0},

@@ -171,27 +171,32 @@ def kuhn_itd(azimuth_deg, head_radius=HEAD_RADIUS, c=SPEED_OF_SOUND, sr=SR):
     return tau_0_signed, tau_inf_signed, tau_0_signed * sr, tau_inf_signed * sr
 
 
-def brown_duda_head_shadow(x, azimuth_deg, head_radius=HEAD_RADIUS, c=SPEED_OF_SOUND, sr=SR):
+def brown_duda_head_shadow(x, azimuth_deg, elevation_deg=0.0, head_radius=HEAD_RADIUS, c=SPEED_OF_SOUND, sr=SR):
     """Applies Brown & Duda (1998) continuous spherical head shadow filter discretized via Bilinear Transform.
     H(s) = (alpha*s + w0) / (s + w0)
     where w0 = 2*c / a (~7840 rad/s), and alpha(theta) smoothly varies from 2.0 (ipsilateral boost)
     down to ~0.15 (contralateral shadow), providing authentic physical phase and group delay.
+
+    The incident angle is the true 3D angle between the source direction and the interaural axis, so a rear
+    source (|azimuth| > 90) is shadowed symmetrically rather than over-rotated past pi, and a source at the
+    zenith or nadir collapses to cos(theta) = 0 (equal ears) instead of keeping the horizontal ILD.
     Returns: (l_out, r_out)
     """
-    az = float(azimuth_deg)
+    az = float(np.radians(azimuth_deg))
+    el = float(np.radians(elevation_deg))
     w0 = 2.0 * c / head_radius
     T = 1.0 / sr
     K = w0 * T / 2.0
-    
-    # Incident angle relative to right ear (+90) and left ear (-90)
-    theta_r = abs(np.radians(90.0 - az))
-    theta_l = abs(np.radians(-90.0 - az))
+
+    # Cosine of the incident angle against the interaural axis (positive towards the right ear)
+    cos_r = float(np.cos(el) * np.sin(az))
+    cos_l = -cos_r
     
     # alpha varies smoothly: at 0 rad (facing ear) alpha=2.0; at pi rad (shadow) alpha=0.15
     alpha_min = 0.15
     # Brown & Duda (1998) Eq. 4 form: cos=1 -> 2.0, cos=-1 -> alpha_min
-    alpha_r = (1.0 + 0.5 * alpha_min) + (1.0 - 0.5 * alpha_min) * np.cos(theta_r)
-    alpha_l = (1.0 + 0.5 * alpha_min) + (1.0 - 0.5 * alpha_min) * np.cos(theta_l)
+    alpha_r = (1.0 + 0.5 * alpha_min) + (1.0 - 0.5 * alpha_min) * cos_r
+    alpha_l = (1.0 + 0.5 * alpha_min) + (1.0 - 0.5 * alpha_min) * cos_l
     alpha_r = float(np.clip(alpha_r, alpha_min, 2.0))
     alpha_l = float(np.clip(alpha_l, alpha_min, 2.0))
     
@@ -244,24 +249,33 @@ def apply_kuhn_dispersive_delay(x, azimuth_deg, head_radius=HEAD_RADIUS, c=SPEED
     """Applies Kuhn frequency-dispersive ITD:
     High-frequency ray delay is applied via fractional delay, and low frequencies receive
     additional phase delay via an allpass filter to match Kuhn's (3a/c)*sin(theta) wave limit.
+
+    A 1st-order all-pass (p + z^-1)/(1 + p*z^-1) delays DC by (1-p)/(1+p) and Nyquist by (1+p)/(1-p).
+    Cascading it onto the full ray delay therefore added a whole sample of DC delay where it switched
+    on; the base fractional delay is shortened by the all-pass's own Nyquist delay instead, so the
+    high frequencies stay at tau_inf and DC arrives at tau_0 with no step at the threshold.
     """
     _, _, tau_0_samps, tau_inf_samps = kuhn_itd(azimuth_deg, head_radius=head_radius, c=c, sr=sr)
     tau_0_samps, tau_inf_samps = abs(tau_0_samps), abs(tau_inf_samps)   # this is the far ear: always delayed, for either side
-    
-    # Base fractional delay for high frequencies
-    delayed_inf = apply_fractional_delay(x, tau_inf_samps)
-    
-    # Extra low-frequency delay needed
-    delta_samps = abs(tau_0_samps) - abs(tau_inf_samps)
-    if delta_samps > 0.2:
-        # Allpass filter: A(z) = (p + z^-1) / (1 + p*z^-1)
-        # For p in [-0.6, -0.2], group delay at DC is (1-p)/(1+p) samples with zero gain coloration
-        p = -float(np.clip(delta_samps / (2.0 + delta_samps), 0.1, 0.6))
-        b_ap = [p, 1.0]
-        a_ap = [1.0, p]
-        out = signal.lfilter(b_ap, a_ap, delayed_inf).astype(np.float32)
+    delta_samps = tau_0_samps - tau_inf_samps
+
+    if delta_samps > 1e-4:
+        # Solve (1-p)/(1+p) - (1+p)/(1-p) = delta for the pole p <= 0:
+        #   p = -delta / (2 + sqrt(4 + delta^2))
+        # (p = -delta/(2+delta) does not satisfy it: it leaves DC at tau_0 + delta/(1+delta).)
+        # The largest physical delta is at ~60 deg (delta ~ 8.4 samples at 48 kHz, needing |p| = 0.79), so the
+        # bound is 0.8: a smaller one would clip the pole and leave the low-frequency ITD short of tau_0 there.
+        p = -float(np.clip(delta_samps / (2.0 + np.sqrt(4.0 + delta_samps ** 2)), 0.0, 0.8))
+        tau_nyq = (1.0 + p) / (1.0 - p)
+        # The all-pass already supplies tau_nyq of the ray delay, so the fractional delay carries the rest:
+        # high frequencies stay at tau_inf and DC arrives at tau_inf + delta = tau_0 (no baseline jump).
+        # Near the centre that rest is slightly negative (an advance), which is what keeps the timing
+        # continuous through azimuth 0 instead of stepping where the all-pass no longer fits.
+        base_delay = tau_inf_samps - tau_nyq
+        delayed_inf = apply_fractional_delay(x, base_delay)
+        out = signal.lfilter([p, 1.0], [1.0, p], delayed_inf).astype(np.float32)
     else:
-        out = delayed_inf
+        out = apply_fractional_delay(x, tau_inf_samps).astype(np.float32)
     return out
 
 
@@ -402,7 +416,8 @@ def apply_torso_bounce(x, elevation_deg=0.0, sr=SR):
 
 def _arrive(sig, azimuth_deg, elevation_deg, sr=SR):
     """A reflection placed where it comes from: pinna colour for its height, head shadow and ITD for its side."""
-    l, r = brown_duda_head_shadow(pinna_spectral_filter(sig, elevation_deg, azimuth_deg, sr=sr), azimuth_deg, sr=sr)
+    l, r = brown_duda_head_shadow(pinna_spectral_filter(sig, elevation_deg, azimuth_deg, sr=sr),
+                                  azimuth_deg, elevation_deg=elevation_deg, sr=sr)
     itd = kuhn_itd(azimuth_deg, sr=sr)[3]
     if itd > 0:
         l = apply_fractional_delay(l, itd)
@@ -455,7 +470,7 @@ def synthesize_early_reflections(x, azimuth_deg, distance_m, space_cfg, elevatio
         lat_filtered = _path_attenuate(lat_filtered, dist, lat_delay_samps, space_cfg, sr)
         
         opp_azimuth = -az * 0.8
-        lat_l, lat_r = brown_duda_head_shadow(lat_filtered, opp_azimuth, sr=sr)
+        lat_l, lat_r = brown_duda_head_shadow(lat_filtered, opp_azimuth, elevation_deg=elevation_deg, sr=sr)
         _, _, _, opp_itd = kuhn_itd(opp_azimuth, sr=sr)
         if opp_itd > 0:
             lat_l = apply_fractional_delay(lat_l, opp_itd)
@@ -530,7 +545,7 @@ def spatialize_stem(audio, azimuth_deg=0.0, elevation_deg=0.0, distance_m=1.0,
     x_direct = pinna_spectral_filter(x_direct, elevation_deg=elevation_deg, azimuth_deg=azimuth_deg, sr=sr)
     
     # 4. Brown & Duda (1998) analytical head shadow
-    l_shadow, r_shadow = brown_duda_head_shadow(x_direct, azimuth_deg=azimuth_deg, sr=sr)
+    l_shadow, r_shadow = brown_duda_head_shadow(x_direct, azimuth_deg=azimuth_deg, elevation_deg=elevation_deg, sr=sr)
     
     # 5. Kuhn frequency-dependent ITD
     _, _, tau_0_samps, tau_inf_samps = kuhn_itd(azimuth_deg=azimuth_deg, sr=sr)

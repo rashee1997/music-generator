@@ -56,6 +56,41 @@ ROWS = {
     'clipping':    dict(meaning='clipped bends / samples', protected=True),
     'silence':     dict(meaning='silent gap in the middle', protected=True),
     'clicks':      dict(meaning='single-sample jumps', protected=True),
+    # stem gate (scripts/stem_gate.py, before mixing)
+    'stem.clicks': dict(meaning='click/impulse on one stem (high-pass MAD + LPC residual)', params={
+        'mad_z': (8.0, 5.0, 15.0), 'floor_fs': (0.02, 0.005, 0.1),
+        'cluster_gap_ms': (1.5, 0.5, 5.0), 'isolate_ms': (10.0, 5.0, 30.0)}, no_skip=True),
+    'stem.dropout': dict(meaning='a short hole in one stem', params={
+        'min_ms': (20.0, 5.0, 50.0), 'max_ms': (1000.0, 500.0, 2000.0), 'floor_below_db': (45.0, 30.0, 60.0)}),
+    'stem.cut': dict(meaning='a level step with no release at a section boundary or the end', params={
+        'drop_db': (12.0, 8.0, 20.0), 'location_ms': (75.0, 25.0, 200.0)}),
+    'stem.end': dict(meaning='a stem truncated at full level', params={
+        'min_decay_db': (12.0, 8.0, 20.0), 'floor_db': (-45.0, -60.0, -30.0)}),
+    'stem.edge': dict(meaning='a stem starts or stops away from its own score notes', params={
+        'max_silence_ms': (25.0, 5.0, 100.0)}),
+    'stem.tick': dict(meaning='a periodic tick in a stem that should have no beat', params={
+        'rho': (0.35, 0.2, 0.6), 'min_events': (6, 3, 12), 'cv_max': (0.05, 0.01, 0.2)}),
+    'stem.dead': dict(meaning='a part missing/dropped against the score dynamics', params={
+        'under_db': (12.0, 6.0, 24.0), 'floor_db': (-70.0, -80.0, -50.0)}),
+    'stem.clipping': dict(meaning='clipped samples on one stem', protected=True),
+    'stem.dc': dict(meaning='DC offset on one stem', params={'dc_max': (0.001, 0.0005, 0.01)}),
+    'stem.flatness': dict(meaning='a noise burst in a tonal stem', params={
+        'threshold': (0.10, 0.03, 0.4), 'min_ms': (50.0, 20.0, 200.0)}),
+    'stem.vocal': dict(meaning='vocal stem integrity (finite, DC, clicks)'),
+    'stem.present': dict(meaning='every score track with notes has a stem'),
+    'stem.duplicate': dict(meaning='two stems are the same signal', params={'max_corr': (0.999, 0.99, 1.0)}),
+    # master rows added by the mix gate
+    'dropout': dict(meaning='a short hole in the master', params={
+        'min_ms': (20.0, 5.0, 50.0), 'max_ms': (1000.0, 500.0, 2000.0), 'floor_below_db': (45.0, 30.0, 60.0)}),
+    'cut.hard': dict(meaning='a hard cut at a boundary/end in the master', params={
+        'drop_db': (12.0, 8.0, 20.0), 'location_ms': (75.0, 25.0, 200.0)}),
+    'end.abrupt': dict(meaning='the master ends at full level with no release', params={
+        'min_decay_db': (12.0, 8.0, 20.0), 'floor_db': (-45.0, -60.0, -30.0)}),
+    'master.dc': dict(meaning='DC offset on the master', params={'dc_max': (0.001, 0.0005, 0.01)}),
+    'tempo.audio': dict(meaning='measured tempo against the score/sheet', params={
+        'tol_bpm': (2.0, 1.0, 5.0), 'tol_pct': (2.0, 1.0, 5.0), 'drift_bpm': (2.0, 1.0, 5.0)}),
+    'section.energy': dict(meaning='section level against the promised energy arc', params={
+        'fail_rho': (0.5, 0.3, 0.8), 'warn_rho': (0.7, 0.5, 0.9)}),
     'channels':    dict(meaning='note started on a channel still sounding', protected=True),
     # score patterns (pattern_audit.audit)
     'pattern.drums_few':     dict(meaning='drums play only a few different bars', params={'distinct_div': (8, 2, 32)}),
@@ -69,7 +104,20 @@ ROWS = {
     'pattern.four_on_floor': dict(meaning='a kick on every beat and nothing else'),
     'pattern.flags_max':     dict(meaning='how many pattern flags make a FAIL', params={'max': (6, 3, 12)}, no_skip=True),
     # audio / mix
-    'roughness':             dict(meaning='cochlear sensory roughness', params={'scale': (1.0, 0.5, 2.0), 'outro_resolve': (True,)}, no_skip=True),
+    # `model` switches the estimator: 'legacy' is the original Plomp-Levelt/Sethares pair weight with per-frame
+    # normalisation; 'level_aware' adds absolute partial level, simultaneous masking and the Vassilakis amplitude
+    # terms (knowledgebase/sound-design/roughness.md). Default stays 'legacy' until the listening check in
+    # docs/roughness_model.md is answered. The other params are read only by 'level_aware'.
+    'roughness':             dict(meaning='cochlear sensory roughness', params={
+        'scale': (1.0, 0.5, 2.0),
+        'outro_resolve': (True,),
+        'model': ('legacy', 'level_aware'),
+        'median': (0.024, 0.02, 0.40),                    # calibrated on tests/fixtures/roughness, not on a cue
+        'calib_spl_db': (70.0, 60.0, 80.0),              # Zwicker & Fastl measure roughness at 60-70 dB SPL
+        'mask_band_bark': (1.0, 0.5, 3.0),               # Daniel & Weber use 1-Bark filters
+        'mask_slope_up_db_bark': (10.5, 5.0, 20.0),      # measured upper masking slope, 64-70 dB near 450 Hz
+        'mask_slope_down_db_bark': (27.0, 15.0, 40.0),   # Daniel & Weber lower slope, -27 dB/Bark
+    }, no_skip=True),
     'ambient_bed':           dict(meaning='an ambient bed that drops out or pumps', params={'pump_db': (3.8, 3.0, 6.0)}, no_skip=True),
     'modulation_flutter':    dict(meaning='6-25 Hz amplitude flutter in a sustained part', params={'warn': (0.18, 0.10, 0.30)}, no_skip=True),
     # score checks (pattern_audit.acoustic_checks). No numbers to retune, but a type of music may legitimately have them:
@@ -118,6 +166,14 @@ ROWS = {
     # delivery traceability (scripts/helpers/, written at certification; the gate only reads it)
     'meta.tags':     dict(meaning='standard metadata written beside the certified master',
                           params={'max_missing': (0, 0, 12)}),
+    # the direction sheet is the promise the delivery is judged against (scripts/quality_gate.py direction_rows)
+    'delivery.sample_rate': dict(meaning='delivered sample rate against the direction sheet'),
+    'delivery.bit_depth':   dict(meaning='delivered bit depth against the direction sheet'),
+    'delivery.channels':    dict(meaning='delivered channel count against the direction sheet'),
+    'delivery.duration':    dict(meaning='delivered length against the direction sheet',
+                                  params={'tolerance_s': (0.5, 0.1, 5.0)}),
+    'tempo.bpm':            dict(meaning='score tempo inside the range the direction sheet promises'),
+    'key.mode':             dict(meaning='score key and mode against the direction sheet'),
     'meta.version':  dict(meaning='a version record for the certified master, and its versioned file still on disk',
                           params={'max_missing': (0, 0, 5)}),
     # video delivery (scripts/video_score.py; measured by video-mixer/video_gate.py)
@@ -136,6 +192,23 @@ ROWS = {
     'vocal.intonation':   dict(meaning='sung pitch against the written pitch, vibrato excluded', params={'max_cents': (60.0, 20.0, 150.0)}),
     'vocal.dynamics':     dict(meaning='note level follows note velocity (no per-note normalisation)', params={'min_corr': (0.5, 0.0, 0.9)}),
     'vocal.hum_tone':     dict(meaning='a hum stays dark and murmur-like, not a bright instrument tone', params={'max_hf_frac': (0.02, 0.001, 0.2)}),
+    'vocal.ring':         dict(meaning="the singer's formant is an F3-F5 cluster near 2.8-3.2 kHz, not a boost pole",
+                               params={'max_spread_hz': (400.0, 150.0, 900.0),
+                                       'spread_at_zero_hz': (1600.0, 800.0, 3000.0)}),
+    'vocal.formant_tuning': dict(meaning='a note whose f0 is above F1 keeps its fundamental out of a spectral valley',
+                                 params={'max_deficit_db': (6.0, 2.0, 12.0)}),
+    'vocal.consonant':    dict(meaning='consonants sit in their declared band before the onset, at the declared VOT',
+                               params={'vot_tol': (0.3, 0.1, 0.6), 'centroid_margin': (2.0, 1.2, 4.0)}),
+    'vocal.coarticulation': dict(meaning='the formant track moves toward the next vowel before the note boundary',
+                                 params={'min_lead_ms': (20.0, 5.0, 60.0)}),
+    'vocal.perturbation': dict(meaning='period-to-period jitter measured on the rendered signal (not flutter)',
+                               params={'min_pct': (0.3, 0.1, 1.0), 'max_pct': (2.0, 1.0, 4.0)}, no_skip=True),
+    'vocal.passaggio':    dict(meaning='no register step across the break (open quotient stays continuous)',
+                               params={'max_step': (0.01, 0.002, 0.05)}),
+    'vocal.vibrato':      dict(meaning='vibrato carries amplitude modulation in step with f0',
+                               params={'min_corr': (0.5, 0.2, 0.9), 'min_db': (0.2, 0.05, 2.0)}),
+    'vocal.identity':     dict(meaning='two singers have measurably different tracts (formant distance)',
+                               params={'min_pct': (2.0, 1.0, 8.0)}),
     # cognitive feel checks (pattern_audit.cognitive_feel_checks); modes apply/skip, relaxing is by the profile's flags
     'feel.contour':    dict(meaning='melodic arch / gap-fill'),
     'feel.resolution': dict(meaning='harmonic tension to resolution'),
@@ -203,6 +276,10 @@ def _check_range(row, name, val, problems, where):
     if isinstance(spec[0], bool):
         if not isinstance(val, bool):
             problems.append(f'{where}: {row}.{name} must be true or false')
+        return
+    if isinstance(spec[0], str):                     # an enumerated parameter: the tuple lists the allowed values
+        if val not in spec:
+            problems.append(f'{where}: {row}.{name} must be one of {list(spec)}, not {val!r}')
         return
     if isinstance(val, bool) or not isinstance(val, (int, float)):
         problems.append(f'{where}: {row}.{name} must be a number')
@@ -477,7 +554,7 @@ def cmd_list():
 
 def cmd_rows():
     for rid, r in ROWS.items():
-        ps = ', '.join(f'{k}={v[0]} ({v[1]}..{v[2]})' if len(v) == 3 else f'{k}={v[0]}' for k, v in (r.get('params') or {}).items())
+        ps = ', '.join(f'{k}={v[0]} ({v[1]}..{v[2]})' if len(v) == 3 and not isinstance(v[0], str) else f'{k}={"|".join(str(x) for x in v)}' for k, v in (r.get('params') or {}).items())
         print(f'{rid:22s} {"PROTECTED " if r.get("protected") else ""}{r["meaning"]}' + (f'  [{ps}]' if ps else ''))
 
 

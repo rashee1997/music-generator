@@ -60,7 +60,9 @@ SCHEMA_VERSION = 2
 
 LIVE = ('seconds', 'voices', 'note', 'free', 'calibration',
         'materials', 'objects', 'sources', 'timeline', 'propagation', 'spatial')
-PROPAGATION_KEYS = ('distance_m', 'atmosphere', 'canopy_density', 'ground_gain', 'ground_delay_ms', 'ground_cutoff_hz')
+PROPAGATION_KEYS = ('distance_m', 'atmosphere', 'canopy_density', 'ground_gain', 'ground_delay_ms', 'ground_cutoff_hz',
+                    'occluder')
+OCCLUDER_KEYS = ('material', 'thickness_m', 'edge_offset_m', 'coverage', 'transmission', 'distance_m')
 SPATIAL_KEYS = ('azimuth', 'elevation', 'distance_m')
 SOURCE_KEYS = ('mechanism', 'speed_m_s', 'corner_hz', 'intensity', 'band_low', 'band_high')
 ACTION_KEYS = ('at', 'after', 'offset', 'for', 'duration_s', 'interaction', 'target', 'object', 'surface', 'source',
@@ -188,6 +190,24 @@ def problems(scene):
                     out.append(f'propagation: unknown key "{k}" (known: {", ".join(PROPAGATION_KEYS)})')
             if 'distance_m' in prop and (prop['distance_m'] <= 0):
                 out.append('propagation.distance_m: must be positive')
+            occ = prop.get('occluder')
+            if occ is not None:
+                if not isinstance(occ, dict):
+                    out.append('propagation.occluder: an object {"material": ..., "thickness_m": ..., '
+                               '"edge_offset_m": ..., "coverage": 0..1}')
+                else:
+                    for k in occ:
+                        if k not in OCCLUDER_KEYS:
+                            out.append(f'propagation.occluder: unknown key "{k}" '
+                                       f'(known: {", ".join(OCCLUDER_KEYS)})')
+                    for k in ('thickness_m', 'edge_offset_m', 'distance_m'):
+                        if k in occ and (not isinstance(occ[k], (int, float)) or occ[k] < 0):
+                            out.append(f'propagation.occluder.{k}: needs a number >= 0')
+                    cov = occ.get('coverage')
+                    if cov is not None and (not isinstance(cov, (int, float)) or not (0.0 <= float(cov) <= 1.0)):
+                        out.append('propagation.occluder.coverage: 0 (clear line) .. 1 (fully behind the barrier)')
+                    if float(occ.get('thickness_m', 0.02)) <= 0.0 and occ.get('transmission', True):
+                        out.append('propagation.occluder.thickness_m: a transmitting barrier needs a thickness')
 
     sp = scene.get('spatial')
     if sp is not None:

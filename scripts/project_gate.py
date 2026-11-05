@@ -48,7 +48,7 @@ SCAFFOLD = ('direction', 'presets', 'scores', 'reports')   # out/, midi/, stems/
 # each group is satisfied by any one of its keys (older sheets use other names)
 DIRECTION_NEEDS = [('title', 'purpose', 'concept'), ('duration_s', 'duration_seconds'), ('tempo_bpm', 'bpm'),
                    ('key', 'mode'), ('feel',), ('avoid_feel',), ('spatial_staging', 'staging'),
-                   ('loudness_lufs',), ('true_peak_max',)]
+                   ('loudness_lufs',), ('true_peak_max',), ('piece_type',)]
 WEB_MARK = re.compile(r'^#+\s*web research', re.I | re.M)
 HIT_KINDS = ('cut', 'motion', 'musical')
 HIT_SYNC = ('hard', 'soft')
@@ -233,6 +233,9 @@ def direction_problems(project):
         stg = d.get('spatial_staging') or d.get('staging')
         if stg is not None and not isinstance(stg, dict):
             miss.append('spatial_staging as an object {name: {azimuth, distance}}')
+        reason = str(d.get('gate_reason') or '').strip()
+        if not reason:
+            miss.append('gate_reason (one line: why this gate profile fits this piece)')
         shape = [] if miss else sheet_shape_problems(d)
         if not miss and not shape:
             return []
@@ -649,13 +652,19 @@ def gate_problems(score, project):
     return out
 
 
+def output_problems(score):
+    """The score's `output_targets` must name formats the engine can build; nothing renders for a target it cannot."""
+    import render_targets
+    return render_targets.problems(score)
+
+
 def problems(score, project):
     project = Path(project).resolve()
     out = [f'missing folder {d}/ (run: setup_project.py --new-project <dir>)' for d in SCAFFOLD if not (project / d).is_dir()]
     out += research_problems(project) + direction_problems(project) + preset_file_problems(project)
     if score is not None:
         out += track_problems(score, project) + stage_problems(score, project) + ambience_problems(score, project) + reference_problems(score, project) + space_problems(score, project) + immersive_problems(score, project)
-        out += gate_problems(score, project)
+        out += gate_problems(score, project) + output_problems(score)
     return out
 
 

@@ -47,6 +47,15 @@ ROUGHNESS_AUDIBLE_DB = -40.0    # a partial this far under the frame's loudest c
 ROUGHNESS_MEDIAN = 0.070
 ROUGHNESS_RELATIVE = 1.6        # a spike must also stand this far above the piece's own median
 ROUGHNESS_OUTRO_RATIO = 1.2     # the last 3 s must not be rougher than the piece's median by more than this
+# Level-aware model (roughness.model = "level_aware"). Every value below is a profile parameter of the `roughness`
+# row (scripts/gate_profiles.py); these are its defaults. Sources and the argument for each:
+# knowledgebase/sound-design/roughness.md. The legacy computation is untouched and still reported for comparison.
+ROUGHNESS_CALIB_SPL_DB = 70.0            # programme loudness is placed at this SPL (the sources measure at 60-70 dB)
+ROUGHNESS_MASK_BAND_BARK = 1.0           # Daniel & Weber mask in 1-Bark filters
+ROUGHNESS_MASK_SLOPE_UP_DB_BARK = 10.5   # measured upper masking slope, 64-70 dB components at 450-480 Hz
+ROUGHNESS_MASK_SLOPE_DOWN_DB_BARK = 27.0 # Daniel & Weber lower masking slope, -27 dB/Bark
+ROUGHNESS_SL_RAMP_DB = 10.0             # a partial reaches full weight 10 dB above its threshold (ramp below that)
+ROUGHNESS_MEDIAN_LEVEL_AWARE = 0.024     # calibrated on tests/fixtures/roughness (see docs/roughness_model.md)
 # Plomp-Levelt is about beating between resolved partials. A drum hit, a cymbal or a noise bed fills the band with random
 # peaks that are not partials; measured on six masters, those frames reached 0.13-0.16 and made every piece fail. A frame is
 # judged only when its detected partials hold at least this share of the band's energy.
@@ -246,11 +255,30 @@ def verdicts(r, bpm=None, target=None):
     return out
 
 
-def cochlear_roughness_check(path_or_audio, sr=44100, score=None):
-    """2.1 Plomp-Levelt & Sethares Cochlear Sensory Roughness.
-    Per 1.0 s Hann frame in ROUGHNESS_BAND_HZ: the ten loudest partials, the roughness kernel for every pair, and the mean of
-    the three strongest pair contributions. Density-independent by construction (a sum over pairs grows with the number of
-    parts, which made every 6+ part chord fail), so the number means "how strong is the worst partial clash here".
+def _bark(f):
+    """Critical-band rate in Bark (Traunmuller): 26.81*f/(1960+f) - 0.53."""
+    f = np.asarray(f, dtype=float)
+    return 26.81 * f / (1960.0 + f) - 0.53
+
+
+def cochlear_roughness_check(path_or_audio, sr=44100, score=None, model=None):
+    """2.1 Cochlear sensory roughness, two models.
+
+    Both models take the ten loudest resolved partials in ROUGHNESS_BAND_HZ per 1.0 s Hann frame and reduce the
+    pair contributions to the mean of the three strongest (density-independent: a sum grows with the number of
+    parts and failed every 6+ part chord).
+
+      model="legacy"       the Plomp-Levelt/Sethares pair weight min(a_norm) * kernel, amplitudes normalised per
+                           frame. Unchanged from the original implementation, to 4 decimals.
+      model="level_aware"  absolute partial level (dB SPL, calibrated against the file's own loudness); each partial
+                           reduced to its margin above the higher of its simultaneous masking threshold and the
+                           absolute threshold; the Vassilakis amplitude terms
+                           0.5 * (Amin*Amax)^0.1 * (2*Amin/(Amin+Amax))^3.11 * kernel.
+                           A pair at or below threshold has A = 0 and contributes nothing.
+
+    `model` defaults to the profile's `roughness.model` (itself default "legacy"), so nothing changes until a piece
+    asks for the new model. With the new model the legacy value is still computed and reported as
+    INFO "cochlear_roughness_legacy", so the two can be compared. Doc: knowledgebase/sound-design/roughness.md.
     Returns (rows, dict(mean_roughness=..., max_roughness=...)).
     """
     if isinstance(path_or_audio, str):
@@ -265,6 +293,33 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None):
     if dur < 1.0:
         return [('PASS', 'cochlear_roughness', 'Audio duration < 1.0s; roughness check skipped')], dict(mean_roughness=0.0, max_roughness=0.0)
 
+    # the model, its numbers and the two legacy knobs all come from the `roughness` row of the gate profile
+    intent = dict(is_ambient=False, is_tense=False, is_dance=False, is_cliffhanger=False)
+    scale, outro_resolve = 1.0, True
+    model_name = 'legacy'
+    calib_spl_db, band_bark = ROUGHNESS_CALIB_SPL_DB, ROUGHNESS_MASK_BAND_BARK
+    slope_up, slope_down = ROUGHNESS_MASK_SLOPE_UP_DB_BARK, ROUGHNESS_MASK_SLOPE_DOWN_DB_BARK
+    median_la = ROUGHNESS_MEDIAN_LEVEL_AWARE
+    if score:
+        try:
+            import pattern_audit
+            import gate_profiles
+            intent = pattern_audit.get_intent_profile(score)
+            gp = gate_profiles.resolve(score)
+            scale, outro_resolve = gp.param('roughness', 'scale'), gp.param('roughness', 'outro_resolve')
+            model_name = str(gp.param('roughness', 'model'))
+            calib_spl_db = float(gp.param('roughness', 'calib_spl_db'))
+            band_bark = float(gp.param('roughness', 'mask_band_bark'))
+            slope_up = float(gp.param('roughness', 'mask_slope_up_db_bark'))
+            slope_down = float(gp.param('roughness', 'mask_slope_down_db_bark'))
+            median_la = float(gp.param('roughness', 'median'))
+        except Exception:
+            pass
+    if model is not None:
+        model_name = str(model)
+    if model_name not in ('legacy', 'level_aware'):
+        raise ValueError(f'roughness model must be "legacy" or "level_aware", not {model_name!r}')
+
     win = int(sr)
     hop = int(sr // 2)
     if len(mono) < win:
@@ -272,12 +327,34 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None):
         hop = max(win // 2, 1024)
     n_frames = max(1, (len(mono) - win) // hop + 1)
 
+    # Absolute level: the file's own integrated loudness is placed at calib_spl_db, so a partial keeps the level it
+    # really has here (a pp frame is judged as pp) and two masters are compared at one playback level.
+    lufs_file = None
+    if model_name != 'legacy':
+        try:
+            sig = x[:, :2] if x.ndim == 2 else np.column_stack([x, x])
+            lufs_file = float(lufs_meter(sig, sr))
+            if not np.isfinite(lufs_file):
+                lufs_file = None
+        except Exception:
+            lufs_file = None
+    calib = (calib_spl_db - lufs_file) if lufs_file is not None else 0.0
+
+    def ath_of(freqs):
+        try:
+            import quality_gate
+            return np.asarray(quality_gate._ath_db(freqs), dtype=float)
+        except Exception:                       # naturalness_check used on its own, without the gate package
+            k = np.maximum(np.asarray(freqs, dtype=float), 20.0) / 1000.0
+            return 3.64 * k ** -0.8 - 6.5 * np.exp(-0.6 * (k - 3.3) ** 2) + 1e-3 * k ** 4
+
     hann = np.hanning(win)
     freqs = np.fft.rfftfreq(win, 1.0 / sr)
     band_mask = (freqs >= ROUGHNESS_BAND_HZ[0]) & (freqs <= ROUGHNESS_BAND_HZ[1])
     b_freqs = freqs[band_mask]
 
     roughness = []
+    roughness_legacy = []
     frame_times = []
 
     for i in range(n_frames):
@@ -288,11 +365,13 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None):
 
         if len(mag) < 3:
             roughness.append(np.nan)
+            roughness_legacy.append(np.nan)
             continue
         peaks = np.where((mag[1:-1] > mag[:-2]) & (mag[1:-1] > mag[2:]))[0] + 1
         max_a = float(np.max(mag)) if len(mag) > 0 else 0.0
         if max_a < 1e-6 or len(peaks) < 2:
             roughness.append(np.nan)
+            roughness_legacy.append(np.nan)
             continue
 
         sig_peaks = peaks[mag[peaks] >= 0.03 * max_a]
@@ -302,17 +381,20 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None):
         sig_peaks = sig_peaks[mag[sig_peaks] >= floor[sig_peaks] * 10 ** (PEAK_PROMINENCE_DB / 20.0)]
         if len(sig_peaks) < 2:
             roughness.append(np.nan)
+            roughness_legacy.append(np.nan)
             continue
         # broad-band frame (drum hit, cymbal, noise): its "peaks" are random, not partials that can beat
         tonal = float(np.sum(mag[sig_peaks] ** 2) / (np.sum(mag ** 2) + 1e-30))
         if tonal < TONAL_MIN_FRACTION:
             roughness.append(np.nan)
+            roughness_legacy.append(np.nan)
             continue
 
         top_idx = sig_peaks[np.argsort(mag[sig_peaks])[-10:]]
         top_idx = top_idx[mag[top_idx] >= max_a * 10 ** (ROUGHNESS_AUDIBLE_DB / 20.0)]
         if len(top_idx) < 2:
             roughness.append(np.nan)
+            roughness_legacy.append(np.nan)
             continue
         f_p = b_freqs[top_idx]
         a_norm = mag[top_idx] / max_a
@@ -331,10 +413,51 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None):
                     contrib.append(float(min(a_norm[j], a_norm[k]) * w))
         # three strongest clashes, averaged: independent of how many parts happen to be sounding
         contrib.sort(reverse=True)
-        roughness.append(float(np.mean(contrib[:3])) if contrib else 0.0)
+        legacy_val = float(np.mean(contrib[:3])) if contrib else 0.0
+        roughness_legacy.append(legacy_val)
+
+        if model_name == 'legacy' or lufs_file is None:
+            roughness.append(legacy_val)
+            continue
+
+        # ---- level-aware: absolute level, masked threshold, Vassilakis amplitude terms
+        a_abs = mag[top_idx][order] / (win * 0.5)                 # sine amplitude, full scale = 1
+        spl = 20.0 * np.log10(np.maximum(a_abs, 1e-12)) + calib   # dB SPL at the calibration playback level
+        z = _bark(f_p)
+        ath = ath_of(f_p)
+        mask = np.full(len(f_p), -np.inf)
+        for j in range(len(f_p)):
+            dz = np.abs(z - z[j])
+            near = (dz <= band_bark) & (dz > 0.0)
+            if not near.any():
+                continue
+            # masking spreads further upwards than downwards: a different slope on each side of the masker
+            slope = np.where(f_p > f_p[j], slope_up, slope_down)
+            mask = np.maximum(mask, np.where(near, spl[j] - slope * dz, -np.inf))
+        atten = np.maximum(0.0, mask - spl)                       # dB the masker pushes this partial under the mask
+        heard = np.clip((spl - ath) / ROUGHNESS_SL_RAMP_DB, 0.0, 1.0)  # 0 at the absolute threshold, 1 by 10 dB SL
+        A = heard * 10.0 ** ((spl - 94.0 - atten) / 20.0)         # amplitude (1 Pa = 94 dB SPL), mask-attenuated
+
+        lev = []
+        for j in range(len(f_p)):
+            for k in range(j + 1, len(f_p)):
+                if A[j] <= 0.0 or A[k] <= 0.0:
+                    continue
+                f1, f2 = f_p[j], f_p[k]
+                S = 0.24 / (0.0207 * f1 + 18.96)
+                df = f2 - f1
+                w = np.exp(-3.51 * S * df) - np.exp(-5.75 * S * df)
+                if w <= 0.0:
+                    continue
+                amin, amax = (A[j], A[k]) if A[j] <= A[k] else (A[k], A[j])
+                lev.append(float((amin * amax) ** 0.1 * 0.5 * (2.0 * amin / (amin + amax)) ** 3.11 * w))
+        lev.sort(reverse=True)
+        roughness.append(float(np.mean(lev[:3])) if lev else 0.0)
 
     r_all = np.array(roughness, dtype=float)
+    r_legacy = np.array(roughness_legacy, dtype=float)
     r_arr = r_all[~np.isnan(r_all)]
+    r_leg = r_legacy[~np.isnan(r_legacy)]
     if len(r_arr) < TONAL_MIN_FRAMES:
         # Nothing to judge is stated, never a silent pass: a noise bed or a percussion-only piece has no resolved partials to beat.
         return ([('INFO', 'cochlear_roughness',
@@ -343,28 +466,22 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None):
                 dict(mean_roughness=round(float(np.mean(r_arr)), 4) if len(r_arr) else 0.0,
                      max_roughness=round(float(np.max(r_arr)), 4) if len(r_arr) else 0.0))
     r_med = float(np.median(r_arr))
-    r_mad = float(np.median(np.abs(r_arr - r_med))) + 1e-6
     r_mean = float(np.mean(r_arr))
     r_max = float(np.max(r_arr))
+    legacy_med = float(np.median(r_leg)) if len(r_leg) else 0.0
+    legacy_max = float(np.max(r_leg)) if len(r_leg) else 0.0
 
-    intent = dict(is_ambient=False, is_tense=False, is_dance=False, is_cliffhanger=False)
-    scale, outro_resolve = 1.0, True                   # the 'melodic' numbers; a gate profile (gate_profiles.py) may relax them
-    if score:
-        try:
-            import pattern_audit
-            import gate_profiles
-            intent = pattern_audit.get_intent_profile(score)
-            gp = gate_profiles.resolve(score)
-            scale, outro_resolve = gp.param('roughness', 'scale'), gp.param('roughness', 'outro_resolve')
-        except Exception:
-            pass
-    abs_thresh = ROUGHNESS_MEDIAN * scale            # `scale` applied once, here
+    median_base = ROUGHNESS_MEDIAN if model_name == 'legacy' else median_la
+    abs_thresh = median_base * scale            # `scale` applied once, here
     rel_thresh = max(abs_thresh, ROUGHNESS_RELATIVE * r_med)
 
     rows = []
+    if model_name != 'legacy':
+        rows.append(('INFO', 'cochlear_roughness_legacy',
+                     f'legacy model on the same frames: median {legacy_med:.3f}, max {legacy_max:.3f} '
+                     '(the level-aware model is the one judged above)'))
     spikes = []
     dyn = score.get('dynamics', []) if score else []
-
     if r_med > abs_thresh:
         rows.append(('FAIL', 'cochlear_roughness',
                      f"Cochlear sensory roughness chronically high (median {r_med:.3f} > {abs_thresh:.3f}); "
@@ -418,9 +535,13 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None):
                              f"Sensory roughness does not resolve at outro (final 3s roughness {outro_r:.3f} > {target_outro:.3f}). "
                              "Cadence into a clean consonant triad."))
 
-    metrics = dict(mean_roughness=round(r_mean, 4), max_roughness=round(r_max, 4))
+    metrics = dict(mean_roughness=round(r_mean, 4), max_roughness=round(r_max, 4),
+                   frames=[round(float(v), 4) if not np.isnan(v) else None for v in r_all])
+    if model_name != 'legacy':
+        metrics['frames_legacy'] = [round(float(v), 4) if not np.isnan(v) else None for v in r_legacy]
+        metrics['mean_roughness_legacy'] = round(legacy_med, 4)
+        metrics['max_roughness_legacy'] = round(legacy_max, 4)
     return rows, metrics
-
 
 FLUTTER_ROLES = ('pad', 'melody', 'lead', 'counter')   # counter added: on the Amazon render the flute counter-line was the worst (0.23)
 FLUTTER_BAND_HZ = (6.0, 25.0)       # faster than vibrato (4-7 Hz), slower than pitch: the choppy-gate / stepping zone

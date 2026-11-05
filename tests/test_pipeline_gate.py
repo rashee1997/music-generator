@@ -241,5 +241,39 @@ class Cli(unittest.TestCase):
             self.assertEqual(rep['attempts'][-1]['fails'] == 0, r.returncode == 0)     # the exit code tells the truth
 
 
+class PresetAdoption(unittest.TestCase):
+    """A project preset is the source of truth for sound and place; the score keeps its notes and role."""
+
+    def adopt(self, td, preset, track):
+        import pipeline
+        d = Path(td) / 'presets' / 'vocals'
+        d.mkdir(parents=True, exist_ok=True)
+        (d / (preset['name'] + '.json')).write_text(json.dumps(preset), encoding='utf-8')
+        return pipeline.MusicPipeline(verbose=False).adopt_presets({'tracks': [track]}, presets_dir=td, project_dir=td)
+
+    def test_preset_sound_and_place_beat_stale_score_values(self):
+        track = dict(name='answer', instrument='answer', role='lead', gain_db=-3.0,
+                     spatial=dict(azimuth=0.0, distance=1.0), formants=[500.0],
+                     notes=[dict(t=0.0, d=1.0, p=60, v=0.8)])
+        preset = dict(name='answer', character='a trait', formants=[430.0], bandwidths=[145.0],
+                      breathing=dict(capacity_s=9.0), vowel='a', spatial=dict(azimuth=135.0, distance=2.5))
+        tr = self.adopt(tempfile.mkdtemp(), preset, track)['tracks'][0]
+        self.assertEqual(tr['spatial'], dict(azimuth=135.0, distance=2.5))      # not shadowed by the score
+        self.assertEqual(tr['formants'], [430.0])
+        self.assertEqual(tr['bandwidths'], [145.0])                             # a key the old whitelist dropped
+        self.assertEqual(tr['breathing'], dict(capacity_s=9.0))
+        self.assertEqual(tr['vowel'], 'a')
+        self.assertEqual(tr['character'], 'a trait')
+        self.assertEqual((tr['name'], tr['role'], tr['gain_db']), ('answer', 'lead', -3.0))
+        self.assertEqual(tr['notes'], track['notes'])
+
+    def test_preset_fills_a_key_the_score_does_not_set(self):
+        track = dict(name='answer', instrument='answer', notes=[])
+        preset = dict(name='answer', eq=dict(low_shelf_db=-2.0), role='lead')
+        tr = self.adopt(tempfile.mkdtemp(), preset, track)['tracks'][0]
+        self.assertEqual(tr['eq'], dict(low_shelf_db=-2.0))
+        self.assertEqual(tr['role'], 'lead')
+
+
 if __name__ == '__main__':
     unittest.main()

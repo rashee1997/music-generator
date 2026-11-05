@@ -201,10 +201,27 @@ avoid that.
 | `vocal.intonation` | pitch against the score, vibrato excluded | mean 60 cents |
 | `vocal.dynamics` | note level follows velocity (no per-note normalisation) | correlation at least 0.5 |
 | `vocal.hum_tone` | a hum stays dark | at most 2% above 1.5 kHz |
+| `vocal.ring` | the singer's formant is an F3-F5 cluster (measured spread of the produced pole track) | at most 400 Hz |
+| `vocal.formant_tuning` | level at f0 against the F1 band on notes whose f0 is above F1 | deficit at most 6 dB |
+| `vocal.consonant` | consonant centroid inside its declared band, stop VOT inside tolerance | VOT ±30 %, centroid inside |
+| `vocal.coarticulation` | the formant track moves toward the next vowel before the note boundary | at least 20 ms early |
+| `vocal.perturbation` | local period jitter measured on the signal (not smooth flutter) | 0.3-2 % |
+| `vocal.passaggio` | register parameters stay continuous across the break | step at most 0.01 |
+| `vocal.vibrato` | amplitude modulation present and correlated with the f0 modulation | r at least 0.5, depth at least 0.2 dB |
+| `vocal.identity` | two singers' tracts differ (length × pharynx scale) | at least 2 % |
+
+Every number above is a starting value, measured on the engine's own output and never on the config that asked for it.
 
 `project_gate` also checks vocal presets and a track's `vocal` block: unknown style, register, vowel or expression, numbers out of
 range, and a placeholder `character`. Relaxing a row needs a reason, in a gate profile or the score's `gate` block; `vocal.integrity`
 cannot be relaxed. A PASS means the measurable faults are absent, not that the voice is good.
+
+`report` also carries the measured technique numbers (`ring_spread_hz`, `tuning_deficit_db`, `coart_lead_ms`, `jitter_pct`,
+`passaggio_step`, `vib_am_db`, `vib_am_corr`, `consonants`, `identity_pct`) so the rows above judge the signal, not the preset.
+
+`vib_am_db`/`vib_am_corr` are read from the realised glottal cycles, one note at a time, only where the vibrato is
+developed and outside rests/creak, and only in the band around that note's own modulation peak; an ensemble reports the
+phrase where the coupling is fully developed. They are never read off the `vibrato` config.
 
 `report['phrasing']` (contours used, timing std/max, accent depth, inhale spread, tempo) is **informational**.
 No gate row judges it: these numbers say what the phrase did, not whether it was good.
@@ -213,7 +230,13 @@ No gate row judges it: these numbers say what the phrase did, not whether it was
 
 - **Not listened to.** All checks are objective. Realism, emotion and phrasing are unjudged. Run `listen.py` and use your ears.
 - Numbers are literature-informed starting points, not from the knowledge base, not tuned by ear (`defaults.json` lists the sources).
-- Vowels and hums only: no words, no consonants, no speech.
+- **Syllables, not words.** `consonants` adds the missing syllable layer (stops, fricatives, nasals, liquids, a trill), but
+  there is no lexicon, no language and no text setting. A sung text still needs a recording or a speech model, which this
+  skill forbids.
+- The singer's formant, formant tuning, vowel cover, creak and the consonant recipes are literature-informed starting
+  values (Klatt 1980, Sundberg 1975/1987, Peterson & Barney 1952, Ladefoged & Johnson). They are unmeasured as a *whole
+  voice*; `listen.py` is the only judge of whether the result reads as a person.
+- Anti-formants are approximated by one notch: a nasal consonant is a murmur with one null, not a full nasal tract model.
 - A hum-to-vowel change inside one phrase starts a new phrase (no crossfade between the two models).
 - A first phrase at time 0 has no room for an inhale.
 - Styles are synthesis profiles, not claims of authentic reproduction of any tradition.
