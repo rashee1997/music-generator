@@ -593,6 +593,7 @@
         "formant_tuning": {"type": "number", "minimum": 0, "maximum": 1, "description": "raise F1 toward f0 when f0 approaches F1 (Sundberg 1975)"},
         "tuning_threshold": {"type": "number", "minimum": 0.5, "maximum": 1.5},
         "tuning_f2_share": {"type": "number", "minimum": 0, "maximum": 1},
+        "tuning_upper_share": {"type": "number", "minimum": 0, "maximum": 1, "description": "share of the tuning step applied to F3-F5; 0 keeps them fixed (Joliveau, Smith & Wolfe 2004 measure the upper resonances rising with f0)"},
         "cover": {"type": "number", "minimum": 0, "maximum": 1, "description": "vowel modification toward the covered neighbour above the passaggio"},
         "cover_start_midi": {"type": "number"},
         "cover_span_semitones": {"type": "number"},

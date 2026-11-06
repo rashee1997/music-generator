@@ -7,6 +7,7 @@
     "Fujimura 1962 / Dang, Honda, Suzuki 1994 on nasal murmur formants and the /m/ anti-resonance",
     "Sundberg 1987, 'The Science of the Singing Voice' (singer's formant, vibrato 5-7 Hz)",
     "Sundberg 1975, 'Formant technique in a professional female singer', Acustica 32 (formant tuning above F1)",
+    "Joliveau, Smith & Wolfe 2004, 'Vocal tract resonances in singing: the soprano voice', JASA 116 (R1:f0 tuning, and R4 rising with f0: regression 0.46)",
     "Klatt 1980 (F4/F5 targets, five-pole cascade reference)",
     "Peterson & Barney 1952, 'Control methods used in a study of the vowels', JASA 24 (F1-F3 of /ae/, /E/, /I/, /O/)",
     "Ohman 1966, 'Coarticulation in VCV utterances', JASA 39 (anticipatory vowel-to-vowel coarticulation)",
@@ -206,6 +207,7 @@
     "formant_tuning": 1.0,
     "tuning_threshold": 0.9,
     "tuning_f2_share": 0.5,
+  "tuning_upper_share": 0.0,
     "cover": 0.0,
     "cover_start_midi": 64.0,
     "cover_span_semitones": 3.0,
@@ -1117,6 +1119,10 @@
       1.5
     ],
     "technique.tuning_f2_share": [
+      0,
+      1
+    ],
+    "technique.tuning_upper_share": [
       0,
       1
     ],

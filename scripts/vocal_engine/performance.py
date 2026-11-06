@@ -263,11 +263,17 @@ def _calibration(sr, cfg, hum, F, BW, style, register, nasality, hz=220.0):
 
 def _tuned_formants(F, f0, cfg):
     """The formants a singer's tract actually has at pitch `f0`: F1 follows f0 when f0 climbs into it (Sundberg's
-    formant tuning), F2 follows by `tuning_f2_share`, and F1 stays under F2.
+    formant tuning), F2 follows by `tuning_f2_share`, the formants above F2 by `tuning_upper_share`, and F1 stays
+    under F2.
 
     One implementation for two callers: the per-sample track below and the calibration that sets the timbre's gain.
     Measured on a real phrase, calibrating the untuned F1 (430 Hz) while synthesising the tuned one (766 Hz at
     f0 784 Hz) put a 7 dB pitch-dependent error on `note_rms`, so the level no longer followed velocity.
+
+    `tuning_upper_share` is 0 by default, so a preset that does not ask for it renders exactly as before. It exists
+    because tuning does not stop at F2: measured on sopranos, the regression of R4 on f0 is 0.46 (Joliveau, Smith &
+    Wolfe 2004), i.e. the upper resonances climb with pitch too, and an F3-F5 cluster that stays put while the pitch
+    climbs is the part of the tract that does not follow the singer.
     """
     F = np.array(F, dtype=float)
     te = cfg.get('technique') or {}
@@ -278,6 +284,10 @@ def _tuned_formants(F, f0, cfg):
     over = f0 > float(te.get('tuning_threshold', 0.9)) * F[0]
     d = np.where(over, tune * (f0 - F[0]), 0.0)
     F[1] = F[1] + float(te.get('tuning_f2_share', 0.5)) * d
+    upper = float(te.get('tuning_upper_share', 0.0))
+    if upper > 0 and F.shape[0] > 2:
+        F[2:] = F[2:] + upper * d
+        F[2] = np.maximum(F[2], F[1] + 1.0)      # keep the bank ordered even at an extreme share
     F[0] = np.minimum(F[0] + d, 0.95 * F[1])
     return F
 

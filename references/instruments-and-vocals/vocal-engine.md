@@ -52,6 +52,12 @@ events -> split into monophonic lines (chords become lines) -> for each singer (
   (`consonants.tract_mix` 0.35) of their energy through the following vowel's formants.
 - **Tract.** Parallel two-pole resonators, each with gain exactly 1 at its centre (the old code's normalisation was
   evaluated at the wrong point). Formants can move inside a phrase (vowel changes blend over `performance.vowel_blend_ms`).
+- **Formant tuning.** `technique.formant_tuning` (1.0) moves F1 toward f0 once f0 passes `tuning_threshold` (0.9) x F1,
+  and `tuning_f2_share` (0.5) carries F2 with it: Sundberg's R1:f0 tuning, so a high note keeps its fundamental on a
+  formant instead of in a valley. `tuning_upper_share` (0 by default) carries F3-F5 by the same step. It is off by
+  default so no existing render changes; 0.46 is the measured regression of R4 on f0 in sopranos (Joliveau, Smith &
+  Wolfe 2004, JASA 116), which is the value to start from when a preset wants the upper tract to follow the pitch.
+  Moving F3-F5 together shifts the singer's-formant cluster without widening it, so `vocal.ring` still reads one cluster.
 - **Loudness.** One calibration constant per timbre **and pitch** (`dynamics.pitch_compensation` 1 = a singer evens out the
   level between pitches; 0 = raw resonance). It is not a per-note normaliser: velocity, phrase arc and dynamics sit on top.
   Without it, a harmonic landing near a formant made some pitches 6 dB louder (found by the gate test, fixed).
@@ -261,6 +267,10 @@ phrase where the coupling is fully developed. They are never read off the `vibra
 - The singer's formant, formant tuning, vowel cover, creak and the consonant recipes are literature-informed starting
   values (Klatt 1980, Sundberg 1975/1987, Peterson & Barney 1952, Ladefoged & Johnson). They are unmeasured as a *whole
   voice*; `listen.py` is the only judge of whether the result reads as a person.
+- `technique.tuning_upper_share` rests on a measurement of the *tract* (Joliveau, Smith & Wolfe 2004: R4 rises with f0,
+  regression 0.46), not on a measurement of this engine's output. The default is 0 and nothing has been listened to, so
+  treat a non-zero value as a preset experiment, not as a proven improvement. The regression is an average over sopranos:
+  it says the direction and roughly the size, not what one singer does.
 - Anti-formants are approximated by one notch: a nasal consonant is a murmur with one null, not a full nasal tract model.
 - A hum-to-vowel change inside one phrase starts a new phrase (no crossfade between the two models).
 - A first phrase at time 0 has no room for an inhale.

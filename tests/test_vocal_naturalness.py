@@ -126,6 +126,24 @@ class FormantTuning(unittest.TestCase):
         self.assertGreater(got[1.0][0], 1.5 * got[0.0][0])
         self.assertLessEqual(got[1.0][1], 2.0)          # tuned: the f0 harmonic sits on F1 now
 
+    def test_upper_formants_track_pitch_only_when_asked(self):
+        """Tuning moves F1 and F2 toward f0. F3-F5 stay put unless `tuning_upper_share` asks for them to follow,
+        because the measured regression of R4 on f0 in sopranos is 0.46 (Joliveau, Smith & Wolfe 2004) and the
+        default must keep every existing render unchanged. Moving them equally leaves the singer's-formant cluster
+        the same width: it is a shift of the cluster, not a wider band."""
+        F = np.array([730.0, 1090.0, 2440.0, 3400.0, 4500.0])
+        f0 = np.array(880.0)
+        off = pf._tuned_formants(F, f0, cfg(technique=dict(formant_tuning=1.0)))
+        self.assertTrue(np.array_equal(off[2:], F[2:]), 'the upper formants moved without being asked')
+        on = pf._tuned_formants(F, f0, cfg(technique=dict(formant_tuning=1.0, tuning_upper_share=0.46)))
+        self.assertTrue(np.allclose(on[2:], F[2:] + 0.46 * (880.0 - 730.0), atol=0.5), on)
+        self.assertAlmostEqual(on[4] - on[2], off[4] - off[2], places=6)
+
+    def test_upper_share_keeps_the_bank_ordered(self):
+        F = pf._tuned_formants(np.array([730.0, 1090.0, 2440.0, 3400.0, 4500.0]), np.array(1760.0),
+                               cfg(technique=dict(formant_tuning=1.0, tuning_upper_share=1.0)))
+        self.assertTrue(np.all(np.diff(F) > 0), F)
+
     def test_low_notes_are_untouched_by_tuning(self):
         a = phrase([dict(t=0, dur=1.0, p=45, v=90)], cfg(technique=dict(formant_tuning=1.0)))['signal']
         b = phrase([dict(t=0, dur=1.0, p=45, v=90)], cfg(technique=dict(formant_tuning=0.0)))['signal']
