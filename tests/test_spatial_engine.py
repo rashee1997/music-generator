@@ -255,6 +255,18 @@ class Deliverables(unittest.TestCase):
             render.render_deliverable(self._score(), self._stems(), 'binaural', path, SR)
             self.assertEqual(sf.info(path).channels, 2)
 
+    def test_delivery_gate_fails_when_channel_count_does_not_match_target(self):
+        import os
+        import tempfile
+        import soundfile as sf
+        import spatial_gate
+        with tempfile.TemporaryDirectory() as td:
+            path = os.path.join(td, 'stereo.wav')
+            sf.write(path, np.zeros((SR // 10, 2)), SR)
+            rows = []
+            spatial_gate.output_rows(dict(output_targets='immersive_7_1_4'), path, rows)
+        self.assertTrue(any(level == 'FAIL' and name == 'delivery.format' for level, name, _ in rows), rows)
+
 
 if __name__ == '__main__':
     unittest.main()

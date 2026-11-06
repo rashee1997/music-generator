@@ -70,8 +70,21 @@ class GateCheckTest(unittest.TestCase):
         res = gc.check_dc(Signal(fx.add_dc(self.stems['bass'], offset=0.02), fx.SR))
         self.assertGreater(res['value'], res['threshold'], res['detail'])
 
+    def test_dc_checks_all_multichannel_outputs(self):
+        channels = np.zeros((fx.SR * 2, 4), dtype=np.float64)
+        channels[:, 3] = 0.02
+        res = gc.check_dc(Signal(channels, fx.SR))
+        self.assertGreater(res['value'], res['threshold'], res['detail'])
+        self.assertEqual(len(res['channel_means']), 4)
+
     def test_clipping_fires_on_hard_clip(self):
         res = gc.check_clipping(Signal(fx.clip_hard(self.stems['lead']), fx.SR))
+        self.assertGreater(res['value'], 0.0, res['detail'])
+
+    def test_clipping_checks_all_multichannel_outputs(self):
+        channels = np.zeros((fx.SR, 4), dtype=np.float64)
+        channels[-1, 3] = 1.0
+        res = gc.check_clipping(Signal(channels, fx.SR))
         self.assertGreater(res['value'], 0.0, res['detail'])
 
     def test_flatness_quiet_on_a_tone_and_loud_on_noise(self):

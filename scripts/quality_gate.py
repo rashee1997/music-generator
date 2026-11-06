@@ -393,20 +393,27 @@ def audio_checks(path, score, out, metrics=None):
     target = master.get('lufs', -14.0)
     lufs_tol = master.get('lufs_tolerance', master.get('tolerance_lu', 2.5))
     tp_target = master.get('true_peak', -1.5)
-    r = nc.analyse(path, target_lufs=target)
-    x, sr = nc.load(path)
-    # A surround master is judged on its BS.775 fold-down, not on the mean of its channels: the fold is what a
-    # listener without the room hears, and a channel mean changes with the channel count. nc.load returns two
-    # channels, so the real channel count is read from the file itself.
+    # A speaker-layout master is analysed through its layout's fold-down, never a channel mean or the first two
+    # channels alone. Per-channel delivery limits are independently certified by spatial_gate.output_rows.
     import render_targets
     import soundfile as _sf
     _multi, _multi_sr = _sf.read(path, always_2d=True)
+    _layout = None
     for _name in render_targets.resolve(score)['selected']:
         _tgt = render_targets.get(_name) or {}
         if _tgt.get('layout') and render_targets.channels(_name) == _multi.shape[1]:
-            from spatial_engine import master as _spatial_master
-            r['lufs'] = _spatial_master.fold_lufs(_multi, _tgt['layout'])
+            _layout = _tgt['layout']
             break
+    if _layout:
+        from spatial_engine import downmix as _downmix, master as _spatial_master
+        x = _downmix.fold(_multi, _layout)
+        sr = _multi_sr
+        r = nc.analyse(path, target_lufs=target, audio=(x, sr))
+        r['lufs'] = _spatial_master.fold_lufs(_multi, _layout)
+    else:
+        x = np.repeat(_multi, 2, axis=1) if _multi.shape[1] == 1 else _multi[:, :2]
+        sr = _multi_sr
+        r = nc.analyse(path, target_lufs=target, audio=(x, sr))
     spatial_check(path, score, out)
     for level, msg in nc.verdicts(r, target=target):
         _row(out, level, 'audio', msg)
@@ -433,7 +440,7 @@ def audio_checks(path, score, out, metrics=None):
     else:
         _row(out, 'PASS', 'silence', 'no silent gap in the middle of the piece')
     clicks = find_clicks(mono)
-    gate_clicks = gc.check_clicks(GateAudio(path))
+    gate_clicks = gc.check_clicks(GateAudio(path, y=x, sr=sr))
     n_clicks = max(len(clicks), int(gate_clicks.get('mad_count', 0)))
     if n_clicks:
         when = ', '.join(f'{i / sr:.3f}s' for i in clicks[:5])
@@ -515,25 +522,34 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
     A defect injected into the summed mix must have a row to fail; these are the unsuffixed master ids.
     """
     sig = GateAudio(wav_path)
+    program_sig = sig
+    import render_targets
+    for target_name in render_targets.resolve(score)['selected']:
+        target = render_targets.get(target_name) or {}
+        if target.get('layout') and render_targets.channels(target_name) == sig.channels:
+            from gate_audio import Signal
+            from spatial_engine import downmix
+            program_sig = Signal(downmix.fold(sig.audio, target['layout']), sig.sr)
+            break
     sheet = _direction_sheet(project_dir) if project_dir else {}
-    secs = gc.section_bounds(score, sig.dur, sheet)
+    secs = gc.section_bounds(score, program_sig.dur, sheet)
     boundaries = [s['start_s'] for s in secs if s['start_s'] > 0.05]
 
-    res = gc.check_dropout(sig)
+    res = gc.check_dropout(program_sig)
     level = 'FAIL' if res.get('holes') else 'PASS'
     _row(out, level, 'dropout', res['detail'])
     _metric(metrics, row='dropout', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
             threshold=res['threshold'], margin=res['margin'], worst_times_s=res['times'][:8], calibrated=False,
             detail=res['detail'])
 
-    res = gc.check_cut(sig, boundaries)
+    res = gc.check_cut(program_sig, boundaries)
     level = 'FAIL' if res['value'] > res['threshold'] else 'PASS'
     _row(out, level, 'cut.hard', res['detail'])
     _metric(metrics, row='cut.hard', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
             threshold=res['threshold'], margin=res['margin'], worst_times_s=res['times'][:8], calibrated=False,
             detail=res['detail'])
 
-    res = gc.check_abrupt_end(sig)
+    res = gc.check_abrupt_end(program_sig)
     level = 'FAIL' if res.get('fail') else 'PASS'
     _row(out, level, 'end.abrupt', res['detail'])
     _metric(metrics, row='end.abrupt', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
@@ -563,7 +579,7 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
              f'score.bpm {float(bpm_ref):g} is declared, but the score has no percussion and no isochronous part: a beat '
              'tracker cannot measure a pulse the music does not play, so the tempo is not judged')
     elif bpm_ref:
-        res = gc.check_tempo(sig, float(bpm_ref))
+        res = gc.check_tempo(program_sig, float(bpm_ref))
         if not res.get('skipped'):
             level = 'FAIL' if res.get('fail') else 'PASS'
             _row(out, level, 'tempo.audio', res['detail'])
@@ -571,7 +587,7 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
                     unit=res['unit'], threshold=res['threshold'], margin=res['margin'], worst_times_s=[],
                     calibrated=False, detail=res['detail'])
 
-    res = gc.section_energy(sig, score, sheet)
+    res = gc.section_energy(program_sig, score, sheet)
     level = res.pop('level', 'PASS')
     _row(out, level, 'section.energy', res['detail'])
     _metric(metrics, row='section.energy', stage='mix', stem=None, level=level, value=res['value'],

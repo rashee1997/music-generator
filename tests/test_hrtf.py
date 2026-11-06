@@ -23,6 +23,7 @@ from scipy import signal
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'scripts'))
 from spatial_hrtf import binaural  # noqa: E402
+from spatial_hrtf.io import load_sofa_hrirs  # noqa: E402
 
 SR = 44100
 
@@ -37,6 +38,31 @@ def _cues(y):
     L, R = y[:, 0], y[:, 1]
     ild = 20 * np.log10(np.sqrt((R ** 2).mean()) / np.sqrt((L ** 2).mean()))
     return ild, (np.argmax(signal.correlate(R, L, 'full')) - (len(L) - 1)) / SR * 1000
+
+
+class TestSofaValidation(unittest.TestCase):
+    def test_sofa_loader_accepts_single_measurement_without_squeezing_ears(self):
+        from unittest.mock import patch
+        data = {
+            'Data.SamplingRate': np.array([[44100.0]]),
+            'Data.IR': np.ones((1, 2, 16)),
+            'SourcePosition': np.array([[0.0, 0.0, 1.0]]),
+        }
+        with patch('spatial_hrtf.io.load_sofa_data', return_value=data):
+            hrir = load_sofa_hrirs('unused.sofa')
+        self.assertEqual(hrir.left.shape, (1, 16))
+        self.assertEqual(hrir.right.shape, (1, 16))
+
+    def test_sofa_loader_rejects_invalid_measurement_geometry(self):
+        from unittest.mock import patch
+        data = {
+            'Data.SamplingRate': np.array([[44100.0]]),
+            'Data.IR': np.ones((1, 2, 16)),
+            'SourcePosition': np.array([[0.0, 100.0, 1.0]]),
+        }
+        with patch('spatial_hrtf.io.load_sofa_data', return_value=data):
+            with self.assertRaisesRegex(ValueError, 'elevation'):
+                load_sofa_hrirs('unused.sofa')
 
 
 @unittest.skipUnless(binaural.available(), 'head data not downloaded')

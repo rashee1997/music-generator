@@ -288,7 +288,7 @@ def load_sofa_data(filename):
     with h5py.File(os.path.expanduser(filename), 'r') as f:
         out_dict = {}
         for key, value in f.items():
-            out_dict[key] = np.squeeze(value)
+            out_dict[key] = np.asarray(value)
     return out_dict
 
 
@@ -316,17 +316,34 @@ def load_sofa_hrirs(filename):
 
     """
     sdata = load_sofa_data(os.path.expanduser(filename))
-    fs = int(sdata['Data.SamplingRate'])
-    irs = np.asarray(sdata['Data.IR'])
-    grid = np.asarray(sdata['SourcePosition'])
-    assert (abs((grid[:, 2]-grid[:, 2].mean())).mean() < 0.1)  # Otherwise not r
-    grid_azi, grid_zen = np.deg2rad(grid[:, 0]), np.pi/2 - np.deg2rad(
-                                                            grid[:, 1])
-    assert (all(grid_zen > -10e-6))  # Otherwise not zen
-    irs_left = np.squeeze(irs[:, 0, :])
-    irs_right = np.squeeze(irs[:, 1, :])
-    HRIRs = sig.HRIRs(irs_left, irs_right, grid_azi, grid_zen, fs)
-    return HRIRs
+    missing = [key for key in ('Data.SamplingRate', 'Data.IR', 'SourcePosition') if key not in sdata]
+    if missing:
+        raise ValueError(f'SOFA file is missing required field(s): {", ".join(missing)}')
+
+    rate = np.asarray(sdata['Data.SamplingRate'], dtype=float).reshape(-1)
+    if rate.size != 1 or not np.isfinite(rate[0]) or rate[0] <= 0:
+        raise ValueError('SOFA Data.SamplingRate must be one finite positive value')
+    fs = int(rate[0])
+    if fs != rate[0]:
+        raise ValueError(f'SOFA Data.SamplingRate must be an integer sample rate, got {rate[0]}')
+
+    irs = np.asarray(sdata['Data.IR'], dtype=float)
+    grid = np.asarray(sdata['SourcePosition'], dtype=float)
+    if irs.ndim != 3 or irs.shape[1] != 2 or irs.shape[0] < 1 or irs.shape[2] < 1:
+        raise ValueError(f'SOFA Data.IR must have shape (measurements, 2 ears, samples), got {irs.shape}')
+    if grid.ndim != 2 or grid.shape[0] != irs.shape[0] or grid.shape[1] < 3:
+        raise ValueError(f'SOFA SourcePosition must have shape ({irs.shape[0]}, 3 or more), got {grid.shape}')
+    if not np.isfinite(irs).all() or not np.isfinite(grid[:, :3]).all():
+        raise ValueError('SOFA HRIR samples and source positions must be finite')
+    if float(np.mean(np.abs(grid[:, 2] - grid[:, 2].mean()))) >= 0.1:
+        raise ValueError('SOFA SourcePosition must describe a constant-radius measurement grid')
+    if np.any((grid[:, 1] < -90.0) | (grid[:, 1] > 90.0)):
+        raise ValueError('SOFA SourcePosition elevation must be between -90 and 90 degrees')
+
+    grid_azi = np.deg2rad(grid[:, 0])
+    grid_zen = np.pi / 2 - np.deg2rad(grid[:, 1])
+    irs_left, irs_right = irs[:, 0, :], irs[:, 1, :]
+    return sig.HRIRs(irs_left, irs_right, grid_azi, grid_zen, fs)
 
 
 def sofa_to_sh(filename, N_sph, sh_type='real'):

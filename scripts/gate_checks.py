@@ -425,11 +425,12 @@ def _peak_ratio(a):
 
 def check_dc(sig, dc_max=0.001, drift_max=0.001):
     """Per-channel DC mean and 1 s block drift."""
-    means = [float(np.mean(sig.stereo[:, c])) for c in range(sig.stereo.shape[1])]
+    channels = sig.audio.shape[1]
+    means = [float(np.mean(sig.audio[:, c])) for c in range(channels)]
     block = max(1, int(sig.sr))
     drift = 0.0
-    for c in range(sig.stereo.shape[1]):
-        x = sig.stereo[:, c]
+    for c in range(channels):
+        x = sig.audio[:, c]
         n = len(x) // block
         if n >= 2:
             bm = x[:n * block].reshape(n, block).mean(axis=1)
@@ -441,7 +442,7 @@ def check_dc(sig, dc_max=0.001, drift_max=0.001):
 
 def check_clipping(sig, full=0.999):
     """Samples at or above `full`, plus flat-top runs of 3+ samples."""
-    a = np.abs(sig.stereo)
+    a = np.abs(sig.audio)
     count = int(np.sum(a >= full))
     flats = 0
     for c in range(a.shape[1]):

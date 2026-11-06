@@ -40,13 +40,13 @@ def output_rows(score, wav_path, out):
     try:
         sig = gate_audio.load(wav_path)
     except Exception as exc:
-        _row(out, 'WARN', 'delivery.format', f'cannot read {wav_path} to check the requested format ({exc})')
+        _row(out, 'FAIL', 'delivery.format', f'cannot read {wav_path} to verify the requested format ({exc})')
         return
     n_ch = sig.channels
     targets = targets_for(score, n_ch)
     if not targets:
         requested = render_targets.resolve(score)['selected']
-        _row(out, 'WARN', 'delivery.format',
+        _row(out, 'FAIL', 'delivery.format',
              f'{wav_path} has {n_ch} channel(s), which matches none of the requested target(s) '
              f'{", ".join(requested) or "none"}: the delivered format is not the promised one')
         return

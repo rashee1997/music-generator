@@ -7,11 +7,9 @@ load_when:
   - an imm gate row fails
 ---
 
-# Immersive headphone spatial audio (height, front/back, room, width)
+# Immersive spatial audio: headphone and speaker renders
 
-"Immersive" here means one thing: the stereo headphone master gets real height, placement, room and width through the systems the skill already has
-(`mixer.py`, `spatial_hrtf` measured-head route, the `spaces` and `mix` presets). There is no separate engine and no multichannel (7.1.4) output.
-Switch it on per piece in the **project's mix preset**; it is off by default, so older projects mix exactly as before.
+"Immersive" covers two distinct output paths: stereo headphone spatialization through `mixer.py`, `spatial_hrtf` and the `spaces`/`mix` presets; and discrete channel-based speaker renders through `spatial_engine`. The speaker renderer supports 7.1 (System H), 7.1.2 (System I) and 7.1.4 (System J) WAV deliverables. These are fixed channel layouts, not object-based Dolby Atmos, ADM or a binaural headphone master. Each path is selected as an output target; headphone height processing remains off unless enabled in the project's mix preset.
 
 ## 1. Switch and rules (mix preset, kind `mix`)
 
@@ -105,4 +103,4 @@ Loudness, true peak, clicks and silence are the existing rows.
 - Surface diffusion is not modelled (a specular image cannot scatter); `geometry` keeps the strongest `max_taps` images and stops at `min_level_db`. Below the Schroeder frequency of a small room the modal behaviour is not modelled either.
 - A listener's own set must be a `.mat` with `hrir_l`/`hrir_r`/`azi`/`zen` or a SOFA file; a set at another rate is resampled, but nothing checks it was measured at the same distance convention as FABIAN.
 - Everything is measured by probes and proxies. Nothing replaces listening on headphones (`listen.py`, then a person).
-- No speaker (7.1.4/Atmos) delivery.
+- The channel-based 7.1, 7.1.2 and 7.1.4 WAV renders are not object-based Atmos/ADM, and speaker-layout gate checks do not replace listening on a correctly configured playback system.
