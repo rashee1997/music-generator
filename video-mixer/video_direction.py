@@ -148,6 +148,24 @@ def sections_from_energy(rep, cfg, duration_s):
     return out
 
 
+def _merge_map(base, over):
+    """Deep-merge a film preset over the one-cue map: dicts merge, anything else replaces."""
+    out = dict(base or {})
+    for k, v in (over or {}).items():
+        out[k] = _merge_map(out[k], v) if isinstance(v, dict) and isinstance(out.get(k), dict) else v
+    return out
+
+
+def _direction_map(cfg, film):
+    """The map the picture is read through: the one-cue staging's map, with the film's `mapping`
+    preset on top. The mapping preset owns tempo, mode and density per AGENTS section 10, so a
+    project that overrides it must change the sheet; its own metadata keys are not part of a map."""
+    dm = dict(cfg['direction_map'])
+    mapping = (film or {}).get('mapping') or {}
+    meta = {'kind', 'name', 'character', 'provenance', 'sources', '_source'}
+    return _merge_map(dm, {k: v for k, v in mapping.items() if k not in meta})
+
+
 def direction_sheet(rep, cfg, brief_text='', title=None, context=None, film=None):
     """The direction sheet: the same fields as `templates/direction_sheet.json`, filled from the picture.
 
@@ -155,7 +173,7 @@ def direction_sheet(rep, cfg, brief_text='', title=None, context=None, film=None
     reel: one section per scene, each with what the music may do in it (`density`, `shot_scale`,
     `allowed_roles`), so the measured arc reaches the score instead of one mean energy.
     """
-    dm = cfg['direction_map']
+    dm = _direction_map(cfg, film)
     src = rep['source']
     duration = float(src['duration_s'])
     tempo = tempo_from_cuts([c['t'] for c in rep['cuts']], dm, float(src['fps']))
@@ -207,6 +225,12 @@ def direction_sheet(rep, cfg, brief_text='', title=None, context=None, film=None
         hits=[dict(t=h['t_s'], kind=h['kind'], sync=h['sync'], sound=h['sound'],
                    why=why[h['kind']]) for h in hits],
         piece_type='video_dialogue' if has_audio else 'video_basic',
+        # the project gate needs one line on why this profile fits; it is a fact about the picture, not a choice:
+        # with speech the dialogue rows carry the weight, without it the picture rows and delivery do.
+        gate_reason=('a cue under the picture\'s own speech: the dialogue rows are the strict ones and the '
+                     'music rows stay those of a scored cue' if has_audio else
+                     'a single cue against a picture with no speech: picture time, cut sync and delivery '
+                     'decide, and the music rows stay those of a cinematic cue'),
         video=dict(enabled=True, preset=cfg.get('name', 'default'), source=rep['path'], in_s=0.0,
                    out_s=round(duration, 3), duration_s=round(duration, 3), fps=float(src['fps']),
                    cuts=[c['t'] for c in rep['cuts']], cuts_count=len(rep['cuts']), cut_source=rep['cut_source'],

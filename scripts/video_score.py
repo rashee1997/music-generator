@@ -122,7 +122,9 @@ def run(video, project, title=None, brief='', preset='default', profile=None, ou
         print(f'  VIDEO SCORE: {name}')
         print('=' * 78)
 
-    probe_rep = video_probe.probe(video, analysis, verbose=verbose)
+    # the probe reads `probe` (analysis.json) and `direction_map.energy_curve_bins` (mapping.json); a film
+    # preset is split by concern, so the probe gets the two merged instead of only analysis.
+    probe_rep = video_probe.probe(video, dict(analysis, direction_map=mapping), verbose=verbose)
     probe_path = os.path.join(reports, 'video_probe.json')
     with open(probe_path, 'w', encoding='utf-8') as fh:
         json.dump(probe_rep, fh, indent=2)
@@ -228,8 +230,9 @@ def run(video, project, title=None, brief='', preset='default', profile=None, ou
     report = pipeline.MusicPipeline(verbose=verbose).execute(score_path, project=project, out_wav=master_wav,
                                                              json_report=ci_path, video_rows=programme_rows)
 
-    rows_out = [(c['level'], c['check'], c['detail']) for c in report.get('ci_checks') or []
-                if str(c['check']).startswith(('video.', 'reel.'))]
+    # a blocked report writes rows as `name` (a passing one as `check`); read either so a failure is reported
+    rows_out = [(c['level'], c.get('check') or c.get('name'), c['detail']) for c in report.get('ci_checks') or []
+                if str(c.get('check') or c.get('name')).startswith(('video.', 'reel.'))]
     fails = int((report.get('ci_summary') or {}).get('fail', 0))
     verdict = 'CERTIFIED' if fails == 0 and report.get('status') == 'PASSED' else f'NOT CERTIFIED ({fails} FAIL)'
     print('\n  --- VIDEO SCOREBOARD ---')
