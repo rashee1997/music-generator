@@ -279,7 +279,7 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
             res = gc.check_tick(sig, rho_min=gp.param('stem.tick', 'rho'),
                                 min_events=int(gp.param('stem.tick', 'min_events')),
                                 cv_max=gp.param('stem.tick', 'cv_max'),
-                                min_ripple_db=gp.param('stem.tick', 'ripple_db'))
+                                min_rise_db=gp.param('stem.tick', 'rise_db'))
             _emit(rows, metrics, 'stem.tick', 'FAIL' if res.get('periodic') else 'PASS', res, name)
         else:
             _skip(rows, metrics, 'stem.tick', name, gp)

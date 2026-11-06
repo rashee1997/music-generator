@@ -69,6 +69,7 @@
     "feel.resolution": {},
     "feel.spiral": {},
     "feel.witek": {},
+    "focus.declared": {},
     "imm.band": {
       "min_hf_frac": 0.003
     },
@@ -106,6 +107,8 @@
     "imm.width": {
       "max_corr": 0.95
     },
+    "intent.avoid": {},
+    "intent.vocabulary": {},
     "key.mode": {},
     "kick.grid": {
       "min_lock": 0.7
@@ -227,7 +230,8 @@
     "stem.tick": {
       "cv_max": 0.05,
       "min_events": 6,
-      "rho": 0.35
+      "rho": 0.35,
+      "rise_db": 3.0
     },
     "stem.vocal": {},
     "tempo.audio": {
@@ -316,6 +320,10 @@
     "vocal.ring": {
       "max_spread_hz": 400.0,
       "spread_at_zero_hz": 1600.0
+    },
+    "vocal.spatial": {
+      "max_stereo_corr": 0.98,
+      "min_mono_db": -3.0
     },
     "vocal.vibrato": {
       "min_corr": 0.5,

@@ -136,9 +136,17 @@ def clip_hard(x, gain=20.0):
     return np.clip(np.asarray(x) * gain, -1.0, 1.0)
 
 
-def add_tick(x, at=2.0, period=0.25, amp=0.08, count=12):
+def add_tick(x, at=2.0, period=0.25, amp=0.2, count=12):
+    """A machine-gun tick: a 5 ms 1.8 kHz burst repeated on a grid.
+
+    `amp` is the burst's peak; the stems are normalised to 0.25, so the default is a retrigger at programme level.
+    `_note()` cannot build this: its 50 ms release scaling shrinks a 5 ms note to about 1/80 of `amp` (measured peak
+    0.001 against a 0.063 RMS pad), so the old fixture injected a tick 36 dB below the bed and no detector could
+    honestly call it one.
+    """
     y = np.array(x, copy=True)
-    burst = _note(1800.0, 0.005, amp)
+    n = max(1, int(0.005 * SR))
+    burst = amp * np.sin(2 * np.pi * 1800.0 * np.arange(n) / SR) * np.hanning(n)
     for k in range(count):
         a = int((at + k * period) * SR)
         if a >= len(y):

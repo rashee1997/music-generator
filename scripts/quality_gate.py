@@ -37,7 +37,7 @@ except Exception:
     median_filter = None
 
 import gate_checks as gc
-from gate_audio import GateAudio
+from gate_audio import GateAudio, Signal
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import naturalness_check as nc
@@ -387,6 +387,18 @@ def immersive_rows(score, path, stems, out):
                  + ('phase cancellation will thin it on phone speakers' if drop > lim else 'holds up on a phone speaker'))
 
 
+def per_channel_clicks(x, sr):
+    """The click measurement for each delivered channel of a multichannel master, or [] for mono/stereo.
+
+    A two-channel file is measured as delivered; a speaker-layout master is folded before the click row, and a fold
+    can hide an impulse that only one channel carries, so every channel is measured on its own.
+    """
+    x = np.asarray(x)
+    if x.ndim != 2 or x.shape[1] <= 2:
+        return []
+    return [gc.check_clicks(Signal(x[:, c], sr)) for c in range(x.shape[1])]
+
+
 def audio_checks(path, score, out, metrics=None):
     """Measurements of the rendered file against the score's own targets."""
     master = score.get('master', {})
@@ -441,6 +453,18 @@ def audio_checks(path, score, out, metrics=None):
         _row(out, 'PASS', 'silence', 'no silent gap in the middle of the piece')
     clicks = find_clicks(mono)
     gate_clicks = gc.check_clicks(GateAudio(path, y=x, sr=sr))
+    # A click can live in one channel of a multichannel master and vanish in the fold-down: measured, a +0.6 FS
+    # impulse on one channel against -0.6 on another leaves the fold at 0.05 peak with no MAD event, while each
+    # delivered channel carries a full-scale jump. Certify the delivered channels one by one and keep the worst, the
+    # way true peak and DC are already per channel.
+    ch_clicks = per_channel_clicks(_multi, sr)
+    if ch_clicks:
+        counts = [max(int(c.get('mad_count', 0)), int(c.get('lpc_count', 0))) for c in ch_clicks]
+        fold_n = max(int(gate_clicks.get('mad_count', 0)), int(gate_clicks.get('lpc_count', 0)))
+        worst = int(np.argmax(counts))
+        if counts[worst] > fold_n:
+            gate_clicks = dict(ch_clicks[worst], channel=worst + 1,
+                               detail=f'channel {worst + 1}: {ch_clicks[worst]["detail"]}')
     n_clicks = max(len(clicks), int(gate_clicks.get('mad_count', 0)))
     if n_clicks:
         when = ', '.join(f'{i / sr:.3f}s' for i in clicks[:5])

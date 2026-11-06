@@ -14,6 +14,7 @@ sys.path.insert(0, HERE)
 
 import gate_checks as gc
 import gate_fixture as fx
+import quality_gate as qg
 from gate_audio import Signal
 
 
@@ -93,6 +94,24 @@ class GateCheckTest(unittest.TestCase):
         self.assertEqual(quiet['windows'], 0, quiet['detail'])
         self.assertGreater(noisy['windows'], 0, noisy['detail'])
 
+    def test_clicks_in_a_multichannel_master_are_checked_per_channel(self):
+        """A click that only one channel carries must not disappear into the fold-down.
+
+        The fixture puts a full-scale impulse on one channel and its mirror on another, which is exactly what a
+        channel mean or a weight-summed fold cancels: the folded signal then has no event at all.
+        """
+        n = fx.SR * 3
+        tone = 0.05 * np.sin(2 * np.pi * 220 * np.arange(n) / fx.SR)
+        x = np.stack([tone] * 6, axis=1)
+        x[int(1.5 * fx.SR), 2] += 0.6
+        x[int(1.5 * fx.SR), 3] -= 0.6
+        self.assertEqual(gc.check_clicks(Signal(x.mean(axis=1), fx.SR))['mad_count'], 0,
+                         'the fold hides the impulse: this test is only meaningful if it does')
+        per_channel = qg.per_channel_clicks(x, fx.SR)
+        self.assertEqual(len(per_channel), 6)
+        self.assertGreater(max(c['mad_count'] for c in per_channel), 0)
+        self.assertEqual(qg.per_channel_clicks(tone, fx.SR), [], 'a mono signal has no per-channel pass')
+
     def test_tick_is_not_periodic_on_clean_material(self):
         res = gc.check_tick(self.pad())
         self.assertFalse(res['periodic'], res['detail'])
@@ -100,6 +119,21 @@ class GateCheckTest(unittest.TestCase):
     def test_tick_fires_on_a_regular_train(self):
         res = gc.check_tick(Signal(fx.add_tick(self.stems['pad']), fx.SR))
         self.assertTrue(res['periodic'], res['detail'])
+        self.assertGreaterEqual(res['rise_db'], 3.0, res['detail'])
+
+    def test_a_level_swing_is_not_a_tick(self):
+        """A tremolo is periodic in both spectrum and level, but it is not a transient, so it is not a tick train.
+
+        The periodic evidence alone does flag it (rho and the grid match), so the peak-rise measurement is what
+        separates the two. A 4 Hz swing of this depth is a musical gesture, not the machine-gun defect the row names.
+        """
+        pad = self.stems['pad']
+        t = np.arange(pad.size) / fx.SR
+        res = gc.check_tick(Signal(pad * (1.0 + 0.40 * np.sin(2 * np.pi * 4.0 * t)), fx.SR))
+        self.assertGreaterEqual(res['value'], 0.35, res['detail'])        # periodic in the spectrum
+        self.assertGreaterEqual(res['grid_matched'], 6, res['detail'])    # and on a grid
+        self.assertFalse(res['periodic'], res['detail'])
+        self.assertLess(res['rise_db'], 3.0, res['detail'])
 
     def test_section_energy_follows_the_score_dynamics(self):
         res = gc.section_energy(Signal(fx.build_mix(self.stems), fx.SR), self.score)
