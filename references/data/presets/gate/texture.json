@@ -1,0 +1,21 @@
+{
+  "name": "texture",
+  "character": "texture-led: colour, grain and slow movement are the subject; there is no tune and no kick, and that is not a defect",
+  "extends": "ambient",
+  "detect": {"keywords": ["texture", "textural", "drone", "granular", "soundscape", "sound design", "atmosphere", "field recording"], "pulse": ["free"]},
+  "focus": {
+    "roles": ["texture", "pad", "drone", "arp"],
+    "fallback": "balance.layers",
+    "label": "a colour that moves: a grain bed, a pad or a slow pattern",
+    "reason": "the piece is made of surface, not of a line; a motif is optional and must not be judged as the subject"
+  },
+  "rows": {
+    "pattern.melody_notes": {"mode": "skip", "reason": "there is no melodic line to judge"},
+    "pattern.loop_short": {"mode": "relax", "max_period_bars": 2, "max_distinct": 2, "reason": "a texture repeats its own grain by design"},
+    "pattern.flat_dynamics": {"mode": "relax", "min_range_frac": 0.06, "reason": "the level holds while the spectrum moves"},
+    "pattern.flags_max": {"mode": "relax", "max": 8, "reason": "few parts, few varied lines"},
+    "masking.vs_melody": {"mode": "skip", "reason": "no figure to unmask; the texture is the subject"},
+    "bow.breath_gap": {"mode": "skip", "reason": "no bowed or wind line"},
+    "balance.vs_lead": {"mode": "apply", "fallback": "balance.layers"}
+  }
+}

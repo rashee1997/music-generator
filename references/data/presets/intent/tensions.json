@@ -1,0 +1,75 @@
+{
+  "kind": "intent",
+  "name": "tensions",
+  "character": "Tension is a mechanism, not an adjective. Each entry names the one device that creates it and what it must NOT resolve into, so a cue asked for tension gets a device a listener's ear already reads as unresolved.",
+  "tensions": {
+    "pedal": {
+      "character": "one pitch held under everything while the harmony moves over it",
+      "device": "a drone or pedal tone at the tonic or dominant, held through two or more chord changes",
+      "resolves_by": "the pedal stops being the bass and the bass moves",
+      "forbidden": ["major_cadence"],
+      "qa": {"min_long_note_frac": 0.4},
+      "sources": ["references/scoring/emotion-and-scoring.md section 3 (tension toolkit)"]
+    },
+    "ostinato": {
+      "character": "the same cell again and again; the ear starts counting and cannot stop",
+      "device": "a short repeating figure, identical in pitch, with only velocity moving",
+      "resolves_by": "the cell breaks",
+      "forbidden": ["rubato_on_the_cell"],
+      "qa": {"min_repeat_frac": 0.5},
+      "sources": ["knowledgebase/genre-and-feel/dynamic-flow.md (repetition as pressure)"]
+    },
+    "tritone": {
+      "character": "diabolus in musica: the interval that refuses to sound finished",
+      "device": "an augmented fourth sounding against a held note, or two voices a tritone apart",
+      "resolves_by": "one of the two voices moves a semitone",
+      "forbidden": ["major_cadence"],
+      "qa": {"min_dissonance_frac": 0.15},
+      "sources": ["references/scoring/emotion-and-scoring.md section 3", "knowledgebase/genre-and-feel/psychoacoustic-genre.md (roughness)"]
+    },
+    "cluster": {
+      "character": "too many notes too close; the ear cannot separate them",
+      "device": "seconds stacked in one register, held",
+      "resolves_by": "the cluster thins to an interval",
+      "forbidden": ["wide_open_voicing"],
+      "qa": {"min_dissonance_frac": 0.25},
+      "sources": ["references/scoring/emotion-and-scoring.md section 3"]
+    },
+    "silence_before": {
+      "character": "the room goes quiet and the audience leans in",
+      "device": "a gap of at least a bar before the event, with no bed carrying through it",
+      "resolves_by": "the event lands",
+      "forbidden": ["bed_through_the_gap"],
+      "qa": {"min_silences": 1},
+      "sources": ["references/scoring/video-scoring.md (the cut before the hit)", "references/scoring/emotion-and-scoring.md section 3"]
+    },
+    "unresolved_dominant": {
+      "character": "a question mark at the end of the sentence",
+      "device": "ending on the dominant or on a suspended chord, with the tonic never sounding last",
+      "resolves_by": "the tonic finally lands, usually in the next cue",
+      "forbidden": ["major_cadence"],
+      "qa": {"ends_on": "dominant_or_sus"},
+      "sources": ["references/scoring/emotion-and-scoring.md section 3"]
+    },
+    "rising_line": {
+      "character": "something is climbing and the audience does not know where",
+      "device": "a line that rises by step across the cue without arriving at a stable pitch",
+      "resolves_by": "the line stops climbing",
+      "forbidden": ["descending_resolution"],
+      "qa": {"min_range_frac": 0.3},
+      "sources": ["references/scoring/emotion-and-scoring.md section 3"]
+    },
+    "static_high": {
+      "character": "a thin high tone that will not go away",
+      "device": "one high pitch, barely moving, present under the whole cue",
+      "resolves_by": "the tone is removed",
+      "forbidden": ["bright_staccato"],
+      "qa": {"min_long_note_frac": 0.5},
+      "sources": ["references/scoring/emotion-and-scoring.md section 3", "knowledgebase/media/video-scoring.md"]
+    }
+  },
+  "provenance": {
+    "tensions.*.qa": "starting value: a floor a mechanism has to reach before it is audible as that mechanism, uncalibrated",
+    "tensions.*.forbidden": "the gesture that would resolve the tension early; taken from the same section-3 table that names each device"
+  }
+}

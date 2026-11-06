@@ -2,6 +2,10 @@
   "name": "effects_only",
   "character": "sound effects and ambience only: no notes, no key, no melody, so note and melody rules do not apply; level and layer balance do",
   "extends": "melodic",
+  "focus": {
+    "roles": [],
+    "reason": "an effects piece has no line by definition; the focus row is skipped below"
+  },
   "rows": {
     "pattern.drums_few": {"mode": "skip", "reason": "no notes in the piece"},
     "pattern.loop_short": {"mode": "skip", "reason": "no notes in the piece"},
@@ -14,6 +18,7 @@
     "chroma.concordance": {"mode": "skip", "reason": "no musical key to clash with"},
     "bow.breath_gap": {"mode": "skip", "reason": "no bowed or wind line"},
     "kick.grid": {"mode": "skip", "reason": "no kick"},
+    "focus.declared": {"mode": "skip", "reason": "an effects piece has no line, so there is nothing to declare"},
     "feel.contour": {"mode": "skip", "reason": "feel checks read notes"},
     "feel.resolution": {"mode": "skip", "reason": "feel checks read notes"},
     "feel.groove": {"mode": "skip", "reason": "feel checks read notes"},

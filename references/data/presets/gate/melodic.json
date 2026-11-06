@@ -2,5 +2,10 @@
   "name": "melodic",
   "character": "a piece carried by a melody over an accompaniment: today's gate, every row applied with its default numbers",
   "flags": [],
+  "focus": {
+    "roles": ["melody", "lead", "vocal"],
+    "label": "a line the ear can follow",
+    "reason": "this type is defined by a figure, so a piece that declares it must carry one; the same list means a lead or a vocal is checked exactly like a melody"
+  },
   "rows": {}
 }

@@ -32,7 +32,9 @@ structured ways (research summary in references/mixing/humanization.md):
 Everything is seeded, so the same score + seed always renders identically.
 
 Input note (dict): {"t": beat, "d": beats, "p": midi, "v": 0..1 or 1..127, "role": optional}
-roles: melody | counter | chord | pad | bass | arp | drum | fx (default: chord)
+roles: the canonical vocabulary in scripts/roles.py - melody | lead | vocal | counter | chord | pad |
+bass | drum | arp | ostinato | drone | texture | fx | environment (default: chord). A synonym in that
+module's alias table (`harmony`, `vox`, `percussion`, `sfx`) is resolved before the profile is chosen.
 Output event (dict, SECONDS): {"t","dur","p","v"(1-127),"role","beat"}
 
     from humanize import humanize_track, TempoMap, PRESETS
@@ -40,6 +42,7 @@ Output event (dict, SECONDS): {"t","dur","p","v"(1-127),"role","beat"}
 import numpy as np
 
 import pattern_audit as pa                          # one definition of "machine gun", shared with the gate
+import roles as rolelib                             # one role vocabulary, shared with the gate and the mixer
 
 PRESETS = {
     # timing_ms = per-note gaussian sigma; lead_ms = how early the melody sits; drift_ms = slow ensemble wander
@@ -65,14 +68,24 @@ JUST = {1: 11.7, 2: 3.9, 3: 15.6, 4: -13.7, 5: -2.0, 6: -9.8, 7: 2.0, 8: 13.7, 9
 # per-role defaults: (timing offset ms relative to the beat, velocity offset, legato gate)
 ROLE = {
     'melody':  dict(off=-1.0, vel=+8,  gate=1.00, legato=True),    # offset multiplier of lead_ms (negative = early)
+    'lead':    dict(off=-1.0, vel=+8,  gate=1.00, legato=True),    # the same figure under its prominence name
+    'vocal':   dict(off=-0.9, vel=+7,  gate=1.03, legato=True),    # a sung line sits slightly ahead and holds longer
     'counter': dict(off=-0.4, vel=+2,  gate=1.00, legato=True),
     'chord':   dict(off=+0.2, vel=-6,  gate=0.95, legato=False),
     'pad':     dict(off=+0.3, vel=-10, gate=1.02, legato=True),
+    'texture': dict(off=+0.3, vel=-10, gate=1.03, legato=True),    # a grain bed is shaped like a pad, not like an effect
+    'drone':   dict(off=+0.3, vel=-10, gate=1.05, legato=True),    # holds through, never re-attacks on the grid
     'bass':    dict(off=0.0,  vel=-1,  gate=0.90, legato=False),
     'arp':     dict(off=+0.1, vel=-4,  gate=0.85, legato=False),
+    'ostinato': dict(off=+0.1, vel=-3, gate=0.94, legato=False),   # repeated cell, but each repeat is played
     'drum':    dict(off=0.0,  vel=0,   gate=1.00, legato=False),
     'fx':      dict(off=0.0,  vel=0,   gate=1.00, legato=False),
+    'environment': dict(off=0.0, vel=0, gate=1.00, legato=False),
 }
+
+# The figure family: the line the ear follows. A role missing from ROLE used to fall through to the chord
+# profile, which is how a drone ended up shaped like a comp. Unknown roles now raise in roles.canonical().
+FIG = rolelib.LEAD
 
 # drum piece offsets in ms (kick tight/early, snare lays back, hats loose)
 DRUM_PUSH = {36: -3.0, 35: -3.0, 38: +5.0, 40: +5.0, 37: +3.0, 39: +4.0, 42: +1.0, 44: +1.0, 46: +2.0,
@@ -263,7 +276,7 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
     c.update(TIMING)
     c.update(PRESETS[cfg] if isinstance(cfg, str) else (cfg or {}))
     rng = np.random.default_rng(seed)
-    base_role = role or 'chord'
+    base_role = rolelib.canonical(role) if role else 'chord'
     rd = ROLE.get(base_role, ROLE['chord'])
     if isinstance(articulation, dict):             # an instrument's own articulation, not the role's default
         rd = dict(rd, gate=float(articulation.get('gate', rd['gate'])))
@@ -312,7 +325,7 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
     flip = 0
     guitar = 'guitar' in str(instrument or '').lower()
     for key, idx in groups.items():
-        if len(idx) > 1 and base_role in ('chord', 'pad', 'arp', 'counter') and c['strum_ms'] > 0:
+        if len(idx) > 1 and base_role in ('chord', 'pad', 'arp', 'counter', 'texture') and c['strum_ms'] > 0:
             idx_sorted = sorted(idx, key=lambda j: ns[j]['p'])
             span_in = max(ns[j]['t'] for j in idx) - min(ns[j]['t'] for j in idx)
             if guitar and span_in < 0.005:             # beats: downstroke; off-beats: upstroke
@@ -341,15 +354,15 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
         m = len(idx)
         x = np.linspace(0, 1, m) if m > 1 else np.array([0.5])
         arch = np.sin(np.pi * x) - 0.5
-        # a melody swells to its middle; a counter-line answers softer in the middle; beds and drums get no arch
-        if base_role == 'melody':
+        # the figure swells to its middle; a counter-line answers softer in the middle; beds and drums get no arch
+        if base_role in FIG:
             v[idx] += 7.0 * arch
         elif base_role == 'counter':
             v[idx] -= 3.0 * arch
         if m > 2:
             pz = (p[idx] - p[idx].mean()) / (p[idx].std() + 1e-6)
             v[idx] += 2.0 * np.clip(pz, -1.5, 1.5)             # higher notes a little louder
-        if base_role == 'melody':
+        if base_role in FIG:
             v[idx[-1]] -= 6.0                                  # last note of a phrase relaxes
     # fast runs (taans, scale runs, 16th arpeggios): a run of 4+ short notes, each within half a beat of the last,
     # is shaped as a run. Every group of four starts stronger (the taan's sam-like accent); the run swells to its
@@ -388,7 +401,7 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
             clusters[-1].append(i)
         else:
             clusters.append([i])
-    if base_role in ('chord', 'pad', 'arp'):
+    if base_role in ('chord', 'pad', 'arp', 'texture'):
         for cl in clusters:
             if len(cl) < 3 or v_in[cl].std() >= 1.5:
                 continue
@@ -416,7 +429,7 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
 
     if not is_drum:
         for i in range(1, n):
-            if base_role in ('melody', 'counter') and abs(ns[i]['p'] - ns[i - 1]['p']) >= 5:
+            if base_role in FIG + ('counter',) and abs(ns[i]['p'] - ns[i - 1]['p']) >= 5:
                 start_boost[i] += 0.008                # agogic delay on the arrival of a leap
                 v[i] += 4.0
                 d_beats[i - 1] *= 0.92                 # shorten the note before the leap to articulate it
@@ -462,7 +475,7 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
     if not is_drum:
         # an accent is also a little longer; a soft note a little shorter (velocity-duration coupling)
         dur = dur * (1.0 + float(c.get('vel_dur', 0.0)) * (np.clip(v, 1, 127) - 90.0) / 64.0)
-    if base_role in ('melody', 'counter'):                        # a phrase's last note breathes: held a little longer
+    if base_role in FIG + ('counter',):                           # a phrase's last note breathes: held a little longer
         for idx in phrases.values():
             dur[idx[-1]] *= 1.08
     # A negative offset near bar 1 used to collapse every affected note onto sample 0, phase-locking a chord and
@@ -482,7 +495,7 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
         for idx in phrases.values():
             cents_extra[idx] += _smooth_noise(rng, len(idx), corr=3.0) * td
     jr = float(c.get('just_ratio', 0.0))
-    if jr > 0 and base_role in ('chord', 'pad', 'arp'):
+    if jr > 0 and base_role in ('chord', 'pad', 'arp', 'texture'):
         for cl in clusters:
             if len(cl) < 2:
                 continue

@@ -583,6 +583,17 @@ MASK_WIN_S = 4.0            # the congestion check looks at 4-second windows
 MASK_MARGIN_DB = 3.0        # a bed within 3 dB of the lead in an ERB critical band is congested
 
 
+def _role_in(role, want):
+    """True when a track's role is one of `want`, through the one canonical vocabulary (scripts/roles.py).
+    A score written with `lead`, `vocal` or `harmony` is the same music as one written with `melody` and
+    `counter`; before this, only the literal string 'melody' was ever checked."""
+    import roles as rolelib
+    try:
+        return rolelib.canonical(role) in want
+    except rolelib.UnknownRole:
+        return False
+
+
 def masking_rows(stems, score, sr=44100, out=None):
     """2.2 Moore-Glasberg ERB Critical-Band & Binaural Unmasking (Moore & Glasberg 1983).
     Evaluates 8 ERB critical bands across 250 - 4000 Hz, with up to +3.5 dB delta BMLD binaural
@@ -599,10 +610,19 @@ def masking_rows(stems, score, sr=44100, out=None):
     if mixer.STATE.get('processed'):                       # measure the mix as played: after the EQ and the carve
         stems = mixer.STATE['processed']
     roles = {t['name']: t.get('role') for t in score['tracks']}
-    leads = [n for n, r in roles.items() if r == 'melody' and n in stems]
-    beds = [n for n, r in roles.items() if r in ('pad', 'chord', 'arp', 'counter') and n in stems and n not in leads]
+    focus = set(gp.focus_roles())
+    leads = [n for n, r in roles.items() if _role_in(r, focus) and n in stems]
+    beds = [n for n, r in roles.items() if _role_in(r, ('pad', 'chord', 'arp', 'counter', 'drone', 'texture'))
+            and n in stems and n not in leads]
     beds += [n for n in ('chorus',) if n in stems and n not in beds]
-    if not leads or not beds:
+    if not leads:
+        rows.append(('INFO', 'erb_binaural_masking',
+                     f'not measured: no track in this type\'s focus ({", ".join(gp.focus_roles()) or "none"}). '
+                     'A row that could not run is not a pass; give the piece its figure, or pick the type it really is.'))
+        return rows
+    if not beds:
+        rows.append(('INFO', 'erb_binaural_masking',
+                     'not measured: the piece has a figure but no bed that could mask it'))
         return rows
 
     # 8 ERB center frequencies spanning 250 - 4000 Hz
@@ -815,7 +835,108 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
     return rows
 
 
-LEAD_ROLES = ('melody', 'lead', 'vocal')
+import roles as _roles
+LEAD_ROLES = _roles.LEAD          # one vocabulary: scripts/roles.py owns the list, this name is for callers
+
+
+def focus_rows(score, out=None):
+    """The piece carries the line its type and its own declaration promise.
+
+    Why this row exists: every feel check, the masking row and the balance row read tracks by role and
+    returned an empty list when there were none. Deleting the figure was therefore the cheapest way through
+    the gate - a piece with a pad, a bass and a groove produced no contour row, no entropy row, no masking
+    row and no balance row, and the report said nothing was missing. This row makes absence a fact with a
+    reason: a type that declares a figure must have one, a type that declares a bed is judged on the bed,
+    and an effects piece says so in its profile.
+    """
+    import gate_profiles
+    rows = []
+    gp = gate_profiles.resolve(score)
+    if not gp.on('focus.declared'):
+        return rows
+    meta = score.get('meta') or {}
+    explicit = score.get('focus') or meta.get('focus')
+    want = list(_roles.focus_roles(_roles.focus_of(score))) if explicit else list(gp.focus_roles())
+    if not want:
+        rows.append(('INFO', 'focus.declared', 'this type has no line by definition; nothing to check'))
+        return rows
+    found = _roles.tracks_by_role(score, want, min_notes=4)
+    if found:
+        names = ', '.join(f'{t.get("name", "?")} ({r})' for t, r in found[:4])
+        how = f'declared focus {_roles.focus_of(score)}' if explicit else f'{gp.label} expects one'
+        prof = set(gp.focus_roles())
+        dec = set(_roles.focus_roles(_roles.focus_of(score)))
+        if explicit and prof and not (prof & dec):
+            rows.append(('WARN', 'focus.declared',
+                         f'carried by {names}; the piece declares focus {_roles.focus_of(score)}, but {gp.label} '
+                         f'is judged around {", ".join(sorted(prof))}. Set piece_type to the type that matches, '
+                         'or the report will apply the wrong rule'))
+        else:
+            rows.append(('PASS', 'focus.declared', f'carried by {names}; {how}'))
+        return rows
+    any_music = _roles.tracks_by_role(score, None, min_notes=4)
+    if not any_music:
+        rows.append(('FAIL', 'focus.declared',
+                     f'no track carries a line (no role in {", ".join(want)} has 4+ pitched notes, and no other '
+                     'track has any). If this is an effects piece, say so: piece_type effects_only'))
+    else:
+        carried = ', '.join(f'{t.get("name", "?")} ({r})' for t, r in any_music[:4])
+        rows.append(('FAIL', 'focus.declared',
+                     f'the piece is carried by {carried}, but this type is judged around {", ".join(want)}. '
+                     'Either write the line the type promises, or declare the type and focus the piece really has'))
+    if out is not None:
+        out.extend(rows)
+    return rows
+
+
+def intent_rows(score, out=None):
+    """What the piece declared it would be, checked against what it plays.
+
+    Two facts, both readable from the score alone. `intent.vocabulary` is the declaration itself: every word
+    must resolve to one concept in references/data/presets/intent, so a mood the engine has no meaning for
+    cannot be typed into a score. `intent.avoid` takes the gestures the declaration forbids (and the piece's
+    own `intent.avoid`) and measures each one in the notes. A gesture with no score-side measurement is
+    reported as unmeasured - never as passed - because a silent pass is how a declaration becomes decoration.
+    """
+    import gate_profiles
+    import intent
+    rows = []
+    gp = gate_profiles.resolve(score)
+    block = score.get('intent')
+    if block is None and not gp.on('intent.vocabulary'):
+        return rows
+    try:
+        resolved = intent.normalise_block(block or {})
+    except intent.IntentError as exc:
+        rows.append(('FAIL', 'intent.vocabulary', str(exc)))
+        resolved = {}
+    else:
+        if not block:
+            rows.append(('INFO', 'intent.vocabulary',
+                         'no intent block: the piece is described by piece_type and feel only'))
+        else:
+            said = ', '.join(f'{k}={v}' for k, v in resolved.items() if k in ('emotions', 'registers', 'scenes',
+                                                                             'tensions') and v)
+            rows.append(('PASS', 'intent.vocabulary', said or 'every declared word resolves'))
+    avoid = list(resolved.get('avoid') or [])        # the concepts' own forbidden gestures, expanded by normalise_block
+    if avoid:
+        hits, unmeasured = intent.gesture_hits(score, avoid)
+        for g, detail in hits:
+            rows.append(('FAIL', 'intent.avoid',
+                         f'{g} happens: {detail}. The piece declares it away '
+                         f'({intent.GESTURES.get(g, "")}); change the arrangement, or change the declaration'))
+        measured = [g for g in avoid if g not in unmeasured]
+        if measured and not hits:
+            rows.append(('PASS', 'intent.avoid',
+                         f'{len(measured)} gesture(s) measured clear: ' + ', '.join(measured[:8])))
+        if unmeasured:
+            rows.append(('WARN', 'intent.avoid',
+                         'declared away but not measurable from the score: ' + ', '.join(unmeasured)
+                         + '. These are mix-side gestures; measure them at mix time or drop them from the '
+                           'declaration'))
+    if out is not None:
+        out.extend(rows)
+    return rows
 
 
 def balance_allow_db(mix=None):
@@ -850,12 +971,17 @@ def balance_rows(score, stems=None, out=None, sr=44100):
     if st:
         roles = {t['name']: t.get('role') for t in score.get('tracks', [])}
         lv = {n: _active_db(v, sr) for n, v in st.items() if n in roles}
-        leads = [lv[n] for n in lv if roles[n] in LEAD_ROLES and lv[n] is not None]
+        focus = set(gp.focus_roles())
+        leads = [lv[n] for n in lv if _role_in(roles[n], focus) and lv[n] is not None]
         if leads and gp.on('balance.vs_lead'):
             lead = max(leads)
             warn_over, fail_over = gp.param('balance.vs_lead', 'warn_over_db'), gp.param('balance.vs_lead', 'fail_over_db')
             for n, db in lv.items():
-                allow = balance_allow_db(mixer._mix()).get(roles[n])
+                import roles as rolelib
+                try:
+                    allow = balance_allow_db(mixer._mix()).get(rolelib.canonical(roles[n]))
+                except rolelib.UnknownRole:
+                    allow = None
                 if allow is None or db is None:
                     continue
                 over = db - lead - allow
@@ -867,6 +993,10 @@ def balance_rows(score, stems=None, out=None, sr=44100):
                 rows.append(('PASS', 'balance', f'every accompaniment stem sits within its role allowance of the lead'))
         elif gp.fallback('balance.vs_lead') == 'balance.layers' and gp.on('balance.layers'):
             rows += layer_balance_rows(score, lv, roles, gp)
+        elif gp.on('balance.vs_lead'):
+            rows.append(('INFO', 'balance',
+                         f'not measured: the piece has no track in this type\'s focus '
+                         f'({", ".join(gp.focus_roles()) or "none"}) and the profile does not fall back to layer balance'))
     if out is not None:
         out.extend(rows)
     return rows
@@ -1409,6 +1539,8 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mo
         out.extend(ar.gate_rows(score, stems, dirs))
         import sfx_eval                                 # WARN only: a sound that behaves unlike its own physics
         out.extend(sfx_eval.gate_rows(score, stems))
+        focus_rows(score, out=out)
+        intent_rows(score, out=out)
         balance_rows(score, stems, out=out)
         spatial_separation_rows(score, stems, out=out)
         equal_loudness_rows(score, stems, out=out)

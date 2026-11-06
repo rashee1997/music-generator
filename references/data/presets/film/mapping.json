@@ -49,11 +49,13 @@
     "insert": "transition"
   },
 
+  "focus": "melody",
+
   "layers_by_density": [
-    {"below": 0.25, "roles": ["melody", "lead"]},
-    {"below": 0.50, "roles": ["melody", "lead", "pad", "harmony", "bass"]},
-    {"below": 0.75, "roles": ["melody", "lead", "pad", "harmony", "bass", "arp", "chord"]},
-    {"below": 1.01, "roles": ["melody", "lead", "pad", "harmony", "bass", "arp", "chord", "percussion", "counter"]}
+    {"below": 0.25, "roles": ["melody", "lead", "drone", "texture", "pad"]},
+    {"below": 0.50, "roles": ["melody", "lead", "drone", "texture", "pad", "harmony", "counter", "bass"]},
+    {"below": 0.75, "roles": ["melody", "lead", "drone", "texture", "pad", "harmony", "counter", "bass", "arp", "ostinato", "chord"]},
+    {"below": 1.01, "roles": ["melody", "lead", "drone", "texture", "pad", "harmony", "counter", "bass", "arp", "ostinato", "chord", "drum", "percussion"]}
   ],
 
   "motion_dir_to_pan": {
@@ -75,6 +77,7 @@
     "centre_of_motion_to_pan": "unchanged from presets/video/default.json",
     "palette_to_mode": "starting value: a tie-breaker only, luminance wins when they disagree",
     "shot_scale_max_density": "starting value, from the camera-distance rule in music-direction.md section 2.4",
-    "layers_by_density": "starting value, one hero rule from AGENTS.md rule 7.4"
+    "layers_by_density": "starting value: shot scale sets how much may sound, never what the subject is, so a quiet band holds a drone or a texture as readily as a lead; a role absent from every band is an error in video_direction.apply_section_arrangement, not a silent delete",
+    "focus": "starting value: the historical melody-led cue. A project overrides it in its own presets/film/mapping.json (melody | drone | groove | texture | gesture); the picture decides density, the preset decides what the ear follows"
   }
 }

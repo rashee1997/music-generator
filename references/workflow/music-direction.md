@@ -106,6 +106,9 @@ The core targets. `listen.py` reads these directly, so fill them with words and 
 | `hits_at` | seconds where a hit, a cut or a reveal must land | `[24.0, 38.0]` |
 | `duration_s` | length the picture needs | `45` |
 | `spatial_staging` | each part's azimuth, elevation and distance; the presets must match | `{"flute": {"azimuth": 0, "distance": 1.4}}` |
+| `piece_type` | which gate profile judges it; declare it rather than letting keywords guess | `cinematic`, `groove`, `ambient` |
+| `focus` | what carries the piece: a line, a bed, a groove, a surface or a gesture | `drone` for a farewell, `groove` for a beat with no tune |
+| `intent` | what it is, in words the engine owns: emotions, register, scene, tensions, what to avoid | `{"emotions": ["grief"], "scenes": ["farewell"]}` |
 
 `listen.py` checks `feel` against `avoid_feel` as a forced choice and looks for an onset within 0.3 s of every
 `hits_at`; nothing else is a gate row, which is why the blocks below stop a green cue from being the wrong cue.
@@ -186,6 +189,22 @@ Parts that share the midrange (`500-4000 Hz`) during the climax turn muddy when 
 (what may be lifted, what stays on the floor) and the `spatial.z_separation` row in `references/mixing/quality-gate.md`
 §5d (25 deg azimuth or 15 deg elevation between competing pairs). Give the sub-bass (`< 120 Hz`) to one foundation
 part and high-pass the higher parts so low end does not accumulate.
+
+### 2.8 Declare what the piece is, then what it plays
+
+A sheet that names only notes and tempo can be played correctly and still be the wrong piece. Three fields prevent
+that, and they are checked rather than trusted:
+
+- **`piece_type`** picks the gate profile: which rules apply, and what the subject is expected to be.
+- **`focus`** names the subject: `melody` (a figure the ear follows), `drone` (a held centre), `groove` (kick, bass and
+the cell), `texture` (a surface), `gesture` (events in space). The profile carries a default; write it when the piece is
+not that default. `focus.declared` FAILs if the type expects a line and none is there, and names what the piece has.
+- **`intent`** is the meaning, as data: `emotions`, `registers`, `scenes`, `tensions`, `avoid`, `must_hear`, `words`.
+
+Every word resolves through `references/data/presets/intent/synonyms.json` to a concept the engine owns, so "heartbroken"
+or "funeral" works and an invented mood name is an error that lists the closest words. A concept carries its forbidden
+gestures with it (`grief` forbids a major cadence), which `intent.avoid` measures against the notes. The vocabulary, the
+row behaviour and how to add a word: [`intent-and-focus.md`](intent-and-focus.md).
 
 ## 3. Decide in the order listeners weigh cues
 

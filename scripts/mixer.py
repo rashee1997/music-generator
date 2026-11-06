@@ -53,6 +53,7 @@ import dsp
 import mix_context
 import mix_schema
 import presets
+import roles as rolelib
 
 SR = 44100
 REF_LUFS = -24.0
@@ -525,7 +526,7 @@ def envelope(x, sr=SR, attack_ms=8, release_ms=150, rate=400, hold_tail=False):
     return dsp.envelope(x, sr, attack_ms, release_ms, rate, hold_tail)
 
 
-DUCK_BAND_ROLES = ('pad', 'chord', 'arp', 'counter', 'environment')   # ducked in the lead's band, not full-band
+DUCK_BAND_ROLES = ('pad', 'texture', 'chord', 'arp', 'ostinato', 'counter', 'environment')   # ducked in the lead's band, not full-band
 DUCK_BAND_HZ = (250.0, 3800.0)
 DUCK_RESIDUAL = 0.3
 
@@ -593,7 +594,7 @@ def gain_stage(x, l, role, spec, gs=None, sr=SR):
     strategy = str(gs.get('strategy', 'legacy')).lower()
     ref = float(gs.get('ref_lufs', REF_LUFS))
     max_boost = float(gs.get('max_boost_db', _max_boost_db()))
-    if role in ('melody', 'lead'):
+    if rolelib.is_lead(role):
         # A lead is the reference everything else is judged against, so it has to reach its level. The boost cap
         # exists to protect near-silent ambience; it is not a statement that a quietly played lead must stay buried
         # (a GM lead under a soft dynamics arc sat 15-25 dB under the beds and every bed then read "too loud").
@@ -921,10 +922,17 @@ def _place(name, x, spec, mx, sr):
 
 # orchestral-style seating so layers do not stack in the middle (-1 left .. +1 right)
 def default_spec(tr):
-    role = tr.get('role', 'chord')
+    role = rolelib.canonical(tr.get('role', 'chord')) if tr.get('role') else 'chord'
     inst = str(tr.get('instrument', '')).lower().replace(' ', '_')
-    d = dict(role=role, gain_db=_level_by_role().get(role, -8),
-             pan=from_table(_seating(), inst, 0.0) if role not in ('bass', 'drum') else 0.0,
+    # A role with no level is a leak, not a default: -8 dB is somewhere between a pad and a bass. Unlisted
+    # roles are one of the four families now, so the number comes from the family's own entry.
+    fam = rolelib.FAMILY_OF.get(role, 'harmony')
+    level = _level_by_role().get(role)
+    if level is None:
+        level = _level_by_role().get({'figure': 'melody', 'harmony': 'chord',
+                                      'rhythm': 'bass', 'colour': 'pad'}[fam], -8)
+    d = dict(role=role, gain_db=level,
+             pan=from_table(_seating(), inst, 0.0) if role not in ('bass', 'drum', 'drone', 'percussion', 'ostinato') else 0.0,
              reverb=0.18, widen=_widen_by_role().get(role, 0.0))
     d['inst'] = inst
 
@@ -969,9 +977,11 @@ def default_spec(tr):
         d['reverb'] = d.get('reverb', 0.0)
     if role == 'drum':
         d['reverb'] = d.get('reverb', 0.08)
-    if role == 'pad':
+    if role in ('pad', 'texture'):
         d['reverb'] = d.get('reverb', 0.30)
-    if role == 'melody':
+    if role == 'drone':
+        d['reverb'] = d.get('reverb', 0.26)
+    if rolelib.is_lead(role):
         d['reverb'] = d.get('reverb', 0.22)
     if role == 'environment':
         d['reverb'] = d.get('reverb', 0.20)
@@ -1115,10 +1125,10 @@ def carve_for_lead(specs, mx=None):
     band = float(mx.get('lead_band_hz', DEFAULT_LEAD_BAND_HZ))
     carve = float(mx.get('carve_db', DEFAULT_CARVE_DB))
     limit = float((mx.get('spectral') or {}).get('max_auto_cut_db', 3.0))
-    if not any(s.get('role') == 'melody' for s in specs.values()):
+    if not any(rolelib.is_lead(s.get('role')) for s in specs.values()):
         return specs
     for name, sp in specs.items():
-        if sp.get('role') in ('pad', 'chord', 'arp', 'counter', 'environment') or name in ('chorus',):
+        if sp.get('role') in ('pad', 'texture', 'drone', 'chord', 'arp', 'ostinato', 'counter', 'environment') or name in ('chorus',):
             eq = sp.setdefault('eq', [])
             if not any(d.get('type') == 'peak' and abs(d.get('f', 0) - band) < 1 for d in eq):
                 depth = carve - 1.5 if sp.get('role') == 'environment' else carve
@@ -1159,7 +1169,7 @@ def apply_lead_carve(processed, specs, mx=None, sr=SR):
     if cfg.get('source'):
         lead = str(cfg['source'])
     else:
-        leads = [n for n, sp in specs.items() if sp.get('role') == 'melody']
+        leads = [n for n, sp in specs.items() if rolelib.is_lead(sp.get('role'))]
         if not leads:
             return processed                              # no lead, nothing to make room for
         lead = max(leads, key=lambda n: float(specs[n].get('gain_db', 0.0)))

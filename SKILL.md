@@ -47,6 +47,28 @@ Follow these steps in order. Never skip steps.
 | 7 | **Revise** | Change ONE lever at a time ([`references/workflow/music-direction.md`](references/workflow/music-direction.md) §6). Re-run step 6 until green (max 5 attempts). | All gates pass |
 | 8 | **Listen & deliver** | `python scripts/listen.py out/master.wav --direction direction/<sheet>.json` | Verify and report results |
 
+## What the piece is: focus and intent
+
+Notes alone do not say what a piece is for. Three declarations do, and all three are data:
+
+| Declaration | Says | Where |
+|---|---|---|
+| `piece_type` | which rules judge it (`melodic`, `groove`, `texture`, `ambient`, `tense`, `dance`, `cinematic`, `effects_only`) | score and direction sheet |
+| `focus` | what carries it: `melody`, `drone`, `groove`, `texture` or `gesture` | score; the gate profile carries the default |
+| `intent` | what it is: emotions, register, scene, tensions, and what it must avoid | score `intent` |
+
+```json
+"piece_type": "cinematic", "focus": "drone",
+"intent": {"emotions": ["grief"], "scenes": ["farewell"], "registers": ["cinematic"], "avoid": ["drums"]}
+```
+
+Every track role comes from one vocabulary (`scripts/roles.py`), and every intent word resolves to a concept in
+`references/data/presets/intent/`: a word the engine has no meaning for is an error, not a silent default. The gate
+rows `focus.declared`, `intent.vocabulary` and `intent.avoid` make a declaration a fact to be measured, so a piece
+cannot pass by deleting its figure. `python scripts/intent.py check` validates the vocabulary; `compose.py` accepts
+the same block in a brief and fills only what the brief left empty. Read
+[`references/workflow/intent-and-focus.md`](references/workflow/intent-and-focus.md) before writing either.
+
 ## Scoring to picture
 
 A film is a project type of its own: its unit of work is a **cue**, and each cue is a normal music project.
@@ -76,6 +98,8 @@ One line each; every path is under `scripts/` unless it says otherwise.
 | `mix_diagnostics.py` | the mixing diagnostics table; reports, never edits the mix |
 | `quality_gate.py` | the gate rows for a score and a rendered master |
 | `gate_profiles.py` | gate profiles: `list`, `rows`, `explain`, `new`, `check` |
+| `intent.py` | the intent vocabulary: `check`, `list`, `explain <word>`, `resolve "<free text>"` |
+| `roles.py` | the one role vocabulary (`python scripts/roles.py` prints it) |
 | `presets.py` | `list`, `show`, `validate`, `scaffold`, `ingest` |
 | `direct.py` | director edits on a score: pulse, lines, arcs, gains, tempo |
 | `listen.py` | earshot readings and measurements against a direction sheet |
@@ -166,6 +190,8 @@ exists so the agent can decide values, not so it can be quoted.
 ## Key Principles
 
 - **Modular**: Sound/space in `presets/`, notes in `scores/`, intent in `direction/`. No monolithic scripts.
+- **One vocabulary**: a track's `role` is a function from `scripts/roles.py`; synonyms live in its alias table only.
+- **Declare the subject**: `piece_type` and `focus` say what the piece is, and `focus.declared` holds the promise.
 - **Research-driven**: Every custom instrument/vocal/culture needs KB research citations.
 - **Data over code**: New sounds use scene data (`"scene"`/`"scene_layers"`), not Python generators.
 - **One change at a time**: When fixing gate failures, change exactly one parameter and re-measure.
@@ -184,6 +210,7 @@ exists so the agent can decide values, not so it can be quoted.
 | Instrument cloning/extraction | [`references/instruments-and-vocals/instrument-cloning.md`](references/instruments-and-vocals/instrument-cloning.md), [`references/workflow/extraction.md`](references/workflow/extraction.md) |
 | Mixing/mastering | [`references/mixing/mixing-and-mastering.md`](references/mixing/mixing-and-mastering.md), `scripts/mixer.py`, `scripts/mix_diagnostics.py` |
 | Gate failures | [`references/mixing/quality-gate.md`](references/mixing/quality-gate.md), `scripts/gate_profiles.py` |
+| Intent, mood words, focus | [`references/workflow/intent-and-focus.md`](references/workflow/intent-and-focus.md), `scripts/intent.py` |
 
 ## Output Template
 

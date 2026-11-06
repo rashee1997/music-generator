@@ -1,0 +1,69 @@
+{
+  "kind": "intent",
+  "name": "registers",
+  "character": "cinematic and natural are not adjectives, they are two measurable ways of putting a piece in a room. A register is a band of dynamic range, reverb, width, sync and loudness; a piece declares one and the gate checks it was delivered.",
+  "registers": {
+    "cinematic": {
+      "character": "the music is larger than the room: long tails, wide image, hits that land on the picture, a big distance between the quiet and the loud",
+      "lra_lu": [12.0, 20.0],
+      "crest_db": [9.0, 20.0],
+      "reverb_tail_s": [2.8, 5.2],
+      "stereo_corr_max": 0.85,
+      "sync_to_picture": true,
+      "lufs": [-18.0, -14.0],
+      "forbidden": [],
+      "sources": ["references/mixing/mixing-and-mastering.md section 3 (film/cinematic loudness and large_hall 3.2 s)", "references/workflow/music-direction.md section 2.4"]
+    },
+    "natural": {
+      "character": "the music is in the room with the player: one space, dynamics preserved, no hit tied to a cut, tempo allowed to breathe",
+      "lra_lu": [6.0, 12.0],
+      "crest_db": [10.0, 22.0],
+      "reverb_tail_s": [0.5, 1.8],
+      "stereo_corr_max": 0.95,
+      "sync_to_picture": false,
+      "lufs": [-16.0, -13.0],
+      "forbidden": ["cut_synced_hits", "compressed_crest"],
+      "sources": ["references/mixing/humanization.md (rubato and anti-correlated timing)", "knowledgebase/media/video-scoring.md (diegetic versus non-diegetic)"]
+    },
+    "documentary": {
+      "character": "a bed that must never take the narration's place: narrow, low, almost no accents",
+      "lra_lu": [5.0, 10.0],
+      "crest_db": [7.0, 16.0],
+      "reverb_tail_s": [0.6, 2.0],
+      "stereo_corr_max": 0.97,
+      "sync_to_picture": false,
+      "lufs": [-20.0, -16.0],
+      "forbidden": ["cut_synced_hits", "speech_band_energy"],
+      "sources": ["references/mixing/mixing-and-mastering.md section 3 (film underscore -18 to -16 LUFS)"]
+    },
+    "diegetic": {
+      "character": "the sound is the source on screen: a radio, a band in the next room, a phone speaker. It is filtered by its own container and has no cinematic tail",
+      "lra_lu": [3.0, 9.0],
+      "crest_db": [6.0, 18.0],
+      "reverb_tail_s": [0.1, 0.9],
+      "stereo_corr_max": 0.99,
+      "sync_to_picture": false,
+      "lufs": [-24.0, -16.0],
+      "forbidden": ["cinematic_tail"],
+      "sources": ["knowledgebase/media/video-scoring.md (diegetic music)"]
+    },
+    "hybrid": {
+      "character": "a diegetic source that opens into the score when the scene needs it; the register changes at a declared time, not gradually",
+      "lra_lu": [8.0, 16.0],
+      "crest_db": [8.0, 20.0],
+      "reverb_tail_s": [0.4, 3.0],
+      "stereo_corr_max": 0.92,
+      "sync_to_picture": true,
+      "lufs": [-20.0, -14.0],
+      "forbidden": [],
+      "sources": ["knowledgebase/media/video-scoring.md (diegetic to non-diegetic transitions)"]
+    }
+  },
+  "provenance": {
+    "registers.*.lra_lu": "starting value: a band wide enough to separate a cue from a natural room bed; calibrate on the first measured renders",
+    "registers.*.crest_db": "starting value, same reason",
+    "registers.cinematic.reverb_tail_s": "the large_hall figure in mixing-and-mastering.md section 3 (3.2 s) as the centre of the band",
+    "registers.*.lufs": "the delivery rows in mixing-and-mastering.md section 3",
+    "registers.*.sync_to_picture": "a definition, not a measurement: cinema is written against the cut, a natural room bed is not"
+  }
+}

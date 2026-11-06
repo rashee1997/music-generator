@@ -69,7 +69,25 @@ ROLE_CHAINS = {
                     'comp': {'thr': -24, 'ratio': 2.0, 'attack': 30, 'release': 250}},
     'fx': {'eq': [{'type': 'hp', 'f': 100}], 'comp': None},
 }
-ROLE_CHAINS['default'] = ROLE_CHAINS['fx']          # an unknown role gets the effect chain, as before
+# Every canonical role (scripts/roles.py) has a chain. These are the same numbers under the other name: a
+# `lead` is a melody and an `ostinato` is an arp, so renaming a track never moves its mix.
+ROLE_CHAINS['lead'] = ROLE_CHAINS['melody']
+ROLE_CHAINS['texture'] = ROLE_CHAINS['pad']
+ROLE_CHAINS['ostinato'] = ROLE_CHAINS['arp']
+ROLE_CHAINS['percussion'] = ROLE_CHAINS['drum']
+# A held centre is not a pad with a low-pass: it has no attack to shape, so almost no compression, and it must
+# not be carved where its fundamental and its fifth live.
+ROLE_CHAINS['drone'] = {'eq': [{'type': 'hp', 'f': 28}, {'type': 'peak', 'f': 220, 'gain': -1.5, 'q': 0.8},
+                               {'type': 'peak', 'f': 2600, 'gain': -2.0, 'q': 0.9}, {'type': 'lp', 'f': 7000}],
+                        'comp': {'thr': -30, 'ratio': 1.4, 'attack': 60, 'release': 400}}
+ROLE_CHAINS['vocal'] = {'eq': [{'type': 'hp', 'f': 75}, {'type': 'peak', 'f': 500, 'gain': -1.5, 'q': 1.0},
+                               {'type': 'peak', 'f': 3000, 'gain': 1.0, 'q': 0.9},
+                               {'type': 'peak', 'f': 7000, 'gain': -1.5, 'q': 1.2}],
+                        'comp': {'thr': -22, 'ratio': 2.0, 'attack': 12, 'release': 140}}
+# An unlisted role used to be mixed as an effect (a high-pass at 100 Hz and no compression), which is how a
+# `drone` came out thin. The vocabulary now raises on an unknown role (roles.canonical), so this chain is only a
+# last resort for a name a project invents - and a neutral accompaniment is a better last resort than an effect.
+ROLE_CHAINS['default'] = ROLE_CHAINS['chord']
 
 # ---------------------------------------------------------------------------------------------
 # spectral profiles: what replaces the one universal environment chain when a source says what it is.
@@ -180,7 +198,8 @@ DEFAULTS = {
     # How far above the lead an accompaniment may sit before the gate complains. A per-piece decision
     # (a dub bass is not a pad): change it in the project's mix preset, not in quality_gate.py.
     'balance': {
-        'allow_db': {'bass': 6.0, 'drum': 6.0, 'chord': 3.0, 'pad': 3.0, 'counter': 3.0, 'arp': 3.0},
+        'allow_db': {'bass': 6.0, 'drum': 6.0, 'chord': 3.0, 'pad': 3.0, 'counter': 3.0, 'arp': 3.0,
+                     'texture': 3.0, 'drone': 3.0, 'ostinato': 3.0, 'percussion': 6.0},
     },
     # What the mixing diagnostics call mud, harsh, a collision or a held-still transient. Advisory
     # thresholds belong to the piece too: a lo-fi cue may want a wider mud allowance.
@@ -215,7 +234,9 @@ DEFAULTS = {
     # `pair` is how a stereo stem keeps its width: two sources at +-width/2, level normalised for input coherence.
     'immersive': {
         'enabled': False,
-        'height_by_role': {'melody': 6.0, 'pad': 15.0, 'environment': 40.0, 'chord': 0.0, 'bass': 0.0, 'drum': 0.0},
+        'height_by_role': {'melody': 6.0, 'lead': 6.0, 'vocal': 6.0, 'pad': 15.0, 'texture': 15.0,
+                           'environment': 40.0, 'chord': 0.0, 'bass': 0.0, 'drum': 0.0, 'percussion': 0.0,
+                           'drone': 0.0, 'ostinato': 0.0},
         'max_elevation': 60.0,
         'min_height_tracks': 1,
         # a listener's own head set: '' = the bundled FABIAN set, else a name in <project>/presets/hrtf/ or a path

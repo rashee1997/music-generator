@@ -93,8 +93,16 @@ class Shipped(Base):
     def test_shipped_profiles_are_valid(self):
         self.assertEqual(gpf.problems(), [])
         self.assertEqual(set(presets.load('gate')), {'melodic', 'tense', 'ambient', 'dance', 'cinematic', 'effects_only',
+                                                     'groove', 'texture',
                                                      'video_cinematic', 'video_basic', 'video_dialogue',
                                                      'video_underscore', 'video_montage', 'video_trailer'})
+
+    def test_every_focus_role_is_a_role_the_engine_knows(self):
+        """A focus list is a promise about the arrangement: an unknown name in it would check nothing."""
+        import roles as rolelib
+        for name, prof in presets.load('gate').items():
+            for r in (prof.get('focus') or {}).get('roles') or []:
+                self.assertIn(rolelib.canonical(r), rolelib.CANONICAL_ROLES, f'{name}/{r}')
 
     def test_melodic_changes_nothing(self):
         p = gpf.resolve(loop_score())
@@ -261,16 +269,35 @@ class RealDefectsStillFail(Base):
         mixer.STATE['processed'] = {'a': tone(-30), 'b': tone(-31, f=900), 'c': tone(-33, f=2000)}
         self.assertEqual([r[0] for r in qg.balance_rows(score)], ['PASS'])
 
-    def test_no_lead_melodic_stays_silent_as_before(self):
+    def test_a_piece_without_its_focus_says_so_instead_of_going_silent(self):
+        """The old behaviour returned no rows at all, so deleting the figure was the cheapest way through the gate."""
         mixer.STATE['processed'] = {'a': tone(-30), 'b': tone(-6, f=900)}
-        score = dict(tracks=[dict(name='a', role='fx'), dict(name='b', role='fx')])
-        self.assertEqual(qg.balance_rows(score), [])
+        score = dict(piece_type='melodic', tracks=[dict(name='a', role='fx'), dict(name='b', role='fx')])
+        rows = qg.balance_rows(score)
+        self.assertEqual([r[0] for r in rows], ['INFO'])
+        self.assertIn('no track in this type', rows[0][2])
+        self.assertEqual([r[0] for r in qg.focus_rows(score)], ['FAIL'])
 
-    def test_lead_pieces_keep_the_lead_rule_in_every_profile(self):
+    def test_a_texture_piece_is_balanced_against_its_own_layers(self):
+        mixer.STATE['processed'] = {'grain': tone(-26), 'swell': tone(-27, f=900)}
+        score = dict(piece_type='texture', tracks=[
+            dict(name='grain', role='texture', notes=[dict(t=i, d=1, p=60 + i, v=.5) for i in range(8)]),
+            dict(name='swell', role='pad', notes=[dict(t=i, d=1, p=48 + i, v=.5) for i in range(8)])])
+        self.assertEqual([r[0] for r in qg.focus_rows(score)], ['PASS'])
+        self.assertEqual([r[0] for r in qg.balance_rows(score)], ['PASS'])
+
+    def test_a_lead_is_still_the_reference_wherever_the_type_judges_a_line(self):
         mixer.STATE['processed'] = {'lead': tone(-40), 'bass': tone(-27, f=60.0)}
-        for t in ('melodic', 'tense', 'ambient', 'dance', 'cinematic'):
+        for t in ('melodic', 'tense', 'ambient', 'cinematic'):
             score = dict(piece_type=t, tracks=[dict(name='lead', role='melody'), dict(name='bass', role='bass')])
             self.assertEqual([r[0] for r in qg.balance_rows(score)], ['FAIL'], t)
+
+    def test_a_groove_type_does_not_call_its_own_bass_an_over_loud_accompaniment(self):
+        """In `dance` and `groove` the bass is part of the subject, so the loudest focus track is its own reference."""
+        mixer.STATE['processed'] = {'lead': tone(-40), 'bass': tone(-27, f=60.0)}
+        for t in ('dance', 'groove'):
+            score = dict(piece_type=t, tracks=[dict(name='lead', role='melody'), dict(name='bass', role='bass')])
+            self.assertNotEqual([r[0] for r in qg.balance_rows(score)], ['FAIL'], t)
 
     def test_protected_rows_cannot_be_touched(self):
         for cfg in ({'mode': 'skip', 'reason': 'x'}, {'mode': 'relax', 'reason': 'x'}):
@@ -283,6 +310,59 @@ class RealDefectsStillFail(Base):
         self.assertEqual(qg.chroma_concordance_rows(dict(piece_type='effects_only', tracks=[dict(name='e', role='environment')]),
                                                     None, {'e': tone(-20)}), [])
         self.assertEqual(qg.masking_rows({'m': tone(-20)}, dict(piece_type='effects_only', tracks=[dict(name='m', role='melody')])), [])
+
+
+class FocusIsDeclared(Base):
+    """The type decides what the subject is; a declared focus must match it, and absence is a FAIL with a reason."""
+
+    def score(self, *roles, **extra):
+        tracks = [dict(name=f't{i}', role=r, notes=[dict(t=i, d=1, p=60 + i, v=.5) for i in range(8)]) for i, r in enumerate(roles)]
+        return dict(tracks=tracks, **extra)
+
+    def test_a_melodic_piece_with_only_beds_fails_and_names_what_it_has(self):
+        rows = qg.focus_rows(self.score('pad', 'bass', 'drum', piece_type='melodic'))
+        self.assertEqual([r[0] for r in rows], ['FAIL'])
+        self.assertIn('t0 (pad)', rows[0][2])
+        self.assertIn('melody', rows[0][2])
+
+    def test_a_groove_is_a_subject_in_its_own_right(self):
+        groove = self.score('drum', 'bass', 'ostinato', piece_type='groove')
+        self.assertEqual([r[0] for r in qg.focus_rows(groove)], ['PASS'])
+        self.assertEqual([r[0] for r in qg.focus_rows(dict(groove, piece_type='melodic'))], ['FAIL'])
+
+    def test_the_same_track_is_a_lead_vocal_or_melody(self):
+        for role in ('melody', 'lead', 'vocal'):
+            self.assertEqual(qg.focus_rows(self.score(role, piece_type='melodic'))[0][0], 'PASS', role)
+
+    def test_an_effects_piece_declares_an_empty_focus_and_is_not_judged(self):
+        score = dict(piece_type='effects_only', tracks=[])
+        self.assertEqual(qg.focus_rows(score), [])
+        skipped = [n[2] for n in gpf.resolve(score).notes() if 'focus.declared' in n[2]]
+        self.assertEqual(len(skipped), 1)
+        self.assertTrue(skipped[0].startswith('SKIP focus.declared'), skipped[0])
+        self.assertIn('nothing to declare', skipped[0])
+
+    def test_a_declared_focus_the_type_does_not_judge_is_a_warning(self):
+        rows = qg.focus_rows(dict(self.score('pad'), focus='texture', piece_type='melodic'))
+        self.assertEqual([r[0] for r in rows], ['WARN'])
+        self.assertIn('declares focus texture', rows[0][2])
+
+    def test_masking_says_it_could_not_run_instead_of_passing(self):
+        score = dict(piece_type='melodic', tracks=[dict(name='bass', role='bass'), dict(name='pad', role='pad')])
+        mixer.STATE['processed'] = {'bass': tone(-10, f=80), 'pad': tone(-12, f=300)}
+        rows = qg.masking_rows(None, score)
+        self.assertEqual([r[0] for r in rows], ['INFO'])
+        self.assertIn('no track in this type', rows[0][2])
+
+    def test_a_vocal_is_a_lead_for_the_masking_rule(self):
+        score = dict(piece_type='melodic', tracks=[dict(name='voice', role='vocal'), dict(name='pad', role='pad')])
+        mixer.STATE['processed'] = {'voice': tone(-12, f=1000), 'pad': tone(-40, f=1200)}
+        self.assertEqual([r[0] for r in qg.masking_rows(None, score)], ['PASS'])
+
+    def test_a_type_that_skips_masking_says_so_in_its_profile(self):
+        score = dict(piece_type='groove', tracks=[dict(name='bass', role='bass'), dict(name='pad', role='pad')])
+        mixer.STATE['processed'] = {'bass': tone(-10, f=80), 'pad': tone(-12, f=300)}
+        self.assertEqual(qg.masking_rows(None, score), [])
 
 
 class ProjectProfiles(Base):

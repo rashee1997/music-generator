@@ -212,8 +212,11 @@ def direction_sheet(rep, cfg, brief_text='', title=None, context=None, film=None
         sections=sections_from_energy(rep, cfg, duration),
         instruments=[],
         spatial_staging=staging_from_centre(float(rep['centre_mean']), cfg),
-        mix_intent=dict(hero='lead', support=['pad', 'bass'], sits_under=['dialogue'] if has_audio else [],
-                        must_hear=['the lead above the bed', 'the low end with the bass and the hits'] +
+        focus=focus_of_picture(rep, cfg, dm),
+        mix_intent=dict(hero=focus_hero(focus_of_picture(rep, cfg, dm)), support=['pad', 'bass'],
+                        sits_under=['dialogue'] if has_audio else [],
+                        must_hear=[f'the {focus_hero(focus_of_picture(rep, cfg, dm))} above the bed',
+                                   'the low end with the bass and the hits'] +
                                   (['250-3800 Hz kept clear while the voice speaks'] if has_audio else []),
                         leave_free_hz=list(mix_cfg['speech_band_hz'])),
         loudness_lufs=float(master['lufs']),
@@ -327,6 +330,31 @@ def allowed_roles(density, mapping_cfg):
     return list((table[-1] or {}).get('roles') or []) if table else []
 
 
+def mapped_roles(mapping_cfg):
+    """Every role the mapping can place at some density. A role outside this set is not a quiet section:
+    it is a role the preset has no opinion about, and deleting its notes used to happen in silence."""
+    out = set()
+    for row in mapping_cfg.get('layers_by_density') or []:
+        out |= {str(r) for r in (row.get('roles') or [])}
+    return out
+
+
+def focus_of_picture(rep, cfg, dm):
+    """What the ear follows in this cue. The picture decides the density, never the subject: a close-up can
+    hold a drone, and a montage can be carried by its groove. Declared in the film `mapping` preset, so a
+    project can choose it for its own film instead of every cue being a lead."""
+    focus = str((dm or {}).get('focus') or 'melody').strip().lower().replace(' ', '_')
+    allowed = {'melody', 'drone', 'groove', 'texture', 'gesture'}
+    if focus not in allowed:
+        raise ValueError(f'film mapping focus "{focus}" is not one of {sorted(allowed)}')
+    return focus
+
+
+def focus_hero(focus):
+    """The stem a mix must hear, from the declared focus (scripts/roles.py FOCUS_ROLES)."""
+    return {'melody': 'lead', 'drone': 'drone', 'groove': 'bass', 'texture': 'pad', 'gesture': 'hits'}[focus]
+
+
 def _section_at(sections, t_s):
     for s in sections:
         if float(s['start_s']) <= t_s < float(s['end_s']):
@@ -351,8 +379,18 @@ def apply_section_arrangement(score, sheet, mapping_cfg):
                                                 float(s.get('energy') or 0.0), mapping_cfg))
         s['allowed_roles'] = s.get('allowed_roles') or allowed_roles(float(s['density']), mapping_cfg)
     all_roles = sorted({str(t.get('role')) for t in score['tracks'] if t.get('notes')})
+    known = mapped_roles(mapping_cfg)
+    unplaced = sorted({str(t.get('role')) for t in score['tracks']
+                       if t.get('notes') and str(t.get('role')) not in known
+                       and str(t.get('role')) not in ('sfx', 'fx', 'environment', 'drum', 'percussion')})
+    if unplaced:
+        raise ValueError(
+            'the film mapping has no density band for role ' + ', '.join(unplaced) +
+            ': its notes would be deleted in every section. Add the role to '
+            'references/data/presets/film/mapping.json layers_by_density, or write the track as one of '
+            + ', '.join(sorted(known)))
     for track in score['tracks']:
-        if not track.get('notes') or track.get('role') in ('sfx', 'environment', 'drum'):
+        if not track.get('notes') or str(track.get('role')) in ('sfx', 'fx', 'environment', 'drum', 'percussion'):
             continue
         role = str(track.get('role'))
         keep = []
@@ -362,7 +400,8 @@ def apply_section_arrangement(score, sheet, mapping_cfg):
             if sec is None or role in (sec.get('allowed_roles') or [role]):
                 keep.append(n)
         track['notes'] = keep
-    score['tracks'] = [t for t in score['tracks'] if t.get('notes') or t.get('role') in ('sfx', 'environment')]
+    score['tracks'] = [t for t in score['tracks']
+                       if t.get('notes') or str(t.get('role')) in ('sfx', 'fx', 'environment')]
     for s in sections:
         present = {str(t.get('role')) for t in score['tracks'] for n in t.get('notes') or []
                    if float(s['start_s']) <= float(n.get('t', 0.0)) * 60.0 / bpm < float(s['end_s'])}
@@ -387,7 +426,8 @@ def score_from_sheet(sheet, cfg, rep, context=None, mapping=None):
                  key=sheet['key'], mode=sheet['mode'], emotion=' '.join(sheet['feel']),
                  energy=float(np.mean(rep['energy'])) if rep['energy'] else 0.5,
                  piece_type=sheet['piece_type'], voiceover=has_audio, lufs=bed_lufs,
-                 seed=int(sheet.get('seed', 7)), hit_points=[], space=space)
+                 seed=int(sheet.get('seed', 7)), hit_points=[], space=space,
+                 focus=sheet.get('focus') or 'melody')
     score = compose.compose(brief)
     score['title'] = sheet['title']
     score['bpm'] = float(sheet['tempo_bpm'])

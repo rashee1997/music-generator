@@ -21,6 +21,9 @@ These are not negotiable.
 | A preset needs research first | Every instrument, vocal and culture preset cites knowledge base `id`s. | the pipeline blocks without a research note |
 | No inline EQ or spatial values in a score | A score holds track names and notes; EQ and placement live in the presets. | separation is strict |
 | No project-specific values in the engine | Every fix is general; never hardcode a project, track or piece name. | required for engine changes |
+| One role vocabulary | A track's `role` is a function from `scripts/roles.py`. A synonym goes in `roles.ALIASES`, never in a second list; a module that branches on a role string imports it. | unknown role raises |
+| The subject is declared | `piece_type` and `focus` say what carries the piece. Never delete the figure, the bed or the groove to get past `focus.declared`. | the gate row names what is missing |
+| Intent words resolve | Every emotion, register, scene and tension word must resolve in `references/data/presets/intent/`; a word that resolves to nothing, or to two concepts of one kind, is an error. | `intent.py check` |
 
 ---
 
@@ -35,7 +38,7 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **0.4** Determine request type from Section 3 (READ TABLE)
 
 ### PHASE 1: UNDERSTAND & PLAN
-- [ ] **1.1** Parse the brief. If vague, pick sensible defaults and STATE them. Only ask if it changes the outcome (duration, forbidden instruments, ambience needed).
+- [ ] **1.1** Parse the brief. If vague, pick sensible defaults and STATE them. Only ask if it changes the outcome (duration, forbidden instruments, ambience needed). Write what the piece IS as an `intent` block (see `references/workflow/intent-and-focus.md`); every word must resolve.
 - [ ] **1.2** For creative builds: CREATE A PLAN (feel, key/tempo, instruments, sections, layer purposes) and WAIT for approval before rendering. If user says "plan", read EVERY file in READ TABLE.
 - [ ] **1.3** Determine project type and fill in STATUS.md
 
@@ -55,7 +58,8 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 ### PHASE 4: DIRECTION SHEET (only after Phase 3 is complete)
 - [ ] **4.1** Confirm R1-R3 are done, the research notes carry citations, and `references/workflow/music-direction.md` has been read.
 - [ ] **4.2** Copy `templates/direction_sheet.json` to `<dir>/direction/direction_<title>.json`
-- [ ] **4.3** FILL EVERY FIELD: `job`, `purpose`, `point_of_view`, `sections` (with picture action), `motifs`, `hits_at`+`hits`, `ending`, `feel`, `avoid_feel`, `palette`, `avoid_sounds`, `tempo`, `key/mode`, `energy`, `space`, `mix_intent`, `loudness`, `true_peak_max`, `delivery`, `references` (words only), `spatial_staging`
+- [ ] **4.3** FILL EVERY FIELD: `job`, `purpose`, `point_of_view`, `sections` (with picture action), `motifs`, `hits_at`+`hits`, `ending`, `feel`, `avoid_feel`, `palette`, `avoid_sounds`, `tempo`, `key/mode`, `energy`, `space`, `mix_intent`, `loudness`, `true_peak_max`, `delivery`, `references` (words only), `spatial_staging`, `piece_type`, `focus` (what carries it), `intent`
+- [ ] **4.6** Decide the focus before the arrangement: `melody`, `drone`, `groove`, `texture` or `gesture`, and the roles that may carry it. A piece whose type expects a figure and has none will FAIL `focus.declared`, and that is the point.
 - [ ] **4.4** If scoring to video, run `scripts/video_score.py` - it fills video block but YOU still write music intent
 - [ ] **4.5** Ensure sections don't overlap, hits align with hits_at. Gate rejects otherwise.
 
@@ -73,7 +77,7 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **6.3** Only relax/skip after measurement with explicit reason. Never relax in advance.
 
 ### PHASE 7: SCORE
-- [ ] **7.1** Write `<dir>/scores/<title>_score.json`. Tracks reference preset names only. NO inline EQ/spatial.
+- [ ] **7.1** Write `<dir>/scores/<title>_score.json`. Tracks reference preset names only, every `role` from `scripts/roles.py`. NO inline EQ/spatial. Carry `piece_type`, `focus` and `intent` from the sheet.
 - [ ] **7.2** Follow all rules in Section 4.
 
 ### PHASE 8: RENDER & ITERATE
@@ -97,7 +101,8 @@ Before Phase 4, open every file in the row that matches the request; union sever
 
 | Request type | Open |
 |---|---|
-| **ANY PIECE** | `SKILL.md`, `references/workflow/brief-reading.md`, `references/workflow/music-direction.md`, `references/spatial/acoustic-laws.md`, `references/mixing/mix-rules.md`, `references/mixing/humanization.md`, `references/mixing/quality-gate.md` |
+| **ANY PIECE** | `SKILL.md`, `references/workflow/brief-reading.md`, `references/workflow/music-direction.md`, `references/workflow/intent-and-focus.md`, `references/spatial/acoustic-laws.md`, `references/mixing/mix-rules.md`, `references/mixing/humanization.md`, `references/mixing/quality-gate.md` |
+| **Intent/mood words/focus/roles** | `references/workflow/intent-and-focus.md`, `scripts/intent.py`, `scripts/roles.py` |
 | **Mood/film/underscore/background** | `references/workflow/scene-recipes.md`, `references/scoring/emotion-and-scoring.md`, `knowledgebase/media/video-scoring.md` |
 | **Score video file** | `references/scoring/video-scoring.md`, `scripts/video_score.py`, `video-mixer/video_probe.py`, `video-mixer/context.py`, Section 10 below |
 | **Film reel / several cues / spotting** | `references/scoring/video-scoring.md`, `video-mixer/deliver/reel.py`, `video-mixer/gate/pass_.py`, `scripts/setup_project.py --new-film`, Section 9 and Section 10 |
@@ -166,12 +171,14 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
 
 | Piece Type | Start From | Notes |
 |---|---|---|
-| Melody + accompaniment (normal) | `melodic` | All rows on |
-| Film cue/build-hit-release | `cinematic` | Falls back to layer balance if no lead |
-| Drone/bed/soundscape (no kick) | `ambient` | Loops/holds by design |
-| Steady kick + loop layers (genre) | `dance` | Four-on-floor expected |
+| Melody + accompaniment (normal) | `melodic` | All rows on; focus = melody/lead/vocal |
+| Film cue/build-hit-release | `cinematic` | Focus may be a line, a texture or a drone |
+| Drone/bed/soundscape (no kick) | `ambient` | Loops/holds by design; a lead is optional |
+| Steady kick + loop layers (genre) | `dance` | Four-on-floor expected; the groove is the focus |
+| Groove with no melody at all (beat, riff, bass) | `groove` | Melody rows skipped by design; focus = kick/bass/cell |
+| Surface, grain, no line (texture piece) | `texture` | Melody rows skipped; focus = texture/pad/arp |
 | Dark/unresolved/suspense (no cadence) | `tense` | SKIPS "resolves to tonic" |
-| Effects/ambience only (no notes) | `effects_only` | Note/melody rows don't apply |
+| Effects/ambience only (no notes) | `effects_only` | Declares an empty focus and skips the row |
 
 - Read brief for demands. If demands conflict with profile flags, don't pick it.
 - Mixed situations: create custom profile with `python scripts/gate_profiles.py new <name> --from <closest> --project <dir>`. Can merge with list like `["cinematic", "dance"]`.
@@ -181,6 +188,36 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
 - One-off exceptions go in score as `"gate": {"<row>": {"mode": "relax", "reason": "...", ...}}`
 
 ---
+
+## 6b. Focus and intent (what the piece is)
+
+Three declarations, three different jobs, and each is read by the gate:
+
+| Declaration | Says | Read by |
+|---|---|---|
+| `piece_type` | which rules judge it | `gate_profiles.resolve`, every row |
+| `focus` | what carries it | `focus.declared`, `balance_rows`, `masking_rows`, `humanize`, the mix preset |
+| `intent` | what it is (mood, register, scene, tension, avoid) | `intent.vocabulary`, `intent.avoid` |
+
+Rules:
+
+1. **One vocabulary.** Every track `role` is canonical: `melody`, `lead`, `vocal`, `counter`, `chord`, `pad`, `bass`, `drum`,
+   `arp`, `ostinato`, `drone`, `texture`, `fx`, `environment`. `melody`, `lead` and `vocal` are the figure family; a
+   profile's `focus.roles` says which of them may carry the piece. A synonym (`harmony`, `vox`, `percussion`, `sfx`,
+   `riff`) is added to `roles.ALIASES` and nowhere else.
+2. **The type and the focus must agree.** A type that expects a figure and a piece with no figure is a FAIL naming the
+   tracks that exist. Fix the arrangement or the declaration; never delete a part to make the row quiet, and never
+   loosen the row.
+3. **`focus` is not a volume.** It changes which stem is the reference for balance and masking, what the listener is
+   asked to follow, and how the part is phrased. A `drone` piece still has a level; it is just not a lead.
+4. **Intent words are data.** A brief saying "heartbroken" resolves through `synonyms.json` to an emotion. A word that
+   resolves to nothing is an error with the closest matches: never invent a mood, and never let an unknown word become
+   a silent default.
+5. **A declaration is a promise.** If `grief` forbids `major_cadence`, a piece that cadences home FAILs `intent.avoid`.
+   Change the bars, not the emotion. A gesture with no score-side measurement is reported WARN as unmeasured: that is
+   not a pass.
+6. **`compose.py` fills only what the brief left empty.** An explicit `emotion`, `focus` or `intensity` wins over one
+   derived from the intent block; the resolved block is carried onto the score so the gate judges what was asked for.
 
 ## 7. Rules for every piece
 
@@ -203,6 +240,8 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
     "starting value" on the same line. A new KB file gets a row in `knowledgebase/README.md` and the standard
     header (`id`, `title`, `domain`, `status`, `sources`, `used_by`, `updated`), and
     `python tests/check_kb.py` must pass. Writing new Python generator for new sound name is forbidden. Unknown fields = error, no fallback. No normalization erasing physical intensity differences.
+17. **A declaration is judged** - `focus.declared`, `intent.vocabulary` and `intent.avoid` are rows like any other (Section 6b).
+    They fail in the score or the presets; a declaration is never deleted, loosened or skipped to get a green report.
 
 ---
 

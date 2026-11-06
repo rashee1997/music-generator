@@ -3,6 +3,12 @@
   "character": "cinematic cue (build, hit, release): judged like a melodic piece, but may have no lead so it falls back to layer balance",
   "extends": "melodic",
   "detect": {"keywords": ["cinematic", "cue", "film", "score", "montage", "underscore", "trailer"]},
+  "focus": {
+    "roles": ["melody", "lead", "vocal", "texture", "drone"],
+    "fallback": "balance.layers",
+    "label": "a figure, a texture or a drone carrying the scene",
+    "reason": "a cue may be led by a line, by a texture or by a held drone; all three are the scene's centre"
+  },
   "rows": {
     "balance.vs_lead": {"mode": "apply", "fallback": "balance.layers"}
   }

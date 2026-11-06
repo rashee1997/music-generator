@@ -92,6 +92,12 @@ bigger the music may be (`references/workflow/music-direction.md` §2.4). A clos
 a wide allows the band. The cap is a preset table, and the gate measures the density that actually
 resulted, not the intention.
 
+**Shot scale decides the density, never the subject.** A close-up does not force a tune and a wide does not
+force a drone: `mapping.json` declares `focus` (`melody`, `drone`, `groove`, `texture`, `gesture`), and the
+sections' `allowed_roles` carry the roles that may realise it. A role with no band in the density table is an
+error, not a silent deletion, and `focus.declared` then judges whether the cue that got built still has its
+subject. The vocabulary is `references/workflow/intent-and-focus.md`.
+
 `text_on_screen` is `null` and says "not measured": nothing in this skill detects text, and a
 measurement that is not made must not be invented.
 
@@ -102,7 +108,7 @@ measurement that is not made must not be invented.
 | Preset | Holds |
 |---|---|
 | `analysis.json` | probe rate, cut detection, shot-scale thresholds, speech thresholds, phase fit, scene grouping |
-| `mapping.json` | tempo from cuts, luma/palette → mode, centre and direction → pan, shot scale → density, layers per density |
+| `mapping.json` | tempo from cuts, luma/palette → mode, centre and direction → pan, shot scale → density, layers per density, and `focus` (what carries the cue) |
 | `hits.json` | sounds, budget, gap, **hit classes** (`dead_on`, `reaction`) and their windows |
 | `dialogue.json` | voice chain, bed, duck, speech band, intelligibility band, audited loudness difference |
 | `delivery.json` | master profiles **with an explicit gating mode**, mux target, gate tolerances |
@@ -177,6 +183,7 @@ brief are read the same way. What the picture fills:
 |---|---|
 | `tempo_bpm`, `tempo_method` | the median cut interval (1/2/4/8 beats), frame-locked when asked |
 | `key`, `mode` | the mapping preset; luma decides, palette only breaks a tie |
+| `focus`, `intent` | what carries the cue, and what it is, carried from the mapping preset and the brief |
 | `sections` | one per scene: `shot_scale`, `energy`, `density`, `allowed_roles`, `action`, `music` |
 | `hits`, `hits_at` | cuts (hard) and movements (soft), each with `kind`, `sync`, `class`, `offset_s` |
 | `video.cuts`, `cut_phase`, `scenes`, `silence_windows` | the context artifact |
