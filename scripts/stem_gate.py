@@ -69,9 +69,19 @@ def _note_intervals(track, bpm):
     return out
 
 
+MELODIC_ROLES = {'melody', 'lead', 'counter', 'vocal'}
+
+
 def _beatless(track, bpm):
-    """True when this stem should have no pulse: not percussive and its note starts are not isochronous."""
+    """True when this stem should have no pulse: not percussive, and not a part the score gives a rhythm.
+
+    A melodic part is excluded on purpose. `stem.tick` asks whether a stem that should hold still is ticking; a
+    played melody legitimately has repeated bow changes and a vibrato (a 6 Hz violin vibrato is a 163 ms period),
+    and reading that as a tick faults the playing, not a defect.
+    """
     if _is_percussive(track):
+        return False
+    if str((track or {}).get('role') or '').lower() in MELODIC_ROLES:
         return False
     starts = sorted(a for a, _ in _note_intervals(track, bpm))
     if len(starts) < 3:
@@ -242,8 +252,9 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
 
     iv = _note_intervals(track, bpm) if track is not None else []
     # Percussive stems are excluded: a drum note's written length is a grid cell, not a sound length, so the space
-    # between the last hit and the bar line is not silence to trim.
-    if iv and not _is_percussive(track):
+    # between the last hit and the bar line is not silence to trim. An `sfx` track is the same case: its written
+    # length is a trigger for a one-shot sound, and the sound's own attack and decay are the instrument, not an edit.
+    if iv and not _is_percussive(track) and str((track or {}).get('role') or '').lower() != 'sfx':
         if gp.on('stem.edge'):
             res = gc.check_edge(sig, min(a for a, _ in iv), max(b for _, b in iv),
                                 max_silence_ms=gp.param('stem.edge', 'max_silence_ms'))

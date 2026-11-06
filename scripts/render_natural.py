@@ -820,6 +820,19 @@ def _mark_accompanied(tr, tracks):
     return dict(tr, notes=notes)
 
 
+def _dc_block(x, sr=44100, cutoff_hz=5.0):
+    """Remove DC and subsonic drift from a rendered stem.
+
+    Some SoundFont samples carry a DC offset; multiplied by a per-note envelope it becomes a slowly
+    varying DC that `stem.dc` correctly fails (a 1 s block mean moving by more than 0.001 FS). It is
+    inaudible but not a musical choice, so it is removed at the source: a 2nd-order high-pass at 5 Hz,
+    two octaves under the lowest note any preset plays.
+    """
+    from scipy import signal as _signal
+    sos = _signal.butter(2, cutoff_hz, 'high', fs=sr, output='sos')
+    return _signal.sosfiltfilt(sos, x, axis=0).astype(np.float32)
+
+
 def build_stems(score, sfpath=None, seed=None, verbose=True):
     """Humanize + render every track. Returns (stems dict name->(N,2) float32, meta, tempo map)."""
     # The caller registers the project (pipeline.py in project mode, run_gate from the score path). This function
@@ -864,6 +877,7 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
                     cached = _report_entry(name).get('cached')
                     print(f'  {"cached   " if cached else "rendered "} {name}', flush=True)
                 stems[name] = stem
+    stems = {name: _dc_block(stem) for name, stem in stems.items()}
     return stems, tm
 
 
