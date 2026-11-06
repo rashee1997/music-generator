@@ -71,8 +71,16 @@ Roughness (`naturalness_check`): only tonal peaks (15 dB over the local spectral
 1. **Critical-Band Vocal & Speech Masking (`masking_rows`)**:
    - For vocal leads or voice-over, tests the critical speech intelligibility corridor (**250 Hz – 3,800 Hz**). Accompaniment or ambient beds rising within 3 dB of the lead trigger a `WARN` with exact timestamps and offending stems.
 2. **Harmonic Chroma Concordance (`chroma_concordance_rows`)**:
-   - Extracts 12-TET chroma vectors via 8,192-point FFT on ambient soundscapes and background beds.
+   - Pitch classes from `naturalness_check.chroma_analysis`: `librosa.feature.chroma_cqt` (CQT, 36 bins/octave from C2)
+     over the **whole** stem at 22.05 kHz, with `librosa.estimate_tuning` correcting the band's tuning, weighted by the
+     frames that are sounding (within 40 dB of the loudest) and tonal.
+   - Tonality is the peak-prominence rule the roughness model uses (peaks 15 dB over a median-filtered floor holding
+     40 % of the frame's energy), not spectral flatness: flatness over the whole band calls *band-limited* noise (rain)
+     tonal, because its energy sits in one part of the spectrum.
    - Detects dissonant semitone collisions (minor 2nd intervals against the tonic root or active chord tones). Flags if dissonance energy exceeds 28%.
+   - A bed with no tonal content, a silent track, or a machine without librosa is reported `INFO` naming what could not be
+     measured, never as concordant. The row used to read one 186 ms FFT frame at the file's midpoint, so a bed that
+     stopped before the midpoint produced an all-zero profile and printed "0.0% dissonance" - a pass from no measurement.
 3. **Mobile Phone Presence Mono Fold-Down (`mono_phone_loss`)**:
    - Tests mono summing in the 1–5 kHz presence band. Flags if mono cancellation exceeds **-3.5 dB**, catching aggressive Haas stereo wideners before testing on phone speakers.
 4. **Kick-Drum Beat-Grid Lock (`kick_grid_rows`)**:

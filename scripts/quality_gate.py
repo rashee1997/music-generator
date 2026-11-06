@@ -1752,7 +1752,12 @@ def vocal_rows(score, stems=None, out=None, sr=44100, report=None):
 def chroma_concordance_rows(score, rendered_path, stems=None, out=None, sr=44100):
     """Harmonic Concordance Check:
     Verifies that ambient beds / nature tracks do not introduce dissonant semitone collisions
-    (minor 2nd intervals) against the song's root tonic or active chord tones."""
+    (minor 2nd intervals) against the song's root tonic or active chord tones.
+
+    The pitch classes come from `naturalness_check.chroma_analysis`: a constant-Q chroma of the whole stem, weighted by
+    the frames that hold resolved harmonics. A bed with no tonal content (rain, wind, noise) and a silent track are
+    reported as not measurable, not as concordant: the old single-frame profile returned zeros for a bed that sounded
+    early and not at the midpoint, and that read as a pass."""
     rows = []
     import gate_profiles
     gp = gate_profiles.resolve(score)
@@ -1775,14 +1780,31 @@ def chroma_concordance_rows(score, rendered_path, stems=None, out=None, sr=44100
     
     for name in env_tracks:
         if name in stems:
-            c = nc.chroma_profile(stems[name], sr)
+            prof = nc.chroma_analysis(stems[name], sr)
+            if prof is None:
+                rows.append(('INFO', 'harmonic_concordance',
+                             f'ambient track "{name}": librosa is missing, so its pitch classes were not measured'))
+                continue
+            if prof['sounding_frames'] == 0:
+                rows.append(('INFO', 'harmonic_concordance',
+                             f'ambient track "{name}" carries no signal to analyse: nothing to clash with {root_name}'))
+                continue
+            if prof['tonal_frames'] < nc.CHROMA_MIN_TONAL_FRAMES:
+                rows.append(('INFO', 'harmonic_concordance',
+                             f'ambient track "{name}" is broadband ({prof["tonal_frames"]} of '
+                             f'{prof["sounding_frames"]} frames hold resolved harmonics, so its pitch classes are noise): '
+                             f'a semitone clash is not measurable here'))
+                continue
+            c = prof['chroma']
+            coverage = (f'{prof["tonal_frames"]} of {prof["sounding_frames"]} sounding frames tonal, '
+                        f'tuning {prof["tuning_cents"]:+.0f} cents')
             diss_energy = float(c[dissonant_pcs].sum())
             if diss_energy > max_diss:
                 rows.append(('WARN', 'harmonic_concordance',
-                             f'ambient track "{name}" has high dissonant semitone energy ({diss_energy*100:.1f}%) against key {root_name}. Retune or notch'))
+                             f'ambient track "{name}" has high dissonant semitone energy ({diss_energy*100:.1f}%) against key {root_name}. Retune or notch ({coverage})'))
             else:
                 rows.append(('PASS', 'harmonic_concordance',
-                             f'ambient track "{name}" is harmonically concordant with key {root_name} (dissonance {diss_energy*100:.1f}% <= {max_diss*100:.0f}%)'))
+                             f'ambient track "{name}" is harmonically concordant with key {root_name} (dissonance {diss_energy*100:.1f}% <= {max_diss*100:.0f}%; {coverage})'))
     if out is not None:
         out.extend(rows)
     return rows

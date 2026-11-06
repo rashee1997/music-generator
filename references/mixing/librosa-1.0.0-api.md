@@ -52,6 +52,13 @@ keywords (`*, y=None, S=None`) rather than positional. Calling `feature.rms(mono
 | `poly_features` | polynomial fit to each spectrum, coefficients | `(order+1, t)`, unitless | `order=1` (slope), `freq=None` | coefficient scale depends on the frequency axis; slope is the useful one | [S] |
 | `zero_crossing_rate` | sign changes per frame / (frame_length-1) | `(1, t)`, 0..1 | `frame_length=2048, hop_length=512, center=True` | a DC offset and a high-passed noise both change it; not a defect detector alone | [S] |
 | `chroma_cqt` | energy per pitch class from the CQT | `(12, t)`, 0..1 with `norm=inf` | `hop_length=512, fmin=None (C1), norm=inf, n_chroma=12, n_octaves=7, bins_per_octave=36` | low notes and percussion smear; needs a tonal source | [S] |
+
+`chroma_cqt` now backs the `harmonic_concordance` row (`naturalness_check.chroma_analysis`, 2026-11-06): whole stem at
+22.05 kHz with `hop_length=2048`, `fmin=C2`, `tuning=estimate_tuning(...)`, `norm=None`, summed over the frames that are
+sounding (within 40 dB of the loudest) and tonal, then normalised. Measured here: a clean C-E-G triad puts 1.0 % of its
+pitch energy on C#/B, the same triad with C# added 26.3 %, and a C#-rooted bed 54.4 %; a 442 Hz-tuned triad still reads
+C-E-G with `tuning` +10 cents; 20 s of audio costs 0.42 s, 30 s costs 0.74 s. Percussion smear is why tonal filtering is
+mandatory: white and band-limited noise hold 0 of 65 tonal frames and are reported as unmeasurable rather than concordant.
 | `chroma_stft` | pitch-class energy from the STFT | `(12, t)`, 0..1 with `norm=inf` | `n_fft=2048, hop_length=512, tuning=None` | poorer low-frequency resolution than `chroma_cqt` | [S] |
 | `tonnetz` | 6-D tonal centroid (fifths, minor third, major third) | `(6, t)`, roughly -1..1 | `chroma=None` -> computes `chroma_cqt`; extra kwargs go to it | depends on the chroma normalization; not a key detector by itself | [S] |
 | `mfcc` | mel-cepstral coefficients (dB domain) | `(n_mfcc, t)`, unbounded, typically about -100..100 | `n_mfcc=20, dct_type=2, norm='ortho', lifter=0, mel_norm='slaney'` | coefficients are not comparable across sample rates and gain; useful as a timbre distance only | [S] |
