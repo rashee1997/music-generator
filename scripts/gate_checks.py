@@ -313,8 +313,38 @@ def check_edge(sig, first_note_s, last_note_s, max_silence_ms=25.0, floor_below_
                    head_ms=round(head_ms, 1), tail_ms=round(tail_ms, 1), fail=bool(fail))
 
 
-def check_tick(sig, rho_min=0.35, min_events=6, cv_max=0.05, lag_s=(0.1, 1.0), hop=512):
-    """Onset-strength autocorrelation in the 0.1-1 s lag range, corroborated by tempogram and PLP."""
+def _level_ripple_db(sig, rate_hz):
+    """Depth (dB) of the level modulation at a rate, after removing the slow dynamics arc.
+
+    Projected sinusoid, so the number is the peak-to-peak amplitude in dB of the level at that rate, not an FFT
+    magnitude that depends on the analyser's window length.
+    """
+    try:
+        db, times = sig.frame_db(frame_ms=10.0, hop_ms=2.0)
+    except Exception:
+        return 0.0
+    db = np.asarray(db, dtype=np.float64)
+    times = np.asarray(times, dtype=np.float64)
+    keep = np.isfinite(db)
+    if keep.sum() < 64 or rate_hz <= 0:
+        return 0.0
+    db, times = db[keep], times[keep]
+    step = float(times[1] - times[0]) if times.size > 1 else 0.002
+    # remove the slow arc (a 0.25 s moving average leaves a 8-13 Hz modulation almost untouched)
+    k = max(3, int(round(0.25 / step)))
+    trend = np.convolve(db, np.ones(k) / k, mode="same")
+    x = db - trend
+    win = np.hanning(x.size)
+    best = 0.0
+    for f in (rate_hz * 0.85, rate_hz, rate_hz * 1.15):
+        ph = np.exp(-2j * np.pi * f * (times - times[0]))
+        best = max(best, 2.0 * abs(np.sum(x * win * ph)) / (np.sum(win) + EPS))
+    return float(best)
+
+
+def check_tick(sig, rho_min=0.35, min_events=6, cv_max=0.05, lag_s=(0.1, 1.0), hop=512,
+               min_ripple_db=0.5):
+    """Onset-strength autocorrelation in the 0.1-1 s lag range, corroborated by tempogram, PLP and level ripple."""
     if librosa is None:
         return _result(0.0, rho_min, 'rho', [], 'librosa missing: tick row not measured', skipped=True)
     onset = sig.onset_env
@@ -352,15 +382,22 @@ def check_tick(sig, rho_min=0.35, min_events=6, cv_max=0.05, lag_s=(0.1, 1.0), h
     # sat exactly on a 244/255 ms grid). Score how many strong peaks land on the autocorrelation period instead.
     st = strong * hop / float(sig.sr)
     matched = _grid_matches(st, period_s, tol_s=0.02) if st.size else 0
+    # A tick train is periodic in LEVEL, not only in timbre. Onset strength (spectral flux) rises whenever the spectrum
+    # moves, so a sampled orchestral sustain reads as periodic while its level is flat: measured 0.02-0.28 dB at the
+    # detected period on real Sonatina stems (vibrato plus a 4096-sample sustain loop = 92.9 ms), against several dB
+    # for a synthetic tick train. A defect has to move the level, so require that before calling it one.
+    ripple_db = _level_ripple_db(sig, 1.0 / period_s if period_s > 0 else 0.0)
     periodic = (rho >= rho_min and strong.size >= min_events and matched >= min_events
-                and matched >= 0.3 * strong.size)
+                and matched >= 0.3 * strong.size and ripple_db >= min_ripple_db)
     times = [float(st[0])] if st.size else []
     detail = (f'onset autocorrelation {rho:.2f} at {period_s * 1000:.0f} ms (limit {rho_min:g}), '
               f'{strong.size} strong onset(s) of {peaks.size}, {matched} on the grid, IOI CV {cv:.3f}; '
+              f'level ripple {ripple_db:.2f} dB at that period (min {min_ripple_db:g}); '
               f'tempogram peak ratio {tg_ratio:.2f}, PLP peak ratio {plp_ratio:.2f}')
     return _result(rho, rho_min, 'rho', times, detail,
                    periodic=bool(periodic), period_ms=period_s * 1000.0, events=int(strong.size),
-                   cv=cv, grid_matched=int(matched), tempogram_ratio=tg_ratio, plp_ratio=plp_ratio)
+                   cv=cv, grid_matched=int(matched), tempogram_ratio=tg_ratio, plp_ratio=plp_ratio,
+                   ripple_db=round(ripple_db, 3))
 
 
 def _grid_matches(times, period_s, tol_s=0.02):

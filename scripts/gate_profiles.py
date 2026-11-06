@@ -69,7 +69,8 @@ ROWS = {
     'stem.edge': dict(meaning='a stem starts or stops away from its own score notes', params={
         'max_silence_ms': (25.0, 5.0, 100.0)}),
     'stem.tick': dict(meaning='a periodic tick in a stem that should have no beat', params={
-        'rho': (0.35, 0.2, 0.6), 'min_events': (6, 3, 12), 'cv_max': (0.05, 0.01, 0.2)}),
+        'rho': (0.35, 0.2, 0.6), 'min_events': (6, 3, 12), 'cv_max': (0.05, 0.01, 0.2),
+        'ripple_db': (0.5, 0.2, 2.0)}),
     'stem.dead': dict(meaning='a part missing/dropped against the score dynamics', params={
         'under_db': (12.0, 6.0, 24.0), 'floor_db': (-70.0, -80.0, -50.0)}),
     'stem.clipping': dict(meaning='clipped samples on one stem', protected=True),
