@@ -104,14 +104,18 @@ def _breath_noise(rng, n, sr, B, lo, hi, body_hz, tilt_db):
 
 # ---------------------------------------------------------------- continuous airflow
 
-def airflow_env(n, sr, B, spans):
+def airflow_env(n, sr, B, spans, jitter=None):
     """The airflow envelope across a whole line, in linear amplitude relative to a phrase's RMS.
 
     `spans` are the sung (t0, voiced_end) pairs in seconds. Every gap gets an inhalation that rises through
     most of the gap and peaks `inhale_lead_ms` before the next phrase, then crossfades under the voice's
     attack (`inhale_crossfade_ms`); every phrase gets a decaying release. Between those, the envelope sits on
     `inhale_floor_db` - air, not silence. Level and length follow the gap, so a long rest is a slow quiet
-    breath and a catch breath is short and firmer."""
+    breath and a catch breath is short and firmer.
+
+    `jitter` is one `(shift_s, duration_scale)` per gap, moving that inhalation inside its own gap and
+    scaling its length. It is per gap on purpose: shifting the whole envelope would move the releases too,
+    and a singer's breath is not the same person's reaction time as their exhale."""
     floor = 10.0 ** (float(B['inhale_floor_db']) / 20.0)
     env = np.full(n, floor, dtype=float)
     t = np.arange(n) / sr
@@ -119,6 +123,7 @@ def airflow_env(n, sr, B, spans):
     rel_db = float(B['release_peak_db'])
     lead = float(B['inhale_lead_ms']) * 1e-3
     fade = max(0.02, float(B['inhale_crossfade_ms']) * 1e-3)
+    jitter = jitter or []
     for i, (_t0, t1) in enumerate(spans):
         # release: the air keeps leaving after the note stops
         if rel_db > B['inhale_floor_db']:
@@ -135,9 +140,11 @@ def airflow_env(n, sr, B, spans):
         gap = gap_end - gap_start
         if gap < float(B['inhale_min_s']) * 0.6:
             continue
-        dur = float(np.clip(B['inhale_gap_frac'] * gap, B['inhale_min_s'], B['inhale_max_s']))
-        end = gap_end - lead
+        shift, dscale = jitter[i] if i < len(jitter) else (0.0, 1.0)
+        dur = float(np.clip(B['inhale_gap_frac'] * gap * float(dscale), B['inhale_min_s'], B['inhale_max_s']))
+        end = min(gap_end - 0.4 * lead, gap_end - lead + float(np.clip(shift, -0.5 * gap, 0.5 * gap)))
         start = max(gap_start + 0.02, end - dur)
+        end = max(start + 0.08, end)
         if end - start < 0.08:
             continue
         m = int((end - start) * sr)
@@ -164,12 +171,12 @@ def airflow_env(n, sr, B, spans):
     return np.maximum(env, floor)
 
 
-def bed(sr, rng, B, ref_rms, spans, n, character=0.0):
+def bed(sr, rng, B, ref_rms, spans, n, character=0.0, jitter=None):
     """Continuous breath signal for one line: one shaped noise, multiplied by `airflow_env`.
     `ref_rms` is the singer's reference RMS, so the level keys stay relative to the voice."""
     if n <= 0 or not spans:
         return np.zeros(max(n, 0))
-    env = airflow_env(n, sr, B, spans)
+    env = airflow_env(n, sr, B, spans, jitter=jitter)
     lo, hi = B['inhale_band_hz']
     shift = 1.0 + 0.18 * float(np.clip(character, -1.0, 1.0))
     noise = _breath_noise(rng, n, sr, B, lo * shift, hi * shift,

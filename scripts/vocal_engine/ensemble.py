@@ -24,9 +24,9 @@ millisecond is the one thing breath modelling must not do.
 """
 import numpy as np
 
-from . import breath, context, expression, performance as pf, singer
+from . import binaural, breath, context, expression, performance as pf, singer
 from . import data
-from .utils import dc_block
+from .utils import dc_block, drift_walk
 
 
 def soft_limit(y, knee=0.9):
@@ -52,6 +52,20 @@ def report(R, dry, mixed, out, sr):
         k = max(1, int(sr // 4000))
         M = np.corrcoef(np.stack([d[::k] for d in live]))
         corr = float(np.nanmax(np.abs(M[np.triu_indices(len(live), 1)])))
+    # binaural cues live in the mix, not in the dry stems, so they are measured on the mix: a mono fold
+    # that keeps everything is a mix with no stereo information (correlation ~1) and it is a fact, not an opinion
+    Lm, Rm = mixed[:, 0], mixed[:, 1]
+    stereo = None
+    if len(Lm) > 8 and Lm.std() > 1e-9 and Rm.std() > 1e-9:
+        k = max(1, int(sr // 4000))
+        stereo = float(np.corrcoef(Lm[::k], Rm[::k])[0, 1])
+    mono_loss = None
+    rl, rr = float(np.sqrt(np.mean(Lm ** 2))), float(np.sqrt(np.mean(Rm ** 2)))
+    if rl + rr > 1e-12:
+        mono_loss = float(20.0 * np.log10(float(np.sqrt(np.mean((Lm + Rm) ** 2))) / (rl + rr)))
+    tb = np.asarray(R.get('timing_bias_ms') or [], dtype=float)
+    onset_jit = round(float(np.std(tb)), 3) if len(tb) >= 2 else None
+    itd = R.get('itd_ms') or []
     hf = None
     if R['hum']:
         sp = np.abs(np.fft.rfft(mixed[:, 0] * np.hanning(len(mixed)))) ** 2
@@ -84,6 +98,8 @@ def report(R, dry, mixed, out, sr):
                 capacity_s=R['capacity_s'], over_capacity=R['over_capacity'], inhales=R['inhales'],
                 no_room_phrases=R['no_room_phrases'], mean_abs_dev_cents=float(np.mean(np.abs(dev))),
                 max_abs_dev_cents=float(np.max(np.abs(dev))), dyn_corr=dyn, max_corr=corr, hum_hf_frac=hf,
+                stereo_corr=stereo, mono_loss_db=mono_loss,
+                itd_ms_max=(round(float(max(itd)), 3) if itd else None),
                 finite=bool(np.isfinite(mixed).all()), dc=float(np.abs(mixed.mean(0)).max()),
                 peak_pre_limit=float(np.abs(mixed).max()), peak=float(np.abs(out).max()),
                 technique=tech, consonants=cons_rep, identity_pct=identity_pct, **tech,
@@ -92,6 +108,7 @@ def report(R, dry, mixed, out, sr):
                               timing_max_ms=round(float(np.max(np.abs(tim))), 3),
                               accent_db=round(float(np.mean(R.get('accents_db') or [0.0])), 3),
                               inhale_spread_ms=None if not spreads else round(float(np.mean([np.std(s) for s in spreads])) * 1e3, 3),
+                              onset_jitter_ms=onset_jit,
                               tempo_bpm=R.get('tempo_bpm') or 0.0))
 
 
@@ -124,6 +141,7 @@ def render(events, sr=44100, cfg=None, seed=1, hum=False, default_vowel=None, vo
     piece = context.analyse(events, cfg)
     R = dict(phrases=0, joins=0, longest_phrase_s=0.0, capacity_s=None, over_capacity=0, inhales=0, no_room_phrases=0,
              dev=[], note_v=[], note_rms=[], hum=hum, contours=[], timing_ms=[], accents_db=[], inhale_map={},
+             timing_bias_ms=[], itd_ms=[],
              technique={}, consonants=[], identity=[], tempo_bpm=piece['tempo_bpm'])
     div = E['diversity'] * (1.0 - 0.5 * coh)
 
@@ -134,9 +152,16 @@ def render(events, sr=44100, cfg=None, seed=1, hum=False, default_vowel=None, vo
         pos = _pos(j, n_total)
         rs = np.random.default_rng([int(seed) & 0xFFFFFFFF, j, 31337])
         t_bias = rs.normal(0.0, E['timing_spread_ms'] * 1e-3 * (1 - coh) * 0.5)
-        detune = pos * E['pitch_spread_cents'] * (1 - coh)
+        # a choir does not start on one edge: each singer has a reaction time, wider as cohesion drops
+        onset_std = 0.0 if coh >= 1.0 else float(np.clip(E['onset_spread_ms'] * (1 - coh), 15.0, 45.0)) * 1e-3
+        if onset_std > 0.0:
+            t_bias += rs.normal(0.0, onset_std)
+        # a person's tuning is a tendency plus a slow wander, not a rung on a ladder
+        detune = rs.uniform(-0.5, 0.5) * E['pitch_spread_cents'] * (1 - coh)
+        drift_amp = E['pitch_drift_cents'] * rs.uniform(0.5, 1.5) * (1 - coh)
+        drift = drift_walk(rs, N, sr, E['pitch_drift_hz']) * drift_amp
         pan = float(np.clip(pos * E['pan_width'], -1, 1))
-        gl, gr = np.sqrt(0.5 * (1 - pan)), np.sqrt(0.5 * (1 + pan))
+        rs_sp = np.random.default_rng([int(seed) & 0xFFFFFFFF, j, 2718])   # spatial draws are not the performance's
         gain = 1.0 / np.sqrt(max(1, n_total))
         ref = scfg['dynamics']['ref_rms'] * scfg['dynamics']['level_scale']
         amt = float(np.clip(float((scfg.get('phrasing') or {}).get('amount', 0.0)), 0.0, 1.0))
@@ -147,7 +172,7 @@ def render(events, sr=44100, cfg=None, seed=1, hum=False, default_vowel=None, vo
             for e in line:
                 d = dict(e)
                 d['t'] = max(0.0, e['t'] + t_bias + rs.normal(0.0, E['timing_spread_ms'] * 1e-3 * (1 - coh) * 0.2))
-                d['c'] = float(e.get('c', 0.0)) + detune
+                d['c'] = float(e.get('c', 0.0)) + detune + float(drift[min(N - 1, max(0, int(round(d['t'] * sr))))])
                 ev.append(d)
             ev.sort(key=lambda x: x['t'])
             spans = []
@@ -195,14 +220,19 @@ def render(events, sr=44100, cfg=None, seed=1, hum=False, default_vowel=None, vo
             # phrase, a release after it. Nothing is dropped into silence as a short event.
             if float(scfg['breathing'].get('inhale_gain', 0.0)) > 0:
                 rng_b = np.random.default_rng([int(seed) & 0xFFFFFFFF, j, li, 900])
-                air = breath.bed(sr, rng_b, scfg['breathing'], ref, spans, N)
-                # every singer breathes on the same phase (a section breathes together); only a few ms of
-                # offset and a small amplitude difference remain, so the breath is one texture, not N events
-                shift = int(round(rs.normal(0.0, min(B['inhale_timing_jitter_ms'], 12.0) * 1e-3) * amt * sr))
-                if shift > 0:
-                    air = np.concatenate([np.zeros(shift), air[:-shift]])[:N]
-                elif shift < 0:
-                    air = np.concatenate([air[-shift:], np.zeros(-shift)])[:N]
+                # each singer's breath has its own onset wander and length, so a section does not gasp together.
+                # The wander grows with the gap (a long rest allows a later, lazier breath) and stays inside the
+                # gap: airflow_env clamps the window, so no breath is ever pushed under the note before it.
+                jit = []
+                for i in range(len(spans) - 1):
+                    gap = spans[i + 1][0] - spans[i][1]
+                    sig = float(np.clip(float(B['inhale_timing_jitter_ms']) * 1e-3
+                                        * float(np.clip(gap / max(float(B['inhale_min_s']), 1e-3), 0.5, 1.5)),
+                                        0.035, 0.16))
+                    jit.append((float(np.clip(rs.normal(0.0, sig), -2.0 * sig, 0.35 * gap)) * amt,
+                                1.0 + amt * float(B['inhale_duration_var']) * rs.uniform(-1.0, 1.0)))
+                character = float(np.clip(rs.uniform(-1.0, 1.0) * float(B['inhale_character_var']) * amt, -1.0, 1.0))
+                air = breath.bed(sr, rng_b, scfg['breathing'], ref, spans, N, character=character, jitter=jit)
                 air = air * gain * (1.0 + 0.10 * amt * rs.uniform(-1.0, 1.0))
                 if amt > 0:
                     # a phrase with no room to breathe still gets the air that escapes at its attack; the bed's
@@ -221,13 +251,17 @@ def render(events, sr=44100, cfg=None, seed=1, hum=False, default_vowel=None, vo
                 R['no_room_phrases'] += sum(1 for i in range(len(spans) - 1)
                                             if spans[i + 1][0] - spans[i][1] < float(B['inhale_min_s']) * 0.6)
                 if spans:
-                    R['inhale_map'].setdefault((li, len(spans) - 1), []).append(spans[-1][0] + shift / float(sr))
-        out[:, 0] += (dry[j] + brs[j]) * gl
-        out[:, 1] += (dry[j] + brs[j]) * gr
+                    R['inhale_map'].setdefault((li, len(spans) - 1), []).append(
+                        spans[-1][0] + (jit[-1][0] if jit else 0.0))
+        left, right, cues = binaural.place(dry[j] + brs[j], pan, sr, E, rs_sp, n_total)
+        R['timing_bias_ms'].append(float(t_bias * 1e3))
+        R['itd_ms'].append(float(cues['itd_ms']))
+        out[:, 0] += left
+        out[:, 1] += right
         dist = max(0.3, E['distance_m'] + rs.normal(0.0, E['distance_spread_m']))
         info['voices'].append(dict(index=j, pan=pan, azimuth_deg=float(pos * E['pan_width'] * 60.0), distance_m=float(dist),
-                                   detune_cents=float(detune), timing_bias_ms=float(t_bias * 1e3), group='choir',
-                                   identity=ident))
+                                   detune_cents=float(detune + drift.mean()), timing_bias_ms=float(t_bias * 1e3), group='choir',
+                                   identity=ident, **cues))
     mixed = np.stack([dc_block(out[:, 0]), dc_block(out[:, 1])], axis=1)
     # Opt-in: `peak_trim` (a ceiling, e.g. 0.9) caps a hot ensemble sum before the limiter. A two-voice
     # preset that sums above the knee otherwise saturates: one project measured 11830 samples at

@@ -227,6 +227,8 @@ ROWS = {
                                params={'min_corr': (0.5, 0.2, 0.9), 'min_db': (0.2, 0.05, 2.0)}),
     'vocal.identity':     dict(meaning='two singers have measurably different tracts (formant distance)',
                                params={'min_pct': (2.0, 1.0, 8.0)}),
+    'vocal.spatial':      dict(meaning='the voice mix keeps binaural cues: L/R correlation and the mono sum',
+                               params={'max_stereo_corr': (0.98, 0.8, 1.0), 'min_mono_db': (-3.0, -9.0, 0.0)}),
     # cognitive feel checks (pattern_audit.cognitive_feel_checks); modes apply/skip, relaxing is by the profile's flags
     'feel.contour':    dict(meaning='melodic arch / gap-fill'),
     'feel.resolution': dict(meaning='harmonic tension to resolution'),

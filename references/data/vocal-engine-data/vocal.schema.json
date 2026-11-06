@@ -177,6 +177,14 @@
         "max_harmonic_hz": {
           "type": "number"
         },
+        "tilt_poles": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2
+        },
+        "open_quotient_scale": {
+          "type": "number"
+        },
         "registers": {
           "type": "object"
         }
@@ -185,10 +193,13 @@
     },
     "tract": {
       "type": "object",
-      "description": "vocal tract: formant_scale, gains, bandwidths, vowels, formants",
+      "description": "vocal tract: formant_scale, gains, bandwidths, vowels, formants, ring (singer's formant)",
       "properties": {
         "block_ms": {
           "type": "number"
+        },
+        "ring": {
+          "type": "object"
         },
         "formant_scale": {
           "type": "number",
@@ -203,6 +214,9 @@
       "description": "nasal hum: brightness, antiformant_hz/bw/depth, oral_coupling, lip_closure_hz, murmur_gain, airflow, nasal_poles",
       "properties": {
         "register": {},
+        "nasal_scale": {
+          "type": "number"
+        },
         "antiformant_hz": {
           "type": "number"
         },
@@ -398,6 +412,9 @@
           "maximum": 14
         },
         "rate_var": {
+          "type": "number"
+        },
+        "rate_cycle_var": {
           "type": "number"
         },
         "depth_var": {
@@ -659,7 +676,7 @@
     },
     "ensemble": {
       "type": "object",
-      "description": "voices, cohesion 0..1, pitch_spread_cents, timing_spread_ms, pan_width, diversity, distance_m, singers[]",
+      "description": "voices, cohesion 0..1, pitch_spread_cents, timing_spread_ms, pan_width, diversity, distance_m, singers[], intonation drift, onset spread, binaural cues (itd_ms, head_shadow_hz/db, reflection_*)",
       "properties": {
         "voices": {
           "type": "number",
@@ -697,6 +714,56 @@
           "maximum": 50
         },
         "distance_spread_m": {
+          "type": "number"
+        },
+        "pitch_drift_cents": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 40
+        },
+        "pitch_drift_hz": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 1.2
+        },
+        "onset_spread_ms": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 120
+        },
+        "itd_ms": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.8
+        },
+        "head_shadow_hz": {
+          "type": "number"
+        },
+        "head_shadow_db": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "reflection_gain": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.12
+        },
+        "reflection_ms": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "reflection_taps": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "reflection_lp_hz": {
           "type": "number"
         },
         "expression": {},

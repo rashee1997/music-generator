@@ -50,7 +50,7 @@ def _radiate(g, f0, sr):
     return d * sr / np.maximum(f0, 20.0)
 
 
-def _tilt(x, tilt_hz, sr):
+def _tilt_once(x, tilt_hz, sr):
     t = np.asarray(tilt_hz, dtype=float)
     t = np.maximum(t, 20.0)
     if t.ndim == 0 or t.min() == t.max():
@@ -61,6 +61,15 @@ def _tilt(x, tilt_hz, sr):
     t_clamped = np.maximum(t, 20.0)
     w = (np.log(t_clamped) - np.log(lo)) / (np.log(hi) - np.log(lo))
     return (1.0 - w) * one_pole_lp(x, lo, sr) + w * one_pole_lp(x, hi, sr)
+
+
+def _tilt(x, tilt_hz, sr, poles=1):
+    """Spectral tilt: one pole is -6 dB/oct above the corner, two is -12 dB/oct (the glottal source's
+    natural roll-off). `source.tilt_poles` chooses; 1 reproduces the old one-pole sound exactly."""
+    y = _tilt_once(x, tilt_hz, sr)
+    for _ in range(max(0, int(poles) - 1)):
+        y = _tilt_once(y, tilt_hz, sr)
+    return y
 
 
 def _detrend_cycles(x):
@@ -111,7 +120,8 @@ def _vib_band(la, lp, dur_s, half_width=1):
 def glottal_source(f0, sr, rng, reg, breathiness=0.03, phase0=0.0, subharmonic=False, sub_weight=0.65, stats_gate=None,
                    stats_notes=None,
                    whistle_hz=0.0, whistle_weight=0.45, aspiration_depth=0.65, tilt_hz=None,
-                   jitter_pct=0.0, jitter_shimmer_corr=0.5, sub_extra=0.0, stats=None, amp_mod=None):
+                   jitter_pct=0.0, jitter_shimmer_corr=0.5, sub_extra=0.0, stats=None, amp_mod=None,
+                   tilt_poles=1):
     """f0: Hz per sample. reg: dict(open_quotient, speed_quotient, closure, tilt_hz, shimmer); each value scalar
     or per-sample array. Returns (source, cycles, flow). Voiced part has unit RMS, so dynamics are applied later.
 
@@ -149,7 +159,7 @@ def glottal_source(f0, sr, rng, reg, breathiness=0.03, phase0=0.0, subharmonic=F
         c2 = c / 2.0
         d = d + sub_total * _radiate(pulse(c2 - np.floor(c2), reg['open_quotient'], reg['speed_quotient'],
                                            reg['closure']), 0.5 * f0_eff, sr)
-    d = _tilt(d, reg['tilt_hz'] if tilt_hz is None else tilt_hz, sr)
+    d = _tilt(d, reg['tilt_hz'] if tilt_hz is None else tilt_hz, sr, poles=tilt_poles)
     d = d / (rms(d) + 1e-12)
     if whistle_hz and whistle_hz > 0:
         h = max(1, int(round(whistle_hz / float(np.mean(f0)))))

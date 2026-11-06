@@ -507,6 +507,14 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
 
     depth_t = _per_note(depth_i)
     rate_t = _per_note(rate_i) * (1 + V['rate_var'] * 0.5 * smooth_noise(rng, n, sr, 0.6))
+    rcv = float(V.get('rate_cycle_var', 0.0))
+    if rcv > 0.0:
+        # cycle-to-cycle rate wobble (the period is not perfectly constant inside one note). Drawn from a
+        # stream derived from the generator's state, so it does not shift the performance's own random draws.
+        st = rng.bit_generator.state
+        seed_c = int(st.get('state', {}).get('state', 0) & 0xFFFFFFFFFFFFFFFF) if isinstance(st, dict) else 0
+        rate_t = rate_t * (1.0 + rcv * smooth_noise(np.random.default_rng(seed_c), n, sr,
+                                                    max(float(np.mean(rate_i)), 1.0)))
     cyc = np.cumsum(rate_t) / sr
     walk = float(V.get('phase_walk', 0.0))
     if walk > 0:                                          # a random-walk phase, not a perfect LFO
@@ -736,7 +744,7 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
             note_v.append(float(e.get('v', 80)))
             dev.append(float(np.mean(cents_nov[a:b]) - base[i]))
     sig = sig * cal * level * arc * flutter * (10 ** (acc_db / 20.0)) * gate * press
-    cons_report = _place_consonants(sig, codes, CN, sr, rng, f0, s, e_, Fn, lv, n, notes)
+    cons_report = _place_consonants(sig, codes, CN, sr, rng, f0, s, e_, Fn, lv, n, notes, reg)
     tech = _technique_report(sig, sr, f0, F_track, s, e_, k, reg, cfg, vib_am, src_stats=vstats)
     p0 = t0 - pad / sr                                   # the consonant sits before the scored onset
     return dict(signal=sig, t0=p0, t1=p0 + n / sr, f0=f0, gate=gate, level=level, connected=connected, s=s, e=e_,
@@ -790,7 +798,7 @@ def _local_jitter(sig, f0, sr):
     return float(np.mean(np.abs(np.diff(T))) / (np.mean(T) + 1e-12) * 100.0)
 
 
-def _place_consonants(sig, codes, cn, sr, rng, f0, s, e_, Fn, lv, n, notes):
+def _place_consonants(sig, codes, cn, sr, rng, f0, s, e_, Fn, lv, n, notes, reg=None):
     """Add the consonant segments into the phrase buffer. A consonant is part of the word, not of the breath, so it
     goes into the voice signal (before the voiced onset by its own VOT), never into the breath stem."""
     out = []
@@ -803,7 +811,7 @@ def _place_consonants(sig, codes, cn, sr, rng, f0, s, e_, Fn, lv, n, notes):
         a, b = s[i], max(s[i] + 8, e_[i])
         f0i = float(np.mean(f0[a:b]))
         lvl = float(lv[min(i, len(lv) - 1)])
-        y, meta = consonant.render(code, cn, sr, rng, f0=f0i, vowel=list(Fn[i]))
+        y, meta = consonant.render(code, cn, sr, rng, f0=f0i, vowel=list(Fn[i]), reg=reg)
         if len(y):
             at = a - len(y)
             if at < 0:
@@ -817,7 +825,7 @@ def _place_consonants(sig, codes, cn, sr, rng, f0, s, e_, Fn, lv, n, notes):
                                 vot_ms=meta.get('vot_ms'), centroid_hz=meas['centroid_hz'], dur_ms=meas['dur_ms']))
         c = notes[i].get('consonant')
         if cn.get('codas') and isinstance(c, (list, tuple)) and len(c) > 1:
-            y2, meta2 = consonant.render(c[0], cn, sr, rng, f0=f0i, vowel=list(Fn[i]))
+            y2, meta2 = consonant.render(c[0], cn, sr, rng, f0=f0i, vowel=list(Fn[i]), reg=reg)
             if len(y2):
                 at = max(0, e_[i] - len(y2))
                 m = min(len(y2), n - at)

@@ -1478,6 +1478,16 @@ def vocal_rows(score, stems=None, out=None, sr=44100, report=None):
                 rows.append(('FAIL' if c > lim else 'PASS', 'vocal',
                              f'{tag}: strongest voice-to-voice correlation {c:.2f} (limit {lim})'
                              + ('; the voices are one singer copied: raise ensemble.diversity or lower cohesion' if c > lim else '')))
+        if gp.on('vocal.spatial') and v.get('stereo_corr') is not None:
+            lim = gp.param('vocal.spatial', 'max_stereo_corr')
+            c = float(v['stereo_corr'])
+            mlim = gp.param('vocal.spatial', 'min_mono_db')
+            ml = v.get('mono_loss_db')
+            bad = c > lim or (ml is not None and ml < mlim)
+            said = f'{tag}: L/R correlation {c:.2f} (max {lim})'
+            said += ', mono sum not measured' if ml is None else f', mono sum {ml:+.2f} dB (min {mlim})'
+            rows.append(('FAIL' if bad else 'PASS', 'vocal', said
+                         + ('; the mix has collapsed toward mono: the binaural cues are too weak or the parts are centred' if bad else '')))
         if gp.on('vocal.intonation') and v.get('phrases'):
             lim = gp.param('vocal.intonation', 'max_cents')
             if v.get('mean_abs_dev_cents', 0.0) > lim:

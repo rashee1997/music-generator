@@ -23,6 +23,10 @@ from . import data, nasal, source, tract
 def resolve_register(cfg, name=None):
     regs = cfg['source']['registers']
     reg = dict(regs.get(name or cfg['source']['register'], regs['modal']))
+    # one singer's glottal closure is not the next one's: scale the quotient so the ensemble is not one larynx
+    sc = float(cfg['source'].get('open_quotient_scale', 1.0))
+    if sc != 1.0 and 'open_quotient' in reg:
+        reg['open_quotient'] = float(np.clip(float(reg['open_quotient']) * sc, 0.05, 0.98))
     return reg
 
 
@@ -72,7 +76,7 @@ def synth(f0, sr, rng, cfg, formants=None, bandwidths=None, gains=None, hum=Fals
         aspiration_depth=s['aspiration_pulse_depth'], tilt_hz=tilt_hz,
         jitter_pct=float(s.get('jitter_period_pct', 0.0)),
         jitter_shimmer_corr=float(s.get('jitter_shimmer_corr', 0.5)), sub_extra=creak, stats=stats, amp_mod=vib_am,
-        stats_gate=stats_gate, stats_notes=stats_notes)
+        stats_gate=stats_gate, stats_notes=stats_notes, tilt_poles=int(s.get('tilt_poles', 1)))
     if hum:
         y = nasal.hum_branch(src, sr, cfg['humming'], rng, flow=flow, block=block)
     else:

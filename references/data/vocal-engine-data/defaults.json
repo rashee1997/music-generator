@@ -66,6 +66,8 @@
     "whistle_weight": 0.45,
     "harmonic_lock_amount": 0.6,
     "max_harmonic_hz": 0.45,
+    "tilt_poles": 2,
+    "open_quotient_scale": 1.0,
     "jitter_period_pct": 0.6,
     "jitter_shimmer_corr": 0.5,
     "register_ladder": [
@@ -176,6 +178,7 @@
     "ring": {
       "_about": "The singer's formant is a clustering of F3-F5 toward 2.8-3.2 kHz (Sundberg 1987), never an extra boost pole: F3, F4 and F5 are pulled to their own target by `shares * technique.singer_formant`. Targets and shares are starting values.",
       "enabled": true,
+      "scale": 1.0,
       "target_hz": [
         2850.0,
         3000.0,
@@ -212,6 +215,7 @@
   },
   "humming": {
     "register": "hum",
+    "nasal_scale": 1.0,
     "nasal_poles": [
       {
         "hz": 270,
@@ -277,6 +281,7 @@
     "depth_cents": 20.0,
     "rate_hz": 5.3,
     "rate_var": 0.08,
+    "rate_cycle_var": 0.01,
     "depth_var": 0.15,
     "delay_s": 0.35,
     "onset_s": 0.6,
@@ -338,7 +343,7 @@
     "inhale_lead_ms": 30.0,
     "release_breath_gain": 0.03,
     "release_breath_ms": 260.0,
-    "inhale_timing_jitter_ms": 18.0,
+    "inhale_timing_jitter_ms": 90.0,
     "inhale_duration_var": 0.22,
     "inhale_character_var": 0.6,
     "catch_breath_after_s": 3.2,
@@ -364,6 +369,8 @@
     "min_note_s": 0.25,
     "gain_db": -9.0,
     "closure_floor_db": -55.0,
+    "buzz_tilt_hz": 1500.0,
+    "tract_mix": 0.35,
     "inventory": {
       "p": {"type": "stop", "place_hz": 900.0, "band": [250.0, 2200.0], "vot_ms": 60.0, "burst_ms": 6.0, "closure_ms": 45.0, "voiced": false},
       "t": {"type": "stop", "place_hz": 4000.0, "band": [2200.0, 7000.0], "vot_ms": 70.0, "burst_ms": 5.0, "closure_ms": 45.0, "voiced": false},
@@ -385,15 +392,29 @@
   "ensemble": {
     "voices": 5,
     "cohesion": 0.4,
-    "pitch_spread_cents": 9.0,
-    "timing_spread_ms": 22.0,
+    "pitch_spread_cents": 12.0,
+    "timing_spread_ms": 30.0,
     "pan_width": 0.45,
-    "diversity": 1.0,
+    "diversity": 1.1,
     "distance_m": 2.0,
     "distance_spread_m": 0.5,
     "expression": "",
     "expression_intensity": 1.0,
-    "singers": []
+    "singers": [],
+    "pitch_drift_cents": 8.0,
+    "pitch_drift_hz": 0.35,
+    "onset_spread_ms": 30.0,
+    "_about_spatial": "ITD from the Woodworth rigid-sphere model (Aaronson & Hartmann 2014, JASA 136: 0.65 ms is the frontal horizontal limit); head shadow from Algazi et al. 2002, one-pole spherical-head filter (3 kHz, -6 dB at the far ear); reflection 8-24 ms and gain <= 0.10 are starting values (small-room early reflections, low-gain by design).",
+    "itd_ms": 0.65,
+    "head_shadow_hz": 3000.0,
+    "head_shadow_db": 6.0,
+    "reflection_gain": 0.1,
+    "reflection_ms": [
+      8.0,
+      24.0
+    ],
+    "reflection_taps": 2,
+    "reflection_lp_hz": 3500.0
   },
   "singer_variation": [
     {
@@ -416,8 +437,8 @@
       "path": "vibrato.rate_hz",
       "mode": "add",
       "range": [
-        -0.5,
-        0.5
+        -0.9,
+        0.9
       ]
     },
     {
@@ -578,6 +599,62 @@
       "range": [
         -2.0,
         2.0
+      ]
+    },
+    {
+      "path": "source.open_quotient_scale",
+      "mode": "mul",
+      "range": [
+        0.85,
+        1.15
+      ]
+    },
+    {
+      "path": "humming.nasal_scale",
+      "mode": "mul",
+      "range": [
+        0.9,
+        1.1
+      ]
+    },
+    {
+      "path": "tract.ring.scale",
+      "mode": "mul",
+      "range": [
+        0.9,
+        1.1
+      ]
+    },
+    {
+      "path": "performance.vowel_blend_ms",
+      "mode": "mul",
+      "range": [
+        0.75,
+        1.25
+      ]
+    },
+    {
+      "path": "phrasing.formants.coarticulation.anticipate_ms",
+      "mode": "mul",
+      "range": [
+        0.75,
+        1.25
+      ]
+    },
+    {
+      "path": "phrasing.formants.coarticulation.settle_ms",
+      "mode": "mul",
+      "range": [
+        0.75,
+        1.25
+      ]
+    },
+    {
+      "path": "vibrato.onset_s",
+      "mode": "mul",
+      "range": [
+        0.7,
+        1.4
       ]
     }
   ],
@@ -977,7 +1054,7 @@
     ],
     "breathing.inhale_timing_jitter_ms": [
       0,
-      120
+      300
     ],
     "breathing.inhale_duration_var": [
       0,
@@ -1010,6 +1087,10 @@
     "source.jitter_period_pct": [
       0,
       4
+    ],
+    "source.tilt_poles": [
+      1,
+      2
     ],
     "source.jitter_shimmer_corr": [
       -1,
@@ -1102,6 +1183,86 @@
     "consonants.closure_floor_db": [
       -90,
       -20
+    ],
+    "consonants.buzz_tilt_hz": [
+      200,
+      5000
+    ],
+    "consonants.tract_mix": [
+      0,
+      1
+    ],
+    "ensemble.pitch_drift_cents": [
+      0,
+      40
+    ],
+    "ensemble.pitch_drift_hz": [
+      0.05,
+      1.2
+    ],
+    "ensemble.onset_spread_ms": [
+      0,
+      120
+    ],
+    "ensemble.itd_ms": [
+      0,
+      0.8
+    ],
+    "ensemble.head_shadow_hz": [
+      500,
+      6000
+    ],
+    "ensemble.head_shadow_db": [
+      0,
+      20
+    ],
+    "ensemble.reflection_gain": [
+      0,
+      0.12
+    ],
+    "ensemble.reflection_taps": [
+      0,
+      4
+    ],
+    "ensemble.reflection_lp_hz": [
+      500,
+      8000
+    ],
+    "ensemble.pitch_spread_cents": [
+      0,
+      100
+    ],
+    "ensemble.timing_spread_ms": [
+      0,
+      300
+    ],
+    "ensemble.diversity": [
+      0,
+      2
+    ],
+    "source.open_quotient_scale": [
+      0.5,
+      1.5
+    ],
+    "humming.nasal_scale": [
+      0.8,
+      1.2
+    ],
+    "tract.ring.scale": [
+      0.85,
+      1.15
+    ],
+    "vibrato.rate_cycle_var": [
+      0,
+      0.05
+    ],
+    "vibrato.onset_s": [
+      0.05,
+      2
+    ],
+    "performance.vowel_blend_ms": [
+      10,
+      400
     ]
   }
 }

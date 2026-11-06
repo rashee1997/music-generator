@@ -217,6 +217,14 @@ def check(cfg):
     ring = cfg['tract'].get('ring') or {}
     if ring.get('enabled', True) and (len(ring.get('target_hz') or []) != 3 or len(ring.get('shares') or []) != 3):
         out.append('tract.ring needs three target_hz and three shares (F3, F4, F5)')
+    ens = cfg.get('ensemble') or {}
+    rms = ens.get('reflection_ms')
+    if not (isinstance(rms, (list, tuple)) and len(rms) == 2
+            and all(isinstance(x, (int, float)) and not isinstance(x, bool) and x > 0 for x in rms) and rms[0] < rms[1]):
+        out.append('ensemble.reflection_ms must be [first_ms, last_ms] with 0 < first < last')
+    tp = (cfg.get('source') or {}).get('tilt_poles', 1)
+    if tp not in (1, 2):
+        out.append(f'source.tilt_poles must be 1 or 2 (got {tp!r})')
     ladder = cfg['source'].get('register_ladder') or []
     for r in ladder:
         if r not in cfg['source']['registers']:

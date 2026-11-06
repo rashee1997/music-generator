@@ -311,6 +311,7 @@ class GateRows(unittest.TestCase):
                     peak_pre_limit=0.4, peak=0.4, ring_spread_hz=300.0, ring_amount=1.0,
                     tuning_deficit_db=2.0, coart_lead_ms=40.0, jitter_pct=0.6, passaggio_step=0.001,
                     vib_am_db=1.0, vib_am_corr=0.9, identity_pct=5.0,
+                    stereo_corr=0.6, mono_loss_db=-0.5,
                     consonants=dict(n=2, centroid_ok=True, centroid_bad=0, codes=['s', 't'],
                                     declared_vot_ms=70.0, measured_vot_ms=72.0))
         base.update(over)
@@ -321,19 +322,19 @@ class GateRows(unittest.TestCase):
         rs = self._rows()
         self.assertNotIn('FAIL', [r[0] for r in rs], rs)
         for word in ('cluster', 'f0 sits', 'consonant', 'before the boundary', 'jitter', 'open-quotient',
-                     'amplitude modulation', 'tract length'):
+                     'amplitude modulation', 'tract length', 'mono sum'):
             self.assertTrue(any(word in d for _, _, d in rs), word)
 
     def test_every_new_row_can_fail(self):
         rs = self._rows(ring_spread_hz=900.0, tuning_deficit_db=20.0, coart_lead_ms=2.0, jitter_pct=5.0,
-                        passaggio_step=0.2, vib_am_corr=0.1, identity_pct=0.1,
+                        passaggio_step=0.2, vib_am_corr=0.1, identity_pct=0.1, stereo_corr=1.0,
                         consonants=dict(n=1, centroid_ok=False, centroid_bad=1, codes=['s'],
                                         declared_vot_ms=70.0, measured_vot_ms=20.0))
         self.assertGreaterEqual(len([r for r in rs if r[0] == 'FAIL']), 8, rs)
 
     def test_rows_skip_when_the_engine_did_not_use_the_feature(self):
         rs = self._rows(ring_spread_hz=None, tuning_deficit_db=None, coart_lead_ms=None,
-                        passaggio_step=None, vib_am_corr=None, consonants=None)
+                        passaggio_step=None, vib_am_corr=None, consonants=None, stereo_corr=None)
         self.assertNotIn('FAIL', [r[0] for r in rs], rs)
         self.assertFalse(any('cluster' in d for _, _, d in rs))
 

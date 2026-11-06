@@ -36,6 +36,20 @@ def one_pole_lp(x, fc, sr):
     return lfilter([1 - a], [1, -a], x)
 
 
+def drift_walk(rng, n, sr, rate_hz=0.35):
+    """Mean-reverting random walk (Ornstein-Uhlenbeck), unit std, corner at `rate_hz`. O(n).
+
+    A singer's intonation is not a fixed offset: it wanders slowly and comes back. The one-pole on white
+    noise gives that: 1/f^2 below nothing, `rate_hz` as the corner, and it cannot run away from centre.
+    """
+    n = int(n)
+    if n <= 0:
+        return np.zeros(0)
+    a = float(np.exp(-2 * np.pi * max(float(rate_hz), 1e-3) / sr))
+    x = lfilter([1.0 - a], [1.0, -a], rng.standard_normal(n))
+    return x / (x.std() + 1e-9)
+
+
 def dc_block(x, r=0.9995):
     return lfilter([1, -1], [1, -r], x)
 

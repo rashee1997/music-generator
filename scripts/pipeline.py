@@ -59,6 +59,7 @@ import cli_util
 import compose
 import envcheck
 import gate_report
+import stem_cache
 import stem_gate
 from helpers import ingest_metadata, version_manager
 import humanize as hz
@@ -98,9 +99,15 @@ def write_stems(stems, stems_dir, full=False, sr=SR):
         if full and len(x) < total:
             seg = np.pad(x, ((0, total - len(x)),) + ((0, 0),) * (x.ndim - 1))
         sf.write(os.path.join(stems_dir, f"{name}.wav"), np.asarray(seg, np.float32), sr)
-        manifest[name] = dict(start_s=round(start, 4), length_s=round(len(seg) / sr, 4), timeline_s=round(total / sr, 4))
+        manifest[name] = dict(start_s=round(start, 4), length_s=round(len(seg) / sr, 4),
+                              timeline_s=round(total / sr, 4), stem_hash=stem_cache.audio_hash(x, size=16, stride=1))
     with open(os.path.join(stems_dir, 'stems.json'), 'w', encoding='utf-8') as fh:
         json.dump(manifest, fh, indent=2)
+    # The manifest the per-stem cache reads: track -> where its stem is, how long it sounds, and its content hash.
+    with open(os.path.join(stems_dir, 'stems_manifest.json'), 'w', encoding='utf-8') as fh:
+        json.dump({name: dict(stem_hash=m['stem_hash'], wav_path=os.path.join(stems_dir, f'{name}.wav'),
+                              span=[m['start_s'], round(m['start_s'] + m['length_s'], 4)]) for name, m in manifest.items()},
+                  fh, indent=2)
     return manifest
 
 
@@ -789,13 +796,16 @@ class MusicPipeline:
         stem_rows, stem_meta = stem_gate.run_stem_gate(
             score, stems, sr=SR, workers=int(os.environ.get('GATE_WORKERS', '2')),
             report_dir=(os.path.join(project_dir, 'reports', 'gate') if project_dir else None),
-            mode='draft' if draft else 'full')
+            mode='draft' if draft else 'full',
+            cache_path=(os.path.join(project_dir, '.cache', 'gate', 'stem_qa.json') if project_dir else None))
         self.stem_meta = stem_meta
         if self.verbose:
             for lvl, name, detail in stem_rows:
                 print(f"  [{lvl:4s}] {name:26s} {detail}")
             print(f"  stem gate: {stem_meta['fails']} FAIL, {stem_meta['warns']} WARN, "
-                  f"{len(stem_rows)} rows, {stem_meta['total_ms']:.0f} ms on {stem_meta['workers']} worker(s)")
+                  f"{len(stem_rows)} rows, {stem_meta['total_ms']:.0f} ms on {stem_meta['workers']} worker(s)"
+                  f" ({stem_meta.get('cached_stems', 0)} of {stem_meta.get('cached_stems', 0) + stem_meta.get('measured_stems', 0)} "
+                  f"stems from cache)")
         if stem_meta['fails']:
             print(f"  [BLOCKED] {stem_meta['fails']} stem FAIL(s): mixing is not allowed until they are fixed")
             failing = [f"{n}: {d}" for l, n, d in stem_rows if l == 'FAIL']

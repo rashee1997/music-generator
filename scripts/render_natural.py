@@ -64,6 +64,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import dsp
 import humanize as hz
 import soundbank as sb
+import stem_cache
 import vocals
 import presets
 import mix_schema
@@ -428,8 +429,14 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
             t0 = float(tm.sec(min(n['t'] for n in notes)))
             t1 = min(dur_s, float(tm.sec(max(n['t'] + n.get('d', 1.0) for n in notes))))
             span = max(1.0, t1 - t0)
-            seg = environment.render_environment_preset(env_key, duration_s=span, sr=SR, seed=seed)
-            fade = int(min(2.0, span / 4.0) * SR)
+            # +0.1 s of ambience past the end: the notes say when the place is audible, and a bed that stops on the last
+            # written sample leaves its final ~70-100 ms below the stem's own -60 dB line, which reads as a truncated stem
+            # (stem.edge). The tail is trimmed by the timeline slice below when it runs past the piece.
+            seg = environment.render_environment_preset(env_key, duration_s=span + 0.1, sr=SR, seed=seed)
+            # 20 ms, not 2 s: the stem gate measures a stem's audible span against its written notes, and any fade long
+            # enough to shape the entrance put the last ~90-190 ms of every bed 60 dB under the stem's own peak, which
+            # reads as a truncated stem. A 20 ms ramp is still click-free, and the bed's own preset shapes the sound.
+            fade = int(min(0.02, span / 4.0) * SR)
             if fade > 1:
                 ramp = np.sin(np.linspace(0.0, np.pi / 2.0, fade)) ** 2
                 seg[:fade] *= ramp[:, None]
@@ -751,9 +758,22 @@ def _preset_fingerprint(tr):
     return out
 
 
+def _track_seed(name, tr, tm, cfg):
+    """The RNG seed for one track: a hash of that track alone (its name, notes, role, humanization profile and the
+    tempo map). Editing a note on `timp` must not re-roll `flute`'s humanization, and an index-based seed did exactly
+    that: adding or removing any earlier track shifted every later track's seed."""
+    sig = json.dumps(dict(name=name, notes=tr.get('notes') or [], role=tr.get('role'),
+                          profile=tr.get('humanize', cfg),
+                          tempo=[round(float(s), 5) for s in (tm.secs if len(tm.secs) < 4096 else tm.secs[::4])]),
+                     sort_keys=True, default=str)
+    return int(hashlib.sha256(sig.encode('utf-8')).hexdigest()[:8], 16) % (2 ** 31 - 1)
+
+
 def _track_cache_key(tr, seed, ts, swing, tm, global_dyn, sr, sfpath=None):
     """A hash of everything that changes the rendered bytes: the track, the tempo map, the renderer code, the
-    resolved presets and the SoundFont itself. Same score + same project + same code -> same key, any process."""
+    resolved presets and the SoundFont itself. Same score + same project + same code -> same key, any process.
+    Stage-5 values (spatial staging, EQ, gain, reverb, pan) are stripped first: re-staging or re-EQing the piece must
+    reuse the dry stems, not re-render them."""
     sf_id = None
     if sfpath:
         try:
@@ -761,9 +781,9 @@ def _track_cache_key(tr, seed, ts, swing, tm, global_dyn, sr, sfpath=None):
             sf_id = [os.path.abspath(str(sfpath)), st.st_size, int(st.st_mtime)]
         except OSError:
             sf_id = str(sfpath)
-    sig = json.dumps(dict(tr=tr, seed=seed, ts=list(ts), swing=swing, global_dyn=global_dyn, sr=sr,
-                          renderer=_RENDERER_VERSION, code=_code_hash(), sf=sf_id,
-                          presets=_preset_fingerprint(tr)),
+    sig = json.dumps(dict(tr=stem_cache.dry_track(tr), seed=seed, ts=list(ts), swing=swing, global_dyn=global_dyn,
+                          sr=sr, renderer=_RENDERER_VERSION, code=_code_hash(), sf=sf_id,
+                          presets=stem_cache.dry_presets(_preset_fingerprint(tr))),
                      sort_keys=True, default=str)
     h = hashlib.sha1(sig.encode('utf-8'))
     h.update(np.asarray(tm.secs).tobytes())
@@ -785,6 +805,7 @@ def _render_cached(tr, name, tm, sfpath, global_dyn, cfg, seed, ts, swing):
                     entry = json.load(fh)
             except (OSError, ValueError):
                 pass                      # no sidecar (old cache): the bytes are still valid, the report is not
+            entry.pop('cached', None)      # a sidecar written by a cached read carries it; passing it twice raises
             _record(name, **entry, cached=True)
             return x
     x = render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing)
@@ -795,7 +816,8 @@ def _render_cached(tr, name, tm, sfpath, global_dyn, cfg, seed, ts, swing):
             # and hard-clipped any stem peaking above 1.0 on the way to disk. Cached audio must be the rendered audio.
             sf.write(tmp, np.asarray(x, dtype=np.float32), SR, format='WAV', subtype='FLOAT')
             os.replace(tmp, cache_path)      # atomic: a killed render never leaves a half-written cache file
-            entry = _report_entry(name)      # written after the stem, so a half-written entry is never restored
+            # written after the stem, so a half-written entry is never restored; `cached` describes the read, not the bytes
+            entry = {k: v for k, v in _report_entry(name).items() if k != 'cached'}
             if entry:
                 mt = meta_path + f'.tmp{os.getpid()}'
                 with open(mt, 'w', encoding='utf-8') as fh:
@@ -850,11 +872,12 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
     other_jobs = [(i, name, tr) for i, name, tr in marked if not _is_sfz_track(tr)]
 
     for i, name, tr in other_jobs:
+        t_seed = _track_seed(name, tr, tm, cfg)
         if verbose:
             print(f'  rendering {name:12s} ({tr.get("instrument")}) ...', flush=True)
-        stems[name] = _render_cached(tr, name, tm, sfpath, score.get('dynamics'), cfg, seed + 31 * i, ts, score.get('swing', 0.5))
+        stems[name] = _render_cached(tr, name, tm, sfpath, score.get('dynamics'), cfg, t_seed, ts, score.get('swing', 0.5))
         if verbose and _report_entry(name).get('cached'):
-            print(f'  cached    {name}', flush=True)
+            print(f'  [CACHED] skipped rendering {name} (hash match)', flush=True)
 
     if sfz_jobs:
         # sfizz_render is one independent, CPU-bound subprocess per track with no internal thread flag (confirmed via
@@ -866,7 +889,8 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
 
         def _run(job):
             i, name, tr = job
-            return name, _render_cached(tr, name, tm, sfpath, score.get('dynamics'), cfg, seed + 31 * i, ts, score.get('swing', 0.5))
+            return name, _render_cached(tr, name, tm, sfpath, score.get('dynamics'), cfg,
+                                        _track_seed(name, tr, tm, cfg), ts, score.get('swing', 0.5))
 
         with ThreadPoolExecutor(max_workers=workers) as ex:
             # as_completed, not map: map yields in submission order, so one slow first track hides every stem that
@@ -874,8 +898,10 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
             for fut in as_completed([ex.submit(_run, job) for job in sfz_jobs]):
                 name, stem = fut.result()
                 if verbose:
-                    cached = _report_entry(name).get('cached')
-                    print(f'  {"cached   " if cached else "rendered "} {name}', flush=True)
+                    if _report_entry(name).get('cached'):
+                        print(f'  [CACHED] skipped rendering {name} (hash match)', flush=True)
+                    else:
+                        print(f'  rendered  {name}', flush=True)
                 stems[name] = stem
     stems = {name: _dc_block(stem) for name, stem in stems.items()}
     return stems, tm

@@ -38,13 +38,18 @@ events -> split into monophonic lines (chords become lines) -> for each singer (
   -> split into phrases (long gap, or hum<->vowel change)
   -> pitch curve (cents): note targets + portamento + anticipation + overshoot/settle + drift + jitter + arch + end sag + vibrato
   -> glottal source (continuous phase) -> tract (vowel) or nasal hum -> x calibration x level x phrase arc x flutter x gate x pressure
-  -> + inhale / release (breath stem) -> pan -> sum -> DC block -> soft limiter -> (N,2) float32
+  -> + inhale / release (breath stem) -> binaural placement (mix only) -> sum -> DC block -> soft limiter -> (N,2) float32
 ```
 
 - **Source.** Flow pulse rises (raised cosine) for the first part of the open phase, then closes. `closure` 0 = abrupt (more high
   harmonics, chest/pressed), 1 = smooth (fewer, falsetto/breathy). The radiated source is the flow derivative. Tilt is a
-  one-pole low-pass that follows level (`dynamics.timbre_follow`: louder = brighter). Per-cycle shimmer, aspiration noise
-  modulated by the flow, optional Kargyraa subharmonic and Sygyt whistle.
+  two-pole low-pass (`source.tilt_poles` 2, -12 dB/oct; 1 reproduces the old one-pole sound) that follows level
+  (`dynamics.timbre_follow`: louder = brighter). Per-cycle shimmer, aspiration noise
+  modulated by the flow, optional Kargyraa subharmonic and Sygyt whistle. Each singer may scale the register's open
+  quotient (`source.open_quotient_scale`, from `singer_variation`), so a choir is not one larynx copied.
+- **Consonants.** They share the singer's source: the voiced buzz is `source.glottal_source` tilted at
+  `consonants.buzz_tilt_hz` (1500) with two poles, not a bright additive sine bank, and turbulent sounds pass a share
+  (`consonants.tract_mix` 0.35) of their energy through the following vowel's formants.
 - **Tract.** Parallel two-pole resonators, each with gain exactly 1 at its centre (the old code's normalisation was
   evaluated at the wrong point). Formants can move inside a phrase (vowel changes blend over `performance.vowel_blend_ms`).
 - **Loudness.** One calibration constant per timbre **and pitch** (`dynamics.pitch_compensation` 1 = a singer evens out the
@@ -132,8 +137,7 @@ and a release after each phrase that grows over 120 ms before decaying. The enve
 reaches zero, so a gap is air rather than digital silence with a burst in it — the failure mode that reads as a
 footstep, and the first version's measured gap profile was -240 dB (silence) for 2 s and then 0.28 s at -48 dB. Length
 and level follow the gap (`inhale_min_s`/`inhale_max_s`, `inhale_peak_db`, -6 dB per doubling of the breath), because
-singers shorten the inspiration as the phrase comes faster. Every singer shares that phase
-(offset at most 12 ms), so a section breathes together instead of producing N unrelated events.
+singers shorten the inspiration as the phrase comes faster.
 
 The noise itself is shaped air: `inhale_body_hz` (520) is the low chest part, the air band (`inhale_band_hz`) sits
 above it held down by `inhale_tilt_db` (-11 dB) because real inhalation spectra fall with weak peaks below 3 kHz
@@ -149,12 +153,13 @@ exhale puff after the phrase. **Exhaustion**: past `capacity_s * exhaust_start` 
 under the voice by default (`inhale_gain` 0.08 of `ref_rms`; it was 0.5 and louder than the voice, fixed after a measured step).
 
 Breaths are **per singer**, not per ensemble. `plan_inhales_detailed` decides *whether* a phrase gets a breath;
-the ensemble decides *when* (`inhale_timing_jitter_ms` 18), *how long* (`inhale_duration_var`) and *through which
-end* (`inhale_character_var`: −1 nasal and slow, +1 mouth and quick). A phrase that lasted
-`catch_breath_after_s` gets a quicker, brighter catch breath. A phrase with no room for an inhale gets an
-`onset_puff` — the air that escapes before the first voiced note — and the release after a long phrase carries
-`release_scale_by_phrase` more air than after a short one. With `phrasing.amount` 0 the plan is applied exactly
-as before (one character, no jitter).
+the ensemble decides *when* (`inhale_timing_jitter_ms` 90, clamped to 35-160 ms and to the gap it belongs to), *how long*
+(`inhale_duration_var`) and *through which end* (`inhale_character_var`: −1 nasal and slow, +1 mouth and quick). The
+jitter is drawn **per gap** inside `breath.airflow_env`, so one singer's reaction time moves the inhalation but not
+their exhale; shifting the whole bed would drag every release with it. A phrase that lasted `catch_breath_after_s`
+gets a quicker, brighter catch breath. A phrase with no room for an inhale gets an `onset_puff` — the air that escapes
+before the first voiced note — and the release after a long phrase carries `release_scale_by_phrase` more air than
+after a short one. With `phrasing.amount` 0 the plan is applied exactly as before (one character, no jitter).
 
 ## 7. Expression (`expression`, `expression_intensity`)
 
@@ -168,25 +173,43 @@ preset that says `attack: 0.5` keeps its attack under any profile. The profiles 
 ## 8. Singers and the ensemble (`ensemble.*`, `singer_variation`)
 
 Each singer gets a deterministic identity from `seed` and index, by perturbing `singer_variation` entries (formant scale,
-breathiness, vibrato rate/depth/delay, tuning, pitch stability, portamento, hum brightness and anti-formant, attack, release,
-level, timbre follow, breath capacity). Edit that table to change who the singers are. `diversity` 0 makes identical singers.
+breathiness, vibrato rate/depth/onset/delay, tuning, pitch stability, portamento, hum brightness, anti-formant, nasal
+scale and murmur, attack, release, level, timbre follow, breath capacity, glottal open quotient, vowel blend and
+coarticulation timing). Edit that table to change who the singers are; rows are drawn in order, so append a new row
+rather than inserting one. `diversity` (default 1.1) scales the whole table, 0 makes identical singers.
 `ensemble.singers` is a list of explicit per-singer override objects (wraps around). **`cohesion`**: 1 = tight (no timing or
-pitch spread, less identity variation), 0 = loose (up to `timing_spread_ms` and `pitch_spread_cents`). Typical: tight 0.9,
-default 0.4, loose 0.1. Every singer renders every line (as before), so chords are sung by all.
+pitch spread, less identity variation), 0 = loose (up to `timing_spread_ms`, `pitch_spread_cents`, `onset_spread_ms` and
+`pitch_drift_cents`).
 
-## 9. Interface for the spatial engine (source only, nothing spatial is computed here)
+Intonation is a **tendency plus a slow wander**, not a rung on a pitch ladder: each singer draws a tuning bias
+(`pitch_spread_cents` 12) and a mean-reverting walk (`pitch_drift_cents` 8, corner `pitch_drift_hz` 0.35, Ornstein-
+Uhlenbeck shape from `utils.drift_walk`). Onsets are staggered by `onset_spread_ms` (30, clamped to 15-45 ms), zero at
+cohesion 1, so a section does not start on one edge.
+
+The mix is placed binaurally in `binaural.place`, weighted by `|pan|` so a centred singer is unchanged:
+interaural time difference up to `itd_ms` (0.65 ms, the Woodworth rigid-sphere limit), a one-pole head shadow
+(`head_shadow_hz` 3000, down to `head_shadow_db` 6 on the far ear), and `reflection_taps` (2) early reflections
+between `reflection_ms` (8-24 ms) at `reflection_gain` 0.1, scaled by `(1 - 1/n)` so a solo singer keeps the old pan law.
+Every singer renders every line (as before), so chords are sung by all.
+
+## 9. Interface for the spatial engine (mix cues, dry stems)
 
 `render_choir(..., return_stems=True)` returns `(mix, info)`:
 
-- `info['stems']`: one dry mono `float32` array per singer (before pan and breath)
-- `info['breath_stems']`: one breath-only array per singer
-- `info['voices'][i]`: `index`, `pan`, `azimuth_deg`, `distance_m`, `detune_cents`, `timing_bias_ms`, `group`, `identity`
+- the **mix** carries the binaural cues above (ITD, head shadow, early reflections); anything that folds it to mono
+  throws them away
+- `info['stems']`: one dry mono `float32` array per singer (before pan, binaural placement and breath)
+- `info['breath_stems']`: one breath-only dry array per singer
+- `info['voices'][i]`: `index`, `pan`, `azimuth_deg`, `distance_m`, `detune_cents`, `timing_bias_ms`, `group`, `identity`,
+  `itd_ms`, `shadow_db`, `reflection_gains`
 - `info['report']`: the numbers the quality gate reads (section 10)
 
-`render_natural` currently takes the stereo mix only. To place singers individually, feed `info['stems'][i]` to
-`spatial.spatialize_stem(audio, azimuth_deg, elevation_deg, distance_m, ...)` or register each singer as its own track. The
-spatial routes that fold stereo to mono (`mixer.py`, for a preset with a `spatial` block) remove the width of the mix; the stems
-avoid that.
+The stems stay dry on purpose: `spatial.spatialize_stem(audio, azimuth_deg, elevation_deg, distance_m, ...)` must receive
+one unprocessed singer, not a signal that already contains a head shadow and two reflections. Use either path — the
+engine's mix, or the stems through your own spatial engine — not both.
+
+`render_natural` takes the stereo mix. The spatial routes that fold stereo to mono (`mixer.py`, for a preset with a
+`spatial` block) remove the width of the mix; `vocal.spatial` measures that when it happens.
 
 ## 10. Quality gate rows (`gate_profiles.py rows`)
 
@@ -209,6 +232,7 @@ avoid that.
 | `vocal.passaggio` | register parameters stay continuous across the break | step at most 0.01 |
 | `vocal.vibrato` | amplitude modulation present and correlated with the f0 modulation | r at least 0.5, depth at least 0.2 dB |
 | `vocal.identity` | two singers' tracts differ (length × pharynx scale) | at least 2 % |
+| `vocal.spatial` | the mix keeps binaural cues: L/R correlation and the mono sum | corr below 0.98, mono sum above −3 dB |
 
 Every number above is a starting value, measured on the engine's own output and never on the config that asked for it.
 
@@ -223,8 +247,9 @@ cannot be relaxed. A PASS means the measurable faults are absent, not that the v
 developed and outside rests/creak, and only in the band around that note's own modulation peak; an ensemble reports the
 phrase where the coupling is fully developed. They are never read off the `vibrato` config.
 
-`report['phrasing']` (contours used, timing std/max, accent depth, inhale spread, tempo) is **informational**.
-No gate row judges it: these numbers say what the phrase did, not whether it was good.
+`report['phrasing']` (contours used, timing std/max, accent depth, inhale spread, onset jitter, tempo) is
+**informational**. No gate row judges it: these numbers say what the phrase did, not whether it was good.
+`report` also carries `stereo_corr`, `mono_loss_db` and `itd_ms_max`, measured on the mix (the dry stems cannot show them).
 
 ## 11. Limits (read before promising anything)
 
@@ -239,6 +264,11 @@ No gate row judges it: these numbers say what the phrase did, not whether it was
 - Anti-formants are approximated by one notch: a nasal consonant is a murmur with one null, not a full nasal tract model.
 - A hum-to-vowel change inside one phrase starts a new phrase (no crossfade between the two models).
 - A first phrase at time 0 has no room for an inhale.
+- The binaural cues are **not an HRTF**. ITD is a fractional delay, head shadow is one pole, and the two reflections
+  are not a room: they give the mix width and a sense of a shared space, they do not localise a singer like a measured
+  HRTF or place them in a real venue. Folding the mix to mono removes them by design; the dry stems are for a project
+  that does its own spatialisation.
+- The ensemble's intonation is statistical (bias + slow wander), not a model of a particular singer's ear.
 - Styles are synthesis profiles, not claims of authentic reproduction of any tradition.
 - Ensemble level follows velocity less tightly than a single voice (timing spread smears note windows).
 - The contour set, weight multipliers and expression/role bias tables are design choices, not measurements. The
