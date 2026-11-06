@@ -346,7 +346,8 @@ class MusicPipeline:
     # -----------------------------------------------------------------------------------------
     # Stage 6: Automated CI/CD Quality Gate Suite
     # -----------------------------------------------------------------------------------------
-    def stage6_ci_quality_suite(self, score, stems, out_wav, out_midi=None, stem_rows=None, mode='full'):
+    def stage6_ci_quality_suite(self, score, stems, out_wav, out_midi=None, stem_rows=None, mode='full',
+                                video_rows=None):
         """Stage 6: Exhaustive battery of objective audio & mix tests.
 
         One call to quality_gate.run_gate, not a hand-copied subset of it: every row the gate knows (score and render
@@ -372,6 +373,22 @@ class MusicPipeline:
         m21_rows = self.discover_and_run_music21_analysis(score, out_wav, out_midi=out_midi)
         if m21_rows:
             ci_rows.extend(m21_rows)
+
+        # Picture rows: one verdict, one list. `video_rows` is the closure supplied by scripts/video_score.py,
+        # which builds the program from the master this stage just measured. Without it a film cue is judged on
+        # the score-side picture rows only (gate.probe_rows), and the report says so.
+        self.video_block = None
+        if isinstance(score.get('video'), dict) and score['video'].get('enabled'):
+            if video_rows is not None:
+                v_rows, v_block = video_rows(score, out_wav, ci_rows)
+                ci_rows.extend(v_rows)
+                self.video_block = v_block
+            else:
+                try:
+                    import video_gate_pipeline as _vgp
+                    ci_rows.extend(_vgp.score_rows(score))
+                except Exception as exc:
+                    ci_rows.append(('WARN', 'video.gate', f'picture rows did not run: {exc}'))
 
         # Print scoreboard
         fails = sum(1 for lvl, _, _ in ci_rows if lvl == 'FAIL')
@@ -431,6 +448,8 @@ class MusicPipeline:
                            'fail': fails},
             'ci_checks': [{'level': l, 'check': n, 'detail': d} for l, n, d in ci_rows]
         }
+        if getattr(self, 'video_block', None):
+            report['video'] = self.video_block
 
         if json_report:
             with open(json_report, 'w', encoding='utf-8') as f:
@@ -590,7 +609,8 @@ class MusicPipeline:
     def execute(self, input_spec=None, out_wav=None, out_midi=None, stems_dir=None,
                 strict=False, json_report=None, check_only=False, score_path=None,
                 presets_dir=None, adopt_presets=True, wav_path=None, project=None, test=False,
-                max_attempts=5, no_stems=False, stems_full=False, draft=False, targets=None, **overrides):
+                max_attempts=5, no_stems=False, stems_full=False, draft=False, targets=None, video_rows=None,
+                **overrides):
         """Execute the complete CI/CD Music Pipeline or Quality Check existing productions."""
         t_start = time.time()
         explicit_out = out_wav is not None
@@ -799,16 +819,17 @@ class MusicPipeline:
         self.stage5_mix_and_master(score, stems, draft_wav)
 
         # Stage 6: Automated CI Quality Suite
-        ci_rows, fails, warns = self.stage6_ci_quality_suite(
-            score, stems, draft_wav, out_midi=out_midi, stem_rows=stem_rows,
-            mode='draft' if draft else 'full')
+        ci_rows, fails, warns = self.stage6_ci_quality_suite(score, stems, draft_wav, out_midi=out_midi,
+                                                            stem_rows=stem_rows,
+                                                            mode='draft' if draft else 'full',
+                                                            video_rows=video_rows)
 
         if project_dir:
             try:
                 gate_report.write_reports(draft_wav, score, os.path.join(project_dir, 'reports', 'gate'),
                                           stem_meta=stem_meta,
                                           mix_meta=dict(stage='mix', metrics=self.mix_metrics))
-            except Exception as exc:              # the gate verdict stands even if a figure could not be drawn
+            except Exception as exc:      # the gate verdict stands even if a figure could not be drawn
                 print(f"  [WARN] gate report figures not written ({exc})")
 
         published = None

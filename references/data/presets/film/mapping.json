@@ -1,0 +1,80 @@
+{
+  "kind": "film",
+  "name": "mapping",
+  "character": "What the picture's measurements mean musically: tempo from cuts, mode from light and palette, pan from the centre of motion, density from shot scale, and the layer allowance per density.",
+
+  "energy_curve_bins": 8,
+  "default_key": "D",
+  "default_ending": "tail_out",
+
+  "job": [
+    "follow the picture's own energy instead of a fixed arc",
+    "land the cuts on the frame; let movements inside a shot pass softly",
+    "never compete with the dialogue"
+  ],
+
+  "energy_sections": {
+    "enabled": true,
+    "names": [
+      {"below": 0.25, "name": "quiet"},
+      {"below": 0.5, "name": "settle"},
+      {"below": 0.8, "name": "build"},
+      {"below": 1.01, "name": "peak"}
+    ]
+  },
+
+  "tempo_from_cuts": {"min_bpm": 60, "max_bpm": 168, "quantise_bpm": 1, "prefer_frame_lock": true},
+
+  "luminance_to_mode": [{"below": 0.35, "mode": "minor"}, {"below": 1.01, "mode": "major"}],
+  "centre_of_motion_to_pan": {"range": [-0.7, 0.7], "max_azimuth_deg": 45.0},
+  "warmth_to_timbre": {"cold": "bright", "warm": "dark"},
+
+  "palette_to_mode": [
+    {"temperature": "cool", "mode": "minor"},
+    {"temperature": "neutral", "mode": null},
+    {"temperature": "warm", "mode": "major"}
+  ],
+
+  "shot_scale_max_density": {
+    "wide": 0.92,
+    "medium": 0.72,
+    "close": 0.45,
+    "insert": 0.30
+  },
+
+  "scene_role": {
+    "wide": "establish",
+    "medium": "build",
+    "close": "peak",
+    "insert": "transition"
+  },
+
+  "layers_by_density": [
+    {"below": 0.25, "roles": ["melody", "lead"]},
+    {"below": 0.50, "roles": ["melody", "lead", "pad", "harmony", "bass"]},
+    {"below": 0.75, "roles": ["melody", "lead", "pad", "harmony", "bass", "arp", "chord"]},
+    {"below": 1.01, "roles": ["melody", "lead", "pad", "harmony", "bass", "arp", "chord", "percussion", "counter"]}
+  ],
+
+  "motion_dir_to_pan": {
+    "left": {"azimuth": -24.0, "role": "pad"},
+    "right": {"azimuth": 24.0, "role": "pad"},
+    "static": {"azimuth": 0.0, "role": "pad"}
+  },
+
+  "sources": [
+    "references/workflow/music-direction.md section 2.4 (the further the camera, the bigger the music may be)",
+    "references/workflow/music-direction.md section 2.2 (spotting markers, hard and soft sync points)",
+    "https://www.robin-hoffmann.com/dfsb/placement-of-hit-points/ (a comprehension moment wants its accent after the action)"
+  ],
+
+  "provenance": {
+    "energy_curve_bins": "unchanged from presets/video/default.json",
+    "tempo_from_cuts.*": "unchanged from presets/video/default.json",
+    "luminance_to_mode": "unchanged from presets/video/default.json",
+    "centre_of_motion_to_pan": "unchanged from presets/video/default.json",
+    "palette_to_mode": "starting value: a tie-breaker only, luminance wins when they disagree",
+    "shot_scale_max_density": "starting value, from the camera-distance rule in music-direction.md section 2.4",
+    "layers_by_density": "starting value, one hero rule from AGENTS.md rule 7.4"
+  }
+}

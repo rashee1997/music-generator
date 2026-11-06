@@ -93,7 +93,8 @@ class Shipped(Base):
     def test_shipped_profiles_are_valid(self):
         self.assertEqual(gpf.problems(), [])
         self.assertEqual(set(presets.load('gate')), {'melodic', 'tense', 'ambient', 'dance', 'cinematic', 'effects_only',
-                                                     'video_cinematic'})
+                                                     'video_cinematic', 'video_basic', 'video_dialogue',
+                                                     'video_underscore', 'video_montage', 'video_trailer'})
 
     def test_melodic_changes_nothing(self):
         p = gpf.resolve(loop_score())

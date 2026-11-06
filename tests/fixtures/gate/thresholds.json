@@ -16,6 +16,7 @@
     "stem.clipping",
     "true_peak",
     "video.duration_lock",
+    "video.gating_mode",
     "video.master_compliance",
     "vocal.integrity"
   ],
@@ -236,10 +237,16 @@
     },
     "tempo.bpm": {},
     "true_peak": {},
+    "video.cue_silence": {
+      "max_dbfs": -50.0
+    },
     "video.cut_sync": {
       "aim_ms": 40,
       "early_ms": 45,
       "late_ms": 125
+    },
+    "video.dialogue_band": {
+      "min_db": 12.0
     },
     "video.dialogue_snr": {
       "min_db": 15.0
@@ -247,8 +254,23 @@
     "video.duration_lock": {
       "tolerance_ms": 50
     },
+    "video.gating_mode": {},
+    "video.grid_phase": {
+      "tolerance_frames": 1.0
+    },
+    "video.hit_class": {},
+    "video.hit_density": {
+      "budget_per_minute": 24,
+      "max_consecutive_cut_hits": 0.6
+    },
     "video.master_compliance": {
       "tolerance_lu": 1.0
+    },
+    "video.motion_sync": {
+      "window_ms": 150.0
+    },
+    "video.shot_scale": {
+      "tolerance": 0.15
     },
     "vocal.breath": {
       "over_capacity_factor": 1.0

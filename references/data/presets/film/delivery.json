@@ -1,0 +1,61 @@
+{
+  "kind": "film",
+  "name": "delivery",
+  "character": "What leaves the building: the master profile with the gating mode it is really measured in, sample rate and bit depth, the mux target, and the tolerances the video gate judges.",
+
+  "master": {"profile": "streaming", "sample_rate": 48000, "bit_depth": 24},
+
+  "master_profiles": {
+    "streaming": {"loudness_mode": "full_program", "lufs": -14.0, "true_peak_db": -1.5, "tolerance_lu": 1.0,
+                  "reference": "web / social delivery: full-program integrated loudness"},
+    "youtube": {"loudness_mode": "full_program", "lufs": -14.0, "true_peak_db": -1.0, "tolerance_lu": 1.0,
+                "reference": "YouTube normalises to about -14 LUFS on playback and turns down only"},
+    "prime": {"loudness_mode": "full_program", "lufs": -24.0, "true_peak_db": -2.0, "tolerance_lu": 2.0,
+              "reference": "Amazon Prime Video delivery spec: -24 LKFS +/-2, full program"},
+    "broadcast": {"loudness_mode": "dialogue", "lufs": -23.0, "true_peak_db": -1.0, "tolerance_lu": 1.0,
+                  "reference": "EBU R128: -23 LUFS +/-0.5, -1 dBTP; ATSC A/85 uses -24 LKFS +/-2 in the US"},
+    "netflix": {"loudness_mode": "dialogue", "lufs": -27.0, "true_peak_db": -2.0, "tolerance_lu": 2.0,
+                "reference": "Netflix Sound Mix Specifications: -27 LKFS +/-2 LU dialogue-gated (ITU-R BS.1770-1), -2 dBTP"},
+    "cinema": {"loudness_mode": "dialogue", "lufs": -27.0, "true_peak_db": -2.0, "tolerance_lu": 2.0,
+               "reference": "cinema print master: dialogue-gated anchor, -2 dBTP"}
+  },
+
+  "mux": {
+    "video_copy": true,
+    "container": "mp4",
+    "audio_codec": {"mp4": "aac", "mov": "pcm_s24le", "mkv": "aac", "webm": "libopus"},
+    "audio_bitrate": "320k",
+    "faststart": true,
+    "shortest": true
+  },
+
+  "gate": {
+    "duration_tolerance_ms": 50,
+    "cut_sync": {"early_ms": 45, "late_ms": 125, "aim_ms": 40},
+    "motion_sync": {"window_ms": 150},
+    "grid_phase": {"tolerance_frames": 1.0},
+    "hit_density": {"budget_per_minute": 24, "max_consecutive_cut_hits": 0.60},
+    "cue_silence": {"max_dbfs": -50.0},
+    "dialogue_snr_min_db": 15.0,
+    "dialogue_band_min_db": 12.0,
+    "shot_scale_tolerance": 0.15,
+    "loudness_tolerance_lu": 1.0
+  },
+
+  "sources": [
+    "https://partnerhelp.netflixstudios.com/hc/en-us/articles/360001794307-Netflix-Sound-Mix-Specifications-Best-Practices-v1-6 (dialogue-gated -27 LKFS +/-2, -2 dBTP)",
+    "https://www.rtw.com/blog/rtw-knowledge-base-1/worldwide-loudness-delivery-standards-4 (EBU R128 -23 LUFS, ATSC A/85 -24 LKFS, YouTube -14 LUFS)",
+    "https://tech.ebu.ch/docs/r/r128s4.pdf (dialogue loudness is measured on the speech part; do not raise dialogue to programme loudness)",
+    "https://voicedeck.io/tools/platform-delivery-spec-card/ (Prime Video and Disney+ are full-program gated at -24 LKFS)"
+  ],
+
+  "provenance": {
+    "master_profiles.streaming": "unchanged from presets/video/default.json",
+    "master_profiles.broadcast.lufs": "EBU R128 -23 LUFS (+/-0.5); the tolerance is widened to 1.0 here",
+    "master_profiles.netflix": "Netflix Sound Mix Specifications v1.6",
+    "master_profiles.prime": "Prime Video delivery spec",
+    "master_profiles.youtube": "YouTube playback normalisation",
+    "gate.shot_scale_tolerance": "starting value",
+    "gate.dialogue_band_min_db": "starting value: 12 dB of music below the voice in 1-4 kHz; positive because the figure is 'how far the music sits under', the same sign as dialogue_snr_min_db"
+  }
+}

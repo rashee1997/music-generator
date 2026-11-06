@@ -1,139 +1,205 @@
 ---
 title: Video scoring
-summary: Scoring against a picture: cuts, hits, dialogue, the video block in the sheet and its four gate rows.
-tags: [video, picture, sync, cut, dialogue, fps, hits, spotting]
+summary: Scoring to picture at three timescales, with its own gate rows, its own presets and a reel assembled from certified cues.
+tags: [video, picture, sync, cut, dialogue, fps, hits, spotting, film, reel, gating]
 load_when:
-  - the brief has a video file
+  - the brief has a video file or a film reel
   - a video gate row fails
+  - a film project needs scaffolding
 ---
 
 # Scoring to picture
 
-Music written against a film: the cuts set the tempo and the hits, the picture's own audio stays intelligible,
-and the finished file carries the original video stream untouched.
+Music written against a film: the picture sets the tempo, the density and the hits; the film's own
+speech stays intelligible; and the finished file carries the original video stream untouched.
 
 ```bash
-python3 scripts/video_score.py --video clips/source.mp4 --project D:/films/glaciers --brief "calm documentary"
-python3 scripts/video_score.py --selftest          # 17 checks, no project, temp files only
+python3 scripts/setup_project.py --new-film D:/films/glaciers --title "Glaciers" --fps 25
+python3 scripts/video_score.py --video clips/reel1.mp4 --project D:/films/glaciers/cues/M01_open --brief "calm documentary"
+python3 scripts/video_score.py --selftest        # the video path proves it works, and that it can fail
+python3 video-mixer/deliver/reel.py D:/films/glaciers --reel 1 --mux
 ```
+
+## Two project shapes
+
+| Shape | For | Scaffold |
+|---|---|---|
+| music project | one piece, no picture | `setup_project.py --new-project <dir>` |
+| **film project** | a reel, several cues, a spotting list | `setup_project.py --new-film <dir> --fps 25` |
+
+A film project is not a music project with extra folders: its unit of work is a **cue**, and each
+cue folder is a complete music project, so every rule in `AGENTS.md` applies to it unchanged.
+
+```
+my-film/
+  film.json                 reel facts: fps, picture, duration, delivery, reels
+  spotting/                 cutlist.json, cuesheet.json, notes.md
+  analysis/                 reel_<id>_probe.json, reel_<id>_context.json
+  cues/<id>/                one complete music project per cue
+  deliver/                  reel_<id>_program.wav, reel_<id>_report.json, the muxed file
+```
+
+The reel **places and aggregates**; it never re-scores, re-times or rewrites a cue's report.
 
 ## What runs, in order
 
 | Stage | File | Does |
 |---|---|---|
-| probe | `video-mixer/video_probe.py` | ffprobe stream facts, `scdet` cuts, per-frame luma / motion / centre / warmth at `analysis_fps` |
-| direction | `video-mixer/video_direction.py` | cuts → tempo and hits, energy → intensity, luma → mode, centre → azimuth, warmth → timbre |
+| probe | `video-mixer/video_probe.py` | ffprobe facts, `scdet` cuts, per-frame luma / motion / centre / warmth |
+| context | `video-mixer/context.py` (+ `analysis/shot_scale.py`, `analysis/speech.py`) | the three timescales below, plus the fitted cut-grid phase |
+| direction | `video-mixer/video_direction.py` | context → sections with music, hits with a class, score |
 | score | `compose.py` (unchanged) | the music, rendered by `pipeline.py` with every normal music rule |
-| program | `video-mixer/video_program_mix.py` | voice chain, music bed under speech, duck, swell into hits, SFX, master to the delivery profile |
+| program | `video-mixer/video_program_mix.py` | voice chain, bed under speech, band duck, swell, master in the declared gating mode |
+| **gate** | `video-mixer/gate/pass_.py` | every picture row, **inside** the pipeline's own certification |
 | mux | `video-mixer/video_mux.py` | `-c:v copy` + audio, then proves the video stream is identical |
-| gate | `video-mixer/video_gate.py` | four delivery rows appended to `reports/ci_report.json` |
+| reel | `video-mixer/deliver/reel.py` | cues placed in reel time, one program, one aggregate verdict |
 
-`scripts/video_score.py` is the only video file in `scripts/`. `pipeline.py` is not modified: the music is a normal
-score, so every existing gate row still applies to it.
+The music rows and the picture rows run in the same list, at the same moment, and produce one
+verdict. There is no `attach()` that rewrites an already-certified report.
 
-## The preset
+### Who owns what
 
-`references/data/presets/video/default.json` holds every number the path uses. A project preset of the same name in
-`<project>/presets/video/` deep-merges over it, so an override can be five lines:
+| Path | Owns | Does not |
+|---|---|---|
+| `video-mixer/video_probe.py` | ffprobe facts, `scdet` cuts, per-frame luma / motion / centre / warmth | choose music |
+| `video-mixer/analysis/shot_scale.py` | block contrast → subject box → `wide` / `medium` / `close` / `insert` | set the density (the mapping preset does) |
+| `video-mixer/analysis/speech.py` | speech activity (presence) and the per-sample mask | judge intelligibility |
+| `video-mixer/context.py` | the three timescales, `cut_phase`, `silence_windows` | write a direction sheet |
+| `video-mixer/video_direction.py` | context → sections, hits with a class, a score | invent feel, purpose or motifs |
+| `video-mixer/video_program_mix.py` | voice chain, bed under speech, band duck, swell, master in the declared gating mode | touch the music's own mix preset |
+| `video-mixer/gate/rows.py` | one function per `video.*` row | decide which rows apply |
+| `video-mixer/gate/pass_.py` | loads the five `film/*` presets, runs the rows, returns `(rows, extras)` | re-judge a certified report |
+| `video-mixer/deliver/reel.py` | certified cues placed in reel time, one program, one aggregate verdict | re-score or re-time a cue |
+| `video-mixer/video_gate.py` | the old import path, as a thin wrapper | hold a second verdict |
+| `scripts/video_gate_pipeline.py` | the picture rows a music render can answer alone (no program supplied) | replace the program-side rows |
 
-```json
-{"name": "default", "character": "glacier documentary: slow, wide, almost no hits",
- "hits": {"max_hits_per_minute": 6},
- "mix": {"bed_db": -14.0},
- "master": {"profile": "broadcast"}}
-```
+A change belongs in the module that owns the number. A new threshold goes in a `film/*` preset with its
+`provenance`; a new row goes in `gate/rows.py` and `scripts/gate_profiles.py`; a new placement rule goes in
+`video_direction.py`; nothing in `video-mixer/` writes into a cue's score.
 
-| Block | Holds |
+## The three timescales
+
+The picture is not four scalars. `analysis/reel_<id>_context.json` holds:
+
+| Timescale | Answers | Fields |
+|---|---|---|
+| **reel** (s–min) | what kind of film is this | shots, scenes, palette temperature, motion profile, speech share, mean/range luma |
+| **scene** (2–40 s) | what is this shot | `shot_scale`, motion + direction, luma, speech activity, energy, `music_gap` |
+| **motion beat** (frames) | where does the picture pulse | peaks with strength and direction, plus `cut_phase` (bpm, offset, confidence, worst residual) |
+
+`shot_scale` implements the rule the direction guide already states: the further the camera, the
+bigger the music may be (`references/workflow/music-direction.md` §2.4). A close-up caps the density;
+a wide allows the band. The cap is a preset table, and the gate measures the density that actually
+resulted, not the intention.
+
+`text_on_screen` is `null` and says "not measured": nothing in this skill detects text, and a
+measurement that is not made must not be invented.
+
+## The presets, split by concern
+
+`references/data/presets/film/` holds five files; a project overrides only the one it needs:
+
+| Preset | Holds |
 |---|---|
-| `probe` | analysis fps and size, `scdet` threshold, motion-hit percentile, keyframe probe |
-| `direction_map` | energy bins, default key, tempo range and frame lock, luma→mode, centre→azimuth, warmth→timbre |
-| `staging` | the cue's own space preset (`space`), then elevation and distance per role |
-| `mix_preset` | the cue's own mix preset: lead band, carve, level per role |
-| `hits` | cut and motion sounds, per-minute budget, minimum gap in beats, hit length, velocities |
-| `mix` | voice chain, bed and duck levels, speech band, swell, fades, SFX headroom |
-| `master` | profile name, sample rate, bit depth |
-| `master_profiles` | `streaming` (−14 LUFS, full program), `broadcast` (−24, dialogue gated), `cinema` (−27, dialogue gated) |
-| `mux` | container, codec per extension, bitrate, faststart, shortest |
-| `gate` | duration tolerance, cut-sync window, dialogue SNR floor, loudness tolerance |
+| `analysis.json` | probe rate, cut detection, shot-scale thresholds, speech thresholds, phase fit, scene grouping |
+| `mapping.json` | tempo from cuts, luma/palette → mode, centre and direction → pan, shot scale → density, layers per density |
+| `hits.json` | sounds, budget, gap, **hit classes** (`dead_on`, `reaction`) and their windows |
+| `dialogue.json` | voice chain, bed, duck, speech band, intelligibility band, audited loudness difference |
+| `delivery.json` | master profiles **with an explicit gating mode**, mux target, gate tolerances |
 
-Scaffold a project copy to edit:
+Every new number carries a source or the words "starting value" in that preset's `provenance`.
 
-```bash
-python3 scripts/presets.py scaffold video default --project <dir>
-```
+The one-cue `references/data/presets/video/default.json` still supplies the room (`staging`) and the
+mix preset; it remains readable as a merged view for compatibility.
 
-The space and the mix preset named by the video preset are written into the project on the first run if they are
-not there, because the project gate refuses a shipped fallback and a cue's room and balance belong to the project.
+## Hit classes
 
-## The workflow, in order
+An accent is not always on the frame:
 
-The video path is not a shortcut around the normal one. Scaffold the project, run `research_kb.py` and add web
-sources (Steps R1–R2 in `AGENTS.md`), then:
+| Class | For | Placement |
+|---|---|---|
+| `dead_on` | a cut, an explosion, a slam | on the frame (ITU-R BT.1359: +45 ms early, −125 ms late) |
+| `reaction` | a line, a look, a reveal | *after* the audience's reaction time (about 350 ms), because the moment has to be absorbed first |
 
-```bash
-python3 scripts/video_score.py --video clips/source.mp4 --project <dir> --brief "calm documentary awe"
-```
+`video.hit_class` fails an accent that drifts out of its own class window, and `video.cut_sync` and
+`video.motion_sync` judge the two sync families separately: a cut is hard, a movement inside a shot is
+softer (music-to-motion synchrony is detected inside about 300–450 ms).
 
-The project gate still blocks the render if research, direction or presets are missing — that is the same gate as
-any other piece.
+## The gate rows
 
-## The direction sheet the picture produces
-
-The video path writes `direction/direction_sheet.json` in the same shape as `templates/direction_sheet.json`, so a
-cue to picture and a cue to a brief are read the same way (`listen.py`, the project gate, a human director). What is
-filled from the picture is listed in `music-direction.md` section 2.6; what it adds here is the block itself:
-
-```json
-"video": {
-  "enabled": true, "preset": "default", "source": "clips/source.mp4",
-  "in_s": 0.0, "out_s": 12.0, "duration_s": 12.0, "fps": 25.0,
-  "cuts": [2.0, 5.0], "cuts_count": 2, "cut_source": "scdet", "motion_hits": 1,
-  "cut_sync": {"early_ms": 45, "late_ms": 125, "aim_ms": 40},
-  "dialogue": {"present": true, "duck_db": -9.0, "snr_min_db": 15.0},
-  "master_profile": "streaming",
-  "deliverable": {"container": "mp4", "audio_codec": "aac", "bitrate": "320k", "video_copy": true}
-}
-```
-
-`cuts` are candidates from `scdet` (or the frame-difference fallback named in `cut_source`), not an edit list. The
-`hits` list beside `hits_at` carries the same moments with `kind` and `sync`: a cut is a **hard** sync point and is
-judged in `cut_sync`; a movement inside a shot is **soft** and is not judged against any cut. `sections` is the
-picture's measured energy, labelled from `direction_map.energy_sections` - what the music does inside a section is
-still a hand decision, so the generated sheet leaves `music` out rather than inventing it.
-
-A sheet with `enabled: true` must name `source`, `fps`, `master_profile`, a cut list and a sync window; the project
-gate rejects one that claims a picture it cannot describe.
-
-## Tempo and hits
-
-The median interval between cuts is read as 1, 2, 4 or 8 beats, whichever lands closest to the middle of
-`min_bpm`..`max_bpm`. With `prefer_frame_lock` the tempo snaps so one beat is a whole number of frames at the
-picture's own frame rate. Hits are written at **fractional beats** (`beat = t_s × bpm / 60`), because
-`compose.add_hit_points` rounds to half beats and would throw a cut hit up to a beat away.
-
-Every hit carries `kind`: `cut` or `motion`. Only cut hits are judged by `video.cut_sync`; a motion hit accents a
-movement inside a shot and has no edit to be late for.
-
-## The four gate rows
-
-Registered in `scripts/gate_profiles.py`, chosen by the `video_cinematic` profile (`"piece_type"` in the score).
+Registered in `scripts/gate_profiles.py`; chosen by a `video_*` profile.
 
 | Row | Measures | Protected |
 |---|---|---|
 | `video.duration_lock` | program length against the picture, ±`duration_tolerance_ms` | yes |
-| `video.cut_sync` | every cut hit against its cut; early and late limits separate (ITU-R BT.1359) | no |
-| `video.dialogue_snr` | music RMS under the voice while speech is active | no |
-| `video.master_compliance` | delivered LUFS and true peak against the chosen master profile | yes |
+| `video.cut_sync` | a cut hit against its cut; early and late limits separate | no |
+| `video.motion_sync` | a movement hit against its movement beat | no |
+| `video.hit_class` | a delayed accent lands after its moment; a dead-on one does not drift | no |
+| `video.grid_phase` | the cuts' worst residual against the fitted grid, in frames | no |
+| `video.hit_density` | accents per minute, and the share of adjacent cut pairs both hit (Mickey Mousing) | no |
+| `video.cue_silence` | music energy where the spotting asked for silence | no |
+| `video.dialogue_snr` | music level under speech | no |
+| `video.dialogue_band` | music energy in 1–4 kHz under speech | no |
+| `video.shot_scale` | realised density against the camera distance | no |
+| `video.master_compliance` | delivered loudness **in the declared gating mode**, and true peak | yes |
+| `video.gating_mode` | the declared gating mode was the mode actually measured | yes |
 
-The music tail runs past the end of the voice but never past the picture. A picture with no audio stream is not
-an error: the cue plays alone and `video.dialogue_snr` passes with that reason written in the row.
+Profiles: `video_basic` (no speech), `video_dialogue`, `video_underscore` (sparse, dialogue strict),
+`video_montage` (many short shots, budget relaxed with a written reason), `video_trailer`.
+`video_cinematic` is kept for the one-cue path.
+
+Sign convention: `video.dialogue_snr` and `video.dialogue_band` both print `voice − music`, so a positive
+number means the music sits *under* the voice and a bigger number is a quieter bed. `film/delivery.json`
+stores `dialogue_band_min_db: 12.0` in that convention; the row's range in `gate_profiles.py` follows it.
+
+## Gating: the fix this gate row exists for
+
+A delivery that says `loudness_mode: dialogue` is measured on the **speech-active part only**
+(ITU-R BS.1770-1 practice, what Netflix grades a print master on), not on the whole program. The
+master and the gate use the same speech mask, so they cannot disagree:
+
+- `mixer.dialogue_gated_lufs(y, sr, mask)` measures the speech segments;
+- `video_program_mix.master(..., loudness_mode='dialogue', speech_mask=...)` converges on that target;
+- `video.gating_mode` fails a delivery whose declared gate was not the measured one;
+- `video.master_compliance` fails a dialogue target when no speech was found, instead of grading a
+  dialogue target on a full-program number.
+
+Platform targets live in `film/delivery.json` with their source: Netflix −27 LKFS ±2 dialogue-gated,
+−2 dBTP; EBU R128 −23 LUFS, −1 dBTP; ATSC A/85 −24 LKFS ±2; Prime −24 full program; YouTube ≈ −14 on
+playback.
+
+## The direction sheet
+
+The sheet keeps the shape of `templates/direction_sheet.json`, so a cue to picture and a cue to a
+brief are read the same way. What the picture fills:
+
+| Block | Filled from |
+|---|---|
+| `tempo_bpm`, `tempo_method` | the median cut interval (1/2/4/8 beats), frame-locked when asked |
+| `key`, `mode` | the mapping preset; luma decides, palette only breaks a tie |
+| `sections` | one per scene: `shot_scale`, `energy`, `density`, `allowed_roles`, `action`, `music` |
+| `hits`, `hits_at` | cuts (hard) and movements (soft), each with `kind`, `sync`, `class`, `offset_s` |
+| `video.cuts`, `cut_phase`, `scenes`, `silence_windows` | the context artifact |
+| `video.dialogue` | whether speech was **measured**, and the duck policy |
+| `video.master_profile` | the delivery preset's own profile |
+
+Everything else (`job`, `feel`, `point_of_view`, `motifs`, `mix_intent`) is still a hand decision: the
+probe cannot know what the film is about. `sections[].density` is the allowance; the score is thinned
+to it by `apply_section_arrangement()`, and the realised density is what the gate measures.
 
 ## Honest limits
 
-- Cuts come from `scdet`, which misses fades and dissolves; motion hits are a frame-difference fallback, not an
-  edit list. Both are candidates, and `cut_source` in the report says which one was used.
-- The loudness targets are published-standard summaries, not re-read tables. Verify against the current delivery
-  spec of the platform you are cutting for.
-- Nothing in the video path has been auditioned. `listen.py` judges the music bed, not the program mix under speech.
-- The audio is always re-encoded at mux; only the video stream is copied, and that copy is proven by comparing
-  codec, size, pixel format and frame count before and after.
+- Cuts come from `scdet`, which misses fades and dissolves. A deep detector (TransNetV2 class,
+  F1 0.962 on BBC Planet Earth) is described in `film/analysis.json` but is **not shipped**: it needs
+  TensorFlow and 1.4 GB of weights. `cut_source` in the report says which detector ran.
+- Shot scale is a heuristic (block contrast, subject bounding box, `analysis.shot_scale.peak_frac`
+  keeping a flat background out of the subject). It is wrong on shallow focus and on text-over-graphics;
+  a scene can be pinned by hand in `spotting/cutlist.json` and the context records which source won.
+- Speech activity is a measurement of *presence*, not a demix. `video.dialogue_snr` is a loudness
+  difference, not an intelligibility score.
+- `motion_sync`, `grid_phase`, `shot_scale` and `dialogue_band` thresholds are starting values until
+  measured on real reels. They may only be relaxed after measurement, with the reason written down.
+- Nothing in the video path has been auditioned. `listen.py` judges the music bed, not the program
+  under speech.
+- The audio is always re-encoded at mux; only the video stream is copied, and that copy is proven by
+  comparing codec, size, pixel format and frame count before and after.

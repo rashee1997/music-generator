@@ -1,0 +1,19 @@
+{
+  "name": "video_basic",
+  "character": "a single cue scored to a picture with no speech: picture time, cut sync and delivery decide; the dialogue rows pass with their reason",
+  "extends": "cinematic",
+  "rows": {
+    "video.duration_lock": {"mode": "apply"},
+    "video.cut_sync": {"mode": "apply"},
+    "video.motion_sync": {"mode": "apply"},
+    "video.hit_class": {"mode": "apply"},
+    "video.grid_phase": {"mode": "apply"},
+    "video.hit_density": {"mode": "apply"},
+    "video.cue_silence": {"mode": "apply"},
+    "video.shot_scale": {"mode": "apply"},
+    "video.master_compliance": {"mode": "apply"},
+    "video.gating_mode": {"mode": "apply"},
+    "video.dialogue_snr": {"mode": "skip", "reason": "the picture has no audio stream: the cue plays alone"},
+    "video.dialogue_band": {"mode": "skip", "reason": "the picture has no audio stream: nothing to mask"}
+  }
+}

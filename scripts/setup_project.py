@@ -549,10 +549,91 @@ The pipeline will not render until a note cites the knowledge base and lists at 
     print(f"  {venv_python(SKILL / '.venv')} {skill_scripts_str}/pipeline.py {scores_dir / 'main_score.json'} --project {proj_dir}")
 
 
+FILM_CUES = ('M01_open',)
+
+
+def scaffold_film_project(proj_path, title='Untitled Film', fps=25.0, cues=None, ambience=False):
+    """A film project: the reel, the spotting, and one folder per cue.
+
+    A film's unit of work is a cue, not a piece. Each cue folder is a complete music project
+    (direction/, presets/, scores/, reports/, out/), so every rule in AGENTS.md applies to it
+    unchanged, and the reel only assembles what was certified.
+    """
+    film_dir = Path(proj_path).resolve()
+    cue_ids = list(cues or FILM_CUES)
+    for d in ('spotting', 'analysis', 'deliver', 'cues'):
+        (film_dir / d).mkdir(parents=True, exist_ok=True)
+    for cid in cue_ids:
+        scaffold_project(film_dir / 'cues' / cid, title=f'{title} {cid}', ambience=ambience)
+
+    film = {
+        'title': title,
+        'fps': float(fps),
+        'timecode_start': '00:00:00:00',
+        'duration_s': None,
+        'video': None,
+        'reels': [1],
+        'delivery': {'sample_rate': 48000, 'fade_in_s': 0.02, 'fade_out_s': 0.05, 'cue_gain_db': 0.0},
+        'notes': 'video is the picture path; duration_s is the reel length once the cut is locked',
+    }
+    (film_dir / 'film.json').write_text(json.dumps(film, indent=2) + '\n', encoding='utf-8')
+
+    cutlist = {
+        'source': None,
+        'fps': float(fps),
+        'cuts': [],
+        'shots': [],
+        'scenes': [],
+        'notes': 'fill from analysis/reel_<id>_context.json once the probe has run; a cut is a candidate, not an edit list',
+    }
+    (film_dir / 'spotting' / 'cutlist.json').write_text(json.dumps(cutlist, indent=2) + '\n', encoding='utf-8')
+
+    cuesheet = {
+        'cues': [dict(id=cid, title=f'TODO: what this cue is for', reel=1,
+                      in_s=0.0, out_s=None, duration_s=None,
+                      master=f'cues/{cid}/out/master.wav',
+                      purpose='TODO: the job the music does here',
+                      music='TODO: sustained / sparse / none', silence=False) for cid in cue_ids],
+        'notes': 'in_s/out_s are reel time; duration_s is the cue\'s own length. A silent cue keeps its gap.',
+    }
+    (film_dir / 'spotting' / 'cuesheet.json').write_text(json.dumps(cuesheet, indent=2) + '\n', encoding='utf-8')
+
+    (film_dir / 'spotting' / 'notes.md').write_text(
+        '# Spotting notes\n\n'
+        'The human words from the spotting pass: where the music breathes, where it must not play, '
+        'which moments the director called out. Write here, then fill the sheets.\n',
+        encoding='utf-8')
+
+    meta_file = film_dir / 'metadata.json'
+    if not meta_file.exists():
+        meta_file.write_text(json.dumps({
+            'overrides': {},
+            'derive_from_score': {'title': False, 'genre': False, 'comment': False, 'year': True},
+        }, indent=2) + '\n', encoding='utf-8')
+
+    (film_dir / 'STATUS.md').write_text(
+        f'# {title} - film status\n\n'
+        '## Per cue\n' + ''.join(f'- [ ] {cid}: research, direction, presets, score, render, video gate\n' for cid in cue_ids) +
+        '\n## Reel\n- [ ] cuesheet filled in reel time\n- [ ] every cue certified\n- [ ] reel assembled (deliver/reel.py)\n- [ ] muxed and compared\n',
+        encoding='utf-8')
+
+    print(f'\nFilm project: {film_dir}')
+    print('  film.json              reel facts (fps, video, duration, delivery)')
+    print('  spotting/              cutlist.json, cuesheet.json, notes.md')
+    print('  analysis/              reel_<id>_probe.json, reel_<id>_context.json')
+    print('  cues/<id>/             one complete music project per cue')
+    print('  deliver/               reel_<id>_program.wav, reel_<id>_report.json, muxed file')
+    print(f'\nNext: probe the picture, fill spotting/cuesheet.json, then score cue by cue.')
+    return film_dir
+
+
 def main():
     ap = argparse.ArgumentParser(description='Set up the music-generator skill or scaffold a music project.')
     ap.add_argument('--ambience', action='store_true', help='with --new-project: also scaffold an environment preset and track (only when the user asked for ambience)')
     ap.add_argument('--new-project', metavar='DIR', help='scaffold a project: direction/ presets/ scores/ midi/ stems/ reports/ scripts/ out/ STATUS.md')
+    ap.add_argument('--new-film', metavar='DIR', help='scaffold a film: film.json, spotting/, analysis/, cues/<id>/ (one music project each), deliver/')
+    ap.add_argument('--fps', type=float, default=25.0, help='with --new-film: the picture rate (default 25)')
+    ap.add_argument('--cues', default=None, help='with --new-film: comma-separated cue ids (default M01_open)')
     ap.add_argument('--title', default='New Composition', help='title of the piece when scaffolding a new project')
     ap.add_argument('--ears', action='store_true', help='also install earshot and download its models (about 1 GB)')
     ap.add_argument('--venv', default=str(SKILL / '.venv'), help='where the virtual environment goes (default: .venv)')
@@ -561,6 +642,11 @@ def main():
 
     if args.new_project:
         scaffold_project(args.new_project, title=args.title, ambience=args.ambience)
+        return
+
+    if args.new_film:
+        cues = [c.strip() for c in (args.cues or '').split(',') if c.strip()] or None
+        scaffold_film_project(args.new_film, title=args.title, fps=args.fps, cues=cues, ambience=args.ambience)
         return
 
     if sys.version_info < (3, 10):

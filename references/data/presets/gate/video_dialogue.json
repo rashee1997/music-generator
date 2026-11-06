@@ -1,0 +1,9 @@
+{
+  "name": "video_dialogue",
+  "character": "a cue under speech: every picture row applies, and the two dialogue rows carry the weight",
+  "extends": "video_basic",
+  "rows": {
+    "video.dialogue_snr": {"mode": "apply"},
+    "video.dialogue_band": {"mode": "apply"}
+  }
+}

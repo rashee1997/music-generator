@@ -64,6 +64,7 @@ KINDS = {
     'layouts': dict(required=['channels', 'speakers']),   # where the loudspeakers of a multichannel format sit
     'sfzlib': dict(required=['character', 'licence', 'type']),   # a downloadable SFZ library or engine (scripts/sfz_libs.py)
     'video': dict(required=['character', 'probe', 'direction_map', 'staging', 'mix_preset', 'mix', 'master', 'mux']),   # scoring to picture (scripts/video_score.py)
+    'film': dict(required=['character']),      # one concern of film scoring: analysis, mapping, hits, dialogue, delivery
 }
 
 

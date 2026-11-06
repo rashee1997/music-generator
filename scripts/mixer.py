@@ -217,6 +217,37 @@ def lufs(x, sr=SR):
     return -70.0 if not np.isfinite(v) else float(v)
 
 
+def dialogue_gated_lufs(x, sr=SR, mask=None, min_seg_s=0.2):
+    """Integrated loudness of the speech-active part of a program (ITU-R BS.1770-1 practice).
+
+    A print master's "dialogue-gated" loudness is the loudness measured on the dialogue, not on the whole
+    program: a wall-to-wall action sequence must not drag the average up. `mask` is a per-sample 0/1 array
+    (analysis.speech.mask_at gives one). Segments shorter than `min_seg_s` are ignored, as a meter ignores a
+    blip. Returns None when nothing is marked as speech, so the caller falls back to the full program and
+    says so rather than inventing a number.
+    """
+    y = to_stereo(x)
+    if mask is None:
+        return None
+    m = np.asarray(mask, dtype=np.float32).reshape(-1)
+    if len(m) != len(y):
+        m = np.interp(np.linspace(0, 1, len(y)), np.linspace(0, 1, len(m)), m) >= 0.5
+    else:
+        m = m >= 0.5
+    if not m.any():
+        return None
+    idx = np.flatnonzero(m)
+    breaks = np.flatnonzero(np.diff(idx) > 1)
+    starts = np.concatenate([[idx[0]], idx[breaks + 1]])
+    ends = np.concatenate([idx[breaks], [idx[-1]]])
+    min_len = max(1, int(float(min_seg_s) * sr))
+    parts = [y[a:b + 1] for a, b in zip(starts, ends) if (b - a + 1) >= min_len]
+    if not parts:
+        return None
+    joined = np.concatenate(parts, axis=0)
+    return lufs(joined, sr)
+
+
 def true_peak_db(x, sr=SR, over=4):
     return dsp.true_peak_db(x, sr, over)
 

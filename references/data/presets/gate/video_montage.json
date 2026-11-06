@@ -1,0 +1,13 @@
+{
+  "name": "video_montage",
+  "character": "a cut-heavy montage: many short shots, so the hit budget and the grid are relaxed with a written reason; sync stays strict",
+  "extends": "video_basic",
+  "rows": {
+    "video.hit_density": {"mode": "relax", "budget_per_minute": 48, "max_consecutive_cut_hits": 0.85,
+                          "reason": "a montage cuts every second or two; a 24/min budget would force the cue to ignore the edit"},
+    "video.grid_phase": {"mode": "relax", "tolerance_frames": 1.5,
+                         "reason": "a montage's cut spacing is not metronomic; half a frame of accumulated drift is expected"},
+    "video.shot_scale": {"mode": "skip",
+                         "reason": "a montage changes shot scale inside a section, so a per-section density cap measures the edit, not the score"}
+  }
+}

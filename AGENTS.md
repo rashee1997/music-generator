@@ -99,7 +99,8 @@ Before Phase 4, open every file in the row that matches the request; union sever
 |---|---|
 | **ANY PIECE** | `SKILL.md`, `references/workflow/brief-reading.md`, `references/workflow/music-direction.md`, `references/spatial/acoustic-laws.md`, `references/mixing/mix-rules.md`, `references/mixing/humanization.md`, `references/mixing/quality-gate.md` |
 | **Mood/film/underscore/background** | `references/workflow/scene-recipes.md`, `references/scoring/emotion-and-scoring.md`, `knowledgebase/media/video-scoring.md` |
-| **Score video file** | `references/scoring/video-scoring.md`, `scripts/video_score.py`, `video-mixer/` |
+| **Score video file** | `references/scoring/video-scoring.md`, `scripts/video_score.py`, `video-mixer/video_probe.py`, `video-mixer/context.py`, Section 10 below |
+| **Film reel / several cues / spotting** | `references/scoring/video-scoring.md`, `video-mixer/deliver/reel.py`, `video-mixer/gate/pass_.py`, `scripts/setup_project.py --new-film`, Section 9 and Section 10 |
 | **Named genre (42 built-in)** | `references/scoring/genres-and-moods.md`, `knowledgebase/genre-and-feel/psychoacoustic-genre.md`, `knowledgebase/README.md`, then `python scripts/compose.py --list` |
 | **Electronic/EDM (house/techno/trance/future bass/trap/synthpop/D&B)** | Section 4 below + above + `knowledgebase/genre-and-feel/dynamic-flow.md`, `references/mixing/mixing-and-mastering.md`, `references/mixing/blending-and-balance.md` |
 | **Indian/Carnatic/Tamil/Hindustani** | `knowledgebase/cultures/pan-indian.md`, `knowledgebase/cultures/tamil.md`, `references/scoring/cultural-soul.md`, `references/scoring/world-music.md`, `references/workflow/director-roles-and-soul.md` |
@@ -214,3 +215,112 @@ Answer every box in `references/workflow/self-check.md` yes/no in `<project>/STA
 - [ ] Ran `listen.py` OR said ears did not run
 
 If a box is no, fix it or say which step was skipped and why.
+
+---
+
+## 9. Film (scoring to picture)
+
+A film is a different project type, not a music project with a video attached. Its unit of work is a **cue**.
+
+### 9.1 Project shape
+
+```
+python scripts/setup_project.py --new-film <dir> --title "<Title>" --fps 25 [--cues M01_open,M02_close]
+```
+
+```
+<dir>/film.json              reel facts (fps, picture, duration, delivery)
+<dir>/spotting/               cutlist.json, cuesheet.json, notes.md
+<dir>/analysis/               reel_<id>_probe.json, reel_<id>_context.json
+<dir>/cues/<id>/              one complete music project per cue
+<dir>/deliver/                reel_<id>_program.wav, report, muxed file
+```
+
+Rules:
+- Every cue folder follows Phases 0-9 of this file unchanged. The film adds artefacts; it relaxes no rule.
+- A cue writes only inside `cues/<id>/`. The reel reads, never edits, a cue.
+- `deliver/` is written only by `video-mixer/deliver/reel.py`.
+- `spotting/notes.md` is where the human writes; `analysis/` is written only by measurement.
+
+### 9.2 Phases for a cue
+
+1. **Context first.** Probe the picture, build `analysis/reel_<id>_context.json` (three timescales), and read it.
+   Do not write a direction sheet before the context exists.
+2. **Spotting, then sheet.** `spotting/cuesheet.json` gives the cue its in/out in reel time. The direction sheet is
+   filled from the context: sections per scene, hits with a class, silence where the spotting says silence.
+3. **Research, presets, score, render.** Exactly as Phases 3-8, inside the cue folder.
+4. **Certification is one pass.** The picture rows run inside `pipeline.stage6`; do not append rows to a report that
+   has already been certified, and do not write a second verdict.
+5. **Reel.** Only cues with `status: PASSED` are assembled. A silent cue keeps its gap.
+
+### 9.3 Presets
+
+| File | Holds |
+|---|---|
+| `presets/film/analysis.json` | probe, cut detection, shot scale, speech, phase fit, scene grouping |
+| `presets/film/mapping.json` | tempo, mode, pan, shot scale → density, layers per density |
+| `presets/film/hits.json` | sounds, budget, hit classes and windows |
+| `presets/film/dialogue.json` | voice chain, duck, speech band, intelligibility band |
+| `presets/film/delivery.json` | master profiles with their gating mode, mux, gate tolerances |
+
+Modules, sign conventions and ownership: Section 10.
+
+A film overrides a film preset in `cues/<id>/presets/film/`. Every new number carries a source or the
+words "starting value" in that preset's `provenance`.
+
+### 9.4 The video gate
+
+Rows: `video.duration_lock`, `video.cut_sync`, `video.motion_sync`, `video.hit_class`, `video.grid_phase`,
+`video.hit_density`, `video.cue_silence`, `video.dialogue_snr`, `video.dialogue_band`, `video.shot_scale`,
+`video.master_compliance`, `video.gating_mode`. Profiles: `video_basic`, `video_dialogue`, `video_underscore`,
+`video_montage`, `video_trailer` (and `video_cinematic` for the one-cue path).
+
+- `video.duration_lock`, `video.master_compliance` and `video.gating_mode` are **protected**: they cannot be relaxed,
+  retuned or skipped by any type of piece, and a score's `gate` block cannot silence them.
+- A failing picture row is a fact: measure it, fix the score, the preset or the placement.
+- `video.gating_mode` exists because `loudness_mode` used to be a label with no gating behind it. A delivery that
+  claims dialogue gating is measured on the speech-active part; if no speech was measured, the row fails.
+
+### 9.5 Honest limits (repeat them in the report)
+
+- `scdet` misses fades and dissolves; no deep detector ships. `cut_source` says what ran.
+- Shot scale is a heuristic; speech activity is presence, not content.
+- `motion_sync`, `grid_phase`, `shot_scale`, `dialogue_band` thresholds are starting values until measured.
+- Nothing is auditioned. `listen.py` judges the bed, not the program under speech.
+
+---
+
+## 10. The video mixer (modules, ownership, sign)
+
+`video-mixer/` executes picture decisions. It measures, places what the direction sheet asked for, and certifies
+once. A change belongs in the module that owns the number:
+
+| Path | Owns | Does not |
+|---|---|---|
+| `video-mixer/video_probe.py` | ffprobe facts, `scdet` cuts, per-frame luma / motion / centre / warmth | choose music |
+| `video-mixer/analysis/shot_scale.py` | block contrast → subject box → `wide`/`medium`/`close`/`insert` | set density (the mapping preset does) |
+| `video-mixer/analysis/speech.py` | speech presence and the per-sample mask | judge intelligibility |
+| `video-mixer/context.py` | reel / scene / motion-beat timescales, `cut_phase`, `silence_windows` | write a direction sheet |
+| `video-mixer/video_direction.py` | context → sections, hits with a class, a score | invent feel or motifs |
+| `video-mixer/video_program_mix.py` | voice chain, bed under speech, band duck, swell, master in the declared gating mode | touch the music's mix preset |
+| `video-mixer/gate/rows.py` | one function per `video.*` row | decide which rows apply |
+| `video-mixer/gate/pass_.py` | five `film/*` presets → rows + extras | re-judge a certified report |
+| `video-mixer/deliver/reel.py` | certified cues in reel time, one program, one aggregate verdict | re-score or re-time a cue |
+| `video-mixer/video_gate.py` | the old import path, as a thin wrapper | hold a second verdict |
+| `scripts/video_gate_pipeline.py` | the picture rows a music render answers alone | replace the program-side rows |
+
+Rules:
+
+1. **One verdict.** `pipeline.stage6_ci_quality_suite` takes the picture rows through its `video_rows` hook, so
+   they are certified in the same list as the music rows. Never attach rows to a finished report.
+2. **Numbers live in presets.** `references/data/presets/film/<analysis|mapping|hits|dialogue|delivery>.json`,
+   overridden per cue in `cues/<id>/presets/film/`. Every value carries a source or "starting value" in
+   `provenance`; a missing film preset is an error, never a default.
+3. **Sign.** `video.dialogue_snr` and `video.dialogue_band` both report `voice − music`: positive means the music
+   sits under the voice. `dialogue_band_min_db` is `12.0` in that convention.
+4. **Protected rows.** `video.duration_lock`, `video.master_compliance` and `video.gating_mode` cannot be relaxed,
+   retuned or skipped by any piece type, and a score's `gate` block cannot silence them.
+5. **A measurement that is not made says so.** `text_on_screen` is `null`, a missing program is a WARN that names
+   what could not be measured, and `cut_source` names the detector that ran. Never guess a field.
+6. **Prove it can fail.** `python scripts/video_score.py --selftest` runs each row with a positive and a negative
+   control; a row that cannot fail is not a row. Run it after any change under `video-mixer/`.

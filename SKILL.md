@@ -37,7 +37,7 @@ Follow these steps in order. Never skip steps.
 
 | Step | Action | Output | Check |
 |---|---|---|---|
-| 1 | **Create project** | `python scripts/setup_project.py --new-project <dir> --title "<Title>"` (add `--ambience` only if requested) | Project structure with direction/, presets/, scores/, out/, reports/, STATUS.md |
+| 1 | **Create project** | `python scripts/setup_project.py --new-project <dir> --title "<Title>"` (add `--ambience` only if requested; `--new-film <dir> --fps 25` for a reel) | Project structure with direction/, presets/, scores/, out/, reports/, STATUS.md |
 | 2 | **Research** | `python scripts/research_kb.py <dir> --topic "<topic>" --tags <tags>`. Add web sources via TinyFish (see the `use-tinyfish` skill). For ambience/effects, use `--sounds` and document real references with licenses/measurements. | `reports/research_<topic>.md` with KB citations and sources |
 | 2b | **Load references** | `python scripts/find_references.py "<the brief in plain words>" --top 5`. Then open only the files it returns, and inside them only the sections it names. | The list of files you will actually open, and why |
 | 3 | **Direction sheet** | Copy `templates/direction_sheet.json` to `<dir>/direction/direction_<title>.json`. Fill all fields per [`references/workflow/music-direction.md`](references/workflow/music-direction.md). For video, run `scripts/video_score.py` first. | Complete sheet with job, feel, sections, motifs, hits, mix_intent, spatial_staging |
@@ -47,13 +47,28 @@ Follow these steps in order. Never skip steps.
 | 7 | **Revise** | Change ONE lever at a time ([`references/workflow/music-direction.md`](references/workflow/music-direction.md) §6). Re-run step 6 until green (max 5 attempts). | All gates pass |
 | 8 | **Listen & deliver** | `python scripts/listen.py out/master.wav --direction direction/<sheet>.json` | Verify and report results |
 
+## Scoring to picture
+
+A film is a project type of its own: its unit of work is a **cue**, and each cue is a normal music project.
+
+```bash
+python scripts/setup_project.py --new-film films/glaciers --title "Glaciers" --fps 25
+python scripts/video_score.py --video clips/reel1.mp4 --project films/glaciers/cues/M01_open --brief "calm documentary"
+python video-mixer/deliver/reel.py films/glaciers --reel 1 --mux
+```
+
+Read [`references/scoring/video-scoring.md`](references/scoring/video-scoring.md) before the first cue: it holds
+the three timescales, the five `film/*` presets, the hit classes and the twelve `video.*` gate rows. Picture rows
+are certified inside the same `pipeline.py` run as the music rows, so one cue gets one verdict. Never attach rows
+to a report that has already been certified.
+
 ## Scripts you run
 
 One line each; every path is under `scripts/` unless it says otherwise.
 
 | Script | What it does |
 |---|---|
-| `setup_project.py` | create a project: uv venv, packages, SoundFont, `--ears` for earshot |
+| `setup_project.py` | create a project (`--new-project`, `--new-film --fps`), uv venv, packages, SoundFont, `--ears` for earshot |
 | `pipeline.py` | render and certify: stages 1-7, the gate, version files, tags |
 | `compose.py` | brief to score; `--list`, `--render`, `--midi`, `--energy`, `--space`, `--voiceover` |
 | `render_natural.py` | score to stems and master, per-note expression |
@@ -71,7 +86,8 @@ One line each; every path is under `scripts/` unless it says otherwise.
 | `sfx.py` | one-hit effects from presets (`list`, `make`) |
 | `environment.py` | ambience from presets and physical scenes |
 | `physical.py` | the physical scene engine: `laws`, `check`, `render`, `verify` |
-| `video_score.py` | score a video end to end (`--selftest`) |
+| `video_score.py` | score a video end to end inside a cue (`--selftest` proves every picture row can also fail) |
+| `video-mixer/deliver/reel.py` | place certified cues on a reel, one program, one verdict (`--mux`) |
 | `clone_instrument.py` | clone an instrument from a recording, export an SFZ |
 | `extract_pipeline.py` | song to MIDI and stems: `setup`, `run`, `status`, `kb` |
 | `sfz_libs.py`, `sfz_render.py` | optional SFZ libraries and the renderer that plays them |
