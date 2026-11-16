@@ -25,11 +25,12 @@ An AI agent skill and Python audio pipeline that composes, renders, mixes, and v
 
 * **Voice-Leading & Melodic Rules:** Enforces conjunct motion, leap recovery, chromatic tension resolution, and 3D spiral-array tonal tension.
 * **Groove That Breathes:** Evaluates metric-tree syncopation across 4/4, 3/4, 6/8, 5/4, 7/8, and 12/8—rejecting both robotic marches and rhythmic collapse.
-* **Measured Humanization:** Separates shared ensemble tempo drift from individual player motor error, scales drum push with tempo, couples velocity to note duration, and adds note-on/note-off mechanism noise.
+* **Measured Humanization:** Separates shared ensemble tempo drift from individual player motor error, scales drum push with tempo, couples velocity to note duration, brightens each note with its own velocity, and adds note-on/note-off mechanism noise.
 * **Roughness & Masking Gates:** Runs critical-band analysis (80–6000 Hz) and ERB stereo masking checks so leads stay clear and overtones don't clash.
 * **Spatial Staging:** Applies per-stem azimuth, distance filtering, stereo width, shared room acoustics, and optional measured-HRTF binaural rendering.
 * **Immersive 2.0 (opt-in, `immersive.engine: "hoa_bus"`):** One fifth-order ambisonic bus carries every source, reflection and tail and is decoded once. Sources move by keyframes and keep their room (each reflection has its own Doppler shift), reverb time and pre-delay can be derived from the room's size and materials, and the room can change between sections.
 * **Deliverables:** Stereo, binaural, 7.1 / 7.1.2 / 7.1.4, an AmbiX sound field (`ambix`), object-based ADM BW64 (`adm_bw64`) and 48 kHz delivery (`"rate_hz": 48000`), each named in the score's `output_targets`.
+* **Optional SFZ Orchestras:** Multisampled libraries played per articulation (sustain, staccato, marcato, pizzicato, tremolo, key-switch), with slurred legato, a written dynamics arc and per-note expression on solo lines.
 * **Voice and Expression:** An optional Liljencrants-Fant glottal source with one pressed-to-breathy control, source oversampling, syllable shorthand, vibrato that wanders, and a bed of sympathetic strings tuned to the piece.
 * **Any Animal Call as Data:** The `animal_call` environment primitive builds a call from pitch contours, a sequence, roughness, pulses and a tube length, stored as a `calls` preset; `python scripts/environment.py --call <name>` renders one alone.
 * **Preset-Driven Mixing:** Keeps sound design, spatial placement, mix bus processing, and loudness targets (LUFS / True Peak) strictly in JSON presets rather than hardcoded scripts.
@@ -93,9 +94,11 @@ The agent will automatically read `SKILL.md`, research the style, generate a dir
 
 ### Using via CLI
 
-Use the virtual environment created during setup (`.venv/bin/python` on macOS/Linux or `.venv\Scripts\python.exe` on Windows):
+Use the virtual environment created during setup:
 
 ```bash
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+
 # 1. Scaffold a new project
 python scripts/setup_project.py --new-project my-project --title "My Track"
 
@@ -127,7 +130,7 @@ python video-mixer/deliver/reel.py films/glaciers --reel 1 --mux
    ├─ 1. Composition & Voice Leading    (compose.py · theory.py · world.py)
    ├─ 2. Pre-Flight Theory Linter       (pattern_audit.py)
    ├─ 3. Humanization & Respiration     (humanize.py)
-   ├─ 4. Multi-Engine Stem Rendering    (tinysoundfont · vocals.py · environment.py · spatial.py)
+   ├─ 4. Multi-Engine Stem Rendering    (tinysoundfont · sfz_render · vocal_engine · environment · sfx)
    ├─ 5. Mixing & Mastering             (mixer.py)
    ├─ 6. Psychoacoustic Quality Gates   (quality_gate.py · naturalness_check.py · music21)
    └─ 7. Certified Release Packaging    (out/master_vNN.wav · stems/ · midi/ · ci_report.json)
@@ -171,16 +174,23 @@ Every certified render is versioned (`master_v01.wav`, `master_v02.wav`) in `out
 music-generator/
 ├── SKILL.md         # Agent skill entry point and workflow instructions
 ├── AGENTS.md        # Strict agent rules, preset schemas, and gate profiles
-├── scripts/         # Core pipeline, composition, mixing, and gate scripts
-├── presets/         # Default instrument, mix, space, vocal, and metadata JSONs
+├── scripts/         # Pipeline, composition, mixing and gate scripts
+│   ├── vocal_engine/     # glottal source, tract, nasal, breath, consonants
+│   ├── sfx_engine/ · env_engine/ · phys_core/   # effects, ambience, physical scenes
+│   ├── spatial_engine/   # panning, crossover, ambisonics, ADM
+│   ├── spatial_hrtf/     # measured-HRTF binaural rendering
+│   └── helpers/          # version record, metadata ingest, MP3 encode
+├── presets/         # The skill's own defaults (metadata); every instrument, mix,
+│                    # space, vocal, SFX and SFZ JSON ships in references/data/presets/
+├── references/      # Guides (mixing, vocals, spatial, SFZ, video, limits) + data/presets
 ├── knowledgebase/   # Genre, cultural idiom, and DSP reference docs
-├── references/      # Detailed guides (mixing, vocals, spatial, SFZ, video, limits)
 ├── templates/       # Project, direction-sheet, and score templates
 ├── video-mixer/     # Scoring to picture: probe, context, direction, program mix, video gate, reel
 │   ├── analysis/    # shot scale (block contrast) and speech activity
 │   ├── gate/        # the video.* rows and the one-pass entry point
 │   └── deliver/     # reel assembly from certified cues only
-├── docs/            # Psychoacoustic math (PSYCHOACOUSTICS.md) & web audio player
+├── docs/            # Psychoacoustic math, vocal-tract design, roughness notes, web player
+├── assets/samples/  # The demo MP3
 └── tests/           # Pipeline, spatial, and audio integrity test suites
 ```
 
@@ -189,7 +199,7 @@ music-generator/
 ## Known Limitations
 
 * **Metrics Are Not Ears:** Quality gates catch technical and psychoacoustic errors (masking, clipping, bad voice leading), but cannot judge subjective musical taste or emotional fit.
-* **General MIDI Default Bank:** Uses GeneralUser GS by default. Concert-grade orchestral realism requires supplying multisampled SFZ libraries per project.
+* **General MIDI Default Bank:** Uses GeneralUser GS by default. One sample layer cannot brighten with velocity the way a recorded second layer does, so the engine approximates it with a per-note filter tilt; concert-grade orchestral realism requires supplying multisampled SFZ libraries per project.
 * **Syllables, Not Words:** Synthesized vocals sing vowels, hums and simple syllables; there are no lyrics.
 * **Immersive 2.0 Is Measured, Not Auditioned:** The ambisonic engine, the new gate rows and the shipped animal-call presets are checked by tests and probes only. The call presets use estimated numbers, and the ADM file is an open-standard file, not a Dolby Atmos master.
 * **Cultural Idioms Are Approximations:** Non-Western scales and rhythms are approximated unless paired with authentic instrument presets or user recordings.

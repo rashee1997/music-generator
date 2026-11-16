@@ -1,6 +1,10 @@
 # Technical Research & Architectural Design: Vectorized Kelly–Lochbaum Vocal Tract
 
-Status: **Phase 1 — design, awaiting approval.** No production file has been modified.
+Status: **Implemented as a parameter generator.** `vocal_engine/waveguide.py` holds the vectorized
+Kelly–Lochbaum network and the tube solver; `waveguide.mode: "physical"` in the vocal config measures formants and
+bandwidths from the tube, and `kl` is used as a reference and gesture generator. The sample-by-sample network is not
+the render path (it costs ~0.36 s of CPU per audio second per voice); the resonator bank still renders. Gate tests:
+`tests/test_vocal_waveguide.py`.
 
 This document answers one question: can the vocal tract in `scripts/vocal_engine/` be replaced by a physically
 modelled, vectorized acoustic-tube network that keeps the current facade, the current regression contracts and the
