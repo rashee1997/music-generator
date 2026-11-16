@@ -25,7 +25,7 @@ An AI agent skill and Python audio pipeline that composes, renders, mixes, and v
 
 * **Voice-Leading & Melodic Rules:** Enforces conjunct motion, leap recovery, chromatic tension resolution, and 3D spiral-array tonal tension.
 * **Groove That Breathes:** Evaluates metric-tree syncopation across 4/4, 3/4, 6/8, 5/4, 7/8, and 12/8—rejecting both robotic marches and rhythmic collapse.
-* **Measured Humanization:** Separates shared ensemble tempo drift from individual player motor error, scales drum push with tempo, couples velocity to note duration, brightens each note with its own velocity, and adds note-on/note-off mechanism noise.
+* **Measured Humanization:** Separates shared ensemble tempo drift from individual player motor error, scales drum push with tempo, couples velocity to note duration, and adds note-on/note-off mechanism noise.
 * **Roughness & Masking Gates:** Runs critical-band analysis (80–6000 Hz) and ERB stereo masking checks so leads stay clear and overtones don't clash.
 * **Spatial Staging:** Applies per-stem azimuth, distance filtering, stereo width, shared room acoustics, and optional measured-HRTF binaural rendering.
 * **Immersive 2.0 (opt-in, `immersive.engine: "hoa_bus"`):** One fifth-order ambisonic bus carries every source, reflection and tail and is decoded once. Sources move by keyframes and keep their room (each reflection has its own Doppler shift), reverb time and pre-delay can be derived from the room's size and materials, and the room can change between sections.
@@ -199,7 +199,7 @@ music-generator/
 ## Known Limitations
 
 * **Metrics Are Not Ears:** Quality gates catch technical and psychoacoustic errors (masking, clipping, bad voice leading), but cannot judge subjective musical taste or emotional fit.
-* **General MIDI Default Bank:** Uses GeneralUser GS by default. One sample layer cannot brighten with velocity the way a recorded second layer does, so the engine approximates it with a per-note filter tilt; concert-grade orchestral realism requires supplying multisampled SFZ libraries per project.
+* **General MIDI Default Bank:** Uses GeneralUser GS by default. Concert-grade orchestral realism requires supplying multisampled SFZ libraries per project.
 * **Syllables, Not Words:** Synthesized vocals sing vowels, hums and simple syllables; there are no lyrics.
 * **Immersive 2.0 Is Measured, Not Auditioned:** The ambisonic engine, the new gate rows and the shipped animal-call presets are checked by tests and probes only. The call presets use estimated numbers, and the ADM file is an open-standard file, not a Dolby Atmos master.
 * **Cultural Idioms Are Approximations:** Non-Western scales and rhythms are approximated unless paired with authentic instrument presets or user recordings.
