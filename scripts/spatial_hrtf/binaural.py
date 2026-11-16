@@ -137,8 +137,101 @@ def near_field_gains(azimuth_deg, elevation_deg, distance_m, cfg, sr=SR):
     return out
 
 
+def _sphere_mag(mu, rho, cos_t):
+    """|H| of a rigid sphere: pressure at a surface point over the free-field pressure at the centre, for a point
+    source at rho head radii and normalised frequencies mu = k a (Duda & Martens 1998, eq. 3):
+
+        H = -(rho / mu) exp(-i mu rho) sum_m (2m + 1) P_m(cos t) h_m(mu rho) / h_m'(mu)
+
+    Returns (len(cos_t), len(mu)). Terms past the point where the series has converged are dropped, because the
+    Hankel functions there overflow before their ratio does."""
+    from scipy.special import eval_legendre, spherical_jn, spherical_yn
+    mu = np.asarray(mu, float)
+    m = np.arange(0, int(1.3 * mu.max()) + 42)[:, None]     # past m ~ mu the terms fall like rho^-m
+    use = m <= 1.3 * mu[None, :] + 40
+    with np.errstate(all='ignore'):
+        num = spherical_jn(m, mu[None, :] * rho) - 1j * spherical_yn(m, mu[None, :] * rho)
+        den = spherical_jn(m, mu[None, :], derivative=True) - 1j * spherical_yn(m, mu[None, :], derivative=True)
+        ratio = np.where(use, num / den, 0.0)
+    ratio = np.nan_to_num(ratio, nan=0.0, posinf=0.0, neginf=0.0)
+    leg = eval_legendre(m, np.asarray(cos_t, float)[None, :])            # (M, len(cos_t))
+    return np.abs(np.einsum('mc,mf->cf', (2 * m + 1) * leg, ratio)) * rho / mu[None, :]
+
+
+DVF_BLOCK = 2048
+DVF_COS = np.linspace(-1.0, 1.0, 25)
+
+
+def _dvf_table(a, ref_m, sr):
+    """The distance variation function on a grid: near-field over reference-distance sphere response, per ear angle.
+    (distances, table[distance, cos, bin]). Kan, Jin & van Schaik 2009: multiply a far-field HRTF by this ratio and
+    it becomes the HRTF of the nearer source; the head's own shape cancels in the ratio."""
+    key = ('dvf', round(a, 5), round(ref_m, 4), sr)
+    if key not in _cache:
+        bins = np.maximum(np.fft.rfftfreq(DVF_BLOCK, 1.0 / sr), 30.0)
+        f = np.geomspace(30.0, sr / 2.0, 96)                # the ratio is smooth: solve on 96 points, read per bin
+        mu = 2.0 * np.pi * f * a / SPEED_OF_SOUND
+        dists = np.geomspace(0.2, ref_m, 10)
+        far = _sphere_mag(mu, ref_m / a, DVF_COS)
+        coarse = np.stack([_sphere_mag(mu, d / a, DVF_COS) / np.maximum(far, 1e-9) for d in dists])
+        fine = np.empty(coarse.shape[:2] + (len(bins),))
+        for i in range(coarse.shape[0]):
+            for j in range(coarse.shape[1]):
+                fine[i, j] = np.interp(np.log(bins), np.log(f), coarse[i, j])
+        _cache[key] = (dists, fine)
+    return _cache[key]
+
+
+def dvf_gains(azimuth_deg, elevation_deg, distance_m, cfg, sr=SR):
+    """(2, bins) magnitude for the left / right ear of one source position: 1.0 everywhere at `max_m` and beyond.
+    The ears sit on the interaural axis; `strength` blends the cue in dB."""
+    a = float(cfg.get('head_radius_m', 0.0875))
+    ref = float(cfg.get('max_m', 1.0))
+    dists, table = _dvf_table(a, ref, sr)
+    d = float(np.clip(distance_m, dists[0], ref))
+    c_r = float(np.cos(np.radians(elevation_deg)) * np.sin(np.radians(azimuth_deg)))
+    out = []
+    for c in (-c_r, c_r):                                  # left ear, right ear
+        i = int(np.clip(np.searchsorted(dists, d) - 1, 0, len(dists) - 2))
+        j = int(np.clip(np.searchsorted(DVF_COS, c) - 1, 0, len(DVF_COS) - 2))
+        u = (np.log(d) - np.log(dists[i])) / (np.log(dists[i + 1]) - np.log(dists[i]))
+        v = (c - DVF_COS[j]) / (DVF_COS[j + 1] - DVF_COS[j])
+        db = 20.0 * np.log10(np.maximum(table[i:i + 2, j:j + 2], 1e-9))
+        out.append((1 - u) * ((1 - v) * db[0, 0] + v * db[0, 1]) + u * ((1 - v) * db[1, 0] + v * db[1, 1]))
+    return 10.0 ** (np.array(out) * float(np.clip(cfg.get('strength', 1.0), 0.0, 1.0)) / 20.0)
+
+
+def stft_gain(y, gain_at, block=DVF_BLOCK, hop=DVF_BLOCK // 4):
+    """A zero-phase filter whose magnitude changes over time: `gain_at(sample)` gives (bins,) or (channels, bins) for
+    the frame centred on that sample. Root-Hann analysis and synthesis windows at 75 % overlap, so a filter that
+    does not change is a plain zero-phase filter and one that does never switches."""
+    y = np.asarray(y, float)
+    flat = y.ndim == 1
+    y2 = y[:, None] if flat else y
+    n = len(y2)
+    w = np.sqrt(signal.get_window('hann', block, fftbins=True))
+    xp = np.concatenate([np.zeros((block, y2.shape[1])), y2, np.zeros((block, y2.shape[1]))])
+    out = np.zeros_like(xp)
+    wsum = np.zeros(len(xp))
+    for i0 in range(0, len(xp) - block + 1, hop):
+        g = np.atleast_2d(gain_at(int(np.clip(i0 + block // 2 - block, 0, max(0, n - 1)))))
+        spec = np.fft.rfft(xp[i0:i0 + block] * w[:, None], axis=0) * g.T
+        out[i0:i0 + block] += np.fft.irfft(spec, block, axis=0) * w[:, None]
+        wsum[i0:i0 + block] += w * w
+    out = (out / np.maximum(wsum, 1e-9)[:, None])[block:block + n]
+    return out[:, 0] if flat else out
+
+
 def apply_near_field(y, azimuth_deg, elevation_deg, distance_m, cfg, sr=SR):
     """The near-field level difference (and its low-frequency emphasis) on an already binaural signal."""
+    if (cfg or {}).get('model', 'geometric') == 'dvf':
+        if not cfg.get('enabled', True):
+            return y
+        az, el, dist = (np.atleast_1d(np.asarray(v, float)) for v in (azimuth_deg, elevation_deg, distance_m))
+        if float(dist.min()) >= float(cfg.get('max_m', 1.0)):
+            return y
+        pick = lambda v, k: float(v[min(k, len(v) - 1)])
+        return stft_gain(y, lambda k: dvf_gains(pick(az, k), pick(el, k), pick(dist, k), cfg, sr))
     g = near_field_gains(azimuth_deg, elevation_deg, distance_m, cfg, sr)
     if g is None:
         return y
@@ -320,9 +413,6 @@ def reflections(audio, azimuth_deg, distance_m, refl, sr=SR, order=ORDER, path_p
             out += y
         return out.astype(np.float32)
 
-    side = -1.0 if az > 0 else 1.0
-    rear_az = (1.0 if az >= 0 else -1.0) * (180.0 - abs(az))
-
     def add(key, k, cutoff, direction, level=1.0):
         gain = float(refl.get(key + '_gain', 0.0)) * level
         delay_s = float(refl.get(key + '_delay_ms', 0.0)) / 1000.0
@@ -341,15 +431,22 @@ def reflections(audio, azimuth_deg, distance_m, refl, sr=SR, order=ORDER, path_p
         for e in (0, 1):
             out[:, e] += signal.fftconvolve(s, g @ dec[e])[:n]
 
-    add('ground', 0.10, 3200.0, (az, -25.0))
-    if abs(az) < 5.0:
-        add('lateral', 0.15, 2400.0, (-90.0, 0.0), 0.707)
-        add('lateral', 0.15, 2400.0, (90.0, 0.0), 0.707)
-    else:
-        add('lateral', 0.15, 2400.0, (side * 90.0, 0.0))
-    add('ceiling', 0.12, 2800.0, (az, 60.0))
-    add('rear', 0.18, 2000.0, (rear_az, 0.0))
+    for tap in fixed_plan(az):
+        add(*tap)
     return out.astype(np.float32)
+
+
+def fixed_plan(az):
+    """The four fixed reflections of a space preset without a geometry: (key, delay growth per metre, default
+    cut-off, direction, level). Floor below, the far wall, the ceiling above, the rear wall."""
+    side = -1.0 if az > 0 else 1.0
+    rear_az = (1.0 if az >= 0 else -1.0) * (180.0 - abs(az))
+    plan = [('ground', 0.10, 3200.0, (az, -25.0), 1.0)]
+    if abs(az) < 5.0:
+        plan += [('lateral', 0.15, 2400.0, (-90.0, 0.0), 0.707), ('lateral', 0.15, 2400.0, (90.0, 0.0), 0.707)]
+    else:
+        plan += [('lateral', 0.15, 2400.0, (side * 90.0, 0.0), 1.0)]
+    return plan + [('ceiling', 0.12, 2800.0, (az, 60.0), 1.0), ('rear', 0.18, 2000.0, (rear_az, 0.0), 1.0)]
 
 
 # ---------------------------------------------------------------------------------------------
@@ -364,7 +461,7 @@ def late(audio, azimuth_deg, distance_m, refl, sr=SR, order=ORDER, ref_m=1.0):
     A single tail in both ears is the classic in-head failure: it is perfectly correlated, so it has no width and the
     source stays inside the head. Decorrelated tails from spread directions are what give envelopment.
     """
-    cfg = (refl or {}).get('late') if isinstance(refl, dict) else None
+    cfg = room.late_cfg(refl)                  # "auto" values come from the room's own geometry
     if not cfg or not cfg.get('enabled', False):
         return None
     x = np.asarray(audio, float)

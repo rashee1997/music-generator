@@ -119,6 +119,30 @@ def split_phrases(notes, cfg, default_hum=False):
     return out
 
 
+def expand_syllable(ev, cfg):
+    """A note's `syl` written out as the `consonant` and `vowel` keys the engine already sings: the longest onset
+    in `consonants.inventory`, then one vowel or two (a diphthong). "la" -> l + a, "shai" -> sh + [a, i]. This is a
+    syllable, not a language: there is no dictionary and no coda. A note's own consonant or vowel key wins."""
+    syl = ev.get('syl')
+    if not syl:
+        return ev
+    inv = [k for k in ((cfg.get('consonants') or {}).get('inventory') or {}) if not k.startswith('_')]
+    vowels = [v for v in cfg['tract']['vowels'] if v != 'm']
+    syl = str(syl)
+    onset = max((c for c in inv if syl.startswith(c) and len(syl) > len(c)), key=len, default='')
+    rest = syl[len(onset):]
+    first = max((v for v in vowels if rest.startswith(v)), key=len, default=None)
+    tail = rest[len(first):] if first else None
+    if first is None or (tail and tail not in vowels):
+        raise ValueError(f'syl "{syl}" is not [consonant] + vowel [+ vowel]; consonants: {sorted(inv)}, '
+                         f'vowels: {sorted(vowels)}')
+    out = dict(ev)
+    if onset:
+        out.setdefault('consonant', onset)
+    out.setdefault('vowel', [first, tail] if tail else first)
+    return out
+
+
 def _vowel_name(ev, default='a'):
     """(onset vowel, diphthong target) from a note. A list of *names* is a diphthong; a list of numbers is formants."""
     v = ev.get('vowel', default)

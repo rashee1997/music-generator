@@ -16,8 +16,10 @@
     "metal":     [0.02, 0.02, 0.01, 0.01, 0.02, 0.03, 0.05],
     "water":     [0.01, 0.01, 0.01, 0.02, 0.02, 0.03, 0.03],
     "earth":     [0.10, 0.15, 0.25, 0.35, 0.45, 0.55, 0.60],
-    "snow":      [0.30, 0.50, 0.60, 0.65, 0.70, 0.75, 0.80]
+    "snow":      [0.30, 0.50, 0.60, 0.65, 0.70, 0.75, 0.80],
+    "open":      [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00]
   },
+  "open_note": "\"open\" is not a material: it is a surface that is not there (open sky, a missing wall). Nothing comes back from it, by definition, so it carries no source.",
   "sources": [
     "Everest & Pohlmann, Master Handbook of Acoustics, absorption-coefficient tables",
     "cross-checked against a second published absorption table"

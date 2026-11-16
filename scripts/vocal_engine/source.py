@@ -21,7 +21,8 @@ raised-cosine close (1, weak high harmonics, falsetto/breathy). The radiated sou
 `phase` is a cumulative cycle count, so a phrase rendered in one call has no restart at note joins.
 """
 import numpy as np
-from scipy.signal import lfilter
+from scipy.optimize import brentq
+from scipy.signal import lfilter, resample_poly
 
 from .utils import one_pole_lp, rms
 
@@ -42,6 +43,72 @@ def pulse(phi, oq, sq, closure):
     fall = (1.0 - closure) * np.cos(0.5 * np.pi * x) + closure * 0.5 * (1.0 + np.cos(np.pi * x))
     g = np.where(phi < tp, rise, np.where(phi < oq, fall, 0.0))
     return g
+
+
+LF_RD = (0.3, 2.7)          # the range Fant's regressions cover: 0.3 pressed, about 1 modal, 2.7 breathy
+MODELS = ('pulse', 'lf')
+_LF = {}
+
+
+def lf_params(rd):
+    """Timing of one LF period (length 1) from the shape parameter Rd (Fant 1995): (tp, te, ta, alpha, epsilon).
+    Ra = (-1 + 4.8 Rd)/100, Rk = (22.4 + 11.8 Rd)/100, Rg = Rk (0.5 + 1.2 Rk) / (4 (0.11 Rd - Ra (0.5 + 1.2 Rk))).
+    epsilon closes the return phase at the end of the period; alpha makes the flow return to zero."""
+    rd = float(np.clip(rd, *LF_RD))
+    ra = (-1.0 + 4.8 * rd) / 100.0
+    rk = (22.4 + 11.8 * rd) / 100.0
+    rg = rk * (0.5 + 1.2 * rk) / (4.0 * (0.11 * rd - ra * (0.5 + 1.2 * rk)))
+    tp = 1.0 / (2.0 * rg)
+    te = tp * (1.0 + rk)
+    ta = ra
+    gap = 1.0 - te
+    eps = 1.0 / ta
+    for _ in range(60):                                   # eps * ta = 1 - exp(-eps * (1 - te))
+        eps = (1.0 - np.exp(-eps * gap)) / ta
+    wg = np.pi / tp
+    ret = -((1.0 - np.exp(-eps * gap)) / eps - gap * np.exp(-eps * gap)) / (eps * ta)   # area of the return phase
+
+    def net(alpha):                                       # open-phase area + return area, with E(te) = -1
+        e = np.exp(alpha * te)
+        area = (e * (alpha * np.sin(wg * te) - wg * np.cos(wg * te)) + wg) / (alpha * alpha + wg * wg)
+        return -area / (e * np.sin(wg * te)) + ret
+    return tp, te, ta, float(brentq(net, -60.0, 120.0)), float(eps)
+
+
+def _lf_table(points=4096, steps=49):
+    """(Rd grid, flow-derivative table, flow table): one LF period per Rd, the flow peaking at 1."""
+    if not _LF:
+        rds = np.linspace(LF_RD[0], LF_RD[1], steps)
+        t = np.arange(points) / points
+        E, G = np.zeros((steps, points)), np.zeros((steps, points))
+        for i, rd in enumerate(rds):
+            tp, te, ta, alpha, eps = lf_params(rd)
+            wg = np.pi / tp
+            e0 = -1.0 / (np.exp(alpha * te) * np.sin(wg * te))
+            d = np.where(t <= te, e0 * np.exp(alpha * t) * np.sin(wg * t),
+                         -(np.exp(-eps * (t - te)) - np.exp(-eps * (1.0 - te))) / (eps * ta))
+            g = np.cumsum(d) / points
+            E[i], G[i] = d / g.max(), np.maximum(g, 0.0) / g.max()
+        _LF.update(rds=rds, E=E, G=G)
+    return _LF['rds'], _LF['E'], _LF['G']
+
+
+def lf_pulse(phi, rd):
+    """(flow derivative per cycle, flow) of the LF model at phase `phi` (0..1) and shape `rd` (scalar or track)."""
+    rds, E, G = _lf_table()
+    points = E.shape[1]
+    r = np.clip((np.broadcast_to(np.asarray(rd, dtype=float), np.shape(phi)) - rds[0]) / (rds[1] - rds[0]),
+                0.0, len(rds) - 1.0 - 1e-9)
+    i = r.astype(int)
+    fr = r - i
+    x = np.asarray(phi, dtype=float) * points
+    j = x.astype(int) % points
+    fx = x - np.floor(x)
+    j1 = (j + 1) % points
+
+    def at(T):
+        return (1.0 - fr) * ((1.0 - fx) * T[i, j] + fx * T[i, j1]) + fr * ((1.0 - fx) * T[i + 1, j] + fx * T[i + 1, j1])
+    return at(E), at(G)
 
 
 def _radiate(g, f0, sr):
@@ -121,7 +188,35 @@ def glottal_source(f0, sr, rng, reg, breathiness=0.03, phase0=0.0, subharmonic=F
                    stats_notes=None,
                    whistle_hz=0.0, whistle_weight=0.45, aspiration_depth=0.65, tilt_hz=None,
                    jitter_pct=0.0, jitter_shimmer_corr=0.5, sub_extra=0.0, stats=None, amp_mod=None,
-                   tilt_poles=1):
+                   tilt_poles=1, model='pulse', oversample=1):
+    """The source at `oversample` times the rate, low-passed and decimated: the pulse has a corner at every closure,
+    and at soprano pitch its harmonics above half the rate fold back between the real ones. 1 = the engine as it was.
+    `model`: "pulse" (the Rosenberg-family flow) or "lf" (Liljencrants-Fant, shaped by reg["rd"])."""
+    if model not in MODELS:
+        raise ValueError(f'source.model "{model}" is not one of {", ".join(MODELS)}')
+    k = int(oversample)
+    kw = dict(breathiness=breathiness, phase0=phase0, subharmonic=subharmonic, sub_weight=sub_weight,
+              stats_gate=stats_gate, stats_notes=stats_notes, whistle_hz=whistle_hz, whistle_weight=whistle_weight,
+              aspiration_depth=aspiration_depth, tilt_hz=tilt_hz, jitter_pct=jitter_pct,
+              jitter_shimmer_corr=jitter_shimmer_corr, sub_extra=sub_extra, stats=stats, amp_mod=amp_mod,
+              tilt_poles=tilt_poles, model=model)
+    n = len(f0)
+    if k <= 1 or n == 0:
+        return _source(f0, sr, rng, reg, **kw)
+
+    def up(v):                                            # a per-sample track is held for k samples
+        return np.repeat(v, k) if isinstance(v, np.ndarray) and v.shape == (n,) else v
+    for name in ('breathiness', 'stats_gate', 'stats_notes', 'tilt_hz', 'sub_extra', 'amp_mod'):
+        kw[name] = up(kw[name])
+    d, c, g = _source(np.repeat(np.asarray(f0, dtype=float), k), sr * k, rng, {a: up(b) for a, b in reg.items()}, **kw)
+    return resample_poly(d, 1, k), c[k - 1::k], g[::k]
+
+
+def _source(f0, sr, rng, reg, breathiness=0.03, phase0=0.0, subharmonic=False, sub_weight=0.65, stats_gate=None,
+            stats_notes=None,
+            whistle_hz=0.0, whistle_weight=0.45, aspiration_depth=0.65, tilt_hz=None,
+            jitter_pct=0.0, jitter_shimmer_corr=0.5, sub_extra=0.0, stats=None, amp_mod=None,
+            tilt_poles=1, model='pulse'):
     """f0: Hz per sample. reg: dict(open_quotient, speed_quotient, closure, tilt_hz, shimmer); each value scalar
     or per-sample array. Returns (source, cycles, flow). Voiced part has unit RMS, so dynamics are applied later.
 
@@ -149,17 +244,24 @@ def glottal_source(f0, sr, rng, reg, breathiness=0.03, phase0=0.0, subharmonic=F
             f0_eff = f0 * np.maximum(1.0 + jit * per[idx], 0.2)
     c = cycles(f0_eff, sr, phase0)
     phi = c - np.floor(c)
-    g = pulse(phi, reg['open_quotient'], reg['speed_quotient'], reg['closure'])
-    d = _radiate(g, f0_eff, sr)
+    lf = model == 'lf'
+
+    def wave(ph, f):                                      # (flow derivative, flow) of the chosen model
+        if lf:
+            return lf_pulse(ph, reg.get('rd', 1.0))
+        flow = pulse(ph, reg['open_quotient'], reg['speed_quotient'], reg['closure'])
+        return _radiate(flow, f, sr), flow
+    d, g = wave(phi, f0_eff)
     if shimmer > 0 and z is not None:
         d = d * np.maximum(1.0 + shimmer * z[idx], 0.05)
     sub_total = np.asarray(sub_weight * float(subharmonic), dtype=float) + np.asarray(sub_extra, dtype=float)
     sub_total = np.broadcast_to(sub_total, (n,)).astype(float)
     if np.any(sub_total > 0):
         c2 = c / 2.0
-        d = d + sub_total * _radiate(pulse(c2 - np.floor(c2), reg['open_quotient'], reg['speed_quotient'],
-                                           reg['closure']), 0.5 * f0_eff, sr)
-    d = _tilt(d, reg['tilt_hz'] if tilt_hz is None else tilt_hz, sr, poles=tilt_poles)
+        d = d + sub_total * wave(c2 - np.floor(c2), 0.5 * f0_eff)[0]
+    # the LF return phase is the source's own roll-off (set by Rd), so only one pole is left for the tilt that
+    # follows loudness; a second would darken it twice
+    d = _tilt(d, reg['tilt_hz'] if tilt_hz is None else tilt_hz, sr, poles=1 if lf else tilt_poles)
     d = d / (rms(d) + 1e-12)
     if whistle_hz and whistle_hz > 0:
         h = max(1, int(round(whistle_hz / float(np.mean(f0)))))

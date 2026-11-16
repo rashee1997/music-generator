@@ -22,42 +22,48 @@
         "speed_quotient": 2.4,
         "closure": 0.15,
         "tilt_hz": 3600,
-        "shimmer": 0.03
+        "shimmer": 0.03,
+        "rd": 0.8
       },
       "modal": {
         "open_quotient": 0.6,
         "speed_quotient": 2.0,
         "closure": 0.25,
         "tilt_hz": 3000,
-        "shimmer": 0.03
+        "shimmer": 0.03,
+        "rd": 1.0
       },
       "head": {
         "open_quotient": 0.7,
         "speed_quotient": 1.6,
         "closure": 0.4,
         "tilt_hz": 2600,
-        "shimmer": 0.025
+        "shimmer": 0.025,
+        "rd": 1.4
       },
       "falsetto": {
         "open_quotient": 0.85,
         "speed_quotient": 1.2,
         "closure": 0.6,
         "tilt_hz": 2000,
-        "shimmer": 0.02
+        "shimmer": 0.02,
+        "rd": 2.2
       },
       "breathy": {
         "open_quotient": 0.75,
         "speed_quotient": 1.5,
         "closure": 0.5,
         "tilt_hz": 2400,
-        "shimmer": 0.04
+        "shimmer": 0.04,
+        "rd": 2.4
       },
       "hum": {
         "open_quotient": 0.65,
         "speed_quotient": 1.8,
         "closure": 0.35,
         "tilt_hz": 2200,
-        "shimmer": 0.03
+        "shimmer": 0.03,
+        "rd": 1.2
       }
     },
     "breathiness": 0.03,
@@ -67,6 +73,9 @@
     "whistle_weight": 0.45,
     "harmonic_lock_amount": 0.6,
     "max_harmonic_hz": 0.45,
+    "model": "pulse",
+    "rd": null,
+    "oversample": 1,
     "tilt_poles": 2,
     "open_quotient_scale": 1.0,
     "jitter_period_pct": 0.6,
@@ -1312,6 +1321,10 @@
     "ensemble.diversity": [
       0,
       2
+    ],
+    "source.rd": [
+      0.3,
+      2.7
     ],
     "source.open_quotient_scale": [
       0.5,

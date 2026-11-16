@@ -12,6 +12,7 @@
     "clicks",
     "clipping",
     "loudness",
+    "render.finite",
     "silence",
     "stem.clipping",
     "true_peak",
@@ -73,6 +74,9 @@
     "imm.band": {
       "min_hf_frac": 0.003
     },
+    "imm.clarity": {
+      "min_c80_db": -5.0
+    },
     "imm.coloration": {
       "hi_hz": 5000.0,
       "lo_hz": 500.0,
@@ -100,6 +104,14 @@
       "min_tilt_db": 2.0
     },
     "imm.height_rules": {},
+    "imm.iacc_early": {
+      "max_iacc": 0.97
+    },
+    "imm.kinematics": {},
+    "imm.low_fold": {
+      "hz": 250.0,
+      "max_db": 2.5
+    },
     "imm.route_parity": {
       "max_ild_db": 3.0,
       "max_itd_ms": 0.2
@@ -127,6 +139,10 @@
     },
     "meta.version": {
       "max_missing": 0
+    },
+    "mix.band_fold": {
+      "floor_db": 30.0,
+      "max_db": 3.5
     },
     "modulation_flutter": {
       "warn": 0.18
@@ -162,6 +178,7 @@
       "sd_frac": 0.05
     },
     "percussion_flam": {},
+    "render.finite": {},
     "roughness": {
       "calib_spl_db": 70.0,
       "mask_band_bark": 1.0,

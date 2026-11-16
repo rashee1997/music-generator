@@ -1,0 +1,52 @@
+{
+  "name": "dog_bark",
+  "character": "A medium dog barking somewhere off: short, rough, falling barks in uneven runs.",
+  "elements": {
+    "bark": {
+      "f0_hz": [
+        [
+          0,
+          520
+        ],
+        [
+          0.2,
+          600
+        ],
+        [
+          1,
+          380
+        ]
+      ],
+      "ms": [
+        110,
+        170
+      ],
+      "harmonics": 20,
+      "rolloff": 0.9,
+      "noise": 0.4,
+      "subharmonic": 0.3,
+      "attack": 0.06,
+      "release": 0.3
+    }
+  },
+  "sequence": [
+    [
+      "bark",
+      2,
+      5
+    ]
+  ],
+  "gap_ms": [
+    140,
+    320
+  ],
+  "bouts_per_min": 6.0,
+  "tract_cm": 15.0,
+  "formant_q": 4.0,
+  "formant_mix": 0.75,
+  "sources": [
+    "ESTIMATE: typical values for this kind of call written from general knowledge, not measured from a recording and not auditioned. Replace them with numbers from a real recording of the species the project needs.",
+    "Taylor & Reby (2010), J. Zoology 280: source-filter theory for mammal calls",
+    "Wilden, Herzel, Peters & Tembrock (1998), Bioacoustics 9: subharmonics, biphonation and chaos in mammal calls"
+  ]
+}

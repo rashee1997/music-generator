@@ -798,6 +798,31 @@ def _dsp_dynamics(x, dyn, sr):
     return x
 
 
+def place_of(spec, imm=None):
+    """(azimuth, elevation, distance) a track is placed at. With immersive on, a track with no elevation of its own
+    takes its role's height, bass and drums stay on the floor, and nothing goes above `max_elevation`."""
+    sp = spec.get('spatial') or {}
+    az = float(sp.get('azimuth', 0.0))
+    el = float(sp.get('elevation', 0.0))
+    dist = max(0.5, float(sp.get('distance', 1.5)))
+    if imm:
+        if 'elevation' not in sp:
+            el = float(imm.get('height_by_role', {}).get(spec.get('role', ''), 0.0))
+        el = 0.0 if spec.get('role') in ('bass', 'drum') else float(np.clip(el, -90.0, float(imm.get('max_elevation', 60.0))))
+    return az, el, dist
+
+
+def pair_half_width(x, sp, imm):
+    """Half the angle between the two sources a stereo stem becomes (0 = one source): the track's own
+    `half_width_deg`, else the mix preset's `immersive.pair` width for a bed or for a stem that is really stereo."""
+    c = float(np.corrcoef(x[:, 0], x[:, 1])[0, 1]) if x.shape[1] == 2 and x.std() > 0 else 1.0
+    pair = dict(mix_schema.DEFAULTS['immersive'].get('pair') or {})
+    pair.update((imm or {}).get('pair') or {})
+    default_hw = float(pair['width_deg_bed'] if sp.get('kind') == 'bed'
+                       else (pair['width_deg_stereo'] if np.isfinite(c) and c < 0.9 else 0.0))
+    return float(sp.get('half_width_deg', default_hw))
+
+
 def _place(name, x, spec, mx, sr):
     """Width, widen, pan, distance laws, the binaural route and the DRR send decision."""
     sp = spec.get('spatial')
@@ -809,14 +834,8 @@ def _place(name, x, spec, mx, sr):
             x = widen(x, spec['widen'], seed=zlib.crc32(name.encode()) % 997, sr=sr)
         return pan_stereo(x, spec.get('pan', 0.0), spec.get('pan_law', 'legacy'))
 
-    az = float(sp.get('azimuth', 0.0))
-    el = float(sp.get('elevation', 0.0))
-    dist = max(0.5, float(sp.get('distance', 1.5)))
     imm = _imm()
-    if imm:
-        if 'elevation' not in sp:
-            el = float(imm.get('height_by_role', {}).get(spec.get('role', ''), 0.0))
-        el = 0.0 if spec.get('role') in ('bass', 'drum') else float(np.clip(el, -90.0, float(imm.get('max_elevation', 60.0))))
+    az, el, dist = place_of(spec, imm)
 
     sp_cfg = dict(mx.get('spatial') or {})
     dc = _space().get('distance', {}) if _space_owned(_space()) else {}
@@ -843,32 +862,28 @@ def _place(name, x, spec, mx, sr):
     refl = resolve_space(sp['space']).get('reflections') if sp.get('space') else None
     space_arg = refl or sp.get('space') or (_space().get('reflections') if _space_owned(_space()) else None) or 'outdoor_open'
     hrtf_ok = False
-    if binaural and route == 'hrtf':
+    # the ambisonic bus places this track itself (spatial_engine/hoa.py): hand it over unplaced, at its own level
+    on_bus = bool(STATE.get('hoa') and imm and sp.get('binaural') is not False)
+    if on_bus:                 # no width or widen either: in a 3-D field a stem's width is its pair angle
+        return (x / max(dist, 1.0)).astype(np.float32)
+    if traj and (traj.get('keyframes') or traj.get('mode')):
+        raise ValueError(f'track "{name}": trajectory keyframes and modes need the ambisonic bus; set '
+                         f'"immersive": {{"enabled": true, "engine": "hoa_bus"}} in the mix preset')
+    elif binaural and route == 'hrtf':
         from spatial_hrtf import binaural as _hrtf
         hrtf_ok = _hrtf.available()
         if not hrtf_ok:
             print('  [spatial] "binaural": "hrtf" asked for but the head data is missing: run '
                   '`python -m spatial_hrtf.data` from scripts/. Using spatial.py.')
     if hrtf_ok:
-        # the head set is a preset value: a listener's own set when the piece names one, the bundled book otherwise
-        want_set = str(((imm or {}).get('hrtf') or {}).get('dataset') or '')
-        try:
-            _hrtf.set_dataset(_head_set(want_set))
-        except Exception as e:
-            print(f'  [spatial] head set "{want_set}" could not be used ({e}); using the bundled set')
-            _hrtf.set_dataset(None)
+        _use_head_set(imm)
         # the near field belongs to the space, not to the mix: below one metre the ears hear different distances
         track_space = resolve_space(sp['space']) if sp.get('space') else _space()
         near = (track_space.get('distance') or {}).get('near_field')
         kw = dict(sr=sr, trajectory=traj, temp_c=float(sp.get('temp_c', 20.0)), rh=float(sp.get('rh', 50.0)),
                   near_field=near)
         mono = x.mean(axis=1)
-        c = float(np.corrcoef(x[:, 0], x[:, 1])[0, 1]) if x.shape[1] == 2 and x.std() > 0 else 1.0
-        pair = dict(mix_schema.DEFAULTS['immersive'].get('pair') or {})
-        pair.update((imm or {}).get('pair') or {})
-        default_hw = float(pair['width_deg_bed'] if kind == 'bed'
-                           else (pair['width_deg_stereo'] if np.isfinite(c) and c < 0.9 else 0.0))
-        hw = float(sp.get('half_width_deg', default_hw)) if imm and not traj else 0.0
+        hw = pair_half_width(x, sp, imm) if imm and not traj else 0.0
         direct = (_hrtf.spatialize_pair(x, az, el, dist, hw, **kw) if hw > 0
                   else _hrtf.spatialize(mono, az, el, dist, **kw))
         if imm and not traj:
@@ -1226,6 +1241,87 @@ def _head_set(name):
                             f'put the listener\'s set there or give a path')
 
 
+def _use_head_set(imm):
+    """The head set is a preset value: a listener's own set when the piece names one, the bundled one otherwise."""
+    from spatial_hrtf import binaural as _hrtf
+    want_set = str(((imm or {}).get('hrtf') or {}).get('dataset') or '')
+    try:
+        _hrtf.set_dataset(_head_set(want_set))
+    except Exception as e:
+        print(f'  [spatial] head set "{want_set}" could not be used ({e}); using the bundled set')
+        _hrtf.set_dataset(None)
+
+
+def _hoa_bus(score, bus, sr):
+    """(the bus that places the tracks or None, the bus to sum into). With immersive on, a bus that places tracks
+    itself (ambisonic, loudspeaker layout, ADM objects) is handed every track unplaced; a stereo or headphone mix
+    on the ambisonic engine gets an ambisonic bus of its own; a loudspeaker bus keeps its own panning for the direct
+    sound and is given the room through one."""
+    imm = _imm()
+    if not imm:
+        return None, bus
+    on_hoa = str(imm.get('engine', 'per_stem')) == 'hoa_bus'
+    if not on_hoa and not getattr(bus, 'places_tracks', False):
+        return None, bus
+    from spatial_hrtf import binaural as _hrtf
+    from spatial_engine import hoa
+    kw = dict(sr=sr, order=int(imm.get('order', 5)), imm=imm, space=_space(), score=score)
+    if getattr(bus, 'places_tracks', False):
+        if hasattr(bus, 'attach_room'):                   # a loudspeaker layout
+            bus.imm, bus.score = imm, score
+            if on_hoa:
+                bus.attach_room(hoa.HoaBus(decode='speakers', speakers=bus.speakers, room_only=True, **kw))
+        return bus, bus
+    if bus is None:
+        if not _hrtf.available():
+            print('  [spatial] "engine": "hoa_bus" needs the head data: run `python -m spatial_hrtf.data` from '
+                  'scripts/. Using the per-stem engine.')
+            return None, None
+        _use_head_set(imm)
+        made = hoa.HoaBus(decode='binaural', **kw)
+        return made, made
+    return None, bus
+
+
+def sympathetic_bed(score, processed, specs, mx, sr=SR):
+    """The stereo bed of the mix preset's `sympathetic_resonance` block, or None when it is off or has nothing to
+    ring with. One fixed tuning for the piece, so nothing is retuned or crossfaded while it plays."""
+    cfg = mx.get('sympathetic_resonance') or {}
+    if not cfg.get('enabled'):
+        return None
+    want = set(cfg.get('sources') or [])
+    names = [k for k, sp in specs.items() if k in processed and (
+        (k in want or sp.get('role') in want) if want else sp.get('role') not in ('drum', 'percussion', 'environment'))]
+    if not names:
+        return None
+    tuning = cfg.get('tuning', 'score_scale')
+    if tuning == 'score_scale':
+        import cli_util
+        weight = np.zeros(12)
+        for tr in score.get('tracks', []):
+            if tr.get('name') in names:
+                for nt in tr.get('notes', []):
+                    try:
+                        weight[cli_util.midi_int(nt['p']) % 12] += float(nt.get('d', 1.0))
+                    except (ValueError, KeyError, TypeError):
+                        continue                  # a drum key or an effect hit has no pitch class
+        base = 69.0 + 12.0 * np.log2(float(cfg['low_hz']) / 440.0)
+        pcs = [int(i) for i in np.argsort(-weight, kind='stable')[:int(cfg['strings'])] if weight[i] > 0]
+        freqs = [440.0 * 2.0 ** ((np.ceil((base - pc) / 12.0) * 12.0 + pc - 69.0) / 12.0) for pc in pcs]
+    elif isinstance(tuning, (list, tuple)):
+        freqs = [float(f) for f in tuning]
+    else:
+        raise ValueError(f'sympathetic_resonance.tuning must be "score_scale" or a list of Hz (got {tuning!r})')
+    freqs = [f * h for f in freqs for h in range(1, int(cfg['partials']) + 1)]
+    src = np.sum([to_stereo(processed[k]) for k in names], axis=0).mean(axis=1)
+    y = dsp.resonator_bank(src, sr, freqs, float(cfg['q']))
+    ref, got = float(np.sqrt(np.mean(src ** 2))), float(np.sqrt(np.mean(y ** 2)))
+    if ref <= 0 or got <= 0:
+        return None
+    y = (y * (ref / got) * 10.0 ** (float(cfg['level_db']) / 20.0)).astype(np.float32)
+    return widen(to_stereo(y), amount=float(cfg['width']), sr=sr)
+
+
 def _imm():
     """The active mix preset's immersive block when it is switched on, else None."""
     c = _mix().get('immersive') or {}
@@ -1302,8 +1398,13 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
     dry = np.zeros((n, 2), np.float32)
     send = np.zeros((n, 2), np.float32)
     processed = {}
-    for name, x in stems.items():
-        processed[name] = fit(process_stem(name, x, specs[name], sr, ctx), n)
+    own_bus, bus = _hoa_bus(score, bus, sr)
+    STATE['hoa'] = own_bus is not None                  # _place leaves these tracks for the bus to place
+    try:
+        for name, x in stems.items():
+            processed[name] = fit(process_stem(name, x, specs[name], sr, ctx), n)
+    finally:
+        STATE['hoa'] = False
     apply_lead_carve(processed, specs, mx, sr)  # the dynamic half of the lead rule, keyed by the lead itself
     STATE['processed'] = processed              # what the mix actually plays: the gate measures this
     STATE['specs'] = specs
@@ -1376,6 +1477,16 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
         else:
             processed[name] = processed[name] * d_gain[:, None]
 
+    bed = sympathetic_bed(score, processed, specs, mx, sr)
+    if bed is not None:
+        bed = fit(bed, n)
+        if bus is not None:
+            bed_spec = default_spec(dict(role='pad'))
+            if (mx.get('sympathetic_resonance') or {}).get('spatial'):
+                bed_spec['spatial'] = dict(mx['sympathetic_resonance']['spatial'])
+            bus.add('sympathetic_resonance', bed, bed_spec)
+        else:
+            dry += bed
     law = _space().get('distance', {}).get('pre_delay_law') if _space_owned(_space()) else None
     STATE['sends'] = {}
     for name, y in processed.items():

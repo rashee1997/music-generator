@@ -13,6 +13,8 @@ checked and never failed.
 
 This module measures only. It has no thresholds of its own.
 """
+import os
+
 import numpy as np
 
 
@@ -32,6 +34,17 @@ def targets_for(score, channels):
     return [t for t in sel if render_targets.channels(t) == int(channels)]
 
 
+def finite_row(audio, out, name='the delivered file'):
+    """render.finite: a NaN or an infinity in any channel. Players differ on what they do with one (silence, a full
+    scale burst), so no file that holds one is delivered."""
+    a = np.asarray(audio)
+    bad = [c for c in range(a.shape[1] if a.ndim == 2 else 1)
+           if not np.isfinite(a[:, c] if a.ndim == 2 else a).all()]
+    _row(out, 'FAIL' if bad else 'PASS', 'render.finite',
+         (f'{name}: channel(s) {", ".join(str(c + 1) for c in bad)} hold NaN or infinite samples' if bad
+          else f'{name}: every sample of every channel is a finite number'))
+
+
 def output_rows(score, wav_path, out):
     """Rows for the delivered file: its format, its ceiling, and the checks that format needs."""
     import gate_audio
@@ -43,7 +56,10 @@ def output_rows(score, wav_path, out):
         _row(out, 'FAIL', 'delivery.format', f'cannot read {wav_path} to verify the requested format ({exc})')
         return
     n_ch = sig.channels
-    targets = targets_for(score, n_ch)
+    finite_row(sig.audio, out, os.path.basename(str(wav_path)))
+    targets = targets_for(score, n_ch) or [
+        t for t in render_targets.resolve(score)['selected']
+        if not render_targets.channels(t) and os.path.basename(str(wav_path)).endswith(render_targets.filename(t))]
     if not targets:
         requested = render_targets.resolve(score)['selected']
         _row(out, 'FAIL', 'delivery.format',

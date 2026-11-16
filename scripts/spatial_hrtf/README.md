@@ -19,9 +19,13 @@ It is downloaded by `python -m spatial_hrtf.data` (setup_project.py runs this) i
 |---|---|---|
 | `decoder.py`, `sph.py`, `io.py`, `sig.py`, `process.py`, `grids.py`, `parsa.py`, `utils.py`, `plot.py` | spaudiopy | used: `sph.sh_matrix`, `decoder.magls_bin`, `io.load_hrirs` / `get_default_hrirs`. The rest is kept so the copy is whole. |
 | `data/Grids/` | spaudiopy | sampling grids, unchanged |
-| `binaural.py` | ours | what the mixer calls: place a mono stem at an angle, order 5 MagLS, 1/r and air loss, near field, moving sources (STFT), geometry reflections, directional late field, head-set selection |
-| `room.py` | ours | a room as data: shoebox image sources, per-surface absorption filters, the late field's IR and directions |
+| `binaural.py` | ours | what the mixer calls: place a mono stem at an angle, order 5 MagLS, 1/r and air loss, near field (geometric or the rigid-sphere distance variation function), moving sources (STFT), geometry reflections, directional late field, head-set selection |
+| `room.py` | ours | a room as data: shoebox image sources (still or followed along a path), per-surface absorption filters, the late field's IR and directions, Eyring reverberation time and mixing time from the geometry |
 | `data.py` | ours | `python -m spatial_hrtf.data`: download and prepare the head data |
+
+The ambisonic bus (`scripts/spatial_engine/hoa.py`, mix preset `immersive.engine: "hoa_bus"`) uses `sph.sh_matrix`,
+`sph.max_rE_weights` and `decoder.magls_bin` from here and builds its own all-round loudspeaker decoder on the
+engine's VBAP (`spatial_engine/pan.py`), so `decoder.allrad` / `allrad2` and their loudspeaker hull are not used.
 
 ## Changes to their files
 

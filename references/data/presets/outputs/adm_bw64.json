@@ -1,0 +1,21 @@
+{
+  "name": "adm_bw64",
+  "character": "Object-based delivery: every placed track is its own channel with its position over time written as ADM metadata, plus the reverb return as a stereo bed. The playback renderer places the objects on the loudspeakers that are there.",
+  "label": "ADM BW64 objects",
+  "order": 8,
+  "aliases": [
+    "adm",
+    "objects"
+  ],
+  "channels": 0,
+  "channel_order": [],
+  "file": "master_adm.wav",
+  "renderer": "adm",
+  "true_peak_dbtp": -3.0,
+  "layout": null,
+  "sources": [
+    "ITU-R BS.2076-2 (Audio Definition Model) for the metadata, ITU-R BS.2088-1 (BW64) for the axml and chna chunks",
+    "channels is 0 because the file has one channel per object: the count is the piece's, not the format's",
+    "An open-standard ADM file. It is not a Dolby Atmos master file and has not been through any vendor's certification"
+  ]
+}

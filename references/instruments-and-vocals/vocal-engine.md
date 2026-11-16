@@ -46,7 +46,7 @@ events -> split into monophonic lines (chords become lines) -> for each singer (
   two-pole low-pass (`source.tilt_poles` 2, -12 dB/oct; 1 reproduces the old one-pole sound) that follows level
   (`dynamics.timbre_follow`: louder = brighter). Per-cycle shimmer, aspiration noise
   modulated by the flow, optional Kargyraa subharmonic and Sygyt whistle. Each singer may scale the register's open
-  quotient (`source.open_quotient_scale`, from `singer_variation`), so a choir is not one larynx copied.
+  quotient (`source.open_quotient_scale`, from `singer_variation`), so a choir is not one larynx copied `source.model: "lf"`, `source.oversample` and the `syl` note key: `vocal-tract-physics.md`, last section.
 - **Consonants.** They share the singer's source: the voiced buzz is `source.glottal_source` tilted at
   `consonants.buzz_tilt_hz` (1500) with two poles, not a bright additive sine bank, and turbulent sounds pass a share
   (`consonants.tract_mix` 0.35) of their energy through the following vowel's formants.

@@ -1,0 +1,67 @@
+{
+  "name": "wetland_night",
+  "description": "A pond edge on a warm night: still water, a frog chorus, crickets, an owl far off (example: copy into your project's presets/environments/ and tune it from your research; not auditioned)",
+  "character": "Reeds and open water after dark: a low water bed, frogs close on both sides, crickets behind and a distant owl.",
+  "atmosphere": {
+    "temp_c": 22,
+    "rh": 85
+  },
+  "layers": [
+    {
+      "name": "water",
+      "primitive": "water_flow",
+      "kind": "bed",
+      "gain_db": -30.0,
+      "swell_period_s": 9.0,
+      "bubble_rate": 3.0
+    },
+    {
+      "name": "frogs",
+      "primitive": "animal_call",
+      "call": "frog_trill",
+      "kind": "spot",
+      "gain_db": -22.0,
+      "spatial": {
+        "azimuth": -30,
+        "distance": 5
+      }
+    },
+    {
+      "name": "frogs_right",
+      "primitive": "animal_call",
+      "call": "frog_trill",
+      "kind": "spot",
+      "gain_db": -25.0,
+      "spatial": {
+        "azimuth": 55,
+        "distance": 9
+      }
+    },
+    {
+      "name": "crickets",
+      "primitive": "cricket_chorus",
+      "kind": "spot",
+      "gain_db": -28.0,
+      "spatial": {
+        "azimuth": 140,
+        "distance": 6
+      }
+    },
+    {
+      "name": "owl",
+      "primitive": "animal_call",
+      "call": "owl_hoot",
+      "kind": "spot",
+      "gain_db": -30.0,
+      "spatial": {
+        "azimuth": 80,
+        "elevation": 20,
+        "distance": 70
+      }
+    }
+  ],
+  "blending": {
+    "overall_gain_db": -22.0,
+    "high_pass_hz": 70
+  }
+}

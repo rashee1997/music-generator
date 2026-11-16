@@ -241,6 +241,17 @@ ROWS = {
     'feel.contour':    dict(meaning='melodic arch / gap-fill'),
     'feel.resolution': dict(meaning='harmonic tension to resolution'),
     'feel.groove':     dict(meaning='groove pocket lock'),
+    # Immersive 2.0 (quality_gate.immersive2_rows, fold_rows). Starting values, not calibrated on a corpus yet.
+    'imm.iacc_early':    dict(meaning='room probe, first 80 ms: interaural correlation over the 500-2000 Hz octaves',
+                              params={'max_iacc': (0.97, 0.3, 1.0)}),
+    'imm.clarity':       dict(meaning='room probe C80 over 500-4000 Hz: only a washed-out room trips it',
+                              params={'min_c80_db': (-5.0, -15.0, 5.0)}),
+    'imm.low_fold':      dict(meaning='mono fold-down loss below the bass corner',
+                              params={'max_db': (2.5, 1.0, 6.0), 'hz': (250.0, 80.0, 400.0)}),
+    'mix.band_fold':     dict(meaning='mono fold-down loss in each auditory band, 100-5000 Hz',
+                              params={'max_db': (3.5, 2.0, 9.0), 'floor_db': (30.0, 12.0, 60.0)}),
+    'imm.kinematics':    dict(meaning='no source travels faster than its role allows'),
+    'render.finite':     dict(meaning='no NaN or infinite sample in any delivered channel', protected=True),
     'feel.effort':     dict(meaning='kinematic effort / respiration'),
     'feel.spiral':     dict(meaning='tonal tension arc'),
     'feel.witek':      dict(meaning='groove pleasure curve'),
@@ -275,6 +286,10 @@ ALIASES = {
     'imm_foldown': 'imm.foldown',
     'imm_coloration': 'imm.coloration',
     'imm_route_parity': 'imm.route_parity',
+    'imm_iacc_early': 'imm.iacc_early',
+    'imm_clarity': 'imm.clarity',
+    'imm_low_fold': 'imm.low_fold',
+    'imm_kinematics': 'imm.kinematics',
     'natural_aliasing': 'natural.aliasing',
 }
 REPORT_IDS = {}

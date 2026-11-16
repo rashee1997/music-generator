@@ -1,0 +1,40 @@
+{
+  "name": "frog_trill",
+  "character": "A treefrog chorus on a warm night: short pulsed trills, faster when the air is warmer.",
+  "elements": {
+    "trill": {
+      "f0_hz": [
+        [
+          0,
+          1080
+        ],
+        [
+          1,
+          1140
+        ]
+      ],
+      "ms": [
+        600,
+        900
+      ],
+      "harmonics": 3,
+      "rolloff": 0.6,
+      "pulse_hz": 23.0,
+      "pulse_duty": 0.6,
+      "attack": 0.1,
+      "release": 0.15
+    }
+  },
+  "sequence": [
+    "trill"
+  ],
+  "bouts_per_min": 14.0,
+  "individuals": 6,
+  "individual_spread": 0.05,
+  "temp_ref_c": 20.0,
+  "rate_per_c": 0.063,
+  "sources": [
+    "Gerhardt & Doherty (1988) as cited in Diekamp & Gerhardt (1995), J. Comp. Physiol. A: in Hyla versicolor the pulse rate rises linearly with temperature, 13 to 32 pulses per second between 13 and 26 C (about 6 percent per degree around 20 C, the rate_per_c here)",
+    "ESTIMATE: carrier frequency, call length and call rate are typical treefrog values, not measured"
+  ]
+}

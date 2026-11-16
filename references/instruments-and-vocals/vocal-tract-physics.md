@@ -72,3 +72,19 @@ one vocal phrase pays the 0.7 s; on a long session it is amortised.
 - The gains are peak amplitudes with one calibrated tilt, not a full source-filter fit.
 - **Nothing has been listened to.** Everything here is measured, and no measurement in this file says the result sounds
   like a person.
+
+## 6. The source model, oversampling and syllables
+
+- **Source model.** `source.model: "lf"` replaces the pulse with the Liljencrants-Fant model, shaped by one number,
+  `rd`: 0.3 is pressed, about 1 is modal, 2.7 is breathy. Each register carries its own `rd`, blended across the
+  passaggio like the other register values; `source.rd` (a number) overrides them for the whole voice. With `lf` the
+  level-following tilt keeps one pole, because the model's return phase already is the source's roll-off. Measured:
+  the first harmonic against the second goes from -4 dB at `rd` 0.3 to +19 dB at 2.7.
+- **Oversampling.** `source.oversample` 2 or 4 makes the source at that multiple of the rate and decimates. At 1 kHz
+  the energy that folds back between the harmonics drops by about 14 dB at 2 and 24 dB at 4. Default 1: the engine as
+  it was.
+- **Syllable shorthand.** A note may carry `"syl": "la"`: the longest onset in `consonants.inventory`, then one vowel
+  or two (a diphthong), written out as the `consonant` and `vowel` keys. `"shai"` is `sh` + `["a", "i"]`. A note's
+  own `consonant` or `vowel` wins. It is spelling for syllables, not a dictionary: an unknown syllable is an error.
+- The LF source is the textbook model with Fant's regression from `rd` to its timing; the `rd` per register in
+  `defaults.json` is a starting value, and neither model is fitted to a recorded singer.

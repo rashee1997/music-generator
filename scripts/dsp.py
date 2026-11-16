@@ -522,6 +522,42 @@ def soften_onsets(x, sr=44100, times=(), ms=2.0):
     return y
 
 
+def dynamic_tilt(x, sr=44100, velocity=None, low_hz=1500.0, span_hz=2600.0, floor=0.55, curve=1.2, norm_env=None):
+    """Brightness that follows level: a quiet moment is a warm low-passed copy, a loud one the full band.
+
+    The corner is low_hz + span_hz * (mean velocity / 127); `floor` is how much of the full band a silent moment
+    keeps and `curve` bends the blend. Level-compensated over the stem, so pattern level does not move. This is the
+    tilt enhance_sf2_dynamics always applied to SoundFont stems, as its own function so that a preset can give it
+    to any stem (`dynamic_tilt` on a track or an instrument preset).
+    """
+    y = to_2d(x).astype(np.float32)
+    if len(y) == 0:
+        return y
+    if norm_env is None:
+        env = envelope(y, sr=sr, attack_ms=5.0, release_ms=80.0)[:, None]
+        norm_env = env / max(float(env.max()), 1e-6)
+    v = 0.55 if velocity is None else float(np.clip(float(velocity) / 127.0, 0.0, 1.0))
+    tilt_hz = float(low_hz) + float(span_hz) * v
+    sos_warm = signal.butter(2, min(tilt_hz, sr * 0.45), btype='lowpass', fs=sr, output='sos')
+    warm = signal.sosfilt(sos_warm, y, axis=0).astype(np.float32)
+    w = float(floor) + (1.0 - float(floor)) * np.clip(norm_env, 0.0, 1.0) ** float(curve)
+    before = float(np.sqrt(np.mean(y ** 2)) + 1e-12)
+    y = (warm * (1.0 - w) + y * w).astype(np.float32)
+    return (y * (before / float(np.sqrt(np.mean(y ** 2)) + 1e-12))).astype(np.float32)
+
+
+def resonator_bank(x, sr, freqs, q):
+    """A mono signal through parallel two-pole resonators (unity gain at each centre), summed: strings that are
+    never played but ring when the music excites them. A resonator at f with quality q rings for q / (pi f) s."""
+    x = np.asarray(x, dtype=np.float64)
+    out = np.zeros(len(x))
+    for f in freqs:
+        if 20.0 < float(f) < 0.45 * sr:
+            b, a = signal.iirpeak(float(f), float(q), fs=sr)
+            out += signal.lfilter(b, a, x)
+    return out
+
+
 def enhance_sf2_dynamics(x, sr=44100, role='chord', velocity=None):
     """Restores transient snap and velocity-driven harmonic excitement to SF2 stems.
 
@@ -548,14 +584,7 @@ def enhance_sf2_dynamics(x, sr=44100, role='chord', velocity=None):
         # copy, blended in by how loud the moment is, restores the direction (still not a per-note brightness law:
         # that needs a second sample layer). Level-compensated globally, so pattern level is unchanged.
         if role in ('chord', 'melody', 'counter', 'bass'):
-            v = 0.55 if velocity is None else float(np.clip(float(velocity) / 127.0, 0.0, 1.0))
-            tilt_hz = 1500.0 + 2600.0 * v                       # soft (v=30) ~2.1 kHz, hard (v=127) ~4.1 kHz
-            sos_warm = signal.butter(2, min(tilt_hz, sr * 0.45), btype='lowpass', fs=sr, output='sos')
-            warm = signal.sosfilt(sos_warm, y, axis=0).astype(np.float32)
-            w = 0.55 + 0.45 * np.clip(norm_env, 0.0, 1.0) ** 1.2
-            before = float(np.sqrt(np.mean(y ** 2)) + 1e-12)
-            y = (warm * (1.0 - w) + y * w).astype(np.float32)
-            y = (y * (before / float(np.sqrt(np.mean(y ** 2)) + 1e-12))).astype(np.float32)
+            y = dynamic_tilt(y, sr=sr, velocity=velocity, norm_env=norm_env)   # soft (v=30) ~2.1 kHz, hard ~4.1 kHz
         drive = (1.0 + 0.55 * np.clip((norm_env - 0.55) / 0.45, 0.0, 1.0) ** 2).astype(np.float32)
         # tanh(y*drive)/tanh(drive) carries a +2.4 dB small-signal gain; dividing the drive back out keeps the
         # harmonics and drops the free level, so gain staging never inherits a hidden boost from this stage.

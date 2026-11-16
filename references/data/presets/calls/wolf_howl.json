@@ -1,0 +1,83 @@
+{
+  "name": "wolf_howl",
+  "character": "A pack howling at a distance: long rising and slowly falling tones, each animal on its own pitch.",
+  "elements": {
+    "howl": {
+      "f0_hz": [
+        [
+          0,
+          300
+        ],
+        [
+          0.15,
+          470
+        ],
+        [
+          0.6,
+          440
+        ],
+        [
+          1,
+          330
+        ]
+      ],
+      "ms": [
+        3500,
+        6000
+      ],
+      "harmonics": 6,
+      "rolloff": 1.5,
+      "vibrato_hz": 5.5,
+      "vibrato_cents": 18,
+      "attack": 0.1,
+      "release": 0.3
+    },
+    "break_": {
+      "f0_hz": [
+        [
+          0,
+          330
+        ],
+        [
+          1,
+          420
+        ]
+      ],
+      "ms": [
+        1800,
+        2600
+      ],
+      "harmonics": 6,
+      "rolloff": 1.5,
+      "jump": [
+        0.55,
+        1.3
+      ],
+      "attack": 0.1,
+      "release": 0.3
+    }
+  },
+  "sequence": [
+    "howl",
+    [
+      "break_",
+      0,
+      1
+    ]
+  ],
+  "gap_ms": [
+    400,
+    900
+  ],
+  "bouts_per_min": 3.0,
+  "individuals": 4,
+  "individual_spread": 0.12,
+  "tract_cm": 20.0,
+  "formant_q": 4.0,
+  "formant_mix": 0.4,
+  "sources": [
+    "ESTIMATE: typical values for this kind of call written from general knowledge, not measured from a recording and not auditioned. Replace them with numbers from a real recording of the species the project needs.",
+    "Taylor & Reby (2010), J. Zoology 280: source-filter theory for mammal calls",
+    "Wilden, Herzel, Peters & Tembrock (1998), Bioacoustics 9: subharmonics, biphonation and chaos in mammal calls"
+  ]
+}

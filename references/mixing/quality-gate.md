@@ -210,12 +210,13 @@ against the target it claims to be. A format that was not requested is never che
 | Row | Applies to | What is measured | Where the limit comes from |
 |---|---|---|---|
 | `delivery.true_peak` | every target | worst channel true peak after 4x oversampling | the target preset's `true_peak_dbtp` (-1.5 dBTP two-channel, -3.0 dBTP multichannel) |
-| `delivery.format` | every target | channel count against the requested targets | `render_targets.channels()` |
+| `delivery.format` | every target | channel count against the requested targets (a target with `"channels": 0`, one channel per object, is matched by file name) | `render_targets.channels()` |
 | `stereo.correlation` | 2-channel targets | `corr(L, R)` - below the floor the centre is cancelling | target preset `gate.stereo_correlation_min` |
 | `imm.lfe_stopband` | multichannel | energy above the stopband, relative to the programme RMS | layout `lfe.stopband_hz` / `stopband_db` |
 | `imm.surround_ratio` | multichannel | surround energy (BL+BR+SL+SR) against the front stage (FL+FR+FC) | layout `gate.surround_ratio_db` |
 | `imm.height_arc` | layouts with overhead speakers | height energy against the listener-level beds | layout `gate.height_max_rel_db` |
 | `imm.fold_coherence` | multichannel | correlation of the ITU-R BS.775 fold | layout `gate.stereo_correlation_min` |
+| `render.finite` | every target | a NaN or an infinite sample in any channel (protected: no profile can switch it off) | none: one is a fault |
 
 For a multichannel delivery the `loudness` row is measured on the layout's BS.775 two-channel fold, not on the mean of
 the channels: the fold is what a listener without the room hears, and a channel mean changes with the channel count.
@@ -228,7 +229,7 @@ the stopband: a high-pass there would strip the band the channel exists to carry
 
 `imm_cues`, `imm_elevation`, `imm_height_rules`, `imm_externalization`, `imm_foldown` FAIL; `imm_frontback`, `imm_band`, `imm_envelopment`, `imm_width` WARN.
 Probes run through the measured-head route the mixer forces, with the numbers from `tests/test_hrtf.py`. What each row means, the height rules and the
-limits: `references/spatial/immersive-spatial.md`. A failing row is fixed in the score or presets (raise a pad, give the space a ceiling reflection, lower a bass), never by loosening the row.
+limits: `references/spatial/immersive-spatial.md`. A failing row is fixed in the score or presets (raise a pad, give the space a ceiling reflection, lower a bass), never by loosening the row. The rows of the ambisonic engine (`imm_kinematics`, `imm_low_fold`, `mix.band_fold`, `imm_iacc_early`, `imm_clarity`) are in the same file, section 3.
 
 ## 5d. Z-axis separation and equal-loudness harshness
 

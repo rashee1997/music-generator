@@ -1,0 +1,76 @@
+{
+  "name": "big_cat_roar",
+  "character": "A big cat: a low, rough roar that swells and sags, then a run of short grunts.",
+  "elements": {
+    "roar": {
+      "f0_hz": [
+        [
+          0,
+          70
+        ],
+        [
+          0.3,
+          105
+        ],
+        [
+          1,
+          60
+        ]
+      ],
+      "ms": [
+        1600,
+        2400
+      ],
+      "harmonics": 40,
+      "rolloff": 0.8,
+      "noise": 0.5,
+      "subharmonic": 0.6,
+      "attack": 0.2,
+      "release": 0.35
+    },
+    "grunt": {
+      "f0_hz": [
+        [
+          0,
+          85
+        ],
+        [
+          1,
+          60
+        ]
+      ],
+      "ms": [
+        260,
+        380
+      ],
+      "harmonics": 40,
+      "rolloff": 0.8,
+      "noise": 0.55,
+      "subharmonic": 0.5,
+      "level_db": -4.0
+    }
+  },
+  "sequence": [
+    "roar",
+    "roar",
+    [
+      "grunt",
+      3,
+      6
+    ]
+  ],
+  "gap_ms": [
+    350,
+    600
+  ],
+  "bouts_per_min": 1.0,
+  "tract_cm": 38.0,
+  "formant_q": 5.0,
+  "formant_mix": 0.8,
+  "sources": [
+    "ESTIMATE: typical values for this kind of call written from general knowledge, not measured from a recording and not auditioned. Replace them with numbers from a real recording of the species the project needs.",
+    "Fitch (1997), JASA 102: a longer vocal tract puts the resonances lower and closer together",
+    "Taylor & Reby (2010), J. Zoology 280: source-filter theory for mammal calls",
+    "Wilden, Herzel, Peters & Tembrock (1998), Bioacoustics 9: subharmonics, biphonation and chaos in mammal calls"
+  ]
+}

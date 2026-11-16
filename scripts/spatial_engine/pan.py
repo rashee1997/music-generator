@@ -89,8 +89,12 @@ def gains(azimuth_deg, elevation_deg, spk):
         # a near-coplanar triplet inverts to huge gains that can look positive: accept only a real solution
         if float(np.linalg.norm(m.T @ g - p)) > 1e-9:
             continue
-        score = float(np.min(g))
-        if best is None or score > best[0]:
+        # Many triplets can hold a direction with positive gains (FL + BR "contain" a source at +80 deg across a
+        # 165 deg gap). The one that needs the least total gain is the face of the layout the direction really
+        # passes through; choosing by the largest minimum gain picked the wide pair whenever a gain was zero,
+        # which is every source at ear height.
+        score = -float(np.sum(g))
+        if best is None or score > best[0] + 1e-9:
             best = (score, {spk[i]['name']: float(g[0]), spk[j]['name']: float(g[1]),
                             spk[k]['name']: float(g[2])})
     if best is None:                       # a direction outside the hull: fall back to the nearest speaker

@@ -592,7 +592,10 @@ def synth_model_layer(sec, sr=SR, rng=None, voices=None, free=None):
     return sound_model.render(model, sr, int(rng.integers(0, 2 ** 31 - 1))).astype(np.float32)
 
 
+from env_engine.calls import synth_animal_call   # noqa: E402  any animal's call as data (env_engine/calls.py)
+
 PRIMITIVES = {
+    'animal_call': synth_animal_call,
     'noise_bed': synth_noise_bed, 'resonant_gust': synth_resonant_gust, 'fm_chirp_cluster': synth_fm_chirp_cluster,
     'impulse_cluster': synth_impulse_cluster, 'stridulation_bed': synth_stridulation_bed, 'water_flow': synth_water_flow,
     'formant_babble': synth_formant_babble, 'doppler_sweep': synth_doppler_sweep, 'rain_physical': synth_rain,
@@ -613,7 +616,7 @@ LAYER_KEYS = {'name', 'primitive', 'type', 'kind', 'gain_db', 'gain_curve', 'spa
               'trajectory', 'pan', 'normalize', 'diffuse', 'atmosphere', 'physical', 'species'}
 BLENDING_KEYS = {'high_pass_hz', 'vocal_pocket_notch_hz', 'vocal_pocket_notch_db', 'target_lufs', 'overall_gain_db'}
 KINDS = ('bed', 'spot')         # bed: steady, wide, nothing recognisable in it. spot: an event with a place of its own
-EVENT_PRIMITIVES = {'fm_chirp_cluster', 'impulse_cluster', 'cricket_chorus', 'bird_chorus', 'voice_bouts', 'syllable_bouts',
+EVENT_PRIMITIVES = {'animal_call', 'fm_chirp_cluster', 'impulse_cluster', 'cricket_chorus', 'bird_chorus', 'voice_bouts', 'syllable_bouts',
                     'doppler_sweep'}
 EVENT_RADIUS = 0.86             # allpass radius for decorrelating spots / event primitives: short ring, so syllables stay clean
 BED_RADIUS = 0.985
@@ -646,6 +649,9 @@ def layer_problems(lyr):
     bad = sorted(k for k in lyr if k not in valid)
     if bad:
         out.append(f'{label} ({canon}): key(s) {bad} are never read. Valid keys: {", ".join(sorted(valid))}')
+    if canon == 'animal_call':
+        from env_engine import calls
+        out += [f'{label}: {p}' for p in calls.problems({k: lyr[k] for k in ('call', 'elements', 'sequence') if k in lyr})]
     if canon == 'model_layer':
         import sound_model
         out += [f'{label}: {p}' for p in sound_model.problems(dict(seconds=1.0, voices=lyr.get('voices') or sound_model.DEFAULT_VOICES))]
@@ -830,7 +836,10 @@ def render_environment_preset(name_or_dict, duration_s=30.0, sr=SR, seed=42):
         gain_lin = 10.0 ** (gain_db / 20.0)
 
         kw = {k: lyr[k] for k in _params(fn) if k in lyr and not (k == 'species' and canon != 'bird_chorus')}
-        if canon == 'cricket_chorus' and 'temp_c' not in kw:
+        if canon == 'animal_call' and kw.get('call'):       # the layer's own keys over the named calls preset
+            from env_engine import calls
+            kw = calls.resolve(kw['call'], kw)
+        if canon in ('cricket_chorus', 'animal_call') and 'temp_c' not in kw:   # cold-blooded callers follow the air
             kw['temp_c'] = float((lyr.get('atmosphere') or cfg.get('atmosphere') or {}).get('temp_c', 20.0))
         mono = fn(duration_s, sr, rng, **kw)
 
@@ -954,14 +963,20 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('preset', nargs='?', help='Name of environment preset or path to JSON file')
     ap.add_argument('--primitives', action='store_true', help='List every primitive, its parameters and defaults, then exit')
+    ap.add_argument('--call', help='Render one calls preset on its own (an animal_call layer), to hear it')
+    ap.add_argument('--project', help='Project folder whose presets/ are read as well')
     ap.add_argument('--seconds', type=float, default=10.0, help='Duration in seconds')
     ap.add_argument('--out', default='environment_out.wav', help='Output WAV path')
     args = ap.parse_args()
     if args.primitives:
         print(list_primitives())
         return
+    if args.project:
+        presets.add_project(args.project)
+    if args.call:
+        args.preset = dict(layers=[dict(name=args.call, primitive='animal_call', call=args.call, gain_db=-12.0, first_s=0.5)])
     if not args.preset:
-        ap.error('give a preset name, or --primitives')
+        ap.error('give a preset name, --call <calls preset>, or --primitives')
     audio = render_environment_preset(args.preset, duration_s=args.seconds)
     sf.write(args.out, audio, SR, subtype='PCM_16')
     print(f'Wrote environmental soundscape: {args.out} ({len(audio)/SR:.1f} s, shape {audio.shape})')

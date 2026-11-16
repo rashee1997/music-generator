@@ -1,0 +1,59 @@
+{
+  "name": "cuckoo_two_note",
+  "character": "A two-note call falling by about a minor third, repeated steadily: the far voice of a spring wood.",
+  "elements": {
+    "high": {
+      "f0_hz": [
+        [
+          0,
+          560
+        ],
+        [
+          0.2,
+          575
+        ],
+        [
+          1,
+          565
+        ]
+      ],
+      "ms": [
+        130,
+        170
+      ],
+      "harmonics": 3,
+      "rolloff": 2.0
+    },
+    "low": {
+      "f0_hz": [
+        [
+          0,
+          470
+        ],
+        [
+          1,
+          455
+        ]
+      ],
+      "ms": [
+        220,
+        280
+      ],
+      "harmonics": 3,
+      "rolloff": 2.0,
+      "release": 0.45
+    }
+  },
+  "sequence": [
+    "high",
+    "low"
+  ],
+  "gap_ms": [
+    160,
+    220
+  ],
+  "bouts_per_min": 38.0,
+  "sources": [
+    "ESTIMATE: typical values for this kind of call written from general knowledge, not measured from a recording and not auditioned. Replace them with numbers from a real recording of the species the project needs."
+  ]
+}

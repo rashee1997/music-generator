@@ -17,6 +17,7 @@
     "pattern.melody_notes": {"mode": "relax", "min_lengths": 2, "on_beat_max": 1.0, "repeat_max": 0.6, "reason": "slow repeated tones are the style, with no beat grid to avoid"},
     "pattern.flags_max": {"mode": "relax", "max": 8, "reason": "few parts, so fewer varied lines"},
     "kick.grid": {"mode": "skip", "reason": "no kick is expected in an ambient piece"},
+    "imm.clarity": {"mode": "skip", "reason": "a bed is meant to sit inside its tail; clarity is a measure for notes"},
     "balance.vs_lead": {"mode": "apply", "fallback": "balance.layers"}
   }
 }

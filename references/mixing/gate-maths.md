@@ -63,7 +63,7 @@ and pan are applied later in `mixer._place`. A pre-mix stem therefore has no dis
 | `clipping` | same as `stem.clipping` | any sample | calibrated |
 | `master.dc` | same as `stem.dc` | 0.001 FS | starting value |
 | `tempo.audio` | full-track `librosa.beat.beat_track`, compared with `score.bpm`; tolerance `max(2 BPM, 2%)`; only judged when the score actually plays a pulse (a percussive track or 6+ isochronous note starts, IOI CV <= 0.05), otherwise it is INFO. Quarter drift from the same beat list is **reported, not decisive** | 2 BPM or 2% | starting value; the drift limitation is measured: a steady 74 BPM render showed 4.1 BPM of quarter-to-quarter tracker jitter with no tempo change, so making drift decisive produced a false FAIL |
-| `section.energy` | Spearman rho between the promised section `dyn`/energy and the measured 20 ms frame level in the middle 80% of each section (4+ sections) | FAIL < 0.5, WARN < 0.7 | starting value; skipped (not judged) when fewer than 4 sections or constant energies |
+| `section.energy` | Spearman rho between the promised section `dyn`/energy and the measured 20 ms frame level in the middle 80% of each section (four or more sections) | FAIL < 0.5, WARN < 0.7 | starting value; skipped (not judged) when fewer than four sections or constant energies |
 
 Existing rows keep their old numbers: loudness target +-2.5 LU, true peak ceiling +0.3 dB, the 1 s silence row, and the
 naturalness, balance, masking, spatial, immersive and delivery rows. Nothing in `gate_profiles.py` was relaxed; the new

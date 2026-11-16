@@ -387,6 +387,175 @@ def immersive_rows(score, path, stems, out):
                  + ('phase cancellation will thin it on phone speakers' if drop > lim else 'holds up on a phone speaker'))
 
 
+def room_measures(brir, sr=44100):
+    """(IACC over the first 80 ms, C80 in dB) of a binaural room impulse response, after ISO 3382-1.
+
+    The response is timed from the direct sound (the first sample within 20 dB of the peak). IACC is the largest
+    interaural cross-correlation within +-1 ms, the mean of the 500, 1000 and 2000 Hz octaves ("IACC E3"); C80 is
+    early (0-80 ms) against late energy, the mean of the 500 to 4000 Hz octaves."""
+    from scipy import signal
+    h = np.asarray(brir, dtype=float)
+    env = np.abs(h).max(axis=1)
+    h = h[int(np.argmax(env >= 0.1 * env.max())):]
+    e, lag = int(0.08 * sr), int(0.001 * sr)
+    iacc, c80 = [], []
+    for fc in (500.0, 1000.0, 2000.0, 4000.0):
+        b = signal.sosfilt(signal.butter(3, [fc / np.sqrt(2.0), fc * np.sqrt(2.0)], 'band', fs=sr, output='sos'),
+                           h, axis=0)
+        early, late = b[:e], b[e:]
+        c80.append(10.0 * np.log10((early ** 2).sum() / ((late ** 2).sum() + 1e-20) + 1e-20))
+        if fc <= 2000.0:
+            cc = signal.correlate(early[:, 0], early[:, 1], 'full')[len(early) - 1 - lag:len(early) + lag]
+            iacc.append(np.max(np.abs(cc)) / (np.sqrt((early[:, 0] ** 2).sum() * (early[:, 1] ** 2).sum()) + 1e-20))
+    return float(np.mean(iacc)), float(np.mean(c80))
+
+
+def fold_loss(x, sr=44100, nperseg=4096):
+    """(frequencies, power of the two channels, power of their mono sum) per bin. Their ratio is what a mono
+    speaker loses: 0 dB for a centred sound, 3 dB for two unrelated channels, more when they cancel."""
+    from scipy import signal
+    L, R = np.asarray(x[:, 0], float), np.asarray(x[:, 1], float)
+    n = min(nperseg, len(L))
+    f, pl = signal.welch(L, sr, nperseg=n)
+    _, pr = signal.welch(R, sr, nperseg=n)
+    _, plr = signal.csd(L, R, sr, nperseg=n)
+    return f, 0.5 * (pl + pr), 0.25 * (pl + pr + 2.0 * np.real(plr))
+
+
+def _erb_edges(lo=100.0, hi=5000.0):
+    """Band edges one ERB apart (Glasberg & Moore 1990) from lo to hi."""
+    def rate(f):
+        return 21.4 * np.log10(4.37e-3 * f + 1.0)
+    k = np.arange(np.ceil(rate(lo)), np.floor(rate(hi)) + 1.0)
+    return (10.0 ** (k / 21.4) - 1.0) / 4.37e-3
+
+
+def fold_rows(score, path, out, audio=None, sr=44100):
+    """mix.band_fold for any two-channel master and imm.low_fold for an immersive one: what a mono speaker loses,
+    band by band. A broadband fold-down number hides a single band that cancels."""
+    import gate_profiles
+    import mixer
+    gp = gate_profiles.resolve(score)
+    if audio is None:
+        import soundfile as sf
+        audio, sr = sf.read(path, always_2d=True)
+    if audio.shape[1] != 2 or len(audio) < sr:
+        return
+    f, chan, mono = fold_loss(audio, sr)
+    immersive = bool(mixer.immersive_cfg(score))
+    # A headphone master is left out: a source at the side reaches the far ear up to 0.7 ms late, and that delay
+    # alone notches the mono sum near 700 Hz. There the loss is the head, not a fault (measured: 4.7 dB at
+    # 698-803 Hz for one source at 60 degrees); imm_foldown and imm_low_fold judge that master instead.
+    if gp.on('mix.band_fold') and not immersive:
+        lim, floor = float(gp.param('mix.band_fold', 'max_db')), float(gp.param('mix.band_fold', 'floor_db'))
+        edges = _erb_edges()
+        bands = [(a, b, chan[(f >= a) & (f < b)].sum(), mono[(f >= a) & (f < b)].sum())
+                 for a, b in zip(edges[:-1], edges[1:])]
+        top = max((c for _, _, c, _ in bands), default=0.0)
+        bad = []
+        for a, b, c, m in bands:
+            if c > top * 10.0 ** (-floor / 10.0):                     # a band with nothing in it has nothing to lose
+                loss = 10.0 * np.log10(c / (m + 1e-30))
+                if loss > lim:
+                    bad.append((loss, a, b))
+        if bad:
+            loss, a, b = max(bad)
+            who = ''
+            proc = mixer.STATE.get('processed') or {}
+            if proc:                                                  # the stem whose two channels cancel most there
+                from scipy import signal
+                sos = signal.butter(2, [a, b], 'band', fs=sr, output='sos')
+                cross = {}
+                for k, v in proc.items():
+                    v = np.asarray(v)
+                    if v.ndim == 2 and v.shape[1] == 2:
+                        y = signal.sosfilt(sos, v, axis=0)
+                        cross[k] = float(np.sum(y[:, 0] * y[:, 1]))
+                if cross and min(cross.values()) < 0:
+                    who = f'; stem "{min(cross, key=cross.get)}" is the most out of phase there'
+            _row(out, 'FAIL', 'mix.band_fold',
+                 f'{len(bad)} band(s) lose more than {lim:g} dB in mono, worst {a:.0f}-{b:.0f} Hz at {loss:.1f} dB{who}: '
+                 'narrow that stem below the band, or lower its widening')
+        else:
+            _row(out, 'PASS', 'mix.band_fold', f'no auditory band from 100 to 5000 Hz loses more than {lim:g} dB in mono')
+    if immersive and gp.on('imm.low_fold'):
+        lim, hz = float(gp.param('imm.low_fold', 'max_db')), float(gp.param('imm.low_fold', 'hz'))
+        sel = (f > 20.0) & (f < hz)
+        loss = 10.0 * np.log10(chan[sel].sum() / (mono[sel].sum() + 1e-30) + 1e-30)
+        _row(out, 'FAIL' if loss > lim else 'PASS', 'imm_low_fold',
+             f'below {hz:g} Hz the mono fold loses {loss:.1f} dB (limit {lim:g}): '
+             + ('the bass is not the same in both ears and will thin out on one speaker' if loss > lim
+                else 'the low end holds on one speaker'))
+
+
+def immersive2_rows(score, path, out, brir=None):
+    """Rows of the ambisonic engine: how fast sources travel, and the room measured on its own impulse response."""
+    import gate_profiles
+    import mixer
+    from spatial_engine import trajectory
+    cfg = mixer.immersive_cfg(score)
+    if not cfg:
+        return
+    gp = gate_profiles.resolve(score)
+    sr = 44100
+    if gp.on('imm.kinematics'):
+        n = 0
+        if path:
+            import soundfile as sf
+            info = sf.info(path)
+            n = int(info.frames * sr / info.samplerate)
+        limits = cfg.get('max_deg_per_sec') or {}
+        fast, moving = [], 0
+        for tr in score.get('tracks', []):
+            spec = mixer.default_spec(tr)
+            traj = (spec.get('spatial') or {}).get('trajectory')
+            if not traj or n < sr:
+                continue
+            az, el, dist = mixer.place_of(spec, cfg)
+            p = trajectory.path(traj, az, el, dist, n, sr, score)
+            if p is None:
+                continue
+            role = 'anchor' if trajectory.is_anchor(traj, spec.get('role')) else 'mover'
+            if role == 'anchor':
+                p = trajectory.anchor(p, az, el, dist, float(cfg.get('anchor_max_span_deg', 6.0)))
+            moving += 1
+            v, lim = trajectory.speed_deg_per_s(p, sr), float(limits.get(role, 120.0))
+            if v > lim:
+                fast.append(f'{tr.get("name")}: {v:.0f} deg/s as {role} (limit {lim:g})')
+        _row(out, 'FAIL' if fast else 'PASS', 'imm_kinematics',
+             '; '.join(fast[:4]) + ': spread the keyframes further apart' if fast
+             else f'{moving} moving source(s), none faster than its role allows')
+    space = mixer._space()
+    owned = mixer._space_owned(space) and isinstance(space.get('reflections'), dict)
+    if brir is None and (str(cfg.get('engine', 'per_stem')) != 'hoa_bus' or not owned):
+        return                               # the room rows measure the ambisonic bus's room; there is none here
+    if not (gp.on('imm.iacc_early') or gp.on('imm.clarity')):
+        return
+    dists = [float((mixer.default_spec(tr).get('spatial') or {}).get('distance', 0.0)) for tr in score.get('tracks', [])]
+    dist = float(np.median([d for d in dists if d > 0] or [2.0]))
+    if brir is None:
+        try:
+            from spatial_engine import hoa
+            mixer._use_head_set(cfg)
+            brir = hoa.probe_brir(cfg, space, sr, distance=dist, score=score)
+        except Exception as exc:
+            _row(out, 'WARN', 'imm_clarity', f'the room probe could not be rendered ({exc}); the room is not measured')
+            return
+    iacc, c80 = room_measures(brir, sr)
+    if gp.on('imm.iacc_early'):
+        lim = float(gp.param('imm.iacc_early', 'max_iacc'))
+        _row(out, 'WARN' if iacc > lim else 'PASS', 'imm_iacc_early',
+             f'room probe at {dist:g} m: early interaural correlation {iacc:.2f} (limit {lim:g}); '
+             + ('the first reflections all come from the front, so a source will sound narrow: move a side wall in '
+                'or make it harder' if iacc > lim else 'the first reflections arrive from the sides'))
+    if gp.on('imm.clarity'):
+        lim = float(gp.param('imm.clarity', 'min_c80_db'))
+        _row(out, 'WARN' if c80 < lim else 'PASS', 'imm_clarity',
+             f'room probe at {dist:g} m: C80 {c80:+.1f} dB (floor {lim:+g}); '
+             + ('the tail swamps the notes: lower late.level_db, shorten rt60_s or move the sources closer'
+                if c80 < lim else 'notes stay clear of the tail (concert halls measure about -5 to +5 dB)'))
+
+
 def per_channel_clicks(x, sr):
     """The click measurement for each delivered channel of a multichannel master, or [] for mono/stereo.
 
@@ -1573,6 +1742,8 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mo
     t_tier = time.perf_counter() if timings is not None else 0.0
     if mode != 'draft':
         immersive_rows(score, rendered, stems, out)
+        immersive2_rows(score, rendered, out)
+        fold_rows(score, rendered, out)
         ambient_fusion_rows(score, rendered, stems, out=out)
         import ambience_reference as ar                 # WARN only: a render far from its measured real recordings
         dirs = [d for d in (s_dir, os.path.dirname(s_dir) if s_dir else None) if d]

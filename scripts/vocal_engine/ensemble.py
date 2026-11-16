@@ -131,6 +131,7 @@ def render(events, sr=44100, cfg=None, seed=1, hum=False, default_vowel=None, vo
     styles = data.deep_merge(data.styles(), cfg.get('styles') or {})
     hum = bool(hum or cfg.get('hum'))
     vowel0 = default_vowel or cfg.get('vowel') or ('m' if hum else 'a')
+    events = [pf.expand_syllable(e, cfg) for e in events]
     end = max((e['t'] + e['dur'] for e in events), default=0.0) + 1.5 + abs(E['timing_spread_ms']) * 1e-3
     N = int(end * sr) + 1
     out = np.zeros((N, 2))
@@ -243,7 +244,7 @@ def render(events, sr=44100, cfg=None, seed=1, hum=False, default_vowel=None, vo
                         if i and gap >= float(B['inhale_min_s']) * 0.6:
                             continue
                         puff = breath.onset_puff(sr, rng_p, scfg['breathing'], ref, level_scale=amt)
-                        k = int(round(t0 * sr))
+                        k = max(0, int(round(t0 * sr)))    # a consonant on the first note starts before time 0
                         air[k:k + len(puff)] += puff[:max(0, N - k)]
                 brs[j] += air[:N]
                 R['inhales'] += sum(1 for i in range(len(spans) - 1)

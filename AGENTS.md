@@ -68,8 +68,17 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **5.2** Scaffold space preset if needed: `python scripts/presets.py scaffold spaces <name> --project <dir>`. Set `space`/`room` in score.
 - [ ] **5.3** Scaffold mix preset: `python scripts/presets.py scaffold mix --project <dir>`. **MUST customize it** - defaults are no-ops. Configure per piece needs (ducking, sidechain, mastering.crest_floor_db, inst_eq, etc.). Read `references/mixing/mixing-and-mastering.md` section 8b.
 - [ ] **5.4** For immersive: add `"immersive": {"enabled": true, ...}` to mix preset. Set heights in presets to match staging. Bass/drums at 0deg.
+      A scaffolded mix preset runs on the ambisonic bus (`"engine": "hoa_bus"`): a moving part gets `spatial.trajectory`
+      keyframes placed by bar or section, a room that changes gets `scenes` on the space preset, and a room's tail comes
+      from its geometry with `"rt60_s": "auto"`. Bass and drums are anchors and do not travel. Never write a path or a
+      room size in a script. `references/spatial/immersive-spatial.md` §2c.
+- [ ] **5.5a** An animal or bird the piece needs is a `calls` preset, never a script: `presets.py scaffold calls <name>
+      --project <dir>`, fill its elements from the researched recording (pitch contour, lengths, pulse rate), then
+      play it from an environment layer with `"primitive": "animal_call", "call": "<name>"`.
+      `references/spatial/environments-as-presets.md`, section on calls.
 - [ ] **5.5** For ambience/env/sfx: follow physical scene rules or layers. Every owned preset must have `"sources"`. Validate with `presets.py validate`.
-- [ ] **5.6** For SFZ (only if requested): follow Section 3b exactly.
+- [ ] **5.6** For SFZ (only if requested): follow Section 3b exactly (patch per articulation, controller matched to the
+      patch family, a written dynamics arc, no expectation of per-note vibrato).
 
 ### PHASE 6: GATE PROFILE
 - [ ] **6.1** Choose profile from table or create custom. Check with `python scripts/gate_profiles.py list` and `rows`
@@ -83,7 +92,11 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 ### PHASE 8: RENDER & ITERATE
 - [ ] **8.1** Render: `python scripts/pipeline.py <dir>/scores/<title>_score.json --project <dir> --max-attempts 3` (background for long runs)
 - [ ] **8.2** Read scoreboard, not early logs. Fix ONE thing at a time based on gate failures. Max 5 attempts.
-- [ ] **8.3** For immersive pieces, fix imm_* rows in presets/score, never loosen.
+- [ ] **8.3** For immersive pieces, fix imm_* rows in presets/score, never loosen. `imm_kinematics`: spread the
+      keyframes. `imm_low_fold` / `mix.band_fold`: narrow the stem the row names. `imm_clarity`: lower the space's
+      `late.level_db`. Table: `references/mixing/quality-gate.md` §5b.
+- [ ] **8.4** Extra deliverables are `output_targets` names, never a script: `ambix` (sound field), `adm_bw64`
+      (objects), `stereo_48k` (or `"rate_hz": 48000` on a project's own target). List a two-channel target first.
 
 ### PHASE 9: DELIVER
 - [ ] **9.1** Verify the delivery record: `python scripts/helpers/version_manager.py list --project <dir>`. Every certified render is kept as `out/master_vNN.wav` with its change in `out/versions.json`; `out/master.wav` is a copy of the newest. Never delete or overwrite a version file or a record.
@@ -137,6 +150,43 @@ If none match, open `knowledgebase/README.md`, ask the reference finder (`python
 
 ---
 
+## 3b. SFZ natural rendering (only when requested)
+
+The SFZ path (`scripts/sfz_render.py`) is not the GM path with better samples: it has one MIDI channel and a different set of
+levers. Using GM habits on an SFZ track is what leaves it sounding like a sample player.
+
+| The SFZ path does | The SFZ path ignores (GM-only) |
+|---|---|
+| humanize timing, velocity, strum and the articulation gate, exactly as GM | `per_note_channels`, `sustained` |
+| one dynamics controller curve (CC11, CC7 or CC1) every 15 ms | per-note `vibrato`, `expression` envelopes, `detune_cents` |
+| constant `controls` at t=0 (a library's own vibrato knob) | per-note pitch scoop, LFO vibrato |
+| `keyswitches` driven by each note's `art` | microtonal `c`, the `gl`/`gs` glide |
+| slurred legato: 25 ms overlap, -20 c glide, vel x0.88, 25 ms partial ramp | round-robin choice from the score |
+| `trim_db`, `dc_hp_hz`, `attack_fade_s` measured per project | `dsp.enhance_sf2_dynamics` (dynamic tilt and saturation) - GM only |
+
+1. **Patch and articulation before notes.** Pick the patch per articulation (sustain, staccato, marcato, pizzicato, tremolo,
+   legato, key-switch) and mark the notes `"art"`. One sustain patch playing a whole part, attacks included, is the SFZ tell.
+2. **Match the controller to the patch family.** "Notation" patches take loudness on CC11; "Performance" patches take it on
+   the mod wheel - set `"cc": "modwheel"` for those, or the dynamics curve does nothing.
+3. **Write the dynamics arc.** With no score `dynamics` (or track `dynamics`) the only continuous expression the SFZ path
+   has is a constant, i.e. an organ-like flat sustain. A crescendo has to exist in the score, not in the mix.
+4. **A sustained solo on SFZ is a stated limit.** The SFZ path has no per-note vibrato, scoop or expression arch. If the part
+   is a solo where a flat looped sustain is audible, play it on the GM path (which shapes each note) or the vocal engine, and
+   say which one ran. Never claim vibrato that was not sent.
+5. **Slur only what a player slurs.** `"art": "legato"` slurs bowed and blown patches; never staccato, marcato, pizzicato,
+   tremolo, spiccato, col legno or harmonics.
+6. **Measure the level, then seat it.** `trim_db` from a measurement (SFZ stems are quiet and differ per library), reverb
+   from the project `space` (a dry SFZ stem is a bug), a unique azimuth/distance per part, and `inst_eq` from the mix preset
+   for the 3-5 kHz brightness the free sets share.
+7. **Fix a library defect at its own key, after measuring it.** `attack_fade_s` for an onset that starts on a hard step,
+   `dc_hp_hz` for a DC offset. Never in advance.
+8. **Unsupported is said, not approximated.** A microtonal `c` or a `gl` glide on an SFZ track is dropped by the renderer:
+   move that part to a path that supports it, or change the part.
+9. **Report what ran.** Library, patch, the articulations used, whether `fallback: "gm"` fired, and that nothing was
+   auditioned unless `listen.py` ran.
+
+---
+
 ## 4. ELECTRONIC/EDM SPECIFICS
 
 1. **Archetype from KB** - Don't guess. Use KB archetypes.
@@ -157,7 +207,7 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
 1. **State upfront** - Say it's free multisampled (Sonatina SSO), better than GM, not commercial, played by `sfizz_render`. Size ~1.4GB total.
 2. **Install in project only** - `sfz_libs.py engine --project <dir>`, then `sfz_libs.py get sso --parts ... --project <dir>`. Verify with `sfz_libs.py check sso --project <dir>` shows 0 missing. Long downloads in background.
 3. **Read patches first** - `sfz_libs.py find sso <words>`. Each is instrument preset with `sfz` block. Wrong patch = error, no silent fallback to gm unless user accepts mixed sound.
-4. **Own mix/space** - SFZ bright at 3-5kHz and dry. Soften per instrument with `inst_eq`, seat with azimuth/distance, add reverb. Dry SFZ = bug.
+4. **Own mix/space** - SFZ bright at 3-5kHz and dry. Soften per instrument with `inst_eq`, seat with azimuth/distance, add reverb. Dry SFZ = bug. Naturalness levers: Section 3b.
 5. **Fresh project** - NEVER run `setup_project.py --new-project` on folder with existing presets (overwrites mix). Create folders manually or use fresh folder.
 6. **Check ranges** - Verify patch range before writing notes. Notes outside range silent/stretched.
 7. **Render via pipeline only** - `pipeline.py <score> --project <dir>`, never shortcut renderer. Measure stems - SFZ quiet (-19 to -28dB), set `trim_db` by measurement.

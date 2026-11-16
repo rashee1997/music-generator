@@ -177,6 +177,30 @@
         "max_harmonic_hz": {
           "type": "number"
         },
+        "model": {
+          "description": "pulse = the Rosenberg-family flow pulse; lf = Liljencrants-Fant, shaped by rd",
+          "enum": [
+            "pulse",
+            "lf"
+          ]
+        },
+        "rd": {
+          "description": "LF shape for the whole voice (0.3 pressed, 1 modal, 2.7 breathy); null = each register's own rd",
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0.3,
+          "maximum": 2.7
+        },
+        "oversample": {
+          "description": "the source is made at this multiple of the rate and decimated (less aliasing at high pitch)",
+          "enum": [
+            1,
+            2,
+            4
+          ]
+        },
         "tilt_poles": {
           "type": "integer",
           "minimum": 1,

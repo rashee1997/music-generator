@@ -58,6 +58,7 @@ KINDS = {
     'environments': dict(required=[]),
     'spaces': dict(required=['room', 'distance']),
     'materials': dict(required=['bands_hz', 'surfaces']),   # surface absorption library a space's geometry names
+    'calls': dict(required=['character', 'elements']),   # one animal's call or song as data (scripts/env_engine/calls.py)
     'sfx': dict(required=['character']),       # a one-hit effect; ambience (rain, wind, ...) is an environments preset
     'gate': dict(required=['character']),      # a piece type for the quality gate (scripts/gate_profiles.py)
     'outputs': dict(required=[]),              # one deliverable format: channels, order, file, ceiling (scripts/render_targets.py)
@@ -190,6 +191,10 @@ def validate():
 
 def scaffold(kind, name, project_dir, from_name=None):
     """Write a template preset with every key of the kind, so the user can see and change each value."""
+    if not name:
+        if kind != 'mix':
+            raise SystemExit(f'scaffold {kind} needs a name: presets.py scaffold {kind} <name> --project <dir>')
+        name = 'default'              # a project's own mix preset is its override of the default one
     templates = {
         'cultures': dict(name=name, note='what the music is and does', scales=['major'], bpm=[90, 120], meter=4,
                          pattern=None, roles=dict(lead=['flute'], pluck=['piano'], pad=['slow_strings'], bass=['cello'],
@@ -200,6 +205,9 @@ def scaffold(kind, name, project_dir, from_name=None):
                      ornament=True, cadence=True, tempo=[80, 120], avoid_instruments=[]),
         'mix': dict(name=name, character='ONE SENTENCE: what this music is (genre, mood, density) and why the mix below suits it', lead_band_hz=2000, carve_db=-4.0, max_boost_db=12.0, active_db=-55.0,
                     lead_db_margin=3.0, inst_eq={}, seating={}, level_by_role={},
+                    # strings that ring with the music (references/mixing/mixing-and-mastering.md, section 8b)
+                    sympathetic_resonance=dict(enabled=False, sources=[], tuning='score_scale', low_hz=110.0,
+                                               strings=7, partials=3, q=300.0, level_db=-26.0, width=0.5, spatial={}),
                     note='every key is written out, including role_chains and spectral.profiles: change the ones this piece needs. '
                          'An unlisted key comes from references/data/presets/mix/default.json',
                     # the strategies (references/mixing/mixing-and-mastering.md, section 8b). The defaults are what this engine
@@ -223,7 +231,12 @@ def scaffold(kind, name, project_dir, from_name=None):
                                    pair=dict(width_deg_bed=40.0, width_deg_stereo=12.0),
                                    # a listener's own head set: empty = the bundled FABIAN; else a name in presets/hrtf/ or a path
                                    hrtf=dict(dataset=''),
-                                   gate=dict(max_late_iacc=0.4))),
+                                   gate=dict(max_late_iacc=0.4),
+                                   # Immersive 2.0: one ambisonic field for the whole piece, decoded once. Moving sources
+                                   # keep their room; trajectory keyframes and space scenes need it. "per_stem" is the
+                                   # older engine (scripts/spatial_engine/hoa.py, references/spatial/immersive-spatial.md)
+                                   engine='hoa_bus', order=5, anchor_max_span_deg=6.0,
+                                   max_deg_per_sec=dict(anchor=10.0, mover=120.0))),
         # "gm" is the General MIDI sound the instrument is built on (see soundbank.py --list); the rest is the staging
         'instruments': dict(name=name, description='what it is and how it is played', gm='acoustic_guitar',
                             role='melody', humanize=dict(preset='natural', timing_ms=6.0, drift_ms=6.0, vel_sigma=4.0),
@@ -252,6 +265,17 @@ def scaffold(kind, name, project_dir, from_name=None):
         # a place = at least one BED (steady, wide, nothing recognisable) + SPOTS (events with a position). Run
         # `python environment.py --primitives` for every primitive and its parameters. atmosphere switches distance
         # filtering to ISO 9613-1. per layer: kind, gain_db, gain_curve [[s, dB], ...], decorrelate (0-1 width), spatial
+        'calls': dict(name=name, character='ONE SENTENCE: the animal, the call and where its numbers come from',
+                      # every element is one sound: a pitch contour [[position 0..1, Hz], ...], a length, a source quality
+                      elements=dict(
+                          rise=dict(f0_hz=[[0.0, 600.0], [1.0, 900.0]], ms=[250.0, 350.0], harmonics=6, rolloff=1.2,
+                                    noise=0.0, subharmonic=0.0, biphonation=0.0, vibrato_hz=0.0, vibrato_cents=30.0,
+                                    attack=0.15, release=0.3, level_db=0.0),
+                          rattle=dict(f0_hz=700.0, ms=[400.0, 600.0], harmonics=8, pulse_hz=25.0, pulse_duty=0.5)),
+                      sequence=['rise', ['rattle', 1, 2]], gap_ms=[60.0, 140.0], bouts_per_min=4.0, individuals=1,
+                      individual_spread=0.06, tract_cm=0.0, formants_hz=[], formant_q=6.0, formant_mix=0.7,
+                      temp_ref_c=20.0, rate_per_c=0.0,
+                      sources=['the recording or paper each number was read from; write ESTIMATE where none was found']),
         'environments': dict(name=name, character='ONE SENTENCE: the place, the time, and why these layers make it',
                              description='the place and what is audible in it',
                              atmosphere=dict(temp_c=20.0, rh=50.0), layers=[
@@ -366,13 +390,19 @@ def scaffold(kind, name, project_dir, from_name=None):
                                                       material_set='room_materials', max_order=2, max_taps=8,
                                                       min_level_db=-30.0),
                                         # the late field: decorrelated tails from spread directions, not one tail in both ears
-                                        late=dict(enabled=False, rt60_s=1.8, hf_decay=0.55, level_db=-18.0,
-                                                  count=6, spread_deg=60.0, rise_s=0.02, seed=7,
+                                        # "auto" works the tail out of the geometry above: Eyring's reverberation time per
+                                        # band from the box, its materials and the air, and a start at the room's mixing
+                                        # time. Write numbers instead to set them by hand.
+                                        late=dict(enabled=False, rt60_s='auto', pre_delay_ms='auto', hf_decay=0.55,
+                                                  level_db=-18.0, count=6, spread_deg=60.0, rise_s=0.02, seed=7,
                                                   bands_hz=[125, 250, 500, 1000, 2000, 4000, 8000])),
                        distance=dict(ref_m=1.5, falloff=0.18, air_damping=0.40, min_cutoff_hz=3200, reverb_exponent=0.65,
                                      pre_delay_law=dict(base_ms=32.0, per_m=3.5, max_ms=30.0),
                                      # below one metre the ears are different distances from the source; strength 0 turns the cue off
-                                     near_field=dict(enabled=True, max_m=1.0, head_radius_m=0.0875, strength=1.0,
+                                     # model "dvf" is the rigid-sphere distance variation function (the level difference
+                                     # grows towards low frequencies, as it does at a real head); "geometric" is the
+                                     # older 1/r-per-ear rule with the lf_boost shelf
+                                     near_field=dict(enabled=True, model='dvf', max_m=1.0, head_radius_m=0.0875, strength=1.0,
                                                      lf_boost=2.0, lf_hz=700.0, min_gain=0.35, max_gain=3.0)),
                        air=dict(temp_c=20.0, rh=50.0), binaural=dict(bed=False, spot=True)),
     }

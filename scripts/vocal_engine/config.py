@@ -254,6 +254,10 @@ def check(cfg):
     tp = (cfg.get('source') or {}).get('tilt_poles', 1)
     if tp not in (1, 2):
         out.append(f'source.tilt_poles must be 1 or 2 (got {tp!r})')
+    if cfg['source'].get('model', 'pulse') not in ('pulse', 'lf'):
+        out.append(f'source.model must be "pulse" or "lf" (got {cfg["source"].get("model")!r})')
+    if cfg['source'].get('oversample', 1) not in (1, 2, 4):
+        out.append(f'source.oversample must be 1, 2 or 4 (got {cfg["source"].get("oversample")!r})')
     ladder = cfg['source'].get('register_ladder') or []
     for r in ladder:
         if r not in cfg['source']['registers']:

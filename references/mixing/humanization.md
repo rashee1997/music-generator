@@ -117,6 +117,18 @@ A measured caveat worth knowing: with the default drift and motor amplitudes, th
 (~+0.6) because the slow wander dominates. That is realistic for tempo drift, but it means the module's old claim that
 neighbouring notes are anti-correlated describes the motor term, not the sum.
 
+## 3c. Vibrato that wanders (`vibrato.model: "ou"`)
+
+The default vibrato is one sine per note with a random rate, depth and phase. With `"model": "ou"` on a track's or an
+instrument preset's `vibrato` block, rate and depth each follow a seeded Ornstein-Uhlenbeck track around their mean:
+`rate_sigma` (0.06, a fraction of the rate), `depth_sigma` (0.15) and `tau_s` (0.35, how long a deviation lasts). The
+phase is the running sum of the rate, so it never jumps. Each track starts at zero deviation: a note begins regular
+and drifts as it is held. `delay_ms`, glides, `jitter_cents` and `shimmer` work as before. Chord and pad roles still
+get no vibrato.
+
+The noises of the instrument itself (bow, key, breath, damper at each onset and release) are `render.mechanics` in
+the mix preset; a preset picks its class with `mechanics_class`.
+
 ## 4. What humanization cannot fix
 
 - Wrong notes, clashing voicings, notes outside the instrument's range, bad register balance. Fix the score.

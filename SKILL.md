@@ -41,7 +41,7 @@ Follow these steps in order. Never skip steps.
 | 2 | **Research** | `python scripts/research_kb.py <dir> --topic "<topic>" --tags <tags>`. Add web sources via TinyFish (see the `use-tinyfish` skill). For ambience/effects, use `--sounds` and document real references with licenses/measurements. | `reports/research_<topic>.md` with KB citations and sources |
 | 2b | **Load references** | `python scripts/find_references.py "<the brief in plain words>" --top 5`. Then open only the files it returns, and inside them only the sections it names. | The list of files you will actually open, and why |
 | 3 | **Direction sheet** | Copy `templates/direction_sheet.json` to `<dir>/direction/direction_<title>.json`. Fill all fields per [`references/workflow/music-direction.md`](references/workflow/music-direction.md). For video, run `scripts/video_score.py` first. | Complete sheet with job, feel, sections, motifs, hits, mix_intent, spatial_staging |
-| 4 | **Create presets** | `python scripts/presets.py scaffold instruments/vocals/environments/sfx <name> --project <dir>`. Each needs unique spatial placement. | Presets in project with character, spatial.azimuth/distance |
+| 4 | **Create presets** | `python scripts/presets.py scaffold instruments/vocals/environments/calls/sfx <name> --project <dir>`. Each needs unique spatial placement. A `calls` preset is one animal's call as data, played by an environment layer (`"primitive": "animal_call"`). | Presets in project with character, spatial.azimuth/distance |
 | 5 | **Write score** | Create `<dir>/scores/<title>_score.json` (declarative, references presets). Use [`templates/custom_score_template.py`](templates/custom_score_template.py) for exact control. | Valid JSON with tracks referencing presets |
 | 6 | **Render & gate** | `python scripts/pipeline.py <dir>/scores/<title>_score.json --project <dir>` | `out/master.wav` (a copy of the newest version), `out/master_vNN.wav`, `out/versions.json`, `<master>.json` tags, `stems/`, `midi/`, `reports/ci_report.json` with 0 FAIL |
 | 7 | **Revise** | Change ONE lever at a time ([`references/workflow/music-direction.md`](references/workflow/music-direction.md) §6). Re-run step 6 until green (max 5 attempts). | All gates pass |
@@ -155,10 +155,13 @@ A score names what it wants built; the engine builds only that, never every form
 | `immersive_7_1` | 8 | ITU-R BS.2051 System H | -3.0 dBTP |
 | `immersive_7_1_4` | 12 | ITU-R BS.2051 System J | -3.0 dBTP |
 | `immersive_7_1_2` | 10 | ITU-R BS.2051 System I | -3.0 dBTP |
+| `ambix` | 36 | the mix as a fifth-order sound field (ACN, SN3D) | -3.0 dBTP |
+| `adm_bw64` | one per object + 2 | ADM objects with positions over time, stereo bed | -3.0 dBTP |
+| `stereo_48k` | 2 | the stereo master at 48 kHz (`"rate_hz"` works on any target) | -1.5 dBTP |
 
 Every number lives in `references/data/presets/outputs/` (format) and `references/data/presets/layouts/` (speaker
 positions, crossover, fold-down), loaded through `presets.py`, so a project can add its own format with two JSON files.
-Every shipped target names a renderer the engine has (`mix_master`, `spatial`, `binaural`). A project's own target with
+Every shipped target names a renderer the engine has (`mix_master`, `spatial`, `binaural`, `hoa`, `adm`). A project's own target with
 `"renderer": null` is described but cannot be built: naming it blocks the render (no silent downgrade), and `"all"`
 reports it as skipped. The CLI can override the score: `--targets stereo` or `--targets all`.
 

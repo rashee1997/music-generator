@@ -28,6 +28,10 @@ An AI agent skill and Python audio pipeline that composes, renders, mixes, and v
 * **Measured Humanization:** Separates shared ensemble tempo drift from individual player motor error, scales drum push with tempo, couples velocity to note duration, and adds note-on/note-off mechanism noise.
 * **Roughness & Masking Gates:** Runs critical-band analysis (80–6000 Hz) and ERB stereo masking checks so leads stay clear and overtones don't clash.
 * **Spatial Staging:** Applies per-stem azimuth, distance filtering, stereo width, shared room acoustics, and optional measured-HRTF binaural rendering.
+* **Immersive 2.0 (opt-in, `immersive.engine: "hoa_bus"`):** One fifth-order ambisonic bus carries every source, reflection and tail and is decoded once. Sources move by keyframes and keep their room (each reflection has its own Doppler shift), reverb time and pre-delay can be derived from the room's size and materials, and the room can change between sections.
+* **Deliverables:** Stereo, binaural, 7.1 / 7.1.2 / 7.1.4, an AmbiX sound field (`ambix`), object-based ADM BW64 (`adm_bw64`) and 48 kHz delivery (`"rate_hz": 48000`), each named in the score's `output_targets`.
+* **Voice and Expression:** An optional Liljencrants-Fant glottal source with one pressed-to-breathy control, source oversampling, syllable shorthand, vibrato that wanders, and a bed of sympathetic strings tuned to the piece.
+* **Any Animal Call as Data:** The `animal_call` environment primitive builds a call from pitch contours, a sequence, roughness, pulses and a tube length, stored as a `calls` preset; `python scripts/environment.py --call <name>` renders one alone.
 * **Preset-Driven Mixing:** Keeps sound design, spatial placement, mix bus processing, and loudness targets (LUFS / True Peak) strictly in JSON presets rather than hardcoded scripts.
 * **CI/CD Quality Gates:** Audits every render before finalizing. If a mix fails a check, it stays in `out/_draft_master.wav` until the issue is fixed.
 * **Film Scoring to Picture:** Reads a reel at three timescales (reel, scene, motion beat), caps the music's size by camera distance, places accents by hit class (dead-on or reaction-delayed), ducks the bed per band under measured speech, and certifies a cue once — picture rows run inside the same gate as the music rows. Delivery is measured in the gating mode it declares (dialogue-gated for Netflix/EBU, full program for web), and a reel assembles only certified cues.
@@ -186,7 +190,8 @@ music-generator/
 
 * **Metrics Are Not Ears:** Quality gates catch technical and psychoacoustic errors (masking, clipping, bad voice leading), but cannot judge subjective musical taste or emotional fit.
 * **General MIDI Default Bank:** Uses GeneralUser GS by default. Concert-grade orchestral realism requires supplying multisampled SFZ libraries per project.
-* **Vowel-Only Vocals:** Synthesized vocals generate textures (choirs, *oohs*, hums) without consonants or lyrics.
+* **Syllables, Not Words:** Synthesized vocals sing vowels, hums and simple syllables; there are no lyrics.
+* **Immersive 2.0 Is Measured, Not Auditioned:** The ambisonic engine, the new gate rows and the shipped animal-call presets are checked by tests and probes only. The call presets use estimated numbers, and the ADM file is an open-standard file, not a Dolby Atmos master.
 * **Cultural Idioms Are Approximations:** Non-Western scales and rhythms are approximated unless paired with authentic instrument presets or user recordings.
 * **Opt-In Binaural Processing:** Full HRTF elevation and head-shadowing only apply when `spatial.binaural: true` is enabled in the mix preset.
 * **Picture Analysis Is Heuristic:** Cuts come from `scdet`, so gradual fades and dissolves are missed (no deep detector ships); shot scale is block contrast; speech activity is presence, not content, and dialogue ducking is level- and band-based, not semantic.

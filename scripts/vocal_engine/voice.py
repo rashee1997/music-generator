@@ -87,6 +87,8 @@ def synth(f0, sr, rng, cfg, formants=None, bandwidths=None, gains=None, hum=Fals
     reg = register_track(cfg, register or (cfg['humming']['register'] if hum else st.get('register')), f0)
     block = max(16, int(cfg['tract']['block_ms'] * 1e-3 * sr))
     br = s['breathiness'] if breathiness is None else breathiness
+    if s.get('rd') is not None:                           # one voice-quality control for the whole voice
+        reg = dict(reg, rd=float(s['rd']))
     src, c, flow = source.glottal_source(
         f0, sr, rng, reg, breathiness=br, phase0=phase0,
         subharmonic=bool(st.get('subharmonic')), sub_weight=s['subharmonic_weight'],
@@ -94,7 +96,8 @@ def synth(f0, sr, rng, cfg, formants=None, bandwidths=None, gains=None, hum=Fals
         aspiration_depth=s['aspiration_pulse_depth'], tilt_hz=tilt_hz,
         jitter_pct=float(s.get('jitter_period_pct', 0.0)),
         jitter_shimmer_corr=float(s.get('jitter_shimmer_corr', 0.5)), sub_extra=creak, stats=stats, amp_mod=vib_am,
-        stats_gate=stats_gate, stats_notes=stats_notes, tilt_poles=int(s.get('tilt_poles', 1)))
+        stats_gate=stats_gate, stats_notes=stats_notes, tilt_poles=int(s.get('tilt_poles', 1)),
+        model=str(s.get('model', 'pulse')), oversample=int(s.get('oversample', 1)))
     if hum:
         y = nasal.hum_branch(src, sr, cfg['humming'], rng, flow=flow, block=block, wv=cfg['waveguide'])
     else:

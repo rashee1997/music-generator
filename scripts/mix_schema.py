@@ -243,6 +243,30 @@ DEFAULTS = {
         'hrtf': {'dataset': ''},
         'pair': {'width_deg_bed': 40.0, 'width_deg_stereo': 12.0},
         'gate': {'max_late_iacc': 0.4},
+        # 'per_stem' places each track with its own head filter (the engine every older piece was mixed with);
+        # 'hoa_bus' writes every source, reflection and tail into one ambisonic field and decodes it once
+        # (scripts/spatial_engine/hoa.py): moving sources keep their room, and keyframes and scenes need it.
+        'engine': 'per_stem',
+        'order': 5,
+        # how far an "anchor" source (bass, drums, or `spatial_role: "anchor"`) may sway around its place
+        'anchor_max_span_deg': 6.0,
+        # the fastest a source may travel, read by the imm_kinematics row. Starting values, not measured limits.
+        'max_deg_per_sec': {'anchor': 10.0, 'mover': 120.0},
+    },
+    # strings that are never played but ring with the music (sitar taraf, sarangi, piano with the pedal down).
+    # Tuned once per piece: "score_scale" takes the `strings` most-used pitch classes of the source tracks, placed
+    # upward from `low_hz`; or give `tuning` as a list of Hz. `level_db` is against the level of the sources.
+    'sympathetic_resonance': {
+        'enabled': False,
+        'sources': [],                # track names or roles; [] = every track that is not drums or a place
+        'tuning': 'score_scale',
+        'low_hz': 110.0,
+        'strings': 7,
+        'partials': 3,
+        'q': 300.0,
+        'level_db': -26.0,
+        'width': 0.5,
+        'spatial': {},                # where the bed sits on the ambisonic bus ({} = not placed)
     },
     # rendering: how the sampler is driven. `oversample` renders the SoundFont at that multiple of the rate and
     # decimates, which pushes the linear-interpolation images of a transposed sample down (measured: up two octaves
@@ -312,10 +336,19 @@ RANGES = {
     ('mastering', 'crest_floor_db'): ('num', 0.0, 30.0),
     ('immersive', 'max_elevation'): ('num', 0.0, 90.0),
     ('immersive', 'min_height_tracks'): ('num', 0.0, 24.0),
+    ('immersive', 'order'): ('num', 1.0, 7.0),
+    ('sympathetic_resonance', 'low_hz'): ('num', 27.5, 2000.0),
+    ('sympathetic_resonance', 'strings'): ('num', 1.0, 24.0),
+    ('sympathetic_resonance', 'partials'): ('num', 1.0, 8.0),
+    ('sympathetic_resonance', 'q'): ('num', 5.0, 2000.0),
+    ('sympathetic_resonance', 'level_db'): ('db', -60.0, -6.0),
+    ('sympathetic_resonance', 'width'): ('num', 0.0, 1.0),
+    ('immersive', 'anchor_max_span_deg'): ('num', 0.0, 45.0),
 }
 
 ENUMS = {
     ('gain_staging', 'strategy'): ('legacy', 'adaptive'),
+    ('immersive', 'engine'): ('per_stem', 'hoa_bus'),
     ('dynamics', 'engine'): ('pedalboard', 'dsp'),
     ('dynamics', 'detector'): ('peak', 'rms'),
     ('sidechain', 'mode'): ('legacy', 'explicit', 'off'),

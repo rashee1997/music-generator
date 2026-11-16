@@ -186,6 +186,26 @@ gate's own rows (true peak, clipping, silence) own the blocking verdicts and the
 contract. Stage 6 is one call to `quality_gate.run_gate(..., score=<the score it rendered>)`, so the
 pipeline and `quality_gate.py <score>` produce the same rows and cannot drift apart.
 
+**Sympathetic resonance** (`sympathetic_resonance`, off by default). Strings that are never played but ring with
+the music: sitar taraf, sarangi, a piano with the pedal down. A bank of resonators is tuned once for the piece and fed
+by the mixed stems of `sources` (track names or roles; empty means everything except drums and places).
+
+| Key | Meaning |
+|---|---|
+| `tuning` | `"score_scale"`: the `strings` most-used pitch classes of the source tracks, placed upward from `low_hz`. Or a list of Hz |
+| `partials` | each string also rings at this many harmonics |
+| `q` | a string at f rings for q / (pi f) seconds |
+| `level_db` | the bed against the level of what excites it |
+| `width` | stereo widening of the bed, 0 to 1 |
+| `spatial` | where the bed sits on the ambisonic bus; empty leaves it unplaced |
+
+The tuning does not follow the chords: real sympathetic strings are tuned to the scale and left alone.
+
+**Brightness that follows level** (`dynamic_tilt` on a track or an instrument preset). A SoundFont stem always gets
+it; an SFZ stem gets it when the block is present, for a library with a single velocity layer:
+`{"low_hz": 1500, "span_hz": 2600, "floor": 0.55, "curve": 1.2}`. The corner is `low_hz` plus `span_hz` times the mean
+velocity; `floor` is how much of the full band a silent moment keeps. An unknown key is an error.
+
 **Export validation.** `mix_and_master` re-reads the file it wrote and checks sample rate, channels,
 length, sample peak, oversampled true peak and full-scale samples, in `mixer.STATE['export']`. A problem
 is printed; the render is not silently accepted.

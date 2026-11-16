@@ -74,6 +74,42 @@ refactor can be separated from a sound change.
 Surface matters through the material, not a switch: the same drop pattern on tin, on leaves and on water differs
 because stiffness, loss factor and flow resistivity differ. Schema: `references/spatial/physical-scene.md`.
 
+## Any animal's call (`animal_call` and the `calls` presets)
+
+A call is written as data, not picked from a list of species. `python scripts/presets.py scaffold calls <name>
+--project <dir>` writes the template; a layer plays it with `{"primitive": "animal_call", "call": "<name>"}`, and any
+key written beside `call` replaces the preset's (`"individuals": 1`, `"bouts_per_min": 2`). Hear one alone with
+`python scripts/environment.py --call <name> --project <dir> --seconds 12 --out call.wav`.
+
+| Key | Meaning |
+|---|---|
+| `elements` | the sounds the animal makes, by name. Each has `f0_hz` (a number, or `[[position 0..1, Hz], ...]` for a contour) and `ms` (a length or a range) |
+| `sequence` | the order: `["a", ["b", 2, 4]]` plays a, then b two to four times. Absent: every element once |
+| `gap_ms` | silence between elements |
+| `tract_cm` | length of the tube after the source: resonances at (2k - 1) c / (4 L). Or list `formants_hz`. `formant_q`, `formant_mix` |
+| `bouts_per_min`, `first_s` | how often a call starts |
+| `individuals`, `individual_spread` | how many animals, and how far their pitches differ (a fraction). Each gets its own timing and distance |
+| `rate_per_c`, `temp_ref_c` | pulse rates and the call rate change by this fraction per degree; the temperature is the preset's `atmosphere.temp_c` |
+
+Keys of one element, for what the source does:
+
+| Key | Sound |
+|---|---|
+| `harmonics`, `rolloff` | 1 harmonic is a whistle; many with a low rolloff is a buzz or a roar |
+| `noise` (0 to 1) | irregular vibration and breath: harsh, rough, screamed |
+| `subharmonic` (0 to 1) | period doubling: the rough octave-below of a roar, a caw, a cry |
+| `biphonation` (a ratio) | a second pitch that is not a harmonic of the first |
+| `jump` `[position, ratio]` | a register break: the pitch steps instead of gliding |
+| `pulse_hz`, `pulse_duty` | the sound chopped into pulses: trills, purrs, growls, rattles, frog calls |
+| `vibrato_hz`, `vibrato_cents`, `attack`, `release`, `level_db` | shape |
+
+How to write one from research: read the pitch contour, the element lengths and the pulse rate off a spectrogram of
+a real recording (they are the three numbers that identify a call), take the tract length from the animal's size, and
+set the roughness keys by what the spectrogram shows between the harmonics. Put the recording or paper in `sources`;
+write ESTIMATE where a number was not measured. The shipped call presets are starting shapes with estimated numbers,
+and the project gate rules for an owned environment apply to them as well. `woodland_dawn` and `wetland_night` are
+example places built from them.
+
 ## Starting values by place
 
 | Place | Bed | Spots | Space rt60 |

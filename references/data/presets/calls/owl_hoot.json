@@ -1,0 +1,93 @@
+{
+  "name": "owl_hoot",
+  "character": "A large owl: low, nearly pure hoots, one long and then a short run, far apart in the night.",
+  "elements": {
+    "long": {
+      "f0_hz": [
+        [
+          0,
+          340
+        ],
+        [
+          0.3,
+          365
+        ],
+        [
+          1,
+          330
+        ]
+      ],
+      "ms": [
+        550,
+        700
+      ],
+      "harmonics": 3,
+      "rolloff": 2.2,
+      "attack": 0.25,
+      "release": 0.4
+    },
+    "short": {
+      "f0_hz": [
+        [
+          0,
+          350
+        ],
+        [
+          1,
+          335
+        ]
+      ],
+      "ms": [
+        140,
+        190
+      ],
+      "harmonics": 3,
+      "rolloff": 2.2,
+      "attack": 0.3,
+      "release": 0.4
+    },
+    "trail": {
+      "f0_hz": [
+        [
+          0,
+          360
+        ],
+        [
+          0.2,
+          372
+        ],
+        [
+          1,
+          300
+        ]
+      ],
+      "ms": [
+        800,
+        1100
+      ],
+      "harmonics": 3,
+      "rolloff": 2.2,
+      "vibrato_hz": 9.0,
+      "vibrato_cents": 25,
+      "attack": 0.2,
+      "release": 0.5
+    }
+  },
+  "sequence": [
+    "long",
+    [
+      "short",
+      2,
+      3
+    ],
+    "trail"
+  ],
+  "gap_ms": [
+    220,
+    420
+  ],
+  "bouts_per_min": 2.5,
+  "sources": [
+    "ESTIMATE: typical values for this kind of call written from general knowledge, not measured from a recording and not auditioned. Replace them with numbers from a real recording of the species the project needs."
+  ]
+}

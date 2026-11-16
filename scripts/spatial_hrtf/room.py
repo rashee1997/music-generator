@@ -123,7 +123,7 @@ def taps(geom, azimuth_deg=0.0, elevation_deg=0.0, distance_m=2.0, sr=SR):
                 out.append(dict(delay_ms=(path - direct) / C * 1000.0, distance_m=float(path),
                                 azimuth=float(np.degrees(np.arctan2(ix - lx, iy - ly))),
                                 elevation=float(np.degrees(np.arcsin(np.clip((iz - lz) / path, -1, 1)))),
-                                coeffs=coeff, level=level))
+                                coeffs=coeff, level=level, image=(i, j, k)))
     if not out:
         return []
     floor_db = float(geom.get('min_level_db', -30.0))
@@ -140,7 +140,8 @@ def late_ir(cfg, sr=SR):
     cfg: rt60_s, hf_decay, bands_hz, seed, rise_s (the tail builds for one mean free path instead of starting at full
     level, which is what a room does).
     """
-    rt60 = max(0.05, float(cfg.get('rt60_s', 1.6)))
+    per_band = cfg.get('rt60_bands_s')               # one RT60 per band (late_cfg writes it for rt60_s "auto")
+    rt60 = max(0.05, float(max(per_band) if per_band else cfg.get('rt60_s', 1.6)))
     hf = float(np.clip(cfg.get('hf_decay', 0.55), 0.05, 1.5))
     bands = cfg.get('bands_hz') or list(BANDS_HZ)
     n = int(min(12.0, rt60 * 1.6) * sr)
@@ -158,14 +159,101 @@ def late_ir(cfg, sr=SR):
         lo, hi = max(20.0, edges[b]), min(sr * 0.45, edges[b + 1])
         if hi - lo < 20.0:
             continue
-        decay = rt60 * (hf ** min(3, b / 2.0))          # lows ring longest
+        decay = float(per_band[b]) if per_band else rt60 * (hf ** min(3, b / 2.0))          # lows ring longest
         env = np.exp(-6.9078 * t / max(0.05, decay))
         ir += band(noise, lo, hi) * env
     rise = max(0.0, float(cfg.get('rise_s', 0.0)))
     if rise > 0:
         ir *= np.clip(t / rise, 0.0, 1.0) ** 0.5
     ir /= np.sqrt(np.mean(ir ** 2)) + 1e-12
+    gap = int(max(0.0, float(cfg.get('pre_delay_ms') or 0.0)) / 1000.0 * sr)
+    if gap:
+        ir = np.concatenate([np.zeros(gap), ir])
     return ir.astype(np.float32)
+
+
+def _box(geom):
+    """(width, depth, height, absorption of floor / ceiling / walls per band, bands) of a geometry block."""
+    w, d, h = (float(geom.get(k, v)) for k, v in (('width_m', 10.0), ('depth_m', 12.0), ('height_m', 5.0)))
+    table = material_table(geom.get('material_set'))
+    mats = geom.get('materials') or {}
+    return (w, d, h, coefficients(table, mats.get('floor', 'wood')), coefficients(table, mats.get('ceiling', 'plaster')),
+            coefficients(table, mats.get('walls', 'plaster')), [float(b) for b in table.get('bands_hz') or BANDS_HZ])
+
+
+def eyring_rt60(geom, temp_c=20.0, rh=50.0):
+    """(bands_hz, RT60 per band) of the box: Eyring's formula with the air term,
+
+        T = 24 ln(10) / c * V / (-S ln(1 - a_mean) + 4 m V)
+
+    a_mean is the area-weighted absorption of the six surfaces and m the power attenuation of air per metre
+    (ISO 9613-1, from airabs). Eyring and not Sabine, because Sabine over-reads a dead room and never reaches zero
+    for an open one."""
+    w, d, h, a_floor, a_ceil, a_wall, bands = _box(geom)
+    scripts = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if scripts not in sys.path:
+        sys.path.insert(0, scripts)
+    import airabs
+    vol, s_plan, s_wall = w * d * h, w * d, 2.0 * h * (w + d)
+    surf = 2.0 * s_plan + s_wall
+    a_mean = np.clip((s_plan * (a_floor + a_ceil) + s_wall * a_wall) / surf, 1e-4, 0.999)
+    m = airabs.alpha_db_per_m(bands, temp_c, rh) / (10.0 / np.log(10.0))      # dB/m -> nepers of power per metre
+    return bands, 24.0 * np.log(10.0) / C * vol / (-surf * np.log(1.0 - a_mean) + 4.0 * m * vol)
+
+
+def mixing_time_ms(geom):
+    """When a shoebox's reflections have become a diffuse field: 20 V/S + 12 ms (the model-based predictor of
+    Lindau, Kosanke & Weinzierl, JAES 2012). The late tail starts here when `late.pre_delay_ms` is "auto"."""
+    w, d, h = (float(geom.get(k, v)) for k, v in (('width_m', 10.0), ('depth_m', 12.0), ('height_m', 5.0)))
+    return 20.0 * (w * d * h) / (2.0 * (w * d + h * (w + d))) + 12.0
+
+
+def late_cfg(refl):
+    """The preset's `late` block with every "auto" worked out from the room's own geometry, so the tail and the
+    reflections describe one room. A block with no "auto" comes back as it is."""
+    cfg = (refl or {}).get('late') if isinstance(refl, dict) else None
+    if not cfg or 'auto' not in (cfg.get('rt60_s'), cfg.get('pre_delay_ms')):
+        return cfg
+    geom = refl.get('geometry')
+    if not geom:
+        raise ValueError('late.rt60_s / late.pre_delay_ms "auto" need reflections.geometry: without a room there is '
+                         'nothing to work them out from')
+    cfg = dict(cfg)
+    if cfg.get('rt60_s') == 'auto':
+        bands, t60 = eyring_rt60(geom)
+        cfg.update(bands_hz=bands, rt60_bands_s=[float(v) for v in t60],
+                   rt60_s=float(np.mean([v for b, v in zip(bands, t60) if 400.0 <= b <= 1250.0] or t60)))
+    if cfg.get('pre_delay_ms') == 'auto':
+        cfg['pre_delay_ms'] = mixing_time_ms(geom)
+    return cfg
+
+
+def image_tracks(geom, azimuth_deg, elevation_deg, distance_m, sr=SR):
+    """The images `taps` keeps, followed along a source path.
+
+    azimuth / elevation / distance are arrays (one value per control point; length 1 for a still source). The images
+    are chosen once, at the path's mean position, so a tap never appears or vanishes mid-move. Returns
+    (direct_m, [dict(path_m, azimuth, elevation, coeffs)]), every array the length of the input.
+    """
+    az = np.radians(np.atleast_1d(np.asarray(azimuth_deg, float)))
+    el = np.radians(np.atleast_1d(np.asarray(elevation_deg, float)))
+    dist = np.maximum(0.2, np.atleast_1d(np.asarray(distance_m, float)))
+    kept = taps(geom, float(np.degrees(np.mean(az))), float(np.degrees(np.mean(el))), float(np.mean(dist)), sr=sr)
+    w, d, h = (float(geom.get(k, v)) for k, v in (('width_m', 10.0), ('depth_m', 12.0), ('height_m', 5.0)))
+    lis = geom.get('listener') or {}
+    lx, ly, lz = float(lis.get('x', w / 2.0)), float(lis.get('y', 0.3 * d)), float(lis.get('z', 1.5))
+    sx = np.clip(lx + dist * np.cos(el) * np.sin(az), 0.05, w - 0.05)        # the same clamp as taps(): a source
+    sy = np.clip(ly + dist * np.cos(el) * np.cos(az), 0.05, d - 0.05)        # never mirrors from outside a wall
+    sz = np.clip(lz + dist * np.sin(el), 0.05, h - 0.05)
+    direct = np.sqrt((sx - lx) ** 2 + (sy - ly) ** 2 + (sz - lz) ** 2)
+    out = []
+    for t in kept:
+        i, j, k = t['image']
+        ix, iy, iz = _images(i, w, sx)[0], _images(j, d, sy)[0], _images(k, h, sz)[0]
+        path = np.sqrt((ix - lx) ** 2 + (iy - ly) ** 2 + (iz - lz) ** 2)
+        out.append(dict(path_m=path, azimuth=np.degrees(np.arctan2(ix - lx, iy - ly)),
+                        elevation=np.degrees(np.arcsin(np.clip((iz - lz) / path, -1, 1))), coeffs=t['coeffs']))
+    return direct, out
 
 
 def directions(cfg):

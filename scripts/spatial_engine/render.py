@@ -16,6 +16,8 @@ A track's own stem is placed at its track-preset position (azimuth, elevation); 
 low-frequency channel and its mains are high-passed, so one low end has one owner. Everything else keeps its main image;
 a mix preset may add a complement send, which is why `lfe_sends` is separate from `lfe_roles`.
 """
+import contextlib
+
 import numpy as np
 import soundfile as sf
 
@@ -123,6 +125,9 @@ def _mono_fold(y):
     return 0.5 * (y[:, 0] + y[:, 1])
 
 
+PAN_STRIDE = 16
+
+
 class LayoutBus:
     """The summing target for a discrete deliverable.
 
@@ -132,6 +137,7 @@ class LayoutBus:
 
     The interface is the one `bus` in mix_stems expects: add(name, signal, spec), add_reverb(signal), result().
     """
+    places_tracks = True               # with immersive on, the mixer hands tracks over unplaced
 
     def __init__(self, layout_name, target_name=None, sr=44100):
         problems = config.problems(layout_name)
@@ -150,6 +156,13 @@ class LayoutBus:
         self.decorrelation = layout.get('decorrelation') or {}
         self.parts = {name: [] for name in self.names}
         self.low_sends = []
+        self.room = None
+        self.imm, self.score = None, None      # set by the mixer when the piece is immersive
+
+    def attach_room(self, room_bus):
+        """Give the layout a room: an ambisonic bus (hoa.HoaBus, room_only) that hears every track this bus is
+        handed and returns its reflections and late field on the loudspeakers. The direct sound stays VBAP."""
+        self.room = room_bus
 
     def _add(self, channel, signal):
         signal = np.asarray(signal, dtype=np.float64)
@@ -162,6 +175,8 @@ class LayoutBus:
         if mono.size == 0:
             return
         spec = dict(spec or {})
+        if self.room is not None:
+            self.room.add(name, y, spec)
         role = str(spec.get('role') or '')
         cutoff = self.lfe.get('lowpass_hz')
         if role in self.roles and cutoff:
@@ -177,9 +192,36 @@ class LayoutBus:
         sp = spec.get('spatial') or {}
         azimuth = float(sp.get('azimuth', spec.get('azimuth', 0.0)))
         elevation = float(sp.get('elevation', spec.get('elevation', 0.0)))
-        for speaker, gain in pan.gains(azimuth, elevation, self.speakers).items():
-            if gain:
-                self._add(speaker, mains * gain)
+        path = None
+        if self.imm and sp:                    # an immersive piece: the role's height, and the track's own path
+            import mixer
+            from . import trajectory
+            azimuth, elevation, dist = mixer.place_of(spec, self.imm)
+            traj = sp.get('trajectory')
+            path = trajectory.path(traj, azimuth, elevation, dist, len(mains), self.sr, self.score)
+            if path is not None and trajectory.is_anchor(traj, role):
+                path = trajectory.anchor(path, azimuth, elevation, dist,
+                                         float(self.imm.get('anchor_max_span_deg', 6.0)))
+        if path is None:
+            for speaker, gain in pan.gains(azimuth, elevation, self.speakers).items():
+                if gain:
+                    self._add(speaker, mains * gain)
+            return
+        # A moving source: VBAP gains every PAN_STRIDE control points (about 23 ms), linear in between, power kept.
+        # shortcut: level follows distance but there is no Doppler shift on loudspeakers; the room bus has it.
+        idx = np.unique(np.append(np.arange(0, len(path), PAN_STRIDE), len(path) - 1))
+        table = np.zeros((len(idx), len(self.speakers)))
+        col = {s['name']: j for j, s in enumerate(self.speakers)}
+        for i, k in enumerate(idx):
+            for speaker, gain in pan.gains(path[k, 0], path[k, 1], self.speakers).items():
+                table[i, col[speaker]] = gain
+        at = np.arange(len(mains)) / float(trajectory.HOP)
+        g = np.stack([np.interp(at, idx, table[:, j]) for j in range(table.shape[1])], axis=1)
+        g /= np.maximum(np.sqrt(np.sum(g * g, axis=1, keepdims=True)), 1e-9)
+        level = max(dist, 1.0) / np.maximum(trajectory.at_samples(path, 2, 0, len(mains)), 1.0)
+        for speaker, j in col.items():
+            if table[:, j].any():
+                self._add(speaker, mains * g[:, j] * level)
 
     def add_reverb(self, ret):
         """Spread the shared reverb return: the layout says how loud it sits in front, around and above."""
@@ -206,6 +248,11 @@ class LayoutBus:
         for name, parts in self.parts.items():
             for signal in parts:
                 mix[name][:len(signal)] += signal
+        if self.room is not None and n:
+            room = self.room.result()
+            for i, speaker in enumerate(self.speakers):
+                m = min(n, len(room))
+                mix[speaker['name']][:m] += room[:m, i]
         if self.lfe_speaker is not None and self.low_sends:
             low = bass.lfe_bus(self.low_sends, self.sr, self.lfe)
             mix[self.lfe_speaker['name']][:len(low)] += low
@@ -228,12 +275,10 @@ def spatial_mix(score, stems, target_name, sr=44100, ctx=None):
     return bus.result()
 
 
-def binaural_mix(score, stems, sr=44100, ctx=None):
-    """The headphone deliverable: the same mix with the head-related route switched on for the whole piece.
-
-    The route itself is the mixer's existing immersive placement (measured head data when spatial_hrtf is available,
-    spatial.py when it is not); only the switch belongs to the deliverable, not to the score's stereo mix preset.
-    """
+@contextlib.contextmanager
+def _immersive(score, ctx=None):
+    """The piece's mix context with the immersive block switched on, current for the length of the block. The
+    switch belongs to the deliverable, not to the score's stereo mix preset."""
     import mix_context
     import mix_schema
     import mixer
@@ -246,13 +291,80 @@ def binaural_mix(score, stems, sr=44100, ctx=None):
     bctx.mix['immersive'] = immersive
     mix_context.make_current(bctx)
     try:
+        yield bctx
+    finally:
+        mix_context.make_current(previous)
+
+
+def binaural_mix(score, stems, sr=44100, ctx=None):
+    """The headphone deliverable: the same mix with the head-related route switched on for the whole piece.
+
+    The route itself is the mixer's existing immersive placement (measured head data when spatial_hrtf is available,
+    spatial.py when it is not).
+    """
+    import mixer
+    with _immersive(score, ctx) as bctx:
         mix = mixer.mix_stems(score, stems, sr, bctx)
         mix = mixer.trim_tail(mix, sr)
         master_cfg = dict(score.get('master') or {})
         out = mixer.master_chain(mix, master_cfg, sr, bctx)
         out = mixer.fades(out, sr, fout=float(master_cfg.get('fade_out', 0.6)))
-    finally:
-        mix_context.make_current(previous)
+    return out
+
+
+def _level(audio, ref, score, target, sr):
+    """One gain for a programme that has no loudspeaker layout to measure: `ref`, a two-channel stand-in for it,
+    is brought to the loudness target, then the gain is cut until every channel is under the ceiling. A single
+    gain, because separate ones would move the sound field."""
+    import mixer
+    from . import master
+    cfg = mixer._master_cfg(dict(score.get('master') or {}), mixer._mix())
+    gain_db = float(cfg.get('lufs', -14.0)) - float(mixer.lufs(ref, sr))
+    if not np.isfinite(gain_db):
+        gain_db = 0.0
+    ceiling = float(target.get('true_peak_dbtp', -1.5))
+    gain_db = min(gain_db, ceiling - 0.05 - max(master.channel_peaks(audio, sr)))
+    return mixer.fades(audio * np.float32(10.0 ** (gain_db / 20.0)), sr, fout=float(cfg.get('fade_out', 0.6)))
+
+
+def hoa_mix(score, stems, target, sr=44100, ctx=None):
+    """The mix as a sound field: AmbiX (ACN order, SN3D), (order + 1)^2 channels. Any ambisonic decoder can then
+    put it on any loudspeakers or headphones, and it can still be rotated (head tracking, 360 video)."""
+    import mixer
+    from . import hoa
+    with _immersive(score, ctx) as bctx:
+        imm = bctx.mix['immersive']
+        bus = hoa.HoaBus(sr, int(target.get('order') or imm.get('order', 5)), 'ambix', imm, bctx.space, score)
+        field = mixer.trim_tail(mixer.mix_stems(score, stems, sr, bctx, bus=bus), sr)
+        return _level(field, np.repeat(field[:, :1], 2, axis=1), score, target, sr)   # W is the plain pressure
+
+
+def adm_mix(score, stems, target, sr=44100, ctx=None):
+    """(audio, axml, chna rows) of the object-based deliverable: see adm.py."""
+    import mixer
+    from . import adm
+    with _immersive(score, ctx) as bctx:
+        bus = adm.AdmBus(sr, bctx.mix['immersive'], score)
+        audio = mixer.trim_tail(mixer.mix_stems(score, stems, sr, bctx, bus=bus), sr)
+        audio = _level(audio, bus.stereo_fold(audio), score, target, sr)
+    return audio, bus
+
+
+def to_rate(audio, sr, rate, ceiling=None):
+    """The programme at another sample rate (polyphase resampling). The new samples fall between the old ones, so
+    the true peak is measured again and the whole programme is turned down if it now passes the ceiling."""
+    from math import gcd
+    from scipy.signal import resample_poly
+    from . import master
+    rate = int(rate)
+    if rate == int(sr):
+        return np.asarray(audio, np.float32)
+    g = gcd(rate, int(sr))
+    out = resample_poly(np.asarray(audio, np.float64), rate // g, int(sr) // g, axis=0).astype(np.float32)
+    if ceiling is not None:
+        over = max(master.channel_peaks(out, rate)) - float(ceiling)
+        if over > 0.0:
+            out = out * np.float32(10.0 ** (-(over + 0.05) / 20.0))
     return out
 
 
@@ -260,16 +372,31 @@ def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None):
     """Build one requested deliverable and write it. The target preset's `renderer` names the route."""
     target = config.target(target_name) or {}
     renderer = target.get('renderer')
+    rate = int(target.get('rate_hz') or sr)
+    ceiling = target.get('true_peak_dbtp')
+    subtype = str(target.get('subtype') or 'PCM_24')
     if renderer == 'spatial':
         from . import master
         audio = master.master(spatial_mix(score, stems, target_name, sr, ctx), score, target, sr)
     elif renderer == 'binaural':
         audio = binaural_mix(score, stems, sr, ctx)
+    elif renderer == 'hoa':
+        audio = hoa_mix(score, stems, target, sr, ctx)
+    elif renderer == 'adm':
+        from . import adm
+        audio, bus = adm_mix(score, stems, target, sr, ctx)
+        audio = to_rate(audio, sr, rate, ceiling)
+        return adm.write(path, audio, rate, bus.xml(len(audio), rate), bus.chna())
     elif renderer == 'mix_master':
         import mixer
         mixer.mix_and_master(score, stems, path, sr=sr, ctx=ctx)
+        if rate != sr:                         # the certified master, resampled: nothing else about it changes
+            import soundfile as sf
+            info = sf.info(path)
+            write(path, to_rate(sf.read(path, always_2d=True, dtype='float32')[0], sr, rate, ceiling), rate,
+                  subtype=info.subtype)
         return path
     else:
         raise ValueError(f'deliverable "{target_name}" names renderer {renderer!r}, which the engine does not have')
-    write(path, audio, sr, subtype=str(target.get('subtype') or 'PCM_24'))
+    write(path, to_rate(audio, sr, rate, ceiling), rate, subtype=subtype)
     return path

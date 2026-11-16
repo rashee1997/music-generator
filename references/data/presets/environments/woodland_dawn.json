@@ -1,0 +1,60 @@
+{
+  "name": "woodland_dawn",
+  "description": "A temperate wood at first light: a light breeze, songbirds near and far, a cuckoo in the distance (example: copy into your project's presets/environments/ and tune it from your research; not auditioned)",
+  "character": "A leafy wood at dawn: a quiet air bed, three songbirds around the listener and a far two-note call on the left.",
+  "atmosphere": {
+    "temp_c": 11,
+    "rh": 80
+  },
+  "layers": [
+    {
+      "name": "air",
+      "primitive": "noise_bed",
+      "kind": "bed",
+      "gain_db": -26.0,
+      "low_hz": 120,
+      "high_hz": 3200,
+      "decorrelate": 0.8
+    },
+    {
+      "name": "songbirds",
+      "primitive": "animal_call",
+      "call": "songbird_phrase",
+      "kind": "spot",
+      "gain_db": -22.0,
+      "spatial": {
+        "azimuth": 35,
+        "elevation": 25,
+        "distance": 8
+      }
+    },
+    {
+      "name": "songbirds_far",
+      "primitive": "animal_call",
+      "call": "songbird_phrase",
+      "kind": "spot",
+      "gain_db": -30.0,
+      "bouts_per_min": 6.0,
+      "spatial": {
+        "azimuth": -70,
+        "elevation": 15,
+        "distance": 25
+      }
+    },
+    {
+      "name": "cuckoo",
+      "primitive": "animal_call",
+      "call": "cuckoo_two_note",
+      "kind": "spot",
+      "gain_db": -30.0,
+      "spatial": {
+        "azimuth": -40,
+        "distance": 60
+      }
+    }
+  ],
+  "blending": {
+    "overall_gain_db": -22.0,
+    "high_pass_hz": 90
+  }
+}

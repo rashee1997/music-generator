@@ -331,6 +331,28 @@ def _mean_vel(ev):
     return float(np.mean([e['v'] for e in ev])) if ev else None
 
 
+TILT_KEYS = ('low_hz', 'span_hz', 'floor', 'curve')
+VIBRATO_MODELS = ('lfo', 'ou')
+
+
+def _ou(rng, n, dt, tau_s, sigma):
+    """A seeded Ornstein-Uhlenbeck track: mean 0, standard deviation `sigma`, correlation time `tau_s`. It starts
+    at 0, so a note's vibrato begins regular and wanders as it goes on, the way a player's does."""
+    from scipy.signal import lfilter
+    a = float(np.exp(-dt / max(float(tau_s), 1e-3)))
+    return lfilter([float(sigma) * np.sqrt(1.0 - a * a)], [1.0, -a], rng.standard_normal(n))
+
+
+def _tilt_block(tr, inst_cfg, name):
+    """The `dynamic_tilt` block of a track or its instrument preset (None = off). Unknown keys are an error."""
+    blk = tr.get('dynamic_tilt') or (inst_cfg or {}).get('dynamic_tilt')
+    if not blk:
+        return None
+    if not isinstance(blk, dict) or any(k not in TILT_KEYS for k in blk):
+        raise ValueError(f'track "{name}": dynamic_tilt takes only {", ".join(TILT_KEYS)} (got {blk!r})')
+    return blk
+
+
 def _is_sfz_track(tr):
     """True when render_track would take the SFZ path for this track (mirrors its dispatch order)."""
     raw_inst = str(tr.get('instrument', 'piano'))
@@ -373,6 +395,9 @@ def _sfz_track(tr, tm, cfg, seed, ts, swing, global_dyn, raw_inst, inst_cfg, qua
             return None
         raise RuntimeError(f'track "{name}": {ex}')
     _record(name, sfz=f"{blk['library']}/{blk['patch']}")
+    tilt = _tilt_block(tr, inst_cfg, name)
+    if tilt:                                   # a library with one velocity layer is as flat as a SoundFont
+        x = dsp.dynamic_tilt(x, sr=SR, velocity=_mean_vel(ev), **tilt)
     return x
 
 
@@ -583,6 +608,11 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
         d = VIBRATO_DEFAULT.get(inst)
         vib = dict(depth_cents=d[0], rate_hz=d[1], delay_ms=d[2] * 1000) if d else dict(depth_cents=0)
 
+    vib_model = str(vib.get('model', 'lfo'))
+    if vib_model not in VIBRATO_MODELS:
+        raise ValueError(f'track "{tr.get("name", inst)}": vibrato.model "{vib_model}" is not one of '
+                         f'{", ".join(VIBRATO_MODELS)}')
+
     expr_kind = tr.get('expression')
     if expr_kind is None and inst_cfg and 'expression' in inst_cfg:
         expr_kind = inst_cfg['expression']
@@ -634,6 +664,12 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
             rate = vib.get('rate_hz', 5.5) * (1 + rng.normal(0, 0.04))
             delay = e.get('vd', vib.get('delay_ms', 250) / 1000.0)     # nyasa notes: vibrato waits longer
             phase = rng.random() * 6.283
+            vph = vdep = None
+            if vib_model == 'ou' and depth > 0:    # rate and depth wander around their mean; the phase stays continuous
+                tau = float(vib.get('tau_s', 0.35))
+                r_t = rate * (1.0 + _ou(rng, n_steps, step, tau, float(vib.get('rate_sigma', 0.06))))
+                vph = phase + 2 * np.pi * np.cumsum(r_t) * step
+                vdep = 1.0 + _ou(rng, n_steps, step, tau, float(vib.get('depth_sigma', 0.15)))
             # human perturbation, not a clean LFO: healthy sustained phonation sits near 0.5 % jitter and 3-5 %
             # shimmer (acoustic-voice literature), and a perfectly periodic vibrato is the synth tell
             jitter_cents = float(vib.get('jitter_cents', 0.0))
@@ -657,7 +693,8 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
                 slide = glide * (1 - min(age / gs, 1.0)) ** 2 if glide else 0.0
                 if depth > 0 and dur > 0.30 and age > delay * 0.5:
                     ramp = np.clip((age - delay * 0.5) / 0.35, 0, 1)
-                    cents = (micro + slide + depth * ramp * np.sin(2 * np.pi * rate * age + phase)
+                    osc = np.sin(2 * np.pi * rate * age + phase) if vph is None else vdep[k] * np.sin(vph[k])
+                    cents = (micro + slide + depth * ramp * osc
                              + jitter_cents * np.sin(2 * np.pi * 0.9 * age + phase * 1.7))
                     b = bend_value(cents)
                     if b != last_b:
