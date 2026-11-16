@@ -568,6 +568,35 @@ def per_channel_clicks(x, sr):
     return [gc.check_clicks(Signal(x[:, c], sr)) for c in range(x.shape[1])]
 
 
+def _read_delivered(path, out):
+    """The delivered file as (frames, channels) float32 plus its rate, whatever container it is in.
+
+    A BW64 ADM deliverable cannot be opened by libsndfile (`Format not recognised` for the BW64 magic; it
+    reads RF64, not BW64), so an object master listed first in `output_targets` would otherwise crash every
+    stereo-shaped row below. It is parsed by its own reader and folded to two channels for those rows, which
+    is the same reference the renderer levelled it on. An unreadable file raises a FAIL row that names the
+    reader and the file instead of a traceback.
+    """
+    import soundfile as sf
+    try:
+        with open(path, 'rb') as fh:
+            magic = fh.read(4)
+    except OSError as exc:
+        _row(out, 'FAIL', 'audio.read', f'cannot open {path} ({exc})')
+        raise
+    if magic == b'BW64':
+        from spatial_engine import adm
+        try:
+            parsed = adm.parse(path)
+            return adm.fold_to_stereo(parsed), parsed['sr']
+        except ValueError as exc:
+            _row(out, 'FAIL', 'audio.read',
+                 f'{os.path.basename(str(path))}: a BW64 deliverable that cannot be folded for the stereo rows '
+                 f'({exc}); its own adm.container row names the structural fault')
+            raise
+    return sf.read(path, always_2d=True)
+
+
 def audio_checks(path, score, out, metrics=None):
     """Measurements of the rendered file against the score's own targets."""
     master = score.get('master', {})
@@ -577,8 +606,10 @@ def audio_checks(path, score, out, metrics=None):
     # A speaker-layout master is analysed through its layout's fold-down, never a channel mean or the first two
     # channels alone. Per-channel delivery limits are independently certified by spatial_gate.output_rows.
     import render_targets
-    import soundfile as _sf
-    _multi, _multi_sr = _sf.read(path, always_2d=True)
+    try:
+        _multi, _multi_sr = _read_delivered(path, out)
+    except Exception:
+        return                     # the FAIL row that says why is already in `out`
     _layout = None
     for _name in render_targets.resolve(score)['selected']:
         _tgt = render_targets.get(_name) or {}

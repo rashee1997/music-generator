@@ -313,9 +313,13 @@ def binaural_mix(score, stems, sr=44100, ctx=None):
 
 
 def _level(audio, ref, score, target, sr):
-    """One gain for a programme that has no loudspeaker layout to measure: `ref`, a two-channel stand-in for it,
-    is brought to the loudness target, then the gain is cut until every channel is under the ceiling. A single
-    gain, because separate ones would move the sound field."""
+    """One gain for a programme that has no loudspeaker layout to measure: `ref`, a two-channel fold of it,
+    is brought to the loudness target, then the gain is cut until every channel's true peak is under the
+    ceiling. A single gain, because separate ones would move the sound field.
+
+    The fold is this engine's internal levelling reference, not a standard-required loudness: an ADM
+    object file has no loudness until a renderer folds it, and the method is recorded in the delivery
+    report (AdmBus.report) and in spatial_gate's adm.loudness row."""
     import mixer
     from . import master
     cfg = mixer._master_cfg(dict(score.get('master') or {}), mixer._mix())
@@ -383,10 +387,19 @@ def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None):
     elif renderer == 'hoa':
         audio = hoa_mix(score, stems, target, sr, ctx)
     elif renderer == 'adm':
+        import json
+        import os as _os
         from . import adm
         audio, bus = adm_mix(score, stems, target, sr, ctx)
-        audio = to_rate(audio, sr, rate, ceiling)
-        return adm.write(path, audio, rate, bus.xml(len(audio), rate), bus.chna())
+        audio = to_rate(audio, sr, rate, ceiling)   # rescales at the target rate, re-alarms its true peak
+        out_path = adm.write(path, audio, rate, bus.xml(len(audio), rate), bus.chna())
+        report = bus.report(len(audio), rate)
+        report.update({'format': 'BW64', 'file': str(out_path), 'true_peak_ceiling_dbtp': ceiling,
+                       'validation': 'scripts/spatial_engine/adm.py validate_file (structural; gate rows in '
+                                     'scripts/spatial_gate.py). No third-party validator ran.'})
+        with open(str(out_path) + '.adm_report.json', 'w', encoding='utf-8') as fh:
+            json.dump(report, fh, indent=2)
+        return out_path
     elif renderer == 'mix_master':
         import mixer
         mixer.mix_and_master(score, stems, path, sr=sr, ctx=ctx)

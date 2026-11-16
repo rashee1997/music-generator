@@ -317,6 +317,13 @@ def residual_rows(ctx, rows):
                         f'{len(log) - 1} extra round(s)'))
 
 
+# The weight of one row in the extraction score. INFO is a row that ran but had nothing to judge (and a row
+# that could not run at all, e.g. no figure to mask): it is neither a pass nor a warning, so it adds nothing.
+# An unknown level is weighted as a FAIL rather than raising: these rows come from imported gates as well as
+# this module, and a level this file has not seen must never crash the run (the row itself stays in the report).
+LEVEL_WEIGHT = {'PASS': 0, 'INFO': 0, 'WARN': 3, 'FAIL': 10}
+
+
 CHECKS = (magnitude_match, fidelity_rows, midi_rows, render_rows, natural_rows, levels, onset_coverage, database_agreement, residual_rows)
 
 
@@ -330,7 +337,7 @@ def evaluate(ctx):
             fn(ctx, rows)
         except Exception as e:                                 # a broken check must show up in the report, never vanish
             rows.append(row(fn.__name__, 'WARN', '', '', f'check crashed: {type(e).__name__}: {e}'))
-    score = sum({'PASS': 0, 'WARN': 3, 'FAIL': 10}[r['level']] for r in rows)
+    score = sum(LEVEL_WEIGHT.get(str(r.get('level', '')).upper(), LEVEL_WEIGHT['FAIL']) for r in rows)
     return rows, score
 
 

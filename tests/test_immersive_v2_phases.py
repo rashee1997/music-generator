@@ -354,24 +354,26 @@ class Deliverables(unittest.TestCase):
         stems = {'still': noise(1.0), 'mover': noise(1.0, 2), 'flat': np.stack([noise(1.0, 3), noise(1.0, 4)], axis=1)}
         bus = adm.AdmBus(SR, IMM, dict(title='t'))
         audio = mix(stems, tracks, bus=bus)
-        self.assertEqual(audio.shape[1], 4 + 2)                            # still, mover, flat L, flat R, then the bed
+        self.assertEqual(audio.shape[1], 4)                                # still, mover, flat L, flat R (no bed: no reverb return)
         fd, path = tempfile.mkstemp(suffix='.wav')
         os.close(fd)
         try:
             adm.write(path, audio, SR, bus.xml(len(audio), SR), bus.chna())
-            back, sr = sf.read(path, always_2d=True)
-            self.assertEqual((sr, back.shape), (SR, audio.shape))
-            np.testing.assert_allclose(back, np.clip(audio, -1, 1), atol=2.0 / (1 << 23))
+            parsed = adm.parse(path)
+            self.assertEqual((parsed['magic'], parsed['sr'], parsed['channels'], parsed['frames']),
+                             ('BW64', SR, audio.shape[1], len(audio)))
+            np.testing.assert_allclose(parsed['audio'], audio, atol=2.0 / (1 << 23))
             chunks = adm.read_chunks(path)
-            self.assertEqual(set(chunks), {'fmt ', 'chna', 'axml', 'data'})
-            self.assertEqual(len(chunks['chna']), 4 + 40 * 6)
+            self.assertEqual(set(chunks), {'ds64', 'fmt ', 'chna', 'axml', 'data'})
+            self.assertEqual(len(chunks['chna']), 4 + 40 * 4)
             self.assertEqual(os.path.getsize(path) % 2, 0)
+            self.assertEqual(adm.validate_file(path), [])
             ns = {'e': 'urn:ebu:metadata-schema:ebuCore_2016'}
             root = ET.fromstring(chunks['axml'])
             objs = root.findall('.//e:audioObject', ns)
-            self.assertEqual([o.get('audioObjectName') for o in objs], ['still', 'mover', 'flat L', 'flat R', 'room return'])
+            self.assertEqual([o.get('audioObjectName') for o in objs], ['still', 'mover', 'flat L', 'flat R'])
             uids = [u.get('UID') for u in root.findall('.//e:audioTrackUID', ns)]
-            self.assertEqual(len(uids), 6)
+            self.assertEqual(len(uids), 4)
             self.assertEqual(sorted(uids), sorted(r.text for o in objs for r in o.findall('e:audioTrackUIDRef', ns)))
             chans = root.findall('.//e:audioChannelFormat', ns)
 
@@ -388,15 +390,17 @@ class Deliverables(unittest.TestCase):
         finally:
             os.remove(path)
 
-    def test_a_file_named_for_a_variable_channel_target_gets_its_rows(self):
+    def test_a_plain_riff_file_named_for_adm_fails_the_container_row(self):
         fd, path = tempfile.mkstemp(suffix='_master_adm.wav')
         os.close(fd)
         try:
             sf.write(path, np.zeros((SR, 5), np.float32), SR, subtype='PCM_24')
             out = []
             spatial_gate.output_rows(dict(output_targets=['stereo', 'adm_bw64'], tracks=[]), path, out)
+            # A RIFF file is not a BW64 container however it is named; the ADM branch checks structure,
+            # not the file name or the channel count, so this file fails adm.container.
+            self.assertIn('FAIL', [r[0] for r in rows_of(out, 'adm.container')])
             self.assertEqual([r[0] for r in rows_of(out, 'render.finite')], ['PASS'])
-            self.assertEqual(rows_of(out, 'delivery.format'), [])
             self.assertEqual(len(rows_of(out, 'delivery.true_peak')), 1)
         finally:
             os.remove(path)

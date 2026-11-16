@@ -1,6 +1,6 @@
 {
   "name": "adm_bw64",
-  "character": "Object-based delivery: every placed track is its own channel with its position over time written as ADM metadata, plus the reverb return as a stereo bed. The playback renderer places the objects on the loudspeakers that are there.",
+  "character": "Object-based delivery: every placed track is its own channel with its position over time written as ADM metadata, plus the reverb return as a stereo bed. The playback renderer places the objects on the loudspeakers that are there. The container is strict BW64 (ITU-R BS.2088): every file starts with the BW64 header, a ds64 chunk carrying the 64-bit file and data sizes, fmt, chna, axml and data, even when the file is far below 4 GiB, so the format is recognisable by structure and never by its .wav name. Tracks without spatial metadata are split or centred by the documented policy in references/spatial/immersive-spatial.md section 2d; a stereo placed track becomes two mono objects (left at azimuth minus the pair half-width, right at azimuth plus it), so no channel is folded away. Positioned object audio is handed over unplaced and the level is not applied twice: azimuth, elevation and distance live in the ADM metadata.",
   "label": "ADM BW64 objects",
   "order": 8,
   "aliases": [
@@ -14,8 +14,10 @@
   "true_peak_dbtp": -3.0,
   "layout": null,
   "sources": [
-    "ITU-R BS.2076-2 (Audio Definition Model) for the metadata, ITU-R BS.2088-1 (BW64) for the axml and chna chunks",
-    "channels is 0 because the file has one channel per object: the count is the piece's, not the format's",
-    "An open-standard ADM file. It is not a Dolby Atmos master file and has not been through any vendor's certification"
+    "ITU-R BS.2076-2 (Audio Definition Model) for the metadata, ITU-R BS.2088-2 (BW64) for the container: BW64 header, ds64 with the 64-bit file and data sizes, fmt , chna (one row per track, mapped by UID to the axml audioTrackUID), axml (ADM) and data, in that order; azimuth positive to the left (engine azimuth is negated), elevation positive up, distance in metres written as the normalised ADM distance (1.0 = 1 m default sphere radius)",
+    "channels is 0 because the file has one channel per object: the count is the piece's, not the format's. A mix with no reverb return has no bed channels at all (bed only when the mixer produced one)",
+    "Loudness is levelled at render time on a constant-power stereo fold of the objects (BS.1770 loudness of the fold); that fold is this engine's internal levelling reference, not a standard-required loudness, because an object file has no loudness until a renderer folds it. True peak is measured per channel on the delivered audio after any resampling and must meet the -3.0 dBTP ceiling or the delivery gate fails",
+    "Validation is structural (scripts/spatial_engine/adm.py validate_file: magic, ds64, fmt/chna/axml/data agreement, ID uniqueness and reference resolution, block contiguity and position ranges) plus the gate rows in scripts/spatial_gate.py. No third-party BW64/ADM validator (libbw64/libadm) was run: none is available in this environment",
+    "An open-standard ADM file. It is not a Dolby Atmos master file and has not been through any vendor's certification. Players that only understand RIFF/RF64 cannot open the BW64 container"
   ]
 }

@@ -144,10 +144,39 @@ the click check; the all-round decoder holds plane-wave power within 4 dB peak t
 
 Both scene formats switch the immersive block on for themselves, as `binaural` does, so the score's stereo mix preset
 is not changed. Loudness: a scene has none until something renders it, so `ambix` is levelled on its first channel
-(the plain pressure) and `adm_bw64` on a plain two-speaker fold of its objects; one gain for the whole file.
-In ADM a track with no `spatial` block becomes two objects at +-30 degrees, a moving track gets a position block every
-tenth of a second, and azimuth is written with ADM's sign (positive to the left). `scripts/spatial_engine/adm.py`
-writes the file itself; the EBU renderer's own library is not a dependency because its release pins numpy below 2.
+(the plain pressure) and `adm_bw64` on a plain two-speaker fold of its objects; one gain for the whole file. The fold
+is this engine's internal levelling reference, not a standard-required loudness (an object file has no loudness until
+a renderer folds it); the method is recorded in the delivery report and asserted in the gate's `adm.loudness` row.
+
+ADM routing and metadata (what the file actually contains):
+
+| Track | Audio in the file | ADM metadata |
+|---|---|---|
+| placed mono (`spatial` present, not `binaural: false`) | one mono object channel, per-track processing only (no pan, no air absorption, no distance law -- `mixer._place` hands it over unplaced and adm undoes the `1/max(dist,1)` scalar it applies so the renderer does not apply it twice) | azimuth/elevation/distance at BS.2076 conventions (azimuth negated: engine +right becomes ADM +left; elevation passes through; engine distance in metres written as the normalised ADM distance, 1.0 = 1 m default sphere radius) |
+| placed stereo | two mono object channels (left at azimuth minus the pair half-width, right at azimuth plus it; the width is `pair_half_width` -- `spatial.half_width_deg`, else the `immersive.pair` width, else 0 for dual-mono, one object then, since the content is one) | each channel its own object with its own position blocks; no mid fold, no dropped channel |
+| `binaural: false` (explicitly out of the field) | the stereo outcome split as a mono per channel | two flat objects at +-30 deg, elevation 0 |
+| no `spatial` block | the mixer's stereo placement outcome (width/widen/pan seating) split per channel, or one centred object when mono | two flat objects at +-30 deg, or one centred object; elevation follows the role (`place_of`), so bass/drums stay on the floor |
+| reverb return, when the mix produced one | two extra channels | a `room return` stereo bed on the 0+2+0 common definition (AP_00010002, referenced, not redefined) |
+| no reverb return | no bed channels | no bed object |
+
+A moving object (trajectory `line`/`keyframes`/`sway`, anchored the same way `hoa` anchors it) gets `audioBlockFormat`
+blocks whose stride adapts to the trajectory's fastest angular speed: at least every 0.1 s, at most 200 blocks per
+second, and no step above about 2 deg (the largest step is reported in the delivery report). Blocks are positioned
+at their end and tile the file exactly (first at 0 to the last sample, 1e-5 s grid), so a renderer that interpolates
+between them reproduces the authored path.
+
+The container is strict BW64 (BS.2088-2): `BW64` + 0xFFFFFFFF + `WAVE`, then `ds64` (64-bit file and data sizes),
+`fmt `, `chna`, `axml`, `data`, always -- even below 4 GiB -- so the format is recognisable by structure, and audio is
+streamed in bounded blocks so the data chunk may pass 4 GiB. `scripts/spatial_engine/adm.py` (with `validate_file`)
+writes and checks it without the EBU libraries, whose releases pin numpy below 2. Sampling is 24-bit PCM with no
+clipping ever: a non-finite sample or a sample over full scale is an error, never a hard-clipped file. The delivery
+gate (`spatial_gate.adm_rows`, behind `adm.container` / `adm.channels` / `adm.loudness` plus the shared
+`delivery.true_peak` / `render.finite`) fails the file for a plain RIFF container, a broken ds64, a chna that does not
+map 1:1 to ADM tracks, unresolved IDs, non-contiguous blocks, out-of-range positions or a true-peak overshoot.
+Players that only understand RIFF/RF64 cannot open the BW64 magic; verification is this engine's own structural
+check plus byte-level tests (`tests/test_adm_bw64.py`) -- no third-party BW64/ADM validator was run (none is
+available in this environment). It is an open-standard ADM file, not a Dolby Atmos master and not a certified
+deliverable.
 
 ## 3. Stage 0 (project gate) and the Stage 6 immersion rows
 
@@ -213,9 +242,19 @@ Loudness, true peak, clicks and silence are the existing rows.
   loudspeakers cannot hold power exactly (measured spread up to 3.4 dB on 7.1.2).
 - `"auto"` reverberation time is Eyring's diffuse-field estimate. It is wrong for a room that is not diffuse: a long
   corridor, a room with one very dead surface, anything coupled to another space.
-- `adm_bw64` is an open-standard ADM file. It is not a Dolby Atmos master file, carries no vendor certification, and is
-  limited to 4 GiB (plain RIFF). An object carries the track after the mixer's chain and distance gain but without the
-  room: early reflections and the late field are not in the file, only the shared reverb return is.
+- `adm_bw64` is an open-standard ADM file. It is not a Dolby Atmos master file, carries no vendor certification, and
+  its container is strict BW64, so a data chunk may pass 4 GiB (the 32-bit fields then saturate and the true sizes live
+  in `ds64`; audio is streamed, so RAM does not grow with the file). An object carries the track after the mixer's chain
+  but without the room: early reflections and the late field are not in the file, only the shared reverb return is, and
+  it is a stereo bed rather than per-object room metadata. The distance is written in metres as the normalised ADM
+  distance (1.0 = 1 m), so a renderer that scales it by `absoluteDistance` will place the objects in that room.
+- What is *not* verified: no third-party BW64/ADM toolchain (libbw64, libadm, the EBU ADM Renderer) ran against these
+  files, because none is installed in this environment and the EBU releases pin numpy below 2. The guarantees here are
+  the writer's structure, the structural validator in `scripts/spatial_engine/adm.py`, and byte-level tests, which a
+  standards-aware reader still has to confirm. `soundfile`/libsndfile cannot read BW64 at all, so the project reads its
+  own files back with `adm.parse`.
+- 24-bit PCM only. The writer refuses a non-finite sample or a sample over full scale instead of clipping, so a mix
+  that cannot meet its ceiling fails the gate rather than being forced into compliance.
 - `ambix` holds the whole field in memory while it is scaled and written; a long piece at order 5 needs several GB.
   If it is the only target of a score, the stereo rows of the gate read its first two channels, which are not left
   and right: list a two-channel target first.
