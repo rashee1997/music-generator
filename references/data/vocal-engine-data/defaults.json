@@ -84,6 +84,72 @@
       "width_semitones": 2.0
     }
   },
+  "waveguide": {
+    "_about": "Physical tract model. `geometry` is the tube a formant target is realised in (a neutral area function times a few log-area control points, the inverse problem being ill-posed); `losses`/`radiation` are what the renderer's bandwidths and mode gains are measured from; `nasal` is the branched tract behind the 3-way pharynx junction. `mode` chooses what the renderer uses: `physical` (default) measures bandwidths and mode gains from the tube, `table` keeps the fixed formant table above.",
+    "mode": "physical",
+    "speed_of_sound_m_s": 343.0,
+    "air_density_kg_m3": 1.2,
+    "tract_length_m": 0.17,
+    "sections": 22,
+    "radiation": {
+      "ka_max": 1.2,
+      "source": "flanged piston, low-ka expansion Z/(rho c/A) = (ka)^2/2 + j(8/3 pi)ka (standard speech radiation load, Morse & Ingard)"
+    },
+    "gain_tilt_power": 0.582,
+  "gain_tilt_source": "measured: least-squares fit in log amplitude of the physics' neutral-vowel mode amplitudes against the legacy `tract.gains` table, across all ten vowels in the table. The parallel bank has no source tilt in it; this is the one calibration that keeps presets voiced as they were while every vowel still gets its own measured amplitude.",
+  "losses": {
+      "k0_per_m": 0.9,
+      "k1_s_per_m": 2.6e-05,
+      "source": "starting value, calibrated by measurement: boundary-layer losses alone give 22-131 Hz formant bandwidths (prototype measurement), while speech measures 50-300 Hz (Fant 1960/1972; Fujimura & Lindqvist 1971). k0/k1 stand for wall vibration and the losses a one-dimensional model cannot express."
+    },
+    "geometry": {
+      "control_points": 11,
+      "neutral_cm2": [
+        3.4,
+        1.7,
+        1.05,
+        1.0,
+        1.4,
+        2.3,
+        3.3,
+        4.2,
+        3.6,
+        2.5,
+        1.6
+      ],
+      "neutral_source": "starting value, pharynx-to-lips neutral area of an adult male tract (Story, Titze & Hoffman 1998, MRI area functions)",
+      "bounds": 2.5,
+      "curvature": 0.12,
+      "scale_pin": 0.5,
+      "weights": [
+        1.0,
+        0.9,
+        0.75,
+        0.3,
+        0.15
+      ],
+      "tolerance_hz": 3.0,
+      "max_iterations": 18,
+      "trust": 0.4,
+      "blend_sigma_hz": 260.0
+    },
+    "nasal": {
+      "velum_fraction": 0.42,
+      "velum_area_cm2": 0.35,
+      "nasal_area_cm2": 0.55,
+      "nasal_length_m": 0.11,
+      "nasal_sections": 10,
+    "pharynx_area_cm2": 3.0,
+    "oral_area_cm2": 1.2,
+      "velar_coupling": 1.0,
+      "source": "starting value: three-tube pharyngeal/oral/nasal model after Kasess et al. 2013 and Fujimura 1962; the /m/ zero is c/(4 l_oral) from the closed oral branch (a 9.9 cm closed branch puts it near 870 Hz), and pharynx/oral area are the neutral adult male values of the tract above"
+    },
+    "hum": {
+      "use_physics": true,
+      "antiformant_override_hz": null,
+      "antiformant_coupling": 0.85
+    }
+  },
   "tract": {
     "_about": "Five formants (Klatt 1980's reference cascade has five): F1-F3 fix the vowel, F4/F5 fix the voice, the singer's formant and most individuality. A preset that declares three formants keeps three: the bank is sliced to the shortest of formants, gains and bandwidths.",
     "block_ms": 5.0,
@@ -237,7 +303,8 @@
     ],
     "antiformant_hz": 1000.0,
     "antiformant_bw": 160.0,
-    "antiformant_depth": 0.85,
+    "antiformant_from_junction": true,
+  "antiformant_depth": 0.85,
     "oral_coupling": 0.25,
     "oral_formants": [
       300,

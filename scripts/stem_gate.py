@@ -266,7 +266,10 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
     # Percussive stems are excluded: a drum note's written length is a grid cell, not a sound length, so the space
     # between the last hit and the bar line is not silence to trim. An `sfx` track is the same case: its written
     # length is a trigger for a one-shot sound, and the sound's own attack and decay are the instrument, not an edit.
-    if iv and not _is_percussive(track) and str((track or {}).get('role') or '').lower() != 'sfx':
+    # An `sfx`/`fx` track is the same case: its written length is a trigger for a one-shot sound, and the sound's own
+    # attack and decay are the instrument, not an edit. (roles.py canonicalises every effect role to `fx`, so checking
+    # only the literal string 'sfx' let a one-shot through to a row that cannot apply to it.)
+    if iv and not _is_percussive(track) and str((track or {}).get('role') or '').lower() not in ('sfx', 'fx'):
         if gp.on('stem.edge'):
             res = gc.check_edge(sig, min(a for a, _ in iv), max(b for _, b in iv),
                                 max_silence_ms=gp.param('stem.edge', 'max_silence_ms'))

@@ -59,8 +59,11 @@ women and children run higher, so raise every value by the singer's formant scal
 | ae / E / I / O | | | | | | the covered neighbours `technique.cover` moves toward above the passaggio |
 
 Five formants, not three: F4/F5 carry the voice's identity and the singer's formant. A preset that declares three formants
-still renders three (the bank is sliced). Bandwidths start at 90/110/150/200/260 Hz; each resonator has exactly unit gain at
-its own formant.
+still renders three (the bank is sliced). Each resonator has exactly unit gain at its own formant. These numbers are the
+*targets*: the bandwidth of each one and its gain are measured from a tube solved to have those resonances
+(`waveguide.mode: physical`, the default), which gives F1 widths of about 111-192 Hz against the fixed 90/110/150/200/260
+the table used to state. `waveguide.mode: table` restores the fixed numbers; a preset that passes `bandwidths`/`gains`
+always wins. Details and measurements: `docs/VOCAL-TRACT-WAVEGUIDE.md`.
 
 `technique.singer_formant` does **not** add a 3 kHz boost: it pulls F3, F4 and F5 toward 2.85/3.0/3.1 kHz so they bunch
 (Sundberg 1987). `technique.formant_tuning` raises F1 toward f0 when a high note's fundamental reaches F1, so the fundamental

@@ -17,7 +17,7 @@
 dynamics and articulation are applied by the caller, so loudness is never re-normalised per note."""
 import numpy as np
 
-from . import data, nasal, source, tract
+from . import data, geometry, nasal, source, tract
 
 
 def resolve_register(cfg, name=None):
@@ -54,6 +54,24 @@ def register_track(cfg, name, f0):
     return out
 
 
+def tract_params(cfg, sr, F, block, n, bandwidths=None, gains=None):
+    """Bandwidth and gain per formant for a target `F`: the one place that decides physical against table.
+
+    `waveguide.mode` chooses: `physical` measures both from the tube solved to have these resonances, `table` keeps the
+    fixed lists. A caller that passes them explicitly (a preset's own numbers, an instrument clone) always wins - that
+    is the override the physical model demotes, not replaces. The level calibration in `performance.py` asks this same
+    function, so what it measures and what the render uses cannot drift apart.
+    """
+    F = np.asarray(F, dtype=float)
+    k = 1 if F.ndim == 1 else F.shape[0]
+    if bandwidths is None and gains is None and cfg['waveguide'].get('mode', 'physical') == 'physical':
+        BW, G = geometry.as_track(geometry.table(cfg, sr), F, block, n, tract.block_track)
+        return list(BW), list(G)
+    BW = np.asarray(bandwidths if bandwidths is not None else cfg['tract']['bandwidths'][:k],
+                    dtype=float).reshape(k, -1)
+    return list(BW), list(gains if gains is not None else cfg['tract']['gains'])[:k]
+
+
 def synth(f0, sr, rng, cfg, formants=None, bandwidths=None, gains=None, hum=False, nasality=0.0, register=None,
           style=None, breathiness=None, phase0=0.0, tilt_hz=None, formant_scale=1.0, creak=0.0, stats=None,
           vib_am=None, stats_gate=None, stats_notes=None):
@@ -78,15 +96,14 @@ def synth(f0, sr, rng, cfg, formants=None, bandwidths=None, gains=None, hum=Fals
         jitter_shimmer_corr=float(s.get('jitter_shimmer_corr', 0.5)), sub_extra=creak, stats=stats, amp_mod=vib_am,
         stats_gate=stats_gate, stats_notes=stats_notes, tilt_poles=int(s.get('tilt_poles', 1)))
     if hum:
-        y = nasal.hum_branch(src, sr, cfg['humming'], rng, flow=flow, block=block)
+        y = nasal.hum_branch(src, sr, cfg['humming'], rng, flow=flow, block=block, wv=cfg['waveguide'])
     else:
         F = np.asarray(formants if formants is not None else cfg['tract']['vowels']['a'], dtype=float) * formant_scale
         k = len(F)
-        BW = np.asarray(bandwidths if bandwidths is not None else cfg['tract']['bandwidths'][:k], dtype=float)
-        G = list(gains if gains is not None else cfg['tract']['gains'])[:k]
         if st.get('harmonic_lock'):
             F = tract.lock_to_harmonics(F.reshape(k, -1), f0[None, :] if F.ndim > 1 else np.mean(f0), s['harmonic_lock_amount'])
-        y = tract.bank(src, list(F), list(np.broadcast_to(BW, (k,) + BW.shape[1:]) if BW.ndim > 1 else BW), G, sr, block)
+        BW, G = tract_params(cfg, sr, F, block, n, bandwidths=bandwidths, gains=gains)
+        y = tract.bank(src, list(F), BW, G, sr, block)
         if nasality > 0:
-            y = nasal.nasalize(y, src, sr, nasality, cfg['humming'], block)
+            y = nasal.nasalize(y, src, sr, nasality, cfg['humming'], block, wv=cfg['waveguide'])
     return y, float(c[-1])

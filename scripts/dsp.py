@@ -318,6 +318,210 @@ def transient_shaper(x, sr=44100, attack=0.0, sustain=0.0, fast_ms=3.0, slow_ms=
     return (y * curve[:, None]).astype(np.float32)
 
 
+def fade_out_at(x, sr=44100, times=(), ms=4.0):
+    """A short raised-cosine release ending at each note-off, so a damped hit ends instead of being cut.
+
+    A drum note-off lands 120 ms into a sample that is still ringing, and a hard cut on a non-zero sample is a
+    click (measured: an isolated impulse at the off of roughly one hit in four on a GM djembe). Four milliseconds
+    is faster than any audible damping, so the hit is unchanged but the step is gone.
+    """
+    y = to_2d(x).astype(np.float32)
+    n = int(round(float(ms) * sr / 1000.0))
+    if n < 2 or len(y) == 0 or not len(times):
+        return y
+    ramp = (0.5 + 0.5 * np.cos(np.pi * np.linspace(0.0, 1.0, n))).astype(np.float32)[:, None]
+    for t in times:
+        i1 = int(round(float(t) * sr))
+        i0 = max(0, i1 - n)
+        if i1 <= 0 or i0 >= len(y):
+            continue
+        seg = y[i0:i1]
+        y[i0:i1] = (seg * ramp[n - seg.shape[0]:]).astype(np.float32)
+    return y
+
+
+def declick(x, sr=44100, mad_z=8.0, floor_frac=0.02, cluster_ms=1.5, repair_ms=0.8):
+    """Repair isolated single-sample discontinuities left in a sampled patch.
+
+    A bank's edited sample can carry a step that no playing produced: measured on one SoundFont djembe, an isolated
+    impulse 2-43 ms into the hit, on about a hit in four, and on a shaker on nearly a third of them. The step is a
+    defect, not a transient, so it is removed rather than mixed away: a short linear bridge over the step. Only an
+    isolated jump is bridged -- a dense noise burst (a shaker's attack) and a steep monotone attack are left alone,
+    which is the same distinction the stem gate draws.
+    """
+    y = to_2d(x).astype(np.float32)
+    if len(y) < 64:
+        return y
+    peak = float(np.max(np.abs(y))) or 1.0
+    from scipy.signal import butter, sosfiltfilt
+    sos = butter(4, min(6000.0, sr * 0.45), 'high', fs=sr, output='sos')
+    h = sosfiltfilt(sos, y.astype(np.float64), axis=0).mean(axis=1)
+    r = np.diff(h)
+    med = float(np.median(r))
+    mad = float(np.median(np.abs(r - med))) * 1.4826 + 1e-12
+    cand = np.flatnonzero((np.abs(r - med) > mad_z * mad) & (np.abs(r) > floor_frac * peak))
+    if cand.size == 0:
+        return y
+    groups, cur = [], [int(cand[0])]
+    for c in cand[1:]:
+        if (int(c) - cur[-1]) / sr * 1000.0 <= cluster_ms:
+            cur.append(int(c))
+        else:
+            groups.append(cur)
+            cur = [int(c)]
+    groups.append(cur)
+    n_rep = max(2, int(round(repair_ms * sr / 1000.0)))
+    fixed = 0
+    for g in groups:
+        if (g[-1] - g[0]) / sr * 1000.0 > cluster_ms:
+            continue                                   # a dense burst: noise, not a step
+        k = int(g[int(np.argmax(np.abs(r[g])))])
+        a, b = k - n_rep, k + n_rep
+        if a < 1 or b >= len(y) - 1:
+            continue
+        # the jump must be isolated: the local slope either side has to be far smaller than the step itself
+        local = float(np.median(np.abs(r[a:b]))) + 1e-12
+        if abs(float(r[k])) < 4.0 * local:
+            continue
+        left, right = y[a - 1], y[b]
+        w = np.linspace(0.0, 1.0, b - a + 1, dtype=np.float32)[:, None]
+        y[a:b + 1] = (left[None, :] * (1.0 - w) + right[None, :] * w).astype(np.float32)
+        fixed += 1
+    return y if fixed == 0 else y.astype(np.float32)
+
+
+def repair_clicks(x, sr=44100, mad_z=8.0, floor_frac=0.02, cluster_ms=1.5, isolate_ms=10.0,   # floor_frac is FS
+                  second_ratio=0.5, smooth_ms=0.35, half_ms=0.8, _passes=0):
+    """Remove the isolated sample steps an edited bank sample carries.
+
+    Measured on this project's GeneralUser bank: a djembe, a bell and a shaker all carry single-sample jumps inside
+    the hit (2-43 ms in, on a quarter to a third of the hits) that no playing produced. A step is not a transient, so
+    it is repaired rather than mixed away: the samples around it are smoothed and blended back with a raised-cosine
+    window, which removes the jump and leaves the surrounding waveform untouched.
+
+    Only an isolated jump is repaired. A dense cluster is a noise burst (a shaker's attack), and a monotone rise out
+    of silence is an attack -- both are the instrument, not a defect, and both are left alone.
+    """
+    y = to_2d(x).astype(np.float32)
+    if len(y) < 64:
+        return y
+    from scipy.ndimage import uniform_filter1d
+    from scipy.signal import butter, sosfiltfilt
+    mono = y.astype(np.float64).mean(axis=1)
+    sos = butter(4, min(6000.0, sr * 0.45), 'high', fs=sr, output='sos')
+    h = sosfiltfilt(sos, mono)
+    r = np.diff(h)
+    med = float(np.median(r))
+    mad = float(np.median(np.abs(r - med))) * 1.4826 + 1e-12
+    # The gate's own candidate rule, reproduced exactly: one-sided z (a click is a positive step) and an absolute
+    # full-scale floor. Any wider net (two-sided, level-relative) merges the isolated jumps into "dense bursts" and
+    # then skips exactly the events that need repairing - measured: 0 repaired of 30 on a bell stem.
+    cand = np.flatnonzero(((r - med) / mad > mad_z) & (np.abs(r) > floor_frac))
+    if cand.size == 0:
+        return y
+    groups, cur = [], [int(cand[0])]
+    for c in cand[1:]:
+        if (int(c) - cur[-1]) / sr * 1000.0 <= cluster_ms:
+            cur.append(int(c))
+        else:
+            groups.append(cur)
+            cur = [int(c)]
+    groups.append(cur)
+    ev = []
+    for g in groups:
+        if (g[-1] - g[0]) / sr * 1000.0 > cluster_ms:
+            continue                                   # a dense burst: noise, not a step
+        k = int(g[int(np.argmax(np.abs(r[g])))])
+        ev.append((k, float(abs(r[k]))))
+    iso = isolate_ms * sr / 1000.0
+    look = max(4, int(0.002 * sr))
+    try:
+        from gate_checks import _is_attack             # the gate's own test: repair must agree with measurement
+    except Exception:
+        _is_attack = None
+    kept = []
+    for i, (k, amp) in enumerate(ev):
+        if any(j != i and abs(k2 - k) <= iso and a2 >= second_ratio * amp for j, (k2, a2) in enumerate(ev)):
+            continue                                   # paired with a rival: a layered hit, not a step
+        if _is_attack is not None:
+            if _is_attack(mono, k):
+                continue                               # an attack, not a defect
+        else:
+            back, fwd = mono[max(0, k - look):k], mono[k + 1:k + 1 + look]
+            if back.size > 4 and fwd.size > 4 and (np.all(np.diff(back) >= -1e-6) or np.all(np.diff(fwd) >= -1e-6)):
+                continue
+        kept.append(k)
+    half, win = max(2, int(round(half_ms * sr / 1000.0))), max(3, int(round(smooth_ms * sr / 1000.0)))
+    merge = []
+    for k in kept:
+        if merge and k - merge[-1] < half:
+            continue                                   # overlapping windows: one repair covers both
+        merge.append(k)
+    for k in merge:
+        a, b = max(1, k - half), min(len(y) - 1, k + half)
+        if b - a < win + 2:
+            continue
+        seg = y[a:b].copy()
+        sm = np.stack([uniform_filter1d(seg[:, c].astype(np.float64), size=win) for c in range(y.shape[1])], axis=1)
+        ramp = (np.sin(np.linspace(0.0, np.pi, b - a)) ** 2).astype(np.float32)[:, None]
+        y[a:b] = (seg * (1.0 - ramp) + sm.astype(np.float32) * ramp).astype(np.float32)
+    if merge and _passes < 2:
+        # a step that was only partly smoothed still measures as a click (6 of ~50 on a djembe stem): re-detect what is
+        # left instead of assuming one pass reached every event
+        return repair_clicks(y, sr, mad_z, floor_frac, cluster_ms, isolate_ms, second_ratio, smooth_ms, half_ms,
+                             _passes + 1)
+    return y
+
+
+def trim_digital_lead(x, sr=44100, max_ms=150.0):
+    """Roll a stem left by the digital silence a sampled patch starts with.
+
+    A sampled instrument can carry tens of milliseconds of digital zero before its attack (measured: 110 ms on one
+    bank's kalimba, 70 ms on a bowed bass), so every note of that patch sounds that late. The delay is identical
+    for every note, so removing it from the stem start aligns the whole part with the score instead of moving a
+    single note. Only digital silence is trimmed, never an audible swell: 2 ms up to `max_ms`, nothing else.
+    """
+    y = to_2d(x).astype(np.float32)
+    if len(y) == 0:
+        return y
+    peak = float(np.max(np.abs(y))) or 1.0
+    # 72 dB below the stem's loudest moment is inaudible in every listening condition, so what precedes the first
+    # sample above it is the patch's pre-attack room tone, not an attack: a bowed bass carried 40 ms of it, which
+    # put its first written note 40 ms late against the score.
+    loud = np.flatnonzero(np.max(np.abs(y), axis=1) > max(peak * 10 ** (-72.0 / 20.0), 1e-5))
+    if loud.size == 0:
+        return y
+    lead = int(loud[0])
+    if lead < int(0.002 * sr) or lead > int(float(max_ms) * sr / 1000.0):
+        return y
+    return np.concatenate([y[lead:], np.zeros((lead, y.shape[1]), np.float32)]).astype(np.float32)
+
+
+def soften_onsets(x, sr=44100, times=(), ms=2.0):
+    """A short raised-cosine ramp at each onset that starts from silence.
+
+    A sampled drum or shaker often begins on a single-sample step: its PCM starts at full level instead of rising
+    out of silence, so the high-pass residual shows a clustered impulse at every hit (measured: a GM shaker read
+    an impulse on 250 of its 352 hits). Two to three milliseconds is faster than any audible attack, so the
+    transient is unchanged, but the step that reads as a click is gone. An onset that lands inside a still-ringing
+    hit is left alone: ramping there would cut the ringing body, not a step.
+    """
+    y = to_2d(x).astype(np.float32)
+    n = int(round(float(ms) * sr / 1000.0))
+    if n < 2 or len(y) == 0 or not len(times):
+        return y
+    ramp = (0.5 - 0.5 * np.cos(np.pi * np.linspace(0.0, 1.0, n))).astype(np.float32)[:, None]
+    peak = float(np.max(np.abs(y))) or 1.0
+    for t in times:
+        i0 = int(round(float(t) * sr))
+        if not (0 < i0 < len(y) - n):
+            continue
+        if float(np.max(np.abs(y[max(0, i0 - 1):i0]))) > 0.02 * peak:
+            continue                                    # already sounding: a flam or a layer, not a fresh onset
+        y[i0:i0 + n] *= ramp
+    return y
+
+
 def enhance_sf2_dynamics(x, sr=44100, role='chord', velocity=None):
     """Restores transient snap and velocity-driven harmonic excitement to SF2 stems.
 

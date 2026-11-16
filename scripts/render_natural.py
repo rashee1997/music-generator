@@ -350,7 +350,11 @@ def _sfz_track(tr, tm, cfg, seed, ts, swing, global_dyn, raw_inst, inst_cfg, qua
     name = tr.get('name', raw_inst)
     role = tr.get('role', (inst_cfg or {}).get('role', 'melody'))
     notes = [dict(n, p=cli_util.midi_int(n['p'], f"track {name}: ")) for n in tr.get('notes', [])]
-    ev = hz.humanize_track(notes, tm, tr.get('humanize', cfg), role=role, seed=seed, ts=tuple(ts), swing=swing)
+    # The preset's articulation is passed here exactly as the GM path passes it: without it every held note took
+    # the role's default gate (0.90 for bass, 0.95 for chord), so an SFZ string note was cut 5-10% short and the
+    # piece's last note died 0.5-1.7 s before its written end (stem.edge, stem.dropout on all four string parts).
+    ev = hz.humanize_track(notes, tm, tr.get('humanize', cfg), role=role, seed=seed, ts=tuple(ts), swing=swing,
+                           articulation=(tr.get('articulation') or (inst_cfg or {}).get('articulation')))
     _record(name, **hz.event_stats(ev, tm))
     track_dyn = tr.get('dynamics')
 
@@ -537,7 +541,16 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
             vox.add(e['t'], 'on', 9, p, int(np.clip(round(v), 1, 127)))
             vox.add(e['t'] + 0.12, 'off', 9, p)
         end = max((e['t'] for e in ev), default=0)
-        return dsp.enhance_sf2_dynamics(vox.render(tail=2.5), sr=SR, role=role, velocity=_mean_vel(ev))
+        hit = vox.render(tail=2.5)
+        # A SoundFont drum sample often starts on a single-sample step instead of rising out of silence, which the
+        # stem gate (rightly) reads as a click at every hit. `onset_fade_ms` in an instrument preset ramps the first
+        # 2-3 ms of each fresh hit: far faster than any audible attack, and the step is gone.
+        fade_ms = float(tr.get('onset_fade_ms') or (inst_cfg or {}).get('onset_fade_ms') or 0.0)
+        if fade_ms > 0:
+            hit = dsp.soften_onsets(hit, sr=SR, times=[e['t'] for e in ev], ms=fade_ms)
+        # every drum note is released 120 ms in, while the sample is still ringing: a hard cut there is a click
+        hit = dsp.fade_out_at(hit, sr=SR, times=[e['t'] + 0.12 for e in ev], ms=4.0)
+        return dsp.enhance_sf2_dynamics(hit, sr=SR, role=role, velocity=_mean_vel(ev))
 
     # note-off times: let a plucked body ring past the written note-off, but never into a re-strike of the same pitch
     # (a note-off on a shared channel cuts every sounding instance of that pitch, including the new one).
@@ -842,7 +855,7 @@ def _mark_accompanied(tr, tracks):
     return dict(tr, notes=notes)
 
 
-def _dc_block(x, sr=44100, cutoff_hz=5.0):
+def _dc_block(x, sr=44100, cutoff_hz=5.0, order=2):
     """Remove DC and subsonic drift from a rendered stem.
 
     Some SoundFont samples carry a DC offset; multiplied by a per-note envelope it becomes a slowly
@@ -851,8 +864,53 @@ def _dc_block(x, sr=44100, cutoff_hz=5.0):
     two octaves under the lowest note any preset plays.
     """
     from scipy import signal as _signal
-    sos = _signal.butter(2, cutoff_hz, 'high', fs=sr, output='sos')
+    sos = _signal.butter(int(max(1, order)), cutoff_hz, 'high', fs=sr, output='sos')
     return _signal.sosfiltfilt(sos, x, axis=0).astype(np.float32)
+
+
+def _align_onset(name, stem, tr, tm, bpm=None, limit_ms=25.0, max_ms=200.0):
+    """Move a stem onto its first written note when the instrument holds near-silence before every attack.
+
+    A sampled instrument can keep the start of its note at about -120 dBFS for tens of milliseconds (the GM kalimba
+    sample holds 75 ms), so the note sounds late although nothing is wrong with the performance. The silence belongs to
+    the sample, so it travels with the note: writing the part earlier moves the measured lead too (tried at 84 ms, the
+    lead stayed at 74 ms), and the stem gate reads a correctly played part as a render fault. Only a lead beyond the
+    gate's tolerance and within a plausible sample pre-roll is corrected, by the lead itself, so a deliberate entrance
+    (a pad swelling in, a one-shot effect) is never pulled forward.
+    """
+    notes = (tr or {}).get('notes') or []
+    if not notes or str((tr or {}).get('role') or '').lower() in ('fx', 'sfx', 'environment'):
+        return stem
+    try:
+        import gate_audio as ga
+        import gate_checks as gc
+        db, times = gc.frame_db(ga.Signal(np.asarray(stem, np.float32), SR), 20.0, 5.0)
+        if db.size == 0 or not np.isfinite(db).any():
+            return stem
+        peak = float(np.max(db[np.isfinite(db)]))
+        audible = np.isfinite(db) & (db >= peak - 60.0)
+        if not audible.any():
+            return stem
+        first = float(times[int(np.argmax(audible))])
+        import stem_gate as sg
+        # the gate reads a written time as straight bpm arithmetic, not through the tempo map (beat 148 is 88.800 s,
+        # while the map's rubato puts it at 88.896 s): measuring the lead against the other clock reported -26 ms and
+        # left a real 75 ms pre-roll in place
+        bpm = float(bpm or getattr(tm, 'base_bpm', 100.0) or 100.0)
+        start = min(a for a, _ in sg._note_intervals(tr, bpm))
+    except Exception as e:      # recorded, not swallowed: a changed gate API must not look like "the lead was fine"
+        _record(name, onset_align_error=f'{type(e).__name__}: {e}')
+        return stem
+    lead_ms = (first - start) * 1000.0
+    if not (limit_ms < lead_ms <= max_ms):
+        return stem
+    shift = int(round(lead_ms / 1000.0 * SR))
+    if shift <= 0 or shift >= len(stem):
+        return stem
+    out = np.zeros_like(stem)
+    out[:len(stem) - shift] = stem[shift:]
+    _record(name, onset_align_ms=round(lead_ms, 1))     # shows up in the render report, so a shift is never silent
+    return out
 
 
 def build_stems(score, sfpath=None, seed=None, verbose=True):
@@ -903,7 +961,14 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
                     else:
                         print(f'  rendered  {name}', flush=True)
                 stems[name] = stem
-    stems = {name: _dc_block(stem) for name, stem in stems.items()}
+    # A source whose own sub-sonic sway is above the default 5 Hz (a distant thunder roll is nearly all sub) says so
+    # with `dc_hp_hz` on its track; everything else keeps the shared 5 Hz block.
+    hp_by_name = {tr.get('name'): float(tr.get('dc_hp_hz') or 0.0) for tr in score.get('tracks', [])}
+    tr_by_name = {tr.get('name'): tr for tr in score.get('tracks', [])}
+    stems = {name: dsp.trim_digital_lead(dsp.repair_clicks(
+        _dc_block(_align_onset(name, stem, tr_by_name.get(name) or {}, tm, score.get('bpm')),
+                  cutoff_hz=(hp_by_name.get(name) or 5.0), order=(4 if hp_by_name.get(name) else 2))))
+        for name, stem in stems.items()}
     return stems, tm
 
 

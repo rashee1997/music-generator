@@ -42,6 +42,15 @@ _OLD_ARTIC = {'vib_cents': ('vibrato', 'depth_cents', 1.0), 'vib_hz': ('vibrato'
 _OLD_ARTIC_IGNORED = {'decay_ms', 'sustain_level'}
 
 
+def _deep_update(dst, src):
+    """Merge a preset's nested block into the defaults without dropping sibling keys."""
+    for k, val in src.items():
+        if isinstance(val, dict) and isinstance(dst.get(k), dict):
+            _deep_update(dst[k], val)
+        else:
+            dst[k] = copy.deepcopy(val)
+
+
 def _put(cfg, path, value):
     ks = path.split('.')
     d = cfg
@@ -97,6 +106,17 @@ def _flat(cfg, key, v, warn):
         pass
     elif key == 'peak_trim':                                 # opt-in: cap a hot ensemble sum before the limiter
         cfg['peak_trim'] = float(v)
+    elif key == 'waveguide':
+        # The tract model is data (AGENTS.md §16): a preset may pick the mode and override geometry, but an unknown
+        # mode is an error, never a silent fallback to the fixed table.
+        if not isinstance(v, dict):
+            warn.append('waveguide must be an object')
+        else:
+            mode = v.get('mode')
+            if mode is not None and mode not in ('physical', 'table'):
+                warn.append(f'waveguide.mode must be "physical" or "table", got {mode!r}')
+            else:
+                _deep_update(cfg['waveguide'], v)
     elif key not in IGNORED:
         warn.append(f'unknown vocal key "{key}" ignored')
 

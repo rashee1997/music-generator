@@ -38,7 +38,7 @@ import json
 
 import numpy as np
 
-from . import breath, consonant, tract, voice
+from . import breath, consonant, data, tract, voice
 from .utils import smooth_noise
 
 _CAL = {}
@@ -246,15 +246,40 @@ def _formant_track(n, sr, s, e_, Fn, steady, vsteps, dip_start, dip_n):
     return np.stack([np.convolve(np.pad(row, (pad, pad), mode='edge'), ker, mode='valid')[:n] for row in raw])
 
 
-def _calibration(sr, cfg, hum, F, BW, style, register, nasality, hz=220.0):
+def _bandwidth_override(cfg, style):
+    """The bandwidth list a style or preset explicitly asks for, or None when the physics should decide.
+
+    `tract.bandwidths` is the table mode's data; a project that changes it is asking for that table and is treated as
+    an override, but the shipped values are not one. `data.defaults()` is the reference for "shipped".
+    """
+    bw = style.get('bandwidths')
+    if bw:
+        return np.asarray(bw, dtype=float)
+    cur = np.asarray(cfg['tract']['bandwidths'], dtype=float)
+    ref = np.asarray(_DEFAULT_BW(), dtype=float)
+    return None if (cur.shape == ref.shape and np.allclose(cur, ref)) else cur
+
+
+def _DEFAULT_BW():
+    if 'bw' not in _DEFAULT_BW.__dict__:
+        import copy as _copy
+        _DEFAULT_BW.bw = _copy.deepcopy(data.defaults()['tract']['bandwidths'])
+    return _DEFAULT_BW.bw
+
+
+def _calibration(sr, cfg, hum, F, BW, style, register, nasality, hz=220.0, bw_arg=None):
     """Gain that makes this timbre's steady tone at `hz` hit dynamics.ref_rms (one constant per timbre and pitch, never
-    per performed note: velocity, phrase arc and dynamics are applied on top)."""
+    per performed note: velocity, phrase arc and dynamics are applied on top).
+
+    `BW` names the widths in the cache key; `bw_arg` is what the probe render passes on (`None` lets it measure the
+    tube, exactly as the real render will), so a calibration can never be taken through a different tract.
+    """
     key = json.dumps([sr, hum, round(float(hz), 1), [round(float(f), 1) for f in F], [float(b) for b in BW], sorted(style.items()), register,
                       round(float(nasality), 3), cfg['humming'], cfg['source'], cfg['dynamics']['ref_rms']],
                      sort_keys=True, default=str)
     if key not in _CAL:
         n = int(0.5 * sr)
-        y, _ = voice.synth(np.full(n, float(hz)), sr, np.random.default_rng(0), cfg, formants=F, bandwidths=BW, hum=hum,
+        y, _ = voice.synth(np.full(n, float(hz)), sr, np.random.default_rng(0), cfg, formants=F, bandwidths=bw_arg, hum=hum,
                            nasality=nasality, register=register, style=style, breathiness=0.0)
         r = float(np.sqrt(np.mean(y[n // 4:] ** 2))) + 1e-12
         _CAL[key] = cfg['dynamics']['ref_rms'] / r
@@ -632,7 +657,11 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
     Fn = [_formants(e, cfg, style) for e in notes]
     K = min([len(f) for f in Fn] + [len(cfg['tract']['gains'])])
     Fn = [f[:K] for f in Fn]
-    BW = np.array(style.get('bandwidths') or cfg['tract']['bandwidths'], dtype=float)[:K]
+    # A bandwidth list is an override only when the style or the preset actually declares one. The shipped table is the
+    # table mode's data, not an override: passing it here would silently keep the physical model out of every render.
+    BW = _bandwidth_override(cfg, style)[:K] if _bandwidth_override(cfg, style) is not None else None
+    blk = max(16, int(cfg['tract']['block_ms'] * 1e-3 * sr))
+    BWn = [np.asarray(voice.tract_params(cfg, sr, F, blk, 1, bandwidths=BW)[0]).reshape(-1)[:K] for F in Fn]
     reg = register or style.get('register')
     comp = float(D['pitch_compensation'])        # singers even out the level between pitches; harmonics near a formant would not
     TE = cfg.get('technique') or {}
@@ -640,10 +669,11 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
     # so measuring the gain at F1 430 Hz and then singing through F1 766 Hz makes the level depend on pitch
     TFn = [_tuned_formants(F, 440.0 * 2 ** ((b / 100.0 - 69) / 12), cfg) if not hum else np.asarray(F, dtype=float)
            for F, b in zip(Fn, base)]
-    c220 = [_calibration(sr, cfg, hum, F, BW, style, reg, nasality) for F in Fn]
+    c220 = [_calibration(sr, cfg, hum, F, bw, style, reg, nasality, bw_arg=BW) for F, bw in zip(Fn, BWn)]
     cals = c220 if comp <= 0 else [
-        _calibration(sr, cfg, hum, F, BW, style, reg, nasality, hz=440.0 * 2 ** ((b / 100.0 - 69) / 12)) ** comp * c0 ** (1 - comp)
-        for F, b, c0 in zip(TFn, base, c220)]
+        _calibration(sr, cfg, hum, F, bw, style, reg, nasality, hz=440.0 * 2 ** ((b / 100.0 - 69) / 12),
+                     bw_arg=BW) ** comp * c0 ** (1 - comp)
+        for F, bw, b, c0 in zip(TFn, BWn, base, c220)]
     wv = int(P['vowel_blend_ms'] * 1e-3 * sr)
     FH = PH.get('formants') or {}
     CO = FH.get('coarticulation') or {}

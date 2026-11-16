@@ -20,7 +20,7 @@ recordings, no models, no network. Whether it sounds human has **not** been list
 | Facade | `scripts/vocals.py` | `render_choir`, `sing`, `add_vocal_harmonies`, `add_vocal_chorus`, `apply_vocal_dsp`, `selftest`, `demo`, `hum` |
 | Config | `vocal_engine/config.py` | defaults, migration of old keys, range clamping, validation |
 | Source | `vocal_engine/source.py` | glottal flow pulse (open quotient, speed quotient, closure), tilt, shimmer, aspiration, subharmonic, whistle |
-| Tract | `vocal_engine/tract.py` | resonators with exact unity gain at the centre, moving formants, `harmonic_lock` |
+| Tract | `vocal_engine/tract.py`, `waveguide.py`, `geometry.py` | resonators with exact unity gain at the centre, moving formants, `harmonic_lock`; the physics that measures their bandwidth and gain |
 | Hum | `vocal_engine/nasal.py` | nasal poles, anti-formant, oral coupling, lip-closure low-pass, nasal airflow, `nasalize` |
 | Voice | `vocal_engine/voice.py` | f0 track to signal (no envelope, no normalisation) |
 | Phrase | `vocal_engine/performance.py` | pitch curve, portamento, overshoot, vibrato, articulation, dynamics, phrase contours, micro-timing |
@@ -52,24 +52,25 @@ events -> split into monophonic lines (chords become lines) -> for each singer (
   (`consonants.tract_mix` 0.35) of their energy through the following vowel's formants.
 - **Tract.** Parallel two-pole resonators, each with gain exactly 1 at its centre (the old code's normalisation was
   evaluated at the wrong point). Formants can move inside a phrase (vowel changes blend over `performance.vowel_blend_ms`).
+- **Bandwidth and gain** come from a solved tube (`waveguide.mode: physical`, the default; `table` keeps the old fixed
+  lists, an explicit `bandwidths=`/`gains=` always wins). `references/instruments-and-vocals/vocal-tract-physics.md`.
 - **Formant tuning.** `technique.formant_tuning` (1.0) moves F1 toward f0 once f0 passes `tuning_threshold` (0.9) x F1,
-  and `tuning_f2_share` (0.5) carries F2 with it: Sundberg's R1:f0 tuning, so a high note keeps its fundamental on a
-  formant instead of in a valley. `tuning_upper_share` (0 by default) carries F3-F5 by the same step. It is off by
-  default so no existing render changes; 0.46 is the measured regression of R4 on f0 in sopranos (Joliveau, Smith &
-  Wolfe 2004, JASA 116), which is the value to start from when a preset wants the upper tract to follow the pitch.
-  Moving F3-F5 together shifts the singer's-formant cluster without widening it, so `vocal.ring` still reads one cluster.
-- **Loudness.** One calibration constant per timbre **and pitch** (`dynamics.pitch_compensation` 1 = a singer evens out the
-  level between pitches; 0 = raw resonance). It is not a per-note normaliser: velocity, phrase arc and dynamics sit on top.
-  Without it, a harmonic landing near a formant made some pitches 6 dB louder (found by the gate test, fixed).
+  and `tuning_f2_share` (0.5) carries F2: Sundberg's R1:f0 tuning, so a high note keeps its fundamental on a formant
+  instead of in a valley. `tuning_upper_share` (0) carries F3-F5 too; it is off because no existing render should change,
+  and 0.46 (R4-on-f0 regression in sopranos, Joliveau, Smith & Wolfe 2004) is where a preset should start. Moving F3-F5
+  together shifts the singer's-formant cluster without widening it, so `vocal.ring` still reads one cluster.
+- **Loudness.** One calibration constant per timbre **and pitch** (`dynamics.pitch_compensation`; 0 = raw resonance). It
+  is not a per-note normaliser: velocity, phrase arc and dynamics sit on top. Without it, a harmonic landing near a
+  formant made some pitches 6 dB louder (found by the gate test, fixed).
 
 ## 4. Humming (the priority feature)
 
-A note whose vowel is `m`, or any note when `hum: true`, goes through `nasal.hum_branch` instead of the vowel tract:
+A note whose vowel is `m`, or any note when `hum: true`, goes through `nasal.hum_branch` instead of the vowel tract.
 
 | Part | Config (`humming.*`) | Default |
 |---|---|---|
-| Nasal murmur poles | `nasal_poles` [{hz, bw, gain}] | 270 Hz (bw 70), 1000 (180, 0.25), 2200 (300, 0.10) |
-| Oral anti-formant | `antiformant_hz`, `antiformant_bw`, `antiformant_depth` | 1000 Hz, 160, 0.85 |
+| Nasal murmur poles | `nasal_poles` [{hz, bw, gain}] | 270 Hz (bw 70), 1000 (180, 0.25), 2200 (300, 0.10); `physical` measures 204/1480/2148 and the 822 Hz zero from the junction |
+| Oral anti-formant | `antiformant_hz`, `antiformant_bw`, `antiformant_depth` | 1000 Hz, 160, 0.85; `physical` takes the frequency from the junction, `antiformant_from_junction: false` restores the constant |
 | Oral cavity coupling | `oral_coupling`, `oral_formants`, `oral_bandwidths` | 0.25, 300/870/2240 |
 | Lip closure low-pass | `lip_closure_hz` (moved by `brightness`) | 2400 Hz |
 | Nasal brightness | `brightness` 0..1 (0.5 neutral) | 0.5 |
@@ -80,8 +81,8 @@ A note whose vowel is `m`, or any note when `hum: true`, goes through `nasal.hum
 | Nasality on open vowels | `nasality_vowels` 0..1 | 0 |
 
 Tests check the spectrum: the hum is darker than "a", more than 90% of its energy is below 500 Hz, removing the anti-formant
-puts back at least 4x the energy at 1 kHz, brightness moves the energy above 800 Hz at least 3x. These prove the structure
-works as designed. They do not prove it sounds like a person humming.
+puts back at least 4x the energy at the junction zero, brightness moves the energy above 800 Hz at least 3x. These prove the
+structure works as designed, not that it sounds like a person humming.
 
 ## 5. Phrase performance (`performance.*`, `vibrato.*`, `articulation.*`)
 
@@ -271,7 +272,7 @@ phrase where the coupling is fully developed. They are never read off the `vibra
   regression 0.46), not on a measurement of this engine's output. The default is 0 and nothing has been listened to, so
   treat a non-zero value as a preset experiment, not as a proven improvement. The regression is an average over sopranos:
   it says the direction and roughly the size, not what one singer does.
-- Anti-formants are approximated by one notch: a nasal consonant is a murmur with one null, not a full nasal tract model.
+- Anti-formants are one notch at the junction's first null: the frequency is physical, the null is still one zero-pair.
 - A hum-to-vowel change inside one phrase starts a new phrase (no crossfade between the two models).
 - A first phrase at time 0 has no room for an inhale.
 - The binaural cues are **not an HRTF**. ITD is a fractional delay, head shadow is one pole, and the two reflections
@@ -293,7 +294,7 @@ phrase where the coupling is fully developed. They are never read off the `vibra
 ## 12. Compatibility and migration
 
 Old flat keys, the old nested preset keys (`formant_profile`, `articulation.attack_ms/vib_*/tremolo_*`) and the style identifiers
-all still work (`config.resolve`). Differences a user can hear versus the old engine: no per-note peak normalisation; notes
+all still work (`config.resolve`); `waveguide.mode: table` restores the old tables exactly and the module API is unchanged. Differences a user can hear versus the old engine: no per-note peak normalisation; notes
 connect instead of dropping out; `c` now works in cents; chorus default mix 0.25 (was 0.4); `qawwali_devotional` now gets its
 saturation; `harmonic_lock`, `bandwidths` and style registers now act. The three shipped vocal presets were converted to the new
 schema (they had no effect before). `tests/legacy_vocals.py` keeps the old code for A/B and benchmarks.

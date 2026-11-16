@@ -273,6 +273,8 @@ def synth_impulse_cluster(sec, sr=SR, rng=None, event_rate=8.0, freq_low=1400.0,
     total_events = int(sec * event_rate)
     decay_samps = max(20, int((decay_ms / 1000.0) * sr))
     dt = np.arange(decay_samps) / sr
+    att = max(2, int(0.0025 * sr))                                    # finite impact rise, not a single-sample step
+    rise = (0.5 - 0.5 * np.cos(np.pi * np.arange(att) / att)).astype(np.float32)
     
     for _ in range(total_events):
         pos = int(rng.uniform(0, n - decay_samps - 1))
@@ -285,7 +287,10 @@ def synth_impulse_cluster(sec, sr=SR, rng=None, event_rate=8.0, freq_low=1400.0,
         else:
             click = np.sin(2 * np.pi * fc * dt)
         env = np.exp(-dt / d_rate)
-        out[pos:pos + decay_samps] += click * env * float(rng.uniform(0.2, 0.9))
+        ev = (click * env * float(rng.uniform(0.2, 0.9))).astype(np.float32)
+        if ev.size > att:
+            ev[:att] *= rise
+        out[pos:pos + decay_samps] += ev
         
     return out.astype(np.float32)
 
@@ -426,6 +431,10 @@ def synth_rain(sec, sr=SR, rng=None, rate_mm_h=5.0, surface='water', bubble_prob
                          'leaf': ((800.0, 4000.0), 900.0, 0.7)}.get(surface, ((2000.0, 12000.0), 2500.0, 1.0))
     ev_len = int(0.025 * sr)
     t = np.arange(ev_len) / sr
+    # a real impact builds over two or three milliseconds; starting a 12 kHz ring at full level on the first sample
+    # is a single-sample step, which the stem gate rightly reads as a click (12 isolated impulses in one rain bed)
+    att = max(2, int(0.0025 * sr))
+    rise = (0.5 - 0.5 * np.cos(np.pi * np.arange(att) / att)).astype(np.float32)
     for pos in rng.integers(0, max(1, n - ev_len - 1), int(sec * rate)):
         d = float(np.clip(0.3 + rng.exponential(1.0 / lam), 0.3, 6.0))
         amp = loud * 3.778 * d ** 0.67 * d ** 2 / 60.0            # momentum-like, ~1 for a 4 mm drop
@@ -434,7 +443,9 @@ def synth_rain(sec, sr=SR, rng=None, rate_mm_h=5.0, surface='water', bubble_prob
         if surface == 'water' and rng.random() < bubble_prob:
             f_b = min(sr * 0.45, 3.26 / float(rng.uniform(0.25, 1.0) * 1e-3))
             ev = ev + 1.8 * amp * np.exp(-t / 0.004) * np.sin(2 * np.pi * f_b * t * (1.0 + 3.0 * t))
-        out[pos:pos + ev_len] += (ev * float(rng.uniform(0.7, 1.0))).astype(np.float32)
+        ev = ev.astype(np.float32)
+        ev[:att] *= rise
+        out[pos:pos + ev_len] += ev * float(rng.uniform(0.7, 1.0))
     return (out / max(1e-6, float(np.max(np.abs(out)))) * 0.8).astype(np.float32)
 
 
