@@ -37,15 +37,52 @@ Follow these steps in order. Never skip steps.
 
 | Step | Action | Output | Check |
 |---|---|---|---|
-| 1 | **Create project** | `python scripts/setup_project.py --new-project <dir> --title "<Title>"` (add `--ambience` only if requested) | Project structure with direction/, presets/, scores/, out/, reports/, STATUS.md |
+| 1 | **Create project** | `python scripts/setup_project.py --new-project <dir> --title "<Title>"` (add `--ambience` only if requested; `--new-film <dir> --fps 25` for a reel) | Project structure with direction/, presets/, scores/, out/, reports/, STATUS.md |
 | 2 | **Research** | `python scripts/research_kb.py <dir> --topic "<topic>" --tags <tags>`. Add web sources via TinyFish (see the `use-tinyfish` skill). For ambience/effects, use `--sounds` and document real references with licenses/measurements. | `reports/research_<topic>.md` with KB citations and sources |
 | 2b | **Load references** | `python scripts/find_references.py "<the brief in plain words>" --top 5`. Then open only the files it returns, and inside them only the sections it names. | The list of files you will actually open, and why |
 | 3 | **Direction sheet** | Copy `templates/direction_sheet.json` to `<dir>/direction/direction_<title>.json`. Fill all fields per [`references/workflow/music-direction.md`](references/workflow/music-direction.md). For video, run `scripts/video_score.py` first. | Complete sheet with job, feel, sections, motifs, hits, mix_intent, spatial_staging |
-| 4 | **Create presets** | `python scripts/presets.py scaffold instruments/vocals/environments/sfx <name> --project <dir>`. Each needs unique spatial placement. | Presets in project with character, spatial.azimuth/distance |
+| 4 | **Create presets** | `python scripts/presets.py scaffold instruments/vocals/environments/calls/sfx <name> --project <dir>`. Each needs unique spatial placement. A `calls` preset is one animal's call as data, played by an environment layer (`"primitive": "animal_call"`). | Presets in project with character, spatial.azimuth/distance |
 | 5 | **Write score** | Create `<dir>/scores/<title>_score.json` (declarative, references presets). Use [`templates/custom_score_template.py`](templates/custom_score_template.py) for exact control. | Valid JSON with tracks referencing presets |
 | 6 | **Render & gate** | `python scripts/pipeline.py <dir>/scores/<title>_score.json --project <dir>` | `out/master.wav` (a copy of the newest version), `out/master_vNN.wav`, `out/versions.json`, `<master>.json` tags, `stems/`, `midi/`, `reports/ci_report.json` with 0 FAIL |
 | 7 | **Revise** | Change ONE lever at a time ([`references/workflow/music-direction.md`](references/workflow/music-direction.md) §6). Re-run step 6 until green (max 5 attempts). | All gates pass |
 | 8 | **Listen & deliver** | `python scripts/listen.py out/master.wav --direction direction/<sheet>.json` | Verify and report results |
+
+## What the piece is: focus and intent
+
+Notes alone do not say what a piece is for. Three declarations do, and all three are data:
+
+| Declaration | Says | Where |
+|---|---|---|
+| `piece_type` | which rules judge it (`melodic`, `groove`, `texture`, `ambient`, `tense`, `dance`, `cinematic`, `effects_only`) | score and direction sheet |
+| `focus` | what carries it: `melody`, `drone`, `groove`, `texture` or `gesture` | score; the gate profile carries the default |
+| `intent` | what it is: emotions, register, scene, tensions, and what it must avoid | score `intent` |
+
+```json
+"piece_type": "cinematic", "focus": "drone",
+"intent": {"emotions": ["grief"], "scenes": ["farewell"], "registers": ["cinematic"], "avoid": ["drums"]}
+```
+
+Every track role comes from one vocabulary (`scripts/roles.py`), and every intent word resolves to a concept in
+`references/data/presets/intent/`: a word the engine has no meaning for is an error, not a silent default. The gate
+rows `focus.declared`, `intent.vocabulary` and `intent.avoid` make a declaration a fact to be measured, so a piece
+cannot pass by deleting its figure. `python scripts/intent.py check` validates the vocabulary; `compose.py` accepts
+the same block in a brief and fills only what the brief left empty. Read
+[`references/workflow/intent-and-focus.md`](references/workflow/intent-and-focus.md) before writing either.
+
+## Scoring to picture
+
+A film is a project type of its own: its unit of work is a **cue**, and each cue is a normal music project.
+
+```bash
+python scripts/setup_project.py --new-film films/glaciers --title "Glaciers" --fps 25
+python scripts/video_score.py --video clips/reel1.mp4 --project films/glaciers/cues/M01_open --brief "calm documentary"
+python video-mixer/deliver/reel.py films/glaciers --reel 1 --mux
+```
+
+Read [`references/scoring/video-scoring.md`](references/scoring/video-scoring.md) before the first cue: it holds
+the three timescales, the five `film/*` presets, the hit classes and the twelve `video.*` gate rows. Picture rows
+are certified inside the same `pipeline.py` run as the music rows, so one cue gets one verdict. Never attach rows
+to a report that has already been certified.
 
 ## Scripts you run
 
@@ -53,7 +90,7 @@ One line each; every path is under `scripts/` unless it says otherwise.
 
 | Script | What it does |
 |---|---|
-| `setup_project.py` | create a project: uv venv, packages, SoundFont, `--ears` for earshot |
+| `setup_project.py` | create a project (`--new-project`, `--new-film --fps`), uv venv, packages, SoundFont, `--ears` for earshot |
 | `pipeline.py` | render and certify: stages 1-7, the gate, version files, tags |
 | `compose.py` | brief to score; `--list`, `--render`, `--midi`, `--energy`, `--space`, `--voiceover` |
 | `render_natural.py` | score to stems and master, per-note expression |
@@ -61,6 +98,8 @@ One line each; every path is under `scripts/` unless it says otherwise.
 | `mix_diagnostics.py` | the mixing diagnostics table; reports, never edits the mix |
 | `quality_gate.py` | the gate rows for a score and a rendered master |
 | `gate_profiles.py` | gate profiles: `list`, `rows`, `explain`, `new`, `check` |
+| `intent.py` | the intent vocabulary: `check`, `list`, `explain <word>`, `resolve "<free text>"` |
+| `roles.py` | the one role vocabulary (`python scripts/roles.py` prints it) |
 | `presets.py` | `list`, `show`, `validate`, `scaffold`, `ingest` |
 | `direct.py` | director edits on a score: pulse, lines, arcs, gains, tempo |
 | `listen.py` | earshot readings and measurements against a direction sheet |
@@ -71,7 +110,8 @@ One line each; every path is under `scripts/` unless it says otherwise.
 | `sfx.py` | one-hit effects from presets (`list`, `make`) |
 | `environment.py` | ambience from presets and physical scenes |
 | `physical.py` | the physical scene engine: `laws`, `check`, `render`, `verify` |
-| `video_score.py` | score a video end to end (`--selftest`) |
+| `video_score.py` | score a video end to end inside a cue (`--selftest` proves every picture row can also fail) |
+| `video-mixer/deliver/reel.py` | place certified cues on a reel, one program, one verdict (`--mux`) |
 | `clone_instrument.py` | clone an instrument from a recording, export an SFZ |
 | `extract_pipeline.py` | song to MIDI and stems: `setup`, `run`, `status`, `kb` |
 | `sfz_libs.py`, `sfz_render.py` | optional SFZ libraries and the renderer that plays them |
@@ -115,10 +155,13 @@ A score names what it wants built; the engine builds only that, never every form
 | `immersive_7_1` | 8 | ITU-R BS.2051 System H | -3.0 dBTP |
 | `immersive_7_1_4` | 12 | ITU-R BS.2051 System J | -3.0 dBTP |
 | `immersive_7_1_2` | 10 | ITU-R BS.2051 System I | -3.0 dBTP |
+| `ambix` | 36 | the mix as a fifth-order sound field (ACN, SN3D) | -3.0 dBTP |
+| `adm_bw64` | one per object + 2 | ADM objects with positions over time, stereo bed | -3.0 dBTP |
+| `stereo_48k` | 2 | the stereo master at 48 kHz (`"rate_hz"` works on any target) | -1.5 dBTP |
 
 Every number lives in `references/data/presets/outputs/` (format) and `references/data/presets/layouts/` (speaker
 positions, crossover, fold-down), loaded through `presets.py`, so a project can add its own format with two JSON files.
-Every shipped target names a renderer the engine has (`mix_master`, `spatial`, `binaural`). A project's own target with
+Every shipped target names a renderer the engine has (`mix_master`, `spatial`, `binaural`, `hoa`, `adm`). A project's own target with
 `"renderer": null` is described but cannot be built: naming it blocks the render (no silent downgrade), and `"all"`
 reports it as skipped. The CLI can override the score: `--targets stereo` or `--targets all`.
 
@@ -150,6 +193,8 @@ exists so the agent can decide values, not so it can be quoted.
 ## Key Principles
 
 - **Modular**: Sound/space in `presets/`, notes in `scores/`, intent in `direction/`. No monolithic scripts.
+- **One vocabulary**: a track's `role` is a function from `scripts/roles.py`; synonyms live in its alias table only.
+- **Declare the subject**: `piece_type` and `focus` say what the piece is, and `focus.declared` holds the promise.
 - **Research-driven**: Every custom instrument/vocal/culture needs KB research citations.
 - **Data over code**: New sounds use scene data (`"scene"`/`"scene_layers"`), not Python generators.
 - **One change at a time**: When fixing gate failures, change exactly one parameter and re-measure.
@@ -168,6 +213,7 @@ exists so the agent can decide values, not so it can be quoted.
 | Instrument cloning/extraction | [`references/instruments-and-vocals/instrument-cloning.md`](references/instruments-and-vocals/instrument-cloning.md), [`references/workflow/extraction.md`](references/workflow/extraction.md) |
 | Mixing/mastering | [`references/mixing/mixing-and-mastering.md`](references/mixing/mixing-and-mastering.md), `scripts/mixer.py`, `scripts/mix_diagnostics.py` |
 | Gate failures | [`references/mixing/quality-gate.md`](references/mixing/quality-gate.md), `scripts/gate_profiles.py` |
+| Intent, mood words, focus | [`references/workflow/intent-and-focus.md`](references/workflow/intent-and-focus.md), `scripts/intent.py` |
 
 ## Output Template
 

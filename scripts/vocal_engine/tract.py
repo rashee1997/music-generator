@@ -79,7 +79,7 @@ def ring_cluster(F, amount, ring):
     a = float(np.clip(amount, 0.0, 1.0))
     if a <= 0.0 or len(F) < 5 or not ring or not ring.get('enabled', True):
         return F
-    tgt = np.asarray(ring['target_hz'], dtype=float)
+    tgt = np.asarray(ring['target_hz'], dtype=float) * float(ring.get('scale', 1.0))
     share = np.asarray(ring['shares'], dtype=float)
     if tgt.shape != (3,) or share.shape != (3,):
         return F

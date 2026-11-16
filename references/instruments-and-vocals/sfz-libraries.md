@@ -62,13 +62,49 @@ or in the score: `"instrument": "sfz:sso/Strings - Notation/1st Violins Legato"`
 | `controls` | constant controllers at start (e.g. `{"21": 50}` is Sonatina's vibrato knob) |
 | `keyswitches` | `{"pizz": 36}`: a note's `art` becomes a key-switch note, for KS patches |
 | `legato_overlap_s` | legato patches, scores with no per-note `art`: each note ends this long after the next one starts (default 0.04) |
-| `slur_overlap_s`, `slur_glide_cents`, `slur_glide_s`, `slur_vel_scale`, `slur_fade_s`, `slur_fade_floor`, `slur_fade_off` | slurred legato for notes marked `"art": "legato"` (defaults 0.025, -20, 0.04, 0.88, 0.025, 0.55, false); see "Slurred legato" below |
+| `slur_overlap_s`, `slur_glide_cents`, `slur_glide_s`, `slur_vel_scale`, `slur_fade_s`, `slur_fade_floor`, `slur_fade_off` | slurred legato for notes marked `"art": "legato"` (defaults 0.025, -20, 0.04, 0.88, 0.025, 0.85, false); see "Slurred legato" below |
 | `tail_s` | room for the release (default 3) |
 | `trim_db` | stem level; the library's own level differs from the GM bank, set it by measuring |
 | `fallback` | `"gm"`: play the SoundFont when the library is missing. Printed, counted in `STATS['sfz_fallback']`, never silent. Default none: a missing library is an error |
 
 Timing and velocity are humanized first (same as the GM path). The dynamics curve is sent as controller values; controllers go out
 50 ms before the first note (a controller on the same tick as a note-on arrives too late for that note).
+
+## Making it sound natural
+
+A sampled part still sounds played by a machine, and the reason is what the MIDI does not carry. The SFZ path is **one MIDI
+channel for the whole track**, so these GM-path features are not sent and their preset keys do nothing here:
+`per_note_channels`, `sustained`, `vibrato`, `expression`, `detune_cents`, and the per-note `c` (microtone) and `gl`/`gs`
+(glide) note fields. There is no per-note expression arch, no delayed vibrato, no scoop and no bow direction. What is sent is
+timing, velocity, `art`, keyswitches, the constant `controls`, one dynamics controller every 15 ms, and - for slurred legato -
+a pitch-bend glide and a partial gain ramp.
+
+That leaves five levers, in this order:
+
+1. **Patch per articulation.** A staccato note and a held note must be different recordings. Mark the notes `"art"` and map
+   the names to keyswitches for a KS patch, or give the articulation its own track and patch. One sustain patch across a whole
+   phrase is the strongest sample tell there is.
+2. **The right controller for the patch family.** "Notation" patches read loudness from CC11 (`"cc": "expression"`, the
+   default); "Performance" patches read it from the mod wheel (`"cc": "modwheel"`). Send the wrong one and the dynamics curve
+   is applied to a controller the patch ignores - the part plays flat while the score looks correct.
+3. **A written dynamics arc.** `dyn_level` is the score's `dynamics` times the track's `dynamics`, and with neither it is a
+   constant 1.0: one CC value for the whole piece, which is the organ-like sustain. The crescendo has to exist in the score.
+4. **Slurred legato where a player slurs.** Two consecutive `"art": "legato"` notes become one bow stroke (25 ms overlap,
+   -20 cents glide, velocity x0.88, 25 ms partial ramp on a monophonic track). Leave staccato, marcato, pizzicato, tremolo,
+   spiccato, col legno and harmonics out of it.
+5. **Level and room, measured.** `trim_db` set by measurement (libraries differ by many dB and sit well below the GM bank),
+   the project `space` for reverb (the free sets are mostly dry), a unique azimuth/distance per part, and the mix preset's
+   `inst_eq` for the 3-5 kHz brightness these libraries share.
+
+Library defects are fixed at their own key, only after measuring them: `attack_fade_s` when a sample begins on a hard step,
+`dc_hp_hz` when the patch carries a DC offset. `slur_fade_off` turns the ramp off for a polyphonic track where it would cut a
+neighbouring voice.
+
+What is still missing, and should be said rather than worked around: an SFZ stem does **not** pass through
+`dsp.enhance_sf2_dynamics`, the GM path's level-following tilt and saturation, so a soft sampled passage keeps the same
+brightness as a loud one. A sustained solo line that has to breathe (vibrato, a swell, a phrase-end taper) belongs on the GM
+path or the vocal engine until the SFZ path sends those curves. Judge the result with `naturalness_check.py` (`spec_flux`,
+`flatness`) and the `modulation_flutter` gate row, and report that neither is an ear.
 
 ## The gate
 Project gate: an SFZ track needs its library installed, the patch to exist, and the engine (the message names the command). Warnings: the credit

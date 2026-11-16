@@ -28,8 +28,13 @@ An AI agent skill and Python audio pipeline that composes, renders, mixes, and v
 * **Measured Humanization:** Separates shared ensemble tempo drift from individual player motor error, scales drum push with tempo, couples velocity to note duration, and adds note-on/note-off mechanism noise.
 * **Roughness & Masking Gates:** Runs critical-band analysis (80–6000 Hz) and ERB stereo masking checks so leads stay clear and overtones don't clash.
 * **Spatial Staging:** Applies per-stem azimuth, distance filtering, stereo width, shared room acoustics, and optional measured-HRTF binaural rendering.
+* **Immersive 2.0 (opt-in, `immersive.engine: "hoa_bus"`):** One fifth-order ambisonic bus carries every source, reflection and tail and is decoded once. Sources move by keyframes and keep their room (each reflection has its own Doppler shift), reverb time and pre-delay can be derived from the room's size and materials, and the room can change between sections.
+* **Deliverables:** Stereo, binaural, 7.1 / 7.1.2 / 7.1.4, an AmbiX sound field (`ambix`), object-based ADM BW64 (`adm_bw64`) and 48 kHz delivery (`"rate_hz": 48000`), each named in the score's `output_targets`.
+* **Voice and Expression:** An optional Liljencrants-Fant glottal source with one pressed-to-breathy control, source oversampling, syllable shorthand, vibrato that wanders, and a bed of sympathetic strings tuned to the piece.
+* **Any Animal Call as Data:** The `animal_call` environment primitive builds a call from pitch contours, a sequence, roughness, pulses and a tube length, stored as a `calls` preset; `python scripts/environment.py --call <name>` renders one alone.
 * **Preset-Driven Mixing:** Keeps sound design, spatial placement, mix bus processing, and loudness targets (LUFS / True Peak) strictly in JSON presets rather than hardcoded scripts.
 * **CI/CD Quality Gates:** Audits every render before finalizing. If a mix fails a check, it stays in `out/_draft_master.wav` until the issue is fixed.
+* **Film Scoring to Picture:** Reads a reel at three timescales (reel, scene, motion beat), caps the music's size by camera distance, places accents by hit class (dead-on or reaction-delayed), ducks the bed per band under measured speech, and certifies a cue once — picture rows run inside the same gate as the music rows. Delivery is measured in the gating mode it declares (dialogue-gated for Netflix/EBU, full program for web), and a reel assembles only certified cues.
 
 ---
 
@@ -105,6 +110,11 @@ python scripts/helpers/version_manager.py list --project my-project
 
 # 5. Export certified master to MP3 with metadata tags
 python scripts/helpers/compress_mp3.py out/master_v01.wav -o my-track.mp3 -b 320k
+
+# 6. Score to picture: a film project, one cue, then the reel
+python scripts/setup_project.py --new-film films/glaciers --title "Glaciers" --fps 25
+python scripts/video_score.py --video clips/reel1.mp4 --project films/glaciers/cues/M01_open --brief "calm documentary"
+python video-mixer/deliver/reel.py films/glaciers --reel 1 --mux
 ```
 
 ---
@@ -121,6 +131,21 @@ python scripts/helpers/compress_mp3.py out/master_v01.wav -o my-track.mp3 -b 320
    ├─ 5. Mixing & Mastering             (mixer.py)
    ├─ 6. Psychoacoustic Quality Gates   (quality_gate.py · naturalness_check.py · music21)
    └─ 7. Certified Release Packaging    (out/master_vNN.wav · stems/ · midi/ · ci_report.json)
+```
+
+Scoring to picture adds one path that feeds the same gate, not a second verdict:
+
+```text
+[Film reel / cue]
+   │
+   ├─ probe      ffprobe facts · scdet cuts · per-frame luma / motion / centre   (video-mixer/video_probe.py)
+   ├─ context    reel / scene / motion-beat timescales · cut grid phase         (context.py · analysis/)
+   ├─ direction  sections, hits with a class, silence from the spotting         (video_direction.py)
+   ├─ music      the cue is a normal music project: Phases 1-8 unchanged
+   ├─ program    voice chain, bed under speech, duck, master in the declared
+   │             gating mode (dialogue-gated or full program)                  (video_program_mix.py)
+   ├─ gate       the twelve video.* rows, inside stage 6 of the same run        (video-mixer/gate/)
+   └─ reel       certified cues placed in reel time, one aggregate verdict      (video-mixer/deliver/reel.py)
 ```
 
 ### The 8-Step Agent Workflow
@@ -151,7 +176,10 @@ music-generator/
 ├── knowledgebase/   # Genre, cultural idiom, and DSP reference docs
 ├── references/      # Detailed guides (mixing, vocals, spatial, SFZ, video, limits)
 ├── templates/       # Project, direction-sheet, and score templates
-├── video-mixer/     # Video cut detection, dialogue ducking, and muxing
+├── video-mixer/     # Scoring to picture: probe, context, direction, program mix, video gate, reel
+│   ├── analysis/    # shot scale (block contrast) and speech activity
+│   ├── gate/        # the video.* rows and the one-pass entry point
+│   └── deliver/     # reel assembly from certified cues only
 ├── docs/            # Psychoacoustic math (PSYCHOACOUSTICS.md) & web audio player
 └── tests/           # Pipeline, spatial, and audio integrity test suites
 ```
@@ -162,10 +190,12 @@ music-generator/
 
 * **Metrics Are Not Ears:** Quality gates catch technical and psychoacoustic errors (masking, clipping, bad voice leading), but cannot judge subjective musical taste or emotional fit.
 * **General MIDI Default Bank:** Uses GeneralUser GS by default. Concert-grade orchestral realism requires supplying multisampled SFZ libraries per project.
-* **Vowel-Only Vocals:** Synthesized vocals generate textures (choirs, *oohs*, hums) without consonants or lyrics.
+* **Syllables, Not Words:** Synthesized vocals sing vowels, hums and simple syllables; there are no lyrics.
+* **Immersive 2.0 Is Measured, Not Auditioned:** The ambisonic engine, the new gate rows and the shipped animal-call presets are checked by tests and probes only. The call presets use estimated numbers, and the ADM file is an open-standard file, not a Dolby Atmos master.
 * **Cultural Idioms Are Approximations:** Non-Western scales and rhythms are approximated unless paired with authentic instrument presets or user recordings.
 * **Opt-In Binaural Processing:** Full HRTF elevation and head-shadowing only apply when `spatial.binaural: true` is enabled in the mix preset.
-* **Basic Video Sync:** Cut detection misses gradual fades/dissolves and ducks dialogue by level rather than semantic context.
+* **Picture Analysis Is Heuristic:** Cuts come from `scdet`, so gradual fades and dissolves are missed (no deep detector ships); shot scale is block contrast; speech activity is presence, not content, and dialogue ducking is level- and band-based, not semantic.
+* **The Video Path Is Not Auditioned:** `listen.py` judges the music bed, not the program under speech, and `motion_sync`, `grid_phase`, `shot_scale` and `dialogue_band` thresholds are starting values until measured on real reels.
 
 See [references/workflow/troubleshooting-and-limits.md](references/workflow/troubleshooting-and-limits.md) and [docs/PSYCHOACOUSTICS.md](docs/PSYCHOACOUSTICS.md) for full details.
 

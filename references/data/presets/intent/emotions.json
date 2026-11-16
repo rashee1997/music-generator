@@ -1,0 +1,208 @@
+{
+  "kind": "intent",
+  "name": "emotions",
+  "character": "What each feeling asks for, as facts a small model can choose and a gate can check: the order of the cues, what it forbids, and the measurements that would show it was not delivered. The numbers stay in scripts/compose.py EMOTIONS; this file says what the numbers MEAN, and every entry must name a mood compose already knows.",
+  "order": ["mode", "tempo", "register", "dynamics", "articulation", "timbre"],
+  "why_this_order": "Listener studies put mode first, then tempo, then register, dynamics, articulation and timbre, and find the cues roughly additive (references/scoring/emotion-and-scoring.md section 1). Choosing them in this order is what stops one cue contradicting the rest.",
+  "emotions": {
+    "calm": {
+      "character": "nothing is at stake; the music holds still and lets the room be heard",
+      "register": "mid",
+      "density": 0.15,
+      "forbidden": ["four_on_floor", "bright_staccato", "sudden_loud"],
+      "qa": {"max_onsets_per_s": 1.2, "min_long_note_frac": 0.5, "crest_floor_db": 8},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (calm row)"]
+    },
+    "grief": {
+      "character": "loss that has already happened; nothing is being fought",
+      "register": "low",
+      "density": 0.10,
+      "forbidden": ["four_on_floor", "bright_staccato", "major_cadence"],
+      "qa": {"max_onsets_per_s": 0.9, "min_long_note_frac": 0.55, "crest_floor_db": 9},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (grief row)"]
+    },
+    "sad": {
+      "character": "falling lines and long rests; the piece loses something as it goes",
+      "register": "low_mid",
+      "density": 0.18,
+      "forbidden": ["four_on_floor", "bright_staccato"],
+      "qa": {"max_onsets_per_s": 1.5, "min_long_note_frac": 0.45},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (sad row)"]
+    },
+    "tender": {
+      "character": "close and unguarded; quiet enough that a breath is audible",
+      "register": "mid_high",
+      "density": 0.20,
+      "forbidden": ["four_on_floor", "sudden_loud"],
+      "qa": {"max_onsets_per_s": 2.0, "crest_floor_db": 8},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (tender row)"]
+    },
+    "hopeful": {
+      "character": "it is not resolved yet, but it is going to be",
+      "register": "rising",
+      "density": 0.40,
+      "forbidden": ["four_on_floor", "tritone_pedal"],
+      "qa": {"min_layers_at_peak": 3},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (hopeful row)"]
+    },
+    "epic": {
+      "character": "the frame is bigger than the person in it",
+      "register": "wide",
+      "density": 0.60,
+      "forbidden": ["thin_texture_throughout"],
+      "qa": {"min_layers_at_peak": 4, "min_range_frac": 0.35},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (triumphant/epic row)"]
+    },
+    "dark_epic": {
+      "character": "the same size, aimed at you; power without triumph",
+      "register": "wide_low",
+      "density": 0.60,
+      "forbidden": ["major_cadence"],
+      "qa": {"min_layers_at_peak": 3, "min_range_frac": 0.3},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (dark epic row)"]
+    },
+    "tense": {
+      "character": "pressure that does not release; the ear waits for a resolution that does not come",
+      "register": "low_plus_sparse_high",
+      "density": 0.25,
+      "forbidden": ["major_cadence", "four_on_floor"],
+      "qa": {"min_silences": 1, "crest_floor_db": 9},
+      "sources": ["references/scoring/emotion-and-scoring.md sections 1 and 3 (tension toolkit)"]
+    },
+    "scary": {
+      "character": "something is wrong and it is not going to explain itself",
+      "register": "very_low_plus_very_high",
+      "density": 0.15,
+      "forbidden": ["major_cadence", "steady_pulse", "four_on_floor"],
+      "qa": {"min_silences": 1, "max_onsets_per_s": 1.4},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (scary/dread row)"]
+    },
+    "mysterious": {
+      "character": "a question, held open; the harmony never settles on an answer",
+      "register": "high_over_low_drone",
+      "density": 0.20,
+      "forbidden": ["major_cadence", "four_on_floor"],
+      "qa": {"min_silences": 0, "crest_floor_db": 7},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (mysterious row)"]
+    },
+    "wonder": {
+      "character": "the scale of it lands before anything else does",
+      "register": "wide_ascending",
+      "density": 0.35,
+      "forbidden": ["four_on_floor", "sudden_loud"],
+      "qa": {"min_layers_at_peak": 3},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (wonder/awe row)"]
+    },
+    "focused": {
+      "character": "it stays out of the way on purpose; no event, no peak",
+      "register": "mid",
+      "density": 0.30,
+      "forbidden": ["sudden_loud", "four_on_floor", "wide_range"],
+      "qa": {"max_onsets_per_s": 2.5, "max_range_frac": 0.4},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (focused/neutral row)"]
+    },
+    "joyful": {
+      "character": "nothing is being withheld; the line rises and the rhythm agrees with it",
+      "register": "mid_high",
+      "density": 0.45,
+      "forbidden": ["pedal_drone_throughout"],
+      "qa": {"min_layers_at_peak": 3},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (joyful row)"]
+    },
+    "playful": {
+      "character": "light on its feet, and allowed to be a little wrong on purpose",
+      "register": "high",
+      "density": 0.35,
+      "forbidden": ["four_on_floor", "pedal_drone_throughout"],
+      "qa": {"min_onsets_per_s": 0.8},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (playful row)"]
+    },
+    "determined": {
+      "character": "one idea, repeated forward; the harmony does not wander",
+      "register": "low_mid",
+      "density": 0.45,
+      "forbidden": ["rubato_on_the_cell"],
+      "qa": {"min_onsets_per_s": 1.2},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (determined row)"]
+    },
+    "energetic": {
+      "character": "the tempo is the point; every layer agrees on the pulse",
+      "register": "wide",
+      "density": 0.65,
+      "forbidden": ["bed_through_the_gap"],
+      "qa": {"min_onsets_per_s": 2.0, "min_layers_at_peak": 3},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (energetic row)"]
+    },
+    "angry": {
+      "character": "weight pushed at the listener; the low end is the argument",
+      "register": "low",
+      "density": 0.55,
+      "forbidden": ["major_cadence", "rubato_on_the_cell"],
+      "qa": {"min_dissonance_frac": 0.1},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (angry row)"]
+    },
+    "adventure": {
+      "character": "moving through somewhere new; the material keeps opening",
+      "register": "wide",
+      "density": 0.50,
+      "forbidden": ["pedal_drone_throughout"],
+      "qa": {"min_layers_at_peak": 3},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (adventure row)"]
+    },
+    "triumphant": {
+      "character": "the arrival is earned; brass and low end carry it",
+      "register": "wide",
+      "density": 0.65,
+      "forbidden": ["thin_texture_throughout"],
+      "qa": {"min_layers_at_peak": 4, "min_range_frac": 0.3},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (triumphant row)"]
+    },
+    "majestic": {
+      "character": "vast and unhurried; the piece has more space than notes",
+      "register": "wide_low",
+      "density": 0.40,
+      "forbidden": ["four_on_floor", "bright_staccato"],
+      "qa": {"min_long_note_frac": 0.4},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (majestic row)"]
+    },
+    "dreamy": {
+      "character": "edges softened; the harmony drifts without landing",
+      "register": "mid_high",
+      "density": 0.20,
+      "forbidden": ["four_on_floor", "major_cadence"],
+      "qa": {"min_long_note_frac": 0.5},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (dreamy row)"]
+    },
+    "melancholy": {
+      "character": "sadness with some light left in it; a major third appears and is taken away",
+      "register": "mid",
+      "density": 0.22,
+      "forbidden": ["four_on_floor", "bright_staccato"],
+      "qa": {"max_onsets_per_s": 1.6, "min_long_note_frac": 0.4},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (melancholy row)"]
+    },
+    "nostalgic": {
+      "character": "warm and slightly out of reach, as though heard through something",
+      "register": "mid",
+      "density": 0.25,
+      "forbidden": ["four_on_floor", "sudden_loud"],
+      "qa": {"max_onsets_per_s": 1.8, "crest_floor_db": 7},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (nostalgic row)"]
+    },
+    "passionate": {
+      "character": "the line pushed to the top of its range and held there",
+      "register": "wide_ascending",
+      "density": 0.55,
+      "forbidden": ["thin_texture_throughout"],
+      "qa": {"min_range_frac": 0.4, "min_layers_at_peak": 3},
+      "sources": ["references/scoring/emotion-and-scoring.md section 1 (passionate row)"]
+    }
+  },
+  "provenance": {
+    "order": "the cue order of emotion-and-scoring.md section 1, which the document takes from listener studies",
+    "emotions.*.density": "starting value: the layer count a mood usually carries, from the arc table in section 2",
+    "emotions.*.qa.max_onsets_per_s": "starting value, uncalibrated until the first measured renders",
+    "emotions.*.qa.crest_floor_db": "starting value: a piece with less crest than this has been held still",
+    "emotions.*.register": "the register column of the same table"
+  }
+}

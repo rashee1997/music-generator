@@ -69,7 +69,25 @@ ROLE_CHAINS = {
                     'comp': {'thr': -24, 'ratio': 2.0, 'attack': 30, 'release': 250}},
     'fx': {'eq': [{'type': 'hp', 'f': 100}], 'comp': None},
 }
-ROLE_CHAINS['default'] = ROLE_CHAINS['fx']          # an unknown role gets the effect chain, as before
+# Every canonical role (scripts/roles.py) has a chain. These are the same numbers under the other name: a
+# `lead` is a melody and an `ostinato` is an arp, so renaming a track never moves its mix.
+ROLE_CHAINS['lead'] = ROLE_CHAINS['melody']
+ROLE_CHAINS['texture'] = ROLE_CHAINS['pad']
+ROLE_CHAINS['ostinato'] = ROLE_CHAINS['arp']
+ROLE_CHAINS['percussion'] = ROLE_CHAINS['drum']
+# A held centre is not a pad with a low-pass: it has no attack to shape, so almost no compression, and it must
+# not be carved where its fundamental and its fifth live.
+ROLE_CHAINS['drone'] = {'eq': [{'type': 'hp', 'f': 28}, {'type': 'peak', 'f': 220, 'gain': -1.5, 'q': 0.8},
+                               {'type': 'peak', 'f': 2600, 'gain': -2.0, 'q': 0.9}, {'type': 'lp', 'f': 7000}],
+                        'comp': {'thr': -30, 'ratio': 1.4, 'attack': 60, 'release': 400}}
+ROLE_CHAINS['vocal'] = {'eq': [{'type': 'hp', 'f': 75}, {'type': 'peak', 'f': 500, 'gain': -1.5, 'q': 1.0},
+                               {'type': 'peak', 'f': 3000, 'gain': 1.0, 'q': 0.9},
+                               {'type': 'peak', 'f': 7000, 'gain': -1.5, 'q': 1.2}],
+                        'comp': {'thr': -22, 'ratio': 2.0, 'attack': 12, 'release': 140}}
+# An unlisted role used to be mixed as an effect (a high-pass at 100 Hz and no compression), which is how a
+# `drone` came out thin. The vocabulary now raises on an unknown role (roles.canonical), so this chain is only a
+# last resort for a name a project invents - and a neutral accompaniment is a better last resort than an effect.
+ROLE_CHAINS['default'] = ROLE_CHAINS['chord']
 
 # ---------------------------------------------------------------------------------------------
 # spectral profiles: what replaces the one universal environment chain when a source says what it is.
@@ -180,7 +198,8 @@ DEFAULTS = {
     # How far above the lead an accompaniment may sit before the gate complains. A per-piece decision
     # (a dub bass is not a pad): change it in the project's mix preset, not in quality_gate.py.
     'balance': {
-        'allow_db': {'bass': 6.0, 'drum': 6.0, 'chord': 3.0, 'pad': 3.0, 'counter': 3.0, 'arp': 3.0},
+        'allow_db': {'bass': 6.0, 'drum': 6.0, 'chord': 3.0, 'pad': 3.0, 'counter': 3.0, 'arp': 3.0,
+                     'texture': 3.0, 'drone': 3.0, 'ostinato': 3.0, 'percussion': 6.0},
     },
     # What the mixing diagnostics call mud, harsh, a collision or a held-still transient. Advisory
     # thresholds belong to the piece too: a lo-fi cue may want a wider mud allowance.
@@ -215,13 +234,39 @@ DEFAULTS = {
     # `pair` is how a stereo stem keeps its width: two sources at +-width/2, level normalised for input coherence.
     'immersive': {
         'enabled': False,
-        'height_by_role': {'melody': 6.0, 'pad': 15.0, 'environment': 40.0, 'chord': 0.0, 'bass': 0.0, 'drum': 0.0},
+        'height_by_role': {'melody': 6.0, 'lead': 6.0, 'vocal': 6.0, 'pad': 15.0, 'texture': 15.0,
+                           'environment': 40.0, 'chord': 0.0, 'bass': 0.0, 'drum': 0.0, 'percussion': 0.0,
+                           'drone': 0.0, 'ostinato': 0.0},
         'max_elevation': 60.0,
         'min_height_tracks': 1,
         # a listener's own head set: '' = the bundled FABIAN set, else a name in <project>/presets/hrtf/ or a path
         'hrtf': {'dataset': ''},
         'pair': {'width_deg_bed': 40.0, 'width_deg_stereo': 12.0},
         'gate': {'max_late_iacc': 0.4},
+        # 'per_stem' places each track with its own head filter (the engine every older piece was mixed with);
+        # 'hoa_bus' writes every source, reflection and tail into one ambisonic field and decodes it once
+        # (scripts/spatial_engine/hoa.py): moving sources keep their room, and keyframes and scenes need it.
+        'engine': 'per_stem',
+        'order': 5,
+        # how far an "anchor" source (bass, drums, or `spatial_role: "anchor"`) may sway around its place
+        'anchor_max_span_deg': 6.0,
+        # the fastest a source may travel, read by the imm_kinematics row. Starting values, not measured limits.
+        'max_deg_per_sec': {'anchor': 10.0, 'mover': 120.0},
+    },
+    # strings that are never played but ring with the music (sitar taraf, sarangi, piano with the pedal down).
+    # Tuned once per piece: "score_scale" takes the `strings` most-used pitch classes of the source tracks, placed
+    # upward from `low_hz`; or give `tuning` as a list of Hz. `level_db` is against the level of the sources.
+    'sympathetic_resonance': {
+        'enabled': False,
+        'sources': [],                # track names or roles; [] = every track that is not drums or a place
+        'tuning': 'score_scale',
+        'low_hz': 110.0,
+        'strings': 7,
+        'partials': 3,
+        'q': 300.0,
+        'level_db': -26.0,
+        'width': 0.5,
+        'spatial': {},                # where the bed sits on the ambisonic bus ({} = not placed)
     },
     # rendering: how the sampler is driven. `oversample` renders the SoundFont at that multiple of the rate and
     # decimates, which pushes the linear-interpolation images of a transposed sample down (measured: up two octaves
@@ -291,10 +336,19 @@ RANGES = {
     ('mastering', 'crest_floor_db'): ('num', 0.0, 30.0),
     ('immersive', 'max_elevation'): ('num', 0.0, 90.0),
     ('immersive', 'min_height_tracks'): ('num', 0.0, 24.0),
+    ('immersive', 'order'): ('num', 1.0, 7.0),
+    ('sympathetic_resonance', 'low_hz'): ('num', 27.5, 2000.0),
+    ('sympathetic_resonance', 'strings'): ('num', 1.0, 24.0),
+    ('sympathetic_resonance', 'partials'): ('num', 1.0, 8.0),
+    ('sympathetic_resonance', 'q'): ('num', 5.0, 2000.0),
+    ('sympathetic_resonance', 'level_db'): ('db', -60.0, -6.0),
+    ('sympathetic_resonance', 'width'): ('num', 0.0, 1.0),
+    ('immersive', 'anchor_max_span_deg'): ('num', 0.0, 45.0),
 }
 
 ENUMS = {
     ('gain_staging', 'strategy'): ('legacy', 'adaptive'),
+    ('immersive', 'engine'): ('per_stem', 'hoa_bus'),
     ('dynamics', 'engine'): ('pedalboard', 'dsp'),
     ('dynamics', 'detector'): ('peak', 'rms'),
     ('sidechain', 'mode'): ('legacy', 'explicit', 'off'),

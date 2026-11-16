@@ -1,0 +1,18 @@
+{
+  "name": "video_underscore",
+  "character": "an underscore under dialogue: a quiet bed with few or no accents, so dialogue stays strict and the accent rows only report",
+  "extends": "video_dialogue",
+  "focus": {
+    "roles": ["drone", "pad", "texture", "melody"],
+    "fallback": "balance.layers",
+    "label": "a bed with no accent of its own",
+    "reason": "an underscore sits under speech: the bed is the subject and a tune would fight the voice"
+  },
+  "rows": {
+    "video.hit_density": {"mode": "apply", "budget_per_minute": 6,
+                          "reason": "an underscore is not a montage: six accents a minute is already a lot under speech"},
+    "video.cut_sync": {"mode": "apply"},
+    "video.dialogue_snr": {"mode": "apply", "min_db": 18.0,
+                           "reason": "an underscore gives the dialogue more room than a scored cue: 18 dB is still inside the observed 12-18 dB working range"}
+  }
+}

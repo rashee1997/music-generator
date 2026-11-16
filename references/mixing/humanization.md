@@ -61,6 +61,29 @@ the instrument preset, replaces the role's fixed 35 ms overlap (a bowed line ove
 **Velocity and duration move together**: a score that writes one flat velocity still gets level variation, but it is no
 longer level alone.
 
+## 1c. The role decides the phrasing (`humanize.ROLE`)
+
+A role is a function, and every function is played differently. `humanize.py` reads the canonical role from
+`scripts/roles.py`; a role it does not know raises rather than falling back to a comp, which is how a drone used to be
+phrased like a chord.
+
+| Role | Offset of `lead_ms` | Velocity | Gate | Why |
+|---|---|---|---|---|
+| `melody`, `lead` | -1.0 (early) | +8 | 1.00 | the figure leads the accompaniment (Goebl 2001) |
+| `vocal` | -0.9 | +7 | 1.03 | a sung line sits slightly ahead and holds longer |
+| `counter` | -0.4 | +2 | 1.00 | answers the lead, does not lead |
+| `chord` | +0.2 | -6 | 0.95 | comps behind the beat, shorter than written |
+| `pad` | +0.3 | -10 | 1.02 | sustains, never re-attacks on the grid |
+| `texture` | +0.3 | -10 | 1.03 | a grain bed is shaped like a pad, not like an effect |
+| `drone` | +0.3 | -10 | 1.05 | holds through the harmony change |
+| `bass`, `drum` | 0.0 | -1 / 0 | 0.90 / 1.00 | the rhythm section stays on the grid |
+| `ostinato` | +0.1 | -3 | 0.94 | the cell repeats, but every repeat is played |
+| `arp` | +0.1 | -4 | 0.85 | even and short |
+
+A `groove` or `texture` piece has no figure, so nothing gets the melody lead; the piece is phrased by its cell and its
+surface. The mix's `level_by_role` and `widen_by_role` follow the same roles, so phrasing and level cannot disagree
+about what a part is.
+
 ## 2. Presets (in `humanize.PRESETS`)
 
 | Preset | timing_ms | lead_ms | drift_ms | vel_sigma | rubato | Feel |
@@ -93,6 +116,18 @@ number here.
 A measured caveat worth knowing: with the default drift and motor amplitudes, the *total* deviation's lag-1 is positive
 (~+0.6) because the slow wander dominates. That is realistic for tempo drift, but it means the module's old claim that
 neighbouring notes are anti-correlated describes the motor term, not the sum.
+
+## 3c. Vibrato that wanders (`vibrato.model: "ou"`)
+
+The default vibrato is one sine per note with a random rate, depth and phase. With `"model": "ou"` on a track's or an
+instrument preset's `vibrato` block, rate and depth each follow a seeded Ornstein-Uhlenbeck track around their mean:
+`rate_sigma` (0.06, a fraction of the rate), `depth_sigma` (0.15) and `tau_s` (0.35, how long a deviation lasts). The
+phase is the running sum of the rate, so it never jumps. Each track starts at zero deviation: a note begins regular
+and drifts as it is held. `delay_ms`, glides, `jitter_cents` and `shimmer` work as before. Chord and pad roles still
+get no vibrato.
+
+The noises of the instrument itself (bow, key, breath, damper at each onset and release) are `render.mechanics` in
+the mix preset; a preset picks its class with `mechanics_class`.
 
 ## 4. What humanization cannot fix
 

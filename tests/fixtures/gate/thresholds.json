@@ -12,10 +12,12 @@
     "clicks",
     "clipping",
     "loudness",
+    "render.finite",
     "silence",
     "stem.clipping",
     "true_peak",
     "video.duration_lock",
+    "video.gating_mode",
     "video.master_compliance",
     "vocal.integrity"
   ],
@@ -68,8 +70,12 @@
     "feel.resolution": {},
     "feel.spiral": {},
     "feel.witek": {},
+    "focus.declared": {},
     "imm.band": {
       "min_hf_frac": 0.003
+    },
+    "imm.clarity": {
+      "min_c80_db": -5.0
     },
     "imm.coloration": {
       "hi_hz": 5000.0,
@@ -98,6 +104,14 @@
       "min_tilt_db": 2.0
     },
     "imm.height_rules": {},
+    "imm.iacc_early": {
+      "max_iacc": 0.97
+    },
+    "imm.kinematics": {},
+    "imm.low_fold": {
+      "hz": 250.0,
+      "max_db": 2.5
+    },
     "imm.route_parity": {
       "max_ild_db": 3.0,
       "max_itd_ms": 0.2
@@ -105,6 +119,8 @@
     "imm.width": {
       "max_corr": 0.95
     },
+    "intent.avoid": {},
+    "intent.vocabulary": {},
     "key.mode": {},
     "kick.grid": {
       "min_lock": 0.7
@@ -123,6 +139,10 @@
     },
     "meta.version": {
       "max_missing": 0
+    },
+    "mix.band_fold": {
+      "floor_db": 30.0,
+      "max_db": 3.5
     },
     "modulation_flutter": {
       "warn": 0.18
@@ -158,6 +178,7 @@
       "sd_frac": 0.05
     },
     "percussion_flam": {},
+    "render.finite": {},
     "roughness": {
       "calib_spl_db": 70.0,
       "mask_band_bark": 1.0,
@@ -226,7 +247,8 @@
     "stem.tick": {
       "cv_max": 0.05,
       "min_events": 6,
-      "rho": 0.35
+      "rho": 0.35,
+      "rise_db": 3.0
     },
     "stem.vocal": {},
     "tempo.audio": {
@@ -236,10 +258,16 @@
     },
     "tempo.bpm": {},
     "true_peak": {},
+    "video.cue_silence": {
+      "max_dbfs": -50.0
+    },
     "video.cut_sync": {
       "aim_ms": 40,
       "early_ms": 45,
       "late_ms": 125
+    },
+    "video.dialogue_band": {
+      "min_db": 12.0
     },
     "video.dialogue_snr": {
       "min_db": 15.0
@@ -247,8 +275,23 @@
     "video.duration_lock": {
       "tolerance_ms": 50
     },
+    "video.gating_mode": {},
+    "video.grid_phase": {
+      "tolerance_frames": 1.0
+    },
+    "video.hit_class": {},
+    "video.hit_density": {
+      "budget_per_minute": 24,
+      "max_consecutive_cut_hits": 0.6
+    },
     "video.master_compliance": {
       "tolerance_lu": 1.0
+    },
+    "video.motion_sync": {
+      "window_ms": 150.0
+    },
+    "video.shot_scale": {
+      "tolerance": 0.15
     },
     "vocal.breath": {
       "over_capacity_factor": 1.0
@@ -294,6 +337,10 @@
     "vocal.ring": {
       "max_spread_hz": 400.0,
       "spread_at_zero_hz": 1600.0
+    },
+    "vocal.spatial": {
+      "max_stereo_corr": 0.98,
+      "min_mono_db": -3.0
     },
     "vocal.vibrato": {
       "min_corr": 0.5,

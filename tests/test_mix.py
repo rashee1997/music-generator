@@ -56,6 +56,16 @@ class CarveRule(unittest.TestCase):
 
 
 class MaskingCheck(unittest.TestCase):
+    def setUp(self):
+        """masking_rows measures mixer.STATE['processed'] when a mix has already been made -- that is what the
+        gate should do in a real run, but it means a module that mixed a piece earlier in the same process
+        would be measured here instead of the stems this test passes. Drop the stored stems so each test
+        measures its own signal (mixer.release_stems is the engine's own API for exactly that)."""
+        mixer.release_stems()
+
+    def tearDown(self):
+        mixer.release_stems()
+
     def _score(self):
         return dict(tracks=[dict(name='lead', role='melody'), dict(name='pad', role='pad')])
 

@@ -47,6 +47,11 @@ load_when:
   here has been checked against a recording unless a project did that check itself.
 - Nothing in the physical engine has been auditioned. `physical.py render` and `baseline --wav` produce files to listen
   to; that listening is the user's or a later session's, not something the tests do.
+- The vocal source models (`pulse`, `lf`) are not fitted to a recorded singer, and `rd` values are starting values.
+- The sympathetic bed is a resonator bank on the mixed stems: it has no bridge, no string coupling and one tuning for
+  the whole piece.
+- The room rows (`imm_iacc_early`, `imm_clarity`) measure the modelled room's impulse response, not a real hall, and
+  their limits are starting values that no corpus has calibrated.
 - The sampled bank is good, not concert-grade. Do not claim it is indistinguishable from a real orchestra.
 - No sung words. Choir and "oohs" are texture only.
 - Cloning needs a clean recording of single notes; neural cloning needs a GPU and is not run here.

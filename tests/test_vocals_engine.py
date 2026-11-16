@@ -134,8 +134,25 @@ class CoreSynthesis(unittest.TestCase):
     def test_hum_antiformant_notch_removes_energy(self):
         c0, c1 = data.defaults(), data.defaults()
         c0['humming']['antiformant_depth'] = 0.0
-        c0['humming']['oral_coupling'] = c1['humming']['oral_coupling'] = 0.0
-        # f0 chosen so a harmonic sits on the notch (1000 Hz = 8 x 125)
+        for c in (c0, c1):
+            c['humming']['oral_coupling'] = 0.0
+            c['humming']['airflow'] = 0.0      # the notch cannot remove airflow noise: a hum with no breath noise
+        # The antiformant is where the 3-way junction puts the oral-branch zero, so the test asks the physics where
+        # it is and puts a harmonic on it (f0 = zero / 7). It used to be a constant at 1 kHz; that constant is now
+        # the override, which the next test proves still works.
+        zero = float(nasal.junction(c1['humming'], c1['waveguide'])[2])
+        e0 = _band(_syn(cfg=c0, f0=zero / 7.0, hum=True, breathiness=0.0), SR, 0.9 * zero, 1.1 * zero)[0]
+        e1 = _band(_syn(cfg=c1, f0=zero / 7.0, hum=True, breathiness=0.0), SR, 0.9 * zero, 1.1 * zero)[0]
+        self.assertLess(e1, 0.25 * e0)
+
+    def test_antiformant_override_restores_the_constant(self):
+        """The demoted 1 kHz override must still notch at 1 kHz, for presets voiced against it."""
+        c0, c1 = data.defaults(), data.defaults()
+        for c in (c0, c1):
+            c['humming']['antiformant_from_junction'] = False
+            c['humming']['oral_coupling'] = 0.0
+            c['humming']['airflow'] = 0.0
+        c0['humming']['antiformant_depth'] = 0.0
         e0 = _band(_syn(cfg=c0, f0=125, hum=True, breathiness=0.0), SR, 900, 1100)[0]
         e1 = _band(_syn(cfg=c1, f0=125, hum=True, breathiness=0.0), SR, 900, 1100)[0]
         self.assertLess(e1, 0.25 * e0)

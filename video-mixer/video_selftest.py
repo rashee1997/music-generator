@@ -45,6 +45,20 @@ for p in (HERE, os.path.join(SKILL, 'scripts')):
 
 import presets              # noqa: E402
 import video_probe          # noqa: E402
+
+
+def make_bursts(work, sr=44100):
+    """Two speech-like bursts in an otherwise quiet track, for the speech-activity check."""
+    n = int(DURATION * sr)
+    y = np.zeros((n, 1), np.float32)
+    for a, b in ((0.4, 1.1), (3.2, 4.4)):
+        i, j = int(a * sr), int(b * sr)
+        t = np.arange(j - i) / sr
+        env = np.minimum(1.0, np.minimum(t * 30.0, (t[-1] - t) * 30.0))
+        f0 = 170.0 + 10.0 * np.sin(2 * np.pi * 4.0 * t)
+        sig = sum(0.3 * np.sin(2 * np.pi * k * f0 * t) / k for k in (1, 2, 3, 4, 5))
+        y[i:j, 0] = (sig * env).astype(np.float32)
+    return y
 import video_direction      # noqa: E402
 import video_program_mix    # noqa: E402
 import video_mux            # noqa: E402
@@ -191,6 +205,98 @@ def run():
         loud_rows = []
         video_gate.master_row(loud, prof, cfg['gate'], loud_rows)
         check(results, 'control: loud master fails', loud_rows[0][0] == 'FAIL', loud_rows[0][2])
+
+        # --- context model ----------------------------------------------------
+        import context as context_mod
+        import presets as _p
+        film_analysis = _p.get('film', 'analysis')
+        film_mapping = _p.get('film', 'mapping')
+        film_hits = _p.get('film', 'hits')
+        ctx = context_mod.build(rep, film_analysis, film_mapping)
+        check(results, 'context groups shots into scenes', len(ctx['scenes']) >= 1 and len(ctx['shots']) >= 2,
+              f"{len(ctx['shots'])} shots, {len(ctx['scenes'])} scenes")
+        phase = context_mod.cut_phase(cuts, sheet['tempo_bpm'], FPS)
+        check(results, 'cut grid phase is fitted', phase['cuts'] >= 2 and phase['confidence'] > 0.5,
+              f"offset {phase['offset_s']:.3f}s, worst {phase['worst_residual_ms']:.0f} ms, "
+              f"confidence {phase['confidence']:.2f}")
+        from analysis import shot_scale as ss, speech as sp_mod
+        wide = np.tile((0.5 + 0.45 * np.sin(np.linspace(0.0, 40.0 * np.pi, 160)))[None, :], (90, 1))
+        close = np.tile(np.full(160, 0.8)[None, :], (90, 1))
+        close[35:55, 70:90] = np.tile((0.5 + 0.45 * np.sin(np.linspace(0.0, 20.0 * np.pi, 20)))[None, :],
+                                      (20, 1))
+        w_label, _ = ss.classify(wide.astype(np.float32), film_analysis)
+        c_label, _ = ss.classify(close.astype(np.float32), film_analysis)
+        check(results, 'shot scale reads wide vs close', w_label != c_label,
+              f'wide frame -> {w_label}, close frame -> {c_label}')
+        act = sp_mod.activity(np.repeat(make_bursts(work), 2, axis=1), 44100, film_analysis)
+        check(results, 'speech activity finds the bursts', 2 <= len(act['segments']) <= 4 and act['share'] > 0.1,
+              f"{len(act['segments'])} segments, {act['share'] * 100:.0f} % of the track")
+
+        # --- the new rows, positive and negative -------------------------------
+        from gate import rows as G
+        beats = [{'t': 1.0}]
+        sync_rows = []
+        G.motion_sync_row(beats, [{'t_s': 1.05, 'kind': 'motion'}], cfg['gate'], sync_rows)
+        check(results, 'row motion_sync passes on time', sync_rows[0][0] == 'PASS', sync_rows[0][2])
+        sync_rows = []
+        G.motion_sync_row(beats, [{'t_s': 1.6, 'kind': 'motion'}], cfg['gate'], sync_rows)
+        check(results, 'control: late movement hit fails', sync_rows[0][0] == 'FAIL', sync_rows[0][2])
+
+        cls_rows = []
+        G.hit_class_row([{'t': 2.0, 'class': 'dead_on', 'offset_s': 0.0}], film_hits, cls_rows)
+        check(results, 'row hit_class passes a dead-on accent', cls_rows[0][0] == 'PASS', cls_rows[0][2])
+        cls_rows = []
+        G.hit_class_row([{'t': 2.0, 'class': 'dead_on', 'offset_s': 0.5}], film_hits, cls_rows)
+        check(results, 'control: a dead-on accent off the frame fails', cls_rows[0][0] == 'FAIL', cls_rows[0][2])
+
+        dens_rows = []
+        G.hit_density_row([{'t_s': 1.0}, {'t_s': 3.0}], [1.0, 3.0, 5.0], 60.0,
+                          dict(cfg['gate'], density=film_hits['density']), dens_rows)
+        check(results, 'row hit_density passes a sparse cue', dens_rows[0][0] == 'PASS', dens_rows[0][2])
+        many = [{'t_s': float(i)} for i in range(0, 60)]
+        dens_rows = []
+        G.hit_density_row(many, [float(i) for i in range(0, 60)], 60.0,
+                          dict(cfg['gate'], density=film_hits['density']), dens_rows)
+        check(results, 'control: hitting every cut fails', dens_rows[0][0] == 'FAIL', dens_rows[0][2])
+
+        gp_rows = []
+        G.grid_phase_row(dict(worst_residual_ms=10.0, tolerance_frames=0.25), cfg['gate'], gp_rows)
+        check(results, 'row grid_phase passes a tight grid', gp_rows[0][0] == 'PASS', gp_rows[0][2])
+        gp_rows = []
+        G.grid_phase_row(dict(worst_residual_ms=200.0, tolerance_frames=5.0), cfg['gate'], gp_rows)
+        check(results, 'control: cuts off the grid fail', gp_rows[0][0] == 'FAIL', gp_rows[0][2])
+
+        quiet = os.path.join(work, 'quiet.wav')
+        sf.write(quiet, np.zeros((int(sr * 2), 2), np.float32), sr, subtype='PCM_24')
+        cs_rows = []
+        G.cue_silence_row(quiet, [(0.2, 1.0)], cfg['gate'], cs_rows)
+        check(results, 'row cue_silence passes real silence', cs_rows[0][0] == 'PASS', cs_rows[0][2])
+        cs_rows = []
+        G.cue_silence_row(program_wav, [(0.2, 1.0)], dict(cfg['gate'], cue_silence={'max_dbfs': -70.0}), cs_rows)
+        check(results, 'control: music in a silent window fails', cs_rows[0][0] == 'FAIL', cs_rows[0][2])
+
+        band_ok = []
+        G.dialogue_band_row({'music_under_voice_band_db': 18.0}, rep, cfg['gate'], band_ok)
+        check(results, 'row dialogue_band passes a carved bed', band_ok[0][0] == 'PASS', band_ok[0][2])
+        band_bad = []
+        G.dialogue_band_row({'music_under_voice_band_db': 2.0}, rep, cfg['gate'], band_bad)
+        check(results, 'control: a bed over the consonants fails', band_bad[0][0] == 'FAIL', band_bad[0][2])
+
+        scale_ok = []
+        G.shot_scale_row([{'name': 's1', 'shot_scale': 'close', 'density': 0.3}], [],
+                         dict(film_mapping, tolerance=0.15), scale_ok)
+        check(results, 'row shot_scale passes a close-up', scale_ok[0][0] == 'PASS', scale_ok[0][2])
+        scale_bad = []
+        G.shot_scale_row([{'name': 's1', 'shot_scale': 'close', 'density': 0.9}], [],
+                         dict(film_mapping, tolerance=0.15), scale_bad)
+        check(results, 'control: a full band in a close-up fails', scale_bad[0][0] == 'FAIL', scale_bad[0][2])
+
+        gm_ok = []
+        G.gating_mode_row({'loudness_mode': 'dialogue'}, 'dialogue', gm_ok)
+        check(results, 'row gating_mode passes a real gate', gm_ok[0][0] == 'PASS', gm_ok[0][2])
+        gm_bad = []
+        G.gating_mode_row({'loudness_mode': 'dialogue'}, 'full_program', gm_bad)
+        check(results, 'control: a claimed gate that was not applied fails', gm_bad[0][0] == 'FAIL', gm_bad[0][2])
 
         ok = all(r[1] for r in results)
         print(f"\n  selftest: {sum(1 for r in results if r[1])}/{len(results)} checks passed -> {'OK' if ok else 'FAILED'}")

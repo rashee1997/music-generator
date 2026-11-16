@@ -38,7 +38,7 @@ import json
 
 import numpy as np
 
-from . import breath, consonant, tract, voice
+from . import breath, consonant, data, tract, voice
 from .utils import smooth_noise
 
 _CAL = {}
@@ -116,6 +116,30 @@ def split_phrases(notes, cfg, default_hum=False):
         cur.append(e)
     if cur:
         out.append(cur)
+    return out
+
+
+def expand_syllable(ev, cfg):
+    """A note's `syl` written out as the `consonant` and `vowel` keys the engine already sings: the longest onset
+    in `consonants.inventory`, then one vowel or two (a diphthong). "la" -> l + a, "shai" -> sh + [a, i]. This is a
+    syllable, not a language: there is no dictionary and no coda. A note's own consonant or vowel key wins."""
+    syl = ev.get('syl')
+    if not syl:
+        return ev
+    inv = [k for k in ((cfg.get('consonants') or {}).get('inventory') or {}) if not k.startswith('_')]
+    vowels = [v for v in cfg['tract']['vowels'] if v != 'm']
+    syl = str(syl)
+    onset = max((c for c in inv if syl.startswith(c) and len(syl) > len(c)), key=len, default='')
+    rest = syl[len(onset):]
+    first = max((v for v in vowels if rest.startswith(v)), key=len, default=None)
+    tail = rest[len(first):] if first else None
+    if first is None or (tail and tail not in vowels):
+        raise ValueError(f'syl "{syl}" is not [consonant] + vowel [+ vowel]; consonants: {sorted(inv)}, '
+                         f'vowels: {sorted(vowels)}')
+    out = dict(ev)
+    if onset:
+        out.setdefault('consonant', onset)
+    out.setdefault('vowel', [first, tail] if tail else first)
     return out
 
 
@@ -246,15 +270,40 @@ def _formant_track(n, sr, s, e_, Fn, steady, vsteps, dip_start, dip_n):
     return np.stack([np.convolve(np.pad(row, (pad, pad), mode='edge'), ker, mode='valid')[:n] for row in raw])
 
 
-def _calibration(sr, cfg, hum, F, BW, style, register, nasality, hz=220.0):
+def _bandwidth_override(cfg, style):
+    """The bandwidth list a style or preset explicitly asks for, or None when the physics should decide.
+
+    `tract.bandwidths` is the table mode's data; a project that changes it is asking for that table and is treated as
+    an override, but the shipped values are not one. `data.defaults()` is the reference for "shipped".
+    """
+    bw = style.get('bandwidths')
+    if bw:
+        return np.asarray(bw, dtype=float)
+    cur = np.asarray(cfg['tract']['bandwidths'], dtype=float)
+    ref = np.asarray(_DEFAULT_BW(), dtype=float)
+    return None if (cur.shape == ref.shape and np.allclose(cur, ref)) else cur
+
+
+def _DEFAULT_BW():
+    if 'bw' not in _DEFAULT_BW.__dict__:
+        import copy as _copy
+        _DEFAULT_BW.bw = _copy.deepcopy(data.defaults()['tract']['bandwidths'])
+    return _DEFAULT_BW.bw
+
+
+def _calibration(sr, cfg, hum, F, BW, style, register, nasality, hz=220.0, bw_arg=None):
     """Gain that makes this timbre's steady tone at `hz` hit dynamics.ref_rms (one constant per timbre and pitch, never
-    per performed note: velocity, phrase arc and dynamics are applied on top)."""
+    per performed note: velocity, phrase arc and dynamics are applied on top).
+
+    `BW` names the widths in the cache key; `bw_arg` is what the probe render passes on (`None` lets it measure the
+    tube, exactly as the real render will), so a calibration can never be taken through a different tract.
+    """
     key = json.dumps([sr, hum, round(float(hz), 1), [round(float(f), 1) for f in F], [float(b) for b in BW], sorted(style.items()), register,
                       round(float(nasality), 3), cfg['humming'], cfg['source'], cfg['dynamics']['ref_rms']],
                      sort_keys=True, default=str)
     if key not in _CAL:
         n = int(0.5 * sr)
-        y, _ = voice.synth(np.full(n, float(hz)), sr, np.random.default_rng(0), cfg, formants=F, bandwidths=BW, hum=hum,
+        y, _ = voice.synth(np.full(n, float(hz)), sr, np.random.default_rng(0), cfg, formants=F, bandwidths=bw_arg, hum=hum,
                            nasality=nasality, register=register, style=style, breathiness=0.0)
         r = float(np.sqrt(np.mean(y[n // 4:] ** 2))) + 1e-12
         _CAL[key] = cfg['dynamics']['ref_rms'] / r
@@ -263,11 +312,17 @@ def _calibration(sr, cfg, hum, F, BW, style, register, nasality, hz=220.0):
 
 def _tuned_formants(F, f0, cfg):
     """The formants a singer's tract actually has at pitch `f0`: F1 follows f0 when f0 climbs into it (Sundberg's
-    formant tuning), F2 follows by `tuning_f2_share`, and F1 stays under F2.
+    formant tuning), F2 follows by `tuning_f2_share`, the formants above F2 by `tuning_upper_share`, and F1 stays
+    under F2.
 
     One implementation for two callers: the per-sample track below and the calibration that sets the timbre's gain.
     Measured on a real phrase, calibrating the untuned F1 (430 Hz) while synthesising the tuned one (766 Hz at
     f0 784 Hz) put a 7 dB pitch-dependent error on `note_rms`, so the level no longer followed velocity.
+
+    `tuning_upper_share` is 0 by default, so a preset that does not ask for it renders exactly as before. It exists
+    because tuning does not stop at F2: measured on sopranos, the regression of R4 on f0 is 0.46 (Joliveau, Smith &
+    Wolfe 2004), i.e. the upper resonances climb with pitch too, and an F3-F5 cluster that stays put while the pitch
+    climbs is the part of the tract that does not follow the singer.
     """
     F = np.array(F, dtype=float)
     te = cfg.get('technique') or {}
@@ -278,6 +333,10 @@ def _tuned_formants(F, f0, cfg):
     over = f0 > float(te.get('tuning_threshold', 0.9)) * F[0]
     d = np.where(over, tune * (f0 - F[0]), 0.0)
     F[1] = F[1] + float(te.get('tuning_f2_share', 0.5)) * d
+    upper = float(te.get('tuning_upper_share', 0.0))
+    if upper > 0 and F.shape[0] > 2:
+        F[2:] = F[2:] + upper * d
+        F[2] = np.maximum(F[2], F[1] + 1.0)      # keep the bank ordered even at an extreme share
     F[0] = np.minimum(F[0] + d, 0.95 * F[1])
     return F
 
@@ -507,6 +566,14 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
 
     depth_t = _per_note(depth_i)
     rate_t = _per_note(rate_i) * (1 + V['rate_var'] * 0.5 * smooth_noise(rng, n, sr, 0.6))
+    rcv = float(V.get('rate_cycle_var', 0.0))
+    if rcv > 0.0:
+        # cycle-to-cycle rate wobble (the period is not perfectly constant inside one note). Drawn from a
+        # stream derived from the generator's state, so it does not shift the performance's own random draws.
+        st = rng.bit_generator.state
+        seed_c = int(st.get('state', {}).get('state', 0) & 0xFFFFFFFFFFFFFFFF) if isinstance(st, dict) else 0
+        rate_t = rate_t * (1.0 + rcv * smooth_noise(np.random.default_rng(seed_c), n, sr,
+                                                    max(float(np.mean(rate_i)), 1.0)))
     cyc = np.cumsum(rate_t) / sr
     walk = float(V.get('phase_walk', 0.0))
     if walk > 0:                                          # a random-walk phase, not a perfect LFO
@@ -614,7 +681,11 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
     Fn = [_formants(e, cfg, style) for e in notes]
     K = min([len(f) for f in Fn] + [len(cfg['tract']['gains'])])
     Fn = [f[:K] for f in Fn]
-    BW = np.array(style.get('bandwidths') or cfg['tract']['bandwidths'], dtype=float)[:K]
+    # A bandwidth list is an override only when the style or the preset actually declares one. The shipped table is the
+    # table mode's data, not an override: passing it here would silently keep the physical model out of every render.
+    BW = _bandwidth_override(cfg, style)[:K] if _bandwidth_override(cfg, style) is not None else None
+    blk = max(16, int(cfg['tract']['block_ms'] * 1e-3 * sr))
+    BWn = [np.asarray(voice.tract_params(cfg, sr, F, blk, 1, bandwidths=BW)[0]).reshape(-1)[:K] for F in Fn]
     reg = register or style.get('register')
     comp = float(D['pitch_compensation'])        # singers even out the level between pitches; harmonics near a formant would not
     TE = cfg.get('technique') or {}
@@ -622,10 +693,11 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
     # so measuring the gain at F1 430 Hz and then singing through F1 766 Hz makes the level depend on pitch
     TFn = [_tuned_formants(F, 440.0 * 2 ** ((b / 100.0 - 69) / 12), cfg) if not hum else np.asarray(F, dtype=float)
            for F, b in zip(Fn, base)]
-    c220 = [_calibration(sr, cfg, hum, F, BW, style, reg, nasality) for F in Fn]
+    c220 = [_calibration(sr, cfg, hum, F, bw, style, reg, nasality, bw_arg=BW) for F, bw in zip(Fn, BWn)]
     cals = c220 if comp <= 0 else [
-        _calibration(sr, cfg, hum, F, BW, style, reg, nasality, hz=440.0 * 2 ** ((b / 100.0 - 69) / 12)) ** comp * c0 ** (1 - comp)
-        for F, b, c0 in zip(TFn, base, c220)]
+        _calibration(sr, cfg, hum, F, bw, style, reg, nasality, hz=440.0 * 2 ** ((b / 100.0 - 69) / 12),
+                     bw_arg=BW) ** comp * c0 ** (1 - comp)
+        for F, bw, b, c0 in zip(TFn, BWn, base, c220)]
     wv = int(P['vowel_blend_ms'] * 1e-3 * sr)
     FH = PH.get('formants') or {}
     CO = FH.get('coarticulation') or {}
@@ -736,7 +808,7 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
             note_v.append(float(e.get('v', 80)))
             dev.append(float(np.mean(cents_nov[a:b]) - base[i]))
     sig = sig * cal * level * arc * flutter * (10 ** (acc_db / 20.0)) * gate * press
-    cons_report = _place_consonants(sig, codes, CN, sr, rng, f0, s, e_, Fn, lv, n, notes)
+    cons_report = _place_consonants(sig, codes, CN, sr, rng, f0, s, e_, Fn, lv, n, notes, reg)
     tech = _technique_report(sig, sr, f0, F_track, s, e_, k, reg, cfg, vib_am, src_stats=vstats)
     p0 = t0 - pad / sr                                   # the consonant sits before the scored onset
     return dict(signal=sig, t0=p0, t1=p0 + n / sr, f0=f0, gate=gate, level=level, connected=connected, s=s, e=e_,
@@ -790,7 +862,7 @@ def _local_jitter(sig, f0, sr):
     return float(np.mean(np.abs(np.diff(T))) / (np.mean(T) + 1e-12) * 100.0)
 
 
-def _place_consonants(sig, codes, cn, sr, rng, f0, s, e_, Fn, lv, n, notes):
+def _place_consonants(sig, codes, cn, sr, rng, f0, s, e_, Fn, lv, n, notes, reg=None):
     """Add the consonant segments into the phrase buffer. A consonant is part of the word, not of the breath, so it
     goes into the voice signal (before the voiced onset by its own VOT), never into the breath stem."""
     out = []
@@ -803,7 +875,7 @@ def _place_consonants(sig, codes, cn, sr, rng, f0, s, e_, Fn, lv, n, notes):
         a, b = s[i], max(s[i] + 8, e_[i])
         f0i = float(np.mean(f0[a:b]))
         lvl = float(lv[min(i, len(lv) - 1)])
-        y, meta = consonant.render(code, cn, sr, rng, f0=f0i, vowel=list(Fn[i]))
+        y, meta = consonant.render(code, cn, sr, rng, f0=f0i, vowel=list(Fn[i]), reg=reg)
         if len(y):
             at = a - len(y)
             if at < 0:
@@ -817,7 +889,7 @@ def _place_consonants(sig, codes, cn, sr, rng, f0, s, e_, Fn, lv, n, notes):
                                 vot_ms=meta.get('vot_ms'), centroid_hz=meas['centroid_hz'], dur_ms=meas['dur_ms']))
         c = notes[i].get('consonant')
         if cn.get('codas') and isinstance(c, (list, tuple)) and len(c) > 1:
-            y2, meta2 = consonant.render(c[0], cn, sr, rng, f0=f0i, vowel=list(Fn[i]))
+            y2, meta2 = consonant.render(c[0], cn, sr, rng, f0=f0i, vowel=list(Fn[i]), reg=reg)
             if len(y2):
                 at = max(0, e_[i] - len(y2))
                 m = min(len(y2), n - at)

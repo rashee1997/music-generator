@@ -1,0 +1,56 @@
+{
+  "kind": "film",
+  "name": "hits",
+  "character": "How a cue accents the picture: which sound lands on a cut and which on a movement, how many accents a minute, and whether an accent is dead on or delayed by the audience's reaction time.",
+
+  "cut_sound": "sfx:impact",
+  "motion_sound": "sfx:whoosh",
+  "max_hits_per_minute": 24,
+  "min_gap_beats": 1.0,
+  "duration_s": 1.0,
+  "cut_velocity": 0.9,
+  "motion_velocity": 0.7,
+
+  "classes": {
+    "dead_on": {
+      "kinds": ["impact", "explosion", "slam", "cut"],
+      "after_s": 0.0,
+      "window_s": [-0.045, 0.125],
+      "why": "an explosion or a cut needs no processing: dead on the frame (ITU-R BT.1359)"
+    },
+    "reaction": {
+      "kinds": ["look", "line", "reveal", "comprehension"],
+      "after_s": 0.35,
+      "window_s": [0.15, 2.0],
+      "why": "a line or a look needs the audience to absorb it first; the accent follows the reaction time"
+    }
+  },
+
+  "sync": {
+    "cut": {"early_ms": 45, "late_ms": 125, "aim_ms": 40},
+    "motion": {"window_ms": 150, "min_ms": 60, "max_ms": 450,
+               "note": "music-to-motion synchrony is detected inside a 300-450 ms window, narrowing to about 150-200 ms as tempo rises"}
+  },
+
+  "density": {
+    "budget_per_minute": 24,
+    "max_consecutive_cut_hits": 0.60,
+    "note": "hitting every cut is Mickey Mousing; the ratio caps what share of adjacent cut pairs may both be hit"
+  },
+
+  "sources": [
+    "https://www.itu.int/dms_pubrec/itu-r/rec/bt/R-REC-BT.1359-0-199802-S!!PDF-E.pdf (A/V sync: +45 ms early to -125 ms late)",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC6711538/ (music-to-motion synchrony window 300-450 ms)",
+    "https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2015.00736/full (synchrony window narrows at faster tempi: about 200 ms at 60 BPM, 150 ms at 120 BPM)",
+    "https://www.robin-hoffmann.com/dfsb/placement-of-hit-points/ (delayed accents for comprehension moments)"
+  ],
+
+  "provenance": {
+    "cut_sound": "unchanged from presets/video/default.json",
+    "max_hits_per_minute": "unchanged from presets/video/default.json",
+    "classes.dead_on.window_s": "ITU-R BT.1359",
+    "classes.reaction.after_s": "starting value: 350 ms sits inside the 300-450 ms synchrony window",
+    "sync.motion.window_ms": "PMC6711538",
+    "density.max_consecutive_cut_hits": "starting value"
+  }
+}

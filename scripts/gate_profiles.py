@@ -42,11 +42,16 @@ if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
 import presets
+import roles as rolelib
 
 MODES = ('apply', 'relax', 'skip')
 FLAGS = ('ambient', 'tense', 'dance')
 DEFAULT_PROFILE = 'melodic'
 TRAITS = {'drone_ratio_min': (0.0, 1.0)}
+# a profile's "focus" says what the ear follows in this type of music. The roles are canonical role
+# names (scripts/roles.py), so a piece whose line is written `lead` or `vocal` is judged exactly like
+# one written `melody` - before this, only the literal string 'melody' was ever checked.
+FOCUS_KEYS = ('roles', 'fallback', 'label', 'reason')
 
 # id -> meaning, params {name: (default, lo, hi)}, protected. A bool default means a bool parameter.
 ROWS = {
@@ -69,7 +74,8 @@ ROWS = {
     'stem.edge': dict(meaning='a stem starts or stops away from its own score notes', params={
         'max_silence_ms': (25.0, 5.0, 100.0)}),
     'stem.tick': dict(meaning='a periodic tick in a stem that should have no beat', params={
-        'rho': (0.35, 0.2, 0.6), 'min_events': (6, 3, 12), 'cv_max': (0.05, 0.01, 0.2)}),
+        'rho': (0.35, 0.2, 0.6), 'min_events': (6, 3, 12), 'cv_max': (0.05, 0.01, 0.2),
+        'rise_db': (3.0, 1.5, 8.0)}),
     'stem.dead': dict(meaning='a part missing/dropped against the score dynamics', params={
         'under_db': (12.0, 6.0, 24.0), 'floor_db': (-70.0, -80.0, -50.0)}),
     'stem.clipping': dict(meaning='clipped samples on one stem', protected=True),
@@ -128,7 +134,10 @@ ROWS = {
     'machine_gun_percussion': dict(meaning='percussion repeated at one velocity and one interval'),
     'percussion_flam':       dict(meaning='two percussion hits too close to read as one or two'),
     'low_interval_mud':      dict(meaning='low intervals closer than a minor third'),
-    'balance.vs_lead':       dict(meaning='accompaniment against the lead', params={'warn_over_db': (3.0, 1.0, 6.0), 'fail_over_db': (6.0, 3.0, 12.0)}),
+    'balance.vs_lead':       dict(meaning='accompaniment against the figure (melody, lead or vocal)', params={'warn_over_db': (3.0, 1.0, 6.0), 'fail_over_db': (6.0, 3.0, 12.0)}),
+    'focus.declared':        dict(meaning='the piece carries the line its type and its own declaration promise'),
+    'intent.vocabulary':     dict(meaning='every word the piece declares resolves to one concept in the intent presets'),
+    'intent.avoid':          dict(meaning='the gesture the piece said it would avoid does not happen in the score'),
     'balance.layers':        dict(meaning='each layer against the median layer (no lead needed)',
                                   params={'warn_db': (9.0, 4.0, 18.0), 'fail_db': (15.0, 8.0, 24.0)}),
     'masking.vs_melody':     dict(meaning='ERB-band masking of the melody by beds', params={'margin_db': (3.0, 1.0, 6.0)}),
@@ -181,8 +190,25 @@ ROWS = {
     'video.cut_sync':        dict(meaning='every hit against its cut, early and late measured separately',
                                   params={'early_ms': (45, 10, 150), 'late_ms': (125, 20, 300), 'aim_ms': (40, 5, 120)}),
     'video.dialogue_snr':    dict(meaning='music level under speech', params={'min_db': (15.0, 6.0, 30.0)}),
-    'video.master_compliance': dict(meaning='delivered loudness and true peak against the master profile',
+    'video.master_compliance': dict(meaning='delivered loudness in the declared gating mode and true peak',
                                     params={'tolerance_lu': (1.0, 0.3, 3.0)}, protected=True),
+    # the picture rows read at the three timescales (video-mixer/gate/pass_.py); thresholds are starting values
+    # except where a reference is named in references/scoring/video-scoring.md
+    'video.motion_sync':  dict(meaning='a movement hit against the movement it accents',
+                               params={'window_ms': (150.0, 60.0, 450.0)}),
+    'video.hit_class':    dict(meaning='a delayed accent lands after its moment, a dead-on one does not drift'),
+    'video.grid_phase':   dict(meaning="the cuts' residual against the fitted beat grid",
+                               params={'tolerance_frames': (1.0, 0.25, 2.0)}),
+    'video.hit_density':  dict(meaning='accents per minute, and no Mickey Mousing',
+                               params={'budget_per_minute': (24, 4, 60),
+                                       'max_consecutive_cut_hits': (0.60, 0.20, 0.95)}),
+    'video.cue_silence':  dict(meaning='music where the spotting asked for silence',
+                               params={'max_dbfs': (-50.0, -90.0, -20.0)}),
+    'video.dialogue_band': dict(meaning='music energy in the consonant band under speech',
+                                params={'min_db': (12.0, 6.0, 30.0)}),
+    'video.shot_scale':   dict(meaning='density against the camera distance',
+                               params={'tolerance': (0.15, 0.0, 0.50)}),
+    'video.gating_mode':  dict(meaning='the declared gating mode was actually measured', protected=True),
     # vocal tracks (scripts/vocals.py + vocal_engine; measured by quality_gate.vocal_rows from the render's vocal report)
     'vocal.integrity':    dict(meaning='vocal stems finite, no DC offset, no limiter hit', params={'dc_max': (0.005, 0.0005, 0.02)}, protected=True),
     'vocal.clicks':       dict(meaning='single-sample jumps inside a vocal stem (joins between notes)', params={'max_clicks': (0, 0, 5)}),
@@ -209,10 +235,23 @@ ROWS = {
                                params={'min_corr': (0.5, 0.2, 0.9), 'min_db': (0.2, 0.05, 2.0)}),
     'vocal.identity':     dict(meaning='two singers have measurably different tracts (formant distance)',
                                params={'min_pct': (2.0, 1.0, 8.0)}),
+    'vocal.spatial':      dict(meaning='the voice mix keeps binaural cues: L/R correlation and the mono sum',
+                               params={'max_stereo_corr': (0.98, 0.8, 1.0), 'min_mono_db': (-3.0, -9.0, 0.0)}),
     # cognitive feel checks (pattern_audit.cognitive_feel_checks); modes apply/skip, relaxing is by the profile's flags
     'feel.contour':    dict(meaning='melodic arch / gap-fill'),
     'feel.resolution': dict(meaning='harmonic tension to resolution'),
     'feel.groove':     dict(meaning='groove pocket lock'),
+    # Immersive 2.0 (quality_gate.immersive2_rows, fold_rows). Starting values, not calibrated on a corpus yet.
+    'imm.iacc_early':    dict(meaning='room probe, first 80 ms: interaural correlation over the 500-2000 Hz octaves',
+                              params={'max_iacc': (0.97, 0.3, 1.0)}),
+    'imm.clarity':       dict(meaning='room probe C80 over 500-4000 Hz: only a washed-out room trips it',
+                              params={'min_c80_db': (-5.0, -15.0, 5.0)}),
+    'imm.low_fold':      dict(meaning='mono fold-down loss below the bass corner',
+                              params={'max_db': (2.5, 1.0, 6.0), 'hz': (250.0, 80.0, 400.0)}),
+    'mix.band_fold':     dict(meaning='mono fold-down loss in each auditory band, 100-5000 Hz',
+                              params={'max_db': (3.5, 2.0, 9.0), 'floor_db': (30.0, 12.0, 60.0)}),
+    'imm.kinematics':    dict(meaning='no source travels faster than its role allows'),
+    'render.finite':     dict(meaning='no NaN or infinite sample in any delivered channel', protected=True),
     'feel.effort':     dict(meaning='kinematic effort / respiration'),
     'feel.spiral':     dict(meaning='tonal tension arc'),
     'feel.witek':      dict(meaning='groove pleasure curve'),
@@ -247,6 +286,10 @@ ALIASES = {
     'imm_foldown': 'imm.foldown',
     'imm_coloration': 'imm.coloration',
     'imm_route_parity': 'imm.route_parity',
+    'imm_iacc_early': 'imm.iacc_early',
+    'imm_clarity': 'imm.clarity',
+    'imm_low_fold': 'imm.low_fold',
+    'imm_kinematics': 'imm.kinematics',
     'natural_aliasing': 'natural.aliasing',
 }
 REPORT_IDS = {}
@@ -345,6 +388,29 @@ def profile_problems(name, p, all_profiles):
     for f in p.get('flags', []):
         if f not in FLAGS:
             problems.append(f'{where}: flag "{f}" is not one of {FLAGS}')
+    foc = p.get('focus')
+    if foc is not None:
+        if not isinstance(foc, dict):
+            problems.append(f'{where}: "focus" must be an object (roles, fallback, label, reason)')
+        else:
+            for k in foc:
+                if k not in FOCUS_KEYS:
+                    problems.append(f'{where}: focus has unknown key "{k}" (roles, fallback, label, reason)')
+            rs = foc.get('roles')
+            if rs is not None and not isinstance(rs, list):
+                problems.append(f'{where}: focus.roles must be a list of roles')
+            elif rs is not None:
+                for r in rs:
+                    try:
+                        rolelib.canonical(r)
+                    except rolelib.UnknownRole:
+                        problems.append(f'{where}: focus role "{r}" is not a role. Known: {", ".join(rolelib.CANONICAL_ROLES)}')
+                if not rs and not str(foc.get('reason', '')).strip():
+                    problems.append(f'{where}: focus.roles is empty; name at least one role, or give a reason '
+                                    f'(a type of music with no line at all)')
+            fb = foc.get('fallback')
+            if fb is not None and fb not in ROWS:
+                problems.append(f'{where}: focus.fallback "{fb}" is not a row')
     det = p.get('detect') or {}
     for k in det:
         if k not in ('keywords', 'pulse', 'traits'):
@@ -404,13 +470,14 @@ def _chain(name, allp):
 
 
 def _merge_profile(name, allp):
-    flags, rows, why = set(), {}, []
+    flags, rows, focus = set(), {}, {}
     for n in _chain(name, allp):
         p = allp[n]
         flags |= set(p.get('flags', []))
+        focus = presets._deep_merge(focus, p.get('focus') or {})
         for rid, cfg in (p.get('rows') or {}).items():
             rows[rid] = presets._deep_merge(rows.get(rid, {}), cfg)
-    return flags, rows
+    return flags, rows, focus
 
 
 def _drone_ratio(score):
@@ -455,12 +522,43 @@ def infer(score, allp):
 
 
 class Profile:
-    def __init__(self, names, how, why, flags, rows, errors):
-        self.names, self.how, self.why, self.flags, self.rows, self.errors = names, how, why, flags, rows, errors
+    def __init__(self, names, how, why, flags, rows, errors, focus=None):
+        self.names, self.how, self.why = names, how, why
+        self.flags, self.rows, self.errors = flags, rows, errors
+        self.focus = focus or {}
 
     @property
     def label(self):
         return '+'.join(self.names)
+
+    def focus_roles(self):
+        """The roles this type of music treats as its reference figure, most specific first.
+
+        Defaults to the figure family, so a profile written before this field existed is judged exactly
+        as before: melody, lead and vocal all count, instead of only the literal string 'melody'.
+        """
+        # `roles: []` is a decision (an effects piece has no line), not a missing key: an empty list must not
+        # fall back to the figure family, or the type would demand the very line it just said it has none of.
+        raw = self.focus.get('roles')
+        out = []
+        for r in (list(rolelib.LEAD) if raw is None else raw):
+            try:
+                c = rolelib.canonical(r)
+            except rolelib.UnknownRole:
+                continue
+            if c not in out:
+                out.append(c)
+        return tuple(out)
+
+    def focus_label(self):
+        if not self.focus_roles():
+            return 'no line by definition'
+        if self.focus.get('label'):
+            return str(self.focus['label'])
+        return ' / '.join(self.focus_roles())
+
+    def focus_fallback(self):
+        return self.focus.get('fallback')
 
     def mode(self, rid):
         return self.rows.get(canonical(rid), {}).get('mode', 'apply')
@@ -478,7 +576,11 @@ class Profile:
 
     def notes(self):
         """Report rows: the chosen type, then every relaxed or skipped row with its reason."""
-        out = [('INFO', 'piece_type', f'{self.label} ({self.how}{": " + self.why if self.why else ""})')]
+        out = [('INFO', 'piece_type', f'{self.label} ({self.how}{": " + self.why if self.why else ""})'),
+               ('INFO', 'focus', f'judged around {self.focus_label()}')]
+        dec = self.focus.get('reason')
+        if dec and self.focus_roles():
+            out.append(('INFO', 'focus', dec))
         for rid in sorted(self.rows):
             cfg = self.rows[rid]
             m = cfg.get('mode', 'apply')
@@ -517,10 +619,11 @@ def resolve(score):
             why = '; '.join(f'{n}: {w}' for n, _, w in found)
     if not names:
         names = [DEFAULT_PROFILE] if DEFAULT_PROFILE in allp else []
-    flags, rows = set(), {}
+    flags, rows, focus = set(), {}, {}
     for n in names:
-        f, r = _merge_profile(n, allp)
+        f, r, foc = _merge_profile(n, allp)
         flags |= f
+        focus = presets._deep_merge(focus, foc)
         for rid, cfg in r.items():
             rows[rid] = presets._deep_merge(rows.get(rid, {}), cfg)
     over = score.get('gate')
@@ -530,7 +633,7 @@ def resolve(score):
             rid = canonical(rid)
             if rid in ROWS and not ROWS[rid].get('protected'):
                 rows[rid] = presets._deep_merge(rows.get(rid, {}), cfg)
-    return Profile(names, how, why, flags, rows, errors)
+    return Profile(names, how, why, flags, rows, errors, focus)
 
 
 # ---------- command line ----------
@@ -544,10 +647,11 @@ def cmd_list():
     allp = presets.load('gate')
     for name in sorted(allp):
         p = allp[name]
-        flags, rows = _merge_profile(name, allp)
+        flags, rows, focus = _merge_profile(name, allp)
         print(f'{name}: {p.get("character", "")}   [{p.get("_source")}]')
         if p.get('extends'):
             print(f'  extends {p["extends"]}; flags {sorted(flags) or "-"}')
+        print(f'  focus: {" / ".join(focus.get("roles") or rolelib.LEAD)}  ({focus.get("label", "-")})')
         for rid in sorted(rows):
             print(_row_line(rid, rows[rid]))
 
@@ -564,6 +668,7 @@ def cmd_explain(score_path):
     for lv, name, d in p.notes():
         print(f'[{lv}] {name}: {d}')
     print(f'flags: {sorted(p.flags) or "-"}')
+    print(f'focus: {" / ".join(p.focus_roles())}  ({p.focus_label()})')
     print('every row (final):')
     for rid in ROWS:
         cfg = dict(defaults(rid) if not ROWS[rid].get('protected') else {}, **p.rows.get(rid, {}))

@@ -1,0 +1,21 @@
+{
+  "name": "groove",
+  "character": "groove-led: drums, bass and a repeating figure carry the piece, and a hook is never required of it",
+  "extends": "dance",
+  "detect": {"keywords": ["groove", "tek", "breakbeat", "funk", "drum and bass", "dnb", "uk garage", "afrobeat", "highlife"], "pulse": ["steady"]},
+  "focus": {
+    "roles": ["drum", "bass", "ostinato"],
+    "fallback": "balance.layers",
+    "label": "the groove itself: kick, bass and the repeating cell",
+    "reason": "this type is carried by rhythm and low end; demanding a melodic line would judge it as a different kind of music"
+  },
+  "rows": {
+    "pattern.loop_short": {"mode": "relax", "max_period_bars": 4, "max_distinct": 3, "reason": "a groove repeats; the variation lives in the fill and the mix"},
+    "pattern.flat_dynamics": {"mode": "relax", "min_range_frac": 0.08, "reason": "a groove holds its level; energy comes from the arrangement and the accents"},
+    "pattern.flags_max": {"mode": "relax", "max": 8, "reason": "few parts by design, so fewer varied lines"},
+    "pattern.melody_notes": {"mode": "skip", "reason": "there is no melodic line to judge in a groove-led piece"},
+    "masking.vs_melody": {"mode": "skip", "reason": "no figure to unmask; balance.layers judges the low end against the rest"},
+    "bow.breath_gap": {"mode": "skip", "reason": "no bowed or wind line"},
+    "balance.vs_lead": {"mode": "apply", "fallback": "balance.layers"}
+  }
+}

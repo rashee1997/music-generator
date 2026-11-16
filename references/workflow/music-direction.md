@@ -106,6 +106,9 @@ The core targets. `listen.py` reads these directly, so fill them with words and 
 | `hits_at` | seconds where a hit, a cut or a reveal must land | `[24.0, 38.0]` |
 | `duration_s` | length the picture needs | `45` |
 | `spatial_staging` | each part's azimuth, elevation and distance; the presets must match | `{"flute": {"azimuth": 0, "distance": 1.4}}` |
+| `piece_type` | which gate profile judges it; declare it rather than letting keywords guess | `cinematic`, `groove`, `ambient` |
+| `focus` | what carries the piece: a line, a bed, a groove, a surface or a gesture | `drone` for a farewell, `groove` for a beat with no tune |
+| `intent` | what it is, in words the engine owns: emotions, register, scene, tensions, what to avoid | `{"emotions": ["grief"], "scenes": ["farewell"]}` |
 
 `listen.py` checks `feel` against `avoid_feel` as a forced choice and looks for an onset within 0.3 s of every
 `hits_at`; nothing else is a gate row, which is why the blocks below stop a green cue from being the wrong cue.
@@ -187,6 +190,51 @@ Parts that share the midrange (`500-4000 Hz`) during the climax turn muddy when 
 §5d (25 deg azimuth or 15 deg elevation between competing pairs). Give the sub-bass (`< 120 Hz`) to one foundation
 part and high-pass the higher parts so low end does not accumulate.
 
+### 2.8 Declare what the piece is, then what it plays
+
+A sheet that names only notes and tempo can be played correctly and still be the wrong piece. Three fields prevent
+that, and they are checked rather than trusted:
+
+- **`piece_type`** picks the gate profile: which rules apply, and what the subject is expected to be.
+- **`focus`** names the subject: `melody` (a figure the ear follows), `drone` (a held centre), `groove` (kick, bass and
+the cell), `texture` (a surface), `gesture` (events in space). The profile carries a default; write it when the piece is
+not that default. `focus.declared` FAILs if the type expects a line and none is there, and names what the piece has.
+- **`intent`** is the meaning, as data: `emotions`, `registers`, `scenes`, `tensions`, `avoid`, `must_hear`, `words`.
+
+Every word resolves through `references/data/presets/intent/synonyms.json` to a concept the engine owns, so "heartbroken"
+or "funeral" works and an invented mood name is an error that lists the closest words. A concept carries its forbidden
+gestures with it (`grief` forbids a major cadence), which `intent.avoid` measures against the notes. The vocabulary, the
+row behaviour and how to add a word: [`intent-and-focus.md`](intent-and-focus.md).
+
+### 2.9 When the palette is sampled (SFZ): direct for naturalness, not for realism
+
+An SFZ library sounds recorded and still sounds played by a machine, because the machine part is what the renderer sends it.
+The SFZ path carries **one MIDI channel**: timing, velocity, strum and the articulation gate are humanized exactly as on the
+GM path, and one controller curve carries dynamics every 15 ms. It does not send per-note vibrato, a per-note expression
+arch, a pitch scoop or a glide (`AGENTS.md` 3b lists the whole split). So direction moves the arc into the places the sheet
+already controls:
+
+| The sheet says | What the SFZ path turns it into |
+|---|---|
+| `instruments` naming a patch family per part | which sample set plays: sustain, staccato, marcato, pizzicato, tremolo, legato or key-switch |
+| `sections[].music` naming articulation | every note's `"art"` - the attack of a staccato chord and a sustained line are different recordings, not one sample at two lengths |
+| `energy` and the score `dynamics` arc | the one continuous controller curve; without it the part holds one level from first note to last |
+| `space` | the room the dry free sets have none of; a dry SFZ stem is a bug, not a close sound |
+| `spatial_staging` | azimuth and distance per part, so sampled and procedural stems sit in one room |
+
+Two consequences for the direction sheet itself:
+
+- **Write the articulation plan, not just the notes.** A cue that wants a soaring line and a chattering accompaniment needs
+  two patches and an `art` on the notes; asking one sustain patch to do both is the single most audible sample tell.
+- **A sustained solo is a declared limit.** Nothing in the SFZ path shapes inside a note, so a long solo flute or violin note
+  keeps its looped sample level. If that flatness is exposed in the mix, direct that line to the GM path (it gets per-note
+  vibrato and an envelope) or the vocal engine, and write which ran in the sheet's `notes`.
+
+Judging it: `listen.py` still judges mood, pulse and form (it cannot hear sample looping), so add the measurements that can -
+`naturalness_check.py` reports `spec_flux` and warns when the timbre is static, and the `modulation_flutter` gate row reports
+6-25 Hz choppiness on pad, melody, lead and counter stems. Both are proxies: a WARN on a sampled stem is a question about
+articulation and patch choice, not a number to lower.
+
 ## 3. Decide in the order listeners weigh cues
 
 Mode is the strongest cue for happy and sad; tempo, register, dynamics, articulation and timbre follow, and the cues
@@ -244,6 +292,7 @@ Change one lever at a time, render, listen. Each row starts with the most likely
 | `loudness` off | `master.lufs` in the score | a very dynamic piece may not reach a target; accept it | score `master` |
 | `true_peak` hot or `clipping` | lower the master input 2-3 dB | lower the loudest stem's `gain_db` | score `master`, `gain_db` |
 | `length` off | `duration_s` / bar count | a ring-out adds 2-5 s; trim the file or accept and say so | `compose --duration` |
+| An SFZ part reads as a sample player (same attack every note, flat sustain) | patch per articulation + `art` on the notes (2.9) | a written `dynamics` arc, then move an exposed sustained solo to the GM path | `sfz` block, score `dynamics` |
 
 Gate rows, thresholds and levers: see `references/mixing/quality-gate.md`.
 

@@ -1,0 +1,27 @@
+{
+  "name": "stereo_48k",
+  "character": "The certified stereo master at 48 kHz, the rate picture and broadcast work in. Same mix, resampled last; the true peak is measured again at the new rate.",
+  "label": "stereo master, 48 kHz",
+  "order": 7,
+  "aliases": [
+    "48k",
+    "stereo_48000"
+  ],
+  "channels": 2,
+  "channel_order": [
+    "L",
+    "R"
+  ],
+  "file": "master_48k.wav",
+  "renderer": "mix_master",
+  "rate_hz": 48000,
+  "true_peak_dbtp": -1.5,
+  "layout": null,
+  "gate": {
+    "stereo_correlation_min": 0.15
+  },
+  "sources": [
+    "EBU R 128 / ITU-R BS.1770-5: loudness and true peak are measured on the delivered samples, so the peak is re-measured after resampling",
+    "`rate_hz` works on any output preset; the engine itself still renders at 44.1 kHz"
+  ]
+}

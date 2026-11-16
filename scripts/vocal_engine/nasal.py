@@ -20,11 +20,57 @@ poles, an oral-side anti-formant (a notch where the closed oral cavity side-bran
 a weak coupled oral-cavity branch, a lip-closure low-pass that sets how much high frequency survives, and a small
 pulse-modulated nasal airflow noise. All values come from the `humming` config section.
 """
+import json
+
 import numpy as np
 from scipy.signal import lfilter
 
+from . import waveguide as wg
 from .tract import bank, resonate
 from .utils import one_pole_lp, rms
+
+_JUNCTION = {}
+
+
+def junction(h, wv):
+    """Poles, bandwidths and the oral-side zero measured from the 3-way pharynx junction.
+
+    Nothing here is dialled in. The mouth is closed, so the oral branch is a short-circuited side branch whose input
+    impedance falls to zero at c/(4 l_oral) - that is the /m/ antiformant, and it needs no constant. The murmur poles
+    are the resonances of the same branched network. The 1 kHz figure in `humming.antiformant_hz` survives only as an
+    override (`antiformant_from_junction: false`) for a preset that was voiced against it.
+
+    Measured for the configured geometry: first nasal pole ~204 Hz, first null ~822 Hz against c/(4*0.099) = 870 Hz.
+    """
+    key = json.dumps([wv['nasal'], float(wv['tract_length_m']), int(wv['sections']), len(h['nasal_poles'])],
+                     sort_keys=True)
+    hit = _JUNCTION.get(key)
+    if hit is not None:
+        return hit
+    n = wv['nasal']
+    L = float(wv['tract_length_m'])
+    l_ph = L * float(n['velum_fraction'])
+    l_or = L * (1.0 - float(n['velum_fraction']))
+    a_ph = np.full(max(4, int(wv['sections']) // 3), float(n['pharynx_area_cm2']) * 1e-4)
+    a_or = np.full(max(4, int(wv['sections']) // 2), float(n['oral_area_cm2']) * 1e-4)
+    a_na = np.full(int(n['nasal_sections']), float(n['nasal_area_cm2']) * 1e-4)
+    f = np.linspace(80.0, 4000.0, 981)
+    mag = np.abs(wg.nasal_response(f, a_ph, l_ph, a_or, l_or, a_na, float(n['nasal_length_m']), wv))
+    pk = np.nonzero((mag[1:-1] > mag[:-2]) & (mag[1:-1] > mag[2:]))[0] + 1
+    lo = np.nonzero((mag[1:-1] < mag[:-2]) & (mag[1:-1] < mag[2:]))[0] + 1
+    band = (f[lo] > 400.0) & (f[lo] < 3000.0)
+    zero = float(f[lo][band][int(np.argmin(mag[lo][band]))]) if band.any() else float(h['antiformant_hz'])
+    k = len(h['nasal_poles'])
+    F = np.array([p['hz'] for p in h['nasal_poles']], dtype=float)
+    BW = np.array([p['bw'] for p in h['nasal_poles']], dtype=float)
+    if len(pk) >= k:
+        F = f[pk][:k]
+        BW = wg.bandwidths(f, mag, F)
+    else:                                            # fewer junction poles than the config names: keep the rest
+        F[:len(pk)] = f[pk]
+    out = (F, BW, zero)
+    _JUNCTION[key] = out
+    return out
 
 
 def notch(x, f, bw, depth, sr):
@@ -43,17 +89,33 @@ def _brightness_db(brightness, i, k):
     return (float(brightness) - 0.5) * 24.0 * (i / max(1, k - 1))
 
 
-def hum_branch(src, sr, h, rng, flow=None, block=220):
-    """Source -> nasal tract. h: humming config. Returns the signal (not level-normalised)."""
+def hum_branch(src, sr, h, rng, flow=None, block=220, wv=None):
+    """Source -> nasal tract. h: humming config, wv: the waveguide config (None keeps the table).
+
+    Returns the signal (not level-normalised). In `physical` mode the poles and the zero come from the junction; the
+    per-pole gains and the brightness tilt stay in the config, because brightness is a preset decision about the
+    singer, not a property of the tube.
+    """
     poles = h['nasal_poles']
+    sc = float(h.get('nasal_scale', 1.0))            # singer's nasal cavity size, not the piece's
     k = len(poles)
-    F = [p['hz'] for p in poles]
-    BW = [p['bw'] for p in poles]
+    physical = wv is not None and wv.get('mode', 'physical') == 'physical'
+    if physical:
+        Fj, BWj, zero = junction(h, wv)
+        F = [float(x) * sc for x in Fj]
+        BW = [float(x) for x in BWj]
+    else:
+        F = [p['hz'] * sc for p in poles]
+        BW = [p['bw'] for p in poles]
+        zero = float(h['antiformant_hz']) * sc
     G = [p['gain'] * 10 ** (_brightness_db(h['brightness'], i, k) / 20.0) * h['murmur_gain'] for i, p in enumerate(poles)]
     y = bank(src, F, BW, G, sr, block)
     if h['oral_coupling'] > 0:
-        y = y + h['oral_coupling'] * bank(src, h['oral_formants'], h['oral_bandwidths'], [1.0, 0.6, 0.3], sr, block)
-    y = notch(y, h['antiformant_hz'], h['antiformant_bw'], h['antiformant_depth'], sr)
+        oral = [f * sc for f in h['oral_formants']]
+        y = y + h['oral_coupling'] * bank(src, oral, h['oral_bandwidths'], [1.0, 0.6, 0.3], sr, block)
+    if not physical or not h.get('antiformant_from_junction', True):
+        zero = float(h['antiformant_hz']) * sc
+    y = notch(y, zero, h['antiformant_bw'], h['antiformant_depth'], sr)
     lp = float(h['lip_closure_hz']) * 2.0 ** (2.0 * (float(h['brightness']) - 0.5))
     y = one_pole_lp(one_pole_lp(y, lp, sr), lp, sr)
     if h['airflow'] > 0 and len(y):
@@ -64,12 +126,24 @@ def hum_branch(src, sr, h, rng, flow=None, block=220):
     return y
 
 
-def nasalize(y, src, sr, amount, h, block=220):
-    """Blend nasal colour into an open vowel: low nasal pole added, oral anti-formant notch, a little less top."""
+def nasalize(y, src, sr, amount, h, block=220, wv=None):
+    """Blend nasal colour into an open vowel: low nasal pole added, oral anti-formant notch, a little less top.
+
+    The pole and the zero are the junction's when `wv` is passed in physical mode - partial nasalisation has the same
+    antiresonance as a full hum, it is only weaker.
+    """
     a = float(np.clip(amount, 0.0, 1.0))
     if a <= 0:
         return y
+    sc = float(h.get('nasal_scale', 1.0))
+    physical = wv is not None and wv.get('mode', 'physical') == 'physical'
     p = h['nasal_poles'][0]
-    low = resonate(src, p['hz'], p['bw'], sr, block) * p['gain']
+    hz, bw, zero = p['hz'], p['bw'], float(h['antiformant_hz'])
+    if physical:
+        Fj, BWj, zj = junction(h, wv)
+        hz, bw = float(Fj[0]), float(BWj[0])
+        if h.get('antiformant_from_junction', True):
+            zero = zj
+    low = resonate(src, hz * sc, bw, sr, block) * p['gain']
     out = (1.0 - 0.35 * a) * y + a * 0.6 * rms(y) * low / (rms(low) + 1e-12)
-    return notch(out, h['antiformant_hz'], h['antiformant_bw'], h['antiformant_depth'] * a, sr)
+    return notch(out, zero * sc, h['antiformant_bw'], h['antiformant_depth'] * a, sr)

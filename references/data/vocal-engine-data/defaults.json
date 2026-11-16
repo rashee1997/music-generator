@@ -7,6 +7,7 @@
     "Fujimura 1962 / Dang, Honda, Suzuki 1994 on nasal murmur formants and the /m/ anti-resonance",
     "Sundberg 1987, 'The Science of the Singing Voice' (singer's formant, vibrato 5-7 Hz)",
     "Sundberg 1975, 'Formant technique in a professional female singer', Acustica 32 (formant tuning above F1)",
+    "Joliveau, Smith & Wolfe 2004, 'Vocal tract resonances in singing: the soprano voice', JASA 116 (R1:f0 tuning, and R4 rising with f0: regression 0.46)",
     "Klatt 1980 (F4/F5 targets, five-pole cascade reference)",
     "Peterson & Barney 1952, 'Control methods used in a study of the vowels', JASA 24 (F1-F3 of /ae/, /E/, /I/, /O/)",
     "Ohman 1966, 'Coarticulation in VCV utterances', JASA 39 (anticipatory vowel-to-vowel coarticulation)",
@@ -21,42 +22,48 @@
         "speed_quotient": 2.4,
         "closure": 0.15,
         "tilt_hz": 3600,
-        "shimmer": 0.03
+        "shimmer": 0.03,
+        "rd": 0.8
       },
       "modal": {
         "open_quotient": 0.6,
         "speed_quotient": 2.0,
         "closure": 0.25,
         "tilt_hz": 3000,
-        "shimmer": 0.03
+        "shimmer": 0.03,
+        "rd": 1.0
       },
       "head": {
         "open_quotient": 0.7,
         "speed_quotient": 1.6,
         "closure": 0.4,
         "tilt_hz": 2600,
-        "shimmer": 0.025
+        "shimmer": 0.025,
+        "rd": 1.4
       },
       "falsetto": {
         "open_quotient": 0.85,
         "speed_quotient": 1.2,
         "closure": 0.6,
         "tilt_hz": 2000,
-        "shimmer": 0.02
+        "shimmer": 0.02,
+        "rd": 2.2
       },
       "breathy": {
         "open_quotient": 0.75,
         "speed_quotient": 1.5,
         "closure": 0.5,
         "tilt_hz": 2400,
-        "shimmer": 0.04
+        "shimmer": 0.04,
+        "rd": 2.4
       },
       "hum": {
         "open_quotient": 0.65,
         "speed_quotient": 1.8,
         "closure": 0.35,
         "tilt_hz": 2200,
-        "shimmer": 0.03
+        "shimmer": 0.03,
+        "rd": 1.2
       }
     },
     "breathiness": 0.03,
@@ -66,6 +73,11 @@
     "whistle_weight": 0.45,
     "harmonic_lock_amount": 0.6,
     "max_harmonic_hz": 0.45,
+    "model": "pulse",
+    "rd": null,
+    "oversample": 1,
+    "tilt_poles": 2,
+    "open_quotient_scale": 1.0,
     "jitter_period_pct": 0.6,
     "jitter_shimmer_corr": 0.5,
     "register_ladder": [
@@ -79,6 +91,72 @@
       "enabled": true,
       "midi": 60.0,
       "width_semitones": 2.0
+    }
+  },
+  "waveguide": {
+    "_about": "Physical tract model. `geometry` is the tube a formant target is realised in (a neutral area function times a few log-area control points, the inverse problem being ill-posed); `losses`/`radiation` are what the renderer's bandwidths and mode gains are measured from; `nasal` is the branched tract behind the 3-way pharynx junction. `mode` chooses what the renderer uses: `physical` (default) measures bandwidths and mode gains from the tube, `table` keeps the fixed formant table above.",
+    "mode": "physical",
+    "speed_of_sound_m_s": 343.0,
+    "air_density_kg_m3": 1.2,
+    "tract_length_m": 0.17,
+    "sections": 22,
+    "radiation": {
+      "ka_max": 1.2,
+      "source": "flanged piston, low-ka expansion Z/(rho c/A) = (ka)^2/2 + j(8/3 pi)ka (standard speech radiation load, Morse & Ingard)"
+    },
+    "gain_tilt_power": 0.582,
+  "gain_tilt_source": "measured: least-squares fit in log amplitude of the physics' neutral-vowel mode amplitudes against the legacy `tract.gains` table, across all ten vowels in the table. The parallel bank has no source tilt in it; this is the one calibration that keeps presets voiced as they were while every vowel still gets its own measured amplitude.",
+  "losses": {
+      "k0_per_m": 0.9,
+      "k1_s_per_m": 2.6e-05,
+      "source": "starting value, calibrated by measurement: boundary-layer losses alone give 22-131 Hz formant bandwidths (prototype measurement), while speech measures 50-300 Hz (Fant 1960/1972; Fujimura & Lindqvist 1971). k0/k1 stand for wall vibration and the losses a one-dimensional model cannot express."
+    },
+    "geometry": {
+      "control_points": 11,
+      "neutral_cm2": [
+        3.4,
+        1.7,
+        1.05,
+        1.0,
+        1.4,
+        2.3,
+        3.3,
+        4.2,
+        3.6,
+        2.5,
+        1.6
+      ],
+      "neutral_source": "starting value, pharynx-to-lips neutral area of an adult male tract (Story, Titze & Hoffman 1998, MRI area functions)",
+      "bounds": 2.5,
+      "curvature": 0.12,
+      "scale_pin": 0.5,
+      "weights": [
+        1.0,
+        0.9,
+        0.75,
+        0.3,
+        0.15
+      ],
+      "tolerance_hz": 3.0,
+      "max_iterations": 18,
+      "trust": 0.4,
+      "blend_sigma_hz": 260.0
+    },
+    "nasal": {
+      "velum_fraction": 0.42,
+      "velum_area_cm2": 0.35,
+      "nasal_area_cm2": 0.55,
+      "nasal_length_m": 0.11,
+      "nasal_sections": 10,
+    "pharynx_area_cm2": 3.0,
+    "oral_area_cm2": 1.2,
+      "velar_coupling": 1.0,
+      "source": "starting value: three-tube pharyngeal/oral/nasal model after Kasess et al. 2013 and Fujimura 1962; the /m/ zero is c/(4 l_oral) from the closed oral branch (a 9.9 cm closed branch puts it near 870 Hz), and pharynx/oral area are the neutral adult male values of the tract above"
+    },
+    "hum": {
+      "use_physics": true,
+      "antiformant_override_hz": null,
+      "antiformant_coupling": 0.85
     }
   },
   "tract": {
@@ -176,6 +254,7 @@
     "ring": {
       "_about": "The singer's formant is a clustering of F3-F5 toward 2.8-3.2 kHz (Sundberg 1987), never an extra boost pole: F3, F4 and F5 are pulled to their own target by `shares * technique.singer_formant`. Targets and shares are starting values.",
       "enabled": true,
+      "scale": 1.0,
       "target_hz": [
         2850.0,
         3000.0,
@@ -203,6 +282,7 @@
     "formant_tuning": 1.0,
     "tuning_threshold": 0.9,
     "tuning_f2_share": 0.5,
+  "tuning_upper_share": 0.0,
     "cover": 0.0,
     "cover_start_midi": 64.0,
     "cover_span_semitones": 3.0,
@@ -212,6 +292,7 @@
   },
   "humming": {
     "register": "hum",
+    "nasal_scale": 1.0,
     "nasal_poles": [
       {
         "hz": 270,
@@ -231,7 +312,8 @@
     ],
     "antiformant_hz": 1000.0,
     "antiformant_bw": 160.0,
-    "antiformant_depth": 0.85,
+    "antiformant_from_junction": true,
+  "antiformant_depth": 0.85,
     "oral_coupling": 0.25,
     "oral_formants": [
       300,
@@ -277,6 +359,7 @@
     "depth_cents": 20.0,
     "rate_hz": 5.3,
     "rate_var": 0.08,
+    "rate_cycle_var": 0.01,
     "depth_var": 0.15,
     "delay_s": 0.35,
     "onset_s": 0.6,
@@ -338,7 +421,7 @@
     "inhale_lead_ms": 30.0,
     "release_breath_gain": 0.03,
     "release_breath_ms": 260.0,
-    "inhale_timing_jitter_ms": 18.0,
+    "inhale_timing_jitter_ms": 90.0,
     "inhale_duration_var": 0.22,
     "inhale_character_var": 0.6,
     "catch_breath_after_s": 3.2,
@@ -364,6 +447,8 @@
     "min_note_s": 0.25,
     "gain_db": -9.0,
     "closure_floor_db": -55.0,
+    "buzz_tilt_hz": 1500.0,
+    "tract_mix": 0.35,
     "inventory": {
       "p": {"type": "stop", "place_hz": 900.0, "band": [250.0, 2200.0], "vot_ms": 60.0, "burst_ms": 6.0, "closure_ms": 45.0, "voiced": false},
       "t": {"type": "stop", "place_hz": 4000.0, "band": [2200.0, 7000.0], "vot_ms": 70.0, "burst_ms": 5.0, "closure_ms": 45.0, "voiced": false},
@@ -385,15 +470,29 @@
   "ensemble": {
     "voices": 5,
     "cohesion": 0.4,
-    "pitch_spread_cents": 9.0,
-    "timing_spread_ms": 22.0,
+    "pitch_spread_cents": 12.0,
+    "timing_spread_ms": 30.0,
     "pan_width": 0.45,
-    "diversity": 1.0,
+    "diversity": 1.1,
     "distance_m": 2.0,
     "distance_spread_m": 0.5,
     "expression": "",
     "expression_intensity": 1.0,
-    "singers": []
+    "singers": [],
+    "pitch_drift_cents": 8.0,
+    "pitch_drift_hz": 0.35,
+    "onset_spread_ms": 30.0,
+    "_about_spatial": "ITD from the Woodworth rigid-sphere model (Aaronson & Hartmann 2014, JASA 136: 0.65 ms is the frontal horizontal limit); head shadow from Algazi et al. 2002, one-pole spherical-head filter (3 kHz, -6 dB at the far ear); reflection 8-24 ms and gain <= 0.10 are starting values (small-room early reflections, low-gain by design).",
+    "itd_ms": 0.65,
+    "head_shadow_hz": 3000.0,
+    "head_shadow_db": 6.0,
+    "reflection_gain": 0.1,
+    "reflection_ms": [
+      8.0,
+      24.0
+    ],
+    "reflection_taps": 2,
+    "reflection_lp_hz": 3500.0
   },
   "singer_variation": [
     {
@@ -416,8 +515,8 @@
       "path": "vibrato.rate_hz",
       "mode": "add",
       "range": [
-        -0.5,
-        0.5
+        -0.9,
+        0.9
       ]
     },
     {
@@ -578,6 +677,62 @@
       "range": [
         -2.0,
         2.0
+      ]
+    },
+    {
+      "path": "source.open_quotient_scale",
+      "mode": "mul",
+      "range": [
+        0.85,
+        1.15
+      ]
+    },
+    {
+      "path": "humming.nasal_scale",
+      "mode": "mul",
+      "range": [
+        0.9,
+        1.1
+      ]
+    },
+    {
+      "path": "tract.ring.scale",
+      "mode": "mul",
+      "range": [
+        0.9,
+        1.1
+      ]
+    },
+    {
+      "path": "performance.vowel_blend_ms",
+      "mode": "mul",
+      "range": [
+        0.75,
+        1.25
+      ]
+    },
+    {
+      "path": "phrasing.formants.coarticulation.anticipate_ms",
+      "mode": "mul",
+      "range": [
+        0.75,
+        1.25
+      ]
+    },
+    {
+      "path": "phrasing.formants.coarticulation.settle_ms",
+      "mode": "mul",
+      "range": [
+        0.75,
+        1.25
+      ]
+    },
+    {
+      "path": "vibrato.onset_s",
+      "mode": "mul",
+      "range": [
+        0.7,
+        1.4
       ]
     }
   ],
@@ -977,7 +1132,7 @@
     ],
     "breathing.inhale_timing_jitter_ms": [
       0,
-      120
+      300
     ],
     "breathing.inhale_duration_var": [
       0,
@@ -1011,6 +1166,10 @@
       0,
       4
     ],
+    "source.tilt_poles": [
+      1,
+      2
+    ],
     "source.jitter_shimmer_corr": [
       -1,
       1
@@ -1036,6 +1195,10 @@
       1.5
     ],
     "technique.tuning_f2_share": [
+      0,
+      1
+    ],
+    "technique.tuning_upper_share": [
       0,
       1
     ],
@@ -1102,6 +1265,90 @@
     "consonants.closure_floor_db": [
       -90,
       -20
+    ],
+    "consonants.buzz_tilt_hz": [
+      200,
+      5000
+    ],
+    "consonants.tract_mix": [
+      0,
+      1
+    ],
+    "ensemble.pitch_drift_cents": [
+      0,
+      40
+    ],
+    "ensemble.pitch_drift_hz": [
+      0.05,
+      1.2
+    ],
+    "ensemble.onset_spread_ms": [
+      0,
+      120
+    ],
+    "ensemble.itd_ms": [
+      0,
+      0.8
+    ],
+    "ensemble.head_shadow_hz": [
+      500,
+      6000
+    ],
+    "ensemble.head_shadow_db": [
+      0,
+      20
+    ],
+    "ensemble.reflection_gain": [
+      0,
+      0.12
+    ],
+    "ensemble.reflection_taps": [
+      0,
+      4
+    ],
+    "ensemble.reflection_lp_hz": [
+      500,
+      8000
+    ],
+    "ensemble.pitch_spread_cents": [
+      0,
+      100
+    ],
+    "ensemble.timing_spread_ms": [
+      0,
+      300
+    ],
+    "ensemble.diversity": [
+      0,
+      2
+    ],
+    "source.rd": [
+      0.3,
+      2.7
+    ],
+    "source.open_quotient_scale": [
+      0.5,
+      1.5
+    ],
+    "humming.nasal_scale": [
+      0.8,
+      1.2
+    ],
+    "tract.ring.scale": [
+      0.85,
+      1.15
+    ],
+    "vibrato.rate_cycle_var": [
+      0,
+      0.05
+    ],
+    "vibrato.onset_s": [
+      0.05,
+      2
+    ],
+    "performance.vowel_blend_ms": [
+      10,
+      400
     ]
   }
 }

@@ -126,6 +126,24 @@ class FormantTuning(unittest.TestCase):
         self.assertGreater(got[1.0][0], 1.5 * got[0.0][0])
         self.assertLessEqual(got[1.0][1], 2.0)          # tuned: the f0 harmonic sits on F1 now
 
+    def test_upper_formants_track_pitch_only_when_asked(self):
+        """Tuning moves F1 and F2 toward f0. F3-F5 stay put unless `tuning_upper_share` asks for them to follow,
+        because the measured regression of R4 on f0 in sopranos is 0.46 (Joliveau, Smith & Wolfe 2004) and the
+        default must keep every existing render unchanged. Moving them equally leaves the singer's-formant cluster
+        the same width: it is a shift of the cluster, not a wider band."""
+        F = np.array([730.0, 1090.0, 2440.0, 3400.0, 4500.0])
+        f0 = np.array(880.0)
+        off = pf._tuned_formants(F, f0, cfg(technique=dict(formant_tuning=1.0)))
+        self.assertTrue(np.array_equal(off[2:], F[2:]), 'the upper formants moved without being asked')
+        on = pf._tuned_formants(F, f0, cfg(technique=dict(formant_tuning=1.0, tuning_upper_share=0.46)))
+        self.assertTrue(np.allclose(on[2:], F[2:] + 0.46 * (880.0 - 730.0), atol=0.5), on)
+        self.assertAlmostEqual(on[4] - on[2], off[4] - off[2], places=6)
+
+    def test_upper_share_keeps_the_bank_ordered(self):
+        F = pf._tuned_formants(np.array([730.0, 1090.0, 2440.0, 3400.0, 4500.0]), np.array(1760.0),
+                               cfg(technique=dict(formant_tuning=1.0, tuning_upper_share=1.0)))
+        self.assertTrue(np.all(np.diff(F) > 0), F)
+
     def test_low_notes_are_untouched_by_tuning(self):
         a = phrase([dict(t=0, dur=1.0, p=45, v=90)], cfg(technique=dict(formant_tuning=1.0)))['signal']
         b = phrase([dict(t=0, dur=1.0, p=45, v=90)], cfg(technique=dict(formant_tuning=0.0)))['signal']
@@ -311,6 +329,7 @@ class GateRows(unittest.TestCase):
                     peak_pre_limit=0.4, peak=0.4, ring_spread_hz=300.0, ring_amount=1.0,
                     tuning_deficit_db=2.0, coart_lead_ms=40.0, jitter_pct=0.6, passaggio_step=0.001,
                     vib_am_db=1.0, vib_am_corr=0.9, identity_pct=5.0,
+                    stereo_corr=0.6, mono_loss_db=-0.5,
                     consonants=dict(n=2, centroid_ok=True, centroid_bad=0, codes=['s', 't'],
                                     declared_vot_ms=70.0, measured_vot_ms=72.0))
         base.update(over)
@@ -321,19 +340,19 @@ class GateRows(unittest.TestCase):
         rs = self._rows()
         self.assertNotIn('FAIL', [r[0] for r in rs], rs)
         for word in ('cluster', 'f0 sits', 'consonant', 'before the boundary', 'jitter', 'open-quotient',
-                     'amplitude modulation', 'tract length'):
+                     'amplitude modulation', 'tract length', 'mono sum'):
             self.assertTrue(any(word in d for _, _, d in rs), word)
 
     def test_every_new_row_can_fail(self):
         rs = self._rows(ring_spread_hz=900.0, tuning_deficit_db=20.0, coart_lead_ms=2.0, jitter_pct=5.0,
-                        passaggio_step=0.2, vib_am_corr=0.1, identity_pct=0.1,
+                        passaggio_step=0.2, vib_am_corr=0.1, identity_pct=0.1, stereo_corr=1.0,
                         consonants=dict(n=1, centroid_ok=False, centroid_bad=1, codes=['s'],
                                         declared_vot_ms=70.0, measured_vot_ms=20.0))
         self.assertGreaterEqual(len([r for r in rs if r[0] == 'FAIL']), 8, rs)
 
     def test_rows_skip_when_the_engine_did_not_use_the_feature(self):
         rs = self._rows(ring_spread_hz=None, tuning_deficit_db=None, coart_lead_ms=None,
-                        passaggio_step=None, vib_am_corr=None, consonants=None)
+                        passaggio_step=None, vib_am_corr=None, consonants=None, stereo_corr=None)
         self.assertNotIn('FAIL', [r[0] for r in rs], rs)
         self.assertFalse(any('cluster' in d for _, _, d in rs))
 

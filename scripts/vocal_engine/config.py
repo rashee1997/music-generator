@@ -42,6 +42,15 @@ _OLD_ARTIC = {'vib_cents': ('vibrato', 'depth_cents', 1.0), 'vib_hz': ('vibrato'
 _OLD_ARTIC_IGNORED = {'decay_ms', 'sustain_level'}
 
 
+def _deep_update(dst, src):
+    """Merge a preset's nested block into the defaults without dropping sibling keys."""
+    for k, val in src.items():
+        if isinstance(val, dict) and isinstance(dst.get(k), dict):
+            _deep_update(dst[k], val)
+        else:
+            dst[k] = copy.deepcopy(val)
+
+
 def _put(cfg, path, value):
     ks = path.split('.')
     d = cfg
@@ -97,6 +106,17 @@ def _flat(cfg, key, v, warn):
         pass
     elif key == 'peak_trim':                                 # opt-in: cap a hot ensemble sum before the limiter
         cfg['peak_trim'] = float(v)
+    elif key == 'waveguide':
+        # The tract model is data (AGENTS.md §16): a preset may pick the mode and override geometry, but an unknown
+        # mode is an error, never a silent fallback to the fixed table.
+        if not isinstance(v, dict):
+            warn.append('waveguide must be an object')
+        else:
+            mode = v.get('mode')
+            if mode is not None and mode not in ('physical', 'table'):
+                warn.append(f'waveguide.mode must be "physical" or "table", got {mode!r}')
+            else:
+                _deep_update(cfg['waveguide'], v)
     elif key not in IGNORED:
         warn.append(f'unknown vocal key "{key}" ignored')
 
@@ -203,10 +223,19 @@ def check(cfg):
         v = cfg['tract'].get(k)
         if v is not None and (not isinstance(v, list) or not v or any(x <= 0 for x in v)):
             out.append(f'tract.{k} must be a list of positive numbers')
+    # The bank is as long as the formant list actually used: `voice.synth` takes k = len(F) and slices BW and G to it,
+    # so a preset that declares three formants is a three-formant voice and needs three bandwidths, not five. Check
+    # against that length, or a deliberate 3-formant preset (what `presets.py scaffold vocals` writes) is rejected for
+    # being shorter than the 5-formant vowel table it no longer reads. When no `formants` is set the vowel table is
+    # used, so the original protection still applies.
+    fmt = cfg['tract'].get('formants')
+    bank_len = len(fmt) if isinstance(fmt, list) and fmt else None
     for k in ('gains', 'bandwidths'):
         v = cfg['tract'].get(k)
-        if isinstance(v, list) and any(len(F) > len(v) for F in cfg['tract']['vowels'].values()):
-            out.append(f'tract.{k} is shorter than a vowel: the bank is sliced to {len(v)} formants')
+        if isinstance(v, list):
+            need = bank_len if bank_len is not None else max((len(F) for F in cfg['tract']['vowels'].values()), default=0)
+            if len(v) < need:
+                out.append(f'tract.{k} has {len(v)} value(s) for a {need}-formant bank: the bank is sliced to {len(v)} formants')
     for name, tgt in (cfg['tract'].get('cover_map') or {}).items():
         if name.startswith('_'):
             continue
@@ -217,6 +246,18 @@ def check(cfg):
     ring = cfg['tract'].get('ring') or {}
     if ring.get('enabled', True) and (len(ring.get('target_hz') or []) != 3 or len(ring.get('shares') or []) != 3):
         out.append('tract.ring needs three target_hz and three shares (F3, F4, F5)')
+    ens = cfg.get('ensemble') or {}
+    rms = ens.get('reflection_ms')
+    if not (isinstance(rms, (list, tuple)) and len(rms) == 2
+            and all(isinstance(x, (int, float)) and not isinstance(x, bool) and x > 0 for x in rms) and rms[0] < rms[1]):
+        out.append('ensemble.reflection_ms must be [first_ms, last_ms] with 0 < first < last')
+    tp = (cfg.get('source') or {}).get('tilt_poles', 1)
+    if tp not in (1, 2):
+        out.append(f'source.tilt_poles must be 1 or 2 (got {tp!r})')
+    if cfg['source'].get('model', 'pulse') not in ('pulse', 'lf'):
+        out.append(f'source.model must be "pulse" or "lf" (got {cfg["source"].get("model")!r})')
+    if cfg['source'].get('oversample', 1) not in (1, 2, 4):
+        out.append(f'source.oversample must be 1, 2 or 4 (got {cfg["source"].get("oversample")!r})')
     ladder = cfg['source'].get('register_ladder') or []
     for r in ladder:
         if r not in cfg['source']['registers']:

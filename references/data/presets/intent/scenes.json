@@ -1,0 +1,133 @@
+{
+  "kind": "intent",
+  "name": "scenes",
+  "character": "The twelve things a cue is asked to do to a picture. A scene gives the shape (where it starts, where it peaks, whether it ends), not the notes: it names a focus, a density arc, a tempo band and the register it belongs in, so a vague brief (\"make it sad here\") still produces a shaped cue instead of a loop.",
+  "scenes": {
+    "establish": {
+      "character": "tell the audience where they are before anything happens",
+      "focus": "texture",
+      "energy_arc": [0.25, 0.35, 0.30],
+      "tempo_bpm": [60, 100],
+      "register": "cinematic",
+      "forbidden": ["four_on_floor", "sudden_loud"],
+      "sections": [["establish", 0.5], ["hold", 0.35], ["settle", 0.15]],
+      "sources": ["references/workflow/scene-recipes.md (establishing)"]
+    },
+    "arrival": {
+      "character": "the thing being waited for is here; one hit does the work",
+      "focus": "melody",
+      "energy_arc": [0.20, 0.95, 0.55],
+      "tempo_bpm": [60, 110],
+      "register": "cinematic",
+      "forbidden": ["four_on_floor"],
+      "sections": [["approach", 0.55], ["arrival", 0.1], ["aftermath", 0.35]],
+      "sources": ["references/workflow/scene-recipes.md (arrival and reveal)"]
+    },
+    "reveal": {
+      "character": "the camera shows it late and the music must not be louder than the fact",
+      "focus": "drone",
+      "energy_arc": [0.15, 0.85, 0.35],
+      "tempo_bpm": [50, 90],
+      "register": "cinematic",
+      "forbidden": ["four_on_floor", "bright_staccato"],
+      "sections": [["withhold", 0.6], ["reveal", 0.12], ["release", 0.28]],
+      "sources": ["references/workflow/scene-recipes.md (arrival and reveal)"]
+    },
+    "build": {
+      "character": "the same material, more of it, until the frame can take the whole band",
+      "focus": "melody",
+      "energy_arc": [0.15, 0.85, 0.95],
+      "tempo_bpm": [80, 140],
+      "register": "cinematic",
+      "forbidden": ["thin_texture_throughout"],
+      "sections": [["seed", 0.3], ["build", 0.45], ["peak", 0.25]],
+      "sources": ["references/scoring/emotion-and-scoring.md section 2 (arc table)"]
+    },
+    "chase": {
+      "character": "no rests, one pulse, and the harmony keeps refusing to land",
+      "focus": "groove",
+      "energy_arc": [0.7, 0.95, 0.75],
+      "tempo_bpm": [120, 170],
+      "register": "cinematic",
+      "forbidden": ["min_silence_long", "major_cadence"],
+      "sections": [["launch", 0.2], ["run", 0.6], ["brake", 0.2]],
+      "sources": ["references/workflow/scene-recipes.md (action and chase)", "knowledgebase/genre-and-feel/dynamic-flow.md"]
+    },
+    "battle": {
+      "character": "weight and percussion; the low end is the story, not the melody",
+      "focus": "groove",
+      "energy_arc": [0.6, 1.0, 0.5],
+      "tempo_bpm": [100, 160],
+      "register": "cinematic",
+      "forbidden": ["thin_texture_throughout", "major_cadence"],
+      "sections": [["first_contact", 0.35], ["clash", 0.45], ["after", 0.2]],
+      "sources": ["references/workflow/scene-recipes.md (battle)", "knowledgebase/media/video-scoring.md"]
+    },
+    "montage": {
+      "character": "several places and times in one gesture; the music is the only continuous thing",
+      "focus": "melody",
+      "energy_arc": [0.4, 0.7, 0.5],
+      "tempo_bpm": [90, 140],
+      "register": "cinematic",
+      "forbidden": ["cut_synced_hits"],
+      "sections": [["open", 0.25], ["accumulate", 0.5], ["close", 0.25]],
+      "sources": ["references/scoring/video-scoring.md (montage)", "references/data/presets/film/mapping.json"]
+    },
+    "love": {
+      "character": "one harmonic world, no percussion, the line allowed to breathe",
+      "focus": "melody",
+      "energy_arc": [0.15, 0.45, 0.30],
+      "tempo_bpm": [55, 85],
+      "register": "natural",
+      "forbidden": ["drum_kit", "four_on_floor", "bright_staccato"],
+      "sections": [["open", 0.35], ["speak", 0.45], ["stay", 0.2]],
+      "sources": ["references/workflow/scene-recipes.md (intimacy)"]
+    },
+    "farewell": {
+      "character": "it is leaving and the music says so by taking things away",
+      "focus": "drone",
+      "energy_arc": [0.45, 0.35, 0.05],
+      "tempo_bpm": [50, 80],
+      "register": "cinematic",
+      "forbidden": ["four_on_floor", "bright_staccato", "sudden_loud"],
+      "sections": [["still_here", 0.3], ["going", 0.4], ["gone", 0.3]],
+      "sources": ["references/workflow/scene-recipes.md (ending and loss)"]
+    },
+    "memory": {
+      "character": "past tense: filtered, imperfect, one instrument too close",
+      "focus": "texture",
+      "energy_arc": [0.25, 0.45, 0.25],
+      "tempo_bpm": [60, 95],
+      "register": "diegetic",
+      "forbidden": ["four_on_floor"],
+      "sections": [["fade_in", 0.3], ["remember", 0.45], ["fade_out", 0.25]],
+      "sources": ["knowledgebase/media/video-scoring.md (memory and diegetic treatment)"]
+    },
+    "dread": {
+      "character": "the threat is off screen; the music must not point at it",
+      "focus": "drone",
+      "energy_arc": [0.1, 0.5, 0.35],
+      "tempo_bpm": [40, 80],
+      "register": "cinematic",
+      "forbidden": ["major_cadence", "four_on_floor", "steady_pulse"],
+      "sections": [["not_yet", 0.45], ["closer", 0.35], ["held", 0.2]],
+      "sources": ["references/scoring/emotion-and-scoring.md section 3 (tension toolkit)"]
+    },
+    "work": {
+      "character": "hands doing something; the music is a rhythm, not a feeling",
+      "focus": "groove",
+      "energy_arc": [0.35, 0.55, 0.40],
+      "tempo_bpm": [70, 120],
+      "register": "natural",
+      "forbidden": ["min_silence_long"],
+      "sections": [["begin", 0.2], ["labour", 0.6], ["finish", 0.2]],
+      "sources": ["references/workflow/scene-recipes.md (procedure and montage of labour)"]
+    }
+  },
+  "provenance": {
+    "scenes.*.energy_arc": "starting value: three points (start, peak, end) from the arc table in emotion-and-scoring.md section 2",
+    "scenes.*.tempo_bpm": "starting value, from the tempo bands in the same table",
+    "scenes.*.sections": "starting value: proportional sections, scaled to the cue duration at score time",
+    "scenes.*.forbidden": "the contradiction list of each recipe, so a scene cannot be filled with the gesture that would cancel it"
+  }
+}

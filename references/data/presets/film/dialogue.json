@@ -1,0 +1,71 @@
+{
+  "kind": "film",
+  "name": "dialogue",
+  "character": "How the music gets out of the way of speech: the voice chain, the bed level, the band that is carved, the duck that follows the speech mask, the swell into a hit, and the loudness difference the gate audits.",
+
+  "voice_lufs": -16.0,
+  "bed_db": -10.0,
+  "duck_db": -9.0,
+  "music_bed_lufs": -20.0,
+  "tail_s": 1.5,
+
+  "speech_band_hz": [250, 3800],
+  "intelligibility_band_hz": [1000, 4000],
+  "duck_depth_db": -6.0,
+  "attack_ms": 25,
+  "release_ms": 300,
+  "lookahead_ms": 60,
+  "low_end_protect_below_hz": 200,
+
+  "sfx_headroom_db": -8.0,
+
+  "voice_hp_hz": 80.0,
+  "voice_mud_hz": 500.0,
+  "voice_mud_db": -2.0,
+  "voice_presence_hz": 3500.0,
+  "voice_presence_db": 2.5,
+  "voice_sibilance_hz": 7000.0,
+  "voice_sibilance_db": -2.0,
+  "voice_comp_threshold_db": -24.0,
+  "voice_comp_ratio": 3.0,
+  "voice_comp_attack_ms": 3.0,
+  "voice_comp_release_ms": 40.0,
+  "voice_makeup_db": 3.0,
+
+  "speech_envelope_attack_ms": 5.0,
+  "speech_envelope_release_ms": 60.0,
+  "speech_threshold_db": -38.0,
+  "speech_hold_s": 0.35,
+  "speech_hold_frac": 0.02,
+  "duck_threshold": 0.02,
+  "duck_floor_db": -1.0,
+  "duck_smooth_s": 0.03,
+
+  "music_carve_hz": 3000.0,
+  "music_carve_db": -3.0,
+  "music_hp_hz": 60.0,
+
+  "fade_in_s": 0.3,
+  "fade_out_s": 1.2,
+  "loop_crossfade_max_s": 2.0,
+  "sfx_short_gain": 0.3,
+  "swell": {"enabled": true, "rise_s": 1.2, "pre_hit_db": 2.0, "release_s": 2.0},
+
+  "snr_min_db": 15.0,
+  "band_min_db": -12.0,
+  "loudness_difference_lu": {"min": 7.0, "typical": [12.0, 18.0], "observed_broadcast": [-17.0, -14.0]},
+
+  "sources": [
+    "https://aes.org/publications/elibrary-page/20711.pdf (preferred background ducking levels: German public-broadcaster guidance at least 7 LU, typically 16-23 LU; non-experts prefer about 4 LU more than experts)",
+    "https://www.cnam.ie/app/uploads/2023/06/20230619_Investigating-a-Standardised-Approach-to-Setting-Audio-Description-Dip-Values_vFINAL-1.pdf (dialogue over music observed at -14 to -17 LU in broadcast; 12-18 dB working range)",
+    "https://openclip.app/learn/audio-ducking (duck depth 15-25 dB, attack 10-30 ms, release 200-500 ms)",
+    "references/mixing/mix-rules.md (voice-over contract: -8 to -14 dB duck, 25 ms attack, 250-350 ms release)"
+  ],
+
+  "provenance": {
+    "voice_lufs .. swell": "unchanged from presets/video/default.json mix block",
+    "intelligibility_band_hz": "starting value: the consonant band that carries meaning is about 1-4 kHz",
+    "snr_min_db": "inside the observed -14..-17 LU broadcast range and the 12-18 dB working range",
+    "band_min_db": "starting value: how far the 1-4 kHz music energy must sit under the voice"
+  }
+}

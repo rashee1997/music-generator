@@ -1,0 +1,109 @@
+{
+  "name": "songbird_phrase",
+  "character": "A small songbird: clear whistles, a falling slur and a fast trill, each bird a little different.",
+  "elements": {
+    "whistle": {
+      "f0_hz": [
+        [
+          0,
+          3200
+        ],
+        [
+          0.5,
+          4100
+        ],
+        [
+          1,
+          3600
+        ]
+      ],
+      "ms": [
+        90,
+        150
+      ],
+      "harmonics": 2,
+      "rolloff": 2.5
+    },
+    "slur": {
+      "f0_hz": [
+        [
+          0,
+          5200
+        ],
+        [
+          1,
+          2600
+        ]
+      ],
+      "ms": [
+        110,
+        170
+      ],
+      "harmonics": 2,
+      "rolloff": 2.5
+    },
+    "trill": {
+      "f0_hz": [
+        [
+          0,
+          4300
+        ],
+        [
+          1,
+          4000
+        ]
+      ],
+      "ms": [
+        320,
+        520
+      ],
+      "harmonics": 2,
+      "rolloff": 2.5,
+      "pulse_hz": 28.0,
+      "pulse_duty": 0.55
+    },
+    "chip": {
+      "f0_hz": [
+        [
+          0,
+          6200
+        ],
+        [
+          1,
+          4800
+        ]
+      ],
+      "ms": [
+        35,
+        55
+      ],
+      "harmonics": 2,
+      "rolloff": 2.0
+    }
+  },
+  "sequence": [
+    [
+      "whistle",
+      2,
+      4
+    ],
+    "slur",
+    [
+      "chip",
+      0,
+      2
+    ],
+    "trill"
+  ],
+  "gap_ms": [
+    45,
+    110
+  ],
+  "bouts_per_min": 9.0,
+  "individuals": 3,
+  "individual_spread": 0.07,
+  "sources": [
+    "ESTIMATE: typical values for this kind of call written from general knowledge, not measured from a recording and not auditioned. Replace them with numbers from a real recording of the species the project needs.",
+    "Mindlin & Laje (2005), The Physics of Birdsong: syllables as gestures of pressure and tension"
+  ]
+}

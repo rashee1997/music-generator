@@ -37,7 +37,7 @@ except Exception:
     median_filter = None
 
 import gate_checks as gc
-from gate_audio import GateAudio
+from gate_audio import GateAudio, Signal
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import naturalness_check as nc
@@ -387,26 +387,245 @@ def immersive_rows(score, path, stems, out):
                  + ('phase cancellation will thin it on phone speakers' if drop > lim else 'holds up on a phone speaker'))
 
 
+def room_measures(brir, sr=44100):
+    """(IACC over the first 80 ms, C80 in dB) of a binaural room impulse response, after ISO 3382-1.
+
+    The response is timed from the direct sound (the first sample within 20 dB of the peak). IACC is the largest
+    interaural cross-correlation within +-1 ms, the mean of the 500, 1000 and 2000 Hz octaves ("IACC E3"); C80 is
+    early (0-80 ms) against late energy, the mean of the 500 to 4000 Hz octaves."""
+    from scipy import signal
+    h = np.asarray(brir, dtype=float)
+    env = np.abs(h).max(axis=1)
+    h = h[int(np.argmax(env >= 0.1 * env.max())):]
+    e, lag = int(0.08 * sr), int(0.001 * sr)
+    iacc, c80 = [], []
+    for fc in (500.0, 1000.0, 2000.0, 4000.0):
+        b = signal.sosfilt(signal.butter(3, [fc / np.sqrt(2.0), fc * np.sqrt(2.0)], 'band', fs=sr, output='sos'),
+                           h, axis=0)
+        early, late = b[:e], b[e:]
+        c80.append(10.0 * np.log10((early ** 2).sum() / ((late ** 2).sum() + 1e-20) + 1e-20))
+        if fc <= 2000.0:
+            cc = signal.correlate(early[:, 0], early[:, 1], 'full')[len(early) - 1 - lag:len(early) + lag]
+            iacc.append(np.max(np.abs(cc)) / (np.sqrt((early[:, 0] ** 2).sum() * (early[:, 1] ** 2).sum()) + 1e-20))
+    return float(np.mean(iacc)), float(np.mean(c80))
+
+
+def fold_loss(x, sr=44100, nperseg=4096):
+    """(frequencies, power of the two channels, power of their mono sum) per bin. Their ratio is what a mono
+    speaker loses: 0 dB for a centred sound, 3 dB for two unrelated channels, more when they cancel."""
+    from scipy import signal
+    L, R = np.asarray(x[:, 0], float), np.asarray(x[:, 1], float)
+    n = min(nperseg, len(L))
+    f, pl = signal.welch(L, sr, nperseg=n)
+    _, pr = signal.welch(R, sr, nperseg=n)
+    _, plr = signal.csd(L, R, sr, nperseg=n)
+    return f, 0.5 * (pl + pr), 0.25 * (pl + pr + 2.0 * np.real(plr))
+
+
+def _erb_edges(lo=100.0, hi=5000.0):
+    """Band edges one ERB apart (Glasberg & Moore 1990) from lo to hi."""
+    def rate(f):
+        return 21.4 * np.log10(4.37e-3 * f + 1.0)
+    k = np.arange(np.ceil(rate(lo)), np.floor(rate(hi)) + 1.0)
+    return (10.0 ** (k / 21.4) - 1.0) / 4.37e-3
+
+
+def fold_rows(score, path, out, audio=None, sr=44100):
+    """mix.band_fold for any two-channel master and imm.low_fold for an immersive one: what a mono speaker loses,
+    band by band. A broadband fold-down number hides a single band that cancels."""
+    import gate_profiles
+    import mixer
+    gp = gate_profiles.resolve(score)
+    if audio is None:
+        import soundfile as sf
+        audio, sr = sf.read(path, always_2d=True)
+    if audio.shape[1] != 2 or len(audio) < sr:
+        return
+    f, chan, mono = fold_loss(audio, sr)
+    immersive = bool(mixer.immersive_cfg(score))
+    # A headphone master is left out: a source at the side reaches the far ear up to 0.7 ms late, and that delay
+    # alone notches the mono sum near 700 Hz. There the loss is the head, not a fault (measured: 4.7 dB at
+    # 698-803 Hz for one source at 60 degrees); imm_foldown and imm_low_fold judge that master instead.
+    if gp.on('mix.band_fold') and not immersive:
+        lim, floor = float(gp.param('mix.band_fold', 'max_db')), float(gp.param('mix.band_fold', 'floor_db'))
+        edges = _erb_edges()
+        bands = [(a, b, chan[(f >= a) & (f < b)].sum(), mono[(f >= a) & (f < b)].sum())
+                 for a, b in zip(edges[:-1], edges[1:])]
+        top = max((c for _, _, c, _ in bands), default=0.0)
+        bad = []
+        for a, b, c, m in bands:
+            if c > top * 10.0 ** (-floor / 10.0):                     # a band with nothing in it has nothing to lose
+                loss = 10.0 * np.log10(c / (m + 1e-30))
+                if loss > lim:
+                    bad.append((loss, a, b))
+        if bad:
+            loss, a, b = max(bad)
+            who = ''
+            proc = mixer.STATE.get('processed') or {}
+            if proc:                                                  # the stem whose two channels cancel most there
+                from scipy import signal
+                sos = signal.butter(2, [a, b], 'band', fs=sr, output='sos')
+                cross = {}
+                for k, v in proc.items():
+                    v = np.asarray(v)
+                    if v.ndim == 2 and v.shape[1] == 2:
+                        y = signal.sosfilt(sos, v, axis=0)
+                        cross[k] = float(np.sum(y[:, 0] * y[:, 1]))
+                if cross and min(cross.values()) < 0:
+                    who = f'; stem "{min(cross, key=cross.get)}" is the most out of phase there'
+            _row(out, 'FAIL', 'mix.band_fold',
+                 f'{len(bad)} band(s) lose more than {lim:g} dB in mono, worst {a:.0f}-{b:.0f} Hz at {loss:.1f} dB{who}: '
+                 'narrow that stem below the band, or lower its widening')
+        else:
+            _row(out, 'PASS', 'mix.band_fold', f'no auditory band from 100 to 5000 Hz loses more than {lim:g} dB in mono')
+    if immersive and gp.on('imm.low_fold'):
+        lim, hz = float(gp.param('imm.low_fold', 'max_db')), float(gp.param('imm.low_fold', 'hz'))
+        sel = (f > 20.0) & (f < hz)
+        loss = 10.0 * np.log10(chan[sel].sum() / (mono[sel].sum() + 1e-30) + 1e-30)
+        _row(out, 'FAIL' if loss > lim else 'PASS', 'imm_low_fold',
+             f'below {hz:g} Hz the mono fold loses {loss:.1f} dB (limit {lim:g}): '
+             + ('the bass is not the same in both ears and will thin out on one speaker' if loss > lim
+                else 'the low end holds on one speaker'))
+
+
+def immersive2_rows(score, path, out, brir=None):
+    """Rows of the ambisonic engine: how fast sources travel, and the room measured on its own impulse response."""
+    import gate_profiles
+    import mixer
+    from spatial_engine import trajectory
+    cfg = mixer.immersive_cfg(score)
+    if not cfg:
+        return
+    gp = gate_profiles.resolve(score)
+    sr = 44100
+    if gp.on('imm.kinematics'):
+        n = 0
+        if path:
+            import soundfile as sf
+            info = sf.info(path)
+            n = int(info.frames * sr / info.samplerate)
+        limits = cfg.get('max_deg_per_sec') or {}
+        fast, moving = [], 0
+        for tr in score.get('tracks', []):
+            spec = mixer.default_spec(tr)
+            traj = (spec.get('spatial') or {}).get('trajectory')
+            if not traj or n < sr:
+                continue
+            az, el, dist = mixer.place_of(spec, cfg)
+            p = trajectory.path(traj, az, el, dist, n, sr, score)
+            if p is None:
+                continue
+            role = 'anchor' if trajectory.is_anchor(traj, spec.get('role')) else 'mover'
+            if role == 'anchor':
+                p = trajectory.anchor(p, az, el, dist, float(cfg.get('anchor_max_span_deg', 6.0)))
+            moving += 1
+            v, lim = trajectory.speed_deg_per_s(p, sr), float(limits.get(role, 120.0))
+            if v > lim:
+                fast.append(f'{tr.get("name")}: {v:.0f} deg/s as {role} (limit {lim:g})')
+        _row(out, 'FAIL' if fast else 'PASS', 'imm_kinematics',
+             '; '.join(fast[:4]) + ': spread the keyframes further apart' if fast
+             else f'{moving} moving source(s), none faster than its role allows')
+    space = mixer._space()
+    owned = mixer._space_owned(space) and isinstance(space.get('reflections'), dict)
+    if brir is None and (str(cfg.get('engine', 'per_stem')) != 'hoa_bus' or not owned):
+        return                               # the room rows measure the ambisonic bus's room; there is none here
+    if not (gp.on('imm.iacc_early') or gp.on('imm.clarity')):
+        return
+    dists = [float((mixer.default_spec(tr).get('spatial') or {}).get('distance', 0.0)) for tr in score.get('tracks', [])]
+    dist = float(np.median([d for d in dists if d > 0] or [2.0]))
+    if brir is None:
+        try:
+            from spatial_engine import hoa
+            mixer._use_head_set(cfg)
+            brir = hoa.probe_brir(cfg, space, sr, distance=dist, score=score)
+        except Exception as exc:
+            _row(out, 'WARN', 'imm_clarity', f'the room probe could not be rendered ({exc}); the room is not measured')
+            return
+    iacc, c80 = room_measures(brir, sr)
+    if gp.on('imm.iacc_early'):
+        lim = float(gp.param('imm.iacc_early', 'max_iacc'))
+        _row(out, 'WARN' if iacc > lim else 'PASS', 'imm_iacc_early',
+             f'room probe at {dist:g} m: early interaural correlation {iacc:.2f} (limit {lim:g}); '
+             + ('the first reflections all come from the front, so a source will sound narrow: move a side wall in '
+                'or make it harder' if iacc > lim else 'the first reflections arrive from the sides'))
+    if gp.on('imm.clarity'):
+        lim = float(gp.param('imm.clarity', 'min_c80_db'))
+        _row(out, 'WARN' if c80 < lim else 'PASS', 'imm_clarity',
+             f'room probe at {dist:g} m: C80 {c80:+.1f} dB (floor {lim:+g}); '
+             + ('the tail swamps the notes: lower late.level_db, shorten rt60_s or move the sources closer'
+                if c80 < lim else 'notes stay clear of the tail (concert halls measure about -5 to +5 dB)'))
+
+
+def per_channel_clicks(x, sr):
+    """The click measurement for each delivered channel of a multichannel master, or [] for mono/stereo.
+
+    A two-channel file is measured as delivered; a speaker-layout master is folded before the click row, and a fold
+    can hide an impulse that only one channel carries, so every channel is measured on its own.
+    """
+    x = np.asarray(x)
+    if x.ndim != 2 or x.shape[1] <= 2:
+        return []
+    return [gc.check_clicks(Signal(x[:, c], sr)) for c in range(x.shape[1])]
+
+
+def _read_delivered(path, out):
+    """The delivered file as (frames, channels) float32 plus its rate, whatever container it is in.
+
+    A BW64 ADM deliverable cannot be opened by libsndfile (`Format not recognised` for the BW64 magic; it
+    reads RF64, not BW64), so an object master listed first in `output_targets` would otherwise crash every
+    stereo-shaped row below. It is parsed by its own reader and folded to two channels for those rows, which
+    is the same reference the renderer levelled it on. An unreadable file raises a FAIL row that names the
+    reader and the file instead of a traceback.
+    """
+    import soundfile as sf
+    try:
+        with open(path, 'rb') as fh:
+            magic = fh.read(4)
+    except OSError as exc:
+        _row(out, 'FAIL', 'audio.read', f'cannot open {path} ({exc})')
+        raise
+    if magic == b'BW64':
+        from spatial_engine import adm
+        try:
+            parsed = adm.parse(path)
+            return adm.fold_to_stereo(parsed), parsed['sr']
+        except ValueError as exc:
+            _row(out, 'FAIL', 'audio.read',
+                 f'{os.path.basename(str(path))}: a BW64 deliverable that cannot be folded for the stereo rows '
+                 f'({exc}); its own adm.container row names the structural fault')
+            raise
+    return sf.read(path, always_2d=True)
+
+
 def audio_checks(path, score, out, metrics=None):
     """Measurements of the rendered file against the score's own targets."""
     master = score.get('master', {})
     target = master.get('lufs', -14.0)
     lufs_tol = master.get('lufs_tolerance', master.get('tolerance_lu', 2.5))
     tp_target = master.get('true_peak', -1.5)
-    r = nc.analyse(path, target_lufs=target)
-    x, sr = nc.load(path)
-    # A surround master is judged on its BS.775 fold-down, not on the mean of its channels: the fold is what a
-    # listener without the room hears, and a channel mean changes with the channel count. nc.load returns two
-    # channels, so the real channel count is read from the file itself.
+    # A speaker-layout master is analysed through its layout's fold-down, never a channel mean or the first two
+    # channels alone. Per-channel delivery limits are independently certified by spatial_gate.output_rows.
     import render_targets
-    import soundfile as _sf
-    _multi, _multi_sr = _sf.read(path, always_2d=True)
+    try:
+        _multi, _multi_sr = _read_delivered(path, out)
+    except Exception:
+        return                     # the FAIL row that says why is already in `out`
+    _layout = None
     for _name in render_targets.resolve(score)['selected']:
         _tgt = render_targets.get(_name) or {}
         if _tgt.get('layout') and render_targets.channels(_name) == _multi.shape[1]:
-            from spatial_engine import master as _spatial_master
-            r['lufs'] = _spatial_master.fold_lufs(_multi, _tgt['layout'])
+            _layout = _tgt['layout']
             break
+    if _layout:
+        from spatial_engine import downmix as _downmix, master as _spatial_master
+        x = _downmix.fold(_multi, _layout)
+        sr = _multi_sr
+        r = nc.analyse(path, target_lufs=target, audio=(x, sr))
+        r['lufs'] = _spatial_master.fold_lufs(_multi, _layout)
+    else:
+        x = np.repeat(_multi, 2, axis=1) if _multi.shape[1] == 1 else _multi[:, :2]
+        sr = _multi_sr
+        r = nc.analyse(path, target_lufs=target, audio=(x, sr))
     spatial_check(path, score, out)
     for level, msg in nc.verdicts(r, target=target):
         _row(out, level, 'audio', msg)
@@ -433,7 +652,19 @@ def audio_checks(path, score, out, metrics=None):
     else:
         _row(out, 'PASS', 'silence', 'no silent gap in the middle of the piece')
     clicks = find_clicks(mono)
-    gate_clicks = gc.check_clicks(GateAudio(path))
+    gate_clicks = gc.check_clicks(GateAudio(path, y=x, sr=sr))
+    # A click can live in one channel of a multichannel master and vanish in the fold-down: measured, a +0.6 FS
+    # impulse on one channel against -0.6 on another leaves the fold at 0.05 peak with no MAD event, while each
+    # delivered channel carries a full-scale jump. Certify the delivered channels one by one and keep the worst, the
+    # way true peak and DC are already per channel.
+    ch_clicks = per_channel_clicks(_multi, sr)
+    if ch_clicks:
+        counts = [max(int(c.get('mad_count', 0)), int(c.get('lpc_count', 0))) for c in ch_clicks]
+        fold_n = max(int(gate_clicks.get('mad_count', 0)), int(gate_clicks.get('lpc_count', 0)))
+        worst = int(np.argmax(counts))
+        if counts[worst] > fold_n:
+            gate_clicks = dict(ch_clicks[worst], channel=worst + 1,
+                               detail=f'channel {worst + 1}: {ch_clicks[worst]["detail"]}')
     n_clicks = max(len(clicks), int(gate_clicks.get('mad_count', 0)))
     if n_clicks:
         when = ', '.join(f'{i / sr:.3f}s' for i in clicks[:5])
@@ -515,25 +746,34 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
     A defect injected into the summed mix must have a row to fail; these are the unsuffixed master ids.
     """
     sig = GateAudio(wav_path)
+    program_sig = sig
+    import render_targets
+    for target_name in render_targets.resolve(score)['selected']:
+        target = render_targets.get(target_name) or {}
+        if target.get('layout') and render_targets.channels(target_name) == sig.channels:
+            from gate_audio import Signal
+            from spatial_engine import downmix
+            program_sig = Signal(downmix.fold(sig.audio, target['layout']), sig.sr)
+            break
     sheet = _direction_sheet(project_dir) if project_dir else {}
-    secs = gc.section_bounds(score, sig.dur, sheet)
+    secs = gc.section_bounds(score, program_sig.dur, sheet)
     boundaries = [s['start_s'] for s in secs if s['start_s'] > 0.05]
 
-    res = gc.check_dropout(sig)
+    res = gc.check_dropout(program_sig)
     level = 'FAIL' if res.get('holes') else 'PASS'
     _row(out, level, 'dropout', res['detail'])
     _metric(metrics, row='dropout', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
             threshold=res['threshold'], margin=res['margin'], worst_times_s=res['times'][:8], calibrated=False,
             detail=res['detail'])
 
-    res = gc.check_cut(sig, boundaries)
+    res = gc.check_cut(program_sig, boundaries)
     level = 'FAIL' if res['value'] > res['threshold'] else 'PASS'
     _row(out, level, 'cut.hard', res['detail'])
     _metric(metrics, row='cut.hard', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
             threshold=res['threshold'], margin=res['margin'], worst_times_s=res['times'][:8], calibrated=False,
             detail=res['detail'])
 
-    res = gc.check_abrupt_end(sig)
+    res = gc.check_abrupt_end(program_sig)
     level = 'FAIL' if res.get('fail') else 'PASS'
     _row(out, level, 'end.abrupt', res['detail'])
     _metric(metrics, row='end.abrupt', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
@@ -563,7 +803,7 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
              f'score.bpm {float(bpm_ref):g} is declared, but the score has no percussion and no isochronous part: a beat '
              'tracker cannot measure a pulse the music does not play, so the tempo is not judged')
     elif bpm_ref:
-        res = gc.check_tempo(sig, float(bpm_ref))
+        res = gc.check_tempo(program_sig, float(bpm_ref))
         if not res.get('skipped'):
             level = 'FAIL' if res.get('fail') else 'PASS'
             _row(out, level, 'tempo.audio', res['detail'])
@@ -571,7 +811,7 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
                     unit=res['unit'], threshold=res['threshold'], margin=res['margin'], worst_times_s=[],
                     calibrated=False, detail=res['detail'])
 
-    res = gc.section_energy(sig, score, sheet)
+    res = gc.section_energy(program_sig, score, sheet)
     level = res.pop('level', 'PASS')
     _row(out, level, 'section.energy', res['detail'])
     _metric(metrics, row='section.energy', stage='mix', stem=None, level=level, value=res['value'],
@@ -581,6 +821,17 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
 
 MASK_WIN_S = 4.0            # the congestion check looks at 4-second windows
 MASK_MARGIN_DB = 3.0        # a bed within 3 dB of the lead in an ERB critical band is congested
+
+
+def _role_in(role, want):
+    """True when a track's role is one of `want`, through the one canonical vocabulary (scripts/roles.py).
+    A score written with `lead`, `vocal` or `harmony` is the same music as one written with `melody` and
+    `counter`; before this, only the literal string 'melody' was ever checked."""
+    import roles as rolelib
+    try:
+        return rolelib.canonical(role) in want
+    except rolelib.UnknownRole:
+        return False
 
 
 def masking_rows(stems, score, sr=44100, out=None):
@@ -599,10 +850,19 @@ def masking_rows(stems, score, sr=44100, out=None):
     if mixer.STATE.get('processed'):                       # measure the mix as played: after the EQ and the carve
         stems = mixer.STATE['processed']
     roles = {t['name']: t.get('role') for t in score['tracks']}
-    leads = [n for n, r in roles.items() if r == 'melody' and n in stems]
-    beds = [n for n, r in roles.items() if r in ('pad', 'chord', 'arp', 'counter') and n in stems and n not in leads]
+    focus = set(gp.focus_roles())
+    leads = [n for n, r in roles.items() if _role_in(r, focus) and n in stems]
+    beds = [n for n, r in roles.items() if _role_in(r, ('pad', 'chord', 'arp', 'counter', 'drone', 'texture'))
+            and n in stems and n not in leads]
     beds += [n for n in ('chorus',) if n in stems and n not in beds]
-    if not leads or not beds:
+    if not leads:
+        rows.append(('INFO', 'erb_binaural_masking',
+                     f'not measured: no track in this type\'s focus ({", ".join(gp.focus_roles()) or "none"}). '
+                     'A row that could not run is not a pass; give the piece its figure, or pick the type it really is.'))
+        return rows
+    if not beds:
+        rows.append(('INFO', 'erb_binaural_masking',
+                     'not measured: the piece has a figure but no bed that could mask it'))
         return rows
 
     # 8 ERB center frequencies spanning 250 - 4000 Hz
@@ -815,7 +1075,108 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
     return rows
 
 
-LEAD_ROLES = ('melody', 'lead', 'vocal')
+import roles as _roles
+LEAD_ROLES = _roles.LEAD          # one vocabulary: scripts/roles.py owns the list, this name is for callers
+
+
+def focus_rows(score, out=None):
+    """The piece carries the line its type and its own declaration promise.
+
+    Why this row exists: every feel check, the masking row and the balance row read tracks by role and
+    returned an empty list when there were none. Deleting the figure was therefore the cheapest way through
+    the gate - a piece with a pad, a bass and a groove produced no contour row, no entropy row, no masking
+    row and no balance row, and the report said nothing was missing. This row makes absence a fact with a
+    reason: a type that declares a figure must have one, a type that declares a bed is judged on the bed,
+    and an effects piece says so in its profile.
+    """
+    import gate_profiles
+    rows = []
+    gp = gate_profiles.resolve(score)
+    if not gp.on('focus.declared'):
+        return rows
+    meta = score.get('meta') or {}
+    explicit = score.get('focus') or meta.get('focus')
+    want = list(_roles.focus_roles(_roles.focus_of(score))) if explicit else list(gp.focus_roles())
+    if not want:
+        rows.append(('INFO', 'focus.declared', 'this type has no line by definition; nothing to check'))
+        return rows
+    found = _roles.tracks_by_role(score, want, min_notes=4)
+    if found:
+        names = ', '.join(f'{t.get("name", "?")} ({r})' for t, r in found[:4])
+        how = f'declared focus {_roles.focus_of(score)}' if explicit else f'{gp.label} expects one'
+        prof = set(gp.focus_roles())
+        dec = set(_roles.focus_roles(_roles.focus_of(score)))
+        if explicit and prof and not (prof & dec):
+            rows.append(('WARN', 'focus.declared',
+                         f'carried by {names}; the piece declares focus {_roles.focus_of(score)}, but {gp.label} '
+                         f'is judged around {", ".join(sorted(prof))}. Set piece_type to the type that matches, '
+                         'or the report will apply the wrong rule'))
+        else:
+            rows.append(('PASS', 'focus.declared', f'carried by {names}; {how}'))
+        return rows
+    any_music = _roles.tracks_by_role(score, None, min_notes=4)
+    if not any_music:
+        rows.append(('FAIL', 'focus.declared',
+                     f'no track carries a line (no role in {", ".join(want)} has 4+ pitched notes, and no other '
+                     'track has any). If this is an effects piece, say so: piece_type effects_only'))
+    else:
+        carried = ', '.join(f'{t.get("name", "?")} ({r})' for t, r in any_music[:4])
+        rows.append(('FAIL', 'focus.declared',
+                     f'the piece is carried by {carried}, but this type is judged around {", ".join(want)}. '
+                     'Either write the line the type promises, or declare the type and focus the piece really has'))
+    if out is not None:
+        out.extend(rows)
+    return rows
+
+
+def intent_rows(score, out=None):
+    """What the piece declared it would be, checked against what it plays.
+
+    Two facts, both readable from the score alone. `intent.vocabulary` is the declaration itself: every word
+    must resolve to one concept in references/data/presets/intent, so a mood the engine has no meaning for
+    cannot be typed into a score. `intent.avoid` takes the gestures the declaration forbids (and the piece's
+    own `intent.avoid`) and measures each one in the notes. A gesture with no score-side measurement is
+    reported as unmeasured - never as passed - because a silent pass is how a declaration becomes decoration.
+    """
+    import gate_profiles
+    import intent
+    rows = []
+    gp = gate_profiles.resolve(score)
+    block = score.get('intent')
+    if block is None and not gp.on('intent.vocabulary'):
+        return rows
+    try:
+        resolved = intent.normalise_block(block or {})
+    except intent.IntentError as exc:
+        rows.append(('FAIL', 'intent.vocabulary', str(exc)))
+        resolved = {}
+    else:
+        if not block:
+            rows.append(('INFO', 'intent.vocabulary',
+                         'no intent block: the piece is described by piece_type and feel only'))
+        else:
+            said = ', '.join(f'{k}={v}' for k, v in resolved.items() if k in ('emotions', 'registers', 'scenes',
+                                                                             'tensions') and v)
+            rows.append(('PASS', 'intent.vocabulary', said or 'every declared word resolves'))
+    avoid = list(resolved.get('avoid') or [])        # the concepts' own forbidden gestures, expanded by normalise_block
+    if avoid:
+        hits, unmeasured = intent.gesture_hits(score, avoid)
+        for g, detail in hits:
+            rows.append(('FAIL', 'intent.avoid',
+                         f'{g} happens: {detail}. The piece declares it away '
+                         f'({intent.GESTURES.get(g, "")}); change the arrangement, or change the declaration'))
+        measured = [g for g in avoid if g not in unmeasured]
+        if measured and not hits:
+            rows.append(('PASS', 'intent.avoid',
+                         f'{len(measured)} gesture(s) measured clear: ' + ', '.join(measured[:8])))
+        if unmeasured:
+            rows.append(('WARN', 'intent.avoid',
+                         'declared away but not measurable from the score: ' + ', '.join(unmeasured)
+                         + '. These are mix-side gestures; measure them at mix time or drop them from the '
+                           'declaration'))
+    if out is not None:
+        out.extend(rows)
+    return rows
 
 
 def balance_allow_db(mix=None):
@@ -850,12 +1211,17 @@ def balance_rows(score, stems=None, out=None, sr=44100):
     if st:
         roles = {t['name']: t.get('role') for t in score.get('tracks', [])}
         lv = {n: _active_db(v, sr) for n, v in st.items() if n in roles}
-        leads = [lv[n] for n in lv if roles[n] in LEAD_ROLES and lv[n] is not None]
+        focus = set(gp.focus_roles())
+        leads = [lv[n] for n in lv if _role_in(roles[n], focus) and lv[n] is not None]
         if leads and gp.on('balance.vs_lead'):
             lead = max(leads)
             warn_over, fail_over = gp.param('balance.vs_lead', 'warn_over_db'), gp.param('balance.vs_lead', 'fail_over_db')
             for n, db in lv.items():
-                allow = balance_allow_db(mixer._mix()).get(roles[n])
+                import roles as rolelib
+                try:
+                    allow = balance_allow_db(mixer._mix()).get(rolelib.canonical(roles[n]))
+                except rolelib.UnknownRole:
+                    allow = None
                 if allow is None or db is None:
                     continue
                 over = db - lead - allow
@@ -867,6 +1233,10 @@ def balance_rows(score, stems=None, out=None, sr=44100):
                 rows.append(('PASS', 'balance', f'every accompaniment stem sits within its role allowance of the lead'))
         elif gp.fallback('balance.vs_lead') == 'balance.layers' and gp.on('balance.layers'):
             rows += layer_balance_rows(score, lv, roles, gp)
+        elif gp.on('balance.vs_lead'):
+            rows.append(('INFO', 'balance',
+                         f'not measured: the piece has no track in this type\'s focus '
+                         f'({", ".join(gp.focus_roles()) or "none"}) and the profile does not fall back to layer balance'))
     if out is not None:
         out.extend(rows)
     return rows
@@ -1403,12 +1773,16 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mo
     t_tier = time.perf_counter() if timings is not None else 0.0
     if mode != 'draft':
         immersive_rows(score, rendered, stems, out)
+        immersive2_rows(score, rendered, out)
+        fold_rows(score, rendered, out)
         ambient_fusion_rows(score, rendered, stems, out=out)
         import ambience_reference as ar                 # WARN only: a render far from its measured real recordings
         dirs = [d for d in (s_dir, os.path.dirname(s_dir) if s_dir else None) if d]
         out.extend(ar.gate_rows(score, stems, dirs))
         import sfx_eval                                 # WARN only: a sound that behaves unlike its own physics
         out.extend(sfx_eval.gate_rows(score, stems))
+        focus_rows(score, out=out)
+        intent_rows(score, out=out)
         balance_rows(score, stems, out=out)
         spatial_separation_rows(score, stems, out=out)
         equal_loudness_rows(score, stems, out=out)
@@ -1478,6 +1852,16 @@ def vocal_rows(score, stems=None, out=None, sr=44100, report=None):
                 rows.append(('FAIL' if c > lim else 'PASS', 'vocal',
                              f'{tag}: strongest voice-to-voice correlation {c:.2f} (limit {lim})'
                              + ('; the voices are one singer copied: raise ensemble.diversity or lower cohesion' if c > lim else '')))
+        if gp.on('vocal.spatial') and v.get('stereo_corr') is not None:
+            lim = gp.param('vocal.spatial', 'max_stereo_corr')
+            c = float(v['stereo_corr'])
+            mlim = gp.param('vocal.spatial', 'min_mono_db')
+            ml = v.get('mono_loss_db')
+            bad = c > lim or (ml is not None and ml < mlim)
+            said = f'{tag}: L/R correlation {c:.2f} (max {lim})'
+            said += ', mono sum not measured' if ml is None else f', mono sum {ml:+.2f} dB (min {mlim})'
+            rows.append(('FAIL' if bad else 'PASS', 'vocal', said
+                         + ('; the mix has collapsed toward mono: the binaural cues are too weak or the parts are centred' if bad else '')))
         if gp.on('vocal.intonation') and v.get('phrases'):
             lim = gp.param('vocal.intonation', 'max_cents')
             if v.get('mean_abs_dev_cents', 0.0) > lim:
@@ -1570,7 +1954,12 @@ def vocal_rows(score, stems=None, out=None, sr=44100, report=None):
 def chroma_concordance_rows(score, rendered_path, stems=None, out=None, sr=44100):
     """Harmonic Concordance Check:
     Verifies that ambient beds / nature tracks do not introduce dissonant semitone collisions
-    (minor 2nd intervals) against the song's root tonic or active chord tones."""
+    (minor 2nd intervals) against the song's root tonic or active chord tones.
+
+    The pitch classes come from `naturalness_check.chroma_analysis`: a constant-Q chroma of the whole stem, weighted by
+    the frames that hold resolved harmonics. A bed with no tonal content (rain, wind, noise) and a silent track are
+    reported as not measurable, not as concordant: the old single-frame profile returned zeros for a bed that sounded
+    early and not at the midpoint, and that read as a pass."""
     rows = []
     import gate_profiles
     gp = gate_profiles.resolve(score)
@@ -1593,14 +1982,31 @@ def chroma_concordance_rows(score, rendered_path, stems=None, out=None, sr=44100
     
     for name in env_tracks:
         if name in stems:
-            c = nc.chroma_profile(stems[name], sr)
+            prof = nc.chroma_analysis(stems[name], sr)
+            if prof is None:
+                rows.append(('INFO', 'harmonic_concordance',
+                             f'ambient track "{name}": librosa is missing, so its pitch classes were not measured'))
+                continue
+            if prof['sounding_frames'] == 0:
+                rows.append(('INFO', 'harmonic_concordance',
+                             f'ambient track "{name}" carries no signal to analyse: nothing to clash with {root_name}'))
+                continue
+            if prof['tonal_frames'] < nc.CHROMA_MIN_TONAL_FRAMES:
+                rows.append(('INFO', 'harmonic_concordance',
+                             f'ambient track "{name}" is broadband ({prof["tonal_frames"]} of '
+                             f'{prof["sounding_frames"]} frames hold resolved harmonics, so its pitch classes are noise): '
+                             f'a semitone clash is not measurable here'))
+                continue
+            c = prof['chroma']
+            coverage = (f'{prof["tonal_frames"]} of {prof["sounding_frames"]} sounding frames tonal, '
+                        f'tuning {prof["tuning_cents"]:+.0f} cents')
             diss_energy = float(c[dissonant_pcs].sum())
             if diss_energy > max_diss:
                 rows.append(('WARN', 'harmonic_concordance',
-                             f'ambient track "{name}" has high dissonant semitone energy ({diss_energy*100:.1f}%) against key {root_name}. Retune or notch'))
+                             f'ambient track "{name}" has high dissonant semitone energy ({diss_energy*100:.1f}%) against key {root_name}. Retune or notch ({coverage})'))
             else:
                 rows.append(('PASS', 'harmonic_concordance',
-                             f'ambient track "{name}" is harmonically concordant with key {root_name} (dissonance {diss_energy*100:.1f}% <= {max_diss*100:.0f}%)'))
+                             f'ambient track "{name}" is harmonically concordant with key {root_name} (dissonance {diss_energy*100:.1f}% <= {max_diss*100:.0f}%; {coverage})'))
     if out is not None:
         out.extend(rows)
     return rows

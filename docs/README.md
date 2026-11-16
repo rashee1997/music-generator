@@ -9,6 +9,7 @@ Everything a reader or an agent needs beyond the front page. Each entry below is
 | [README.md](README.md) | This index — the map of every document, plus the engine's known limits. | First, to find the right file. |
 | [PSYCHOACOUSTICS.md](PSYCHOACOUSTICS.md) | The perceptual laws the gate enforces: thresholds, equations and the peer-reviewed sources behind each one (Chew, Huron, Moore–Glasberg, Plomp–Levelt, Sethares, Witek, Krumhansl, Pearce, Meyer, ITU-R BS.1770). | When a gate row cites a perceptual rule, or when you need the citation for one. |
 | [listen.html](listen.html) | The audio player page served by GitHub Pages, because GitHub strips `<audio>` from Markdown. Plays `../assets/samples/black-jaguar-cinematic-chase.mp3`. | When you want to hear a rendered demo. |
+| [VOCAL-TRACT-WAVEGUIDE.md](VOCAL-TRACT-WAVEGUIDE.md) | The design for replacing the five-resonator vocal tract with a Kelly–Lochbaum acoustic tube (3-way pharynx junction, area-function inversion, measured cost and gate plan). Phase 1 — awaiting approval. | Before changing `vocal_engine/tract.py`, `nasal.py` or the `tract`/`humming` data blocks. |
 
 ## Documents outside this folder
 

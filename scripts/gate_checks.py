@@ -313,8 +313,47 @@ def check_edge(sig, first_note_s, last_note_s, max_silence_ms=25.0, floor_below_
                    head_ms=round(head_ms, 1), tail_ms=round(tail_ms, 1), fail=bool(fail))
 
 
-def check_tick(sig, rho_min=0.35, min_events=6, cv_max=0.05, lag_s=(0.1, 1.0), hop=512):
-    """Onset-strength autocorrelation in the 0.1-1 s lag range, corroborated by tempogram and PLP."""
+def _peak_rise_db(sig, onset_times, win_ms=20.0):
+    """How far the peak envelope jumps at each onset, in dB: the median over the onsets and how many were usable.
+
+    The footprint of a tick is a short transient, so the statistic has to be a local *peak*: a 20 ms peak window is
+    long enough to hold a cycle of a low bed (so a steady tone reads flat) and short enough to see a 5 ms burst. A
+    sinusoidal projection of the frame level cannot see one at all (a 20 ms spike every 250 ms has almost no
+    fundamental), which is why a loud 5 ms tick read 0.1-0.4 dB there. Measured with this peak window: a clean pad
+    0.0 dB, a 5.5 Hz 10% tremolo 0.6 dB, a flat-level 92.9 ms timbre loop 0.2-0.8 dB, and a 5 ms tick at programme
+    level 4-6 dB. The windows do not straddle the transient: the local background is the same envelope 60-300 ms
+    before and 60-150 ms after the onset, so a section gain step is not mistaken for a tick.
+    """
+    try:
+        from scipy.ndimage import maximum_filter1d
+        x = np.abs(np.asarray(sig.mono, dtype=np.float64))
+    except Exception:
+        return 0.0, 0
+    times_in = np.asarray(onset_times, dtype=np.float64)
+    if x.size == 0 or times_in.size == 0:
+        return 0.0, 0
+    sr = float(sig.sr)
+    env = maximum_filter1d(x, size=max(3, int(round(win_ms * sr / 1000.0))))
+    rises = []
+    for s in times_in:
+        post = env[int(max(0, (s - 0.02) * sr)):int(min(env.size, (s + 0.03) * sr + 1))]
+        before = env[int(max(0, (s - 0.30) * sr)):int(max(0, (s - 0.06) * sr))]
+        after = env[int(min(env.size, (s + 0.06) * sr)):int(min(env.size, (s + 0.15) * sr))]
+        bg = np.concatenate([before, after])
+        if post.size < 3 or bg.size < max(8, int(0.02 * sr)):
+            continue
+        floor = float(np.median(bg))
+        if floor <= 1e-9:
+            continue
+        rises.append(20.0 * np.log10(float(np.max(post)) / floor))
+    if not rises:
+        return 0.0, 0
+    return float(np.median(rises)), len(rises)
+
+
+def check_tick(sig, rho_min=0.35, min_events=6, cv_max=0.05, lag_s=(0.1, 1.0), hop=512,
+               min_rise_db=3.0):
+    """Onset-strength autocorrelation in the 0.1-1 s lag range, corroborated by tempogram, PLP and peak rise."""
     if librosa is None:
         return _result(0.0, rho_min, 'rho', [], 'librosa missing: tick row not measured', skipped=True)
     onset = sig.onset_env
@@ -329,7 +368,11 @@ def check_tick(sig, rho_min=0.35, min_events=6, cv_max=0.05, lag_s=(0.1, 1.0), h
         return _result(0.0, rho_min, 'rho', [], 'not enough frames for the lag range')
     seg = ac[lo:hi + 1]
     rho = float(np.max(seg))
-    period_s = (lo + int(np.argmax(seg))) * hop / float(sig.sr)
+    # The best lag is often a multiple of the true period: a train at 250 ms correlates just as well at 500 ms, and
+    # scoring the grid at 500 ms then counts half the ticks as off-grid. Take the shortest lag that is within 5% of
+    # the best, so the period describes one tick.
+    near = np.flatnonzero(seg >= 0.95 * rho)
+    period_s = (lo + int(near[0] if near.size else np.argmax(seg))) * hop / float(sig.sr)
     peaks, _ = find_peaks(onset, prominence=max(1e-6, 0.5 * float(np.median(onset[onset > 0])) if np.any(onset > 0) else 1e-6))
     # A pad has many weak flux peaks from its own envelope; a tick train has a few strong ones. Score the strong peaks
     # only, or the coefficient of variation measures the pad, not the tick (measured: 205 onsets, CV 0.26 for a clean
@@ -352,15 +395,24 @@ def check_tick(sig, rho_min=0.35, min_events=6, cv_max=0.05, lag_s=(0.1, 1.0), h
     # sat exactly on a 244/255 ms grid). Score how many strong peaks land on the autocorrelation period instead.
     st = strong * hop / float(sig.sr)
     matched = _grid_matches(st, period_s, tol_s=0.02) if st.size else 0
+    # A tick train is a repeated transient, not only a periodic spectrum. Onset strength (spectral flux) rises whenever
+    # the spectrum moves, so a sampled orchestral sustain reads as periodic while it has no transient at all: measured
+    # 0.0-0.8 dB of local peak rise on a pad, a tremolo and a flat-level 92.9 ms timbre loop, against 4-6 dB for a
+    # 5 ms tick at programme level. A defect has to be an impulse, so require that before calling it one.
+    rise_db, rise_n = _peak_rise_db(sig, st)
     periodic = (rho >= rho_min and strong.size >= min_events and matched >= min_events
-                and matched >= 0.3 * strong.size)
+                and matched >= 0.3 * strong.size and rise_n > 0 and rise_db >= min_rise_db)
     times = [float(st[0])] if st.size else []
-    detail = (f'onset autocorrelation {rho:.2f} at {period_s * 1000:.0f} ms (limit {rho_min:g}), '
+    detail = (f'onset autocorrelation {rho:.2f} at a {period_s * 1000:.0f} ms grid (limit {rho_min:g}; '
+              f'onset frames are {hop / float(sig.sr) * 1000:.1f} ms apart, so the reported grid can be a multiple of '
+              f'the tick spacing), '
               f'{strong.size} strong onset(s) of {peaks.size}, {matched} on the grid, IOI CV {cv:.3f}; '
+              f'peak rise {rise_db:.2f} dB at those onsets over {rise_n} onset(s) (min {min_rise_db:g}); '
               f'tempogram peak ratio {tg_ratio:.2f}, PLP peak ratio {plp_ratio:.2f}')
     return _result(rho, rho_min, 'rho', times, detail,
                    periodic=bool(periodic), period_ms=period_s * 1000.0, events=int(strong.size),
-                   cv=cv, grid_matched=int(matched), tempogram_ratio=tg_ratio, plp_ratio=plp_ratio)
+                   cv=cv, grid_matched=int(matched), tempogram_ratio=tg_ratio, plp_ratio=plp_ratio,
+                   rise_db=round(rise_db, 3), rise_onsets=int(rise_n))
 
 
 def _grid_matches(times, period_s, tol_s=0.02):
@@ -388,11 +440,12 @@ def _peak_ratio(a):
 
 def check_dc(sig, dc_max=0.001, drift_max=0.001):
     """Per-channel DC mean and 1 s block drift."""
-    means = [float(np.mean(sig.stereo[:, c])) for c in range(sig.stereo.shape[1])]
+    channels = sig.audio.shape[1]
+    means = [float(np.mean(sig.audio[:, c])) for c in range(channels)]
     block = max(1, int(sig.sr))
     drift = 0.0
-    for c in range(sig.stereo.shape[1]):
-        x = sig.stereo[:, c]
+    for c in range(channels):
+        x = sig.audio[:, c]
         n = len(x) // block
         if n >= 2:
             bm = x[:n * block].reshape(n, block).mean(axis=1)
@@ -404,7 +457,7 @@ def check_dc(sig, dc_max=0.001, drift_max=0.001):
 
 def check_clipping(sig, full=0.999):
     """Samples at or above `full`, plus flat-top runs of 3+ samples."""
-    a = np.abs(sig.stereo)
+    a = np.abs(sig.audio)
     count = int(np.sum(a >= full))
     flats = 0
     for c in range(a.shape[1]):

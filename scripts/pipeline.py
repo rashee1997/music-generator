@@ -59,6 +59,7 @@ import cli_util
 import compose
 import envcheck
 import gate_report
+import stem_cache
 import stem_gate
 from helpers import ingest_metadata, version_manager
 import humanize as hz
@@ -98,9 +99,15 @@ def write_stems(stems, stems_dir, full=False, sr=SR):
         if full and len(x) < total:
             seg = np.pad(x, ((0, total - len(x)),) + ((0, 0),) * (x.ndim - 1))
         sf.write(os.path.join(stems_dir, f"{name}.wav"), np.asarray(seg, np.float32), sr)
-        manifest[name] = dict(start_s=round(start, 4), length_s=round(len(seg) / sr, 4), timeline_s=round(total / sr, 4))
+        manifest[name] = dict(start_s=round(start, 4), length_s=round(len(seg) / sr, 4),
+                              timeline_s=round(total / sr, 4), stem_hash=stem_cache.audio_hash(x, size=16, stride=1))
     with open(os.path.join(stems_dir, 'stems.json'), 'w', encoding='utf-8') as fh:
         json.dump(manifest, fh, indent=2)
+    # The manifest the per-stem cache reads: track -> where its stem is, how long it sounds, and its content hash.
+    with open(os.path.join(stems_dir, 'stems_manifest.json'), 'w', encoding='utf-8') as fh:
+        json.dump({name: dict(stem_hash=m['stem_hash'], wav_path=os.path.join(stems_dir, f'{name}.wav'),
+                              span=[m['start_s'], round(m['start_s'] + m['length_s'], 4)]) for name, m in manifest.items()},
+                  fh, indent=2)
     return manifest
 
 
@@ -346,7 +353,8 @@ class MusicPipeline:
     # -----------------------------------------------------------------------------------------
     # Stage 6: Automated CI/CD Quality Gate Suite
     # -----------------------------------------------------------------------------------------
-    def stage6_ci_quality_suite(self, score, stems, out_wav, out_midi=None, stem_rows=None, mode='full'):
+    def stage6_ci_quality_suite(self, score, stems, out_wav, out_midi=None, stem_rows=None, mode='full',
+                                video_rows=None):
         """Stage 6: Exhaustive battery of objective audio & mix tests.
 
         One call to quality_gate.run_gate, not a hand-copied subset of it: every row the gate knows (score and render
@@ -372,6 +380,22 @@ class MusicPipeline:
         m21_rows = self.discover_and_run_music21_analysis(score, out_wav, out_midi=out_midi)
         if m21_rows:
             ci_rows.extend(m21_rows)
+
+        # Picture rows: one verdict, one list. `video_rows` is the closure supplied by scripts/video_score.py,
+        # which builds the program from the master this stage just measured. Without it a film cue is judged on
+        # the score-side picture rows only (gate.probe_rows), and the report says so.
+        self.video_block = None
+        if isinstance(score.get('video'), dict) and score['video'].get('enabled'):
+            if video_rows is not None:
+                v_rows, v_block = video_rows(score, out_wav, ci_rows)
+                ci_rows.extend(v_rows)
+                self.video_block = v_block
+            else:
+                try:
+                    import video_gate_pipeline as _vgp
+                    ci_rows.extend(_vgp.score_rows(score))
+                except Exception as exc:
+                    ci_rows.append(('WARN', 'video.gate', f'picture rows did not run: {exc}'))
 
         # Print scoreboard
         fails = sum(1 for lvl, _, _ in ci_rows if lvl == 'FAIL')
@@ -431,6 +455,8 @@ class MusicPipeline:
                            'fail': fails},
             'ci_checks': [{'level': l, 'check': n, 'detail': d} for l, n, d in ci_rows]
         }
+        if getattr(self, 'video_block', None):
+            report['video'] = self.video_block
 
         if json_report:
             with open(json_report, 'w', encoding='utf-8') as f:
@@ -590,7 +616,8 @@ class MusicPipeline:
     def execute(self, input_spec=None, out_wav=None, out_midi=None, stems_dir=None,
                 strict=False, json_report=None, check_only=False, score_path=None,
                 presets_dir=None, adopt_presets=True, wav_path=None, project=None, test=False,
-                max_attempts=5, no_stems=False, stems_full=False, draft=False, targets=None, **overrides):
+                max_attempts=5, no_stems=False, stems_full=False, draft=False, targets=None, video_rows=None,
+                **overrides):
         """Execute the complete CI/CD Music Pipeline or Quality Check existing productions."""
         t_start = time.time()
         explicit_out = out_wav is not None
@@ -769,13 +796,16 @@ class MusicPipeline:
         stem_rows, stem_meta = stem_gate.run_stem_gate(
             score, stems, sr=SR, workers=int(os.environ.get('GATE_WORKERS', '2')),
             report_dir=(os.path.join(project_dir, 'reports', 'gate') if project_dir else None),
-            mode='draft' if draft else 'full')
+            mode='draft' if draft else 'full',
+            cache_path=(os.path.join(project_dir, '.cache', 'gate', 'stem_qa.json') if project_dir else None))
         self.stem_meta = stem_meta
         if self.verbose:
             for lvl, name, detail in stem_rows:
                 print(f"  [{lvl:4s}] {name:26s} {detail}")
             print(f"  stem gate: {stem_meta['fails']} FAIL, {stem_meta['warns']} WARN, "
-                  f"{len(stem_rows)} rows, {stem_meta['total_ms']:.0f} ms on {stem_meta['workers']} worker(s)")
+                  f"{len(stem_rows)} rows, {stem_meta['total_ms']:.0f} ms on {stem_meta['workers']} worker(s)"
+                  f" ({stem_meta.get('cached_stems', 0)} of {stem_meta.get('cached_stems', 0) + stem_meta.get('measured_stems', 0)} "
+                  f"stems from cache)")
         if stem_meta['fails']:
             print(f"  [BLOCKED] {stem_meta['fails']} stem FAIL(s): mixing is not allowed until they are fixed")
             failing = [f"{n}: {d}" for l, n, d in stem_rows if l == 'FAIL']
@@ -799,16 +829,17 @@ class MusicPipeline:
         self.stage5_mix_and_master(score, stems, draft_wav)
 
         # Stage 6: Automated CI Quality Suite
-        ci_rows, fails, warns = self.stage6_ci_quality_suite(
-            score, stems, draft_wav, out_midi=out_midi, stem_rows=stem_rows,
-            mode='draft' if draft else 'full')
+        ci_rows, fails, warns = self.stage6_ci_quality_suite(score, stems, draft_wav, out_midi=out_midi,
+                                                            stem_rows=stem_rows,
+                                                            mode='draft' if draft else 'full',
+                                                            video_rows=video_rows)
 
         if project_dir:
             try:
                 gate_report.write_reports(draft_wav, score, os.path.join(project_dir, 'reports', 'gate'),
                                           stem_meta=stem_meta,
                                           mix_meta=dict(stage='mix', metrics=self.mix_metrics))
-            except Exception as exc:              # the gate verdict stands even if a figure could not be drawn
+            except Exception as exc:      # the gate verdict stands even if a figure could not be drawn
                 print(f"  [WARN] gate report figures not written ({exc})")
 
         published = None

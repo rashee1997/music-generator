@@ -64,6 +64,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import dsp
 import humanize as hz
 import soundbank as sb
+import stem_cache
 import vocals
 import presets
 import mix_schema
@@ -330,6 +331,28 @@ def _mean_vel(ev):
     return float(np.mean([e['v'] for e in ev])) if ev else None
 
 
+TILT_KEYS = ('low_hz', 'span_hz', 'floor', 'curve')
+VIBRATO_MODELS = ('lfo', 'ou')
+
+
+def _ou(rng, n, dt, tau_s, sigma):
+    """A seeded Ornstein-Uhlenbeck track: mean 0, standard deviation `sigma`, correlation time `tau_s`. It starts
+    at 0, so a note's vibrato begins regular and wanders as it goes on, the way a player's does."""
+    from scipy.signal import lfilter
+    a = float(np.exp(-dt / max(float(tau_s), 1e-3)))
+    return lfilter([float(sigma) * np.sqrt(1.0 - a * a)], [1.0, -a], rng.standard_normal(n))
+
+
+def _tilt_block(tr, inst_cfg, name):
+    """The `dynamic_tilt` block of a track or its instrument preset (None = off). Unknown keys are an error."""
+    blk = tr.get('dynamic_tilt') or (inst_cfg or {}).get('dynamic_tilt')
+    if not blk:
+        return None
+    if not isinstance(blk, dict) or any(k not in TILT_KEYS for k in blk):
+        raise ValueError(f'track "{name}": dynamic_tilt takes only {", ".join(TILT_KEYS)} (got {blk!r})')
+    return blk
+
+
 def _is_sfz_track(tr):
     """True when render_track would take the SFZ path for this track (mirrors its dispatch order)."""
     raw_inst = str(tr.get('instrument', 'piano'))
@@ -349,7 +372,11 @@ def _sfz_track(tr, tm, cfg, seed, ts, swing, global_dyn, raw_inst, inst_cfg, qua
     name = tr.get('name', raw_inst)
     role = tr.get('role', (inst_cfg or {}).get('role', 'melody'))
     notes = [dict(n, p=cli_util.midi_int(n['p'], f"track {name}: ")) for n in tr.get('notes', [])]
-    ev = hz.humanize_track(notes, tm, tr.get('humanize', cfg), role=role, seed=seed, ts=tuple(ts), swing=swing)
+    # The preset's articulation is passed here exactly as the GM path passes it: without it every held note took
+    # the role's default gate (0.90 for bass, 0.95 for chord), so an SFZ string note was cut 5-10% short and the
+    # piece's last note died 0.5-1.7 s before its written end (stem.edge, stem.dropout on all four string parts).
+    ev = hz.humanize_track(notes, tm, tr.get('humanize', cfg), role=role, seed=seed, ts=tuple(ts), swing=swing,
+                           articulation=(tr.get('articulation') or (inst_cfg or {}).get('articulation')))
     _record(name, **hz.event_stats(ev, tm))
     track_dyn = tr.get('dynamics')
 
@@ -368,6 +395,9 @@ def _sfz_track(tr, tm, cfg, seed, ts, swing, global_dyn, raw_inst, inst_cfg, qua
             return None
         raise RuntimeError(f'track "{name}": {ex}')
     _record(name, sfz=f"{blk['library']}/{blk['patch']}")
+    tilt = _tilt_block(tr, inst_cfg, name)
+    if tilt:                                   # a library with one velocity layer is as flat as a SoundFont
+        x = dsp.dynamic_tilt(x, sr=SR, velocity=_mean_vel(ev), **tilt)
     return x
 
 
@@ -428,8 +458,14 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
             t0 = float(tm.sec(min(n['t'] for n in notes)))
             t1 = min(dur_s, float(tm.sec(max(n['t'] + n.get('d', 1.0) for n in notes))))
             span = max(1.0, t1 - t0)
-            seg = environment.render_environment_preset(env_key, duration_s=span, sr=SR, seed=seed)
-            fade = int(min(2.0, span / 4.0) * SR)
+            # +0.1 s of ambience past the end: the notes say when the place is audible, and a bed that stops on the last
+            # written sample leaves its final ~70-100 ms below the stem's own -60 dB line, which reads as a truncated stem
+            # (stem.edge). The tail is trimmed by the timeline slice below when it runs past the piece.
+            seg = environment.render_environment_preset(env_key, duration_s=span + 0.1, sr=SR, seed=seed)
+            # 20 ms, not 2 s: the stem gate measures a stem's audible span against its written notes, and any fade long
+            # enough to shape the entrance put the last ~90-190 ms of every bed 60 dB under the stem's own peak, which
+            # reads as a truncated stem. A 20 ms ramp is still click-free, and the bed's own preset shapes the sound.
+            fade = int(min(0.02, span / 4.0) * SR)
             if fade > 1:
                 ramp = np.sin(np.linspace(0.0, np.pi / 2.0, fade)) ** 2
                 seg[:fade] *= ramp[:, None]
@@ -530,7 +566,16 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
             vox.add(e['t'], 'on', 9, p, int(np.clip(round(v), 1, 127)))
             vox.add(e['t'] + 0.12, 'off', 9, p)
         end = max((e['t'] for e in ev), default=0)
-        return dsp.enhance_sf2_dynamics(vox.render(tail=2.5), sr=SR, role=role, velocity=_mean_vel(ev))
+        hit = vox.render(tail=2.5)
+        # A SoundFont drum sample often starts on a single-sample step instead of rising out of silence, which the
+        # stem gate (rightly) reads as a click at every hit. `onset_fade_ms` in an instrument preset ramps the first
+        # 2-3 ms of each fresh hit: far faster than any audible attack, and the step is gone.
+        fade_ms = float(tr.get('onset_fade_ms') or (inst_cfg or {}).get('onset_fade_ms') or 0.0)
+        if fade_ms > 0:
+            hit = dsp.soften_onsets(hit, sr=SR, times=[e['t'] for e in ev], ms=fade_ms)
+        # every drum note is released 120 ms in, while the sample is still ringing: a hard cut there is a click
+        hit = dsp.fade_out_at(hit, sr=SR, times=[e['t'] + 0.12 for e in ev], ms=4.0)
+        return dsp.enhance_sf2_dynamics(hit, sr=SR, role=role, velocity=_mean_vel(ev))
 
     # note-off times: let a plucked body ring past the written note-off, but never into a re-strike of the same pitch
     # (a note-off on a shared channel cuts every sounding instance of that pitch, including the new one).
@@ -562,6 +607,11 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
     if vib is None:
         d = VIBRATO_DEFAULT.get(inst)
         vib = dict(depth_cents=d[0], rate_hz=d[1], delay_ms=d[2] * 1000) if d else dict(depth_cents=0)
+
+    vib_model = str(vib.get('model', 'lfo'))
+    if vib_model not in VIBRATO_MODELS:
+        raise ValueError(f'track "{tr.get("name", inst)}": vibrato.model "{vib_model}" is not one of '
+                         f'{", ".join(VIBRATO_MODELS)}')
 
     expr_kind = tr.get('expression')
     if expr_kind is None and inst_cfg and 'expression' in inst_cfg:
@@ -614,6 +664,12 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
             rate = vib.get('rate_hz', 5.5) * (1 + rng.normal(0, 0.04))
             delay = e.get('vd', vib.get('delay_ms', 250) / 1000.0)     # nyasa notes: vibrato waits longer
             phase = rng.random() * 6.283
+            vph = vdep = None
+            if vib_model == 'ou' and depth > 0:    # rate and depth wander around their mean; the phase stays continuous
+                tau = float(vib.get('tau_s', 0.35))
+                r_t = rate * (1.0 + _ou(rng, n_steps, step, tau, float(vib.get('rate_sigma', 0.06))))
+                vph = phase + 2 * np.pi * np.cumsum(r_t) * step
+                vdep = 1.0 + _ou(rng, n_steps, step, tau, float(vib.get('depth_sigma', 0.15)))
             # human perturbation, not a clean LFO: healthy sustained phonation sits near 0.5 % jitter and 3-5 %
             # shimmer (acoustic-voice literature), and a perfectly periodic vibrato is the synth tell
             jitter_cents = float(vib.get('jitter_cents', 0.0))
@@ -637,7 +693,8 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
                 slide = glide * (1 - min(age / gs, 1.0)) ** 2 if glide else 0.0
                 if depth > 0 and dur > 0.30 and age > delay * 0.5:
                     ramp = np.clip((age - delay * 0.5) / 0.35, 0, 1)
-                    cents = (micro + slide + depth * ramp * np.sin(2 * np.pi * rate * age + phase)
+                    osc = np.sin(2 * np.pi * rate * age + phase) if vph is None else vdep[k] * np.sin(vph[k])
+                    cents = (micro + slide + depth * ramp * osc
                              + jitter_cents * np.sin(2 * np.pi * 0.9 * age + phase * 1.7))
                     b = bend_value(cents)
                     if b != last_b:
@@ -751,9 +808,22 @@ def _preset_fingerprint(tr):
     return out
 
 
+def _track_seed(name, tr, tm, cfg):
+    """The RNG seed for one track: a hash of that track alone (its name, notes, role, humanization profile and the
+    tempo map). Editing a note on `timp` must not re-roll `flute`'s humanization, and an index-based seed did exactly
+    that: adding or removing any earlier track shifted every later track's seed."""
+    sig = json.dumps(dict(name=name, notes=tr.get('notes') or [], role=tr.get('role'),
+                          profile=tr.get('humanize', cfg),
+                          tempo=[round(float(s), 5) for s in (tm.secs if len(tm.secs) < 4096 else tm.secs[::4])]),
+                     sort_keys=True, default=str)
+    return int(hashlib.sha256(sig.encode('utf-8')).hexdigest()[:8], 16) % (2 ** 31 - 1)
+
+
 def _track_cache_key(tr, seed, ts, swing, tm, global_dyn, sr, sfpath=None):
     """A hash of everything that changes the rendered bytes: the track, the tempo map, the renderer code, the
-    resolved presets and the SoundFont itself. Same score + same project + same code -> same key, any process."""
+    resolved presets and the SoundFont itself. Same score + same project + same code -> same key, any process.
+    Stage-5 values (spatial staging, EQ, gain, reverb, pan) are stripped first: re-staging or re-EQing the piece must
+    reuse the dry stems, not re-render them."""
     sf_id = None
     if sfpath:
         try:
@@ -761,9 +831,9 @@ def _track_cache_key(tr, seed, ts, swing, tm, global_dyn, sr, sfpath=None):
             sf_id = [os.path.abspath(str(sfpath)), st.st_size, int(st.st_mtime)]
         except OSError:
             sf_id = str(sfpath)
-    sig = json.dumps(dict(tr=tr, seed=seed, ts=list(ts), swing=swing, global_dyn=global_dyn, sr=sr,
-                          renderer=_RENDERER_VERSION, code=_code_hash(), sf=sf_id,
-                          presets=_preset_fingerprint(tr)),
+    sig = json.dumps(dict(tr=stem_cache.dry_track(tr), seed=seed, ts=list(ts), swing=swing, global_dyn=global_dyn,
+                          sr=sr, renderer=_RENDERER_VERSION, code=_code_hash(), sf=sf_id,
+                          presets=stem_cache.dry_presets(_preset_fingerprint(tr))),
                      sort_keys=True, default=str)
     h = hashlib.sha1(sig.encode('utf-8'))
     h.update(np.asarray(tm.secs).tobytes())
@@ -785,6 +855,7 @@ def _render_cached(tr, name, tm, sfpath, global_dyn, cfg, seed, ts, swing):
                     entry = json.load(fh)
             except (OSError, ValueError):
                 pass                      # no sidecar (old cache): the bytes are still valid, the report is not
+            entry.pop('cached', None)      # a sidecar written by a cached read carries it; passing it twice raises
             _record(name, **entry, cached=True)
             return x
     x = render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing)
@@ -795,7 +866,8 @@ def _render_cached(tr, name, tm, sfpath, global_dyn, cfg, seed, ts, swing):
             # and hard-clipped any stem peaking above 1.0 on the way to disk. Cached audio must be the rendered audio.
             sf.write(tmp, np.asarray(x, dtype=np.float32), SR, format='WAV', subtype='FLOAT')
             os.replace(tmp, cache_path)      # atomic: a killed render never leaves a half-written cache file
-            entry = _report_entry(name)      # written after the stem, so a half-written entry is never restored
+            # written after the stem, so a half-written entry is never restored; `cached` describes the read, not the bytes
+            entry = {k: v for k, v in _report_entry(name).items() if k != 'cached'}
             if entry:
                 mt = meta_path + f'.tmp{os.getpid()}'
                 with open(mt, 'w', encoding='utf-8') as fh:
@@ -820,6 +892,64 @@ def _mark_accompanied(tr, tracks):
     return dict(tr, notes=notes)
 
 
+def _dc_block(x, sr=44100, cutoff_hz=5.0, order=2):
+    """Remove DC and subsonic drift from a rendered stem.
+
+    Some SoundFont samples carry a DC offset; multiplied by a per-note envelope it becomes a slowly
+    varying DC that `stem.dc` correctly fails (a 1 s block mean moving by more than 0.001 FS). It is
+    inaudible but not a musical choice, so it is removed at the source: a 2nd-order high-pass at 5 Hz,
+    two octaves under the lowest note any preset plays.
+    """
+    from scipy import signal as _signal
+    sos = _signal.butter(int(max(1, order)), cutoff_hz, 'high', fs=sr, output='sos')
+    return _signal.sosfiltfilt(sos, x, axis=0).astype(np.float32)
+
+
+def _align_onset(name, stem, tr, tm, bpm=None, limit_ms=25.0, max_ms=200.0):
+    """Move a stem onto its first written note when the instrument holds near-silence before every attack.
+
+    A sampled instrument can keep the start of its note at about -120 dBFS for tens of milliseconds (the GM kalimba
+    sample holds 75 ms), so the note sounds late although nothing is wrong with the performance. The silence belongs to
+    the sample, so it travels with the note: writing the part earlier moves the measured lead too (tried at 84 ms, the
+    lead stayed at 74 ms), and the stem gate reads a correctly played part as a render fault. Only a lead beyond the
+    gate's tolerance and within a plausible sample pre-roll is corrected, by the lead itself, so a deliberate entrance
+    (a pad swelling in, a one-shot effect) is never pulled forward.
+    """
+    notes = (tr or {}).get('notes') or []
+    if not notes or str((tr or {}).get('role') or '').lower() in ('fx', 'sfx', 'environment'):
+        return stem
+    try:
+        import gate_audio as ga
+        import gate_checks as gc
+        db, times = gc.frame_db(ga.Signal(np.asarray(stem, np.float32), SR), 20.0, 5.0)
+        if db.size == 0 or not np.isfinite(db).any():
+            return stem
+        peak = float(np.max(db[np.isfinite(db)]))
+        audible = np.isfinite(db) & (db >= peak - 60.0)
+        if not audible.any():
+            return stem
+        first = float(times[int(np.argmax(audible))])
+        import stem_gate as sg
+        # the gate reads a written time as straight bpm arithmetic, not through the tempo map (beat 148 is 88.800 s,
+        # while the map's rubato puts it at 88.896 s): measuring the lead against the other clock reported -26 ms and
+        # left a real 75 ms pre-roll in place
+        bpm = float(bpm or getattr(tm, 'base_bpm', 100.0) or 100.0)
+        start = min(a for a, _ in sg._note_intervals(tr, bpm))
+    except Exception as e:      # recorded, not swallowed: a changed gate API must not look like "the lead was fine"
+        _record(name, onset_align_error=f'{type(e).__name__}: {e}')
+        return stem
+    lead_ms = (first - start) * 1000.0
+    if not (limit_ms < lead_ms <= max_ms):
+        return stem
+    shift = int(round(lead_ms / 1000.0 * SR))
+    if shift <= 0 or shift >= len(stem):
+        return stem
+    out = np.zeros_like(stem)
+    out[:len(stem) - shift] = stem[shift:]
+    _record(name, onset_align_ms=round(lead_ms, 1))     # shows up in the render report, so a shift is never silent
+    return out
+
+
 def build_stems(score, sfpath=None, seed=None, verbose=True):
     """Humanize + render every track. Returns (stems dict name->(N,2) float32, meta, tempo map)."""
     # The caller registers the project (pipeline.py in project mode, run_gate from the score path). This function
@@ -837,11 +967,12 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
     other_jobs = [(i, name, tr) for i, name, tr in marked if not _is_sfz_track(tr)]
 
     for i, name, tr in other_jobs:
+        t_seed = _track_seed(name, tr, tm, cfg)
         if verbose:
             print(f'  rendering {name:12s} ({tr.get("instrument")}) ...', flush=True)
-        stems[name] = _render_cached(tr, name, tm, sfpath, score.get('dynamics'), cfg, seed + 31 * i, ts, score.get('swing', 0.5))
+        stems[name] = _render_cached(tr, name, tm, sfpath, score.get('dynamics'), cfg, t_seed, ts, score.get('swing', 0.5))
         if verbose and _report_entry(name).get('cached'):
-            print(f'  cached    {name}', flush=True)
+            print(f'  [CACHED] skipped rendering {name} (hash match)', flush=True)
 
     if sfz_jobs:
         # sfizz_render is one independent, CPU-bound subprocess per track with no internal thread flag (confirmed via
@@ -853,7 +984,8 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
 
         def _run(job):
             i, name, tr = job
-            return name, _render_cached(tr, name, tm, sfpath, score.get('dynamics'), cfg, seed + 31 * i, ts, score.get('swing', 0.5))
+            return name, _render_cached(tr, name, tm, sfpath, score.get('dynamics'), cfg,
+                                        _track_seed(name, tr, tm, cfg), ts, score.get('swing', 0.5))
 
         with ThreadPoolExecutor(max_workers=workers) as ex:
             # as_completed, not map: map yields in submission order, so one slow first track hides every stem that
@@ -861,9 +993,19 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
             for fut in as_completed([ex.submit(_run, job) for job in sfz_jobs]):
                 name, stem = fut.result()
                 if verbose:
-                    cached = _report_entry(name).get('cached')
-                    print(f'  {"cached   " if cached else "rendered "} {name}', flush=True)
+                    if _report_entry(name).get('cached'):
+                        print(f'  [CACHED] skipped rendering {name} (hash match)', flush=True)
+                    else:
+                        print(f'  rendered  {name}', flush=True)
                 stems[name] = stem
+    # A source whose own sub-sonic sway is above the default 5 Hz (a distant thunder roll is nearly all sub) says so
+    # with `dc_hp_hz` on its track; everything else keeps the shared 5 Hz block.
+    hp_by_name = {tr.get('name'): float(tr.get('dc_hp_hz') or 0.0) for tr in score.get('tracks', [])}
+    tr_by_name = {tr.get('name'): tr for tr in score.get('tracks', [])}
+    stems = {name: dsp.trim_digital_lead(dsp.repair_clicks(
+        _dc_block(_align_onset(name, stem, tr_by_name.get(name) or {}, tm, score.get('bpm')),
+                  cutoff_hz=(hp_by_name.get(name) or 5.0), order=(4 if hp_by_name.get(name) else 2))))
+        for name, stem in stems.items()}
     return stems, tm
 
 

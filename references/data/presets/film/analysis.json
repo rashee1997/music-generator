@@ -1,0 +1,81 @@
+{
+  "kind": "film",
+  "name": "analysis",
+  "character": "How a reel is read: probe rate, cut detection, shot scale, speech activity and the beat-grid phase fit. Numbers only; no decision about music is made here.",
+
+  "probe": {
+    "analysis_fps": 12,
+    "analysis_width": 320,
+    "analysis_height": 180,
+    "keyframe_probe": true,
+    "scene_cut": {"threshold": 10.0, "min_gap_s": 0.25},
+    "motion_hit": {"percentile": 92, "min_gap_s": 0.5}
+  },
+
+  "detector": {
+    "name": "scdet",
+    "deep": false,
+    "deep_reference_f1": {"bbc_planet_earth": 0.962, "clipshots": 0.779},
+    "note": "scdet is the default and the fallback. A deep detector (TransNetV2 class) is opt-in only, because it needs TensorFlow and 1.4 GB of weights; the reference F1 scores are why it is worth offering, not a promise this skill ships it."
+  },
+
+  "shot_scale": {
+    "enabled": true,
+    "grid": [16, 9],
+    "mass_frac": 0.25,
+    "peak_frac": 0.5,
+    "focus_floor": 0.05,
+    "wide_min": 0.60,
+    "medium_min": 0.30,
+    "close_min": 0.12,
+    "samples_per_scene": 3
+  },
+
+  "speech": {
+    "band_hz": [300, 3400],
+    "frame_ms": 25.0,
+    "hop_ms": 10.0,
+    "threshold_db": -42.0,
+    "max_flatness": 0.45,
+    "min_voicing": 0.30,
+    "min_seg_s": 0.15,
+    "merge_gap_s": 0.30,
+    "hold_s": 0.25
+  },
+
+  "phase_fit": {
+    "tolerance_frames": 1.0,
+    "min_confidence": 0.40,
+    "max_candidates": 4
+  },
+
+  "scene_grouping": {
+    "long_shot_s": 8.0,
+    "motion_delta": 0.35,
+    "max_scene_s": 40.0
+  },
+
+  "sources": [
+    "https://ffmpeg-cookbook.com/en/articles/scene-detect/ (scdet threshold 0-100, default 10, 8-14 for film; fades and dissolves missed)",
+    "https://dl.acm.org/doi/10.1145/3664647.3685517 (TransNet V2, ACM MM 2024: F1 96.2 on BBC Planet Earth, 77.9 on ClipShots)",
+    "https://openaccess.thecvf.com/content/CVPR2023W/NAS/papers/Zhu_AutoShot_A_Short_Video_Dataset_and_State-of-the-Art_Shot_Boundary_Detection_CVPRW_2023_paper.pdf (54 % of missed transitions are gradual)"
+  ],
+
+  "provenance": {
+    "probe.*": "unchanged from references/data/presets/video/default.json",
+    "detector.deep_reference_f1": "TransNet V2, ACM MM 2024",
+    "shot_scale.grid": "16x9 blocks over a 320x180 analysis frame: starting value",
+    "shot_scale.mass_frac": "starting value",
+    "shot_scale.peak_frac": "starting value: a cell below half the peak contrast is background, so a flat background cannot become the subject through the quantile",
+    "shot_scale.focus_floor": "starting value: below this block contrast nothing is treated as subject",
+    "shot_scale.wide_min": "starting value, to be calibrated on real reels",
+    "shot_scale.medium_min": "starting value, to be calibrated on real reels",
+    "shot_scale.close_min": "starting value, to be calibrated on real reels",
+    "speech.threshold_db": "starting value relative to the reel's own 95th percentile",
+    "speech.max_flatness": "starting value",
+    "speech.min_voicing": "starting value",
+    "phase_fit.tolerance_frames": "starting value: one frame at any rate is the sync unit the gate judges in",
+    "phase_fit.min_confidence": "starting value",
+    "scene_grouping.*": "starting value"
+  }
+}

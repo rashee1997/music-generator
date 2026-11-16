@@ -1,0 +1,13 @@
+{
+  "name": "video_trailer",
+  "character": "a trailer: hits land hard and often, the picture is cut to the music, and delivery is the streaming ceiling",
+  "extends": "video_basic",
+  "rows": {
+    "video.hit_density": {"mode": "relax", "budget_per_minute": 36, "max_consecutive_cut_hits": 0.80,
+                          "reason": "a trailer cuts to the accents; the budget is raised rather than the rule dropped"},
+    "video.cut_sync": {"mode": "apply", "aim_ms": 25,
+                       "reason": "in a trailer the cue is the edit's clock, so the aim is tighter than a documentary cue's"},
+    "video.cue_silence": {"mode": "skip",
+                          "reason": "a trailer has no silent spotting: the picture is wall-to-wall by design"}
+  }
+}

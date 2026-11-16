@@ -1,0 +1,53 @@
+{
+  "name": "crow_caw",
+  "character": "A crow: harsh, rough caws in short runs, the pitch sagging through each one.",
+  "elements": {
+    "caw": {
+      "f0_hz": [
+        [
+          0,
+          520
+        ],
+        [
+          0.25,
+          560
+        ],
+        [
+          1,
+          430
+        ]
+      ],
+      "ms": [
+        230,
+        340
+      ],
+      "harmonics": 18,
+      "rolloff": 0.9,
+      "noise": 0.45,
+      "subharmonic": 0.5,
+      "attack": 0.08,
+      "release": 0.25
+    }
+  },
+  "sequence": [
+    [
+      "caw",
+      2,
+      4
+    ]
+  ],
+  "gap_ms": [
+    160,
+    280
+  ],
+  "bouts_per_min": 5.0,
+  "formants_hz": [
+    1500.0,
+    2700.0
+  ],
+  "formant_q": 4.0,
+  "sources": [
+    "ESTIMATE: typical values for this kind of call written from general knowledge, not measured from a recording and not auditioned. Replace them with numbers from a real recording of the species the project needs.",
+    "Wilden, Herzel, Peters & Tembrock (1998), Bioacoustics 9: subharmonics, biphonation and chaos in mammal calls"
+  ]
+}

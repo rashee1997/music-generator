@@ -103,26 +103,83 @@ def band_shares(x, sr):
     return {n: 10 * np.log10(p[(f >= lo) & (f < hi)].sum() / tot + 1e-18) for n, lo, hi in BANDS}, f, p
 
 
+# Chroma: which pitch classes the signal actually holds. Read with a constant-Q transform over the WHOLE signal,
+# not one 186 ms FFT frame at the midpoint. The old single-frame histogram had two measured defects: a bed that
+# sounds early and not at the midpoint returned an all-zero profile, which the harmonic-concordance row then read as
+# "0.0% dissonance" (a false pass), and one frame says nothing about a bed that changes.
+CHROMA_SR = 22050          # a pitch class is a low-frequency question: half the rate is half the work, and nothing lost
+CHROMA_HOP = 2048
+CHROMA_FMIN_HZ = 65.41     # C2: the lowest note the 36-bin-per-octave CQT resolves to about a semitone
+CHROMA_SOUNDING_DB = -40.0  # a frame this far under the loudest frame is not sounding
+# A pitch class only means something on a frame with resolved harmonics: noise spreads over all twelve classes, so it
+# can read as a clash by accident, and the awkward case is BAND-LIMITED noise (rain, wind): spectral flatness over the
+# whole band calls it tonal because its energy sits in one part of the spectrum (measured 0.30-0.45 on rain against
+# 0.00-0.02 on a chord). Tonalness is therefore the same peak-prominence rule the roughness model uses: peaks this far
+# above a median-filtered local floor, holding at least TONAL_MIN_FRACTION of the frame's energy.
+CHROMA_PEAK_FLOOR_BINS = 51
+CHROMA_MIN_TONAL_FRAMES = 4
+
+
+def _tonal_frames(mag, floor_bins=CHROMA_PEAK_FLOOR_BINS):
+    """Per-frame True where the spectrum holds resolved partials (peaks over a local median floor), for a (bins, frames)
+    magnitude spectrogram. Noise of any bandwidth fails: its peaks are only a few dB over their own floor."""
+    peaks_mask = np.zeros(mag.shape, dtype=bool)
+    peaks_mask[1:-1] = (mag[1:-1] > mag[:-2]) & (mag[1:-1] > mag[2:])
+    floor = ndimage.median_filter(mag, size=(floor_bins, 1), mode='nearest')
+    peaks_mask &= mag >= floor * 10.0 ** (PEAK_PROMINENCE_DB / 20.0)
+    tonal_energy = np.sum(np.where(peaks_mask, mag ** 2, 0.0), axis=0)
+    total = np.sum(mag ** 2, axis=0) + 1e-30
+    return (tonal_energy / total) >= TONAL_MIN_FRACTION
+
+
+def chroma_analysis(x, sr=44100):
+    """Pitch-class energy of the whole signal, and how much of it was actually tonal.
+
+    Returns dict(chroma=12 values summing to 1, sounding_frames, tonal_frames, tonal_fraction, tuning_cents), or None
+    when librosa is missing (the row then says it was not measured, rather than reading a default as concordant).
+
+    chroma   energy-weighted over the frames that are sounding and tonal. Zeros when nothing qualified.
+    tonal_fraction  tonal frames / sounding frames: 1 is a pure chord, 0 a broadband bed or noise.
+    """
+    try:
+        import librosa
+    except Exception:
+        return None
+    mono = x.mean(axis=1) if x.ndim == 2 else np.asarray(x)
+    out = dict(chroma=np.zeros(12, dtype=np.float64), sounding_frames=0, tonal_frames=0,
+               tonal_fraction=0.0, tuning_cents=0.0)
+    if len(mono) < CHROMA_HOP * CHROMA_MIN_TONAL_FRAMES or not np.any(np.abs(mono) > 1e-6):
+        return out
+    y = mono if sr == CHROMA_SR else librosa.resample(mono, orig_sr=sr, target_sr=CHROMA_SR)
+    tuning = float(librosa.estimate_tuning(y=y, sr=CHROMA_SR))
+    C = librosa.feature.chroma_cqt(y=y, sr=CHROMA_SR, hop_length=CHROMA_HOP, fmin=CHROMA_FMIN_HZ,
+                                   tuning=tuning, norm=None)
+    S = np.abs(librosa.stft(y, n_fft=2048, hop_length=CHROMA_HOP))
+    energy = C.sum(axis=0)
+    n = min(C.shape[1], energy.size, S.shape[1])
+    if n < CHROMA_MIN_TONAL_FRAMES:
+        return out
+    C, energy, S = C[:, :n], energy[:n], S[:, :n]
+    peak = float(energy.max())
+    if peak <= 0.0:
+        return out
+    sounding = energy >= peak * 10.0 ** (CHROMA_SOUNDING_DB / 20.0)
+    tonal = sounding & _tonal_frames(S)
+    out.update(sounding_frames=int(sounding.sum()), tonal_frames=int(tonal.sum()),
+               tonal_fraction=float(tonal.sum() / max(int(sounding.sum()), 1)),
+               tuning_cents=round(tuning * 100.0, 1))
+    use = tonal if int(tonal.sum()) >= CHROMA_MIN_TONAL_FRAMES else sounding
+    prof = C[:, use].sum(axis=1) if np.any(use) else np.zeros(12)
+    total = float(prof.sum())
+    if total > 0.0:
+        out['chroma'] = prof / total
+    return out
+
+
 def chroma_profile(x, sr):
-    """Compute 12-TET chroma energy profile (80 - 2000 Hz) via 8192-point FFT."""
-    mono = x.mean(1) if x.ndim == 2 else x
-    n = 8192
-    if len(mono) < n:
-        mono = np.pad(mono, (0, n - len(mono)))
-    mid_idx = max(0, len(mono) // 2 - n // 2)
-    seg = mono[mid_idx:mid_idx + n] * np.hanning(n)
-    spec = np.abs(np.fft.rfft(seg))
-    freqs = np.fft.rfftfreq(n, 1.0 / sr)
-    valid = (freqs >= 80.0) & (freqs <= 2000.0)
-    spec = spec[valid]
-    freqs = freqs[valid]
-    midi = 69.0 + 12.0 * np.log2(np.maximum(freqs, 1.0) / 440.0)
-    chroma = np.zeros(12, dtype=np.float64)
-    for p, val in zip(midi, spec):
-        pc = int(round(p)) % 12
-        chroma[pc] += val
-    tot = chroma.sum() + 1e-12
-    return chroma / tot
+    """The 12-value pitch-class profile alone (sums to 1), or None when it could not be measured."""
+    a = chroma_analysis(x, sr)
+    return None if a is None else a['chroma']
 
 
 def onsets(x, sr, hop=256):
@@ -180,7 +237,8 @@ def analyse(path, bpm=None, target_lufs=None, audio=None):
     side_bp = signal.sosfiltfilt(signal.butter(4, [1000, 5000], 'bandpass', fs=sr, output='sos'), side)
     st_bp = np.sqrt(((mid_bp ** 2) + (side_bp ** 2)).mean() + 1e-12)
     r['mono_phone_loss'] = float(20 * np.log10(np.sqrt((mid_bp ** 2).mean()) / (st_bp + 1e-12) + 1e-12))
-    r['chroma'] = chroma_profile(x, sr).tolist()
+    prof = chroma_profile(x, sr)
+    r['chroma'] = prof.tolist() if prof is not None else None
     r['dc'] = float(abs(x.mean()))
     on = onsets(x, sr)
     r['n_onsets'] = int(len(on))

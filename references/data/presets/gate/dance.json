@@ -4,6 +4,12 @@
   "extends": "melodic",
   "flags": ["dance"],
   "detect": {"keywords": ["edm", "techno", "house", "dance", "march", "trailer"]},
+  "focus": {
+    "roles": ["drum", "bass", "ostinato", "melody"],
+    "fallback": "balance.layers",
+    "label": "the groove: kick, bass and the repeating figure",
+    "reason": "a dance piece is carried by its groove, not by a tune; the hook is optional and sits on top"
+  },
   "rows": {
     "pattern.four_on_floor": {"mode": "skip", "reason": "a kick on every beat is the genre; the groove row checks it is on the grid"},
     "pattern.loop_short": {"mode": "relax", "max_period_bars": 2, "max_distinct": 2, "reason": "bass and arp loop; sections change by layers entering and leaving"},

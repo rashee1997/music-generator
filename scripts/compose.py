@@ -60,6 +60,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from theory import (Key, TEXTURES, bass_line, bass_note, clamp_register, drum_bar, harmony_line, make_phrase,
                     note_name, parse_progression, vary_phrase, voice_lead, MODES)
 import presets
+import roles
 import world
 
 # ------------------------------------------------------------------------------------------------
@@ -798,7 +799,44 @@ def intensity_per_bar(arc, n_bars, base, hit_shifts, bpm, bb):
 # main
 # ------------------------------------------------------------------------------------------------
 
+def apply_intent(brief):
+    """A brief may declare what the piece is instead of describing what it plays.
+
+    `intent: {scenes: ["farewell"], emotions: ["grief"], registers: ["cinematic"], tensions: [...]}` resolves
+    to ids (scripts/intent.py) and then fills only what the brief left empty: the emotion, the focus (a farewell
+    is carried by a drone, not a tune) and the intensity (the scene's own energy arc). Anything the brief states
+    itself wins, so a declaration never overrides a decision. The resolved block is carried onto the score, where
+    the gate's `intent.*` rows read it.
+    """
+    block = brief.get('intent')
+    if not block:
+        return brief, None
+    import intent
+    resolved = intent.normalise_block(block)
+    voc = intent.vocabulary()
+    out = dict(brief)
+    notes = []
+    if not out.get('emotion') and resolved.get('emotions'):
+        emo = resolved['emotions'][0]
+        if emo in EMOTIONS:
+            out['emotion'] = emo
+            notes.append(f'intent emotions: {emo}')
+    scenes = [voc['scenes'][s] for s in resolved.get('scenes') or [] if s in voc['scenes']]
+    if scenes and not out.get('focus'):
+        out['focus'] = scenes[0]['focus']
+        notes.append(f'intent scene: focus {scenes[0]["focus"]}')
+    if scenes and out.get('intensity') is None and out.get('energy') is None:
+        arc = scenes[0].get('energy_arc') or []
+        if len(arc) == 3:
+            out['intensity'] = float(arc[1])
+            notes.append(f'intent scene: intensity {arc[1]:.2f} from its peak')
+    out['_intent'] = resolved
+    out['_intent_notes'] = notes
+    return out, resolved
+
+
 def compose(brief):
+    brief, _intent = apply_intent(brief)
     fp = None
     if brief.get('fusion'):                            # any mix of cultures: scripts/fusion.py picks scale, tempo, instruments
         import fusion
@@ -824,6 +862,34 @@ def compose(brief):
     if fp:
         import fusion
         G = fusion.group_G(fp, G)                       # a fusion's instruments override the genre's layers
+    # ---- what the piece is carried by ---------------------------------------------------------------
+    # Every genre template seeds a melody, because most music has one; that must not become "every piece
+    # must have one". `focus` is the brief's own decision (scripts/roles.py FOCUS_ROLES): which family the
+    # ear is meant to follow. It removes a layer the brief did not ask for and never invents one, and it is
+    # recorded in meta so the gate reads the same promise the renderer kept (gate_profiles focus.roles,
+    # quality_gate.focus_rows). Before this, deleting the melody was the cheapest way to pass the gate,
+    # because six checks read melody-role tracks and returned nothing when there were none.
+    declared_focus = brief.get('focus') or G.get('focus') or 'melody'
+    focus = str(declared_focus).strip().lower().replace(' ', '_')
+    if focus not in roles.FOCUS_ROLES:
+        raise ValueError(f'focus "{declared_focus}" is not one of {roles.FOCUS}: name what the ear follows')
+    if focus != 'melody':
+        drop = {'melody', 'harmony'} if focus in ('texture', 'gesture') else {'melody'}
+        G['layers'] = [l for l in G['layers'] if l.get('kind') not in drop]
+        keep = {'drone': ('pad', 'chords', 'ostinato'), 'texture': ('pad', 'chords', 'ostinato'),
+                'gesture': ('pad', 'chords', 'sparkle', 'ostinato'), 'groove': ('drums', 'bass', 'ostinato')}[focus]
+        if not any(l.get('kind') in keep for l in G['layers']):
+            raise ValueError(f'genre "{g_name}" has no layer that can carry a {focus} focus '
+                             f'(needs one of: {", ".join(keep)}). Pick another genre or keep focus melody')
+        # The bed that enters first is the centre of a drone or texture piece, so its role must say so: the mixer,
+        # the humanizer and the immersive height table all read the role, and calling a drone a pad would give it
+        # the pad's high-pass and reverb. Lowest `min` is the layer the piece is built on, by construction.
+        if focus in ('drone', 'texture'):
+            beds = [l for l in G['layers'] if l.get('kind') == 'pad']
+            if beds:
+                centre = min(beds, key=lambda l: float(l.get('min', 0.0)))
+                centre['role'] = focus
+                centre['focus_layer'] = True
     voiceover = bool(brief.get('voiceover'))
     loop = bool(brief.get('loop'))
     # the mood's own dynamic band is the neutral energy. calm starts at 0.40, epic at 0.68; 0.5 is a compromise
@@ -1087,12 +1153,15 @@ def compose(brief):
                  master=dict(lufs=brief.get('lufs', -18 if voiceover else G['lufs']), true_peak=-1.5, tone=G['tone']),
                  meta=dict(emotion=emo, genre=g_name, mode=mode, tonic=tonic, bars=n_bars, progression=prog_text,
                            form=''.join(form), arc=arc, intensity_per_bar=[round(float(x), 2) for x in inten],
-                           energy=round(float(intensity), 2), room=room, mood_notes=mood_notes,
+                           focus=focus, energy=round(float(intensity), 2), room=room, mood_notes=mood_notes,
                            duration_s_nominal=round(n_bars * bb * 60.0 / bpm, 1)))
     if mods['wet'] != 1.0:
         score['mix'] = dict(reverb_return=round(float(mods['wet']), 2))
     if brief.get('piece_type'):               # the type of piece for the quality gate (gate_profiles.py list); else the gate infers it
         score['piece_type'] = brief['piece_type']
+    if _intent:                               # the declaration travels with the score, so the gate judges what was asked for
+        score['intent'] = _intent
+        score['meta']['intent_notes'] = list(brief.get('_intent_notes') or [])
     if fp:
         score['fusion'] = fp
     if plan:

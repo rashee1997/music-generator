@@ -4,6 +4,12 @@
   "extends": "melodic",
   "flags": ["ambient"],
   "detect": {"keywords": ["calm", "ambient", "meditative", "peaceful", "sleep", "drone", "minimal"], "pulse": ["free"], "traits": {"drone_ratio_min": 0.5}},
+  "focus": {
+    "roles": ["drone", "pad", "texture", "melody"],
+    "fallback": "balance.layers",
+    "label": "a held centre: a drone, a bed or a slow pad",
+    "reason": "the piece is the bed; a lead is optional and must not be demanded"
+  },
   "rows": {
     "pattern.loop_short": {"mode": "relax", "max_period_bars": 2, "max_distinct": 2, "reason": "beds and drones loop for long stretches by design"},
     "pattern.flat_dynamics": {"mode": "relax", "min_range_frac": 0.1, "reason": "a bed holds its level; the change is in colour, not loudness"},
@@ -11,6 +17,7 @@
     "pattern.melody_notes": {"mode": "relax", "min_lengths": 2, "on_beat_max": 1.0, "repeat_max": 0.6, "reason": "slow repeated tones are the style, with no beat grid to avoid"},
     "pattern.flags_max": {"mode": "relax", "max": 8, "reason": "few parts, so fewer varied lines"},
     "kick.grid": {"mode": "skip", "reason": "no kick is expected in an ambient piece"},
+    "imm.clarity": {"mode": "skip", "reason": "a bed is meant to sit inside its tail; clarity is a measure for notes"},
     "balance.vs_lead": {"mode": "apply", "fallback": "balance.layers"}
   }
 }

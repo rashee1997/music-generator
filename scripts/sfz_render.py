@@ -101,6 +101,13 @@ def midi_for(ev, offs, blk, dyn_level, patch_name, lead=0.0):
     glide_s = float(blk.get('slur_glide_s', 0.04))
     soft_v = float(blk.get('slur_vel_scale', 0.88))                      # the rosin bite of a slurred note is softer
     starts = sorted(set(round(e['t'], 4) for e in ev))
+    # Onsets per pitch, so no note-off can reach a later note of the same pitch. sfizz hands an off that lands at or
+    # after the next same-pitch note-on to the note that just started, and the retrigger comes back silent: measured
+    # -84 dBFS on a p69 -> p69 repeat 100 ms inside the first note, against -51 dBFS with a clear gap and -54 dBFS for
+    # p69 -> p70 at the same spacing. Velocity makes no difference, the pitch repeat alone decides.
+    onsets_by_pitch = {}
+    for _e in ev:
+        onsets_by_pitch.setdefault(int(_e['p']), []).append(float(_e['t']))
     last_art = None
     slurred_in = [False] * len(ev)                                       # note j continues a slur begun earlier
     slur_next = {}                                                       # note i -> the note it slurs into
@@ -120,6 +127,9 @@ def midi_for(ev, offs, blk, dyn_level, patch_name, lead=0.0):
             later = [s for s in starts if s > e['t'] + 0.01]
             if later and later[0] - off < 0.15:
                 off = later[0] + overlap
+        later_same = [s for s in onsets_by_pitch.get(int(e['p']), ()) if s > e['t'] + 0.01]
+        if later_same and off > later_same[0] - 0.01:
+            off = later_same[0] - 0.01
         art = e.get('art')
         if art in ks and art != last_art:
             inst.notes.append(pretty_midi.Note(velocity=100, pitch=int(ks[art]), start=max(0.0, e['t'] - 0.05), end=e['t'] - 0.01 if e['t'] > 0.06 else 0.01))

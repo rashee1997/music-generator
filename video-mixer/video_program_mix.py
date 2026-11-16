@@ -173,18 +173,85 @@ def build(voice, music, sfx, cfg, sr=SR, hit_times=None, limit_s=None):
             continue
         seg = s[:len(mix) - i]
         mix[i:i + len(seg)] += seg
-    report = dict(speech_ratio=round(float(mask.mean()), 4))
+    report = dict(speech_ratio=round(float(mask.mean()), 4), speech_measured=bool(mask.any()))
     sp = mask[:len(m)]
     if sp.sum() > sr:
         report['voice_rms_db'] = round(mx.rms_db(v[sp]), 2)
         report['music_rms_db'] = round(mx.rms_db(m[sp]), 2)
         report['music_under_voice_db'] = round(report['voice_rms_db'] - report['music_rms_db'], 2)
+        # the band that carries consonants: a bed can be 20 dB down overall and still bury a sentence at 2 kHz
+        lo, hi = cfg.get('intelligibility_band_hz') or cfg.get('speech_band_hz') or [1000.0, 4000.0]
+        mb, vb = band(m, lo, hi, sr), band(v, lo, hi, sr)
+        report['music_under_voice_band_db'] = round(float(mx.rms_db(vb[sp])) - float(mx.rms_db(mb[sp])), 2)
+        report['band_hz'] = [float(lo), float(hi)]
+    report['speech_segments'] = _mask_segments(mask, sr)
     return mix, v, m, mask, report
 
 
-def master(mix, cfg, sr=SR):
-    """Program master: the loudness and true-peak ceiling of the chosen profile, then the delivery sample rate."""
-    y = mx.master_chain(mix, dict(lufs=cfg['lufs'], true_peak=cfg['true_peak_db'], glue=True), sr)
+def _mask_segments(mask, sr=SR, min_gap_s=0.05):
+    """[(start_s, end_s)] where the mask is on, gaps shorter than min_gap_s closed.
+
+    The gate rebuilds a per-sample mask from these, so the master and the gate
+    measure the same speech, not two similar-looking guesses.
+    """
+    m = np.asarray(mask).astype(bool)
+    if not m.any():
+        return []
+    edges = np.flatnonzero(np.diff(m.astype(np.int8)))
+    starts = ([0] if m[0] else []) + [int(e) + 1 for e in edges if m[int(e) + 1]]
+    ends = [int(e) + 1 for e in edges if m[int(e)]] + ([len(m)] if m[-1] else [])
+    segs = [(a / float(sr), b / float(sr)) for a, b in zip(starts, ends) if b > a]
+    out = []
+    for a, b in segs:
+        if out and a - out[-1][1] <= min_gap_s:
+            out[-1][1] = b
+        else:
+            out.append([a, b])
+    return [(round(a, 4), round(b, 4)) for a, b in out]
+
+
+def master(mix, cfg, sr=SR, loudness_mode=None, speech_mask=None):
+    """Program master: the loudness and true-peak ceiling of the chosen profile, then the delivery sample rate.
+
+    `loudness_mode` decides *how the target is reached and measured*:
+
+      full_program   integrated loudness of the whole program (web, social, Prime)
+      dialogue       integrated loudness of the speech-active part only, then converged
+                     on the profile target (Netflix -27 LKFS +/-2, EBU R128 speech
+                     practice). The mask comes from the same speech measurement the
+                     gate uses, so the master and the gate cannot disagree about
+                     what "dialogue-gated" means.
+
+    When the mode is dialogue and there is no speech mask, the full-program target is
+    used and plainly labelled, never silently substituted: the gate's
+    `video.gating_mode` row fails a delivery that claims gating it did not apply.
+    """
+    mode = str(loudness_mode or cfg.get('gating') or cfg.get('loudness_mode') or 'full_program')
+    if mode not in ('full_program', 'dialogue'):
+        raise ValueError(f'unknown loudness_mode "{mode}" (full_program or dialogue)')
+    target_cfg = dict(lufs=float(cfg['lufs']), true_peak=float(cfg['true_peak_db']), glue=True)
+    y = mx.master_chain(mix, target_cfg, sr)
+    applied = 'full_program'
+    if mode == 'dialogue' and speech_mask is not None:
+        m = np.asarray(speech_mask, np.float32).reshape(-1)
+        if len(m) != len(y):
+            m = (np.interp(np.linspace(0, 1, len(y)), np.linspace(0, 1, max(1, len(m))), m) >= 0.5).astype(np.float32)
+        applied = 'dialogue'
+        for _ in range(3):
+            got = mx.dialogue_gated_lufs(y, sr, m)
+            if got is None:
+                applied = 'full_program'
+                break
+            err = float(cfg['lufs']) - float(got)
+            if abs(err) < 0.3:
+                break
+            target_cfg['lufs'] = target_cfg['lufs'] + 0.8 * err
+            y = mx.master_chain(mix, target_cfg, sr)
+    try:
+        mx.STATE.setdefault('master', {})['gating'] = applied
+        mx.STATE['master']['declared_gating'] = mode
+    except Exception:
+        pass
     target = int(cfg.get('sample_rate', sr))
     if target != sr:
         y = signal.resample_poly(y, target, sr, axis=0).astype(np.float32)

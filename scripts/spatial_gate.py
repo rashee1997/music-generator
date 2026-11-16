@@ -13,6 +13,8 @@ checked and never failed.
 
 This module measures only. It has no thresholds of its own.
 """
+import os
+
 import numpy as np
 
 
@@ -32,21 +34,78 @@ def targets_for(score, channels):
     return [t for t in sel if render_targets.channels(t) == int(channels)]
 
 
+def adm_rows(score, wav_path, out):
+    """Rows for an ADM BW64 deliverable: the container itself (BW64 magic, ds64, fmt/chna/axml/data
+    agreement) and the ADM integrity (IDs unique and resolved, chna mapping, block times, positions),
+    then finite samples and the true-peak ceiling. The audio is parsed by the same structural reader the
+    writer targets (adm.parse) because libsndfile only understands RIFF/RF64, not the BS.2088 BW64 magic."""
+    import render_targets
+    from spatial_engine import adm
+    from spatial_engine import master
+    ceiling = render_targets.true_peak('adm_bw64')
+    problems = adm.validate_file(str(wav_path))
+    _row(out, 'FAIL' if problems else 'PASS', 'adm.container',
+         (f'adm_bw64: BW64 container/metadata problems: {"; ".join(problems)}' if problems
+          else f'adm_bw64: strict BW64 (BS.2088) container with valid ADM metadata (BS.2076): '
+               f'magic, ds64, fmt, chna, axml and data agree; IDs resolve; blocks tile the file'))
+    try:
+        parsed = adm.parse(str(wav_path))
+    except ValueError as e:
+        _row(out, 'FAIL', 'adm.channels', f'adm_bw64: cannot read the file to verify its channels ({e})')
+        return
+    finite_row(parsed['audio'], out, os.path.basename(str(wav_path)))
+    _row(out, 'PASS', 'adm.channels',
+         f"adm_bw64: {parsed['channels']} track(s) at {parsed['sr']} Hz, "
+         f"{parsed['frames']} frames, {parsed['fmt']['bits']}-bit PCM; "
+         f"each track maps to one ADM object (no fold-down)")
+    peaks = master.channel_peaks(parsed['audio'], parsed['sr'])
+    worst = float(np.max(peaks)) if len(peaks) else float('-inf')
+    if ceiling is not None:
+        _row(out, 'FAIL' if worst > ceiling else 'PASS', 'delivery.true_peak',
+             f'adm_bw64: worst channel true peak {worst:+.1f} dBTP (ceiling {ceiling:+.1f} dBTP; '
+             f'per channel {", ".join(f"{p:+.1f}" for p in peaks)})')
+    _row(out, 'PASS', 'adm.loudness',
+         'adm_bw64 loudness is levelled at render time on a constant-power stereo fold of the objects '
+         '(engine-internal reference, BS.1770 loudness of the fold; an object file has no loudness of itself)')
+    return
+
+
+def finite_row(audio, out, name='the delivered file'):
+    """render.finite: a NaN or an infinity in any channel. Players differ on what they do with one (silence, a full
+    scale burst), so no file that holds one is delivered."""
+    a = np.asarray(audio)
+    bad = [c for c in range(a.shape[1] if a.ndim == 2 else 1)
+           if not np.isfinite(a[:, c] if a.ndim == 2 else a).all()]
+    _row(out, 'FAIL' if bad else 'PASS', 'render.finite',
+         (f'{name}: channel(s) {", ".join(str(c + 1) for c in bad)} hold NaN or infinite samples' if bad
+          else f'{name}: every sample of every channel is a finite number'))
+
+
 def output_rows(score, wav_path, out):
     """Rows for the delivered file: its format, its ceiling, and the checks that format needs."""
-    import gate_audio
     import render_targets
     from spatial_engine import config
+    # An ADM deliverable is recognised by having been requested and by the target's file name: its channel
+    # count is the piece's, not the format's (channels 0 in the preset), and its container is BW64, which
+    # the soundfile-based reader cannot open -- so it gets its own structural branch below.
+    if 'adm_bw64' in render_targets.resolve(score)['selected'] and \
+            os.path.basename(str(wav_path)).endswith(render_targets.filename('adm_bw64')):
+        adm_rows(score, wav_path, out)
+        return
+    import gate_audio
     try:
         sig = gate_audio.load(wav_path)
     except Exception as exc:
-        _row(out, 'WARN', 'delivery.format', f'cannot read {wav_path} to check the requested format ({exc})')
+        _row(out, 'FAIL', 'delivery.format', f'cannot read {wav_path} to verify the requested format ({exc})')
         return
     n_ch = sig.channels
-    targets = targets_for(score, n_ch)
+    finite_row(sig.audio, out, os.path.basename(str(wav_path)))
+    targets = targets_for(score, n_ch) or [
+        t for t in render_targets.resolve(score)['selected']
+        if not render_targets.channels(t) and os.path.basename(str(wav_path)).endswith(render_targets.filename(t))]
     if not targets:
         requested = render_targets.resolve(score)['selected']
-        _row(out, 'WARN', 'delivery.format',
+        _row(out, 'FAIL', 'delivery.format',
              f'{wav_path} has {n_ch} channel(s), which matches none of the requested target(s) '
              f'{", ".join(requested) or "none"}: the delivered format is not the promised one')
         return
