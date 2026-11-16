@@ -173,10 +173,15 @@ clipping ever: a non-finite sample or a sample over full scale is an error, neve
 gate (`spatial_gate.adm_rows`, behind `adm.container` / `adm.channels` / `adm.loudness` plus the shared
 `delivery.true_peak` / `render.finite`) fails the file for a plain RIFF container, a broken ds64, a chna that does not
 map 1:1 to ADM tracks, unresolved IDs, non-contiguous blocks, out-of-range positions or a true-peak overshoot.
-Players that only understand RIFF/RF64 cannot open the BW64 magic; verification is this engine's own structural
-check plus byte-level tests (`tests/test_adm_bw64.py`) -- no third-party BW64/ADM validator was run (none is
-available in this environment). It is an open-standard ADM file, not a Dolby Atmos master and not a certified
-deliverable.
+Players that only understand RIFF/RF64 cannot open the BW64 magic, and libsndfile/soundfile cannot read BW64 at all,
+so the project reads its own files back with `adm.parse`. The writer's structural check is the gate
+(`tests/test_adm_bw64.py` covers it byte for byte), and the files were additionally checked outside the project
+against the EBU implementations: libbw64 0.10.0 (BS.2088) opened them as `BW64`, reported `ds64` sizes matching the
+file on disk, the `chna` rows and `axml` chunk, and read every frame; the EBU ADM Renderer 2.1.0 (BS.2076 parser /
+BS.2127) opened them, reconciled `chna` against the AXML, validated the model, and rendered them with
+`ear-render --strict -c` to BS.2051 `0+5+0` and `4+7+0` without warnings or overload. libadm itself was not built
+(its CMake requires Boost, which this environment lacks), so no libadm-specific schema validation result exists. It
+is an open-standard ADM file, not a Dolby Atmos master and not a certified deliverable.
 
 ## 3. Stage 0 (project gate) and the Stage 6 immersion rows
 
@@ -248,11 +253,12 @@ Loudness, true peak, clicks and silence are the existing rows.
   but without the room: early reflections and the late field are not in the file, only the shared reverb return is, and
   it is a stereo bed rather than per-object room metadata. The distance is written in metres as the normalised ADM
   distance (1.0 = 1 m), so a renderer that scales it by `absoluteDistance` will place the objects in that room.
-- What is *not* verified: no third-party BW64/ADM toolchain (libbw64, libadm, the EBU ADM Renderer) ran against these
-  files, because none is installed in this environment and the EBU releases pin numpy below 2. The guarantees here are
-  the writer's structure, the structural validator in `scripts/spatial_engine/adm.py`, and byte-level tests, which a
-  standards-aware reader still has to confirm. `soundfile`/libsndfile cannot read BW64 at all, so the project reads its
-  own files back with `adm.parse`.
+- What the outside check covered, and what it did not: libbw64 and the EBU ADM Renderer parsed and rendered these files
+  (see the container paragraph above), which is the strongest reading available here, but neither replaces an ADM
+  profile validator: libadm was not built (Boost missing), nothing checked a delivery profile such as BS.2088/BS.2076
+  conformance of every optional element, and no file past 4 GiB was written end to end (the `ds64` saturation path is
+  exercised on a small file by overriding `adm.SATURATE_AT`). Both tools were installed in a scratch environment, not
+  in the project; the check is recorded here rather than run by the test suite.
 - 24-bit PCM only. The writer refuses a non-finite sample or a sample over full scale instead of clipping, so a mix
   that cannot meet its ceiling fails the gate rather than being forced into compliance.
 - `ambix` holds the whole field in memory while it is scaled and written; a long piece at order 5 needs several GB.
