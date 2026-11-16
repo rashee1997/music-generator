@@ -80,7 +80,8 @@
 
   "loudness_lufs": -18.0,
   "true_peak_max": -1.5,
-  "delivery": {"format": "wav", "sample_rate": 48000, "bit_depth": 24, "stage": "broadcast"},
+  "delivery": {"format": "wav", "sample_rate": 48000, "bit_depth": 24, "stage": "broadcast",
+               "output_targets": ["stereo", "ambix"]},
 
   "references": [
     "in words, not a track: a solo flute over slow celli, the colour of a nature documentary opening, no percussion",
@@ -94,6 +95,27 @@
     "environment": {"azimuth": 0.0, "elevation": 0.0, "distance": 8.0, "space": "misty_western_ghats_valley"}
   },
 
+  "immersive": {
+    "enabled": true,
+    "why": "the camera drifts along the ridge: the field carries the geography, the tempo does not",
+    "engine": "hoa_bus",
+    "anchors": ["cello", "environment"],
+    "movers": [
+      {"part": "flute", "why": "it follows the ridge line the camera is tracking",
+       "path": "enters 30 deg left in the mist, crosses the centre as the crest lands, settles 15 deg right for the last breath"}
+    ],
+    "height": {"flute": 8, "strings": 18},
+    "room_changes": [
+      {"at_section": "sun", "why": "the valley floor opens: the room grows and its tail lifts", "transition_s": 6.0}
+    ],
+    "must_hear": ["the flute crossing the centre at 52 s", "the room opening as the first light lands"],
+    "deliverables": ["stereo", "ambix"],
+    "notes": "the sheet records intent; the mix, space and instrument presets execute it. The score's output_targets must name the same deliverables, two-channel first. Presets carry the keyframes, heights and room geometry, never this block."
+  },
+
+  "focus": "melody",
+  "intent": {"emotions": ["wonder"], "registers": ["cinematic"], "scenes": ["establish"],
+             "tensions": [], "avoid": ["tense"]},
   "piece_type": "cinematic",
   "gate_reason": "TODO: one line on why this gate profile fits this piece; the gate runs it",
 
@@ -115,5 +137,5 @@
     "notes": "music-only sheet: leave enabled false. For a cue written against a cut, scripts/video_score.py fills this block from the picture (cuts, fps, sync windows, dialogue policy, delivery profile, mux target) and writes the hits with their kind; the music still follows every rule in the rest of this sheet."
   },
 
-  "notes": "Every field is a target someone can check. feel and avoid_feel are what listen.py tests earshot against; sections is the cue's arc in seconds; hits_at is what listen.py looks for in the onset list, and hits is the same moments with a reason and a kind (cut, motion or musical). spatial_staging is the room seen from above: each preset must match its own spot. mix_intent says what must be audible and what must stay free. Write in plain English: earshot reads the words."
+  "notes": "Every field is a target someone can check. feel and avoid_feel are what listen.py tests earshot against; sections is the cue's arc in seconds, and its names are what a trajectory or a room change is anchored to; hits_at is what listen.py looks for in the onset list, and hits is the same moments with a reason and a kind (cut, motion or musical). spatial_staging is the room seen from above: each preset must match its own spot. immersive says whether the field is doing a job, what moves and why, and where the room changes (numbers live in the presets). mix_intent says what must be audible and what must stay free. Write in plain English: earshot reads the words."
 }

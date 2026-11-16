@@ -124,7 +124,8 @@ The core targets. `listen.py` reads these directly, so fill them with words and 
 | `hits` | the same moments as `hits_at`, each with `kind` (`cut`, `motion`, `musical`), `sync` (`hard`, `soft`), `sound`, and `why` - the reason the moment needs an accent |
 | `ending` | how it leaves: `hard_out`, `tail_out`, `combination` |
 | `mix_intent` | `hero`, `support`, `sits_under` (what must win), `must_hear` (audible by when), `leave_free_hz` |
-| `delivery` | `format`, `sample_rate`, `bit_depth`, `stage` (`web`, `broadcast`, `cinema`) |
+| `immersive` | whether the field is doing a job, and how: `why`, `engine`, `anchors`, `movers`, `height`, `room_changes`, `deliverables` (2.10) |
+| `delivery` | `format`, `sample_rate`, `bit_depth`, `stage` (`web`, `broadcast`, `cinema`), `output_targets` (the score names the same set) |
 | `references` | the reference in words, never a track (2.5) |
 | `video` | the picture this cue was written against, when there is one (2.6) |
 
@@ -234,6 +235,12 @@ Judging it: `listen.py` still judges mood, pulse and form (it cannot hear sample
 `naturalness_check.py` reports `spec_flux` and warns when the timbre is static, and the `modulation_flutter` gate row reports
 6-25 Hz choppiness on pad, melody, lead and counter stems. Both are proxies: a WARN on a sampled stem is a question about
 articulation and patch choice, not a number to lower.
+
+### 2.10 Directing in space: Immersive 2.0
+
+Whether the field does a job, which parts move and why, the height plan, the room changes and the deliverables
+that carry them are decided in [`directing-space.md`](directing-space.md); the numbers they describe live in the
+presets, never in this sheet.
 
 ## 3. Decide in the order listeners weigh cues
 

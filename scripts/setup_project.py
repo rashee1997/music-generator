@@ -162,11 +162,11 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
             {"t": 32.0, "kind": "musical", "sync": "soft", "sound": "TODO", "why": "TODO"}
         ],
         "mix_intent": {"hero": "lead_flute", "support": ["warm_piano", "acoustic_bass"], "sits_under": [],
-                       "must_hear": ["TODO: what has to be audible, and by when"], "leave_free_hz": [250, 3800]},
+                       "must_hear": ["TODO: what has to be audible, and by when"], "leave_free_hz": []},
         "loudness_lufs": -16.0,
         "true_peak_max": -1.5,
         "delivery": {"format": "wav", "sample_rate": 48000, "bit_depth": 24,
-                     "stage": "TODO: web, broadcast or cinema"},
+                     "stage": "TODO: web, broadcast or cinema", "output_targets": ["stereo"]},
         "references": ["TODO: in words, never a copyrighted track (references/workflow/music-direction.md section 2)"],
         "spatial_staging": {
             "lead_flute": {"azimuth": 0.0, "elevation": 4.0, "distance": 1.4, "space": room},
@@ -174,6 +174,25 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
             "acoustic_bass": {"azimuth": 0.0, "elevation": -6.0, "distance": 1.2, "space": room},
             "vocal_hum": {"azimuth": 45.0, "elevation": 8.0, "distance": 2.8, "space": room}
         },
+        "immersive": {
+            "enabled": False,
+            "why": "TODO: one sentence on the job the space does (a camera drifting, a herd passing behind). "
+                   "If it cannot be written, leave enabled false.",
+            "engine": "hoa_bus",
+            "anchors": ["lead_flute"],
+            "movers": [{"part": "vocal_hum", "why": "TODO: the reason a listener could name",
+                        "path": "TODO: enters where, crosses what, settles where, in words"}],
+            "height": {"lead_flute": 4.0, "vocal_hum": 8.0},
+            "room_changes": [],
+            "must_hear": ["TODO: what movement or room change has to be audible, and when"],
+            "deliverables": ["stereo"],
+            "notes": "the sheet records intent; the presets execute it. Section names above are the vocabulary a "
+                     "trajectory or a room scene is anchored to. A scene format (ambix, adm_bw64) has no loudness "
+                     "until something folds it, so loudness_lufs stays the two-channel master's number."
+        },
+        "focus": "melody",
+        "intent": {"emotions": ["hopeful"], "registers": ["cinematic"], "scenes": ["establish"],
+                   "tensions": [], "avoid": ["tense"]},
         "piece_type": "melodic",
         "gate_reason": "TODO: one line on why this gate profile fits this piece; the gate runs it",
         "video": {"enabled": False, "source": None, "fps": None, "cuts": [], "cut_source": None,
