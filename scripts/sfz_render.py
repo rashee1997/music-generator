@@ -21,6 +21,7 @@ A track plays through SFZ when its instrument is "sfz:<library>/<patch>", or its
 
     "sfz": {"library": "sso", "patch": "Strings - Notation/1st Violins Legato",
             "cc": "expression",            # which controller carries the dynamics curve: expression (CC11), volume (CC7), modwheel (CC1), none
+            "note_dyn": {"hold_decay_db": 1.5, "release_db": 2.5, "release_s": 0.12},   # per-note arch on a monophonic line; false to switch off
             "controls": {"21": 50},        # constant controllers sent at t=0 (e.g. the library's own vibrato knob)
             "keyswitches": {"pizz": 36},   # articulation name (a note's "art") -> key-switch note, for KS patches
             "legato_overlap_s": 0.04,      # legato patches: each note ends this long after the next starts
@@ -46,6 +47,85 @@ import sfz_libs
 
 CC_NUMBERS = {'expression': 11, 'volume': 7, 'modwheel': 1, 'none': None}
 CC_STEP_S = 0.015
+
+# The per-note dynamics arch of a monophonic line. A written dynamics arc says what the phrase does; it cannot say
+# that a held note loses a little support as it sustains and lets go at its end. A sustaining player varies the
+# dynamic level while the note is sounding, which is what CC crossfades model in a library (sfzformat.com,
+# "Sustained note basics"). No measurement fixes these numbers yet, so they are starting values, small enough
+# to stay under the note-to-note spread the humanizer already writes (vel_sigma 5 on a 127 scale).
+NOTE_DYN_KEYS = ('enabled', 'hold_decay_db', 'release_db', 'release_s', 'phrase_gap_s')
+NOTE_DYN = dict(enabled=True, hold_decay_db=1.5, release_db=2.5, release_s=0.12, phrase_gap_s=0.15)
+
+
+def note_dyn(blk):
+    """The per-note dynamics arch for a monophonic SFZ line, or None when it is switched off.
+
+    One MIDI channel carries the whole track, so a note-level CC curve shapes every sounding note at once: on a chord
+    it would be a global level move, not phrasing. It is therefore applied only to a single line. Unknown keys are an
+    error, like every other preset block.
+    """
+    raw = (blk or {}).get('note_dyn')
+    if raw is None:
+        cfg = dict(NOTE_DYN)
+    elif isinstance(raw, bool):
+        cfg = dict(NOTE_DYN, enabled=bool(raw))
+    elif isinstance(raw, dict):
+        unknown = sorted(set(raw) - set(NOTE_DYN_KEYS))
+        if unknown:
+            raise ValueError(f'note_dyn takes only {", ".join(NOTE_DYN_KEYS)} (got {", ".join(unknown)})')
+        cfg = dict(NOTE_DYN, **raw)
+    else:
+        raise ValueError(f'note_dyn must be true, false or an object, got {raw!r}')
+    return cfg if cfg.get('enabled') else None
+
+
+def _mono_line(ev, ends, tol=0.06):
+    """True when no note is still sounding after the next one starts (a legato overlap of <= 60 ms is allowed): the
+    case where one CC curve can describe a single line's phrasing."""
+    order = sorted(range(len(ev)), key=lambda i: float(ev[i]['t']))
+    for a, b in zip(order, order[1:]):
+        if float(ends[a]) > float(ev[b]['t']) + tol:
+            return False
+    return True
+
+
+def note_arch(ev, ends, cfg, times):
+    """Multiplier per CC step for a monophonic line: a slow loss of support across each note and a taper at its end.
+
+    `hold_decay_db` falls linearly (in dB) over the note, a player easing off rather than holding a fixed pressure;
+    `release_db` is an extra fall over the last `release_s` before the note ends. Both are relative to the written
+    dynamics, so a crescendo still happens; a short note keeps nearly all of its level. The taper is a phrase end: it
+    is applied only when nothing follows the note for `phrase_gap_s`, so a continuous line is not ducked before every
+    new note (a bow that keeps moving does not let go).
+    """
+    times = np.asarray(times, float)
+    a = np.ones(len(times), float)
+    if not len(times) or cfg is None:
+        return a
+    hold = float(cfg.get('hold_decay_db', 0.0))
+    rel_db = float(cfg.get('release_db', 0.0))
+    rel_s = max(0.0, float(cfg.get('release_s', 0.0)))
+    gap_s = max(0.0, float(cfg.get('phrase_gap_s', 0.0)))
+    order = sorted(range(len(ev)), key=lambda i: float(ev[i]['t']))
+    nxt = {i: (float(ev[order[k + 1]]['t']) if k + 1 < len(order) else None) for k, i in enumerate(order)}
+    for i, (e, end) in enumerate(zip(ev, ends)):
+        t0 = float(e['t'])
+        t1 = float(end)
+        if t1 <= t0:
+            continue
+        sel = (times >= t0) & (times < t1)
+        if not sel.any():
+            continue
+        age = times[sel] - t0
+        dur = t1 - t0
+        fall = 10.0 ** (-hold * np.clip(age / dur, 0.0, 1.0) / 20.0) if hold else np.ones(age.size)
+        after = nxt.get(i)
+        phrase_end = after is None or (after - t1) > gap_s
+        if rel_db and rel_s > 0 and phrase_end:
+            taper = np.clip((age - max(dur - rel_s, 0.0)) / rel_s, 0.0, 1.0)
+            fall = fall * 10.0 ** (-rel_db * taper / 20.0)
+        a[sel] *= fall
+    return a
 
 
 class SfzUnavailable(RuntimeError):
@@ -118,6 +198,7 @@ def midi_for(ev, offs, blk, dyn_level, patch_name, lead=0.0):
                 slurred_in[b_i] = True
                 slur_next[a_i] = b_i
     pm._slur_onsets = []
+    ends = []                                                            # the off actually sent per note (after legato/trims)
     for j, e in enumerate(ev):
         off = float(offs[j])
         if slur_ok:
@@ -140,12 +221,20 @@ def midi_for(ev, offs, blk, dyn_level, patch_name, lead=0.0):
             if glide_c and glide_s > 0:                    # -20 cents falling to 0 over 40 ms; a bend of +-200 cents is 8192 units
                 for k in range(5):
                     inst.pitch_bends.append(pretty_midi.PitchBend(int(round(glide_c / 200.0 * 8192.0 * (1 - k / 4.0))), float(e['t']) + k * glide_s / 4.0))
-        inst.notes.append(pretty_midi.Note(velocity=int(np.clip(round(vel), 1, 127)), pitch=int(e['p']), start=float(e['t']), end=max(off, e['t'] + 0.02)))
+        end_j = max(off, float(e['t']) + 0.02)
+        ends.append(end_j)
+        inst.notes.append(pretty_midi.Note(velocity=int(np.clip(round(vel), 1, 127)), pitch=int(e['p']), start=float(e['t']), end=end_j))
     t_end = max((n.end for n in inst.notes), default=0.0)
     if ccn is not None:
+        nd = note_dyn(blk)
+        grid = np.arange(0.0, t_end + 0.01, CC_STEP_S)
+        arch = note_arch(ev, ends, nd, grid) if nd is not None and _mono_line(ev, ends) else None
         last = None
-        for t in np.arange(0.0, t_end + 0.01, CC_STEP_S):
-            v = int(np.clip(round(float(dyn_level(max(0.0, t - lead))) * 127.0), 1, 127))
+        for k, t in enumerate(grid):
+            level = float(dyn_level(max(0.0, t - lead)))
+            if arch is not None:
+                level *= float(arch[k])
+            v = int(np.clip(round(level * 127.0), 1, 127))
             if v != last:
                 inst.control_changes.append(pretty_midi.ControlChange(ccn, v, float(t)))
                 last = v

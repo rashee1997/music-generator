@@ -75,7 +75,9 @@ shimmer). Articulation is an instrument preset value: `{"overlap_ms": 30, "gate"
 What none of this fixes: a single-layer GM patch cannot brighten with velocity the way a second recorded layer would,
 there are no real release samples or legato transitions, and tinysoundfont exposes no sample offset, so a repeated note
 still plays the same sample (varied only by detune, attack, stroke and mechanism noise). This makes a bank sound
-*played*; it does not make it a sampled orchestra.
+*played*; it does not make it a sampled orchestra. A per-note velocity-to-brightness curve was tried and dropped: with
+the tilt already following the signal envelope (which tracks velocity through gain), moving its corner note by note
+changed the high-band share of a real violin stem by about 0.5 dB, so it was not worth the code.
 
 ## Quality honesty
 

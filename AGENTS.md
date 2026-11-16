@@ -158,7 +158,7 @@ levers. Using GM habits on an SFZ track is what leaves it sounding like a sample
 | The SFZ path does | The SFZ path ignores (GM-only) |
 |---|---|
 | humanize timing, velocity, strum and the articulation gate, exactly as GM | `per_note_channels`, `sustained` |
-| one dynamics controller curve (CC11, CC7 or CC1) every 15 ms | per-note `vibrato`, `expression` envelopes, `detune_cents` |
+| one dynamics curve (the written arc, plus a per-note arch on a monophonic line) on CC11, CC7 or CC1 every 15 ms | per-note `vibrato`, `expression` envelopes, `detune_cents` |
 | constant `controls` at t=0 (a library's own vibrato knob) | per-note pitch scoop, LFO vibrato |
 | `keyswitches` driven by each note's `art` | microtonal `c`, the `gl`/`gs` glide |
 | slurred legato: 25 ms overlap, -20 c glide, vel x0.88, 25 ms partial ramp | round-robin choice from the score |
@@ -169,10 +169,11 @@ levers. Using GM habits on an SFZ track is what leaves it sounding like a sample
 2. **Match the controller to the patch family.** "Notation" patches take loudness on CC11; "Performance" patches take it on
    the mod wheel - set `"cc": "modwheel"` for those, or the dynamics curve does nothing.
 3. **Write the dynamics arc.** With no score `dynamics` (or track `dynamics`) the only continuous expression the SFZ path
-   has is a constant, i.e. an organ-like flat sustain. A crescendo has to exist in the score, not in the mix.
-4. **A sustained solo on SFZ is a stated limit.** The SFZ path has no per-note vibrato, scoop or expression arch. If the part
-   is a solo where a flat looped sustain is audible, play it on the GM path (which shapes each note) or the vocal engine, and
-   say which one ran. Never claim vibrato that was not sent.
+   has is a constant, i.e. an organ-like flat sustain. A monophonic line also gets the per-note arch (`note_dyn`, a slow loss
+   of support and a phrase-end taper), but a crescendo has to exist in the score, not in the mix.
+4. **A sustained solo on SFZ is a stated limit.** The SFZ path has no per-note vibrato or scoop (the arch moves level, not
+   pitch). If the part is a solo where a flat looped sustain is audible, play it on the GM path (which shapes each note) or
+   the vocal engine, and say which one ran. Never claim vibrato that was not sent.
 5. **Slur only what a player slurs.** `"art": "legato"` slurs bowed and blown patches; never staccato, marcato, pizzicato,
    tremolo, spiccato, col legno or harmonics.
 6. **Measure the level, then seat it.** `trim_db` from a measurement (SFZ stems are quiet and differ per library), reverb
