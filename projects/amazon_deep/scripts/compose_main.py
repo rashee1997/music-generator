@@ -139,7 +139,7 @@ bs.append(N(B(13), 2.0, 26, 0.46))
 bs += [N(B(15), 3.95, near(G, 26, 37), 0.36), N(B(16), 3.95, near(A, 26, 37), 0.48)]
 for bar in range(17, 32):
     v = 0.58 + 0.025 * (bar - 17)
-    bs.append(N(B(bar), 4.06, near(CH[bar][0], 26, 37), min(0.95, v)))
+    bs.append(N(B(bar), 4.06, near(CH[bar][0], 38 if 21 <= bar <= 31 else 26, 49 if 21 <= bar <= 31 else 37), min(0.95, v)))
 bs.append(N(B(32), 2.0, near(C, 26, 37), 0.92))
 bs += [N(B(33), 7.9, near(F, 26, 37), 0.5), N(B(35), 3.9, near(Bb, 26, 37), 0.52), N(B(36), 3.9, near(C, 26, 37), 0.55)]
 bs += [N(B(37), 7.4, 26, 0.5), N(B(37) + 7.0, 6.4, 26, 0.5)]
@@ -184,10 +184,10 @@ track('violins_tremolo', 'green_violins_tremolo', 'pad', vt)
 
 # violins on a bowed sustain: the canopy at the start, the light at the end
 vs = [N(0, 15.9, 81, 0.5), N(B(5), 15.9, 84, 0.52)]
-for bar, ps in ((33, (81, 84)), (34, (77, 80)), (35, (86, 89)), (36, (84, 88))):
+for bar, ps in ((33, (69, 72)), (34, (68, 73)), (35, (74, 77)), (36, (76, 79))):
     for p in ps:
         vs.append(N(B(bar), 3.95, p, 0.5 + 0.1 * (bar - 33)))
-vs += [N(B(37), 14.4, 86, 0.4), N(B(37), 14.4, 81, 0.38)]
+vs += [N(B(37), 14.4, 74, 0.4), N(B(37), 14.4, 69, 0.38)]
 track('violins_sustain', 'green_violins_sustain', 'pad', vs)
 
 # ================================================================ winds
@@ -378,7 +378,7 @@ def jag(name, t0, d, az, el, dist, keys=None, **kw):
     sp = dict(azimuth=az, elevation=el, distance=dist, kind='spot', binaural=True)
     if keys:
         sp['trajectory'] = dict(spatial_role='mover', doppler_strength=1.0, keyframes=keys)
-    track(name, 'env:green_jaguar', 'environment', [dict(t=float(t0), d=float(d), p=60, v=1.0)], spatial=sp, **kw)
+    track(name, 'env:green_jaguar', 'environment', [dict(t=float(t0), d=float(d), p=60, v=1.0)], spatial=sp, fade_in_s=0.04, fade_out_s=0.15, **kw)
 
 
 jag('jaguar_far', B(15, 2.5), 5.4, 150, 0, 16.0)

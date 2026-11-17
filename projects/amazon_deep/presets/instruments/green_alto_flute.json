@@ -16,7 +16,8 @@
     "note_dyn": {
       "enabled": true
     },
-    "attack_fade_s": 0.005
+    "attack_fade_s": 0.005,
+    "slur_fade_off": true
   },
   "humanize": {
     "preset": "natural",

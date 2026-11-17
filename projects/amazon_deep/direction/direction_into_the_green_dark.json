@@ -266,13 +266,13 @@
       "space": "green_dark_room"
     },
     "green_basses": {
-      "azimuth": -38.0,
+      "azimuth": -52.0,
       "elevation": 0.0,
       "distance": 4.0,
       "space": "green_dark_room"
     },
     "green_celli_ostinato": {
-      "azimuth": -42.0,
+      "azimuth": -26.0,
       "elevation": 0.0,
       "distance": 3.2,
       "space": "green_dark_room"
@@ -284,7 +284,7 @@
       "space": "green_dark_room"
     },
     "green_cymbals": {
-      "azimuth": 72.0,
+      "azimuth": 85.0,
       "elevation": 14.0,
       "distance": 6.2,
       "space": "green_dark_room"
@@ -309,18 +309,18 @@
     },
     "green_horns": {
       "azimuth": 38.0,
-      "elevation": 8.0,
+      "elevation": 18.0,
       "distance": 3.6,
       "space": "green_dark_room"
     },
     "green_timpani": {
-      "azimuth": 12.0,
+      "azimuth": 26.0,
       "elevation": 0.0,
       "distance": 5.6,
       "space": "green_dark_room"
     },
     "green_trombones": {
-      "azimuth": -68.0,
+      "azimuth": -78.0,
       "elevation": 6.0,
       "distance": 3.9,
       "space": "green_dark_room"
@@ -332,13 +332,13 @@
       "space": "green_dark_room"
     },
     "green_tuba": {
-      "azimuth": -16.0,
+      "azimuth": 0.0,
       "elevation": 0.0,
       "distance": 4.3,
       "space": "green_dark_room"
     },
     "green_violas_ostinato": {
-      "azimuth": 30.0,
+      "azimuth": 52.0,
       "elevation": 2.0,
       "distance": 3.4,
       "space": "green_dark_room"
@@ -350,7 +350,7 @@
       "space": "green_dark_room"
     },
     "green_violins_tremolo": {
-      "azimuth": -56.0,
+      "azimuth": -48.0,
       "elevation": 22.0,
       "distance": 4.6,
       "space": "green_dark_room"

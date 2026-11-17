@@ -20,7 +20,7 @@
     "vel_sigma": 4.0
   },
   "spatial": {
-    "azimuth": -42.0,
+    "azimuth": -26.0,
     "elevation": 0.0,
     "distance": 3.2,
     "binaural": true,

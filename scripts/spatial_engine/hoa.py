@@ -38,6 +38,9 @@ C = 343.0
 IN_RAM_BYTES = 768 * 1024 * 1024       # a longer field is kept in a temporary file instead of in memory
 BLOCK = 1 << 18
 ROWS = 1 << 13                          # rows of the field written at a time (36 float32 columns: about 1 MB)
+SPAN_LEAD_S = 0.25                     # the air filter is zero-phase: it rings this long before a source's first sample
+SPAN_PAD_S = 1.0                       # silence after a source's last sample that its reflections and air filter can still fill
+SILENCE = 1e-7                         # a sample below this is no signal
 STEREO_DEG = 30.0                      # where an unplaced stereo stem's two channels sit in a field with no head
 
 
@@ -199,6 +202,83 @@ class HoaBus:
         return out
 
     # ------------------------------------------------------------------ one source
+    # ------------------------------------------------------------------ where each source is heard, and on how many cores
+    def _span(self, y, spec):
+        """(a, b): the samples a source can be heard in. A source that stands still is rendered over this span only: the
+        direct sound, every reflection and the late-field send are time-invariant, so the part before its first
+        sample and after its last (plus `SPAN_PAD_S` for the longest reflection and the air filter) is silence in,
+        silence out. A moving source keeps its whole length, because its path is a function of the time of day."""
+        n = len(y)
+        if (spec.get('spatial') or {}).get('trajectory'):
+            return 0, n
+        loud = np.abs(y).max(axis=1) if y.ndim == 2 else np.abs(y)
+        nz = np.flatnonzero(loud > SILENCE)
+        if not nz.size:
+            return 0, 0
+        return int(max(0, nz[0] - SPAN_LEAD_S * self.sr)), int(min(n, nz[-1] + 1 + SPAN_PAD_S * self.sr))
+
+    def _run(self, bus, stereo, sends, name, y, spec, states, span):
+        """One source into (bus, stereo, sends), over its span."""
+        a, b = span
+        if b <= a:
+            return
+        if a == 0 and b >= len(y):
+            return self._source(bus, stereo, sends, name, y, spec, states)
+        local = {}
+        window = [(cfg, None if w is None else w[a:b]) for cfg, w in states]
+        self._source(bus[a:b], stereo[a:b], local, name, y[a:b], spec, window)
+        for key, (refl, send) in local.items():
+            if key not in sends:
+                sends[key] = [refl, np.zeros(len(bus))]
+            sends[key][1][a:b] += send
+
+    def _workers(self, n):
+        """How many sources are rendered at once: the mix preset's `render.mix_workers` ('auto' = one per core), cut so
+        the partial fields (one per worker, each (n, K) float32) stay inside four times IN_RAM_BYTES."""
+        import mixer
+        import mix_schema
+        w = mix_schema.section(mixer._mix(), 'render').get('mix_workers', 1)
+        w = (os.cpu_count() or 1) if w == 'auto' else max(1, int(w))
+        return int(max(1, min(w, (4 * IN_RAM_BYTES) // max(n * self.k * 4, 1))))
+
+    def _place_all(self, bus, stereo, sends, states, n):
+        spans = [self._span(y, spec) for _, y, spec in self.sources]
+        workers = min(self._workers(n), len(self.sources))
+        if workers <= 1:
+            for (name, y, spec), span in zip(self.sources, spans):
+                self._run(bus, stereo, sends, name, y, spec, states, span)
+            return
+        import mix_context
+        from concurrent.futures import ThreadPoolExecutor
+        ctx = mix_context.current()
+        order = sorted(range(len(self.sources)), key=lambda i: -(spans[i][1] - spans[i][0]))
+        chunks, load = [[] for _ in range(workers)], [0] * workers
+        for i in order:                                    # the longest first, each onto the least loaded worker
+            j = load.index(min(load))
+            chunks[j].append(i)
+            load[j] += spans[i][1] - spans[i][0] + 1
+
+        def work(chunk):
+            mix_context.make_current(ctx)                  # the context is per thread: this one reads the piece's own
+            b = np.zeros((n, self.k), np.float32)
+            st = np.zeros((n, 2))
+            sd = {}
+            for i in chunk:
+                name, y, spec = self.sources[i]
+                self._run(b, st, sd, name, y, spec, states, spans[i])
+            return b, st, sd
+
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            parts = list(pool.map(work, [c for c in chunks if c]))
+        for b, st, sd in parts:
+            for a in range(0, n, ROWS):
+                bus[a:a + ROWS] += b[a:a + ROWS]
+            stereo += st
+            for key, (refl, send) in sd.items():
+                if key not in sends:
+                    sends[key] = [refl, np.zeros(len(bus))]
+                sends[key][1] += send
+
     def _source(self, bus, stereo, sends, name, y, spec, states):
         import airabs
         import mixer
@@ -344,8 +424,7 @@ class HoaBus:
         bus, path = _alloc(n, self.k)
         stereo = np.zeros((n, 2))
         sends, states = {}, self._states(n)
-        for name, y, spec in self.sources:
-            self._source(bus, stereo, sends, name, y, spec, states)
+        self._place_all(bus, stereo, sends, states, n)
         for refl, send in sends.values():
             self._late(bus, refl, send)
         if self.reverb is not None and not self.room_only:
