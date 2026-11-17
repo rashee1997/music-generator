@@ -93,3 +93,12 @@ node_modules/
 scripts/spatial_hrtf/data/
 presets/hrtf/
 
+
+# project sample libraries and engines (large, fetched per project)
+projects/*/libs/
+projects/*/out/_draft_*
+projects/*/stems/
+projects/*/midi/
+projects/*/out/
+projects/*/.cache/
+projects/*/reports/gate/

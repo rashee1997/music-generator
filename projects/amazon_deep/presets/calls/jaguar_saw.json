@@ -1,0 +1,80 @@
+{
+  "name": "jaguar_saw",
+  "character": "A jaguar: a run of low sawing coughs, then one or two grunts. The roughness is noise and a subharmonic, not a chopped pulse.",
+  "elements": {
+    "saw": {
+      "f0_hz": [
+        [
+          0,
+          150
+        ],
+        [
+          0.5,
+          125
+        ],
+        [
+          1,
+          95
+        ]
+      ],
+      "ms": [
+        380,
+        620
+      ],
+      "harmonics": 40,
+      "rolloff": 0.7,
+      "noise": 0.6,
+      "subharmonic": 0.4,
+      "attack": 0.1,
+      "release": 0.25
+    },
+    "grunt": {
+      "f0_hz": [
+        [
+          0,
+          95
+        ],
+        [
+          1,
+          70
+        ]
+      ],
+      "ms": [
+        220,
+        340
+      ],
+      "harmonics": 35,
+      "rolloff": 0.8,
+      "noise": 0.6,
+      "subharmonic": 0.5,
+      "level_db": -3.0
+    }
+  },
+  "sequence": [
+    [
+      "saw",
+      3,
+      5
+    ],
+    [
+      "grunt",
+      1,
+      2
+    ]
+  ],
+  "gap_ms": [
+    220,
+    380
+  ],
+  "tract_cm": 40.0,
+  "formant_q": 5.0,
+  "formant_mix": 0.8,
+  "bouts_per_min": 6.0,
+  "individuals": 1,
+  "sources": [
+    "No reliable measured jaguar fundamental was found; a related cat (puma) is 291-438 Hz, mean call 0.65 s: https://www.uv.mx/personal/pdias/files/2025/10/Rangel-Negrinetal.2025.pdf",
+    "Longer, heavier vocal folds give a lower fundamental (big-cat roar physics): https://physicstoday.aip.org/quick-study/what-makes-a-big-cat-roar",
+    "ESTIMATE: f0 70-150 Hz, lengths and pulse rate are not measured and not auditioned; replace with a recording's numbers",
+    "Taylor and Reby (2010), J. Zoology 280: source-filter theory for mammal calls"
+  ]
+}

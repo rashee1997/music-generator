@@ -1,0 +1,89 @@
+{
+  "name": "green_vine_chop",
+  "character": "A blade through a green vine: a hard steel impact, a fibrous tear as it parts, and the cut ends falling in the leaves.",
+  "seconds": 1.2,
+  "role": "fx",
+  "gain_db": -3.0,
+  "reverb": 0.12,
+  "spatial": {
+    "azimuth": 0.0,
+    "elevation": 0.0,
+    "distance": 2.5
+  },
+  "scene": {
+    "note": "A machete striking a vine: steel on fibre, fracture, a fall of leaves.",
+    "calibration": {
+      "normalize": "energy",
+      "level_db": -8
+    },
+    "objects": {
+      "blade": {
+        "material": "steel",
+        "geometry": {
+          "shape": "bar",
+          "length_m": 0.4,
+          "thickness_m": 0.003
+        },
+        "modes": 8
+      },
+      "vine": {
+        "material": "bark",
+        "geometry": {
+          "shape": "bar",
+          "length_m": 0.8,
+          "thickness_m": 0.025
+        },
+        "modes": 8
+      },
+      "leaves": {
+        "material": "leaf_green",
+        "geometry": {
+          "shape": "leaf",
+          "width_m": 0.1,
+          "thickness_m": 0.0003
+        },
+        "modes": 5
+      }
+    },
+    "timeline": [
+      {
+        "at": 0.0,
+        "interaction": "impact",
+        "target": "blade",
+        "mass_kg": 0.6,
+        "velocity_m_s": 14.0,
+        "then": [
+          {
+            "offset": 0.002,
+            "interaction": "fracture",
+            "target": "vine",
+            "mass_kg": 0.3,
+            "velocity_m_s": 5.0
+          },
+          {
+            "offset": 0.2,
+            "interaction": "foliage",
+            "target": "leaves",
+            "speed_m_s": 2.0,
+            "for": 0.7,
+            "leaf_count": 140
+          }
+        ]
+      }
+    ],
+    "propagation": {
+      "distance_m": 2.5,
+      "atmosphere": {
+        "temp_c": 27,
+        "rh": 90
+      },
+      "canopy_density": 0.5
+    },
+    "seconds": 1.2
+  },
+  "sources": [
+    "machete_vine_chop"
+  ],
+  "note": "KB sfx-formulas (impact, friction and fracture laws used by phys_core) | KB game-sfx | Turchet, Serafin, Dimitrov and Nordahl (DAFx-10): a footstep is a ground reaction force on a contact, see scripts/phys_core/gait.py | No measurement found: ESTIMATE of masses, speeds, materials and levels; nothing here was auditioned",
+  "hp": 80
+}

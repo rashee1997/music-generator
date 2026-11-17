@@ -1,0 +1,81 @@
+{
+  "name": "green_step_mud",
+  "character": "One footfall in wet mud and leaves at a run: a heavy, damp contact and a slap of leaves, harder than a walking step.",
+  "seconds": 0.5,
+  "role": "fx",
+  "gain_db": -3.0,
+  "reverb": 0.12,
+  "spatial": {
+    "azimuth": 0.0,
+    "elevation": 0.0,
+    "distance": 2.5
+  },
+  "scene": {
+    "note": "A running foot on wet ground: heavier contact on saturated soil, leaves thrown aside.",
+    "calibration": {
+      "normalize": "energy",
+      "level_db": -12
+    },
+    "materials": {
+      "mud": {
+        "family": "absorbent",
+        "density": 1700,
+        "young_modulus_gpa": 0.004,
+        "loss_factor": 0.35,
+        "flow_resistivity": 40000
+      }
+    },
+    "objects": {
+      "ground": {
+        "material": "mud",
+        "geometry": {
+          "shape": "plate",
+          "width_m": 2.0,
+          "thickness_m": 0.3
+        },
+        "modes": 6
+      },
+      "litter": {
+        "material": "leaf_green",
+        "geometry": {
+          "shape": "leaf",
+          "width_m": 0.1,
+          "thickness_m": 0.0003
+        },
+        "modes": 5
+      }
+    },
+    "timeline": [
+      {
+        "at": 0.0,
+        "for": 0.4,
+        "interaction": "gait",
+        "target": "ground",
+        "cadence_spm": 170,
+        "mass_kg": 80
+      },
+      {
+        "at": 0.0,
+        "for": 0.35,
+        "interaction": "foliage",
+        "target": "litter",
+        "speed_m_s": 3.5,
+        "leaf_count": 260
+      }
+    ],
+    "propagation": {
+      "distance_m": 2.5,
+      "atmosphere": {
+        "temp_c": 27,
+        "rh": 92
+      },
+      "canopy_density": 0.6
+    },
+    "seconds": 0.5
+  },
+  "sources": [
+    "footstep_leaf_litter_and_mud"
+  ],
+  "note": "KB sfx-formulas (impact, friction and fracture laws used by phys_core) | KB game-sfx | Turchet, Serafin, Dimitrov and Nordahl (DAFx-10): a footstep is a ground reaction force on a contact, see scripts/phys_core/gait.py | No measurement found: ESTIMATE of masses, speeds, materials and levels; nothing here was auditioned",
+  "hp": 80
+}

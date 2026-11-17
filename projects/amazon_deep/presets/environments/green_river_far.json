@@ -1,0 +1,33 @@
+{
+  "name": "green_river_far",
+  "description": "A river in spate beyond the trees: a low continuous roar with slow swells, far behind the listener to the right.",
+  "character": "A river in spate beyond the trees: a low continuous roar with slow swells, far behind the listener to the right.",
+  "layers": [
+    {
+      "name": "river",
+      "primitive": "water_flow",
+      "kind": "bed",
+      "gain_db": -24.0,
+      "swell_period_s": 9.0,
+      "low_cutoff_hz": 140,
+      "foam_cutoff_hz": 3000,
+      "hf_damp": 0.75,
+      "bubble_rate": 6.0,
+      "spatial": {
+        "azimuth": 140,
+        "elevation": 0,
+        "distance": 28
+      }
+    }
+  ],
+  "blending": {
+    "high_pass_hz": 140,
+    "vocal_pocket_notch_hz": 2200,
+    "vocal_pocket_notch_db": -3.0,
+    "overall_gain_db": -16.0
+  },
+  "sources": [
+    "river_in_spate"
+  ],
+  "note": "KB sfx-ambience (laws 1, 2 and 4: the ambience is a high-passed halo, SFX step forward in rests, music and place sit in different geometries) | KB brazil-turkic-mongolian (section 3.1: forest bio-acoustics, the chakapa leaf-rattle as a heartbeat pulse) | Acoustic niche partitioning in tropical forest: insects above about 10 kHz, birds below 4 kHz, https://methodsblog.com/2021/03/26/unmasking-acoustic-indices | Rain is bubble resonance, drop sizes from under 0.8 mm (silent) to over 3.5 mm (loud), Ma and Nystuen 2005 via https://acousticstoday.org/issues/2022AT/Summer2022/files/basic-html/page65.html | No measurement found: ESTIMATE of rain rate, levels, bout rates and positions; nothing here was auditioned"
+}
