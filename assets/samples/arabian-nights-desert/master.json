@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "audio": "master.wav",
+  "written_at": "2026-11-17T03:09:39+00:00",
+  "metadata": {
+    "title": "Arabian Nights: The Desert Crossing",
+    "artist": "Music Generator",
+    "album_artist": "Music Generator",
+    "genre": "Cinematic",
+    "year": "2026",
+    "copyright": "Copyright (C) 2026 rasheedh",
+    "comment": "D maqam_hijaz · 88 BPM · cinematic",
+    "language": "zxx",
+    "license": "AGPL-3.0-or-later",
+    "description": "put the listener inside the crossing: the caravan passes, the room opens into a cistern at first light. night falls on open sand, a caravan approaches from the left and crosses behind the listener, a mirage blooms and fades, and at first light the caravan reaches a stone cistern whose walls are the first walls in the piece."
+  },
+  "version": 2,
+  "ci_report": "ci_report.json"
+}

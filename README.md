@@ -8,6 +8,7 @@ An AI agent skill and Python audio pipeline that composes, renders, mixes, and v
 
  **Demo:** **Black Jaguar (Cinematic Chase)** — *D minor · 134 BPM*
 ▶ **[Listen in Browser](https://rashee1997.github.io/music-generator/docs/listen.html)** · **[Download MP3 (320 kbps)](assets/samples/black-jaguar-cinematic-chase.mp3)**
+▶ **[Arabian Nights: The Desert Crossing (Immersive 2.0)](assets/samples/arabian-nights-desert.mp3)** — with the desert air, mixed on the ambisonic bus
 
 ---
 
@@ -190,7 +191,7 @@ music-generator/
 │   ├── gate/        # the video.* rows and the one-pass entry point
 │   └── deliver/     # reel assembly from certified cues only
 ├── docs/            # Psychoacoustic math, vocal-tract design, roughness notes, web player
-├── assets/samples/  # The demo MP3
+├── assets/samples/  # The demo MP3s
 └── tests/           # Pipeline, spatial, and audio integrity test suites
 ```
 

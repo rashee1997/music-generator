@@ -1,0 +1,31 @@
+{
+  "versions": [
+    {
+      "version": 1,
+      "file": "master_v01.wav",
+      "master": "master.wav",
+      "timestamp": "2026-11-17T03:02:31+00:00",
+      "change": "cleared ambient_bed; ambient_bed",
+      "attempts": 13,
+      "title": "Arabian Nights: The Desert Crossing",
+      "piece_type": "cinematic",
+      "integrated_lufs": -18.729057536368668,
+      "true_peak_dbtp": -2.500000227499757,
+      "crest_factor_db": 19.345936685432978
+    },
+    {
+      "version": 2,
+      "file": "master_v02.wav",
+      "master": "master.wav",
+      "timestamp": "2026-11-17T03:07:15+00:00",
+      "change": "cleared ambient_bed; ambient_bed",
+      "attempts": 14,
+      "title": "Arabian Nights: The Desert Crossing",
+      "piece_type": "cinematic",
+      "integrated_lufs": -18.718342436949396,
+      "true_peak_dbtp": -2.4999992103108237,
+      "crest_factor_db": 19.348508120215772
+    }
+  ],
+  "latest": 2
+}

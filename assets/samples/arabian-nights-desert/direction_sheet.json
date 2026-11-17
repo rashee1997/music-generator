@@ -1,0 +1,327 @@
+{
+  "title": "Arabian Nights: The Desert Crossing",
+  "project": "a test project for the Immersive 2.0 direction-sheet instructions",
+  "version": 1,
+  "medium": "installation / album opener, no picture",
+  "brief": "Arabian nights, a caravan crossing the desert at night, fully immersive: the listener is in the sand.",
+  "audience": "a listener on a 7.1.2 system or headphones, no picture to follow, so the space has to carry the story",
+  "purpose": "put the listener inside the crossing: the caravan passes, the room opens into a cistern at first light",
+  "point_of_view": "the listener stands still on a dune and the caravan moves around them; nothing is ever in front for long",
+  "job": [
+    "establish the desert at night as a place with no walls",
+    "make one pass-by audible as a pass-by, not a pan",
+    "let the room change at first light so the ending feels like arrival",
+    "put the listener in open air, so the first wall at the cistern is audible as a change"
+  ],
+  "story": "night falls on open sand, a caravan approaches from the left and crosses behind the listener, a mirage blooms and fades, and at first light the caravan reaches a stone cistern whose walls are the first walls in the piece.",
+  "duration_s": 65.45,
+  "in_point_s": 0.0,
+  "out_point_s": 65.45,
+  "ending": "tail_out",
+  "feel": [
+    "vast",
+    "warm",
+    "nostalgic",
+    "exultant"
+  ],
+  "avoid_feel": [
+    "synthetic",
+    "robotic",
+    "flat",
+    "harsh",
+    "touristy"
+  ],
+  "sections": [
+    {
+      "name": "nightfall",
+      "start_bar": 1,
+      "end_bar": 6,
+      "energy": 0.25,
+      "action": "dusk over open sand, no landmark yet",
+      "music": "oud alone states the hijaz figure; the drone enters under it",
+      "role": "place",
+      "start_s": 0.0,
+      "end_s": 16.36
+    },
+    {
+      "name": "crossing",
+      "start_bar": 7,
+      "end_bar": 14,
+      "energy": 0.55,
+      "action": "a caravan appears far left and starts to cross",
+      "music": "ney takes the melody and travels; darbuka enters on maqsum; qanun answers",
+      "role": "build",
+      "start_s": 16.36,
+      "end_s": 38.18
+    },
+    {
+      "name": "mirage",
+      "start_bar": 15,
+      "end_bar": 20,
+      "energy": 0.85,
+      "action": "the air shimmers, a second caravan appears where there is none",
+      "music": "ululation over the full ensemble, qanun runs, ney overhead",
+      "role": "peak",
+      "start_s": 38.18,
+      "end_s": 54.55
+    },
+    {
+      "name": "first_light",
+      "start_bar": 21,
+      "end_bar": 24,
+      "energy": 0.35,
+      "action": "the cistern wall appears; the caravan stops",
+      "music": "everything thins to oud and voice; the room becomes stone",
+      "role": "button",
+      "start_s": 54.55,
+      "end_s": 65.45
+    }
+  ],
+  "motifs": [
+    {
+      "name": "the crossing figure",
+      "first_at_s": 0.0,
+      "shape": "D-Eb-F#-G, the half-flat second leaning up to the third",
+      "returns": "every oud bar, and the ney sings it in augmentation at first light"
+    },
+    {
+      "name": "the call",
+      "first_at_s": 38.2,
+      "shape": "a rising fourth answered a step lower",
+      "returns": "behind the listener at the mirage, then in the cistern as a hum"
+    }
+  ],
+  "instruments": [
+    "oud",
+    "ney",
+    "qanun",
+    "darbuka",
+    "rababa",
+    "strings_drone",
+    "vocal_chant",
+    "vocal_oohs",
+    "desert_air"
+  ],
+  "avoid_sounds": [
+    "drum machine hats",
+    "western power chords",
+    "synth pad swells",
+    "any chant treated as a sample drop"
+  ],
+  "pulse": "steady",
+  "tempo_bpm": [
+    88.0,
+    88.0
+  ],
+  "key": "D",
+  "mode": "maqam_hijaz",
+  "energy": 0.5,
+  "space": "desert_night",
+  "hits_at": [
+    38.18,
+    54.55
+  ],
+  "hits": [
+    {
+      "t": 38.18,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the darbuka's first doum with the ney arriving overhead",
+      "why": "the crossing has to start somewhere a listener can point at"
+    },
+    {
+      "t": 54.55,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the ululation lands and the qanun run turns back down",
+      "why": "the mirage is the only moment of exultation before the arrival"
+    }
+  ],
+  "mix_intent": {
+    "hero": "ney",
+    "support": [
+      "oud",
+      "qanun",
+      "darbuka"
+    ],
+    "sits_under": [
+      "strings_drone",
+      "vocal_oohs",
+      "desert_air"
+    ],
+    "must_hear": [
+      "the ney crossing from left to behind at the mirage",
+      "the cistern's tail arriving before the last oud note ends"
+    ],
+    "leave_free_hz": []
+  },
+  "loudness_lufs": -17.0,
+  "true_peak_max": -1.5,
+  "delivery": {
+    "format": "wav",
+    "sample_rate": 44100,
+    "bit_depth": 24,
+    "stage": "installation playback, 7.1.2 room",
+    "output_targets": [
+      "stereo",
+      "immersive_7_1_2",
+      "immersive_7_1"
+    ],
+    "note": "the engine renders at 44.1 kHz; stereo_48k is a target you add if a delivery needs 48 kHz"
+  },
+  "references": [
+    "the sound of an oud recorded close in a dry room, a ney with breath left in it, a darbuka with no reverb on the dum",
+    "night desert ambience: no birds, wind low and wide, nothing above 6 kHz"
+  ],
+  "spatial_staging": {
+    "oud": {
+      "azimuth": -18.0,
+      "elevation": 0.0,
+      "distance": 1.6,
+      "space": "desert_night"
+    },
+    "ney": {
+      "azimuth": -55.0,
+      "elevation": 12.0,
+      "distance": 3.4,
+      "space": "desert_night"
+    },
+    "qanun": {
+      "azimuth": 38.0,
+      "elevation": 10.0,
+      "distance": 2.2,
+      "space": "desert_night"
+    },
+    "darbuka": {
+      "azimuth": 12.0,
+      "elevation": 0.0,
+      "distance": 1.9,
+      "space": "desert_night"
+    },
+    "rababa": {
+      "azimuth": 95.0,
+      "elevation": 4.0,
+      "distance": 2.9,
+      "space": "desert_night"
+    },
+    "strings_drone": {
+      "azimuth": 0.0,
+      "elevation": 20.0,
+      "distance": 4.5,
+      "space": "desert_night"
+    },
+    "vocal_chant": {
+      "azimuth": -150.0,
+      "elevation": 8.0,
+      "distance": 4.0,
+      "space": "desert_night"
+    },
+    "vocal_oohs": {
+      "azimuth": 168.0,
+      "elevation": 14.0,
+      "distance": 5.0,
+      "space": "desert_night"
+    },
+    "desert_air": {
+      "azimuth": 0.0,
+      "elevation": 20.0,
+      "distance": 6.0,
+      "space": "desert_night"
+    }
+  },
+  "piece_type": "cinematic",
+  "gate_reason": "an installation cue that builds and resolves, so the cinematic profile fits and its loudness target is the one the room expects",
+  "immersive": {
+    "enabled": true,
+    "why": "the caravan passes the listener from the left dune to behind them, and the room becomes stone at first light; both are the story, not decoration",
+    "engine": "hoa_bus",
+    "anchors": [
+      "oud",
+      "darbuka",
+      "qanun",
+      "desert_air"
+    ],
+    "movers": [
+      {
+        "part": "ney",
+        "why": "the caravan's approach is the cue's one long travel",
+        "path": "enters far left and low at the crossing, rises over the listener's head through the mirage, settles front-right at first light"
+      },
+      {
+        "part": "vocal_oohs",
+        "why": "the mirage calls from behind, where a second caravan is not",
+        "path": "appears behind-left at the mirage, drifts to behind-right, leaves before the cistern"
+      }
+    ],
+    "height": {
+      "ney": 12.0,
+      "qanun": 10.0,
+      "strings_drone": 20.0,
+      "vocal_chant": 8.0,
+      "oud": 0.0,
+      "darbuka": 0.0,
+      "rababa": 4.0,
+      "vocal_oohs": 14.0,
+      "desert_air": 20.0
+    },
+    "room_changes": [
+      {
+        "at_section": "first_light",
+        "at_bar": 1,
+        "what": "open desert becomes a stone cistern: walls arrive, the tail grows and comes from the sides",
+        "why": "the first walls in the piece are the arrival"
+      }
+    ],
+    "must_hear": [
+      "the ney's pass from far left to behind, with its distance closing",
+      "the cistern's tail on the last oud note, arriving from the sides and above",
+      "the dune gust arriving from the left before the caravan does"
+    ],
+    "deliverables": [
+      "stereo",
+      "immersive_7_1_2",
+      "immersive_7_1"
+    ],
+    "notes": "the sheet records intent; the presets execute it. Section names here are the vocabulary the ney's trajectory and the cistern scene are anchored to, and they match the score's plan.sections. Loudness is the two-channel master's number; the 7.1.2 and 7.1 files have their own -3.0 dBTP ceiling. The high voice is a sampled choir patch: the vocal engine's ululation left a measured click in the room return, so that part moved to a path that does not."
+  },
+  "focus": "melody",
+  "intent": {
+    "emotions": [
+      "wonder",
+      "hopeful",
+      "nostalgic"
+    ],
+    "registers": [
+      "cinematic"
+    ],
+    "scenes": [
+      "establish",
+      "reveal"
+    ],
+    "tensions": [],
+    "avoid": [
+      "tense"
+    ]
+  },
+  "video": {
+    "enabled": false,
+    "source": null,
+    "fps": null,
+    "cuts": [],
+    "cut_source": null,
+    "cut_sync": {
+      "early_ms": 45,
+      "late_ms": 125
+    },
+    "dialogue": {
+      "present": false,
+      "duck_db": -9.0,
+      "snr_min_db": 15.0
+    },
+    "master_profile": null,
+    "deliverable": null,
+    "preset": "default",
+    "notes": "music-only piece: no picture"
+  },
+  "notes": "No SFZ library for these instruments exists in the skill registry and sfizz cannot run on this Linux host, so every part plays the GM bank through presets; the SFZ block is left out rather than faked."
+}
