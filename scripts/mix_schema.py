@@ -299,6 +299,11 @@ DEFAULTS = {
         # (scripts/spatial_engine/hoa.py): moving sources keep their room, and keyframes and scenes need it.
         'engine': 'per_stem',
         'order': 5,
+        # how the TWO-CHANNEL master is decoded from the ambisonic bus: 'binaural' (head-filtered, for headphones;
+        # the left and right ears disagree on purpose, so the sum of the two channels loses level in the mid band)
+        # or 'speakers' (a loudspeaker pair, layout `stereo_layout`, no head filter: what fold.mono assumes)
+        'stereo_decode': 'binaural',
+        'stereo_layout': 'stereo_bs775',
         # how far an "anchor" source (bass, drums, or `spatial_role: "anchor"`) may sway around its place
         'anchor_max_span_deg': 6.0,
         # the fastest a source may travel, read by the imm_kinematics row. Starting values, not measured limits.
@@ -406,6 +411,7 @@ RANGES = {
 ENUMS = {
     ('gain_staging', 'strategy'): ('legacy', 'adaptive'),
     ('immersive', 'engine'): ('per_stem', 'hoa_bus'),
+    ('immersive', 'stereo_decode'): ('binaural', 'speakers'),
     ('dynamics', 'engine'): ('pedalboard', 'dsp'),
     ('dynamics', 'detector'): ('peak', 'rms'),
     ('sidechain', 'mode'): ('legacy', 'explicit', 'off'),

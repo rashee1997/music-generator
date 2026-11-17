@@ -1319,6 +1319,10 @@ def _hoa_bus(score, bus, sr):
             print('  [spatial] "engine": "hoa_bus" needs the head data: run `python -m spatial_hrtf.data` from '
                   'scripts/. Using the per-stem engine.')
             return None, None
+        if str(imm.get('stereo_decode', 'binaural')) == 'speakers':
+            from spatial_engine import config as _cfg
+            made = hoa.HoaBus(decode='speakers', speakers=_cfg.speakers(imm.get('stereo_layout', 'stereo_bs775')), **kw)
+            return made, made
         _use_head_set(imm)
         made = hoa.HoaBus(decode='binaural', **kw)
         return made, made
