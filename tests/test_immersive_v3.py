@@ -406,5 +406,33 @@ class Compute(unittest.TestCase):
         self.assertTrue(mix_schema.validate({'render': {'compute': {'device': 'abacus'}}}))
 
 
+class StereoDecodeAndMemory(unittest.TestCase):
+    """The stereo master can be decoded for loudspeakers, the master high-pass can be steeper, and a many-channel file
+    is measured one channel at a time."""
+
+    def test_stereo_decode_is_a_preset_choice_with_two_values(self):
+        self.assertEqual(mix_schema.validate({'immersive': {'stereo_decode': 'speakers'}}), [])
+        self.assertEqual(mix_schema.validate({'immersive': {'stereo_decode': 'binaural'}}), [])
+        self.assertTrue(mix_schema.validate({'immersive': {'stereo_decode': 'surround'}}))
+
+    def test_the_stereo_pair_layout_is_a_decode_only_layout(self):
+        from spatial_engine import config
+        self.assertEqual(config.problems('stereo_bs775'), [])
+        self.assertEqual([s['name'] for s in config.speakers('stereo_bs775')], ['L', 'R'])
+
+    def test_highpass_order_is_bounded_and_defaults_to_one(self):
+        self.assertEqual(mix_schema.with_defaults({})['mastering']['highpass_order'], 1)
+        self.assertEqual(mix_schema.validate({'mastering': {'highpass_order': 3}}), [])
+        self.assertTrue(mix_schema.validate({'mastering': {'highpass_order': 9}}))
+
+    def test_true_peak_by_channel_matches_the_whole_file_upsample(self):
+        from scipy.signal import resample_poly
+        from gate_audio import Signal
+        rng = np.random.default_rng(5)
+        a = (0.3 * rng.standard_normal((44100, 4))).astype(np.float32)
+        want = 20.0 * np.log10(np.max(np.abs(resample_poly(a, 4, 1, axis=0)), axis=0) + 1e-12)
+        np.testing.assert_allclose(Signal(a, 44100).true_peak_by_channel, want, atol=1e-4)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -63,3 +63,22 @@ differs from it in the last bits of float32, so the gate certifies the render th
   it is why `mono` is its own target.
 - The GPU kernels run only on a machine that has one. A piece certified on the CPU says nothing about the GPU render
   of it until that render is gated too.
+
+## Stereo master: speakers or headphones (`immersive.stereo_decode`)
+
+On the ambisonic engine the two-channel master is decoded from the field once, and the mix preset says how:
+
+| `stereo_decode` | Decoder | Use |
+|---|---|---|
+| `binaural` (default) | head-filtered (MagLS), ears disagree on purpose | a master meant for headphones |
+| `speakers` | AllRAD to the pair in `immersive.stereo_layout` (default `stereo_bs775`, +-30 deg), no head filter | a master meant for loudspeakers, and the one `fold.mono` assumes |
+
+A head-filtered master loses 3-5 dB when its two channels are added, in the 450-1500 Hz band where a lateral source
+reaches the ears out of phase. Moving parts toward the centre cut only part of that (measured on one piece: -5.2 to
+-4.7 dB); decoding for loudspeakers brought the same piece to +3.1 dB against the 3.5 dB limit. The stereo pair is a
+layout preset with `"decode_only": true`: it needs no low-frequency channel and no room return.
+
+`mastering.highpass_order` (default 1) cascades the master high-pass: Pedalboard's filter is first order, so 55-70 Hz at
+order 3 is what removes a loud sub from a loudspeaker stereo master. The sub is then carried by the layouts' low-frequency
+channel. `master.dc` measures 1 s block means, and a loud 80-120 Hz tone that does not complete its cycles in each block
+reads as drift, which is why the high-pass, and not a looser row, is the fix.
