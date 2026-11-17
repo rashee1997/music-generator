@@ -255,11 +255,7 @@ track('trombones', 'green_trombones', 'chord', tb)
 track('trombones_sus', 'green_trombones_sus', 'pad', tb_sus)
 
 tu = [N(ENTRY, 6.0, 38, 0.8), N(CHASE, 8.0, 38, 0.95), N(TWIST, 6.0, 41, 0.95), N(FINAL, 4.6, 38, 0.5)]
-for bar in list(range(26, 29)) + [30, 31]:
-    pat = PATTERNS_TU[int(rng.integers(0, len(PATTERNS_TU)))]
-    for off, d in pat:
-        tu.append(N(B(bar, off), d, near(CH[bar][0], 30, 43), 0.8))
-tu.append(N(B(32), 1.9, 36, 0.9))
+tu.append(N(B(27), 3.4, near(CH[27][0], 30, 43), 0.8))                      # one more blow in the chase; the tuba owns only the structural moments
 track('tuba', 'green_tuba', 'bass', tu)
 
 # ================================================================ percussion

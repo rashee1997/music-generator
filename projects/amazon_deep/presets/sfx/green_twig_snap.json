@@ -48,14 +48,14 @@
     "timeline": [
       {
         "at": 0.0,
-        "for": 0.28,
+        "for": 0.18,
         "interaction": "creak",
         "target": "twig",
         "strain": 0.006,
-        "rate_hz": 14.0
+        "rate_hz": 7.0
       },
       {
-        "at": 0.28,
+        "at": 0.2,
         "interaction": "fracture",
         "target": "twig",
         "mass_kg": 0.05,
