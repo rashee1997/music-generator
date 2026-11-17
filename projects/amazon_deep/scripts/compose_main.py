@@ -307,7 +307,7 @@ POOL_R = [(0.5, 2.0, 3.5), (1.0, 2.5), (0.5, 1.25, 2.0, 2.75, 3.5), (0, 1.5, 3.5
 def conga(pool, bar, vel, notes):
     pat = pool[int(rng.integers(0, len(pool)))]
     for i, o in enumerate(pat):
-        key = (48, 50, 52)[int(rng.choice([0, 1, 2], p=[0.5, 0.35, 0.15]))]
+        key = (48, 50, 53)[int(rng.choice([0, 1, 2], p=[0.5, 0.35, 0.15]))]
         notes.append(N(B(bar, o), 0.4, key, vel * (1.0 if i == 0 else 0.62 + 0.3 * float(rng.random()))))
 
 

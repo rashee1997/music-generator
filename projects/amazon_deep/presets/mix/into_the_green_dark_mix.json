@@ -281,7 +281,7 @@
         "glue": true
       }
     },
-    "highpass_hz": 45.0
+    "highpass_hz": 52.0
   },
   "role_chains": {
     "melody": {
