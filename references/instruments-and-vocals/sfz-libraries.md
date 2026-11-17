@@ -60,6 +60,7 @@ or in the score: `"instrument": "sfz:sso/Strings - Notation/1st Violins Legato"`
 |---|---|
 | `cc` | controller that carries the dynamics curve: `expression` (CC11), `volume` (CC7), `modwheel` (CC1, for Performance patches), `none` |
 | `controls` | constant controllers at start (e.g. `{"21": 50}` is Sonatina's vibrato knob) |
+| `note_dyn` | the per-note dynamics arch on a monophonic line: `{"enabled": true, "hold_decay_db": 1.5, "release_db": 2.5, "release_s": 0.12, "phrase_gap_s": 0.15}`, or `false` to switch it off |
 | `keyswitches` | `{"pizz": 36}`: a note's `art` becomes a key-switch note, for KS patches |
 | `legato_overlap_s` | legato patches, scores with no per-note `art`: each note ends this long after the next one starts (default 0.04) |
 | `slur_overlap_s`, `slur_glide_cents`, `slur_glide_s`, `slur_vel_scale`, `slur_fade_s`, `slur_fade_floor`, `slur_fade_off` | slurred legato for notes marked `"art": "legato"` (defaults 0.025, -20, 0.04, 0.88, 0.025, 0.85, false); see "Slurred legato" below |
@@ -75,11 +76,11 @@ Timing and velocity are humanized first (same as the GM path). The dynamics curv
 A sampled part still sounds played by a machine, and the reason is what the MIDI does not carry. The SFZ path is **one MIDI
 channel for the whole track**, so these GM-path features are not sent and their preset keys do nothing here:
 `per_note_channels`, `sustained`, `vibrato`, `expression`, `detune_cents`, and the per-note `c` (microtone) and `gl`/`gs`
-(glide) note fields. There is no per-note expression arch, no delayed vibrato, no scoop and no bow direction. What is sent is
-timing, velocity, `art`, keyswitches, the constant `controls`, one dynamics controller every 15 ms, and - for slurred legato -
-a pitch-bend glide and a partial gain ramp.
+(glide) note fields. There is no delayed vibrato, no scoop and no bow direction. What is sent is timing, velocity, `art`,
+keyswitches, the constant `controls`, one dynamics curve every 15 ms (the written arc plus the per-note arch below), and -
+for slurred legato - a pitch-bend glide and a partial gain ramp.
 
-That leaves five levers, in this order:
+That leaves six levers, in this order:
 
 1. **Patch per articulation.** A staccato note and a held note must be different recordings. Mark the notes `"art"` and map
    the names to keyswitches for a KS patch, or give the articulation its own track and patch. One sustain patch across a whole
@@ -89,10 +90,17 @@ That leaves five levers, in this order:
    is applied to a controller the patch ignores - the part plays flat while the score looks correct.
 3. **A written dynamics arc.** `dyn_level` is the score's `dynamics` times the track's `dynamics`, and with neither it is a
    constant 1.0: one CC value for the whole piece, which is the organ-like sustain. The crescendo has to exist in the score.
-4. **Slurred legato where a player slurs.** Two consecutive `"art": "legato"` notes become one bow stroke (25 ms overlap,
+4. **Phrase each note.** A monophonic line also gets a per-note arch (`note_dyn`): a slow loss of support across a held
+   note and, at a phrase end, a taper over its last `release_s`, because a sustaining player varies the dynamic level
+   while the note sounds and a library models that with CC crossfades (sfzformat.com, [Sustained note
+   basics](https://sfzformat.com/tutorials/sustained_note_basics)). The taper needs a rest after the note
+   (`phrase_gap_s`): a continuous line is not ducked before every new note. One MIDI channel carries the whole track, so
+   a chord would have every voice shaped together: the arch is applied only when no note outlasts the next onset by more
+   than 60 ms. `note_dyn: false` switches it off. The numbers are starting values until a project measures its line.
+5. **Slurred legato where a player slurs.** Two consecutive `"art": "legato"` notes become one bow stroke (25 ms overlap,
    -20 cents glide, velocity x0.88, 25 ms partial ramp on a monophonic track). Leave staccato, marcato, pizzicato, tremolo,
    spiccato, col legno and harmonics out of it.
-5. **Level and room, measured.** `trim_db` set by measurement (libraries differ by many dB and sit well below the GM bank),
+6. **Level and room, measured.** `trim_db` set by measurement (libraries differ by many dB and sit well below the GM bank),
    the project `space` for reverb (the free sets are mostly dry), a unique azimuth/distance per part, and the mix preset's
    `inst_eq` for the 3-5 kHz brightness these libraries share.
 
@@ -102,9 +110,10 @@ neighbouring voice.
 
 What is still missing, and should be said rather than worked around: an SFZ stem does **not** pass through
 `dsp.enhance_sf2_dynamics`, the GM path's level-following tilt and saturation, so a soft sampled passage keeps the same
-brightness as a loud one. A sustained solo line that has to breathe (vibrato, a swell, a phrase-end taper) belongs on the GM
-path or the vocal engine until the SFZ path sends those curves. Judge the result with `naturalness_check.py` (`spec_flux`,
-`flatness`) and the `modulation_flutter` gate row, and report that neither is an ear.
+brightness as a loud one unless the track carries a `dynamic_tilt` block (the tick applies per note there too). Vibrato,
+a scoop and a bow-direction swell still belong to the GM path or the vocal engine: the arch above moves level, not pitch or
+colour. Judge the result with `naturalness_check.py` (`spec_flux`, `flatness`) and the `modulation_flutter` gate row, and
+report that neither is an ear.
 
 ## The gate
 Project gate: an SFZ track needs its library installed, the patch to exist, and the engine (the message names the command). Warnings: the credit
