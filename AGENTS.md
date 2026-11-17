@@ -68,6 +68,9 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **5.1** Scaffold instruments/vocals: `python scripts/presets.py scaffold instruments|vocals <exact_name> --project <dir>`. Each needs unique `spatial.azimuth/distance`. Fill real `character` sentence (placeholder blocked).
 - [ ] **5.2** Scaffold space preset if needed: `python scripts/presets.py scaffold spaces <name> --project <dir>`. Set `space`/`room` in score.
 - [ ] **5.3** Scaffold mix preset: `python scripts/presets.py scaffold mix --project <dir>`. **MUST customize it** - defaults are no-ops. Configure per piece needs (ducking, sidechain, mastering.crest_floor_db, inst_eq, etc.). Read `references/mixing/mixing-and-mastering.md` section 8b.
+      The master tone curves, the glue compressor, the room send per role (`space.send_by_role`) and the duck timing are
+      preset keys: change the number there, never in `mixer.py`. To make the sheet's `mix_intent` act on the mix, carry it
+      on the score and set `lead_carve: {"enabled": true, "from_intent": true}`.
 - [ ] **5.4** For immersive: add `"immersive": {"enabled": true, ...}` to mix preset. Set heights in presets to match staging. Bass/drums at 0deg.
       A scaffolded mix preset runs on the ambisonic bus (`"engine": "hoa_bus"`): a moving part gets `spatial.trajectory`
       keyframes placed by bar or section, a room that changes gets `scenes` on the space preset, and a room's tail comes
@@ -96,8 +99,13 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **8.3** For immersive pieces, fix imm_* rows in presets/score, never loosen. `imm_kinematics`: spread the
       keyframes. `imm_low_fold` / `mix.band_fold`: narrow the stem the row names. `imm_clarity`: lower the space's
       `late.level_db`. Table: `references/mixing/quality-gate.md` §5b.
-- [ ] **8.4** Extra deliverables are `output_targets` names, never a script: `ambix` (sound field), `adm_bw64`
-      (objects), `stereo_48k` (or `"rate_hz": 48000` on a project's own target). List a two-channel target first.
+- [ ] **8.4** Extra deliverables are `output_targets` names, never a script: `mono` (rendered, not folded),
+      `immersive_5_1` / `_5_1_2` / `_5_1_4` and the 7.1 family (loudspeaker layouts), `ambix` (sound field), `adm_bw64`
+      (objects), `stereo_48k` (or `"rate_hz": 48000` on a project's own target). List `stereo` first: the `fold.mono` and
+      `fold.timbre` rows compare every extra format with that master, and only warn without it.
+- [ ] **8.5** A `fold.*` or `imm.loudness` row is fixed in the piece: narrow or re-pan the part the row's band names,
+      move its `spatial` place, or lower the loudness target. Another layout is a JSON file in the project's
+      `presets/layouts/` and `presets/outputs/`. `references/spatial/immersive-deliverables.md`.
 
 ### PHASE 9: DELIVER
 - [ ] **9.1** Verify the delivery record: `python scripts/helpers/version_manager.py list --project <dir>`. Every certified render is kept as `out/master_vNN.wav` with its change in `out/versions.json`; `out/master.wav` is a copy of the newest. Never delete or overwrite a version file or a record.
@@ -138,6 +146,7 @@ Before Phase 4, open every file in the row that matches the request; union sever
 | **Exact theme/chord sheet/timecodes** | `references/workflow/custom-scripts.md`, `references/workflow/creative-composition.md`, `templates/custom_score_template.py` |
 | **Spatial/3D/headphone** | `references/spatial/spatial-presets-and-scoring.md` |
 | **Immersive/height/surround** | `references/spatial/immersive-spatial.md`, `references/spatial/spatial-presets-and-scoring.md`, `references/mixing/quality-gate.md` §5b |
+| **Mono / 5.1 / any loudspeaker layout / GPU render** | `references/spatial/immersive-deliverables.md`, `references/mixing/quality-gate.md` §5b, `scripts/compute.py` |
 | **Clone instrument** | `references/instruments-and-vocals/instrument-cloning.md`, `scripts/clone_instrument.py` |
 | **Extract MIDI/stems** | `references/workflow/extraction.md`, `scripts/extract_pipeline.py` |
 | **Mix/master existing stems** | `references/mixing/mixing-and-mastering.md`, `scripts/mixer.py`, `scripts/mix_diagnostics.py` |

@@ -157,11 +157,13 @@ A score names what it wants built; the engine builds only that, never every form
 | `immersive_7_1_2` | 10 | ITU-R BS.2051 System I | -3.0 dBTP |
 | `ambix` | 36 | the mix as a fifth-order sound field (ACN, SN3D) | -3.0 dBTP |
 | `adm_bw64` | one per object + 2 | ADM objects with positions over time, stereo bed | -3.0 dBTP |
+| `immersive_5_1`, `immersive_5_1_2`, `immersive_5_1_4` | 6, 8, 10 | the 5.1 ring, alone or with two or four overhead speakers (ITU-R BS.2051 systems B, C, D) | -3.0 dBTP |
+| `mono` | 1 | rendered from the mix without pan, width or head filter (not a sum of the stereo file) | -1.5 dBTP |
 | `stereo_48k` | 2 | the stereo master at 48 kHz (`"rate_hz"` works on any target) | -1.5 dBTP |
 
 Every number lives in `references/data/presets/outputs/` (format) and `references/data/presets/layouts/` (speaker
 positions, crossover, fold-down), loaded through `presets.py`, so a project can add its own format with two JSON files.
-Every shipped target names a renderer the engine has (`mix_master`, `spatial`, `binaural`, `hoa`, `adm`). A project's own target with
+Every shipped target names a renderer the engine has (`mix_master`, `spatial`, `binaural`, `hoa`, `adm`, `mono`). List `stereo` first: the `fold.mono` and `fold.timbre` rows compare each extra format with it (`references/spatial/immersive-deliverables.md`). A project's own target with
 `"renderer": null` is described but cannot be built: naming it blocks the render (no silent downgrade), and `"all"`
 reports it as skipped. The CLI can override the score: `--targets stereo` or `--targets all`.
 

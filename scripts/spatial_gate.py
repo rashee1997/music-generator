@@ -27,11 +27,110 @@ def _db(x):
     return float(20.0 * np.log10(np.sqrt(np.mean(np.square(x)) + 1e-20)))
 
 
-def targets_for(score, channels):
-    """The selected targets whose channel count is `channels` (empty when the file is not a requested format)."""
+def targets_for(score, channels, path=None):
+    """The selected targets this file is: the one whose file name it carries when there is one (5.1.2 and 7.1 both
+    have eight channels, so a channel count alone cannot tell them apart), else every selected target with that
+    channel count. Empty when the file is not a requested format."""
     import render_targets
     sel = render_targets.resolve(score)['selected']
-    return [t for t in sel if render_targets.channels(t) == int(channels)]
+    same = [t for t in sel if render_targets.channels(t) == int(channels)]
+    if path is not None:
+        base = os.path.basename(str(path))
+        if base.startswith('_draft_'):
+            base = base[len('_draft_'):]
+        named = [t for t in same if base == render_targets.filename(t)]
+        if named:
+            return named
+    return same
+
+
+def _erb_bands(lo=100.0, hi=5000.0):
+    """Edges of the auditory bands between lo and hi (one ERB each): the bands quality_gate.fold_rows uses."""
+    import quality_gate
+    return quality_gate._erb_edges()
+
+
+def band_levels(x, sr, edges):
+    """Power in each band of a one-channel signal (Welch), as an array."""
+    from scipy.signal import welch
+    x = np.asarray(x, dtype=np.float64).reshape(-1)
+    f, p = welch(x, fs=float(sr), nperseg=min(len(x), 8192))
+    return np.array([p[(f >= a) & (f < b)].sum() for a, b in zip(edges[:-1], edges[1:])])
+
+
+def fold_timbre(reference, candidate, sr, floor_db=30.0):
+    """How far the spectrum of `candidate` departs from `reference`, band by band, once their overall levels are
+    matched: (worst deviation in dB, the band's edges in Hz). Bands more than `floor_db` under the loudest band of
+    the reference are left out: a band with nothing in it has nothing to lose."""
+    edges = _erb_bands()
+    a, b = band_levels(reference, sr, edges), band_levels(candidate, sr, edges)
+    keep = a > a.max() * 10.0 ** (-float(floor_db) / 10.0) if a.max() > 0 else np.zeros(len(a), bool)
+    if not keep.any() or b[keep].sum() <= 0:
+        return 0.0, (0.0, 0.0)
+    dev = 10.0 * np.log10((b + 1e-30) / (a + 1e-30))
+    dev = dev - 10.0 * np.log10(b[keep].sum() / a[keep].sum())        # level-matched over the bands that count
+    i = int(np.argmax(np.where(keep, np.abs(dev), -1.0)))
+    return float(dev[i]), (float(edges[i]), float(edges[i + 1]))
+
+
+def fold_rows(score, primary_path, extra_path, target_name, out):
+    """Rows that compare a deliverable with the certified two-channel master it was delivered beside.
+
+    fold.mono    the rendered mono against the plain sum of the stereo master, band by band. Where they agree, the
+                 stereo master is safe on a system that sums it; where they do not, the row names the band the sum
+                 loses or gains, which is what a listener on one speaker would hear of the stereo file.
+    fold.timbre  a loudspeaker layout folded to two channels (the layout's own BS.775 coefficients) against the
+                 stereo master: no format may be the dull one or the thin one.
+
+    Both are comparisons of long-term spectra after level matching. They do not see a part that is missing for two
+    bars; the per-file rows and the listening pass are for that.
+    """
+    import gate_audio
+    import render_targets
+    tgt = render_targets.get(target_name) or {}
+    gate = tgt.get('gate') or {}
+    limit = gate.get('fold_band_max_db')
+    if limit is None:
+        return
+    primary_name = (render_targets.resolve(score)['selected'] or [None])[0]
+    primary = render_targets.get(primary_name) or {}
+    if primary.get('channels') != 2 or primary.get('renderer') != 'mix_master':
+        _row(out, 'WARN', 'fold.reference',
+             f'{target_name}: no loudspeaker stereo master was delivered first ("{primary_name}"), so the fold-down '
+             f'comparison was not made')
+        return
+    try:
+        ref, new = gate_audio.load(primary_path), gate_audio.load(extra_path)
+    except Exception as exc:
+        _row(out, 'FAIL', 'fold.reference', f'{target_name}: cannot read the files to compare them ({exc})')
+        return
+    if ref.sr != new.sr:
+        _row(out, 'WARN', 'fold.reference', f'{target_name}: {new.sr} Hz against a {ref.sr} Hz master; not compared')
+        return
+    floor = float(gate.get('fold_floor_db', 30.0))
+    stereo_sum = 0.5 * (ref.audio[:, 0] + ref.audio[:, 1])
+    if tgt.get('renderer') == 'mono':
+        dev, (lo, hi) = fold_timbre(new.audio[:, 0], stereo_sum, ref.sr, floor)
+        bad = abs(dev) > float(limit)
+        _row(out, 'FAIL' if bad else 'PASS', 'fold.mono',
+             (f'{target_name}: summed to one channel, the stereo master is {dev:+.1f} dB against the rendered mono at '
+              f'{lo:.0f}-{hi:.0f} Hz (limit {float(limit):g} dB): something there is cancelling or doubling in the '
+              f'stereo file. Narrow or re-pan the part that lives in that band' if bad else
+              f'{target_name}: the stereo master summed to one channel stays within {float(limit):g} dB of the '
+              f'rendered mono in every auditory band from 100 to 5000 Hz (worst {dev:+.1f} dB at {lo:.0f}-{hi:.0f} Hz)'))
+        return
+    lay = tgt.get('layout')
+    if lay and new.channels > 2:
+        from spatial_engine import downmix
+        fold = downmix.fold(new.audio, lay)
+        dev, (lo, hi) = fold_timbre(stereo_sum, 0.5 * (fold[:, 0] + fold[:, 1]), ref.sr, floor)
+        bad = abs(dev) > float(limit)
+        _row(out, 'FAIL' if bad else 'PASS', 'fold.timbre',
+             (f'{target_name}: folded to two channels it is {dev:+.1f} dB against the stereo master at '
+              f'{lo:.0f}-{hi:.0f} Hz (limit {float(limit):g} dB): this format does not sound like the same mix there'
+              if bad else
+              f'{target_name}: folded to two channels it stays within {float(limit):g} dB of the stereo master in '
+              f'every auditory band from 100 to 5000 Hz (worst {dev:+.1f} dB at {lo:.0f}-{hi:.0f} Hz)'))
 
 
 def adm_rows(score, wav_path, out):
@@ -100,7 +199,7 @@ def output_rows(score, wav_path, out):
         return
     n_ch = sig.channels
     finite_row(sig.audio, out, os.path.basename(str(wav_path)))
-    targets = targets_for(score, n_ch) or [
+    targets = targets_for(score, n_ch, wav_path) or [
         t for t in render_targets.resolve(score)['selected']
         if not render_targets.channels(t) and os.path.basename(str(wav_path)).endswith(render_targets.filename(t))]
     if not targets:
@@ -119,6 +218,8 @@ def output_rows(score, wav_path, out):
             _row(out, 'FAIL' if worst > ceiling else 'PASS', 'delivery.true_peak',
                  f'{name}: worst channel true peak {worst:+.1f} dBTP (ceiling {ceiling:+.1f} dBTP; '
                  f'per channel {", ".join(f"{p:+.1f}" for p in peaks)})')
+        if n_ch == 1:
+            continue
         if n_ch == 2:
             corr = float(np.corrcoef(sig.audio[:, 0], sig.audio[:, 1])[0, 1]) if n_ch == 2 else 1.0
             limit = float((tgt.get('gate') or {}).get('stereo_correlation_min', 0.0))
@@ -130,6 +231,20 @@ def output_rows(score, wav_path, out):
             continue
         cfg = config.lfe_cfg(lay_name, target)
         order = list(tgt.get('channel_order') or [])
+        if (tgt.get('loudness') or {}).get('method') == 'bs1770_layout' and len(order) == n_ch:
+            import loudness
+            import mix_schema
+            import mixer
+            got = loudness.layout_lufs(sig.audio, lay_name, sig.sr)
+            mcfg = mixer._master_cfg(dict((score or {}).get('master') or {}), mixer._mix())
+            want = float((tgt.get('loudness') or {}).get('target_lufs', mcfg.get('lufs', -14.0)))
+            miss = float(mix_schema.section(mixer._mix(), 'mastering')['converge']['report_miss_lu'])
+            off = abs(got - want) > miss
+            _row(out, 'WARN' if off else 'PASS', 'imm.loudness',
+                 f'{name}: {got:.1f} LKFS on the delivered channels against a {want:g} LKFS target (ITU-R BS.1770 with '
+                 f'this layout\'s channel weights, low-frequency channel excluded)'
+                 + ('; the limiter stopped at its allowed reduction rather than flatten the programme: lower the '
+                    'target or accept it' if off and got < want else ''))
         # low-frequency channel: nothing above the stopband may leave it
         idx = cfg.get('channel')
         if isinstance(idx, str):                      # the layout names its channel; the target may give an index

@@ -285,7 +285,7 @@ class MusicPipeline:
         from spatial_engine import render as spatial_render
         name = target or ((render_targets.resolve(score)['selected'] or ['stereo'])[0])
         renderer = (render_targets.get(name) or {}).get('renderer')
-        if renderer in ('spatial', 'binaural'):
+        if renderer in ('spatial', 'binaural', 'mono'):
             spatial_render.render_deliverable(score, stems, name, out_wav)
             try:                       # the same advisory diagnostics the stereo path leaves for the gate
                 import mix_diagnostics
@@ -875,6 +875,10 @@ class MusicPipeline:
                 spatial_render.render_deliverable(score, stems, extra, extra_draft)
                 rows = []
                 spatial_gate.output_rows(score, extra_draft, rows)
+                spatial_gate.fold_rows(score, out_wav, extra_draft, extra, rows)
+                for lvl, n, d in rows:
+                    if lvl != 'FAIL':
+                        print(f"  [{lvl}] {n}: {d}")
                 bad = [(n, d) for lvl, n, d in rows if lvl == 'FAIL']
                 if bad:
                     for n, d in bad:

@@ -28,6 +28,8 @@ import os
 import tempfile
 
 import numpy as np
+
+import compute
 from scipy import signal
 
 from . import trajectory
@@ -248,7 +250,7 @@ class HoaBus:
                 if is_near and self.decode == 'binaural':   # the two ears hear different distances: no field holds that
                     dec = H.magls(self.order)
                     if p is None:
-                        ears = np.stack([signal.fftconvolve(direct, g @ dec[e])[:n] for e in (0, 1)], axis=1)
+                        ears = np.stack([compute.conv(direct, g @ dec[e])[:n] for e in (0, 1)], axis=1)
                         ears = H.apply_near_field(ears, a0, el, dist, near, sr)
                     else:
                         az_s, el_s = trajectory.at_samples(p, 0, 0, n), trajectory.at_samples(p, 1, 0, n)
@@ -330,7 +332,7 @@ class HoaBus:
         level = 10.0 ** (float(cfg.get('level_db', -18.0)) / 20.0) / np.sqrt(len(dirs))
         for i, (az, el) in enumerate(dirs):
             ir = room.late_ir(dict(cfg, seed=int(cfg.get('seed', 7)) + i), self.sr).astype(float)
-            tail = signal.oaconvolve(send, ir)[:len(send)] * (level / np.sqrt(np.sum(ir ** 2)))
+            tail = compute.oaconv(send, ir)[:len(send)] * (level / np.sqrt(np.sum(ir ** 2)))
             encode(bus, tail, _hrtf().gains(self.order, az, el)[0])
 
     # ------------------------------------------------------------------ the field and its decoders
@@ -372,7 +374,7 @@ class HoaBus:
                 col = np.asarray(bus[:, c], float)
                 if col.any():                             # a long signal, a short filter: overlap-add is the fast way
                     for e in (0, 1):
-                        out[:, e] += signal.oaconvolve(col, dec[e, c])[:len(col)]
+                        out[:, e] += compute.oaconv(col, dec[e, c])[:len(col)]
             return out.astype(np.float32)
         finally:
             if path:

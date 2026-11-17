@@ -220,6 +220,9 @@ def scaffold(kind, name, project_dir, from_name=None):
                                   multiband=None, dynamic_eq=None, transient=None),   # engine='dsp' reaches scripts/dsp.py
                     spectral=dict(max_auto_cut_db=0.0, preserve_spectrum_roles=['environment']),   # 0 = no clamp on carve_db
                     space=dict(auto_env_blend=dict(enabled=True),                                  # lift instrument sends when ambience is present
+                               # the room send each role starts with (starting values: a dry bass, a wet pad). Delete a role to give it `default`
+                               send_by_role=dict(default=0.18, bass=0.0, drum=0.08, percussion=0.08, pad=0.30, texture=0.30,
+                                                 drone=0.26, melody=0.22, lead=0.22, vocal=0.22, environment=0.20),
                                drr=dict(enabled=False, target_db=0.0), tail_guard_db=-62.0),
                     sidechain=dict(mode='legacy', band_hz=[250.0, 3800.0], residual=0.3, env_plateau=True),  # legacy|explicit|off
                     automation=dict(curve='linear'),                                                   # linear|cosine|exponential

@@ -138,6 +138,7 @@ class LayoutBus:
     The interface is the one `bus` in mix_stems expects: add(name, signal, spec), add_reverb(signal), result().
     """
     places_tracks = True               # with immersive on, the mixer hands tracks over unplaced
+    unplaced = True                    # ... and without it too: a track panned for two speakers is not placed for eight
 
     def __init__(self, layout_name, target_name=None, sr=44100):
         problems = config.problems(layout_name)
@@ -190,7 +191,12 @@ class LayoutBus:
         # The mixer keeps a track's place in `spatial`; a flat azimuth/elevation is still accepted for a caller
         # that hands raw specs. Reading only the flat pair put every track at 0 deg (front centre).
         sp = spec.get('spatial') or {}
-        azimuth = float(sp.get('azimuth', spec.get('azimuth', 0.0)))
+        # A track with a stereo `pan` and no place of its own sits on the front stage at that pan: full left is the
+        # layout's front-left loudspeaker (`reverb.front_azimuth_max` is the front stage's half-width). It used to
+        # arrive already panned for two speakers, be averaged to one channel and land in the centre loudspeaker,
+        # so a piece that was never staged in 3-D came out of 7.1 as mono in the centre.
+        from_pan = float(np.clip(float(spec.get('pan', 0.0) or 0.0), -1.0, 1.0)) * float(self.reverb.get('front_azimuth_max', 0.0))
+        azimuth = float(sp.get('azimuth', spec.get('azimuth', from_pan)))
         elevation = float(sp.get('elevation', spec.get('elevation', 0.0)))
         path = None
         if self.imm and sp:                    # an immersive piece: the role's height, and the track's own path
@@ -261,6 +267,79 @@ class LayoutBus:
         skip = [self.lfe_speaker['name']] if self.lfe_speaker else None
         mix = decorrelate.bus(mix, self.decorrelation, self.sr, names=skip)
         return np.stack([mix[name] for name in self.names], axis=1)
+
+
+class MonoBus:
+    """The summing target of the one-channel deliverable.
+
+    A mono file made by adding the two channels of a stereo or headphone master inherits everything that master did
+    to place its sources: a hard-panned part comes out 3 dB down, widened parts lose what was added out of phase, and
+    a head-filtered source is notched where its two ears disagree. So mono is rendered instead: mixer.mix_stems makes
+    every per-track decision as usual, hands each track over without pan, width or head filter (`unplaced`), and this
+    bus adds them at the level the mix gave them.
+
+    A track that is stereo in itself (a sampled piano, a decorrelated bed) and the shared reverb return still have
+    two channels. Their mid is taken, and the level lost by averaging two channels that are not identical is given
+    back with one gain, bounded by the target's `mono.compensate_max_db`: two unrelated channels average 3 dB down,
+    and nothing is ever boosted beyond that bound to rescue a part whose channels cancel.
+    """
+    unplaced = True
+
+    def __init__(self, sr=44100, cfg=None):
+        self.sr = int(sr)
+        self.cfg = dict(cfg or {})
+        self.parts = []
+        self.compensation = {}
+
+    def _one(self, name, y):
+        y = np.asarray(y, dtype=np.float64)
+        if y.ndim == 1 or y.shape[1] == 1:
+            return y.reshape(-1)
+        mid = 0.5 * (y[:, 0] + y[:, 1])
+        limit = float(self.cfg.get('compensate_max_db', 0.0))
+        if limit <= 0.0:
+            return mid
+        want = float(np.mean(y[:, 0] ** 2 + y[:, 1] ** 2)) / 2.0
+        have = float(np.mean(mid ** 2))
+        if have <= 0.0 or want <= 0.0:
+            return mid
+        gain_db = float(np.clip(10.0 * np.log10(want / have), 0.0, limit))
+        self.compensation[name] = gain_db
+        return mid * 10.0 ** (gain_db / 20.0)
+
+    def add(self, name, y, spec):
+        x = self._one(name, y)
+        if x.size:
+            self.parts.append(x)
+
+    def add_reverb(self, ret):
+        if ret is not None and len(ret):
+            self.parts.append(self._one('reverb_return', ret))
+
+    def result(self):
+        n = max((len(p) for p in self.parts), default=0)
+        out = np.zeros(n, dtype=np.float64)
+        for p in self.parts:
+            out[:len(p)] += p
+        return out.astype(np.float32)[:, None]
+
+
+def mono_mix(score, stems, target, sr=44100, ctx=None):
+    """The one-channel deliverable: the same mix, summed by a MonoBus, through the same master chain."""
+    import mixer
+    ctx = mixer._context_for(score, ctx)
+    bus = MonoBus(sr, (target or {}).get('mono'))
+    mix = mixer.trim_tail(mixer.mix_stems(score, stems, sr, ctx, bus=bus), sr)
+    master_cfg = dict(score.get('master') or {})
+    # The master chain is a two-channel chain; a one-channel programme goes through it as two identical channels
+    # (which is how a mono file is played on a stereo system, and the loudness the target is set on).
+    out = mixer.master_chain(np.repeat(mix, 2, axis=1), master_cfg, sr, ctx)
+    out = mixer.fades(out, sr, fout=float(mixer._master_cfg(master_cfg, mixer._mix()).get('fade_out', 0.6)))
+    REPORT['mono'] = dict(compensation_db=dict(bus.compensation))
+    return out[:, :1]
+
+
+REPORT = {}
 
 
 def spatial_mix(score, stems, target_name, sr=44100, ctx=None):
@@ -338,7 +417,9 @@ def hoa_mix(score, stems, target, sr=44100, ctx=None):
     from . import hoa
     with _immersive(score, ctx) as bctx:
         imm = bctx.mix['immersive']
-        bus = hoa.HoaBus(sr, int(target.get('order') or imm.get('order', 5)), 'ambix', imm, bctx.space, score)
+        # `order` in a target preset is its place in the listing, not an ambisonic order: reading it here wrote
+        # a 49-channel file for a target that promises 36. The field's order is `ambisonic_order`.
+        bus = hoa.HoaBus(sr, int(target.get('ambisonic_order') or imm.get('order', 5)), 'ambix', imm, bctx.space, score)
         field = mixer.trim_tail(mixer.mix_stems(score, stems, sr, bctx, bus=bus), sr)
         return _level(field, np.repeat(field[:, :1], 2, axis=1), score, target, sr)   # W is the plain pressure
 
@@ -384,6 +465,8 @@ def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None):
         audio = master.master(spatial_mix(score, stems, target_name, sr, ctx), score, target, sr)
     elif renderer == 'binaural':
         audio = binaural_mix(score, stems, sr, ctx)
+    elif renderer == 'mono':
+        audio = mono_mix(score, stems, target, sr, ctx)
     elif renderer == 'hoa':
         audio = hoa_mix(score, stems, target, sr, ctx)
     elif renderer == 'adm':

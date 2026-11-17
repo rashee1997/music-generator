@@ -1,7 +1,7 @@
 # Engine audit and the plan for Immersive 3.0
 
-Status: proposal, nothing in the engine has been changed. Written 2026-11-17 from a read of the code, a
-profile of the render path and web research.
+Status: the audit below is as written on 2026-11-17. The first implementation pass is in the engine; section 11 says
+exactly what was built, what was verified and what is still open.
 
 ## 1. What this is based on, and what it is not
 
@@ -265,6 +265,56 @@ by numbers alone: they need `listen.py` and a person.
    formats) or keep 44.1 kHz and let targets ask.
 3. **GPU dependency.** torch (recommended: already used by `listen.py`, covers CUDA and MPS) or CuPy (lighter, CUDA only).
 4. **`sfx.py` recipes.** Retire them (recommended) or keep them as legacy names that resolve to models.
+
+## 11. What the first implementation pass built
+
+Verified by the test suite (the existing tests plus `tests/test_immersive_v3.py`) and by a null test of synthetic
+stems against renders saved before any change. Nothing was listened to, and no real project was run through
+`pipeline.py` (no SoundFont in the build container), so every item is "the numbers are right", not "it sounds right".
+
+| Built | Where | Check |
+|---|---|---|
+| Rendered `mono` target | `spatial_engine/render.py` `MonoBus`, `presets/outputs/mono.json` | a hard-panned part keeps its level in the render and is 3.0 dB down in the fold |
+| 5.1, 5.1.2, 5.1.4 layouts and targets | `presets/layouts/itu_bs2051_system_b/c/d.json`, `presets/outputs/immersive_5_1*.json` | presets validate; panning keeps unit power over the sphere |
+| `fold.mono`, `fold.timbre`, `fold.reference`, `imm.loudness` rows | `spatial_gate.py`, called from pipeline stage 5b | each with a passing and a failing control |
+| BS.1770 loudness with channel weights | `scripts/loudness.py` | matches the stereo meter; surround +1.5 dB; LFE excluded |
+| Linked multichannel true-peak limiter | `spatial_engine/master.py` `limit` | peaks land on the ceiling; one gain for all channels; bounded reduction is reported |
+| Master chain, room sends, duck timing, synthesised room as preset data | `mix_schema.py`, `mixer.py` | stereo mix and master null bit-for-bit against the saved renders |
+| `mix_intent` drives the lead carve when asked | `lead_carve.from_intent` | the bed gives way in the band the sheet names |
+| Stems mixed in parallel | `render.mix_workers` | identical samples; 4.8 s to 2.2 s on eight 60 s stems, four cores |
+| One-pass loudness measures | `loudness.Blocks` | master measures agree within 0.01 |
+| matplotlib no longer imported by a render | `spatial_hrtf/__init__.py` | import 1.05 s to 0.84 s |
+| CPU / GPU selection | `scripts/compute.py`, `render.compute` | CPU path and fallbacks tested; **the GPU kernel has not run on a GPU or on torch at all** (torch could not be installed) |
+
+Bugs found on the way and fixed:
+
+- The `ambix` deliverable was written with 49 channels, not the 36 its preset promises: the preset's listing position
+  (`order`) was read as the ambisonic order. The key is `ambisonic_order` now.
+- A piece with stereo pans and no `spatial` blocks came out of every loudspeaker layout in the centre speaker only.
+- The per-role reverb sends in `mixer.default_spec` never applied (every role had the default before they were read), so
+  a bass was sent to the room like a flute. They are data now; the schema default keeps the old behaviour and a newly
+  scaffolded mix preset lists the per-role set.
+- The one sample score that asks for the master tone `dark` was getting a flat master with no message. It still masters
+  flat, and now says so.
+- Two layouts with the same channel count (5.1.2 and 7.1) were indistinguishable to the gate; files are matched by name.
+
+Changed on purpose, so an old layout render will not null: 7.1 / 7.1.2 / 7.1.4 files are levelled with channel weights
+and limited, and panned parts reach their side. The stereo master is unchanged to the bit.
+
+Still open, in the order of section 9:
+
+| Open | Why |
+|---|---|
+| `render.sample_rate` (phase 3) | 44100 is a constant in over a hundred places; not started |
+| Scene cache shared by all targets | each target still re-runs `mix_stems` |
+| 9.1.6 | no ITU layout of that name to cite for positions; a project can add its own layout file |
+| IAMF | needs the external encoder; not wired |
+| AllRAD2 / EPAD, binaural equalisation, FDN late field, directivity, field rotation (phase 5) | change the sound and need listening |
+| Per-frame spectral unmasking, section automation, mastering chain as a list, `must_hear` rows (phase 6) | only the `mix_intent` carve is done |
+| Vocal batching and lattice filter, SFX recipes into model JSON, ambience as scene objects (phase 7) | not started |
+| `mix_schema.py` tables, `world.py`, `compose.py`, `theory.py`, `environment.py`, `spatial.py` into JSON | not started; the mixer's inline numbers are done |
+| `situation` field and `sections[].mix` on the direction sheet | not started; the sheet gained `delivery.played_on` and an executable `mix_intent` |
+| A real project through `pipeline.py`, `mono` as the first target, any GPU render | not run |
 
 ## Sources
 

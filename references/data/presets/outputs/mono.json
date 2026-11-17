@@ -1,0 +1,31 @@
+{
+  "name": "mono",
+  "character": "One channel, rendered and not folded: every track at the level the mix gave it, with no pan, no width and no head filter, so nothing cancels. For a phone speaker, a radio, a public-address system or a club system that sums.",
+  "label": "mono master (rendered)",
+  "order": 12,
+  "aliases": [
+    "mono_render",
+    "1.0"
+  ],
+  "channels": 1,
+  "channel_order": [
+    "M"
+  ],
+  "file": "master_mono.wav",
+  "renderer": "mono",
+  "true_peak_dbtp": -1.5,
+  "layout": null,
+  "mono": {
+    "compensate_max_db": 3.0
+  },
+  "gate": {
+    "fold_band_max_db": 3.5,
+    "fold_floor_db": 30.0
+  },
+  "sources": [
+    "Rendered mono: the mix is summed without placement (scripts/spatial_engine/render.py MonoBus). The alternative, adding the two channels of the stereo master, is what the mix.band_fold and fold.mono rows measure",
+    "compensate_max_db 3.0: two channels with nothing in common average 3.01 dB below either one (10 log10 2), so 3 dB is the most that averaging alone can cost a stereo part; a part that loses more than that is cancelling, and is not boosted",
+    "Loudness is set on the programme as two identical channels (how a one-channel file plays on a stereo system); measured as a single channel per ITU-R BS.1770 it reads 3 LU lower. The -1.5 dBTP ceiling is this project's two-channel policy",
+    "fold_band_max_db 3.5 is the same starting value as the mix.band_fold row"
+  ]
+}

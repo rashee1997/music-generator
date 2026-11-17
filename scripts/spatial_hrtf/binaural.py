@@ -25,6 +25,8 @@ import hashlib
 import os
 
 import numpy as np
+
+import compute
 from scipy import signal
 
 from . import data, decoder, io, room, sph
@@ -286,7 +288,7 @@ def spatialize(audio, azimuth_deg=0.0, elevation_deg=0.0, distance_m=1.5, sr=SR,
         x = _air(x, d0, temp_c, rh, sr)
         out = np.zeros((n, 2))
         for e in (0, 1):
-            out[:, e] = signal.fftconvolve(x, g @ dec[e])[:n]
+            out[:, e] = compute.conv(x, g @ dec[e])[:n]
         if near_field:
             out = apply_near_field(out, a0, e0, d0, near_field, sr)
         return out.astype(np.float32)
@@ -369,8 +371,8 @@ def _place_tap(x, delay_ms, coeffs, dec, order, direction, sr):
         fir = room.absorption_fir(coeffs, sr=sr)
         s = signal.lfilter(fir, 1.0, s)
     g = gains(order, direction[0], direction[1])[0]
-    return np.stack([signal.fftconvolve(s, g @ dec[0])[:len(x)],
-                     signal.fftconvolve(s, g @ dec[1])[:len(x)]], axis=1)
+    return np.stack([compute.conv(s, g @ dec[0])[:len(x)],
+                     compute.conv(s, g @ dec[1])[:len(x)]], axis=1)
 
 
 def reflections(audio, azimuth_deg, distance_m, refl, sr=SR, order=ORDER, path_physics=True, ref_m=1.0,
@@ -429,7 +431,7 @@ def reflections(audio, azimuth_deg, distance_m, refl, sr=SR, order=ORDER, path_p
         s = signal.sosfilt(signal.butter(2, min(sr * 0.45, float(refl.get(key + '_cutoff_hz', cutoff))), 'low', fs=sr, output='sos'), s)
         g = gains(order, direction[0], direction[1])[0]
         for e in (0, 1):
-            out[:, e] += signal.fftconvolve(s, g @ dec[e])[:n]
+            out[:, e] += compute.conv(s, g @ dec[e])[:n]
 
     for tap in fixed_plan(az):
         add(*tap)
@@ -475,10 +477,10 @@ def late(audio, azimuth_deg, distance_m, refl, sr=SR, order=ORDER, ref_m=1.0):
     acc = np.zeros((n, 2))
     for i, (daz, del_) in enumerate(dirs):
         ir = room.late_ir(dict(cfg, seed=int(cfg.get('seed', 7)) + i), sr)
-        tail = signal.fftconvolve(x, ir)[:n]
+        tail = compute.conv(x, ir)[:n]
         g = gains(order, daz, del_)[0]
         for e in (0, 1):
-            acc[:, e] += signal.fftconvolve(tail, g @ dec[e])[:n]
+            acc[:, e] += compute.conv(tail, g @ dec[e])[:n]
     acc /= max(1, len(dirs))
     dry = np.sqrt(np.mean(x ** 2) + 1e-12)
     got = np.sqrt(np.mean(acc ** 2) + 1e-12)

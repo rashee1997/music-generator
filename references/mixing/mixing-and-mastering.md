@@ -152,8 +152,8 @@ number out of range, a malformed EQ band, an unknown spectral profile or a bad m
 reported with its path.
 
 `scripts/mix_context.py` resolves a piece's configuration once (`mix_context.resolve(score)`), so mixing
-two pieces in one process cannot leak one into the other. The engine is single-threaded by design; it was
-already, and still is.
+two pieces in one process cannot leak one into the other. The context is per thread, and `render.mix_workers`
+processes several stems at once with the same samples as one after another.
 
 | Section | Keys | Default |
 |---|---|---|
@@ -205,6 +205,19 @@ The tuning does not follow the chords: real sympathetic strings are tuned to the
 it; an SFZ stem gets it when the block is present, for a library with a single velocity layer:
 `{"low_hz": 1500, "span_hz": 2600, "floor": 0.55, "curve": 1.2}`. The corner is `low_hz` plus `span_hz` times the mean
 velocity; `floor` is how much of the full band a silent moment keeps. An unknown key is an error.
+
+**Numbers that live in the mix preset, not in the mixer.**
+
+| Section | Keys | What they are |
+|---|---|---|
+| `mastering` | `highpass_hz`, `tones` (name -> EQ bands), `glue` (`threshold_db`, `ratio`, `attack_ms`, `release_ms`), `converge` (`max_iterations`, `tolerance_lu`, `step`, `report_miss_lu`), `fallback_limiter`, `min_crest_db` | the master chain itself. A master block or a profile picks a tone by name; a project adds its own tone by listing its bands. A tone that is not listed masters neutral and says so on stderr |
+| `space` | `send_by_role`, `ir` (`bands`, `length_factor`, `length_pad_s`, `onset_s`), `er` (`taps`, `first_gain`, `tap_decay`, `window_s`), `return` (`highpass_hz`, `lowpass_hz`), `auto_env_blend.floors` | the room send each role starts with, the synthesised tail and its early reflections, the band the reverb returns in. `send_by_role.default` is every role; a role listed beside it gets its own send, and a track's `reverb` still wins |
+| `sidechain` | `band_roles`, `default_duck_db`, `legacy_env_duck_db`, `lookahead_ms`, `timing` (`default`, `environment`), `plateau_percentile`, `plateau_fade_max_s`, `plateau_fade_frac` | which roles duck only in the lead's band, and the follower times when neither the track nor the per-role maps name one |
+| `lead_carve` | `from_intent` | with `enabled`, take the source from the score's `mix_intent.hero` and the band from `mix_intent.leave_free_hz`; `mixer.STATE['mix_intent_used']` records what was taken |
+| `render` | `compute` (`device`, `workers`), `mix_workers` | where the array work runs and how many stems are processed at once (`references/spatial/immersive-spatial.md`, section 2e) |
+
+A project scaffolded with `presets.py scaffold mix` lists a starting `send_by_role` (a dry bass, a wet pad). The schema
+default lists only `default`, so a piece with no such table sends every role alike.
 
 **Export validation.** `mix_and_master` re-reads the file it wrote and checks sample rate, channels,
 length, sample peak, oversampled true peak and full-scale samples, in `mixer.STATE['export']`. A problem

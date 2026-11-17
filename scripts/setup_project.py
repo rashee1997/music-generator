@@ -309,6 +309,10 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
                   "spectral": {"max_auto_cut_db": 0.0, "preserve_spectrum_roles": ["environment"],
                                "profiles": copy.deepcopy(mix_schema.SPECTRAL_PROFILES)},   # rain, wind, water, voice, strings, ...
                   "space": {"auto_env_blend": {"enabled": True},
+                            # the room send each role starts with (starting values: a dry bass, a wet pad)
+                            "send_by_role": {"default": 0.18, "bass": 0.0, "drum": 0.08, "percussion": 0.08, "pad": 0.30,
+                                             "texture": 0.30, "drone": 0.26, "melody": 0.22, "lead": 0.22, "vocal": 0.22,
+                                             "environment": 0.20},
                             "drr": {"enabled": False, "target_db": 0.0}},
                   "sidechain": {"mode": "legacy", "band_hz": [250.0, 3800.0], "residual": 0.3,
                                 "env_plateau": True},

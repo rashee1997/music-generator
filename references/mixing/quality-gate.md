@@ -216,10 +216,21 @@ against the target it claims to be. A format that was not requested is never che
 | `imm.surround_ratio` | multichannel | surround energy (BL+BR+SL+SR) against the front stage (FL+FR+FC) | layout `gate.surround_ratio_db` |
 | `imm.height_arc` | layouts with overhead speakers | height energy against the listener-level beds | layout `gate.height_max_rel_db` |
 | `imm.fold_coherence` | multichannel | correlation of the ITU-R BS.775 fold | layout `gate.stereo_correlation_min` |
+| `imm.loudness` | layouts whose target sets `loudness.method: bs1770_layout` | ITU-R BS.1770 loudness of the delivered channels with the layout's `loudness_weight_db` per speaker, the low-frequency channel left out; WARN when it misses the target by more than the mix preset's `mastering.converge.report_miss_lu` | the score's master block, or the target's `loudness.target_lufs` |
+| `fold.mono` | the `mono` target, beside a loudspeaker stereo master | the stereo master summed to one channel against the rendered mono, per auditory band from 100 to 5000 Hz, after level matching | target preset `gate.fold_band_max_db`, `fold_floor_db` |
+| `fold.timbre` | every layout target, beside a loudspeaker stereo master | the layout folded to two channels with its own `downmix` coefficients against the stereo master, per auditory band, after level matching | target preset `gate.fold_band_max_db`, `fold_floor_db` |
+| `fold.reference` | `mono` and layout targets | WARN: the first deliverable is not a loudspeaker stereo master, so the fold comparison was not made | none |
 | `render.finite` | every target | a NaN or an infinite sample in any channel (protected: no profile can switch it off) | none: one is a fault |
 | `adm.container` | the `adm_bw64` target | the container itself, read from the bytes: `BW64` magic + saturated outer size, `ds64` first with the 64-bit file and data sizes matching the file, `fmt `/`chna`/`axml`/`data` agreement, unique ADM IDs with every reference resolved (or a BS.2094 common definition), each `chna` row mapping one channel to one `audioTrackUID`, block times contiguous from 0 to the file end, positions in range | `scripts/spatial_engine/adm.py` `validate_file` (structure, not a threshold) |
 | `adm.channels` | the `adm_bw64` target | tracks, sample rate, frames, bit depth read from the parsed container, and that each track maps to exactly one ADM object | `adm.parse` |
 | `adm.loudness` | the `adm_bw64` target | names the loudness policy in the report: BS.1770 loudness of a constant-power stereo fold of the objects, applied as one programme gain at render time. This is this engine's internal levelling reference, not a standard-required loudness (an object file has no loudness until a renderer folds it), so the row reports the method rather than inventing a target | `spatial_engine/adm.py` `AdmBus.report` |
+
+The `fold.*` rows compare long-term spectra. They catch a band that cancels, doubles or goes dull between formats;
+they do not see a part that drops out for two bars, which is what the per-file rows and `listen.py` are for. A
+`fold.mono` FAIL is a fact about the stereo master (something in that band is out of phase between its channels, or
+panned so hard that the sum loses it): narrow, re-pan or lower the widening of the part that lives there. A
+`fold.timbre` FAIL is a fact about the layout render: check the part's `spatial` place and the layout's `downmix`.
+A file is matched to its target by its file name before its channel count, because two layouts can share a count.
 
 The `adm_bw64` target is checked by those rows and never by `delivery.format`: its channel count is the piece's, not
 the format's, and the container is BW64, which libsndfile/soundfile cannot open (`sf.read` raises `Format not

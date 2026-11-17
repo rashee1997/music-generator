@@ -3,19 +3,64 @@
   "character": "Discrete 7.1.2 immersive audio: the 7.1 ring plus a front overhead pair, the smallest true-height format.",
   "label": "7.1.2 immersive (ITU-R BS.2051 System I)",
   "order": 5,
-  "aliases": ["7.1.2", "7_1_2"],
+  "aliases": [
+    "7.1.2",
+    "7_1_2"
+  ],
   "channels": 10,
-  "channel_order": ["FL", "FR", "FC", "LFE", "BL", "BR", "SL", "SR", "TFL", "TFR"],
+  "channel_order": [
+    "FL",
+    "FR",
+    "FC",
+    "LFE",
+    "BL",
+    "BR",
+    "SL",
+    "SR",
+    "TFL",
+    "TFR"
+  ],
   "file": "master_7_1_2.wav",
   "renderer": "spatial",
   "true_peak_dbtp": -3.0,
   "layout": "itu_bs2051_system_i",
-  "lfe": {"channel": 4, "send_db": -10.0, "lowpass_hz": 80.0, "stopband_hz": 120.0, "stopband_db": -45.0,
-          "roles": ["bass", "sub_bass", "sub_brass", "drone", "kick"]},
-  "gate": {"stereo_correlation_min": 0.15},
+  "lfe": {
+    "channel": 4,
+    "send_db": -10.0,
+    "lowpass_hz": 80.0,
+    "stopband_hz": 120.0,
+    "stopband_db": -45.0,
+    "roles": [
+      "bass",
+      "sub_bass",
+      "sub_brass",
+      "drone",
+      "kick"
+    ]
+  },
+  "gate": {
+    "stereo_correlation_min": 0.15,
+    "fold_band_max_db": 6.0,
+    "fold_floor_db": 30.0
+  },
   "sources": [
     "ITU-R BS.2051-3: System I is the 7.1.2 loudspeaker layout (System H plus a front overhead pair at +30 degrees)",
     "ITU-R BS.1770-4: the LFE channel is excluded from the loudness measurement",
-    "The -3.0 dBTP ceiling is this project's delivery policy for a multichannel file that carries an LFE channel, not a measured acoustic value"
-  ]
+    "The -3.0 dBTP ceiling is this project's delivery policy for a multichannel file that carries an LFE channel, not a measured acoustic value",
+    "Loudness is measured on the delivered channels with the layout's channel weights (ITU-R BS.1770, `loudness.method`: bs1770_layout); it used to be the loudness of the two-channel fold, which a project can still ask for with \"stereo_fold\"",
+    "The linked limiter (5 ms look-ahead, 120 ms release, at most 6 dB of reduction) and the fold-down band limit (6 dB) are starting values, not measured ones"
+  ],
+  "loudness": {
+    "method": "bs1770_layout"
+  },
+  "limiter": {
+    "enabled": true,
+    "lookahead_ms": 5.0,
+    "release_ms": 120.0,
+    "oversample": 4,
+    "max_reduction_db": 6.0,
+    "max_iterations": 4,
+    "tolerance_lu": 0.2,
+    "margin_db": 0.1
+  }
 }
