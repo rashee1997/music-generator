@@ -384,7 +384,7 @@ def jag(name, t0, d, az, el, dist, keys=None, **kw):
 jag('jaguar_far', B(15, 2.5), 5.4, 150, 0, 16.0)
 jag('jaguar_near', B(22, 2), 8.0, -140, 0, 6.0,
     keys=[dict(bar=22.5, azimuth=-140, distance=6.0), dict(bar=24.5, azimuth=-75, distance=3.6), dict(bar=24.9, azimuth=-60, distance=3.0)])
-jag('jaguar_chase', B(27, 1), 14.0, -90, 0, 5.0,
+jag('jaguar_chase', B(27, 1), 13.9, -90, 0, 5.0,
     keys=[dict(bar=27.2, azimuth=-90, distance=5.0), dict(bar=29.0, azimuth=0, distance=2.6), dict(bar=31.0, azimuth=95, distance=5.5)])
 jag('jaguar_eyes', B(39, 2), 6.0, 4, 0, 2.6)
 
