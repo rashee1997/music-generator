@@ -1,0 +1,28 @@
+{
+  "versions": [
+    {
+      "version": 1,
+      "file": "master_v01.wav",
+      "master": "master.wav",
+      "timestamp": "2026-11-17T04:45:11+00:00",
+      "change": "cleared clicks",
+      "attempts": 3,
+      "title": "The Unwelcome Crossing",
+      "piece_type": "tense"
+    },
+    {
+      "version": 2,
+      "file": "master_v02.wav",
+      "master": "master.wav",
+      "timestamp": "2026-11-17T04:54:45+00:00",
+      "change": "cleared clicks",
+      "attempts": 3,
+      "title": "The Unwelcome Crossing",
+      "piece_type": "tense",
+      "integrated_lufs": -17.225372538076137,
+      "true_peak_dbtp": -2.0000003881560344,
+      "crest_factor_db": 18.954936868446698
+    }
+  ],
+  "latest": 2
+}

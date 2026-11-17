@@ -1,0 +1,372 @@
+{
+  "title": "The Unwelcome Crossing",
+  "project": "a separate project outside the skill: a haunted desert crossing, cinematic, with object-based delivery",
+  "version": 1,
+  "medium": "game cue / installation, no picture",
+  "brief": "an unwelcoming desert with no path to survive: Arabian instruments only, plus piano, violin and flutes, Zimmer pulse and Rahman layering, a haunted desert air with natural sand SFX",
+  "audience": "a player or listener in a 7.1.2 room or on headphones, with the cue looping under gameplay",
+  "purpose": "make the desert feel like it is taking the travellers: no path, no water, no way back",
+  "point_of_view": "the listener is one of the travellers on foot, never able to see where the route is",
+  "job": [
+    "put the listener on foot in a desert that gives nothing back",
+    "keep a pulse under the fear without turning it into an action cue",
+    "let the dune itself make the loudest sound in the piece",
+    "end with no resolution, because there is no path out"
+  ],
+  "story": "the last water is drunk at a cistern at dusk; the caravan walks out and the trail erases behind them; the dunes start to boom and the sand moves without wind; jackals answer from three bearings; by the last section there is no water, no landmark and no route, and the piece simply stops being able to go on",
+  "duration_s": 101.05,
+  "in_point_s": 0.0,
+  "out_point_s": 101.05,
+  "ending": "tail_out",
+  "feel": [
+    "vast",
+    "desolate",
+    "unsettled",
+    "cinematic",
+    "patient"
+  ],
+  "avoid_feel": [
+    "triumphant",
+    "cosy",
+    "touristy",
+    "synthetic",
+    "busy"
+  ],
+  "sections": [
+    {
+      "name": "cistern",
+      "start_bar": 1,
+      "end_bar": 4,
+      "energy": 0.3,
+      "action": "the last water at dusk: no landmark, nothing growing",
+      "music": "oud alone states the trail figure; piano sets the clock, flute hangs above; no drum",
+      "role": "place",
+      "start_s": 0.0,
+      "end_s": 12.63
+    },
+    {
+      "name": "no_road",
+      "start_bar": 5,
+      "end_bar": 12,
+      "energy": 0.45,
+      "action": "the caravan leaves the cistern and the trail erases itself behind them",
+      "music": "darbuka enters on a saidi 4/4 with a new fill each bar; ney takes the figure; qanun runs 16ths; violin holds a moving texture",
+      "role": "build",
+      "start_s": 12.63,
+      "end_s": 37.89
+    },
+    {
+      "name": "the_moan",
+      "start_bar": 13,
+      "end_bar": 18,
+      "energy": 0.6,
+      "action": "the dunes begin to boom; the sand moves without wind",
+      "music": "drums out; a 78 Hz dune swell from the air bed, piano clusters, one long ney cry, violin high",
+      "role": "turn",
+      "start_s": 37.89,
+      "end_s": 56.84
+    },
+    {
+      "name": "jackals",
+      "start_bar": 19,
+      "end_bar": 25,
+      "energy": 0.7,
+      "action": "they are answered from three bearings and keep walking",
+      "music": "piano pulse to 16ths, qanun turns to 16ths, darbuka double-times into the last bar; jackal answers far away",
+      "role": "push",
+      "start_s": 56.84,
+      "end_s": 78.95
+    },
+    {
+      "name": "no_water",
+      "start_bar": 26,
+      "end_bar": 32,
+      "energy": 0.25,
+      "action": "nothing left to drink, no path out; the piece does not resolve",
+      "music": "everything thins to rababa, low piano, a last ney phrase that ends on the fifth; one dune slump; fade",
+      "role": "release",
+      "start_s": 78.95,
+      "end_s": 101.05
+    }
+  ],
+  "motifs": [
+    {
+      "name": "the trail figure",
+      "first_at_s": 0.0,
+      "shape": "D-Eb(+50c)-F-G, the half-flat second never resolving upward",
+      "returns": "oud every bar in a new transposition, ney in augmentation, and as the last phrase over the fifth"
+    },
+    {
+      "name": "the dune's answer",
+      "first_at_s": 37.89,
+      "shape": "a 78 Hz swell with its harmonics, no rhythm",
+      "returns": "at the moan and again when the water runs out"
+    },
+    {
+      "name": "the jackal",
+      "first_at_s": 56.84,
+      "shape": "two or three rising howls that sag, answered by a thinner one",
+      "returns": "behind and to the right, from a different bearing each bout"
+    }
+  ],
+  "instruments": [
+    "oud",
+    "piano",
+    "violin",
+    "ney",
+    "flute",
+    "qanun",
+    "rababa",
+    "darbuka",
+    "desert_air",
+    "sand_gust",
+    "dune_slump"
+  ],
+  "avoid_sounds": [
+    "drum machine hats",
+    "orchestral braam cliche",
+    "cricket loop",
+    "synth pad swell",
+    "any chant treated as a sample drop",
+    "whoosh-riser transitions"
+  ],
+  "pulse": "steady low piano pulse, 8ths then 16ths, never on the melody",
+  "tempo_bpm": [
+    76.0,
+    76.0
+  ],
+  "key": "D",
+  "mode": "maqam_bayati",
+  "energy": 0.45,
+  "space": "desert_night",
+  "hits_at": [
+    12.63,
+    37.89,
+    56.84
+  ],
+  "hits": [
+    {
+      "t": 12.63,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "a sheet of sand lifting off hardpan as the darbuka enters",
+      "why": "the moment the trail stops existing"
+    },
+    {
+      "t": 37.89,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the dune's slip face giving way under the 78 Hz bed",
+      "why": "the desert becomes a character here, not scenery"
+    },
+    {
+      "t": 56.84,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "a far jackal answering the sand",
+      "why": "something else is out here, and it is not lost"
+    }
+  ],
+  "mix_intent": {
+    "hero": "ney",
+    "support": [
+      "oud",
+      "qanun",
+      "piano",
+      "darbuka"
+    ],
+    "sits_under": [
+      "violin",
+      "rababa",
+      "desert_air",
+      "flute",
+      "sand_gust",
+      "dune_slump"
+    ],
+    "must_hear": [
+      "the 78 Hz dune swell arriving under the piano cluster",
+      "the sand blast at the moment the trail erases",
+      "the last ney phrase ending on the fifth, not the tonic"
+    ],
+    "leave_free_hz": [
+      160.0,
+      900.0
+    ]
+  },
+  "loudness_lufs": -17.0,
+  "true_peak_max": -1.5,
+  "delivery": {
+    "format": "wav",
+    "sample_rate": 44100,
+    "bit_depth": 24,
+    "stage": "game cue, 7.1.2 bus",
+    "output_targets": [
+      "stereo",
+      "stereo_48k",
+      "immersive_7_1_2",
+      "immersive_7_1",
+      "adm_bw64"
+    ],
+    "note": "two-channel first, a 48 kHz twin for engine ingest, the 7.1.2 and 7.1 scenes, and adm_bw64 objects so the cue can be placed rather than just played"
+  },
+  "references": [
+    "an oud recorded close in a dry room; a piano felt-muted and close; a violin held long with no per-note vibrato",
+    "desert air after the last water: a 70-105 Hz dune pressure, sand hiss at 0.8-2.5 kHz, gusts that start and stop, jackals far off"
+  ],
+  "spatial_staging": {
+    "oud": {
+      "azimuth": -18.0,
+      "elevation": 0.0,
+      "distance": 1.6,
+      "space": "desert_night"
+    },
+    "piano": {
+      "azimuth": -42.0,
+      "elevation": 6.0,
+      "distance": 2.4,
+      "space": "desert_night"
+    },
+    "violin": {
+      "azimuth": -6.0,
+      "elevation": 32.0,
+      "distance": 3.2,
+      "space": "desert_night"
+    },
+    "ney": {
+      "azimuth": -58.0,
+      "elevation": 16.0,
+      "distance": 3.6,
+      "space": "desert_night"
+    },
+    "flute": {
+      "azimuth": 62.0,
+      "elevation": 26.0,
+      "distance": 4.2,
+      "space": "desert_night"
+    },
+    "qanun": {
+      "azimuth": 34.0,
+      "elevation": 12.0,
+      "distance": 2.0,
+      "space": "desert_night"
+    },
+    "rababa": {
+      "azimuth": 96.0,
+      "elevation": 4.0,
+      "distance": 3.0,
+      "space": "desert_night"
+    },
+    "darbuka": {
+      "azimuth": 10.0,
+      "elevation": 0.0,
+      "distance": 1.8,
+      "space": "desert_night"
+    },
+    "desert_air": {
+      "azimuth": 0.0,
+      "elevation": 18.0,
+      "distance": 6.0,
+      "space": "desert_night"
+    },
+    "sand_gust": {
+      "azimuth": -120.0,
+      "elevation": 8.0,
+      "distance": 8.0,
+      "space": "desert_night"
+    },
+    "dune_slump": {
+      "azimuth": 150.0,
+      "elevation": 4.0,
+      "distance": 14.0,
+      "space": "desert_night"
+    }
+  },
+  "piece_type": "tense",
+  "gate_reason": "a cue that ends with nothing resolved, so the tense profile judges it: unresolved harmony and a held pressure are the design, not defects; melody, ostinato and drone all carry it",
+  "immersive": {
+    "enabled": true,
+    "why": "the sand arrives from every bearing and the dune is under and around the listener; that surround field is the story, not decoration",
+    "engine": "hoa_bus",
+    "anchors": [
+      "oud",
+      "darbuka",
+      "qanun",
+      "piano",
+      "desert_air"
+    ],
+    "movers": [
+      {
+        "part": "flute",
+        "why": "the only thing that drifts: air moving where nothing else does",
+        "path": "hangs front-right and high through the crossing, drifts overhead at the jackals, settles back right at the end"
+      }
+    ],
+    "height": {
+      "violin": 32.0,
+      "flute": 26.0,
+      "ney": 16.0,
+      "qanun": 12.0,
+      "piano": 6.0,
+      "oud": 4.0,
+      "rababa": 6.0,
+      "darbuka": 0.0,
+      "desert_air": 18.0,
+      "sand_gust": 12.0,
+      "dune_slump": 8.0
+    },
+    "room_changes": [],
+    "must_hear": [
+      "the dune swell from below and behind",
+      "the sand blast sweeping across the back",
+      "the jackal answering from the right rear"
+    ],
+    "deliverables": [
+      "stereo",
+      "stereo_48k",
+      "immersive_7_1_2",
+      "immersive_7_1",
+      "adm_bw64"
+    ],
+    "notes": "every height is inside the mix's 35 degree ceiling; bass and drum stay on the floor"
+  },
+  "focus": "melody",
+  "intent": {
+    "emotions": [
+      "dark_epic",
+      "grief"
+    ],
+    "registers": [
+      "cinematic"
+    ],
+    "scenes": [
+      "dread"
+    ],
+    "tensions": [
+      "pedal"
+    ],
+    "avoid": [
+      "hopeful"
+    ]
+  },
+  "video": {
+    "enabled": false,
+    "source": null,
+    "fps": null,
+    "cuts": [],
+    "cut_source": null,
+    "cut_sync": {
+      "early_ms": 45,
+      "late_ms": 125
+    },
+    "dialogue": {
+      "present": false,
+      "duck_db": -9.0,
+      "snr_min_db": 15.0
+    },
+    "master_profile": null,
+    "deliverable": null,
+    "preset": "default",
+    "notes": "music-only piece: no picture"
+  },
+  "notes": "No SFZ library for these instruments is in the skill registry and sfizz cannot run on this host, so every part plays the GM bank through project presets; the SFZ block is left out rather than faked. The ambience is preset data: one environment and two one-hit SFX, each citing the research note."
+}
