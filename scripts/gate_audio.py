@@ -122,8 +122,12 @@ class Signal:
         """True peak per channel, in dBTP: a multichannel deliverable is checked channel by channel."""
         def make():
             from scipy.signal import resample_poly
-            up = resample_poly(self.audio, 4, 1, axis=0)
-            return 20.0 * np.log10(np.max(np.abs(up), axis=0) + 1e-12)
+            # One channel at a time: a sound-field or object file has dozens of channels, and upsampling all of them
+            # at once holds 4x the whole file in float64 (a 36-channel AmbiX piece needed about 14 GB). The result
+            # is the same numbers, channel by channel.
+            audio = self.audio if self.audio.ndim > 1 else self.audio[:, None]
+            peaks = [float(np.max(np.abs(resample_poly(audio[:, c], 4, 1)))) for c in range(audio.shape[1])]
+            return 20.0 * np.log10(np.asarray(peaks) + 1e-12)
         return self._get('true_peak_by_channel', make)
 
     def frame_db(self, frame_ms=FRAME_MS, hop_ms=HOP_MS, decimated=True):
