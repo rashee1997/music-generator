@@ -190,47 +190,47 @@
     "end_bar": 8,
     "energy": 0.5,
     "start_s": 0.0,
-    "end_s": 19.9
+    "end_s": 19.901
    },
    {
     "name": "closing_in",
     "start_bar": 9,
     "end_bar": 16,
     "energy": 0.55,
-    "start_s": 19.9,
-    "end_s": 39.171
+    "start_s": 19.901,
+    "end_s": 39.172
    },
    {
     "name": "the_watcher",
     "start_bar": 17,
     "end_bar": 24,
     "energy": 0.75,
-    "start_s": 39.171,
-    "end_s": 57.916
+    "start_s": 39.172,
+    "end_s": 57.917
    },
    {
     "name": "the_chase",
     "start_bar": 25,
     "end_bar": 32,
     "energy": 1.0,
-    "start_s": 57.916,
-    "end_s": 75.806
+    "start_s": 57.917,
+    "end_s": 75.808
    },
    {
     "name": "the_clearing",
     "start_bar": 33,
     "end_bar": 36,
     "energy": 0.8,
-    "start_s": 75.806,
-    "end_s": 86.287
+    "start_s": 75.808,
+    "end_s": 86.289
    },
    {
     "name": "not_alone",
     "start_bar": 37,
     "end_bar": 40,
     "energy": 0.55,
-    "start_s": 86.287,
-    "end_s": 97.685
+    "start_s": 86.289,
+    "end_s": 97.577
    }
   ],
   "ending": {
@@ -5121,7 +5121,7 @@
    "notes": [
     {
      "t": 127.5,
-     "d": -27.700000000000003,
+     "d": 34.5,
      "p": 60,
      "v": 1.0
     }

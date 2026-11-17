@@ -369,7 +369,7 @@ def env(name, preset, t0, d, role='environment', **extra):
 env('canopy', 'green_canopy_alive', 0.0, SNAP)
 env('hush', 'green_hush', SNAP, 16.0, fade_in_s=0.05, fade_out_s=3.0)
 env('rain_heavy', 'green_rain_heavy', ENTRY - 2.0, REVEAL - ENTRY + 2.0, fade_in_s=4.0, fade_out_s=1.5)
-env('rain_clearing', 'green_rain_clearing', REVEAL - 0.5, 99.8 - (REVEAL - 0.5), fade_in_s=2.5, fade_out_s=3.0)
+env('rain_clearing', 'green_rain_clearing', REVEAL - 0.5, 162.0 - (REVEAL - 0.5), fade_in_s=2.5, fade_out_s=3.0)
 env('river', 'green_river_far', B(21), B(36) - B(21), fade_in_s=8.0, fade_out_s=5.0)
 env('monkeys', 'green_monkeys', B(19), 18.0, fade_in_s=1.0, fade_out_s=2.0)
 
