@@ -266,7 +266,7 @@
       "space": "green_dark_room"
     },
     "green_basses": {
-      "azimuth": -52.0,
+      "azimuth": -44.0,
       "elevation": 0.0,
       "distance": 4.0,
       "space": "green_dark_room"
@@ -326,7 +326,7 @@
       "space": "green_dark_room"
     },
     "green_trombones_sus": {
-      "azimuth": -80.0,
+      "azimuth": -64.0,
       "elevation": 24.0,
       "distance": 4.4,
       "space": "green_dark_room"
@@ -344,13 +344,13 @@
       "space": "green_dark_room"
     },
     "green_violins_sustain": {
-      "azimuth": 56.0,
+      "azimuth": 46.0,
       "elevation": 26.0,
       "distance": 4.9,
       "space": "green_dark_room"
     },
     "green_violins_tremolo": {
-      "azimuth": -48.0,
+      "azimuth": -34.0,
       "elevation": 22.0,
       "distance": 4.6,
       "space": "green_dark_room"
