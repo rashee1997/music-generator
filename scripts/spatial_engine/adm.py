@@ -238,7 +238,7 @@ class AdmBus:
             blocks[o[0]] = dict(blocks=len(b), max_step_deg=round(step, 3))
         return dict(renderer='adm', container='BW64 (ITU-R BS.2088, strict form)',
                     sample_rate=sr, bit_depth=BITS, channels=self.channel_count(),
-                    objects=[o[0] for o in self.objects], bed=bool(self.bed),
+                    objects=[o[0] for o in self.objects], bed=self.bed is not None,
                     trajectory=blocks,
                     loudness_method='BS.1770 loudness of a constant-power stereo fold of the objects '
                                     '(engine-internal levelling reference; an object file has no loudness)')
