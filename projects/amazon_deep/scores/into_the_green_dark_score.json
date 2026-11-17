@@ -190,47 +190,47 @@
     "end_bar": 8,
     "energy": 0.5,
     "start_s": 0.0,
-    "end_s": 19.903
+    "end_s": 19.9
    },
    {
     "name": "closing_in",
     "start_bar": 9,
     "end_bar": 16,
     "energy": 0.55,
-    "start_s": 19.903,
-    "end_s": 39.175
+    "start_s": 19.9,
+    "end_s": 39.171
    },
    {
     "name": "the_watcher",
     "start_bar": 17,
     "end_bar": 24,
     "energy": 0.75,
-    "start_s": 39.175,
-    "end_s": 57.921
+    "start_s": 39.171,
+    "end_s": 57.916
    },
    {
     "name": "the_chase",
     "start_bar": 25,
     "end_bar": 32,
     "energy": 1.0,
-    "start_s": 57.921,
-    "end_s": 75.812
+    "start_s": 57.916,
+    "end_s": 75.806
    },
    {
     "name": "the_clearing",
     "start_bar": 33,
     "end_bar": 36,
     "energy": 0.8,
-    "start_s": 75.812,
-    "end_s": 86.294
+    "start_s": 75.806,
+    "end_s": 86.287
    },
    {
     "name": "not_alone",
     "start_bar": 37,
     "end_bar": 40,
     "energy": 0.55,
-    "start_s": 86.294,
-    "end_s": 97.522
+    "start_s": 86.287,
+    "end_s": 97.685
    }
   ],
   "ending": {
@@ -5121,13 +5121,13 @@
    "notes": [
     {
      "t": 127.5,
-     "d": 38.5,
+     "d": -27.700000000000003,
      "p": 60,
      "v": 1.0
     }
    ],
    "fade_in_s": 2.5,
-   "fade_out_s": 4.0
+   "fade_out_s": 3.0
   },
   {
    "name": "river",
