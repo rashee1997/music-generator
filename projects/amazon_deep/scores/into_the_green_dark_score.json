@@ -190,47 +190,47 @@
     "end_bar": 8,
     "energy": 0.5,
     "start_s": 0.0,
-    "end_s": 19.901
+    "end_s": 19.903
    },
    {
     "name": "closing_in",
     "start_bar": 9,
     "end_bar": 16,
     "energy": 0.55,
-    "start_s": 19.901,
-    "end_s": 39.172
+    "start_s": 19.903,
+    "end_s": 39.175
    },
    {
     "name": "the_watcher",
     "start_bar": 17,
     "end_bar": 24,
     "energy": 0.75,
-    "start_s": 39.172,
-    "end_s": 57.917
+    "start_s": 39.175,
+    "end_s": 57.921
    },
    {
     "name": "the_chase",
     "start_bar": 25,
     "end_bar": 32,
     "energy": 1.0,
-    "start_s": 57.917,
-    "end_s": 75.808
+    "start_s": 57.921,
+    "end_s": 75.812
    },
    {
     "name": "the_clearing",
     "start_bar": 33,
     "end_bar": 36,
     "energy": 0.8,
-    "start_s": 75.808,
-    "end_s": 86.289
+    "start_s": 75.812,
+    "end_s": 86.294
    },
    {
     "name": "not_alone",
     "start_bar": 37,
     "end_bar": 40,
     "energy": 0.55,
-    "start_s": 86.289,
-    "end_s": 97.577
+    "start_s": 86.294,
+    "end_s": 97.522
    }
   ],
   "ending": {
@@ -5121,13 +5121,13 @@
    "notes": [
     {
      "t": 127.5,
-     "d": 34.5,
+     "d": 38.5,
      "p": 60,
      "v": 1.0
     }
    ],
    "fade_in_s": 2.5,
-   "fade_out_s": 3.0
+   "fade_out_s": 1.0
   },
   {
    "name": "river",
@@ -5179,7 +5179,7 @@
     "binaural": true
    },
    "fade_in_s": 0.04,
-   "fade_out_s": 0.04
+   "fade_out_s": 0.15
   },
   {
    "name": "jaguar_near",
@@ -5222,7 +5222,7 @@
     }
    },
    "fade_in_s": 0.04,
-   "fade_out_s": 0.04
+   "fade_out_s": 0.15
   },
   {
    "name": "jaguar_chase",
@@ -5231,7 +5231,7 @@
    "notes": [
     {
      "t": 105.0,
-     "d": 13.9,
+     "d": 14.0,
      "p": 60,
      "v": 1.0
     }
@@ -5265,7 +5265,7 @@
     }
    },
    "fade_in_s": 0.04,
-   "fade_out_s": 0.04
+   "fade_out_s": 0.15
   },
   {
    "name": "jaguar_eyes",
@@ -5287,7 +5287,7 @@
     "binaural": true
    },
    "fade_in_s": 0.04,
-   "fade_out_s": 0.04
+   "fade_out_s": 0.15
   },
   {
    "name": "steps_left",

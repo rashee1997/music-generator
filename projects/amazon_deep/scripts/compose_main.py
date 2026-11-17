@@ -369,7 +369,7 @@ def env(name, preset, t0, d, role='environment', **extra):
 env('canopy', 'green_canopy_alive', 0.0, SNAP)
 env('hush', 'green_hush', SNAP, 16.0, fade_in_s=0.05, fade_out_s=3.0)
 env('rain_heavy', 'green_rain_heavy', ENTRY - 2.0, REVEAL - ENTRY + 2.0, fade_in_s=4.0, fade_out_s=1.5)
-env('rain_clearing', 'green_rain_clearing', REVEAL - 0.5, 162.0 - (REVEAL - 0.5), fade_in_s=2.5, fade_out_s=3.0)
+env('rain_clearing', 'green_rain_clearing', REVEAL - 0.5, 166.0 - (REVEAL - 0.5), fade_in_s=2.5, fade_out_s=1.0)
 env('river', 'green_river_far', B(21), B(36) - B(21), fade_in_s=8.0, fade_out_s=5.0)
 env('monkeys', 'green_monkeys', B(19), 18.0, fade_in_s=1.0, fade_out_s=2.0)
 
@@ -378,13 +378,13 @@ def jag(name, t0, d, az, el, dist, keys=None, **kw):
     sp = dict(azimuth=az, elevation=el, distance=dist, kind='spot', binaural=True)
     if keys:
         sp['trajectory'] = dict(spatial_role='mover', doppler_strength=1.0, keyframes=keys)
-    track(name, 'env:green_jaguar', 'environment', [dict(t=float(t0), d=float(d), p=60, v=1.0)], spatial=sp, fade_in_s=0.04, fade_out_s=0.04, **kw)
+    track(name, 'env:green_jaguar', 'environment', [dict(t=float(t0), d=float(d), p=60, v=1.0)], spatial=sp, fade_in_s=0.04, fade_out_s=0.15, **kw)
 
 
 jag('jaguar_far', B(15, 2.5), 5.4, 150, 0, 16.0)
 jag('jaguar_near', B(22, 2), 8.0, -140, 0, 6.0,
     keys=[dict(bar=22.5, azimuth=-140, distance=6.0), dict(bar=24.5, azimuth=-75, distance=3.6), dict(bar=24.9, azimuth=-60, distance=3.0)])
-jag('jaguar_chase', B(27, 1), 13.9, -90, 0, 5.0,
+jag('jaguar_chase', B(27, 1), 14.0, -90, 0, 5.0,
     keys=[dict(bar=27.2, azimuth=-90, distance=5.0), dict(bar=29.0, azimuth=0, distance=2.6), dict(bar=31.0, azimuth=95, distance=5.5)])
 jag('jaguar_eyes', B(39, 2), 6.0, 4, 0, 2.6)
 
