@@ -23,8 +23,10 @@
     border: 1px solid rgba(255, 255, 255, 0.10);
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
   }
-  h1 { margin: 0 0 .35rem; font-size: 1.45rem; letter-spacing: .01em; }
-  p.meta { margin: 0 0 1.5rem; color: #9aa6c4; font-size: .93rem; }
+  h1 { margin: 0 0 1.6rem; font-size: 1.45rem; letter-spacing: .01em; }
+  h2 { margin: 0 0 .35rem; font-size: 1.12rem; letter-spacing: .01em; }
+  p.meta { margin: 0 0 1.1rem; color: #9aa6c4; font-size: .93rem; }
+  section.track + section.track { margin-top: 2.2rem; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.10); }
   audio { width: 100%; border-radius: 10px; }
   footer { margin-top: 1.6rem; font-size: .82rem; color: #7d88a6; }
   a { color: #8fb4ff; }
@@ -32,12 +34,23 @@
 </head>
 <body>
 <main>
-  <h1>Black Jaguar — cinematic chase</h1>
-  <p class="meta">D minor · 134 BPM · jungle ambience, stalking strings, chromatic pursuit, build and release</p>
-  <audio controls preload="metadata" src="../assets/samples/black-jaguar-cinematic-chase.mp3">
-    Your browser does not support the audio element.
-    <a href="../assets/samples/black-jaguar-cinematic-chase.mp3">Download the MP3</a>.
-  </audio>
+  <h1>Listen</h1>
+  <section class="track">
+    <h2>Arabian Nights — the desert crossing</h2>
+    <p class="meta">D maqam hijaz · 88 BPM · oud, qanun, ney, rababa, chant and open desert air · Immersive 2.0 (7.1.2)</p>
+    <audio controls preload="metadata" src="../assets/samples/arabian-nights-desert.mp3">
+      Your browser does not support the audio element.
+      <a href="../assets/samples/arabian-nights-desert.mp3">Download the MP3</a>.
+    </audio>
+  </section>
+  <section class="track">
+    <h2>Black Jaguar — cinematic chase</h2>
+    <p class="meta">D minor · 134 BPM · jungle ambience, stalking strings, chromatic pursuit, build and release</p>
+    <audio controls preload="metadata" src="../assets/samples/black-jaguar-cinematic-chase.mp3">
+      Your browser does not support the audio element.
+      <a href="../assets/samples/black-jaguar-cinematic-chase.mp3">Download the MP3</a>.
+    </audio>
+  </section>
   <footer>Rendered by <a href="../">music-generator</a>. MP3, 320 kbps.</footer>
 </main>
 </body>
