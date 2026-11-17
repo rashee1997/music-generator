@@ -22,7 +22,56 @@
       "integrated_lufs": -17.225372538076137,
       "true_peak_dbtp": -2.0000003881560344,
       "crest_factor_db": 18.954936868446698
+    },
+    {
+      "version": 3,
+      "file": "master_v03.wav",
+      "master": "master.wav",
+      "timestamp": "2026-11-17T06:54:17+00:00",
+      "change": "cleared master.dc",
+      "attempts": 20,
+      "title": "The Unwelcome Crossing",
+      "piece_type": "tense",
+      "integrated_lufs": -17.200816408076538,
+      "true_peak_dbtp": -1.8813297399971272,
+      "crest_factor_db": 18.693762023303773
+    },
+    {
+      "version": 4,
+      "file": "master_v04.wav",
+      "master": "master.wav",
+      "timestamp": "2026-11-17T07:02:18+00:00",
+      "change": "cleared master.dc",
+      "attempts": 21,
+      "title": "The Unwelcome Crossing",
+      "piece_type": "tense",
+      "integrated_lufs": -17.20912776913239,
+      "true_peak_dbtp": -1.8813245495280877,
+      "crest_factor_db": 18.691911433104163
+    },
+    {
+      "version": 5,
+      "file": "master_v05.wav",
+      "master": "master.wav",
+      "timestamp": "2026-11-17T07:11:09+00:00",
+      "change": "cleared master.dc",
+      "attempts": 22,
+      "title": "The Unwelcome Crossing",
+      "piece_type": "tense",
+      "integrated_lufs": -17.229783036806477,
+      "true_peak_dbtp": -1.883752884494281,
+      "crest_factor_db": 18.71417458847693
+    },
+    {
+      "version": 6,
+      "file": "master_v06.wav",
+      "master": "master.wav",
+      "timestamp": "2026-11-17T07:19:49+00:00",
+      "change": "cleared master.dc",
+      "attempts": 23,
+      "title": "The Unwelcome Crossing",
+      "piece_type": "tense"
     }
   ],
-  "latest": 2
+  "latest": 6
 }

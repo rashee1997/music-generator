@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "audio": "master.wav",
-  "written_at": "2026-11-17T04:59:23+00:00",
+  "written_at": "2026-11-17T07:16:16+00:00",
   "metadata": {
     "title": "The Unwelcome Crossing",
     "artist": "Music Generator",
@@ -14,6 +14,6 @@
     "license": "AGPL-3.0-or-later",
     "description": "make the desert feel like it is taking the travellers: no path, no water, no way back. the last water is drunk at a cistern at dusk; the caravan walks out and the trail erases behind them; the dunes start to boom and the sand moves without wind; jackals answer from three bearings; by the last section there is no water, no landmark and no route, and the piece simply stops being able to go on"
   },
-  "version": 2,
+  "version": 5,
   "ci_report": "ci_report.json"
 }
