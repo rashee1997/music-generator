@@ -141,7 +141,7 @@ for bar in range(17, 32):
     v = 0.58 + 0.025 * (bar - 17)
     bs.append(N(B(bar), 4.06, near(CH[bar][0], 38 if 21 <= bar <= 31 else 26, 49 if 21 <= bar <= 31 else 37), min(0.95, v)))
 bs.append(N(B(32), 2.0, near(C, 26, 37), 0.92))
-bs += [N(B(33), 7.9, near(F, 26, 37), 0.5), N(B(35), 3.9, near(Bb, 26, 37), 0.52), N(B(36), 3.9, near(C, 26, 37), 0.55)]
+bs += [N(B(33), 3.95, near(F, 26, 37), 0.5), N(B(34), 3.95, near(Db, 26, 37), 0.5), N(B(35), 3.9, near(Bb, 26, 37), 0.52), N(B(36), 3.9, near(C, 26, 37), 0.55)]
 bs += [N(B(37), 7.4, 26, 0.5), N(B(37) + 7.0, 6.4, 26, 0.5)]
 track('basses', 'green_basses', 'bass', bs)
 
@@ -451,12 +451,12 @@ score = dict(
     tempo_points=[[0, 96], [56, 100], [88, 102], [96, 106], [120, 108], [128, 108], [132, 90], [152, 88], [160, 78]],
     dynamics=dynamics, ritard=0.12, ritard_beats=8, space='green_dark_room', mix_preset='into_the_green_dark_mix',
     output_targets=['stereo', 'mono', 'immersive_5_1', 'immersive_7_1_4', 'ambix', 'adm_bw64'],
-    master=dict(lufs=-16.0, true_peak=-1.6, tone='neutral', fade_out=2.5),
+    master=dict(lufs=-16.0, true_peak=-1.6, tone='neutral', fade_out=1.0),
     piece_type='cinematic', focus='melody',
     intent=dict(emotions=['adventure', 'tense', 'wonder'], registers=['cinematic', 'natural'], scenes=['dread', 'chase', 'reveal'],
                 tensions=['ostinato', 'pedal', 'silence_before', 'unresolved_dominant'], avoid=['joyful', 'playful']),
     mix_intent=dict(hero='horns', leave_free_hz=[700, 2600]),
-    plan=dict(sections=sections, ending=dict(fade_out=2.5)),
+    plan=dict(sections=sections, ending=dict(fade_out=1.0)),
     tracks=tracks,
     mix=dict(tracks={}),
 )

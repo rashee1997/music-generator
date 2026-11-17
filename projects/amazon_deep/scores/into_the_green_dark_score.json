@@ -145,7 +145,7 @@
   "lufs": -16.0,
   "true_peak": -1.6,
   "tone": "neutral",
-  "fade_out": 2.5
+  "fade_out": 1.0
  },
  "piece_type": "cinematic",
  "focus": "melody",
@@ -234,7 +234,7 @@
    }
   ],
   "ending": {
-   "fade_out": 2.5
+   "fade_out": 1.0
   }
  },
  "tracks": [
@@ -407,8 +407,14 @@
     },
     {
      "t": 128.0,
-     "d": 7.9,
+     "d": 3.95,
      "p": 29,
+     "v": 0.71
+    },
+    {
+     "t": 132.0,
+     "d": 3.95,
+     "p": 37,
      "v": 0.71
     },
     {
