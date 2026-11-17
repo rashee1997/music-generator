@@ -257,6 +257,7 @@ DEFAULTS = {
         # the chain itself. `tones` maps a tone name to EQ bands (the same band objects as everywhere else);
         # a master block or a profile picks one by name, and a project adds its own by listing it here.
         'highpass_hz': 24.0,           # 0 = none
+        'highpass_order': 1,           # first-order filters in cascade: 1 is 6 dB/octave, 3 is 18 dB/octave
         'tones': {
             'neutral': [],
             'warm': [{'type': 'lowshelf', 'f': 120, 'gain': 1.0, 'q': 0.7},
@@ -396,6 +397,7 @@ RANGES = {
     ('lead_carve', 'attack_ms'): ('num', 0.0, 100.0),
     ('lead_carve', 'release_ms'): ('num', 5.0, 2000.0),
     ('mastering', 'crest_floor_db'): ('num', 0.0, 30.0),
+    ('mastering', 'highpass_order'): ('num', 1.0, 6.0),
     ('immersive', 'max_elevation'): ('num', 0.0, 90.0),
     ('immersive', 'min_height_tracks'): ('num', 0.0, 24.0),
     ('immersive', 'order'): ('num', 1.0, 7.0),

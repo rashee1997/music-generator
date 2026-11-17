@@ -1079,7 +1079,10 @@ def master_chain(x, m, sr=SR, ctx=None):
     ceiling = float(cfg.get('true_peak', -1.5))
     tone = cfg.get('tone', 'neutral')
     mm = cfg['_cfg']
-    chain = [pb.HighpassFilter(float(mm['highpass_hz']))] if float(mm.get('highpass_hz') or 0.0) > 0.0 else []
+    # Pedalboard's high-pass is first order (6 dB/octave); `highpass_order` cascades it, so a sub band the master should
+    # not carry can be cut harder without a second filter family. 1 is the filter every older master was made with.
+    chain = ([pb.HighpassFilter(float(mm['highpass_hz'])) for _ in range(max(1, int(mm.get('highpass_order') or 1)))]
+             if float(mm.get('highpass_hz') or 0.0) > 0.0 else [])
     tones = mm.get('tones') or {}
     if tone not in tones:
         # An unlisted tone has always mastered flat without a word. It still masters flat (an older score keeps
