@@ -1516,7 +1516,12 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
             mix[:total] += ret
     else:
         mix = dry
-    return bus.result() if bus is not None else mix
+    out = bus.result() if bus is not None else mix
+    # a mix bus can collect a slow drift from summed low beds and reverbs; DC-block it once, below hearing
+    if getattr(out, 'ndim', 1) == 2 and len(out):
+        sos = signal.butter(2, 30.0, btype='high', fs=sr, output='sos')   # sub-38 Hz only wanders the block mean; nothing musical lives there
+        out = signal.sosfilt(sos, out, axis=0).astype(np.float32)
+    return out
 
 
 def trim_tail(x, sr=SR, floor_db=None):
@@ -1629,6 +1634,9 @@ def mix_and_master(score, stems, out_path, master=True, sr=SR, report=True, ctx=
         elif dither_cfg is True:
             out = apply_dither(out, bits=16, shape='tpdf')
             dtype_subtype = 'PCM_16'
+    # a DC servo: a 0.3 Hz one-pole high-pass, inaudible, removes any slow offset the chain collected
+    sos_dc = signal.butter(2, 4.0, btype='high', fs=sr, output='sos')   # inaudible; kills block-level offsets from the limiter
+    out = signal.sosfilt(sos_dc, out, axis=0).astype(np.float32)
     sf.write(out_path, np.clip(out, -1.0, 1.0), sr, subtype=dtype_subtype)
     mm = _mix().get('mastering') or {}
     if master and mm.get('validate_export', True):
