@@ -85,5 +85,6 @@
     "machete_vine_chop"
   ],
   "note": "KB sfx-formulas (impact, friction and fracture laws used by phys_core) | KB game-sfx | Turchet, Serafin, Dimitrov and Nordahl (DAFx-10): a footstep is a ground reaction force on a contact, see scripts/phys_core/gait.py | No measurement found: ESTIMATE of masses, speeds, materials and levels; nothing here was auditioned",
-  "hp": 80
+  "hp": 80,
+  "lp": 6500
 }

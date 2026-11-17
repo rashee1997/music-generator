@@ -13,7 +13,8 @@
     "fallback": null,
     "note_dyn": {
       "enabled": true
-    }
+    },
+    "attack_fade_s": 0.005
   },
   "humanize": {
     "preset": "natural",

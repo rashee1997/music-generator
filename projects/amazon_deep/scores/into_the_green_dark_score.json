@@ -145,7 +145,7 @@
   "lufs": -16.0,
   "true_peak": -1.6,
   "tone": "neutral",
-  "fade_out": 4.0
+  "fade_out": 2.5
  },
  "piece_type": "cinematic",
  "focus": "melody",
@@ -234,7 +234,7 @@
    }
   ],
   "ending": {
-   "fade_out": 4.0
+   "fade_out": 2.5
   }
  },
  "tracks": [
@@ -5892,7 +5892,7 @@
     }
    ],
    "spatial": {
-    "azimuth": -9,
+    "azimuth": -14,
     "elevation": -15,
     "distance": 2.4,
     "kind": "spot",
@@ -6080,7 +6080,7 @@
     }
    ],
    "spatial": {
-    "azimuth": 9,
+    "azimuth": 14,
     "elevation": -15,
     "distance": 2.4,
     "kind": "spot",
@@ -6355,44 +6355,6 @@
     "distance": 8.0,
     "kind": "bed"
    }
-  },
-  {
-   "name": "sub_hits",
-   "instrument": "sfx:boom",
-   "role": "fx",
-   "notes": [
-    {
-     "t": 64.0,
-     "d": 4.0,
-     "p": 60,
-     "v": 0.12
-    },
-    {
-     "t": 96.0,
-     "d": 4.0,
-     "p": 60,
-     "v": 0.15
-    },
-    {
-     "t": 112.0,
-     "d": 4.0,
-     "p": 60,
-     "v": 0.16
-    },
-    {
-     "t": 152.0,
-     "d": 5.0,
-     "p": 60,
-     "v": 0.1
-    }
-   ],
-   "spatial": {
-    "azimuth": 0,
-    "elevation": 0,
-    "distance": 3.0,
-    "kind": "bed"
-   },
-   "dc_hp_hz": 25.0
   }
  ],
  "mix": {

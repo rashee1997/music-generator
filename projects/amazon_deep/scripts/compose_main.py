@@ -410,8 +410,8 @@ for i, b in enumerate(r_steps + [60, 63] + pursued[1::2] + quick[1::2]):
     walk_all['right'].append(b)
 steps('steps_left', 'green_step_leaf', sorted(walk_all['left'] + calm[0::2]), -8, 2.6, 0.7)
 steps('steps_right', 'green_step_leaf', sorted(walk_all['right'] + calm[1::2]), 8, 2.6, 0.7)
-steps('run_left', 'green_step_mud', run[0::2], -9, 2.4, 0.85)
-steps('run_right', 'green_step_mud', run[1::2], 9, 2.4, 0.85)
+steps('run_left', 'green_step_mud', run[0::2], -14, 2.4, 0.85)
+steps('run_right', 'green_step_mud', run[1::2], 14, 2.4, 0.85)
 other = [146.0, 148.0, 150.0, 152.0, 153.5, 155.0]                   # after he has stopped, somebody behind him has not
 steps('steps_other', 'green_step_leaf', other, 160, 9.0, 0.5, spatial_trajectory=True)
 for t in tracks:
@@ -434,13 +434,10 @@ track('heartbeat', 'sfx:heartbeat', 'fx', [dict(t=B(14) + k * 1.4, d=1.2, p=60, 
 track('risers', 'sfx:riser', 'fx', [dict(t=ENTRY - 4.0, d=4.0, p=60, v=0.5), dict(t=CHASE - 4.0, d=4.0, p=60, v=0.65),
                                     dict(t=TWIST - 3.0, d=3.0, p=60, v=0.7)],
       spatial=dict(azimuth=0, elevation=20, distance=8.0, kind='bed'))
-track('sub_hits', 'sfx:boom', 'fx', [dict(t=ENTRY, d=4.0, p=60, v=0.12), dict(t=CHASE, d=4.0, p=60, v=0.15),
-                                     dict(t=TWIST, d=4.0, p=60, v=0.16), dict(t=FINAL, d=5.0, p=60, v=0.1)],
-      spatial=dict(azimuth=0, elevation=0, distance=3.0, kind='bed'))
 
 # sub-bass effects carry energy below 25 Hz that shows as a slow drift in the stem gate: remove it at the track (measured, stem.dc)
 for _t in tracks:
-    if _t['name'] in ('heartbeat', 'sub_hits', 'thunder', 'vine_chop'):
+    if _t['name'] in ('heartbeat', 'thunder', 'vine_chop'):
         _t['dc_hp_hz'] = 25.0
 
 # ================================================================ the score
@@ -454,12 +451,12 @@ score = dict(
     tempo_points=[[0, 96], [56, 100], [88, 102], [96, 106], [120, 108], [128, 108], [132, 90], [152, 88], [160, 78]],
     dynamics=dynamics, ritard=0.12, ritard_beats=8, space='green_dark_room', mix_preset='into_the_green_dark_mix',
     output_targets=['stereo', 'mono', 'immersive_5_1', 'immersive_7_1_4', 'ambix', 'adm_bw64'],
-    master=dict(lufs=-16.0, true_peak=-1.6, tone='neutral', fade_out=4.0),
+    master=dict(lufs=-16.0, true_peak=-1.6, tone='neutral', fade_out=2.5),
     piece_type='cinematic', focus='melody',
     intent=dict(emotions=['adventure', 'tense', 'wonder'], registers=['cinematic', 'natural'], scenes=['dread', 'chase', 'reveal'],
                 tensions=['ostinato', 'pedal', 'silence_before', 'unresolved_dominant'], avoid=['joyful', 'playful']),
     mix_intent=dict(hero='horns', leave_free_hz=[700, 2600]),
-    plan=dict(sections=sections, ending=dict(fade_out=4.0)),
+    plan=dict(sections=sections, ending=dict(fade_out=2.5)),
     tracks=tracks,
     mix=dict(tracks={}),
 )

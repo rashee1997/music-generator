@@ -333,7 +333,7 @@
     },
     "green_tuba": {
       "azimuth": -9.0,
-      "elevation": 0.0,
+      "elevation": -15.0,
       "distance": 4.3,
       "space": "green_dark_room"
     },

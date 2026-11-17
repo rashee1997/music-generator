@@ -11,7 +11,7 @@
     "tail_s": 3.0,
     "trim_db": 0.0,
     "fallback": null,
-    "attack_fade_s": 0.003
+    "attack_fade_s": 0.005
   },
   "humanize": {
     "preset": "natural",

@@ -66,5 +66,7 @@
   "sources": [
     "tropical_thunder"
   ],
-  "note": "KB sfx-formulas (impact, friction and fracture laws used by phys_core) | KB game-sfx | Turchet, Serafin, Dimitrov and Nordahl (DAFx-10): a footstep is a ground reaction force on a contact, see scripts/phys_core/gait.py | No measurement found: ESTIMATE of masses, speeds, materials and levels; nothing here was auditioned | Shipped sound model sound-models/thunder.json (crack then rolling rumble), copied unchanged except for length and level"
+  "note": "KB sfx-formulas (impact, friction and fracture laws used by phys_core) | KB game-sfx | Turchet, Serafin, Dimitrov and Nordahl (DAFx-10): a footstep is a ground reaction force on a contact, see scripts/phys_core/gait.py | No measurement found: ESTIMATE of masses, speeds, materials and levels; nothing here was auditioned | Shipped sound model sound-models/thunder.json (crack then rolling rumble), copied unchanged except for length and level",
+  "hp": 60,
+  "lp": 3000
 }
