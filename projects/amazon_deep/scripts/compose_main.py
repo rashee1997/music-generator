@@ -378,7 +378,7 @@ def jag(name, t0, d, az, el, dist, keys=None, **kw):
     sp = dict(azimuth=az, elevation=el, distance=dist, kind='spot', binaural=True)
     if keys:
         sp['trajectory'] = dict(spatial_role='mover', doppler_strength=1.0, keyframes=keys)
-    track(name, 'env:green_jaguar', 'environment', [dict(t=float(t0), d=float(d), p=60, v=1.0)], spatial=sp, fade_in_s=0.04, fade_out_s=0.15, **kw)
+    track(name, 'env:green_jaguar', 'environment', [dict(t=float(t0), d=float(d), p=60, v=1.0)], spatial=sp, fade_in_s=0.04, fade_out_s=0.04, **kw)
 
 
 jag('jaguar_far', B(15, 2.5), 5.4, 150, 0, 16.0)

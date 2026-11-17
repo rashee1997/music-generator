@@ -5179,7 +5179,7 @@
     "binaural": true
    },
    "fade_in_s": 0.04,
-   "fade_out_s": 0.15
+   "fade_out_s": 0.04
   },
   {
    "name": "jaguar_near",
@@ -5222,7 +5222,7 @@
     }
    },
    "fade_in_s": 0.04,
-   "fade_out_s": 0.15
+   "fade_out_s": 0.04
   },
   {
    "name": "jaguar_chase",
@@ -5265,7 +5265,7 @@
     }
    },
    "fade_in_s": 0.04,
-   "fade_out_s": 0.15
+   "fade_out_s": 0.04
   },
   {
    "name": "jaguar_eyes",
@@ -5287,7 +5287,7 @@
     "binaural": true
    },
    "fade_in_s": 0.04,
-   "fade_out_s": 0.15
+   "fade_out_s": 0.04
   },
   {
    "name": "steps_left",
