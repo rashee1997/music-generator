@@ -240,10 +240,10 @@ tb_sus += [N(TWIST, 6.0, p, 1.0) for p in (53, 56, 60, 65)] + [N(FINAL, 6.8, p, 
 tb = [N(B(21, 0), 1.5, p, 0.72) for p in (55, 62)]
 PATTERNS = [((0, 1.4), (1.5, 1.4), (3.0, 0.9)), ((0, 1.9), (2.0, 0.9), (3.5, 0.45)), ((0, 1.4), (1.5, 0.9), (2.5, 1.4)),
             ((0, 0.9), (1.0, 0.9), (2.0, 1.9)), ((0, 1.4), (3.0, 0.9)), ((0, 2.9), (3.0, 0.9))]
-for bar in (26, 30, 31):
+STAB_BARS = {26: ((0, 1.9), (2.0, 0.9)), 31: ((0, 1.4), (3.0, 0.9))}      # few stabs: each one is an event, not a pulse
+for bar, pat in STAB_BARS.items():
     root, q = CH[bar]
     r = near(root, 48, 59)
-    pat = PATTERNS[int(rng.integers(0, len(PATTERNS)))]
     for off, d in pat:
         if bar == 32 and off > 0:
             continue
@@ -385,7 +385,7 @@ def jag(name, t0, d, az, el, dist, keys=None, **kw):
     track(name, 'env:green_jaguar', 'environment', [dict(t=float(t0), d=float(d), p=60, v=1.0)], spatial=sp, **kw)
 
 
-jag('jaguar_far', B(15, 2.5), 6.0, 150, 0, 16.0)
+jag('jaguar_far', B(15, 2.5), 5.4, 150, 0, 16.0)
 jag('jaguar_near', B(22, 2), 8.0, -140, 0, 6.0,
     keys=[dict(bar=22.5, azimuth=-140, distance=6.0), dict(bar=24.5, azimuth=-75, distance=3.6), dict(bar=24.9, azimuth=-60, distance=3.0)])
 jag('jaguar_chase', B(27, 1), 14.0, -90, 0, 5.0,
@@ -427,13 +427,13 @@ for t in tracks:
 # ================================================================ single sounds: the snap, the blade, the sky, the heart
 track('twig_snap', 'sfx:green_twig_snap', 'fx', [dict(t=SNAP, d=2.6, p=60, v=1.0)],
       spatial=dict(azimuth=-22, elevation=0, distance=2.2, kind='spot', binaural=True))
-track('vine_chop', 'sfx:green_vine_chop', 'fx', [dict(t=27.0, d=2.0, p=60, v=0.8), dict(t=39.0, d=2.0, p=60, v=0.85),
-                                                  dict(t=108.5, d=2.0, p=60, v=0.9)],
+track('vine_chop', 'sfx:green_vine_chop', 'fx', [dict(t=27.0, d=2.0, p=60, v=0.6), dict(t=39.0, d=2.0, p=60, v=0.65),
+                                                  dict(t=108.5, d=2.0, p=60, v=0.7)],
       spatial=dict(azimuth=18, elevation=0, distance=2.0, kind='spot', binaural=True))
-track('thunder', 'sfx:green_thunder', 'fx', [dict(t=B(21, 3), d=11.0, p=60, v=0.4), dict(t=TWIST - 0.8, d=11.0, p=60, v=0.5)],
+track('thunder', 'sfx:green_thunder', 'fx', [dict(t=B(21, 3), d=11.0, p=60, v=0.32), dict(t=TWIST - 0.8, d=11.0, p=60, v=0.4)],
       spatial=dict(azimuth=-30, elevation=35, distance=24.0, kind='bed'))
-track('heartbeat', 'sfx:heartbeat', 'fx', [dict(t=B(14) + k * 1.4, d=1.2, p=60, v=0.4 + 0.015 * k) for k in range(8)]
-      + [dict(t=B(37) + k * 2.8, d=1.2, p=60, v=0.36 - 0.04 * k) for k in range(5)],
+track('heartbeat', 'sfx:heartbeat', 'fx', [dict(t=B(14) + k * 1.4, d=1.2, p=60, v=0.3 + 0.012 * k) for k in range(8)]
+      + [dict(t=B(37) + k * 2.8, d=1.2, p=60, v=0.27 - 0.03 * k) for k in range(5)],
       spatial=dict(azimuth=0, elevation=-5, distance=0.8, kind='spot', binaural=True))
 track('risers', 'sfx:riser', 'fx', [dict(t=ENTRY - 4.0, d=4.0, p=60, v=0.5), dict(t=CHASE - 4.0, d=4.0, p=60, v=0.65),
                                     dict(t=TWIST - 3.0, d=3.0, p=60, v=0.7)],
@@ -444,7 +444,7 @@ track('sub_hits', 'sfx:boom', 'fx', [dict(t=ENTRY, d=4.0, p=60, v=0.12), dict(t=
 
 # sub-bass effects carry energy below 25 Hz that shows as a slow drift in the stem gate: remove it at the track (measured, stem.dc)
 for _t in tracks:
-    if _t['name'] in ('heartbeat', 'sub_hits', 'thunder', 'vine_chop', 'twig_snap'):
+    if _t['name'] in ('heartbeat', 'sub_hits', 'thunder', 'vine_chop'):
         _t['dc_hp_hz'] = 25.0
 
 # ================================================================ the score
