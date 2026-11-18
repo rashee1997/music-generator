@@ -437,6 +437,9 @@ class MusicPipeline:
 
         import mixer
         mixer.release_stems()          # Stage 6 has measured the processed stems; nothing reads them again
+        _mem = resources.release_memory()
+        if _mem and _mem[0] is not None and _mem[1] is not None and _mem[0] - _mem[1] > 0.5:
+            print(f"  [mem] returned {_mem[0] - _mem[1]:.1f} GB to the system after the mix ({_mem[1]:.1f} GB resident)")
         return ci_rows, fails, warns
 
     # -----------------------------------------------------------------------------------------
@@ -911,6 +914,7 @@ class MusicPipeline:
             for extra in outputs['selected'][1:]:
                 rel = render_targets.filename(extra)
                 extra_draft = os.path.join(os.path.dirname(out_wav) or '.', '_draft_' + rel)
+                resources.release_memory()                  # the last mix's freed memory goes back before the next one starts
                 spatial_render.render_deliverable(score, stems, extra, extra_draft)
                 rows = []
                 spatial_gate.output_rows(score, extra_draft, rows)

@@ -16,7 +16,9 @@ environment variable. Nothing here knows a project or a piece.
     sfz_workers()        sampler subprocesses at once       MUSICGEN_SFZ_WORKERS
     gate_workers()       threads for the per-stem gate rows  GATE_WORKERS
     summary()            one line for the render report
+    release_memory()     hand freed memory back to the system between renders
 """
+import gc
 import os
 
 SFZ_WORKER_GB = 2.5        # starting value: one sfizz process with an orchestra patch set, measured as the cause of an out-of-memory at 4 on 15 GB
@@ -106,3 +108,26 @@ def gate_workers(n_cores=None):
 
 def summary():
     return (f'{cores()} core(s), {available_gb():.1f} GB free: {sfz_workers()} sampler worker(s), {gate_workers()} gate thread(s)')
+
+
+def release_memory():
+    """Give freed memory back to the operating system; returns the resident size in GB before and after, or None.
+
+    numpy frees an array to the allocator, and glibc keeps what worker threads freed in per-thread arenas: after a
+    mix that peaked at 12 GB the process still held most of it, and the next format's mix started on top and was
+    killed by the container's limit. A collection plus `malloc_trim` returns the free pages. Only glibc has it, and
+    nothing happens elsewhere."""
+    def rss():
+        try:
+            with open('/proc/self/statm') as fh:
+                return int(fh.read().split()[1]) * os.sysconf('SC_PAGE_SIZE') / 1e9
+        except (OSError, ValueError, IndexError):
+            return None
+    before = rss()
+    gc.collect()
+    try:
+        import ctypes
+        ctypes.CDLL('libc.so.6').malloc_trim(0)
+    except (OSError, AttributeError):
+        pass
+    return before, rss()

@@ -68,3 +68,12 @@ class Memory(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class ReleaseMemory(unittest.TestCase):
+    def test_returns_resident_sizes_and_never_raises(self):
+        import resources
+        got = resources.release_memory()
+        self.assertEqual(len(got), 2)
+        for v in got:
+            self.assertTrue(v is None or v > 0.0)
