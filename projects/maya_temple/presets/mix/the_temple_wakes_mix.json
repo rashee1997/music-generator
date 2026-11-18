@@ -247,9 +247,9 @@
       "bass": 0.0,
       "drum": 0.1,
       "percussion": 0.1,
-      "pad": 0.2,
-      "texture": 0.2,
-      "melody": 0.16,
+      "pad": 0.15,
+      "texture": 0.15,
+      "melody": 0.13,
       "environment": 0.1,
       "fx": 0.08
     },
