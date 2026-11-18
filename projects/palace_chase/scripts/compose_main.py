@@ -183,7 +183,7 @@ track('violins_tremolo', 'mayan_violins_tremolo', 'pad', vt)
 
 vs = [N(B(bar), 3.95, 74 + (bar - 42), 0.55 + 0.03 * (bar - 42)) for bar in range(42, 58)]          # the rising device in the forest
 vs += [N(B(bar), 3.95, 78 + 2 * (bar - 62), 0.95) for bar in range(62, 66)]
-vs += [N(B(66), 15.9, 81, 0.8), N(B(70), 15.9, 78, 0.55), N(B(74), 8.0, 81, 0.4)]               # F#5, D major add9 above: the light
+vs += [N(B(66), 15.9, 81, 0.8), N(B(70), 15.9, 74, 0.55), N(B(74), 8.0, 81, 0.4)]               # F#5, D major add9 above: the light
 track('violins_sustain', 'mayan_violins_sustain', 'pad', vs)
 
 # ================================================================ woodwinds and harp: the human voice, and the relic's
@@ -319,7 +319,7 @@ for bar in range(58, 62):
 for bar in range(62, 66):
     ch += [N(B(bar), 3.95, p, 1.0) for p in (62, 66, 69, 74)]                 # D major: the cluster is gone, F# in the chord
 ch += [N(B(66), 15.9, p, 0.55) for p in (62, 69, 74)]
-ch += [N(B(70), 23.9, p, 0.35) for p in (62, 66, 69)]
+ch += [N(B(70), 23.9, p, 0.35) for p in (62, 69, 74)]                  # an open fifth: no third, so the ending is calm in either mode
 track('choir', 'mayan_choir', 'pad', ch)
 
 # ================================================================ places, calls and single sounds
