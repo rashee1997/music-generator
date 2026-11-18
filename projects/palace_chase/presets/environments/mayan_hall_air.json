@@ -1,0 +1,33 @@
+{
+  "name": "mayan_hall_air",
+  "description": "The inside of a stone palace: a very low, dark air bed with nothing alive in it.",
+  "character": "The inside of a stone palace: a very low, dark air bed with nothing alive in it, only the sense of a large closed space.",
+  "layers": [
+    {
+      "name": "hall_air",
+      "primitive": "noise_bed",
+      "kind": "bed",
+      "gain_db": -24.0,
+      "low_hz": 60,
+      "high_hz": 900,
+      "mod_rate_hz": 0.03,
+      "mod_depth": 0.15,
+      "pan": 0.0,
+      "spatial": {
+        "azimuth": 0,
+        "elevation": 30,
+        "distance": 10
+      }
+    }
+  ],
+  "blending": {
+    "high_pass_hz": 60,
+    "vocal_pocket_notch_hz": 2200,
+    "vocal_pocket_notch_db": -3.0,
+    "overall_gain_db": -10.0
+  },
+  "sources": [
+    "stone_temple_interior"
+  ],
+  "note": "A closed stone palace: low air only. No measurement found: ESTIMATE of band and level; a closed stone room has no insect or wind sound; nothing here was auditioned."
+}

@@ -1,0 +1,71 @@
+{
+  "name": "mayan_step_run_leaf",
+  "character": "One footfall of a person running over dry leaf litter: a hard contact on soil and a quick scatter of leaves.",
+  "seconds": 0.55,
+  "role": "fx",
+  "gain_db": -4.0,
+  "reverb": 0.12,
+  "spatial": {
+    "azimuth": 0.0,
+    "elevation": 0.0,
+    "distance": 3.0
+  },
+  "scene": {
+    "note": "A running foot on leaf litter: gait contact on soil, a quick scatter of dry leaves.",
+    "calibration": {
+      "normalize": "energy",
+      "level_db": 0
+    },
+    "objects": {
+      "ground": {
+        "material": "soil",
+        "geometry": {
+          "shape": "plate",
+          "width_m": 2.0,
+          "thickness_m": 0.2
+        },
+        "modes": 6
+      },
+      "litter": {
+        "material": "leaf_dry",
+        "geometry": {
+          "shape": "leaf",
+          "width_m": 0.08,
+          "thickness_m": 0.0002
+        },
+        "modes": 5
+      }
+    },
+    "timeline": [
+      {
+        "at": 0.0,
+        "for": 0.4,
+        "interaction": "gait",
+        "target": "ground",
+        "cadence_spm": 170,
+        "mass_kg": 80
+      },
+      {
+        "at": 0.0,
+        "for": 0.4,
+        "interaction": "foliage",
+        "target": "litter",
+        "speed_m_s": 3.2,
+        "leaf_count": 240
+      }
+    ],
+    "propagation": {
+      "distance_m": 3.0,
+      "atmosphere": {
+        "temp_c": 27,
+        "rh": 90
+      },
+      "canopy_density": 0.6
+    },
+    "seconds": 0.55
+  },
+  "sources": [
+    "footstep_leaf_litter_and_mud"
+  ],
+  "note": "KB sfx-formulas (impact, friction and fracture laws used by phys_core) | KB game-sfx | Turchet, Serafin, Dimitrov and Nordahl (DAFx-10): a footstep is a ground reaction force on a contact, see scripts/phys_core/gait.py | No measurement found: ESTIMATE of masses, speeds, materials and levels; nothing here was auditioned"
+}

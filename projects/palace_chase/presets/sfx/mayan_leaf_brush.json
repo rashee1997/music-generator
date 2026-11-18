@@ -1,0 +1,54 @@
+{
+  "name": "mayan_leaf_brush",
+  "character": "Undergrowth pushed aside at a run: a wide rush of green leaves against cloth and skin.",
+  "seconds": 1.1,
+  "role": "fx",
+  "gain_db": -4.0,
+  "reverb": 0.12,
+  "spatial": {
+    "azimuth": -60,
+    "elevation": 0,
+    "distance": 1.0
+  },
+  "scene": {
+    "calibration": {
+      "normalize": "energy",
+      "level_db": -6
+    },
+    "objects": {
+      "leaves": {
+        "material": "leaf_green",
+        "geometry": {
+          "shape": "leaf",
+          "width_m": 0.12,
+          "thickness_m": 0.0003
+        },
+        "modes": 5
+      }
+    },
+    "timeline": [
+      {
+        "at": 0.0,
+        "for": 0.8,
+        "interaction": "foliage",
+        "target": "leaves",
+        "speed_m_s": 3.8,
+        "leaf_count": 520
+      }
+    ],
+    "propagation": {
+      "distance_m": 1.0,
+      "atmosphere": {
+        "temp_c": 27,
+        "rh": 90
+      },
+      "canopy_density": 0.6
+    },
+    "note": "A body passing through a wall of leaves.",
+    "seconds": 1.1
+  },
+  "sources": [
+    "foliage_leaf_brush"
+  ],
+  "note": "A body passing through a wall of leaves. No measurement found: ESTIMATE of speeds, masses and counts; nothing here was auditioned."
+}

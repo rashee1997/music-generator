@@ -1,0 +1,79 @@
+{
+  "name": "mayan_stone_slam",
+  "character": "A stone block dropped into place: a hard crack, a short ring of the slab and a low rumble that runs away through the rock.",
+  "seconds": 6.0,
+  "role": "fx",
+  "gain_db": -3.0,
+  "reverb": 0.3,
+  "spatial": {
+    "azimuth": 0.0,
+    "elevation": 0.0,
+    "distance": 5.0
+  },
+  "model": {
+    "seconds": 6,
+    "voices": [
+      {
+        "name": "crack",
+        "excite": {
+          "kind": "burst",
+          "tau": 0.08
+        },
+        "resonator": {
+          "kind": "bandpass",
+          "band": [
+            400,
+            3500
+          ]
+        },
+        "events": {
+          "kind": "single"
+        }
+      },
+      {
+        "name": "ring",
+        "excite": {
+          "kind": "impact",
+          "tau": 0.004
+        },
+        "resonator": {
+          "kind": "modal",
+          "law": "bar",
+          "f1": 140,
+          "n": 6,
+          "t60": 1.6
+        },
+        "events": {
+          "kind": "single"
+        },
+        "gain_db": -3
+      },
+      {
+        "name": "rumble",
+        "excite": {
+          "kind": "noise",
+          "color": "brown",
+          "attack": 0.03,
+          "tau": 1.4,
+          "hold": 0.1
+        },
+        "resonator": {
+          "kind": "bandpass",
+          "band": [
+            110,
+            320
+          ]
+        },
+        "events": {
+          "kind": "single"
+        },
+        "gain_db": -4
+      }
+    ]
+  },
+  "sources": [
+    "stone_door_friction"
+  ],
+  "hp": 100,
+  "lp": 4500
+}

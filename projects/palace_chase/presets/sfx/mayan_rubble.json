@@ -1,0 +1,70 @@
+{
+  "name": "mayan_rubble",
+  "character": "A stone ceiling giving way: one heavy block landing and a long run of smaller stones.",
+  "seconds": 3.4,
+  "role": "fx",
+  "gain_db": -2.0,
+  "reverb": 0.3,
+  "spatial": {
+    "azimuth": 0,
+    "elevation": 20,
+    "distance": 7.0
+  },
+  "scene": {
+    "calibration": {
+      "normalize": "energy",
+      "level_db": 0
+    },
+    "objects": {
+      "slab": {
+        "material": "stone",
+        "geometry": {
+          "shape": "plate",
+          "width_m": 3.0,
+          "thickness_m": 0.4
+        },
+        "modes": 8
+      },
+      "grit": {
+        "material": "stone",
+        "geometry": {
+          "shape": "plate",
+          "width_m": 2.0,
+          "thickness_m": 0.3
+        },
+        "modes": 6
+      }
+    },
+    "timeline": [
+      {
+        "at": 0.0,
+        "interaction": "impact",
+        "target": "slab",
+        "mass_kg": 60.0,
+        "velocity_m_s": 5.0
+      },
+      {
+        "at": 0.15,
+        "for": 2.4,
+        "interaction": "granular",
+        "target": "grit",
+        "rate_hz": 110.0,
+        "velocity_m_s": 2.0
+      }
+    ],
+    "propagation": {
+      "distance_m": 7.0,
+      "atmosphere": {
+        "temp_c": 22,
+        "rh": 85
+      },
+      "canopy_density": 0.0
+    },
+    "note": "A block landing on stone followed by loose rubble.",
+    "seconds": 3.4
+  },
+  "sources": [
+    "rubble_granular_fall"
+  ],
+  "note": "A block landing on stone followed by loose rubble. No measurement found: ESTIMATE of speeds, masses and counts; nothing here was auditioned."
+}

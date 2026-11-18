@@ -1,0 +1,53 @@
+{
+  "name": "mayan_step_run_stone",
+  "character": "One footfall of a person running on a stone floor: a hard heel and a short dry ring from the slab.",
+  "seconds": 0.55,
+  "role": "fx",
+  "gain_db": -5.0,
+  "reverb": 0.3,
+  "spatial": {
+    "azimuth": 0.0,
+    "elevation": 0.0,
+    "distance": 3.0
+  },
+  "scene": {
+    "note": "A running foot on a worn stone slab: a shorter, harder heel than a walk.",
+    "calibration": {
+      "normalize": "energy",
+      "level_db": 0
+    },
+    "objects": {
+      "ground": {
+        "material": "stone",
+        "geometry": {
+          "shape": "plate",
+          "width_m": 2.0,
+          "thickness_m": 0.3
+        },
+        "modes": 8
+      }
+    },
+    "timeline": [
+      {
+        "at": 0.0,
+        "for": 0.4,
+        "interaction": "gait",
+        "target": "ground",
+        "cadence_spm": 170,
+        "mass_kg": 80
+      }
+    ],
+    "propagation": {
+      "distance_m": 3.0,
+      "atmosphere": {
+        "temp_c": 22,
+        "rh": 85
+      },
+      "canopy_density": 0.0
+    },
+    "seconds": 0.55
+  },
+  "sources": [
+    "stone_slab_footstep"
+  ]
+}

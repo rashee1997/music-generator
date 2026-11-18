@@ -1,0 +1,16 @@
+{
+  "overrides": {
+    "artist": "Music Generator",
+    "album": "Immersive 3.0 test cues",
+    "year": "2026",
+    "genre": "Cinematic / Orchestral",
+    "copyright": "Generated test cue",
+    "comment": "Orchestra: Sonatina Symphonic Orchestra, Mattias Westlund and Peter Eastman, CC Sampling Plus 1.0 (https://github.com/peastman/sso). Played by sfizz. Not auditioned."
+  },
+  "derive_from_score": {
+    "title": true,
+    "genre": true,
+    "comment": true,
+    "year": true
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "name": "mayan_guardian_step",
+  "character": "One step of a carved stone figure: a very heavy, slow contact on a slab, a deep thud with a gritty ring.",
+  "seconds": 1.6,
+  "role": "fx",
+  "gain_db": -2.0,
+  "reverb": 0.3,
+  "spatial": {
+    "azimuth": 180,
+    "elevation": -10,
+    "distance": 6.0
+  },
+  "scene": {
+    "calibration": {
+      "normalize": "energy",
+      "level_db": 2
+    },
+    "objects": {
+      "ground": {
+        "material": "stone",
+        "geometry": {
+          "shape": "plate",
+          "width_m": 2.5,
+          "thickness_m": 0.5
+        },
+        "modes": 8
+      }
+    },
+    "timeline": [
+      {
+        "at": 0.0,
+        "for": 1.0,
+        "interaction": "gait",
+        "target": "ground",
+        "cadence_spm": 60,
+        "mass_kg": 450
+      }
+    ],
+    "propagation": {
+      "distance_m": 6.0,
+      "atmosphere": {
+        "temp_c": 22,
+        "rh": 85
+      },
+      "canopy_density": 0.0
+    },
+    "note": "A 450 kg stone figure stepping on a stone slab.",
+    "seconds": 1.6
+  },
+  "sources": [
+    "stone_slab_footstep"
+  ],
+  "note": "A 450 kg stone figure stepping on a stone slab. No measurement found: ESTIMATE of speeds, masses and counts; nothing here was auditioned."
+}
