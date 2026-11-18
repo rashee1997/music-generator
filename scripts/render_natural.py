@@ -709,6 +709,9 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
             if open_p.get(ch) == e['p']:
                 open_p[ch] = None
         stem = mechanics.add(vox.render(tail=3.0), tr, ev, sr=SR, seed=seed)
+        fade_ms = float(tr.get('onset_fade_ms') or (inst_cfg or {}).get('onset_fade_ms') or 0.0)
+        if fade_ms > 0:   # the preset's own 2-3 ms ramp, for sampled patches that start on a step
+            stem = dsp.soften_onsets(stem, sr=SR, times=[e['t'] for e in ev], ms=fade_ms)
         return dsp.enhance_sf2_dynamics(stem, sr=SR, role=role, velocity=_mean_vel(ev))
 
     # shared channel (piano, guitar, plucked, mallets)
@@ -733,6 +736,9 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
         vox.add(e['t'], 'on', 0, e['p'], e['v'])
         vox.add(offs[j], 'off', 0, e['p'])
     stem = mechanics.add(vox.render(tail=3.5), tr, ev, sr=SR, seed=seed)
+    fade_ms = float(tr.get('onset_fade_ms') or (inst_cfg or {}).get('onset_fade_ms') or 0.0)
+    if fade_ms > 0:   # the preset's own 2-3 ms ramp, for sampled patches that start on a step
+        stem = dsp.soften_onsets(stem, sr=SR, times=[e['t'] for e in ev], ms=fade_ms)
     return dsp.enhance_sf2_dynamics(stem, sr=SR, role=role, velocity=_mean_vel(ev))
 
 

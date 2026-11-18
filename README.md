@@ -9,7 +9,7 @@ An AI agent skill and Python audio pipeline that composes, renders, mixes and va
 **Demo:** **Black Jaguar (Cinematic Chase)** — *D minor · 134 BPM*
 ▶ **[Listen in Browser](https://rashee1997.github.io/music-generator/docs/listen.html#black-jaguar)** · **[Download MP3 (320 kbps)](https://rashee1997.github.io/music-generator/assets/samples/black-jaguar-cinematic-chase.mp3)**
 ▶ **[Arabian Nights: The Desert Crossing (Immersive 2.0)](https://rashee1997.github.io/music-generator/docs/listen.html#arabian-nights)** — with the desert air, mixed on the ambisonic bus · **[Download MP3 (320 kbps)](https://rashee1997.github.io/music-generator/assets/samples/arabian-nights-desert.mp3)**
-▶ **[The Unwelcome Crossing (haunted desert cue, object audio)](https://rashee1997.github.io/music-generator/docs/listen.html#haunted-desert)** — 7.1.2, 7.1, 48 kHz and ADM objects · **[Download MP3 (320 kbps)](https://rashee1997.github.io/music-generator/assets/samples/haunted-desert-crossing.mp3)**
+▶ **[The Unwelcome Crossing (haunted desert cue, object audio)](https://rashee1997.github.io/music-generator/docs/listen.html#haunted-desert)** — 48 kHz game master, with 7.1.2, 7.1 and ADM object renders · **[Download MP3 (320 kbps)](https://rashee1997.github.io/music-generator/assets/samples/haunted-desert-crossing.mp3)**
 
 > **What was and was not checked.** Everything below is verified by tests, probes and gate rows. Nothing in this
 > repository has been auditioned by its author's ears except where a listing says so; the pipeline's numbers measure
