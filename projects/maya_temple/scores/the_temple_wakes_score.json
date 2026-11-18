@@ -108,7 +108,7 @@
   "adm_bw64"
  ],
  "master": {
-  "lufs": -13.0,
+  "lufs": -14.5,
   "true_peak": -2.0,
   "tone": "neutral",
   "fade_out": 0.6
@@ -10806,7 +10806,7 @@
     }
    ],
    "spatial": {
-    "azimuth": -55,
+    "azimuth": -80,
     "elevation": 35,
     "distance": 8.0,
     "kind": "bed"

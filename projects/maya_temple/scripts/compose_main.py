@@ -322,7 +322,7 @@ track('stone_slam', 'sfx:maya_stone_slam', 'fx', [dict(t=BRAAM2, d=10.0, p=60, v
 track('heartbeat', 'sfx:heartbeat', 'fx', [dict(t=B(2) + k * 1.4, d=1.2, p=60, v=0.32 + 0.012 * k) for k in range(18)],
       spatial=dict(azimuth=45, elevation=-10, distance=0.8, kind='spot', binaural=True))
 track('risers', 'sfx:riser', 'fx', [dict(t=beat - 4.0, d=4.0, p=60, v=0.7) for beat in (DESCENT, BRAAM2, AWAKE, RUN)],
-      spatial=dict(azimuth=-55, elevation=35, distance=8.0, kind='bed'))
+      spatial=dict(azimuth=-80, elevation=35, distance=8.0, kind='bed'))
 for _t in tracks:
     if _t['name'] in ('heartbeat', 'risers', 'stone_slam', 'stone_door'):
         _t['dc_hp_hz'] = 45.0
@@ -341,7 +341,7 @@ score = dict(
     tempo_points=[[0, 84], [32, 88], [64, 96], [80, 104], [124, 108], [128, 120], [160, 128], [176, 132], [200, 138]],
     dynamics=dynamics, space='maya_temple_room', mix_preset='the_temple_wakes_mix',
     output_targets=['stereo', 'mono', 'immersive_5_1', 'immersive_7_1_4', 'ambix', 'adm_bw64'],
-    master=dict(lufs=-13.0, true_peak=-2.0, tone='neutral', fade_out=0.6),
+    master=dict(lufs=-14.5, true_peak=-2.0, tone='neutral', fade_out=0.6),
     piece_type='cinematic', focus='melody',
     intent=dict(emotions=['adventure', 'tense', 'dark_epic'], registers=['cinematic', 'natural'], scenes=['build', 'battle', 'arrival'],
                 tensions=['ostinato', 'pedal', 'cluster', 'rising_line', 'silence_before'], avoid=['joyful', 'playful']),
