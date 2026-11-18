@@ -100,8 +100,26 @@ def band_power(x, sr, lo, hi, nperseg=4096):
     return float(np.sum(p[m]))
 
 
+_BAND_DB_CACHE = {}          # (id(x), shape, lo, hi, sr) -> (the array itself, the answer)
+_BAND_DB_MAX = 256           # a run asks for a handful of bands of a handful of stems; this only bounds a leak
+
+
 def band_db(x, sr, lo, hi):
-    return 10.0 * np.log10(band_power(x, sr, lo, hi) + EPS)
+    """10 log10 of one band's power, memoised per array object.
+
+    Several gate rows ask for the same band of the same stem (masking, balance, kick grid, separation), and each
+    call re-ran the whole Welch PSD over a multi-minute stem. The cache holds the array itself, so its identity
+    cannot be recycled while the entry is live, and an edit produces a new array and therefore a new measurement.
+    """
+    key = (id(x), np.shape(x), float(lo), float(hi), int(sr))
+    got = _BAND_DB_CACHE.get(key)
+    if got is not None and got[0] is x:
+        return got[1]
+    value = 10.0 * np.log10(band_power(x, sr, lo, hi) + EPS)
+    if len(_BAND_DB_CACHE) >= _BAND_DB_MAX:
+        _BAND_DB_CACHE.clear()
+    _BAND_DB_CACHE[key] = (x, value)
+    return value
 
 
 def band_powers(x, sr, bands, nperseg=4096):

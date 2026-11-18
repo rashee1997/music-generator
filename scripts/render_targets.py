@@ -89,6 +89,22 @@ def buildable(name):
     return t.get('renderer') in ENGINE_RENDERERS
 
 
+def delivered(score):
+    """What this run delivers, in promise order: one dict per target, no guessing from a file name.
+
+    Stage 5 renders these, stage 6 certifies the first (and each extra against its own rows), and the packaging
+    stage reports them. `channels` 0 with renderer "adm" means the piece's own channel count (objects), not a
+    format width.
+    """
+    out = []
+    for name in resolve(score)['selected']:
+        t = get(name) or {}
+        out.append(dict(name=name, channels=int(t.get('channels') or 0), channel_order=list(t.get('channel_order') or []),
+                        layout=t.get('layout'), renderer=t.get('renderer'), file=filename(name),
+                        true_peak_dbtp=true_peak(name)))
+    return out
+
+
 def filename(name):
     """The file a target is delivered as, inside out/."""
     return (get(name) or {}).get('file') or (name + '.wav')

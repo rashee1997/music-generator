@@ -389,8 +389,9 @@ class MusicPipeline:
         The mixing diagnostics go on top as advisory `mix:` rows."""
         self.log(6, "Automated CI/CD Quality Gate Suite")
         mix_metrics = []
+        self.master_analysis = {}          # the gate's measurement of this file, for the packaging stage
         ci_rows, _ = qg.run_gate(None, wav_path=out_wav, refresh=False, stems=stems, score=score,
-                                 mode=mode, metrics=mix_metrics)
+                                 mode=mode, metrics=mix_metrics, analysis=self.master_analysis)
         self.mix_metrics = mix_metrics
         if stem_rows:
             ci_rows = list(stem_rows) + ci_rows          # stem rows first: the earlier stage owns the first verdict
@@ -449,9 +450,14 @@ class MusicPipeline:
             if self.verbose:
                 print(f"  Exported MIDI: {out_midi}")
 
-        # Measure master file audio attributes and neuro-cognitive perception metrics
-        analysis = nc.analyse(out_wav)
-        _, rough_metrics = nc.cochlear_roughness_check(out_wav, score=score)
+        # Master audio attributes and neuro-cognitive perception metrics. The gate measured this same audio a
+        # moment ago (it is the file it certified); re-running the analysis here measured it twice for one report.
+        got = getattr(self, 'master_analysis', None) or {}
+        if got.get('r'):
+            analysis, rough_metrics = got['r'], (got.get('rough') or {})
+        else:
+            analysis = nc.analyse(out_wav)
+            _, rough_metrics = nc.cochlear_roughness_check(out_wav, score=score)
         cog_metrics = pattern_audit.cognitive_metrics(score)
 
         report = {
@@ -746,6 +752,9 @@ class MusicPipeline:
             presets.STRICT = True
             presets.reset_projects()          # one piece never inherits the previous project's presets
             presets.add_project(project_dir)
+            # Processed stems are kept between attempts and shared between formats: a retry after one note fix
+            # re-runs the stems whose bytes changed, and a second deliverable reuses the first one's chain.
+            mixer.use_mix_cache(os.path.join(project_dir, '.cache', 'mix'))
             if presets_dir or not adopt_presets:
                 raise SystemExit("--presets-dir / --no-adopt-presets are for --test or --check-only; "
                                  "a project always uses <project>/presets.")
@@ -753,6 +762,7 @@ class MusicPipeline:
         else:
             presets.STRICT = False
             presets.reset_projects()
+            mixer.use_mix_cache(None)
             print("  *** TEST RENDER - generic General MIDI instruments, not a deliverable ***")
 
         if project_dir and not explicit_out:
@@ -890,7 +900,7 @@ class MusicPipeline:
 
         # Additional requested formats: rendered only after the primary is certified, so one format's failure never
         # takes the certified master with it; each is checked against its own format rows before it enters out/.
-        extra_paths = []
+        extra_paths, certified = [], []
         if fails == 0 and not draft and project_dir and len(outputs['selected']) > 1:
             self.log('5b', 'Additional deliverable formats')
             import spatial_gate
@@ -914,16 +924,24 @@ class MusicPipeline:
                 final = os.path.join(project_dir, 'out', rel)
                 os.replace(extra_draft, final)
                 extra_paths.append(final)
+                certified.append(extra)
                 print(f"  [OUTPUT] {extra}: {final}")
 
         # Stage 7: Packaging & Report
         report = self.stage7_package_release(score, out_wav if fails == 0 else draft_wav, ci_rows, fails, warns,
                                             out_midi=out_midi, json_report=json_report)
+        import render_targets as _rt
+        delivered = _rt.delivered(score)          # one truth for what was rendered, and what was certified
         report['deliverables']['outputs'] = outputs['selected']
         report['deliverables']['outputs_skipped'] = outputs['skipped']
         report['deliverables']['output_files'] = extra_paths if project_dir and fails == 0 else []
+        report['deliverables']['delivered'] = [dict(name=d['name'], channels=d['channels'], layout=d['layout'],
+                                                    renderer=d['renderer'], file=d['file']) for d in delivered]
+        report['deliverables']['certified'] = ([] if fails else [d['name'] for d in delivered[:1]]) + \
+            (certified if fails == 0 else [])
         report['mode'] = 'project' if project_dir else 'test'
         report['gate'] = dict(mode='draft' if draft else 'full', stopped=None,
+                              cache=mixer.STATE.get('cache'),
                               stages=dict(stem=stem_meta,
                                           mix=dict(stage='mix', fails=fails, warns=warns,
                                                    metrics=self.mix_metrics,

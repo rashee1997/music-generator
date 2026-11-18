@@ -92,22 +92,35 @@ def fold_rows(score, primary_path, extra_path, target_name, out):
     limit = gate.get('fold_band_max_db')
     if limit is None:
         return
+    import gate_audio
     primary_name = (render_targets.resolve(score)['selected'] or [None])[0]
     primary = render_targets.get(primary_name) or {}
-    if primary.get('channels') != 2 or primary.get('renderer') != 'mix_master':
+    floor = float(gate.get('fold_floor_db', 30.0))
+    stereo_master = primary.get('channels') == 2 and primary.get('renderer') == 'mix_master'
+    if not stereo_master and not (tgt.get('layout') and render_targets.channels(target_name) > 2):
         _row(out, 'WARN', 'fold.reference',
-             f'{target_name}: no loudspeaker stereo master was delivered first ("{primary_name}"), so the fold-down '
-             f'comparison was not made')
+             f'{target_name}: no loudspeaker stereo master was delivered first ("{primary_name}") and this format '
+             f'has no layout to fold, so the fold-down comparison was not made')
         return
     try:
-        ref, new = gate_audio.load(primary_path), gate_audio.load(extra_path)
+        new = gate_audio.load(extra_path)
     except Exception as exc:
-        _row(out, 'FAIL', 'fold.reference', f'{target_name}: cannot read the files to compare them ({exc})')
+        _row(out, 'FAIL', 'fold.reference', f'{target_name}: cannot read the file to compare it ({exc})')
+        return
+    if not stereo_master:
+        # No stereo master beside it: compare the delivered layout with its own fold instead of not making the
+        # row. A run that delivers only `immersive_7_1_2` renders nothing else, and the question the row asks (is
+        # there a band the format cancels in its own downmix) is still answerable from the file it delivered.
+        _own_fold(tgt, new, target_name, limit, floor, out)
+        return
+    try:
+        ref = gate_audio.load(primary_path)
+    except Exception as exc:
+        _row(out, 'FAIL', 'fold.reference', f'{target_name}: cannot read the master to compare it ({exc})')
         return
     if ref.sr != new.sr:
         _row(out, 'WARN', 'fold.reference', f'{target_name}: {new.sr} Hz against a {ref.sr} Hz master; not compared')
         return
-    floor = float(gate.get('fold_floor_db', 30.0))
     stereo_sum = 0.5 * (ref.audio[:, 0] + ref.audio[:, 1])
     if tgt.get('renderer') == 'mono':
         dev, (lo, hi) = fold_timbre(new.audio[:, 0], stereo_sum, ref.sr, floor)
@@ -131,6 +144,51 @@ def fold_rows(score, primary_path, extra_path, target_name, out):
               if bad else
               f'{target_name}: folded to two channels it stays within {float(limit):g} dB of the stereo master in '
               f'every auditory band from 100 to 5000 Hz (worst {dev:+.1f} dB at {lo:.0f}-{hi:.0f} Hz)'))
+
+
+def _own_fold(tgt, new, target_name, limit, floor, out):
+    """fold.timbre for a loudspeaker layout delivered on its own: the format against its own two-channel fold.
+
+    The reference is the delivered format's own channel power (every channel but the low-frequency one); the
+    candidate is the fold a two-channel listener will hear of it. Bands are level-matched first, so the row asks
+    about shape, not level: a band the fold loses is a band this layout cancels in its own downmix.
+    """
+    from spatial_engine import config, downmix
+    lay = (tgt or {}).get('layout')
+    if not lay or new.channels <= 2:
+        _row(out, 'WARN', 'fold.reference',
+             f'{target_name}: not a loudspeaker layout, so it has no fold to compare against')
+        return
+    names = config.channel_names(lay)
+    if len(names) != new.channels:
+        _row(out, 'WARN', 'fold.reference',
+             f'{target_name}: {new.channels} channel(s) but layout "{lay}" has {len(names)}; not compared')
+        return
+    lfe = {sp['name'] for sp in config.layout(lay)['speakers'] if sp.get('lfe')}
+    edges = _erb_bands()
+    total = np.zeros(len(edges) - 1)
+    for i, name in enumerate(names):
+        if name not in lfe:
+            total += band_levels(new.audio[:, i], new.sr, edges)
+    fold = downmix.fold(new.audio, lay)
+    have = band_levels(0.5 * (fold[:, 0] + fold[:, 1]), new.sr, edges)
+    top = float(total.max()) if total.size else 0.0
+    keep = total > top * 10.0 ** (-float(floor) / 10.0) if top > 0 else np.zeros(total.shape, bool)
+    if not keep.any() or have[keep].sum() <= 0:
+        dev, lo, hi = 0.0, 0.0, 0.0
+    else:
+        dev = 10.0 * np.log10((have + 1e-30) / (total + 1e-30))
+        dev = dev - 10.0 * np.log10(have[keep].sum() / total[keep].sum())
+        i = int(np.argmax(np.where(keep, np.abs(dev), -1.0)))
+        dev, lo, hi = float(dev[i]), float(edges[i]), float(edges[i + 1])
+    bad = abs(dev) > float(limit)
+    _row(out, 'FAIL' if bad else 'PASS', 'fold.timbre',
+         (f'{target_name}: its own two-channel fold is {dev:+.1f} dB against the delivered channels at '
+          f'{lo:.0f}-{hi:.0f} Hz (limit {float(limit):g} dB): this layout cancels that band in its downmix'
+          if bad else
+          f'{target_name}: its own two-channel fold stays within {float(limit):g} dB of the delivered channels in '
+          f'every auditory band from 100 to 5000 Hz (worst {dev:+.1f} dB at {lo:.0f}-{hi:.0f} Hz); no stereo master '
+          f'was delivered, so the comparison is the layout against its own fold'))
 
 
 def adm_rows(score, wav_path, out):

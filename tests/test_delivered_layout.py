@@ -24,8 +24,10 @@ import soundfile as sf
 SK = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(SK / 'scripts'))
 
+import gate_audio                                            # noqa: E402
 import quality_gate as qg                                     # noqa: E402
 import render_targets                                        # noqa: E402
+import spatial_gate                                          # noqa: E402
 
 SR = 44100
 TARGET = 'immersive_7_1_2'
@@ -140,6 +142,52 @@ class DeliveredLayout(unittest.TestCase):
         detail = [d for lvl, n, d in out if n == 'loudness']
         self.assertTrue(detail, msg='the loudness row did not run')
         self.assertIn('BS.1770', detail[0])
+
+
+class OneTruthAndOneDecode(unittest.TestCase):
+    """What the run delivered, and how many times the gate reads it."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp(prefix='delivered_layout_')
+
+    def test_delivered_names_the_target_the_format_and_the_ceiling(self):
+        d = render_targets.delivered(score())
+        self.assertEqual([x['name'] for x in d], [TARGET])
+        self.assertEqual(d[0]['channels'], 10)
+        self.assertEqual(d[0]['layout'], 'itu_bs2051_system_i')
+        self.assertEqual(d[0]['renderer'], 'spatial')
+        self.assertEqual(d[0]['file'], 'master_7_1_2.wav')
+        self.assertAlmostEqual(d[0]['true_peak_dbtp'], -3.0)
+
+    def test_the_gate_decodes_the_delivered_file_once(self):
+        path = write(programme(), self.tmp)
+        gate_audio.clear()
+        import soundfile
+        calls = {'n': 0}
+        real = soundfile.read
+
+        def counting(*a, **k):
+            calls['n'] += 1
+            return real(*a, **k)
+
+        soundfile.read = counting
+        try:
+            qg.audio_checks(path, score(), [])
+            qg.master_extra_rows(score(), path, [])
+            qg.spatial_check(path, score(), [])
+        finally:
+            soundfile.read = real
+        self.assertEqual(calls['n'], 1, msg=f'the delivered file was decoded {calls["n"]} time(s)')
+
+    def test_fold_rows_compare_a_sole_layout_with_its_own_fold(self):
+        path = write(programme(), self.tmp)
+        out = []
+        spatial_gate.fold_rows(score(), None, path, TARGET, out)
+        names = [n for _l, n, _d in out]
+        self.assertNotIn('fold.reference', names, msg='a delivered layout must not need a stereo master')
+        self.assertEqual(level_of(out, 'fold.timbre'), 'PASS')
+        detail = [d for _l, n, d in out if n == 'fold.timbre'][0]
+        self.assertIn('own two-channel fold', detail)
 
 
 if __name__ == '__main__':

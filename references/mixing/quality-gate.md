@@ -282,7 +282,16 @@ says in its detail which one it used:
 | `master.dc` | the programme channels; the low-frequency channel is excluded, it carries the sub below the DC blocker's corner by design |
 
 `clipping`, `clicks`, `silence`, `dropout`, `delivery.channels` and `render.finite` are measured on every delivered
-channel, so a defect in one surround or height channel still fails with that channel named.
+channel, so a defect in one surround or height channel still fails with that channel named. `fold.timbre` needs no
+stereo master beside it: with only a loudspeaker format delivered, it compares that format with its own two-channel
+fold (`spatial_gate._own_fold`), which is the same question — is there a band this layout cancels in its downmix.
+
+**What a gate run costs.** The delivered file is decoded once and shared by every row (`gate_audio.load` keys the
+object on the path, its mtime and its size), the per-stem band helpers are memoised on the array object
+(`dsp.band_db`, `_band_frames`) instead of band-passing every stem once per row, and the packaging stage reports
+the gate's own `nc.analyse` and roughness numbers rather than measuring the same audio again. On the real profile
+those repeated filters were 71 s and 30 s of a 290 s gate, plus a full second analysis at the end. No threshold,
+row id or verdict changes with any of it.
 A file is matched to its target by its file name before its channel count, because two layouts can share a count.
 
 The `adm_bw64` target is checked by those rows and never by `delivery.format`: its channel count is the piece's, not

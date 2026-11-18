@@ -17,6 +17,7 @@ never decimated; envelopes, section levels and cut/dropout use the 8 kHz copy, w
 
 This module measures only. It has no synthesis, EQ, mixing or preset values.
 """
+import os
 import threading
 
 import numpy as np
@@ -171,5 +172,34 @@ class GateAudio(Signal):
         return int(self.audio.shape[1])
 
 
-def load(path):
-    return GateAudio(path)
+_REGISTRY = {}                     # (absolute path, mtime_ns, size) -> GateAudio
+_LOCK = threading.RLock()
+
+
+def load(path, y=None, sr=None):
+    """One GateAudio per file per process, shared by every row of a run.
+
+    A gate run used to read the delivered file four times (the delivered read, the spatial check, the fold rows
+    and the master rows), and each read built its own lazily-cached views, so the decimation, STFT and true-peak
+    of one file were computed again per row. Rows measure one file: they get one object and its caches. The key
+    carries the file's mtime and size, so a re-rendered file is never described by the old one's measurements.
+    """
+    if y is not None:                       # a caller handing its own array is not the file: no sharing
+        return GateAudio(path, y=y, sr=sr)
+    try:
+        st = os.stat(str(path))
+        key = (os.path.abspath(str(path)), st.st_mtime_ns, st.st_size)
+    except OSError:
+        return GateAudio(path)               # let the reader raise its own error, with its own message
+    with _LOCK:
+        got = _REGISTRY.get(key)
+        if got is None:
+            got = GateAudio(path)
+            _REGISTRY[key] = got
+    return got
+
+
+def clear():
+    """Forget every loaded file (a test that rewrites a file in place, or a long-lived process)."""
+    with _LOCK:
+        _REGISTRY.clear()

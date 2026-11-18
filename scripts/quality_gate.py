@@ -193,8 +193,9 @@ def spatial_check(path, score, out):
             routed += bool(is_binaural)
     if not staged:
         return
+    import gate_audio
     try:
-        x, _ = sf.read(path, always_2d=True)
+        x = gate_audio.load(path).audio
     except Exception:
         return
     if x.shape[1] < 2 or float(np.std(x[:, 0])) < 1e-9 or float(np.std(x[:, 1])) < 1e-9:
@@ -437,8 +438,9 @@ def fold_rows(score, path, out, audio=None, sr=44100):
     import mixer
     gp = gate_profiles.resolve(score)
     if audio is None:
-        import soundfile as sf
-        audio, sr = sf.read(path, always_2d=True)
+        import gate_audio
+        sig = gate_audio.load(path)
+        audio, sr = sig.audio, sig.sr
     if audio.shape[1] != 2 or len(audio) < sr:
         return
     f, chan, mono = fold_loss(audio, sr)
@@ -594,11 +596,17 @@ def _read_delivered(path, out):
                  f'{os.path.basename(str(path))}: a BW64 deliverable that cannot be folded for the stereo rows '
                  f'({exc}); its own adm.container row names the structural fault')
             raise
-    return sf.read(path, always_2d=True)
+    import gate_audio
+    sig = gate_audio.load(path)             # one decode per file for the whole run
+    return sig.audio, sig.sr
 
 
-def audio_checks(path, score, out, metrics=None):
-    """Measurements of the rendered file against the score's own targets."""
+def audio_checks(path, score, out, metrics=None, analysis=None):
+    """Measurements of the rendered file against the score's own targets.
+
+    `analysis`, when given, receives this run's measurement of the file (`r`, the roughness metrics and the path)
+    so the packaging stage can report them instead of measuring the same audio a second time.
+    """
     master = score.get('master', {})
     target = master.get('lufs', -14.0)
     lufs_tol = master.get('lufs_tolerance', master.get('tolerance_lu', 2.5))
@@ -722,9 +730,11 @@ def audio_checks(path, score, out, metrics=None):
              f'15-22 kHz holds {share:.1f} dB of the 200 Hz-16 kHz band (limit {lim:g}); above that it is sampler '
              f'interpolation images, not instrument (fix: render.oversample in the mix preset)')
     # 2.1 Plomp-Levelt & Sethares Cochlear Sensory Roughness
-    rough_rows, _ = nc.cochlear_roughness_check(x, sr=sr, score=score)
+    rough_rows, rough_metrics = nc.cochlear_roughness_check(x, sr=sr, score=score)
     for l, n, d in rough_rows:
         _row(out, l, n, d)
+    if analysis is not None:                # the packaging stage reports these, it does not re-measure them
+        analysis.update(path=str(path), r=r, rough=rough_metrics)
 
 
 def _metric(metrics, **kw):
@@ -763,7 +773,8 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
 
     A defect injected into the summed mix must have a row to fail; these are the unsuffixed master ids.
     """
-    sig = GateAudio(wav_path)
+    import gate_audio
+    sig = gate_audio.load(wav_path)
     program_sig = sig
     import render_targets
     delivered = None                      # (target name, target preset) when the file is a loudspeaker layout
@@ -1313,18 +1324,36 @@ Z_BAND_HZ = (500.0, 4000.0)      # where strings, brass and a bright synth lead 
 Z_FRAME_S = 0.25                 # band-envelope resolution for the overlap measure
 
 
+_BAND_FRAME_CACHE = {}       # (id(x), shape, lo, hi, win_s, sr) -> (the array itself, the frames)
+_BAND_FRAME_MAX = 128
+
+
 def _band_frames(x, sr, lo=500.0, hi=4000.0, win_s=Z_FRAME_S):
-    """RMS of the lo-hi band in win_s frames, or None when the stem is shorter than two frames."""
+    """RMS of the lo-hi band in win_s frames, or None when the stem is shorter than two frames.
+
+    Memoised per array object: the separation, masking and balance rows each band-pass the same stems, and a
+    fourth-order sosfilt over every stem, once per row, was 30 s of a 290 s gate. The cache holds the array, so
+    its identity cannot be recycled, and an edited stem is a different object and gets its own measurement.
+    """
+    key = (id(x), np.shape(x), float(lo), float(hi), float(win_s), int(sr))
+    got = _BAND_FRAME_CACHE.get(key)
+    if got is not None and got[0] is x:
+        return got[1]
     from scipy.signal import butter, sosfilt
     mono = np.asarray(x, dtype=np.float32)
     mono = mono.mean(axis=1) if mono.ndim == 2 else mono
     n = int(win_s * sr)
     if len(mono) < 2 * n:
-        return None
-    sos = butter(4, [lo, min(hi, sr * 0.45)], btype='band', fs=sr, output='sos')
-    y = sosfilt(sos, mono)
-    k = len(y) // n
-    return np.sqrt((y[:k * n].reshape(k, n) ** 2).mean(axis=1) + 1e-20)
+        out = None
+    else:
+        sos = butter(4, [lo, min(hi, sr * 0.45)], btype='band', fs=sr, output='sos')
+        y = sosfilt(sos, mono)
+        k = len(y) // n
+        out = np.sqrt((y[:k * n].reshape(k, n) ** 2).mean(axis=1) + 1e-20)
+    if len(_BAND_FRAME_CACHE) >= _BAND_FRAME_MAX:
+        _BAND_FRAME_CACHE.clear()
+    _BAND_FRAME_CACHE[key] = (x, out)
+    return out
 
 
 def _mix_immersive(score):
@@ -1799,7 +1828,7 @@ def metadata_rows(score, out, project_dir=None, wav_path=None):
 
 
 def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mode='full', metrics=None,
-             timings=None):
+             timings=None, analysis=None):
     """refresh=False: the caller has just rendered this score in this process, so the renderer's counters are already
     current and the gate does not render the stems a second time (a full render takes minutes).
 
@@ -1837,7 +1866,7 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mo
     out = []
     _timed('score', lambda: score_checks(score, out))
     _timed('render', lambda: render_checks(out))
-    _timed('audio', lambda: audio_checks(rendered, score, out, metrics=metrics))
+    _timed('audio', lambda: audio_checks(rendered, score, out, metrics=metrics, analysis=analysis))
     # Deliverable rows: only the formats this score asked for, measured against the target's own data.
     import spatial_gate
     _timed('outputs', lambda: spatial_gate.output_rows(score, rendered, out))
