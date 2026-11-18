@@ -1,6 +1,6 @@
 {
  "title": "The Temple Wakes",
- "bpm": 90,
+ "bpm": 129,
  "ts": [
   4,
   4
@@ -109,7 +109,7 @@
  ],
  "master": {
   "lufs": -13.0,
-  "true_peak": -1.6,
+  "true_peak": -2.0,
   "tone": "neutral",
   "fade_out": 0.6
  },
@@ -119,22 +119,23 @@
   "emotions": [
    "adventure",
    "tense",
-   "wonder"
+   "dark_epic"
   ],
   "registers": [
    "cinematic",
    "natural"
   ],
   "scenes": [
-   "dread",
-   "chase",
-   "reveal"
+   "build",
+   "battle",
+   "arrival"
   ],
   "tensions": [
    "ostinato",
    "pedal",
-   "silence_before",
-   "unresolved_dominant"
+   "cluster",
+   "rising_line",
+   "silence_before"
   ],
   "avoid": [
    "joyful",
@@ -10605,7 +10606,7 @@
     }
    ],
    "spatial": {
-    "azimuth": -22,
+    "azimuth": -70,
     "elevation": 0,
     "distance": 2.2,
     "kind": "spot",
@@ -10626,7 +10627,7 @@
    ],
    "spatial": {
     "azimuth": 0,
-    "elevation": 0,
+    "elevation": 25,
     "distance": 6.0,
     "kind": "spot",
     "binaural": true
@@ -10664,7 +10665,7 @@
     "kind": "spot",
     "binaural": true
    },
-   "dc_hp_hz": 45.0
+   "dc_hp_hz": 90.0
   },
   {
    "name": "heartbeat",
@@ -10781,8 +10782,8 @@
     }
    ],
    "spatial": {
-    "azimuth": 0,
-    "elevation": -5,
+    "azimuth": 45,
+    "elevation": -10,
     "distance": 0.8,
     "kind": "spot",
     "binaural": true

@@ -39,7 +39,7 @@
         "resonator": {
           "kind": "modal",
           "law": "bar",
-          "f1": 90,
+          "f1": 140,
           "n": 6,
           "t60": 1.6
         },
@@ -60,8 +60,8 @@
         "resonator": {
           "kind": "bandpass",
           "band": [
-            60,
-            260
+            110,
+            320
           ]
         },
         "events": {
@@ -74,6 +74,6 @@
   "sources": [
     "stone_door_friction"
   ],
-  "hp": 60,
+  "hp": 100,
   "lp": 4500
 }

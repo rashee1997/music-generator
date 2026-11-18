@@ -316,19 +316,21 @@ for t in tracks:
     if t['name'] in ('steps_left', 'steps_right'):
         t['notes'] = [n for n in t['notes'] if not (B(20, 0) <= n['t'] < B(22, 0)) and not (HELD - 1.0 <= n['t'] < B(33, 2.0))]
 
-track('twig_snap', 'sfx:maya_twig_snap', 'fx', [dict(t=B(8, 3.0), d=2.6, p=60, v=1.0)], spatial=dict(azimuth=-22, elevation=0, distance=2.2, kind='spot', binaural=True))
-track('stone_door', 'sfx:maya_stone_door', 'fx', [dict(t=B(21, 1.0), d=12.0, p=60, v=0.9)], spatial=dict(azimuth=0, elevation=0, distance=6.0, kind='spot', binaural=True))
+track('twig_snap', 'sfx:maya_twig_snap', 'fx', [dict(t=B(8, 3.0), d=2.6, p=60, v=1.0)], spatial=dict(azimuth=-70, elevation=0, distance=2.2, kind='spot', binaural=True))
+track('stone_door', 'sfx:maya_stone_door', 'fx', [dict(t=B(21, 1.0), d=12.0, p=60, v=0.9)], spatial=dict(azimuth=0, elevation=25, distance=6.0, kind='spot', binaural=True))
 track('stone_slam', 'sfx:maya_stone_slam', 'fx', [dict(t=BRAAM2, d=10.0, p=60, v=1.0), dict(t=AWAKE, d=10.0, p=60, v=0.8), dict(t=SLAM, d=10.0, p=60, v=1.0)],
       spatial=dict(azimuth=0, elevation=0, distance=5.0, kind='spot', binaural=True))
 track('heartbeat', 'sfx:heartbeat', 'fx', [dict(t=B(2) + k * 1.4, d=1.2, p=60, v=0.32 + 0.012 * k) for k in range(18)],
-      spatial=dict(azimuth=0, elevation=-5, distance=0.8, kind='spot', binaural=True))
+      spatial=dict(azimuth=45, elevation=-10, distance=0.8, kind='spot', binaural=True))
 track('risers', 'sfx:riser', 'fx', [dict(t=beat - 4.0, d=4.0, p=60, v=0.7) for beat in (DESCENT, BRAAM2, AWAKE, RUN)],
       spatial=dict(azimuth=0, elevation=20, distance=8.0, kind='bed'))
 for _t in tracks:
     if _t['name'] in ('heartbeat', 'risers', 'stone_slam', 'stone_door'):
         _t['dc_hp_hz'] = 45.0
     if _t['name'] == 'heartbeat':
-        _t['dc_hp_hz'] = 60.0                          # sub-bass effects carry energy below 25 Hz that shows as stem drift
+        _t['dc_hp_hz'] = 60.0
+    if _t['name'] == 'stone_slam':
+        _t['dc_hp_hz'] = 90.0                          # sub-bass effects carry energy below 25 Hz that shows as stem drift
 
 # ================================================================ the score
 dynamics = [[0, 0.3], [32, 0.45], [64, 0.6], [80, 0.75], [100, 0.85], [124, 0.95], [126, 0.2], [128, 1.0], [160, 1.0], [176, 1.0], [199, 1.0], [202, 1.0]]
@@ -336,14 +338,14 @@ sections = [dict(name='the_approach', start_bar=1, end_bar=8, energy=0.35), dict
             dict(name='the_descent', start_bar=21, end_bar=32, energy=0.8), dict(name='the_awakening', start_bar=33, end_bar=44, energy=1.0),
             dict(name='the_run', start_bar=45, end_bar=52, energy=1.0)]
 score = dict(
-    title='The Temple Wakes', bpm=90, ts=[4, 4], seed=1519, humanize='natural', key='D', mode='minor',
+    title='The Temple Wakes', bpm=129, ts=[4, 4], seed=1519, humanize='natural', key='D', mode='minor',
     tempo_points=[[0, 84], [32, 88], [64, 96], [80, 104], [124, 108], [128, 120], [160, 128], [176, 132], [200, 138]],
     dynamics=dynamics, space='maya_temple_room', mix_preset='the_temple_wakes_mix',
     output_targets=['stereo', 'mono', 'immersive_5_1', 'immersive_7_1_4', 'ambix', 'adm_bw64'],
-    master=dict(lufs=-13.0, true_peak=-1.6, tone='neutral', fade_out=0.6),
+    master=dict(lufs=-13.0, true_peak=-2.0, tone='neutral', fade_out=0.6),
     piece_type='cinematic', focus='melody',
-    intent=dict(emotions=['adventure', 'tense', 'wonder'], registers=['cinematic', 'natural'], scenes=['dread', 'chase', 'reveal'],
-                tensions=['ostinato', 'pedal', 'silence_before', 'unresolved_dominant'], avoid=['joyful', 'playful']),
+    intent=dict(emotions=['adventure', 'tense', 'dark_epic'], registers=['cinematic', 'natural'], scenes=['build', 'battle', 'arrival'],
+                tensions=['ostinato', 'pedal', 'cluster', 'rising_line', 'silence_before'], avoid=['joyful', 'playful']),
     mix_intent=dict(hero='horns', leave_free_hz=[700, 2600]),
     plan=dict(sections=sections, ending=dict(fade_out=0.6)),
     tracks=tracks,

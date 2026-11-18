@@ -397,22 +397,23 @@
     "emotions": [
       "adventure",
       "tense",
-      "wonder"
+      "dark_epic"
     ],
     "registers": [
       "cinematic",
       "natural"
     ],
     "scenes": [
-      "dread",
-      "chase",
-      "reveal"
+      "build",
+      "battle",
+      "arrival"
     ],
     "tensions": [
       "ostinato",
       "pedal",
-      "silence_before",
-      "unresolved_dominant"
+      "cluster",
+      "rising_line",
+      "silence_before"
     ],
     "avoid": [
       "joyful",
