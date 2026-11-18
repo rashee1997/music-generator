@@ -755,6 +755,9 @@ class MusicPipeline:
             # Processed stems are kept between attempts and shared between formats: a retry after one note fix
             # re-runs the stems whose bytes changed, and a second deliverable reuses the first one's chain.
             mixer.use_mix_cache(os.path.join(project_dir, '.cache', 'mix'))
+            freed = stem_cache.prune(os.path.join(project_dir, '.cache'))     # a cache keyed on the code and the preset grows with every edit
+            if freed:
+                print(f"  [cache] removed {freed / 1e9:.1f} GB of the oldest cache files (cap {stem_cache.cache_cap_bytes() / 1e9:.0f} GB, MUSICGEN_CACHE_GB)")
             if presets_dir or not adopt_presets:
                 raise SystemExit("--presets-dir / --no-adopt-presets are for --test or --check-only; "
                                  "a project always uses <project>/presets.")
