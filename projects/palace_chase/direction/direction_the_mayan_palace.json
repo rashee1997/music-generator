@@ -40,7 +40,7 @@
       "action": "an explorer walks into a stone palace the forest has swallowed, torch-lit, curious and unafraid",
       "music": "a D pedal in the basses, a far timpani stroke, a high shimmer in the strings, slow footsteps on stone, and a flute that asks a six-note question",
       "start_s": 0.0,
-      "end_s": 26.649
+      "end_s": 26.64862760156349
     },
     {
       "name": "the_relic_chamber",
@@ -48,8 +48,8 @@
       "energy": 0.4,
       "action": "the explorer finds a carved relic in a small chamber, studies it, touches it and opens it",
       "music": "the question comes back up a fourth, a bass clarinet answers it from the stone, a harp touches the relic, a cello pulse grows under, a choir cluster appears, and a stone lid grinds open",
-      "start_s": 26.649,
-      "end_s": 56.765
+      "start_s": 26.64862760156349,
+      "end_s": 56.76499983711586
     },
     {
       "name": "the_opening",
@@ -57,8 +57,8 @@
       "energy": 0.65,
       "action": "what was inside is out: the palace wakes, a door shuts behind the explorer",
       "music": "a braam, a choir cluster that climbs a semitone a bar, the question in the horns as a threat, a death whistle far inside the walls, a door slam, then one full bar of nothing",
-      "start_s": 56.765,
-      "end_s": 80.912
+      "start_s": 56.76499983711586,
+      "end_s": 80.91208022645623
     },
     {
       "name": "the_corridors",
@@ -66,8 +66,8 @@
       "energy": 0.85,
       "action": "the chase through the palace corridors: the explorer runs, a stone guardian follows, the way out collapses",
       "music": "a pulse that does not stop, a 3+3+2 drum pattern, trombone stabs, heavy steps behind, the horns state the threat, and the exit falls in",
-      "start_s": 80.912,
-      "end_s": 108.793
+      "start_s": 80.91208022645623,
+      "end_s": 108.79347595514609
     },
     {
       "name": "the_forest",
@@ -75,8 +75,8 @@
       "energy": 0.95,
       "action": "out into the night forest, running through leaves and branches, with the pursuer breaking trees behind",
       "music": "the pulse continues over leaves, brushes, branches and a trunk grabbed at a turn, a stumble, the violins climb a semitone a bar, tree-cracks nearer each time",
-      "start_s": 108.793,
-      "end_s": 134.486
+      "start_s": 108.79347595514609,
+      "end_s": 134.48558280903586
     },
     {
       "name": "the_escape",
@@ -84,8 +84,8 @@
       "energy": 1.0,
       "action": "cornered, the explorer turns the curse back with a power of their own and escapes by a hair",
       "music": "the minor key turns to D major, the hero theme in the horns overrules the threat, one last hit, a beat of nothing, then release",
-      "start_s": 134.486,
-      "end_s": 153.009
+      "start_s": 134.48558280903586,
+      "end_s": 153.00871264130967
     },
     {
       "name": "the_aftermath",
@@ -93,8 +93,8 @@
       "energy": 0.2,
       "action": "the forest at night, calm; the explorer is safe, and the reed holds a low, steady D",
       "music": "a held D major, the flute's question answered and falling home to D, the forest returns, and the bass clarinet holds a low D",
-      "start_s": 153.009,
-      "end_s": 175.309
+      "start_s": 153.00871264130967,
+      "end_s": 175.309472865875
     }
   ],
   "motifs": [

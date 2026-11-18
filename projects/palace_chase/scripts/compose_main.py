@@ -211,19 +211,18 @@ track('harp', 'mayan_harp', 'arp', hp)
 # ================================================================ brass
 hn = []
 for bar in range(18, 25, 2):                                                                          # the motif, muted then open: the threat
-    hn += phrase(MOTIF, B(bar), 55, 0.75 + 0.03 * (bar - 18), scale=1.0, art=1.03)
+    hn += phrase(MOTIF, B(bar), 55, 0.75 + 0.03 * (bar - 18), scale=1.0, art=1.1)
 for bar in range(30, 42, 4):
-    hn += phrase(MOTIF, B(bar), 55, 0.85, scale=1.0, art=1.03)
-    hn += phrase(MOTIF, B(bar + 2), 62, 0.9, scale=1.0, art=1.03)
+    hn += phrase(MOTIF, B(bar), 55, 0.85, scale=1.0, art=1.1)
+    hn += phrase(MOTIF, B(bar + 2), 62, 0.9, scale=1.0, art=1.1)
 for bar in range(46, 58, 4):
-    hn += phrase(MOTIF, B(bar), 59, 0.92, scale=1.0, art=1.03)
-    hn += phrase(MOTIF, B(bar + 2), 66, 0.95, scale=1.0, art=1.03)
+    hn += phrase(MOTIF, B(bar), 59, 0.92, scale=1.0, art=1.1)
+    hn += phrase(MOTIF, B(bar + 2), 66, 0.95, scale=1.0, art=1.1)
 for bar in (58, 60):
-    hn += phrase(MOTIF, B(bar), 62, 0.95, scale=1.0, upto=3, art=1.03)
+    hn += phrase(MOTIF, B(bar), 62, 0.95, scale=1.0, upto=3, art=1.1)
 for k, bar in enumerate((62, 66)):                                                                    # the hero theme overrules it, in D major
-    hn += phrase(HERO, B(bar), 62, 0.92, scale=1.0, art=1.03)
-    hn += phrase(HERO, B(bar + 2), 62 + 5, 0.95, scale=1.0, art=1.03)
-hn += [N(B(70), 15.9, 62, 0.7)]
+    hn += phrase(HERO, B(bar), 62, 0.92, scale=1.0, art=1.1)
+    hn += phrase(HERO, B(bar + 2), 62 + 5, 0.95, scale=1.0, art=1.1)
 track('horns', 'mayan_horns', 'melody', hn)
 
 tb_sus = []
@@ -335,11 +334,11 @@ def call(name, preset, t0, d, az, el, dist, **kw):
     track(name, f'env:{preset}', 'environment', [dict(t=float(t0), d=float(d), p=60, v=1.0)], spatial=sp, fade_in_s=0.04, fade_out_s=0.04, **kw)
 
 
-call('conch_1', 'mayan_conch', B(S_OPEN, 0.0), 5.0, 150, 0, 20.0)
+call('conch_1', 'mayan_conch', B(S_OPEN, 0.0), 8.0, 150, 0, 20.0)
 call('whistle_1', 'mayan_whistle', B(21, 0.0), 6.0, -110, 5, 16.0)
 call('whistle_2', 'mayan_whistle', B(30, 1.0), 6.0, 130, 5, 8.0)
 call('whistle_3', 'mayan_whistle', B(52, 0.0), 6.0, 160, 5, 4.0)
-call('conch_2', 'mayan_conch', B(S_ESCAPE, 0.0), 5.0, -150, 0, 12.0)
+call('conch_2', 'mayan_conch', B(S_ESCAPE, 0.0), 8.0, -150, 0, 12.0)
 
 
 def footfalls(name, preset, times, az, dist, vel=0.72, jitter=0.03, el=-15):
@@ -398,7 +397,7 @@ for _t in tracks:
     if _t['name'] in ('run_left', 'run_right', 'guardian_far', 'guardian_near', 'collapse'):
         _t['dc_hp_hz'] = 60.0
     if _t['name'] == 'tree_crack':
-        _t['dc_hp_hz'] = 45.0                           # sub-bass effects carry energy below 25 Hz that shows as stem drift
+        _t['dc_hp_hz'] = 70.0                           # sub-bass effects carry energy below 25 Hz that shows as stem drift
 
 # ================================================================ the score
 dynamics = [[0, 0.45], [16, 0.45], [32, 0.5], [52, 0.55], [64, 0.6], [68, 0.65], [92, 0.85], [95, 0.85], [96, 0.5], [100, 1.0],
@@ -425,8 +424,8 @@ sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'scripts'))
 import humanize as hz
 TM = hz.tempo_map_for(score, seed=score['seed'])
 for sec in sections:
-    sec['start_s'] = round(float(TM.sec((sec['start_bar'] - 1) * BB)), 3)
-    sec['end_s'] = round(float(TM.sec(sec['end_bar'] * BB)), 3)
+    sec['start_s'] = float(TM.sec((sec['start_bar'] - 1) * BB))     # not rounded: a note that starts on a section line must not overlap the section before it
+    sec['end_s'] = float(TM.sec(sec['end_bar'] * BB))
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 with open(OUT, 'w', encoding='utf-8') as f:
     json.dump(score, f, indent=1)
