@@ -1,7 +1,7 @@
 {
   "name": "palace_room",
   "kind": "spaces",
-  "character": "A closed stone palace with a high vault, then the open forest at night: a box of cut stone that becomes a narrow corridor, and a green space of earth and foliage, with a tail that comes from the material and not from the source.",
+  "character": "A Mayan palace of narrow vaulted rooms, then the open rainforest at night: long, narrow galleries with a tall stepped (corbelled) ceiling under plaster, which become a green space of earth and foliage, with a tail that comes from the material and not from the source.",
   "room": {
     "rt60": 1.6,
     "pre_delay_ms": 14,
@@ -22,18 +22,18 @@
     "rear_delay_ms": 26.0,
     "rear_gain": 0.25,
     "geometry": {
-      "width_m": 14.0,
-      "depth_m": 36.0,
-      "height_m": 9.0,
+      "width_m": 5.0,
+      "depth_m": 24.0,
+      "height_m": 7.0,
       "listener": {
-        "x": 7.0,
-        "y": 10.0,
+        "x": 2.5,
+        "y": 8.0,
         "z": 1.6
       },
       "materials": {
         "floor": "concrete",
-        "ceiling": "concrete",
-        "walls": "concrete"
+        "ceiling": "plaster",
+        "walls": "plaster"
       },
       "material_set": "room_materials",
       "max_order": 2,
@@ -96,13 +96,13 @@
       "transition_bars": 2,
       "space_overrides": {
         "geometry": {
-          "width_m": 10.0,
-          "depth_m": 14.0,
-          "height_m": 7.0,
+          "width_m": 3.5,
+          "depth_m": 9.0,
+          "height_m": 6.0,
           "materials": {
             "floor": "concrete",
-            "ceiling": "concrete",
-            "walls": "concrete"
+            "ceiling": "plaster",
+            "walls": "plaster"
           }
         },
         "late": {
@@ -117,13 +117,13 @@
       "transition_bars": 2,
       "space_overrides": {
         "geometry": {
-          "width_m": 18.0,
-          "depth_m": 30.0,
-          "height_m": 16.0,
+          "width_m": 9.0,
+          "depth_m": 20.0,
+          "height_m": 10.0,
           "materials": {
             "floor": "concrete",
-            "ceiling": "concrete",
-            "walls": "concrete"
+            "ceiling": "plaster",
+            "walls": "plaster"
           }
         },
         "late": {
@@ -138,13 +138,13 @@
       "transition_bars": 2,
       "space_overrides": {
         "geometry": {
-          "width_m": 6.0,
-          "depth_m": 40.0,
+          "width_m": 2.5,
+          "depth_m": 30.0,
           "height_m": 5.0,
           "materials": {
             "floor": "concrete",
-            "ceiling": "concrete",
-            "walls": "concrete"
+            "ceiling": "plaster",
+            "walls": "plaster"
           }
         },
         "late": {
@@ -198,7 +198,8 @@
   "sources": [
     "KB sfx-ambience law 4: music and ambience occupy different geometries",
     "Late tail and reflections from the room geometry (Eyring), scripts/spatial_hrtf/room.py; absorption coefficients from presets/materials/room_materials.json (concrete stands in for cut stone: a hard, reflective surface; nearest material there)",
-    "ESTIMATE: chamber sizes are invented to be a narrow temple passage and a taller vault; no survey of a real temple was used",
-    "Chirped echo and stepped-pyramid acoustics: https://www.nature.com/news/2004/041213/full/news041213-5.html"
+    "Chirped echo and stepped-pyramid acoustics: https://www.nature.com/news/2004/041213/full/news041213-5.html",
+    "Maya palace rooms: the corbel vault needed very heavy walls and gave narrow interior spaces; rooms were finished with limestone plaster (https://www.webpages.uidaho.edu/arch499/nonwest/mayan/architecture.htm, https://www.ancient-history-sites.com/?p=140142); the Cancuen palace is described as hundreds of small rooms with 20-foot corbel-arched ceilings (https://www.sciencedaily.com/releases/2000/09/000909224023.htm). Search-result text only; pages not opened.",
+    "ESTIMATE: widths of 2.5-9 m, lengths of 9-30 m and heights of 5-10 m are written from \"narrow\" and \"about 20 feet\" and are not a survey of a real building; plaster stands in for limestone plaster in room_materials.json; no acoustic measurement of a Maya palace was found"
   ]
 }
