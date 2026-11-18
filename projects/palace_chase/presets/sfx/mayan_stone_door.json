@@ -1,7 +1,7 @@
 {
   "name": "mayan_stone_door",
   "character": "A great stone slab dragged open over stone: a low grinding stick-slip with a heavy body under it.",
-  "seconds": 7.0,
+  "seconds": 9.0,
   "role": "fx",
   "gain_db": -4.0,
   "reverb": 0.3,

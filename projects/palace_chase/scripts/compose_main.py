@@ -316,7 +316,7 @@ for bar in range(58, 62):
 for bar in range(62, 66):
     ch += [N(B(bar), 4.05, p, 1.0) for p in (62, 66, 69, 74)]                 # D major: the cluster is gone, F# in the chord
 ch += [N(B(66), 15.9, p, 0.8) for p in (62, 69, 74)]
-ch += [N(B(70), 23.9, p, 0.7) for p in (50, 62)]        # D3 and D4 of one choir: no second instrument for the flute to beat against                  # an open fifth: no third, so the ending is calm in either mode
+ch += [N(B(74, 2.0), 5.9, p, 0.7) for p in (50, 62)]        # D3 and D4 of one choir: no second instrument for the flute to beat against                  # an open fifth: no third, so the ending is calm in either mode
 track('choir', 'mayan_choir', 'pad', ch)
 
 # ================================================================ places, calls and single sounds
@@ -361,9 +361,9 @@ footfalls('walk_right', 'mayan_step_stone', walk[1::2], 20, 2.2, 0.55)
 run_stone = alternate(B(26), B(41, 2.0), 1.0)
 footfalls('run_left', 'mayan_step_run_stone', run_stone[0::2], -55, 1.6, 0.78, el=-16)
 footfalls('run_right', 'mayan_step_run_stone', run_stone[1::2], 55, 1.6, 0.78, el=-16)
-run_leaf = alternate(B(41, 2.0), B(66), 1.0, skip=[(B(53, 1.0), B(53, 3.0))])
+run_leaf = alternate(B(41, 2.0), B(65, 2.0), 1.0, skip=[(B(53, 1.0), B(53, 3.0))])
 run_leaf += [B(53, 2.0), B(53, 2.5)]                                                                 # the stumble: a missed step, then two close ones
-run_leaf = sorted(t for t in run_leaf if t < CUT)
+run_leaf = sorted(t for t in run_leaf if t < B(65, 2.0))
 footfalls('leaf_left', 'mayan_step_run_leaf', run_leaf[0::2], -55, 1.5, 0.8, el=-16)
 footfalls('leaf_right', 'mayan_step_run_leaf', run_leaf[1::2], 55, 1.5, 0.8, el=-16)
 
@@ -381,9 +381,9 @@ def touches(name, preset, times, az, dist, vel=0.8, el=0, dur=3.0):
     track(name, f'sfx:{preset}', 'fx', notes, spatial=dict(azimuth=az, elevation=el, distance=dist, kind='spot', binaural=True))
 
 
-touches('brush_left', 'mayan_leaf_brush', [B(43, 1.5), B(46, 0.0), B(49, 2.5), B(52, 1.0), B(55, 3.0), B(58, 0.5), B(60, 2.0)], -70, 1.0, 0.7, dur=3.5)
+touches('brush_left', 'mayan_leaf_brush', [B(43, 1.5), B(46, 0.0), B(49, 2.5), B(52, 1.0), B(55, 3.0), B(58, 0.5), B(60, 2.0)], -105, 1.0, 0.7, el=21, dur=3.5)
 touches('brush_right', 'mayan_leaf_brush', [B(44, 2.5), B(47, 1.5), B(50, 3.5), B(54, 0.0), B(56, 2.0), B(59, 1.5), B(61, 0.5)], 70, 1.0, 0.7, dur=3.5)
-touches('branch_left', 'mayan_branch_whip', [B(45, 1.0), B(48, 3.0), B(51, 2.0), B(55, 0.5), B(59, 3.5)], -85, 0.9, 0.85)
+touches('branch_left', 'mayan_branch_whip', [B(45, 1.0), B(48, 3.0), B(51, 2.0), B(55, 0.5), B(59, 3.5)], -105, 0.9, 0.85, el=16)
 touches('branch_right', 'mayan_branch_whip', [B(42, 3.0), B(47, 0.0), B(50, 0.5), B(53, 0.5), B(55, 2.5), B(56, 3.0)], 85, 0.9, 0.85)
 touches('bark_scratch', 'mayan_bark_scratch', [B(49, 0.0), B(56, 1.0)], -140, 0.9, 0.9, el=10, dur=4.5)
 touches('twig_snap', 'mayan_twig_snap', [B(51, 3.5)], 125, 1.2, 0.85, el=20, dur=5.0)

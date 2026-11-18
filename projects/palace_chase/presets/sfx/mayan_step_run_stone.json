@@ -1,7 +1,7 @@
 {
   "name": "mayan_step_run_stone",
   "character": "One footfall of a person running on a stone floor: a hard heel and a short dry ring from the slab.",
-  "seconds": 0.55,
+  "seconds": 0.9,
   "role": "fx",
   "gain_db": -5.0,
   "reverb": 0.3,
@@ -45,7 +45,7 @@
       },
       "canopy_density": 0.0
     },
-    "seconds": 0.55
+    "seconds": 0.9
   },
   "sources": [
     "stone_slab_footstep"

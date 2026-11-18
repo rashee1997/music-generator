@@ -472,8 +472,8 @@
       "space": "palace_room"
     },
     "brush_left": {
-      "azimuth": -70,
-      "elevation": 0,
+      "azimuth": -105,
+      "elevation": 21,
       "distance": 1.0,
       "space": "palace_room"
     },
@@ -484,8 +484,8 @@
       "space": "palace_room"
     },
     "branch_left": {
-      "azimuth": -85,
-      "elevation": 0,
+      "azimuth": -105,
+      "elevation": 16,
       "distance": 0.9,
       "space": "palace_room"
     },
