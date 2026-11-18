@@ -291,7 +291,7 @@ ti += [tp(24, 2.0 + 0.25 * k, 0.2, 0.45 + 0.5 * (k / 7.0) ** 1.6 + (0.04 if k % 
 ti = [n for n in ti if not (B(24, 2.0) <= n['t'] < B(25) and n['d'] > 0.3)]
 for bar in range(S_CORR, S_ESCAPE + 4):
     if bar % 4 == 1:                                                                                   # a fill every fourth bar: sixteenths rising into the next bar
-        ti += [tp(bar, 0, 0.4, 1.0), tp(bar, 1.5, 0.4, 0.85)] + [tp(bar, 2.5 + 0.25 * k, 0.2, 0.55 + 0.1 * k) for k in range(6)]
+        ti += [tp(bar, 0, 0.4, 1.0), tp(bar, 1.5, 0.4, 0.85)] + [tp(bar, 2.5 + 0.25 * k, 0.2, 0.5 + 0.45 * (k / 5.0) ** 1.6 + (0.04 if k % 2 == 0 else -0.04)) for k in range(6)]
     else:
         ti += [tp(bar, 0, 0.4, 1.0), tp(bar, 1.5, 0.4, 0.85), tp(bar, 3.0, 0.4, 0.9)]
         if bar % 2 == 0:
@@ -317,7 +317,7 @@ for bar in range(S_CORR + 2, S_ESCAPE + 4):                                     
         continue
     sn += [N(B(bar, 1.0), 0.3, 49, 0.9 + rng.normal(0, 0.03)), N(B(bar, 3.0), 0.3, 49, 0.92 + rng.normal(0, 0.03)), N(B(bar, 2.75), 0.15, 49, 0.45)]
     if bar % 4 == 0:
-        sn += [N(B(bar, 3.0 + 0.125 * k), 0.1, 49, 0.5 + 0.06 * k) for k in range(8)]
+        sn += [N(B(bar, 3.0 + 0.125 * k), 0.1, 49, 0.45 + 0.45 * (k / 7.0) ** 1.6 + (0.04 if k % 2 == 0 else -0.04)) for k in range(1, 8)]
 track('snare', 'mayan_bass_drum', 'drum', sn)
 
 cy = [N(beat - 3.0, 3.0, 50, 0.7) for beat in (BRAAM1, CORR_HIT, FOREST_HIT, POWER)] + [N(beat, 4.0, 59, 0.6) for beat in (BRAAM1, FOREST_HIT, POWER)]
