@@ -374,7 +374,7 @@ def _fmt_body(channels, sr):
 
 def _pcm24_block(block):
     """float32 (frames, channels) -> 24-bit LE interleaved bytes, no clipping (|x| <= 1 already checked)."""
-    pcm = np.round(np.asarray(block, dtype=np.float64) * 8388607.0).astype('<i4')
+    pcm = np.ascontiguousarray(np.round(np.asarray(block, dtype=np.float64) * 8388607.0).astype('<i4'))   # a transposed view is not viewable as bytes
     return pcm.view(np.uint8).reshape(-1, 4)[:, :3].tobytes()
 
 
