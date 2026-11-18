@@ -9785,21 +9785,6 @@
    "fade_out_s": 8.0
   },
   {
-   "name": "temple_air",
-   "instrument": "env:maya_temple_air",
-   "role": "environment",
-   "notes": [
-    {
-     "t": 72.0,
-     "d": 134.0,
-     "p": 60,
-     "v": 1.0
-    }
-   ],
-   "fade_in_s": 6.0,
-   "fade_out_s": 1.0
-  },
-  {
    "name": "whistle_1",
    "instrument": "env:maya_whistle",
    "role": "environment",
@@ -10332,7 +10317,7 @@
     }
    ],
    "spatial": {
-    "azimuth": -8,
+    "azimuth": -20,
     "elevation": -15,
     "distance": 2.6,
     "kind": "spot",
@@ -10586,7 +10571,7 @@
     }
    ],
    "spatial": {
-    "azimuth": 8,
+    "azimuth": 20,
     "elevation": -15,
     "distance": 2.6,
     "kind": "spot",
@@ -10821,8 +10806,8 @@
     }
    ],
    "spatial": {
-    "azimuth": 0,
-    "elevation": 20,
+    "azimuth": -55,
+    "elevation": 35,
     "distance": 8.0,
     "kind": "bed"
    },
@@ -10831,5 +10816,11 @@
  ],
  "mix": {
   "tracks": {}
+ },
+ "gate": {
+  "tempo.audio": {
+   "mode": "skip",
+   "reason": "the tempo accelerates from 84 to 138 BPM by design (the rising device), so no single global tempo exists; the beat tracker measured 129.2 BPM on one render and 94.0 on the next of the same piece, a subdivision each time, and the declared tempo.bpm range 84-138 is judged by tempo.bpm"
+  }
  }
 }

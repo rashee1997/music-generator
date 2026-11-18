@@ -278,7 +278,6 @@ def env(name, preset, t0, d, role='environment', **extra):
 
 
 env('night', 'maya_night', 0.0, B(21, 2.0), fade_out_s=8.0)
-env('temple_air', 'maya_temple_air', B(19), 208.0 - B(19) - 2.0, fade_in_s=6.0, fade_out_s=1.0)
 
 
 def call(name, preset, t0, d, az, el, dist, **kw):
@@ -310,8 +309,8 @@ def steps(name, times, az, dist, vel=0.7, jitter=0.03):
 climb = [B(11) + k * 1.0 for k in range(0, 36)]                                       # up the stairs, one a beat
 slow = [B(22) + k * 2.0 for k in range(0, 20)]                                          # down the passage, afraid
 run = [B(45) + k * 0.5 for k in range(0, 24)]                                            # running
-steps('steps_left', sorted(climb[0::2] + slow[0::2] + run[0::2]), -8, 2.6, 0.72)
-steps('steps_right', sorted(climb[1::2] + slow[1::2] + run[1::2]), 8, 2.6, 0.72)
+steps('steps_left', sorted(climb[0::2] + slow[0::2] + run[0::2]), -20, 2.6, 0.72)
+steps('steps_right', sorted(climb[1::2] + slow[1::2] + run[1::2]), 20, 2.6, 0.72)
 for t in tracks:
     if t['name'] in ('steps_left', 'steps_right'):
         t['notes'] = [n for n in t['notes'] if not (B(20, 0) <= n['t'] < B(22, 0)) and not (HELD - 1.0 <= n['t'] < B(33, 2.0))]
@@ -323,7 +322,7 @@ track('stone_slam', 'sfx:maya_stone_slam', 'fx', [dict(t=BRAAM2, d=10.0, p=60, v
 track('heartbeat', 'sfx:heartbeat', 'fx', [dict(t=B(2) + k * 1.4, d=1.2, p=60, v=0.32 + 0.012 * k) for k in range(18)],
       spatial=dict(azimuth=45, elevation=-10, distance=0.8, kind='spot', binaural=True))
 track('risers', 'sfx:riser', 'fx', [dict(t=beat - 4.0, d=4.0, p=60, v=0.7) for beat in (DESCENT, BRAAM2, AWAKE, RUN)],
-      spatial=dict(azimuth=0, elevation=20, distance=8.0, kind='bed'))
+      spatial=dict(azimuth=-55, elevation=35, distance=8.0, kind='bed'))
 for _t in tracks:
     if _t['name'] in ('heartbeat', 'risers', 'stone_slam', 'stone_door'):
         _t['dc_hp_hz'] = 45.0
@@ -350,6 +349,7 @@ score = dict(
     plan=dict(sections=sections, ending=dict(fade_out=0.6)),
     tracks=tracks,
     mix=dict(tracks={}),
+    gate=dict({'tempo.audio': dict(mode='skip', reason='the tempo accelerates from 84 to 138 BPM by design (the rising device), so no single global tempo exists; the beat tracker measured 129.2 BPM on one render and 94.0 on the next of the same piece, a subdivision each time, and the declared tempo.bpm range 84-138 is judged by tempo.bpm')}),
 )
 import sys
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'scripts'))
