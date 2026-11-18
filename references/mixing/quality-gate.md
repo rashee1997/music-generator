@@ -173,7 +173,20 @@ Read from the score and the presets before any audio is made; each was found by 
 | `preflight.figure_level` | WARN | a melody, lead or vocal part that plays mostly the quiet sections: gain staging lifts every figure-family part to full level, so give it the role `counter` |
 | `preflight.placement` | WARN | a score-placed sound within 25 degrees in azimuth and 15 in elevation of a part that plays with it |
 
-Limits are starting values from those failures. `python scripts/preflight_lint.py scores/<title>_score.json <project>` runs them alone.
+More rows, from the score alone (`scripts/preflight_levels.py`; estimates, WARN only):
+
+| Row | Judges |
+|---|---|
+| `preflight.stem_level` | a part quiet twice in a section (velocity and the dynamics curve both under 75 % of usual): the stem gate reads it as `stem.dead` |
+| `preflight.arc` | parts playing x velocity x curve per section against the declared section energy (rank correlation under 0.5 is where `section.energy` fails) |
+| `preflight.tempo` | a tempo map spanning more than 25 %: `tempo.audio` will fail against one declared value; record a measured skip |
+| `preflight.roughness` | two different instruments a second apart for three beats or more (Plomp and Levelt 1965) |
+
+One-shot effects, rendered once and judged alone (`scripts/preset_probe.py`): `probe.silent` and `probe.clip` and `probe.start` FAIL; `probe.tail` and `probe.dc` WARN (`probe.dc` is silent when every track that plays the effect sets `dc_hp_hz`).
+
+`focus.declared` and `intent.*` run in stage 2 as well. `scripts/lint_coverage.py` maps every gate row to the rule that catches it before a render, or to the reason only audio can; `tests/test_lint_coverage.py` fails when a gate row is missing from it. `scripts/gate_clock.py` is the one beats-to-seconds conversion for every gate module; `tests/test_gate_clock.py` fails when a gate module reads the flat `bpm` without `# flat-bpm-ok: <why>`.
+
+Limits are starting values from those failures. `python scripts/preflight_lint.py scores/<title>_score.json <project>` runs all of them alone.
 
 ## 3c. The gate adapts to the type of piece (gate profiles)
 

@@ -232,6 +232,10 @@ class MusicPipeline:
         rows = pattern_audit.acoustic_checks(score)
         try:
             rows = rows + [r for r in preflight_lint.checks(score, project_dir) if r[0] in ('FAIL', 'WARN')]
+            extra = []
+            qg.focus_rows(score, extra)         # judged from the score alone: a missing figure is found here, not after a render
+            qg.intent_rows(score, extra)
+            rows = rows + [r for r in extra if r[0] in ('FAIL', 'WARN')]
         except Exception as exc:                  # a lint that cannot run must say so, never stop the render by itself
             print(f"  [WARN] preflight_lint did not run ({exc})")
         fails = sum(1 for kind, _, _ in rows if kind == 'FAIL')

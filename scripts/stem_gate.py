@@ -72,7 +72,7 @@ def _clock(score):
     """What turns a beat into seconds for this score: its own tempo map when it declares `tempo_points` (the renderer
     plays that map, so a gate that counted at a flat BPM looked at the wrong place by up to a second), else the flat
     BPM, exactly as before."""
-    flat = float(score.get('bpm') or 120.0)
+    flat = float(score.get('bpm') or 120.0)          # flat-bpm-ok: the fallback when the score has no tempo map
     if not score.get('tempo_points'):
         return flat
     try:
@@ -355,7 +355,8 @@ def _gate_key(name, audio_hash, track, score, secs, dur, gp):
     return stem_cache.digest(dict(
         audio=audio_hash, stem=name, code=_gate_code(),
         track={k: (track or {}).get(k) for k in ('name', 'role', 'instrument', 'notes')},
-        bpm=score.get('bpm'), ts=score.get('ts'), dur=round(float(dur), 4), profile=gp.label,
+        bpm=score.get('bpm'), ts=score.get('ts'),          # flat-bpm-ok: part of the cache key, not a conversion
+ dur=round(float(dur), 4), profile=gp.label,
         sections=[(s.get('name'), round(float(s['start_s']), 4), round(float(s['end_s']), 4), s.get('dyn'))
                   for s in secs],
         rows=gp.rows), size=16)

@@ -720,7 +720,7 @@ def _score_has_pulse(score):
     `tempo.audio` measures the audio; on a rubato or arpeggiated cue a beat tracker reports a subdivision (a real project
     run measured 152 BPM for a written 84), so the row is only judged where a pulse exists to measure.
     """
-    bpm = float(score.get('bpm') or 120.0)
+    bpm = float(score.get('bpm') or 120.0)          # flat-bpm-ok: only the steadiness of the gaps between note starts is judged, in beats
     for tr in score.get('tracks', []):
         role = str(tr.get('role') or '').lower()
         inst = str(tr.get('instrument') or '').lower()
@@ -792,7 +792,7 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
     _metric(metrics, row='master.dc', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
             threshold=res['threshold'], margin=res['margin'], worst_times_s=[], calibrated=False, detail=res['detail'])
 
-    bpm_ref = score.get('bpm')
+    bpm_ref = score.get('bpm')          # flat-bpm-ok: the declared tempo, which tempo.audio compares with the measured one
     # every other master row asks the piece's profile first; this one used to judge regardless, so a
     # measured, reasoned `tempo.audio` skip in a project's gate profile had no effect at all.
     import gate_profiles as _gprof
@@ -1017,7 +1017,7 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
                         clock = _hz.tempo_map_for(score, seed=score.get('seed', 7))
                     except Exception:
                         clock = None
-                bd = 60.0 / float(score.get('bpm', 90.0))
+                bd = 60.0 / float(score.get('bpm', 90.0))          # flat-bpm-ok: the fallback when the score has no tempo map
                 _sec = (lambda beats: float(clock.sec(beats))) if clock is not None else (lambda beats: beats * bd)
                 s0 = _sec(min(float(nt['t']) for nt in tr['notes']))
                 s1 = _sec(max(float(nt['t']) + float(nt.get('d', 1.0)) for nt in tr['notes']))
@@ -1061,10 +1061,11 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
                 if len(dyn) >= 2:
                     try:
                         pts = sorted((float(b), float(v)) for b, v in dyn)
-                        bpm = float(score.get('bpm', 90.0))
+                        import gate_clock
+                        _secs = gate_clock.seconds_fn(score)
                         for (b0, v0), (b1, v1) in zip(pts, pts[1:]):
                             if b1 > b0 and v0 > 1e-6 and v1 > 1e-6:
-                                slope_db_s = max(slope_db_s, abs(20 * np.log10(v1 / v0)) / (b1 - b0) * bpm / 60.0)
+                                slope_db_s = max(slope_db_s, abs(20 * np.log10(v1 / v0)) / max(1e-6, float(_secs(b1)) - float(_secs(b0))))
                     except (TypeError, ValueError):
                         slope_db_s = 0.0
                 pump_limit = gp.param('ambient_bed', 'pump_db') + 0.5 * slope_db_s
@@ -1640,8 +1641,8 @@ def direction_rows(score, out, project_dir=None, wav_path=None, mode='full'):
             else:
                 out.append(('PASS', 'delivery.duration', f'{got:.2f} s matches duration_s {want:g} s'))
     if gp.on('tempo.bpm'):
-        want_bpm = sheet.get('tempo_bpm', sheet.get('bpm'))
-        bpm = score.get('bpm')
+        want_bpm = sheet.get('tempo_bpm', sheet.get('bpm'))          # flat-bpm-ok: the sheet's own promise, not a conversion
+        bpm = score.get('bpm')          # flat-bpm-ok: the declared tempo against the sheet's range
         if want_bpm and bpm:
             lo, hi = (want_bpm if isinstance(want_bpm, (list, tuple)) else [want_bpm, want_bpm])
             try:
@@ -2066,16 +2067,17 @@ def kick_grid_rows(score, stems=None, out=None, sr=44100):
                   if t.get('role') == 'drum' and t['name'] in stems]
     if not drum_stems:
         return rows
-    bpm = score.get('bpm', 120.0)
-    spb = 60.0 / bpm
+    bpm = score.get('bpm', 120.0)          # flat-bpm-ok: the label in the report; the grid below is on the tempo map
+    import gate_clock
     dm = drum_stems[0].mean(axis=1) if drum_stems[0].ndim == 2 else drum_stems[0]
     from scipy.signal import butter, sosfilt
     sos = butter(4, min(140.0, sr * 0.45), 'low', fs=sr, output='sos')
     kick = sosfilt(sos, dm)
     on = nc.onsets(kick[:, np.newaxis], sr)
     if len(on) >= 4:
-        rem = (on % spb)
-        dist = np.minimum(rem, spb - rem)
+        grid = gate_clock.beat_grid_seconds(score, float(len(dm)) / sr)
+        idx = np.clip(np.searchsorted(grid, on), 1, len(grid) - 1)
+        dist = np.minimum(np.abs(on - grid[idx - 1]), np.abs(grid[idx] - on))
         within40 = float((dist <= 0.040).sum() / len(dist))
         if within40 >= min_lock:
             rows.append(('PASS', 'kick_grid', f'{within40*100:.0f}% of kick transients lock within 40 ms of the {bpm:.0f} BPM beat grid'))

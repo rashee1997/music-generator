@@ -13,6 +13,10 @@ found by a render that failed; none of them replaces the audio rows, which stay 
 
     rows = preflight_lint.checks(score, project_dir)        # [(level, name, detail)]
 
+More rows live beside this file: preflight_levels.py (stem_level, arc, tempo, roughness: from the score alone) and
+preset_probe.py (probe.*: each one-shot effect rendered once). `checks()` runs all three. lint_coverage.py says, for every
+audio row, what here catches it or why only audio can.
+
 Rows
     preflight.range         FAIL  a note is above or below the sampled range of its SFZ patch (it plays silent or stretched)
     preflight.sfx_length    FAIL  a one-shot's event is cut before its sound has played 75 % of its length (the cut is a click)
@@ -41,16 +45,8 @@ SPARSE_MAX_BEATS = 16.0          # an event longer than this is a bed, not a spa
 # ------------------------------------------------------------------ helpers
 def _clock(score):
     """beats -> seconds, on the tempo map the renderer plays (a flat bpm looked at the wrong place)."""
-    pts = score.get('tempo_points')
-    if pts:
-        try:
-            import humanize as hz
-            tm = hz.tempo_map_for(score, seed=score.get('seed', 7))
-            return lambda b: float(tm.sec(b))
-        except Exception:
-            pass
-    bd = 60.0 / float(score.get('bpm') or 120.0)
-    return lambda b: float(b) * bd
+    import gate_clock
+    return gate_clock.seconds_fn(score)
 
 
 def _tracks(score):
@@ -233,7 +229,7 @@ def section_edge_rows(score):
 def unison_rows(score):
     pads = []
     for t in _tracks(score):
-        if str(t.get('role')) in ('drum', 'percussion', 'fx', 'environment') or str(t.get('instrument', '')).startswith(('env:', 'sfx:')):
+        if str(t.get('role')) in ('drum', 'percussion', 'fx', 'environment', 'texture') or str(t.get('instrument', '')).startswith(('env:', 'sfx:')):
             continue
         pads.append(t)
     found = []
@@ -347,8 +343,9 @@ def _shared_seconds(sa, sb):
     return total
 
 
-def checks(score, project_dir=None, lookup=None, patch_range=None):
-    """Every preflight row for this score. `lookup(kind, name)` and `patch_range(block, project)` are injectable for tests."""
+def checks(score, project_dir=None, lookup=None, patch_range=None, probe=True, render=None):
+    """Every preflight row for this score. `lookup(kind, name)`, `patch_range(block, project)` and `render(name, seconds, sr, seed)`
+    are injectable for tests; `probe=False` skips the one-shot renders of preset_probe."""
     lookup = lookup or default_lookup
     patch_range = patch_range or default_patch_range
     rows = []
@@ -358,6 +355,11 @@ def checks(score, project_dir=None, lookup=None, patch_range=None):
     rows += unison_rows(score)
     rows += figure_level_rows(score)
     rows += placement_rows(score, lookup)
+    import preflight_levels
+    rows += preflight_levels.checks(score)
+    if probe:
+        import preset_probe
+        rows += preset_probe.probe_rows(score, lambda name: lookup('sfx', name), render)
     return rows
 
 
