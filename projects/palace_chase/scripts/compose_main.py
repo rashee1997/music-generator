@@ -127,7 +127,7 @@ POWER = B(62)
 CUT = B(S_RELEASE)
 
 # ================================================================ pianos: the pulse, the question, the pursuer
-pl = [N(B(bar), 4.3, 26 + 12, 0.42 + 0.008 * bar + (0.06 if bar % 4 == 1 else 0.0)) for bar in range(1, 18)]        # a low D struck once a bar in the quiet: a piano note does not hold for sixteen beats
+pl = [N(B(bar), 4.3, 33,0.42 + 0.008 * bar + (0.06 if bar % 4 == 1 else 0.0)) for bar in range(1, 18)]        # a low D struck once a bar in the quiet: a piano note does not hold for sixteen beats
 pl += [N(B(bar), 4.0, near(chord_at(bar, 0)[0], 26, 37) + 12, 0.66 + 0.02 * (bar - 18)) for bar in range(18, 25)]
 for bar in range(S_CORR, S_ESCAPE + 4):                                                                  # the pursuer: heavy two-hand octaves on 3+3+2
     for off, v, d in ((0, 1.0, 0.5), (1.5, 0.78, 0.35), (3.0, 0.88, 0.35)):
@@ -311,16 +311,21 @@ for bar in range(S_CORR + 1, S_ESCAPE + 4):
         if B(bar, o) in BR or (bar == 53 and o == 2.0) or (bar % 4 == 1 and o == 3.0):
             continue
         bd.append(N(B(bar, o), 0.9, 48, v + rng.normal(0, 0.03)))
+    extra = (None, 0.75, 3.5, 2.5)[bar % 4]                                                            # a different pickup each bar of the cycle
+    if extra is not None and not (bar == 53 and extra >= 2.0) and B(bar, extra) not in BR:
+        bd.append(N(B(bar, extra), 0.4, 48, 0.5 + rng.normal(0, 0.03)))
 track('bass_drum', 'mayan_bass_drum', 'drum', bd)
 
 sn = []
 for bar in range(S_CORR + 2, S_ESCAPE + 4):                                                            # a backbeat snare and a ghost note, a roll into the fill bar
     if bar == 53:
         continue
-    sn += [N(B(bar, 1.0), 0.3, 49, 0.9 + rng.normal(0, 0.03)), N(B(bar, 3.0), 0.3, 49, 0.92 + rng.normal(0, 0.03)), N(B(bar, 2.75), 0.15, 49, 0.45)]
+    back = 3.0 if bar % 4 != 2 else 3.5                                                               # the second backbeat moves in alternate bars: no stack of attacks on the 3+3+2 beat
+    ghost = (2.75, 1.75, 3.25, 2.25)[bar % 4]
+    sn += [N(B(bar, 1.0), 0.3, 49, 0.9 + rng.normal(0, 0.03)), N(B(bar, back), 0.3, 49, 0.92 + rng.normal(0, 0.03)), N(B(bar, ghost), 0.15, 49, 0.45)]
     if bar % 4 == 0:
         sn += [N(B(bar, 3.0 + 0.125 * k), 0.1, 49, 0.45 + 0.45 * (k / 7.0) ** 1.6 + (0.04 if k % 2 == 0 else -0.04)) for k in range(1, 8)]
-track('snare', 'mayan_bass_drum', 'drum', sn)
+track('snare', 'mayan_snare', 'drum', sn)
 
 cy = [N(beat - 3.0, 3.0, 50, 0.7) for beat in (CORR_HIT, FOREST_HIT, POWER)] + [N(beat, 4.0, 59, 0.6) for beat in (BRAAM1, CORR_HIT, FOREST_HIT, B(58), POWER)]        # every swell lands in a section that also holds a hit
 cy += [N(BRAAM1, 4.0, 60, 1.0), N(B(21), 4.0, 50, 0.9), N(B(23), 4.0, 59, 0.95), N(B(34), 4.0, 59, 0.9), N(B(38), 4.0, 59, 0.85)]        # the opening and the corridors keep up with the sections around them
@@ -367,7 +372,7 @@ for bar in range(S_CORR, S_ESCAPE + 4):                                         
     for o in (0.0, 1.5, 3.0):
         if bar % 4 == 1 and o == 3.0:
             continue
-        cn.append(N(B(bar, o), 0.3, 50 + key_of(bar) + (0 if o == 0 else 3 if o == 1.5 else 5), 0.78 + 0.08 * (o == 0)))
+        cn.append(N(B(bar, o), 0.3, 50 + key_of(bar) + (0 if o == 0 else 3 if o == 1.5 else 5), (0.9 if o == 0 else 0.72 if o == 1.5 else 0.6) + rng.normal(0, 0.04)))
 track('chant', 'mayan_chant', 'chord', cn, vowel='a')
 
 wh = phrase(Q, B(5), 62, 0.4, scale=1.3, upto=4) + phrase(HOLLOW_A, B(15), 62, 0.42, scale=1.0, upto=3)           # far away, closed mouth: what is in the relic
@@ -400,7 +405,20 @@ sections = [dict(name='the_entry', start_bar=S_ENTRY, end_bar=8, energy=0.25), d
             dict(name='the_opening', start_bar=S_OPEN, end_bar=25, energy=0.55), dict(name='the_corridors', start_bar=S_CORR, end_bar=41, energy=0.85),
             dict(name='the_forest', start_bar=S_FOREST, end_bar=57, energy=0.95), dict(name='the_escape', start_bar=S_ESCAPE, end_bar=65, energy=1.0),
             dict(name='the_release', start_bar=S_RELEASE, end_bar=69, energy=0.45), dict(name='the_aftermath', start_bar=S_AFTER, end_bar=75, energy=0.2)]
+def swell(name, lo=0.76):
+    """A part that plays the whole chase at one weight reads as a loop: its velocity climbs from `lo` at the corridors to full at the escape."""
+    t0, t1 = B(S_CORR), B(S_ESCAPE)
+    for tr in tracks:
+        if tr['name'] == name:
+            for n in tr['notes']:
+                if t0 <= n['t'] < t1:
+                    n['v'] = float(min(1.0, n['v'] * (lo + (1.0 - lo) * (n['t'] - t0) / (t1 - t0))))
+
+
+for _name in ('basses', 'celli', 'violas', 'violins_staccato', 'horns', 'tuba', 'chant'):
+    swell(_name)
 score = dict(
+    gate={'tempo.audio': dict(mode='skip', reason='the tempo map runs 56-172 BPM by design (a slow entry, the chase at 148-172, a fall back to 62), so no single tempo exists; the beat tracker measured 83.4 BPM against the declared 150 on this render, a subdivision of the chase, and the declared range is judged by tempo.bpm')},
     title='The Mayan Palace', bpm=150, ts=[4, 4], seed=1511, humanize='natural', key='D', mode='minor',
     tempo_points=[[0, 66], [68, 66], [96, 84], [99.9, 56], [100, 148], [164, 158], [228, 168], [260, 172], [262, 120], [270, 84], [276, 66], [300, 62]],
     dynamics=dynamics, space='palace_room', mix_preset='the_palace_hunts_mix',

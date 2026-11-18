@@ -17,7 +17,8 @@
   ],
   "source": {
     "register": "chest",
-    "breathiness": 0.02
+    "breathiness": 0.02,
+    "jitter_period_pct": 0.4
   },
   "articulation": {
     "mode": "detached",
