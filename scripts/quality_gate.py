@@ -610,18 +610,23 @@ def audio_checks(path, score, out, metrics=None):
         _multi, _multi_sr = _read_delivered(path, out)
     except Exception:
         return                     # the FAIL row that says why is already in `out`
-    _layout = None
+    _layout, _target_name, _tgt, _basis = None, None, {}, ''
     for _name in render_targets.resolve(score)['selected']:
         _tgt = render_targets.get(_name) or {}
         if _tgt.get('layout') and render_targets.channels(_name) == _multi.shape[1]:
-            _layout = _tgt['layout']
+            _layout, _target_name, _tgt = _tgt['layout'], _name, _tgt
             break
     if _layout:
         from spatial_engine import downmix as _downmix, master as _spatial_master
         x = _downmix.fold(_multi, _layout)
         sr = _multi_sr
         r = nc.analyse(path, target_lufs=target, audio=(x, sr))
-        r['lufs'] = _spatial_master.fold_lufs(_multi, _layout)
+        # The loudness is judged on the basis the master was levelled on: a target that asks for
+        # `loudness.method: bs1770_layout` was trimmed to the delivered channels' LKFS, so reading the loudness of
+        # the fold here judged a correctly levelled 7.1 master several LU off its own target.
+        r['lufs'], _lmeth = _spatial_master.programme_lufs(_multi, _layout, sr, _tgt)
+        _basis = (' on the delivered channels with this layout\'s BS.1770 weights' if _lmeth == 'bs1770_layout'
+                  else f' on the 2-channel fold of {_target_name}')
     else:
         x = np.repeat(_multi, 2, axis=1) if _multi.shape[1] == 1 else _multi[:, :2]
         sr = _multi_sr
@@ -631,10 +636,23 @@ def audio_checks(path, score, out, metrics=None):
         _row(out, level, 'audio', msg)
     d = r['lufs'] - target
     if abs(d) > lufs_tol:
-        _row(out, 'FAIL', 'loudness', f'{r["lufs"]:.1f} LUFS, target {target}: missed by {d:+.1f} LU. The mix is too dynamic for the '
+        _row(out, 'FAIL', 'loudness', f'{r["lufs"]:.1f} LUFS{_basis}, target {target}: missed by {d:+.1f} LU. The mix is too dynamic for the '
                                       'target under the limiter. Lower the target or the dynamics range, or accept it and say so')
-    if r['true_peak'] > tp_target + 0.3:
+    elif _basis:
+        _row(out, 'PASS', 'loudness', f'{r["lufs"]:.1f} LUFS{_basis} against a {target:g} target (+{d:+.1f} LU)')
+    # True peak: a delivered multichannel target has a ceiling of its own and is certified channel by channel
+    # (spatial_gate.delivery.true_peak). A fold is a sum of channels, so its peak is not a delivery limit: judging it
+    # against the two-channel policy failed a 7.1 file whose every channel was under its own ceiling.
+    _target_ceiling = render_targets.true_peak(_target_name) if _target_name else None
+    _per_channel = bool(_layout) and _target_ceiling is not None
+    tp_fail = r['true_peak'] > tp_target + 0.3 and not _per_channel
+    if tp_fail:
         _row(out, 'FAIL', 'true peak', f"{r['true_peak']:.2f} dBTP is above the ceiling {tp_target}")
+    elif _per_channel and r['true_peak'] > tp_target + 0.3:
+        _row(out, 'INFO', 'true peak',
+             f"{r['true_peak']:.2f} dBTP on the 2-channel fold of {_target_name}; every delivered channel is "
+             f"certified against this format's own ceiling of {_target_ceiling:+.1f} dBTP by delivery.true_peak. "
+             f"A fold is a sum of channels, so its peak is not a delivery limit")
     mono = x.mean(axis=1) if x.ndim == 2 else x
     # silent gap: a run of 1 s or more under -60 dBFS, away from the start and end
     win = int(0.25 * sr)
@@ -686,7 +704,7 @@ def audio_checks(path, score, out, metrics=None):
                             margin=float(abs(d) - lufs_tol), worst_times_s=[], calibrated=True,
                             detail=f'{r["lufs"]:.1f} LUFS vs target {target} (tolerance {lufs_tol} LU)'))
         metrics.append(dict(row='true peak', stage='mix', stem=None,
-                            level='FAIL' if r['true_peak'] > tp_target + 0.3 else 'PASS',
+                            level='FAIL' if tp_fail else 'PASS',
                             value=float(r['true_peak']), unit='dBTP', threshold=float(tp_target),
                             margin=float(r['true_peak'] - tp_target), worst_times_s=[], calibrated=True,
                             detail=f'{r["true_peak"]:.2f} dBTP vs ceiling {tp_target}'))
@@ -748,12 +766,14 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
     sig = GateAudio(wav_path)
     program_sig = sig
     import render_targets
+    delivered = None                      # (target name, target preset) when the file is a loudspeaker layout
     for target_name in render_targets.resolve(score)['selected']:
         target = render_targets.get(target_name) or {}
         if target.get('layout') and render_targets.channels(target_name) == sig.channels:
             from gate_audio import Signal
             from spatial_engine import downmix
             program_sig = Signal(downmix.fold(sig.audio, target['layout']), sig.sr)
+            delivered = (target_name, target)
             break
     sheet = _direction_sheet(project_dir) if project_dir else {}
     secs = gc.section_bounds(score, program_sig.dur, sheet)
@@ -786,9 +806,21 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
     _metric(metrics, row='clipping', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
             threshold=res['threshold'], margin=res['margin'], worst_times_s=[], calibrated=True, detail=res['detail'])
 
-    res = gc.check_dc(sig)
+    # DC is a programme row: the low-frequency channel is not one. It carries the sub, which is content below the
+    # DC blocker's corner by design, so reading it with the programme channels failed a clean 7.1 delivery.
+    dc_sig, dc_note = sig, ''
+    if delivered:
+        from gate_audio import Signal as _Sig
+        from spatial_engine import config as _spatial_config
+        order = list(delivered[1].get('channel_order') or [])
+        lfe = _spatial_config.lfe_speaker(delivered[1]['layout'])
+        if lfe is not None and lfe['name'] in order and sig.channels > 1:
+            i = order.index(lfe['name'])
+            dc_sig = _Sig(np.delete(sig.audio, i, axis=1), sig.sr)
+            dc_note = f' ({delivered[0]}: the low-frequency channel "{lfe["name"]}" is excluded, it carries the sub)'
+    res = gc.check_dc(dc_sig)
     level = 'FAIL' if res['value'] > res['threshold'] else 'PASS'
-    _row(out, level, 'master.dc', res['detail'])
+    _row(out, level, 'master.dc', res['detail'] + dc_note)
     _metric(metrics, row='master.dc', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
             threshold=res['threshold'], margin=res['margin'], worst_times_s=[], calibrated=False, detail=res['detail'])
 
