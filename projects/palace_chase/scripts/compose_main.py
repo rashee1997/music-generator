@@ -136,7 +136,7 @@ for bar in range(S_CORR, S_ESCAPE + 4):                                         
         r = near(chord_at(bar, off)[0], 31, 42)
         pl += [N(B(bar, off), d, r, v), N(B(bar, off), d, r + 12, v - 0.06)]
 pl += [N(B(66), 4.0, 38, 1.0), N(B(66), 4.0, 50, 0.95)]
-pl += [N(B(bar), 3.9 if bar < 75 else 2.0, 33, 0.7 - 0.015 * (bar - 70)) for bar in range(70, 76)]
+pl += [N(B(bar), 3.9 if bar < 75 else 2.0, 33, 0.7 - 0.015 * (bar - 70)) for bar in range(70, 74)]
 track('piano_low', 'mayan_piano_low', 'bass', pl)
 
 CELLS = [[0, 2, 3, 2], [0, 3, 2, 3], [0, 2, 0, 3], [2, 3, 2, 0], [0, 1, 2, 3], [3, 2, 1, 2]]       # indices into [root, third, fifth, octave]
@@ -167,7 +167,7 @@ for bar in range(S_CORR, S_ESCAPE + 4):                                         
             v = 0.7 + (0.2 if k == 0 else 0.0) + (0.06 if beat in (0, 2) else 0.0) + 0.0015 * (bar - S_CORR) + rng.normal(0, 0.03)
             pn += [N(tt, 0.22, t[cell[k]], v), N(tt, 0.22, t[cell[k]] + 12, v - 0.14)]
 pn += phrase(ANSWER, B(70), 74, 0.5, scale=1.4)
-pn[-1]['d'] -= 0.6                                                                                      # the last note rings out: the score stops where the sound does
+pn[-1]['d'] -= 0.9                                                                                      # the last note rings out: the score stops where the sound does
 track('piano', 'mayan_piano', 'ostinato', pn)
 
 # ================================================================ strings
@@ -420,7 +420,8 @@ def no_retrigger(name, gap=0.004):
 
 for _name in ('bass_drum', 'snare', 'timpani', 'drums_left', 'drums_right'):
     no_retrigger(_name)
-for _name in ('piano', 'piano_low', 'celli', 'violas', 'violins_staccato', 'trombones', 'tuba', 'horns', 'harp'):
+no_retrigger('piano', 0.03)
+for _name in ('piano_low', 'celli', 'violas', 'violins_staccato', 'trombones', 'tuba', 'horns', 'harp'):
     no_retrigger(_name, 0.06)                                                                            # the humanizer moves a note by a few ms: a pitched key needs room to release first
 
 
