@@ -51,3 +51,25 @@ class AbsorptionCache(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class TempField(unittest.TestCase):
+    def test_a_field_on_disk_leaves_no_file_behind_on_posix(self):
+        import glob
+        import tempfile
+        before = set(glob.glob(os.path.join(tempfile.gettempdir(), '*.hoa')))
+        old = hoa.IN_RAM_BYTES
+        hoa.IN_RAM_BYTES = 1000
+        try:
+            arr, path = hoa._alloc(2000, 4)
+            arr[:10] = 1.0
+            self.assertEqual(float(arr[:10].sum()), 40.0)          # ten rows of four columns: still usable
+            after = set(glob.glob(os.path.join(tempfile.gettempdir(), '*.hoa')))
+            if os.name != 'nt':
+                self.assertIsNone(path)
+                self.assertEqual(after - before, set())
+        finally:
+            hoa.IN_RAM_BYTES = old
+            del arr
+            if path:
+                os.remove(path)

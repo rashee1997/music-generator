@@ -64,7 +64,18 @@ def _alloc(n, k):
         return np.zeros((n, k), np.float32), None
     fd, path = tempfile.mkstemp(suffix='.hoa')
     os.close(fd)
-    return np.memmap(path, dtype=np.float32, mode='w+', shape=(n, k)), path
+    try:
+        arr = np.memmap(path, dtype=np.float32, mode='w+', shape=(n, k))
+    except OSError:
+        os.remove(path)                    # a full disk must not leave the half-made file behind
+        raise
+    if os.name != 'nt':                    # POSIX keeps an unlinked file alive while it is mapped: a killed render leaves nothing
+        try:
+            os.unlink(path)
+            return arr, None
+        except OSError:
+            pass
+    return arr, path
 
 
 def read(x, pos):
