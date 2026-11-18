@@ -1,0 +1,162 @@
+{
+  "name": "maya_temple_room",
+  "kind": "spaces",
+  "character": "The forest floor at night, then the inside of a stone temple: a box of earth and foliage that becomes a long chamber of cut stone, and a high vault beneath it, with a tail that comes from the rock and not from the source.",
+  "room": {
+    "rt60": 1.6,
+    "pre_delay_ms": 14,
+    "hf_decay": 0.4,
+    "early_level": 0.3
+  },
+  "reflections": {
+    "path_physics": true,
+    "ref_m": 1.5,
+    "ground_delay_ms": 6.5,
+    "ground_gain": 0.35,
+    "ground_cutoff_hz": 2600,
+    "lateral_delay_ms": 16.0,
+    "lateral_gain": 0.3,
+    "lateral_cutoff_hz": 2000,
+    "ceiling_delay_ms": 15.0,
+    "ceiling_gain": 0.3,
+    "rear_delay_ms": 26.0,
+    "rear_gain": 0.25,
+    "geometry": {
+      "width_m": 40.0,
+      "depth_m": 60.0,
+      "height_m": 28.0,
+      "listener": {
+        "x": 20.0,
+        "y": 22.0,
+        "z": 1.6
+      },
+      "materials": {
+        "floor": "earth",
+        "ceiling": "foliage",
+        "walls": "foliage"
+      },
+      "material_set": "room_materials",
+      "max_order": 2,
+      "max_taps": 10,
+      "min_level_db": -34.0
+    },
+    "late": {
+      "enabled": true,
+      "rt60_s": "auto",
+      "pre_delay_ms": "auto",
+      "hf_decay": 0.4,
+      "level_db": -16.0,
+      "count": 8,
+      "spread_deg": 80.0,
+      "rise_s": 0.04,
+      "seed": 23,
+      "bands_hz": [
+        125,
+        250,
+        500,
+        1000,
+        2000,
+        4000,
+        8000
+      ]
+    }
+  },
+  "distance": {
+    "ref_m": 1.5,
+    "falloff": 0.18,
+    "air_damping": 0.45,
+    "min_cutoff_hz": 2800,
+    "reverb_exponent": 0.65,
+    "pre_delay_law": {
+      "base_ms": 32.0,
+      "per_m": 3.5,
+      "max_ms": 30.0
+    },
+    "near_field": {
+      "enabled": true,
+      "model": "dvf",
+      "max_m": 1.0,
+      "head_radius_m": 0.0875,
+      "strength": 1.0,
+      "lf_boost": 2.0,
+      "lf_hz": 700.0,
+      "min_gain": 0.35,
+      "max_gain": 3.0
+    }
+  },
+  "binaural": {
+    "bed": false,
+    "spot": true
+  },
+  "scenes": [
+    {
+      "anchor": {
+        "section": "the_stairs"
+      },
+      "transition_bars": 2,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 24.0,
+          "depth_m": 30.0,
+          "height_m": 18.0,
+          "materials": {
+            "floor": "concrete",
+            "ceiling": "foliage",
+            "walls": "concrete"
+          }
+        },
+        "late": {
+          "level_db": -14.0
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_descent"
+      },
+      "transition_bars": 2,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 8.0,
+          "depth_m": 24.0,
+          "height_m": 6.0,
+          "materials": {
+            "floor": "concrete",
+            "ceiling": "concrete",
+            "walls": "concrete"
+          }
+        },
+        "late": {
+          "level_db": -9.0
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_awakening"
+      },
+      "transition_bars": 2,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 16.0,
+          "depth_m": 30.0,
+          "height_m": 16.0,
+          "materials": {
+            "floor": "concrete",
+            "ceiling": "concrete",
+            "walls": "concrete"
+          }
+        },
+        "late": {
+          "level_db": -10.0
+        }
+      }
+    }
+  ],
+  "sources": [
+    "KB sfx-ambience law 4: music and ambience occupy different geometries",
+    "Late tail and reflections from the room geometry (Eyring), scripts/spatial_hrtf/room.py; absorption coefficients from presets/materials/room_materials.json (concrete stands in for cut stone: a hard, reflective surface; nearest material there)",
+    "ESTIMATE: chamber sizes are invented to be a narrow temple passage and a taller vault; no survey of a real temple was used",
+    "Chirped echo and stepped-pyramid acoustics: https://www.nature.com/news/2004/041213/full/news041213-5.html"
+  ]
+}

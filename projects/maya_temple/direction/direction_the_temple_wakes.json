@@ -1,0 +1,449 @@
+{
+  "title": "The Temple Wakes",
+  "project": "A haunted, unknown Maya temple in the deep forest: a hybrid-orchestral cue of pressure that does not let go",
+  "version": 1,
+  "medium": "film",
+  "brief": "a high-tension, Hans Zimmer-style hybrid orchestral cue for an unwelcoming adventure through the deep forest into a haunted ancient Maya temple: a pulse that never stops, braams, drums, ritual whistles and a stone door, ending on a cut",
+  "audience": "a listener on headphones, a living-room 5.1 and a 7.1.4 room, and on a phone speaker; they came for the pressure",
+  "purpose": "a 117-second cue in which the walker is drawn up, into and through a temple that wakes, and the door shuts behind them",
+  "point_of_view": "the walker: the steps are the nearest sound; the orchestra and the temple are what is closing in",
+  "job": [
+    "hold pressure from bar 5 to the cut: no section is a rest, except the two beats that are the held breath",
+    "turn the story three times with a braam each: the door (bar 21), the awakening (bar 33), the run (bar 45)",
+    "let the ritual sounds be the unknown: a whistle that is not a bird, a conch that is not a horn, an echo that is not a voice"
+  ],
+  "story": "A walker comes to the foot of a temple the forest has swallowed. A twig breaks; the night insects stop. The steps up are answered by a chirp that runs away down the stairs. A stone door opens by itself. In the passage the pulse never stops; a slab drops behind them; for two beats there is nothing. Then the temple wakes, drums on every side, a whistle that sounds like a scream, and the run begins. The door shuts and the music is cut.",
+  "duration_s": 116.9,
+  "in_point_s": 0.0,
+  "out_point_s": 116.9,
+  "ending": "cut",
+  "feel": [
+    "tense",
+    "oppressive",
+    "ancient",
+    "relentless",
+    "vast",
+    "ritual"
+  ],
+  "avoid_feel": [
+    "comic",
+    "cosy",
+    "serene",
+    "meditative",
+    "cheerful",
+    "new-age cliche"
+  ],
+  "sections": [
+    {
+      "name": "the_approach",
+      "role": "place",
+      "energy": 0.35,
+      "action": "the walker comes to the foot of an overgrown temple at night",
+      "music": "a D pedal in the basses, a heartbeat in the timpani, a semitone D/Eb in the high strings; the cello pulse starts quietly at bar 5; a far whistle; a twig breaks at bar 8",
+      "start_s": 0.0,
+      "end_s": 22.413
+    },
+    {
+      "name": "the_stairs",
+      "role": "establish",
+      "energy": 0.6,
+      "action": "the steps up the pyramid, and something that answers them",
+      "music": "a conch blast, steps on stone one a beat, the chirped echo, the pulse doubles to sixteenths at bar 17, the drums begin far away",
+      "start_s": 22.413,
+      "end_s": 52.906
+    },
+    {
+      "name": "the_descent",
+      "role": "build",
+      "energy": 0.8,
+      "action": "a stone door grinds open and the passage goes down",
+      "music": "braam on the door, drips, the pulse never stops, a cluster in the choir, the slab drops at bar 29, then two beats of nothing at bar 32",
+      "start_s": 52.906,
+      "end_s": 79.844
+    },
+    {
+      "name": "the_awakening",
+      "role": "peak",
+      "energy": 1.0,
+      "action": "the temple wakes: the walls answer",
+      "music": "a braam, the full orchestra on a 3+3+2 drum pattern, the horns state the theme, the violins climb a semitone a bar, a whistle from every side",
+      "start_s": 79.844,
+      "end_s": 102.649
+    },
+    {
+      "name": "the_run",
+      "role": "peak",
+      "energy": 1.0,
+      "action": "the run for the way out, and the door shuts",
+      "music": "everything at once on every beat, a braam at bar 45, the stone slab slams and the music is cut dead",
+      "start_s": 102.649,
+      "end_s": 116.89
+    }
+  ],
+  "motifs": [
+    {
+      "name": "the semitone",
+      "first_at_s": 0.0,
+      "shape": "D against Eb: a minor second held, flickered and stacked",
+      "returns": "in the ostinato cells, the high strings, the choir cluster and the horns' theme; the last chord keeps it"
+    },
+    {
+      "name": "the horns' theme",
+      "first_at_s": 79.84,
+      "shape": "D, Eb, D, A: a fall to the flat second and a leap to the fifth",
+      "returns": "lifted an octave from bar 41; on every beat in the run"
+    }
+  ],
+  "instruments": [
+    "celli",
+    "basses",
+    "violas",
+    "violins",
+    "horns",
+    "trombones",
+    "tuba",
+    "timpani",
+    "bass drum",
+    "cymbals",
+    "choir",
+    "conga",
+    "whistle",
+    "conch",
+    "stone",
+    "environment"
+  ],
+  "avoid_sounds": [
+    "synth pad",
+    "electric guitar",
+    "drum kit",
+    "pop vocals",
+    "sirens",
+    "stock jungle loop",
+    "harp",
+    "flute"
+  ],
+  "pulse": "eighths in the celli from bar 5 that become sixteenths at bar 17 and never stop; footsteps on stone are the second pulse; a 3+3+2 drum pattern from bar 33",
+  "tempo_bpm": [
+    84,
+    138
+  ],
+  "key": "D",
+  "mode": "minor",
+  "energy": 0.85,
+  "space": "maya_temple_room",
+  "hits_at": [
+    21.72,
+    52.91,
+    71.05,
+    78.81,
+    79.84,
+    102.65,
+    113.36
+  ],
+  "hits": [
+    {
+      "t": 21.72,
+      "kind": "motion",
+      "sync": "hard",
+      "sound": "a twig breaks under the walker's foot",
+      "why": "the first wrong sound; the night insects hold their breath"
+    },
+    {
+      "t": 52.91,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "a braam on the stone door: the temple is open",
+      "why": "weight, not volume"
+    },
+    {
+      "t": 71.05,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the slab drops into place",
+      "why": "the point of no return"
+    },
+    {
+      "t": 78.81,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "everything stops for two beats",
+      "why": "the held breath before the temple wakes"
+    },
+    {
+      "t": 79.84,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the awakening braam with a drum and slab hit",
+      "why": "the turn: the place is alive"
+    },
+    {
+      "t": 102.65,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the run begins on a braam",
+      "why": "the music does not let go from here"
+    },
+    {
+      "t": 113.36,
+      "kind": "motion",
+      "sync": "hard",
+      "sound": "the door slams and the music is cut",
+      "why": "a cliff, not a fade"
+    }
+  ],
+  "mix_intent": {
+    "hero": "horns",
+    "support": [
+      "celli",
+      "trombones",
+      "timpani",
+      "choir"
+    ],
+    "sits_under": [
+      "steps"
+    ],
+    "must_hear": [
+      "the twig snap at 21.72 s with the night stopping",
+      "the door braam at 52.91 s",
+      "two beats of silence at 78.81 s",
+      "the whistle at 87.68 s",
+      "the cut at 113.36 s"
+    ],
+    "leave_free_hz": [
+      700,
+      2600
+    ],
+    "executed_by": "carry this block on the score as `mix_intent` and set the mix preset's lead_carve to {\"enabled\": true, \"from_intent\": true}: `hero` (a track name) becomes the part the beds yield to and `leave_free_hz` the band they yield in. Without that the block is read by listen.py only."
+  },
+  "loudness_lufs": -13.0,
+  "true_peak_max": -1.5,
+  "delivery": {
+    "format": "wav",
+    "sample_rate": 44100,
+    "bit_depth": 24,
+    "stage": "cinema",
+    "output_targets": [
+      "stereo",
+      "mono",
+      "immersive_5_1",
+      "immersive_7_1_4",
+      "ambix",
+      "adm_bw64"
+    ],
+    "played_on": "a headphone listener, a living-room 5.1, a 7.1.4 theatre, a phone speaker (mono), and a game engine that takes objects (adm_bw64) or a sound field (ambix)"
+  },
+  "references": [
+    "in words, not a track: a hybrid orchestral thriller cue where a low-string pulse, brass braams and a drum ensemble never let go, with the colour of ritual instruments and a stone place"
+  ],
+  "spatial_staging": {
+    "maya_bass_drum": {
+      "azimuth": 7.0,
+      "elevation": 0.0,
+      "distance": 5.0,
+      "space": "maya_temple_room"
+    },
+    "maya_basses": {
+      "azimuth": -52.0,
+      "elevation": 0.0,
+      "distance": 4.0,
+      "space": "maya_temple_room"
+    },
+    "maya_celli_ostinato": {
+      "azimuth": -26.0,
+      "elevation": 0.0,
+      "distance": 3.2,
+      "space": "maya_temple_room"
+    },
+    "maya_choir": {
+      "azimuth": -2.0,
+      "elevation": 34.0,
+      "distance": 7.5,
+      "space": "maya_temple_room"
+    },
+    "maya_cymbals": {
+      "azimuth": 85.0,
+      "elevation": 14.0,
+      "distance": 6.2,
+      "space": "maya_temple_room"
+    },
+    "maya_drums_left": {
+      "azimuth": -112.0,
+      "elevation": 0.0,
+      "distance": 22.0,
+      "space": "maya_temple_room"
+    },
+    "maya_drums_right": {
+      "azimuth": 128.0,
+      "elevation": 0.0,
+      "distance": 30.0,
+      "space": "maya_temple_room"
+    },
+    "maya_horns": {
+      "azimuth": 18.0,
+      "elevation": 18.0,
+      "distance": 3.6,
+      "space": "maya_temple_room"
+    },
+    "maya_timpani": {
+      "azimuth": 26.0,
+      "elevation": 0.0,
+      "distance": 5.6,
+      "space": "maya_temple_room"
+    },
+    "maya_trombones": {
+      "azimuth": -78.0,
+      "elevation": 6.0,
+      "distance": 3.9,
+      "space": "maya_temple_room"
+    },
+    "maya_trombones_sus": {
+      "azimuth": -64.0,
+      "elevation": 24.0,
+      "distance": 4.4,
+      "space": "maya_temple_room"
+    },
+    "maya_tuba": {
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "distance": 4.3,
+      "space": "maya_temple_room"
+    },
+    "maya_violas_ostinato": {
+      "azimuth": 52.0,
+      "elevation": 2.0,
+      "distance": 3.4,
+      "space": "maya_temple_room"
+    },
+    "maya_violins_sustain": {
+      "azimuth": 46.0,
+      "elevation": 26.0,
+      "distance": 4.9,
+      "space": "maya_temple_room"
+    },
+    "maya_violins_tremolo": {
+      "azimuth": -34.0,
+      "elevation": 22.0,
+      "distance": 4.6,
+      "space": "maya_temple_room"
+    }
+  },
+  "immersive": {
+    "enabled": true,
+    "why": "the story is about what is around the walker: the stone, the ritual sounds and the drums come from every side; a stereo mix can say it, a field can place it",
+    "engine": "hoa_bus",
+    "anchors": [
+      "basses",
+      "celli",
+      "tuba",
+      "timpani",
+      "bass_drum",
+      "drums_left",
+      "drums_right"
+    ],
+    "movers": [
+      {
+        "part": "jaguar_near",
+        "why": "it closes from behind on the left on the stairs",
+        "path": "behind left at 6 m, passing to the left of the listener at 3 m"
+      },
+      {
+        "part": "whistle_4",
+        "why": "the scream is the nearest sound in the run",
+        "path": "from the right at 12 m to 3 m by bar 47"
+      }
+    ],
+    "height": {
+      "horns": 8,
+      "violins_tremolo": 22,
+      "violins_sustain": 26,
+      "choir": 34,
+      "cymbals": 14,
+      "night": 40
+    },
+    "room_changes": [
+      {
+        "at_section": "the_stairs",
+        "why": "the forest falls away and the stone begins",
+        "transition_s": 4.0
+      },
+      {
+        "at_section": "the_descent",
+        "why": "a narrow stone passage: a close, bright tail",
+        "transition_s": 4.0
+      },
+      {
+        "at_section": "the_awakening",
+        "why": "the vault opens above: a taller, longer tail",
+        "transition_s": 4.0
+      }
+    ],
+    "must_hear": [
+      "the chirp running away down the steps",
+      "the drums on both sides in the awakening",
+      "the slam and then the cut"
+    ],
+    "deliverables": [
+      "stereo",
+      "mono",
+      "immersive_5_1",
+      "immersive_7_1_4",
+      "ambix",
+      "adm_bw64"
+    ],
+    "notes": "the sheet records intent; the mix, space and instrument presets execute it. Keyframes, heights and room geometry are in presets/spaces/green_dark_room.json and the score; mono is rendered from the mix, not summed from the stereo master."
+  },
+  "focus": "melody",
+  "intent": {
+    "emotions": [
+      "adventure",
+      "tense",
+      "wonder"
+    ],
+    "registers": [
+      "cinematic",
+      "natural"
+    ],
+    "scenes": [
+      "dread",
+      "chase",
+      "reveal"
+    ],
+    "tensions": [
+      "ostinato",
+      "pedal",
+      "silence_before",
+      "unresolved_dominant"
+    ],
+    "avoid": [
+      "joyful",
+      "playful"
+    ]
+  },
+  "piece_type": "cinematic",
+  "gate_reason": "a build-hit-release cue with a long line (the horn theme), a held breath and a cut: the cinematic profile, started strict",
+  "video": {
+    "enabled": false,
+    "source": null,
+    "in_s": 0.0,
+    "out_s": null,
+    "fps": null,
+    "duration_s": null,
+    "cuts": [],
+    "cut_source": null,
+    "motion_hits": 0,
+    "cut_sync": {
+      "early_ms": 45,
+      "late_ms": 125
+    },
+    "dialogue": {
+      "present": false,
+      "duck_db": -9.0,
+      "snr_min_db": 15.0
+    },
+    "master_profile": null,
+    "deliverable": null,
+    "preset": "default",
+    "notes": "music-only sheet: no picture."
+  },
+  "notes": "Every field is a target someone can check. feel and avoid_feel are what listen.py tests earshot against; sections is the cue's arc in seconds, and its names are what a trajectory or a room change is anchored to; hits_at is what listen.py looks for in the onset list, and hits is the same moments with a reason and a kind (cut, motion or musical). spatial_staging is the room seen from above: each preset must match its own spot. immersive says whether the field is doing a job, what moves and why, and where the room changes (numbers live in the presets). mix_intent says what must be audible and what must stay free. Write in plain English: earshot reads the words."
+}

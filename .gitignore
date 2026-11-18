@@ -102,3 +102,5 @@ projects/*/midi/
 projects/*/out/
 projects/*/.cache/
 projects/*/reports/gate/
+
+projects/*/libs

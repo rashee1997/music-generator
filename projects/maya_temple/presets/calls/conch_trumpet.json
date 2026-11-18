@@ -1,0 +1,53 @@
+{
+  "name": "conch_trumpet",
+  "character": "A conch-shell trumpet: one long, hoarse, low blast that swells in and bends up a little, like a distant horn from inside the temple.",
+  "elements": {
+    "blast": {
+      "f0_hz": [
+        [
+          0,
+          170
+        ],
+        [
+          0.2,
+          235
+        ],
+        [
+          1,
+          225
+        ]
+      ],
+      "ms": [
+        2200,
+        3200
+      ],
+      "harmonics": 18,
+      "rolloff": 0.6,
+      "noise": 0.12,
+      "subharmonic": 0.1,
+      "attack": 0.25,
+      "release": 0.5
+    }
+  },
+  "sequence": [
+    [
+      "blast",
+      1,
+      1
+    ]
+  ],
+  "gap_ms": [
+    600,
+    900
+  ],
+  "tract_cm": 60.0,
+  "formant_q": 3.0,
+  "formant_mix": 0.5,
+  "bouts_per_min": 2.0,
+  "individuals": 1,
+  "sources": [
+    "Maya conch-shell trumpets are documented in Classic Maya art and burials: https://flaar-mesoamerica.org/research-reports/musical-instruments-of-the-classic-maya-and-teotihuacan/ and https://en.wikipedia.org/wiki/Maya_music",
+    "Zalaquett et al. (2023), Ancient Mesoamerica: archaeoacoustical study of instruments from Comalcalco and Jonuta https://cambridge.org/core/product/634568408B4CB1F801829BB8C9CBFA4C/core-reader",
+    "ESTIMATE: f0 170-235 Hz, length and swell are not measured; no recording of a conch was analysed here"
+  ]
+}

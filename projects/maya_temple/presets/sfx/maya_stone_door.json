@@ -1,0 +1,79 @@
+{
+  "name": "maya_stone_door",
+  "character": "A great stone slab dragged open over stone: a low grinding stick-slip with a heavy body under it.",
+  "seconds": 7.0,
+  "role": "fx",
+  "gain_db": -4.0,
+  "reverb": 0.3,
+  "spatial": {
+    "azimuth": 0.0,
+    "elevation": 0.0,
+    "distance": 6.0
+  },
+  "model": {
+    "seconds": 7,
+    "voices": [
+      {
+        "name": "grind",
+        "excite": {
+          "kind": "friction",
+          "beta": -1.2,
+          "speed_curve": [
+            [
+              0,
+              0.6
+            ],
+            [
+              3.0,
+              1.8
+            ],
+            [
+              7.0,
+              0.9
+            ]
+          ],
+          "slip_hz": 5.0,
+          "slip_depth": 0.9
+        },
+        "resonator": {
+          "kind": "modal",
+          "law": "power",
+          "f1": 120,
+          "n": 8,
+          "t60": 0.35,
+          "exponent": 1.2,
+          "gain_exp": 0.4
+        },
+        "events": {
+          "kind": "continuous"
+        }
+      },
+      {
+        "name": "body",
+        "excite": {
+          "kind": "noise",
+          "color": "brown",
+          "attack": 0.8,
+          "tau": 3.0,
+          "hold": 1.0
+        },
+        "resonator": {
+          "kind": "bandpass",
+          "band": [
+            70,
+            400
+          ]
+        },
+        "events": {
+          "kind": "single"
+        },
+        "gain_db": -6
+      }
+    ]
+  },
+  "sources": [
+    "stone_door_friction"
+  ],
+  "hp": 60,
+  "lp": 4000
+}

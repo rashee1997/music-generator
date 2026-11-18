@@ -1,0 +1,27 @@
+{
+  "name": "maya_jaguar",
+  "description": "A jaguar: a sawing cough and low grunts. The track that plays it chooses where it is, and may move it.",
+  "character": "A jaguar: a sawing cough and low grunts. The track that plays it chooses where it is, and may move it.",
+  "layers": [
+    {
+      "name": "jaguar",
+      "primitive": "animal_call",
+      "kind": "spot",
+      "gain_db": -6.0,
+      "call": "jaguar_saw",
+      "individuals": 1,
+      "bouts_per_min": 30,
+      "first_s": 0.0
+    }
+  ],
+  "blending": {
+    "high_pass_hz": 60,
+    "vocal_pocket_notch_hz": 0,
+    "vocal_pocket_notch_db": 0.0,
+    "overall_gain_db": -12.0
+  },
+  "sources": [
+    "jaguar_saw_cough"
+  ],
+  "note": "KB sfx-ambience (laws 1, 2 and 4: the ambience is a high-passed halo, SFX step forward in rests, music and place sit in different geometries) | KB brazil-turkic-mongolian (section 3.1: forest bio-acoustics, the chakapa leaf-rattle as a heartbeat pulse) | Acoustic niche partitioning in tropical forest: insects above about 10 kHz, birds below 4 kHz, https://methodsblog.com/2021/03/26/unmasking-acoustic-indices | Rain is bubble resonance, drop sizes from under 0.8 mm (silent) to over 3.5 mm (loud), Ma and Nystuen 2005 via https://acousticstoday.org/issues/2022AT/Summer2022/files/basic-html/page65.html | No measurement found: ESTIMATE of rain rate, levels, bout rates and positions; nothing here was auditioned"
+}
