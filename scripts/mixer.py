@@ -1593,6 +1593,8 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
         STATE['unplaced'] = False
     for nm, y, _hit in done:
         processed[nm] = y
+    import resources
+    resources.release_memory()                  # the stem chains ran on several threads: their freed 64-bit temporaries are still held by the heap
     STATE['cache'] = dict(dir=cache, hits=sum(1 for _n, _y, h in done if h), stems=len(done))
     apply_lead_carve(processed, specs, mx, sr, intent=score.get('mix_intent'))  # the dynamic half of the lead rule, keyed by the lead itself
     STATE['processed'] = processed              # what the mix actually plays: the gate measures this
