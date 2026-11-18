@@ -443,7 +443,7 @@ score = dict(
     tempo_points=[[0, 66], [68, 66], [96, 84], [99.9, 56], [100, 148], [164, 158], [228, 168], [260, 172], [262, 120], [270, 84], [276, 66], [300, 62]],
     dynamics=dynamics, space='palace_room', mix_preset='the_palace_hunts_mix',
     output_targets=['stereo', 'immersive_7_1_2'],
-    master=dict(lufs=-15.0, true_peak=-2.0, tone='neutral', fade_out=3.0),
+    master=dict(lufs=-15.5, true_peak=-2.0, tone='neutral', fade_out=3.0),
     piece_type='cinematic', focus='melody',
     intent=dict(emotions=['tense', 'dark_epic', 'adventure'], registers=['cinematic', 'natural'], scenes=['arrival', 'build', 'battle'],
                 tensions=['ostinato', 'pedal', 'cluster', 'rising_line', 'silence_before'], avoid=['joyful', 'playful']),
