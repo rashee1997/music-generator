@@ -127,7 +127,7 @@ POWER = B(62)
 CUT = B(S_RELEASE)
 
 # ================================================================ pianos: the pulse, the question, the pursuer
-pl = [N(B(bar), 4.3, 33,0.42 + 0.008 * bar + (0.06 if bar % 4 == 1 else 0.0)) for bar in range(1, 18)]        # a low D struck once a bar in the quiet: a piano note does not hold for sixteen beats
+pl = [N(B(bar), 3.9, 33, 0.42 + 0.008 * bar + (0.06 if bar % 4 == 1 else 0.0)) for bar in range(1, 18)]        # a low D struck once a bar in the quiet: a piano note does not hold for sixteen beats
 pl += [N(B(bar), 4.0, near(chord_at(bar, 0)[0], 26, 37) + 12, 0.66 + 0.02 * (bar - 18)) for bar in range(18, 25)]
 for bar in range(S_CORR, S_ESCAPE + 4):                                                                  # the pursuer: heavy two-hand octaves on 3+3+2
     for off, v, d in ((0, 1.0, 0.5), (1.5, 0.78, 0.35), (3.0, 0.88, 0.35)):
@@ -136,7 +136,7 @@ for bar in range(S_CORR, S_ESCAPE + 4):                                         
         r = near(chord_at(bar, off)[0], 31, 42)
         pl += [N(B(bar, off), d, r, v), N(B(bar, off), d, r + 12, v - 0.06)]
 pl += [N(B(66), 4.0, 38, 1.0), N(B(66), 4.0, 50, 0.95)]
-pl += [N(B(bar), 4.3 if bar < 75 else 2.0, 38, 0.7 - 0.015 * (bar - 70)) for bar in range(70, 76)]
+pl += [N(B(bar), 3.9 if bar < 75 else 2.0, 38, 0.7 - 0.015 * (bar - 70)) for bar in range(70, 76)]
 track('piano_low', 'mayan_piano_low', 'bass', pl)
 
 CELLS = [[0, 2, 3, 2], [0, 3, 2, 3], [0, 2, 0, 3], [2, 3, 2, 0], [0, 1, 2, 3], [3, 2, 1, 2]]       # indices into [root, third, fifth, octave]
@@ -236,7 +236,9 @@ track('violins_sustain', 'mayan_violins_sustain', 'pad', vsu)
 
 # ================================================================ woodwinds and harp
 fl = phrase(CURIOUS, B(13), 79, 0.46, scale=1.2, upto=4)
-fl += phrase(ANSWER, B(70), 79, 0.46, scale=1.4) + [N(B(73, 3.0), 6.0, 81, 0.35)]
+fl_end = phrase(ANSWER, B(70), 79, 0.46, scale=1.4)
+fl_end[-1]['d'] = 2.2                                                                                    # the last phrase note ends before the held A begins: a whole step apart they beat
+fl += fl_end + [N(B(73, 3.0), 6.0, 81, 0.35)]
 track('alto_flute', 'mayan_alto_flute', 'counter', fl)
 bc = phrase(HOLLOW_A, B(11), 50, 0.55) + phrase(HOLLOW_B, B(15), 50, 0.6) + [N(B(74), 8.0, 45, 0.35)]
 track('bass_clarinet', 'mayan_bass_clarinet', 'counter', bc)
@@ -405,6 +407,21 @@ sections = [dict(name='the_entry', start_bar=S_ENTRY, end_bar=8, energy=0.25), d
             dict(name='the_opening', start_bar=S_OPEN, end_bar=25, energy=0.55), dict(name='the_corridors', start_bar=S_CORR, end_bar=41, energy=0.85),
             dict(name='the_forest', start_bar=S_FOREST, end_bar=57, energy=0.95), dict(name='the_escape', start_bar=S_ESCAPE, end_bar=65, energy=1.0),
             dict(name='the_release', start_bar=S_RELEASE, end_bar=69, energy=0.45), dict(name='the_aftermath', start_bar=S_AFTER, end_bar=75, energy=0.2)]
+def no_retrigger(name):
+    """A key struck again while its last strike still sounds restarts the voice and clicks: end each note before the next one of the same pitch."""
+    for tr in tracks:
+        if tr['name'] == name:
+            last = {}
+            for n in sorted(tr['notes'], key=lambda q: (q['p'], q['t'])):
+                if n['p'] in last and last[n['p']]['t'] + last[n['p']]['d'] > n['t'] - 0.004:
+                    last[n['p']]['d'] = max(0.05, n['t'] - 0.004 - last[n['p']]['t'])
+                last[n['p']] = n
+
+
+for _name in ('piano_low', 'bass_drum', 'snare', 'timpani', 'drums_left', 'drums_right'):
+    no_retrigger(_name)
+
+
 def swell(name, lo=0.76):
     """A part that plays the whole chase at one weight reads as a loop: its velocity climbs from `lo` at the corridors to full at the escape."""
     t0, t1 = B(S_CORR), B(S_ESCAPE)

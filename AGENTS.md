@@ -312,7 +312,7 @@ Rules:
 10. **Faithful reporting** - Say what was/wasn't checked. Didn't listen unless `listen.py` ran. Taste/realism/fit aren't measured.
 11. **Backup before editing skill** - Copy to backup location outside the skill folder, no `.venv`. Keep SKILL.md lean, details in references, enforce in code.
 12. **Python via venv only** - Skill venv or project's uv venv. Nothing global. Ship .ps1 with .sh.
-13. **Mix decisions in presets** - Gain staging, dynamics, spectral, sidechain, space, mastering are in mix preset (`mix_schema.py`). Change in preset, not `mixer.py`. Don't add hardcoded fallbacks for preset keys. Both `legacy` and `adaptive` are valid.
+13. **Mix decisions in presets** - Gain staging, dynamics, spectral, sidechain, space, mastering are in mix preset (`mix_schema.py`). Change in preset, not `mixer.py`. Don't add hardcoded fallbacks for preset keys. Both `legacy` and `adaptive` are valid. A dynamics key the chosen engine never reads (knee, detector, lookahead under `pedalboard`) is reported by `mix_schema.inert_dynamics` and a `[WARN]` at mix time: set `engine: dsp` or drop it; never leave a no-op key in a preset.
 14. **Diagnostics report, don't act** - `mix_diagnostics.py` reports. Never "fix" WARN by loosening thresholds, never let it edit mix, never claim audible improvement from numbers.
 15. **Sounds are data** - Materials/geometry/interactions/events go in preset `scene`.
 16. **A number needs a status** - Any number added to a knowledge base file carries a source, or the words
