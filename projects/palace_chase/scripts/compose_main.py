@@ -322,7 +322,7 @@ for bar in range(S_CORR + 2, S_ESCAPE + 4):                                     
         sn += [N(B(bar, 3.0 + 0.125 * k), 0.1, 49, 0.45 + 0.45 * (k / 7.0) ** 1.6 + (0.04 if k % 2 == 0 else -0.04)) for k in range(1, 8)]
 track('snare', 'mayan_bass_drum', 'drum', sn)
 
-cy = [N(beat - 3.0, 3.0, 50, 0.7) for beat in (CORR_HIT, FOREST_HIT, POWER)] + [N(beat, 4.0, 59, 0.6) for beat in (BRAAM1, FOREST_HIT, B(58), POWER)]        # every swell lands in a section that also holds a hit
+cy = [N(beat - 3.0, 3.0, 50, 0.7) for beat in (CORR_HIT, FOREST_HIT, POWER)] + [N(beat, 4.0, 59, 0.6) for beat in (BRAAM1, CORR_HIT, FOREST_HIT, B(58), POWER)]        # every swell lands in a section that also holds a hit
 cy += [N(CUT, 4.0, 60, 0.9), N(B(46, 0.0), 3.0, 59, 0.6), N(B(50, 0.0), 3.0, 59, 0.6), N(B(54, 0.0), 3.0, 59, 0.6)]
 track('cymbals', 'mayan_cymbals', 'texture', cy)
 
