@@ -221,8 +221,8 @@ for bar in range(46, 58, 4):
 for bar in (58, 60):
     hn += phrase(MOTIF, B(bar), 62, 0.95, scale=1.0, upto=3, art=1.1)
 for k, bar in enumerate((62, 66)):                                                                    # the hero theme overrules it, in D major
-    hn += phrase(HERO, B(bar), 62, 0.92, scale=1.0, art=1.1)
-    hn += phrase(HERO, B(bar + 2), 62 + 5, 0.95, scale=1.0, art=1.1)
+    hn += phrase(HERO, B(bar), 55, 0.92, scale=1.0, art=1.1)                                           # the horns' top note is F5 (77): the lift stays inside it
+    hn += phrase(HERO, B(bar + 2), 62, 0.95, scale=1.0, art=1.1)
 track('horns', 'mayan_horns', 'melody', hn)
 
 tb_sus = []
@@ -397,7 +397,7 @@ for _t in tracks:
     if _t['name'] in ('run_left', 'run_right', 'guardian_far', 'guardian_near', 'collapse'):
         _t['dc_hp_hz'] = 60.0
     if _t['name'] == 'tree_crack':
-        _t['dc_hp_hz'] = 70.0                           # sub-bass effects carry energy below 25 Hz that shows as stem drift
+        _t['dc_hp_hz'] = 90.0                           # sub-bass effects carry energy below 25 Hz that shows as stem drift
 
 # ================================================================ the score
 dynamics = [[0, 0.45], [16, 0.45], [32, 0.5], [52, 0.55], [64, 0.6], [68, 0.65], [92, 0.85], [95, 0.85], [96, 0.5], [100, 1.0],
