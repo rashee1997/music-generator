@@ -282,7 +282,7 @@
         "glue": true
       }
     },
-    "highpass_hz": 95.0,
+    "highpass_hz": 105.0,
     "highpass_order": 4
   },
   "role_chains": {

@@ -83,8 +83,17 @@
       "role": "peak",
       "energy": 1.0,
       "action": "cornered, the explorer turns the curse back with a power of their own and escapes by a hair",
-      "music": "the minor key turns to D major, the hero theme in the horns overrules the threat, one last hit, a beat of nothing, then release",
+      "music": "the minor key turns to D major, the hero theme in the horns overrules the threat, and one last hit lands",
       "start_s": 134.48558280903586,
+      "end_s": 146.89407999649785
+    },
+    {
+      "name": "the_release",
+      "role": "transition",
+      "energy": 0.45,
+      "action": "the power spent, the explorer is out of reach; the monsters stop and the forest is quiet again",
+      "music": "the last hit, a beat of nothing, then a held low D, strings in D major and the horns' hero theme at half weight, a conch far away",
+      "start_s": 146.89407999649785,
       "end_s": 153.00871264130967
     },
     {
@@ -415,25 +424,25 @@
       "space": "palace_room"
     },
     "run_left": {
-      "azimuth": -50,
+      "azimuth": -90,
       "elevation": -15,
       "distance": 1.6,
       "space": "palace_room"
     },
     "run_right": {
-      "azimuth": 50,
+      "azimuth": 90,
       "elevation": -15,
       "distance": 1.6,
       "space": "palace_room"
     },
     "leaf_left": {
-      "azimuth": -55,
+      "azimuth": -90,
       "elevation": -12,
       "distance": 1.5,
       "space": "palace_room"
     },
     "leaf_right": {
-      "azimuth": 55,
+      "azimuth": 90,
       "elevation": -12,
       "distance": 1.5,
       "space": "palace_room"
@@ -714,6 +723,15 @@
         "dynamics": "fff then a drop",
         "articulation": "broad, full-length brass",
         "timbre": "bright, open"
+      },
+      {
+        "section": "the_release",
+        "arousal": "mid, falling",
+        "mode_register": "D major, wide, the horns at half weight",
+        "tempo_trend": "158, then a hit, a hold and a slow fall",
+        "dynamics": "fff then a drop to mp",
+        "articulation": "broad, then held",
+        "timbre": "open"
       },
       {
         "section": "the_aftermath",

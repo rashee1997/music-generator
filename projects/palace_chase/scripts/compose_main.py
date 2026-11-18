@@ -183,7 +183,7 @@ track('violins_tremolo', 'mayan_violins_tremolo', 'pad', vt)
 
 vs = [N(B(bar), 4.05, 74 + (bar - 42), 0.7 + 0.015 * (bar - 42)) for bar in range(42, 58)]          # the rising device in the forest
 vs += [N(B(bar), 4.05, 78 + 2 * (bar - 62), 0.95) for bar in range(62, 66)]
-vs += [N(B(66), 15.9, 81, 0.85), N(B(70), 15.9, 81, 0.7), N(B(74), 8.0, 81, 0.62)]               # F#5, D major add9 above: the light
+vs += [N(B(66), 15.9, 81, 0.85)]                                            # the strings leave at the release: the aftermath is the choir, the flute and the low reeds               # F#5, D major add9 above: the light
 track('violins_sustain', 'mayan_violins_sustain', 'pad', vs)
 
 # ================================================================ woodwinds and harp: the human voice, and the relic's
@@ -197,7 +197,7 @@ fl += phrase(Q, B(7), 74, 0.48, upto=3)
 fl += phrase(CURIOUS, B(9), 79, 0.5)                                                                   # up a fourth: curious
 fl += phrase(Q, B(13), 79, 0.46, scale=1.2, upto=4)
 fl += phrase(ANSWER, B(70), 74, 0.5, scale=1.4) + [N(B(73, 3.0), 6.0, 81, 0.35)]                       # the answer: it ends on a held D
-track('alto_flute', 'mayan_alto_flute', 'melody', fl)
+track('alto_flute', 'mayan_alto_flute', 'counter', fl)           # not 'melody': the mixer lifts every figure-family stem to full level, and the flute plays only the quiet sections
 
 bc = phrase(HOLLOW_A, B(11), 50, 0.55) + phrase(HOLLOW_B, B(15), 50, 0.6)                              # the relic answers, hollow
 bc += [N(B(74), 8.0, 38, 0.35)]                                                                        # a last low D: held, not flat
@@ -326,7 +326,7 @@ def env(name, preset, t0, d, role='environment', **extra):
 
 
 env('hall_air', 'mayan_hall_air', 0.0, B(S_FOREST, 0.0), fade_out_s=6.0)
-env('night', 'mayan_night', B(40, 0.0), B(S_END) - B(40, 0.0) + 4.0, fade_in_s=8.0, fade_out_s=6.0)
+env('night', 'mayan_night', B(40, 0.0), B(S_END) - B(40, 0.0) + 4.0, fade_in_s=2.0, fade_out_s=6.0)
 
 
 def call(name, preset, t0, d, az, el, dist, **kw):
@@ -360,13 +360,13 @@ walk += [B(22, 2.5), B(22, 3.4), B(23, 0.2)]                                    
 footfalls('walk_left', 'mayan_step_stone', walk[0::2], -20, 2.2, 0.55)
 footfalls('walk_right', 'mayan_step_stone', walk[1::2], 20, 2.2, 0.55)
 run_stone = alternate(B(26), B(41, 2.0), 1.0)
-footfalls('run_left', 'mayan_step_run_stone', run_stone[0::2], -50, 1.6, 0.78)
-footfalls('run_right', 'mayan_step_run_stone', run_stone[1::2], 50, 1.6, 0.78)
+footfalls('run_left', 'mayan_step_run_stone', run_stone[0::2], -90, 1.6, 0.78)
+footfalls('run_right', 'mayan_step_run_stone', run_stone[1::2], 90, 1.6, 0.78)
 run_leaf = alternate(B(41, 2.0), B(66), 1.0, skip=[(B(53, 1.0), B(53, 3.0))])
 run_leaf += [B(53, 2.0), B(53, 2.5)]                                                                 # the stumble: a missed step, then two close ones
 run_leaf = sorted(t for t in run_leaf if t < CUT)
-footfalls('leaf_left', 'mayan_step_run_leaf', run_leaf[0::2], -55, 1.5, 0.8, el=-12)
-footfalls('leaf_right', 'mayan_step_run_leaf', run_leaf[1::2], 55, 1.5, 0.8, el=-12)
+footfalls('leaf_left', 'mayan_step_run_leaf', run_leaf[0::2], -90, 1.5, 0.8, el=-12)
+footfalls('leaf_right', 'mayan_step_run_leaf', run_leaf[1::2], 90, 1.5, 0.8, el=-12)
 
 # the pursuer: a stone figure behind, heavy, every two beats; nearer in the forest it breaks trees instead
 g_far = alternate(B(28), B(34), 2.0)
@@ -382,13 +382,13 @@ def touches(name, preset, times, az, dist, vel=0.8, el=0, dur=3.0):
     track(name, f'sfx:{preset}', 'fx', notes, spatial=dict(azimuth=az, elevation=el, distance=dist, kind='spot', binaural=True))
 
 
-touches('brush_left', 'mayan_leaf_brush', [B(43, 1.5), B(46, 0.0), B(49, 2.5), B(52, 1.0), B(55, 3.0), B(58, 0.5), B(60, 2.0)], -70, 1.0, 0.7)
-touches('brush_right', 'mayan_leaf_brush', [B(44, 2.5), B(47, 1.5), B(50, 3.5), B(54, 0.0), B(56, 2.0), B(59, 1.5), B(61, 0.5)], 70, 1.0, 0.7)
+touches('brush_left', 'mayan_leaf_brush', [B(43, 1.5), B(46, 0.0), B(49, 2.5), B(52, 1.0), B(55, 3.0), B(58, 0.5), B(60, 2.0)], -70, 1.0, 0.7, dur=3.5)
+touches('brush_right', 'mayan_leaf_brush', [B(44, 2.5), B(47, 1.5), B(50, 3.5), B(54, 0.0), B(56, 2.0), B(59, 1.5), B(61, 0.5)], 70, 1.0, 0.7, dur=3.5)
 touches('branch_left', 'mayan_branch_whip', [B(45, 1.0), B(48, 3.0), B(51, 2.0), B(55, 0.5), B(59, 3.5)], -85, 0.9, 0.85)
 touches('branch_right', 'mayan_branch_whip', [B(42, 3.0), B(47, 0.0), B(50, 0.5), B(53, 0.5), B(55, 2.5), B(56, 3.0)], 85, 0.9, 0.85)
-touches('bark_scratch', 'mayan_bark_scratch', [B(49, 0.0), B(56, 1.0)], -80, 0.9, 0.9)
-touches('twig_snap', 'mayan_twig_snap', [B(51, 3.5)], 40, 1.2, 0.85)
-touches('tree_crack', 'mayan_tree_crack', [B(46, 2.0), B(50, 2.0), B(54, 1.0), B(60, 2.0), B(63, 0.0)], 170, 7.0, 1.0, dur=6.0)
+touches('bark_scratch', 'mayan_bark_scratch', [B(49, 0.0), B(56, 1.0)], -80, 0.9, 0.9, dur=4.5)
+touches('twig_snap', 'mayan_twig_snap', [B(51, 3.5)], 40, 1.2, 0.85, dur=5.0)
+touches('tree_crack', 'mayan_tree_crack', [B(46, 2.0), B(50, 2.0), B(54, 1.0), B(60, 2.0), B(63, 0.0)], 170, 7.0, 1.0, dur=7.5)
 
 track('stone_door', 'sfx:mayan_stone_door', 'fx', [dict(t=B(16, 3.0), d=12.0, p=60, v=0.8)], spatial=dict(azimuth=0, elevation=10, distance=2.0, kind='spot', binaural=True))
 track('door_shut', 'sfx:mayan_stone_slam', 'fx', [dict(t=SHUT, d=10.0, p=60, v=0.8)], spatial=dict(azimuth=180, elevation=0, distance=6.0, kind='spot', binaural=True))
@@ -408,8 +408,8 @@ for _t in tracks:
 dynamics = [[0, 0.45], [16, 0.45], [32, 0.5], [52, 0.55], [64, 0.6], [68, 0.65], [92, 0.85], [95, 0.85], [96, 0.5], [100, 1.0],
             [160, 1.0], [164, 1.0], [228, 1.0], [244, 1.0], [264, 0.9], [268, 0.6], [276, 0.55], [296, 0.5], [300, 0.4]]
 sections = [dict(name='the_entry', start_bar=S_ENTRY, end_bar=8, energy=0.25), dict(name='the_relic_chamber', start_bar=S_CHAMBER, end_bar=17, energy=0.4),
-            dict(name='the_opening', start_bar=S_OPEN, end_bar=25, energy=0.65), dict(name='the_corridors', start_bar=S_CORR, end_bar=41, energy=0.85),
-            dict(name='the_forest', start_bar=S_FOREST, end_bar=57, energy=0.95), dict(name='the_escape', start_bar=S_ESCAPE, end_bar=69, energy=1.0),
+            dict(name='the_opening', start_bar=S_OPEN, end_bar=25, energy=0.55), dict(name='the_corridors', start_bar=S_CORR, end_bar=41, energy=0.85),
+            dict(name='the_forest', start_bar=S_FOREST, end_bar=57, energy=0.95), dict(name='the_escape', start_bar=S_ESCAPE, end_bar=65, energy=1.0), dict(name='the_release', start_bar=66, end_bar=69, energy=0.45),
             dict(name='the_aftermath', start_bar=S_AFTER, end_bar=75, energy=0.2)]
 score = dict(
     title='The Mayan Palace', bpm=150, ts=[4, 4], seed=1511, humanize='natural', key='D', mode='minor',
@@ -422,6 +422,7 @@ score = dict(
                 tensions=['ostinato', 'pedal', 'cluster', 'rising_line', 'silence_before'], avoid=['joyful', 'playful']),
     mix_intent=dict(hero='horns', leave_free_hz=[700, 2600]),
     plan=dict(sections=sections, ending=dict(fade_out=3.0)),
+    gate={'tempo.audio': dict(mode='skip', reason='the tempo rises on purpose from 72 to 158 BPM (and holds at 58 for a bar), so no single global tempo exists; the beat tracker measured 152.0 BPM on one render and 161.5 BPM on the next render of the same map, against a declared 150, and the declared tempo.bpm range 58-158 is judged by tempo.bpm')},
     tracks=tracks,
     mix=dict(tracks={}),
 )

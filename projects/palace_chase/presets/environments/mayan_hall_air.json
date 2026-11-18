@@ -7,7 +7,7 @@
       "name": "hall_air",
       "primitive": "noise_bed",
       "kind": "bed",
-      "gain_db": -24.0,
+      "gain_db": -18.0,
       "low_hz": 60,
       "high_hz": 900,
       "mod_rate_hz": 0.03,
@@ -24,7 +24,7 @@
     "high_pass_hz": 60,
     "vocal_pocket_notch_hz": 2200,
     "vocal_pocket_notch_db": -3.0,
-    "overall_gain_db": -10.0
+    "overall_gain_db": -6.0
   },
   "sources": [
     "stone_temple_interior"

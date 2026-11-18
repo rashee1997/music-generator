@@ -35,7 +35,9 @@ sections = [
     dict(name='the_forest', role='peak', energy=0.95, action='out into the night forest, running through leaves and branches, with the pursuer breaking trees behind',
          music='the pulse continues over leaves, brushes, branches and a trunk grabbed at a turn, a stumble, the violins climb a semitone a bar, tree-cracks nearer each time'),
     dict(name='the_escape', role='peak', energy=1.0, action='cornered, the explorer turns the curse back with a power of their own and escapes by a hair',
-         music='the minor key turns to D major, the hero theme in the horns overrules the threat, one last hit, a beat of nothing, then release'),
+         music='the minor key turns to D major, the hero theme in the horns overrules the threat, and one last hit lands'),
+    dict(name='the_release', role='transition', energy=0.45, action='the power spent, the explorer is out of reach; the monsters stop and the forest is quiet again',
+         music='the last hit, a beat of nothing, then a held low D, strings in D major and the horns\' hero theme at half weight, a conch far away'),
     dict(name='the_aftermath', role='button', energy=0.2, action='the forest at night, calm; the explorer is safe, and the reed holds a low, steady D',
          music='a held D major, the flute\'s question answered and falling home to D, the forest returns, and the bass clarinet holds a low D')]
 for s in sections:
@@ -98,6 +100,7 @@ sheet['expression'] = dict(
           dict(section='the_corridors', arousal='high', mode_register='D minor, low and loud', tempo_trend='fast and steady (132 to 146)', dynamics='f to ff', articulation='staccato ostinato and marcato brass', timbre='dark, hard'),
           dict(section='the_forest', arousal='high', mode_register='D minor, a rising line in the violins', tempo_trend='faster (146 to 154)', dynamics='ff', articulation='staccato ostinato, tremolo strings', timbre='dark and rough'),
           dict(section='the_escape', arousal='very high, then release', mode_register='D minor to D major, bright and wide', tempo_trend='158, then a hit and a hold', dynamics='fff then a drop', articulation='broad, full-length brass', timbre='bright, open'),
+          dict(section='the_release', arousal='mid, falling', mode_register='D major, wide, the horns at half weight', tempo_trend='158, then a hit, a hold and a slow fall', dynamics='fff then a drop to mp', articulation='broad, then held', timbre='open'),
           dict(section='the_aftermath', arousal='low', mode_register='D major, wide and still', tempo_trend='slow (66 to 62)', dynamics='p to pp', articulation='legato, held', timbre='warm, open')],
     theme=dict(contour='a flat second that returns, a leap up of a fifth and then a falling step: a question that does not resolve',
                interval_character='a minor second, a perfect fifth, two steps down', rhythm_cell='long, short, long, very long, long, long',
