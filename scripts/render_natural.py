@@ -984,7 +984,8 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
         # sfizz_render is one independent, CPU-bound subprocess per track with no internal thread flag (confirmed via
         # --help): the only real speedup is running several of these subprocesses at once. Each worker keeps its own
         # tempfile and process, so this is safe; _track_cache_dir() makes a killed/re-run pipeline resume for free.
-        workers = max(1, min(len(sfz_jobs), int(os.environ.get('MUSICGEN_SFZ_WORKERS', '4'))))
+        import resources
+        workers = resources.sfz_workers(n_jobs=len(sfz_jobs))          # every core while memory allows; MUSICGEN_SFZ_WORKERS overrides
         if verbose:
             print(f'  rendering {len(sfz_jobs)} SFZ track(s) across {workers} parallel worker(s) ...', flush=True)
 

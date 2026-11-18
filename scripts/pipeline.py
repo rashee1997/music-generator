@@ -67,6 +67,7 @@ import mixer
 import naturalness_check as nc
 import pattern_audit
 import preflight_lint
+import resources
 import presets
 import project_gate
 import quality_gate as qg
@@ -819,7 +820,7 @@ class MusicPipeline:
         # Stage 4b: stem gate. A stem FAIL stops here: the mixer would only average the defect into the master.
         self.log('4b', 'Stem Gate (each stem measured alone, before the mix)')
         stem_rows, stem_meta = stem_gate.run_stem_gate(
-            score, stems, sr=SR, workers=int(os.environ.get('GATE_WORKERS', '2')),
+            score, stems, sr=SR, workers=resources.gate_workers(),
             report_dir=(os.path.join(project_dir, 'reports', 'gate') if project_dir else None),
             mode='draft' if draft else 'full',
             cache_path=(os.path.join(project_dir, '.cache', 'gate', 'stem_qa.json') if project_dir else None))
@@ -1102,7 +1103,7 @@ def main():
                          'it is the certified master the fold rows compare the others with. Formats: stereo, mono, binaural, '
                          'immersive_5_1, immersive_5_1_2, immersive_5_1_4, immersive_7_1, immersive_7_1_2, immersive_7_1_4, ambix, '
                          'adm_bw64, stereo_48k, or all')
-    ap.add_argument('--gate-workers', type=int, default=None, help='Threads for the per-stem gate rows (default 2 or $GATE_WORKERS)')
+    ap.add_argument('--gate-workers', type=int, default=None, help='Threads for the per-stem gate rows (default: most cores, see resources.py, or $GATE_WORKERS)')
     a = ap.parse_args()
     if a.gate_workers:
         os.environ['GATE_WORKERS'] = str(a.gate_workers)
