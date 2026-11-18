@@ -263,7 +263,7 @@
     ],
     "executed_by": "carry this block on the score as `mix_intent` and set the mix preset's lead_carve to {\"enabled\": true, \"from_intent\": true}: `hero` (a track name) becomes the part the beds yield to and `leave_free_hz` the band they yield in. Without that the block is read by listen.py only."
   },
-  "loudness_lufs": -15.5,
+  "loudness_lufs": -16.5,
   "true_peak_max": -1.5,
   "delivery": {
     "format": "wav",

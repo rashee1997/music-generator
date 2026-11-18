@@ -324,7 +324,9 @@ for bar in range(S_CORR + 2, S_ESCAPE + 4):                                     
         continue
     back = 3.0 if bar % 4 != 2 else 3.5                                                               # the second backbeat moves in alternate bars: no stack of attacks on the 3+3+2 beat
     ghost = (2.75, 1.75, 3.25, 2.25)[bar % 4]
-    sn += [N(B(bar, 1.0), 0.3, 49, 0.9 + rng.normal(0, 0.03)), N(B(bar, back), 0.3, 49, 0.92 + rng.normal(0, 0.03)), N(B(bar, ghost), 0.15, 49, 0.45)]
+    sn += [N(B(bar, 1.0), 0.3, 49, 0.9 + rng.normal(0, 0.03)), N(B(bar, ghost), 0.15, 49, 0.45)]
+    if bar % 4 != 1:                                                                                  # the fill bar leaves the last beat to the timpani roll: every part but the snare already does
+        sn.append(N(B(bar, back), 0.3, 49, 0.92 + rng.normal(0, 0.03)))
     if bar % 4 == 0:
         sn += [N(B(bar, 3.0 + 0.125 * k), 0.1, 49, 0.45 + 0.45 * (k / 7.0) ** 1.6 + (0.04 if k % 2 == 0 else -0.04)) for k in range(1, 8)]
 track('snare', 'mayan_snare', 'drum', sn)
@@ -443,7 +445,7 @@ score = dict(
     tempo_points=[[0, 66], [68, 66], [96, 84], [99.9, 56], [100, 148], [164, 158], [228, 168], [260, 172], [262, 120], [270, 84], [276, 66], [300, 62]],
     dynamics=dynamics, space='palace_room', mix_preset='the_palace_hunts_mix',
     output_targets=['stereo', 'immersive_7_1_2'],
-    master=dict(lufs=-16.5, true_peak=-3.0, tone='neutral', fade_out=3.0),
+    master=dict(lufs=-17.0, true_peak=-3.0, tone='neutral', fade_out=3.0),
     piece_type='cinematic', focus='melody',
     intent=dict(emotions=['tense', 'dark_epic', 'adventure'], registers=['cinematic', 'natural'], scenes=['arrival', 'build', 'battle'],
                 tensions=['ostinato', 'pedal', 'cluster', 'rising_line', 'silence_before'], avoid=['joyful', 'playful']),
