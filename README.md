@@ -59,7 +59,7 @@ python scripts/helpers/arc_report.py my-project/out/master.wav --score my-projec
 python scripts/helpers/compress_mp3.py my-project/out/master_v01.wav -o my-track.mp3 -b 320k
 ```
 
-Name the formats in the score: `"output_targets": ["stereo", "mono", "immersive_5_1", "immersive_7_1_4", "ambix", "adm_bw64"]`. `MUSICGEN_SFZ_WORKERS=2` lowers memory use on a long render. Film scoring is in [`AGENTS.md`](AGENTS.md) section 9.
+Name the formats in the score: `"output_targets": ["stereo", "mono", "immersive_5_1", "immersive_7_1_4", "ambix", "adm_bw64"]`. With none named, a piece is delivered as stereo plus 8-channel 7.1. To render only some formats, add `--only stereo,immersive_7_1_4` to `pipeline.py`; every format added makes the render longer. `MUSICGEN_SFZ_WORKERS=2` lowers memory use on a long render. Film scoring is in [`AGENTS.md`](AGENTS.md) section 9.
 
 ## Pipeline
 

@@ -100,6 +100,7 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **8.3** For immersive pieces, fix imm_* rows in presets/score, never loosen. `imm_kinematics`: spread the
       keyframes. `imm_low_fold` / `mix.band_fold`: narrow the stem the row names. `imm_clarity`: lower the space's
       `late.level_db`. Table: `references/mixing/quality-gate.md` §5b.
+- [ ] **8.4a** Output formats: if the user names none, use the default, stereo plus 8-channel `immersive_7_1` (`presets/outputs/_default.json`); never render `all` or every format unasked, because the order-5 AmbiX and the ADM objects take most of a long render. To render only some formats, pass `--only <list>` on the command line (stereo first), not a changed score. A 7.1 file as the sole target was measured to fail three rows (clipping, true peak and `master.dc` on its two-channel fold), so keep `stereo` first until that is fixed.
 - [ ] **8.4** Extra deliverables are `output_targets` names, never a script: `mono` (rendered, not folded),
       `immersive_5_1` / `_5_1_2` / `_5_1_4` and the 7.1 family (loudspeaker layouts), `ambix` (sound field), `adm_bw64`
       (objects), `stereo_48k` (or `"rate_hz": 48000` on a project's own target). List `stereo` first: the `fold.mono` and

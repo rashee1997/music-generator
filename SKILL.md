@@ -165,7 +165,7 @@ Every number lives in `references/data/presets/outputs/` (format) and `reference
 positions, crossover, fold-down), loaded through `presets.py`, so a project can add its own format with two JSON files.
 Every shipped target names a renderer the engine has (`mix_master`, `spatial`, `binaural`, `hoa`, `adm`, `mono`). List `stereo` first: the `fold.mono` and `fold.timbre` rows compare each extra format with it (`references/spatial/immersive-deliverables.md`). A project's own target with
 `"renderer": null` is described but cannot be built: naming it blocks the render (no silent downgrade), and `"all"`
-reports it as skipped. The CLI can override the score: `--targets stereo` or `--targets all`.
+reports it as skipped. When neither the user nor the score names a format, the default is `["stereo", "immersive_7_1"]`: the certified two-channel master and an 8-channel deliverable. Render only what was asked: `--only stereo`, or `--only stereo,immersive_7_1_4` (`--targets` is the same flag); the CLI overrides the score. `all` builds every format and takes a long time (the order-5 AmbiX and the ADM objects are the slowest), so use it only when asked.
 
 `scripts/spatial_engine/` holds the model behind the multichannel targets: vector base amplitude panning over the
 layout's own speakers (Pulkki 1997), a 4th-order Linkwitz-Riley crossover and low-frequency send (Linkwitz 1976),

@@ -1069,8 +1069,12 @@ def main():
     ap.add_argument('--stems-full', action='store_true', help='Export every stem full length and aligned (default: only the part where each stem sounds, with stems.json)')
     ap.add_argument('--max-attempts', type=int, default=5, help='Attempt count after which a failing run says STOP (default 5)')
     ap.add_argument('--draft', action='store_true', help='Fast check: skip tier 2 rows and never publish to out/')
-    ap.add_argument('--targets', default=None,
-                    help='Deliverable formats, comma separated, overriding the score: stereo, binaural, immersive_7_1, immersive_7_1_4, or all')
+    ap.add_argument('--targets', '--only', dest='targets', default=None,
+                    help='Render only these deliverable formats, comma separated, overriding the score and the default '
+                         '(stereo + immersive_7_1): e.g. --only stereo, or --only stereo,immersive_7_1_4. Name stereo first: '
+                         'it is the certified master the fold rows compare the others with. Formats: stereo, mono, binaural, '
+                         'immersive_5_1, immersive_5_1_2, immersive_5_1_4, immersive_7_1, immersive_7_1_2, immersive_7_1_4, ambix, '
+                         'adm_bw64, stereo_48k, or all')
     ap.add_argument('--gate-workers', type=int, default=None, help='Threads for the per-stem gate rows (default 2 or $GATE_WORKERS)')
     a = ap.parse_args()
     if a.gate_workers:

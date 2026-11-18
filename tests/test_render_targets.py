@@ -32,7 +32,7 @@ class Targets(unittest.TestCase):
         self.assertEqual(render_targets.names(),
                          ['stereo', 'binaural', 'immersive_7_1', 'immersive_7_1_4', 'immersive_7_1_2', 'ambix', 'stereo_48k',
                           'adm_bw64', 'immersive_5_1', 'immersive_5_1_2', 'immersive_5_1_4', 'mono'])
-        self.assertEqual(render_targets.default(), ['stereo'])
+        self.assertEqual(render_targets.default(), ['stereo', 'immersive_7_1'])
 
     def test_every_shipped_target_is_buildable(self):
         for name in render_targets.names():
@@ -40,7 +40,7 @@ class Targets(unittest.TestCase):
 
     def test_no_output_key_builds_the_default(self):
         r = render_targets.resolve(dict(title='t'))
-        self.assertEqual(r['selected'], ['stereo'])
+        self.assertEqual(r['selected'], ['stereo', 'immersive_7_1'])
         self.assertEqual(r['problems'], [])
         self.assertEqual(r['skipped'], [])
 

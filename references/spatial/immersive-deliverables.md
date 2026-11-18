@@ -82,3 +82,7 @@ layout preset with `"decode_only": true`: it needs no low-frequency channel and 
 order 3 is what removes a loud sub from a loudspeaker stereo master. The sub is then carried by the layouts' low-frequency
 channel. `master.dc` measures 1 s block means, and a loud 80-120 Hz tone that does not complete its cycles in each block
 reads as drift, which is why the high-pass, and not a looser row, is the fix.
+
+## Choosing what to render
+
+Each format is its own mixing pass, run one after another after the stereo master is certified, so a render with six formats takes about six times as long. With no format named the default is `stereo` plus `immersive_7_1` (8 channels). `pipeline.py --only <comma list>` renders only those and overrides the score; name `stereo` first because the `fold.*` rows compare every other format with it. A 7.1 file as the only format failed three rows on a 117 s cue (clipping and a true peak 1.6 dBTP over the ceiling once folded to two channels, and `master.dc` on the low-frequency channel); until the multichannel master limits against its own fold, keep `stereo` in the list.
