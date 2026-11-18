@@ -675,8 +675,90 @@ def dynamics_cfg(spec, mx=None):
 # main mix
 # ---------------------------------------------------------------------------------------------
 
-def process_stem(name, x, spec, sr=SR, ctx=None):
-    """One stem through the chain. `spec` is never modified: the send is read by reverb_send_level()."""
+MIX_CACHE_VERSION = 1                   # bump when the chain's output would change without its inputs changing
+_CODE_TAG = None                        # the engine's own identity, hashed once per process
+
+
+def use_mix_cache(path):
+    """Where processed stems are kept between runs; None disables it. A stem is reused only when every input
+    that can change its bytes is identical (see `_chain_key`), so a cache can never hand back another mix's audio."""
+    STATE['cache_dir'] = str(path) if path else None
+
+
+def _code_tag():
+    """Identity of the code behind a processed stem: an engine edit must never be served an old stem."""
+    global _CODE_TAG
+    if _CODE_TAG is None:
+        import stem_cache
+        here = os.path.dirname(os.path.abspath(__file__))
+        _CODE_TAG = stem_cache.code_hash(here, files=('mixer.py', 'dsp.py', 'mix_schema.py', 'mix_context.py',
+                                                      'presets.py', 'spatial.py', 'airabs.py', 'spatial_hrtf/room.py',
+                                                      'spatial_hrtf/binaural.py'),
+                                         packages=('spatial_engine',))
+    return _CODE_TAG
+
+
+def _chain_key(name, x, spec, mx, sr, n):
+    """What `process_chain` reads: this stem's bytes, its resolved staging/EQ/dynamics spec, the whole mix preset,
+    the sample rate and the engine. Placement is deliberately absent: it belongs to the bus, not to the chain."""
+    import compute
+    import stem_cache
+    return stem_cache.digest(dict(version=MIX_CACHE_VERSION, cache=stem_cache.CACHE_VERSION, stem=name,
+                                  audio=stem_cache.audio_hash(x, size=16), spec=stem_cache.jsonable(spec),
+                                  mix=stem_cache.jsonable(mx), sr=int(sr), frames=int(n),
+                                  compute=compute.cache_tag(), code=_code_tag()), size=16)
+
+
+def _cache_files(cache, key, name):
+    d = os.path.join(cache, key)
+    return os.path.join(d, f'{name}.npy'), os.path.join(d, f'{name}.json')
+
+
+def _cache_get(cache, key, name, n):
+    """The chain's output for this stem, or None. A missing, stale or malformed entry is a miss, never an error."""
+    if not (cache and key):
+        return None
+    arr, meta = _cache_files(cache, key, name)
+    if not (os.path.isfile(arr) and os.path.isfile(meta)):
+        return None
+    try:
+        y = np.load(arr)
+        with open(meta, encoding='utf-8') as fh:
+            m = json.load(fh)
+    except (OSError, ValueError):
+        return None
+    if m.get('version') != MIX_CACHE_VERSION or y.dtype != np.float32 or y.shape != (int(n), 2):
+        return None
+    for k in ('gain', 'in_lufs', 'chain'):          # the chain's own report, so a hit reads like a fresh run
+        if k in (m.get('state') or {}):
+            STATE.setdefault(k, {})[name] = m['state'][k]
+    return np.ascontiguousarray(y)
+
+
+def _cache_put(cache, key, name, x, n):
+    """Keep one processed stem. Caching is an optimization: a full disk or a read-only project is not a failure."""
+    if not (cache and key):
+        return
+    arr, meta = _cache_files(cache, key, name)
+    try:
+        os.makedirs(os.path.dirname(arr), exist_ok=True)
+        tmp = arr + f'.tmp{os.getpid()}'
+        np.save(tmp, np.ascontiguousarray(x, dtype=np.float32))
+        os.replace(tmp if tmp.endswith('.npy') else tmp + '.npy', arr)
+        with open(meta, 'w', encoding='utf-8') as fh:
+            json.dump(dict(version=MIX_CACHE_VERSION,
+                           state={k: STATE.get(k, {}).get(name) for k in ('gain', 'in_lufs', 'chain')}), fh)
+    except (OSError, ValueError):
+        pass
+
+
+def process_chain(name, x, spec, sr=SR, ctx=None):
+    """Everything before placement: gain staging, EQ, dynamics, low-end hygiene, level, automation, fades.
+
+    `spec` is never modified: the send is read by reverb_send_level(). This half is the same for every deliverable
+    of a piece, which is why it can be cached across a repeat render and across output formats; `_place` is not
+    (a loudspeaker bus hands a track over unplaced, the stereo mix pans it for two speakers).
+    """
     if ctx is not None and ctx is not mix_context.current():
         _install(ctx.mix, ctx.space)
     mx = _mix()
@@ -760,8 +842,17 @@ def process_stem(name, x, spec, sr=SR, ctx=None):
                 x[:fade_n] = x[:fade_n] * ramp[:, None]
             else:
                 x[-fade_n:] = x[-fade_n:] * ramp[::-1, None]
-    # 5/6/7 width + pan + 3D spatial staging
-    x = _place(name, x, spec, mx, sr)
+    if not np.isfinite(x).all():
+        raise ValueError(f'stem "{name}" produced non-finite samples (check its eq/comp/spatial values)')
+    return x.astype(np.float32)
+
+
+def process_stem(name, x, spec, sr=SR, ctx=None):
+    """One stem through the chain and then placed for this mix's bus."""
+    x = process_chain(name, x, spec, sr, ctx)
+    if x.size == 0:
+        return x
+    x = _place(name, x, spec, _mix(), sr)
     if not np.isfinite(x).all():
         raise ValueError(f'stem "{name}" produced non-finite samples (check its eq/comp/spatial values)')
     return x.astype(np.float32)
@@ -1462,22 +1553,47 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
     STATE['compute'] = compute.info()
     workers = rcfg.get('mix_workers', 1)
     workers = (os.cpu_count() or 1) if workers == 'auto' else max(1, int(workers))
+    cache = STATE.get('cache_dir')
+    keys = {}
+    if cache:
+        try:
+            keys = {nm: _chain_key(nm, v, specs[nm], mx, sr, n) for nm, v in stems.items()}
+        except Exception as exc:                  # a cache that cannot be keyed is no cache, never a failed render
+            print(f'  [mix] processed-stem cache off for this run ({exc})')
+            keys = {}
+
+    def _work(item):
+        """One stem: its chain (reused when nothing it reads changed), then its place on this mix's bus.
+
+        The chain is cached and placement is not, so a second format reuses the first one's EQ and dynamics and
+        only re-places the stems, and a repeat render after one note fix re-runs only the stems that changed.
+        """
+        nm, v = item
+        _context_for(score, ctx)                  # the context is per thread: this one reads the piece's own
+        got = _cache_get(cache, keys.get(nm), nm, n) if keys else None
+        hit = got is not None
+        x = got if hit else process_chain(nm, v, specs[nm], sr, ctx)
+        y = fit(_place(nm, x, specs[nm], mx, sr), n) if x.size else fit(x, n)
+        if not hit and x.size:
+            _cache_put(cache, keys.get(nm), nm, x, n)
+        return nm, y, hit
+
     try:
         if workers > 1 and len(stems) > 1:
             # One stem per thread. The plugins and the filters release the interpreter lock, the context is
-            # per-thread (process_stem installs the piece's own in each worker), and every stem writes only its own
-            # entries in STATE, so the result is the same samples as the serial loop, in the same order.
+            # per-thread (the worker installs the piece's own), and every stem writes only its own entries in
+            # STATE, so the result is the same samples as the serial loop, in the same order.
             from concurrent.futures import ThreadPoolExecutor
             with ThreadPoolExecutor(max_workers=min(workers, len(stems))) as pool:
-                done = list(pool.map(lambda item: fit(process_stem(item[0], item[1], specs[item[0]], sr, ctx), n),
-                                     stems.items()))
-            processed.update(zip(stems.keys(), done))
+                done = list(pool.map(_work, stems.items()))
         else:
-            for name, x in stems.items():
-                processed[name] = fit(process_stem(name, x, specs[name], sr, ctx), n)
+            done = [_work(item) for item in stems.items()]
     finally:
         STATE['hoa'] = False
         STATE['unplaced'] = False
+    for nm, y, _hit in done:
+        processed[nm] = y
+    STATE['cache'] = dict(dir=cache, hits=sum(1 for _n, _y, h in done if h), stems=len(done))
     apply_lead_carve(processed, specs, mx, sr, intent=score.get('mix_intent'))  # the dynamic half of the lead rule, keyed by the lead itself
     STATE['processed'] = processed              # what the mix actually plays: the gate measures this
     STATE['specs'] = specs

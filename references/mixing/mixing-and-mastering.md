@@ -228,6 +228,16 @@ is printed; the render is not silently accepted.
 crest, mono fold and correlation side by side. That is a measurement. It is not a listening test, and no
 row in that table by itself proves the mix sounds better.
 
+**The processed-stem cache.** `<project>/.cache/mix/` keeps each stem's chain output — gain staging, EQ, dynamics,
+level, automation, fades — keyed on that stem's bytes, its resolved spec, the whole mix preset, the sample rate,
+the compute device and the engine's own code hash. Two things follow from one split in `mixer.py`: a retry
+after a one-note fix re-processes only the stems that changed, and a second output format reuses the first one's
+chain, because `process_chain` is independent of the bus while `_place` (width, pan, the head filter, the bus
+hand-over) is not. Placement therefore always runs per mix. Delete the folder to force a rebuild;
+`mixer.use_mix_cache(None)` turns it off, and the run's hit count is in `reports/ci_report.json` under
+`gate.cache`. A cached stem is the same float32 samples a fresh one would be — that is what
+`tests/test_mix_cache.py` asserts, including across two different buses.
+
 **The 3-D mix.** `python scripts/helpers/bench_mix.py` times `HoaBus.field()` — the ambisonic mix a piece on
 `immersive.engine: "hoa_bus"` runs — and prints the reflections, the encoder and the late field as shares of it,
 from a space preset's own room (`--space`, `--seconds`, `--sources`, `--profile`). `docs/mix_profile_palace.md` is
