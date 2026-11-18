@@ -111,6 +111,7 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **9.1** Verify the delivery record: `python scripts/helpers/version_manager.py list --project <dir>`. Every certified render is kept as `out/master_vNN.wav` with its change in `out/versions.json`; `out/master.wav` is a copy of the newest. Never delete or overwrite a version file or a record.
 - [ ] **9.2** Metadata: `out/master.json` (written at certification from `presets/metadata/metadata.json` + the score + the project overrides) carries the standard tags. If a tag is wrong, fix `<dir>/metadata.json` and re-run `python scripts/helpers/ingest_metadata.py out/master.wav --project <dir>`; never edit the sidecar by hand.
 - [ ] **9.3** MP3 is manual and NOT part of the pipeline: `python scripts/helpers/compress_mp3.py out/master_vNN.wav -o <file>.mp3 -b 320k`. Report the file you produced and its bitrate.
+- [ ] **9.4b** Measure the arc against the brief: `python scripts/helpers/arc_report.py out/master.wav --score scores/<title>_score.json`. A green gate says the render is not faulty; it does not say the cue has the pressure the brief asked for (`references/scoring/cinematic-commercial-grade.md`, section 6). Report the section means, the pressure share and the quiet stretches, and say if they disagree with the sheet's `energy`.
 - [ ] **9.5** Listen: `python scripts/listen.py out/master.wav --direction direction/<sheet>.json` (if missing, say so)
 - [ ] **9.6** Complete self-check in `references/workflow/self-check.md` in STATUS.md (all yes/no)
 - [ ] **9.7** Report: what was done, what was checked, what was NOT checked, gate results, the version number delivered, any limitations. Update STATUS.md.
@@ -125,6 +126,7 @@ Before Phase 4, open every file in the row that matches the request; union sever
 |---|---|
 | **ANY PIECE** | `SKILL.md`, `references/workflow/brief-reading.md`, `references/workflow/music-direction.md`, `references/workflow/intent-and-focus.md`, `references/spatial/acoustic-laws.md`, `references/mixing/mix-rules.md`, `references/mixing/humanization.md`, `references/mixing/quality-gate.md` |
 | **Intent/mood words/focus/roles** | `references/workflow/intent-and-focus.md`, `scripts/intent.py`, `scripts/roles.py` |
+| **Cinematic / epic / trailer / hybrid orchestral / thriller / "unknown, hostile place"** | `references/scoring/cinematic-commercial-grade.md`, `knowledgebase/genre-and-feel/cinematic-hybrid-scoring.md`, `references/scoring/emotion-and-scoring.md`, `references/workflow/scene-recipes.md` |
 | **Mood/film/underscore/background** | `references/workflow/scene-recipes.md`, `references/scoring/emotion-and-scoring.md`, `knowledgebase/media/video-scoring.md` |
 | **Score video file** | `references/scoring/video-scoring.md`, `scripts/video_score.py`, `video-mixer/video_probe.py`, `video-mixer/context.py`, Section 10 below |
 | **Film reel / several cues / spotting** | `references/scoring/video-scoring.md`, `video-mixer/deliver/reel.py`, `video-mixer/gate/pass_.py`, `scripts/setup_project.py --new-film`, Section 9 and Section 10 |
@@ -210,6 +212,17 @@ levers. Using GM habits on an SFZ track is what leaves it sounding like a sample
 8. **Honest limits** - Synthesis from SoundFont/simple synthesis. Don't claim hardware synth sound.
 
 ---
+
+## 4b. CINEMATIC / HYBRID SPECIFICS
+
+Full procedure: `references/scoring/cinematic-commercial-grade.md`. Facts and sources: `knowledgebase/genre-and-feel/cinematic-hybrid-scoring.md`.
+
+1. **Pressure is a deliverable.** Decide the carriers (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising or accelerating device) in the direction sheet before any note.
+2. **The last section is the peak or the cliff**, never the fade of a peak, unless the brief asks for relief.
+3. **Atmosphere sits under the cue.** For a brief about threat, turn rain, river and canopy down.
+4. **Gate rows and pressure collide on heavy cues** (`master.dc`, `dropout`, `cochlear_roughness`, `z_separation`, `fold.mono`). The table in the reference file lists the fix for each in the piece; none of them is a loosened row.
+5. **Loudness is the medium's**: a trailer is not -16 LUFS. The figures are starting values until the delivery spec is known.
+6. **Name the library's limit.** A free, dry sample library cannot sound like a commercial hybrid score; say so.
 
 ## 5. SFZ orchestra (only when requested)
 
@@ -301,6 +314,7 @@ Rules:
     "starting value" on the same line. A new KB file gets a row in `knowledgebase/README.md` and the standard
     header (`id`, `title`, `domain`, `status`, `sources`, `used_by`, `updated`), and
     `python tests/check_kb.py` must pass. Writing new Python generator for new sound name is forbidden. Unknown fields = error, no fallback. No normalization erasing physical intensity differences.
+17b. **A green gate is not the brief** - Every gate fix is made in the notes, the presets or the placement, and each one can take pressure out of the piece (a sparser stab, a quieter hit, a high-passed sub). After the gate is green, measure the arc (9.4b) and compare it with the direction sheet's `energy` and `loudness`. A cue briefed as tense, hostile or epic that reads as ambient is a failed brief however many rows pass. Never flatten velocities, remove a pulse or a low hit to quiet a row; fix the row where it arises.
 17. **A declaration is judged** - `focus.declared`, `intent.vocabulary` and `intent.avoid` are rows like any other (Section 6b).
     They fail in the score or the presets; a declaration is never deleted, loosened or skipped to get a green report.
 

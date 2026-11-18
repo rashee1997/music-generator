@@ -207,6 +207,7 @@ exists so the agent can decide values, not so it can be quoted.
 
 | Task | Key References |
 |---|---|
+| Cinematic, epic, trailer, hybrid orchestral, tense or hostile cue | [`references/scoring/cinematic-commercial-grade.md`](references/scoring/cinematic-commercial-grade.md), [`knowledgebase/genre-and-feel/cinematic-hybrid-scoring.md`](knowledgebase/genre-and-feel/cinematic-hybrid-scoring.md), `scripts/helpers/arc_report.py` |
 | Video scoring/cuts | [`references/scoring/video-scoring.md`](references/scoring/video-scoring.md), `scripts/video_score.py` |
 | Vocals/choirs/hums | [`references/instruments-and-vocals/vocals-and-choirs.md`](references/instruments-and-vocals/vocals-and-choirs.md), [`references/instruments-and-vocals/vocal-engine.md`](references/instruments-and-vocals/vocal-engine.md) |
 | Cultural styles/fusion | [`knowledgebase/README.md`](knowledgebase/README.md), [`references/scoring/cultural-soul.md`](references/scoring/cultural-soul.md), [`references/scoring/genre-fusion.md`](references/scoring/genre-fusion.md) |
