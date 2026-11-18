@@ -1,0 +1,29 @@
+{
+  "name": "karoryfer_string_cyborgs",
+  "character": "String Cyborgs: an open-source string instrument from Karoryfer Samples, in the sfzinstruments project",
+  "type": "library",
+  "licence": "see the repository LICENSE (not read)",
+  "licence_url": "https://github.com/sfzinstruments/karoryfer.string-cyborgs",
+  "share_alike": false,
+  "attribution": "Karoryfer String Cyborgs, Karoryfer Samples",
+  "homepage": "https://github.com/sfzinstruments/karoryfer.string-cyborgs",
+  "families": [
+    "strings"
+  ],
+  "verified": false,
+  "source": {
+    "kind": "manual"
+  },
+  "entry": ".",
+  "parts": {
+    "all": {
+      "what": "the library as its author publishes it",
+      "manual": "https://github.com/sfzinstruments/karoryfer.string-cyborgs",
+      "manual_note": "Open the page, download the SFZ instrument, then run: sfz_libs.py install-local karoryfer_string_cyborgs <downloaded.zip> --project <dir>. Then name it in an instrument preset: \"sfz\": {\"library\": \"karoryfer_string_cyborgs\", \"patch\": \"<path/to/patch>\"}."
+    }
+  },
+  "default_parts": [
+    "all"
+  ],
+  "notes": "Listed from search results; the page was not opened when this entry was written. Read the library's own licence file before use."
+}

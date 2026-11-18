@@ -240,6 +240,7 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
 6. **Check ranges** - Verify patch range before writing notes. Notes outside range silent/stretched.
 7. **Render via pipeline only** - `pipeline.py <score> --project <dir>`, never shortcut renderer. Measure stems - SFZ quiet (-19 to -28dB), set `trim_db` by measurement.
 8. **Report fully** - Library name + license, parts installed, "not auditioned" unless listened.
+9. **No library is required** - A preset's `sfz` block may list `alternatives` (`[{"library", "patch"}]`); the first one installed plays, and the render says which. `python scripts/sfz_catalog.py recommend <score> --project <dir>` shows what a score is missing and which of the 14 catalogued libraries could fill it; `list`, `info`, `search` and `install` are there too. An entry with `verified: false` has an unread licence: open its page first.
 
 `sfizz_render` needs `--use-eot` or it renders forever past the end; `scripts/sfz_render.py` passes it with a timeout. Do not call the binary directly without both.
 

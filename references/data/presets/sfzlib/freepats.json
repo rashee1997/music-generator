@@ -1,0 +1,34 @@
+{
+  "name": "freepats",
+  "character": "FreePats: a collection of free instrument sets (piano, guitar, strings, winds, percussion, synths) as SFZ and SF2",
+  "type": "library",
+  "licence": "different for every set: read the set's page",
+  "licence_url": "https://freepats.zenvoid.org/",
+  "share_alike": false,
+  "attribution": "FreePats, the named author of each set",
+  "homepage": "https://freepats.zenvoid.org/",
+  "families": [
+    "piano",
+    "guitar",
+    "strings",
+    "winds",
+    "percussion",
+    "synth"
+  ],
+  "verified": false,
+  "source": {
+    "kind": "manual"
+  },
+  "entry": ".",
+  "parts": {
+    "all": {
+      "what": "the library as its author publishes it",
+      "manual": "https://freepats.zenvoid.org/",
+      "manual_note": "Open the page, download the SFZ instrument, then run: sfz_libs.py install-local freepats <downloaded.zip> --project <dir>. Then name it in an instrument preset: \"sfz\": {\"library\": \"freepats\", \"patch\": \"<path/to/patch>\"}."
+    }
+  },
+  "default_parts": [
+    "all"
+  ],
+  "notes": "Listed from search results; the page was not opened when this entry was written. Read the library's own licence file before use."
+}

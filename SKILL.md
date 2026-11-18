@@ -115,6 +115,7 @@ One line each; every path is under `scripts/` unless it says otherwise.
 | `clone_instrument.py` | clone an instrument from a recording, export an SFZ |
 | `extract_pipeline.py` | song to MIDI and stems: `setup`, `run`, `status`, `kb` |
 | `sfz_libs.py`, `sfz_render.py` | optional SFZ libraries and the renderer that plays them |
+| `sfz_catalog.py` | the catalog of 14 open SFZ libraries: list, search, recommend what a score is missing, install, `alternatives` fallback chain |
 | `helpers/version_manager.py` | the delivery record (`list --project <dir>`) |
 | `helpers/ingest_metadata.py` | rewrite the tags beside a master |
 | `helpers/compress_mp3.py` | manual MP3 encode of a certified version |

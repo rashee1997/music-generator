@@ -126,7 +126,8 @@ def default_patch_range(block, project_dir=None):
     """The sounding key range of an instrument preset's `sfz` block, or None when the library is not installed."""
     try:
         import sfz_libs
-        path = sfz_libs.find_patch(block['library'], block['patch'], project_dir)
+        eff = sfz_libs.effective_block(block, project_dir)
+        path = sfz_libs.find_patch(eff['library'], eff['patch'], project_dir)
     except Exception:
         return None
     return sfz_range(str(path))

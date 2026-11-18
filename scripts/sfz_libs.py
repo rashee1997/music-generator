@@ -58,7 +58,9 @@ TEST_LOOPBACK = False             # tests only: allow http://127.0.0.1 so the do
 CONFIRM_ABOVE_MB = 500
 MAX_UNPACK_GB = 8.0
 LIB_KEYS = {'name', 'character', 'type', 'licence', 'licence_url', 'share_alike', 'attribution', 'homepage', 'source', 'entry',
-            'parts', 'default_parts', 'notes', 'trim_db', '_source', 'kind'}
+            'parts', 'default_parts', 'notes', 'trim_db', '_source', 'kind', 'families', 'verified'}
+FAMILIES = ('strings', 'brass', 'woodwinds', 'winds', 'choir', 'harp', 'percussion', 'drums', 'piano', 'electric_piano', 'keys', 'guitar',
+            'synth', 'world', 'ensemble')
 ENGINE_KEYS = {'name', 'character', 'type', 'licence', 'licence_url', 'share_alike', 'attribution', 'homepage', 'platforms', 'notes',
                '_source', 'kind'}
 PART_KEYS = {'size_mb', 'what', 'paths', 'url', 'hosts', 'sha256', 'manual', 'manual_note'}
@@ -80,6 +82,11 @@ def entry_problems(name, e):
     if not isinstance(e.get('share_alike', False), bool):
         out.append(f'{where}: share_alike must be true or false')
     if kind == 'library':
+        fam = e.get('families', [])
+        if not isinstance(fam, list) or any(f not in FAMILIES for f in fam):
+            out.append(f'{where}: "families" must be a list drawn from {list(FAMILIES)}')
+        if not isinstance(e.get('verified', False), bool):
+            out.append(f'{where}: "verified" must be true or false (true only when the page and the licence were read)')
         if not str(e.get('attribution', '')).strip():
             out.append(f'{where}: missing "attribution" (the credit line a project must carry)')
         if not e.get('entry'):
@@ -583,6 +590,36 @@ def find_patch(name, ref, project=None, dest=None):
     raise LookupError(f'no patch "{ref}" in {name}.' + (f' Similar: {near}' if near else ' Run: sfz_libs.py find ' + name + ' <words>'))
 
 
+def block_choices(blk):
+    """[(library, patch)] a block can be played from, the preferred one first: its own, then each of `alternatives`."""
+    out = [(blk.get('library'), blk.get('patch'))]
+    for a in blk.get('alternatives') or []:
+        out.append((a.get('library'), a.get('patch')))
+    return out
+
+
+def effective_block(blk, project=None):
+    """The block to play: the first of its own library and its `alternatives` whose patch is installed, as a copy that names
+    that library and patch (every other setting stays). Raises LookupError listing why each choice failed."""
+    why = []
+    choices = block_choices(blk)
+    for lib, patch in choices:
+        if not lib or not patch:
+            continue
+        try:
+            find_patch(lib, patch, project)
+        except (LookupError, SystemExit) as ex:
+            why.append(f'{lib}: {ex}')
+            continue
+        out = dict(blk)
+        out['library'], out['patch'] = lib, patch
+        out.pop('alternatives', None)
+        if (lib, patch) != choices[0]:
+            print(f'  [SFZ] "{choices[0][1]}" is not installed; playing "{patch}" from {lib} instead', flush=True)
+        return out
+    raise LookupError(' | '.join(why) or 'the sfz block names no library and patch')
+
+
 def _posix(p):
     """A sample or include path as an .sfz file writes it: forward slashes, whatever the host OS."""
     return str(p).replace('\\', '/')
@@ -634,10 +671,35 @@ def score_refs(score):
     return out
 
 
-def sfz_problems(score, project):
-    """Project gate: an SFZ track needs its library, its patch and an engine. Messages carry the fix command."""
+def score_blocks(score):
+    """[(track name, sfz block)] for tracks played by an SFZ library, as the renderer reads them."""
     out = []
+    for t in score.get('tracks', []):
+        inst = str(t.get('instrument', ''))
+        blk = t.get('sfz')
+        if inst.startswith('sfz:'):
+            lib, _, ref = inst[4:].partition('/')
+            blk = {'library': lib, 'patch': ref}
+        elif not blk:
+            blk = (presets.find_instrument(inst) or {}).get('sfz')
+        if blk:
+            out.append((t.get('name', inst), blk))
+    return out
+
+
+def sfz_problems(score, project):
+    """Project gate: an SFZ track needs its library, its patch (or one of its alternatives) and an engine. Messages carry the fix command."""
+    out = []
+    with_alternatives = {t for t, b in score_blocks(score) if b.get('alternatives')}
+    for track, blk in score_blocks(score):
+        if track in with_alternatives:
+            try:
+                effective_block(blk, project)
+            except LookupError as ex:
+                out.append(f'track "{track}": none of its libraries is installed ({ex}). Find one: sfz_catalog.py recommend <score> --project <project>')
     for track, lib, ref in score_refs(score):
+        if track in with_alternatives:
+            continue
         try:
             get_entry(lib, 'library')
             find_patch(lib, ref, project)

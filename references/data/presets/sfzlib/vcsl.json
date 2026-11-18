@@ -1,0 +1,34 @@
+{
+  "name": "vcsl",
+  "character": "Versilian Community Sample Library: a very large set of orchestral, world and unusual instruments, recorded by Versilian Studios, with SFZ mappings",
+  "type": "library",
+  "licence": "CC0 1.0 (stated for the VCSL Keys derivative; check the repository LICENSE)",
+  "licence_url": "https://github.com/sgossner/VCSL",
+  "share_alike": false,
+  "attribution": "Versilian Community Sample Library, Versilian Studios (credit appreciated)",
+  "homepage": "https://github.com/sgossner/VCSL",
+  "families": [
+    "percussion",
+    "strings",
+    "winds",
+    "keys",
+    "world",
+    "ensemble"
+  ],
+  "verified": false,
+  "source": {
+    "kind": "manual"
+  },
+  "entry": ".",
+  "parts": {
+    "all": {
+      "what": "the library as its author publishes it",
+      "manual": "https://github.com/sgossner/VCSL",
+      "manual_note": "Open the page, download the SFZ instrument, then run: sfz_libs.py install-local vcsl <downloaded.zip> --project <dir>. Then name it in an instrument preset: \"sfz\": {\"library\": \"vcsl\", \"patch\": \"<path/to/patch>\"}."
+    }
+  },
+  "default_parts": [
+    "all"
+  ],
+  "notes": "Listed from search results; the page was not opened when this entry was written. Read the library's own licence file before use."
+}

@@ -252,6 +252,10 @@ def _is_mono(ev, tol=0.03):
 def render(ev, offs, tm, blk, dyn_level, sr, project=None, quality=10, polyphony=256):
     """Stereo float32 stem for one track. Raises SfzUnavailable when the library or engine is missing."""
     import soundfile as sf
+    try:
+        blk = sfz_libs.effective_block(blk, project)          # the library it asks for, or the first of its `alternatives` that is installed
+    except LookupError as ex:
+        raise SfzUnavailable(str(ex))
     exe, sfz = resolve(blk, project)
     pm = midi_for(ev, offs, blk, dyn_level, sfz.name, lead=LEAD_S)
     with tempfile.TemporaryDirectory() as td:
