@@ -3,7 +3,7 @@
   "character": "A stone ceiling giving way: one heavy block landing and a long run of smaller stones.",
   "seconds": 3.4,
   "role": "fx",
-  "gain_db": -2.0,
+  "gain_db": -5.0,
   "reverb": 0.3,
   "spatial": {
     "azimuth": 0,
@@ -13,7 +13,7 @@
   "scene": {
     "calibration": {
       "normalize": "energy",
-      "level_db": 0
+      "level_db": -4
     },
     "objects": {
       "slab": {

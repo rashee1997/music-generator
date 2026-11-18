@@ -3,7 +3,7 @@
   "character": "One step of a carved stone figure: a very heavy, slow contact on a slab, a deep thud with a gritty ring.",
   "seconds": 1.6,
   "role": "fx",
-  "gain_db": -2.0,
+  "gain_db": -4.0,
   "reverb": 0.3,
   "spatial": {
     "azimuth": 180,
@@ -13,7 +13,7 @@
   "scene": {
     "calibration": {
       "normalize": "energy",
-      "level_db": 2
+      "level_db": -2
     },
     "objects": {
       "ground": {

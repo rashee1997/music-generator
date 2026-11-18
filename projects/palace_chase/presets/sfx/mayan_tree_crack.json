@@ -3,7 +3,7 @@
   "character": "A small tree snapped by something heavy: a loud splintering crack, a fall of branches and leaves.",
   "seconds": 2.4,
   "role": "fx",
-  "gain_db": -2.0,
+  "gain_db": -8.0,
   "reverb": 0.18,
   "spatial": {
     "azimuth": 170,
@@ -13,7 +13,7 @@
   "scene": {
     "calibration": {
       "normalize": "energy",
-      "level_db": 2
+      "level_db": -6
     },
     "objects": {
       "stem": {

@@ -139,17 +139,17 @@ CUT = B(66, 0.0)                     # the last hit lands; a beat of nothing
 LAST = B(S_END)
 
 # ================================================================ strings
-bs = [N(B(1), 15.9, 26, 0.45), N(B(5), 15.9, 26, 0.5)]                                   # the D pedal, re-struck every 16 beats
-bs += [N(B(9), 15.9, 26, 0.52), N(B(13), 15.9, 26, 0.58), N(B(17), 4.0, 26, 0.62)]
-bs += [N(B(bar), 4.0, near(CH[bar][0], 26, 37), 0.78 + 0.02 * (bar - 18)) for bar in range(18, 25)]
-bs += [N(B(bar), 4.06, near(CH[bar][0], 26, 37), 0.9) for bar in range(26, 62)]
-bs += [N(B(bar), 4.06, near(CH[bar][0], 26, 37), 1.0) for bar in range(62, 66)]
-bs += [N(B(66), 15.9, 26, 0.6), N(B(70), 15.9, 26, 0.38), N(B(74), 8.0, 26, 0.3)]          # release: one long D
+bs = [N(B(1), 15.9, 26, 0.7), N(B(5), 15.9, 26, 0.72)]                                   # the D pedal, re-struck every 16 beats
+bs += [N(B(9), 15.9, 26, 0.75), N(B(13), 15.9, 26, 0.78), N(B(17), 4.0, 26, 0.8)]
+bs += [N(B(bar), 4.0, near(CH[bar][0], 26, 37), 0.85 + 0.015 * (bar - 18)) for bar in range(18, 25)]
+bs += [N(B(bar), 4.06, near(CH[bar][0], 26, 37), 0.88) for bar in range(26, 62)]
+bs += [N(B(bar), 4.06, near(CH[bar][0], 26, 37), 0.95) for bar in range(62, 66)]
+bs += [N(B(66), 15.9, 26, 0.8), N(B(70), 15.9, 26, 0.7), N(B(74), 8.0, 26, 0.65)]          # release: one long D
 track('basses', 'mayan_basses', 'bass', bs)
 
-ce = ostinato(range(13, 17), 8, 0.42, 0.55, 38, 49, drop=0.3)
-ce += ostinato(range(18, 25), 8, 0.6, 0.78, 38, 49)
-ce += ostinato(range(26, 42), 16, 0.8, 0.98, 38, 49)
+ce = ostinato(range(13, 17), 8, 0.68, 0.78, 38, 49, drop=0.3)
+ce += ostinato(range(18, 25), 8, 0.78, 0.9, 38, 49)
+ce += ostinato(range(26, 42), 16, 0.82, 0.92, 38, 49)
 ce += ostinato(range(42, 58), 16, 0.95, 1.0, 38, 49)
 ce += ostinato(range(58, 62), 16, 0.95, 1.0, 38, 49)
 ce += ostinato(range(62, 65), 16, 0.95, 1.0, 38, 49, cells=CELLS_MAJ)
@@ -168,22 +168,22 @@ track('violas', 'mayan_violas_ostinato', 'arp', va)
 
 vt = []
 for bar in range(3, 9):                                                     # a high flat second, a shimmer in the stone
-    vt.append(N(B(bar), 3.95, 86 if bar % 2 else 87, 0.4 + 0.02 * (bar - 3)))
+    vt.append(N(B(bar), 4.05, 86 if bar % 2 else 87, 0.65 + 0.02 * (bar - 3)))
 for bar in range(13, 18):
-    vt += [N(B(bar), 3.95, 86, 0.5 + 0.04 * (bar - 13)), N(B(bar), 3.95, 87, 0.48 + 0.04 * (bar - 13))]
+    vt += [N(B(bar), 4.05, 86, 0.7 + 0.03 * (bar - 13)), N(B(bar), 4.05, 87, 0.68 + 0.03 * (bar - 13))]
 for bar in range(18, 25):                                                   # a semitone a bar: the evil climbs
-    vt += [N(B(bar), 3.95, 78 + (bar - 18), 0.6 + 0.04 * (bar - 18)), N(B(bar), 3.95, 79 + (bar - 18), 0.58 + 0.04 * (bar - 18))]
+    vt += [N(B(bar), 4.05, 78 + (bar - 18), 0.78 + 0.02 * (bar - 18)), N(B(bar), 4.05, 79 + (bar - 18), 0.76 + 0.02 * (bar - 18))]
 for bar in range(26, 42):
-    vt += [N(B(bar), 3.95, 86, 0.8), N(B(bar), 3.95, 87, 0.78)]
+    vt += [N(B(bar), 4.05, 86, 0.85), N(B(bar), 4.05, 87, 0.83)]
 for bar in range(42, 58):
-    vt += [N(B(bar), 3.95, 85 + (bar % 3), 0.85), N(B(bar), 3.95, 86 + (bar % 3), 0.83)]
+    vt += [N(B(bar), 4.05, 85 + (bar % 3), 0.88), N(B(bar), 4.05, 86 + (bar % 3), 0.86)]
 for bar in range(58, 62):
-    vt += [N(B(bar), 3.95, 86, 0.92), N(B(bar), 3.95, 87, 0.9)]
+    vt += [N(B(bar), 4.05, 86, 0.92), N(B(bar), 4.05, 87, 0.9)]
 track('violins_tremolo', 'mayan_violins_tremolo', 'pad', vt)
 
-vs = [N(B(bar), 3.95, 74 + (bar - 42), 0.55 + 0.03 * (bar - 42)) for bar in range(42, 58)]          # the rising device in the forest
-vs += [N(B(bar), 3.95, 78 + 2 * (bar - 62), 0.95) for bar in range(62, 66)]
-vs += [N(B(66), 15.9, 81, 0.8), N(B(70), 15.9, 74, 0.55), N(B(74), 8.0, 81, 0.4)]               # F#5, D major add9 above: the light
+vs = [N(B(bar), 4.05, 74 + (bar - 42), 0.7 + 0.015 * (bar - 42)) for bar in range(42, 58)]          # the rising device in the forest
+vs += [N(B(bar), 4.05, 78 + 2 * (bar - 62), 0.95) for bar in range(62, 66)]
+vs += [N(B(66), 15.9, 81, 0.85), N(B(70), 15.9, 74, 0.7), N(B(74), 8.0, 81, 0.62)]               # F#5, D major add9 above: the light
 track('violins_sustain', 'mayan_violins_sustain', 'pad', vs)
 
 # ================================================================ woodwinds and harp: the human voice, and the relic's
@@ -203,34 +203,33 @@ bc = phrase(HOLLOW_A, B(11), 50, 0.55) + phrase(HOLLOW_B, B(15), 50, 0.6)       
 bc += [N(B(74), 8.0, 38, 0.35)]                                                                        # a last low D: held, not flat
 track('bass_clarinet', 'mayan_bass_clarinet', 'counter', bc)
 
-hp = [N(B(10) + 1.0 * k, 0.9, p, 0.45 + 0.03 * k) for k, p in enumerate((62, 69, 74, 77))]
-hp += [N(B(14, 2.0), 3.0, 62, 0.6), N(B(15, 2.0), 3.0, 63, 0.62), N(B(16, 2.0), 3.0, 69, 0.68)]        # touching the relic
-hp += [N(B(bar, 0), 3.0, near(CH[bar][0], 62, 74), 0.4) for bar in range(70, 74)]
+hp = [N(B(10) + 1.0 * k, 0.9, p, 0.6 + 0.03 * k) for k, p in enumerate((62, 69, 74, 77))]
+hp += [N(B(14, 2.0), 1.4, 62, 0.7), N(B(15, 2.0), 1.4, 63, 0.72), N(B(16, 2.0), 1.4, 69, 0.78)]        # touching the relic
+hp += [N(B(bar, 0), 1.4, near(CH[bar][0], 62, 74), 0.6) for bar in range(70, 74)]
 track('harp', 'mayan_harp', 'arp', hp)
 
 # ================================================================ brass
 hn = []
 for bar in range(18, 25, 2):                                                                          # the motif, muted then open: the threat
-    hn += phrase(MOTIF, B(bar), 55, 0.55 + 0.05 * (bar - 18), scale=1.0)
+    hn += phrase(MOTIF, B(bar), 55, 0.75 + 0.03 * (bar - 18), scale=1.0, art=1.03)
 for bar in range(30, 42, 4):
-    hn += phrase(MOTIF, B(bar), 55, 0.85, scale=1.0)
-    hn += phrase(MOTIF, B(bar + 2), 62, 0.9, scale=1.0)
+    hn += phrase(MOTIF, B(bar), 55, 0.85, scale=1.0, art=1.03)
+    hn += phrase(MOTIF, B(bar + 2), 62, 0.9, scale=1.0, art=1.03)
 for bar in range(46, 58, 4):
-    hn += phrase(MOTIF, B(bar), 59, 0.92, scale=1.0)
-    hn += phrase(MOTIF, B(bar + 2), 66, 0.95, scale=1.0)
+    hn += phrase(MOTIF, B(bar), 59, 0.92, scale=1.0, art=1.03)
+    hn += phrase(MOTIF, B(bar + 2), 66, 0.95, scale=1.0, art=1.03)
 for bar in (58, 60):
-    hn += phrase(MOTIF, B(bar), 62, 0.95, scale=1.0, upto=3)
+    hn += phrase(MOTIF, B(bar), 62, 0.95, scale=1.0, upto=3, art=1.03)
 for k, bar in enumerate((62, 66)):                                                                    # the hero theme overrules it, in D major
-    hn += phrase(HERO, B(bar), 62, 0.92, scale=1.0)
-    hn += phrase(HERO, B(bar + 2), 62 + 5, 0.95, scale=1.0)
-hn += [N(B(70), 15.9, 62, 0.45)]
+    hn += phrase(HERO, B(bar), 62, 0.92, scale=1.0, art=1.03)
+    hn += phrase(HERO, B(bar + 2), 62 + 5, 0.95, scale=1.0, art=1.03)
+hn += [N(B(70), 15.9, 62, 0.7)]
 track('horns', 'mayan_horns', 'melody', hn)
 
 tb_sus = []
 for beat, dur in ((BRAAM1, 7.0), (CORR_HIT, 7.0), (FOREST_HIT, 7.0), (B(58), 7.0)):
     tb_sus += [N(beat, dur, p, 1.0) for p in (50, 57, 62, 63)]
 tb_sus += [N(POWER, 7.0, p, 1.0) for p in (50, 57, 62, 66)]                                           # D major: F# in the chord
-tb_sus += [N(CUT - 4.0, 3.9, p, 1.0) for p in (50, 57, 62, 66)]
 track('trombones_sus', 'mayan_trombones_sus', 'pad', tb_sus)
 
 tb = []
@@ -244,7 +243,7 @@ for bar, pat in STABS.items():
         tb += [N(B(bar, off), d, r, vv), N(B(bar, off), d, r + 7, vv - 0.05)]
 track('trombones', 'mayan_trombones', 'chord', tb)
 
-tu = [N(beat, 7.0, 38, 1.0) for beat in (BRAAM1, CORR_HIT, FOREST_HIT, B(58), POWER)] + [N(CUT - 4.0, 3.9, 38, 1.0)]
+tu = [N(beat, 7.0, 38, 1.0) for beat in (BRAAM1, CORR_HIT, FOREST_HIT, B(58), POWER)]
 tu += [N(B(bar), 3.9, near(CH[bar][0], 30, 43), 0.85) for bar in (30, 34, 38, 46, 50, 54, 60)]
 track('tuba', 'mayan_tuba', 'bass', tu)
 
@@ -307,19 +306,19 @@ track('drums_right', 'mayan_drums_right', 'drum', dr)
 # ================================================================ choir: a cluster, never a chord, until the hero turns it
 ch = []
 for bar in range(15, 18):
-    ch += [N(B(bar), 3.95, p, 0.35 + 0.05 * (bar - 15)) for p in (62, 63, 69)]
+    ch += [N(B(bar), 4.05, p, 0.6 + 0.05 * (bar - 15)) for p in (62, 63, 69)]
 for bar in range(18, 25):
-    ch += [N(B(bar), 3.95, p, 0.55 + 0.05 * (bar - 18)) for p in (62, 63, 66, 69)]
+    ch += [N(B(bar), 4.05, p, 0.72 + 0.03 * (bar - 18)) for p in (62, 63, 66, 69)]
 for bar in range(26, 42):
-    ch += [N(B(bar), 3.95, p, 0.7 + 0.01 * (bar - 26)) for p in (62, 63, 69)]
+    ch += [N(B(bar), 4.05, p, 0.78 + 0.01 * (bar - 26)) for p in (62, 63, 69)]
 for bar in range(42, 58):
-    ch += [N(B(bar), 3.95, p, 0.82) for p in (63, 66, 69, 74)]
+    ch += [N(B(bar), 4.05, p, 0.86) for p in (63, 66, 69, 74)]
 for bar in range(58, 62):
-    ch += [N(B(bar), 3.95, p, 0.9) for p in (62, 63, 69, 74)]
+    ch += [N(B(bar), 4.05, p, 0.92) for p in (62, 63, 69, 74)]
 for bar in range(62, 66):
-    ch += [N(B(bar), 3.95, p, 1.0) for p in (62, 66, 69, 74)]                 # D major: the cluster is gone, F# in the chord
-ch += [N(B(66), 15.9, p, 0.55) for p in (62, 69, 74)]
-ch += [N(B(70), 23.9, p, 0.35) for p in (62, 69, 74)]                  # an open fifth: no third, so the ending is calm in either mode
+    ch += [N(B(bar), 4.05, p, 1.0) for p in (62, 66, 69, 74)]                 # D major: the cluster is gone, F# in the chord
+ch += [N(B(66), 15.9, p, 0.8) for p in (62, 69, 74)]
+ch += [N(B(70), 23.9, p, 0.7) for p in (62, 69, 74)]                  # an open fifth: no third, so the ending is calm in either mode
 track('choir', 'mayan_choir', 'pad', ch)
 
 # ================================================================ places, calls and single sounds
@@ -336,11 +335,11 @@ def call(name, preset, t0, d, az, el, dist, **kw):
     track(name, f'env:{preset}', 'environment', [dict(t=float(t0), d=float(d), p=60, v=1.0)], spatial=sp, fade_in_s=0.04, fade_out_s=0.04, **kw)
 
 
-call('conch_1', 'mayan_conch', B(S_OPEN, 0.0), 8.0, 150, 0, 20.0)
+call('conch_1', 'mayan_conch', B(S_OPEN, 0.0), 5.0, 150, 0, 20.0)
 call('whistle_1', 'mayan_whistle', B(21, 0.0), 6.0, -110, 5, 16.0)
 call('whistle_2', 'mayan_whistle', B(30, 1.0), 6.0, 130, 5, 8.0)
 call('whistle_3', 'mayan_whistle', B(52, 0.0), 6.0, 160, 5, 4.0)
-call('conch_2', 'mayan_conch', B(S_ESCAPE, 0.0), 8.0, -150, 0, 12.0)
+call('conch_2', 'mayan_conch', B(S_ESCAPE, 0.0), 5.0, -150, 0, 12.0)
 
 
 def footfalls(name, preset, times, az, dist, vel=0.72, jitter=0.03, el=-15):
@@ -386,7 +385,7 @@ touches('brush_right', 'mayan_leaf_brush', [B(44, 2.5), B(47, 1.5), B(50, 3.5), 
 touches('branch_left', 'mayan_branch_whip', [B(45, 1.0), B(48, 3.0), B(51, 2.0), B(55, 0.5), B(59, 3.5)], -85, 0.9, 0.85)
 touches('branch_right', 'mayan_branch_whip', [B(42, 3.0), B(47, 0.0), B(50, 0.5), B(53, 0.5), B(57, 1.5), B(60, 0.0)], 85, 0.9, 0.85)
 touches('bark_scratch', 'mayan_bark_scratch', [B(49, 0.0), B(56, 1.0)], -80, 0.9, 0.9)
-touches('twig_snap', 'mayan_twig_snap', [B(44, 0.5), B(51, 3.5), B(57, 3.0)], 40, 1.2, 0.85)
+touches('twig_snap', 'mayan_twig_snap', [B(51, 3.5)], 40, 1.2, 0.85)
 touches('tree_crack', 'mayan_tree_crack', [B(46, 2.0), B(50, 2.0), B(54, 1.0), B(60, 2.0), B(63, 0.0)], 170, 7.0, 1.0)
 
 track('stone_door', 'sfx:mayan_stone_door', 'fx', [dict(t=B(16, 3.0), d=12.0, p=60, v=0.8)], spatial=dict(azimuth=0, elevation=10, distance=2.0, kind='spot', binaural=True))
@@ -395,11 +394,15 @@ track('collapse', 'sfx:mayan_rubble', 'fx', [dict(t=COLLAPSE, d=6.0, p=60, v=1.0
 track('final_slam', 'sfx:mayan_stone_slam', 'fx', [dict(t=CUT, d=10.0, p=60, v=1.0)], spatial=dict(azimuth=170, elevation=0, distance=4.0, kind='spot', binaural=True))
 for _t in tracks:
     if _t['name'] in ('stone_door', 'door_shut', 'final_slam'):
-        _t['dc_hp_hz'] = 90.0                           # sub-bass effects carry energy below 25 Hz that shows as stem drift
+        _t['dc_hp_hz'] = 90.0
+    if _t['name'] in ('run_left', 'run_right', 'guardian_far', 'guardian_near', 'collapse'):
+        _t['dc_hp_hz'] = 60.0
+    if _t['name'] == 'tree_crack':
+        _t['dc_hp_hz'] = 45.0                           # sub-bass effects carry energy below 25 Hz that shows as stem drift
 
 # ================================================================ the score
-dynamics = [[0, 0.25], [16, 0.3], [32, 0.4], [52, 0.5], [64, 0.55], [68, 0.6], [92, 0.9], [95, 0.9], [96, 0.15], [100, 1.0],
-            [160, 1.0], [164, 1.0], [228, 1.0], [244, 1.0], [264, 0.9], [268, 0.4], [276, 0.3], [296, 0.2], [300, 0.1]]
+dynamics = [[0, 0.45], [16, 0.45], [32, 0.5], [52, 0.55], [64, 0.6], [68, 0.65], [92, 0.85], [95, 0.85], [96, 0.5], [100, 1.0],
+            [160, 1.0], [164, 1.0], [228, 1.0], [244, 1.0], [264, 0.9], [268, 0.6], [276, 0.55], [296, 0.5], [300, 0.4]]
 sections = [dict(name='the_entry', start_bar=S_ENTRY, end_bar=8, energy=0.25), dict(name='the_relic_chamber', start_bar=S_CHAMBER, end_bar=17, energy=0.4),
             dict(name='the_opening', start_bar=S_OPEN, end_bar=25, energy=0.65), dict(name='the_corridors', start_bar=S_CORR, end_bar=41, energy=0.85),
             dict(name='the_forest', start_bar=S_FOREST, end_bar=57, energy=0.95), dict(name='the_escape', start_bar=S_ESCAPE, end_bar=69, energy=1.0),
