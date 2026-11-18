@@ -501,7 +501,7 @@ music-generator/
 ├── knowledgebase/        # facts about music and sound, each labelled with its source and status
 ├── templates/            # project, direction-sheet and score templates
 ├── video-mixer/          # scoring to picture: probe, context, direction, program mix, video gate, reel
-├── docs/                 # psychoacoustics, roughness, vocal tract, the Immersive 3.0 audit and plan, web player
+├── docs/                 # psychoacoustics, roughness, vocal tract, web player
 ├── projects/             # example projects (libraries, stems and renders are not committed)
 ├── assets/samples/       # demo MP3s
 └── tests/                # about 1,100 tests in 68 files, including a positive and a negative control per gate row
@@ -509,8 +509,7 @@ music-generator/
 
 Immersive 3.0 reading order: [`references/spatial/immersive-deliverables.md`](references/spatial/immersive-deliverables.md),
 [`references/spatial/immersive-spatial.md`](references/spatial/immersive-spatial.md),
-[`references/mixing/quality-gate.md`](references/mixing/quality-gate.md) (section 5b),
-[`docs/ENGINE-AUDIT-AND-IMMERSIVE-3-PLAN.md`](docs/ENGINE-AUDIT-AND-IMMERSIVE-3-PLAN.md).
+[`references/mixing/quality-gate.md`](references/mixing/quality-gate.md) (section 5b).
 
 ---
 
@@ -535,7 +534,7 @@ Immersive 3.0 reading order: [`references/spatial/immersive-deliverables.md`](re
   speech activity is presence, and several thresholds are starting values.
 * **Still open from the 3.0 plan:** a sample-rate setting (44.1 kHz is a constant in many places), a scene cache shared by
   all targets, a 9.1.6 layout, IAMF, binaural equalisation, a feedback-delay-network late field, field rotation,
-  and the vocal, SFX and ambience engine rewrites. See section 11 of the plan.
+  and the vocal, SFX and ambience engine rewrites.
 
 See [`references/workflow/troubleshooting-and-limits.md`](references/workflow/troubleshooting-and-limits.md) and
 [`docs/PSYCHOACOUSTICS.md`](docs/PSYCHOACOUSTICS.md) for more.
