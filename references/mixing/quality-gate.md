@@ -270,6 +270,19 @@ they do not see a part that drops out for two bars, which is what the per-file r
 `fold.mono` FAIL is a fact about the stereo master (something in that band is out of phase between its channels, or
 panned so hard that the sum loses it): narrow, re-pan or lower the widening of the part that lives there. A
 `fold.timbre` FAIL is a fact about the layout render: check the part's `spatial` place and the layout's `downmix`.
+
+**When the delivered file is a loudspeaker layout** (`--only immersive_7_1_2`, or a score whose first target is one),
+the gate measures that file and nothing it was not given. Three rows have a basis that is easy to get wrong, and each
+says in its detail which one it used:
+
+| Row | Basis on a multichannel delivery |
+|---|---|
+| `loudness` | the basis the master was levelled on: the delivered channels' BS.1770 LKFS when the target says `loudness.method: bs1770_layout`, otherwise the two-channel fold |
+| `true peak` | `delivery.true_peak` certifies every channel against the format's own ceiling; the peak of the two-channel fold is INFO, because a fold is a sum of channels and is not a delivery limit |
+| `master.dc` | the programme channels; the low-frequency channel is excluded, it carries the sub below the DC blocker's corner by design |
+
+`clipping`, `clicks`, `silence`, `dropout`, `delivery.channels` and `render.finite` are measured on every delivered
+channel, so a defect in one surround or height channel still fails with that channel named.
 A file is matched to its target by its file name before its channel count, because two layouts can share a count.
 
 The `adm_bw64` target is checked by those rows and never by `delivery.format`: its channel count is the piece's, not
