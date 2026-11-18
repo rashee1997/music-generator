@@ -8,7 +8,7 @@ You are working on the `music-generator` skill. Repository `rashee1997/music-gen
 
 ## Read first, in this order
 1. `AGENTS.md` (the rules are binding, section 1 and 7 especially) and `SKILL.md`.
-2. `projects/palace_chase/reports/mix_profile.md`: a real `cProfile` of a 180 s, 31-stem piece rendered on the ambisonic bus. It is the evidence for part B. Do not trust any earlier synthetic-fixture report that ranks loudness metering first: metering is 1 % of the real render.
+2. `docs/mix_profile_palace.md`: a real `cProfile` of a 180 s, 31-stem piece rendered on the ambisonic bus. It is the evidence for part B. Do not trust any earlier synthetic-fixture report that ranks loudness metering first: metering is 1 % of the real render.
 3. `references/mixing/quality-gate.md` (sections 3c, 5b), `references/spatial/immersive-deliverables.md`, `scripts/render_targets.py`, `scripts/pipeline.py` (`stage5_mix_and_master`, stage 6, the extra-format loop after certification, `--only`/`--targets`), `scripts/quality_gate.py` (the `fold.*` rows, `delivery.*` rows, `master.dc`, clipping, true peak), `scripts/spatial_engine/render.py` and `hoa.py`.
 
 ## The problem, as the user stated it
