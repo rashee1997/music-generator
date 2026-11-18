@@ -136,7 +136,7 @@ for bar in range(S_CORR, S_ESCAPE + 4):                                         
         r = near(chord_at(bar, off)[0], 31, 42)
         pl += [N(B(bar, off), d, r, v), N(B(bar, off), d, r + 12, v - 0.06)]
 pl += [N(B(66), 4.0, 38, 1.0), N(B(66), 4.0, 50, 0.95)]
-pl += [N(B(bar), 3.9 if bar < 75 else 2.0, 38, 0.7 - 0.015 * (bar - 70)) for bar in range(70, 76)]
+pl += [N(B(bar), 3.9 if bar < 75 else 2.0, 33, 0.7 - 0.015 * (bar - 70)) for bar in range(70, 76)]
 track('piano_low', 'mayan_piano_low', 'bass', pl)
 
 CELLS = [[0, 2, 3, 2], [0, 3, 2, 3], [0, 2, 0, 3], [2, 3, 2, 0], [0, 1, 2, 3], [3, 2, 1, 2]]       # indices into [root, third, fifth, octave]
@@ -407,19 +407,21 @@ sections = [dict(name='the_entry', start_bar=S_ENTRY, end_bar=8, energy=0.25), d
             dict(name='the_opening', start_bar=S_OPEN, end_bar=25, energy=0.55), dict(name='the_corridors', start_bar=S_CORR, end_bar=41, energy=0.85),
             dict(name='the_forest', start_bar=S_FOREST, end_bar=57, energy=0.95), dict(name='the_escape', start_bar=S_ESCAPE, end_bar=65, energy=1.0),
             dict(name='the_release', start_bar=S_RELEASE, end_bar=69, energy=0.45), dict(name='the_aftermath', start_bar=S_AFTER, end_bar=75, energy=0.2)]
-def no_retrigger(name):
+def no_retrigger(name, gap=0.004):
     """A key struck again while its last strike still sounds restarts the voice and clicks: end each note before the next one of the same pitch."""
     for tr in tracks:
         if tr['name'] == name:
             last = {}
             for n in sorted(tr['notes'], key=lambda q: (q['p'], q['t'])):
-                if n['p'] in last and last[n['p']]['t'] + last[n['p']]['d'] > n['t'] - 0.004:
-                    last[n['p']]['d'] = max(0.05, n['t'] - 0.004 - last[n['p']]['t'])
+                if n['p'] in last and last[n['p']]['t'] + last[n['p']]['d'] > n['t'] - gap:
+                    last[n['p']]['d'] = max(0.05, n['t'] - gap - last[n['p']]['t'])
                 last[n['p']] = n
 
 
-for _name in ('piano_low', 'bass_drum', 'snare', 'timpani', 'drums_left', 'drums_right'):
+for _name in ('bass_drum', 'snare', 'timpani', 'drums_left', 'drums_right'):
     no_retrigger(_name)
+for _name in ('piano', 'piano_low', 'celli', 'violas', 'violins_staccato', 'trombones', 'tuba', 'horns', 'harp'):
+    no_retrigger(_name, 0.06)                                                                            # the humanizer moves a note by a few ms: a pitched key needs room to release first
 
 
 def swell(name, lo=0.76):
