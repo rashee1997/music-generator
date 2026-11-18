@@ -23,9 +23,9 @@
    ],
    "harmonics": 2,
    "rolloff": 0.45,
-   "noise": 0.28,
+   "noise": 0.15,
    "subharmonic": 0.0,
-   "attack": 0.3,
+   "attack": 0.5,
    "release": 0.25
   }
  },
