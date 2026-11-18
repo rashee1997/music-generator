@@ -1010,9 +1010,17 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
             idx_end = max(idx_start + 1, k - int(8.0 / 0.5))
             tr = next((t for t in score.get('tracks', []) if t.get('name') == name), {})
             if tr.get('notes') and not tr.get('full_length'):      # a bed that enters late is only judged where it plays
+                clock = None
+                if score.get('tempo_points'):       # the renderer plays the tempo map, so a flat bpm looked at the wrong place
+                    try:
+                        import humanize as _hz
+                        clock = _hz.tempo_map_for(score, seed=score.get('seed', 7))
+                    except Exception:
+                        clock = None
                 bd = 60.0 / float(score.get('bpm', 90.0))
-                s0 = min(float(nt['t']) for nt in tr['notes']) * bd
-                s1 = max(float(nt['t']) + float(nt.get('d', 1.0)) for nt in tr['notes']) * bd
+                _sec = (lambda beats: float(clock.sec(beats))) if clock is not None else (lambda beats: beats * bd)
+                s0 = _sec(min(float(nt['t']) for nt in tr['notes']))
+                s1 = _sec(max(float(nt['t']) + float(nt.get('d', 1.0)) for nt in tr['notes']))
                 idx_start = max(idx_start, int((s0 + 3.0) / 0.5))   # 2 s fade-in + humanize drift
                 idx_end = min(idx_end, int((s1 - 3.0) / 0.5))
             if idx_end > idx_start + 4:

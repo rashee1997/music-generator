@@ -93,6 +93,20 @@ class AmbientBedJudgesEachStemForWhatItIs(unittest.TestCase):
         rows = self.rows(bed=bed)
         self.assertIn('FAIL', [r[0] for r in rows if r[1] == 'ambient_bed'])
 
+    def test_a_late_bed_is_judged_where_the_tempo_map_plays_it_not_at_a_flat_bpm(self):
+        """A bed that enters at beat 32 plays at 20 s on this map (80 BPM then 120), not at 32 s (flat 60 BPM): judging it from the flat
+        position counted 12 s of its own silence as a dropout."""
+        t0 = 20 * SR
+        bed = np.zeros(self.N)
+        bed[t0:] = self.rng.standard_normal(self.N - t0)
+        bed = self.db(bed, -62)
+        mixer.STATE['processed'] = dict(lead=self.db(np.sin(2 * np.pi * 440 * np.arange(self.N) / SR), -40), bed=bed)
+        score = {'bpm': 60, 'seed': 3, 'tempo_points': [[0, 96], [32, 96], [32.01, 120]],
+                 'tracks': [{'name': 'lead', 'role': 'melody', 'instrument': 'flute'},
+                            {'name': 'bed', 'role': 'environment', 'instrument': 'env:bed', 'notes': [{'t': 32.0, 'd': 40.0, 'p': 60, 'v': 1.0}]}]}
+        rows = [r for r in qg.ambient_fusion_rows(score, None, sr=SR) if r[1] == 'ambient_bed']
+        self.assertNotIn('drops out', ' '.join(r[2] for r in rows), rows)
+
     def test_sparse_calls_are_judged_as_events(self):
         calls = np.zeros(self.N)
         for t0 in range(10, 38, 4):                                   # a call every 4 s, 0.3 s long, exact silence between

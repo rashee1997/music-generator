@@ -415,37 +415,49 @@
       "space": "palace_room"
     },
     "run_left": {
-      "azimuth": -20,
+      "azimuth": -50,
       "elevation": -15,
       "distance": 1.6,
       "space": "palace_room"
     },
     "run_right": {
-      "azimuth": 20,
+      "azimuth": 50,
       "elevation": -15,
       "distance": 1.6,
       "space": "palace_room"
     },
     "leaf_left": {
-      "azimuth": -20,
+      "azimuth": -55,
       "elevation": -12,
       "distance": 1.5,
       "space": "palace_room"
     },
     "leaf_right": {
-      "azimuth": 20,
+      "azimuth": 55,
       "elevation": -12,
       "distance": 1.5,
       "space": "palace_room"
     },
-    "guardian_far": {
-      "azimuth": 180,
+    "guardian_far_a": {
+      "azimuth": 175,
       "elevation": -10,
       "distance": 8.0,
       "space": "palace_room"
     },
-    "guardian_near": {
-      "azimuth": 165,
+    "guardian_far_b": {
+      "azimuth": -175,
+      "elevation": -10,
+      "distance": 8.0,
+      "space": "palace_room"
+    },
+    "guardian_near_a": {
+      "azimuth": 160,
+      "elevation": -10,
+      "distance": 4.5,
+      "space": "palace_room"
+    },
+    "guardian_near_b": {
+      "azimuth": -160,
       "elevation": -10,
       "distance": 4.5,
       "space": "palace_room"
