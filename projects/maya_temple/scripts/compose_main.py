@@ -319,7 +319,7 @@ track('twig_snap', 'sfx:maya_twig_snap', 'fx', [dict(t=B(8, 3.0), d=2.6, p=60, v
 track('stone_door', 'sfx:maya_stone_door', 'fx', [dict(t=B(21, 1.0), d=12.0, p=60, v=0.9)], spatial=dict(azimuth=0, elevation=25, distance=6.0, kind='spot', binaural=True))
 track('stone_slam', 'sfx:maya_stone_slam', 'fx', [dict(t=BRAAM2, d=10.0, p=60, v=1.0), dict(t=AWAKE, d=10.0, p=60, v=0.8), dict(t=SLAM, d=10.0, p=60, v=1.0)],
       spatial=dict(azimuth=0, elevation=0, distance=5.0, kind='spot', binaural=True))
-track('heartbeat', 'sfx:heartbeat', 'fx', [dict(t=B(2) + k * 1.4, d=1.2, p=60, v=0.32 + 0.012 * k) for k in range(18)],
+track('heartbeat', 'sfx:heartbeat', 'fx', [dict(t=B(2) + k * 1.4, d=0.85, p=60, v=0.32 + 0.012 * k) for k in range(18)],
       spatial=dict(azimuth=45, elevation=-10, distance=0.8, kind='spot', binaural=True))
 track('risers', 'sfx:riser', 'fx', [dict(t=beat - 4.0, d=4.0, p=60, v=0.7) for beat in (DESCENT, BRAAM2, AWAKE, RUN)],
       spatial=dict(azimuth=0, elevation=60, distance=8.0, kind='bed'))
