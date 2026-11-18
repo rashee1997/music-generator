@@ -16,7 +16,7 @@
   "duration_s": 116.9,
   "in_point_s": 0.0,
   "out_point_s": 116.9,
-  "ending": "cut",
+  "ending": "hard_out",
   "feel": [
     "tense",
     "oppressive",

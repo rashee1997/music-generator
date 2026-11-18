@@ -59,7 +59,7 @@ sheet.update(
          'turn the story three times with a braam each: the door (bar 21), the awakening (bar 33), the run (bar 45)',
          'let the ritual sounds be the unknown: a whistle that is not a bird, a conch that is not a horn, an echo that is not a voice'],
     story='A walker comes to the foot of a temple the forest has swallowed. A twig breaks; the night insects stop. The steps up are answered by a chirp that runs away down the stairs. A stone door opens by itself. In the passage the pulse never stops; a slab drops behind them; for two beats there is nothing. Then the temple wakes, drums on every side, a whistle that sounds like a scream, and the run begins. The door shuts and the music is cut.',
-    duration_s=end_s, in_point_s=0.0, out_point_s=end_s, ending='cut',
+    duration_s=end_s, in_point_s=0.0, out_point_s=end_s, ending='hard_out',
     feel=['tense', 'oppressive', 'ancient', 'relentless', 'vast', 'ritual'], avoid_feel=['comic', 'cosy', 'serene', 'meditative', 'cheerful', 'new-age cliche'],
     sections=sections,
     motifs=[dict(name='the semitone', first_at_s=0.0, shape='D against Eb: a minor second held, flickered and stacked', returns='in the ostinato cells, the high strings, the choir cluster and the horns\' theme; the last chord keeps it'),

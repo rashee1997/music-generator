@@ -47,6 +47,8 @@ for b, c in zip(range(33, 45), [(D, 'm'), (Eb, 'M'), (Bb, 'M'), (C, 'M')] * 3):
     CH[b] = c
 for b, c in zip(range(45, 53), [(D, 'm'), (Eb, 'M')] * 4):
     CH[b] = c
+for b in (50, 51, 52):
+    CH[b] = (D, 'm')                        # the last bars close on D: the door shuts home, and the cut follows
 
 
 def near(pc, lo, hi):
@@ -111,24 +113,25 @@ SLAM = B(51)             # the door shuts: the music is cut
 CUT = B(51, 2.0)
 
 # ================================================================ strings
-bs = [N(B(1) + 8.0 * k - (0.4 if k else 0.0), 8.4, 26, 0.34 + 0.03 * k) for k in range(4)]          # the D pedal, re-struck every 8 beats
+bs = [N(B(1) + 8.0 * k - (0.4 if k else 0.0), 8.4, 26, 0.62 + 0.03 * k) for k in range(4)]          # the D pedal, re-struck every 8 beats
 for bar in range(9, 21):
-    bs.append(N(B(bar), 4.06, near(CH[bar][0], 26, 37), 0.5 + 0.025 * (bar - 9)))
+    bs.append(N(B(bar), 4.06, near(CH[bar][0], 26, 37), 0.72 + 0.02 * (bar - 9)))
 for bar in range(21, 32):
-    bs.append(N(B(bar), 4.06, near(CH[bar][0], 26, 37), min(1.0, 0.75 + 0.02 * (bar - 21))))
+    bs.append(N(B(bar), 4.06, near(CH[bar][0], 26, 37), min(1.0, 0.88 + 0.012 * (bar - 21))))
 bs.append(N(B(32), 2.0, 26, 0.95))
 for bar in range(33, 51):
     bs.append(N(B(bar), 4.06, near(CH[bar][0], 26, 37), 0.95))
 bs.append(N(B(51), 2.0, 26, 1.0))
 track('basses', 'maya_basses', 'bass', bs)
 
-ce = ostinato(range(5, 9), 8, 0.32, 0.5, 38, 49, drop=0.25)
-ce += ostinato(range(9, 17), 8, 0.5, 0.72, 38, 49)
+ce = ostinato(range(5, 9), 8, 0.58, 0.68, 38, 49, drop=0.25)
+ce += ostinato(range(9, 17), 8, 0.66, 0.78, 38, 49)
 ce += ostinato(range(17, 21), 16, 0.62, 0.8, 38, 49)
 ce += ostinato(range(21, 32), 16, 0.78, 0.95, 38, 49)
 ce += ostinato([32], 16, 0.95, 1.0, 38, 49, stop_at=HELD)
 ce += ostinato(range(33, 51), 16, 0.95, 1.0, 38, 49)
 ce += ostinato([51], 16, 1.0, 1.0, 38, 49, stop_at=CUT)
+ce = [dict(n, p=n['p'] - 1) if (n['t'] >= B(50) and n['p'] % 12 == Eb) else n for n in ce]          # no flat second in the last two bars
 track('celli', 'maya_celli_ostinato', 'ostinato', ce)
 
 va = []
@@ -139,18 +142,20 @@ for bar in list(range(17, 32)) + list(range(33, 51)):
     for k in pos:
         va.append(N(B(bar, k * 0.25), 0.2, base + (7 if k in (7, 15) else 12 if k in (6, 14) else 1 if k == 2 else 0),
                     (0.7 if bar >= 33 else 0.45) + rng.normal(0, 0.03)))
+va = [dict(n, p=n['p'] - 1) if (n['t'] >= B(50) and n['p'] % 12 == Eb) else n for n in va]
 track('violas', 'maya_violas_ostinato', 'arp', va)
 
 vt = []
 for bar in range(3, 9):
-    vt.append(N(B(bar), 3.95, 86 if bar % 2 else 87, 0.22 + 0.03 * (bar - 3)))
+    vt.append(N(B(bar), 3.95, 86 if bar % 2 else 87, 0.5 + 0.03 * (bar - 3)))
 for bar in range(9, 21):
     step = (bar - 9) // 4
-    vt += [N(B(bar), 3.95, 86 + step, 0.4 + 0.015 * (bar - 9)), N(B(bar), 3.95, 87 + step, 0.36 + 0.015 * (bar - 9))]
+    vt += [N(B(bar), 3.95, 86 + step, 0.58 + 0.015 * (bar - 9)), N(B(bar), 3.95, 87 + step, 0.55 + 0.015 * (bar - 9))]
 for bar in range(21, 32):
-    vt += [N(B(bar), 3.95, 85 + (bar % 3), 0.55 + 0.02 * (bar - 21)), N(B(bar), 3.95, 87, 0.5 + 0.02 * (bar - 21))]
-for bar in range(33, 51):
+    vt += [N(B(bar), 3.95, 85 + (bar % 3), 0.55 + 0.02 * (bar - 21)), N(B(bar), 3.95, 86 + (bar % 3), 0.5 + 0.02 * (bar - 21))]
+for bar in range(33, 50):
     vt += [N(B(bar), 3.95, 86, 0.8), N(B(bar), 3.95, 87, 0.78)]
+vt += [N(B(50), 3.95, 86, 0.9), N(B(50), 3.95, 81, 0.88)]
 track('violins_tremolo', 'maya_violins_tremolo', 'pad', vt)
 
 vs = [N(B(bar), 3.95, 74 + (bar - 33), 0.55 + 0.035 * (bar - 33)) for bar in range(33, 45)]               # the rising device
@@ -176,7 +181,7 @@ track('horns', 'maya_horns', 'melody', hn)
 tb_sus = []
 for beat, dur in ((DESCENT, 7.0), (BRAAM2, 7.0), (AWAKE, 7.0), (RUN, 7.0)):
     tb_sus += [N(beat, dur, p, 1.0) for p in (50, 57, 62, 63)]
-tb_sus += [N(SLAM, 2.0, p, 1.0) for p in (50, 57, 62, 63)]
+tb_sus += [N(SLAM, 2.0, p, 1.0) for p in (50, 57, 62)]
 track('trombones_sus', 'maya_trombones_sus', 'pad', tb_sus)
 
 tb = []
@@ -204,12 +209,14 @@ for bar in range(3, 9):                                                         
     ti += [tp(bar, 0, 0.4, 0.4 + 0.02 * bar), tp(bar, 0.75, 0.4, 0.28 + 0.02 * bar)]
 for bar in range(9, 21):
     ti += [tp(bar, 0, 0.4, 0.6 + 0.02 * (bar - 9)), tp(bar, 0.75, 0.4, 0.42), tp(bar, 2, 0.4, 0.5), tp(bar, 2.75, 0.4, 0.36)]
-for bar in (20, 28, 32 - 0):                                                    # rolls into the braams
-    if bar == 32:
-        continue
-    ti += [tp(bar, 2.0 + 0.25 * k, 0.2, 0.5 + 0.045 * k) for k in range(8)]
+ROLLS = (20, 28)                                                                # rolls into the braams replace the pattern in their last two beats
+ti = [n for n in ti if not any(B(r, 2.0) <= n['t'] < B(r + 1) for r in ROLLS)]
+for r in ROLLS:
+    ti += [tp(r, 2.0 + 0.25 * k, 0.2, 0.45 + 0.5 * (k / 7.0) ** 1.6 + (0.04 if k % 2 == 0 else -0.04)) for k in range(8)]
 for bar in range(21, 32):
     for off, v in ((0, 0.95), (1.5, 0.7), (3, 0.8)):
+        if bar in (28,) and off >= 2:
+            continue
         ti.append(tp(bar, off, 0.4, v))
 ti += [tp(32, 0, 0.4, 0.9), tp(32, 1.0, 0.4, 0.7)]
 for bar in range(33, 51):                                                       # 3+3+2 in eighths: the temple's pulse
@@ -221,10 +228,11 @@ ti += [tp(51, 0, 0.6, 1.0)]
 track('timpani', 'maya_timpani', 'drum', ti)
 
 bd = [N(beat, 1.0, 48, 1.0) for beat in (DESCENT, BRAAM2, AWAKE, RUN, SLAM)]
+BRAAMS = {DESCENT, BRAAM2, AWAKE, RUN, SLAM}
 for bar in range(23, 32):
-    bd += [N(B(bar, o), 1.0, 48, v) for o, v in ((0, 0.6 + 0.03 * (bar - 23)), (2.0, 0.45))]
+    bd += [N(B(bar, o), 1.0, 48, v) for o, v in ((0, 0.6 + 0.03 * (bar - 23)), (2.0, 0.45)) if B(bar, o) not in BRAAMS]
 for bar in range(34, 51):
-    bd += [N(B(bar, o), 1.0, 48, v) for o, v in ((0, 0.9), (1.5, 0.7), (3.0, 0.8))]
+    bd += [N(B(bar, o), 1.0, 48, v) for o, v in ((0, 0.9), (1.5, 0.7), (3.0, 0.8)) if B(bar, o) not in BRAAMS]
 track('bass_drum', 'maya_bass_drum', 'drum', bd)
 
 cy = [N(beat - 4.0, 4.0, 50, 0.7) for beat in (DESCENT, BRAAM2, AWAKE, RUN)] + [N(beat, 5.0, 59, 0.6) for beat in (DESCENT, AWAKE, RUN)]
@@ -258,8 +266,9 @@ for bar in range(25, 32):
     ch += [N(B(bar), 3.95, p, 0.55 + 0.04 * (bar - 25)) for p in (62, 63, 69)]
 for bar in range(33, 45):
     ch += [N(B(bar), 3.95, p, 0.7 + 0.01 * (bar - 33)) for p in (62, 63, 66, 69)]
-for bar in range(45, 51):
+for bar in range(45, 50):
     ch += [N(B(bar), 3.95, p, 0.95) for p in (63, 66, 69, 74)]
+ch += [N(B(50), 3.95, p, 0.95) for p in (62, 69, 74)]
 track('choir', 'maya_choir', 'pad', ch)
 
 
@@ -289,7 +298,7 @@ call('chirp_2', 'maya_chirp', B(17, 1.0), 3.0, 20, 10, 7.0)
 call('chirp_3', 'maya_chirp', B(23, 2.0), 3.0, -20, 10, 7.0)
 call('chirp_4', 'maya_chirp', B(39, 2.0), 3.0, 0, 12, 6.0)
 call('jaguar_far', 'maya_jaguar', B(5, 2.5), 5.4, 150, 0, 16.0)
-call('jaguar_near', 'maya_jaguar', B(15, 2.0), 8.0, -120, 0, 6.0)
+call('jaguar_near', 'maya_jaguar', B(15, 2.0), 7.9, -120, 0, 6.0)
 
 
 def steps(name, times, az, dist, vel=0.7, jitter=0.03):
@@ -311,10 +320,9 @@ track('twig_snap', 'sfx:maya_twig_snap', 'fx', [dict(t=B(8, 3.0), d=2.6, p=60, v
 track('stone_door', 'sfx:maya_stone_door', 'fx', [dict(t=B(21, 1.0), d=12.0, p=60, v=0.9)], spatial=dict(azimuth=0, elevation=0, distance=6.0, kind='spot', binaural=True))
 track('stone_slam', 'sfx:maya_stone_slam', 'fx', [dict(t=BRAAM2, d=10.0, p=60, v=1.0), dict(t=AWAKE, d=10.0, p=60, v=0.8), dict(t=SLAM, d=10.0, p=60, v=1.0)],
       spatial=dict(azimuth=0, elevation=0, distance=5.0, kind='spot', binaural=True))
-track('rattle', 'sfx:maya_rattle', 'fx', [dict(t=t, d=3.0, p=60, v=0.7) for t in (B(13, 2), B(19, 1), B(35, 1), B(39, 3), B(43, 2), B(46, 0.5), B(49, 2))],
+track('rattle', 'sfx:maya_rattle', 'fx', [dict(t=t, d=3.0, p=60, v=0.7) for t in (B(35, 1), B(38, 2), B(41, 0), B(43, 0.5))],
       spatial=dict(azimuth=70, elevation=0, distance=4.0, kind='spot', binaural=True))
-track('drips', 'sfx:water_drip', 'fx', [dict(t=t, d=1.5, p=60, v=0.45) for t in (B(22, 3), B(24, 1), B(25, 2), B(27, 0), B(28, 3), B(30, 1), B(31, 3), B(32, 3))],
-      spatial=dict(azimuth=-40, elevation=15, distance=7.0, kind='spot', binaural=True))
+env('drips', 'maya_drips', B(22), B(31, 2.0) - B(22), fade_in_s=2.0, fade_out_s=2.0)
 track('heartbeat', 'sfx:heartbeat', 'fx', [dict(t=B(2) + k * 1.4, d=1.2, p=60, v=0.32 + 0.012 * k) for k in range(18)],
       spatial=dict(azimuth=0, elevation=-5, distance=0.8, kind='spot', binaural=True))
 track('risers', 'sfx:riser', 'fx', [dict(t=beat - 4.0, d=4.0, p=60, v=0.7) for beat in (DESCENT, BRAAM2, AWAKE, RUN)],
@@ -323,10 +331,10 @@ track('booms', 'sfx:boom', 'fx', [dict(t=beat, d=2.0, p=60, v=0.9) for beat in (
       spatial=dict(azimuth=0, elevation=0, distance=3.0, kind='bed'))
 for _t in tracks:
     if _t['name'] in ('heartbeat', 'booms', 'risers', 'stone_slam', 'stone_door'):
-        _t['dc_hp_hz'] = 30.0                          # sub-bass effects carry energy below 25 Hz that shows as stem drift
+        _t['dc_hp_hz'] = 45.0                          # sub-bass effects carry energy below 25 Hz that shows as stem drift
 
 # ================================================================ the score
-dynamics = [[0, 0.3], [32, 0.45], [64, 0.6], [80, 0.75], [100, 0.85], [124, 0.95], [126, 0.2], [128, 1.0], [160, 1.0], [176, 1.0], [199, 1.0], [200, 0.3]]
+dynamics = [[0, 0.3], [32, 0.45], [64, 0.6], [80, 0.75], [100, 0.85], [124, 0.95], [126, 0.2], [128, 1.0], [160, 1.0], [176, 1.0], [199, 1.0], [202, 1.0]]
 sections = [dict(name='the_approach', start_bar=1, end_bar=8, energy=0.35), dict(name='the_stairs', start_bar=9, end_bar=20, energy=0.6),
             dict(name='the_descent', start_bar=21, end_bar=32, energy=0.8), dict(name='the_awakening', start_bar=33, end_bar=44, energy=1.0),
             dict(name='the_run', start_bar=45, end_bar=52, energy=1.0)]
