@@ -323,6 +323,7 @@ for bar in range(S_CORR + 2, S_ESCAPE + 4):                                     
 track('snare', 'mayan_bass_drum', 'drum', sn)
 
 cy = [N(beat - 3.0, 3.0, 50, 0.7) for beat in (CORR_HIT, FOREST_HIT, POWER)] + [N(beat, 4.0, 59, 0.6) for beat in (BRAAM1, CORR_HIT, FOREST_HIT, B(58), POWER)]        # every swell lands in a section that also holds a hit
+cy += [N(BRAAM1, 4.0, 60, 1.0), N(B(21), 4.0, 50, 0.9), N(B(23), 4.0, 59, 0.95), N(B(34), 4.0, 59, 0.9), N(B(38), 4.0, 59, 0.85)]        # the opening and the corridors keep up with the sections around them
 cy += [N(CUT, 4.0, 60, 0.9), N(B(46, 0.0), 3.0, 59, 0.6), N(B(50, 0.0), 3.0, 59, 0.6), N(B(54, 0.0), 3.0, 59, 0.6)]
 track('cymbals', 'mayan_cymbals', 'texture', cy)
 
