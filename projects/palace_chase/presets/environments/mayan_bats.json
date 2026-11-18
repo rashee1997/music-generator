@@ -7,7 +7,7 @@
       "name": "roost_calls",
       "primitive": "animal_call",
       "kind": "spot",
-      "gain_db": -24.0,
+      "gain_db": -30.0,
       "call": "bat_social",
       "individuals": 3,
       "bouts_per_min": 9.0,

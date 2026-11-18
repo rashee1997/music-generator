@@ -174,7 +174,7 @@ bs = [N(B(1), 16.3, 26, 0.7), N(B(5), 16.3, 26, 0.72), N(B(9), 16.3, 26, 0.75), 
 bs += [N(B(bar), 4.0, near(chord_at(bar, 0)[0], 26, 37), 0.85 + 0.015 * (bar - 18)) for bar in range(18, 25)]
 bs += [N(B(bar), 4.06, near(chord_at(bar, 0)[0], 26, 37), 0.9) for bar in range(S_CORR, 62)]
 bs += [N(B(bar), 4.06, near(chord_at(bar, 0)[0], 26, 37), 0.95) for bar in range(62, 66)]
-bs += [N(B(66), 16.3, 26, 0.8), N(B(70), 16.3, 26, 0.7), N(B(74), 8.0, 26, 0.65)]
+bs += [N(B(66), 16.3, 26, 0.8), N(B(70), 16.3, 38, 0.7), N(B(74), 8.0, 38, 0.65)]        # the aftermath is thin: a held D1 alone has all its partials inside one critical band and reads as rough, so the basses move up an octave there
 track('basses', 'mayan_basses', 'bass', bs)
 
 ce = []
