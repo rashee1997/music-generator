@@ -228,6 +228,13 @@ is printed; the render is not silently accepted.
 crest, mono fold and correlation side by side. That is a measurement. It is not a listening test, and no
 row in that table by itself proves the mix sounds better.
 
+**The 3-D mix.** `python scripts/helpers/bench_mix.py` times `HoaBus.field()` — the ambisonic mix a piece on
+`immersive.engine: "hoa_bus"` runs — and prints the reflections, the encoder and the late field as shares of it,
+from a space preset's own room (`--space`, `--seconds`, `--sources`, `--profile`). `docs/mix_profile_palace.md` is
+the same measurement on a real 180 s render: 64 % of the run was the mix, and 715 s of that was the reflection
+loop. Change that loop only with this bench before and after, and with `tests/test_immersive_v2.py` green: it
+pins every tap's delay, level and spectrum against the per-tap loop the faster path replaced.
+
 ## 9. Spotify Pedalboard DSP Architecture & Broadcast Mastering
 
 The mixing engine ([`scripts/mixer.py`](../../scripts/mixer.py)) uses Spotify's **Pedalboard** library for stem filtering, dynamics and master limiting:

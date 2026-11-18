@@ -35,9 +35,16 @@ from scipy import signal
 from . import trajectory
 
 C = 343.0
+ABS_FIR_TAPS = 129                      # room.absorption_fir's own length: a tap's absorption filter is never longer
 IN_RAM_BYTES = 768 * 1024 * 1024       # a longer field is kept in a temporary file instead of in memory
 BLOCK = 1 << 18
-ROWS = 1 << 13                          # rows of the field written at a time (36 float32 columns: about 1 MB)
+# Rows of the field written at a time. Measured on a 90 s source at order 5 (36 columns): 8192 rows 0.95 s per
+# encoder pass, 65536 rows 0.49 s, 131072 rows 0.51 s, 262144 rows 0.93 s. The pass is memory-bound, and a block
+# that small spent most of its time on the 36-column temporary; 65536 rows is about 9 MB of temporary.
+ROWS = 1 << 16
+# How much of one source's tap signals are held at once. Holding them turns one bus pass per tap into one pass per
+# group (see encode_many); the cap keeps a long piece with many taps from trading a saved pass for an allocation.
+SIGNAL_BUDGET = 256 * 1024 * 1024
 SPAN_LEAD_S = 0.25                     # the air filter is zero-phase: it rings this long before a source's first sample
 SPAN_PAD_S = 1.0                       # silence after a source's last sample that its reflections and air filter can still fill
 SILENCE = 1e-7                         # a sample below this is no signal
@@ -89,6 +96,103 @@ def encode(bus, s, g):
         i = np.minimum(at.astype(np.int64), len(g) - 2)
         fr = np.clip(at - i, 0.0, 1.0).astype(np.float32)[:, None]
         bus[a:b] += s[a:b, None] * (g[i] * (1.0 - fr) + g[i + 1] * fr)
+
+
+_ABS_CACHE = {}                          # (surface coefficients, transform size, rate) -> absorption spectrum
+_ABS_CACHE_MAX = 256                     # a room has a handful of surface combinations; this only bounds a leak
+
+
+def _group_size(count, n, budget=SIGNAL_BUDGET):
+    """How many signals of `n` samples are held at once: at least one, at most `count`."""
+    return max(1, min(int(count), int(budget) // max(int(n) * 4, 1)))
+
+
+def _absorption_response(coeffs, size, sr):
+    """The room's absorption FIR as a spectrum at `size` points, kept per (coefficients, size, rate).
+
+    A room's taps share their coefficients: one image-source tap is two side walls, the next is a wall and the
+    floor, and every source plays in the same room for the whole piece. Designing the filter and transforming it
+    once per distinct surface combination is what makes a tap cost one multiply instead of a filter design.
+    """
+    key = (tuple(round(float(c), 9) for c in coeffs), int(size), int(sr))
+    got = _ABS_CACHE.get(key)
+    if got is None:
+        from spatial_hrtf import room
+        got = np.fft.rfft(room.absorption_fir(np.asarray(coeffs, float), sr=sr), int(size))
+        if len(_ABS_CACHE) >= _ABS_CACHE_MAX:
+            _ABS_CACHE.clear()
+        _ABS_CACHE[key] = got
+    return got
+
+
+def tap_signals(raw, taps, sr, temp_c, rh, physics=True, budget=SIGNAL_BUDGET):
+    """Yield (signals (n, T) float32, the T taps) for the reflection taps of a still source, in groups.
+
+    A tap is a delay, a direction, a distance and a material. Rendered one at a time that is a 129-tap
+    `lfilter` for the absorption, a 1025-tap FFT convolution for the air and its own 36-column pass over the
+    field: about 365 000 forward transforms and 300 write passes in a 180 s piece, which was 715 s of a 907 s
+    mix (`docs/mix_profile_palace.md`).
+
+    The source's spectrum is taken once. Each tap is then one multiply by its own response - the absorption
+    filter (the room's own `absorption_fir`, exactly), the air absorption at that tap's path (ISO 9613-1
+    applied as the gain it is, rather than through a 1025-tap approximation of it) and spherical spreading
+    1/distance - and one inverse transform; the delay is the sample offset the tap's signal is written at.
+    A phase ramp in the frequency domain is the same shift and costs a full complex exponential per tap,
+    which was most of what was left. `size` is padded by the longest delay and the filter so nothing wraps.
+
+    The taps come back grouped so that `encode_many` can add a group to the field in one pass: the field is
+    memory-bound, so a pass per tap cost about ten times a pass per source. `budget` is how many bytes of tap
+    signals a group may hold; a group is never empty, whatever the length.
+
+    `physics` off is the room's `path_physics: false`: level and air are left out and only the delay and the
+    material colour the tap, exactly as the per-tap loop did.
+    """
+    import airabs
+    from scipy.fft import next_fast_len
+
+    n = len(raw)
+    delays = [int(round(max(0.0, float(t.get('delay_ms', 0.0))) / 1000.0 * sr)) for t in taps]
+    keep = [(t, d) for t, d in zip(taps, delays) if 0 <= d < n]
+    if not keep:
+        return
+    size = int(next_fast_len(n + max(d for _, d in keep) + ABS_FIR_TAPS, real=True))
+    spec = np.fft.rfft(np.asarray(raw, dtype=np.float64), size)
+    freqs = np.fft.rfftfreq(size, 1.0 / float(sr))
+    group = _group_size(len(keep), n, budget)
+    for start in range(0, len(keep), group):
+        chunk = keep[start:start + group]
+        out = np.zeros((n, len(chunk)), np.float32)
+        for j, (tap, d) in enumerate(chunk):
+            h = _absorption_response(tap['coeffs'], size, sr).copy()
+            dist = float(tap.get('distance_m', 1.0))
+            if physics:
+                if dist > 1.0:
+                    h *= 10.0 ** (-airabs.alpha_db_per_m(freqs, temp_c, rh) * (dist - 1.0) / 20.0)
+                h /= max(dist, 1e-9)
+            y = np.fft.irfft(spec * h, size)[:n]
+            if d:                                  # the tap's delay is where its signal starts, not a phase ramp
+                out[d:n, j] = y[:n - d]
+            else:
+                out[:, j] = y
+        yield out, [t for t, _ in chunk]
+
+
+def encode_many(bus, signals, gains):
+    """Add several signals to the field in one pass: `signals` (n, T) float32, `gains` (T, K).
+
+    bus[t, :] += sum_j signals[t, j] * gains[j, :]
+
+    Same arithmetic as calling `encode` once per signal with a fixed direction, written as one product per row
+    block so the field is read and written once instead of once per tap. That is the difference between a
+    reflection pass per tap and a reflection pass per source: the field is memory-bound (or, past
+    IN_RAM_BYTES, a file), so the passes are what cost.
+    """
+    signals = np.asarray(signals, np.float32)
+    gains = np.asarray(gains, np.float32)
+    n = min(len(bus), signals.shape[0])
+    for a in range(0, n, ROWS):
+        b = min(n, a + ROWS)
+        bus[a:b] += signals[a:b] @ gains
 
 
 _ALLRAD = {}
@@ -362,14 +466,12 @@ class HoaBus:
             return airabs.apply(s, metres - 1.0, temp_c, rh, sr=sr) if physics and metres > 1.0 else s
 
         if geom and p is None:
-            for tp in room.taps(geom, az, el, dist, sr=sr):
-                d = int(round(tp['delay_ms'] / 1000.0 * sr))
-                if not 0 <= d < n:
-                    continue
-                s = np.zeros(n)
-                s[d:] = raw[:n - d] * ((1.0 / tp['distance_m']) if physics else 1.0)
-                s = signal.lfilter(room.absorption_fir(tp['coeffs'], sr=sr), 1.0, s)
-                encode(bus, air(s, tp['distance_m']), H.gains(self.order, tp['azimuth'], tp['elevation'])[0])
+            # Still source in a shoebox: every tap is delay + material + air + distance. One transform of the
+            # source serves all of them, and one pass over the field adds all their directions; see tap_signals.
+            for signals, group in tap_signals(raw, room.taps(geom, az, el, dist, sr=sr), sr, temp_c, rh,
+                                              physics=physics):
+                gains = np.stack([H.gains(self.order, t['azimuth'], t['elevation'])[0] for t in group])
+                encode_many(bus, signals, gains)
         elif geom:
             direct, images = room.image_tracks(geom, p[:, 0], p[:, 1], p[:, 2], sr=sr)
             t = np.arange(n, dtype=float)
@@ -410,10 +512,20 @@ class HoaBus:
             return
         dirs = room.directions(dict(cfg, bias_azimuth_deg=float(cfg.get('bias_azimuth_deg', 0.0))))
         level = 10.0 ** (float(cfg.get('level_db', -18.0)) / 20.0) / np.sqrt(len(dirs))
-        for i, (az, el) in enumerate(dirs):
-            ir = room.late_ir(dict(cfg, seed=int(cfg.get('seed', 7)) + i), self.sr).astype(float)
-            tail = compute.oaconv(send, ir)[:len(send)] * (level / np.sqrt(np.sum(ir ** 2)))
-            encode(bus, tail, _hrtf().gains(self.order, az, el)[0])
+        H = _hrtf()
+        # One pass over the field per group of directions, not one per direction: the tail itself is six
+        # convolutions, but the field is memory-bound and adding six columns at a time costs what one did.
+        group = _group_size(len(dirs), len(send))
+        for start in range(0, len(dirs), group):
+            part = list(range(start, min(len(dirs), start + group)))
+            tails = np.zeros((len(send), len(part)), np.float32)
+            gains = np.zeros((len(part), self.k), np.float32)
+            for j, i in enumerate(part):
+                az, el = dirs[i]
+                ir = room.late_ir(dict(cfg, seed=int(cfg.get('seed', 7)) + i), self.sr).astype(float)
+                tails[:, j] = compute.oaconv(send, ir)[:len(send)] * (level / np.sqrt(np.sum(ir ** 2)))
+                gains[j] = H.gains(self.order, az, el)[0]
+            encode_many(bus, tails, gains)
 
     # ------------------------------------------------------------------ the field and its decoders
     def field(self):

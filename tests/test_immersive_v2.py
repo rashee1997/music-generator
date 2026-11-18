@@ -144,6 +144,86 @@ class RoomPhysics(unittest.TestCase):
             self.assertAlmostEqual(t['azimuth'], float(im['azimuth'][0]), places=9)
 
 
+class ReflectionTaps(unittest.TestCase):
+    """The tap renderer against the per-tap loop it replaced (`docs/mix_profile_palace.md`).
+
+    The old loop built a delayed copy of the source, ran the room's absorption FIR over it and then the air
+    absorption, once per tap; the new one takes one transform of the source and applies each tap as a response.
+    Both must give the same delay, the same level and the same spectrum, or the room has changed.
+    """
+
+    def setUp(self):
+        self.raw = noise(0.5, seed=5).astype(np.float64)
+        self.taps = room.taps(BOX, 35.0, 5.0, 2.0)
+        self.temp, self.rh = 20.0, 50.0
+
+    def per_tap(self, tap, raw=None):
+        """One tap the way the engine rendered it before: delayed copy, absorption, then air."""
+        from scipy import signal
+        raw = self.raw if raw is None else raw
+        n = len(raw)
+        d = int(round(tap['delay_ms'] / 1000.0 * SR))
+        s = np.zeros(n)
+        s[d:] = raw[:n - d] * (1.0 / tap['distance_m'])
+        s = signal.lfilter(room.absorption_fir(tap['coeffs'], sr=SR), 1.0, s)
+        return airabs.apply(s, tap['distance_m'] - 1.0, self.temp, self.rh, sr=SR)
+
+    @staticmethod
+    def lag(a, b):
+        """How far b is delayed against a, in samples: the peak of their circular cross-correlation."""
+        size = 1 << int(np.ceil(np.log2(2 * max(len(a), len(b)))))
+        c = np.fft.irfft(np.fft.rfft(b, size) * np.conj(np.fft.rfft(a, size)), size)
+        i = int(np.argmax(c))
+        return i - size if i > size // 2 else i
+
+    def test_one_transform_per_tap_is_the_same_delay_level_and_spectrum(self):
+        groups = list(hoa.tap_signals(self.raw, self.taps, SR, self.temp, self.rh))
+        self.assertEqual(len(groups), 1)
+        signals, kept = groups[0]
+        self.assertEqual(len(kept), len(self.taps))
+        for j, tap in enumerate(kept):
+            want = self.per_tap(tap).astype(np.float64)
+            got = signals[:, j].astype(np.float64)
+            msg = f'tap {tap["image"]} at {tap["distance_m"]:.1f} m'
+            self.assertAlmostEqual(rms_db(got), rms_db(want), delta=0.05, msg=msg)
+            self.assertEqual(self.lag(got, want), 0, msg=f'{msg}: the tap arrives at a different time')
+            # the air filter used to be a 1025-tap approximation: its error may not be a spectral tilt
+            f = np.fft.rfftfreq(len(want), 1.0 / SR)
+            for lo, hi in ((100.0, 1000.0), (1000.0, 4000.0), (4000.0, 12000.0)):
+                band = (f >= lo) & (f < hi)
+                dev = (10 * np.log10(np.sum(np.abs(np.fft.rfft(got)[band]) ** 2) + 1e-30)
+                       - 10 * np.log10(np.sum(np.abs(np.fft.rfft(want)[band]) ** 2) + 1e-30))
+                self.assertLess(abs(dev), 0.3, msg=f'{msg}: {dev:+.2f} dB at {lo:.0f}-{hi:.0f} Hz')
+
+    def test_the_grouping_changes_nothing_about_the_taps(self):
+        (one, a), = list(hoa.tap_signals(self.raw, self.taps, SR, self.temp, self.rh))
+        parts = list(hoa.tap_signals(self.raw, self.taps, SR, self.temp, self.rh,
+                                     budget=len(self.raw) * 4))       # one tap per group
+        self.assertGreater(len(parts), 1)
+        for k, (sig, taps) in enumerate(parts):
+            j = k * len(taps)
+            np.testing.assert_array_equal(sig, one[:, j:j + len(taps)])
+
+    def test_physics_off_leaves_the_level_out(self):
+        (with_air, taps), = list(hoa.tap_signals(self.raw, self.taps, SR, self.temp, self.rh))
+        (no_air, _), = list(hoa.tap_signals(self.raw, self.taps, SR, self.temp, self.rh, physics=False))
+        for j, tap in enumerate(taps):
+            want = 20.0 * np.log10(tap['distance_m'])
+            got = rms_db(no_air[:, j]) - rms_db(with_air[:, j])
+            self.assertGreater(got, want - 1.0, msg=f'tap {tap["image"]}: 1/distance is the level')
+
+    def test_encoding_together_is_the_sum_of_encoding_one_at_a_time(self):
+        rng = np.random.default_rng(4)
+        signals = rng.standard_normal((2000, 5)).astype(np.float32)
+        gains = rng.standard_normal((5, 9)).astype(np.float32)
+        together = np.zeros((2000, 9), np.float32)
+        hoa.encode_many(together, signals, gains)
+        one_at_a_time = np.zeros((2000, 9), np.float32)
+        for j in range(5):
+            hoa.encode(one_at_a_time, signals[:, j], gains[j])
+        np.testing.assert_allclose(together, one_at_a_time, atol=1e-6)
+
+
 class NearField(unittest.TestCase):
     CFG = dict(model='dvf', max_m=1.0, head_radius_m=0.0875)
 
