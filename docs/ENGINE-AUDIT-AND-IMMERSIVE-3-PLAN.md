@@ -340,3 +340,25 @@ Still open, in the order of section 9:
 
 The web figures above come from search summaries of these pages, not from a full read of each document. Any number
 taken into a preset must be re-read from the primary source first.
+
+## 12. A real project through the pipeline
+
+`projects/amazon_deep` ("Into the Green Dark": 38 tracks, 97 s, free SFZ orchestra, rain-forest ambience, six
+`output_targets`) was taken through `pipeline.py` to a certified master and five further deliverables. It is the first
+real piece the 3.0 changes have run on; section 11 still says what was built, this section says what running it found.
+The result was gate-clean (0 FAIL, 366 PASS, 23 WARN; the stem gate 0 FAIL) and was not auditioned by the author. A
+listener called it meditative where the brief said hostile (measured: -16 LUFS integrated, loudest 3 s -11.5 LUFS,
+quiet stretches over 12 LU under the mean).
+
+| Found | Cause | Change |
+|---|---|---|
+| `fold.mono` failed by 4-5 dB at 450-1500 Hz | the two-channel master was head-filtered; the ears disagree there by design | `immersive.stereo_decode` (`binaural` or `speakers`) and the `stereo_bs775` decode-only layout; worst band then +3.1 dB |
+| `master.dc` failed (0.00102 against 0.001) | 1 s block means of a loud 80-120 Hz tone | `mastering.highpass_order`; a 70 Hz, 3rd-order high-pass in the mix preset |
+| the AmbiX stage was killed for memory | `true_peak_by_channel` upsampled 36 channels at once, about 14 GB | one channel at a time; the same numbers |
+| a random call bout, a bed dip or an onset failed a row on one render and not the next | draws are per render; a change of piece length changes every stem's seed | fixed at the track; never by relaxing a row (`references/workflow/troubleshooting-and-limits.md`) |
+| an environment track's `t` and `d` are in beats, and a negative duration was accepted silently | the composer's helper writes beats | documented; a guard in the engine is still to be written |
+| the gate was green and the piece did not have the pressure of its brief | each gate fix removed energy | `scripts/helpers/arc_report.py`, AGENTS.md rules 4b, 9.4b and 17b, `references/scoring/cinematic-commercial-grade.md` |
+| the 7.1 family files are named `itu_bs2051_system_h`, `_i`, `_j`, and H is the 22.2 system in BS.2051 | a labelling error found while writing the README | open: compare with the standard's table and rename |
+
+Measured on the way: placing 14 sources of 20 s on the bus went from 34 s to about 10.6 s with identical samples; a full
+render of the 97 s piece takes about 9 to 10 minutes on four cores.
