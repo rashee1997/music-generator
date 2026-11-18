@@ -132,7 +132,7 @@ HELD = B(25, 0.0)                    # everything stops for a bar
 BRAAM1 = B(S_OPEN)                   # the evil wakes
 SHUT = B(22, 2.0)                    # a door shuts behind the hero
 CORR_HIT = B(S_CORR)                 # the chase starts
-COLLAPSE = B(40, 2.0)                # the exit falls in
+COLLAPSE = B(39, 3.0)                # the exit falls in; the rubble (3.4 s) ends before the forest section starts
 FOREST_HIT = B(S_FOREST)
 POWER = B(62)                        # the hero turns the curse: D minor -> D major
 CUT = B(66, 0.0)                     # the last hit lands; a beat of nothing
@@ -391,7 +391,7 @@ touches('tree_crack', 'mayan_tree_crack', [B(46, 2.0), B(50, 2.0), B(54, 1.0), B
 
 track('stone_door', 'sfx:mayan_stone_door', 'fx', [dict(t=B(16, 3.0), d=12.0, p=60, v=0.8)], spatial=dict(azimuth=60, elevation=25, distance=2.0, kind='spot', binaural=True))
 track('door_shut', 'sfx:mayan_stone_slam', 'fx', [dict(t=SHUT, d=10.0, p=60, v=0.8)], spatial=dict(azimuth=180, elevation=0, distance=6.0, kind='spot', binaural=True))
-track('collapse', 'sfx:mayan_rubble', 'fx', [dict(t=COLLAPSE, d=10.0, p=60, v=1.0)], spatial=dict(azimuth=180, elevation=20, distance=5.0, kind='spot', binaural=True))
+track('collapse', 'sfx:mayan_rubble', 'fx', [dict(t=COLLAPSE, d=8.9, p=60, v=1.0)], spatial=dict(azimuth=180, elevation=20, distance=5.0, kind='spot', binaural=True))
 track('final_slam', 'sfx:mayan_stone_slam', 'fx', [dict(t=CUT, d=17.0, p=60, v=1.0)], spatial=dict(azimuth=170, elevation=0, distance=4.0, kind='spot', binaural=True))
 for _t in tracks:
     if _t['name'] in ('stone_door', 'door_shut', 'final_slam'):

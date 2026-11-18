@@ -169,7 +169,7 @@
     70.71,
     77.61,
     80.91,
-    106.28,
+    105.03,
     140.72,
     146.89
   ],
@@ -210,7 +210,7 @@
       "why": "the music does not let go from here"
     },
     {
-      "t": 106.28,
+      "t": 105.03,
       "kind": "motion",
       "sync": "hard",
       "sound": "the palace exit collapses",
@@ -246,7 +246,7 @@
       "the flute's question at 9.97 s",
       "the stone lid at 52.56 s",
       "a bar of nothing at 77.61 s",
-      "the exit collapse at 106.28 s",
+      "the exit collapse at 105.03 s",
       "the D major turn at 140.72 s",
       "the answer in the flute at 153.01 s"
     ],
@@ -424,26 +424,26 @@
       "space": "palace_room"
     },
     "run_left": {
-      "azimuth": -90,
-      "elevation": -15,
+      "azimuth": -55,
+      "elevation": -16,
       "distance": 1.6,
       "space": "palace_room"
     },
     "run_right": {
-      "azimuth": 90,
-      "elevation": -15,
+      "azimuth": 55,
+      "elevation": -16,
       "distance": 1.6,
       "space": "palace_room"
     },
     "leaf_left": {
-      "azimuth": -90,
-      "elevation": -12,
+      "azimuth": -55,
+      "elevation": -16,
       "distance": 1.5,
       "space": "palace_room"
     },
     "leaf_right": {
-      "azimuth": 90,
-      "elevation": -12,
+      "azimuth": 55,
+      "elevation": -16,
       "distance": 1.5,
       "space": "palace_room"
     },
@@ -496,8 +496,8 @@
       "space": "palace_room"
     },
     "bark_scratch": {
-      "azimuth": -80,
-      "elevation": 0,
+      "azimuth": -140,
+      "elevation": 10,
       "distance": 0.9,
       "space": "palace_room"
     },

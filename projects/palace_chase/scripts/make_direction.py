@@ -47,7 +47,7 @@ hits = [(sec(16, 3.0), 'motion', 'soft', 'the relic\'s stone lid grinds open', '
         (sec(22, 2.0), 'motion', 'hard', 'a stone door shuts behind the explorer', 'there is no way back'),
         (sec(25), 'musical', 'hard', 'a full bar of nothing', 'the held breath before the chase'),
         (sec(26), 'musical', 'hard', 'the chase begins on a braam and a drum hit', 'the music does not let go from here'),
-        (sec(40, 2.0), 'motion', 'hard', 'the palace exit collapses', 'the way back is gone, the forest begins'),
+        (sec(39, 3.0), 'motion', 'hard', 'the palace exit collapses', 'the way back is gone, the forest begins'),
         (sec(62), 'musical', 'hard', 'D minor turns to D major and the hero theme enters', 'the explorer\'s power'),
         (sec(66), 'musical', 'hard', 'the last hit, then a beat of nothing', 'the narrow escape')]
 staging = {}
@@ -84,7 +84,7 @@ sheet.update(
     references=['in words, not a track: an adventure-horror film score where a quiet exploration turns into a relentless orchestral chase with a recurring motif, ending in release'],
     mix_intent=dict(hero='horns', support=['celli', 'trombones', 'timpani', 'choir'], sits_under=['footsteps'],
                     must_hear=['the flute\'s question at ' + str(sec(4)) + ' s', 'the stone lid at ' + str(sec(16, 3.0)) + ' s', 'a bar of nothing at ' + str(sec(25)) + ' s',
-                               'the exit collapse at ' + str(sec(40, 2.0)) + ' s', 'the D major turn at ' + str(sec(62)) + ' s', 'the answer in the flute at ' + str(sec(70)) + ' s'],
+                               'the exit collapse at ' + str(sec(39, 3.0)) + ' s', 'the D major turn at ' + str(sec(62)) + ' s', 'the answer in the flute at ' + str(sec(70)) + ' s'],
                     leave_free_hz=[700, 2600], executed_by=base['mix_intent']['executed_by']),
     intent=score['intent'], focus=score['focus'], piece_type=score['piece_type'],
     gate_reason='a build-hit-release cue with a long melodic line (the motif), a held bar and a release: the cinematic profile, started strict',
