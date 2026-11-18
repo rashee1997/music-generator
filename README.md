@@ -69,43 +69,22 @@ brief / score → 1 compose → 2 linter → 3 humanize → 4 stems (4b stem gat
 
 The agent's rules are in [`AGENTS.md`](AGENTS.md): sound design lives in presets, notes in scores, intent in direction sheets; acoustic values are cited or measured; a failing row is fixed in the piece, never loosened. Every row is in [`references/mixing/quality-gate.md`](references/mixing/quality-gate.md).
 
-## Equations in use
+## Methods used
 
-Derivations and worked values are in [`docs/PSYCHOACOUSTICS.md`](docs/PSYCHOACOUSTICS.md).
+Each is named with its source and the file that implements it. Derivations are in [`docs/PSYCHOACOUSTICS.md`](docs/PSYCHOACOUSTICS.md).
 
-**Loudness** (`scripts/loudness.py`; ITU-R BS.1770-5, EBU Tech 3341 and 3342). After K-weighting, over 400 ms blocks overlapping 75 %, with channel weights $G_c$ (1.0 front, +1.5 dB surround, low-frequency channel excluded):
+* **Loudness:** K-weighted gated loudness, short-term loudness and loudness range, and 4× oversampled true peak (ITU-R BS.1770-5, EBU Tech 3341 and 3342), with channel weights for any layout. `scripts/loudness.py`
+* **Linked true-peak limiter:** one gain curve for all channels, the engine's own construction. `scripts/spatial_engine/master.py`
+* **Rendered mono and fold bands:** level compensation bounded to the 3 dB that averaging two channels loses, and band-by-band spectral comparison in ERB bands (Glasberg & Moore 1990). `scripts/spatial_gate.py`
+* **Ambisonic encoding:** real spherical harmonics in ACN order, SN3D for AmbiX (Zotter & Frank 2019; Nachbar et al. 2011). `scripts/spatial_engine/hoa.py`
+* **Decoding:** magnitude least squares for headphones (Schörkhuber et al. 2018; Hold et al. 2023); AllRAD with max-rE weights for loudspeakers (Zotter & Frank 2012).
+* **VBAP:** vector base amplitude panning with unit-power gains (Pulkki 1997). `scripts/spatial_engine/pan.py`
+* **Propagation:** 1/r spreading, ISO 9613-1 air absorption, Doppler, image-source reflections (Allen & Berkley 1979), Eyring reverberation (1930), room measures (ISO 3382-1). `scripts/airabs.py`, `scripts/spatial_hrtf/`
+* **Layouts:** ITU-R BS.2051-3 positions, BS.775-3 two-channel fold-down, Linkwitz-Riley 4th-order crossover (Linkwitz 1976), all-pass decorrelation (Kendall 1995). `scripts/spatial_engine/`
+* **Gates:** critical-band roughness (Plomp & Levelt 1965; Daniel & Weber 1997), Terhardt's hearing threshold as a relative weighting, spiral-array tonal tension (Chew 2000), bar syncopation index (Witek et al. 2014). `scripts/quality_gate.py`
+* **Performance and voice:** KTH performance rules (Friberg et al. 2006), Liljencrants-Fant glottal model (Fant et al. 1985). `scripts/humanize.py`, `scripts/vocal_engine/`
 
-$$
-z_j = \sum_c G_c \frac{1}{N}\sum_{k\in j} x_{c,k}^2, \qquad L_j = -0.691 + 10\log_{10} z_j\ \text{[LKFS]}
-$$
-
-Integrated loudness gates at −70 LKFS and 10 LU below the mean; short-term loudness is the same over 3 s; loudness range is the 10th-95th percentile spread above a gate 20 LU under the power mean; true peak is the maximum after 4× oversampling.
-
-**Fold rows** (`scripts/spatial_gate.py`). Rendered mono is given back the $10\log_{10}2 \approx 3.01$ dB that averaging two unrelated channels loses, bounded by `compensate_max_db`. Long-term spectra are compared in bands one ERB wide, ERB-rate $= 21.4\log_{10}(0.00437 f + 1)$ (Glasberg & Moore 1990), level-matched over the bands $K$ within `fold_floor_db` of the loudest:
-
-$$
-\delta_b = 10\log_{10}\frac{P^{cand}_b}{P^{ref}_b} - 10\log_{10}\frac{\sum_{K}P^{cand}_b}{\sum_{K}P^{ref}_b}, \qquad \text{PASS} \iff \max_{b\in K}|\delta_b| \le \delta_{\max}
-$$
-
-**Ambisonic bus** (`scripts/spatial_engine/hoa.py`). A source is written as $b_{nm}(t) = s(t)\,Y_n^m(\theta(t),\phi(t))$ with real spherical harmonics, $0\le n\le N$: $(N+1)^2$ channels, ACN index $n^2+n+m$ (Zotter & Frank 2019). Headphones decode by magnitude least squares (Schörkhuber et al. 2018; Hold et al. 2023). Loudspeakers decode by AllRAD (Zotter & Frank 2012): $J$ virtual loudspeakers on a near-uniform sphere, each panned onto the layout by VBAP,
-
-$$
-D = \frac{4\pi}{J}\,G^{\mathsf T} Y\,\mathrm{diag}(w_n), \qquad w_n = P_n\!\left(\cos\tfrac{137.9^\circ}{N+1.51}\right)
-$$
-
-with max-$r_E$ weights $w_n$. VBAP solves $\mathbf g = L^{-1}\mathbf p$ in the enclosing loudspeaker triplet and normalises $\lVert\mathbf g\rVert_2 = 1$ (Pulkki 1997).
-
-**Linked limiter** (`scripts/spatial_engine/master.py`, the engine's own construction). With oversampled peak $p_n$ over all channels, ceiling $c$ and release constant $k = e^{-1/(\tau f_s)}$, one gain multiplies every channel:
-
-$$
-a_n = -\ln\min\left(1, \tfrac{c}{p_n}\right), \qquad \tilde a_n = \max_{j\le n} a_j k^{\,n-j}, \qquad g_n = e^{-\tilde a_n}
-$$
-
-**Space** (`scripts/airabs.py`, `scripts/spatial_hrtf/`). Air absorption is the ISO 9613-1 coefficient as a linear-phase filter; early reflections are image sources (Allen & Berkley 1979) of amplitude $\frac{1}{r_i}\prod\sqrt{1-a_k(f)}$; the tail follows Eyring (1930) with an air term, $T_{60} = \frac{24\ln 10}{c}\,\frac{V}{-S\ln(1-\bar a) + 4mV}$; room measures follow ISO 3382-1.
-
-**Gates** (`scripts/quality_gate.py`). Roughness comes from partials inside a critical bandwidth (Plomp & Levelt 1965; Daniel & Weber 1997). The hearing threshold, used only as a relative weighting, is $T(f) = 3.64 f^{-0.8} - 6.5 e^{-0.6(f-3.3)^2} + 10^{-3}f^4$ dB SPL, $f$ in kHz (Terhardt 1979). Groove uses the bar syncopation index (Witek et al. 2014), performance rules follow the KTH system (Friberg et al. 2006), and the voice uses the Liljencrants-Fant glottal model (Fant et al. 1985).
-
-Citations are given as the code and its docs state them; page numbers were not re-checked against the publishers' pages.
+Citations are as the code and its docs state them; page numbers were not re-checked against the publishers' pages.
 
 ## Repository structure
 
