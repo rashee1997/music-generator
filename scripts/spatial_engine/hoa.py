@@ -47,7 +47,7 @@ ROWS = 1 << 16
 # How much of one source's tap signals are held at once. Holding them turns one bus pass per tap into one pass per
 # group (see encode_many); the cap keeps a long piece with many taps from trading a saved pass for an allocation.
 SIGNAL_BUDGET = 256 * 1024 * 1024
-HEADROOM_BYTES = 3 * 1024 ** 3          # memory left for the main field, the stems, the decoder and the system when the workers are counted
+HEADROOM_BYTES = 4 * 1024 ** 3          # memory left for the main field, the stems, the decoder and the system when the workers are counted
 SPAN_LEAD_S = 0.25                     # the air filter is zero-phase: it rings this long before a source's first sample
 SPAN_PAD_S = 1.0                       # silence after a source's last sample that its reflections and air filter can still fill
 SILENCE = 1e-7                         # a sample below this is no signal
@@ -377,7 +377,7 @@ class HoaBus:
         self._source(bus[a:b], stereo[a:b], local, name, y[a:b], spec, window)
         for key, (refl, send) in local.items():
             if key not in sends:
-                sends[key] = [refl, np.zeros(len(bus))]
+                sends[key] = [refl, np.zeros(len(bus), np.float32)]
             sends[key][1][a:b] += send
 
     def _workers(self, n):
@@ -399,7 +399,7 @@ class HoaBus:
         import resources
         free = float(resources.available_gb()) * 1e9 if free_bytes is None else float(free_bytes)
         resident_field = min(n * self.k * 4, IN_RAM_BYTES)
-        per_worker = resident_field + n * 2 * 8 + SIGNAL_BUDGET + 8 * n * 8
+        per_worker = resident_field + n * 2 * 4 + SIGNAL_BUDGET + 40 * n * 4         # 40 float32 arrays of n: measured, a 180 s piece's worker held about 2.5 GB
         return int(max(1, (free - HEADROOM_BYTES) // max(per_worker, 1)))
 
     def _place_all(self, bus, stereo, sends, states, n):
@@ -422,7 +422,7 @@ class HoaBus:
         def work(chunk):
             mix_context.make_current(ctx)                  # the context is per thread: this one reads the piece's own
             b, _own = _alloc(n, self.k)                    # on disk past IN_RAM_BYTES, like the main field
-            st = np.zeros((n, 2))
+            st = np.zeros((n, 2), np.float32)
             sd = {}
             for i in chunk:
                 name, y, spec = self.sources[i]
@@ -437,7 +437,7 @@ class HoaBus:
             stereo += st
             for key, (refl, send) in sd.items():
                 if key not in sends:
-                    sends[key] = [refl, np.zeros(len(bus))]
+                    sends[key] = [refl, np.zeros(len(bus), np.float32)]
                 sends[key][1] += send
 
     def _source(self, bus, stereo, sends, name, y, spec, states):
@@ -469,10 +469,10 @@ class HoaBus:
                  else [(y.mean(axis=1), az, 1.0)])
         back = max(dist, 1.0)                            # the mixer already applied 1/r for the track's own distance
         dop = float((traj or {}).get('doppler_strength', 1.0)) if (traj or {}).get('doppler', True) else 0.0
-        t = np.arange(n, dtype=float)
+        t = np.arange(n, dtype=float) if p is not None else None        # only a moving source reads at fractional positions
         for x, a0, weight in parts:
-            x = np.asarray(x, float) * weight
-            raw = x * back
+            x = np.asarray(x, np.float32) * np.float32(weight)          # float32 throughout: the field and every tap signal are float32 in the end
+            raw = x * np.float32(back)
             if p is None:
                 d_s = None
                 direct = airabs.apply(x, dist - 1.0, temp_c, rh, sr=sr) if dist > 1.0 else x
@@ -504,13 +504,13 @@ class HoaBus:
             for refl, w in ([(refl_own, None)] if refl_own else states):
                 if not isinstance(refl, dict):
                     continue
-                feed = raw if w is None else raw * w[:n]
+                feed = raw if w is None else np.multiply(raw, w[:n], dtype=np.float32)
                 a, b = (0, n) if (w is None or p is not None) else window_span(w[:n], self.sr)
                 if b > a:                                # outside its window a room's input is zero, so its reflections are too
                     self._reflections(bus[a:b], feed[a:b], refl, a0, el, dist, p, dop, temp_c, rh)
                 key = id(refl)
                 if key not in sends:
-                    sends[key] = [refl, np.zeros(len(bus))]
+                    sends[key] = [refl, np.zeros(len(bus), np.float32)]
                 sends[key][1][:n] += feed * (0.707 if len(parts) == 2 else 1.0)   # a pair sends its mono mean
 
     def _reflections(self, bus, raw, refl, az, el, dist, p, dop, temp_c, rh):
