@@ -117,10 +117,25 @@ class MusicPipeline:
 
     def __init__(self, verbose=True):
         self.verbose = verbose
+        self.stage_times = []          # [(stage label, seconds)], in order: where a render spends its time
+        self._stage = None
 
     def log(self, stage_num, stage_name, msg=""):
+        now = time.perf_counter()
+        if self._stage is not None:
+            self.stage_times.append((self._stage[0], now - self._stage[1]))
+        self._stage = (str(stage_num), now)
         if self.verbose:
             print(f"\n[CI/CD Stage {stage_num}: {stage_name}] {msg}")
+
+    def timing_report(self):
+        """One line per stage with its share of the run, the last stage closed at the call."""
+        if self._stage is not None:
+            self.stage_times.append((self._stage[0], time.perf_counter() - self._stage[1]))
+            self._stage = None
+        total = sum(t for _, t in self.stage_times) or 1.0
+        lines = [f"  [TIME] stage {name:<3} {t:8.1f} s  {100 * t / total:5.1f} %" for name, t in self.stage_times]
+        return "\n".join(lines + [f"  [TIME] total     {total:8.1f} s"])
 
     # -----------------------------------------------------------------------------------------
     # Stage 1: Composition & Score Ingestion
@@ -959,6 +974,8 @@ class MusicPipeline:
         print("=" * 80)
         status_str = "CERTIFIED PASS" if fails == 0 else f"BUILT WITH {fails} FAILS"
         print(f"  PIPELINE COMPLETE ({elapsed:.1f}s) -> {status_str}")
+        if self.verbose:
+            print(self.timing_report())
         print(f"  Master: {out_wav} ({analysis_summary(report)})")
         if project_dir:
             n = len(report['attempts'])
