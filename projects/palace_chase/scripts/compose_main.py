@@ -385,7 +385,7 @@ def touches(name, preset, times, az, dist, vel=0.8, el=0, dur=3.0):
 touches('brush_left', 'mayan_leaf_brush', [B(43, 1.5), B(46, 0.0), B(49, 2.5), B(52, 1.0), B(55, 3.0), B(58, 0.5), B(60, 2.0)], -70, 1.0, 0.7)
 touches('brush_right', 'mayan_leaf_brush', [B(44, 2.5), B(47, 1.5), B(50, 3.5), B(54, 0.0), B(56, 2.0), B(59, 1.5), B(61, 0.5)], 70, 1.0, 0.7)
 touches('branch_left', 'mayan_branch_whip', [B(45, 1.0), B(48, 3.0), B(51, 2.0), B(55, 0.5), B(59, 3.5)], -85, 0.9, 0.85)
-touches('branch_right', 'mayan_branch_whip', [B(42, 3.0), B(47, 0.0), B(50, 0.5), B(53, 0.5), B(57, 1.5), B(60, 0.0)], 85, 0.9, 0.85)
+touches('branch_right', 'mayan_branch_whip', [B(42, 3.0), B(47, 0.0), B(50, 0.5), B(53, 0.5), B(56, 2.5), B(57, 3.0)], 85, 0.9, 0.85)
 touches('bark_scratch', 'mayan_bark_scratch', [B(49, 0.0), B(56, 1.0)], -80, 0.9, 0.9)
 touches('twig_snap', 'mayan_twig_snap', [B(51, 3.5)], 40, 1.2, 0.85)
 touches('tree_crack', 'mayan_tree_crack', [B(46, 2.0), B(50, 2.0), B(54, 1.0), B(60, 2.0), B(63, 0.0)], 170, 7.0, 1.0, dur=6.0)
@@ -398,6 +398,8 @@ for _t in tracks:
     if _t['name'] in ('stone_door', 'door_shut', 'final_slam'):
         _t['dc_hp_hz'] = 90.0
     if _t['name'] in ('run_left', 'run_right', 'guardian_far_a', 'guardian_far_b', 'guardian_near_a', 'guardian_near_b', 'collapse'):
+        _t['dc_hp_hz'] = 60.0
+    if _t['name'] in ('branch_left', 'branch_right'):
         _t['dc_hp_hz'] = 60.0
     if _t['name'] == 'tree_crack':
         _t['dc_hp_hz'] = 90.0                           # sub-bass effects carry energy below 25 Hz that shows as stem drift

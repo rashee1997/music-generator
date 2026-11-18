@@ -14284,7 +14284,8 @@
     "distance": 0.9,
     "kind": "spot",
     "binaural": true
-   }
+   },
+   "dc_hp_hz": 60.0
   },
   {
    "name": "branch_right",
@@ -14316,13 +14317,13 @@
      "v": 0.855
     },
     {
-     "t": 225.5,
+     "t": 222.5,
      "d": 3.0,
      "p": 60,
      "v": 0.902
     },
     {
-     "t": 236.0,
+     "t": 227.0,
      "d": 3.0,
      "p": 60,
      "v": 0.865
@@ -14334,7 +14335,8 @@
     "distance": 0.9,
     "kind": "spot",
     "binaural": true
-   }
+   },
+   "dc_hp_hz": 60.0
   },
   {
    "name": "bark_scratch",
