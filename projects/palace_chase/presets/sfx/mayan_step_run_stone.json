@@ -11,7 +11,7 @@
     "distance": 3.0
   },
   "scene": {
-    "note": "A running foot on a worn stone slab: a shorter, harder heel than a walk.",
+    "note": "A running foot on a worn stone slab: a shorter, harder heel than a walk. One contact at about 0.16 s.",
     "calibration": {
       "normalize": "energy",
       "level_db": 0
@@ -30,7 +30,7 @@
     "timeline": [
       {
         "at": 0.0,
-        "for": 0.4,
+        "for": 0.2,
         "interaction": "gait",
         "target": "ground",
         "cadence_spm": 170,

@@ -340,9 +340,12 @@ call('whistle_3', 'mayan_whistle', B(52, 0.0), 6.0, 160, 5, 4.0)
 call('conch_2', 'mayan_conch', B(S_ESCAPE, 0.0), 8.0, -150, 0, 12.0)
 
 
-def footfalls(name, preset, times, az, dist, vel=0.72, jitter=0.03, el=-15, dur=1.9):
+STEP_LEAD_BEATS = 0.38        # the gait sound makes its heel contact 0.16 s into the sound (about 0.38 beats at 140-158 BPM): the event starts early so the contact lands on the beat
+
+
+def footfalls(name, preset, times, az, dist, vel=0.72, jitter=0.03, el=-15, dur=1.9, lead=0.0):
     """`dur` is in beats and must be at least as long as the sound, or the next onset cuts the ring and the cut is a click."""
-    notes = [dict(t=round(float(t + rng.normal(0, jitter)), 4), d=dur, p=60, v=round(float(np.clip(vel + rng.normal(0, 0.06), 0.3, 1.0)), 3))
+    notes = [dict(t=round(float(t - lead + rng.normal(0, jitter)), 4), d=dur, p=60, v=round(float(np.clip(vel + rng.normal(0, 0.06), 0.3, 1.0)), 3))
              for t in times]
     track(name, f'sfx:{preset}', 'fx', notes, spatial=dict(azimuth=az, elevation=el, distance=dist, kind='spot', binaural=True))
 
@@ -359,13 +362,13 @@ walk += [B(22, 2.5), B(22, 3.4), B(23, 0.2)]                                    
 footfalls('walk_left', 'mayan_step_stone', walk[0::2], -20, 2.2, 0.55)
 footfalls('walk_right', 'mayan_step_stone', walk[1::2], 20, 2.2, 0.55)
 run_stone = alternate(B(26), B(41, 2.0), 1.0)
-footfalls('run_left', 'mayan_step_run_stone', run_stone[0::2], -55, 1.6, 0.78, el=-16)
-footfalls('run_right', 'mayan_step_run_stone', run_stone[1::2], 55, 1.6, 0.78, el=-16)
+footfalls('run_left', 'mayan_step_run_stone', run_stone[0::2], -55, 1.6, 0.78, el=-16, lead=STEP_LEAD_BEATS)
+footfalls('run_right', 'mayan_step_run_stone', run_stone[1::2], 55, 1.6, 0.78, el=-16, lead=STEP_LEAD_BEATS)
 run_leaf = alternate(B(41, 2.0), B(65, 2.0), 1.0, skip=[(B(53, 1.0), B(53, 3.0))])
 run_leaf += [B(53, 2.0), B(53, 2.5)]                                                                 # the stumble: a missed step, then two close ones
 run_leaf = sorted(t for t in run_leaf if t < B(65, 2.0))
-footfalls('leaf_left', 'mayan_step_run_leaf', run_leaf[0::2], -55, 1.5, 0.8, el=-16)
-footfalls('leaf_right', 'mayan_step_run_leaf', run_leaf[1::2], 55, 1.5, 0.8, el=-16)
+footfalls('leaf_left', 'mayan_step_run_leaf', run_leaf[0::2], -55, 1.5, 0.8, el=-16, lead=STEP_LEAD_BEATS)
+footfalls('leaf_right', 'mayan_step_run_leaf', run_leaf[1::2], 55, 1.5, 0.8, el=-16, lead=STEP_LEAD_BEATS)
 
 # the pursuer: a stone figure behind, heavy, every two beats; nearer in the forest it breaks trees instead
 g_far = alternate(B(28), B(34), 2.0)
