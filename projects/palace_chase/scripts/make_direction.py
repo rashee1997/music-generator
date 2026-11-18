@@ -53,10 +53,14 @@ for f in sorted(glob.glob(os.path.join(ROOT, 'presets', 'instruments', 'mayan_*.
     d = json.load(open(f))
     sp = d['spatial']
     staging[d['name']] = dict(azimuth=sp['azimuth'], elevation=sp['elevation'], distance=sp['distance'], space=score['space'])
+for t in score['tracks']:
+    sp = t.get('spatial')
+    if sp and t['name'] not in staging and t.get('role') in ('fx', 'environment'):
+        staging[t['name']] = dict(azimuth=sp['azimuth'], elevation=sp['elevation'], distance=sp['distance'], space=score['space'])
 sheet = dict(base)
 sheet.update(
-    title='The Mayan Palace', project='A haunted Mayan palace in the Amazon deep forest: a story cue from curious exploration to a chase and a narrow escape',
-    brief='a professional cinema-grade 8-channel score of at least 2 minutes 30 seconds: a hero explores a haunted ancient Mayan palace, opens a relic out of curiosity and frees an evil, is chased through the palace and then the deep forest with realistic running, branch and leaf sounds, and escapes narrowly using his own power',
+    title='The Mayan Palace', project='A haunted Mayan palace in the deep Mesoamerican rainforest (the Petén lowlands of Guatemala): a story cue from curious exploration to a chase and a narrow escape',
+    brief='a professional cinema-grade 8-channel score of at least 2 minutes 30 seconds: a hero explores a haunted ancient Mayan palace in the deep rainforest of the Petén, opens a relic out of curiosity and frees an evil, is chased through the palace and then the deep forest with realistic running, branch and leaf sounds, and escapes narrowly using his own power',
     audience='a listener on an 8-channel (7.1) system or headphones who should feel they are in the chase; they came for the story',
     purpose='a ' + str(round(end_s)) + '-second cue that tells a whole story: wonder, discovery, a mistake, a chase and an escape',
     point_of_view='the explorer: the steps and the forest touching the runner are the nearest sounds; the palace and what it holds are what is closing in',
@@ -67,11 +71,11 @@ sheet.update(
     duration_s=end_s, in_point_s=0.0, out_point_s=end_s, ending='tail_out',
     feel=['tense', 'epic', 'ancient', 'relentless', 'cinematic'], avoid_feel=['comic', 'cosy', 'serene', 'meditative', 'cheerful', 'new-age cliche'],
     sections=sections,
-    motifs=[dict(name='the relic motif', first_at_s=sec(4), shape='D Eb D A G F: a flat second that returns, a leap of a fifth, then a falling step', returns='in the flute as a question (bar 4), up a fourth (bar 9), in the bass clarinet as the answer (bar 11), in the horns as a threat (bars 18-61), in the flute again as a resolved answer (bar 70), and answered at last, falling home to D'),
-            dict(name='the hero theme', first_at_s=sec(62), shape='D A Bb C D: a rising fifth and a climb in D major', returns='once more at bar 66 a fourth higher, and under the aftermath as a held horn D')],
-    instruments=['celli', 'basses', 'violas', 'violins', 'alto flute', 'bass clarinet', 'harp', 'horns', 'trombones', 'tuba', 'timpani', 'bass drum', 'cymbals', 'choir', 'conga', 'footsteps', 'foliage', 'stone'],
+    motifs=[dict(name='the relic motif', first_at_s=sec(4), shape='D Eb D A G F: a flat second that returns, a leap of a fifth, then a falling step (it ends on F, not home on D: a question)', returns='in the flute as a question (bar 4), up a fourth (bar 9), in the bass clarinet as the answer (bar 11), in the horns as a threat (bars 18-61), in the flute again as a resolved answer (bar 70), and answered at last, falling home to D'),
+            dict(name='the hero theme', first_at_s=sec(62), shape='D A C D E D C A: a rising fifth, a climb to the octave and a step above it, then back down; over D major the C natural keeps a hard-won mixolydian colour (the flat seventh) instead of a plain major lift', returns='once more at bar 66 a fourth higher, and under the aftermath as a held horn D')],
+    instruments=['celli', 'basses', 'violas', 'violins', 'alto flute', 'bass clarinet', 'harp', 'horns', 'trombones', 'tuba', 'timpani', 'bass drum', 'cymbals', 'choir', 'conga', 'death whistle', 'conch', 'footsteps', 'foliage', 'stone'],
     avoid_sounds=['synth pad', 'electric guitar', 'drum kit', 'pop vocals', 'sirens', 'riser', 'whoosh', 'stinger', 'boom tail', 'stock jungle loop'],
-    pulse='a low-string pulse of sixteenths from bar 26 that never stops; footsteps are the second pulse; a 3+3+2 drum pattern; before bar 26 the pulse is one far timpani stroke per bar',
+    pulse='the relentless pulse is a low-string ostinato of sixteenths from bar 26 (80.9 s) that never stops until bar 66; before it there is only a warning: one far timpani stroke per bar from bar 5, a sparse cello figure of eighths from bar 13 (the relic hum), and a rolled timpani in the opening; footsteps are the second pulse; a 3+3+2 drum pattern from bar 26',
     tempo_bpm=[58, 158], key='D', mode='minor', energy=0.7, space=score['space'],
     hits_at=[h[0] for h in hits], hits=[dict(t=h[0], kind=h[1], sync=h[2], sound=h[3], why=h[4]) for h in hits],
     loudness_lufs=score['master']['lufs'], true_peak_max=-1.5, spatial_staging=staging,
@@ -90,7 +94,7 @@ sheet['expression'] = dict(
     anti_generic='The generic version is a drone, a riser and a drum loop with a monster sound; this one is a story told by a motif that is first a question, then an answer, then a threat, and is finally overruled by a different shape, with a pulse that appears only once the evil is out.',
     cues=[dict(section='the_entry', arousal='low', mode_register='D minor, mid-low with a high shimmer', tempo_trend='steady and slow (72)', dynamics='pp to p', articulation='tenuto, legato', timbre='dark, breathy'),
           dict(section='the_relic_chamber', arousal='low to mid', mode_register='D minor, a low reed against a high flute', tempo_trend='steady (72)', dynamics='p growing to mp', articulation='legato with single plucks', timbre='hollow, dark'),
-          dict(section='the_opening', arousal='mid to high', mode_register='D minor with a rising cluster', tempo_trend='accelerating from 72 to 90, then a hold', dynamics='mf to ff then a bar of nothing', articulation='sustained swells, a rolled timpani', timbre='dark, brassy'),
+          dict(section='the_opening', arousal='mid to high', mode_register='D minor with a rising cluster', tempo_trend='accelerating from 72 to 90, then a one-bar hold at 58', dynamics='mf to ff then a bar of nothing', articulation='sustained swells, a rolled timpani', timbre='dark, brassy'),
           dict(section='the_corridors', arousal='high', mode_register='D minor, low and loud', tempo_trend='fast and steady (132 to 146)', dynamics='f to ff', articulation='staccato ostinato and marcato brass', timbre='dark, hard'),
           dict(section='the_forest', arousal='high', mode_register='D minor, a rising line in the violins', tempo_trend='faster (146 to 154)', dynamics='ff', articulation='staccato ostinato, tremolo strings', timbre='dark and rough'),
           dict(section='the_escape', arousal='very high, then release', mode_register='D minor to D major, bright and wide', tempo_trend='158, then a hit and a hold', dynamics='fff then a drop', articulation='broad, full-length brass', timbre='bright, open'),
