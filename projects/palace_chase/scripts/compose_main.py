@@ -167,7 +167,7 @@ for bar in range(S_CORR, S_ESCAPE + 4):                                         
             v = 0.7 + (0.2 if k == 0 else 0.0) + (0.06 if beat in (0, 2) else 0.0) + 0.0015 * (bar - S_CORR) + rng.normal(0, 0.03)
             pn += [N(tt, 0.22, t[cell[k]], v), N(tt, 0.22, t[cell[k]] + 12, v - 0.14)]
 pn += phrase(ANSWER, B(70), 74, 0.5, scale=1.4)
-pn[-1]['d'] -= 0.9                                                                                      # the last note rings out: the score stops where the sound does
+pn[-1]['d'] = 2.6                                                                                      # the last note rings out: the score stops where the sound does
 track('piano', 'mayan_piano', 'ostinato', pn)
 
 # ================================================================ strings
@@ -229,8 +229,9 @@ for bar in (S_CORR, S_CORR + 1, 34, 35, 42, 43, 58, 59, 60, 61):                
     vt += [N(B(bar), 4.05, 86 + key_of(bar), 0.85), N(B(bar), 4.05, 87 + key_of(bar), 0.83)]
 track('violins_tremolo', 'mayan_violins_tremolo', 'pad', vt)
 
-vsu = [N(B(bar), 4.05, 74 + (bar - 50) + key_of(bar), 0.72 + 0.015 * (bar - 50)) for bar in range(50, 58)]      # the rising device: a semitone a bar before the escape
-vsu += [N(B(bar), 4.05, 78 + 2 * (bar - 62), 0.95) for bar in range(62, 66)]
+VSHIFT = (0.0, 0.0, 1.5, 0.0, 2.5, 0.0, 1.0, 0.0)                                                   # the rising line never lands on a regular bar grid
+vsu = [N(B(bar, VSHIFT[bar - 50]), 4.05, 74 + (bar - 50) + key_of(bar), 0.72 + 0.015 * (bar - 50)) for bar in range(50, 58)]      # the rising device: a semitone a bar before the escape
+vsu += [N(B(bar, (0.0, 1.0, 0.0, 1.5)[bar - 62]), 4.05, 78 + 2 * (bar - 62), 0.95) for bar in range(62, 66)]
 vsu += [N(B(66), 8.1, 81, 0.85), N(B(68), 8.1, 81, 0.8)]
 track('violins_sustain', 'mayan_violins_sustain', 'pad', vsu)
 
