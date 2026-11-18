@@ -93,3 +93,35 @@ class WorkersFit(unittest.TestCase):
         b = self.bus()
         free = 16 * 1024 ** 3
         self.assertGreaterEqual(b.workers_that_fit(44100 * 60, free_bytes=free), b.workers_that_fit(44100 * 600, free_bytes=free))
+
+
+class WindowedRoom(unittest.TestCase):
+    def test_window_span_covers_the_window_and_its_padding(self):
+        import numpy as np
+        w = np.zeros(44100 * 20)
+        w[44100 * 5:44100 * 8] = 1.0
+        a, b = hoa.window_span(w, 44100)
+        self.assertLessEqual(a, 44100 * 5 - int(hoa.SPAN_LEAD_S * 44100) + 1)
+        self.assertGreaterEqual(b, 44100 * 8 + int(hoa.SPAN_PAD_S * 44100) - 1)
+        self.assertEqual(hoa.window_span(np.zeros(1000), 44100), (0, 0))
+        self.assertEqual(hoa.window_span(np.ones(1000), 44100), (0, 1000))
+
+    def test_rendering_only_the_window_equals_rendering_all_of_it(self):
+        import json
+        import numpy as np
+        refl = json.load(open(os.path.join(ROOT, 'projects', 'palace_chase', 'presets', 'spaces', 'palace_room.json')))['reflections']
+        sr, n = 44100, 44100 * 8
+        rng = np.random.default_rng(3)
+        raw = rng.standard_normal(n)
+        w = np.zeros(n)
+        w[sr * 3:sr * 4] = 1.0
+        feed = raw * w
+        bus = hoa.HoaBus(sr, 3, 'binaural', {}, {}, {})
+        full = np.zeros((n, bus.k), np.float32)
+        bus._reflections(full, feed, refl, 30.0, 0.0, 4.0, None, 0.0, 20.0, 50.0)
+        a, b = hoa.window_span(w, sr)
+        part = np.zeros((n, bus.k), np.float32)
+        bus._reflections(part[a:b], feed[a:b], refl, 30.0, 0.0, 4.0, None, 0.0, 20.0, 50.0)
+        self.assertGreater(float(np.abs(full).max()), 1e-3)
+        scale = float(np.abs(full).max())
+        self.assertLess(float(np.abs(full - part).max()) / scale, 2e-3)

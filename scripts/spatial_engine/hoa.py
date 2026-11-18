@@ -118,6 +118,20 @@ _ABS_CACHE_BYTES = 192 * 1024 * 1024     # the cache's whole size. A spectrum is
 _ABS_LOCK = threading.Lock()
 
 
+def window_span(w, sr):
+    """(a, b): the samples of a room's input window that can carry sound, padded for what the room does after and before.
+
+    A room scene feeds a source through a window that is zero outside its section. A still source's reflections are
+    time-invariant, so the part of the source outside the window gives zeros in and zeros out: only the window, the
+    lead of the zero-phase air filter and the tail of the longest reflection need rendering (the same constants a
+    source's own span uses). Returns (0, 0) when the window is silent."""
+    nz = np.flatnonzero(np.asarray(w) > 1e-9)
+    if not nz.size:
+        return 0, 0
+    n = len(w)
+    return int(max(0, nz[0] - SPAN_LEAD_S * sr)), int(min(n, nz[-1] + 1 + SPAN_PAD_S * sr))
+
+
 def _group_size(count, n, budget=SIGNAL_BUDGET):
     """How many signals of `n` samples are held at once: at least one, at most `count`."""
     return max(1, min(int(count), int(budget) // max(int(n) * 4, 1)))
@@ -491,7 +505,9 @@ class HoaBus:
                 if not isinstance(refl, dict):
                     continue
                 feed = raw if w is None else raw * w[:n]
-                self._reflections(bus, feed, refl, a0, el, dist, p, dop, temp_c, rh)
+                a, b = (0, n) if (w is None or p is not None) else window_span(w[:n], self.sr)
+                if b > a:                                # outside its window a room's input is zero, so its reflections are too
+                    self._reflections(bus[a:b], feed[a:b], refl, a0, el, dist, p, dop, temp_c, rh)
                 key = id(refl)
                 if key not in sends:
                     sends[key] = [refl, np.zeros(len(bus))]
