@@ -20,6 +20,7 @@ Read one file at a time. `scripts/research_kb.py` pulls the file a piece needs.
 | `cultures/western.md` | Western harmony, groove timing and trailer conventions | unverified |
 | `cultures/world-other.md` | Humming formants, Celtic rhythms, Germanic motorik and Balkan metres | unverified |
 | `genre-and-feel/cinematic-hybrid-scoring.md` | Pressure carriers, tension devices, trailer shape, film-music loudness figures and sample-library realism | partly-sourced |
+| `genre-and-feel/emotion-cues.md` | Which musical cues carry emotion (mode, tempo, register, dynamics, articulation, timbre), their direction of effect, and why valence is hard to measure | partly-sourced |
 | `genre-and-feel/commercial-promo.md` | Commercial tempo, ducking and voice-over rules, musical-theatre build | unverified |
 | `genre-and-feel/dynamic-flow.md` | Section flow rules and lo-fi, ambient, horror, jazz, rock and game values | unverified |
 | `genre-and-feel/psychoacoustic-genre.md` | Genre and mood tempo, interval, timbre and reverb values | unverified |

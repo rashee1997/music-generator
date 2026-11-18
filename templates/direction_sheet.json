@@ -115,6 +115,30 @@
     "notes": "the sheet records intent; the mix, space and instrument presets execute it. The score's output_targets must name the same deliverables, two-channel first. Presets carry the keyframes, heights and room geometry, never this block."
   },
 
+  "expression": {
+    "sonic_picture": "Stand in the room: the first ten seconds are a held flute over string harmonics in a wide, damp hall; by the middle a low pulse has entered and never leaves; the last note hangs and is not resolved.",
+    "performer": "Who plays it and what a human does: the flute breathes in the phrase gaps and swells into the long note; the strings lean on beat one and let the bow ease off before each change.",
+    "producer_moves": "What a producer does that a score does not say: a slow filter opening over the last sixteen bars, a full stop one beat before the hit, a reverb throw on the last note.",
+    "anti_generic": "The generic version of this cue is a pad, a four-note arpeggio and a drum loop; what stops it is one pulse that keeps changing and a theme whose leap lands on the weak beat.",
+    "cues": [
+      {
+        "section": "open on the valley",
+        "arousal": "low",
+        "mode_register": "dorian, mid-low",
+        "tempo_trend": "steady and slow",
+        "dynamics": "pp rising to mp",
+        "articulation": "legato, tenuto",
+        "timbre": "dark, soft attack"
+      }
+    ],
+    "theme": {
+      "contour": "arch: a rise of a fifth, a step back, then a fall",
+      "interval_character": "mostly steps with one leap of a fifth",
+      "rhythm_cell": "long, short, short, long",
+      "why_memorable": "the leap lands on the weak beat and is never moved",
+      "variation_plan": "inverted at the return, alone on the tonic at the end"
+    }
+  },
   "focus": "melody",
   "intent": {"emotions": ["wonder"], "registers": ["cinematic"], "scenes": ["establish"],
              "tensions": [], "avoid": ["tense"]},

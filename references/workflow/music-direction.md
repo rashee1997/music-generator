@@ -124,6 +124,7 @@ The core targets. `listen.py` reads these directly, so fill them with words and 
 | `hits` | the same moments as `hits_at`, each with `kind` (`cut`, `motion`, `musical`), `sync` (`hard`, `soft`), `sound`, and `why` - the reason the moment needs an accent |
 | `ending` | how it leaves: `hard_out`, `tail_out`, `combination` |
 | `mix_intent` | `hero`, `support`, `sits_under` (what must win), `must_hear` (audible by when), `leave_free_hz` |
+| `expression` | how it is played and heard: `sonic_picture`, `performer`, `producer_moves`, `anti_generic`, `cues`, `theme` (2.11) |
 | `immersive` | whether the field is doing a job, and how: `why`, `engine`, `anchors`, `movers`, `height`, `room_changes`, `deliverables` (2.10) |
 | `delivery` | `format`, `sample_rate`, `bit_depth`, `stage` (`web`, `broadcast`, `cinema`), `output_targets` (the score names the same set) |
 | `references` | the reference in words, never a track (2.5) |
@@ -241,6 +242,39 @@ articulation and patch choice, not a number to lower.
 Whether the field does a job, which parts move and why, the height plan, the room changes and the deliverables
 that carry them are decided in [`directing-space.md`](directing-space.md); the numbers they describe live in the
 presets, never in this sheet.
+
+### 2.11 How the music is played and heard: the `expression` block
+
+This is the entry point of the whole piece. A sheet that says what the cue must do (`job`, `energy`, `feel`) still leaves
+the agent to invent what it sounds like, and an agent left to invent writes the generic version: a pad, an arpeggio and a
+drum loop in the right key. A human producer decides how the music is *played* before a note exists. Write these
+before the score; they are read by `quality_gate.direction_rows` and by `scripts/helpers/expression_report.py`.
+
+| Field | Decide | The test it can fail |
+|---|---|---|
+| `sonic_picture` | stand in the room: what the listener hears in the first ten seconds, in the middle and in the last note, in plain physical words (distance, size, materials, who is near) | the score's first ten seconds contain what it says |
+| `performer` | who plays each part and what a human does: where the player breathes, leans on a beat, lets a note die, plays slightly behind or ahead | `humanize` and `articulation` are set to say it |
+| `producer_moves` | what a producer does that a score does not say: a filter that opens over sixteen bars, a full stop before a hit, a reverb throw on the last note | each move has a preset key or a score event |
+| `anti_generic` | the generic version of this cue in one sentence, and the one thing that stops this cue being it | the sentence names a measurable difference (a pulse that changes, a leap on a weak beat) |
+| `cues` | per section: `arousal` (low, mid, high), `mode_register`, `tempo_trend`, `dynamics`, `articulation`, `timbre` | `expression.arousal_order` compares the written notes with the sections' `energy` |
+| `theme` | the melody's identity: `contour`, `interval_character`, `rhythm_cell`, `why_memorable`, `variation_plan` (how it changes each time it returns) | `melody.variety` measures interval entropy, range, leaps and bars that repeat exactly |
+
+The cue table follows the research on what carries emotion in music: mode, tempo, register, dynamics, articulation
+and timbre, acting mostly additively (`knowledgebase/genre-and-feel/emotion-cues.md`). Decide all six per section; a
+section that leaves one open gets the default of the last section, which is how a tense cue ends up calm.
+
+Rules:
+
+1. **Write the theme as a shape, not a mood.** "Heroic" is not a theme. "A rise of a fifth, a step back, then a fall,
+   long-short-short-long, the leap on the weak beat, inverted at the return" is one. A melody an agent writes without a shape
+   is the average of every melody it has seen.
+2. **Every return of a motif changes one thing** (interval, rhythm, register, harmony, instrument) and keeps another. The
+   plan says which, in `theme.variation_plan` and in `motifs[].returns`.
+3. **Name the human act.** "Violins sustain" is a patch. "The violins enter late, swell with the bow and drop off before the
+   change" is a performance, and it becomes `dynamics` in the score and `articulation` on the notes.
+4. **The generic version is named so it can be refused.** If the score's first idea is the sentence in `anti_generic`, rewrite it.
+5. **What the metrics cannot say stays said.** `expression_report.py` measures arousal cues and melodic variety from notes.
+   It does not measure valence, taste or whether the theme is good; say so in the report.
 
 ## 3. Decide in the order listeners weigh cues
 

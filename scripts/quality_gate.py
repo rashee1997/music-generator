@@ -1522,6 +1522,38 @@ def _direction_sheet(project_dir):
     return {}
 
 
+def _expression_rows(score, sheet, out):
+    """How the music is played and heard: the sheet's `expression` block, and whether the notes carry it.
+
+    direction.expression: WARN when the block is absent, FAIL when it is present but incomplete (a half-written promise
+    decides nothing). expression.arousal_order and melody.variety come from scripts/helpers/expression_report.py and are
+    WARN at most: their anchors are starting values that no corpus has calibrated, so they flag and never fail."""
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'helpers'))
+    import expression_report as er
+    problems = er.expression_block_problems(sheet)
+    if not isinstance(sheet.get('expression'), dict):
+        out.append(('WARN', 'direction.expression', problems[0] + ' (references/workflow/music-direction.md, section 2.11)'))
+    elif problems:
+        out.append(('FAIL', 'direction.expression', '; '.join(problems)))
+    else:
+        out.append(('PASS', 'direction.expression', 'the sheet says how the music is played and heard'))
+    rho, rows, flag = er.arousal_order(score)
+    if rho is None:
+        out.append(('INFO', 'expression.arousal_order', 'fewer than three sections with a declared energy and notes: no rank order to compare'))
+    elif flag:
+        out.append(('WARN', 'expression.arousal_order', flag))
+    else:
+        out.append(('PASS', 'expression.arousal_order', f'the written notes follow the declared section energy (rank correlation {rho:+.2f})'))
+    mv = er.melody_variety(score)
+    if mv.get('note'):
+        out.append(('INFO', 'melody.variety', mv['note']))
+    elif mv['flags']:
+        out.append(('WARN', 'melody.variety', '; '.join(mv['flags'])))
+    else:
+        out.append(('PASS', 'melody.variety', f'figure line: {mv["interval_entropy_bits"]:.2f} bits of interval entropy, '
+                    f'{mv["range_semitones"]} semitones, {100 * mv["identical_bar_share"]:.0f} % of bars repeated'))
+
+
 def direction_rows(score, out, project_dir=None, wav_path=None, mode='full'):
     """The direction sheet is a promise about the delivery, so the gate judges the delivered file against it.
 
@@ -1548,6 +1580,7 @@ def direction_rows(score, out, project_dir=None, wav_path=None, mode='full'):
             out.append(('INFO', 'delivery.direction',
                         'no direction/*.json: the delivered file is not judged against a sheet (draft run)'))
         return
+    _expression_rows(score, sheet, out)
     delivery = sheet.get('delivery') or {}
     info = None
     if wav_path and os.path.isfile(wav_path):

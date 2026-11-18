@@ -148,6 +148,18 @@ may declare `focus` and an `intent` block, and `compose.py` fills only the field
 that the profile does not judge is a WARN naming both, because the report would apply the wrong rule. A declaration is
 never deleted to pass a row. Detail: `references/workflow/intent-and-focus.md`.
 
+## 3f. Rows for how the music is played (`quality_gate._expression_rows`, from `scripts/helpers/expression_report.py`)
+
+No neural model and no audio: the rows read the sheet and the score's notes. Anchors are starting values that no corpus has calibrated, so the measured rows warn and never fail.
+
+| Row | Judges | Result |
+|---|---|---|
+| `direction.expression` | the sheet's `expression` block (music-direction.md 2.11) | WARN when absent, FAIL when present and incomplete, PASS when complete |
+| `expression.arousal_order` | rank correlation (Spearman) between the sections' declared `energy` and an index of tempo, note density, velocity, register and staccato share per section; limit 0.5 | WARN below the limit, INFO under three sections |
+| `melody.variety` | the figure track: interval entropy (limit 1.0 bit), range (7 semitones), bars that repeat exactly (60 %), no leap in a long line | WARN on a flag, INFO without a figure track |
+
+The index follows the cue research (mode, tempo, register, dynamics, articulation, timbre; Gabrielsson and Lindstrom 2010, Eerola, Friberg and Bresin 2013). It measures how hard the written music pushes, not its valence.
+
 ## 3c. The gate adapts to the type of piece (gate profiles)
 
 Rules tuned on melodies false-flag a tense drone, an ambient bed, a dance loop or an effects-only piece. So which rows run, and their
