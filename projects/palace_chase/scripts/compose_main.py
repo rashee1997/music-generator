@@ -413,8 +413,8 @@ def no_retrigger(name):
         if tr['name'] == name:
             last = {}
             for n in sorted(tr['notes'], key=lambda q: (q['p'], q['t'])):
-                if n['p'] in last and last[n['p']]['t'] + last[n['p']]['d'] > n['t'] - 0.02:
-                    last[n['p']]['d'] = max(0.05, n['t'] - 0.02 - last[n['p']]['t'])
+                if n['p'] in last and last[n['p']]['t'] + last[n['p']]['d'] > n['t'] - 0.004:
+                    last[n['p']]['d'] = max(0.05, n['t'] - 0.004 - last[n['p']]['t'])
                 last[n['p']] = n
 
 
