@@ -127,7 +127,7 @@ POWER = B(62)
 CUT = B(S_RELEASE)
 
 # ================================================================ pianos: the pulse, the question, the pursuer
-pl = [N(B(1), 16.0, 26 + 12, 0.45), N(B(5), 16.0, 26 + 12, 0.5), N(B(9), 16.0, 26 + 12, 0.52), N(B(13), 16.0, 26 + 12, 0.56)]        # a D held low in the quiet
+pl = [N(B(bar), 4.3, 26 + 12, 0.42 + 0.008 * bar + (0.06 if bar % 4 == 1 else 0.0)) for bar in range(1, 18)]        # a low D struck once a bar in the quiet: a piano note does not hold for sixteen beats
 pl += [N(B(bar), 4.0, near(chord_at(bar, 0)[0], 26, 37) + 12, 0.66 + 0.02 * (bar - 18)) for bar in range(18, 25)]
 for bar in range(S_CORR, S_ESCAPE + 4):                                                                  # the pursuer: heavy two-hand octaves on 3+3+2
     for off, v, d in ((0, 1.0, 0.5), (1.5, 0.78, 0.35), (3.0, 0.88, 0.35)):
@@ -135,7 +135,8 @@ for bar in range(S_CORR, S_ESCAPE + 4):                                         
             continue                                                                                      # the fill bar leaves the last beat to the drums
         r = near(chord_at(bar, off)[0], 31, 42)
         pl += [N(B(bar, off), d, r, v), N(B(bar, off), d, r + 12, v - 0.06)]
-pl += [N(B(66), 4.0, 38, 1.0), N(B(66), 4.0, 50, 0.95), N(B(70), 24.0, 38, 0.45)]
+pl += [N(B(66), 4.0, 38, 1.0), N(B(66), 4.0, 50, 0.95)]
+pl += [N(B(bar), 4.3 if bar < 75 else 2.0, 38, 0.7 - 0.015 * (bar - 70)) for bar in range(70, 76)]
 track('piano_low', 'mayan_piano_low', 'bass', pl)
 
 CELLS = [[0, 2, 3, 2], [0, 3, 2, 3], [0, 2, 0, 3], [2, 3, 2, 0], [0, 1, 2, 3], [3, 2, 1, 2]]       # indices into [root, third, fifth, octave]
@@ -166,14 +167,15 @@ for bar in range(S_CORR, S_ESCAPE + 4):                                         
             v = 0.7 + (0.2 if k == 0 else 0.0) + (0.06 if beat in (0, 2) else 0.0) + 0.0015 * (bar - S_CORR) + rng.normal(0, 0.03)
             pn += [N(tt, 0.22, t[cell[k]], v), N(tt, 0.22, t[cell[k]] + 12, v - 0.14)]
 pn += phrase(ANSWER, B(70), 74, 0.5, scale=1.4)
+pn[-1]['d'] -= 0.6                                                                                      # the last note rings out: the score stops where the sound does
 track('piano', 'mayan_piano', 'ostinato', pn)
 
 # ================================================================ strings
-bs = [N(B(1), 15.9, 26, 0.7), N(B(5), 15.9, 26, 0.72), N(B(9), 15.9, 26, 0.75), N(B(13), 15.9, 26, 0.78), N(B(17), 4.0, 26, 0.8)]
+bs = [N(B(1), 16.3, 26, 0.7), N(B(5), 16.3, 26, 0.72), N(B(9), 16.3, 26, 0.75), N(B(13), 16.3, 26, 0.78), N(B(17), 4.0, 26, 0.8)]
 bs += [N(B(bar), 4.0, near(chord_at(bar, 0)[0], 26, 37), 0.85 + 0.015 * (bar - 18)) for bar in range(18, 25)]
 bs += [N(B(bar), 4.06, near(chord_at(bar, 0)[0], 26, 37), 0.9) for bar in range(S_CORR, 62)]
 bs += [N(B(bar), 4.06, near(chord_at(bar, 0)[0], 26, 37), 0.95) for bar in range(62, 66)]
-bs += [N(B(66), 15.9, 26, 0.8), N(B(70), 15.9, 26, 0.7), N(B(74), 8.0, 26, 0.65)]
+bs += [N(B(66), 16.3, 26, 0.8), N(B(70), 16.3, 26, 0.7), N(B(74), 8.0, 26, 0.65)]
 track('basses', 'mayan_basses', 'bass', bs)
 
 ce = []
@@ -229,7 +231,7 @@ track('violins_tremolo', 'mayan_violins_tremolo', 'pad', vt)
 
 vsu = [N(B(bar), 4.05, 74 + (bar - 50) + key_of(bar), 0.72 + 0.015 * (bar - 50)) for bar in range(50, 58)]      # the rising device: a semitone a bar before the escape
 vsu += [N(B(bar), 4.05, 78 + 2 * (bar - 62), 0.95) for bar in range(62, 66)]
-vsu += [N(B(66), 15.9, 81, 0.85)]
+vsu += [N(B(66), 8.1, 81, 0.85), N(B(68), 8.1, 81, 0.8)]
 track('violins_sustain', 'mayan_violins_sustain', 'pad', vsu)
 
 # ================================================================ woodwinds and harp
@@ -320,7 +322,7 @@ for bar in range(S_CORR + 2, S_ESCAPE + 4):                                     
         sn += [N(B(bar, 3.0 + 0.125 * k), 0.1, 49, 0.45 + 0.45 * (k / 7.0) ** 1.6 + (0.04 if k % 2 == 0 else -0.04)) for k in range(1, 8)]
 track('snare', 'mayan_bass_drum', 'drum', sn)
 
-cy = [N(beat - 3.0, 3.0, 50, 0.7) for beat in (BRAAM1, CORR_HIT, FOREST_HIT, POWER)] + [N(beat, 4.0, 59, 0.6) for beat in (BRAAM1, FOREST_HIT, POWER)]
+cy = [N(beat - 3.0, 3.0, 50, 0.7) for beat in (CORR_HIT, FOREST_HIT, POWER)] + [N(beat, 4.0, 59, 0.6) for beat in (BRAAM1, FOREST_HIT, B(58), POWER)]        # every swell lands in a section that also holds a hit
 cy += [N(CUT, 4.0, 60, 0.9), N(B(46, 0.0), 3.0, 59, 0.6), N(B(50, 0.0), 3.0, 59, 0.6), N(B(54, 0.0), 3.0, 59, 0.6)]
 track('cymbals', 'mayan_cymbals', 'texture', cy)
 
@@ -344,14 +346,13 @@ track('drums_right', 'mayan_drums_right', 'drum', dr)
 
 # ================================================================ voices
 ch = []
-for bar in range(15, 18):
-    ch += [N(B(bar), 4.05, p, 0.6 + 0.05 * (bar - 15)) for p in (62, 63, 69)]
-for bar in range(18, 25):
-    ch += [N(B(bar), 4.05, p, 0.72 + 0.03 * (bar - 18)) for p in (62, 63, 66, 69)]
-for bar in range(58, 62):
-    ch += [N(B(bar), 4.05, p, 0.92) for p in (62, 63, 69, 74)]
-for bar in range(62, 66):
-    ch += [N(B(bar), 4.05, p, 1.0) for p in (62, 66, 69, 74)]
+ch += [N(B(15), 12.05, p, 0.6) for p in (62, 63, 69)]                                                  # the voices change at uneven distances, never on a bar grid
+for bar, nb in ((18, 8), (20, 8), (22, 12)):
+    ch += [N(B(bar), nb + 0.05, p, 0.72 + 0.03 * (bar - 18)) for p in (66, 69, 74, 75)]               # above the trombone chord, never on its pitches
+for bar, nb in ((58, 12), (61, 4)):
+    ch += [N(B(bar), nb + 0.05, p, 0.92) for p in (69, 74, 75, 81)]
+for bar, nb in ((62, 8), (64, 4), (65, 4)):
+    ch += [N(B(bar), nb + 0.05, p, 1.0) for p in (69, 74)]
 ch += [N(B(66), 15.9, p, 0.8) for p in (62, 69, 74)]
 ch += [N(B(74, 2.0), 5.9, p, 0.7) for p in (50, 62)]
 track('choir', 'mayan_choir', 'pad', ch)
