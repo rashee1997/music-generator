@@ -1,7 +1,7 @@
 {
   "name": "mayan_snare",
-  "description": "Snare and side drum of the pursuit: the backbeat of the feet, set to the left of the bass drum and a little above it.",
-  "character": "Snare and side drum of the pursuit: the backbeat of the feet, set to the left of the bass drum and a little above it.",
+  "description": "Snare and side drum of the pursuit: the backbeat of the feet, set to the left of the bass drum.",
+  "character": "Snare and side drum of the pursuit: the backbeat of the feet, set to the left of the bass drum.",
   "role": "drum",
   "sfz": {
     "library": "sso",
@@ -20,7 +20,7 @@
   },
   "spatial": {
     "azimuth": -34.0,
-    "elevation": 12.0,
+    "elevation": 0.0,
     "distance": 4.4,
     "binaural": true,
     "kind": "spot"
