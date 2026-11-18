@@ -238,7 +238,7 @@ track('violins_sustain', 'mayan_violins_sustain', 'pad', vsu)
 fl = phrase(CURIOUS, B(13), 79, 0.46, scale=1.2, upto=4)
 fl += phrase(ANSWER, B(70), 79, 0.46, scale=1.4) + [N(B(73, 3.0), 6.0, 81, 0.35)]
 track('alto_flute', 'mayan_alto_flute', 'counter', fl)
-bc = phrase(HOLLOW_A, B(11), 50, 0.55) + phrase(HOLLOW_B, B(15), 50, 0.6) + [N(B(74), 8.0, 38, 0.35)]
+bc = phrase(HOLLOW_A, B(11), 50, 0.55) + phrase(HOLLOW_B, B(15), 50, 0.6) + [N(B(74), 8.0, 45, 0.35)]
 track('bass_clarinet', 'mayan_bass_clarinet', 'counter', bc)
 hp = [N(B(10) + 1.0 * k, 0.9, p, 0.6 + 0.03 * k) for k, p in enumerate((62, 69, 74, 77))]
 hp += [N(B(14, 2.0), 1.4, 62, 0.7), N(B(15, 2.0), 1.4, 63, 0.72), N(B(16, 2.0), 1.4, 69, 0.78)]

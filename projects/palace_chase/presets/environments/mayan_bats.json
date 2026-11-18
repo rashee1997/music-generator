@@ -7,7 +7,7 @@
       "name": "roost_calls",
       "primitive": "animal_call",
       "kind": "spot",
-      "gain_db": -22.0,
+      "gain_db": -24.0,
       "call": "bat_social",
       "individuals": 3,
       "bouts_per_min": 9.0,
@@ -22,11 +22,11 @@
       "name": "wing_flutter",
       "primitive": "noise_bed",
       "kind": "bed",
-      "gain_db": -27.0,
+      "gain_db": -22.0,
       "low_hz": 700,
       "high_hz": 4200,
       "mod_rate_hz": 0.45,
-      "mod_depth": 0.4,
+      "mod_depth": 0.25,
       "spatial": {
         "azimuth": 0,
         "elevation": 60,
@@ -38,7 +38,7 @@
     "high_pass_hz": 600,
     "vocal_pocket_notch_hz": 2200,
     "vocal_pocket_notch_db": -3.0,
-    "overall_gain_db": -6.0
+    "overall_gain_db": 0.0
   },
   "sources": [
     "bat_social_calls",
