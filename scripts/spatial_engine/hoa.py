@@ -47,6 +47,7 @@ ROWS = 1 << 16
 # How much of one source's tap signals are held at once. Holding them turns one bus pass per tap into one pass per
 # group (see encode_many); the cap keeps a long piece with many taps from trading a saved pass for an allocation.
 SIGNAL_BUDGET = 256 * 1024 * 1024
+HEADROOM_BYTES = 3 * 1024 ** 3          # memory left for the main field, the stems, the decoder and the system when the workers are counted
 SPAN_LEAD_S = 0.25                     # the air filter is zero-phase: it rings this long before a source's first sample
 SPAN_PAD_S = 1.0                       # silence after a source's last sample that its reflections and air filter can still fill
 SILENCE = 1e-7                         # a sample below this is no signal
@@ -363,7 +364,20 @@ class HoaBus:
         import mix_schema
         w = mix_schema.section(mixer._mix(), 'render').get('mix_workers', 1)
         w = (os.cpu_count() or 1) if w == 'auto' else max(1, int(w))
-        return int(max(1, min(w, (4 * IN_RAM_BYTES) // max(n * self.k * 4, 1))))
+        return int(max(1, min(w, self.workers_that_fit(n))))
+
+    def workers_that_fit(self, n, free_bytes=None):
+        """How many sources can be rendered at once in the memory this process may still take.
+
+        One worker holds its partial field ((n, K) float32, on disk past IN_RAM_BYTES so only its working rows are
+        resident), a stereo bypass ((n, 2) float64), a group of tap signals (`SIGNAL_BUDGET`) and about six
+        full-length float64 working arrays (the source, its spectrum, one tap's response and inverse). The count
+        is what fits in the free memory less `HEADROOM_BYTES`, and never fewer than one."""
+        import resources
+        free = float(resources.available_gb()) * 1e9 if free_bytes is None else float(free_bytes)
+        resident_field = min(n * self.k * 4, IN_RAM_BYTES)
+        per_worker = resident_field + n * 2 * 8 + SIGNAL_BUDGET + 6 * n * 8
+        return int(max(1, (free - HEADROOM_BYTES) // max(per_worker, 1)))
 
     def _place_all(self, bus, stereo, sends, states, n):
         spans = [self._span(y, spec) for _, y, spec in self.sources]
@@ -384,7 +398,7 @@ class HoaBus:
 
         def work(chunk):
             mix_context.make_current(ctx)                  # the context is per thread: this one reads the piece's own
-            b = np.zeros((n, self.k), np.float32)
+            b, _own = _alloc(n, self.k)                    # on disk past IN_RAM_BYTES, like the main field
             st = np.zeros((n, 2))
             sd = {}
             for i in chunk:

@@ -73,3 +73,21 @@ class TempField(unittest.TestCase):
             del arr
             if path:
                 os.remove(path)
+
+
+class WorkersFit(unittest.TestCase):
+    def bus(self):
+        return hoa.HoaBus(44100, 5, 'binaural', {}, {}, {})
+
+    def test_a_small_machine_gets_one_worker_and_a_big_one_gets_more(self):
+        b, n = self.bus(), 44100 * 180
+        self.assertEqual(b.workers_that_fit(n, free_bytes=2 * 1024 ** 3), 1)          # less than the headroom: one, never zero
+        self.assertEqual(b.workers_that_fit(n, free_bytes=4 * 1024 ** 3), 1)
+        many = b.workers_that_fit(n, free_bytes=64 * 1024 ** 3)
+        self.assertGreater(many, 4)
+        self.assertGreaterEqual(b.workers_that_fit(n, free_bytes=32 * 1024 ** 3), b.workers_that_fit(n, free_bytes=16 * 1024 ** 3))
+
+    def test_a_longer_piece_fits_fewer_workers(self):
+        b = self.bus()
+        free = 16 * 1024 ** 3
+        self.assertGreaterEqual(b.workers_that_fit(44100 * 60, free_bytes=free), b.workers_that_fit(44100 * 600, free_bytes=free))
