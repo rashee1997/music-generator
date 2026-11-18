@@ -38,6 +38,5 @@
     "distance": 5.0,
     "binaural": true,
     "kind": "spot"
-  },
-  "note": "vocal engine source-filter model (references/instruments-and-vocals/vocal-engine.md) | Peterson and Barney 1952, vowel formants, as used in references/data/vocal-engine-data/defaults.json | Mesoamerican ritual music: clay whistles, drums and voices (https://encyclopedia.com/humanities/encyclopedias-almanacs-transcripts-and-maps/pre-columbian-music-mesoamerica; search-result text, page not opened) | ESTIMATE: this chant has not been listened to; the syllables and rhythm are written for the piece"
+  }
 }

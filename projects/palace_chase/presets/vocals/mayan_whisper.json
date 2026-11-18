@@ -27,6 +27,5 @@
     "distance": 6.0,
     "binaural": true,
     "kind": "spot"
-  },
-  "note": "vocal engine hum model (references/instruments-and-vocals/vocal-engine.md) | ESTIMATE: level and position are starting values; not listened to"
+  }
 }
