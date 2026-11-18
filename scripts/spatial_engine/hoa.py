@@ -178,17 +178,26 @@ def tap_signals(raw, taps, sr, temp_c, rh, physics=True, budget=SIGNAL_BUDGET):
         return
     size = int(next_fast_len(n + max(d for _, d in keep) + ABS_FIR_TAPS, real=True))
     spec = np.fft.rfft(np.asarray(raw, dtype=np.float32), size)                # complex64: half the memory and a faster transform than complex128
-    freqs = np.fft.rfftfreq(size, 1.0 / float(sr))
+    keep.sort(key=lambda td: tuple(round(float(c), 9) for c in td[0]['coeffs']))   # taps of one surface combination are neighbours: its spectrum is built once, not per tap
+    air = None                                     # air absorption in nepers per metre over the bins: the same for every tap, only the path differs
+    last_key, last_resp = None, None
     group = _group_size(len(keep), n, budget)
     for start in range(0, len(keep), group):
         chunk = keep[start:start + group]
         out = np.zeros((n, len(chunk)), np.float32)
         for j, (tap, d) in enumerate(chunk):
-            h = _absorption_response(tap['coeffs'], size, sr).copy()
+            key = tuple(round(float(c), 9) for c in tap['coeffs'])
+            if key != last_key:
+                last_key, last_resp = key, _absorption_response(tap['coeffs'], size, sr)
+            h = last_resp.copy()
             dist = float(tap.get('distance_m', 1.0))
             if physics:
                 if dist > 1.0:
-                    h *= (10.0 ** (-airabs.alpha_db_per_m(freqs, temp_c, rh) * (dist - 1.0) / 20.0)).astype(np.float32)
+                    if air is None:
+                        freqs = np.fft.rfftfreq(size, 1.0 / float(sr))
+                        air = (airabs.alpha_db_per_m(freqs, temp_c, rh) * (-np.log(10.0) / 20.0)).astype(np.float32)
+                        del freqs
+                    h *= np.exp(air * np.float32(dist - 1.0))      # 10 ** (-alpha * m / 20), as a float32 exponential
                 h /= np.float32(max(dist, 1e-9))
             y = np.fft.irfft(spec * h, size)[:n]
             if d:                                  # the tap's delay is where its signal starts, not a phase ramp
