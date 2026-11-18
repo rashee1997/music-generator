@@ -167,7 +167,7 @@ for bar in range(S_CORR, S_ESCAPE + 4):                                         
             v = 0.7 + (0.2 if k == 0 else 0.0) + (0.06 if beat in (0, 2) else 0.0) + 0.0015 * (bar - S_CORR) + rng.normal(0, 0.03)
             pn += [N(tt, 0.22, t[cell[k]], v), N(tt, 0.22, t[cell[k]] + 12, v - 0.14)]
 pn += phrase(ANSWER, B(70), 74, 0.5, scale=1.4)
-pn[-1]['d'] = 2.6                                                                                      # the last note rings out: the score stops where the sound does
+pn[-1]['d'] = 1.8                                                                                      # the last note rings out: the score stops where the sound does
 track('piano', 'mayan_piano', 'ostinato', pn)
 
 # ================================================================ strings
