@@ -322,7 +322,7 @@ track('stone_slam', 'sfx:maya_stone_slam', 'fx', [dict(t=BRAAM2, d=10.0, p=60, v
 track('heartbeat', 'sfx:heartbeat', 'fx', [dict(t=B(2) + k * 1.4, d=1.2, p=60, v=0.32 + 0.012 * k) for k in range(18)],
       spatial=dict(azimuth=45, elevation=-10, distance=0.8, kind='spot', binaural=True))
 track('risers', 'sfx:riser', 'fx', [dict(t=beat - 4.0, d=4.0, p=60, v=0.7) for beat in (DESCENT, BRAAM2, AWAKE, RUN)],
-      spatial=dict(azimuth=-80, elevation=35, distance=8.0, kind='bed'))
+      spatial=dict(azimuth=0, elevation=60, distance=8.0, kind='bed'))
 for _t in tracks:
     if _t['name'] in ('heartbeat', 'risers', 'stone_slam', 'stone_door'):
         _t['dc_hp_hz'] = 45.0
