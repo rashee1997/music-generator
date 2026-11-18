@@ -320,18 +320,15 @@ track('twig_snap', 'sfx:maya_twig_snap', 'fx', [dict(t=B(8, 3.0), d=2.6, p=60, v
 track('stone_door', 'sfx:maya_stone_door', 'fx', [dict(t=B(21, 1.0), d=12.0, p=60, v=0.9)], spatial=dict(azimuth=0, elevation=0, distance=6.0, kind='spot', binaural=True))
 track('stone_slam', 'sfx:maya_stone_slam', 'fx', [dict(t=BRAAM2, d=10.0, p=60, v=1.0), dict(t=AWAKE, d=10.0, p=60, v=0.8), dict(t=SLAM, d=10.0, p=60, v=1.0)],
       spatial=dict(azimuth=0, elevation=0, distance=5.0, kind='spot', binaural=True))
-track('rattle', 'sfx:maya_rattle', 'fx', [dict(t=t, d=3.0, p=60, v=0.7) for t in (B(35, 1), B(38, 2), B(41, 0), B(43, 0.5))],
-      spatial=dict(azimuth=70, elevation=0, distance=4.0, kind='spot', binaural=True))
-env('drips', 'maya_drips', B(22), B(31, 2.0) - B(22), fade_in_s=2.0, fade_out_s=2.0)
 track('heartbeat', 'sfx:heartbeat', 'fx', [dict(t=B(2) + k * 1.4, d=1.2, p=60, v=0.32 + 0.012 * k) for k in range(18)],
       spatial=dict(azimuth=0, elevation=-5, distance=0.8, kind='spot', binaural=True))
 track('risers', 'sfx:riser', 'fx', [dict(t=beat - 4.0, d=4.0, p=60, v=0.7) for beat in (DESCENT, BRAAM2, AWAKE, RUN)],
       spatial=dict(azimuth=0, elevation=20, distance=8.0, kind='bed'))
-track('booms', 'sfx:boom', 'fx', [dict(t=beat, d=2.0, p=60, v=0.9) for beat in (DESCENT, BRAAM2, AWAKE, RUN, SLAM)],
-      spatial=dict(azimuth=0, elevation=0, distance=3.0, kind='bed'))
 for _t in tracks:
-    if _t['name'] in ('heartbeat', 'booms', 'risers', 'stone_slam', 'stone_door'):
-        _t['dc_hp_hz'] = 45.0                          # sub-bass effects carry energy below 25 Hz that shows as stem drift
+    if _t['name'] in ('heartbeat', 'risers', 'stone_slam', 'stone_door'):
+        _t['dc_hp_hz'] = 45.0
+    if _t['name'] == 'heartbeat':
+        _t['dc_hp_hz'] = 60.0                          # sub-bass effects carry energy below 25 Hz that shows as stem drift
 
 # ================================================================ the score
 dynamics = [[0, 0.3], [32, 0.45], [64, 0.6], [80, 0.75], [100, 0.85], [124, 0.95], [126, 0.2], [128, 1.0], [160, 1.0], [176, 1.0], [199, 1.0], [202, 1.0]]

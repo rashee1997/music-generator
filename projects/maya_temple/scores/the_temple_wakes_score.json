@@ -10667,59 +10667,6 @@
    "dc_hp_hz": 45.0
   },
   {
-   "name": "rattle",
-   "instrument": "sfx:maya_rattle",
-   "role": "fx",
-   "notes": [
-    {
-     "t": 137,
-     "d": 3.0,
-     "p": 60,
-     "v": 0.7
-    },
-    {
-     "t": 150,
-     "d": 3.0,
-     "p": 60,
-     "v": 0.7
-    },
-    {
-     "t": 160,
-     "d": 3.0,
-     "p": 60,
-     "v": 0.7
-    },
-    {
-     "t": 168.5,
-     "d": 3.0,
-     "p": 60,
-     "v": 0.7
-    }
-   ],
-   "spatial": {
-    "azimuth": 70,
-    "elevation": 0,
-    "distance": 4.0,
-    "kind": "spot",
-    "binaural": true
-   }
-  },
-  {
-   "name": "drips",
-   "instrument": "env:maya_drips",
-   "role": "environment",
-   "notes": [
-    {
-     "t": 84.0,
-     "d": 38.0,
-     "p": 60,
-     "v": 1.0
-    }
-   ],
-   "fade_in_s": 2.0,
-   "fade_out_s": 2.0
-  },
-  {
    "name": "heartbeat",
    "instrument": "sfx:heartbeat",
    "role": "fx",
@@ -10840,7 +10787,7 @@
     "kind": "spot",
     "binaural": true
    },
-   "dc_hp_hz": 45.0
+   "dc_hp_hz": 60.0
   },
   {
    "name": "risers",
@@ -10876,50 +10823,6 @@
     "azimuth": 0,
     "elevation": 20,
     "distance": 8.0,
-    "kind": "bed"
-   },
-   "dc_hp_hz": 45.0
-  },
-  {
-   "name": "booms",
-   "instrument": "sfx:boom",
-   "role": "fx",
-   "notes": [
-    {
-     "t": 80.0,
-     "d": 2.0,
-     "p": 60,
-     "v": 0.9
-    },
-    {
-     "t": 112.0,
-     "d": 2.0,
-     "p": 60,
-     "v": 0.9
-    },
-    {
-     "t": 128.0,
-     "d": 2.0,
-     "p": 60,
-     "v": 0.9
-    },
-    {
-     "t": 176.0,
-     "d": 2.0,
-     "p": 60,
-     "v": 0.9
-    },
-    {
-     "t": 200.0,
-     "d": 2.0,
-     "p": 60,
-     "v": 0.9
-    }
-   ],
-   "spatial": {
-    "azimuth": 0,
-    "elevation": 0,
-    "distance": 3.0,
     "kind": "bed"
    },
    "dc_hp_hz": 45.0
