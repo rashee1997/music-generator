@@ -236,9 +236,9 @@ track('violins_sustain', 'mayan_violins_sustain', 'pad', vsu)
 
 # ================================================================ woodwinds and harp
 fl = phrase(CURIOUS, B(13), 79, 0.46, scale=1.2, upto=4)
-fl_end = phrase(ANSWER, B(70), 79, 0.46, scale=1.4)
+fl_end = phrase(ANSWER, B(70), 67, 0.46, scale=1.4)                                                      # an octave down: a high flute alone in the thin aftermath reads as rough
 fl_end[-1]['d'] = 2.2                                                                                    # the last phrase note ends before the held A begins: a whole step apart they beat
-fl += fl_end + [N(B(73, 3.0), 6.0, 81, 0.35)]
+fl += fl_end + [N(B(73, 3.0), 6.0, 69, 0.35)]
 track('alto_flute', 'mayan_alto_flute', 'counter', fl)
 bc = phrase(HOLLOW_A, B(11), 50, 0.55) + phrase(HOLLOW_B, B(15), 50, 0.6) + [N(B(74), 8.0, 45, 0.35)]
 track('bass_clarinet', 'mayan_bass_clarinet', 'counter', bc)
@@ -443,7 +443,7 @@ score = dict(
     tempo_points=[[0, 66], [68, 66], [96, 84], [99.9, 56], [100, 148], [164, 158], [228, 168], [260, 172], [262, 120], [270, 84], [276, 66], [300, 62]],
     dynamics=dynamics, space='palace_room', mix_preset='the_palace_hunts_mix',
     output_targets=['stereo', 'immersive_7_1_2'],
-    master=dict(lufs=-15.5, true_peak=-2.0, tone='neutral', fade_out=3.0),
+    master=dict(lufs=-15.5, true_peak=-3.0, tone='neutral', fade_out=3.0),
     piece_type='cinematic', focus='melody',
     intent=dict(emotions=['tense', 'dark_epic', 'adventure'], registers=['cinematic', 'natural'], scenes=['arrival', 'build', 'battle'],
                 tensions=['ostinato', 'pedal', 'cluster', 'rising_line', 'silence_before'], avoid=['joyful', 'playful']),

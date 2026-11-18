@@ -277,7 +277,7 @@
     "profiles": {
       "cinema": {
         "lufs": -15.5,
-        "true_peak": -1.5,
+        "true_peak": -3.0,
         "tone": "neutral",
         "glue": true
       }
