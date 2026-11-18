@@ -45,7 +45,7 @@
       "rt60_s": "auto",
       "pre_delay_ms": "auto",
       "hf_decay": 0.4,
-      "level_db": -16.0,
+      "level_db": -20.0,
       "count": 8,
       "spread_deg": 80.0,
       "rise_s": 0.04,
@@ -106,7 +106,7 @@
           }
         },
         "late": {
-          "level_db": -14.0
+          "level_db": -18.0
         }
       }
     },
@@ -127,7 +127,7 @@
           }
         },
         "late": {
-          "level_db": -9.0
+          "level_db": -14.0
         }
       }
     },
@@ -148,7 +148,7 @@
           }
         },
         "late": {
-          "level_db": -10.0
+          "level_db": -15.0
         }
       }
     }

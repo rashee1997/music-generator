@@ -243,15 +243,15 @@
       "enabled": true
     },
     "send_by_role": {
-      "default": 0.18,
+      "default": 0.14,
       "bass": 0.0,
-      "drum": 0.14,
-      "percussion": 0.14,
-      "pad": 0.3,
-      "texture": 0.3,
-      "melody": 0.22,
-      "environment": 0.12,
-      "fx": 0.1
+      "drum": 0.1,
+      "percussion": 0.1,
+      "pad": 0.2,
+      "texture": 0.2,
+      "melody": 0.16,
+      "environment": 0.1,
+      "fx": 0.08
     },
     "drr": {
       "enabled": false,
