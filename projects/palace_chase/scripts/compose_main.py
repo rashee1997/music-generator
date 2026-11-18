@@ -359,13 +359,13 @@ walk += [B(22, 2.5), B(22, 3.4), B(23, 0.2)]                                    
 footfalls('walk_left', 'mayan_step_stone', walk[0::2], -20, 2.2, 0.55)
 footfalls('walk_right', 'mayan_step_stone', walk[1::2], 20, 2.2, 0.55)
 run_stone = alternate(B(26), B(41, 2.0), 1.0)
-footfalls('run_left', 'mayan_step_run_stone', run_stone[0::2], -90, 1.6, 0.78)
-footfalls('run_right', 'mayan_step_run_stone', run_stone[1::2], 90, 1.6, 0.78)
+footfalls('run_left', 'mayan_step_run_stone', run_stone[0::2], -55, 1.6, 0.78, el=-16)
+footfalls('run_right', 'mayan_step_run_stone', run_stone[1::2], 55, 1.6, 0.78, el=-16)
 run_leaf = alternate(B(41, 2.0), B(66), 1.0, skip=[(B(53, 1.0), B(53, 3.0))])
 run_leaf += [B(53, 2.0), B(53, 2.5)]                                                                 # the stumble: a missed step, then two close ones
 run_leaf = sorted(t for t in run_leaf if t < CUT)
-footfalls('leaf_left', 'mayan_step_run_leaf', run_leaf[0::2], -90, 1.5, 0.8, el=-12)
-footfalls('leaf_right', 'mayan_step_run_leaf', run_leaf[1::2], 90, 1.5, 0.8, el=-12)
+footfalls('leaf_left', 'mayan_step_run_leaf', run_leaf[0::2], -55, 1.5, 0.8, el=-16)
+footfalls('leaf_right', 'mayan_step_run_leaf', run_leaf[1::2], 55, 1.5, 0.8, el=-16)
 
 # the pursuer: a stone figure behind, heavy, every two beats; nearer in the forest it breaks trees instead
 g_far = alternate(B(28), B(34), 2.0)
@@ -385,7 +385,7 @@ touches('brush_left', 'mayan_leaf_brush', [B(43, 1.5), B(46, 0.0), B(49, 2.5), B
 touches('brush_right', 'mayan_leaf_brush', [B(44, 2.5), B(47, 1.5), B(50, 3.5), B(54, 0.0), B(56, 2.0), B(59, 1.5), B(61, 0.5)], 70, 1.0, 0.7, dur=3.5)
 touches('branch_left', 'mayan_branch_whip', [B(45, 1.0), B(48, 3.0), B(51, 2.0), B(55, 0.5), B(59, 3.5)], -85, 0.9, 0.85)
 touches('branch_right', 'mayan_branch_whip', [B(42, 3.0), B(47, 0.0), B(50, 0.5), B(53, 0.5), B(55, 2.5), B(56, 3.0)], 85, 0.9, 0.85)
-touches('bark_scratch', 'mayan_bark_scratch', [B(49, 0.0), B(56, 1.0)], -80, 0.9, 0.9, dur=4.5)
+touches('bark_scratch', 'mayan_bark_scratch', [B(49, 0.0), B(56, 1.0)], -140, 0.9, 0.9, el=10, dur=4.5)
 touches('twig_snap', 'mayan_twig_snap', [B(51, 3.5)], 125, 1.2, 0.85, el=20, dur=5.0)
 touches('tree_crack', 'mayan_tree_crack', [B(46, 2.0), B(50, 2.0), B(54, 1.0), B(60, 2.0), B(63, 0.0)], 170, 7.0, 1.0, dur=7.5)
 
