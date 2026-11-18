@@ -293,7 +293,7 @@
       "space": "palace_room"
     },
     "mayan_bass_drum": {
-      "azimuth": 7.0,
+      "azimuth": -8.0,
       "elevation": 0.0,
       "distance": 5.0,
       "space": "palace_room"
@@ -312,7 +312,7 @@
     },
     "mayan_choir": {
       "azimuth": -2.0,
-      "elevation": 34.0,
+      "elevation": 26.0,
       "distance": 7.5,
       "space": "palace_room"
     },
@@ -342,13 +342,13 @@
     },
     "mayan_horns": {
       "azimuth": 18.0,
-      "elevation": 8.0,
+      "elevation": 2.0,
       "distance": 3.6,
       "space": "palace_room"
     },
     "mayan_piano": {
       "azimuth": 44.0,
-      "elevation": 18.0,
+      "elevation": 0.0,
       "distance": 2.6,
       "space": "palace_room"
     },
@@ -390,7 +390,7 @@
     },
     "mayan_violas_ostinato": {
       "azimuth": 52.0,
-      "elevation": 2.0,
+      "elevation": 16.0,
       "distance": 3.4,
       "space": "palace_room"
     },
@@ -402,7 +402,7 @@
     },
     "mayan_violins_sustain": {
       "azimuth": 28.0,
-      "elevation": 40.0,
+      "elevation": 30.0,
       "distance": 4.9,
       "space": "palace_room"
     },
@@ -463,12 +463,13 @@
       }
     ],
     "height": {
-      "horns": 18,
-      "piano": 18,
+      "horns": 2,
+      "piano": 0,
+      "violas": 16,
       "violins_staccato": 34,
       "violins_tremolo": 22,
-      "violins_sustain": 40,
-      "choir": 34,
+      "violins_sustain": 30,
+      "choir": 26,
       "cymbals": 14,
       "night": 40
     },

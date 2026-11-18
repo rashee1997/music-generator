@@ -150,7 +150,7 @@
   "immersive_7_1_2"
  ],
  "master": {
-  "lufs": -15.5,
+  "lufs": -16.5,
   "true_peak": -3.0,
   "tone": "neutral",
   "fade_out": 3.0

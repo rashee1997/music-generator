@@ -21,7 +21,7 @@
   },
   "spatial": {
     "azimuth": -2.0,
-    "elevation": 34.0,
+    "elevation": 26.0,
     "distance": 7.5,
     "binaural": true,
     "kind": "spot"

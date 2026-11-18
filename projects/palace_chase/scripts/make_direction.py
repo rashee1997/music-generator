@@ -112,7 +112,7 @@ imm.update(why='the story is about what is around the runner: the pursuer is beh
            anchors=['basses', 'celli', 'tuba', 'timpani', 'bass_drum', 'drums_left', 'drums_right'],
            movers=[dict(part='piano_low', why='the heavy low octave is the pursuer, behind the listener', path='behind and to the left at 3 m, fixed; louder on each fourth bar'),
                    dict(part='chant', why='the voices answer the drums from behind and from the side', path='behind to the left at 5 m, fixed')],
-           height=dict(horns=18, piano=18, violins_staccato=34, violins_tremolo=22, violins_sustain=40, choir=34, cymbals=14, night=40),
+           height=dict(horns=2, piano=0, violas=16, violins_staccato=34, violins_tremolo=22, violins_sustain=30, choir=26, cymbals=14, night=40),
            room_changes=[dict(at_section='the_relic_chamber', why='a small chamber with the relic', transition_s=4.0),
                          dict(at_section='the_opening', why='the vault opens above: a taller, longer tail', transition_s=4.0),
                          dict(at_section='the_corridors', why='a narrow stone passage: a close tail', transition_s=3.0),

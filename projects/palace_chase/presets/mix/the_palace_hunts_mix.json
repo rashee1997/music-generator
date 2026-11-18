@@ -276,7 +276,7 @@
     "crest_floor_db": 7.0,
     "profiles": {
       "cinema": {
-        "lufs": -15.5,
+        "lufs": -16.5,
         "true_peak": -3.0,
         "tone": "neutral",
         "glue": true
