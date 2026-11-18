@@ -136,7 +136,6 @@ for bar in range(S_CORR, S_ESCAPE + 4):                                         
         r = near(chord_at(bar, off)[0], 31, 42)
         pl += [N(B(bar, off), d, r, v), N(B(bar, off), d, r + 12, v - 0.06)]
 pl += [N(B(66), 4.0, 38, 1.0), N(B(66), 4.0, 50, 0.95)]
-pl += [N(B(bar), 3.9 if bar < 75 else 2.0, 33, 0.7 - 0.015 * (bar - 70)) for bar in range(70, 74)]
 track('piano_low', 'mayan_piano_low', 'bass', pl)
 
 CELLS = [[0, 2, 3, 2], [0, 3, 2, 3], [0, 2, 0, 3], [2, 3, 2, 0], [0, 1, 2, 3], [3, 2, 1, 2]]       # indices into [root, third, fifth, octave]
