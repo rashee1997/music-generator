@@ -23,9 +23,11 @@ What that buys over placing each stem with its own filter:
 The interface is the one mixer.mix_stems expects of a bus: add(name, signal, spec), add_reverb(signal), result().
 Nothing here decides anything: places come from the presets, the room from the space preset.
 """
+import collections
 import json
 import os
 import tempfile
+import threading
 
 import numpy as np
 
@@ -98,8 +100,10 @@ def encode(bus, s, g):
         bus[a:b] += s[a:b, None] * (g[i] * (1.0 - fr) + g[i + 1] * fr)
 
 
-_ABS_CACHE = {}                          # (surface coefficients, transform size, rate) -> absorption spectrum
-_ABS_CACHE_MAX = 256                     # a room has a handful of surface combinations; this only bounds a leak
+_ABS_CACHE = collections.OrderedDict()   # (surface coefficients, transform size, rate) -> absorption spectrum
+_ABS_CACHE_BYTES = 192 * 1024 * 1024     # the cache's whole size. A spectrum is (size / 2 + 1) complex128 values: 64 MB for a 3 minute
+                                         # source, and the size is part of the key, so a count limit let 256 of them (16 GB) pile up
+_ABS_LOCK = threading.Lock()
 
 
 def _group_size(count, n, budget=SIGNAL_BUDGET):
@@ -115,13 +119,18 @@ def _absorption_response(coeffs, size, sr):
     once per distinct surface combination is what makes a tap cost one multiply instead of a filter design.
     """
     key = (tuple(round(float(c), 9) for c in coeffs), int(size), int(sr))
-    got = _ABS_CACHE.get(key)
-    if got is None:
-        from spatial_hrtf import room
-        got = np.fft.rfft(room.absorption_fir(np.asarray(coeffs, float), sr=sr), int(size))
-        if len(_ABS_CACHE) >= _ABS_CACHE_MAX:
-            _ABS_CACHE.clear()
-        _ABS_CACHE[key] = got
+    with _ABS_LOCK:
+        got = _ABS_CACHE.get(key)
+        if got is not None:
+            _ABS_CACHE.move_to_end(key)
+            return got
+    from spatial_hrtf import room
+    got = np.fft.rfft(room.absorption_fir(np.asarray(coeffs, float), sr=sr), int(size))
+    if got.nbytes <= _ABS_CACHE_BYTES:
+        with _ABS_LOCK:
+            _ABS_CACHE[key] = got
+            while sum(v.nbytes for v in _ABS_CACHE.values()) > _ABS_CACHE_BYTES and len(_ABS_CACHE) > 1:
+                _ABS_CACHE.popitem(last=False)             # the least recently used goes first
     return got
 
 
