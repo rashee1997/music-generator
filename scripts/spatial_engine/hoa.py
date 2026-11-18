@@ -137,7 +137,7 @@ def _absorption_response(coeffs, size, sr):
             _ABS_CACHE.move_to_end(key)
             return got
     from spatial_hrtf import room
-    got = np.fft.rfft(room.absorption_fir(np.asarray(coeffs, float), sr=sr), int(size))
+    got = np.fft.rfft(room.absorption_fir(np.asarray(coeffs, float), sr=sr).astype(np.float32), int(size))   # complex64: the taps are float32 in the end
     if got.nbytes <= _ABS_CACHE_BYTES:
         with _ABS_LOCK:
             _ABS_CACHE[key] = got
@@ -177,7 +177,7 @@ def tap_signals(raw, taps, sr, temp_c, rh, physics=True, budget=SIGNAL_BUDGET):
     if not keep:
         return
     size = int(next_fast_len(n + max(d for _, d in keep) + ABS_FIR_TAPS, real=True))
-    spec = np.fft.rfft(np.asarray(raw, dtype=np.float64), size)
+    spec = np.fft.rfft(np.asarray(raw, dtype=np.float32), size)                # complex64: half the memory and a faster transform than complex128
     freqs = np.fft.rfftfreq(size, 1.0 / float(sr))
     group = _group_size(len(keep), n, budget)
     for start in range(0, len(keep), group):
@@ -188,8 +188,8 @@ def tap_signals(raw, taps, sr, temp_c, rh, physics=True, budget=SIGNAL_BUDGET):
             dist = float(tap.get('distance_m', 1.0))
             if physics:
                 if dist > 1.0:
-                    h *= 10.0 ** (-airabs.alpha_db_per_m(freqs, temp_c, rh) * (dist - 1.0) / 20.0)
-                h /= max(dist, 1e-9)
+                    h *= (10.0 ** (-airabs.alpha_db_per_m(freqs, temp_c, rh) * (dist - 1.0) / 20.0)).astype(np.float32)
+                h /= np.float32(max(dist, 1e-9))
             y = np.fft.irfft(spec * h, size)[:n]
             if d:                                  # the tap's delay is where its signal starts, not a phase ramp
                 out[d:n, j] = y[:n - d]
@@ -376,7 +376,7 @@ class HoaBus:
         import resources
         free = float(resources.available_gb()) * 1e9 if free_bytes is None else float(free_bytes)
         resident_field = min(n * self.k * 4, IN_RAM_BYTES)
-        per_worker = resident_field + n * 2 * 8 + SIGNAL_BUDGET + 6 * n * 8
+        per_worker = resident_field + n * 2 * 8 + SIGNAL_BUDGET + 8 * n * 8
         return int(max(1, (free - HEADROOM_BYTES) // max(per_worker, 1)))
 
     def _place_all(self, bus, stereo, sends, states, n):

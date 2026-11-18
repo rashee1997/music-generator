@@ -581,7 +581,7 @@ class MusicPipeline:
             if f.lower().endswith('.wav'):
                 p = os.path.join(stems_dir, f)
                 try:
-                    x, _ = sf.read(p, always_2d=True)
+                    x, _ = sf.read(p, always_2d=True, dtype='float32')     # half the memory of float64; every stage after the render works on float32 audio
                     m = manifest.get(os.path.splitext(f)[0])        # a trimmed stem goes back to where it starts
                     if m and m.get('start_s'):
                         x = np.pad(x, ((int(round(m['start_s'] * SR)), 0), (0, 0)))

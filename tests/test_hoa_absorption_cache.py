@@ -39,7 +39,9 @@ class AbsorptionCache(unittest.TestCase):
         self.assertIs(a, b)
 
     def test_the_least_recently_used_goes_first(self):
-        hoa._ABS_CACHE_BYTES = 3 * (4096 // 2 + 1) * 16 + 10
+        one = hoa._absorption_response(COEFFS, 4096, 44100).nbytes
+        hoa._ABS_CACHE.clear()
+        hoa._ABS_CACHE_BYTES = 3 * one + 10
         for size in (4096, 4098, 4100):
             hoa._absorption_response(COEFFS, size, 44100)
         hoa._absorption_response(COEFFS, 4096, 44100)      # touch the oldest
