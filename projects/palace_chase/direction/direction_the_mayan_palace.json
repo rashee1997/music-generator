@@ -3,9 +3,9 @@
   "project": "A haunted Mayan palace in the deep Mesoamerican rainforest (the Pet\u00e9n lowlands of Guatemala): a story cue from curious exploration to a chase and a narrow escape",
   "version": 1,
   "medium": "film",
-  "brief": "a professional cinema-grade 8-channel score of at least 2 minutes 30 seconds: a hero explores a haunted ancient Mayan palace in the deep rainforest of the Pet\u00e9n, opens a relic out of curiosity and frees an evil, is chased through the palace and then the deep forest with realistic running, branch and leaf sounds, and escapes narrowly using his own power",
+  "brief": "a Hans Zimmer-style, cinema-grade 7.1.2 score of at least 2 minutes 30 seconds: a hero explores a haunted ancient Mayan palace in the deep rainforest of the Pet\u00e9n, opens a relic out of curiosity and frees an evil, is chased through the palace and then the deep forest, and escapes narrowly using his own power. No sound effects: pianos, orchestra, percussion and voices tell the chase; only the ambience of a haunted palace (with bats) and of the forest is heard",
   "audience": "a listener on an 8-channel (7.1) system or headphones who should feel they are in the chase; they came for the story",
-  "purpose": "a 180-second cue that tells a whole story: wonder, discovery, a mistake, a chase and an escape",
+  "purpose": "a 185-second cue that tells a whole story: wonder, discovery, a mistake, a chase and an escape",
   "point_of_view": "the explorer: the steps and the forest touching the runner are the nearest sounds; the palace and what it holds are what is closing in",
   "job": [
     "let the first half be curiosity with a low pulse under it, so the opening of the relic lands as a mistake the listener saw coming",
@@ -13,9 +13,9 @@
     "turn the minor key to major only at the escape, so the power is heard as a change and not as a reward"
   ],
   "story": "An explorer walks into a stone palace, slow and curious. In a small chamber they find a carved relic, touch it and open it. Something inside is released; a door shuts behind them and for one bar there is nothing. Then they run: through the corridors with a stone guardian behind, through a collapsing exit and into the night forest where branches and leaves tear at them and trees break behind. Cornered, they turn the curse back with a power of their own and escape by a hair. The forest is calm again and the question has an answer.",
-  "duration_s": 179.6,
+  "duration_s": 185.0,
   "in_point_s": 0.0,
-  "out_point_s": 179.6,
+  "out_point_s": 185.0,
   "ending": "tail_out",
   "feel": [
     "tense",
@@ -38,9 +38,9 @@
       "role": "place",
       "energy": 0.25,
       "action": "an explorer walks into a stone palace the forest has swallowed, torch-lit, curious and unafraid",
-      "music": "a D pedal in the basses, a far timpani stroke, a high shimmer in the strings, slow footsteps on stone, and a flute that asks a six-note question",
+      "music": "a D pedal in the basses, a far timpani stroke, a high shimmer in the strings, a piano that asks a six-note question, and a far closed-mouth hum that answers",
       "start_s": 0.0,
-      "end_s": 26.64862760156349
+      "end_s": 29.071230110796552
     },
     {
       "name": "the_relic_chamber",
@@ -48,35 +48,35 @@
       "energy": 0.4,
       "action": "the explorer finds a carved relic in a small chamber, studies it, touches it and opens it",
       "music": "the question comes back up a fourth, a bass clarinet answers it from the stone, a harp touches the relic, a cello pulse grows under, a choir cluster appears, and a stone lid grinds open",
-      "start_s": 26.64862760156349,
-      "end_s": 56.76499983711586
+      "start_s": 29.071230110796552,
+      "end_s": 61.9254543677626
     },
     {
       "name": "the_opening",
       "role": "build",
       "energy": 0.65,
       "action": "what was inside is out: the palace wakes, a door shuts behind the explorer",
-      "music": "a braam, a choir cluster that climbs a semitone a bar, the question in the horns as a threat, a death whistle far inside the walls, a door slam, then one full bar of nothing",
-      "start_s": 56.76499983711586,
-      "end_s": 80.91208022645623
+      "music": "a braam, a choir cluster that climbs a semitone a bar, the question in the horns as a threat, a death whistle far inside the walls, a chant that starts on the beat, then one full bar of nothing",
+      "start_s": 61.9254543677626,
+      "end_s": 87.93044255363672
     },
     {
       "name": "the_corridors",
       "role": "peak",
       "energy": 0.85,
       "action": "the chase through the palace corridors: the explorer runs, a stone guardian follows, the way out collapses",
-      "music": "a pulse that does not stop, a 3+3+2 drum pattern, trombone stabs, heavy steps behind, the horns state the threat, and the exit falls in",
-      "start_s": 80.91208022645623,
-      "end_s": 108.79347595514609
+      "music": "a piano pulse of sixteenths that does not stop, chop strings, a 3+3+2 drum pattern with a snare, trombone stabs, a heavy low piano octave behind for the pursuer, the chant on the beat, the horns state the threat, and a timpani roll and a cymbal for the exit falling in",
+      "start_s": 87.93044255363672,
+      "end_s": 113.14842365498023
     },
     {
       "name": "the_forest",
       "role": "peak",
       "energy": 0.95,
       "action": "out into the night forest, running through leaves and branches, with the pursuer breaking trees behind",
-      "music": "the pulse continues over leaves, brushes, branches and a trunk grabbed at a turn, a stumble, the violins climb a semitone a bar, tree-cracks nearer each time",
-      "start_s": 108.79347595514609,
-      "end_s": 134.48558280903586
+      "music": "the pulse continues a tone higher with fast violin runs for branches and leaves, a bar with a beat of silence and a rush for the stumble, the violins climb a semitone a bar, and a hit on the first beat after a rest each time the pursuer breaks a tree",
+      "start_s": 113.14842365498023,
+      "end_s": 136.63784835383169
     },
     {
       "name": "the_escape",
@@ -84,8 +84,8 @@
       "energy": 1.0,
       "action": "cornered, the explorer turns the curse back with a power of their own and escapes by a hair",
       "music": "the minor key turns to D major, the hero theme in the horns overrules the threat, and one last hit lands",
-      "start_s": 134.48558280903586,
-      "end_s": 146.89407999649785
+      "start_s": 136.63784835383169,
+      "end_s": 147.95063899190728
     },
     {
       "name": "the_release",
@@ -93,8 +93,8 @@
       "energy": 0.45,
       "action": "the power spent, the explorer is out of reach; the monsters stop and the forest is quiet again",
       "music": "the last hit, a beat of nothing, then a held low D, strings in D major and the horns' hero theme at half weight, a conch far away",
-      "start_s": 146.89407999649785,
-      "end_s": 153.00871264130967
+      "start_s": 147.95063899190728,
+      "end_s": 158.38210461794296
     },
     {
       "name": "the_aftermath",
@@ -102,25 +102,27 @@
       "energy": 0.2,
       "action": "the forest at night, calm; the explorer is safe, and the reed holds a low, steady D",
       "music": "a held D major, the flute's question answered and falling home to D, the forest returns, and the bass clarinet holds a low D",
-      "start_s": 153.00871264130967,
-      "end_s": 175.309472865875
+      "start_s": 158.38210461794296,
+      "end_s": 180.69413636109536
     }
   ],
   "motifs": [
     {
       "name": "the relic motif",
-      "first_at_s": 9.97,
+      "first_at_s": 10.88,
       "shape": "D Eb D A G F: a flat second that returns, a leap of a fifth, then a falling step (it ends on F, not home on D: a question)",
       "returns": "in the flute as a question (bar 4), up a fourth (bar 9), in the bass clarinet as the answer (bar 11), in the horns as a threat (bars 18-61), in the flute again as a resolved answer (bar 70), and answered at last, falling home to D"
     },
     {
       "name": "the hero theme",
-      "first_at_s": 140.72,
+      "first_at_s": 142.33,
       "shape": "D A C D E D C A: a rising fifth, a climb to the octave and a step above it, then back down; over D major the C natural keeps a hard-won mixolydian colour (the flat seventh) instead of a plain major lift",
       "returns": "once more at bar 66 a fourth higher, and under the aftermath as a held horn D"
     }
   ],
   "instruments": [
+    "piano",
+    "low piano",
     "celli",
     "basses",
     "violas",
@@ -133,14 +135,16 @@
     "tuba",
     "timpani",
     "bass drum",
+    "snare",
     "cymbals",
-    "choir",
     "conga",
+    "choir",
+    "chant voices",
+    "hum",
     "death whistle",
     "conch",
-    "footsteps",
-    "foliage",
-    "stone"
+    "bats",
+    "forest ambience"
   ],
   "avoid_sounds": [
     "synth pad",
@@ -152,79 +156,82 @@
     "whoosh",
     "stinger",
     "boom tail",
-    "stock jungle loop"
+    "stock jungle loop",
+    "footsteps",
+    "foley",
+    "sound effects"
   ],
-  "pulse": "the relentless pulse is a low-string ostinato of sixteenths from bar 26 (80.9 s) that never stops until bar 66; before it there is only a warning: one far timpani stroke per bar from bar 5, a sparse cello figure of eighths from bar 13 (the relic hum), and a rolled timpani in the opening; footsteps are the second pulse; a 3+3+2 drum pattern from bar 26",
+  "pulse": "the relentless pulse is a piano figure of sixteenths with staccato celli and violas from bar 26 that never stops until bar 66; before it there is only a warning: one far timpani stroke per bar from bar 5, a sparse cello figure of eighths from bar 13 (the relic hum), and a rolled timpani in the opening; footsteps are the second pulse; a 3+3+2 drum pattern from bar 26",
   "tempo_bpm": [
-    58,
-    158
+    56,
+    172
   ],
   "key": "D",
   "mode": "minor",
   "energy": 0.7,
   "space": "palace_room",
   "hits_at": [
-    52.56,
-    56.76,
-    70.71,
-    77.61,
-    80.91,
-    105.03,
-    140.72,
-    146.89
+    57.34,
+    61.93,
+    77.04,
+    84.45,
+    87.93,
+    109.7,
+    142.33,
+    147.95
   ],
   "hits": [
     {
-      "t": 52.56,
+      "t": 57.34,
       "kind": "motion",
       "sync": "soft",
       "sound": "the relic's stone lid grinds open",
       "why": "the choice that starts the story"
     },
     {
-      "t": 56.76,
+      "t": 61.93,
       "kind": "musical",
       "sync": "hard",
       "sound": "the opening braam",
       "why": "the evil is out; weight, not volume"
     },
     {
-      "t": 70.71,
+      "t": 77.04,
       "kind": "motion",
       "sync": "hard",
       "sound": "a stone door shuts behind the explorer",
       "why": "there is no way back"
     },
     {
-      "t": 77.61,
+      "t": 84.45,
       "kind": "musical",
       "sync": "hard",
       "sound": "a full bar of nothing",
       "why": "the held breath before the chase"
     },
     {
-      "t": 80.91,
+      "t": 87.93,
       "kind": "musical",
       "sync": "hard",
       "sound": "the chase begins on a braam and a drum hit",
       "why": "the music does not let go from here"
     },
     {
-      "t": 105.03,
+      "t": 109.7,
       "kind": "motion",
       "sync": "hard",
       "sound": "the palace exit collapses",
       "why": "the way back is gone, the forest begins"
     },
     {
-      "t": 140.72,
+      "t": 142.33,
       "kind": "musical",
       "sync": "hard",
       "sound": "D minor turns to D major and the hero theme enters",
       "why": "the explorer's power"
     },
     {
-      "t": 146.89,
+      "t": 147.95,
       "kind": "musical",
       "sync": "hard",
       "sound": "the last hit, then a beat of nothing",
@@ -240,15 +247,15 @@
       "choir"
     ],
     "sits_under": [
-      "footsteps"
+      "chant"
     ],
     "must_hear": [
-      "the flute's question at 9.97 s",
-      "the stone lid at 52.56 s",
-      "a bar of nothing at 77.61 s",
-      "the exit collapse at 105.03 s",
-      "the D major turn at 140.72 s",
-      "the answer in the flute at 153.01 s"
+      "the flute's question at 10.88 s",
+      "the stone lid at 57.34 s",
+      "a bar of nothing at 84.45 s",
+      "the exit collapse at 109.7 s",
+      "the D major turn at 142.33 s",
+      "the answer in the flute at 158.38 s"
     ],
     "leave_free_hz": [
       700,
@@ -339,6 +346,18 @@
       "distance": 3.6,
       "space": "palace_room"
     },
+    "mayan_piano": {
+      "azimuth": 66.0,
+      "elevation": 30.0,
+      "distance": 2.6,
+      "space": "palace_room"
+    },
+    "mayan_piano_low": {
+      "azimuth": -40.0,
+      "elevation": -16.0,
+      "distance": 3.0,
+      "space": "palace_room"
+    },
     "mayan_timpani": {
       "azimuth": 26.0,
       "elevation": 0.0,
@@ -369,6 +388,12 @@
       "distance": 3.4,
       "space": "palace_room"
     },
+    "mayan_violins_staccato": {
+      "azimuth": -100.0,
+      "elevation": 34.0,
+      "distance": 3.8,
+      "space": "palace_room"
+    },
     "mayan_violins_sustain": {
       "azimuth": 28.0,
       "elevation": 40.0,
@@ -390,13 +415,13 @@
     "whistle_1": {
       "azimuth": -110,
       "elevation": 5,
-      "distance": 16.0,
+      "distance": 18.0,
       "space": "palace_room"
     },
     "whistle_2": {
-      "azimuth": 130,
+      "azimuth": -110,
       "elevation": 5,
-      "distance": 8.0,
+      "distance": 16.0,
       "space": "palace_room"
     },
     "whistle_3": {
@@ -404,143 +429,11 @@
       "elevation": 5,
       "distance": 4.0,
       "space": "palace_room"
-    },
-    "conch_2": {
-      "azimuth": -150,
-      "elevation": 0,
-      "distance": 12.0,
-      "space": "palace_room"
-    },
-    "walk_left": {
-      "azimuth": -20,
-      "elevation": -15,
-      "distance": 2.2,
-      "space": "palace_room"
-    },
-    "walk_right": {
-      "azimuth": 20,
-      "elevation": -15,
-      "distance": 2.2,
-      "space": "palace_room"
-    },
-    "run_left": {
-      "azimuth": -55,
-      "elevation": -16,
-      "distance": 1.6,
-      "space": "palace_room"
-    },
-    "run_right": {
-      "azimuth": 55,
-      "elevation": -16,
-      "distance": 1.6,
-      "space": "palace_room"
-    },
-    "leaf_left": {
-      "azimuth": -55,
-      "elevation": -16,
-      "distance": 1.5,
-      "space": "palace_room"
-    },
-    "leaf_right": {
-      "azimuth": 55,
-      "elevation": -16,
-      "distance": 1.5,
-      "space": "palace_room"
-    },
-    "guardian_far_a": {
-      "azimuth": 175,
-      "elevation": -10,
-      "distance": 8.0,
-      "space": "palace_room"
-    },
-    "guardian_far_b": {
-      "azimuth": -175,
-      "elevation": -10,
-      "distance": 8.0,
-      "space": "palace_room"
-    },
-    "guardian_near_a": {
-      "azimuth": 160,
-      "elevation": -10,
-      "distance": 4.5,
-      "space": "palace_room"
-    },
-    "guardian_near_b": {
-      "azimuth": -160,
-      "elevation": -10,
-      "distance": 4.5,
-      "space": "palace_room"
-    },
-    "brush_left": {
-      "azimuth": -105,
-      "elevation": 21,
-      "distance": 1.0,
-      "space": "palace_room"
-    },
-    "brush_right": {
-      "azimuth": 70,
-      "elevation": 0,
-      "distance": 1.0,
-      "space": "palace_room"
-    },
-    "branch_left": {
-      "azimuth": -105,
-      "elevation": 16,
-      "distance": 0.9,
-      "space": "palace_room"
-    },
-    "branch_right": {
-      "azimuth": 85,
-      "elevation": 0,
-      "distance": 0.9,
-      "space": "palace_room"
-    },
-    "bark_scratch": {
-      "azimuth": -140,
-      "elevation": 10,
-      "distance": 0.9,
-      "space": "palace_room"
-    },
-    "twig_snap": {
-      "azimuth": 125,
-      "elevation": 20,
-      "distance": 1.2,
-      "space": "palace_room"
-    },
-    "tree_crack": {
-      "azimuth": 170,
-      "elevation": 0,
-      "distance": 7.0,
-      "space": "palace_room"
-    },
-    "stone_door": {
-      "azimuth": 60,
-      "elevation": 25,
-      "distance": 2.0,
-      "space": "palace_room"
-    },
-    "door_shut": {
-      "azimuth": 180,
-      "elevation": 0,
-      "distance": 6.0,
-      "space": "palace_room"
-    },
-    "collapse": {
-      "azimuth": 180,
-      "elevation": 20,
-      "distance": 5.0,
-      "space": "palace_room"
-    },
-    "final_slam": {
-      "azimuth": 170,
-      "elevation": 0,
-      "distance": 4.0,
-      "space": "palace_room"
     }
   },
   "immersive": {
     "enabled": true,
-    "why": "the story is about what is around the runner: the pursuer is behind, the branches pass on both sides, and the rooms change from a stone hall to a forest; a stereo mix can say it, an 8-channel bed can place it",
+    "why": "the story is about what is around the runner: the pursuer is behind, the runs of the violins pass on both sides, the chant is all around, and the rooms change from a stone hall to a forest; a stereo mix can say it, a 7.1.2 bed can place it",
     "engine": "hoa_bus",
     "anchors": [
       "basses",
@@ -553,20 +446,22 @@
     ],
     "movers": [
       {
-        "part": "guardian_near",
-        "why": "the pursuer closes from behind on the corridor floor",
-        "path": "behind at 8 m, then at 4.5 m, a little to the left"
+        "part": "piano_low",
+        "why": "the heavy low octave is the pursuer, behind the listener",
+        "path": "behind and to the left at 3 m, fixed; louder on each fourth bar"
       },
       {
-        "part": "tree_crack",
-        "why": "the pursuer breaks the forest behind the runner",
-        "path": "behind at 7 m, five times, each a little louder"
+        "part": "chant",
+        "why": "the voices answer the drums from behind and from the side",
+        "path": "behind to the left at 5 m, fixed"
       }
     ],
     "height": {
-      "horns": 8,
+      "horns": 18,
+      "piano": 30,
+      "violins_staccato": 34,
       "violins_tremolo": 22,
-      "violins_sustain": 26,
+      "violins_sustain": 40,
       "choir": 34,
       "cymbals": 14,
       "night": 40
@@ -599,8 +494,8 @@
       }
     ],
     "must_hear": [
-      "the pursuer behind in the corridors",
-      "branches passing on both sides in the forest",
+      "the heavy octave behind in the corridors",
+      "the violin runs on the left in the forest",
       "the room opening at the exit"
     ],
     "deliverables": [
@@ -665,8 +560,8 @@
   },
   "notes": "Every field is a target someone can check. feel and avoid_feel are what listen.py tests earshot against; sections is the cue's arc in seconds, and its names are what a trajectory or a room change is anchored to; hits_at is what listen.py looks for in the onset list, and hits is the same moments with a reason and a kind (cut, motion or musical). spatial_staging is the room seen from above: each preset must match its own spot. immersive says whether the field is doing a job, what moves and why, and where the room changes (numbers live in the presets). mix_intent says what must be audible and what must stay free. Write in plain English: earshot reads the words.",
   "expression": {
-    "sonic_picture": "The first ten seconds are footsteps on stone in a large dark room, a low D far underneath, and a flute that is close and a little breathy asking a six-note question; the middle is a harder, faster run with leaves and branches touching the listener on both sides and a heavy thing behind; the last note is a low reed holding D under a wide major chord.",
-    "performer": "The flute breathes before the long note and lets the last note fall off; the celli dig into the beat with a little drag on beat one and a push into the next bar; the horns enter late on the threat and play the leaps with a short slide in; the timpani stroke is soft and slightly behind; the runner never lands two steps the same, and trips once.",
+    "sonic_picture": "The first ten seconds are a low D held on a piano in a large dark room with bats in the vault and far away a whistle, and a high piano that is close and a little hesitant asking a six-note question; the middle is a hard, fast run, a piano pulse of sixteenths with fast violin runs on both sides and a heavy low octave behind; the last note is a low reed holding D under a wide major chord.",
+    "performer": "The flute breathes before the long note and lets the last note fall off; the celli dig into the beat with a little drag on beat one and a push into the next bar; the horns enter late on the threat and play the leaps with a short slide in; the timpani stroke is soft and slightly behind; the pianist plays the pulse with the left hand a hair ahead and trips once, in the bar with a beat of silence.",
     "producer_moves": "The room gets bigger at the opening and tighter in the corridors and then opens to the forest; one full bar of nothing before the chase; the tempo accelerates in the chase and the forest; a single tutti hit and one beat of nothing before the release; the key turns to major only at the escape.",
     "anti_generic": "The generic version is a drone, a riser and a drum loop with a monster sound; this one is a story told by a motif that is first a question, then an answer, then a threat, and is finally overruled by a different shape, with a pulse that appears only once the evil is out.",
     "cues": [

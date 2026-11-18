@@ -1,0 +1,43 @@
+{
+  "name": "mayan_chant",
+  "category": "rhythmic_chest_shout",
+  "phonetic_sound": "Hah! Hu! ...",
+  "register_range": [
+    "D3",
+    "D4"
+  ],
+  "role": "rhythmic_accent_chant",
+  "character": "A group of five chest voices shouting short syllables on the beat, answering themselves: the ritual chant of whatever was released from the relic.",
+  "vowel": "a",
+  "expression": "powerful",
+  "formants": [
+    680,
+    1220,
+    2420
+  ],
+  "source": {
+    "register": "chest",
+    "breathiness": 0.02
+  },
+  "articulation": {
+    "mode": "detached",
+    "attack_ms": 15.0,
+    "release_ms": 60.0,
+    "detach_ms": 40.0
+  },
+  "vibrato": {
+    "depth_cents": 0.0
+  },
+  "ensemble": {
+    "voices": 5,
+    "cohesion": 0.6
+  },
+  "spatial": {
+    "azimuth": -150.0,
+    "elevation": 10.0,
+    "distance": 5.0,
+    "binaural": true,
+    "kind": "spot"
+  },
+  "note": "vocal engine source-filter model (references/instruments-and-vocals/vocal-engine.md) | Peterson and Barney 1952, vowel formants, as used in references/data/vocal-engine-data/defaults.json | Mesoamerican ritual music: clay whistles, drums and voices (https://encyclopedia.com/humanities/encyclopedias-almanacs-transcripts-and-maps/pre-columbian-music-mesoamerica; search-result text, page not opened) | ESTIMATE: this chant has not been listened to; the syllables and rhythm are written for the piece"
+}

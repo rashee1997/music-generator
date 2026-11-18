@@ -1,0 +1,52 @@
+{
+  "name": "bat_social",
+  "character": "Bat social calls heard in a roost: short, high, downward chirps in small groups, from several animals, with gaps between.",
+  "elements": {
+    "chirp": {
+      "f0_hz": [
+        [
+          0,
+          13500
+        ],
+        [
+          0.4,
+          11000
+        ],
+        [
+          1,
+          8500
+        ]
+      ],
+      "ms": [
+        50,
+        130
+      ],
+      "harmonics": 2,
+      "rolloff": 0.45,
+      "noise": 0.28,
+      "subharmonic": 0.0,
+      "attack": 0.08,
+      "release": 0.25
+    }
+  },
+  "sequence": [
+    [
+      "chirp",
+      2,
+      4
+    ]
+  ],
+  "gap_ms": [
+    40,
+    140
+  ],
+  "tract_cm": 1.0,
+  "formant_q": 3.0,
+  "formant_mix": 0.3,
+  "bouts_per_min": 9.0,
+  "individuals": 3,
+  "sources": [
+    "bat_social_calls",
+    "ESTIMATE: f0 8.5-13.5 kHz, lengths and bout rate are written from \"audible below 20 kHz\" and \"squeaks, squawks and chittering\"; no recording was analysed and no duration in ms was found"
+  ]
+}

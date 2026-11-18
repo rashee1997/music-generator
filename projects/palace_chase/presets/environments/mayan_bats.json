@@ -1,0 +1,48 @@
+{
+  "name": "mayan_bats",
+  "description": "Bats roosting in the vault of an old palace: a few high chirps, and now and then the soft flutter of wings.",
+  "character": "Bats roosting in the vault of an old palace: a few high chirps, and now and then the soft flutter of wings.",
+  "layers": [
+    {
+      "name": "roost_calls",
+      "primitive": "animal_call",
+      "kind": "spot",
+      "gain_db": -16.0,
+      "call": "bat_social",
+      "individuals": 3,
+      "bouts_per_min": 9.0,
+      "first_s": 0.0,
+      "spatial": {
+        "azimuth": 0,
+        "elevation": 55,
+        "distance": 9.0
+      }
+    },
+    {
+      "name": "wing_flutter",
+      "primitive": "noise_bed",
+      "kind": "bed",
+      "gain_db": -40.0,
+      "low_hz": 700,
+      "high_hz": 4200,
+      "mod_rate_hz": 0.45,
+      "mod_depth": 0.9,
+      "spatial": {
+        "azimuth": 0,
+        "elevation": 60,
+        "distance": 7.0
+      }
+    }
+  ],
+  "blending": {
+    "high_pass_hz": 600,
+    "vocal_pocket_notch_hz": 2200,
+    "vocal_pocket_notch_db": -3.0,
+    "overall_gain_db": -12.0
+  },
+  "sources": [
+    "bat_social_calls",
+    "bat_wing_flutter"
+  ],
+  "note": "A roost heard from the floor of a vault. Calls are audible social calls (under 20 kHz); echolocation is ultrasonic and is not rendered. Levels, rates and the flutter envelope are ESTIMATES; nothing here was auditioned."
+}

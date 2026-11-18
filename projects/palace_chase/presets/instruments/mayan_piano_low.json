@@ -1,0 +1,45 @@
+{
+  "name": "mayan_piano_low",
+  "description": "Acoustic grand piano in the low octaves: a held D in the quiet, heavy two-hand octave hits in the chase that stand for the pursuer's steps.",
+  "gm": "piano",
+  "role": "bass",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 7.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 6.0
+  },
+  "spatial": {
+    "azimuth": -40.0,
+    "elevation": -16.0,
+    "distance": 3.0,
+    "binaural": true,
+    "kind": "spot"
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 45.0
+    },
+    {
+      "type": "lp",
+      "f": 10500.0
+    }
+  ],
+  "gain_db": -1.0,
+  "reverb": 0.22,
+  "articulation": {
+    "overlap_ms": 20.0,
+    "gate": 0.96,
+    "release_ms": 140.0
+  },
+  "mechanics_class": "keys",
+  "character": "Acoustic grand piano in the low octaves: a held D in the quiet, heavy two-hand octave hits in the chase that stand for the pursuer's steps.",
+  "sources": [
+    "KB western (orchestral weight: low strings and timpani carry the pulse)",
+    "KB dynamic-flow (the arc comes from layers and register, not volume alone)",
+    "GeneralUser GS SoundFont by S. Christian Collins, played by tinysoundfont (a General MIDI acoustic grand, not a concert-hall sample set)",
+    "Piano and string ostinati built from the notes of the sounding chord, with a few notes changed on each repeat (search-result summary of an analysis of Zimmer ostinati; page not opened)",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim_db is set after the first measured render"
+  ]
+}
