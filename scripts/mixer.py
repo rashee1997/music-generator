@@ -124,6 +124,9 @@ def _install(mix, space=None, ctx=None):
         ctx = mix_context.MixContext(mix, {} if space is None else space,
                                      name=str(mix.get('name') or 'default'))
     mix_context.make_current(ctx)
+    for key, val in mix_schema.inert_dynamics(mix):
+        print(f'  [WARN] mix.dynamics.{key} = {val!r} has no effect with engine "pedalboard" (a four-knob compressor): set '
+              f'mix.dynamics.engine to "dsp" to use it, or remove the key', flush=True)
     return mix
 
 

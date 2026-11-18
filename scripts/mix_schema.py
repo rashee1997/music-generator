@@ -508,6 +508,38 @@ def validate(mix):
     return problems
 
 
+def inert_dynamics(mix):
+    """Dynamics keys a preset sets that the chosen engine never reads.
+
+    With `engine: pedalboard` (the default) the compressor is the four-knob one (thr, ratio, attack, release); knee, detector,
+    lookahead, makeup, parallel, sidechain filters, multiband, dynamic EQ and the transient shaper only run on
+    `engine: dsp` (or on a stem that carries its own `dynamics`). A value that differs from the default under the
+    pedalboard engine therefore changes nothing and says nothing: report it so the preset writer picks the engine.
+    Returns [(key, value)], empty when the engine is dsp or every such key is at its default."""
+    dyn = (mix or {}).get('dynamics')
+    if not isinstance(dyn, dict) or str(dyn.get('engine', DEFAULTS['dynamics']['engine'])) != 'pedalboard':
+        return []
+    base = DEFAULTS['dynamics']
+    return [(k, dyn[k]) for k in INERT_UNDER_PEDALBOARD if k in dyn and dyn[k] != base.get(k)]
+
+
+INERT_UNDER_PEDALBOARD = ('knee_db', 'detector', 'stereo_link', 'lookahead_ms', 'makeup_db', 'parallel', 'multiband', 'dynamic_eq',
+                          'transient', 'sidechain_hp_hz', 'sidechain_lp_hz')
+
+
+def redundant_chains(mix):
+    """Names of `role_chains` / `spectral.profiles` entries a preset repeats exactly as the schema ships them. A copy is not
+    wrong, but it stops following the schema defaults: a later tuning there never reaches this preset. List only what differs."""
+    out = []
+    shipped = {'role_chains': ROLE_CHAINS, 'spectral.profiles': (DEFAULTS.get('spectral') or {}).get('profiles') or {}}
+    got = {'role_chains': (mix or {}).get('role_chains') or {},
+           'spectral.profiles': ((mix or {}).get('spectral') or {}).get('profiles') or {}}
+    for sec, items in got.items():
+        if isinstance(items, dict):
+            out += [f'{sec}.{k}' for k, v in items.items() if shipped[sec].get(k) == v]
+    return out
+
+
 def _chain_problems(path, chain):
     out = []
     if not isinstance(chain, dict):
