@@ -205,7 +205,6 @@ track('bass_clarinet', 'mayan_bass_clarinet', 'counter', bc)
 
 hp = [N(B(10) + 1.0 * k, 0.9, p, 0.6 + 0.03 * k) for k, p in enumerate((62, 69, 74, 77))]
 hp += [N(B(14, 2.0), 1.4, 62, 0.7), N(B(15, 2.0), 1.4, 63, 0.72), N(B(16, 2.0), 1.4, 69, 0.78)]        # touching the relic
-hp += [N(B(bar, 0), 1.4, near(CH[bar][0], 62, 74), 0.6) for bar in range(70, 74)]
 track('harp', 'mayan_harp', 'arp', hp)
 
 # ================================================================ brass
@@ -317,7 +316,7 @@ for bar in range(58, 62):
 for bar in range(62, 66):
     ch += [N(B(bar), 4.05, p, 1.0) for p in (62, 66, 69, 74)]                 # D major: the cluster is gone, F# in the chord
 ch += [N(B(66), 15.9, p, 0.8) for p in (62, 69, 74)]
-ch += [N(B(70), 23.9, p, 0.7) for p in (62, 69)]                  # an open fifth: no third, so the ending is calm in either mode
+ch += [N(B(70), 23.9, p, 0.7) for p in (50, 62)]        # D3 and D4 of one choir: no second instrument for the flute to beat against                  # an open fifth: no third, so the ending is calm in either mode
 track('choir', 'mayan_choir', 'pad', ch)
 
 # ================================================================ places, calls and single sounds
@@ -387,10 +386,10 @@ touches('brush_right', 'mayan_leaf_brush', [B(44, 2.5), B(47, 1.5), B(50, 3.5), 
 touches('branch_left', 'mayan_branch_whip', [B(45, 1.0), B(48, 3.0), B(51, 2.0), B(55, 0.5), B(59, 3.5)], -85, 0.9, 0.85)
 touches('branch_right', 'mayan_branch_whip', [B(42, 3.0), B(47, 0.0), B(50, 0.5), B(53, 0.5), B(55, 2.5), B(56, 3.0)], 85, 0.9, 0.85)
 touches('bark_scratch', 'mayan_bark_scratch', [B(49, 0.0), B(56, 1.0)], -80, 0.9, 0.9, dur=4.5)
-touches('twig_snap', 'mayan_twig_snap', [B(51, 3.5)], 40, 1.2, 0.85, dur=5.0)
+touches('twig_snap', 'mayan_twig_snap', [B(51, 3.5)], 125, 1.2, 0.85, el=20, dur=5.0)
 touches('tree_crack', 'mayan_tree_crack', [B(46, 2.0), B(50, 2.0), B(54, 1.0), B(60, 2.0), B(63, 0.0)], 170, 7.0, 1.0, dur=7.5)
 
-track('stone_door', 'sfx:mayan_stone_door', 'fx', [dict(t=B(16, 3.0), d=12.0, p=60, v=0.8)], spatial=dict(azimuth=0, elevation=10, distance=2.0, kind='spot', binaural=True))
+track('stone_door', 'sfx:mayan_stone_door', 'fx', [dict(t=B(16, 3.0), d=12.0, p=60, v=0.8)], spatial=dict(azimuth=60, elevation=25, distance=2.0, kind='spot', binaural=True))
 track('door_shut', 'sfx:mayan_stone_slam', 'fx', [dict(t=SHUT, d=10.0, p=60, v=0.8)], spatial=dict(azimuth=180, elevation=0, distance=6.0, kind='spot', binaural=True))
 track('collapse', 'sfx:mayan_rubble', 'fx', [dict(t=COLLAPSE, d=10.0, p=60, v=1.0)], spatial=dict(azimuth=180, elevation=20, distance=5.0, kind='spot', binaural=True))
 track('final_slam', 'sfx:mayan_stone_slam', 'fx', [dict(t=CUT, d=17.0, p=60, v=1.0)], spatial=dict(azimuth=170, elevation=0, distance=4.0, kind='spot', binaural=True))
@@ -416,7 +415,7 @@ score = dict(
     tempo_points=[[0, 72], [68, 72], [96, 90], [99.9, 58], [100, 132], [160, 144], [164, 146], [228, 152], [232, 154], [276, 158], [276.01, 66], [300, 62]],
     dynamics=dynamics, space='palace_room', mix_preset='the_palace_hunts_mix',
     output_targets=['stereo', 'immersive_7_1'],
-    master=dict(lufs=-14.5, true_peak=-2.0, tone='neutral', fade_out=3.0),
+    master=dict(lufs=-15.0, true_peak=-2.0, tone='neutral', fade_out=3.0),
     piece_type='cinematic', focus='melody',
     intent=dict(emotions=['tense', 'dark_epic', 'adventure'], registers=['cinematic', 'natural'], scenes=['arrival', 'build', 'battle'],
                 tensions=['ostinato', 'pedal', 'cluster', 'rising_line', 'silence_before'], avoid=['joyful', 'playful']),

@@ -256,7 +256,7 @@
     ],
     "executed_by": "carry this block on the score as `mix_intent` and set the mix preset's lead_carve to {\"enabled\": true, \"from_intent\": true}: `hero` (a track name) becomes the part the beds yield to and `leave_free_hz` the band they yield in. Without that the block is read by listen.py only."
   },
-  "loudness_lufs": -14.5,
+  "loudness_lufs": -15.0,
   "true_peak_max": -1.5,
   "delivery": {
     "format": "wav",
@@ -502,8 +502,8 @@
       "space": "palace_room"
     },
     "twig_snap": {
-      "azimuth": 40,
-      "elevation": 0,
+      "azimuth": 125,
+      "elevation": 20,
       "distance": 1.2,
       "space": "palace_room"
     },
@@ -514,8 +514,8 @@
       "space": "palace_room"
     },
     "stone_door": {
-      "azimuth": 0,
-      "elevation": 10,
+      "azimuth": 60,
+      "elevation": 25,
       "distance": 2.0,
       "space": "palace_room"
     },
