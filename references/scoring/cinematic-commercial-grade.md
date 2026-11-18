@@ -74,6 +74,7 @@ Large low hits and dense low brass trigger gate rows that exist for good reasons
 | `cochlear_roughness` | a bass harmonic a semitone from a sustained chord note | move the bass to the chord's root, or move the chord note; do not mute the bass |
 | `spatial.z_separation` | two parts in the same midrange at the same place | separate by azimuth or height; a bass cannot be raised, so move the other part |
 | `fold.mono` | a head-filtered stereo master adds up 3-5 dB low in 450-1500 Hz | `immersive.stereo_decode: "speakers"` for a loudspeaker master; headphones keep `binaural` |
+| the calm ending is as loud as the chase | a melody, lead or vocal part that plays only the quiet sections: gain staging lifts every figure-family part to full level | give the part the role `counter` (`preflight.figure_level` warns before the render) |
 | `clicks`, `stem.edge`, `ambient_bed` on random sources | a bout of calls or a noise bed lands differently on each render | give the track a fixed length that ends on a call, and a bed under it that does not stop; re-render, do not relax the row |
 
 ## 5. Mix it

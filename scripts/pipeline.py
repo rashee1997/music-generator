@@ -66,6 +66,7 @@ import humanize as hz
 import mixer
 import naturalness_check as nc
 import pattern_audit
+import preflight_lint
 import presets
 import project_gate
 import quality_gate as qg
@@ -224,10 +225,15 @@ class MusicPipeline:
     # -----------------------------------------------------------------------------------------
     # Stage 2: Acoustic Pre-Flight Linter (The 6 Acoustic Laws)
     # -----------------------------------------------------------------------------------------
-    def stage2_preflight_lint(self, score, strict=False):
-        """Stage 2: Check the 6 Acoustic Laws and 4 Cognitive Feel Laws prior to rendering."""
-        self.log(2, "Acoustic & Cognitive Pre-Flight Linter (Acoustic Laws + Cognitive Feel Laws)")
+    def stage2_preflight_lint(self, score, strict=False, project_dir=None):
+        """Stage 2: Check the 6 Acoustic Laws and 4 Cognitive Feel Laws prior to rendering, then the score against the
+        presets that will play it (preflight_lint.py: patch range, one-shot length, section lines, unisons, figure level, placement)."""
+        self.log(2, "Acoustic & Cognitive Pre-Flight Linter (Acoustic Laws + Cognitive Feel Laws + score against presets)")
         rows = pattern_audit.acoustic_checks(score)
+        try:
+            rows = rows + [r for r in preflight_lint.checks(score, project_dir) if r[0] in ('FAIL', 'WARN')]
+        except Exception as exc:                  # a lint that cannot run must say so, never stop the render by itself
+            print(f"  [WARN] preflight_lint did not run ({exc})")
         fails = sum(1 for kind, _, _ in rows if kind == 'FAIL')
         warns = sum(1 for kind, _, _ in rows if kind == 'WARN')
         clean = (fails == 0)
@@ -783,7 +789,7 @@ class MusicPipeline:
                 prev_attempts = []
 
         # Stage 2: Acoustic Pre-Flight
-        self.stage2_preflight_lint(score, strict=strict)
+        self.stage2_preflight_lint(score, strict=strict, project_dir=project_dir)
 
         # Stage 3: Humanization & Respiration
         self.stage3_humanize(score)

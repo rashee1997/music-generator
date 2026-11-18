@@ -291,7 +291,7 @@ POOL_R = [(0.5, 2.0, 3.5), (1.0, 2.5), (0.5, 1.25, 2.0, 2.75, 3.5), (0, 1.5, 3.5
 def conga(pool, bar, vel, notes):
     pat = pool[int(rng.integers(0, len(pool)))]
     for i, o in enumerate(pat):
-        key = (48, 50, 53)[int(rng.choice([0, 1, 2], p=[0.5, 0.35, 0.15]))]
+        key = (48, 50, 52)[int(rng.choice([0, 1, 2], p=[0.5, 0.35, 0.15]))]            # the conga patch is sampled on 48-52 only
         notes.append(N(B(bar, o), 0.4, key, vel * (1.0 if i == 0 else 0.62 + 0.3 * float(rng.random()))))
 
 
@@ -392,8 +392,8 @@ touches('tree_crack', 'mayan_tree_crack', [B(46, 2.0), B(50, 2.0), B(54, 1.0), B
 
 track('stone_door', 'sfx:mayan_stone_door', 'fx', [dict(t=B(16, 3.0), d=12.0, p=60, v=0.8)], spatial=dict(azimuth=0, elevation=10, distance=2.0, kind='spot', binaural=True))
 track('door_shut', 'sfx:mayan_stone_slam', 'fx', [dict(t=SHUT, d=10.0, p=60, v=0.8)], spatial=dict(azimuth=180, elevation=0, distance=6.0, kind='spot', binaural=True))
-track('collapse', 'sfx:mayan_rubble', 'fx', [dict(t=COLLAPSE, d=6.0, p=60, v=1.0)], spatial=dict(azimuth=180, elevation=20, distance=5.0, kind='spot', binaural=True))
-track('final_slam', 'sfx:mayan_stone_slam', 'fx', [dict(t=CUT, d=10.0, p=60, v=1.0)], spatial=dict(azimuth=170, elevation=0, distance=4.0, kind='spot', binaural=True))
+track('collapse', 'sfx:mayan_rubble', 'fx', [dict(t=COLLAPSE, d=10.0, p=60, v=1.0)], spatial=dict(azimuth=180, elevation=20, distance=5.0, kind='spot', binaural=True))
+track('final_slam', 'sfx:mayan_stone_slam', 'fx', [dict(t=CUT, d=17.0, p=60, v=1.0)], spatial=dict(azimuth=170, elevation=0, distance=4.0, kind='spot', binaural=True))
 for _t in tracks:
     if _t['name'] in ('stone_door', 'door_shut', 'final_slam'):
         _t['dc_hp_hz'] = 90.0

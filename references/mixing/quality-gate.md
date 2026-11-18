@@ -160,6 +160,21 @@ No neural model and no audio: the rows read the sheet and the score's notes. Anc
 
 The index follows the cue research (mode, tempo, register, dynamics, articulation, timbre; Gabrielsson and Lindstrom 2010, Eerola, Friberg and Bresin 2013). It measures how hard the written music pushes, not its valence.
 
+## 3g. Pre-render rows (`scripts/preflight_lint.py`, stage 2)
+
+Read from the score and the presets before any audio is made; each was found by a render that failed. FAIL and WARN rows print in stage 2 with the pattern-audit rows. They do not replace the audio rows.
+
+| Row | Level | Judges |
+|---|---|---|
+| `preflight.range` | FAIL | a note outside the sampled key range of its SFZ patch (silent or stretched); read from the `.sfz` and its includes |
+| `preflight.sfx_length` | FAIL | a one-shot event cut before 75 % of its sound plays (event `d`, or the next onset, shorter than the preset's `seconds`): the cut is a click |
+| `preflight.section_edge` | WARN | a sparse sound (16 beats or less) that ends in a section with none of its events |
+| `preflight.unison` | WARN | two instruments of different families on one pitch above middle C for three beats or more |
+| `preflight.figure_level` | WARN | a melody, lead or vocal part that plays mostly the quiet sections: gain staging lifts every figure-family part to full level, so give it the role `counter` |
+| `preflight.placement` | WARN | a score-placed sound within 25 degrees in azimuth and 15 in elevation of a part that plays with it |
+
+Limits are starting values from those failures. `python scripts/preflight_lint.py scores/<title>_score.json <project>` runs them alone.
+
 ## 3c. The gate adapts to the type of piece (gate profiles)
 
 Rules tuned on melodies false-flag a tense drone, an ambient bed, a dance loop or an effects-only piece. So which rows run, and their
