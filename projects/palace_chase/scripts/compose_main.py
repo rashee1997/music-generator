@@ -414,7 +414,7 @@ score = dict(
     title='The Mayan Palace', bpm=150, ts=[4, 4], seed=1511, humanize='natural', key='D', mode='minor',
     tempo_points=[[0, 72], [68, 72], [96, 90], [99.9, 58], [100, 132], [160, 144], [164, 146], [228, 152], [232, 154], [276, 158], [276.01, 66], [300, 62]],
     dynamics=dynamics, space='palace_room', mix_preset='the_palace_hunts_mix',
-    output_targets=['stereo', 'immersive_7_1'],
+    output_targets=['stereo', 'immersive_7_1_2'],          # stereo is the certified reference the gate and the fold rows need; the deliverable is the 7.1.2 file
     master=dict(lufs=-15.0, true_peak=-2.0, tone='neutral', fade_out=3.0),
     piece_type='cinematic', focus='melody',
     intent=dict(emotions=['tense', 'dark_epic', 'adventure'], registers=['cinematic', 'natural'], scenes=['arrival', 'build', 'battle'],

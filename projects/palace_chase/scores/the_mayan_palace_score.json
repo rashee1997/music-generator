@@ -141,7 +141,7 @@
  "mix_preset": "the_palace_hunts_mix",
  "output_targets": [
   "stereo",
-  "immersive_7_1"
+  "immersive_7_1_2"
  ],
  "master": {
   "lufs": -15.0,

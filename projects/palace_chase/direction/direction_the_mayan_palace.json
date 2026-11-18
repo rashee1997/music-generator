@@ -265,7 +265,7 @@
     "stage": "cinema",
     "output_targets": [
       "stereo",
-      "immersive_7_1"
+      "immersive_7_1_2"
     ],
     "played_on": "a headphone listener, a living-room 5.1, a 7.1.4 theatre, a phone speaker (mono), and a game engine that takes objects (adm_bw64) or a sound field (ambix)"
   },
@@ -605,7 +605,7 @@
     ],
     "deliverables": [
       "stereo",
-      "immersive_7_1"
+      "immersive_7_1_2"
     ],
     "notes": "the sheet records intent; the mix, space and instrument presets execute it. Keyframes, heights and room geometry are in presets/spaces/green_dark_room.json and the score; mono is rendered from the mix, not summed from the stereo master."
   },
