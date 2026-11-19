@@ -75,6 +75,20 @@ def _smooth(x):
     return x * x * (3.0 - 2.0 * x)
 
 
+def _conv_same(x, k):
+    """A centred moving average of a whole line, overlap-add when the kernel is long.
+
+    A 30-60 ms Hann kernel over a 3-minute line is 2e10 multiply-adds done directly: measured 3.4 s for the 60 ms
+    one, against 0.23 s for the same filter by overlap-add. `scipy.signal.oaconvolve` places 'same' exactly where
+    `np.convolve` does (measured: 1.5e-13 on a wander whose peak is 137, i.e. float64 rounding), so the smoothed
+    control signal is the same one, not a different filter.
+    """
+    if len(k) < 128:                       # a short kernel is cheaper directly, and keeps the old arithmetic exactly
+        return np.convolve(x, k, mode='same')
+    from scipy.signal import oaconvolve
+    return oaconvolve(x, k, mode='same')
+
+
 def _turbulence(n, sr, rng, B):
     """The air is not steady: a flutter around `turbulence_hz` plus a slow, smoothed wander.
     Returns a multiplier around 1.0."""
@@ -85,7 +99,7 @@ def _turbulence(n, sr, rng, B):
     ph = 2 * np.pi * float(B['turbulence_hz']) * t + 0.9 * np.sin(2 * np.pi * 0.6 * t)
     flutter = np.sin(ph)
     hann = np.hanning(max(3, int(0.06 * sr)))
-    wander = np.convolve(rng.standard_normal(n), hann, mode='same')
+    wander = _conv_same(rng.standard_normal(n), hann)
     wander = wander / (np.max(np.abs(wander)) + 1e-12)
     return np.clip(1.0 + depth * (0.65 * flutter + 0.35 * wander), 0.0, 2.0)
 
@@ -167,7 +181,7 @@ def airflow_env(n, sr, B, spans, jitter=None):
     # the envelope is a control signal: smooth it over 30 ms so no seam (a release starting, a crossfade
     # ending) can step the level and be heard as an object. Then hold the floor, so the bed never goes to zero.
     w = np.hanning(max(3, int(0.03 * sr)))
-    env = np.convolve(env, w / w.sum(), mode='same')
+    env = _conv_same(env, w / w.sum())
     return np.maximum(env, floor)
 
 
