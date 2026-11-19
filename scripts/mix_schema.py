@@ -335,8 +335,13 @@ DEFAULTS = {
         # CPU otherwise; "cpu" never looks. The MUSICGEN_DEVICE environment variable overrides this for one run.
         # `workers` is the FFT thread count on the CPU ("auto" = every core).
         'compute': {'device': 'auto', 'workers': 'auto'},
-        # how many stems are processed at once in the mix ("auto" = one per core, 1 = one after another)
+        # how many stems are processed at once in the mix ("auto" = one per core, 1 = one after another).
+        # The count is then capped by the memory this process may still take: `mix_worker_mb_per_second` is the
+        # measured working set of one stem per second of audio, so a 16 GB machine fits about a dozen 3-minute
+        # stems at once instead of every core's worth (a 7.1.2 mix peaked at 13-14 GB before the cap existed).
+        # starting value: derived from a 180 s stem's chain at 44.1 kHz stereo (about 350 MB of working arrays).
         'mix_workers': 'auto',
+        'mix_worker_mb_per_second': 2.0,
         'mechanics': {
             'enabled': True,
             'default_class': 'keys',
@@ -390,6 +395,7 @@ RANGES = {
     ('dynamics', 'parallel'): ('num', 0.0, 1.0),
     ('spectral', 'max_auto_cut_db'): ('num', 0.0, 24.0),
     ('render', 'oversample'): ('num', 1, 8),
+    ('render', 'mix_worker_mb_per_second'): ('num', 0.1, 64.0),
     ('sidechain', 'residual'): ('num', 0.0, 1.0),
     ('sidechain', 'threshold'): ('num', 0.0, 1.0),
     ('lead_carve', 'ratio'): ('num', 1.0, 20.0),

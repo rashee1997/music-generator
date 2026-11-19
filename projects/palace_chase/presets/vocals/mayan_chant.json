@@ -1,5 +1,6 @@
 {
   "name": "mayan_chant",
+  "synthesis": "formant",
   "category": "rhythmic_chest_shout",
   "phonetic_sound": "Hah! Hu! ...",
   "register_range": [

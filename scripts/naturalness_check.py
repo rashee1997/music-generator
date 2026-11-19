@@ -69,8 +69,20 @@ BANDS = [('sub <60', 20, 60), ('bass 60-250', 60, 250), ('low-mid 250-500', 250,
 
 
 def load(path):
-    x, sr = sf.read(path, always_2d=True)
-    x = x.astype(np.float64)
+    """The first two channels of a file, float64.
+
+    Through `gate_audio.load` when the gate already holds this file: a run otherwise read and kept a second
+    float64 copy of the master (127 MB for three minutes) and rebuilt every derived view from scratch.
+    """
+    try:
+        import gate_audio
+        sig = gate_audio.load(path)
+        x, sr = np.asarray(sig.audio, dtype=np.float64), sig.sr
+    except Exception:                   # not a file the gate can read (or no gate module): read it here
+        x, sr = sf.read(path, always_2d=True)
+        x = np.asarray(x, dtype=np.float64)
+    if x.ndim == 1:
+        x = np.stack([x, x], axis=1)
     if x.shape[1] == 1:
         x = np.repeat(x, 2, 1)
     return x[:, :2], sr

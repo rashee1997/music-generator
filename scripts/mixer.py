@@ -570,10 +570,15 @@ def active_lufs(x, sr=SR, block=0.4, active_db=None):
         return lufs(x, sr)
     # Non-overlapping windows the length of a loudness measurement, so no window straddles the start of a rest and
     # no measured segment is padded with silence (that padding biased every block down by 1 dB).
+    # One window at a time, summed in float64. Stacking the whole stem and squaring a float64 copy of it held six
+    # stem-length buffers per worker at once (measured on a 120 s stem: 267 MB peak for 42 MB of audio), and a mix
+    # runs one worker per stem: that was most of why a 21-stem 7.1.2 mix peaked at 13-14 GB.
     starts = list(range(0, len(x) - win + 1, win))
-    blocks = np.stack([x[s:s + win] for s in starts])
-    rms = np.sqrt((blocks.astype(np.float64) ** 2).mean(axis=(1, 2)) + 1e-20)
-    keep = np.where(20 * np.log10(rms) > active_db)[0]
+    rms = np.empty(len(starts), dtype=np.float64)
+    for k, s in enumerate(starts):
+        seg = x[s:s + win]
+        rms[k] = np.sqrt(np.einsum('ij,ij->', seg, seg, dtype=np.float64) / seg.size + 1e-20)
+    keep = np.flatnonzero(20 * np.log10(rms) > active_db)
     if not len(keep):
         # Nothing clears the activity floor: it is a very quietly played stem, not silence. Measure the window
         # where it plays, or gain staging leaves it at -70 dB and never brings it into the mix at all.
@@ -808,8 +813,8 @@ def process_chain(name, x, spec, sr=SR, ctx=None):
     # 4 low-end hygiene
     if role == 'bass' or spec.get('mono_below'):
         x = mono_below(x, spec.get('mono_below', 120), sr)
-    # level
-    x = x * 10 ** (float(spec.get('gain_db', 0.0)) / 20.0)
+    # level (in place: the chain above already made this stem's private copy)
+    x *= np.float32(10 ** (float(spec.get('gain_db', 0.0)) / 20.0))
     # macro automation for environment
     if role == 'environment':
         tot_s = len(x) / sr
@@ -844,7 +849,7 @@ def process_chain(name, x, spec, sr=SR, ctx=None):
                 x[-fade_n:] = x[-fade_n:] * ramp[::-1, None]
     if not np.isfinite(x).all():
         raise ValueError(f'stem "{name}" produced non-finite samples (check its eq/comp/spatial values)')
-    return x.astype(np.float32)
+    return np.asarray(x, dtype=np.float32)      # already float32: astype() copied every stem a second time
 
 
 def process_stem(name, x, spec, sr=SR, ctx=None):
@@ -855,7 +860,47 @@ def process_stem(name, x, spec, sr=SR, ctx=None):
     x = _place(name, x, spec, _mix(), sr)
     if not np.isfinite(x).all():
         raise ValueError(f'stem "{name}" produced non-finite samples (check its eq/comp/spatial values)')
-    return x.astype(np.float32)
+    return np.asarray(x, dtype=np.float32)
+
+
+def _width_inplace(x, width):
+    """width_ms() written into the buffer it is given: the caller already owns that copy."""
+    m = (x[:, 0] + x[:, 1]) * 0.5
+    s = (x[:, 0] - x[:, 1]) * 0.5 * width
+    np.add(m, s, out=x[:, 0])
+    np.subtract(m, s, out=x[:, 1])
+    return x
+
+
+def _pan_inplace(x, pan, mode='legacy'):
+    """pan_stereo() written into the buffer it is given. 'energy' has its own law, so it stays a copy."""
+    if mode == 'energy':
+        return dsp.pan_energy(x, pan)
+    th = (float(pan) + 1) * np.pi / 4
+    x *= np.array([np.cos(th) * np.sqrt(2), np.sin(th) * np.sqrt(2)], dtype=np.float32)
+    return x
+
+
+def _workers_that_fit(requested, n, sr, rcfg):
+    """Cap the number of stems processed at once by the memory this process may still take.
+
+    One stem's chain holds several full-length working arrays at the same time: the float32 working copy, the EQ /
+    compressor output, the width and pan temporaries and the send. `render.mix_workers: "auto"` used to mean one
+    stem per core, which on a 16 GB machine is what took the 7.1.2 mix to 13-14 GB. The fit uses the measured
+    working set of one stem per second of audio (`render.mix_worker_mb_per_second`) against the free memory
+    `resources.available_gb()` reports, less the headroom the mixer, the gate and the system need.
+    """
+    if requested <= 1:
+        return 1
+    import resources
+    per_mb = float(rcfg.get('mix_worker_mb_per_second', 2.0))
+    per_stem = max(48.0, per_mb * (n / float(sr))) * 1e6
+    free = resources.available_gb() * 1e9 - resources.HEADROOM_GB * 1e9
+    fit = int(free // per_stem)
+    if fit < requested:
+        print(f'  [mix] {requested} stem worker(s) requested; {max(1, fit)} fit in the '
+              f'{resources.available_gb():.1f} GB free ({per_stem / 1e6:.0f} MB per stem)', flush=True)
+    return max(1, min(int(requested), fit))
 
 
 def _curve(v, kind):
@@ -928,10 +973,10 @@ def _place(name, x, spec, mx, sr):
             return x
         w = spec.get('width', 1.0)
         if w != 1.0:
-            x = width_ms(x, w)
+            x = _width_inplace(x, w)
         if spec.get('widen', 0) > 0:
             x = widen(x, spec['widen'], seed=zlib.crc32(name.encode()) % 997, sr=sr)
-        return pan_stereo(x, spec.get('pan', 0.0), spec.get('pan_law', 'legacy'))
+        return _pan_inplace(x, spec.get('pan', 0.0), spec.get('pan_law', 'legacy'))
 
     imm = _imm()
     az, el, dist = place_of(spec, imm)
@@ -966,7 +1011,8 @@ def _place(name, x, spec, mx, sr):
     # the ambisonic bus places this track itself (spatial_engine/hoa.py): hand it over unplaced, at its own level
     on_bus = bool(STATE.get('hoa') and imm and sp.get('binaural') is not False)
     if on_bus:                 # no width or widen either: in a 3-D field a stem's width is its pair angle
-        return (x / max(dist, 1.0)).astype(np.float32)
+        x /= np.float32(max(dist, 1.0))
+        return np.asarray(x, dtype=np.float32)
     if traj and (traj.get('keyframes') or traj.get('mode')):
         raise ValueError(f'track "{name}": trajectory keyframes and modes need the ambisonic bus; set '
                          f'"immersive": {{"enabled": true, "engine": "hoa_bus"}} in the mix preset')
@@ -1018,21 +1064,21 @@ def _place(name, x, spec, mx, sr):
         cutoff = max(min_cut, min(sr * 0.45, 22000.0 / (1.0 + damp * (dist - ref_d))))
         sos_air = signal.butter(1, cutoff, btype='lowpass', fs=sr, output='sos')
         x = signal.sosfilt(sos_air, x, axis=0).astype(np.float32)
-    # B. 1/r direct level
+    # B. 1/r direct level (in place from here on: this stem's buffer is already private to this mix)
     if not binaural and not own_distance and dist > 1.0:
-        x = x * (1.0 / (1.0 + falloff * (dist - 1.0)))
+        x *= np.float32(1.0 / (1.0 + falloff * (dist - 1.0)))
     # C. apparent source width
     spread = float(np.clip(float(sp.get('spread', 0.0)), 0.0, 1.0))
     w = float(sp.get('width', spec.get('width', 1.0))) * (1.0 + spread)
     if w != 1.0:
-        x = width_ms(x, w)
+        x = _width_inplace(x, w)
     widen_amt = float(sp.get('widen', spec.get('widen', 0.0)))
     if widen_amt > 0:
         x = widen(x, widen_amt, seed=zlib.crc32(name.encode()) % 997, sr=sr)
     # D. pan (no comb delays)
     pan_val = float(sp.get('pan', np.clip(np.sin(np.radians(az)), -1.0, 1.0))) * (1.0 - spread)
     if not binaural:
-        x = pan_stereo(x, pan_val, sp.get('pan_law', spec.get('pan_law', 'legacy')))
+        x = _pan_inplace(x, pan_val, sp.get('pan_law', spec.get('pan_law', 'legacy')))
     return x
 
 
@@ -1221,7 +1267,7 @@ def master_chain(x, m, sr=SR, ctx=None):
     if tp > ceiling:                       # last safety: oversampled true peak
         y = y * 10 ** ((ceiling - tp) / 20.0)
         reached = lufs(y, sr)              # the trim moves the whole track: report what was actually delivered
-    y = y.astype(np.float32)
+    y = np.asarray(y, dtype=np.float32)
     STATE['master'] = dict(master_measures(y, sr), target=target, ceiling=ceiling, profile=cfg.get('_profile'),
                            reached=reached,
                            limited_by_ceiling=bool(tp > ceiling))
@@ -1553,6 +1599,7 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
     STATE['compute'] = compute.info()
     workers = rcfg.get('mix_workers', 1)
     workers = (os.cpu_count() or 1) if workers == 'auto' else max(1, int(workers))
+    workers = _workers_that_fit(workers, n, sr, rcfg)
     cache = STATE.get('cache_dir')
     keys = {}
     if cache:
@@ -1573,9 +1620,9 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
         got = _cache_get(cache, keys.get(nm), nm, n) if keys else None
         hit = got is not None
         x = got if hit else process_chain(nm, v, specs[nm], sr, ctx)
-        y = fit(_place(nm, x, specs[nm], mx, sr), n) if x.size else fit(x, n)
         if not hit and x.size:
-            _cache_put(cache, keys.get(nm), nm, x, n)
+            _cache_put(cache, keys.get(nm), nm, x, n)   # before placement: the cache holds the dry chain output,
+        y = fit(_place(nm, x, specs[nm], mx, sr), n) if x.size else fit(x, n)   # and _place may work in place
         return nm, y, hit
 
     try:
@@ -1660,13 +1707,19 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
                         d_gain[i_body_start:i_body_start + n_fade] * cf_in + plateau_gain * cf_out)
                     d_gain[i_body_start + n_fade:i_body_end] = plateau_gain
         if sp.get('role') in sc['band_roles'] and not sp.get('duck_full_band'):
-            # only the band the lead lives in takes the whole duck; the rest follows at `residual` of it
+            # only the band the lead lives in takes the whole duck; the rest follows at `residual` of it.
+            # mid*d + (x - mid)*d**residual == x*res + mid*(d - res), written in place: the placed stem becomes
+            # the result, so a ducked track costs two full-length curves instead of four temporaries plus an output.
             x_ = processed[name]
             sos_b = signal.butter(2, [band[0], band[1]], btype='band', fs=sr, output='sos')
             mid = signal.sosfiltfilt(sos_b, x_, axis=0).astype(np.float32)
-            processed[name] = mid * d_gain[:, None] + (x_ - mid) * (d_gain ** residual)[:, None]
+            res = np.power(d_gain, residual)
+            x_ *= res[:, None]
+            mid *= (d_gain - res)[:, None]
+            x_ += mid
+            processed[name] = x_
         else:
-            processed[name] = processed[name] * d_gain[:, None]
+            processed[name] *= d_gain[:, None]
 
     bed = sympathetic_bed(score, processed, specs, mx, sr)
     if bed is not None:
@@ -1702,9 +1755,10 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
             bus.add_reverb(ret)
         else:
             total = len(ret)
-            mix = np.zeros((max(n, total), 2), np.float32)
-            mix[:n] += dry
-            mix[:total] += ret
+            if total > len(dry):                 # grow the bus in place: a second full-length buffer is a copy
+                dry = np.pad(dry, ((0, total - len(dry)), (0, 0)))
+            dry[:total] += ret
+            mix = dry
     else:
         mix = dry
     out = bus.result() if bus is not None else mix
@@ -1756,14 +1810,20 @@ def _validate_export(path, sr, expected_seconds=None, ceiling=0.0, true_peak=Non
     true_peak  a measurement already taken on the same audio, reused instead of a second 4x oversampled pass.
     """
     info = sf.info(path)
-    data, _ = sf.read(path, always_2d=True)
-    peak = float(np.abs(data).max()) if data.size else 0.0
-    peak_db = 20 * np.log10(peak + 1e-12)
+    # float32 (the file's own precision; PCM_24 needs no float64 copy) and blockwise: a whole-file `np.abs(data)`
+    # temporary doubled the master's memory twice over just to read its peak.
+    data, _ = sf.read(path, always_2d=True, dtype='float32')
     full = 1.0 - 1.0 / (1 << 23)                       # 0.999 counts a valid -0.01 dBFS PCM_24 peak as clipping
+    peak, clipped = 0.0, 0
+    for a in range(0, len(data), 1 << 18):
+        seg = data[a:a + (1 << 18)]
+        peak = max(peak, float(np.abs(seg).max()))
+        clipped += int(np.count_nonzero(np.abs(seg) >= full))
+    peak_db = 20 * np.log10(peak + 1e-12)
     rep = {'path': path, 'sr': info.samplerate, 'channels': info.channels, 'frames': info.frames,
            'subtype': info.subtype, 'peak_db': peak_db,
-           'true_peak_db': float(true_peak) if true_peak is not None else true_peak_db(data.astype(np.float32), info.samplerate),
-           'clipped_samples': int(np.sum(np.abs(data) >= full)),
+           'true_peak_db': float(true_peak) if true_peak is not None else true_peak_db(data, info.samplerate),
+           'clipped_samples': clipped,
            'seconds': info.frames / info.samplerate}
     problems = []
     if info.samplerate != sr:
