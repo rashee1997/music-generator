@@ -1,0 +1,96 @@
+{
+  "name": "green_twig_snap",
+  "character": "A dry branch underfoot: a short creak under load, then it fails along the fibres with a sharp crack, and a few leaves fall.",
+  "seconds": 1.6,
+  "role": "fx",
+  "gain_db": 0.0,
+  "reverb": 0.15,
+  "spatial": {
+    "azimuth": 0.0,
+    "elevation": 0.0,
+    "distance": 4.0
+  },
+  "scene": {
+    "note": "A twig loaded by a foot: creak, fracture, a fall of leaves.",
+    "calibration": {
+      "normalize": "energy",
+      "level_db": 4
+    },
+    "objects": {
+      "twig": {
+        "material": "pine",
+        "geometry": {
+          "shape": "bar",
+          "length_m": 0.35,
+          "thickness_m": 0.012
+        },
+        "modes": 8
+      },
+      "ground": {
+        "material": "soil",
+        "geometry": {
+          "shape": "plate",
+          "width_m": 2.0,
+          "thickness_m": 0.2
+        },
+        "modes": 6
+      },
+      "leaves": {
+        "material": "leaf_dry",
+        "geometry": {
+          "shape": "leaf",
+          "width_m": 0.06,
+          "thickness_m": 0.0002
+        },
+        "modes": 5
+      }
+    },
+    "timeline": [
+      {
+        "at": 0.0,
+        "for": 0.18,
+        "interaction": "creak",
+        "target": "twig",
+        "strain": 0.006,
+        "rate_hz": 7.0
+      },
+      {
+        "at": 0.2,
+        "interaction": "fracture",
+        "target": "twig",
+        "mass_kg": 0.05,
+        "velocity_m_s": 2.0,
+        "then": [
+          {
+            "offset": 0.12,
+            "interaction": "impact",
+            "target": "ground",
+            "mass_kg": 0.03,
+            "velocity_m_s": 1.0
+          },
+          {
+            "offset": 0.15,
+            "interaction": "foliage",
+            "target": "leaves",
+            "speed_m_s": 1.5,
+            "for": 0.8,
+            "leaf_count": 120
+          }
+        ]
+      }
+    ],
+    "propagation": {
+      "distance_m": 4.0,
+      "atmosphere": {
+        "temp_c": 27,
+        "rh": 90
+      },
+      "canopy_density": 0.6
+    },
+    "seconds": 1.6
+  },
+  "sources": [
+    "twig_snap_fracture"
+  ],
+  "note": "KB sfx-formulas (impact, friction and fracture laws used by phys_core) | KB game-sfx | Turchet, Serafin, Dimitrov and Nordahl (DAFx-10): a footstep is a ground reaction force on a contact, see scripts/phys_core/gait.py | No measurement found: ESTIMATE of masses, speeds, materials and levels; nothing here was auditioned"
+}

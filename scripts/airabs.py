@@ -55,6 +55,8 @@ def apply(x, distance_m, temp_c=20.0, rh=50.0, pressure_kpa=101.325, sr=SR):
     n = TAPS - 1
     ir = np.roll(np.fft.irfft(gain, n=n), n // 2)    # zero-phase response, centred
     ir = np.append(ir, 0.0) * signal.windows.blackman(TAPS)
-    out = signal.fftconvolve(x, ir if x.ndim == 1 else ir[:, None], mode='full', axes=0)
+    import compute
+    out = (compute.fftconvolve(x, ir.astype(np.float32)) if compute.on_gpu()
+           else signal.fftconvolve(x, ir if x.ndim == 1 else ir[:, None], mode='full', axes=0))
     start = TAPS // 2
     return out[start:start + len(x)].astype(np.float32)

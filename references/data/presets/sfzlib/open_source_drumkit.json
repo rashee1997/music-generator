@@ -1,0 +1,29 @@
+{
+  "name": "open_source_drumkit",
+  "character": "Open Source Drumkit: a drum kit with SFZ mappings, listed on free-SFZ lists",
+  "type": "library",
+  "licence": "see the kit's own page (not read)",
+  "licence_url": "https://www.kvraudio.com/forum/viewtopic.php?p=7490707",
+  "share_alike": false,
+  "attribution": "Open Source Drumkit, its author",
+  "homepage": "https://www.kvraudio.com/forum/viewtopic.php?p=7490707",
+  "families": [
+    "drums"
+  ],
+  "verified": false,
+  "source": {
+    "kind": "manual"
+  },
+  "entry": ".",
+  "parts": {
+    "all": {
+      "what": "the library as its author publishes it",
+      "manual": "https://www.kvraudio.com/forum/viewtopic.php?p=7490707",
+      "manual_note": "Open the page, download the SFZ instrument, then run: sfz_libs.py install-local open_source_drumkit <downloaded.zip> --project <dir>. Then name it in an instrument preset: \"sfz\": {\"library\": \"open_source_drumkit\", \"patch\": \"<path/to/patch>\"}."
+    }
+  },
+  "default_parts": [
+    "all"
+  ],
+  "notes": "Listed from search results; the page was not opened when this entry was written. Read the library's own licence file before use."
+}

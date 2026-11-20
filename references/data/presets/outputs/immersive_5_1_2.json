@@ -1,0 +1,62 @@
+{
+  "name": "immersive_5_1_2",
+  "character": "Discrete 5.1.2: the 5.1 ring plus a front overhead pair.",
+  "label": "5.1.2 (ITU-R BS.2051 System C)",
+  "order": 10,
+  "aliases": [
+    "5.1.2",
+    "5_1_2"
+  ],
+  "channels": 8,
+  "channel_order": [
+    "FL",
+    "FR",
+    "FC",
+    "LFE",
+    "SL",
+    "SR",
+    "TFL",
+    "TFR"
+  ],
+  "file": "master_5_1_2.wav",
+  "renderer": "spatial",
+  "true_peak_dbtp": -3.0,
+  "layout": "itu_bs2051_system_c",
+  "lfe": {
+    "channel": 4,
+    "send_db": -10.0,
+    "lowpass_hz": 80.0,
+    "stopband_hz": 120.0,
+    "stopband_db": -45.0,
+    "roles": [
+      "bass",
+      "sub_bass",
+      "sub_brass",
+      "drone",
+      "kick"
+    ]
+  },
+  "loudness": {
+    "method": "bs1770_layout"
+  },
+  "limiter": {
+    "enabled": true,
+    "lookahead_ms": 5.0,
+    "release_ms": 120.0,
+    "oversample": 4,
+    "max_reduction_db": 6.0,
+    "max_iterations": 4,
+    "tolerance_lu": 0.2,
+    "margin_db": 0.1
+  },
+  "gate": {
+    "stereo_correlation_min": 0.15,
+    "fold_band_max_db": 6.0,
+    "fold_floor_db": 30.0
+  },
+  "sources": [
+    "ITU-R BS.2051-3: System C is the 5.1.2 loudspeaker layout (2+5+0)",
+    "ITU-R BS.1770: loudness is measured on the delivered channels with the layout's own channel weights, the low-frequency channel excluded (`loudness.method`: bs1770_layout)",
+    "The linked limiter (5 ms look-ahead, 120 ms release, at most 6 dB of reduction) and the fold-down band limit (6 dB) are starting values, not measured ones; the -3.0 dBTP ceiling is this project's delivery policy for a multichannel file"
+  ]
+}

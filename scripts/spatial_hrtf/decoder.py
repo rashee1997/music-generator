@@ -28,7 +28,7 @@ import numpy as np
 import scipy.spatial as scyspat
 from scipy import signal
 
-from . import io, plot, utils, sph, sig, grids
+from . import io, utils, sph, sig, grids
 
 shared_array = None
 
@@ -312,6 +312,7 @@ class LoudspeakerSetup:
 
     def show(self, title='Loudspeaker Setup', **kwargs):
         """Plot hull object, calls plot.hull()."""
+        from . import plot          # matplotlib only when a figure is asked for
         plot.hull(self, title=title, **kwargs)
 
 

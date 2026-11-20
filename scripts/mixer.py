@@ -124,6 +124,9 @@ def _install(mix, space=None, ctx=None):
         ctx = mix_context.MixContext(mix, {} if space is None else space,
                                      name=str(mix.get('name') or 'default'))
     mix_context.make_current(ctx)
+    for key, val in mix_schema.inert_dynamics(mix):
+        print(f'  [WARN] mix.dynamics.{key} = {val!r} has no effect with engine "pedalboard" (a four-knob compressor): set '
+              f'mix.dynamics.engine to "dsp" to use it, or remove the key', flush=True)
     return mix
 
 
@@ -357,39 +360,41 @@ def make_ir(room='hall', sr=SR, seed=3):
         room = (room['room']['rt60'], room['room']['pre_delay_ms'], room['room']['hf_decay'],
                 room['room']['early_level'])
     key = (json.dumps(room, sort_keys=True) if isinstance(room, dict) else str(room), sr, seed)
-    space_cfg = _mix().get('space') or {}                   # the IR is built from the piece's space preset
-    cache_ir = bool(space_cfg.get('cache_ir', mix_schema.DEFAULTS['space']['cache_ir']))
+    space_cfg = mix_schema.section(_mix(), 'space')         # the IR is built from the piece's space section
+    irc = space_cfg['ir']
+    key = key + (json.dumps(irc, sort_keys=True),)
+    cache_ir = bool(space_cfg['cache_ir'])
     cached = _IR_CACHE.get(key)
     if cached is not None and cache_ir:
         return cached
     rt60, pre, hf, er = ROOMS.get(room, ROOMS['hall']) if isinstance(room, str) else room
     rng = np.random.default_rng(seed)
-    n = int((rt60 * 1.15 + pre / 1000.0 + 0.05) * sr)
+    n = int((rt60 * float(irc['length_factor']) + pre / 1000.0 + float(irc['length_pad_s'])) * sr)
     t = np.arange(n) / sr
     out = np.zeros((n, 2))
-    bands = [((20, 500), 1.15), ((500, 3000), 1.0), ((3000, 9000), hf), ((9000, 18000), hf * 0.6)]
     for ch in range(2):
         acc = np.zeros(n)
-        for (lo, hi), mult in bands:
+        for lo, hi, base, hf_power, level in irc['bands']:      # decay of a band = rt60 x base x hf_decay^power
+            mult = float(base) * hf ** float(hf_power)
             w = rng.standard_normal(n)
             sos = signal.butter(2, [lo, min(hi, sr / 2 - 100)], 'band', fs=sr, output='sos')
             w = signal.sosfilt(sos, w)
             env = np.exp(-6.9078 * t / (rt60 * mult))
-            acc += w * env * (1.0 if hi < 9000 else 0.8)
+            acc += w * env * float(level)
         # diffuse onset (no hard click)
-        acc *= 1 - np.exp(-t / 0.012)
+        acc *= 1 - np.exp(-t / float(irc['onset_s']))
         out[:, ch] = acc
     if er > 0:
-        er_block = space_cfg.get('er') if isinstance(space_cfg.get('er'), dict) else {}
-        er_level = float(er_block.get('level', (mix_schema.DEFAULTS['space'].get('er') or {}).get('level', 0.35)))
+        er_block = space_cfg['er']
+        er_level = float(er_block['level'])
         # DRR from an explicit ratio: the taps used to be scaled by sqrt(peak) of the random noise tail, so the
         # early-to-late energy changed with every seed and room size. Now the tap gain sets ER RMS = er_level x tail RMS.
         tail_rms = float(np.sqrt(np.mean(out.astype(np.float64) ** 2)) + 1e-12)
-        k = 12
-        gains = 0.9 * 0.82 ** np.arange(k)
+        k = int(er_block['taps'])
+        gains = float(er_block['first_gain']) * float(er_block['tap_decay']) ** np.arange(k)
         tap = er_level * tail_rms / max(float(np.sqrt(np.sum(gains ** 2))), 1e-9)
         for ch in range(2):
-            times = np.sort(rng.uniform(0.006, 0.085, k))
+            times = np.sort(rng.uniform(float(er_block['window_s'][0]), float(er_block['window_s'][1]), k))
             for i, tt in enumerate(times):
                 idx = int(tt * sr)
                 out[idx, ch] += tap * gains[i] * rng.choice([-1, 1])
@@ -404,7 +409,10 @@ def make_ir(room='hall', sr=SR, seed=3):
     return out
 
 
-def reverb_bus(x, room='hall', sr=SR, hp=150, lp=7500, seed=3, gated=False, gate_thr=-32.0, gate_release_ms=80.0):
+def reverb_bus(x, room='hall', sr=SR, hp=None, lp=None, seed=3, gated=False, gate_thr=-32.0, gate_release_ms=80.0):
+    ret = mix_schema.section(_mix(), 'space')['return']
+    hp = float(ret['highpass_hz']) if hp is None else hp
+    lp = float(ret['lowpass_hz']) if lp is None else lp
     ir = make_ir(room, sr, seed)
     conv = pb.Pedalboard([pb.Convolution(ir.T.copy(), mix=1.0, sample_rate=sr)])
     x = np.pad(x, ((0, len(ir)), (0, 0)))               # room for the tail: pedalboard returns exactly len(input)
@@ -526,9 +534,6 @@ def envelope(x, sr=SR, attack_ms=8, release_ms=150, rate=400, hold_tail=False):
     return dsp.envelope(x, sr, attack_ms, release_ms, rate, hold_tail)
 
 
-DUCK_BAND_ROLES = ('pad', 'texture', 'chord', 'arp', 'ostinato', 'counter', 'environment')   # ducked in the lead's band, not full-band
-DUCK_BAND_HZ = (250.0, 3800.0)
-DUCK_RESIDUAL = 0.3
 
 
 def duck_gain(source, n, depth_db=-6, thresh=0.05, attack_ms=8, release_ms=180, sr=SR, lookahead_ms=10, smooth_s=0.0):
@@ -565,10 +570,15 @@ def active_lufs(x, sr=SR, block=0.4, active_db=None):
         return lufs(x, sr)
     # Non-overlapping windows the length of a loudness measurement, so no window straddles the start of a rest and
     # no measured segment is padded with silence (that padding biased every block down by 1 dB).
+    # One window at a time, summed in float64. Stacking the whole stem and squaring a float64 copy of it held six
+    # stem-length buffers per worker at once (measured on a 120 s stem: 267 MB peak for 42 MB of audio), and a mix
+    # runs one worker per stem: that was most of why a 21-stem 7.1.2 mix peaked at 13-14 GB.
     starts = list(range(0, len(x) - win + 1, win))
-    blocks = np.stack([x[s:s + win] for s in starts])
-    rms = np.sqrt((blocks.astype(np.float64) ** 2).mean(axis=(1, 2)) + 1e-20)
-    keep = np.where(20 * np.log10(rms) > active_db)[0]
+    rms = np.empty(len(starts), dtype=np.float64)
+    for k, s in enumerate(starts):
+        seg = x[s:s + win]
+        rms[k] = np.sqrt(np.einsum('ij,ij->', seg, seg, dtype=np.float64) / seg.size + 1e-20)
+    keep = np.flatnonzero(20 * np.log10(rms) > active_db)
     if not len(keep):
         # Nothing clears the activity floor: it is a very quietly played stem, not silence. Measure the window
         # where it plays, or gain staging leaves it at -70 dB and never brings it into the mix at all.
@@ -670,8 +680,90 @@ def dynamics_cfg(spec, mx=None):
 # main mix
 # ---------------------------------------------------------------------------------------------
 
-def process_stem(name, x, spec, sr=SR, ctx=None):
-    """One stem through the chain. `spec` is never modified: the send is read by reverb_send_level()."""
+MIX_CACHE_VERSION = 1                   # bump when the chain's output would change without its inputs changing
+_CODE_TAG = None                        # the engine's own identity, hashed once per process
+
+
+def use_mix_cache(path):
+    """Where processed stems are kept between runs; None disables it. A stem is reused only when every input
+    that can change its bytes is identical (see `_chain_key`), so a cache can never hand back another mix's audio."""
+    STATE['cache_dir'] = str(path) if path else None
+
+
+def _code_tag():
+    """Identity of the code behind a processed stem: an engine edit must never be served an old stem."""
+    global _CODE_TAG
+    if _CODE_TAG is None:
+        import stem_cache
+        here = os.path.dirname(os.path.abspath(__file__))
+        _CODE_TAG = stem_cache.code_hash(here, files=('mixer.py', 'dsp.py', 'mix_schema.py', 'mix_context.py',
+                                                      'presets.py', 'spatial.py', 'airabs.py', 'spatial_hrtf/room.py',
+                                                      'spatial_hrtf/binaural.py'),
+                                         packages=('spatial_engine',))
+    return _CODE_TAG
+
+
+def _chain_key(name, x, spec, mx, sr, n):
+    """What `process_chain` reads: this stem's bytes, its resolved staging/EQ/dynamics spec, the whole mix preset,
+    the sample rate and the engine. Placement is deliberately absent: it belongs to the bus, not to the chain."""
+    import compute
+    import stem_cache
+    return stem_cache.digest(dict(version=MIX_CACHE_VERSION, cache=stem_cache.CACHE_VERSION, stem=name,
+                                  audio=stem_cache.audio_hash(x, size=16), spec=stem_cache.jsonable(spec),
+                                  mix=stem_cache.jsonable(mx), sr=int(sr), frames=int(n),
+                                  compute=compute.cache_tag(), code=_code_tag()), size=16)
+
+
+def _cache_files(cache, key, name):
+    d = os.path.join(cache, key)
+    return os.path.join(d, f'{name}.npy'), os.path.join(d, f'{name}.json')
+
+
+def _cache_get(cache, key, name, n):
+    """The chain's output for this stem, or None. A missing, stale or malformed entry is a miss, never an error."""
+    if not (cache and key):
+        return None
+    arr, meta = _cache_files(cache, key, name)
+    if not (os.path.isfile(arr) and os.path.isfile(meta)):
+        return None
+    try:
+        y = np.load(arr)
+        with open(meta, encoding='utf-8') as fh:
+            m = json.load(fh)
+    except (OSError, ValueError):
+        return None
+    if m.get('version') != MIX_CACHE_VERSION or y.dtype != np.float32 or y.shape != (int(n), 2):
+        return None
+    for k in ('gain', 'in_lufs', 'chain'):          # the chain's own report, so a hit reads like a fresh run
+        if k in (m.get('state') or {}):
+            STATE.setdefault(k, {})[name] = m['state'][k]
+    return np.ascontiguousarray(y)
+
+
+def _cache_put(cache, key, name, x, n):
+    """Keep one processed stem. Caching is an optimization: a full disk or a read-only project is not a failure."""
+    if not (cache and key):
+        return
+    arr, meta = _cache_files(cache, key, name)
+    try:
+        os.makedirs(os.path.dirname(arr), exist_ok=True)
+        tmp = arr + f'.tmp{os.getpid()}'
+        np.save(tmp, np.ascontiguousarray(x, dtype=np.float32))
+        os.replace(tmp if tmp.endswith('.npy') else tmp + '.npy', arr)
+        with open(meta, 'w', encoding='utf-8') as fh:
+            json.dump(dict(version=MIX_CACHE_VERSION,
+                           state={k: STATE.get(k, {}).get(name) for k in ('gain', 'in_lufs', 'chain')}), fh)
+    except (OSError, ValueError):
+        pass
+
+
+def process_chain(name, x, spec, sr=SR, ctx=None):
+    """Everything before placement: gain staging, EQ, dynamics, low-end hygiene, level, automation, fades.
+
+    `spec` is never modified: the send is read by reverb_send_level(). This half is the same for every deliverable
+    of a piece, which is why it can be cached across a repeat render and across output formats; `_place` is not
+    (a loudspeaker bus hands a track over unplaced, the stereo mix pans it for two speakers).
+    """
     if ctx is not None and ctx is not mix_context.current():
         _install(ctx.mix, ctx.space)
     mx = _mix()
@@ -721,8 +813,8 @@ def process_stem(name, x, spec, sr=SR, ctx=None):
     # 4 low-end hygiene
     if role == 'bass' or spec.get('mono_below'):
         x = mono_below(x, spec.get('mono_below', 120), sr)
-    # level
-    x = x * 10 ** (float(spec.get('gain_db', 0.0)) / 20.0)
+    # level (in place: the chain above already made this stem's private copy)
+    x *= np.float32(10 ** (float(spec.get('gain_db', 0.0)) / 20.0))
     # macro automation for environment
     if role == 'environment':
         tot_s = len(x) / sr
@@ -755,11 +847,60 @@ def process_stem(name, x, spec, sr=SR, ctx=None):
                 x[:fade_n] = x[:fade_n] * ramp[:, None]
             else:
                 x[-fade_n:] = x[-fade_n:] * ramp[::-1, None]
-    # 5/6/7 width + pan + 3D spatial staging
-    x = _place(name, x, spec, mx, sr)
     if not np.isfinite(x).all():
         raise ValueError(f'stem "{name}" produced non-finite samples (check its eq/comp/spatial values)')
-    return x.astype(np.float32)
+    return np.asarray(x, dtype=np.float32)      # already float32: astype() copied every stem a second time
+
+
+def process_stem(name, x, spec, sr=SR, ctx=None):
+    """One stem through the chain and then placed for this mix's bus."""
+    x = process_chain(name, x, spec, sr, ctx)
+    if x.size == 0:
+        return x
+    x = _place(name, x, spec, _mix(), sr)
+    if not np.isfinite(x).all():
+        raise ValueError(f'stem "{name}" produced non-finite samples (check its eq/comp/spatial values)')
+    return np.asarray(x, dtype=np.float32)
+
+
+def _width_inplace(x, width):
+    """width_ms() written into the buffer it is given: the caller already owns that copy."""
+    m = (x[:, 0] + x[:, 1]) * 0.5
+    s = (x[:, 0] - x[:, 1]) * 0.5 * width
+    np.add(m, s, out=x[:, 0])
+    np.subtract(m, s, out=x[:, 1])
+    return x
+
+
+def _pan_inplace(x, pan, mode='legacy'):
+    """pan_stereo() written into the buffer it is given. 'energy' has its own law, so it stays a copy."""
+    if mode == 'energy':
+        return dsp.pan_energy(x, pan)
+    th = (float(pan) + 1) * np.pi / 4
+    x *= np.array([np.cos(th) * np.sqrt(2), np.sin(th) * np.sqrt(2)], dtype=np.float32)
+    return x
+
+
+def _workers_that_fit(requested, n, sr, rcfg):
+    """Cap the number of stems processed at once by the memory this process may still take.
+
+    One stem's chain holds several full-length working arrays at the same time: the float32 working copy, the EQ /
+    compressor output, the width and pan temporaries and the send. `render.mix_workers: "auto"` used to mean one
+    stem per core, which on a 16 GB machine is what took the 7.1.2 mix to 13-14 GB. The fit uses the measured
+    working set of one stem per second of audio (`render.mix_worker_mb_per_second`) against the free memory
+    `resources.available_gb()` reports, less the headroom the mixer, the gate and the system need.
+    """
+    if requested <= 1:
+        return 1
+    import resources
+    per_mb = float(rcfg.get('mix_worker_mb_per_second', 2.0))
+    per_stem = max(48.0, per_mb * (n / float(sr))) * 1e6
+    free = resources.available_gb() * 1e9 - resources.HEADROOM_GB * 1e9
+    fit = int(free // per_stem)
+    if fit < requested:
+        print(f'  [mix] {requested} stem worker(s) requested; {max(1, fit)} fit in the '
+              f'{resources.available_gb():.1f} GB free ({per_stem / 1e6:.0f} MB per stem)', flush=True)
+    return max(1, min(int(requested), fit))
 
 
 def _curve(v, kind):
@@ -826,13 +967,16 @@ def pair_half_width(x, sp, imm):
 def _place(name, x, spec, mx, sr):
     """Width, widen, pan, distance laws, the binaural route and the DRR send decision."""
     sp = spec.get('spatial')
+    mono_render = bool(STATE.get('unplaced'))   # a one-channel deliverable: no pan, no width, no head, only distance
     if not sp:
+        if mono_render:
+            return x
         w = spec.get('width', 1.0)
         if w != 1.0:
-            x = width_ms(x, w)
+            x = _width_inplace(x, w)
         if spec.get('widen', 0) > 0:
             x = widen(x, spec['widen'], seed=zlib.crc32(name.encode()) % 997, sr=sr)
-        return pan_stereo(x, spec.get('pan', 0.0), spec.get('pan_law', 'legacy'))
+        return _pan_inplace(x, spec.get('pan', 0.0), spec.get('pan_law', 'legacy'))
 
     imm = _imm()
     az, el, dist = place_of(spec, imm)
@@ -849,6 +993,8 @@ def _place(name, x, spec, mx, sr):
     min_cut = float(sp.get('min_cutoff_hz', sp_cfg.get('min_air_cutoff_hz', 3200.0)))
     falloff = float(sp.get('falloff_scale', sp_cfg.get('direct_falloff_scale', 0.18)))
 
+    if mono_render:
+        return _distance(x, spec, sp, dist, ref_d, damp, min_cut, falloff, sr)
     traj = sp.get('trajectory')
     binaural = bool(sp.get('binaural')) or bool(traj)
     route = sp.get('binaural')
@@ -865,7 +1011,8 @@ def _place(name, x, spec, mx, sr):
     # the ambisonic bus places this track itself (spatial_engine/hoa.py): hand it over unplaced, at its own level
     on_bus = bool(STATE.get('hoa') and imm and sp.get('binaural') is not False)
     if on_bus:                 # no width or widen either: in a 3-D field a stem's width is its pair angle
-        return (x / max(dist, 1.0)).astype(np.float32)
+        x /= np.float32(max(dist, 1.0))
+        return np.asarray(x, dtype=np.float32)
     if traj and (traj.get('keyframes') or traj.get('mode')):
         raise ValueError(f'track "{name}": trajectory keyframes and modes need the ambisonic bus; set '
                          f'"immersive": {{"enabled": true, "engine": "hoa_bus"}} in the mix preset')
@@ -917,22 +1064,39 @@ def _place(name, x, spec, mx, sr):
         cutoff = max(min_cut, min(sr * 0.45, 22000.0 / (1.0 + damp * (dist - ref_d))))
         sos_air = signal.butter(1, cutoff, btype='lowpass', fs=sr, output='sos')
         x = signal.sosfilt(sos_air, x, axis=0).astype(np.float32)
-    # B. 1/r direct level
+    # B. 1/r direct level (in place from here on: this stem's buffer is already private to this mix)
     if not binaural and not own_distance and dist > 1.0:
-        x = x * (1.0 / (1.0 + falloff * (dist - 1.0)))
+        x *= np.float32(1.0 / (1.0 + falloff * (dist - 1.0)))
     # C. apparent source width
     spread = float(np.clip(float(sp.get('spread', 0.0)), 0.0, 1.0))
     w = float(sp.get('width', spec.get('width', 1.0))) * (1.0 + spread)
     if w != 1.0:
-        x = width_ms(x, w)
+        x = _width_inplace(x, w)
     widen_amt = float(sp.get('widen', spec.get('widen', 0.0)))
     if widen_amt > 0:
         x = widen(x, widen_amt, seed=zlib.crc32(name.encode()) % 997, sr=sr)
     # D. pan (no comb delays)
     pan_val = float(sp.get('pan', np.clip(np.sin(np.radians(az)), -1.0, 1.0))) * (1.0 - spread)
     if not binaural:
-        x = pan_stereo(x, pan_val, sp.get('pan_law', spec.get('pan_law', 'legacy')))
+        x = _pan_inplace(x, pan_val, sp.get('pan_law', spec.get('pan_law', 'legacy')))
     return x
+
+
+def _distance(x, spec, sp, dist, ref_d, damp, min_cut, falloff, sr):
+    """What distance does to a source that is not placed by a head filter: air absorption and the 1/r level. The
+    same two laws _place applies to a panned stem, for a deliverable that has no directions to place it in."""
+    if spec.get('scene_distance_m') is not None:        # a physical scene already propagated itself
+        return x
+    if dist > ref_d and sp.get('air_absorption', True):
+        if 'temp_c' in sp or 'rh' in sp:
+            import airabs
+            x = airabs.apply(x, dist - 1.0, temp_c=float(sp.get('temp_c', 20.0)), rh=float(sp.get('rh', 50.0)), sr=sr)
+        else:
+            cutoff = max(min_cut, min(sr * 0.45, 22000.0 / (1.0 + damp * (dist - ref_d))))
+            x = signal.sosfilt(signal.butter(1, cutoff, btype='lowpass', fs=sr, output='sos'), x, axis=0)
+    if dist > 1.0:
+        x = x * (1.0 / (1.0 + falloff * (dist - 1.0)))
+    return np.asarray(x, dtype=np.float32)
 
 
 # orchestral-style seating so layers do not stack in the middle (-1 left .. +1 right)
@@ -946,9 +1110,10 @@ def default_spec(tr):
     if level is None:
         level = _level_by_role().get({'figure': 'melody', 'harmony': 'chord',
                                       'rhythm': 'bass', 'colour': 'pad'}[fam], -8)
+    sends = mix_schema.section(_mix(), 'space')['send_by_role']
     d = dict(role=role, gain_db=level,
              pan=from_table(_seating(), inst, 0.0) if role not in ('bass', 'drum', 'drone', 'percussion', 'ostinato') else 0.0,
-             reverb=0.18, widen=_widen_by_role().get(role, 0.0))
+             reverb=float(sends['default']), widen=_widen_by_role().get(role, 0.0))
     d['inst'] = inst
 
     passthrough = ('gain_db', 'pan', 'spatial', 'reverb', 'width', 'eq', 'comp', 'hp', 'lp', 'chain',
@@ -957,6 +1122,7 @@ def default_spec(tr):
                    'outro_start_s', 'outro_end_s', 'spectral_profile', 'preserve_spectrum', 'ref_lufs',
                    'dynamics', 'sidechain', 'pan_law', 'release_ms', 'attack_ms', 'smooth_s',
                    'duck_full_band', 'duck_band_hz')
+    inst_cfg = None
     try:
         if inst.startswith('sfx:'):
             inst_cfg = presets.find_sfx(inst[4:])
@@ -988,18 +1154,12 @@ def default_spec(tr):
     sat = from_table(_mix().get('saturation') or {}, inst)
     if sat is not None:
         d['saturation'] = sat
-    if role in ('bass',):
-        d['reverb'] = d.get('reverb', 0.0)
-    if role == 'drum':
-        d['reverb'] = d.get('reverb', 0.08)
-    if role in ('pad', 'texture'):
-        d['reverb'] = d.get('reverb', 0.30)
-    if role == 'drone':
-        d['reverb'] = d.get('reverb', 0.26)
-    if rolelib.is_lead(role):
-        d['reverb'] = d.get('reverb', 0.22)
-    if role == 'environment':
-        d['reverb'] = d.get('reverb', 0.20)
+    # The role's own send, unless the instrument preset set one. The per-role sends that used to be written here
+    # (bass 0, drum 0.08, pad 0.30 ...) never applied: every role already carried the default by this line, so a
+    # bass was sent to the room like a flute. They are data now (`space.send_by_role`): the schema default lists only
+    # `default`, so an older piece mixes as it always has, and a preset that lists a role gets that role's send.
+    if 'reverb' not in (inst_cfg if isinstance(inst_cfg, dict) else {}) and role in sends:
+        d['reverb'] = float(sends[role])
     d.update({k: tr[k] for k in ('role',) + passthrough if k in tr and tr[k] is not None})
     return d
 
@@ -1009,7 +1169,7 @@ def default_spec(tr):
 
 def _master_cfg(m, mx):
     """The master block: the chosen profile, the shipped defaults, then the score's own values."""
-    mm = mx.get('mastering') or {}
+    mm = mix_schema.section(mx, 'mastering')
     profiles = mm.get('profiles') or {}
     name = m.get('profile') or mm.get('profile') or 'default'
     base = dict(profiles.get(name) or profiles.get('default') or {})
@@ -1023,10 +1183,10 @@ def _master_cfg(m, mx):
 
 
 def _short_term(x, sr, win_s=3.0, hop_s=0.5):
-    n, hop = int(win_s * sr), max(1, int(hop_s * sr))
-    if len(x) < n:
-        return [lufs(x, sr)]
-    return [lufs(x[i:i + n], sr) for i in range(0, len(x) - n + 1, hop)]
+    """The loudness of each 3 s window. One K-weighting pass for the whole programme (loudness.Blocks): this used to
+    filter every window again, which was most of the time a master spent measuring itself."""
+    import loudness
+    return list(loudness.Blocks(to_stereo(x), sr).gated_series(win_s, hop_s))
 
 
 def master_measures(x, sr=SR):
@@ -1058,15 +1218,23 @@ def master_chain(x, m, sr=SR, ctx=None):
     target = float(cfg.get('lufs', -14.0))
     ceiling = float(cfg.get('true_peak', -1.5))
     tone = cfg.get('tone', 'neutral')
-    chain = [pb.HighpassFilter(24)]
-    if tone == 'warm':
-        chain += [pb.LowShelfFilter(120, 1.0, 0.7), pb.HighShelfFilter(8000, -1.5, 0.7)]
-    elif tone in ('earthy', 'forest'):
-        chain += [pb.LowShelfFilter(110, 1.4, 0.7), _peak(320, 1.2, 0.9), pb.HighShelfFilter(8200, -1.8, 0.7)]
-    elif tone == 'bright':
-        chain += [pb.HighShelfFilter(7000, 1.8, 0.7)]
-    if cfg.get('glue', True):
-        chain.append(pb.Compressor(threshold_db=-18, ratio=1.6, attack_ms=40, release_ms=250))
+    mm = cfg['_cfg']
+    # Pedalboard's high-pass is first order (6 dB/octave); `highpass_order` cascades it, so a sub band the master should
+    # not carry can be cut harder without a second filter family. 1 is the filter every older master was made with.
+    chain = ([pb.HighpassFilter(float(mm['highpass_hz'])) for _ in range(max(1, int(mm.get('highpass_order') or 1)))]
+             if float(mm.get('highpass_hz') or 0.0) > 0.0 else [])
+    tones = mm.get('tones') or {}
+    if tone not in tones:
+        # An unlisted tone has always mastered flat without a word. It still masters flat (an older score keeps
+        # its sound), but it says so: a tone name that does nothing is a decision nobody made.
+        sys.stderr.write(f'[master] tone "{tone}" is not in mastering.tones ({", ".join(sorted(tones))}): '
+                         f'mastered neutral. Add it to the mix preset to give it a curve.\n')
+        tone = 'neutral'
+    chain += [eq_object(band) for band in tones.get(tone) or []]
+    glue = mm.get('glue') or {}
+    if cfg.get('glue', True) and glue:
+        chain.append(pb.Compressor(threshold_db=float(glue['threshold_db']), ratio=float(glue['ratio']),
+                                   attack_ms=float(glue['attack_ms']), release_ms=float(glue['release_ms'])))
     if cfg.get('width'):
         x = width_ms(x, cfg['width'])
     x = _run(pb.Pedalboard(chain), x, sr)
@@ -1075,29 +1243,31 @@ def master_chain(x, m, sr=SR, ctx=None):
     try:
         lim = pb.Pedalboard([pb.BrickwallLimiter(ceiling_db=ceiling, true_peak=True)])
     except Exception:
-        lim = pb.Pedalboard([pb.Limiter(threshold_db=ceiling - 0.6, release_ms=120)])
-    crest_floor = float((_mix().get('mastering') or {}).get('crest_floor_db', 0.0))
+        fb = mm.get('fallback_limiter') or {}
+        lim = pb.Pedalboard([pb.Limiter(threshold_db=ceiling - float(fb['margin_db']), release_ms=float(fb['release_ms']))])
+    crest_floor = float(mm.get('crest_floor_db', 0.0))
+    conv = mm.get('converge') or {}
     gain_db = target - lufs(x, sr)
     y = x
-    for _ in range(6):                                               # converge on loudness with the limiter in the loop
+    for _ in range(int(conv['max_iterations'])):                                               # converge on loudness with the limiter in the loop
         y = _run(lim, x * 10 ** (gain_db / 20.0), sr)
         err = target - lufs(y, sr)
-        if abs(err) < 0.3:
+        if abs(err) < float(conv['tolerance_lu']):
             break
         if crest_floor > 0 and dsp.crest_db(y) < crest_floor:
             sys.stderr.write(f'[master] a {target} LUFS target would take the crest under {crest_floor} dB '
                              f'(at {dsp.crest_db(y):.1f} dB); stopping. Raise the headroom or lower the target.\n')
             break
-        gain_db += err * 0.75          # damped step: >1.0 on a saturating limiter is an over-relaxed fixed point
+        gain_db += err * float(conv['step'])   # damped step: >1.0 on a saturating limiter is an over-relaxed fixed point
     reached = lufs(y, sr)
-    if abs(target - reached) > 1.0:
+    if abs(target - reached) > float(conv['report_miss_lu']):
         sys.stderr.write(f'[master] reached {reached:.1f} LUFS, not {target}: the music is too dynamic for that target under a '
                          f'{ceiling} dBTP ceiling without squashing it. Kept natural dynamics; lower the target or accept it.\n')
     tp = true_peak_db(y, sr)
     if tp > ceiling:                       # last safety: oversampled true peak
         y = y * 10 ** ((ceiling - tp) / 20.0)
         reached = lufs(y, sr)              # the trim moves the whole track: report what was actually delivered
-    y = y.astype(np.float32)
+    y = np.asarray(y, dtype=np.float32)
     STATE['master'] = dict(master_measures(y, sr), target=target, ceiling=ceiling, profile=cfg.get('_profile'),
                            reached=reached,
                            limited_by_ceiling=bool(tp > ceiling))
@@ -1106,15 +1276,16 @@ def master_chain(x, m, sr=SR, ctx=None):
 
 def suggest_master_target(x, sr=SR, lufs_target=-14.0, ceiling=-1.5):
     """Can this material reach the target without destroying it? Returns (feasible, why)."""
+    min_crest = float(mix_schema.section(_mix(), 'mastering')['min_crest_db'])
     m = master_measures(x, sr)
     crest = m['crest']
     needed = lufs_target - m['lufs']
     ceiling_room = ceiling - m['true_peak']
     if needed <= 0:
         return True, f'already at {m["lufs"]:.1f} LUFS; the target needs no gain'
-    if crest - needed < 8.0:
+    if crest - needed < min_crest:
         return False, (f'crest factor is {crest:.1f} dB; reaching {lufs_target} LUFS needs {needed:+.1f} dB, '
-                       f'which would leave {crest - needed:.1f} dB of crest, below the 8 dB this engine treats as music')
+                       f'which would leave {crest - needed:.1f} dB of crest, below the {min_crest:g} dB this mix preset treats as music')
     if ceiling_room < needed - 0.5:
         return False, (f'{needed:+.1f} dB of gain against {ceiling_room:.1f} dB to the {ceiling} dBTP ceiling: '
                        f'the limiter would have to hold transients down for the whole piece')
@@ -1166,7 +1337,7 @@ def _band_center_q(lo, hi):
     return f, 1.0 / (2.0 * (ratio - 1.0))
 
 
-def apply_lead_carve(processed, specs, mx=None, sr=SR):
+def apply_lead_carve(processed, specs, mx=None, sr=SR, intent=None):
     """Carve the beds only while the lead is actually sounding in the band they share.
 
     carve_for_lead() is a decision taken from the score: one fixed dip, for the whole piece, in one band, whether
@@ -1175,12 +1346,26 @@ def apply_lead_carve(processed, specs, mx=None, sr=SR):
     and yields only where the two actually collide. Roles the sidechain already ducks under the same source are
     skipped, so nothing is moved twice.
 
+    With `lead_carve.from_intent` on, the direction sheet's `mix_intent` (carried on the score) decides what is
+    carved for: `hero` names the track the beds yield to and `leave_free_hz` is the band they yield in. Until this
+    existed those two fields were words for the listening pass only; nothing in the mix read them.
+
     Mutates and returns `processed` (the same dict STATE['processed'] points at).
     """
     mx = mx or _mix()
-    cfg = mx.get('lead_carve') or {}
+    cfg = dict(mx.get('lead_carve') or {})
     if not cfg.get('enabled'):
         return processed
+    used = {}
+    if cfg.get('from_intent') and isinstance(intent, dict):
+        hero = intent.get('hero')
+        if isinstance(hero, str) and hero in specs:
+            cfg['source'] = used['hero'] = hero
+        free = intent.get('leave_free_hz')
+        if isinstance(free, (list, tuple)) and len(free) == 2 and float(free[1]) > float(free[0]) > 0.0:
+            cfg['bands_hz'] = [[float(free[0]), float(free[1])]]
+            used['leave_free_hz'] = cfg['bands_hz'][0]
+    STATE['mix_intent_used'] = used
     if cfg.get('source'):
         lead = str(cfg['source'])
     else:
@@ -1191,7 +1376,7 @@ def apply_lead_carve(processed, specs, mx=None, sr=SR):
     if lead not in processed or lead not in specs:
         return processed
     src = to_stereo(processed[lead])
-    roles = tuple(cfg.get('roles') or DUCK_BAND_ROLES)
+    roles = tuple(cfg.get('roles') or mix_schema.section(mx, 'sidechain')['band_roles'])
     ratio = max(1.0, float(cfg.get('ratio', 2.0)))
     thr = float(cfg.get('threshold_db', -30.0))
     att = float(cfg.get('attack_ms', 6.0))
@@ -1277,6 +1462,10 @@ def _hoa_bus(score, bus, sr):
             print('  [spatial] "engine": "hoa_bus" needs the head data: run `python -m spatial_hrtf.data` from '
                   'scripts/. Using the per-stem engine.')
             return None, None
+        if str(imm.get('stereo_decode', 'binaural')) == 'speakers':
+            from spatial_engine import config as _cfg
+            made = hoa.HoaBus(decode='speakers', speakers=_cfg.speakers(imm.get('stereo_layout', 'stereo_bs775')), **kw)
+            return made, made
         _use_head_set(imm)
         made = hoa.HoaBus(decode='binaural', **kw)
         return made, made
@@ -1368,11 +1557,10 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
 
     # Shared acoustic space: when environmental layers are present, acoustic instruments send a little
     # more into the shared room so music and nature are not two unrelated recordings. Preset-gated.
-    blend = (mx.get('space') or {}).get('auto_env_blend') or {}
+    blend = mix_schema.section(mx, 'space').get('auto_env_blend') or {}
     has_env = any(specs[name].get('role') == 'environment' for name in stems)
     if has_env and blend.get('enabled', True):
-        floors = {'chord': (0.20, 'chord'), 'arp': (0.20, 'chord'), 'melody': (0.22, 'melody'),
-                  'drum': (0.12, 'drum'), 'environment': (0.15, 'environment')}
+        floors = {role: (float(v[0]), str(v[1])) for role, v in (blend.get('floors') or {}).items()}
         for name, sp in specs.items():
             rule = floors.get(sp.get('role'))
             if not rule:
@@ -1389,7 +1577,7 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
         for name, sp in specs.items():
             if sp.get('role') == 'environment' and not sp.get('duck_by'):
                 sp['duck_by'] = drum_track
-                sp['duck_db'] = float(sp.get('duck_db', -3.0))
+                sp['duck_db'] = float(sp.get('duck_db', mix_schema.section(mx, 'sidechain')['legacy_env_duck_db']))
     if sc_mode == 'off':
         for sp in specs.values():
             sp.pop('duck_by', None)
@@ -1400,12 +1588,62 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
     processed = {}
     own_bus, bus = _hoa_bus(score, bus, sr)
     STATE['hoa'] = own_bus is not None                  # _place leaves these tracks for the bus to place
+    STATE['unplaced'] = bool(getattr(bus, 'unplaced', False)) and own_bus is None   # an immersive bus has its own hand-over
+    rcfg = mix_schema.section(mx, 'render')
+    import compute
+    comp = rcfg.get('compute') or {}
+    want = (str(comp.get('device') or 'auto').lower(), comp.get('workers'))
+    if STATE.get('compute_request') != want:               # resolve once per setting, not once per mix
+        compute.configure(*want)
+        STATE['compute_request'] = want
+    STATE['compute'] = compute.info()
+    workers = rcfg.get('mix_workers', 1)
+    workers = (os.cpu_count() or 1) if workers == 'auto' else max(1, int(workers))
+    workers = _workers_that_fit(workers, n, sr, rcfg)
+    cache = STATE.get('cache_dir')
+    keys = {}
+    if cache:
+        try:
+            keys = {nm: _chain_key(nm, v, specs[nm], mx, sr, n) for nm, v in stems.items()}
+        except Exception as exc:                  # a cache that cannot be keyed is no cache, never a failed render
+            print(f'  [mix] processed-stem cache off for this run ({exc})')
+            keys = {}
+
+    def _work(item):
+        """One stem: its chain (reused when nothing it reads changed), then its place on this mix's bus.
+
+        The chain is cached and placement is not, so a second format reuses the first one's EQ and dynamics and
+        only re-places the stems, and a repeat render after one note fix re-runs only the stems that changed.
+        """
+        nm, v = item
+        _context_for(score, ctx)                  # the context is per thread: this one reads the piece's own
+        got = _cache_get(cache, keys.get(nm), nm, n) if keys else None
+        hit = got is not None
+        x = got if hit else process_chain(nm, v, specs[nm], sr, ctx)
+        if not hit and x.size:
+            _cache_put(cache, keys.get(nm), nm, x, n)   # before placement: the cache holds the dry chain output,
+        y = fit(_place(nm, x, specs[nm], mx, sr), n) if x.size else fit(x, n)   # and _place may work in place
+        return nm, y, hit
+
     try:
-        for name, x in stems.items():
-            processed[name] = fit(process_stem(name, x, specs[name], sr, ctx), n)
+        if workers > 1 and len(stems) > 1:
+            # One stem per thread. The plugins and the filters release the interpreter lock, the context is
+            # per-thread (the worker installs the piece's own), and every stem writes only its own entries in
+            # STATE, so the result is the same samples as the serial loop, in the same order.
+            from concurrent.futures import ThreadPoolExecutor
+            with ThreadPoolExecutor(max_workers=min(workers, len(stems))) as pool:
+                done = list(pool.map(_work, stems.items()))
+        else:
+            done = [_work(item) for item in stems.items()]
     finally:
         STATE['hoa'] = False
-    apply_lead_carve(processed, specs, mx, sr)  # the dynamic half of the lead rule, keyed by the lead itself
+        STATE['unplaced'] = False
+    for nm, y, _hit in done:
+        processed[nm] = y
+    import resources
+    resources.release_memory()                  # the stem chains ran on several threads: their freed 64-bit temporaries are still held by the heap
+    STATE['cache'] = dict(dir=cache, hits=sum(1 for _n, _y, h in done if h), stems=len(done))
+    apply_lead_carve(processed, specs, mx, sr, intent=score.get('mix_intent'))  # the dynamic half of the lead rule, keyed by the lead itself
     STATE['processed'] = processed              # what the mix actually plays: the gate measures this
     STATE['specs'] = specs
 
@@ -1424,22 +1662,22 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
             if last_note_s is None or t1 > last_note_s:
                 last_note_s = t1
 
-    sc = mx.get('sidechain') or {}
-    band = tuple(float(v) for v in (sc.get('band_hz') or DUCK_BAND_HZ))
-    residual = float(sc.get('residual', DUCK_RESIDUAL))
+    sc = mix_schema.section(mx, 'sidechain')
+    band = tuple(float(v) for v in sc['band_hz'])
+    residual = float(sc['residual'])
+    timing = sc['timing']
     for name, sp in specs.items():
         src = sp.get('duck_by')
         if not src or src not in processed:
             continue
         is_env = (sp.get('role') == 'environment')
-        rel_ms = float(sp.get('release_ms', (sc.get('release_ms') or {}).get(sp.get('role'),
-                                            1600.0 if is_env else 180.0)))
-        att_ms = float(sp.get('attack_ms', (sc.get('attack_ms') or {}).get(sp.get('role'),
-                                           25.0 if is_env else 8.0)))
-        smooth_s = float(sp.get('smooth_s', 0.35 if is_env else 0.0))
-        d_gain = duck_gain(processed[src], n, sp.get('duck_db', -4), float(sc.get('threshold', 0.05)),
+        base = timing['environment'] if is_env else timing['default']
+        rel_ms = float(sp.get('release_ms', (sc.get('release_ms') or {}).get(sp.get('role'), base['release_ms'])))
+        att_ms = float(sp.get('attack_ms', (sc.get('attack_ms') or {}).get(sp.get('role'), base['attack_ms'])))
+        smooth_s = float(sp.get('smooth_s', base['smooth_s']))
+        d_gain = duck_gain(processed[src], n, sp.get('duck_db', float(sc['default_duck_db'])), float(sc['threshold']),
                            attack_ms=att_ms, release_ms=rel_ms,
-                           lookahead_ms=10, smooth_s=smooth_s, sr=sr)
+                           lookahead_ms=float(sc['lookahead_ms']), smooth_s=smooth_s, sr=sr)
         if is_env and sc.get('env_plateau', True) and first_note_s is not None and last_note_s is not None \
                 and last_note_s > first_note_s:
             # Lock a bed to a steady plateau across the musical body: it should not swell during a
@@ -1447,10 +1685,10 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
             i_body_start = int(first_note_s * sr)
             i_body_end = min(n, int(last_note_s * sr))
             if i_body_end > i_body_start:
-                min_floor = 10.0 ** (float(sp.get('duck_db', -4.0)) / 20.0)
-                plateau_gain = float(np.percentile(d_gain[i_body_start:i_body_end], 25))
+                min_floor = 10.0 ** (float(sp.get('duck_db', float(sc['default_duck_db']))) / 20.0)
+                plateau_gain = float(np.percentile(d_gain[i_body_start:i_body_end], float(sc['plateau_percentile'])))
                 plateau_gain = max(min_floor, min(plateau_gain, 1.0))
-                fade_s = min(2.0, (last_note_s - first_note_s) * 0.25)
+                fade_s = min(float(sc['plateau_fade_max_s']), (last_note_s - first_note_s) * float(sc['plateau_fade_frac']))
                 n_fade = int(fade_s * sr)
                 if n_fade > 0 and 2 * n_fade < (i_body_end - i_body_start):
                     t = np.linspace(0.0, np.pi, n_fade, dtype=np.float32)
@@ -1468,14 +1706,20 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
                     d_gain[i_body_start:i_body_start + n_fade] = (
                         d_gain[i_body_start:i_body_start + n_fade] * cf_in + plateau_gain * cf_out)
                     d_gain[i_body_start + n_fade:i_body_end] = plateau_gain
-        if sp.get('role') in DUCK_BAND_ROLES and not sp.get('duck_full_band'):
-            # only the band the lead lives in takes the whole duck; the rest follows at DUCK_RESIDUAL of it
+        if sp.get('role') in sc['band_roles'] and not sp.get('duck_full_band'):
+            # only the band the lead lives in takes the whole duck; the rest follows at `residual` of it.
+            # mid*d + (x - mid)*d**residual == x*res + mid*(d - res), written in place: the placed stem becomes
+            # the result, so a ducked track costs two full-length curves instead of four temporaries plus an output.
             x_ = processed[name]
             sos_b = signal.butter(2, [band[0], band[1]], btype='band', fs=sr, output='sos')
             mid = signal.sosfiltfilt(sos_b, x_, axis=0).astype(np.float32)
-            processed[name] = mid * d_gain[:, None] + (x_ - mid) * (d_gain ** residual)[:, None]
+            res = np.power(d_gain, residual)
+            x_ *= res[:, None]
+            mid *= (d_gain - res)[:, None]
+            x_ += mid
+            processed[name] = x_
         else:
-            processed[name] = processed[name] * d_gain[:, None]
+            processed[name] *= d_gain[:, None]
 
     bed = sympathetic_bed(score, processed, specs, mx, sr)
     if bed is not None:
@@ -1511,9 +1755,10 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
             bus.add_reverb(ret)
         else:
             total = len(ret)
-            mix = np.zeros((max(n, total), 2), np.float32)
-            mix[:n] += dry
-            mix[:total] += ret
+            if total > len(dry):                 # grow the bus in place: a second full-length buffer is a copy
+                dry = np.pad(dry, ((0, total - len(dry)), (0, 0)))
+            dry[:total] += ret
+            mix = dry
     else:
         mix = dry
     out = bus.result() if bus is not None else mix
@@ -1565,14 +1810,20 @@ def _validate_export(path, sr, expected_seconds=None, ceiling=0.0, true_peak=Non
     true_peak  a measurement already taken on the same audio, reused instead of a second 4x oversampled pass.
     """
     info = sf.info(path)
-    data, _ = sf.read(path, always_2d=True)
-    peak = float(np.abs(data).max()) if data.size else 0.0
-    peak_db = 20 * np.log10(peak + 1e-12)
+    # float32 (the file's own precision; PCM_24 needs no float64 copy) and blockwise: a whole-file `np.abs(data)`
+    # temporary doubled the master's memory twice over just to read its peak.
+    data, _ = sf.read(path, always_2d=True, dtype='float32')
     full = 1.0 - 1.0 / (1 << 23)                       # 0.999 counts a valid -0.01 dBFS PCM_24 peak as clipping
+    peak, clipped = 0.0, 0
+    for a in range(0, len(data), 1 << 18):
+        seg = data[a:a + (1 << 18)]
+        peak = max(peak, float(np.abs(seg).max()))
+        clipped += int(np.count_nonzero(np.abs(seg) >= full))
+    peak_db = 20 * np.log10(peak + 1e-12)
     rep = {'path': path, 'sr': info.samplerate, 'channels': info.channels, 'frames': info.frames,
            'subtype': info.subtype, 'peak_db': peak_db,
-           'true_peak_db': float(true_peak) if true_peak is not None else true_peak_db(data.astype(np.float32), info.samplerate),
-           'clipped_samples': int(np.sum(np.abs(data) >= full)),
+           'true_peak_db': float(true_peak) if true_peak is not None else true_peak_db(data, info.samplerate),
+           'clipped_samples': clipped,
            'seconds': info.frames / info.samplerate}
     problems = []
     if info.samplerate != sr:

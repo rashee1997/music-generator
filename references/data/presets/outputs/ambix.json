@@ -3,6 +3,7 @@
   "character": "The whole mix as a fifth-order sound field (AmbiX: ACN channel order, SN3D scaling). Any ambisonic decoder can put it on any loudspeakers or headphones afterwards, and it can still be rotated for head tracking or 360 video.",
   "label": "AmbiX sound field, order 5",
   "order": 6,
+  "ambisonic_order": 5,
   "aliases": [
     "ambisonic",
     "hoa"

@@ -152,6 +152,8 @@ DEFAULTS = {
         'release_ms': 120.0,
         'roles': ['chord', 'pad', 'arp', 'counter'],
         'skip_ducked': True,           # a role the sidechain already moves under the lead is not carved twice
+        # take the source and the band from the score's `mix_intent` (hero, leave_free_hz) when it carries one
+        'from_intent': False,
     },
     'dynamics': {
         'engine': 'pedalboard',        # pedalboard (threshold/ratio/attack/release) | dsp (the full set)
@@ -176,9 +178,25 @@ DEFAULTS = {
     },
     'space': {
         'auto_env_blend': {'enabled': True, 'chord': 0.22, 'arp': 0.22, 'melody': 0.26,
-                           'drum': 0.14, 'environment': 0.20},
+                           'drum': 0.14, 'environment': 0.20,
+                           # role -> [the send below which the blend acts, which number above it is raised to]
+                           'floors': {'chord': [0.20, 'chord'], 'arp': [0.20, 'chord'], 'melody': [0.22, 'melody'],
+                                      'drum': [0.12, 'drum'], 'environment': [0.15, 'environment']}},
+        # role -> [the send below which the blend acts, which of the numbers above it is raised to]
+        # the room send a track starts with. `default` is every role; add a role to give it its own
+        # (a starting set for a new piece: bass 0.0, drum 0.08, pad 0.30, drone 0.26, melody 0.22).
+        'send_by_role': {'default': 0.18},
         'drr': {'enabled': False, 'target_db': 0.0, 'ref_m': 1.5, 'exponent': 0.65},
-        'er': {'gain_from_tail': True, 'level': 0.35},     # gain_from_tail=True keeps the old IR construction
+        # early reflections of the synthesised room: `taps` impulses per channel inside `window_s`, the first at
+        # `first_gain`, each next one `tap_decay` of the one before; their RMS is `level` x the tail's RMS
+        'er': {'gain_from_tail': True, 'level': 0.35, 'taps': 12, 'first_gain': 0.9, 'tap_decay': 0.82,
+               'window_s': [0.006, 0.085]},
+        # the synthesised tail (used when the space has no geometry of its own): band-limited noise, each band
+        # decaying over rt60 x base x hf_decay^power. A band is [lo_hz, hi_hz, base, power, level].
+        'ir': {'bands': [[20, 500, 1.15, 0, 1.0], [500, 3000, 1.0, 0, 1.0], [3000, 9000, 1.0, 1, 0.8],
+                         [9000, 18000, 0.6, 1, 0.8]],
+               'length_factor': 1.15, 'length_pad_s': 0.05, 'onset_s': 0.012},
+        'return': {'highpass_hz': 150.0, 'lowpass_hz': 7500.0},   # the band the shared reverb returns in
         'cache_ir': True,
         'tail_guard_db': -62.0,
     },
@@ -190,6 +208,17 @@ DEFAULTS = {
         'attack_ms': {},               # per role overrides, e.g. {"environment": 25}
         'release_ms': {},
         'env_plateau': True,           # lock a bed to a steady duck plateau across the musical body
+        # roles ducked only in `band_hz` (the rest of their spectrum follows at `residual` of the duck)
+        'band_roles': ['pad', 'texture', 'chord', 'arp', 'ostinato', 'counter', 'environment'],
+        'default_duck_db': -4.0,       # a track that names `duck_by` and no depth
+        'legacy_env_duck_db': -3.0,    # mode "legacy": how far a bed ducks under the first drum track
+        'lookahead_ms': 10.0,
+        # follower times when neither the track nor attack_ms/release_ms above names one
+        'timing': {'default': {'attack_ms': 8.0, 'release_ms': 180.0, 'smooth_s': 0.0},
+                   'environment': {'attack_ms': 25.0, 'release_ms': 1600.0, 'smooth_s': 0.35}},
+        'plateau_percentile': 25.0,    # the plateau is this percentile of the duck curve over the musical body
+        'plateau_fade_max_s': 2.0,     # ... reached over this long at most,
+        'plateau_fade_frac': 0.25,     # ... or this share of the body when the body is short
     },
     'automation': {
         'curve': 'linear',             # linear | cosine | exponential, for the fades and the swells
@@ -225,6 +254,29 @@ DEFAULTS = {
             'broadcast': {'lufs': -23.0, 'true_peak': -1.0, 'tone': 'neutral', 'glue': True},
             'cinema': {'lufs': -18.0, 'true_peak': -1.5, 'tone': 'neutral', 'glue': True},
         },
+        # the chain itself. `tones` maps a tone name to EQ bands (the same band objects as everywhere else);
+        # a master block or a profile picks one by name, and a project adds its own by listing it here.
+        'highpass_hz': 24.0,           # 0 = none
+        'highpass_order': 1,           # first-order filters in cascade: 1 is 6 dB/octave, 3 is 18 dB/octave
+        'tones': {
+            'neutral': [],
+            'warm': [{'type': 'lowshelf', 'f': 120, 'gain': 1.0, 'q': 0.7},
+                     {'type': 'highshelf', 'f': 8000, 'gain': -1.5, 'q': 0.7}],
+            'earthy': [{'type': 'lowshelf', 'f': 110, 'gain': 1.4, 'q': 0.7},
+                       {'type': 'peak', 'f': 320, 'gain': 1.2, 'q': 0.9},
+                       {'type': 'highshelf', 'f': 8200, 'gain': -1.8, 'q': 0.7}],
+            'forest': [{'type': 'lowshelf', 'f': 110, 'gain': 1.4, 'q': 0.7},
+                       {'type': 'peak', 'f': 320, 'gain': 1.2, 'q': 0.9},
+                       {'type': 'highshelf', 'f': 8200, 'gain': -1.8, 'q': 0.7}],
+            'bright': [{'type': 'highshelf', 'f': 7000, 'gain': 1.8, 'q': 0.7}],
+        },
+        'glue': {'threshold_db': -18.0, 'ratio': 1.6, 'attack_ms': 40.0, 'release_ms': 250.0},
+        # how the limiter loop reaches the loudness target: at most `max_iterations` passes, done within
+        # `tolerance_lu`, each correction scaled by `step` (above 1.0 a saturating limiter overshoots);
+        # a miss larger than `report_miss_lu` is said on stderr.
+        'converge': {'max_iterations': 6, 'tolerance_lu': 0.3, 'step': 0.75, 'report_miss_lu': 1.0},
+        'fallback_limiter': {'margin_db': 0.6, 'release_ms': 120.0},   # only if the true-peak limiter is missing
+        'min_crest_db': 8.0,           # suggest_master_target: below this much crest a target is called infeasible
         'lra_target_lu': None,         # only reported, never forced
         'crest_floor_db': 0.0,         # if limiting would take crest below this, stop and report
         'validate_export': True,       # check the written file: peak, true peak, length, channels
@@ -248,6 +300,11 @@ DEFAULTS = {
         # (scripts/spatial_engine/hoa.py): moving sources keep their room, and keyframes and scenes need it.
         'engine': 'per_stem',
         'order': 5,
+        # how the TWO-CHANNEL master is decoded from the ambisonic bus: 'binaural' (head-filtered, for headphones;
+        # the left and right ears disagree on purpose, so the sum of the two channels loses level in the mid band)
+        # or 'speakers' (a loudspeaker pair, layout `stereo_layout`, no head filter: what fold.mono assumes)
+        'stereo_decode': 'binaural',
+        'stereo_layout': 'stereo_bs775',
         # how far an "anchor" source (bass, drums, or `spatial_role: "anchor"`) may sway around its place
         'anchor_max_span_deg': 6.0,
         # the fastest a source may travel, read by the imm_kinematics row. Starting values, not measured limits.
@@ -274,6 +331,17 @@ DEFAULTS = {
     # the noises a real player and instrument make that a sampled patch does not contain.
     'render': {
         'oversample': 2,
+        # where the heavy array work runs (scripts/compute.py). "auto" takes a GPU when torch reports one, and the
+        # CPU otherwise; "cpu" never looks. The MUSICGEN_DEVICE environment variable overrides this for one run.
+        # `workers` is the FFT thread count on the CPU ("auto" = every core).
+        'compute': {'device': 'auto', 'workers': 'auto'},
+        # how many stems are processed at once in the mix ("auto" = one per core, 1 = one after another).
+        # The count is then capped by the memory this process may still take: `mix_worker_mb_per_second` is the
+        # measured working set of one stem per second of audio, so a 16 GB machine fits about a dozen 3-minute
+        # stems at once instead of every core's worth (a 7.1.2 mix peaked at 13-14 GB before the cap existed).
+        # starting value: derived from a 180 s stem's chain at 44.1 kHz stereo (about 350 MB of working arrays).
+        'mix_workers': 'auto',
+        'mix_worker_mb_per_second': 2.0,
         'mechanics': {
             'enabled': True,
             'default_class': 'keys',
@@ -327,6 +395,7 @@ RANGES = {
     ('dynamics', 'parallel'): ('num', 0.0, 1.0),
     ('spectral', 'max_auto_cut_db'): ('num', 0.0, 24.0),
     ('render', 'oversample'): ('num', 1, 8),
+    ('render', 'mix_worker_mb_per_second'): ('num', 0.1, 64.0),
     ('sidechain', 'residual'): ('num', 0.0, 1.0),
     ('sidechain', 'threshold'): ('num', 0.0, 1.0),
     ('lead_carve', 'ratio'): ('num', 1.0, 20.0),
@@ -334,6 +403,7 @@ RANGES = {
     ('lead_carve', 'attack_ms'): ('num', 0.0, 100.0),
     ('lead_carve', 'release_ms'): ('num', 5.0, 2000.0),
     ('mastering', 'crest_floor_db'): ('num', 0.0, 30.0),
+    ('mastering', 'highpass_order'): ('num', 1.0, 6.0),
     ('immersive', 'max_elevation'): ('num', 0.0, 90.0),
     ('immersive', 'min_height_tracks'): ('num', 0.0, 24.0),
     ('immersive', 'order'): ('num', 1.0, 7.0),
@@ -349,11 +419,13 @@ RANGES = {
 ENUMS = {
     ('gain_staging', 'strategy'): ('legacy', 'adaptive'),
     ('immersive', 'engine'): ('per_stem', 'hoa_bus'),
+    ('immersive', 'stereo_decode'): ('binaural', 'speakers'),
     ('dynamics', 'engine'): ('pedalboard', 'dsp'),
     ('dynamics', 'detector'): ('peak', 'rms'),
     ('sidechain', 'mode'): ('legacy', 'explicit', 'off'),
     ('automation', 'curve'): ('linear', 'cosine', 'exponential'),
 }
+COMPUTE_DEVICES = ('auto', 'cpu', 'cuda', 'mps')
 
 OPEN_SECTIONS = {'role_chains', 'spectral_profiles'}     # keyed by a name the project chooses
 EQ_TYPES_OK = ('peak', 'bell', 'notch', 'hp', 'lp', 'lowshelf', 'highshelf')
@@ -412,6 +484,22 @@ def validate(mix):
         val = (mix.get(sec) or {}).get(key) if isinstance(mix.get(sec), dict) else None
         if val is not None and val not in allowed:
             problems.append(f'mix.{sec}.{key}: "{val}" is not one of {", ".join(allowed)}')
+    comp = (mix.get('render') or {}).get('compute') if isinstance(mix.get('render'), dict) else None
+    if comp is not None:
+        if not isinstance(comp, dict):
+            problems.append('mix.render.compute: expected an object {device, workers}')
+        else:
+            for key in comp:
+                if key not in ('device', 'workers'):
+                    problems.append(f'mix.render.compute.{key}: unknown key; known: device, workers')
+            if comp.get('device') is not None and comp['device'] not in COMPUTE_DEVICES:
+                problems.append(f'mix.render.compute.device: "{comp["device"]}" is not one of {", ".join(COMPUTE_DEVICES)}')
+    for name, bands in (((mix.get('mastering') or {}).get('tones') or {}).items()
+                        if isinstance(mix.get('mastering'), dict) else ()):
+        if not isinstance(bands, list):
+            problems.append(f'mix.mastering.tones.{name}: expected a list of EQ bands')
+            continue
+        problems += _chain_problems(f'mix.mastering.tones.{name}', {'eq': bands})
     for sec in ('role_chains', 'spectral_profiles'):
         for name, chain in ((mix.get(sec) or {}) if isinstance(mix.get(sec), dict) else {}).items():
             problems += _chain_problems(f'mix.{sec}.{name}', chain)
@@ -424,6 +512,38 @@ def validate(mix):
         if 'true_peak' in p and not (-12.0 <= float(p['true_peak']) <= 0.0):
             problems.append(f'mix.mastering.profiles.{prof}.true_peak: {p["true_peak"]} is outside -12..0')
     return problems
+
+
+def inert_dynamics(mix):
+    """Dynamics keys a preset sets that the chosen engine never reads.
+
+    With `engine: pedalboard` (the default) the compressor is the four-knob one (thr, ratio, attack, release); knee, detector,
+    lookahead, makeup, parallel, sidechain filters, multiband, dynamic EQ and the transient shaper only run on
+    `engine: dsp` (or on a stem that carries its own `dynamics`). A value that differs from the default under the
+    pedalboard engine therefore changes nothing and says nothing: report it so the preset writer picks the engine.
+    Returns [(key, value)], empty when the engine is dsp or every such key is at its default."""
+    dyn = (mix or {}).get('dynamics')
+    if not isinstance(dyn, dict) or str(dyn.get('engine', DEFAULTS['dynamics']['engine'])) != 'pedalboard':
+        return []
+    base = DEFAULTS['dynamics']
+    return [(k, dyn[k]) for k in INERT_UNDER_PEDALBOARD if k in dyn and dyn[k] != base.get(k)]
+
+
+INERT_UNDER_PEDALBOARD = ('knee_db', 'detector', 'stereo_link', 'lookahead_ms', 'makeup_db', 'parallel', 'multiband', 'dynamic_eq',
+                          'transient', 'sidechain_hp_hz', 'sidechain_lp_hz')
+
+
+def redundant_chains(mix):
+    """Names of `role_chains` / `spectral.profiles` entries a preset repeats exactly as the schema ships them. A copy is not
+    wrong, but it stops following the schema defaults: a later tuning there never reaches this preset. List only what differs."""
+    out = []
+    shipped = {'role_chains': ROLE_CHAINS, 'spectral.profiles': (DEFAULTS.get('spectral') or {}).get('profiles') or {}}
+    got = {'role_chains': (mix or {}).get('role_chains') or {},
+           'spectral.profiles': ((mix or {}).get('spectral') or {}).get('profiles') or {}}
+    for sec, items in got.items():
+        if isinstance(items, dict):
+            out += [f'{sec}.{k}' for k, v in items.items() if shipped[sec].get(k) == v]
+    return out
 
 
 def _chain_problems(path, chain):

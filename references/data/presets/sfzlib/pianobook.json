@@ -1,0 +1,35 @@
+{
+  "name": "pianobook",
+  "character": "Pianobook: a community site of free sampled instruments, many in SFZ",
+  "type": "library",
+  "licence": "different for every instrument: read its page",
+  "licence_url": "https://www.pianobook.co.uk/sampler/sfz/",
+  "share_alike": false,
+  "attribution": "Pianobook, the named contributor of each instrument",
+  "homepage": "https://www.pianobook.co.uk/sampler/sfz/",
+  "families": [
+    "piano",
+    "keys",
+    "strings",
+    "winds",
+    "percussion",
+    "synth",
+    "world"
+  ],
+  "verified": false,
+  "source": {
+    "kind": "manual"
+  },
+  "entry": ".",
+  "parts": {
+    "all": {
+      "what": "the library as its author publishes it",
+      "manual": "https://www.pianobook.co.uk/sampler/sfz/",
+      "manual_note": "Open the page, download the SFZ instrument, then run: sfz_libs.py install-local pianobook <downloaded.zip> --project <dir>. Then name it in an instrument preset: \"sfz\": {\"library\": \"pianobook\", \"patch\": \"<path/to/patch>\"}."
+    }
+  },
+  "default_parts": [
+    "all"
+  ],
+  "notes": "Listed from search results; the page was not opened when this entry was written. Read the library's own licence file before use."
+}

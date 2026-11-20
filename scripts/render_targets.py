@@ -33,7 +33,7 @@ SCORE_KEY = 'output_targets'
 LEGACY_SCORE_KEY = 'outputs'
 ALL = 'all'
 # The renderers that exist in the engine today. A preset naming anything else is a data error, not a fallback.
-ENGINE_RENDERERS = ('mix_master', 'spatial', 'binaural', 'hoa', 'adm')
+ENGINE_RENDERERS = ('mix_master', 'spatial', 'binaural', 'hoa', 'adm', 'mono')
 REQUIRED = ('channels', 'channel_order', 'file', 'renderer', 'true_peak_dbtp')
 
 
@@ -87,6 +87,22 @@ def buildable(name):
     """True when the engine has the renderer this target names."""
     t = get(name) or {}
     return t.get('renderer') in ENGINE_RENDERERS
+
+
+def delivered(score):
+    """What this run delivers, in promise order: one dict per target, no guessing from a file name.
+
+    Stage 5 renders these, stage 6 certifies the first (and each extra against its own rows), and the packaging
+    stage reports them. `channels` 0 with renderer "adm" means the piece's own channel count (objects), not a
+    format width.
+    """
+    out = []
+    for name in resolve(score)['selected']:
+        t = get(name) or {}
+        out.append(dict(name=name, channels=int(t.get('channels') or 0), channel_order=list(t.get('channel_order') or []),
+                        layout=t.get('layout'), renderer=t.get('renderer'), file=filename(name),
+                        true_peak_dbtp=true_peak(name)))
+    return out
 
 
 def filename(name):

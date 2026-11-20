@@ -533,9 +533,10 @@ def check_tempo(sig, bpm_ref, tol_bpm=2.0, tol_pct=2.0, drift_bpm=2.0):
 
 def section_bounds(score, dur, sheet=None):
     """[{name, start_s, end_s, dyn}] from the score plan or the direction sheet, else four equal parts."""
-    bpm = float(score.get('bpm') or 120.0)
-    bb = float((score.get('ts') or [4, 4])[0])
-    bar_s = 60.0 / bpm * bb
+    import gate_clock
+    _sec = gate_clock.seconds_fn(score)
+    bpb = gate_clock.bar_beats(score)
+    bar_s = float(_sec(bpb))
     out = []
     plan = (score.get('plan') or {}).get('sections') or []
     if plan:
@@ -544,8 +545,8 @@ def section_bounds(score, dur, sheet=None):
                 a = float(s['start_s'])
                 b = float(s.get('end_s', a + bar_s))
             else:
-                a = float(s.get('start_bar', 0)) * bar_s
-                b = float(s.get('end_bar', s.get('start_bar', 0) + 1)) * bar_s
+                a = float(_sec(float(s.get('start_bar', 0)) * bpb))
+                b = float(_sec(float(s.get('end_bar', s.get('start_bar', 0) + 1)) * bpb))
             out.append(dict(name=s.get('name', f'section {i + 1}'), start_s=a, end_s=min(b, dur),
                             dyn=float(s.get('dyn', s.get('energy', 0.5)))))
     elif sheet and sheet.get('sections'):

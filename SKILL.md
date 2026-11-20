@@ -115,6 +115,7 @@ One line each; every path is under `scripts/` unless it says otherwise.
 | `clone_instrument.py` | clone an instrument from a recording, export an SFZ |
 | `extract_pipeline.py` | song to MIDI and stems: `setup`, `run`, `status`, `kb` |
 | `sfz_libs.py`, `sfz_render.py` | optional SFZ libraries and the renderer that plays them |
+| `sfz_catalog.py` | the catalog of 14 open SFZ libraries: list, search, recommend what a score is missing, install, `alternatives` fallback chain |
 | `helpers/version_manager.py` | the delivery record (`list --project <dir>`) |
 | `helpers/ingest_metadata.py` | rewrite the tags beside a master |
 | `helpers/compress_mp3.py` | manual MP3 encode of a certified version |
@@ -157,13 +158,15 @@ A score names what it wants built; the engine builds only that, never every form
 | `immersive_7_1_2` | 10 | ITU-R BS.2051 System I | -3.0 dBTP |
 | `ambix` | 36 | the mix as a fifth-order sound field (ACN, SN3D) | -3.0 dBTP |
 | `adm_bw64` | one per object + 2 | ADM objects with positions over time, stereo bed | -3.0 dBTP |
+| `immersive_5_1`, `immersive_5_1_2`, `immersive_5_1_4` | 6, 8, 10 | the 5.1 ring, alone or with two or four overhead speakers (ITU-R BS.2051 systems B, C, D) | -3.0 dBTP |
+| `mono` | 1 | rendered from the mix without pan, width or head filter (not a sum of the stereo file) | -1.5 dBTP |
 | `stereo_48k` | 2 | the stereo master at 48 kHz (`"rate_hz"` works on any target) | -1.5 dBTP |
 
 Every number lives in `references/data/presets/outputs/` (format) and `references/data/presets/layouts/` (speaker
 positions, crossover, fold-down), loaded through `presets.py`, so a project can add its own format with two JSON files.
-Every shipped target names a renderer the engine has (`mix_master`, `spatial`, `binaural`, `hoa`, `adm`). A project's own target with
+Every shipped target names a renderer the engine has (`mix_master`, `spatial`, `binaural`, `hoa`, `adm`, `mono`). List `stereo` first: the `fold.mono` and `fold.timbre` rows compare each extra format with it (`references/spatial/immersive-deliverables.md`). A project's own target with
 `"renderer": null` is described but cannot be built: naming it blocks the render (no silent downgrade), and `"all"`
-reports it as skipped. The CLI can override the score: `--targets stereo` or `--targets all`.
+reports it as skipped. When neither the user nor the score names a format, the default is `["stereo", "immersive_7_1"]`: the certified two-channel master and an 8-channel deliverable. Render only what was asked: `--only stereo`, or `--only stereo,immersive_7_1_4` (`--targets` is the same flag); the CLI overrides the score. `all` builds every format and takes a long time (the order-5 AmbiX and the ADM objects are the slowest), so use it only when asked. A loudspeaker format asked for alone is certified on its own channels: `--only immersive_7_1_2` renders and judges the 10-channel file, with loudness read on the basis the master was levelled on, `master.dc` on the programme channels only (never the sub channel), and the peak of its two-channel fold reported INFO because `delivery.true_peak` certifies every channel against the format's own ceiling. A genuinely clipped channel still fails.
 
 `scripts/spatial_engine/` holds the model behind the multichannel targets: vector base amplitude panning over the
 layout's own speakers (Pulkki 1997), a 4th-order Linkwitz-Riley crossover and low-frequency send (Linkwitz 1976),
@@ -205,6 +208,7 @@ exists so the agent can decide values, not so it can be quoted.
 
 | Task | Key References |
 |---|---|
+| Cinematic, epic, trailer, hybrid orchestral, tense or hostile cue | [`references/scoring/cinematic-commercial-grade.md`](references/scoring/cinematic-commercial-grade.md), [`knowledgebase/genre-and-feel/cinematic-hybrid-scoring.md`](knowledgebase/genre-and-feel/cinematic-hybrid-scoring.md), `scripts/helpers/arc_report.py` |
 | Video scoring/cuts | [`references/scoring/video-scoring.md`](references/scoring/video-scoring.md), `scripts/video_score.py` |
 | Vocals/choirs/hums | [`references/instruments-and-vocals/vocals-and-choirs.md`](references/instruments-and-vocals/vocals-and-choirs.md), [`references/instruments-and-vocals/vocal-engine.md`](references/instruments-and-vocals/vocal-engine.md) |
 | Cultural styles/fusion | [`knowledgebase/README.md`](knowledgebase/README.md), [`references/scoring/cultural-soul.md`](references/scoring/cultural-soul.md), [`references/scoring/genre-fusion.md`](references/scoring/genre-fusion.md) |

@@ -31,6 +31,52 @@ MIX_KEYS = ('spatial', 'eq', 'gain_db', 'reverb', 'send', 'pan', 'width', 'duck'
             'azimuth', 'elevation', 'distance', 'space', 'mix')
 
 
+CACHE_GB_DEFAULT = 6.0              # starting value: the stems and the processed stems of the current piece are about 3 GB; the rest is room for a few edits
+
+
+def cache_cap_bytes():
+    """How much a project's `.cache` may hold: MUSICGEN_CACHE_GB, else CACHE_GB_DEFAULT."""
+    try:
+        return int(float(os.environ.get('MUSICGEN_CACHE_GB', CACHE_GB_DEFAULT)) * 1e9)
+    except ValueError:
+        return int(CACHE_GB_DEFAULT * 1e9)
+
+
+def prune(root, max_bytes=None):
+    """Delete the oldest files under `root` until it holds at most `max_bytes`. Returns the bytes removed.
+
+    Every cache key includes the engine's code hash and the whole mix preset, so each edit starts a new set of entries
+    and nothing ever asked for the old ones again: on a long session that filled the disk (13 GB in one project). The
+    newest files are the current piece's, so they are the last to go. A missing folder or an unreadable file is skipped."""
+    max_bytes = cache_cap_bytes() if max_bytes is None else int(max_bytes)
+    files, total = [], 0
+    for base, _dirs, names in os.walk(root):
+        for nm in names:
+            fp = os.path.join(base, nm)
+            try:
+                st = os.stat(fp)
+            except OSError:
+                continue
+            files.append((st.st_mtime, st.st_size, fp))
+            total += st.st_size
+    removed = 0
+    for _m, size, fp in sorted(files):
+        if total - removed <= max_bytes:
+            break
+        try:
+            os.remove(fp)
+            removed += size
+        except OSError:
+            pass
+    for base, dirs, names in sorted(os.walk(root), key=lambda t: -len(t[0])):      # empty key folders left behind
+        if base != root and not dirs and not names:
+            try:
+                os.rmdir(base)
+            except OSError:
+                pass
+    return removed
+
+
 def canonical(obj):
     """One deterministic JSON string for any value: dict key order can never change a hash."""
     return json.dumps(obj, sort_keys=True, default=str, separators=(',', ':'))

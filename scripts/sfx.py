@@ -311,6 +311,9 @@ def heartbeat(sec, sr, rng, **kw):
         for off, amp in [(0.0, 1.0), (0.28, 0.6)]:
             t = _t(0.18, sr)
             thump = np.sin(2 * np.pi * (55 - 15 * t / 0.18) * t) * _decay(t, 0.05) * amp
+            # each thump is cut at 0.18 s, where its decay is still at 3 % of the peak: a hard end is a step
+            n_end = min(len(thump), int(0.02 * sr))
+            thump[len(thump) - n_end:] *= np.cos(np.linspace(0.0, np.pi / 2, n_end)) ** 2
             out = out + _place(thump, beat + off, sr, len(out))
     return out
 

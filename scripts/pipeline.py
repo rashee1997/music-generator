@@ -66,6 +66,8 @@ import humanize as hz
 import mixer
 import naturalness_check as nc
 import pattern_audit
+import preflight_lint
+import resources
 import presets
 import project_gate
 import quality_gate as qg
@@ -116,10 +118,25 @@ class MusicPipeline:
 
     def __init__(self, verbose=True):
         self.verbose = verbose
+        self.stage_times = []          # [(stage label, seconds)], in order: where a render spends its time
+        self._stage = None
 
     def log(self, stage_num, stage_name, msg=""):
+        now = time.perf_counter()
+        if self._stage is not None:
+            self.stage_times.append((self._stage[0], now - self._stage[1]))
+        self._stage = (str(stage_num), now)
         if self.verbose:
             print(f"\n[CI/CD Stage {stage_num}: {stage_name}] {msg}")
+
+    def timing_report(self):
+        """One line per stage with its share of the run, the last stage closed at the call."""
+        if self._stage is not None:
+            self.stage_times.append((self._stage[0], time.perf_counter() - self._stage[1]))
+            self._stage = None
+        total = sum(t for _, t in self.stage_times) or 1.0
+        lines = [f"  [TIME] stage {name:<3} {t:8.1f} s  {100 * t / total:5.1f} %" for name, t in self.stage_times]
+        return "\n".join(lines + [f"  [TIME] total     {total:8.1f} s"])
 
     # -----------------------------------------------------------------------------------------
     # Stage 1: Composition & Score Ingestion
@@ -224,10 +241,19 @@ class MusicPipeline:
     # -----------------------------------------------------------------------------------------
     # Stage 2: Acoustic Pre-Flight Linter (The 6 Acoustic Laws)
     # -----------------------------------------------------------------------------------------
-    def stage2_preflight_lint(self, score, strict=False):
-        """Stage 2: Check the 6 Acoustic Laws and 4 Cognitive Feel Laws prior to rendering."""
-        self.log(2, "Acoustic & Cognitive Pre-Flight Linter (Acoustic Laws + Cognitive Feel Laws)")
+    def stage2_preflight_lint(self, score, strict=False, project_dir=None):
+        """Stage 2: Check the 6 Acoustic Laws and 4 Cognitive Feel Laws prior to rendering, then the score against the
+        presets that will play it (preflight_lint.py: patch range, one-shot length, section lines, unisons, figure level, placement)."""
+        self.log(2, "Acoustic & Cognitive Pre-Flight Linter (Acoustic Laws + Cognitive Feel Laws + score against presets)")
         rows = pattern_audit.acoustic_checks(score)
+        try:
+            rows = rows + [r for r in preflight_lint.checks(score, project_dir) if r[0] in ('FAIL', 'WARN')]
+            extra = []
+            qg.focus_rows(score, extra)         # judged from the score alone: a missing figure is found here, not after a render
+            qg.intent_rows(score, extra)
+            rows = rows + [r for r in extra if r[0] in ('FAIL', 'WARN')]
+        except Exception as exc:                  # a lint that cannot run must say so, never stop the render by itself
+            print(f"  [WARN] preflight_lint did not run ({exc})")
         fails = sum(1 for kind, _, _ in rows if kind == 'FAIL')
         warns = sum(1 for kind, _, _ in rows if kind == 'WARN')
         clean = (fails == 0)
@@ -285,7 +311,7 @@ class MusicPipeline:
         from spatial_engine import render as spatial_render
         name = target or ((render_targets.resolve(score)['selected'] or ['stereo'])[0])
         renderer = (render_targets.get(name) or {}).get('renderer')
-        if renderer in ('spatial', 'binaural'):
+        if renderer in ('spatial', 'binaural', 'mono'):
             spatial_render.render_deliverable(score, stems, name, out_wav)
             try:                       # the same advisory diagnostics the stereo path leaves for the gate
                 import mix_diagnostics
@@ -363,8 +389,9 @@ class MusicPipeline:
         The mixing diagnostics go on top as advisory `mix:` rows."""
         self.log(6, "Automated CI/CD Quality Gate Suite")
         mix_metrics = []
+        self.master_analysis = {}          # the gate's measurement of this file, for the packaging stage
         ci_rows, _ = qg.run_gate(None, wav_path=out_wav, refresh=False, stems=stems, score=score,
-                                 mode=mode, metrics=mix_metrics)
+                                 mode=mode, metrics=mix_metrics, analysis=self.master_analysis)
         self.mix_metrics = mix_metrics
         if stem_rows:
             ci_rows = list(stem_rows) + ci_rows          # stem rows first: the earlier stage owns the first verdict
@@ -410,6 +437,9 @@ class MusicPipeline:
 
         import mixer
         mixer.release_stems()          # Stage 6 has measured the processed stems; nothing reads them again
+        _mem = resources.release_memory()
+        if _mem and _mem[0] is not None and _mem[1] is not None and _mem[0] - _mem[1] > 0.5:
+            print(f"  [mem] returned {_mem[0] - _mem[1]:.1f} GB to the system after the mix ({_mem[1]:.1f} GB resident)")
         return ci_rows, fails, warns
 
     # -----------------------------------------------------------------------------------------
@@ -423,9 +453,14 @@ class MusicPipeline:
             if self.verbose:
                 print(f"  Exported MIDI: {out_midi}")
 
-        # Measure master file audio attributes and neuro-cognitive perception metrics
-        analysis = nc.analyse(out_wav)
-        _, rough_metrics = nc.cochlear_roughness_check(out_wav, score=score)
+        # Master audio attributes and neuro-cognitive perception metrics. The gate measured this same audio a
+        # moment ago (it is the file it certified); re-running the analysis here measured it twice for one report.
+        got = getattr(self, 'master_analysis', None) or {}
+        if got.get('r'):
+            analysis, rough_metrics = got['r'], (got.get('rough') or {})
+        else:
+            analysis = nc.analyse(out_wav)
+            _, rough_metrics = nc.cochlear_roughness_check(out_wav, score=score)
         cog_metrics = pattern_audit.cognitive_metrics(score)
 
         report = {
@@ -549,7 +584,7 @@ class MusicPipeline:
             if f.lower().endswith('.wav'):
                 p = os.path.join(stems_dir, f)
                 try:
-                    x, _ = sf.read(p, always_2d=True)
+                    x, _ = sf.read(p, always_2d=True, dtype='float32')     # half the memory of float64; every stage after the render works on float32 audio
                     m = manifest.get(os.path.splitext(f)[0])        # a trimmed stem goes back to where it starts
                     if m and m.get('start_s'):
                         x = np.pad(x, ((int(round(m['start_s'] * SR)), 0), (0, 0)))
@@ -720,6 +755,12 @@ class MusicPipeline:
             presets.STRICT = True
             presets.reset_projects()          # one piece never inherits the previous project's presets
             presets.add_project(project_dir)
+            # Processed stems are kept between attempts and shared between formats: a retry after one note fix
+            # re-runs the stems whose bytes changed, and a second deliverable reuses the first one's chain.
+            mixer.use_mix_cache(os.path.join(project_dir, '.cache', 'mix'))
+            freed = stem_cache.prune(os.path.join(project_dir, '.cache'))     # a cache keyed on the code and the preset grows with every edit
+            if freed:
+                print(f"  [cache] removed {freed / 1e9:.1f} GB of the oldest cache files (cap {stem_cache.cache_cap_bytes() / 1e9:.0f} GB, MUSICGEN_CACHE_GB)")
             if presets_dir or not adopt_presets:
                 raise SystemExit("--presets-dir / --no-adopt-presets are for --test or --check-only; "
                                  "a project always uses <project>/presets.")
@@ -727,6 +768,7 @@ class MusicPipeline:
         else:
             presets.STRICT = False
             presets.reset_projects()
+            mixer.use_mix_cache(None)
             print("  *** TEST RENDER - generic General MIDI instruments, not a deliverable ***")
 
         if project_dir and not explicit_out:
@@ -783,7 +825,7 @@ class MusicPipeline:
                 prev_attempts = []
 
         # Stage 2: Acoustic Pre-Flight
-        self.stage2_preflight_lint(score, strict=strict)
+        self.stage2_preflight_lint(score, strict=strict, project_dir=project_dir)
 
         # Stage 3: Humanization & Respiration
         self.stage3_humanize(score)
@@ -794,7 +836,7 @@ class MusicPipeline:
         # Stage 4b: stem gate. A stem FAIL stops here: the mixer would only average the defect into the master.
         self.log('4b', 'Stem Gate (each stem measured alone, before the mix)')
         stem_rows, stem_meta = stem_gate.run_stem_gate(
-            score, stems, sr=SR, workers=int(os.environ.get('GATE_WORKERS', '2')),
+            score, stems, sr=SR, workers=resources.gate_workers(),
             report_dir=(os.path.join(project_dir, 'reports', 'gate') if project_dir else None),
             mode='draft' if draft else 'full',
             cache_path=(os.path.join(project_dir, '.cache', 'gate', 'stem_qa.json') if project_dir else None))
@@ -864,7 +906,7 @@ class MusicPipeline:
 
         # Additional requested formats: rendered only after the primary is certified, so one format's failure never
         # takes the certified master with it; each is checked against its own format rows before it enters out/.
-        extra_paths = []
+        extra_paths, certified = [], []
         if fails == 0 and not draft and project_dir and len(outputs['selected']) > 1:
             self.log('5b', 'Additional deliverable formats')
             import spatial_gate
@@ -872,9 +914,14 @@ class MusicPipeline:
             for extra in outputs['selected'][1:]:
                 rel = render_targets.filename(extra)
                 extra_draft = os.path.join(os.path.dirname(out_wav) or '.', '_draft_' + rel)
+                resources.release_memory()                  # the last mix's freed memory goes back before the next one starts
                 spatial_render.render_deliverable(score, stems, extra, extra_draft)
                 rows = []
                 spatial_gate.output_rows(score, extra_draft, rows)
+                spatial_gate.fold_rows(score, out_wav, extra_draft, extra, rows)
+                for lvl, n, d in rows:
+                    if lvl != 'FAIL':
+                        print(f"  [{lvl}] {n}: {d}")
                 bad = [(n, d) for lvl, n, d in rows if lvl == 'FAIL']
                 if bad:
                     for n, d in bad:
@@ -884,16 +931,24 @@ class MusicPipeline:
                 final = os.path.join(project_dir, 'out', rel)
                 os.replace(extra_draft, final)
                 extra_paths.append(final)
+                certified.append(extra)
                 print(f"  [OUTPUT] {extra}: {final}")
 
         # Stage 7: Packaging & Report
         report = self.stage7_package_release(score, out_wav if fails == 0 else draft_wav, ci_rows, fails, warns,
                                             out_midi=out_midi, json_report=json_report)
+        import render_targets as _rt
+        delivered = _rt.delivered(score)          # one truth for what was rendered, and what was certified
         report['deliverables']['outputs'] = outputs['selected']
         report['deliverables']['outputs_skipped'] = outputs['skipped']
         report['deliverables']['output_files'] = extra_paths if project_dir and fails == 0 else []
+        report['deliverables']['delivered'] = [dict(name=d['name'], channels=d['channels'], layout=d['layout'],
+                                                    renderer=d['renderer'], file=d['file']) for d in delivered]
+        report['deliverables']['certified'] = ([] if fails else [d['name'] for d in delivered[:1]]) + \
+            (certified if fails == 0 else [])
         report['mode'] = 'project' if project_dir else 'test'
         report['gate'] = dict(mode='draft' if draft else 'full', stopped=None,
+                              cache=mixer.STATE.get('cache'),
                               stages=dict(stem=stem_meta,
                                           mix=dict(stage='mix', fails=fails, warns=warns,
                                                    metrics=self.mix_metrics,
@@ -945,6 +1000,8 @@ class MusicPipeline:
         print("=" * 80)
         status_str = "CERTIFIED PASS" if fails == 0 else f"BUILT WITH {fails} FAILS"
         print(f"  PIPELINE COMPLETE ({elapsed:.1f}s) -> {status_str}")
+        if self.verbose:
+            print(self.timing_report())
         print(f"  Master: {out_wav} ({analysis_summary(report)})")
         if project_dir:
             n = len(report['attempts'])
@@ -1065,9 +1122,13 @@ def main():
     ap.add_argument('--stems-full', action='store_true', help='Export every stem full length and aligned (default: only the part where each stem sounds, with stems.json)')
     ap.add_argument('--max-attempts', type=int, default=5, help='Attempt count after which a failing run says STOP (default 5)')
     ap.add_argument('--draft', action='store_true', help='Fast check: skip tier 2 rows and never publish to out/')
-    ap.add_argument('--targets', default=None,
-                    help='Deliverable formats, comma separated, overriding the score: stereo, binaural, immersive_7_1, immersive_7_1_4, or all')
-    ap.add_argument('--gate-workers', type=int, default=None, help='Threads for the per-stem gate rows (default 2 or $GATE_WORKERS)')
+    ap.add_argument('--targets', '--only', dest='targets', default=None,
+                    help='Render only these deliverable formats, comma separated, overriding the score and the default '
+                         '(stereo + immersive_7_1): e.g. --only stereo, or --only stereo,immersive_7_1_4. Name stereo first: '
+                         'it is the certified master the fold rows compare the others with. Formats: stereo, mono, binaural, '
+                         'immersive_5_1, immersive_5_1_2, immersive_5_1_4, immersive_7_1, immersive_7_1_2, immersive_7_1_4, ambix, '
+                         'adm_bw64, stereo_48k, or all')
+    ap.add_argument('--gate-workers', type=int, default=None, help='Threads for the per-stem gate rows (default: most cores, see resources.py, or $GATE_WORKERS)')
     a = ap.parse_args()
     if a.gate_workers:
         os.environ['GATE_WORKERS'] = str(a.gate_workers)

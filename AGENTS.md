@@ -58,9 +58,10 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 ### PHASE 4: DIRECTION SHEET (only after Phase 3 is complete)
 - [ ] **4.1** Confirm R1-R3 are done, the research notes carry citations, and `references/workflow/music-direction.md` has been read.
 - [ ] **4.2** Copy `templates/direction_sheet.json` to `<dir>/direction/direction_<title>.json`
-- [ ] **4.3** FILL EVERY FIELD: `job`, `purpose`, `point_of_view`, `sections` (with picture action), `motifs`, `hits_at`+`hits`, `ending`, `feel`, `avoid_feel`, `palette`, `avoid_sounds`, `tempo`, `key/mode`, `energy`, `space`, `mix_intent`, `loudness`, `true_peak_max`, `delivery`, `references` (words only), `spatial_staging`, `piece_type`, `focus` (what carries it), `intent`, and for an immersive piece `immersive` (4.7)
+- [ ] **4.3** FILL EVERY FIELD: `job`, `purpose`, `point_of_view`, `sections` (with picture action), `motifs`, `hits_at`+`hits`, `ending`, `feel`, `avoid_feel`, `palette`, `avoid_sounds`, `tempo`, `key/mode`, `energy`, `space`, `mix_intent`, `loudness`, `true_peak_max`, `delivery`, `references` (words only), `spatial_staging`, `piece_type`, `focus` (what carries it), `intent`, `expression` (4.8), and for an immersive piece `immersive` (4.7)
 - [ ] **4.6** Decide the focus before the arrangement: `melody`, `drone`, `groove`, `texture` or `gesture`, and the roles that may carry it. A piece whose type expects a figure and has none will FAIL `focus.declared`, and that is the point.
 - [ ] **4.7** For an immersive piece, fill `immersive` after reading `references/workflow/directing-space.md`: whether the field does a job (`why`), which parts are anchors and which move (`movers[].why`, `.path` in words), the height plan, where the room changes (`room_changes[].at_section`, named by section) and the `deliverables`, two-channel first. Every number (keyframes, heights, room geometry) goes in the presets; the section names here are the vocabulary a trajectory or a room scene is anchored to, so they must match the score's `plan.sections`.
+- [ ] **4.8** Fill `expression` after reading `references/workflow/music-direction.md` section 2.11, before any note: the `sonic_picture` (what the listener hears in the first ten seconds, the middle and the last note), the `performer` (what a human player does), the `producer_moves`, the `anti_generic` sentence, per-section `cues` (arousal, mode and register, tempo, dynamics, articulation, timbre) and, for a melody piece, the `theme` as a shape with a `variation_plan`. A sheet without it is a WARN (`direction.expression`); a half-written one is a FAIL.
 - [ ] **4.4** If scoring to video, run `scripts/video_score.py` - it fills video block but YOU still write music intent
 - [ ] **4.5** Ensure sections don't overlap, hits align with hits_at. Gate rejects otherwise.
 
@@ -68,6 +69,9 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **5.1** Scaffold instruments/vocals: `python scripts/presets.py scaffold instruments|vocals <exact_name> --project <dir>`. Each needs unique `spatial.azimuth/distance`. Fill real `character` sentence (placeholder blocked).
 - [ ] **5.2** Scaffold space preset if needed: `python scripts/presets.py scaffold spaces <name> --project <dir>`. Set `space`/`room` in score.
 - [ ] **5.3** Scaffold mix preset: `python scripts/presets.py scaffold mix --project <dir>`. **MUST customize it** - defaults are no-ops. Configure per piece needs (ducking, sidechain, mastering.crest_floor_db, inst_eq, etc.). Read `references/mixing/mixing-and-mastering.md` section 8b.
+      The master tone curves, the glue compressor, the room send per role (`space.send_by_role`) and the duck timing are
+      preset keys: change the number there, never in `mixer.py`. To make the sheet's `mix_intent` act on the mix, carry it
+      on the score and set `lead_carve: {"enabled": true, "from_intent": true}`.
 - [ ] **5.4** For immersive: add `"immersive": {"enabled": true, ...}` to mix preset. Set heights in presets to match staging. Bass/drums at 0deg.
       A scaffolded mix preset runs on the ambisonic bus (`"engine": "hoa_bus"`): a moving part gets `spatial.trajectory`
       keyframes placed by bar or section, a room that changes gets `scenes` on the space preset, and a room's tail comes
@@ -92,17 +96,26 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 
 ### PHASE 8: RENDER & ITERATE
 - [ ] **8.1** Render: `python scripts/pipeline.py <dir>/scores/<title>_score.json --project <dir> --max-attempts 3` (background for long runs)
+- [ ] **8.1b** Before a long render run `python scripts/preflight_lint.py <dir>/scores/<title>_score.json <dir>` (stage 2 runs it too): fix every FAIL (note outside the patch range, one-shot cut short) and read every WARN, since each one cost a full render when it was found by the audio rows. `references/mixing/quality-gate.md` section 3g.
 - [ ] **8.2** Read scoreboard, not early logs. Fix ONE thing at a time based on gate failures. Max 5 attempts.
 - [ ] **8.3** For immersive pieces, fix imm_* rows in presets/score, never loosen. `imm_kinematics`: spread the
       keyframes. `imm_low_fold` / `mix.band_fold`: narrow the stem the row names. `imm_clarity`: lower the space's
       `late.level_db`. Table: `references/mixing/quality-gate.md` §5b.
-- [ ] **8.4** Extra deliverables are `output_targets` names, never a script: `ambix` (sound field), `adm_bw64`
-      (objects), `stereo_48k` (or `"rate_hz": 48000` on a project's own target). List a two-channel target first.
+- [ ] **8.4a** Output formats: if the user names none, use the default, stereo plus 8-channel `immersive_7_1` (`presets/outputs/_default.json`); never render `all` or every format unasked, because the order-5 AmbiX and the ADM objects take most of a long render. To render only some formats, pass `--only <list>` on the command line (stereo first), not a changed score. A 7.1.2 file as the sole target is certifiable: `master.dc` no longer reads the low-frequency channel (it carries the sub, not the programme), the loudness row reads the basis the master was levelled on (`loudness.method`), and a fold's true peak is INFO because `delivery.true_peak` certifies every delivered channel against the format's own ceiling. `fold.mono` / `fold.timbre` still compare a format with a stereo master, so a run that delivers both keeps `stereo` first.
+- [ ] **8.4** Extra deliverables are `output_targets` names, never a script: `mono` (rendered, not folded),
+      `immersive_5_1` / `_5_1_2` / `_5_1_4` and the 7.1 family (loudspeaker layouts), `ambix` (sound field), `adm_bw64`
+      (objects), `stereo_48k` (or `"rate_hz": 48000` on a project's own target). List `stereo` first: the `fold.mono` and
+      `fold.timbre` rows compare every extra format with that master, and only warn without it.
+- [ ] **8.5** A `fold.*` or `imm.loudness` row is fixed in the piece: narrow or re-pan the part the row's band names,
+      move its `spatial` place, or lower the loudness target. Another layout is a JSON file in the project's
+      `presets/layouts/` and `presets/outputs/`. `references/spatial/immersive-deliverables.md`.
 
 ### PHASE 9: DELIVER
 - [ ] **9.1** Verify the delivery record: `python scripts/helpers/version_manager.py list --project <dir>`. Every certified render is kept as `out/master_vNN.wav` with its change in `out/versions.json`; `out/master.wav` is a copy of the newest. Never delete or overwrite a version file or a record.
 - [ ] **9.2** Metadata: `out/master.json` (written at certification from `presets/metadata/metadata.json` + the score + the project overrides) carries the standard tags. If a tag is wrong, fix `<dir>/metadata.json` and re-run `python scripts/helpers/ingest_metadata.py out/master.wav --project <dir>`; never edit the sidecar by hand.
 - [ ] **9.3** MP3 is manual and NOT part of the pipeline: `python scripts/helpers/compress_mp3.py out/master_vNN.wav -o <file>.mp3 -b 320k`. Report the file you produced and its bitrate.
+- [ ] **9.4b** Measure the arc against the brief: `python scripts/helpers/arc_report.py out/master.wav --score scores/<title>_score.json`. A green gate says the render is not faulty; it does not say the cue has the pressure the brief asked for (`references/scoring/cinematic-commercial-grade.md`, section 6). Report the section means, the pressure share and the quiet stretches, and say if they disagree with the sheet's `energy`.
+- [ ] **9.4c** Check the expression against the sheet: `python scripts/helpers/expression_report.py scores/<title>_score.json --direction direction/<sheet>.json`. It reports whether the written notes follow the sections' declared energy (tempo, density, velocity, register, staccato share) and whether the melody has variety (interval entropy, range, leaps, bars that repeat exactly). It is non-neural, uses starting-value anchors and says nothing about valence or taste; report its flags and what you changed.
 - [ ] **9.5** Listen: `python scripts/listen.py out/master.wav --direction direction/<sheet>.json` (if missing, say so)
 - [ ] **9.6** Complete self-check in `references/workflow/self-check.md` in STATUS.md (all yes/no)
 - [ ] **9.7** Report: what was done, what was checked, what was NOT checked, gate results, the version number delivered, any limitations. Update STATUS.md.
@@ -117,6 +130,7 @@ Before Phase 4, open every file in the row that matches the request; union sever
 |---|---|
 | **ANY PIECE** | `SKILL.md`, `references/workflow/brief-reading.md`, `references/workflow/music-direction.md`, `references/workflow/intent-and-focus.md`, `references/spatial/acoustic-laws.md`, `references/mixing/mix-rules.md`, `references/mixing/humanization.md`, `references/mixing/quality-gate.md` |
 | **Intent/mood words/focus/roles** | `references/workflow/intent-and-focus.md`, `scripts/intent.py`, `scripts/roles.py` |
+| **Cinematic / epic / trailer / hybrid orchestral / thriller / "unknown, hostile place"** | `references/scoring/cinematic-commercial-grade.md`, `knowledgebase/genre-and-feel/cinematic-hybrid-scoring.md`, `references/scoring/emotion-and-scoring.md`, `references/workflow/scene-recipes.md` |
 | **Mood/film/underscore/background** | `references/workflow/scene-recipes.md`, `references/scoring/emotion-and-scoring.md`, `knowledgebase/media/video-scoring.md` |
 | **Score video file** | `references/scoring/video-scoring.md`, `scripts/video_score.py`, `video-mixer/video_probe.py`, `video-mixer/context.py`, Section 10 below |
 | **Film reel / several cues / spotting** | `references/scoring/video-scoring.md`, `video-mixer/deliver/reel.py`, `video-mixer/gate/pass_.py`, `scripts/setup_project.py --new-film`, Section 9 and Section 10 |
@@ -138,6 +152,7 @@ Before Phase 4, open every file in the row that matches the request; union sever
 | **Exact theme/chord sheet/timecodes** | `references/workflow/custom-scripts.md`, `references/workflow/creative-composition.md`, `templates/custom_score_template.py` |
 | **Spatial/3D/headphone** | `references/spatial/spatial-presets-and-scoring.md` |
 | **Immersive/height/surround** | `references/spatial/immersive-spatial.md`, `references/spatial/spatial-presets-and-scoring.md`, `references/mixing/quality-gate.md` §5b |
+| **Mono / 5.1 / any loudspeaker layout / GPU render** | `references/spatial/immersive-deliverables.md`, `references/mixing/quality-gate.md` §5b, `scripts/compute.py` |
 | **Clone instrument** | `references/instruments-and-vocals/instrument-cloning.md`, `scripts/clone_instrument.py` |
 | **Extract MIDI/stems** | `references/workflow/extraction.md`, `scripts/extract_pipeline.py` |
 | **Mix/master existing stems** | `references/mixing/mixing-and-mastering.md`, `scripts/mixer.py`, `scripts/mix_diagnostics.py` |
@@ -202,6 +217,17 @@ levers. Using GM habits on an SFZ track is what leaves it sounding like a sample
 
 ---
 
+## 4b. CINEMATIC / HYBRID SPECIFICS
+
+Full procedure: `references/scoring/cinematic-commercial-grade.md`. Facts and sources: `knowledgebase/genre-and-feel/cinematic-hybrid-scoring.md`.
+
+1. **Pressure is a deliverable.** Decide the carriers (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising or accelerating device) in the direction sheet before any note.
+2. **The last section is the peak or the cliff**, never the fade of a peak, unless the brief asks for relief.
+3. **Atmosphere sits under the cue.** For a brief about threat, turn rain, river and canopy down.
+4. **Gate rows and pressure collide on heavy cues** (`master.dc`, `dropout`, `cochlear_roughness`, `z_separation`, `fold.mono`). The table in the reference file lists the fix for each in the piece; none of them is a loosened row.
+5. **Loudness is the medium's**: a trailer is not -16 LUFS. The figures are starting values until the delivery spec is known.
+6. **Name the library's limit.** A free, dry sample library cannot sound like a commercial hybrid score; say so.
+
 ## 5. SFZ orchestra (only when requested)
 
 Default is the GM SoundFont. Use SFZ only when the user says "real samples", "full orchestra", "SFZ", or names a library.
@@ -214,6 +240,7 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
 6. **Check ranges** - Verify patch range before writing notes. Notes outside range silent/stretched.
 7. **Render via pipeline only** - `pipeline.py <score> --project <dir>`, never shortcut renderer. Measure stems - SFZ quiet (-19 to -28dB), set `trim_db` by measurement.
 8. **Report fully** - Library name + license, parts installed, "not auditioned" unless listened.
+9. **No library is required** - A preset's `sfz` block may list `alternatives` (`[{"library", "patch"}]`); the first one installed plays, and the render says which. `python scripts/sfz_catalog.py recommend <score> --project <dir>` shows what a score is missing and which of the 14 catalogued libraries could fill it; `list`, `info`, `search` and `install` are there too. An entry with `verified: false` has an unread licence: open its page first.
 
 `sfizz_render` needs `--use-eot` or it renders forever past the end; `scripts/sfz_render.py` passes it with a timeout. Do not call the binary directly without both.
 
@@ -285,13 +312,15 @@ Rules:
 10. **Faithful reporting** - Say what was/wasn't checked. Didn't listen unless `listen.py` ran. Taste/realism/fit aren't measured.
 11. **Backup before editing skill** - Copy to backup location outside the skill folder, no `.venv`. Keep SKILL.md lean, details in references, enforce in code.
 12. **Python via venv only** - Skill venv or project's uv venv. Nothing global. Ship .ps1 with .sh.
-13. **Mix decisions in presets** - Gain staging, dynamics, spectral, sidechain, space, mastering are in mix preset (`mix_schema.py`). Change in preset, not `mixer.py`. Don't add hardcoded fallbacks for preset keys. Both `legacy` and `adaptive` are valid.
+13. **Mix decisions in presets** - Gain staging, dynamics, spectral, sidechain, space, mastering are in mix preset (`mix_schema.py`). Change in preset, not `mixer.py`. Don't add hardcoded fallbacks for preset keys. Both `legacy` and `adaptive` are valid. A dynamics key the chosen engine never reads (knee, detector, lookahead under `pedalboard`) is reported by `mix_schema.inert_dynamics` and a `[WARN]` at mix time: set `engine: dsp` or drop it; never leave a no-op key in a preset.
 14. **Diagnostics report, don't act** - `mix_diagnostics.py` reports. Never "fix" WARN by loosening thresholds, never let it edit mix, never claim audible improvement from numbers.
 15. **Sounds are data** - Materials/geometry/interactions/events go in preset `scene`.
 16. **A number needs a status** - Any number added to a knowledge base file carries a source, or the words
     "starting value" on the same line. A new KB file gets a row in `knowledgebase/README.md` and the standard
     header (`id`, `title`, `domain`, `status`, `sources`, `used_by`, `updated`), and
     `python tests/check_kb.py` must pass. Writing new Python generator for new sound name is forbidden. Unknown fields = error, no fallback. No normalization erasing physical intensity differences.
+17b. **A green gate is not the brief** - Every gate fix is made in the notes, the presets or the placement, and each one can take pressure out of the piece (a sparser stab, a quieter hit, a high-passed sub). After the gate is green, measure the arc (9.4b) and compare it with the direction sheet's `energy` and `loudness`. A cue briefed as tense, hostile or epic that reads as ambient is a failed brief however many rows pass. Never flatten velocities, remove a pulse or a low hit to quiet a row; fix the row where it arises.
+17c. **A producer decides how it is played before writing it** - The `expression` block (Phase 4.8) is the entry point of the piece. An agent that has not decided who plays each part, what a human does, what the theme's shape is and what the generic version would be writes the generic version. A theme is a shape with a variation plan, never a mood word.
 17. **A declaration is judged** - `focus.declared`, `intent.vocabulary` and `intent.avoid` are rows like any other (Section 6b).
     They fail in the score or the presets; a declaration is never deleted, loosened or skipped to get a green report.
 

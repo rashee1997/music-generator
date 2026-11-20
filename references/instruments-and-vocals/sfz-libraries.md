@@ -45,6 +45,33 @@ a later different file is refused unless `--force`. `libs/sfz/LICENCES.md` lists
 - **vpo**: Virtual Playing Orchestra 3.3. The two script sets download by script. The 603 MB wave files are hosted on OneDrive, which refuses
   scripted download: download them by hand from the page and run `install-local vpo <zip> --part wave`. Mixed licences, some share-alike.
 - **sfizz**: the engine, BSD-2-Clause, pinned to 1.2.3 (the project is archived). Windows prebuilt. On macOS/Linux build it or set `SFIZZ_RENDER`.
+- **The optional catalog**: twelve more open libraries (Salamander and Accurate Salamander pianos, VCSL and VCSL Keys, Karoryfer String Cyborgs
+  and Big Rusty Drums, jRhodes3c, Smolken Double Bass, Greg Sullivan E-Pianos, FreePats, Open Source Drumkit, Amethyst Imperial Grand, Pianobook).
+  They are all `manual` entries: the entry gives the homepage, licence, credit line and families, and `sfz_libs.py install-local <name> <zip> --project <dir>`
+  puts the files you downloaded in the project. `verified: true` means someone read the page and the licence; an unverified entry came from a
+  search result, so open its page and read the licence before using it. None is required.
+
+## Optional libraries and the fallback chain (`scripts/sfz_catalog.py`)
+No library is required. When one is missing, another can play the part:
+
+```json
+"sfz": {"library": "sso", "patch": "Strings - Notation/1st Violins Legato",
+        "alternatives": [{"library": "vpo", "patch": "Strings/1st Violins Legato"}]}
+```
+
+The renderer plays the first of the block's own library and its `alternatives` whose patch is installed in the project (all other settings of the
+block stay), prints which one it used, and raises an error listing every choice if none is installed. The project gate and the linter use the same
+rule, so a score with a usable alternative passes and one with none says how to fix it.
+
+| Command | Does |
+|---|---|
+| `sfz_catalog.py list [--family piano] [--licence cc0] [--project D]` | every library with families, licence, verified or not, installed or not |
+| `sfz_catalog.py info <name>` / `search <words>` | the full entry / libraries whose text contains every word |
+| `sfz_catalog.py recommend <score> --project D` | for each SFZ track: what plays, or what is missing and which catalog libraries of that family could fill it (installed first) |
+| `sfz_catalog.py install <name> --project D` | downloads parts that have a url; for a part with only a page it prints the page and the `install-local` command |
+| `sfz_catalog.py add-alternative <instrument.json> <library> "<patch>"` | appends an alternative to an instrument preset |
+
+Add your own library with a project file `presets/sfzlib/<name>.json` (same keys as the shipped ones), then name it in `alternatives`.
 
 ## Using one in a score
 An instrument preset (project `presets/instruments/<name>.json`) carries the block, so scores keep readable names:

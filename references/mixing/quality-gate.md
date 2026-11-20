@@ -148,6 +148,46 @@ may declare `focus` and an `intent` block, and `compose.py` fills only the field
 that the profile does not judge is a WARN naming both, because the report would apply the wrong rule. A declaration is
 never deleted to pass a row. Detail: `references/workflow/intent-and-focus.md`.
 
+## 3f. Rows for how the music is played (`quality_gate._expression_rows`, from `scripts/helpers/expression_report.py`)
+
+No neural model and no audio: the rows read the sheet and the score's notes. Anchors are starting values that no corpus has calibrated, so the measured rows warn and never fail.
+
+| Row | Judges | Result |
+|---|---|---|
+| `direction.expression` | the sheet's `expression` block (music-direction.md 2.11) | WARN when absent, FAIL when present and incomplete, PASS when complete |
+| `expression.arousal_order` | rank correlation (Spearman) between the sections' declared `energy` and an index of tempo, note density, velocity, register and staccato share per section; limit 0.5 | WARN below the limit, INFO under three sections |
+| `melody.variety` | the figure track: interval entropy (limit 1.0 bit), range (7 semitones), bars that repeat exactly (60 %), no leap in a long line | WARN on a flag, INFO without a figure track |
+
+The index follows the cue research (mode, tempo, register, dynamics, articulation, timbre; Gabrielsson and Lindstrom 2010, Eerola, Friberg and Bresin 2013). It measures how hard the written music pushes, not its valence.
+
+## 3g. Pre-render rows (`scripts/preflight_lint.py`, stage 2)
+
+Read from the score and the presets before any audio is made; each was found by a render that failed. FAIL and WARN rows print in stage 2 with the pattern-audit rows. They do not replace the audio rows.
+
+| Row | Level | Judges |
+|---|---|---|
+| `preflight.range` | FAIL | a note outside the sampled key range of its SFZ patch (silent or stretched); read from the `.sfz` and its includes |
+| `preflight.sfx_length` | FAIL | a one-shot event cut before 75 % of its sound plays (event `d`, or the next onset, shorter than the preset's `seconds`): the cut is a click |
+| `preflight.section_edge` | WARN | a sparse sound (16 beats or less) that ends in a section with none of its events |
+| `preflight.unison` | WARN | two instruments of different families on one pitch above middle C for three beats or more |
+| `preflight.figure_level` | WARN | a melody, lead or vocal part that plays mostly the quiet sections: gain staging lifts every figure-family part to full level, so give it the role `counter` |
+| `preflight.placement` | WARN | a score-placed sound within 25 degrees in azimuth and 15 in elevation of a part that plays with it |
+
+More rows, from the score alone (`scripts/preflight_levels.py`; estimates, WARN only):
+
+| Row | Judges |
+|---|---|
+| `preflight.stem_level` | a part quiet twice in a section (velocity and the dynamics curve both under 75 % of usual): the stem gate reads it as `stem.dead` |
+| `preflight.arc` | parts playing x velocity x curve per section against the declared section energy (rank correlation under 0.5 is where `section.energy` fails) |
+| `preflight.tempo` | a tempo map spanning more than 25 %: `tempo.audio` will fail against one declared value; record a measured skip |
+| `preflight.roughness` | two different instruments a second apart for three beats or more (Plomp and Levelt 1965) |
+
+One-shot effects, rendered once and judged alone (`scripts/preset_probe.py`): `probe.silent` and `probe.clip` and `probe.start` FAIL; `probe.tail` and `probe.dc` WARN (`probe.dc` is silent when every track that plays the effect sets `dc_hp_hz`).
+
+`focus.declared` and `intent.*` run in stage 2 as well. `scripts/lint_coverage.py` maps every gate row to the rule that catches it before a render, or to the reason only audio can; `tests/test_lint_coverage.py` fails when a gate row is missing from it. `scripts/gate_clock.py` is the one beats-to-seconds conversion for every gate module; `tests/test_gate_clock.py` fails when a gate module reads the flat `bpm` without `# flat-bpm-ok: <why>`.
+
+Limits are starting values from those failures. `python scripts/preflight_lint.py scores/<title>_score.json <project>` runs all of them alone.
+
 ## 3c. The gate adapts to the type of piece (gate profiles)
 
 Rules tuned on melodies false-flag a tense drone, an ambient bed, a dance loop or an effects-only piece. So which rows run, and their
@@ -216,10 +256,43 @@ against the target it claims to be. A format that was not requested is never che
 | `imm.surround_ratio` | multichannel | surround energy (BL+BR+SL+SR) against the front stage (FL+FR+FC) | layout `gate.surround_ratio_db` |
 | `imm.height_arc` | layouts with overhead speakers | height energy against the listener-level beds | layout `gate.height_max_rel_db` |
 | `imm.fold_coherence` | multichannel | correlation of the ITU-R BS.775 fold | layout `gate.stereo_correlation_min` |
+| `imm.loudness` | layouts whose target sets `loudness.method: bs1770_layout` | ITU-R BS.1770 loudness of the delivered channels with the layout's `loudness_weight_db` per speaker, the low-frequency channel left out; WARN when it misses the target by more than the mix preset's `mastering.converge.report_miss_lu` | the score's master block, or the target's `loudness.target_lufs` |
+| `fold.mono` | the `mono` target, beside a loudspeaker stereo master | the stereo master summed to one channel against the rendered mono, per auditory band from 100 to 5000 Hz, after level matching | target preset `gate.fold_band_max_db`, `fold_floor_db` |
+| `fold.timbre` | every layout target, beside a loudspeaker stereo master | the layout folded to two channels with its own `downmix` coefficients against the stereo master, per auditory band, after level matching | target preset `gate.fold_band_max_db`, `fold_floor_db` |
+| `fold.reference` | `mono` and layout targets | WARN: the first deliverable is not a loudspeaker stereo master, so the fold comparison was not made | none |
 | `render.finite` | every target | a NaN or an infinite sample in any channel (protected: no profile can switch it off) | none: one is a fault |
 | `adm.container` | the `adm_bw64` target | the container itself, read from the bytes: `BW64` magic + saturated outer size, `ds64` first with the 64-bit file and data sizes matching the file, `fmt `/`chna`/`axml`/`data` agreement, unique ADM IDs with every reference resolved (or a BS.2094 common definition), each `chna` row mapping one channel to one `audioTrackUID`, block times contiguous from 0 to the file end, positions in range | `scripts/spatial_engine/adm.py` `validate_file` (structure, not a threshold) |
 | `adm.channels` | the `adm_bw64` target | tracks, sample rate, frames, bit depth read from the parsed container, and that each track maps to exactly one ADM object | `adm.parse` |
 | `adm.loudness` | the `adm_bw64` target | names the loudness policy in the report: BS.1770 loudness of a constant-power stereo fold of the objects, applied as one programme gain at render time. This is this engine's internal levelling reference, not a standard-required loudness (an object file has no loudness until a renderer folds it), so the row reports the method rather than inventing a target | `spatial_engine/adm.py` `AdmBus.report` |
+
+The `fold.*` rows compare long-term spectra. They catch a band that cancels, doubles or goes dull between formats;
+they do not see a part that drops out for two bars, which is what the per-file rows and `listen.py` are for. A
+`fold.mono` FAIL is a fact about the stereo master (something in that band is out of phase between its channels, or
+panned so hard that the sum loses it): narrow, re-pan or lower the widening of the part that lives there. A
+`fold.timbre` FAIL is a fact about the layout render: check the part's `spatial` place and the layout's `downmix`.
+
+**When the delivered file is a loudspeaker layout** (`--only immersive_7_1_2`, or a score whose first target is one),
+the gate measures that file and nothing it was not given. Three rows have a basis that is easy to get wrong, and each
+says in its detail which one it used:
+
+| Row | Basis on a multichannel delivery |
+|---|---|
+| `loudness` | the basis the master was levelled on: the delivered channels' BS.1770 LKFS when the target says `loudness.method: bs1770_layout`, otherwise the two-channel fold |
+| `true peak` | `delivery.true_peak` certifies every channel against the format's own ceiling; the peak of the two-channel fold is INFO, because a fold is a sum of channels and is not a delivery limit |
+| `master.dc` | the programme channels; the low-frequency channel is excluded, it carries the sub below the DC blocker's corner by design |
+
+`clipping`, `clicks`, `silence`, `dropout`, `delivery.channels` and `render.finite` are measured on every delivered
+channel, so a defect in one surround or height channel still fails with that channel named. `fold.timbre` needs no
+stereo master beside it: with only a loudspeaker format delivered, it compares that format with its own two-channel
+fold (`spatial_gate._own_fold`), which is the same question — is there a band this layout cancels in its downmix.
+
+**What a gate run costs.** The delivered file is decoded once and shared by every row (`gate_audio.load` keys the
+object on the path, its mtime and its size), the per-stem band helpers are memoised on the array object
+(`dsp.band_db`, `_band_frames`) instead of band-passing every stem once per row, and the packaging stage reports
+the gate's own `nc.analyse` and roughness numbers rather than measuring the same audio again. On the real profile
+those repeated filters were 71 s and 30 s of a 290 s gate, plus a full second analysis at the end. No threshold,
+row id or verdict changes with any of it.
+A file is matched to its target by its file name before its channel count, because two layouts can share a count.
 
 The `adm_bw64` target is checked by those rows and never by `delivery.format`: its channel count is the piece's, not
 the format's, and the container is BW64, which libsndfile/soundfile cannot open (`sf.read` raises `Format not

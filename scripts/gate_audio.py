@@ -17,6 +17,8 @@ never decimated; envelopes, section levels and cut/dropout use the 8 kHz copy, w
 
 This module measures only. It has no synthesis, EQ, mixing or preset values.
 """
+import collections
+import os
 import threading
 
 import numpy as np
@@ -122,8 +124,12 @@ class Signal:
         """True peak per channel, in dBTP: a multichannel deliverable is checked channel by channel."""
         def make():
             from scipy.signal import resample_poly
-            up = resample_poly(self.audio, 4, 1, axis=0)
-            return 20.0 * np.log10(np.max(np.abs(up), axis=0) + 1e-12)
+            # One channel at a time: a sound-field or object file has dozens of channels, and upsampling all of them
+            # at once holds 4x the whole file in float64 (a 36-channel AmbiX piece needed about 14 GB). The result
+            # is the same numbers, channel by channel.
+            audio = self.audio if self.audio.ndim > 1 else self.audio[:, None]
+            peaks = [float(np.max(np.abs(resample_poly(audio[:, c], 4, 1)))) for c in range(audio.shape[1])]
+            return 20.0 * np.log10(np.asarray(peaks) + 1e-12)
         return self._get('true_peak_by_channel', make)
 
     def frame_db(self, frame_ms=FRAME_MS, hop_ms=HOP_MS, decimated=True):
@@ -167,5 +173,43 @@ class GateAudio(Signal):
         return int(self.audio.shape[1])
 
 
-def load(path):
-    return GateAudio(path)
+_REGISTRY = collections.OrderedDict()   # (absolute path, mtime_ns, size) -> GateAudio, most recent last
+_REGISTRY_MAX = 2                  # the delivered file, and the one it is compared with (a fold, a second layout)
+_LOCK = threading.RLock()
+
+
+def load(path, y=None, sr=None):
+    """One GateAudio per file per process, shared by every row of a run.
+
+    A gate run used to read the delivered file four times (the delivered read, the spatial check, the fold rows
+    and the master rows), and each read built its own lazily-cached views, so the decimation, STFT and true-peak
+    of one file were computed again per row. Rows measure one file: they get one object and its caches. The key
+    carries the file's mtime and size, so a re-rendered file is never described by the old one's measurements.
+
+    The registry is capped (`_REGISTRY_MAX`): a film or a multi-format run loads many files, and an unbounded
+    dict of float64 deliverables plus their caches is a leak in a long process. Evicting one is safe: a caller
+    that still holds the object keeps it alive, it just stops being shared.
+    """
+    if y is not None:                       # a caller handing its own array is not the file: no sharing
+        return GateAudio(path, y=y, sr=sr)
+    try:
+        st = os.stat(str(path))
+        key = (os.path.abspath(str(path)), st.st_mtime_ns, st.st_size)
+    except OSError:
+        return GateAudio(path)               # let the reader raise its own error, with its own message
+    with _LOCK:
+        got = _REGISTRY.get(key)
+        if got is None:
+            got = GateAudio(path)
+            _REGISTRY[key] = got
+            while len(_REGISTRY) > _REGISTRY_MAX:
+                _REGISTRY.popitem(last=False)
+        else:
+            _REGISTRY.move_to_end(key)
+    return got
+
+
+def clear():
+    """Forget every loaded file (a test that rewrites a file in place, or a long-lived process)."""
+    with _LOCK:
+        _REGISTRY.clear()

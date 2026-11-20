@@ -167,25 +167,81 @@ def _reset_stats():
         STATS.update(clipped=0, collisions=0)
 
 
-_SYNTH_CACHE = {}                              # (sr, sfpath) -> [Synth, sfid, Lock]: the 32 MB bank is parsed once
+_SYNTH_CACHE = {}                              # (sr, sfpath) -> [[Synth, sfid, Lock], ...]: the 32 MB bank is parsed once
+_SLOT_STATE = threading.local()                # the slot this thread borrowed: what a failed track hands back
 
 
-def _borrow_synth(sfpath, sample_rate):
-    """One loaded SoundFont per (sample rate, path), shared by every track of this process.
+def _stem_workers(n_jobs=None):
+    """How many stems render at once: `resources.stem_workers` (cores, capped by free memory), env override included."""
+    try:
+        import resources
+        return max(1, int(resources.stem_workers(n_jobs=n_jobs)))
+    except Exception:            # no resources module (a single-file copy): one stem at a time, as before
+        return 1
 
-    Re-parsing GeneralUser GS costs a disk read and a decode per track; a shared Synth with its channels reset is
-    byte-identical to a fresh one for the next track. The lock is held for one track at a time (tracks render
-    sequentially), so two tracks can never fight over a channel.
+
+class _Slot:
+    """One borrow of a sampler slot, returned exactly once.
+
+    A track holds its slot from the first sample until its render ends, and three different paths can be the one that
+    gives it back: the render's own `finally`, `render_track`'s when the track raised before or during it, and
+    `__del__` when neither ran. Whoever gets there first wins; a second release would hand one busy slot to two tracks.
+    """
+    __slots__ = ('synth', 'sfid', 'lock', 'taken')
+
+    def __init__(self, ent):
+        self.synth, self.sfid, self.lock, self.taken = ent[0], ent[1], ent[2], True
+
+    def give_back(self):
+        if not self.taken:
+            return
+        self.taken = False
+        try:
+            if hasattr(self.synth, 'notes_off'):
+                self.synth.notes_off()
+        except Exception:
+            pass
+        self.lock.release()
+
+
+def _return_slot():
+    """Give back this thread's borrowed sampler slot (idempotent), whatever became of the Voice that borrowed it.
+
+    A failed track's future keeps its traceback, and through it the Voice, alive, so `__del__` may not run for a long
+    time; every track still queued would then block in `_borrow_synth` and the stage would hang instead of reporting
+    the rendering error. This runs in `render_track`'s `finally`, before that error leaves the track.
+    """
+    slot, _SLOT_STATE.slot = getattr(_SLOT_STATE, 'slot', None), None
+    if slot is not None:
+        slot.give_back()
+
+
+def _borrow_synth(sfpath, sample_rate, max_instances=1):
+    """A loaded SoundFont slot for one track at a time, up to one per concurrent render.
+
+    Re-parsing GeneralUser GS costs a disk read and a decode per track; a Synth with its channels reset is
+    byte-identical to a fresh one for the next track, so slots are reused. A Synth is 16 channels of one player,
+    so two tracks can never share one: a track holds its slot until its render ends, and a track that finds every
+    slot busy (more tracks than workers) waits for one instead of fighting it for a channel.
     """
     import tinysoundfont
     key = (int(sample_rate), os.path.abspath(str(sfpath)))
+    ent = None
     with _STATS_LOCK:
-        ent = _SYNTH_CACHE.get(key)
-        if ent is None:
+        slots = _SYNTH_CACHE.setdefault(key, [])
+        for cand in slots:
+            if cand[2].acquire(blocking=False):        # a free slot: this track owns it until render ends
+                ent = cand
+                break
+        if ent is None and len(slots) < max(1, int(max_instances)):
             s = tinysoundfont.Synth(samplerate=int(sample_rate), gain=0)
             ent = [s, s.sfload(sfpath), threading.Lock()]
-            _SYNTH_CACHE[key] = ent
-    ent[2].acquire()
+            ent[2].acquire()
+            slots.append(ent)
+    if ent is None:                                    # every slot busy and none may be added: wait for the first
+        with _STATS_LOCK:
+            ent = slots[0]
+        ent[2].acquire()
     s = ent[0]
     try:                                   # a previous track's pedals, bends and expression must not leak
         if hasattr(s, 'notes_off'):
@@ -196,7 +252,9 @@ def _borrow_synth(sfpath, sample_rate):
             s.control_change(ch, 7, 127)
     except Exception:
         pass
-    return s, ent[1], ent[2]
+    slot = _Slot(ent)
+    _SLOT_STATE.slot = slot                # so render_track can hand it back even if the track fails from here on
+    return slot
 
 
 def bend_value(cents):
@@ -264,21 +322,17 @@ class Voice:
         import tinysoundfont
         self.ts = tinysoundfont
         self.os = max(1, int(oversample))
-        self.synth, self.sfid, self._lock = _borrow_synth(sfpath, sample_rate * self.os)
+        self._slot = _borrow_synth(sfpath, sample_rate * self.os, _stem_workers())
+        self.synth, self.sfid = self._slot.synth, self._slot.sfid
         self.sr = sample_rate
         self.events = []        # (sample, order, kind, ch, a, b) at the render rate (sr * os)
         self.prog = {}
 
     def _release(self):
-        """Give the shared Synth back (idempotent). Called at the end of render, and by __del__ if a render raised."""
-        lock, self._lock = getattr(self, '_lock', None), None
-        if lock is not None:
-            try:
-                if hasattr(self.synth, 'notes_off'):
-                    self.synth.notes_off()
-            except Exception:
-                pass
-            lock.release()
+        """Give the borrowed slot back (idempotent). Called by render's `finally`, by render_track's, and by __del__."""
+        slot, self._slot = getattr(self, '_slot', None), None
+        if slot is not None:
+            slot.give_back()
 
     def __del__(self):
         try:
@@ -295,6 +349,13 @@ class Voice:
         self.events.append((int(round(t * self.sr * self.os)), order, kind, ch, a, b))
 
     def render(self, tail=2.5):
+        """Render the collected events. The slot comes back from `finally`: a sampler that raises must not strand it."""
+        try:
+            return self._render(tail)
+        finally:
+            self._release()
+
+    def _render(self, tail=2.5):
         ev = sorted(self.events, key=lambda e: (e[0], e[1]))
         s = self.synth
         chunks, pos = [], 0
@@ -316,7 +377,6 @@ class Voice:
         if self.os > 1 and len(out):                 # decimate with a real filter: the images stay above Nyquist
             from scipy.signal import resample_poly
             out = resample_poly(out, 1, self.os, axis=0).astype(np.float32)
-        self._release()
         return out
 
 
@@ -402,7 +462,19 @@ def _sfz_track(tr, tm, cfg, seed, ts, swing, global_dyn, raw_inst, inst_cfg, qua
 
 
 def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None):
-    """Return stereo float32 stem for one track (list of notes -> audio)."""
+    """Return stereo float32 stem for one track (list of notes -> audio).
+
+    The sampler slot a sampled track borrows is returned here, in a `finally`, not only when its `Voice` happens to be
+    collected: a track that raises after taking one keeps the Voice alive in its error path, so `__del__` may never
+    run and a parallel stage would wait on that slot forever instead of reporting the failure.
+    """
+    try:
+        return _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead)
+    finally:
+        _return_slot()
+
+
+def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None):
     raw_inst = str(tr.get('instrument', 'piano'))
     if raw_inst.startswith('clone:'):                      # user-cloned instrument (clone_instrument.py)
         import clone_instrument as ci
@@ -972,19 +1044,56 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
     sfz_jobs = [(i, name, tr) for i, name, tr in marked if _is_sfz_track(tr)]
     other_jobs = [(i, name, tr) for i, name, tr in marked if not _is_sfz_track(tr)]
 
-    for i, name, tr in other_jobs:
-        t_seed = _track_seed(name, tr, tm, cfg)
+    def _other(job):
+        i, name, tr = job
+        return name, _render_cached(tr, name, tm, sfpath, score.get('dynamics'), cfg,
+                                    _track_seed(name, tr, tm, cfg), ts, score.get('swing', 0.5))
+
+    def _keep(result):
+        name, stem = result
         if verbose:
-            print(f'  rendering {name:12s} ({tr.get("instrument")}) ...', flush=True)
-        stems[name] = _render_cached(tr, name, tm, sfpath, score.get('dynamics'), cfg, t_seed, ts, score.get('swing', 0.5))
-        if verbose and _report_entry(name).get('cached'):
-            print(f'  [CACHED] skipped rendering {name} (hash match)', flush=True)
+            if _report_entry(name).get('cached'):
+                print(f'  [CACHED] skipped rendering {name} (hash match)', flush=True)
+            elif workers > 1:
+                print(f'  rendered  {name}', flush=True)
+        stems[name] = stem
+
+    # Stems are independent: their own seed, their own sampler slot. One at a time was the single biggest cost of
+    # this stage (the sampler is one Synth, and the loop waited on it); the count is bounded by cores and by memory
+    # (`resources.stem_workers`), never by the piece.
+    workers = _stem_workers(len(other_jobs)) if other_jobs else 1
+    if workers > 1 and len(other_jobs) > 1:
+        if verbose:
+            print(f'  rendering {len(other_jobs)} track(s) across {workers} parallel worker(s) ...', flush=True)
+        ex = ThreadPoolExecutor(max_workers=min(workers, len(other_jobs)))
+        futs = []
+        try:
+            futs = [ex.submit(_other, job) for job in other_jobs]
+            # as_completed, not map: one slow track (a formant vocal line takes tens of seconds) must not hide the
+            # stems that already finished behind it in the log.
+            for fut in as_completed(futs):
+                _keep(fut.result())
+        except BaseException:
+            # A track failed: the queued ones are cancelled and the running ones finish, so the error comes back now
+            # instead of after the rest of the piece has been rendered.
+            for f in futs:
+                f.cancel()
+            ex.shutdown(wait=True)
+            raise
+        else:
+            ex.shutdown(wait=True)
+    else:
+        for job in other_jobs:
+            if verbose:
+                print(f'  rendering {job[1]:12s} ({job[2].get("instrument")}) ...', flush=True)
+            _keep(_other(job))
 
     if sfz_jobs:
         # sfizz_render is one independent, CPU-bound subprocess per track with no internal thread flag (confirmed via
         # --help): the only real speedup is running several of these subprocesses at once. Each worker keeps its own
         # tempfile and process, so this is safe; _track_cache_dir() makes a killed/re-run pipeline resume for free.
-        workers = max(1, min(len(sfz_jobs), int(os.environ.get('MUSICGEN_SFZ_WORKERS', '4'))))
+        import resources
+        workers = resources.sfz_workers(n_jobs=len(sfz_jobs))          # every core while memory allows; MUSICGEN_SFZ_WORKERS overrides
         if verbose:
             print(f'  rendering {len(sfz_jobs)} SFZ track(s) across {workers} parallel worker(s) ...', flush=True)
 
@@ -1008,10 +1117,24 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
     # with `dc_hp_hz` on its track; everything else keeps the shared 5 Hz block.
     hp_by_name = {tr.get('name'): float(tr.get('dc_hp_hz') or 0.0) for tr in score.get('tracks', [])}
     tr_by_name = {tr.get('name'): tr for tr in score.get('tracks', [])}
-    stems = {name: dsp.trim_digital_lead(dsp.repair_clicks(
-        _dc_block(_align_onset(name, stem, tr_by_name.get(name) or {}, tm, score.get('bpm')),
-                  cutoff_hz=(hp_by_name.get(name) or 5.0), order=(4 if hp_by_name.get(name) else 2))))
-        for name, stem in stems.items()}
+
+    def _finish(name):
+        stem = stems.pop(name)                 # dropped as soon as it is processed: the post-pass used to hold a second
+        tr = tr_by_name.get(name) or {}        # full copy of the piece while it rebuilt every stem from the first
+        return name, dsp.trim_digital_lead(dsp.repair_clicks(
+            _dc_block(_align_onset(name, stem, tr, tm, score.get('bpm')),
+                      cutoff_hz=(hp_by_name.get(name) or 5.0), order=(4 if hp_by_name.get(name) else 2))))
+
+    names = list(stems)
+    post_workers = _stem_workers(len(names)) if names else 1
+    if post_workers > 1 and len(names) > 1:
+        with ThreadPoolExecutor(max_workers=min(post_workers, len(names))) as ex:
+            for name, out in ex.map(_finish, names):
+                stems[name] = out
+    else:
+        for name in names:
+            n, out = _finish(name)
+            stems[n] = out
     return stems, tm
 
 

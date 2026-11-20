@@ -1,0 +1,31 @@
+{
+  "name": "mayan_whisper",
+  "description": "Warm organic humming formant choir in mid-backstage",
+  "synthesis": "formant",
+  "vowel": "m",
+  "character": "A single closed-mouth hum, quiet and far, that follows the relic motif: the voice of what is inside the relic.",
+  "hum": true,
+  "expression": "gentle",
+  "ensemble": {
+    "voices": 4,
+    "cohesion": 0.4,
+    "pitch_spread_cents": 8.0
+  },
+  "vibrato": {
+    "depth_cents": 18.0,
+    "rate_hz": 4.8
+  },
+  "articulation": {
+    "attack_ms": 250.0,
+    "release_ms": 400.0
+  },
+  "gain_db": -10.0,
+  "reverb": 0.38,
+  "spatial": {
+    "azimuth": 150.0,
+    "elevation": 18.0,
+    "distance": 6.0,
+    "binaural": true,
+    "kind": "spot"
+  }
+}

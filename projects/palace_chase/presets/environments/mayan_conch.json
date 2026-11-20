@@ -1,0 +1,47 @@
+{
+  "name": "mayan_conch",
+  "description": "A conch-shell trumpet from deep inside the temple: one long, hoarse blast.",
+  "character": "A conch-shell trumpet from deep inside the temple: one long, hoarse blast.",
+  "layers": [
+    {
+      "name": "room_tone",
+      "primitive": "noise_bed",
+      "kind": "bed",
+      "gain_db": -52.0,
+      "low_hz": 140,
+      "high_hz": 1400,
+      "mod_rate_hz": 0.05,
+      "mod_depth": 0.1,
+      "spatial": {
+        "azimuth": 0,
+        "elevation": 10,
+        "distance": 6
+      }
+    },
+    {
+      "name": "conch_trumpet",
+      "primitive": "animal_call",
+      "kind": "spot",
+      "gain_db": -4.0,
+      "call": "conch_trumpet",
+      "individuals": 1,
+      "bouts_per_min": 5.0,
+      "first_s": 0.0,
+      "spatial": {
+        "azimuth": 150,
+        "elevation": 0,
+        "distance": 22.0
+      }
+    }
+  ],
+  "blending": {
+    "high_pass_hz": 140,
+    "vocal_pocket_notch_hz": 2200,
+    "vocal_pocket_notch_db": -3.0,
+    "overall_gain_db": -8.0
+  },
+  "sources": [
+    "mayan_conch_trumpet"
+  ],
+  "note": "One call per window: the score places a note where the call should start (first_s 0). A very quiet room-tone bed keeps the stem audible across its whole window, as the stem gate measures it. Levels, contours and rates are ESTIMATES."
+}

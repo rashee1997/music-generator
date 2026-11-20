@@ -1,0 +1,53 @@
+{
+  "name": "stair_chirp",
+  "character": "The chirped echo of a clap on a stepped pyramid: a short descending chirp, about an octave down, that repeats as the sound runs down the steps.",
+  "elements": {
+    "chirp": {
+      "f0_hz": [
+        [
+          0,
+          2600
+        ],
+        [
+          0.5,
+          1900
+        ],
+        [
+          1,
+          1300
+        ]
+      ],
+      "ms": [
+        260,
+        340
+      ],
+      "harmonics": 5,
+      "rolloff": 0.85,
+      "noise": 0.04,
+      "subharmonic": 0.0,
+      "attack": 0.01,
+      "release": 0.12
+    }
+  },
+  "sequence": [
+    [
+      "chirp",
+      1,
+      1
+    ]
+  ],
+  "gap_ms": [
+    900,
+    1500
+  ],
+  "tract_cm": 8.0,
+  "formant_q": 5.0,
+  "formant_mix": 0.3,
+  "bouts_per_min": 4.0,
+  "individuals": 1,
+  "sources": [
+    "Nature news, 14 Dec 2004, on the chirped echo of El Castillo, Chichen Itza: https://www.nature.com/news/2004/041213/full/news041213-5.html",
+    "Search-result summaries of Lubman (1998-2002) and Declercq: reflections from the treads make the echo fall by about an octave, and the effect depends on the exciting sound; whether it was designed is debated",
+    "ESTIMATE: 2600 to 1300 Hz and 260-340 ms are read from \"about an octave\" in those summaries, not measured"
+  ]
+}

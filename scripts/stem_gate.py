@@ -68,16 +68,36 @@ def _is_vocal(track):
     return any(h in blob for h in VOCAL_HINTS)
 
 
+def _clock(score):
+    """What turns a beat into seconds for this score: its own tempo map when it declares `tempo_points` (the renderer
+    plays that map, so a gate that counted at a flat BPM looked at the wrong place by up to a second), else the flat
+    BPM, exactly as before."""
+    flat = float(score.get('bpm') or 120.0)          # flat-bpm-ok: the fallback when the score has no tempo map
+    if not score.get('tempo_points'):
+        return flat
+    try:
+        import humanize as hz
+        return hz.tempo_map_for(score, seed=score.get('seed', 7))
+    except Exception:
+        return flat
+
+
+def _secs(clock, beats):
+    return float(clock.sec(beats)) if hasattr(clock, 'sec') else float(beats) * 60.0 / float(clock)
+
+
 def _note_intervals(track, bpm):
+    """(start, end) seconds of every note; `bpm` is a flat tempo or the clock from _clock()."""
     out = []
     for n in track.get('notes', []) if track else []:
         try:
-            a = float(n['t']) * 60.0 / bpm
-            d = float(n.get('d', 0)) * 60.0 / bpm
+            t, d = float(n['t']), float(n.get('d', 0))
+            a = _secs(bpm, t)
+            end = _secs(bpm, t + d)
         except (KeyError, TypeError, ValueError):
             continue
         if d > 0:
-            out.append((a, a + d))
+            out.append((a, end))
     return out
 
 
@@ -123,7 +143,7 @@ def _note_window_level(sig, a, b):
 
 
 def check_dead(sig, track, score, secs, under_db=12.0, floor_db=-70.0):
-    bpm = float(score.get('bpm') or 120.0)
+    bpm = _clock(score)
     iv = _note_intervals(track, bpm)
     if not iv:
         return None
@@ -210,7 +230,7 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
                             unit='', threshold=0.0, margin=0.0, worst_times_s=[], calibrated=False,
                             detail=str(exc)))
         return rows, metrics
-    bpm = float(score.get('bpm') or 120.0)
+    bpm = _clock(score)
 
     if gp.on('stem.dc'):
         res = gc.check_dc(sig, dc_max=gp.param('stem.dc', 'dc_max'))
@@ -335,7 +355,8 @@ def _gate_key(name, audio_hash, track, score, secs, dur, gp):
     return stem_cache.digest(dict(
         audio=audio_hash, stem=name, code=_gate_code(),
         track={k: (track or {}).get(k) for k in ('name', 'role', 'instrument', 'notes')},
-        bpm=score.get('bpm'), ts=score.get('ts'), dur=round(float(dur), 4), profile=gp.label,
+        bpm=score.get('bpm'), ts=score.get('ts'),          # flat-bpm-ok: part of the cache key, not a conversion
+ dur=round(float(dur), 4), profile=gp.label,
         sections=[(s.get('name'), round(float(s['start_s']), 4), round(float(s['end_s']), 4), s.get('dyn'))
                   for s in secs],
         rows=gp.rows), size=16)

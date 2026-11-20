@@ -1,0 +1,77 @@
+{
+  "name": "mayan_night",
+  "description": "A deep rainforest at night, close and wrong: a dark air bed, crickets and katydids in separate bands, tree frogs, nothing friendly.",
+  "character": "A deep rainforest at night, close and wrong: a dark air bed, crickets and katydids in separate bands, tree frogs, nothing friendly.",
+  "layers": [
+    {
+      "name": "night_air",
+      "primitive": "noise_bed",
+      "kind": "bed",
+      "gain_db": -26.0,
+      "low_hz": 140,
+      "high_hz": 2000,
+      "mod_rate_hz": 0.05,
+      "mod_depth": 0.2,
+      "pan": 0.0,
+      "spatial": {
+        "azimuth": 0,
+        "elevation": 40,
+        "distance": 10
+      }
+    },
+    {
+      "name": "crickets",
+      "primitive": "stridulation_bed",
+      "kind": "bed",
+      "gain_db": -27.0,
+      "low_hz": 3000,
+      "high_hz": 5200,
+      "pulse_rate_hz": 16.0,
+      "pulse_depth": 0.6,
+      "spatial": {
+        "azimuth": -70,
+        "elevation": 10,
+        "distance": 9
+      }
+    },
+    {
+      "name": "katydids",
+      "primitive": "stridulation_bed",
+      "kind": "bed",
+      "gain_db": -30.0,
+      "low_hz": 6500,
+      "high_hz": 10500,
+      "pulse_rate_hz": 6.5,
+      "pulse_depth": 0.8,
+      "spatial": {
+        "azimuth": 60,
+        "elevation": 35,
+        "distance": 12
+      }
+    },
+    {
+      "name": "frogs",
+      "primitive": "animal_call",
+      "kind": "spot",
+      "gain_db": -25.0,
+      "call": "frog_trill",
+      "individuals": 5,
+      "bouts_per_min": 14,
+      "spatial": {
+        "azimuth": -85,
+        "elevation": 0,
+        "distance": 14
+      }
+    }
+  ],
+  "blending": {
+    "high_pass_hz": 140,
+    "vocal_pocket_notch_hz": 2200,
+    "vocal_pocket_notch_db": -3.0,
+    "overall_gain_db": -3.0
+  },
+  "sources": [
+    "tropical_night_insects"
+  ],
+  "note": "KB sfx-ambience laws 1, 2 and 4 (halo around the music, high-passed at 140 Hz); the bands follow the cricket and katydid separation in the night-soundscape studies in the research note; no recording of this place was measured."
+}

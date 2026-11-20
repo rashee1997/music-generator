@@ -76,3 +76,15 @@ load_when:
   the previous chord still ring into it, so a hush is quiet, not silent, unless the tail is cut.
 - The trailer recipe's reveal fanfare at beat 66 falls inside the 38 s silence (the hush runs 65.9 to 67.4 beats).
   Move it to beat 67.5 or later if the reveal should land after the silence.
+
+## Lessons from a long render session (cinematic cue, all deliverable formats)
+
+| Symptom | Cause | What to do |
+|---|---|---|
+| A stem or bed is the wrong length, or a render of a whole piece fails after a tiny edit | an environment or SFX track's `t` and `d` are in beats, not seconds; a negative duration is accepted without a word and changes the piece's length | write times through the composer's beat helper; print the track's start and end in seconds after composing |
+| Nearly every stem re-renders after one change | the piece's length changed, so each stem's cache key and random seed changed | change a length last; a track-only edit (a fade, a gain) leaves the others cached |
+| A random sound source fails a row once and passes on the next render | bouts of calls, bed dips and onsets are drawn per render | fix it at the track (a bounded length, a bed that does not stop); changing the track's length redraws it; never relax the row |
+| The process disappears with no error | the kernel killed it for memory (`dmesg` shows the kill) | `MUSICGEN_SFZ_WORKERS=2` for the stem stage; many-channel files are measured one channel at a time (`gate_audio.true_peak_by_channel`) |
+| `fold.mono` fails by 4-5 dB around 450-1500 Hz | the two-channel master is head-filtered and the ears disagree there | `immersive.stereo_decode: "speakers"` for a loudspeaker master |
+| `master.dc` fails with a loud bass | 1 s block means of a loud 80-120 Hz tone | `mastering.highpass_hz` with `mastering.highpass_order` in the mix preset |
+| The gate is green and the cue sounds calm | the gate measures faults, not pressure | `scripts/helpers/arc_report.py`, then `references/scoring/cinematic-commercial-grade.md` |

@@ -183,6 +183,11 @@ BS.2127) opened them, reconciled `chna` against the AXML, validated the model, a
 (its CMake requires Boost, which this environment lacks), so no libadm-specific schema validation result exists. It
 is an open-standard ADM file, not a Dolby Atmos master and not a certified deliverable.
 
+## 2e. Immersive 3.0: every channel count from one mix
+
+Mono, the 5.1 family, loudness and limiting of a layout file, and where the arithmetic runs (CPU or GPU) are in
+`references/spatial/immersive-deliverables.md`.
+
 ## 3. Stage 0 (project gate) and the Stage 6 immersion rows
 
 Stage 0 blocks when immersive is on and: the mix preset lacks `height_by_role`/`max_elevation` or a real `character`; the head data is not downloaded

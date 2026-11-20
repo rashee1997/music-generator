@@ -4,220 +4,110 @@
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 [![Agent Skill](https://img.shields.io/badge/agent%20skill-SKILL.md-black.svg)](SKILL.md)
 
-An AI agent skill and Python audio pipeline that composes, renders, mixes, and validates original music from text briefs, scores, or video files.
+An AI agent skill and Python audio pipeline that composes, renders, mixes and validates original music from text briefs, scores or video, and delivers one mix as stereo, mono, 5.1, 7.1.4, an ambisonic sound field and object audio.
 
- **Demo:** **Black Jaguar (Cinematic Chase)** — *D minor · 134 BPM*
+**Demo:** **Black Jaguar (Cinematic Chase)** — *D minor · 134 BPM*
 ▶ **[Listen in Browser](https://rashee1997.github.io/music-generator/docs/listen.html#black-jaguar)** · **[Download MP3 (320 kbps)](https://rashee1997.github.io/music-generator/assets/samples/black-jaguar-cinematic-chase.mp3)**
 ▶ **[Arabian Nights: The Desert Crossing (Immersive 2.0)](https://rashee1997.github.io/music-generator/docs/listen.html#arabian-nights)** — with the desert air, mixed on the ambisonic bus · **[Download MP3 (320 kbps)](https://rashee1997.github.io/music-generator/assets/samples/arabian-nights-desert.mp3)**
 ▶ **[The Unwelcome Crossing (haunted desert cue, object audio)](https://rashee1997.github.io/music-generator/docs/listen.html#haunted-desert)** — 48 kHz game master, with 7.1.2, 7.1 and ADM object renders · **[Download MP3 (320 kbps)](https://rashee1997.github.io/music-generator/assets/samples/haunted-desert-crossing.mp3)**
 
----
+## What it does
 
-## The Problem vs. What This Sorts Out
+Writes with voice-leading rules and spiral-array tension (Chew 2000), performs with humanization, renders from a SoundFont, optional SFZ orchestras, a glottal-source voice and physical sound models, places every part in space, mixes from JSON presets only, and gates every render with about 390 rows. A failing row is a fact: the piece or the preset changes, the threshold does not. It also scores to picture, assembling only certified cues.
 
-### Why LLM-Generated Music Usually Fails
+## Immersive 3.0
 
-* **Robotic Grid or Random Chaos:** Naive code locks MIDI notes to a rigid grid with static velocity. When told to "humanize," LLMs scatter notes randomly—creating unrecovered leaps and broken rhythm.
-* **Low-End Mud & Voicing Clashes:** Voices clustered below middle C violate low-interval limits, muddying 100–300 Hz. Closed-position chords create grating minor-second clashes.
-* **Ear Fatigue (Cochlear Roughness):** Stacked overtones colliding within a critical bandwidth cause harsh acoustic beating.
-* **Spectral Masking:** Pads, guitars, and bass swallow lead instruments in the 250–500 Hz range when nothing carves out frequency pockets.
-* **Aimless Harmony:** Chord progressions either loop statically or jump between unrelated keys without voice leading or cadence resolution.
+One ambisonic mix, judged once, delivered in every channel count. No format is a degraded copy of another.
 
-### What `music-generator` Sorts Out
+| `output_targets` | Channels | How it is made | Judged by |
+|---|---|---|---|
+| `stereo` | 2 | decoded from the bus: `immersive.stereo_decode` is `"binaural"` (headphones) or `"speakers"` (±30°, ITU-R BS.775-3) | the whole gate |
+| `mono` | 1 | **rendered**, not folded: no pan, width or head filter | `fold.mono` |
+| `immersive_5_1`, `_5_1_2`, `_5_1_4` | 6 / 8 / 10 | VBAP (Pulkki 1997) onto ITU-R BS.2051-3 layouts, a Linkwitz-Riley low-frequency channel (Linkwitz 1976), all-pass decorrelation of the surrounds (Kendall 1995) | `imm.*`, `fold.timbre` |
+| `immersive_7_1`, `_7_1_2`, `_7_1_4` | 8 / 10 / 12 | a 7.1 ring with 0, 2 or 4 overhead loudspeakers (see [Limits](#limits)) | `imm.*`, `fold.timbre` |
+| `ambix` | 36 (order 5) | the field itself, ACN order, SN3D (Nachbar et al. 2011) | `delivery.true_peak` |
+| `adm_bw64` | one per object | Audio Definition Model in BW64 (ITU-R BS.2076-2, BS.2088-1) | `adm.*` |
 
-* **Voice-Leading & Melodic Rules:** Enforces conjunct motion, leap recovery, chromatic tension resolution, and 3D spiral-array tonal tension.
-* **Groove That Breathes:** Evaluates metric-tree syncopation across 4/4, 3/4, 6/8, 5/4, 7/8, and 12/8—rejecting both robotic marches and rhythmic collapse.
-* **Measured Humanization:** Separates shared ensemble tempo drift from individual player motor error, scales drum push with tempo, couples velocity to note duration, and adds note-on/note-off mechanism noise.
-* **Roughness & Masking Gates:** Runs critical-band analysis (80–6000 Hz) and ERB stereo masking checks so leads stay clear and overtones don't clash.
-* **Spatial Staging:** Applies per-stem azimuth, distance filtering, stereo width, shared room acoustics, and optional measured-HRTF binaural rendering.
-* **Immersive 2.0 (opt-in, `immersive.engine: "hoa_bus"`):** One fifth-order ambisonic bus carries every source, reflection and tail and is decoded once. Sources move by keyframes and keep their room (each reflection has its own Doppler shift), reverb time and pre-delay can be derived from the room's size and materials, and the room can change between sections.
-* **Deliverables:** Stereo, binaural, 7.1 / 7.1.2 / 7.1.4, an AmbiX sound field (`ambix`), object-based ADM BW64 (`adm_bw64`) and 48 kHz delivery (`"rate_hz": 48000`), each named in the score's `output_targets`.
-* **Optional SFZ Orchestras:** Multisampled libraries played per articulation (sustain, staccato, marcato, pizzicato, tremolo, key-switch), with slurred legato, a written dynamics arc and per-note expression on solo lines.
-* **Voice and Expression:** An optional Liljencrants-Fant glottal source with one pressed-to-breathy control, source oversampling, syllable shorthand, vibrato that wanders, and a bed of sympathetic strings tuned to the piece.
-* **Any Animal Call as Data:** The `animal_call` environment primitive builds a call from pitch contours, a sequence, roughness, pulses and a tube length, stored as a `calls` preset; `python scripts/environment.py --call <name>` renders one alone.
-* **Preset-Driven Mixing:** Keeps sound design, spatial placement, mix bus processing, and loudness targets (LUFS / True Peak) strictly in JSON presets rather than hardcoded scripts.
-* **CI/CD Quality Gates:** Audits every render before finalizing. If a mix fails a check, it stays in `out/_draft_master.wav` until the issue is fixed.
-* **Film Scoring to Picture:** Reads a reel at three timescales (reel, scene, motion beat), caps the music's size by camera distance, places accents by hit class (dead-on or reaction-delayed), ducks the bed per band under measured speech, and certifies a cue once — picture rows run inside the same gate as the music rows. Delivery is measured in the gating mode it declares (dialogue-gated for Netflix/EBU, full program for web), and a reel assembles only certified cues.
+List `stereo` first: the `fold.*` rows compare every other format with it. A format that fails its rows stays in `out/_draft_master_<format>.wav`. Every certified stereo master is kept as `out/master_vNN.wav`.
 
----
+What 3.0 added: rendered mono (`MonoBus`); BS.1770 loudness and a linked true-peak limiter for any channel count; the `fold.*` and `imm.loudness` rows; CPU or GPU chosen once (`scripts/compute.py`, `MUSICGEN_DEVICE`); parallel mixing (`render.mix_workers`); and master, room and decode choices as preset keys.
+
+Running a real 38-track cue through all six formats showed that a head-filtered stereo master adds up 4-5 dB low at 450-1500 Hz, so `fold.mono` failed until it was decoded for loudspeakers. It also showed that a green gate does not mean the cue has the pressure its brief asked for; `scripts/helpers/arc_report.py` prints the loudness arc per section for that check.
 
 ## Installation
 
-Installing the skill gives your coding agent (`Claude Code`, `Cursor`, `Codex`, etc.) the workflow instructions (`SKILL.md`). Because rendering requires the Python DSP engine and SoundFonts, **clone the repository alongside installing the skill.**
-
-### 1. Install the Agent Skill
-
-Requires **Node.js 22.20+**:
+Needs **Node.js 22.20+**. Install the skill for your agent, then clone the repository for the DSP engine.
 
 ```bash
-# Install into current project
-npx skills add rashee1997/music-generator
-
-# Install globally for all projects
-npx skills add rashee1997/music-generator -g
-
-# Install for a specific agent (e.g., Claude Code)
-npx skills add rashee1997/music-generator --skill music-generator -a claude-code -y
+npx skills add rashee1997/music-generator            # add -g for global; -a claude-code -y for one agent
+git clone https://github.com/rashee1997/music-generator.git && cd music-generator
+python scripts/setup_project.py          # venv, dependencies, SoundFont, smoke test
+python scripts/setup_project.py --ears   # optional (~1 GB): lets listen.py evaluate audio
 ```
 
-Manage the skill:
+**ffmpeg** is needed only for video; **PyTorch** is optional.
+
+## Quick start
+
+With an agent: *"Compose a 60-second underscore for a slow reveal of a mountain range — cold, patient, no drums."*
 
 ```bash
-npx skills list                      # Verify installation
-npx skills update music-generator    # Pull latest version
-```
-
-### 2. Set Up the Audio Engine
-
-```bash
-git clone https://github.com/rashee1997/music-generator.git
-cd music-generator
-
-# Core setup: creates .venv, installs dependencies, downloads SoundFont, runs smoke test
-python scripts/setup_project.py
-
-# Optional: install earshot (~1 GB) so listen.py can evaluate rendered audio
-python scripts/setup_project.py --ears
-```
-
-> **Note:** `setup_project.py` uses [uv](https://docs.astral.sh/uv/) if available and falls back to `python -m venv` + `pip`. **ffmpeg** is required only if using `video-mixer/`.
-
----
-
-## Quick Start
-
-### Using with an AI Agent
-
-Prompt your agent naturally:
-
-> *"Compose a 60-second underscore for a slow reveal of a mountain range — cold, patient, no drums."*
-
-The agent will automatically read `SKILL.md`, research the style, generate a direction sheet and presets, write the score, and iterate through the rendering pipeline until all quality gates pass.
-
-### Using via CLI
-
-Use the virtual environment created during setup:
-
-```bash
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
-
-# 1. Scaffold a new project
+source .venv/bin/activate                                   # Windows: .venv\Scripts\activate
 python scripts/setup_project.py --new-project my-project --title "My Track"
-
-# 2. Render score and run quality gates
 python scripts/pipeline.py my-project/scores/my_track_score.json --project my-project
-
-# 3. Audit an existing WAV file (no re-rendering)
-python scripts/pipeline.py path/to/master.wav --check-only
-
-# 4. Inspect certified version history
-python scripts/helpers/version_manager.py list --project my-project
-
-# 5. Export certified master to MP3 with metadata tags
-python scripts/helpers/compress_mp3.py out/master_v01.wav -o my-track.mp3 -b 320k
-
-# 6. Score to picture: a film project, one cue, then the reel
-python scripts/setup_project.py --new-film films/glaciers --title "Glaciers" --fps 25
-python scripts/video_score.py --video clips/reel1.mp4 --project films/glaciers/cues/M01_open --brief "calm documentary"
-python video-mixer/deliver/reel.py films/glaciers --reel 1 --mux
+python scripts/helpers/arc_report.py my-project/out/master.wav --score my-project/scores/my_track_score.json
+python scripts/helpers/compress_mp3.py my-project/out/master_v01.wav -o my-track.mp3 -b 320k
 ```
 
----
+Name the formats in the score: `"output_targets": ["stereo", "mono", "immersive_5_1", "immersive_7_1_4", "ambix", "adm_bw64"]`. With none named, a piece is delivered as stereo plus 8-channel 7.1. To render only some formats, add `--only stereo,immersive_7_1_4` to `pipeline.py`; every format added makes the render longer. `MUSICGEN_SFZ_WORKERS=2` lowers memory use on a long render. Film scoring is in [`AGENTS.md`](AGENTS.md) section 9.
 
-## Pipeline Architecture
+## Pipeline
 
 ```text
-[Brief / Prompt / Score]
-   │
-   ├─ 1. Composition & Voice Leading    (compose.py · theory.py · world.py)
-   ├─ 2. Pre-Flight Theory Linter       (pattern_audit.py)
-   ├─ 3. Humanization & Respiration     (humanize.py)
-   ├─ 4. Multi-Engine Stem Rendering    (tinysoundfont · sfz_render · vocal_engine · environment · sfx)
-   ├─ 5. Mixing & Mastering             (mixer.py)
-   ├─ 6. Psychoacoustic Quality Gates   (quality_gate.py · naturalness_check.py · music21)
-   └─ 7. Certified Release Packaging    (out/master_vNN.wav · stems/ · midi/ · ci_report.json)
+brief / score → 1 compose → 2 linter → 3 humanize → 4 stems (4b stem gate) → 5 mix & master (5b extra formats) → 6 gates → 7 certified release
 ```
 
-Scoring to picture adds one path that feeds the same gate, not a second verdict:
+The agent's rules are in [`AGENTS.md`](AGENTS.md): sound design lives in presets, notes in scores, intent in direction sheets; acoustic values are cited or measured; a failing row is fixed in the piece, never loosened. Every row is in [`references/mixing/quality-gate.md`](references/mixing/quality-gate.md).
 
-```text
-[Film reel / cue]
-   │
-   ├─ probe      ffprobe facts · scdet cuts · per-frame luma / motion / centre   (video-mixer/video_probe.py)
-   ├─ context    reel / scene / motion-beat timescales · cut grid phase         (context.py · analysis/)
-   ├─ direction  sections, hits with a class, silence from the spotting         (video_direction.py)
-   ├─ music      the cue is a normal music project: Phases 1-8 unchanged
-   ├─ program    voice chain, bed under speech, duck, master in the declared
-   │             gating mode (dialogue-gated or full program)                  (video_program_mix.py)
-   ├─ gate       the twelve video.* rows, inside stage 6 of the same run        (video-mixer/gate/)
-   └─ reel       certified cues placed in reel time, one aggregate verdict      (video-mixer/deliver/reel.py)
-```
+## Methods used
 
-### The 8-Step Agent Workflow
+Each is named with its source and the file that implements it. Derivations are in [`docs/PSYCHOACOUSTICS.md`](docs/PSYCHOACOUSTICS.md).
 
-| Step  | Action                | Output Artifact                                                      |
-|:----- |:--------------------- |:-------------------------------------------------------------------- |
-| **1** | Scaffold project      | `direction/`, `presets/`, `scores/`, `out/`, `reports/`, `STATUS.md` |
-| **2** | Research idiom        | `reports/research_<topic>.md`                                        |
-| **3** | Write direction sheet | `direction/direction_<title>.json`                                   |
-| **4** | Configure presets     | Instrument, vocal, space, and mix JSON presets                       |
-| **5** | Write score           | `scores/<title>_score.json`                                          |
-| **6** | Render & gate         | `out/master_vNN.wav`, `stems/`, `midi/`, `reports/ci_report.json`    |
-| **7** | Iterate fixes         | Adjusts one parameter per run until 0 FAIL (max 5 attempts)          |
-| **8** | Verify & deliver      | `listen.py` evaluation and final checklist in `STATUS.md`            |
+* **Loudness:** K-weighted gated loudness, short-term loudness and loudness range, and 4× oversampled true peak (ITU-R BS.1770-5, EBU Tech 3341 and 3342), with channel weights for any layout. `scripts/loudness.py`
+* **Linked true-peak limiter:** one gain curve for all channels, the engine's own construction. `scripts/spatial_engine/master.py`
+* **Rendered mono and fold bands:** level compensation bounded to the 3 dB that averaging two channels loses, and band-by-band spectral comparison in ERB bands (Glasberg & Moore 1990). `scripts/spatial_gate.py`
+* **Ambisonic encoding:** real spherical harmonics in ACN order, SN3D for AmbiX (Zotter & Frank 2019; Nachbar et al. 2011). `scripts/spatial_engine/hoa.py`
+* **Decoding:** magnitude least squares for headphones (Schörkhuber et al. 2018; Hold et al. 2023); AllRAD with max-rE weights for loudspeakers (Zotter & Frank 2012).
+* **VBAP:** vector base amplitude panning with unit-power gains (Pulkki 1997). `scripts/spatial_engine/pan.py`
+* **Propagation:** 1/r spreading, ISO 9613-1 air absorption, Doppler, image-source reflections (Allen & Berkley 1979), Eyring reverberation (1930), room measures (ISO 3382-1). `scripts/airabs.py`, `scripts/spatial_hrtf/`
+* **Layouts:** ITU-R BS.2051-3 positions, BS.775-3 two-channel fold-down, Linkwitz-Riley 4th-order crossover (Linkwitz 1976), all-pass decorrelation (Kendall 1995). `scripts/spatial_engine/`
+* **Gates:** critical-band roughness (Plomp & Levelt 1965; Daniel & Weber 1997), Terhardt's hearing threshold as a relative weighting, spiral-array tonal tension (Chew 2000), bar syncopation index (Witek et al. 2014). `scripts/quality_gate.py`
+* **Performance and voice:** KTH performance rules (Friberg et al. 2006), Liljencrants-Fant glottal model (Fant et al. 1985). `scripts/humanize.py`, `scripts/vocal_engine/`
 
-Every certified render is versioned (`master_v01.wav`, `master_v02.wav`) in `out/versions.json` so previous takes are never overwritten, with metadata sidecars written to `out/master.json`.
+Citations are as the code and its docs state them; page numbers were not re-checked against the publishers' pages.
 
----
+## Repository structure
 
-## Repository Structure
+`SKILL.md`, `AGENTS.md` (agent entry point and rules) · `scripts/` (pipeline, mixing, gates; `spatial_engine/`, `spatial_hrtf/`, `vocal_engine/`, `helpers/`) · `references/` (guides and JSON presets) · `knowledgebase/` (sourced facts) · `templates/` · `video-mixer/` · `docs/` · `tests/` (about 1,100, each gate row with a passing and a failing control).
 
-```text
-music-generator/
-├── SKILL.md         # Agent skill entry point and workflow instructions
-├── AGENTS.md        # Strict agent rules, preset schemas, and gate profiles
-├── scripts/         # Pipeline, composition, mixing and gate scripts
-│   ├── vocal_engine/     # glottal source, tract, nasal, breath, consonants
-│   ├── sfx_engine/ · env_engine/ · phys_core/   # effects, ambience, physical scenes
-│   ├── spatial_engine/   # panning, crossover, ambisonics, ADM
-│   ├── spatial_hrtf/     # measured-HRTF binaural rendering
-│   └── helpers/          # version record, metadata ingest, MP3 encode
-├── presets/         # The skill's own defaults (metadata); every instrument, mix,
-│                    # space, vocal, SFX and SFZ JSON ships in references/data/presets/
-├── references/      # Guides (mixing, vocals, spatial, SFZ, video, limits) + data/presets
-├── knowledgebase/   # Genre, cultural idiom, and DSP reference docs
-├── templates/       # Project, direction-sheet, and score templates
-├── video-mixer/     # Scoring to picture: probe, context, direction, program mix, video gate, reel
-│   ├── analysis/    # shot scale (block contrast) and speech activity
-│   ├── gate/        # the video.* rows and the one-pass entry point
-│   └── deliver/     # reel assembly from certified cues only
-├── docs/            # Psychoacoustic math, vocal-tract design, roughness notes, web player
-├── assets/samples/  # The demo MP3s
-└── tests/           # Pipeline, spatial, and audio integrity test suites
-```
+## Limits
 
----
+* **Metrics are not ears.** A cue rendered for this repository passed every row and was heard as too calm.
+* **The GPU path has never run on a GPU**; only the CPU kernel and its fallbacks are tested.
+* **One measured head** (FABIAN, Brinkmann et al. 2017); a listener's own `.sofa` or `.mat` set can be supplied.
+* **The stereo master is a headphone render or a loudspeaker render**, chosen by `immersive.stereo_decode`; one file is not both.
+* **The 7.1 layout files carry the wrong system letters.** In ITU-R BS.2051 the letter H is the 22.2 system; this repository stores its 7.1, 7.1.2 and 7.1.4 rings as `itu_bs2051_system_h`, `_i`, `_j`. Do not claim BS.2051 conformance for the 7.1 family until the files are compared with the standard and renamed. The 5.1 family is not compared either.
+* **The default sound bank is General MIDI**; the free SFZ library it installs (Sonatina Symphonic Orchestra) is dry and incomplete on case-sensitive file systems.
+* **Random sources are redrawn when a piece's length changes**, so a row can pass on one render and fail on the next; fix the track, not the row.
 
-## Known Limitations
-
-* **Metrics Are Not Ears:** Quality gates catch technical and psychoacoustic errors (masking, clipping, bad voice leading), but cannot judge subjective musical taste or emotional fit.
-* **General MIDI Default Bank:** Uses GeneralUser GS by default. Concert-grade orchestral realism requires supplying multisampled SFZ libraries per project.
-* **Syllables, Not Words:** Synthesized vocals sing vowels, hums and simple syllables; there are no lyrics.
-* **Immersive 2.0 Is Measured, Not Auditioned:** The ambisonic engine, the new gate rows and the shipped animal-call presets are checked by tests and probes only. The call presets use estimated numbers, and the ADM file is an open-standard file, not a Dolby Atmos master.
-* **Cultural Idioms Are Approximations:** Non-Western scales and rhythms are approximated unless paired with authentic instrument presets or user recordings.
-* **Opt-In Binaural Processing:** Full HRTF elevation and head-shadowing only apply when `spatial.binaural: true` is enabled in the mix preset.
-* **Picture Analysis Is Heuristic:** Cuts come from `scdet`, so gradual fades and dissolves are missed (no deep detector ships); shot scale is block contrast; speech activity is presence, not content, and dialogue ducking is level- and band-based, not semantic.
-* **The Video Path Is Not Auditioned:** `listen.py` judges the music bed, not the program under speech, and `motion_sync`, `grid_phase`, `shot_scale` and `dialogue_band` thresholds are starting values until measured on real reels.
-
-See [references/workflow/troubleshooting-and-limits.md](references/workflow/troubleshooting-and-limits.md) and [docs/PSYCHOACOUSTICS.md](docs/PSYCHOACOUSTICS.md) for full details.
-
----
+More in [`references/workflow/troubleshooting-and-limits.md`](references/workflow/troubleshooting-and-limits.md).
 
 ## Credits & Attributions
 
-* **Spatial Audio:** `scripts/spatial_hrtf/` includes a modified copy of [spaudiopy](https://github.com/chris-hld/spaudiopy) by Chris Hold (MIT License).
-* **HRTF Data:** Uses the **FABIAN HRTF Database** from TU Berlin ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), [DOI: 10.14279/depositonce-5718.5](https://doi.org/10.14279/depositonce-5718.5)), fetched via `setup_project.py`.
-* **Synthesis:** Powered by [tinysoundfont](https://github.com/schellingb/tinysoundfont) by Bernhard Schelling (MIT License) using the [GeneralUser GS SoundFont](https://schristiancollins.com/generaluser.php) by S. Christian Collins.
+* **Spatial audio:** `scripts/spatial_hrtf/` includes a modified copy of [spaudiopy](https://github.com/chris-hld/spaudiopy) by Chris Hold (MIT License).
+* **HRTF data:** the **FABIAN HRTF Database** from TU Berlin ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), [DOI: 10.14279/depositonce-5718.5](https://doi.org/10.14279/depositonce-5718.5)), fetched via `setup_project.py`.
+* **Synthesis:** [tinysoundfont](https://github.com/schellingb/tinysoundfont) by Bernhard Schelling (MIT License) with the [GeneralUser GS SoundFont](https://schristiancollins.com/generaluser.php) by S. Christian Collins.
+* **Optional orchestra:** Sonatina Symphonic Orchestra (Mattias Westlund and Peter Eastman, CC Sampling Plus 1.0) via [sfizz](https://github.com/sfztools/sfizz).
 
 ## License
 

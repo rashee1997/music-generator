@@ -906,8 +906,11 @@ def note_collision(score):
     attacks either phase-cancel or spike; one note per pitch per beat is the only safe way to write it. Drums
     count too: a drum key is its pitch."""
     rows = []
-    spb = 60.0 / float(score.get('bpm', 120) or 120)
+    import gate_clock
+    _sec = gate_clock.seconds_fn(score)
     for t in score.get('tracks', []):
+        if str(t.get('instrument', '')).startswith(('sfx:', 'env:')):
+            continue                 # a one-shot or a place has no pitch to re-attack; its event length is judged by preflight.sfx_length
         by_pitch = {}
         for n in t.get('notes', []):
             by_pitch.setdefault(n.get('p'), []).append(n)
@@ -917,7 +920,7 @@ def note_collision(score):
                 if abs(b['t'] - a['t']) < 1e-6:
                     rows.append(('FAIL', 'note_collision',
                                  f"Track '{t.get('name', '?')}': pitch {p} is attacked twice on beat {b['t']:g} "
-                                 f"({b['t'] * spb:.2f} s). Two identical attacks phase-cancel or spike: delete one."))
+                                 f"({float(_sec(b['t'])):.2f} s). Two identical attacks phase-cancel or spike: delete one."))
                 elif b['t'] < a['t'] + float(a.get('d', 1.0)) - 0.25:
                     rows.append(('WARN', 'note_collision',
                                  f"Track '{t.get('name', '?')}': pitch {p} is re-attacked on beat {b['t']:g} while the "

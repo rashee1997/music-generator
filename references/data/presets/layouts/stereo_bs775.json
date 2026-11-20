@@ -1,0 +1,33 @@
+{
+  "name": "stereo_bs775",
+  "character": "The two-loudspeaker stereo pair at +-30 degrees (ITU-R BS.775-3): the layout a stereo master is made for when it is played on speakers, so a part panned to the centre is heard from both and nothing is head-filtered.",
+  "channels": 2,
+  "speakers": [
+    {
+      "name": "L",
+      "azimuth": -30.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "R",
+      "azimuth": 30.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 0.0
+    }
+  ],
+  "downmix": {
+    "L": [
+      1.0,
+      0.0
+    ],
+    "R": [
+      0.0,
+      1.0
+    ]
+  },
+  "sources": [
+    "ITU-R BS.775-3: the standard two-loudspeaker stereo reproduction, loudspeakers at +-30 degrees from the listener's front"
+  ],
+  "decode_only": true
+}

@@ -1,0 +1,49 @@
+{
+  "name": "green_tuba",
+  "description": "Tuba on a sustain, doubling only the structural hits an octave over the basses so the low end has one owner at a time.",
+  "character": "Tuba on a sustain, doubling only the structural hits an octave over the basses so the low end has one owner at a time.",
+  "role": "bass",
+  "sfz": {
+    "library": "sso",
+    "patch": "Brass - Notation/Tuba Sustain (looped)",
+    "cc": "expression",
+    "controls": {},
+    "tail_s": 3.0,
+    "trim_db": 0.0,
+    "fallback": null,
+    "attack_fade_s": 0.005
+  },
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 4.0
+  },
+  "spatial": {
+    "azimuth": 0.0,
+    "elevation": 0.0,
+    "distance": 4.3,
+    "binaural": true,
+    "kind": "spot"
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 55.0
+    }
+  ],
+  "gain_db": -5.0,
+  "reverb": 0.12,
+  "sources": [
+    "KB western (orchestral weight: low strings and timpani carry the pulse, horns the theme, brass and chorus the weight)",
+    "KB dynamic-flow (the arc comes from layers and register, not volume alone)",
+    "KB video-scoring (structural moments are preceded by a drop in density)",
+    "Sonatina Symphonic Orchestra, CC Sampling Plus 1.0, https://github.com/peastman/sso (free multisampled, dry, looped sustains; not a commercial library)",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim_db is set after the first measured render"
+  ],
+  "articulation": {
+    "gate": 1.0,
+    "overlap_ms": 30.0,
+    "release_ms": 300.0
+  }
+}

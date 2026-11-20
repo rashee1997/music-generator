@@ -1,0 +1,128 @@
+{
+  "name": "itu_bs2051_system_c",
+  "character": "ITU-R BS.2051 System C (2+5+0): the 5.1 ring plus a front overhead pair, azimuths clockwise from front centre.",
+  "channels": 8,
+  "speakers": [
+    {
+      "name": "FL",
+      "azimuth": -30.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "FR",
+      "azimuth": 30.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "FC",
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "LFE",
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "lfe": true
+    },
+    {
+      "name": "SL",
+      "azimuth": -110.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 1.5
+    },
+    {
+      "name": "SR",
+      "azimuth": 110.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 1.5
+    },
+    {
+      "name": "TFL",
+      "azimuth": -30.0,
+      "elevation": 30.0,
+      "loudness_weight_db": 1.5
+    },
+    {
+      "name": "TFR",
+      "azimuth": 30.0,
+      "elevation": 30.0,
+      "loudness_weight_db": 1.5
+    }
+  ],
+  "lfe": {
+    "channel": "LFE",
+    "lowpass_hz": 80.0,
+    "stopband_hz": 120.0,
+    "stopband_db": -45.0,
+    "send_db": -10.0,
+    "guard_order": 4,
+    "release_ms": 10.0
+  },
+  "downmix": {
+    "FL": [
+      1.0,
+      0.0
+    ],
+    "FR": [
+      0.0,
+      1.0
+    ],
+    "FC": [
+      0.7071,
+      0.7071
+    ],
+    "LFE": [
+      0.0,
+      0.0
+    ],
+    "SL": [
+      0.7071,
+      0.0
+    ],
+    "SR": [
+      0.0,
+      0.7071
+    ],
+    "TFL": [
+      0.7071,
+      0.0
+    ],
+    "TFR": [
+      0.0,
+      0.7071
+    ]
+  },
+  "reverb": {
+    "front_azimuth_max": 30.0,
+    "front_db": 0.0,
+    "surround_db": -6.0,
+    "height_db": -12.0
+  },
+  "decorrelation": {
+    "enabled": true,
+    "amount": 0.18,
+    "max_delay_ms": 12.0,
+    "exempt": [
+      "FL",
+      "FR",
+      "FC"
+    ]
+  },
+  "gate": {
+    "surround_ratio_db": [
+      -9.0,
+      -2.0
+    ],
+    "stereo_correlation_min": 0.15,
+    "height_max_rel_db": -4.0
+  },
+  "sources": [
+    "ITU-R BS.2051-3: System C (2+5+0) nominal loudspeaker positions: front pair at 30 degrees, centre, surrounds at 110 degrees, overhead loudspeakers at 30 degrees elevation. Nominal values inside the ranges the Recommendation allows; re-read the Recommendation before treating them as a room specification",
+    "ITU-R BS.1770: +1.5 dB weighting for surround channels in the loudness measurement, the low-frequency channel left out. The same weight on the overhead channels follows the other layouts of this engine and is a starting value: the Recommendation does not settle a weight for elevated channels",
+    "ITU-R BS.775-3 Annex: fold-down coefficients 1.0 for front L/R, 0.7071 for centre and each surround; 0.7071 for the front overhead pair and 0.5 for the rear overhead pair are starting values carried over from the 7.1.4 layout of this engine",
+    "The low-frequency block, the shared-reverb spread, the decorrelation amounts and the gate windows are copied from the 7.1.4 layout and are starting values for this layout: none has been measured on a 5.1 room"
+  ]
+}

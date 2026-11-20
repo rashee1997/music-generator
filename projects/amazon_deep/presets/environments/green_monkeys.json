@@ -1,0 +1,62 @@
+{
+  "name": "green_monkeys",
+  "description": "Howler monkeys a long way off, alarmed: three animals roaring and barking from opposite sides of the canopy.",
+  "character": "Howler monkeys a long way off, alarmed: three animals roaring and barking from opposite sides of the canopy.",
+  "layers": [
+    {
+      "name": "forest_air",
+      "primitive": "noise_bed",
+      "kind": "bed",
+      "gain_db": -30.0,
+      "low_hz": 140,
+      "high_hz": 1800,
+      "mod_rate_hz": 0.05,
+      "mod_depth": 0.2,
+      "spatial": {
+        "azimuth": 0,
+        "elevation": 40,
+        "distance": 12
+      }
+    },
+    {
+      "name": "howlers_left",
+      "primitive": "animal_call",
+      "kind": "spot",
+      "gain_db": -18.0,
+      "call": "howler_roar",
+      "individuals": 2,
+      "bouts_per_min": 9,
+      "spatial": {
+        "azimuth": -100,
+        "elevation": 25,
+        "distance": 40
+      },
+      "first_s": 0.0
+    },
+    {
+      "name": "howlers_right",
+      "primitive": "animal_call",
+      "kind": "spot",
+      "gain_db": -20.0,
+      "call": "howler_roar",
+      "individuals": 1,
+      "bouts_per_min": 7,
+      "first_s": 0.35,
+      "spatial": {
+        "azimuth": 95,
+        "elevation": 20,
+        "distance": 55
+      }
+    }
+  ],
+  "blending": {
+    "high_pass_hz": 140,
+    "vocal_pocket_notch_hz": 2200,
+    "vocal_pocket_notch_db": -3.0,
+    "overall_gain_db": -15.0
+  },
+  "sources": [
+    "howler_monkey_roar"
+  ],
+  "note": "KB sfx-ambience (laws 1, 2 and 4: the ambience is a high-passed halo, SFX step forward in rests, music and place sit in different geometries) | KB brazil-turkic-mongolian (section 3.1: forest bio-acoustics, the chakapa leaf-rattle as a heartbeat pulse) | Acoustic niche partitioning in tropical forest: insects above about 10 kHz, birds below 4 kHz, https://methodsblog.com/2021/03/26/unmasking-acoustic-indices | Rain is bubble resonance, drop sizes from under 0.8 mm (silent) to over 3.5 mm (loud), Ma and Nystuen 2005 via https://acousticstoday.org/issues/2022AT/Summer2022/files/basic-html/page65.html | No measurement found: ESTIMATE of rain rate, levels, bout rates and positions; nothing here was auditioned"
+}
