@@ -1,0 +1,46 @@
+{
+  "name": "bass_pulse",
+  "description": "Plucked bass locked to the darbuka low hits.",
+  "character": "A plucked acoustic bass written high enough (second and third octave) that a phone speaker reproduces its upper partials, locking to the low drum hits so the pulse is one.",
+  "gm": "acoustic_bass",
+  "role": "bass",
+  "humanize": {
+    "preset": "tight",
+    "timing_ms": 3.0,
+    "drift_ms": 3.0,
+    "vel_sigma": 4.0
+  },
+  "spatial": {
+    "azimuth": 0.0,
+    "distance": 1.1
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 120.0
+    },
+    {
+      "type": "lp",
+      "f": 3500
+    }
+  ],
+  "gain_db": -6.0,
+  "reverb": 0.0,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 0.85,
+    "release_ms": 140.0
+  },
+  "mechanics_class": "plucked",
+  "sources": [
+    "KB short-form-functional-music (bass reaches a small speaker through its upper partials in the 250-700 Hz region: per search result)",
+    "KB arabic (the bass follows the low drum hits of the maqsum cycle)",
+    "ESTIMATE: level and EQ are starting values",
+    "STARTING VALUE: onset_fade_ms 6: several strokes land together on every strong beat and their sharp starts add into one impulse the click row flags; a soft attack is also what \"smooth\" asks for",
+    "MEASURED: short_form_report found 10.5% of the master below 200 Hz and 13.9% from 200 to 300 Hz, where a phone speaker returns little; STARTING VALUE: high-pass at 120 Hz and 6 dB less level"
+  ],
+  "vibrato": {
+    "depth_cents": 0.0
+  },
+  "onset_fade_ms": 6.0
+}

@@ -1,0 +1,43 @@
+{
+  "name": "open_pad",
+  "description": "Open-voiced bed that glues the traditions together.",
+  "character": "A soft synthetic pad holding open voicings with no third, so it joins every instrument without choosing a side: a quiet bed that makes the blend feel like one piece.",
+  "gm": "warm_pad",
+  "role": "pad",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 8.0,
+    "drift_ms": 9.0,
+    "vel_sigma": 3.0
+  },
+  "spatial": {
+    "azimuth": 78.0,
+    "distance": 3.0
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 280.0
+    },
+    {
+      "type": "lp",
+      "f": 6500
+    }
+  ],
+  "gain_db": -9.0,
+  "reverb": 0.22,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 1.0,
+    "release_ms": 500.0
+  },
+  "mechanics_class": "keys",
+  "sources": [
+    "KB indian-film-fusion (suspended and add9 voicings that omit the third leave room for the ornamented notes of the melody instruments)",
+    "ESTIMATE: level and placement are starting values",
+    "MEASURED: short_form_report found 10.5% of the master below 200 Hz and 13.9% from 200 to 300 Hz, where a phone speaker returns little; STARTING VALUE: high-pass at 280 Hz"
+  ],
+  "vibrato": {
+    "depth_cents": 0.0
+  }
+}

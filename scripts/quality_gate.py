@@ -609,13 +609,26 @@ def _read_delivered(path, out):
     return sig.audio, sig.sr
 
 
+def resolved_master(score):
+    """The master block the mixer was told to make: the chosen mastering profile (from the piece's mix preset), then the
+    score's own values on top, exactly as `mixer._master_cfg` resolves it. The gate used to read `score["master"]` raw, so
+    a profile's loudness and ceiling were applied by the mixer and ignored by the judge."""
+    import mixer
+    raw = dict(score.get('master') or {})
+    ctx = mixer._context_for(score)
+    cfg = mixer._master_cfg(raw, ctx.mix)
+    out = {k: cfg[k] for k in ('lufs', 'true_peak', 'tone', 'glue') if k in cfg}
+    out.update(raw)
+    return out
+
+
 def audio_checks(path, score, out, metrics=None, analysis=None):
     """Measurements of the rendered file against the score's own targets.
 
     `analysis`, when given, receives this run's measurement of the file (`r`, the roughness metrics and the path)
     so the packaging stage can report them instead of measuring the same audio a second time.
     """
-    master = score.get('master', {})
+    master = resolved_master(score)
     target = master.get('lufs', -14.0)
     lufs_tol = master.get('lufs_tolerance', master.get('tolerance_lu', 2.5))
     tp_target = master.get('true_peak', -1.5)
@@ -1071,7 +1084,6 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
             idx_end = max(idx_start + 1, k - int(8.0 / 0.5))
             tr = next((t for t in score.get('tracks', []) if t.get('name') == name), {})
             if tr.get('notes') and not tr.get('full_length'):      # a bed that enters late is only judged where it plays
-                import gate_clock
                 _tp = []
                 _sec = gate_clock.seconds_fn(score, _tp)        # the tempo map the renderer plays, else the shared flat default
                 for _msg in _tp:
@@ -1118,7 +1130,6 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
                 if len(dyn) >= 2:
                     try:
                         pts = sorted((float(b), float(v)) for b, v in dyn)
-                        import gate_clock
                         _tp2 = []
                         _secs = gate_clock.seconds_fn(score, _tp2)
                         for _msg in _tp2:
@@ -2136,7 +2147,6 @@ def kick_grid_rows(score, stems=None, out=None, sr=44100):
     if not drum_stems:
         return rows
     bpm = gate_clock.flat_bpm(score)          # flat-bpm-ok: the label in the report; the grid below is on the tempo map
-    import gate_clock
     dm = drum_stems[0].mean(axis=1) if drum_stems[0].ndim == 2 else drum_stems[0]
     from scipy.signal import butter, sosfilt
     sos = butter(4, min(140.0, sr * 0.45), 'low', fs=sr, output='sos')

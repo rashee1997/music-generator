@@ -1,0 +1,52 @@
+{
+  "name": "shaker_pulse",
+  "description": "Indian hand cymbals (manjira) pulse on every eighth, louder on the backbeat in the lift and the return.",
+  "character": "A pair of small Indian hand cymbals struck on every eighth for the pulse, louder on the backbeat in the lift: a soft metallic ring that keeps time and fills the gaps between the plucked notes without pushing energy into the band where the ear is most sensitive.",
+  "gm": "drums",
+  "role": "drum",
+  "humanize": {
+    "preset": "tight",
+    "timing_ms": 3.0,
+    "drift_ms": 3.0,
+    "vel_sigma": 4.0
+  },
+  "spatial": {
+    "azimuth": -25.0,
+    "distance": 2.6
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 400
+    },
+    {
+      "type": "peak",
+      "f": 3500,
+      "gain": -5.0,
+      "q": 0.7
+    },
+    {
+      "type": "lp",
+      "f": 4500.0
+    }
+  ],
+  "gain_db": -9.0,
+  "reverb": 0.05,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 0.25,
+    "release_ms": 60.0
+  },
+  "mechanics_class": "drum",
+  "sources": [
+    "KB pan-indian (hand cymbals and small percussion keep the tala pulse)",
+    "KB african (a steady high pulse under the tune: the hosho in Shona music)",
+    "MEASURED: the SoundFont hosho/shaker sample puts 14.9 dB more power in 2.5-5 kHz than in 0.5-2.5 kHz and failed spectral.equal_loudness through three EQ attempts; the guiro decays to digital silence between hits (230 dropouts); the splash-cymbal \"zil\" sample made 13 click events in the mastered file against 6 for the manjira sample (a leave-one-out through the real mix and master), so the manjira carries the pulse",
+    "ESTIMATE: level and placement are starting values",
+    "STARTING VALUE: low-pass at 4.5 kHz: a phone speaker returns little above about 5 kHz (KB short-form-functional-music), and the sharp edges of plucked and struck onsets above it are what the click row reacts to"
+  ],
+  "vibrato": {
+    "depth_cents": 0.0
+  },
+  "onset_fade_ms": 12.0
+}

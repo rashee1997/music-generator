@@ -72,6 +72,13 @@ def _notes(score, skip=ARRANGEMENT_SKIP):
                 yield tr, n
 
 
+def _unit_velocity(n):
+    """A note's velocity on 0..1. Scores carry MIDI velocity (1-127) or a unit value; the anchors are on the unit scale, so
+    a MIDI velocity read raw saturated every section at 1.0 and the arousal order could not tell sections apart."""
+    v = float(n.get('v', 0.7))
+    return v / 127.0 if v > 1.0 else v
+
+
 def arousal_by_section(score):
     """[{name, energy, index, parts}] one row per plan section that has notes. `parts` holds the five cue values."""
     bpb = _beats_per_bar(score)
@@ -83,8 +90,10 @@ def arousal_by_section(score):
             continue
         beats = max(b - a, 1e-6)
         dens = len(sel) / beats
-        vel = sum(float(n.get('v', 0.7)) for n in sel) / len(sel)
-        pitch = sum(float(n['p']) for n in sel) / len(sel)
+        vel = sum(_unit_velocity(n) for n in sel) / len(sel)
+        # register is the pitched notes' average: a percussion stroke is a name ('dum'), not a pitch
+        pitched = [float(n['p']) for n in sel if isinstance(n['p'], (int, float)) and not isinstance(n['p'], bool)]
+        pitch = sum(pitched) / len(pitched) if pitched else sum(ANCHORS['pitch']) / 2.0
         stac = sum(1 for n in sel if float(n.get('d', 1.0)) < 0.5) / len(sel)
         tempo = _tempo_at(score, (a + b) / 2.0)
         parts = dict(tempo=_scale(tempo, *ANCHORS['tempo_bpm']), density=_scale(dens, *ANCHORS['notes_per_beat']),

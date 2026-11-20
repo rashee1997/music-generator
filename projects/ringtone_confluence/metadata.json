@@ -1,0 +1,12 @@
+{
+  "overrides": {
+    "album": "Confluence",
+    "comment": "one-minute ringtone, D major pentatonic, 120 BPM; kalimba, bansuri, oud, koto, marimba and world percussion (SoundFont stand-ins)"
+  },
+  "derive_from_score": {
+    "title": true,
+    "genre": true,
+    "comment": true,
+    "year": true
+  }
+}

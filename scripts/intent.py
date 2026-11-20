@@ -319,6 +319,8 @@ def m_pedal_throughout(score):
     if end <= 0:
         return False, 'no notes'
     for t in score.get('tracks') or []:
+        if roles.canonical(t.get('role') or '') in ('drum', 'fx', 'environment'):
+            continue                                          # a percussion stroke is a name, not a held pitch
         ps = [int(float(n.get('p', n.get('pitch', 60)))) for n in t.get('notes') or []]
         if not ps:
             continue

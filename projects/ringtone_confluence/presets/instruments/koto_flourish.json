@@ -1,0 +1,51 @@
+{
+  "name": "koto_flourish",
+  "description": "East Asian zither: phrase-end sweeps and a ringing high note in the breath.",
+  "character": "A plucked zither used for glitter: rising pentatonic sweeps at the end of each phrase, like the glissando of a Chinese guzheng, that hand the listener from one phrase to the next without covering the tune.",
+  "gm": "koto",
+  "role": "counter",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 5.0,
+    "drift_ms": 5.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": 70.0,
+    "distance": 2.0
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 300
+    },
+    {
+      "type": "peak",
+      "f": 4200,
+      "gain": -2.0
+    },
+    {
+      "type": "lp",
+      "f": 4500.0
+    }
+  ],
+  "gain_db": -3.0,
+  "reverb": 0.16,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 1.0,
+    "release_ms": 500.0
+  },
+  "mechanics_class": "plucked",
+  "sources": [
+    "KB chinese-japanese (the guzheng is tuned to the five pentatonic notes; glissando sweeps run through the scale in quick succession; ornaments fill a skeleton melody)",
+    "ESTIMATE: the SoundFont koto stands in for a guzheng; the sweep spacing is a starting value",
+    "MEASURED: a leave-one-out on the summed stems cut the click events from 85 to 27 without the koto and to 33 without the shaker; STARTING VALUE: low-pass at 6.5 kHz because a phone speaker returns little above 5-6 kHz and the sweeps fire a pluck every 25-60 ms",
+    "STARTING VALUE: onset_fade_ms 10: several strokes land together on every strong beat and their sharp starts add into one impulse the click row flags; a soft attack is also what \"smooth\" asks for",
+    "STARTING VALUE: low-pass at 4.5 kHz: a phone speaker returns little above about 5 kHz (KB short-form-functional-music), and the sharp edges of plucked and struck onsets above it are what the click row reacts to"
+  ],
+  "vibrato": {
+    "depth_cents": 0.0
+  },
+  "onset_fade_ms": 10.0
+}

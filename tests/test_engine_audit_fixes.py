@@ -206,6 +206,74 @@ class Gate(unittest.TestCase):
         self.assertEqual(sg.correlation_verdict(-0.2, 0.0)[0], 'FAIL')
 
 
+class GateRuns(unittest.TestCase):
+    def test_kick_grid_rows_run_on_a_drum_stem(self):
+        """A function-local `import gate_clock` below its first use made the whole name local: UnboundLocalError on
+        any piece with a drum stem, which no test had."""
+        import quality_gate as qg
+        sr = 22050
+        x = np.zeros((sr * 6, 2), np.float32)
+        for k in range(12):                                   # a kick every half second at 120 BPM
+            i = int(k * 0.5 * sr)
+            x[i:i + 800, :] = (np.sin(2 * np.pi * 60 * np.arange(800) / sr) * np.exp(-np.arange(800) / 200.0))[:, None] * 0.8
+        score = dict(ts=[4, 4], bpm=120, piece_type='melodic', tracks=[dict(name='kick', role='drum', notes=[])])
+        rows = qg.kick_grid_rows(score, {'kick': x}, sr=sr)
+        self.assertTrue(all(len(r) == 3 for r in rows))
+
+
+class GateMasterTarget(unittest.TestCase):
+    def test_the_gate_judges_the_master_the_mixer_was_told_to_make(self):
+        """A score that names a mastering profile is mixed to that profile's loudness and ceiling; the gate used to read
+        score["master"] raw with literal fallbacks, so it judged the file against numbers nobody asked for."""
+        import quality_gate as qg
+        streaming = qg.resolved_master({'master': {'profile': 'streaming'}})
+        self.assertEqual(streaming['true_peak'], -2.0)
+        explicit = qg.resolved_master({'master': {'profile': 'streaming', 'true_peak': -1.0}})
+        self.assertEqual(explicit['true_peak'], -1.0)                       # the score's own value still wins
+        self.assertEqual(qg.resolved_master({})['true_peak'], -1.5)         # no profile: the shipped default
+
+
+class ExpressionReport(unittest.TestCase):
+    def test_a_percussion_track_with_named_strokes_does_not_break_the_arousal_index(self):
+        sys.path.insert(0, str(SK / 'scripts' / 'helpers'))
+        import expression_report as er
+        score = dict(ts=[4, 4], bpm=120, plan=dict(sections=[dict(name='a', start_bar=1, end_bar=2, energy=0.5)]),
+                     tracks=[dict(name='m', role='melody', notes=[dict(t=0.0, d=1.0, p=72, v=80), dict(t=2.0, d=1.0, p=76, v=80)]),
+                             dict(name='d', role='drum', notes=[dict(t=0.0, d=0.3, p='dum', v=90), dict(t=1.0, d=0.3, p='tak', v=70)])])
+        rows = er.arousal_by_section(score)
+        self.assertEqual(len(rows), 1)
+        melody_only = er.arousal_by_section(dict(score, tracks=score['tracks'][:1]))
+        self.assertAlmostEqual(rows[0]['parts']['register'], melody_only[0]['parts']['register'])   # register is the pitched notes'
+
+
+class ExpressionVelocityScale(unittest.TestCase):
+    def test_midi_and_unit_velocities_give_the_same_arousal(self):
+        sys.path.insert(0, str(SK / 'scripts' / 'helpers'))
+        import expression_report as er
+
+        def sc(v_loud, v_soft):
+            return dict(ts=[4, 4], bpm=120, plan=dict(sections=[dict(name='a', start_bar=1, end_bar=1, energy=0.3),
+                                                               dict(name='b', start_bar=2, end_bar=2, energy=0.7)]),
+                        tracks=[dict(name='m', role='melody', notes=[dict(t=0.0, d=1.0, p=72, v=v_soft), dict(t=4.0, d=1.0, p=72, v=v_loud)])])
+        midi = er.arousal_by_section(sc(112, 40))
+        unit = er.arousal_by_section(sc(112 / 127.0, 40 / 127.0))
+        for a, b in zip(midi, unit):
+            self.assertAlmostEqual(a['parts']['velocity'], b['parts']['velocity'], places=6)
+        self.assertLess(midi[0]['parts']['velocity'], midi[1]['parts']['velocity'])   # not both saturated at 1.0
+
+
+class IntentPedal(unittest.TestCase):
+    def test_pedal_check_ignores_percussion_and_still_finds_a_real_pedal(self):
+        import intent
+        drums = dict(name='d', role='drum', notes=[dict(t=i * 0.5, d=0.25, p='dum', v=80) for i in range(8)])
+        melody = dict(name='m', role='melody', notes=[dict(t=i, d=0.5, p=60 + i, v=80) for i in range(8)])
+        hit, _ = intent.m_pedal_throughout(dict(bpm=120, tracks=[drums, melody]))      # used to raise on 'dum'
+        self.assertFalse(hit)
+        pedal = dict(name='b', role='bass', notes=[dict(t=0.0, d=8.0, p=40, v=80)])
+        hit, why = intent.m_pedal_throughout(dict(bpm=120, tracks=[drums, pedal]))
+        self.assertTrue(hit, why)
+
+
 class Spatial(unittest.TestCase):
     def test_scene_weights_sum_to_one_when_transitions_overlap(self):
         from spatial_engine import hoa

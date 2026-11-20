@@ -44,7 +44,7 @@ None of these comes from a source. They are the values the references start from
 |---|---|---|
 | The hook begins | within 3 s of the start, on the first or second beat | follows section 2; a listener has not yet decided to answer |
 | The hook motif | 3-6 notes, one leap and steps | short enough to hum after one hearing; no study run |
-| Loudness | -14 LUFS integrated, -1.0 dBTP | a ringtone competes with room noise; not calibrated |
+| Loudness | -14 LUFS integrated, -1.5 dBTP | a ringtone competes with room noise, and a phone usually converts it to a lossy format, so the ceiling is the engine default; not calibrated |
 | Share of energy in 300-5000 Hz | at least 0.85 | follows section 1; the share is a proxy for what the speaker returns |
 | Share of energy below 200 Hz | at most 0.05 | follows section 1 |
 | Loop seam | the end-to-start sample step is no larger than the 99.9th percentile of the steps inside the piece; the level across the seam within 3 dB | derived from the piece itself; the 3 dB is a working figure |
