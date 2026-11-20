@@ -145,11 +145,19 @@ def score_checks(score, out):
     _, flags = pattern_audit.audit(score)           # audit() returns (info, flags)
     for f in flags:
         _row(out, 'WARN', 'pattern', f)
-    max_flags = score.get('pattern_flags_max', score.get('quality', {}).get('pattern_flags_max', gp.param('pattern.flags_max', 'max')))
+    max_flags = flags_limit(score, gp)
     if len(flags) >= max_flags:
         _row(out, 'FAIL', 'pattern', f'{len(flags)} repetition or flatness flags: the piece reads as a loop, not a composition')
     if not flags:
         _row(out, 'PASS', 'pattern', 'no copy-paste, grid-bound or flat-dynamics flags in the score')
+
+
+def flags_limit(score, gp):
+    """The most repetition flags a piece may carry. A score may tighten the profile's limit; it may not raise it:
+    a number written in the score skips the profile's range check, its reason and its record in the report."""
+    limit = gp.param('pattern.flags_max', 'max')
+    asked = score.get('pattern_flags_max', (score.get('quality') or {}).get('pattern_flags_max'))
+    return limit if asked is None else min(limit, asked)
 
 
 def render_checks(out):
@@ -380,10 +388,13 @@ def immersive_rows(score, path, stems, out):
     x, _ = (gate_audio.load(path).audio, sr) if path else (np.zeros((1, 2)), sr)
     if x.shape[1] == 2 and len(x) > sr:
         if gp.on('imm.width'):
-            c = float(np.corrcoef(x[:, 0], x[:, 1])[0, 1])
+            c = gate_audio.channel_correlation(x[:, 0], x[:, 1])
             lim = float((gp.rows.get('imm.width') or {}).get('max_corr', gp.param('imm.width', 'max_corr')))
-            _row(out, 'WARN' if c > lim else 'PASS', 'imm_width',
-                 f'L/R correlation {c:.2f} (limit {lim:g})' + (' (nearly mono: beds are not wide)' if c > lim else ''))
+            if not np.isfinite(c):
+                _row(out, 'WARN', 'imm_width', 'a channel is silent or constant, so the L/R correlation is undefined')
+            else:
+                _row(out, 'WARN' if c > lim else 'PASS', 'imm_width',
+                     f'L/R correlation {c:.2f} (limit {lim:g})' + (' (nearly mono: beds are not wide)' if c > lim else ''))
         if gp.on('imm.foldown'):
             drop = mixer.lufs(x, sr) - mixer.lufs(np.stack([x.mean(axis=1)] * 2, 1), sr)
             lim = float((gp.rows.get('imm.foldown') or {}).get('max_lu', gp.param('imm.foldown', 'max_lu')))
@@ -900,7 +911,6 @@ def masking_rows(stems, score, sr=44100, out=None):
     leads = [n for n, r in roles.items() if _role_in(r, focus) and n in stems]
     beds = [n for n, r in roles.items() if _role_in(r, ('pad', 'chord', 'arp', 'counter', 'drone', 'texture'))
             and n in stems and n not in leads]
-    beds += [n for n in ('chorus',) if n in stems and n not in beds]
     if not leads:
         rows.append(('INFO', 'erb_binaural_masking',
                      f'not measured: no track in this type\'s focus ({", ".join(gp.focus_roles()) or "none"}). '

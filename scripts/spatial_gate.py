@@ -17,6 +17,15 @@ import os
 
 import numpy as np
 
+from gate_audio import channel_correlation
+
+
+def correlation_verdict(corr, floor):
+    """(level, note). A correlation that cannot be measured (a silent or constant channel) is a FAIL, never a pass."""
+    if not np.isfinite(corr):
+        return 'FAIL', ' (a channel is silent or constant, so the correlation is undefined)'
+    return ('FAIL' if corr < floor else 'PASS'), ''
+
 
 def _row(out, level, name, detail):
     out.append((level, name, detail))
@@ -279,10 +288,11 @@ def output_rows(score, wav_path, out):
         if n_ch == 1:
             continue
         if n_ch == 2:
-            corr = float(np.corrcoef(sig.audio[:, 0], sig.audio[:, 1])[0, 1]) if n_ch == 2 else 1.0
+            corr = channel_correlation(sig.audio[:, 0], sig.audio[:, 1])
             limit = float((tgt.get('gate') or {}).get('stereo_correlation_min', 0.0))
-            _row(out, 'FAIL' if corr < limit else 'PASS', 'stereo.correlation',
-                 f'{name}: inter-channel correlation {corr:+.2f} (floor {limit:+.2f}: below it the centre is cancelling)')
+            level, note = correlation_verdict(corr, limit)
+            _row(out, level, 'stereo.correlation',
+                 f'{name}: inter-channel correlation {corr:+.2f} (floor {limit:+.2f}: below it the centre is cancelling)' + note)
             continue
         lay_name = tgt.get('layout')
         if not lay_name:
@@ -340,7 +350,8 @@ def output_rows(score, wav_path, out):
         # a multichannel file must fold to a coherent stereo image (no destructive phase between the two)
         from spatial_engine import downmix
         fold = downmix.fold(sig.audio, lay_name)
-        corr = float(np.corrcoef(fold[:, 0], fold[:, 1])[0, 1]) if len(fold) > 1 else 1.0
+        corr = channel_correlation(fold[:, 0], fold[:, 1]) if len(fold) > 1 else 1.0
         limit = float((tgt.get('gate') or {}).get('stereo_correlation_min', 0.0))
-        _row(out, 'FAIL' if corr < limit else 'PASS', 'imm.fold_coherence',
-             f'{name}: the two-channel fold has correlation {corr:+.2f} (floor {limit:+.2f})')
+        level, note = correlation_verdict(corr, limit)
+        _row(out, level, 'imm.fold_coherence',
+             f'{name}: the two-channel fold has correlation {corr:+.2f} (floor {limit:+.2f})' + note)

@@ -566,7 +566,7 @@ def section_energy(sig, score, sheet=None, fail_rho=0.5, warn_rho=0.7):
     """Spearman rank correlation between measured section level and the promised energy/dynamics."""
     secs = section_bounds(score, sig.dur, sheet)
     if len(secs) < 4:
-        return _result(1.0, fail_rho, 'rho', [], 'fewer than 4 sections: not judged', skipped=True)
+        return _result(1.0, fail_rho, 'rho', [], 'fewer than 4 sections: not judged', skipped=True, level='INFO')
     db, times = frame_db(sig, 20.0, 5.0)
     rows = []
     for s in secs:
@@ -579,7 +579,7 @@ def section_energy(sig, score, sheet=None, fail_rho=0.5, warn_rho=0.7):
     energies = [r['energy'] for r in rows]
     if not np.all(np.isfinite(vals)) or len(set(round(e, 6) for e in energies)) < 2:
         return _result(1.0, fail_rho, 'rho', [], 'section levels or promised energies are constant: not judged',
-                       skipped=True, table=rows)
+                       skipped=True, table=rows, level='INFO')
     from scipy.stats import spearmanr
     rho = float(spearmanr(energies, vals).correlation)
     level = 'FAIL' if rho < fail_rho else ('WARN' if rho < warn_rho else 'PASS')

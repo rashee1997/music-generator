@@ -172,8 +172,8 @@ def apply_dither(x, bits=16, shape='tpdf', rng=None):
     if rng is None:
         rng = np.random.default_rng(12345)
     x = np.asarray(x, dtype=np.float64)
-    # Quantization step
-    scale = 2.0 ** bits
+    # Quantization step: a signed `bits`-bit word has 2**(bits-1) steps per unit of full scale (16-bit: 1/32768)
+    scale = 2.0 ** (bits - 1)
     q = 1.0 / scale
     if shape == 'tpdf':
         # TPDF: difference of two uniform random variables
@@ -191,6 +191,31 @@ def apply_dither(x, bits=16, shape='tpdf', rng=None):
     # Apply quantization
     y = np.round(y * scale) / scale
     return y.astype(np.float32)
+
+
+def finalize_pcm(out, sr, mm_cfg):
+    """The last two steps before the write: the DC servo, then the dither. (out float32, PCM subtype).
+
+    The servo comes FIRST. Dither puts every sample on the target word's grid; any filter after it moves the samples
+    off that grid, and the write then re-rounds them with no dither at all, which undoes the point of dithering."""
+    # a DC servo: a 4 Hz second-order high-pass, inaudible, removes any slow offset the chain collected
+    sos_dc = signal.butter(2, 4.0, btype='high', fs=sr, output='sos')   # kills block-level offsets from the limiter
+    out = signal.sosfilt(sos_dc, out, axis=0)
+    subtype = 'PCM_24'
+    dither_cfg = (mm_cfg or {}).get('dither')
+    bits = None
+    shape = 'tpdf'
+    if isinstance(dither_cfg, dict):
+        bits = int(dither_cfg.get('bits', 16))
+        shape = str(dither_cfg.get('shape', 'tpdf'))
+        subtype = {16: 'PCM_16', 24: 'PCM_24', 32: 'PCM_32'}.get(bits, subtype)
+    elif dither_cfg is True:
+        bits, subtype = 16, 'PCM_16'
+    if bits is not None and bits < 32:
+        out = apply_dither(out, bits=bits, shape=shape)
+        out = np.clip(out, -1.0, 1.0 - 1.0 / (1 << (bits - 1)))      # stay on the grid: +1.0 is not a code
+        return out.astype(np.float32), subtype
+    return np.clip(out.astype(np.float32), -1.0, 1.0), subtype
 
 
 def apply_mid_side(x, mid_gain=1.0, side_gain=1.0):
@@ -540,6 +565,7 @@ def duck_gain(source, n, depth_db=-6, thresh=0.05, attack_ms=8, release_ms=180, 
     """Gain curve (linear) that dips by depth_db while `source` is above threshold; smooth like a compressor."""
     src = fit(to_stereo(source), n)
     e = envelope(src, sr, attack_ms, release_ms, hold_tail=True)
+    thresh = max(float(thresh), 1e-9)                                 # 0 is in range: it must mean "any signal ducks", not 0/0
     k = np.clip((e - thresh * 0.3) / (thresh * 1.2), 0, 1)           # 0..1 how much to duck
     gain_curve = 10 ** (depth_db * k / 20.0)
     min_floor = 10 ** (depth_db / 20.0)
@@ -808,7 +834,9 @@ def process_chain(name, x, spec, sr=SR, ctx=None):
         x = _run(pb.Pedalboard(chain), x, sr)
     STATE.setdefault('chain', {})[name] = source
     if spec.get('dynamics') or str(dyn.get('engine', 'pedalboard')) == 'dsp':
-        x = _dsp_dynamics(x, dyn, sr)
+        # the Pedalboard chain above already ran the compressor: running it again here would compress twice
+        x = _dsp_dynamics(x, dyn, sr, comp_done=isinstance(comp, dict)
+                          and str(dyn.get('engine', 'pedalboard')) == 'pedalboard')
 
     # 4 low-end hygiene
     if role == 'bass' or spec.get('mono_below'):
@@ -912,11 +940,11 @@ def _curve(v, kind):
     return np.asarray(v, dtype=np.float32)
 
 
-def _dsp_dynamics(x, dyn, sr):
+def _dsp_dynamics(x, dyn, sr, comp_done=False):
     """The part of the chain Pedalboard cannot do: knee/detector/sidechain-filter/parallel/multiband/
     dynamic EQ/transient shaping. Only reached when a preset asks for it."""
     comp = dyn.get('comp')
-    if isinstance(comp, dict):
+    if isinstance(comp, dict) and not comp_done:
         x = dsp.compressor(x, sr, threshold_db=comp.get('thr', -22), ratio=comp.get('ratio', 2.5),
                            attack_ms=comp.get('attack', 15), release_ms=comp.get('release', 150),
                            knee_db=float(dyn.get('knee_db', 0.0)), detector=str(dyn.get('detector', 'peak')),
@@ -1314,7 +1342,7 @@ def carve_for_lead(specs, mx=None):
     if not any(rolelib.is_lead(s.get('role')) for s in specs.values()):
         return specs
     for name, sp in specs.items():
-        if sp.get('role') in ('pad', 'texture', 'drone', 'chord', 'arp', 'ostinato', 'counter', 'environment') or name in ('chorus',):
+        if sp.get('role') in ('pad', 'texture', 'drone', 'chord', 'arp', 'ostinato', 'counter', 'environment'):
             eq = sp.setdefault('eq', [])
             if not any(d.get('type') == 'peak' and abs(d.get('f', 0) - band) < 1 for d in eq):
                 depth = carve - 1.5 if sp.get('role') == 'environment' else carve
@@ -1799,8 +1827,10 @@ def wrap_loop(x, loop_seconds, sr=SR):
     xf = min(k, max(1, int(0.035 * sr)))
     if k > xf:
         body[:k - xf] += tail[:k - xf]
+    # the folded tail fades OUT across the seam while the body stays at full level: body + tail at the start of the
+    # fade, body alone at its end. (Fading the body out as well dropped the programme for 35 ms and then stepped.)
     w = np.linspace(0.0, np.pi / 2.0, xf)[:, None]
-    body[k - xf:k] = body[k - xf:k] * np.cos(w) + tail[k - xf:k] * np.sin(w)
+    body[k - xf:k] += tail[k - xf:k] * np.cos(w)
     return body
 
 
@@ -1868,27 +1898,8 @@ def mix_and_master(score, stems, out_path, master=True, sr=SR, report=True, ctx=
     if over:
         sys.stderr.write(f'[export] {over} samples above full scale before the write (master skipped); '
                          f'the file is hard-clipped there\n')
-    # Optional dithering
-    dtype_subtype = 'PCM_24'
-    dither_cfg = mm_cfg.get('dither')
-    if dither_cfg:
-        if isinstance(dither_cfg, dict):
-            dither_bits = int(dither_cfg.get('bits', 16))
-            dither_shape = str(dither_cfg.get('shape', 'tpdf'))
-            if dither_bits == 16:
-                dtype_subtype = 'PCM_16'
-            elif dither_bits == 24:
-                dtype_subtype = 'PCM_24'
-            elif dither_bits == 32:
-                dtype_subtype = 'PCM_32'
-            out = apply_dither(out, bits=dither_bits, shape=dither_shape)
-        elif dither_cfg is True:
-            out = apply_dither(out, bits=16, shape='tpdf')
-            dtype_subtype = 'PCM_16'
-    # a DC servo: a 0.3 Hz one-pole high-pass, inaudible, removes any slow offset the chain collected
-    sos_dc = signal.butter(2, 4.0, btype='high', fs=sr, output='sos')   # inaudible; kills block-level offsets from the limiter
-    out = signal.sosfilt(sos_dc, out, axis=0).astype(np.float32)
-    sf.write(out_path, np.clip(out, -1.0, 1.0), sr, subtype=dtype_subtype)
+    out, dtype_subtype = finalize_pcm(out, sr, mm_cfg)
+    sf.write(out_path, out, sr, subtype=dtype_subtype)
     mm = _mix().get('mastering') or {}
     if master and mm.get('validate_export', True):
         master_tp = (STATE.get('master') or {}).get('true_peak')

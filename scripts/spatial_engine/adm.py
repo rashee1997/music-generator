@@ -762,7 +762,7 @@ def validate_file(path, expect_sr=None):
         for tag, _size32, _off in chunks:
             if tag not in ('fmt ', 'chna', 'axml', 'data'):
                 problems.append(f'chunk {tag!r} is not part of a minimal BW64 file')
-        return problems + _validate_bodies(path)
+        return problems + _validate_bodies(path, expect_sr)
     order = [t for t, _, _ in chunks]
     if order[:1] != ['ds64']:
         problems.append(f'the first chunk is {order[:1]!r}, not ds64 (it must follow the BW64 header)')
@@ -773,7 +773,7 @@ def validate_file(path, expect_sr=None):
         problems.append('ds64 must precede data')
     if 'fmt ' in order and 'data' in order and order.index('fmt ') > order.index('data'):
         problems.append('fmt must precede data')
-    problems += _validate_bodies(path)
+    problems += _validate_bodies(path, expect_sr)
     return problems
 
 

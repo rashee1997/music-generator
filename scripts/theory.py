@@ -99,6 +99,9 @@ class Key:
             raise ValueError(f'bad chord symbol {sym}')
         acc, num, suf = m.groups()
         deg = ROMAN[num.upper()]
+        if deg >= len(self.parent):
+            raise ValueError(f'mode {self.mode!r} has a {len(self.parent)}-note parent scale, so it has no degree '
+                             f'{num.upper()}: give it a 7-note parent in world.PARENT')
         root = self.parent[deg] + (-1 if acc == 'b' else 1 if acc == '#' else 0)
         upper = num.isupper()
         tones = [0, 4, 7] if upper else [0, 3, 7]
@@ -115,8 +118,8 @@ class Key:
             tones = [0, 7]
         if 'maj7' in s or 'maj9' in s:
             tones = tones + [11]
-        elif '7' in s or re.search(r'(?<!add)9', s):
-            tones = tones + [10]
+        elif 'dim' not in s and ('7' in s or re.search(r'(?<!add)9', s)):
+            tones = tones + [10]         # a diminished seventh already carries its own (double-flat) seventh
         if '6' in s and 'maj' not in s:
             tones = tones + [9]
         if 'add9' in s or '9' in s:

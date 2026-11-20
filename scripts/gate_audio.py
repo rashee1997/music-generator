@@ -213,3 +213,15 @@ def clear():
     """Forget every loaded file (a test that rewrites a file in place, or a long-lived process)."""
     with _LOCK:
         _REGISTRY.clear()
+
+
+def channel_correlation(a, b):
+    """Pearson correlation of two channels, or NaN when either is silent or constant (the value is undefined there).
+
+    np.corrcoef returns NaN for those, and every `nan < limit` / `nan > limit` is False, so a one-sided master used
+    to read as a pass on each correlation row. Callers must treat a non-finite result as a finding."""
+    a = np.asarray(a, dtype=np.float64)
+    b = np.asarray(b, dtype=np.float64)
+    if len(a) < 2 or float(np.std(a)) < 1e-12 or float(np.std(b)) < 1e-12:
+        return float('nan')
+    return float(np.corrcoef(a, b)[0, 1])

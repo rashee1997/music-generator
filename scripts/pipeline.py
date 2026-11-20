@@ -100,7 +100,7 @@ def write_stems(stems, stems_dir, full=False, sr=SR):
         seg, start = (x, 0.0) if full else trim_stem(x, sr)
         if full and len(x) < total:
             seg = np.pad(x, ((0, total - len(x)),) + ((0, 0),) * (x.ndim - 1))
-        sf.write(os.path.join(stems_dir, f"{name}.wav"), np.asarray(seg, np.float32), sr)
+        sf.write(os.path.join(stems_dir, f"{name}.wav"), np.asarray(seg, np.float32), sr, subtype='FLOAT')   # not PCM_16: it rounds and clips
         manifest[name] = dict(start_s=round(start, 4), length_s=round(len(seg) / sr, 4),
                               timeline_s=round(total / sr, 4), stem_hash=stem_cache.audio_hash(x, size=16, stride=1))
     with open(os.path.join(stems_dir, 'stems.json'), 'w', encoding='utf-8') as fh:

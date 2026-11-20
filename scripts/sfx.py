@@ -80,6 +80,12 @@ def _chirp(t, f0, f1, dur):
     return 2 * np.pi * (f0 * t + 0.5 * k * t * t)
 
 
+def _sweep(f_hz, sr):
+    """A sine whose instantaneous frequency is `f_hz` per sample. sin(2*pi*f(t)*t) is NOT that: its frequency is
+    f(t) + t*f'(t), so a falling sweep lands far below where it was drawn. The phase is the running sum of f/sr."""
+    return np.sin(np.cumsum(2 * np.pi * np.asarray(f_hz, float) / sr))
+
+
 def _decay(t, tau):
     return np.exp(-t / tau)
 
@@ -165,14 +171,14 @@ def downlifter(sec, sr, rng, **kw):
 
 def impact(sec, sr, rng, **kw):
     t = _t(sec, sr)
-    sub = np.sin(2 * np.pi * (48 - 14 * np.minimum(t, 0.4) / 0.4) * t) * _decay(t, 0.9)
+    sub = _sweep(48 - 14 * np.minimum(t, 0.4) / 0.4, sr) * _decay(t, 0.9)
     crack = _lp(_noise(rng, len(t)), 3500, sr) * _decay(t, 0.05)
     return sub + 0.6 * crack
 
 
 def boom(sec, sr, rng, **kw):
     t = _t(sec, sr)
-    body = np.sin(2 * np.pi * (62 - 25 * (1 - np.exp(-t / 0.2))) * t) * _decay(t, sec / 3.5)
+    body = _sweep(62 - 25 * (1 - np.exp(-t / 0.2)), sr) * _decay(t, sec / 3.5)
     return body + 0.25 * _lp(_noise(rng, len(t)), 180, sr) * _decay(t, sec / 2)
 
 
@@ -272,7 +278,7 @@ def glass_break(sec, sr, rng, **kw):
 
 def explosion(sec, sr, rng, **kw):
     t = _t(sec, sr)
-    rumble = np.sin(2 * np.pi * (55 - 20 * (1 - np.exp(-t / 0.3))) * t) * _decay(t, sec / 3)
+    rumble = _sweep(55 - 20 * (1 - np.exp(-t / 0.3)), sr) * _decay(t, sec / 3)
     debris = _bp(_noise(rng, len(t)), 300, 3000, sr) * _decay(t, sec / 4) * 0.6
     return rumble * 1.1 + debris + _lp(_noise(rng, len(t)), 150, sr) * _decay(t, 0.05)
 
@@ -310,7 +316,7 @@ def heartbeat(sec, sr, rng, **kw):
     for beat in np.arange(0, sec, 0.9):
         for off, amp in [(0.0, 1.0), (0.28, 0.6)]:
             t = _t(0.18, sr)
-            thump = np.sin(2 * np.pi * (55 - 15 * t / 0.18) * t) * _decay(t, 0.05) * amp
+            thump = _sweep(55 - 15 * t / 0.18, sr) * _decay(t, 0.05) * amp
             # each thump is cut at 0.18 s, where its decay is still at 3 % of the peak: a hard end is a step
             n_end = min(len(thump), int(0.02 * sr))
             thump[len(thump) - n_end:] *= np.cos(np.linspace(0.0, np.pi / 2, n_end)) ** 2

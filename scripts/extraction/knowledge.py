@@ -80,6 +80,8 @@ def grow(ctx, summary):
                             'tuning_cents': round(float(d['tuning']['cents']), 1), 'song': song, 'spatial': info.get('spatial')}
         cur['instruments'][vid] = {**prev, **base}
         changed.append(vid)
+    if not changed:                 # nothing new was measured: leave the shipped database byte for byte as it is
+        return changed
     with open(SIGNATURES, 'w', encoding='utf-8') as f:
         json.dump(cur, f, indent=1, ensure_ascii=False)
     return changed

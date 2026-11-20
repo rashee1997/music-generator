@@ -126,8 +126,11 @@ _add('african_pentatonic', [0, 2, 4, 7, 9], None, 'major')
 _add('celtic_dorian', [0, 2, 3, 5, 7, 9, 10])
 _add('mbira_mixolydian', [0, 2, 4, 5, 7, 9, 10])
 # -- shapes from global_music_theory_algorithmic_synthesis_guide.md (the other KB scales already exist under the names in its table) --
-_add('ethiopian_tizita_maj', [0, 2, 4, 7, 8])                      # practice: nostalgic major-minor blend
-_add('ethiopian_bati', [0, 4, 6, 7, 11])                           # practice: luminous Ethio-jazz
+# the parent is a 7-note scale that contains every note of the pentatonic, so its chords can be voiced on the parent's
+# degrees: bati is a subset of lydian, and tizita-major (major third with a minor sixth and seventh: the "major-minor
+# blend") is a subset of raga charukeshi
+_add('ethiopian_tizita_maj', [0, 2, 4, 7, 8], None, 'raga_charukeshi')   # practice: nostalgic major-minor blend
+_add('ethiopian_bati', [0, 4, 6, 7, 11], None, 'lydian')                 # practice: luminous Ethio-jazz
 _add('western_octatonic', [0, 1, 3, 4, 6, 7, 9, 10])               # practice: diminished chase / thriller
 
 # ------------------------------------------------------------------------------------------------

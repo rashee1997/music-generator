@@ -835,6 +835,15 @@ def apply_intent(brief):
     return out, resolved
 
 
+def split_minor_suffix(tonic):
+    """('Bbm' -> ('Bb', 'aeolian')), ('C#minor' -> ('C#', 'aeolian')); a tonic with no minor suffix comes back unchanged
+    with no mode. The note name is a letter and an optional flat or sharp, not just one character."""
+    m = re.match(r'^([A-Ga-g][b#]?)(m|min|minor)$', tonic)
+    if m:
+        return m.group(1), 'aeolian'
+    return tonic, None
+
+
 def compose(brief):
     brief, _intent = apply_intent(brief)
     fp = None
@@ -905,8 +914,9 @@ def compose(brief):
         mode = E['modes'][0]
     tonic = brief.get('key') or E['keys'][int(rng.integers(len(E['keys'])))]
     tonic = tonic.replace('♭', 'b').replace('♯', '#')
-    if len(tonic) > 1 and tonic[1:] in ('m', 'min', 'minor'):
-        tonic, mode = tonic[0], 'aeolian'
+    tonic, minor_mode = split_minor_suffix(tonic)
+    if minor_mode:
+        mode = minor_mode
     key = Key(tonic, mode, octave=4)
     bb = int(brief.get('beats_per_bar', G.get('bb', 3 if brief.get('ts') == 3 else 4)))
     bpm_lo, bpm_hi = E['bpm']

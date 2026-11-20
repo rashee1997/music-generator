@@ -87,8 +87,8 @@ def failure_stages(material, energy_j=1.0, rng=None):
     rng = rng or np.random.default_rng(0)
     from . import fracture as _fr
     brittle = material.get('family') in ('brittle', 'metal')
-    cracks = _fr.crack_train(material, energy_j, rng, brittle=False)
-    frags = _fr.fragments(material, energy_j, rng, brittle=False)
+    cracks = _fr.crack_train(material, energy_j, rng, brittle=brittle)
+    frags = _fr.fragments(material, energy_j, rng, brittle=brittle)
     out = [('stress', 0.0, 'strain builds; creak events, not sound yet')]
     if cracks:
         first = cracks[0][0]

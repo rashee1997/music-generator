@@ -323,6 +323,32 @@ def ambix(field):
     return np.asarray(field, np.float32) * scale[None, :].astype(np.float32)
 
 
+def scene_fade_samples(sc, bar_s, sr):
+    """Samples one scene's room takes to arrive. A scene must say how long it takes (`transition_s`, or
+    `transition_bars` at the piece's tempo): with neither, the old code gave a one-sample fade, which is a step in the
+    reflection feeds and the late send, heard as a click at the room change."""
+    if 'transition_s' in sc:
+        fade = float(sc['transition_s'])
+    elif 'transition_bars' in sc:
+        fade = float(sc['transition_bars']) * bar_s
+    else:
+        raise ValueError('a space scene needs "transition_s" or "transition_bars": a room that changes with no '
+                         'transition is a one-sample switch (a click)')
+    return max(1, int(fade * sr))
+
+
+def scene_weights(rise):
+    """Per-room input weights from the rising windows [1, r1, r2, ...] (room 0 is always on).
+
+    Room i is heard while it has risen and the next one has not: r_i - r_{i+1}. That telescopes to exactly one when
+    the rises are nested, and it stays at one when two transitions overlap, where the old r_i * (1 - r_{i+1}) summed
+    to 1 + r2 * (1 - r1) (up to +1.9 dB). Rises that are not nested are clipped at zero and renormalised."""
+    r = [np.asarray(x, float) for x in rise]
+    w = [np.maximum(r[i] - r[i + 1], 0.0) for i in range(len(r) - 1)] + [r[-1]]
+    total = np.sum(w, axis=0)
+    return [x / np.maximum(total, 1e-12) for x in w]
+
+
 class _FieldView:
     """Rows [a, b) of a `_FieldSink`: the handle a source writes into, so it never sees the whole field."""
 
@@ -461,14 +487,12 @@ class HoaBus:
         for sc in sorted(scenes, key=lambda s: trajectory.seconds(s.get('anchor') or {}, self.score, tm)):
             cfgs.append(_merge(cfgs[-1], sc.get('space_overrides')))
             starts.append(int(trajectory.seconds(sc.get('anchor') or {}, self.score, tm) * self.sr))
-            fade = float(sc['transition_s']) if 'transition_s' in sc else float(sc.get('transition_bars', 0.0)) * bar_s
-            fades.append(max(1, int(fade * self.sr)))
+            fades.append(scene_fade_samples(sc, bar_s, self.sr))
         t = np.arange(n)
         rise = [np.ones(n)] + [np.sin(0.5 * np.pi * np.clip((t - a) / f, 0.0, 1.0)) ** 2
                                for a, f in zip(starts[1:], fades[1:])]
         out = []
-        for i, cfg in enumerate(cfgs):
-            w = rise[i] * (1.0 - rise[i + 1]) if i + 1 < len(cfgs) else rise[i]
+        for cfg, w in zip(cfgs, scene_weights(rise)):
             if np.any(w > 0):
                 out.append((cfg, None if np.all(w == 1.0) else w))
         return out

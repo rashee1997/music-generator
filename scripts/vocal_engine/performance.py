@@ -808,7 +808,7 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
             note_v.append(float(e.get('v', 80)))
             dev.append(float(np.mean(cents_nov[a:b]) - base[i]))
     sig = sig * cal * level * arc * flutter * (10 ** (acc_db / 20.0)) * gate * press
-    cons_report = _place_consonants(sig, codes, CN, sr, rng, f0, s, e_, Fn, lv, n, notes, reg)
+    cons_report = _place_consonants(sig, codes, CN, sr, rng, f0, s, e_, Fn, lv, n, notes, _register_params(cfg, reg))
     tech = _technique_report(sig, sr, f0, F_track, s, e_, k, reg, cfg, vib_am, src_stats=vstats)
     p0 = t0 - pad / sr                                   # the consonant sits before the scored onset
     return dict(signal=sig, t0=p0, t1=p0 + n / sr, f0=f0, gate=gate, level=level, connected=connected, s=s, e=e_,
@@ -860,6 +860,14 @@ def _local_jitter(sig, f0, sr):
     if len(T) < 10:
         return None
     return float(np.mean(np.abs(np.diff(T))) / (np.mean(T) + 1e-12) * 100.0)
+
+
+def _register_params(cfg, reg):
+    """The glottal parameters a voiced consonant buzzes with. A style names its register ("chest"); the consonant
+    renderer wants the parameter dict, so the name goes through the singer's own register table."""
+    if isinstance(reg, dict):
+        return reg
+    return voice.resolve_register(cfg, reg)
 
 
 def _place_consonants(sig, codes, cn, sr, rng, f0, s, e_, Fn, lv, n, notes, reg=None):

@@ -632,7 +632,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
                 vox.add(max(0.0, e['t'] + off), 'on', 9, 37, int(np.clip(v * 0.28, 1, 127)))
                 vox.add(max(0.0, e['t'] + off) + 0.1, 'off', 9, 37)
             last_t[e['p']] = e['t']
-            if hand and jrng.random() < 0.25 and e['v'] > 0.5 and e['t'] > 0.04:   # 32nd-note flam: soft hit 25 ms before
+            if hand and jrng.random() < 0.25 and e['v'] / 127.0 > 0.5 and e['t'] > 0.04:   # 32nd-note flam: soft hit 25 ms before
                 vox.add(e['t'] - 0.025, 'on', 9, p, int(np.clip(v * 0.3, 1, 127)))
                 vox.add(e['t'] - 0.013, 'off', 9, p)
             vox.add(e['t'], 'on', 9, p, int(np.clip(round(v), 1, 127)))
@@ -910,7 +910,7 @@ def _track_cache_key(tr, seed, ts, swing, tm, global_dyn, sr, sfpath=None):
         except OSError:
             sf_id = str(sfpath)
     sig = json.dumps(dict(tr=stem_cache.dry_track(tr), seed=seed, ts=list(ts), swing=swing, global_dyn=global_dyn,
-                          sr=sr, renderer=_RENDERER_VERSION, code=_code_hash(), sf=sf_id,
+                          sr=sr, renderer=_RENDERER_VERSION, code=_code_hash(), sf=sf_id, oversample=_oversample(),
                           presets=stem_cache.dry_presets(_preset_fingerprint(tr))),
                      sort_keys=True, default=str)
     h = hashlib.sha1(sig.encode('utf-8'))
@@ -1102,10 +1102,12 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
             return name, _render_cached(tr, name, tm, sfpath, score.get('dynamics'), cfg,
                                         _track_seed(name, tr, tm, cfg), ts, score.get('swing', 0.5))
 
-        with ThreadPoolExecutor(max_workers=workers) as ex:
+        ex = ThreadPoolExecutor(max_workers=workers)
+        futs = [ex.submit(_run, job) for job in sfz_jobs]
+        try:
             # as_completed, not map: map yields in submission order, so one slow first track hides every stem that
             # finished behind it and the log looks stalled.
-            for fut in as_completed([ex.submit(_run, job) for job in sfz_jobs]):
+            for fut in as_completed(futs):
                 name, stem = fut.result()
                 if verbose:
                     if _report_entry(name).get('cached'):
@@ -1113,6 +1115,14 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
                     else:
                         print(f'  rendered  {name}', flush=True)
                 stems[name] = stem
+        except BaseException:
+            # a track failed: cancel the queued ones so the error comes back now, not after minutes of sfizz
+            for f in futs:
+                f.cancel()
+            ex.shutdown(wait=True)
+            raise
+        else:
+            ex.shutdown(wait=True)
     # A source whose own sub-sonic sway is above the default 5 Hz (a distant thunder roll is nearly all sub) says so
     # with `dc_hp_hz` on its track; everything else keeps the shared 5 Hz block.
     hp_by_name = {tr.get('name'): float(tr.get('dc_hp_hz') or 0.0) for tr in score.get('tracks', [])}
@@ -1164,7 +1174,7 @@ def main():
     if a.stems_dir:
         os.makedirs(a.stems_dir, exist_ok=True)
         for k, v in stems.items():
-            sf.write(os.path.join(a.stems_dir, k + '.wav'), v, SR)
+            sf.write(os.path.join(a.stems_dir, k + '.wav'), v, SR, subtype='FLOAT')
     if a.stems_only:
         return
     import mixer

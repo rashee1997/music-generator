@@ -388,9 +388,10 @@ def mode_ratios(rs):
         return np.arange(1, n + 1, dtype=float)
     if law == 'tube_closed':
         return np.arange(1, 2 * n, 2, dtype=float)
-    if law == 'bar':                                     # free-free bar: measured first five, then ((2n+1)/3)^2
+    if law == 'bar':                                     # free-free bar: measured first five, then ((2m+1)/3)^2 for mode m
         first = [1.0, 2.757, 5.404, 8.933, 13.34]
-        return np.array(first[:n] + [((2 * k + 1) / 3.0) ** 2 for k in range(len(first), n)], float)
+        # k counts from zero, the law counts modes from one: mode 6 is (13/3)^2, not (11/3)^2 (which is mode 5 again)
+        return np.array(first[:n] + [((2 * (k + 1) + 1) / 3.0) ** 2 for k in range(len(first), n)], float)
     if law == 'membrane':                                # circular membrane: first six zeros of J_mn over the first, then spaced by .35
         first = [1.0, 1.594, 2.136, 2.296, 2.653, 2.918]
         return np.array(first[:n] + [2.918 + 0.35 * (k - 5) for k in range(len(first), n)], float)
