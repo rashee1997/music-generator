@@ -132,6 +132,16 @@ Fixed:
 8. `mix_stems` allocated a third full-length bus to add the reverb tail into.
 9. **Stage 4's post-pass kept two copies of the whole piece**: `build_stems` rebuilt `stems` into a *new* dict while the old one was still alive, so `_dc_block`/`repair_clicks`/`_align_onset`/`trim_digital_lead` ran with 2 x 1.6 GiB of stems resident. It now pops each stem, processes it and puts it back.
 10. **Stage 4 rendered 31 independent tracks on one sampler, in a loop.** The shared `Synth` was also the lock that made the loop serial: one `sgenerate` at a time for the whole piece, and a formant vocal line (46 s) had every other track waiting behind it.
+11. **A failed sampled track stranded its sampler slot, so stage 4 hung instead of reporting the error**
+    (`Voice` / `render_track` / `build_stems`). The slot was returned at the end of a successful `render()` and by
+    `Voice.__del__`, but a track that raised after `_borrow_synth` (a bad `vibrato.model`, an out-of-range note) kept
+    its `Voice` alive through the failing future's traceback, so `__del__` did not run; every track still queued then
+    blocked in `_borrow_synth` and the stage never returned the rendering error. The borrow is now a `_Slot` lease that
+    `render_track` gives back in a `finally` (idempotent, so the render's own release and `__del__` stay safe), and the
+    parallel loop cancels its queued futures when one track fails so the error comes back immediately. Regression test
+    `tests/test_humanize_stats.py::RenderPathTests.test_a_track_that_fails_after_taking_a_sampler_slot_returns_it`:
+    it fails when `_return_slot` is stubbed out, and a 4-track `build_stems` run (2 workers, one bad `vibrato.model`)
+    raises in 0.9 s leaving 0 of 2 slots held (8 vCPU / 16 GB, one run).
 
 Also fixed in the second pass: the gate registry is bounded (it grew without limit across formats and
 cues), the master is read and kept once per run instead of three times, a band-ducked bed no longer

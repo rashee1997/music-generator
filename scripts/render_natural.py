@@ -168,6 +168,7 @@ def _reset_stats():
 
 
 _SYNTH_CACHE = {}                              # (sr, sfpath) -> [[Synth, sfid, Lock], ...]: the 32 MB bank is parsed once
+_SLOT_STATE = threading.local()                # the slot this thread borrowed: what a failed track hands back
 
 
 def _stem_workers(n_jobs=None):
@@ -177,6 +178,42 @@ def _stem_workers(n_jobs=None):
         return max(1, int(resources.stem_workers(n_jobs=n_jobs)))
     except Exception:            # no resources module (a single-file copy): one stem at a time, as before
         return 1
+
+
+class _Slot:
+    """One borrow of a sampler slot, returned exactly once.
+
+    A track holds its slot from the first sample until its render ends, and three different paths can be the one that
+    gives it back: the render's own `finally`, `render_track`'s when the track raised before or during it, and
+    `__del__` when neither ran. Whoever gets there first wins; a second release would hand one busy slot to two tracks.
+    """
+    __slots__ = ('synth', 'sfid', 'lock', 'taken')
+
+    def __init__(self, ent):
+        self.synth, self.sfid, self.lock, self.taken = ent[0], ent[1], ent[2], True
+
+    def give_back(self):
+        if not self.taken:
+            return
+        self.taken = False
+        try:
+            if hasattr(self.synth, 'notes_off'):
+                self.synth.notes_off()
+        except Exception:
+            pass
+        self.lock.release()
+
+
+def _return_slot():
+    """Give back this thread's borrowed sampler slot (idempotent), whatever became of the Voice that borrowed it.
+
+    A failed track's future keeps its traceback, and through it the Voice, alive, so `__del__` may not run for a long
+    time; every track still queued would then block in `_borrow_synth` and the stage would hang instead of reporting
+    the rendering error. This runs in `render_track`'s `finally`, before that error leaves the track.
+    """
+    slot, _SLOT_STATE.slot = getattr(_SLOT_STATE, 'slot', None), None
+    if slot is not None:
+        slot.give_back()
 
 
 def _borrow_synth(sfpath, sample_rate, max_instances=1):
@@ -215,7 +252,9 @@ def _borrow_synth(sfpath, sample_rate, max_instances=1):
             s.control_change(ch, 7, 127)
     except Exception:
         pass
-    return s, ent[1], ent[2]
+    slot = _Slot(ent)
+    _SLOT_STATE.slot = slot                # so render_track can hand it back even if the track fails from here on
+    return slot
 
 
 def bend_value(cents):
@@ -283,21 +322,17 @@ class Voice:
         import tinysoundfont
         self.ts = tinysoundfont
         self.os = max(1, int(oversample))
-        self.synth, self.sfid, self._lock = _borrow_synth(sfpath, sample_rate * self.os, _stem_workers())
+        self._slot = _borrow_synth(sfpath, sample_rate * self.os, _stem_workers())
+        self.synth, self.sfid = self._slot.synth, self._slot.sfid
         self.sr = sample_rate
         self.events = []        # (sample, order, kind, ch, a, b) at the render rate (sr * os)
         self.prog = {}
 
     def _release(self):
-        """Give the shared Synth back (idempotent). Called at the end of render, and by __del__ if a render raised."""
-        lock, self._lock = getattr(self, '_lock', None), None
-        if lock is not None:
-            try:
-                if hasattr(self.synth, 'notes_off'):
-                    self.synth.notes_off()
-            except Exception:
-                pass
-            lock.release()
+        """Give the borrowed slot back (idempotent). Called by render's `finally`, by render_track's, and by __del__."""
+        slot, self._slot = getattr(self, '_slot', None), None
+        if slot is not None:
+            slot.give_back()
 
     def __del__(self):
         try:
@@ -314,6 +349,13 @@ class Voice:
         self.events.append((int(round(t * self.sr * self.os)), order, kind, ch, a, b))
 
     def render(self, tail=2.5):
+        """Render the collected events. The slot comes back from `finally`: a sampler that raises must not strand it."""
+        try:
+            return self._render(tail)
+        finally:
+            self._release()
+
+    def _render(self, tail=2.5):
         ev = sorted(self.events, key=lambda e: (e[0], e[1]))
         s = self.synth
         chunks, pos = [], 0
@@ -335,7 +377,6 @@ class Voice:
         if self.os > 1 and len(out):                 # decimate with a real filter: the images stay above Nyquist
             from scipy.signal import resample_poly
             out = resample_poly(out, 1, self.os, axis=0).astype(np.float32)
-        self._release()
         return out
 
 
@@ -421,7 +462,19 @@ def _sfz_track(tr, tm, cfg, seed, ts, swing, global_dyn, raw_inst, inst_cfg, qua
 
 
 def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None):
-    """Return stereo float32 stem for one track (list of notes -> audio)."""
+    """Return stereo float32 stem for one track (list of notes -> audio).
+
+    The sampler slot a sampled track borrows is returned here, in a `finally`, not only when its `Voice` happens to be
+    collected: a track that raises after taking one keeps the Voice alive in its error path, so `__del__` may never
+    run and a parallel stage would wait on that slot forever instead of reporting the failure.
+    """
+    try:
+        return _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead)
+    finally:
+        _return_slot()
+
+
+def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None):
     raw_inst = str(tr.get('instrument', 'piano'))
     if raw_inst.startswith('clone:'):                      # user-cloned instrument (clone_instrument.py)
         import clone_instrument as ci
@@ -1012,11 +1065,23 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
     if workers > 1 and len(other_jobs) > 1:
         if verbose:
             print(f'  rendering {len(other_jobs)} track(s) across {workers} parallel worker(s) ...', flush=True)
-        with ThreadPoolExecutor(max_workers=min(workers, len(other_jobs))) as ex:
+        ex = ThreadPoolExecutor(max_workers=min(workers, len(other_jobs)))
+        futs = []
+        try:
+            futs = [ex.submit(_other, job) for job in other_jobs]
             # as_completed, not map: one slow track (a formant vocal line takes tens of seconds) must not hide the
             # stems that already finished behind it in the log.
-            for fut in as_completed([ex.submit(_other, job) for job in other_jobs]):
+            for fut in as_completed(futs):
                 _keep(fut.result())
+        except BaseException:
+            # A track failed: the queued ones are cancelled and the running ones finish, so the error comes back now
+            # instead of after the rest of the piece has been rendered.
+            for f in futs:
+                f.cancel()
+            ex.shutdown(wait=True)
+            raise
+        else:
+            ex.shutdown(wait=True)
     else:
         for job in other_jobs:
             if verbose:
