@@ -37,6 +37,7 @@ except Exception:
     median_filter = None
 
 import gate_checks as gc
+import gate_audio
 from gate_audio import GateAudio, Signal
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -374,7 +375,9 @@ def immersive_rows(score, path, stems, out):
         _row(out, 'PASS' if iacc <= lim else 'WARN', 'imm_envelopment',
              f'late-tail interaural correlation {iacc:.2f} (limit {lim:g}); IACC alone does not prove envelopment, and the overhead part of the tail is not measured')
 
-    x, _ = sf.read(path, always_2d=True) if path else (np.zeros((1, 2)), sr)
+    # the delivered file as the rest of the gate already holds it (float64, its derived views cached), instead of a
+    # second full float64 read of the same bytes
+    x, _ = (gate_audio.load(path).audio, sr) if path else (np.zeros((1, 2)), sr)
     if x.shape[1] == 2 and len(x) > sr:
         if gp.on('imm.width'):
             c = float(np.corrcoef(x[:, 0], x[:, 1])[0, 1])

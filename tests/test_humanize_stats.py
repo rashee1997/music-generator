@@ -158,5 +158,35 @@ class RenderPathTests(unittest.TestCase):
         self.assertEqual(a.shape[1], 2)
 
 
+    def test_a_track_that_fails_after_taking_a_sampler_slot_returns_it(self):
+        """A failed track keeps its traceback (and its Voice) alive, so `__del__` may never run: the slot has to come
+        back from render_track's `finally`, or a parallel build waits on it forever instead of reporting the error."""
+        try:
+            import tinysoundfont  # noqa: F401
+            import soundbank
+            sf = soundbank.ensure_soundfont()
+        except Exception as e:
+            self.skipTest(f'no sampler available: {e}')
+        import humanize as hz
+        import render_natural as rn
+        # vibrato.model is validated AFTER the Voice has taken its sampler slot: the track fails while holding one
+        tr = dict(name='bad', instrument='piano', role='melody', notes=[dict(t=0, d=1, p=60, v=0.8)],
+                  vibrato={'model': 'nope'})
+        if rn._is_sfz_track(tr):
+            self.skipTest('this instrument plays through an SFZ library: no GM sampler slot is borrowed')
+        tm = hz.TempoMap(60, total_beats=2)
+        err = None
+        try:
+            rn.render_track(tr, tm, sf, None, 'natural', 1, [4, 4], 0.0)
+        except ValueError as ex:
+            err = ex                 # what a failed future holds: the exception, whose traceback keeps the Voice alive
+        self.assertIsInstance(err, ValueError)
+        slots = [ent for pool in rn._SYNTH_CACHE.values() for ent in pool]
+        self.assertTrue(slots, 'the failing track never borrowed a sampler slot: this test proves nothing')
+        self.assertEqual([ent for ent in slots if ent[2].locked()], [], 'a failed track left its sampler slot held')
+        self.assertIsNone(getattr(rn._SLOT_STATE, 'slot', None))
+
+
+
 if __name__ == '__main__':
     unittest.main()

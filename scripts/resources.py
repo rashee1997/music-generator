@@ -14,6 +14,7 @@ environment variable. Nothing here knows a project or a piece.
     cores()              cores this process may run on
     available_gb()       memory this process may still take, in GB
     sfz_workers()        sampler subprocesses at once       MUSICGEN_SFZ_WORKERS
+    stem_workers()       stems rendered at once            MUSICGEN_STEM_WORKERS
     gate_workers()       threads for the per-stem gate rows  GATE_WORKERS
     summary()            one line for the render report
     release_memory()     hand freed memory back to the system between renders
@@ -22,6 +23,8 @@ import gc
 import os
 
 SFZ_WORKER_GB = 2.5        # starting value: one sfizz process with an orchestra patch set, measured as the cause of an out-of-memory at 4 on 15 GB
+STEM_WORKER_GB = 0.5       # one stem render's working set: measured 0.43 GB per extra worker on projects/palace_chase
+                           # (185 s stems, 31 tracks; 2.7 GB at one worker, 5.7 GB at eight), rounded up for headroom
 HEADROOM_GB = 3.0          # left for the mixer, the gate and the system
 
 
@@ -93,6 +96,22 @@ def sfz_workers(n_jobs=None, n_cores=None, free_gb=None):
     c = cores() if n_cores is None else n_cores
     mem = available_gb() if free_gb is None else free_gb
     by_mem = int(max(0.0, mem - HEADROOM_GB) // SFZ_WORKER_GB)
+    n = max(1, min(c, by_mem))
+    return n if n_jobs is None else max(1, min(n, n_jobs))
+
+
+def stem_workers(n_jobs=None, n_cores=None, free_gb=None):
+    """Stems rendered at once: every core while memory allows, one per STEM_WORKER_GB beyond the headroom.
+
+    Stems are independent (each has its own seed and its own sampler), so the count is bounded only by cores and
+    memory. A render that asks for more workers than it has tracks gets one worker per track.
+    """
+    forced = _env_int('MUSICGEN_STEM_WORKERS')
+    if forced:
+        return forced if n_jobs is None else max(1, min(forced, n_jobs))
+    c = cores() if n_cores is None else n_cores
+    mem = available_gb() if free_gb is None else free_gb
+    by_mem = int(max(0.0, mem - HEADROOM_GB) // STEM_WORKER_GB)
     n = max(1, min(c, by_mem))
     return n if n_jobs is None else max(1, min(n, n_jobs))
 

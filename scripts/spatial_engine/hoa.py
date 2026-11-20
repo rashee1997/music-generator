@@ -93,6 +93,26 @@ def read(x, pos):
     return out
 
 
+def _add(bus, start, values):
+    """Add rows [start, start + len(values)) to the field.
+
+    The field is a `_FieldSink` (or a `_FieldView` row range of one), which decodes the rows straight away; a plain
+    array is the test path, which keeps them. These two are the only ways `encode`/`encode_many` write.
+    """
+    add = getattr(bus, 'add', None)
+    if add is not None:
+        add(start, values)
+    else:
+        n = len(values)
+        bus[start:start + n] += values
+
+
+def _rows(obj, a, b):
+    """Rows [a, b) of a field sink (a live window that decodes) or of a plain array (the tests' path)."""
+    window = getattr(obj, 'window', None)          # numpy has its own .view: the sink's factory is called window
+    return window(a, b) if window is not None else obj[a:b]
+
+
 def encode(bus, s, g):
     """Add signal s to the field with harmonic gains g: (K,) for a fixed direction, (m, K) on the control grid."""
     n = min(len(s), len(bus))
@@ -100,16 +120,17 @@ def encode(bus, s, g):
     g = np.asarray(g, np.float32)
     hop = trajectory.HOP
     # Row blocks, all harmonics at once: the field is stored row by row, and writing it a column at a time walked
-    # the whole array once per harmonic (most of a render's time went there).
+    # the whole array once per harmonic (most of a render's time went there). Each block goes to the sink, which
+    # decodes it before the next one is written, so a whole-piece field is never held.
     for a in range(0, n, ROWS):
         b = min(n, a + ROWS)
         if g.ndim == 1:
-            bus[a:b] += s[a:b, None] * g[None, :]
+            _add(bus, a, s[a:b, None] * g[None, :])
             continue
         at = np.arange(a, b) / hop                            # linear between control points
         i = np.minimum(at.astype(np.int64), len(g) - 2)
         fr = np.clip(at - i, 0.0, 1.0).astype(np.float32)[:, None]
-        bus[a:b] += s[a:b, None] * (g[i] * (1.0 - fr) + g[i + 1] * fr)
+        _add(bus, a, s[a:b, None] * (g[i] * (1.0 - fr) + g[i + 1] * fr))
 
 
 _ABS_CACHE = collections.OrderedDict()   # (surface coefficients, transform size, rate) -> absorption spectrum
@@ -183,7 +204,7 @@ def tap_signals(raw, taps, sr, temp_c, rh, physics=True, budget=SIGNAL_BUDGET):
     material colour the tap, exactly as the per-tap loop did.
     """
     import airabs
-    from scipy.fft import next_fast_len
+    from scipy.fft import irfft as _irfft, next_fast_len
 
     n = len(raw)
     delays = [int(round(max(0.0, float(t.get('delay_ms', 0.0))) / 1000.0 * sr)) for t in taps]
@@ -196,6 +217,12 @@ def tap_signals(raw, taps, sr, temp_c, rh, physics=True, budget=SIGNAL_BUDGET):
     air = None                                     # air absorption in nepers per metre over the bins: the same for every tap, only the path differs
     last_key, last_resp = None, None
     group = _group_size(len(keep), n, budget)
+    # One spectrum-sized scratch per source, reused by every tap: the per-tap `last_resp * 1/d` and
+    # `spec * h` and their exponentials allocated three full spectra per tap, each freed a moment later
+    # (about 32 MB each for a 3 minute source at order 5).
+    prod = np.empty_like(spec)
+    resp = np.empty_like(spec)
+    gainspec = None
     for start in range(0, len(keep), group):
         chunk = keep[start:start + group]
         out = np.zeros((n, len(chunk)), np.float32)
@@ -203,17 +230,24 @@ def tap_signals(raw, taps, sr, temp_c, rh, physics=True, budget=SIGNAL_BUDGET):
             key = tuple(round(float(c), 9) for c in tap['coeffs'])
             if key != last_key:
                 last_key, last_resp = key, _absorption_response(tap['coeffs'], size, sr)
-            h = last_resp.copy()
             dist = float(tap.get('distance_m', 1.0))
-            if physics:
+            if not physics:
+                use = last_resp                 # read-only: the response is shared by every tap of this surface
+            else:
+                np.multiply(last_resp, np.float32(1.0 / max(dist, 1e-9)), out=resp)
+                use = resp
                 if dist > 1.0:
                     if air is None:
                         freqs = np.fft.rfftfreq(size, 1.0 / float(sr))
                         air = (airabs.alpha_db_per_m(freqs, temp_c, rh) * (-np.log(10.0) / 20.0)).astype(np.float32)
                         del freqs
-                    h *= np.exp(air * np.float32(dist - 1.0))      # 10 ** (-alpha * m / 20), as a float32 exponential
-                h /= np.float32(max(dist, 1e-9))
-            y = np.fft.irfft(spec * h, size)[:n]
+                    if gainspec is None:
+                        gainspec = np.empty_like(spec)
+                    np.multiply(air, np.float32(dist - 1.0), out=gainspec)
+                    np.exp(gainspec, out=gainspec)                 # 10 ** (-alpha * m / 20), a float32 exponential
+                    np.multiply(resp, gainspec, out=resp)          # same order as `h *= exp(...)` was: (1/d) then air
+            np.multiply(spec, use, out=prod)
+            y = _irfft(prod, size, overwrite_x=True)[:n]
             if d:                                  # the tap's delay is where its signal starts, not a phase ramp
                 out[d:n, j] = y[:n - d]
             else:
@@ -236,7 +270,7 @@ def encode_many(bus, signals, gains):
     n = min(len(bus), signals.shape[0])
     for a in range(0, n, ROWS):
         b = min(n, a + ROWS)
-        bus[a:b] += signals[a:b] @ gains
+        _add(bus, a, signals[a:b] @ gains)
 
 
 _ALLRAD = {}
@@ -287,6 +321,96 @@ def ambix(field):
     order = int(np.sqrt(field.shape[1]) - 1)
     scale = np.concatenate([[np.sqrt(4.0 * np.pi / (2 * n + 1))] * (2 * n + 1) for n in range(order + 1)])
     return np.asarray(field, np.float32) * scale[None, :].astype(np.float32)
+
+
+class _FieldView:
+    """Rows [a, b) of a `_FieldSink`: the handle a source writes into, so it never sees the whole field."""
+
+    def __init__(self, sink, a, b):
+        self.sink, self.a, self.b = sink, int(a), int(b)
+
+    def __len__(self):
+        return self.b - self.a
+
+    def window(self, a, b):
+        """A smaller window of the same sink: `_source` cuts a span out of the range it was given."""
+        return _FieldView(self.sink, min(self.a + int(a), self.b), min(self.a + int(b), self.b))
+
+    def add(self, start, values):
+        start, n = int(start), min(len(values), len(self))
+        if start < 0 or n <= 0:
+            return
+        self.sink.add(self.a + start, values[:n])
+
+
+class _FieldSink:
+    """One piece's sound field, row block by row block, decoded as it goes.
+
+    The field is never held whole. Every source writes its rows here (`encode`/`encode_many` land in `add`), and the
+    block is decoded into the output before the next one is written, so the whole-piece `(n, K)` field and every
+    worker's partial field are gone (order 5, 3 minutes: 1.15 GB each).
+
+    It is also where the binaural decode stops being 72 passes over the whole piece: one transform of a block serves
+    both ears and all harmonics, and the decoder is a 36 x 2 matrix product in the frequency domain (P5 of
+    `docs/mix_memory_profile.md`).
+
+    A binaural block is a filter convolution, so it runs overlap-save: the last `len(filter) - 1` rows are carried
+    into the next block. A block that does not continue the previous one resets that history to zero, which is
+    exactly right, because it is a different contribution (another tap group, a late tail, another source) and every
+    contribution starts from silence.
+
+    `speakers` and `ambix` are linear per row too, so the same stream decodes them without a field: a matrix product
+    per block, and for AmbiX the scaled rows themselves (that field *is* the deliverable).
+    """
+
+    def __init__(self, bus, n, out=None):
+        self.bus, self.n, self.k, self.decode = bus, int(n), bus.k, bus.decode
+        self.out = np.zeros((self.n, bus.out_channels()), np.float32) if out is None else out
+        self._cursor = None
+        if self.decode == 'binaural':
+            h, self.M, self.L = bus.decoder_spectra()          # shared by every worker: (2, M, K) complex64
+            self._h = h
+            self._hist = np.zeros((self.L - 1, self.k), np.float32)
+        elif self.decode == 'speakers':
+            self._d = allrad_matrix(bus.speakers, bus.order).astype(np.float32).T    # (K, speakers)
+        else:
+            self._scale = ambix(np.ones((1, self.k), np.float32))[0]
+
+    def __len__(self):
+        return self.n
+
+    def window(self, a, b):
+        return _FieldView(self, a, b)
+
+    def add(self, start, values):
+        """Decode rows [start, start + len(values)) of this contribution into the output."""
+        start = int(start)
+        values = np.asarray(values, np.float32)
+        n = min(len(values), self.n - start)
+        if n <= 0:
+            return
+        if start != self._cursor and self.decode == 'binaural':
+            self._hist[:] = 0.0                                # a new contribution: its filter starts from silence
+        self._cursor = start + n
+        if self.decode == 'binaural':
+            self._binaural(start, values[:n])
+        elif self.decode == 'speakers':
+            self.out[start:start + n] += values[:n] @ self._d
+        else:
+            self.out[start:start + n] += values[:n] * self._scale     # AmbiX: every contribution is added, then scaled
+
+    def _binaural(self, start, v):
+        if not v.any() and not self._hist.any():
+            return                                             # silence into a silent filter adds nothing
+        L, M = self.L, self.M
+        buf = np.empty((len(v) + L - 1, self.k), np.float32)   # ~9 MB: the carried rows, then this block
+        buf[:L - 1] = self._hist
+        buf[L - 1:] = v
+        f = np.fft.rfft(buf, M, axis=0)                        # one transform per block, not per harmonic
+        for e in (0, 1):
+            y = np.fft.irfft(np.einsum('fk,fk->f', f, self._h[e]), M)
+            self.out[start:start + len(v), e] += y[L - 1:L - 1 + len(v)]
+        self._hist[:] = buf[len(v):]                           # the rows the next block needs
 
 
 def _merge(base, over):
@@ -374,7 +498,7 @@ class HoaBus:
             return self._source(bus, stereo, sends, name, y, spec, states)
         local = {}
         window = [(cfg, None if w is None else w[a:b]) for cfg, w in states]
-        self._source(bus[a:b], stereo[a:b], local, name, y[a:b], spec, window)
+        self._source(_rows(bus, a, b), _rows(stereo, a, b), local, name, y[a:b], spec, window)
         for key, (refl, send) in local.items():
             if key not in sends:
                 sends[key] = [refl, np.zeros(len(bus), np.float32)]
@@ -392,19 +516,40 @@ class HoaBus:
     def workers_that_fit(self, n, free_bytes=None):
         """How many sources can be rendered at once in the memory this process may still take.
 
-        One worker holds its partial field ((n, K) float32, on disk past IN_RAM_BYTES so only its working rows are
-        resident), a stereo bypass ((n, 2) float64), a group of tap signals (`SIGNAL_BUDGET`) and about six
-        full-length float64 working arrays (the source, its spectrum, one tap's response and inverse). The count
-        is what fits in the free memory less `HEADROOM_BYTES`, and never fewer than one."""
+        A worker no longer holds a partial field: it decodes its own rows as it goes, so it carries the decoded
+        output ((n, out_channels) float32), a stereo bypass ((n, 2) float32), a group of tap signals
+        (`SIGNAL_BUDGET`) and the source's own working arrays (measured: about 30 float32 arrays of n). That is
+        what turned a 9 GB palace mix into a few hundred MB per worker. The count is what fits in the free memory
+        less `HEADROOM_BYTES`, and never fewer than one."""
         import resources
         free = float(resources.available_gb()) * 1e9 if free_bytes is None else float(free_bytes)
-        resident_field = min(n * self.k * 4, IN_RAM_BYTES)
-        per_worker = resident_field + n * 2 * 4 + SIGNAL_BUDGET + 40 * n * 4         # 40 float32 arrays of n: measured, a 180 s piece's worker held about 2.5 GB
+        per_worker = self.out_channels() * n * 4 + n * 2 * 4 + SIGNAL_BUDGET + 30 * n * 4
         return int(max(1, (free - HEADROOM_BYTES) // max(per_worker, 1)))
+
+    def out_channels(self):
+        """How many channels `result()` has: two ears, one channel per loudspeaker, or the field itself."""
+        if self.decode == 'binaural':
+            return 2
+        return len(self.speakers) if self.decode == 'speakers' else self.k
+
+    def decoder_spectra(self):
+        """((2, M, K) complex64 spectra of the ear filters, transform size, filter length), built once per bus."""
+        if getattr(self, '_spec', None) is None:
+            from scipy.fft import next_fast_len
+            dec = np.asarray(_hrtf().magls(self.order), np.float32)        # (2, K, 256)
+            size = int(next_fast_len(ROWS + dec.shape[-1] - 1))
+            self._spec = (np.fft.rfft(dec, size, axis=-1).astype(np.complex64).transpose(0, 2, 1), size,
+                          dec.shape[-1])
+        return self._spec
+
+    def _sink(self, n):
+        return _FieldSink(self, n)
 
     def _place_all(self, bus, stereo, sends, states, n):
         spans = [self._span(y, spec) for _, y, spec in self.sources]
         workers = min(self._workers(n), len(self.sources))
+        if self.decode == 'ambix':
+            workers = 1                                    # the field is the deliverable: a worker copy is the thing we removed
         if workers <= 1:
             for (name, y, spec), span in zip(self.sources, spans):
                 self._run(bus, stereo, sends, name, y, spec, states, span)
@@ -421,24 +566,25 @@ class HoaBus:
 
         def work(chunk):
             mix_context.make_current(ctx)                  # the context is per thread: this one reads the piece's own
-            b, _own = _alloc(n, self.k)                    # on disk past IN_RAM_BYTES, like the main field
+            own = self._sink(n)                            # rows decoded as they are written: no partial field at all
             st = np.zeros((n, 2), np.float32)
             sd = {}
             for i in chunk:
                 name, y, spec = self.sources[i]
-                self._run(b, st, sd, name, y, spec, states, spans[i])
-            return b, st, sd
+                self._run(own, st, sd, name, y, spec, states, spans[i])
+            return own.out, st, sd
 
         with ThreadPoolExecutor(max_workers=workers) as pool:
             parts = list(pool.map(work, [c for c in chunks if c]))
-        for b, st, sd in parts:
-            for a in range(0, n, ROWS):
-                bus[a:a + ROWS] += b[a:a + ROWS]
+        for own, st, sd in parts:
+            for a in range(0, n, BLOCK):
+                bus.out[a:a + BLOCK] += own[a:a + BLOCK]   # a decoded output is (n, 2): a few tens of MB per worker
             stereo += st
             for key, (refl, send) in sd.items():
                 if key not in sends:
                     sends[key] = [refl, np.zeros(len(bus), np.float32)]
                 sends[key][1] += send
+            del own                                        # dead once it is summed in, so the peak is one worker's output
 
     def _source(self, bus, stereo, sends, name, y, spec, states):
         import airabs
@@ -507,7 +653,7 @@ class HoaBus:
                 feed = raw if w is None else np.multiply(raw, w[:n], dtype=np.float32)
                 a, b = (0, n) if (w is None or p is not None) else window_span(w[:n], self.sr)
                 if b > a:                                # outside its window a room's input is zero, so its reflections are too
-                    self._reflections(bus[a:b], feed[a:b], refl, a0, el, dist, p, dop, temp_c, rh)
+                    self._reflections(_rows(bus, a, b), feed[a:b], refl, a0, el, dist, p, dop, temp_c, rh)
                 key = id(refl)
                 if key not in sends:
                     sends[key] = [refl, np.zeros(len(bus), np.float32)]
@@ -588,12 +734,17 @@ class HoaBus:
 
     # ------------------------------------------------------------------ the field and its decoders
     def field(self):
-        """((n, K) field, (n, 2) signal that bypasses it, temp-file path or None)."""
+        """The piece, decoded: ((n, out_channels) output, the (n, 2) bypass sum, None).
+
+        No (n, K) field exists at any point. Every source writes row blocks into a `_FieldSink`, which decodes each
+        block before the next one is written, and a worker decodes into its own output, so there is no partial field
+        either. The third item is always None: there is no temp file to clean up any more.
+        """
         n = max([len(y) for _, y, _ in self.sources] + [0])
         if self.reverb is not None and not self.room_only:
             n = max(n, len(self.reverb))
-        bus, path = _alloc(n, self.k)
-        stereo = np.zeros((n, 2))
+        bus = self._sink(n)
+        stereo = np.zeros((n, 2), np.float32)          # float32: every field and every tap signal is float32 in the end
         sends, states = {}, self._states(n)
         self._place_all(bus, stereo, sends, states, n)
         for refl, send in sends.values():
@@ -604,32 +755,11 @@ class HoaBus:
                 stereo[:len(ret)] += ret[:, :2]
             else:                                         # the shared reverb return, wide: it has no place of its own
                 for ch, az in ((0, -2 * STEREO_DEG), (1, 2 * STEREO_DEG)):
-                    encode(bus, ret[:, ch].astype(float), _hrtf().gains(self.order, az, 0.0)[0])
-        return bus, stereo, path
+                    encode(bus, ret[:, ch], _hrtf().gains(self.order, az, 0.0)[0])
+        return bus.out, stereo, None
 
     def result(self):
-        bus, stereo, path = self.field()
-        try:
-            if self.decode == 'ambix':
-                return ambix(bus)
-            if self.decode == 'speakers':
-                d = allrad_matrix(self.speakers, self.order).astype(np.float32)
-                out = np.zeros((len(bus), len(self.speakers)), np.float32)
-                for a in range(0, len(bus), BLOCK):
-                    out[a:a + BLOCK] = np.asarray(bus[a:a + BLOCK]) @ d.T
-                return out
-            dec = _hrtf().magls(self.order)
-            out = stereo
-            for c in range(self.k):
-                col = np.asarray(bus[:, c], float)
-                if col.any():                             # a long signal, a short filter: overlap-add is the fast way
-                    for e in (0, 1):
-                        out[:, e] += compute.oaconv(col, dec[e, c])[:len(col)]
-            return out.astype(np.float32)
-        finally:
-            if path:
-                del bus
-                try:
-                    os.remove(path)
-                except OSError:
-                    pass
+        out, stereo, _ = self.field()
+        if self.decode == 'binaural':
+            out += stereo                              # the tracks that bypass the field, and the shared reverb return
+        return out.astype(np.float32, copy=False)

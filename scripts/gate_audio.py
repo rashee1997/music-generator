@@ -17,6 +17,7 @@ never decimated; envelopes, section levels and cut/dropout use the 8 kHz copy, w
 
 This module measures only. It has no synthesis, EQ, mixing or preset values.
 """
+import collections
 import os
 import threading
 
@@ -172,7 +173,8 @@ class GateAudio(Signal):
         return int(self.audio.shape[1])
 
 
-_REGISTRY = {}                     # (absolute path, mtime_ns, size) -> GateAudio
+_REGISTRY = collections.OrderedDict()   # (absolute path, mtime_ns, size) -> GateAudio, most recent last
+_REGISTRY_MAX = 2                  # the delivered file, and the one it is compared with (a fold, a second layout)
 _LOCK = threading.RLock()
 
 
@@ -183,6 +185,10 @@ def load(path, y=None, sr=None):
     and the master rows), and each read built its own lazily-cached views, so the decimation, STFT and true-peak
     of one file were computed again per row. Rows measure one file: they get one object and its caches. The key
     carries the file's mtime and size, so a re-rendered file is never described by the old one's measurements.
+
+    The registry is capped (`_REGISTRY_MAX`): a film or a multi-format run loads many files, and an unbounded
+    dict of float64 deliverables plus their caches is a leak in a long process. Evicting one is safe: a caller
+    that still holds the object keeps it alive, it just stops being shared.
     """
     if y is not None:                       # a caller handing its own array is not the file: no sharing
         return GateAudio(path, y=y, sr=sr)
@@ -196,6 +202,10 @@ def load(path, y=None, sr=None):
         if got is None:
             got = GateAudio(path)
             _REGISTRY[key] = got
+            while len(_REGISTRY) > _REGISTRY_MAX:
+                _REGISTRY.popitem(last=False)
+        else:
+            _REGISTRY.move_to_end(key)
     return got
 
 
