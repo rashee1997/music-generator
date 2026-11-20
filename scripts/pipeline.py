@@ -915,7 +915,10 @@ class MusicPipeline:
                 rel = render_targets.filename(extra)
                 extra_draft = os.path.join(os.path.dirname(out_wav) or '.', '_draft_' + rel)
                 resources.release_memory()                  # the last mix's freed memory goes back before the next one starts
-                spatial_render.render_deliverable(score, stems, extra, extra_draft)
+                import soundfile as _sf
+                _m = _sf.info(out_wav)                      # the certified master sets the length of every other format
+                spatial_render.render_deliverable(score, stems, extra, extra_draft,
+                                                  length_s=_m.frames / float(_m.samplerate))
                 rows = []
                 spatial_gate.output_rows(score, extra_draft, rows)
                 spatial_gate.fold_rows(score, out_wav, extra_draft, extra, rows)

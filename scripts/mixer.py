@@ -193,7 +193,7 @@ def apply_dither(x, bits=16, shape='tpdf', rng=None):
     return y.astype(np.float32)
 
 
-def finalize_pcm(out, sr, mm_cfg):
+def finalize_pcm(out, sr, mm_cfg, ceiling_db=None):
     """The last two steps before the write: the DC servo, then the dither. (out float32, PCM subtype).
 
     The servo comes FIRST. Dither puts every sample on the target word's grid; any filter after it moves the samples
@@ -201,6 +201,13 @@ def finalize_pcm(out, sr, mm_cfg):
     # a DC servo: a 4 Hz second-order high-pass, inaudible, removes any slow offset the chain collected
     sos_dc = signal.butter(2, 4.0, btype='high', fs=sr, output='sos')   # kills block-level offsets from the limiter
     out = signal.sosfilt(sos_dc, out, axis=0)
+    if ceiling_db is not None:
+        # the master chain trimmed the true peak to the ceiling BEFORE this filter, and a high-pass moves the edges of
+        # low-frequency content (measured: +0.033 dB on a flute, piano and bass cue, enough to fail delivery.true_peak).
+        # The same last-safety trim, applied to what is actually written.
+        tp = true_peak_db(out, sr)
+        if tp > ceiling_db:
+            out = out * 10 ** ((ceiling_db - tp) / 20.0)
     subtype = 'PCM_24'
     dither_cfg = (mm_cfg or {}).get('dither')
     bits = None
@@ -1898,7 +1905,11 @@ def mix_and_master(score, stems, out_path, master=True, sr=SR, report=True, ctx=
     if over:
         sys.stderr.write(f'[export] {over} samples above full scale before the write (master skipped); '
                          f'the file is hard-clipped there\n')
-    out, dtype_subtype = finalize_pcm(out, sr, mm_cfg)
+    ceiling_db = None
+    if master:             # the ceiling the master chain aimed at, less the write guard, so the written file stays under it
+        ceiling_db = (float(_master_cfg(m, _mix()).get('true_peak', -1.5))
+                      - float(mix_schema.section(_mix(), 'mastering')['true_peak_write_guard_db']))
+    out, dtype_subtype = finalize_pcm(out, sr, mm_cfg, ceiling_db=ceiling_db)
     sf.write(out_path, out, sr, subtype=dtype_subtype)
     mm = _mix().get('mastering') or {}
     if master and mm.get('validate_export', True):

@@ -125,6 +125,19 @@ class Mixer(unittest.TestCase):
         steps = out.astype(np.float64) * 32768.0
         np.testing.assert_allclose(steps, np.round(steps), atol=1e-6)
 
+    def test_the_dc_servo_cannot_push_the_master_over_its_true_peak_ceiling(self):
+        sr = 44100
+        t = np.arange(2 * sr) / sr
+        sq = np.sign(np.sin(2 * np.pi * 20 * t))          # a low-frequency square: the 4 Hz servo overshoots its edges
+        x = np.stack([sq, sq], 1)
+        x = x * 10 ** ((-1.5 - dsp.true_peak_db(x, sr, 4)) / 20.0)     # a master already limited to exactly -1.5 dBTP
+        free, _ = mixer.finalize_pcm(x.copy(), sr, {})
+        self.assertGreater(dsp.true_peak_db(free, sr, 4), -1.49)        # without the guard the servo overshoots
+        import mix_schema
+        guard = mix_schema.section({}, 'mastering')['true_peak_write_guard_db']
+        held, _ = mixer.finalize_pcm(x.copy(), sr, {}, ceiling_db=-1.5 - guard)
+        self.assertLess(dsp.true_peak_db(held, sr, 4), -1.5)               # strictly under, as the gate compares
+
     def test_wrap_loop_crossfade_is_continuous_at_both_ends(self):
         sr = 8000
         n, tail = 4 * sr, sr // 2
@@ -226,6 +239,19 @@ class Spatial(unittest.TestCase):
 
 
 class Render(unittest.TestCase):
+    def test_a_deliverable_is_conformed_to_the_masters_length(self):
+        from spatial_engine import render as sr_
+        a = np.full((1000, 4), 0.2, np.float32)
+        shorter = sr_.conform_length(a, 1500)
+        self.assertEqual(shorter.shape, (1500, 4))
+        self.assertEqual(float(np.abs(shorter[1000:]).max()), 0.0)          # padded with silence
+        longer = sr_.conform_length(a, 600)
+        self.assertEqual(longer.shape, (600, 4))
+        self.assertLess(abs(float(longer[-1, 0])), 0.01)                     # cut with a short fade, not a step
+        self.assertAlmostEqual(float(longer[0, 0]), 0.2, places=6)
+        self.assertIs(sr_.conform_length(a, 1000), a)
+
+
     def test_exported_stems_keep_samples_above_full_scale(self):
         import pipeline
         stems = {'a': np.full((4000, 2), 1.5, np.float32)}

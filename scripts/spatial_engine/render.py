@@ -453,8 +453,29 @@ def to_rate(audio, sr, rate, ceiling=None):
     return out
 
 
-def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None):
-    """Build one requested deliverable and write it. The target preset's `renderer` names the route."""
+def conform_length(audio, n):
+    """`audio` made exactly `n` samples long. Every format trims its own silent tail from its own mix, and the field,
+    object and loudspeaker mixes have different tails, so the files of one piece ended up tens of milliseconds apart
+    (a 36-channel AmbiX 27 ms shorter than its stereo master). Shorter: padded with silence. Longer: cut, with a 10 ms
+    fade so the cut is not a step."""
+    n = int(n)
+    if len(audio) == n:
+        return audio
+    if len(audio) < n:
+        pad = np.zeros((n - len(audio),) + audio.shape[1:], audio.dtype)
+        return np.concatenate([audio, pad], axis=0)
+    out = np.array(audio[:n])
+    k = min(n, int(0.010 * 44100))
+    if k > 1:
+        out[-k:] *= np.linspace(1.0, 0.0, k, dtype=out.dtype).reshape((k,) + (1,) * (out.ndim - 1))
+    return out
+
+
+def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None, length_s=None):
+    """Build one requested deliverable and write it. The target preset's `renderer` names the route.
+
+    `length_s` is the length of the certified master: every format that is built on its own is conformed to it, so
+    the files of one piece start and end together."""
     target = config.target(target_name) or {}
     renderer = target.get('renderer')
     rate = int(target.get('rate_hz') or sr)
@@ -474,6 +495,8 @@ def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None):
         import os as _os
         from . import adm
         audio, bus = adm_mix(score, stems, target, sr, ctx)
+        if length_s is not None:
+            audio = conform_length(audio, round(float(length_s) * sr))
         audio = to_rate(audio, sr, rate, ceiling)   # rescales at the target rate, re-alarms its true peak
         out_path = adm.write(path, audio, rate, bus.xml(len(audio), rate), bus.chna())
         report = bus.report(len(audio), rate)
@@ -494,5 +517,7 @@ def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None):
         return path
     else:
         raise ValueError(f'deliverable "{target_name}" names renderer {renderer!r}, which the engine does not have')
+    if length_s is not None:
+        audio = conform_length(audio, round(float(length_s) * sr))
     write(path, to_rate(audio, sr, rate, ceiling), rate, subtype=subtype)
     return path

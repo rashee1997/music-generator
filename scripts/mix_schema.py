@@ -279,6 +279,9 @@ DEFAULTS = {
         'min_crest_db': 8.0,           # suggest_master_target: below this much crest a target is called infeasible
         'lra_target_lu': None,         # only reported, never forced
         'crest_floor_db': 0.0,         # if limiting would take crest below this, stop and report
+        # the write (float32, then a 24-bit word) moves a true peak by about 1e-6 dB, so a peak trimmed to exactly the
+        # ceiling can land a hair over it. The last safety trim after the DC servo aims this far below the ceiling.
+        'true_peak_write_guard_db': 0.001,
         'validate_export': True,       # check the written file: peak, true peak, length, channels
         'report': True,
     },
@@ -403,6 +406,7 @@ RANGES = {
     ('lead_carve', 'attack_ms'): ('num', 0.0, 100.0),
     ('lead_carve', 'release_ms'): ('num', 5.0, 2000.0),
     ('mastering', 'crest_floor_db'): ('num', 0.0, 30.0),
+    ('mastering', 'true_peak_write_guard_db'): ('num', 0.0, 0.5),
     ('mastering', 'highpass_order'): ('num', 1.0, 6.0),
     ('immersive', 'max_elevation'): ('num', 0.0, 90.0),
     ('immersive', 'min_height_tracks'): ('num', 0.0, 24.0),
