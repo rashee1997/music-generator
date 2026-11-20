@@ -20,12 +20,16 @@ wide shot, detail confined to one corner as an insert. Every threshold is a
 preset key; the defaults are starting values and say so in the preset's
 `provenance`.
 """
-import os
 import subprocess
 
 import numpy as np
 
 SCALES = ('wide', 'medium', 'close', 'insert')
+
+
+def luma_of(rgb):
+    """Rec. 709 luma, 0..1, of an (h, w, 3) float RGB frame in 0..255. The one weighting every module uses."""
+    return (0.2126 * rgb[:, :, 0] + 0.7152 * rgb[:, :, 1] + 0.0722 * rgb[:, :, 2]) / 255.0
 
 
 def block_contrast(luma, grid=(16, 9)):
@@ -125,7 +129,7 @@ def frame_at(path, t_s, width, height, timeout=20):
     if p.returncode != 0 or len(p.stdout) < need:
         return None
     rgb = np.frombuffer(p.stdout, np.uint8, count=need).reshape(int(height), int(width), 3).astype(np.float32)
-    return (0.2126 * rgb[:, :, 0] + 0.7152 * rgb[:, :, 1] + 0.0722 * rgb[:, :, 2]) / 255.0
+    return luma_of(rgb)
 
 
 def sample_scene_frames(path, scenes, cfg, samples_per_scene=None):
@@ -156,4 +160,4 @@ def available():
 
 
 __all__ = ['SCALES', 'block_contrast', 'subject_box', 'classify', 'scene_scale',
-           'frame_at', 'sample_scene_frames', 'available', 'os']
+           'frame_at', 'sample_scene_frames', 'available', 'luma_of']

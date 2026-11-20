@@ -29,10 +29,12 @@ The natural-music pipeline plays REAL recorded instrument samples from a SoundFo
 """
 import os
 import sys
+import shutil
 import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 CACHE_DIR = os.environ.get('MUSICGEN_CACHE', os.path.join(os.path.expanduser('~'), '.cache', 'music-generator'))
+DOWNLOAD_TIMEOUT_S = 60     # starting value: per socket operation, so a stalled connection fails instead of hanging
 SF_URLS = [
     # GeneralUser GS (S. Christian Collins): free for any use incl. commercial music, ~32 MB, very good GM set.
     'https://github.com/mrbumpy409/GeneralUser-GS/raw/main/GeneralUser-GS.sf2',
@@ -149,14 +151,20 @@ def _download(dst):
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     last = None
     for url in SF_URLS:
+        tmp = dst + '.part'
         try:
-            tmp = dst + '.part'
-            urllib.request.urlretrieve(url, tmp)
+            with urllib.request.urlopen(url, timeout=DOWNLOAD_TIMEOUT_S) as resp, open(tmp, 'wb') as fh:
+                shutil.copyfileobj(resp, fh, 1 << 20)       # streamed; the timeout applies to every socket read
             if os.path.getsize(tmp) > 5_000_000:
                 os.replace(tmp, dst)
                 return True
         except Exception as e:  # network blocked etc.
             last = e
+        finally:
+            try:
+                os.remove(tmp)                              # a failed or too-small download leaves no .part behind
+            except OSError:
+                pass
     sys.stderr.write(f'[soundbank] download failed: {last}\n')
     return False
 

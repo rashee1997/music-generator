@@ -82,6 +82,32 @@ def _is_attack(mono, k, steps=ATTACK_STEPS, ratio=0.3, reach=8):
     return runs >= steps
 
 
+def _rivals(events, sr, isolate_ms, second_ratio):
+    """[bool] per (sample, amplitude) event: another event within `isolate_ms` is at least `second_ratio` as large.
+
+    Sorted by sample index, the neighbours of an event are a slice found by bisection, not a scan of every event."""
+    n = len(events)
+    if not n:
+        return []
+    ks = np.array([k for k, _ in events], dtype=np.int64)
+    amps = np.array([a for _, a in events], dtype=np.float64)
+    order = np.argsort(ks, kind='stable')
+    ks_s, amps_s = ks[order], amps[order]
+    pos = np.empty(n, dtype=np.int64)
+    pos[order] = np.arange(n)
+    reach = int(np.floor(isolate_ms * sr / 1000.0))        # sample distances are integers: |d| <= reach
+    out = []
+    for i in range(n):
+        k, a = events[i]
+        lo = int(np.searchsorted(ks_s, k - reach, side='left'))
+        hi = int(np.searchsorted(ks_s, k + reach, side='right'))
+        count = int(np.count_nonzero(amps_s[lo:hi] >= second_ratio * a))
+        if amps_s[pos[i]] >= second_ratio * a:
+            count -= 1                                       # the event itself
+        out.append(count > 0)
+    return out
+
+
 def check_clicks(sig, mad_z=8.0, floor_fs=0.02, cluster_gap_ms=1.5, isolate_ms=10.0,
                  second_ratio=0.5, quiet_ms=5.0, run_lpc=True):
     """High-pass MAD residual, clustered into impulse events, plus a Burg LPC residual count.
@@ -118,9 +144,9 @@ def check_clicks(sig, mad_z=8.0, floor_fs=0.02, cluster_gap_ms=1.5, isolate_ms=1
             events.append((k, float(abs(r[k]))))
             spans.append(span)
         kept, attacks = [], 0
+        rivals = _rivals(events, sig.sr, isolate_ms, second_ratio)
         for i, (k, a) in enumerate(events):
-            rival = any(j != i and abs(k2 - k) <= isolate_ms * sig.sr / 1000.0 and a2 >= second_ratio * a
-                        for j, (k2, a2) in enumerate(events))
+            rival = rivals[i]
             if rival:
                 rejected += 1
             elif _is_attack(mono, k):
@@ -224,13 +250,6 @@ def check_cut(sig, boundaries_s, drop_db=12.0, window_ms=20.0, hop_ms=5.0,
     if db.size < 24:
         return _result(0.0, drop_db, 'dB', [], 'too short to judge')
     d = db[:-2] - db[2:]
-    # a fade is a monotone decline over 200 ms, not a step: skip locations inside one
-    fade = np.zeros_like(db, dtype=bool)
-    k = int(round(0.2 / (hop_ms / 1000.0)))
-    for i in range(db.size):
-        a = max(0, i - k)
-        if db[a] - db[i] > 20.0 and db[i] < db[a] - 20.0:
-            fade[i] = True
     floor_ref = float(np.median(db))
     best, hits = 0.0, []
     for i in np.flatnonzero(d > drop_db):
@@ -458,15 +477,16 @@ def check_dc(sig, dc_max=0.001, drift_max=0.001):
 def check_clipping(sig, full=0.999):
     """Samples at or above `full`, plus flat-top runs of 3+ samples."""
     a = np.abs(sig.audio)
-    count = int(np.sum(a >= full))
+    clipped = a >= full
+    count = int(np.count_nonzero(clipped))
+    # One flat-top run = a run of 3+ consecutive clipped samples in one channel: count the samples where the third
+    # consecutive clipped sample arrives (a rising edge of "this and the two before it are all clipped").
     flats = 0
-    for c in range(a.shape[1]):
-        x = a[:, c] >= full
-        run = 0
-        for v in x:
-            run = run + 1 if v else 0
-            if run == 3:
-                flats += 1
+    if clipped.shape[0] >= 3:
+        three = clipped[2:] & clipped[1:-1] & clipped[:-2]      # this sample and the two before it are all clipped
+        starts = three.copy()
+        starts[1:] &= ~three[:-1]                               # keep only the first sample of each such stretch
+        flats = int(np.count_nonzero(starts))
     detail = f'{count} sample(s) at/above {full:g} FS, {flats} flat-top run(s)'
     return _result(count, 0.0, 'samples', [], detail, flat_runs=flats)
 
@@ -486,7 +506,8 @@ def check_flatness(sig, threshold=0.10, level_floor_db=-50.0, min_ms=50.0, hop=5
         run = run + 1 if v else 0
         if run >= run_need:
             t = (i - run + 1) * hop / float(sig.sr)
-            hits.append(t)
+            if run == run_need:                  # one window per sustained run, not one per frame of the run
+                hits.append(t)
             best = max(best, float(np.max(fl[i - run + 1:i + 1])))
     detail = (f'max sustained flatness {best:.2f} (limit {threshold:g}) over {len(hits)} window(s) '
               f'>= {min_ms:.0f} ms')
@@ -531,10 +552,11 @@ def check_tempo(sig, bpm_ref, tol_bpm=2.0, tol_pct=2.0, drift_bpm=2.0):
                    measured_bpm=bpm, drift_bpm=drift, fail=bool(fail))
 
 
-def section_bounds(score, dur, sheet=None):
-    """[{name, start_s, end_s, dyn}] from the score plan or the direction sheet, else four equal parts."""
+def section_bounds(score, dur, sheet=None, problems=None):
+    """[{name, start_s, end_s, dyn}] from the score plan or the direction sheet, else four equal parts.
+    A tempo map that cannot be built raises, unless `problems` (a list) is given to receive the reason."""
     import gate_clock
-    _sec = gate_clock.seconds_fn(score)
+    _sec = gate_clock.seconds_fn(score, problems)
     bpb = gate_clock.bar_beats(score)
     bar_s = float(_sec(bpb))
     out = []

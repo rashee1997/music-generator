@@ -160,7 +160,7 @@ def normalise_block(block):
 
 def _pitched(score):
     for t in score.get('tracks') or []:
-        if roles.canonical(t.get('role') or '') in ('drum', 'sfx', 'environment'):
+        if roles.canonical(t.get('role') or '') in ('drum', 'fx', 'environment'):
             continue
         for n in t.get('notes') or []:
             yield t, n
@@ -262,7 +262,7 @@ def m_thin_texture(score):
 def m_min_silence_long(score):
     bpm, end = _span(score)
     events = sorted((float(n.get('t', 0.0)), float(n.get('t', 0.0)) + float(n.get('d', 0.0) or 0.0))
-                    for _t, n in _pitched(score) if roles.canonical(_t.get('role') or '') != 'sfx')
+                    for _t, n in _pitched(score) if roles.canonical(_t.get('role') or '') != 'fx')
     if not events:
         return True, 'the piece is silent'
     reach = events[0][1]
@@ -308,7 +308,7 @@ def m_cut_synced_hits(score):
 def m_wide_range(score):
     for t in score.get('tracks') or []:
         ps = [float(n.get('p', n.get('pitch', 60))) for n in t.get('notes') or []
-              if roles.canonical(t.get('role') or '') not in ('drum', 'sfx', 'environment')]
+              if roles.canonical(t.get('role') or '') not in ('drum', 'fx', 'environment')]
         if ps and max(ps) - min(ps) > 24:
             return True, f'{t.get("name")} spans {int(max(ps) - min(ps))} semitones'
     return False, 'no track spans more than two octaves'

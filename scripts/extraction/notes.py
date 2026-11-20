@@ -51,6 +51,15 @@ def allowed_mask(spec, priors, cfg):
     return m
 
 
+def _cancel(R, p, offs, amount):
+    """Subtract `amount` (harmonics, frames) from the spectrum rows `p + offs` of each frame. A harmonic past the top
+    row is skipped (it has no row to take it from); the old clamp piled every such harmonic onto the top row, where
+    a fancy-indexed `-=` applied only the last of them."""
+    rows = p[None, :] + offs[:, None]
+    h, t = np.nonzero(rows <= R.shape[0] - 1)
+    np.subtract.at(R, (rows[h, t], t), amount[h, t])
+
+
 def pick_pitches(spec, priors, cfg):
     """Per iteration k: pitch row and strength for every frame. Returns (rows[k, T], strength[k, T])."""
     nc = cfg['notes']
@@ -82,7 +91,7 @@ def pick_pitches(spec, priors, cfg):
         sm[1:-1] = np.minimum(A[1:-1], 0.5 * (A[:-2] + A[2:]))
         sm[-1] = np.minimum(A[-1], A[-2])
         env = nc['harmonic_cap'] * A.max(axis=0)[None, :] * (cfg['spectrum']['harmonic_decay'] ** np.arange(len(offs)))[:, None]
-        R[idx, t_idx[None, :]] -= nc['cancel_frac'] * np.minimum(sm, env)
+        _cancel(R, p, np.array(offs), nc['cancel_frac'] * np.minimum(sm, env))
     return np.array(rows), np.array(strength)
 
 
@@ -148,13 +157,18 @@ def suppress_leakage(notes, cfg):
     """Drop a short note beside a much stronger one (a semitone or two away, touching in time): it is spectral leakage or an attack transient."""
     nc = cfg['notes']
     keep = []
+    by_pitch = {}
+    for o in notes:
+        by_pitch.setdefault(o['midi'], []).append(o)
+    reach = int(np.floor(nc['leak_semitones']))
     for n in notes:
         dur = n['end_s'] - n['start_s']
+        near = [o for d in range(-reach, reach + 1) if d for o in by_pitch.get(n['midi'] + d, ())]   # only pitches within reach
         ghost = any(o is not n and 0 < abs(o['midi'] - n['midi']) <= nc['leak_semitones']
                     and ((dur < nc['leak_max_s'] and o['strength'] >= nc['leak_ratio'] * n['strength']
                           and o['start_s'] - nc['leak_touch_s'] <= n['end_s'] and o['end_s'] + nc['leak_touch_s'] >= n['start_s'])
                          or (abs(o['midi'] - n['midi']) <= 1 and o['strength'] >= nc['leak_strong_ratio'] * n['strength']
-                             and min(o['end_s'], n['end_s']) - max(o['start_s'], n['start_s']) >= 0.6 * dur)) for o in notes)
+                             and min(o['end_s'], n['end_s']) - max(o['start_s'], n['start_s']) >= 0.6 * dur)) for o in near)
         if not ghost:
             keep.append(n)
     return keep

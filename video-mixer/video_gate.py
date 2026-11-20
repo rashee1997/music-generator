@@ -37,10 +37,12 @@ def cut_sync_rows(probe, hits, cfg, out):
 
 
 def rows(probe, program_wav, mix_report, profile, cfg, hits=None, out=None):
-    """All picture rows for one program. `cfg` is the delivery preset's `gate` block.
+    """The program-side picture rows only: duration_lock, cut_sync, dialogue_snr, dialogue_band and
+    master_compliance (5 of the 12 `video.*` rows). `cfg` is the delivery preset's `gate` block.
 
-    Returns (rows, offsets). Kept for tools that call the gate directly; the
-    pipeline path uses `gate.pass_rows()` so the row list is never hand-copied.
+    Returns (rows, offsets). Kept for tools that call the gate directly; the complete list
+    (motion_sync, hit_class, grid_phase, hit_density, cue_silence, shot_scale, gating_mode as well)
+    comes from `gate.pass_rows()`, which is the pipeline path, so the row list is never hand-copied.
     """
     out = [] if out is None else out
     import soundfile as sf

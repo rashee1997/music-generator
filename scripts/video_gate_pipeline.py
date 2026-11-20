@@ -29,29 +29,29 @@ for p in (VIDEO, HERE):
 
 
 def score_rows(score):
-    """Picture rows that need only the score. Never raises: a failure becomes a WARN row."""
+    """Picture rows that need only the score. Never raises: a failure becomes a WARN row.
+
+    The rows themselves are `gate.pass_.probe_rows` (one definition, not a copy here); this adds the one row that
+    needs two lengths: the score's own, against the picture's as probed. Without both, the row says so instead
+    of comparing a number with itself.
+    """
     try:
         from gate import rows as R
+        from gate import pass_ as P
     except Exception as exc:                       # video-mixer missing: say so, do not pass
         return [('WARN', 'video.gate', f'video-mixer is not importable: {exc}')]
     video = score.get('video') or {}
-    gate_cfg = dict(video.get('gate_cfg') or {})
-    hits_cfg = dict(video.get('hits_cfg') or {})
-    hits = [dict(h) for h in (video.get('hits') or [])]
-    if not hits and video.get('hits_at'):
-        hits = [dict(t_s=float(t), kind='cut') for t in video['hits_at']]
     out = []
-    duration = float(video.get('duration_s') or 0.0)
-    if duration > 0:
-        picture = float(video.get('picture_duration_s') or duration)
-        R.duration_row({'source': {'duration_s': picture}}, duration, gate_cfg, out)
-    R.cut_sync_row(video.get('cuts') or [], hits, gate_cfg, out)
-    R.motion_sync_row(video.get('motion_beats') or [], hits,
-                      dict(gate_cfg, motion_sync=gate_cfg.get('motion_sync') or {'window_ms': 150.0}), out)
-    R.hit_class_row(hits, dict(hits_cfg, classes=hits_cfg.get('classes') or {}), out)
-    R.hit_density_row(hits, video.get('cuts') or [], duration,
-                      dict(hits_cfg, density=hits_cfg.get('density') or {}), out)
-    R.grid_phase_row(video.get('cut_phase') or {}, gate_cfg, out)
-    R.shot_scale_row(score.get('sections') or video.get('sections') or [],
-                     video.get('scenes') or [], gate_cfg, out)
+    try:
+        picture, own = video.get('picture_duration_s'), video.get('score_duration_s')
+        gate_cfg = dict(video.get('gate_cfg') or {})
+        if picture is None or own is None:
+            out.append(('INFO', 'video.duration_lock',
+                        'not measured: the score carries no independent picture length and score length '
+                        f'(picture_duration_s={picture}, score_duration_s={own})'))
+        else:
+            R.duration_row({'source': {'duration_s': float(picture)}}, float(own), gate_cfg, out)
+        P.probe_rows(score, out)
+    except Exception as exc:
+        out.append(('WARN', 'video.gate', f'picture rows did not run: {type(exc).__name__}: {exc}'))
     return out

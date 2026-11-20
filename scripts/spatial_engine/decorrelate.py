@@ -21,7 +21,10 @@ def _coefficient(seed, max_delay_ms, sr):
     """A deterministic all-pass coefficient in the range the layout allows, from a channel seed."""
     rng = np.random.default_rng(int(seed))
     # the coefficient sets the group delay; keep it inside the layout's allowed window
-    max_a = float(np.clip(1.0 - 1.0 / max(2.0, float(max_delay_ms) * sr / 1000.0), 0.0, 0.95))
+    # a first-order all-pass delays DC by (1 + a) / (1 - a) samples, so N samples allow a = (N - 1) / (N + 1)
+    # (not 1 - 1/N, which gave about 2N - 1); 0.95 (39 samples at DC) stays the stability cap
+    n_max = max(2.0, float(max_delay_ms) * sr / 1000.0)
+    max_a = float(np.clip((n_max - 1.0) / (n_max + 1.0), 0.0, 0.95))
     return float(rng.uniform(0.2, max(0.25, max_a)))
 
 

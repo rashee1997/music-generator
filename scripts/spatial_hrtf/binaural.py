@@ -35,6 +35,7 @@ SR = 44100
 ORDER = 5
 SPEED_OF_SOUND = 343.0
 _cache = {}
+MAGLS_VERSION = 2      # bump when the way a MagLS set is built or stored changes: it is part of the disk-cache tag
 _dataset = {'path': None, 'name': 'fabian'}
 
 
@@ -82,16 +83,39 @@ def _load_hrirs(sr=SR):
 def magls(order=ORDER):
     """(2, (order+1)^2, 256) filters from harmonic signals to the left / right ear. Built once per head set (about 4 s),
     then kept on disk."""
-    key = _dataset['path'] or 'fabian'
+    src = _dataset['path'] or os.path.join(data.HRIR_DIR, f'HRIRs_default_{SR}.mat')
+    try:
+        st = os.stat(src)
+        key = (src, st.st_mtime_ns, st.st_size)      # a file replaced in place is a different set, in memory too
+    except OSError:
+        key = (src, None, None)
     if (order, key) not in _cache:
-        tag = hashlib.sha1(key.encode('utf-8')).hexdigest()[:10]
+        tag = _magls_tag(src, order)
         path = os.path.join(os.path.dirname(data.HRIR_DIR), f'magls_o{order}_{SR}_{tag}.npy')
-        if os.path.exists(path):
+        if tag and os.path.exists(path):
             _cache[(order, key)] = np.load(path)
         else:
             _cache[(order, key)] = decoder.magls_bin(_load_hrirs(SR), order)
-            np.save(path, _cache[(order, key)].astype(np.float32))
+            if tag:
+                np.save(path, _cache[(order, key)].astype(np.float32))
     return _cache[(order, key)]
+
+
+def _magls_tag(src, order):
+    """Disk-cache tag of a MagLS set: SHA-256 of the head file's bytes, of the decoder source that builds the set,
+    and MAGLS_VERSION, so replacing the file in place or changing the decoder never reuses stale filters. '' when the
+    file cannot be read (nothing is then cached on disk)."""
+    h = hashlib.sha256()
+    try:
+        for path in (src, decoder.__file__):
+            with open(path, 'rb') as f:
+                for chunk in iter(lambda: f.read(1 << 20), b''):
+                    h.update(chunk)
+            h.update(b'|')
+    except OSError:
+        return ''
+    h.update(f'v{MAGLS_VERSION}|o{order}|sr{SR}'.encode('ascii'))
+    return h.hexdigest()[:16]
 
 
 def gains(order, azimuth_deg, elevation_deg):
@@ -299,7 +323,7 @@ def spatialize(audio, azimuth_deg=0.0, elevation_deg=0.0, distance_m=1.5, sr=SR,
         x = _doppler(x, d_t, sr)
     out = _stft_place(x, az_t, el_t, order, sr)
     out *= (1.0 / np.maximum(1.0, d_t))[:, None]
-    out = _air(out, float(np.max(d_t)), temp_c, rh, sr)
+    out = _air_moving(out, d_t, temp_c, rh, sr)
     if near_field:
         out = apply_near_field(out, az_t, el_t, d_t, near_field, sr)
     return out.astype(np.float32)
@@ -315,29 +339,68 @@ def _doppler(x, dist_t, sr, c=SPEED_OF_SOUND):
     return CubicSpline(np.arange(n), x)(idx).astype(float)
 
 
-def _stft_place(x, az_t, el_t, order=ORDER, sr=SR, block=1024, hop=256):
+def _stft_place(x, az_t, el_t, order=ORDER, sr=SR, block=1024, hop=256, chunk=128):
     """Time-varying binaural filter in the STFT domain: each frame takes the direction at that instant, so a crossing
-    source gets its cue updated every `hop` samples (~6 ms) instead of at a gain-update rate. OLA for the periodic Hann
-    window with a 4x overlap is exact for a constant filter, so a still source is unaffected."""
+    source gets its cue updated every `hop` samples (~6 ms) instead of at a gain-update rate.
+
+    Each frame is Hann-windowed, filtered by a true linear convolution (both transforms are zero-padded to
+    >= block + taps - 1, so the filter's tail does not wrap into the frame's start) and overlap-added; the sum is
+    divided by the sum of the analysis windows, which makes a still source exactly x * h. The gains of all frame
+    directions are evaluated together, `chunk` frames at a time."""
     dec = magls(order)
+    taps = dec.shape[-1]
+    nfft = 1 << int(np.ceil(np.log2(block + taps - 1)))
     n = len(x)
     pad = block
     xp = np.concatenate([np.zeros(pad), x, np.zeros(pad)])
     w = signal.get_window('hann', block, fftbins=True)
-    out = np.zeros((len(xp), 2))
+    out = np.zeros((len(xp) + nfft - block, 2))
     wsum = np.zeros(len(xp))
-    pos = np.clip((np.arange(0, len(xp) - block + 1, hop) + block / 2.0 - pad) / max(1, n - 1), 0.0, 1.0)
+    starts = np.arange(0, len(xp) - block + 1, hop)
+    pos = np.clip((starts + block / 2.0 - pad) / max(1, n - 1), 0.0, 1.0)
     k = (pos * (n - 1)).astype(int)
-    for i0, kk in zip(range(0, len(xp) - block + 1, hop), k):
-        seg = xp[i0:i0 + block] * w
-        X = np.fft.rfft(seg)
-        g = gains(order, az_t[kk], el_t[kk])[0]
+    az_t, el_t = np.asarray(az_t, float), np.asarray(el_t, float)
+    for c0 in range(0, len(starts), chunk):
+        sl = slice(c0, c0 + chunk)
+        st, kk = starts[sl], k[sl]
+        segs = xp[st[:, None] + np.arange(block)[None, :]] * w
+        X = np.fft.rfft(segs, nfft, axis=1)
+        g = gains(order, az_t[kk], el_t[kk])                                   # (F, (order+1)^2)
         for e in (0, 1):
-            H = np.fft.rfft(g @ dec[e], block)
-            out[i0:i0 + block, e] += np.fft.irfft(X * H, block) * w
-        wsum[i0:i0 + block] += w * w
+            H = np.fft.rfft(g @ dec[e], nfft, axis=1)                          # (F, nfft/2+1)
+            y = np.fft.irfft(X * H, nfft, axis=1)
+            for i0, row in zip(st, y):
+                out[i0:i0 + nfft, e] += row
+        for i0 in st:
+            wsum[i0:i0 + block] += w
+    out = out[:len(xp)]
     out /= np.maximum(wsum, 1e-9)[:, None]
     return out[pad:pad + n]
+
+
+def _air_moving(y, dist_t, temp_c, rh, sr):
+    """Air loss for a source whose distance changes: ISO 9613-1 for the path beyond one metre at each instant.
+    The filters of a grid of distances (about 1 m apart, spanning the move) are blended by the distance at each
+    sample, so the high end dulls as the source recedes and returns as it nears; a still source is one exact filter."""
+    import airabs
+    extra = np.maximum(np.asarray(dist_t, float) - 1.0, 0.0)
+    lo, hi = float(extra.min()), float(extra.max())
+    if hi <= 0.0:
+        return y
+    if hi - lo < 1e-9:
+        return airabs.apply(y, hi, temp_c=temp_c, rh=rh, sr=sr).astype(float)
+    levels = np.linspace(lo, hi, int(min(64, np.ceil(hi - lo) + 1)) + 1)
+    pos = np.interp(extra, levels, np.arange(len(levels)))
+    j0 = np.minimum(np.floor(pos).astype(int), len(levels) - 2)
+    frac = pos - j0
+    out = np.zeros_like(np.asarray(y, float))
+    for j, d in enumerate(levels):
+        wj = np.where(j0 == j, 1.0 - frac, 0.0) + np.where(j0 == j - 1, frac, 0.0)
+        if not wj.any():
+            continue
+        yj = airabs.apply(y, d, temp_c=temp_c, rh=rh, sr=sr).astype(float) if d > 0 else np.asarray(y, float)
+        out += yj * (wj[:, None] if out.ndim == 2 else wj)
+    return out
 
 
 def spatialize_pair(audio, azimuth_deg, elevation_deg, distance_m, half_width_deg, **kw):
@@ -403,7 +466,7 @@ def reflections(audio, azimuth_deg, distance_m, refl, sr=SR, order=ORDER, path_p
 
     if taps:
         for t in taps:
-            extra = max(0.0, float(t['distance_m']) - dist)
+            extra = max(0.0, float(t['distance_m']) - float(t.get('direct_m', dist)))   # the room's own (clamped) direct path
             level = (ref / (dist + extra)) if path_physics else 1.0
             y = _place_tap(x * level, t['delay_ms'], t['coeffs'], dec, order,
                            (t['azimuth'], t['elevation']), sr)

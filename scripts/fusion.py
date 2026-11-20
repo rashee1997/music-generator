@@ -39,6 +39,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import theory  # noqa: E402  (its MODES include the world scales)
+import roles as rolelib  # noqa: E402  (the one role vocabulary: lead and vocal are the figure, like melody)
 import soul    # noqa: E402  (what each culture needs to feel alive; see references/scoring/cultural-soul.md)
 
 # Sources for the rhythm and scale facts are listed in references/cultures-fusion.md.
@@ -81,8 +82,9 @@ def _pcs_mod12(scale):
 
 
 def _has_aug_second(scale):
-    steps = [(b - a) % 12 for a, b in zip(theory.MODES[scale], theory.MODES[scale][1:])]
-    return len(theory.MODES[scale]) == 7 and 3 in steps
+    s = list(theory.MODES[scale])
+    steps = [b - a for a, b in zip(s, s[1:] + [s[0] + 12])]       # includes the closing step back to the octave
+    return len(s) == 7 and 3 in steps
 
 
 def plan(cultures, key='D', style=None, pocket=False):
@@ -284,7 +286,7 @@ def shape_for_soul(tracks, fp, bb):
     """Make the parts the soul asks for. Call and response: the melody is split by 4-bar phrases into a call and an
     answer, on two voices. Breath: every 4-bar phrase ends with a rest of soul.breath_beats before the next one."""
     req = fp.get('soul') or {}
-    mel = [t for t in tracks if t.get('role') == 'melody' and len(t.get('notes', [])) >= 4]
+    mel = [t for t in tracks if rolelib.is_lead(t.get('role')) and len(t.get('notes', [])) >= 4]
     if not mel:
         return tracks
     lead = mel[0]
@@ -298,11 +300,11 @@ def shape_for_soul(tracks, fp, bb):
         tracks.append(dict(name='answer', instrument=inst, role='counter', notes=answer, gain_db=-3))
         # 3-Tier Hierarchy: Midground chords and arps back off during solo dialogue so lead voices stay clear
         for t in tracks:
-            if t.get('role') in ('chord', 'arp'):
+            if rolelib.canonical(t.get('role')) in ('chord', 'arp'):
                 for n in t.get('notes', []):
                     n['v'] = float(np.clip(n['v'] * 0.82, 0.05, 1.0))
     breath = float(req.get('breath_beats', 0.0))
-    melodic = [t for t in tracks if t.get('role') in ('melody', 'counter') and t.get('notes')]
+    melodic = [t for t in tracks if (rolelib.is_lead(t.get('role')) or rolelib.canonical(t.get('role')) == 'counter') and t.get('notes')]
     if breath > 0:
         phrase = 2 * bb                          # a rest every 2 bars: every 4-bar window holds one
         for t in melodic:

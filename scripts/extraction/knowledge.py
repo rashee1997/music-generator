@@ -100,10 +100,10 @@ def build_pitch_table(a4=440.0, harmonics=12):
         ra = (12194.0 ** 2 * f2 ** 2) / ((f2 + 20.6 ** 2) * np.sqrt((f2 + 107.7 ** 2) * (f2 + 737.9 ** 2)) * (f2 + 12194.0 ** 2))
         return float(20 * np.log10(ra) + 2.0)
 
-    from .music_db import note_to_midi
+    from .music_db import hz, note_to_midi
     table = {}
     for m in range(128):
-        f = a4 * 2.0 ** ((m - 69) / 12.0)
+        f = hz(m, a4=a4)
         ladder = []
         for h in range(1, harmonics + 1):
             x = m + 12 * np.log2(h)

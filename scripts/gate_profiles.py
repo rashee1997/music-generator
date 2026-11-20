@@ -476,6 +476,7 @@ def _merge_profile(name, allp):
         flags |= set(p.get('flags', []))
         focus = presets._deep_merge(focus, p.get('focus') or {})
         for rid, cfg in (p.get('rows') or {}).items():
+            rid = canonical(rid)            # mode()/param() look rows up by canonical id: store them the same way
             rows[rid] = presets._deep_merge(rows.get(rid, {}), cfg)
     return flags, rows, focus
 

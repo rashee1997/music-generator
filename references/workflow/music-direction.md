@@ -276,6 +276,14 @@ Rules:
 5. **What the metrics cannot say stays said.** `expression_report.py` measures arousal cues and melodic variety from notes.
    It does not measure valence, taste or whether the theme is good; say so in the report.
 
+### 2.12 The craft pass
+
+After the sheet is filled and before any note, answer the six questions in [`director-craft.md`](director-craft.md) section 1:
+the hook, the arc, the density map, the lanes, the contrast and the ending. Each answer goes into a field above
+(`motifs`, `sections`, `mix_intent`, `expression`), so nothing new is added to the sheet. The same file lists the
+failures that make a piece read as generated and the counter for each, the rules for blending traditions, and the review
+after the render. A ringtone, alert or loop adds [`short-form-and-ringtones.md`](../scoring/short-form-and-ringtones.md).
+
 ## 3. Decide in the order listeners weigh cues
 
 Mode is the strongest cue for happy and sad; tempo, register, dynamics, articulation and timbre follow, and the cues

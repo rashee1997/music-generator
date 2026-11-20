@@ -39,28 +39,17 @@ import sys
 import warnings
 
 import numpy as np
-from scipy.signal import lfilter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
-from vocal_engine import config as _config, data as _data, ensemble as _ensemble, performance as _perf, tract as _tract  # noqa: E402
-from vocal_engine.utils import smooth_noise as _smooth_noise_fast  # noqa: E402
+from vocal_engine import config as _config, data as _data, ensemble as _ensemble, performance as _perf  # noqa: E402
 
 INSTRUMENTS = {'choir_formant', 'hum_formant', 'voice_formant', 'throat_formant', 'chant_formant'}
 _DEF = _data.defaults()
 VOWELS = {k: tuple(v) for k, v in _DEF['tract']['vowels'].items()}
 VOCAL_STYLES = _data.styles()
-BANDWIDTH = tuple(_DEF['tract']['bandwidths'])
-TRACT_GAIN = tuple(_DEF['tract']['gains'])
-def _smooth_noise(rng, n, sr, rate_hz=6.0):
-    return _smooth_noise_fast(rng, n, sr, rate_hz)
-
-
-def _resonator(x, f, bw, sr):
-    """Two-pole resonator with unity gain at its centre frequency (the old normalisation was evaluated wrongly)."""
-    return _tract.resonate(x, f, bw, sr)
 
 
 def sing(midi, dur, sr, rng, vowel='a', vib_cents=28.0, vib_hz=5.3, vib_delay=0.35, glide_cents=0.0,
@@ -68,6 +57,8 @@ def sing(midi, dur, sr, rng, vowel='a', vib_cents=28.0, vib_hz=5.3, vib_delay=0.
          style=None, bandwidths=None):
     """One note through the phrase engine, peak-normalised to `gain` (the legacy contract). For performances use
     render_choir: nothing there is normalised per note."""
+    if not float(dur) > 0.0:
+        raise ValueError(f'sing: dur must be > 0 seconds, got {dur!r}')
     cfg, _ = _config.resolve(dict(vib_cents=vib_cents, vib_hz=vib_hz, vib_delay=vib_delay, breath=breath,
                                   attack=attack, release=release, formant_scale=formant_scale, bandwidths=bandwidths))
     cfg['performance'].update(arch_cents=0.0, end_sag_cents=0.0)

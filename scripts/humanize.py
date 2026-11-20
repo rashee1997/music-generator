@@ -39,6 +39,8 @@ Output event (dict, SECONDS): {"t","dur","p","v"(1-127),"role","beat"}
 
     from humanize import humanize_track, TempoMap, PRESETS
 """
+import sys
+
 import numpy as np
 
 import pattern_audit as pa                          # one definition of "machine gun", shared with the gate
@@ -276,6 +278,9 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
     c.update(TIMING)
     c.update(PRESETS[cfg] if isinstance(cfg, str) else (cfg or {}))
     rng = np.random.default_rng(seed)
+    if not role:                    # a role-less track still plays as a chord part, but it is said, not assumed
+        print('[WARN] humanize_track: no role given, humanized as a chord part. Set the track role (scripts/roles.py).',
+              file=sys.stderr)
     base_role = rolelib.canonical(role) if role else 'chord'
     rd = ROLE.get(base_role, ROLE['chord'])
     if isinstance(articulation, dict):             # an instrument's own articulation, not the role's default

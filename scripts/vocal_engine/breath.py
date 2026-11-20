@@ -32,7 +32,9 @@ compatibility and for a caller that wants one isolated event; the ensemble no lo
 Phrase exhaustion: past `capacity_s * exhaust_start` the pressure falls and breathiness rises (`aspiration_track`).
 """
 import numpy as np
-from scipy.signal import butter, sosfilt
+
+from .utils import bandpass as _bp
+from .utils import lowpass as _lp
 
 
 def _exhaustion(n, sr, B):
@@ -58,16 +60,6 @@ def aspiration_track(n, sr, base, B, onsets, weights=None):
         if m > 0:
             br[o:o + m] += B['aspirate_gain'] * w * np.exp(-np.arange(m) / sr / tau)
     return br
-
-
-def _bp(x, sr, lo, hi, order=2):
-    sos = butter(order, [max(20.0, lo), min(hi, 0.45 * sr)], btype='band', fs=sr, output='sos')
-    return sosfilt(sos, x)
-
-
-def _lp(x, sr, f, order=2):
-    sos = butter(order, min(max(f, 30.0), 0.45 * sr), btype='low', fs=sr, output='sos')
-    return sosfilt(sos, x)
 
 
 def _smooth(x):
@@ -159,8 +151,6 @@ def airflow_env(n, sr, B, spans, jitter=None):
         end = min(gap_end - 0.4 * lead, gap_end - lead + float(np.clip(shift, -0.5 * gap, 0.5 * gap)))
         start = max(gap_start + 0.02, end - dur)
         end = max(start + 0.08, end)
-        if end - start < 0.08:
-            continue
         m = int((end - start) * sr)
         if m < 8:
             continue

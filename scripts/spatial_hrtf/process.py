@@ -54,10 +54,10 @@ def resample_hrirs(hrir_l, hrir_r, fs_hrir, fs_target, jobs_count=1):
                                  int(hrir_l.shape[1] * fs_target / fs_hrir)])
     hrir_r_resampled = np.zeros_like(hrir_l_resampled)
 
-    if jobs_count == 1:
+    if jobs_count <= 1:          # 0 or negative is serial too, never a silent zero set
         hrir_l_resampled = resampy.resample(hrir_l, fs_hrir, fs_target, axis=1)
         hrir_r_resampled = resampy.resample(hrir_r, fs_hrir, fs_target, axis=1)
-    elif jobs_count > 1:
+    else:
         logging.info("Using %i processes..." % jobs_count)
         with multiprocessing.Pool(processes=jobs_count) as pool:
             results = pool.starmap(resampy.resample,

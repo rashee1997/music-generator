@@ -327,6 +327,7 @@ class MonoBus:
 def mono_mix(score, stems, target, sr=44100, ctx=None):
     """The one-channel deliverable: the same mix, summed by a MonoBus, through the same master chain."""
     import mixer
+    from . import master
     ctx = mixer._context_for(score, ctx)
     bus = MonoBus(sr, (target or {}).get('mono'))
     mix = mixer.trim_tail(mixer.mix_stems(score, stems, sr, ctx, bus=bus), sr)
@@ -334,7 +335,7 @@ def mono_mix(score, stems, target, sr=44100, ctx=None):
     # The master chain is a two-channel chain; a one-channel programme goes through it as two identical channels
     # (which is how a mono file is played on a stereo system, and the loudness the target is set on).
     out = mixer.master_chain(np.repeat(mix, 2, axis=1), master_cfg, sr, ctx)
-    out = mixer.fades(out, sr, fout=float(mixer._master_cfg(master_cfg, mixer._mix()).get('fade_out', 0.6)))
+    out = mixer.fades(out, sr, fout=master.resolved(score)['fade_out'])
     REPORT['mono'] = dict(compensation_db=dict(bus.compensation))
     return out[:, :1]
 
@@ -382,12 +383,13 @@ def binaural_mix(score, stems, sr=44100, ctx=None):
     spatial.py when it is not).
     """
     import mixer
+    from . import master
     with _immersive(score, ctx) as bctx:
         mix = mixer.mix_stems(score, stems, sr, bctx)
         mix = mixer.trim_tail(mix, sr)
         master_cfg = dict(score.get('master') or {})
         out = mixer.master_chain(mix, master_cfg, sr, bctx)
-        out = mixer.fades(out, sr, fout=float(master_cfg.get('fade_out', 0.6)))
+        out = mixer.fades(out, sr, fout=master.resolved(score)['fade_out'])
     return out
 
 
@@ -401,13 +403,13 @@ def _level(audio, ref, score, target, sr):
     report (AdmBus.report) and in spatial_gate's adm.loudness row."""
     import mixer
     from . import master
-    cfg = mixer._master_cfg(dict(score.get('master') or {}), mixer._mix())
-    gain_db = float(cfg.get('lufs', -14.0)) - float(mixer.lufs(ref, sr))
+    rs = master.resolved(score)
+    gain_db = rs['lufs'] - float(mixer.lufs(ref, sr))
     if not np.isfinite(gain_db):
         gain_db = 0.0
     ceiling = float(target.get('true_peak_dbtp', -1.5))
     gain_db = min(gain_db, ceiling - 0.05 - max(master.channel_peaks(audio, sr)))
-    return mixer.fades(audio * np.float32(10.0 ** (gain_db / 20.0)), sr, fout=float(cfg.get('fade_out', 0.6)))
+    return mixer.fades(audio * np.float32(10.0 ** (gain_db / 20.0)), sr, fout=rs['fade_out'])
 
 
 def hoa_mix(score, stems, target, sr=44100, ctx=None):

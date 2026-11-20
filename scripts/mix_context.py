@@ -101,7 +101,14 @@ def space_owned(space):
     """True when the space preset lives in a project. A shipped space is a fallback: its reverb and walls
     apply, but its distance law does not override the mix preset."""
     src = (space or {}).get('_source')
-    return bool(src) and not os.path.abspath(src).startswith(presets.SKILL_PRESETS)
+    if not src:
+        return False
+    root = os.path.normcase(os.path.abspath(presets.SKILL_PRESETS))
+    path = os.path.normcase(os.path.abspath(src))
+    try:
+        return os.path.commonpath([root, path]) != root      # a sibling named like the presets dir is not inside it
+    except ValueError:                                       # different drives: certainly not inside
+        return True
 
 
 def resolve(score=None, space_resolver=None, mix_name=None):

@@ -27,9 +27,13 @@ A flag is a question for the composer, not a verdict: a drone or a minimalist os
 import argparse
 import collections
 import json
+import os
 import sys
 
 import numpy as np
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import roles  # noqa: E402  (the one role vocabulary: a figure is melody, lead or vocal)
 
 
 def bar_sigs(notes, bb):
@@ -55,6 +59,24 @@ def best_period(sigs):
 PLUCKED = {'acoustic_guitar', 'nylon_guitar', 'harp', 'kora', 'oud', 'guzheng'}
 BRIGHT = {39: 'clap', 38: 'snare', 40: 'snare', 37: 'rim', 54: 'tambourine'}
 BRIGHT_NAMES = set(BRIGHT.values())
+
+
+def _role(t):
+    """The canonical role of a track ('' when it has none or an unknown one; roles.problems() reports those)."""
+    try:
+        return roles.canonical(t.get('role'), default='')
+    except roles.UnknownRole:
+        return ''
+
+
+def _is_figure(t):
+    """The figure family: melody, lead or vocal."""
+    return roles.is_lead(t.get('role'))
+
+
+def _is_melodic(t):
+    """A line the ear follows: the figure family or a counter-line."""
+    return _is_figure(t) or _role(t) == 'counter'
 
 
 def _vel(n):
@@ -95,7 +117,7 @@ def chord_voicing_and_strum(score):
     rows = []
     for t in score['tracks']:
         inst = str(t.get('instrument', '')).lower()
-        if t.get('role') not in ('chord', 'harmony') and 'piano' not in inst and 'guitar' not in inst:
+        if _role(t) not in ('chord', 'counter') and 'piano' not in inst and 'guitar' not in inst:
             continue
         chords = [c for c in _clusters(t.get('notes', [])) if len(c) >= 3]
         if not chords:
@@ -126,7 +148,7 @@ def choked_resonance(score):
         pct = len(short) / len(ns)
         stac = sum(1 for n in short if str(n.get('art', '')).lower() == 'staccato') / max(len(short), 1)
         avg = float(np.mean([n.get('d', 0) for n in ns]))
-        if pct >= 0.5 and (stac >= 0.5 or (t.get('role') == 'chord' and avg < 0.35)):
+        if pct >= 0.5 and (stac >= 0.5 or (_role(t) == 'chord' and avg < 0.35)):
             rows.append(('FAIL', 'choked_resonance',
                          f"Track '{t['name']}' has {pct:.0%} short staccato notes (d <= 0.42), choking SoundFont body "
                          "resonance. Increase strum durations to 0.6-1.0 beats and use 'legato' articulation."))
@@ -152,7 +174,7 @@ def _machine_run(vv):
 def machine_gun_percussion(score):
     rows = []
     for t in score['tracks']:
-        if t.get('role') != 'drum':
+        if _role(t) != 'drum':
             continue
         by_p = collections.defaultdict(list)
         for n in sorted(t.get('notes', []), key=lambda n: n['t']):
@@ -174,7 +196,7 @@ def machine_gun_percussion(score):
 def percussion_flam(score):
     rows = []
     for t in score['tracks']:
-        if t.get('role') != 'drum':
+        if _role(t) != 'drum':
             continue
         hits = []
         for n in t.get('notes', []):
@@ -203,7 +225,7 @@ def percussion_flam(score):
 def low_interval_mud(score):
     rows = []
     for t in score['tracks']:
-        if t.get('role') not in ('chord', 'pad', 'arp'):
+        if _role(t) not in ('chord', 'pad', 'arp'):
             continue
         chords = [c for c in _clusters(t.get('notes', [])) if len(c) >= 3]
         if not chords:
@@ -230,8 +252,8 @@ def spatial_glue(score):
         return []
     rows = []
     for t in tracks:
-        if 'reverb' in t and float(t['reverb'] or 0) == 0.0 and t.get('role') in ('chord', 'pad', 'arp', 'melody',
-                                                                                  'counter', 'harmony'):
+        if 'reverb' in t and float(t['reverb'] or 0) == 0.0 and (_role(t) in ('chord', 'pad', 'arp', 'counter')
+                                                                                  or _is_figure(t)):
             rows.append(('WARN', 'spatial_glue',
                          f"Track '{t['name']}' has reverb=0 in a '{room}' score, creating a dry stock-MIDI mismatch. "
                          "Set 'reverb': 0.15-0.22 so all acoustic instruments share the room."))
@@ -318,7 +340,7 @@ def melodic_contour_feel(score):
     rows = []
     intent = get_intent_profile(score)
     for t in score.get('tracks', []):
-        if t.get('role') not in ('melody', 'counter', 'lead'):
+        if not _is_melodic(t):
             continue
         raw_notes = sorted(t.get('notes', []), key=lambda n: n['t'])
         notes = [n for n in raw_notes if isinstance(n.get('p'), (int, float))]
@@ -393,10 +415,10 @@ def harmonic_resolution_feel(score):
     """
     rows = []
     intent = get_intent_profile(score)
-    mel_tracks = [t for t in score.get('tracks', []) if t.get('role') in ('melody', 'lead')]
+    mel_tracks = [t for t in score.get('tracks', []) if _is_figure(t)]
     if not mel_tracks:
-        mel_tracks = [t for t in score.get('tracks', []) if t.get('role') == 'counter']
-    harm_tracks = [t for t in score.get('tracks', []) if t.get('role') in ('chord', 'arp', 'pad', 'bass')]
+        mel_tracks = [t for t in score.get('tracks', []) if _role(t) == 'counter']
+    harm_tracks = [t for t in score.get('tracks', []) if _role(t) in ('chord', 'arp', 'pad', 'bass')]
 
     if not mel_tracks or not harm_tracks:
         return rows
@@ -408,14 +430,13 @@ def harmonic_resolution_feel(score):
     scale_pcs = None
     k_obj = score.get('key')
     if hasattr(k_obj, 'scale') and hasattr(k_obj, 'tpc'):
-        scale_pcs = {(k_obj.tpc + deg) % 12 for deg in k_obj.scale}
+        scale_pcs = k_obj.pcs()
     elif isinstance(k_obj, str):
         try:
             import theory
             parts = k_obj.split()
-            k = theory.Key(parts[0], parts[1] if len(parts) > 1 else 'major')
-            scale_pcs = {(k.tpc + deg) % 12 for deg in k.scale}
-        except Exception:
+            scale_pcs = theory.Key(parts[0], parts[1] if len(parts) > 1 else 'major').pcs()
+        except (ValueError, KeyError, IndexError):      # a key the theory module cannot parse: the scale test is skipped
             pass
 
     for t in mel_tracks:
@@ -488,7 +509,7 @@ def groove_pocket_lock(score):
     Fails if pocket_corr < 0.30 over >= 4 bars.
     """
     rows = []
-    rhythm_tracks = [t for t in score.get('tracks', []) if t.get('role') in ('drum', 'arp', 'bass')]
+    rhythm_tracks = [t for t in score.get('tracks', []) if _role(t) in ('drum', 'arp', 'bass')]
     if not rhythm_tracks:
         return rows
 
@@ -545,7 +566,7 @@ def kinematic_effort_feel(score):
     """
     rows = []
     for t in score.get('tracks', []):
-        if t.get('role') not in ('melody', 'counter', 'lead'):
+        if not _is_melodic(t):
             continue
         inst = str(t.get('instrument', '')).lower()
         is_physical = (inst in ACOUSTIC_PHYSICAL_INSTS or any(k in inst for k in ('flute', 'whistle', 'string', 'violin', 'cello', 'bow', 'voice', 'choir', 'brass', 'horn', 'sax', 'reed', 'pipe')))
@@ -611,7 +632,7 @@ def spiral_tension_arc(score):
     num, _ = ts if (isinstance(ts, (list, tuple)) and len(ts) >= 2) else (4, 4)
     w_len = 2 * num
 
-    all_notes = [n for t in score.get('tracks', []) if t.get('role') not in ('drum', 'environment')
+    all_notes = [n for t in score.get('tracks', []) if _role(t) not in ('drum', 'environment')
                  for n in t.get('notes', []) if isinstance(n.get('p'), (int, float))]
     if not all_notes:
         return rows
@@ -706,7 +727,7 @@ def witek_groove_curve(score):
     weights, steps_per_beat, total_bar_steps = build_metric_tree(ts)
     num, _ = ts if (isinstance(ts, (list, tuple)) and len(ts) >= 2) else (4, 4)
 
-    rhythm_tracks = [t for t in score.get('tracks', []) if t.get('role') in ('drum', 'bass', 'arp')]
+    rhythm_tracks = [t for t in score.get('tracks', []) if _role(t) in ('drum', 'bass', 'arp')]
     if not rhythm_tracks:
         return rows
 
@@ -760,7 +781,7 @@ def melodic_information_entropy(score):
     """
     rows = []
     intent = get_intent_profile(score)
-    mel_tracks = [t for t in score.get('tracks', []) if t.get('role') in ('melody', 'counter', 'lead')]
+    mel_tracks = [t for t in score.get('tracks', []) if _is_melodic(t)]
     if not mel_tracks:
         return rows
 
@@ -833,11 +854,12 @@ def cognitive_feel_checks(score):
 def cognitive_metrics(score):
     """Computes exact numerical metrics for Stage 7 release packaging."""
     out = dict(witek_bsi=0.0, melodic_entropy_bits=2.0, spiral_strain_end=0.0)
+    errors = {}                 # a metric that could not be computed keeps its default value AND is named here
     try:
         ts = score.get('ts', [4, 4])
         weights, steps_per_beat, total_bar_steps = build_metric_tree(ts)
         num, _ = ts if (isinstance(ts, (list, tuple)) and len(ts) >= 2) else (4, 4)
-        rhythm_tracks = [t for t in score.get('tracks', []) if t.get('role') in ('drum', 'bass', 'arp')]
+        rhythm_tracks = [t for t in score.get('tracks', []) if _role(t) in ('drum', 'bass', 'arp')]
         rhythm_notes = [n for t in rhythm_tracks for n in t.get('notes', []) if 't' in n]
         if rhythm_notes:
             vels = [_vel(n) for n in rhythm_notes]
@@ -850,11 +872,11 @@ def cognitive_metrics(score):
                        for s in range(total_steps_piece - 1)
                        if s in step_hits and weights[(s + 1) % total_bar_steps] > weights[s % total_bar_steps] and (s + 1) not in step_hits)
             out['witek_bsi'] = round(float(sync / total_bars), 2)
-    except Exception:
-        pass
+    except Exception as e:
+        errors['witek_bsi'] = repr(e)
 
     try:
-        mel_tracks = [t for t in score.get('tracks', []) if t.get('role') in ('melody', 'lead', 'counter')]
+        mel_tracks = [t for t in score.get('tracks', []) if _is_melodic(t)]
         for t in mel_tracks:
             notes = [n for n in sorted(t.get('notes', []), key=lambda n: n['t']) if isinstance(n.get('p'), (int, float))]
             if len(notes) >= 8:
@@ -870,8 +892,8 @@ def cognitive_metrics(score):
                     ics = [-np.log2(P[idx[dp[i]], idx[dp[i + 1]]]) for i in range(len(dp) - 1)]
                     out['melodic_entropy_bits'] = round(float(np.mean(ics)), 2)
                     break
-    except Exception:
-        pass
+    except Exception as e:
+        errors['melodic_entropy_bits'] = repr(e)
 
     try:
         import soul_check
@@ -884,7 +906,7 @@ def cognitive_metrics(score):
 
         CE_key = P_helical_c(float(tonic_pc))
         num, _ = score.get('ts', [4, 4])
-        all_notes = [n for t in score.get('tracks', []) if t.get('role') not in ('drum', 'environment')
+        all_notes = [n for t in score.get('tracks', []) if _role(t) not in ('drum', 'environment')
                      for n in t.get('notes', []) if isinstance(n.get('p'), (int, float))]
         if all_notes:
             total_beats = max(n['t'] + n.get('d', 1.0) for n in all_notes)
@@ -895,9 +917,11 @@ def cognitive_metrics(score):
                 weights = [float(n.get('d', 1.0)) * _vel(n) for n in active]
                 ce = sum(v * w for v, w in zip(vecs, weights)) / (sum(weights) + 1e-9)
                 out['spiral_strain_end'] = round(float(np.linalg.norm(ce - CE_key)), 2)
-    except Exception:
-        pass
+    except Exception as e:
+        errors['spiral_strain_end'] = repr(e)
 
+    if errors:
+        out['_errors'] = errors
     return out
 
 
@@ -945,12 +969,12 @@ def audit(score):
     bb = score['ts'][0]
     flags, info = [], []
     for t in score['tracks']:
-        if t.get('role') == 'environment' or 'notes' not in t or str(t.get('instrument', '')).startswith('env:'):
+        if _role(t) == 'environment' or 'notes' not in t or str(t.get('instrument', '')).startswith('env:'):
             continue
         notes = t['notes']
         if len(notes) < 8:
             continue
-        name, role = t['name'], t.get('role', '')
+        name, role = t['name'], _role(t)
         sigs = [s for s in bar_sigs(notes, bb)]
         filled = [s for s in sigs if s]
         n_bars = len(sigs)
@@ -960,14 +984,14 @@ def audit(score):
         on_beat = np.mean([abs(n['t'] - round(n['t'])) < 1e-6 for n in notes])
         info.append(f'{name:10s} {role:7s} bars {n_bars:3d}  distinct {distinct:3d}  loop-period {period or "-"}  '
                     f'velocity sd {vel.std():.2f}  on-beat {on_beat:.0%}')
-        if t.get('allow_ostinato') or t.get('is_drone') or t.get('is_ostinato') or t.get('role') in ('drone', 'pad'):
+        if t.get('allow_ostinato') or t.get('is_drone') or t.get('is_ostinato') or role in ('drone', 'pad'):
             continue
         if gp.on('pattern.drums_few') and role == 'drum' and n_bars >= 8 and distinct <= max(2, n_bars // P('pattern.drums_few', 'distinct_div')):
             flags.append(f'{name}: the drums play {distinct} different bar(s) in {n_bars}. Add fills, dropouts, a different groove in the chorus, ghost notes')
         if (gp.on('pattern.loop_short') and role in ('chord', 'pad', 'arp', 'bass') and n_bars >= P('pattern.loop_short', 'min_bars')
                 and period and period <= P('pattern.loop_short', 'max_period_bars') and distinct <= P('pattern.loop_short', 'max_distinct')):
             flags.append(f'{name}: loops every {period} bar(s) for the whole piece. Change the figure between sections, add a pickup, a variation every 4th bar')
-        if gp.on('pattern.melody_notes') and role in ('melody', 'counter') and len(notes) >= 12:
+        if gp.on('pattern.melody_notes') and _is_melodic(t) and len(notes) >= 12:
             durs = {round(n['d'], 2) for n in notes}
             if len(durs) < P('pattern.melody_notes', 'min_lengths'):
                 flags.append(f'{name}: only {len(durs)} note length(s). Mix long and short notes, add a rest, a held note, a pickup')
@@ -987,7 +1011,7 @@ def audit(score):
     dyn = [d[1] for d in score.get('dynamics', [])]
     if gp.on('pattern.flat_dynamics') and dyn and max(dyn) - min(dyn) < P('pattern.flat_dynamics', 'min_range_frac') * max(float(np.mean(dyn)), 1e-6):
         flags.append(f'dynamics: the whole piece stays between {min(dyn):.2f} and {max(dyn):.2f}. Build and release: a quiet intro, a peak, a breath before it')
-    drums = [t for t in score['tracks'] if t.get('role') == 'drum']
+    drums = [t for t in score['tracks'] if _role(t) == 'drum']
     if drums and gp.on('pattern.four_on_floor'):
         kicks = [n for n in drums[0]['notes'] if n['p'] == 'kick']
         on = np.mean([abs(n['t'] - round(n['t'])) < 1e-6 for n in kicks]) if kicks else 0
@@ -1001,7 +1025,8 @@ def main():
     ap.add_argument('score')
     ap.add_argument('--strict', action='store_true')
     a = ap.parse_args()
-    score = json.load(open(a.score, encoding='utf-8'))
+    with open(a.score, encoding='utf-8') as fh:
+        score = json.load(fh)
     info, flags = audit(score)
     acoustic = acoustic_checks(score)
     print('\n'.join(info))

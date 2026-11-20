@@ -21,7 +21,6 @@ pushed by turbulence until adjacent leaves touch. The sound is those contacts: s
 following the gust rather than being modulated by an LFO.
 
     leaf_events(seconds, flow_speed, leaf_count) -> [(time, amplitude, size)]
-    branch_motion(seconds, flow_speed)           -> (displacement, contact_rate)
 
 What is not modelled and is said plainly: the aerodynamics of an individual leaf (flutter instability, vortex
 shedding at the tip) and the acoustics of a canopy (scattering, absorption over many leaves) are beyond this module.
@@ -60,22 +59,6 @@ def leaf_events(seconds, flow_speed=3.0, leaf_count=4000.0, rng=None, gust=None)
         amps = amps * np.clip(gust[idx], 0.05, 2.5)
     sizes = np.exp(0.4 * rng.standard_normal(times.size))
     return times, np.clip(amps, 0.05, 2.0), np.clip(sizes, 0.2, 3.0)
-
-
-def branch_motion(seconds, sr, flow_speed=4.0, stiffness=1.0, rng=None):
-    """Bending displacement of a branch and the rate at which its leaves and twigs make contact.
-
-    Displacement is the filtered gust (a branch is a low-pass on turbulence); the contact rate follows |velocity| of
-    the branch, which is the derivative of that displacement, so contacts concentrate where the branch moves fastest.
-    """
-    rng = rng or np.random.default_rng(0)
-    n = max(1, int(seconds * sr))
-    g = gust_envelope(seconds, sr, rng)
-    k = max(2, int(0.12 * sr / max(stiffness, 0.05)))
-    disp = np.convolve(g, np.ones(k) / k, 'same')
-    disp = (disp - disp.mean()) * (flow_speed / 4.0)
-    vel = np.abs(np.diff(disp, prepend=disp[0])) * sr
-    return disp, np.clip(vel / (vel.max() + 1e-9), 0.0, 1.0)
 
 
 def failure_stages(material, energy_j=1.0, rng=None):

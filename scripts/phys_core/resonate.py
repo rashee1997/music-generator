@@ -105,11 +105,6 @@ def bubble(f_hz, t60_s=0.03, dur_s=0.06, sr=44100, rise=0.1, pitch=1.0):
     return np.exp(-d * t) * np.sin(2 * np.pi * f0 * (t + 0.5 * rise * d * t * t))
 
 
-def bubble_radius(f_hz):
-    """Minnaert radius in metres for a resonance frequency: r = 3.26 / f."""
-    return 3.26 / max(float(f_hz), 1.0)
-
-
 def bubble_frequency(radius_m):
     """Minnaert frequency for a radius in metres: f = 3.26 / r."""
     return 3.26 / max(float(radius_m), 1e-6)

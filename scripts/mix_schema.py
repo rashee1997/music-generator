@@ -164,7 +164,8 @@ DEFAULTS = {
         'makeup_db': 0.0,
         'parallel': 1.0,               # 1.0 = serial; 0.5 = parallel (NY) compression
         'multiband': None,             # [{lo, hi, threshold_db, ratio, attack_ms, release_ms}]
-        'dynamic_eq': None,            # [{f, q, threshold_db, ratio, attack_ms, release_ms, gain_db}]
+        'dynamic_eq': None,            # [{f, q, threshold_db, ratio, attack_ms, release_ms, knee_db, gain_db}]
+        'comp': None,                  # {thr, ratio, attack, release} (missing keys: COMP_DEFAULTS), or None/False = no compressor
         'transient': None,             # {attack_db, sustain_db}
         'sidechain_hp_hz': 0.0,
         'sidechain_lp_hz': 0.0,
@@ -401,6 +402,9 @@ RANGES = {
     ('render', 'mix_worker_mb_per_second'): ('num', 0.1, 64.0),
     ('sidechain', 'residual'): ('num', 0.0, 1.0),
     ('sidechain', 'threshold'): ('num', 0.0, 1.0),
+    # mixer.py applies the plateau fade only when 2 * fade < body; fade = body * frac, so frac must stay under 0.5
+    # (0.5 itself yields no fade); 0.25 is the shipped starting value.
+    ('sidechain', 'plateau_fade_frac'): ('num', 0.0, 0.5),
     ('lead_carve', 'ratio'): ('num', 1.0, 20.0),
     ('lead_carve', 'threshold_db'): ('db', -60.0, 0.0),
     ('lead_carve', 'attack_ms'): ('num', 0.0, 100.0),
@@ -434,17 +438,22 @@ COMPUTE_DEVICES = ('auto', 'cpu', 'cuda', 'mps')
 OPEN_SECTIONS = {'role_chains', 'spectral_profiles'}     # keyed by a name the project chooses
 EQ_TYPES_OK = ('peak', 'bell', 'notch', 'hp', 'lp', 'lowshelf', 'highshelf')
 BAND_KEYS_OK = {'type', 'f', 'freq', 'gain', 'q', 'bandwidth', 'load', 'order'}
+# dynamics.dynamic_eq entries (read by mixer._dsp_dynamics -> dsp.dynamic_eq); `freq` is the alias _band() accepts
+DYNAMIC_EQ_KEYS_OK = {'f', 'freq', 'q', 'threshold_db', 'ratio', 'attack_ms', 'release_ms', 'knee_db', 'gain_db'}
+# dynamics.comp: the keys the engine reads and the values used for any the preset leaves out (starting values:
+# a gentle 2.5:1 glue compressor, 15 ms / 150 ms, the figures the engine always used before they moved here).
+COMP_KEYS_OK = ('thr', 'ratio', 'attack', 'release')
+COMP_DEFAULTS = {'thr': -22, 'ratio': 2.5, 'attack': 15, 'release': 150}
+
+
+def comp_params(comp):
+    """One stem's compressor settings: `comp` (a dict) over COMP_DEFAULTS."""
+    return _merge(COMP_DEFAULTS, comp)
 
 
 def with_defaults(mix):
     """The preset laid over the schema defaults, without mutating either."""
-    out = copy.deepcopy(DEFAULTS)
-    for k, v in (mix or {}).items():
-        if isinstance(v, dict) and isinstance(out.get(k), dict):
-            out[k] = _merge(out[k], v)
-        else:
-            out[k] = copy.deepcopy(v)
-    return out
+    return deep_merge.merge(DEFAULTS, mix)
 
 
 def _merge(base, over):
@@ -488,6 +497,33 @@ def validate(mix):
         val = (mix.get(sec) or {}).get(key) if isinstance(mix.get(sec), dict) else None
         if val is not None and val not in allowed:
             problems.append(f'mix.{sec}.{key}: "{val}" is not one of {", ".join(allowed)}')
+    dyn = mix.get('dynamics') if isinstance(mix.get('dynamics'), dict) else {}
+    cp = dyn.get('comp')
+    if cp not in (None, False, 0):
+        if not isinstance(cp, dict):
+            problems.append('mix.dynamics.comp: expected an object {thr, ratio, attack, release} or false')
+        else:
+            for k, v in cp.items():
+                if k not in COMP_KEYS_OK:
+                    problems.append(f'mix.dynamics.comp.{k}: unknown key; known: {", ".join(COMP_KEYS_OK)}')
+                elif not isinstance(v, (int, float)) or isinstance(v, bool):
+                    problems.append(f'mix.dynamics.comp.{k}: expected a number, got {type(v).__name__}')
+    deq = dyn.get('dynamic_eq')
+    if deq is not None:
+        if not isinstance(deq, list):
+            problems.append('mix.dynamics.dynamic_eq: expected a list of bands')
+        for i, b in enumerate(deq if isinstance(deq, list) else []):
+            path = f'mix.dynamics.dynamic_eq[{i}]'
+            if not isinstance(b, dict):
+                problems.append(f'{path}: expected an object')
+                continue
+            problems += [f'{path}: unknown key "{k}" (known: {", ".join(sorted(DYNAMIC_EQ_KEYS_OK))})'
+                         for k in b if k not in DYNAMIC_EQ_KEYS_OK]
+            f = b.get('f', b.get('freq'))
+            if f is None:
+                problems.append(f'{path}: missing "f"')
+            elif not isinstance(f, (int, float)) or not (10.0 <= float(f) <= 24000.0):
+                problems.append(f'{path}.f: {f} is outside 10..24000 Hz')
     comp = (mix.get('render') or {}).get('compute') if isinstance(mix.get('render'), dict) else None
     if comp is not None:
         if not isinstance(comp, dict):

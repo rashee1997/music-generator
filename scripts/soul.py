@@ -33,10 +33,6 @@ Fields
   avoid_instruments  instruments that read as another culture
 """
 import json
-import os
-
-HERE = os.path.dirname(os.path.abspath(__file__))
-SOUL_DIR = os.path.join(HERE, '..', 'references', 'soul')
 
 # Per-culture feel rules: references/scoring/cultural-soul.md
 import presets  # noqa: E402  (soul profiles are the 'soul' presets: references/data/presets/soul and each project's presets/soul)

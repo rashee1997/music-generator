@@ -126,7 +126,9 @@ def cmd_setup(a):
                                          'title': os.path.splitext(os.path.basename(song))[0]}, indent=1)):
         created.append('project.json')
     prompts = os.path.join(SK, 'templates', 'gemini_listener_prompts.md')
-    if write_new(os.path.join(root, 'prompts', 'gemini_listener_prompts.md'), open(prompts, encoding='utf-8').read()):
+    with open(prompts, encoding='utf-8') as f:
+        prompt_text = f.read()
+    if write_new(os.path.join(root, 'prompts', 'gemini_listener_prompts.md'), prompt_text):
         created.append('prompts/gemini_listener_prompts.md')
     if write_new(os.path.join(root, 'profiles', 'project.json'),
                  json.dumps({'_about': 'Your overrides only. Keys come from templates/extraction_profile.json. Pass another file with --profile NAME.'}, indent=1)):
@@ -274,6 +276,8 @@ def cmd_kb(a):
     if a.action == 'pitch-table':
         print(f'pitch table: {knowledge.build_pitch_table()} pitches -> {knowledge.PITCH_TABLE}')
         return
+    if not a.dir:
+        raise SystemExit(f'kb {a.action} needs a project <dir>')
     root, _ = project_of(a.dir)
     cfg = config.load(project=root)
     db = music_db.load(os.path.join(root, 'music_db'), cfg)

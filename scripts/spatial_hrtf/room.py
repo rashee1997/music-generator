@@ -120,7 +120,7 @@ def taps(geom, azimuth_deg=0.0, elevation_deg=0.0, distance_m=2.0, sr=SR):
                 coeff *= np.power(np.sqrt(np.clip(1 - a_wall, 0, 1)), ny)
                 coeff *= np.power(np.sqrt(np.clip(1 - (a_ceil if k > 0 else a_floor), 0, 1)), nz)
                 level = float(np.sqrt(np.mean(coeff ** 2))) * direct / path
-                out.append(dict(delay_ms=(path - direct) / C * 1000.0, distance_m=float(path),
+                out.append(dict(delay_ms=(path - direct) / C * 1000.0, distance_m=float(path), direct_m=float(direct),
                                 azimuth=float(np.degrees(np.arctan2(ix - lx, iy - ly))),
                                 elevation=float(np.degrees(np.arcsin(np.clip((iz - lz) / path, -1, 1)))),
                                 coeffs=coeff, level=level, image=(i, j, k)))

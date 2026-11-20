@@ -8,7 +8,7 @@
 
     from gate_audio import Signal, load
     a = load('out/master.wav')      # GateAudio
-    a.mono, a.decim, a.stft, a.onset_env, a.lufs, a.true_peak
+    a.mono, a.decim, a.stft, a.onset_env, a.true_peak_by_channel
 
 Every derived array is computed once, on first use, under a lock. Rows must not read the WAV or run a second STFT:
 `tests/test_gate_checks.py` asserts the cache is used. Full-rate data (`stereo`, `mono`, true peak, click residual) is
@@ -100,24 +100,6 @@ class Signal:
                 raise RuntimeError('librosa is required for the onset rows')
             return librosa.onset.onset_strength(y=self.mono, sr=self.sr, hop_length=HOP).astype(np.float64)
         return self._get('onset_env', make)
-
-    @property
-    def lufs(self):
-        def make():
-            try:
-                import pyloudnorm as pyln
-                return float(pyln.Meter(self.sr).integrated_loudness(self.mono))
-            except Exception:
-                return float('nan')
-        return self._get('lufs', make)
-
-    @property
-    def true_peak(self):
-        def make():
-            from scipy.signal import resample_poly
-            up = resample_poly(self.audio, 4, 1, axis=0)
-            return float(20.0 * np.log10(np.max(np.abs(up)) + 1e-12))
-        return self._get('true_peak', make)
 
     @property
     def true_peak_by_channel(self):
@@ -225,3 +207,23 @@ def channel_correlation(a, b):
     if len(a) < 2 or float(np.std(a)) < 1e-12 or float(np.std(b)) < 1e-12:
         return float('nan')
     return float(np.corrcoef(a, b)[0, 1])
+
+
+def loudness_lufs(x, sr):
+    """Integrated loudness in LUFS of a signal, the way the mixer meters it (-70 for silence, a meter error propagates).
+    The one loudness measurement the gate rows use: a second meter would disagree with the one the master was levelled on."""
+    import mixer
+    return float(mixer.lufs(x, sr))
+
+
+def mono_psd(y, sr, nperseg):
+    """Welch power spectral density (frequencies, power) of the channel mean of `y` (a mono signal passes through)."""
+    from scipy import signal
+    m = y.mean(axis=1) if np.ndim(y) == 2 else np.asarray(y)
+    return signal.welch(m, sr, nperseg=nperseg)
+
+
+def band_level_db(y, lo, hi, sr=44100, nperseg=2048):
+    """Mean Welch power between `lo` and `hi` Hz, in dB (relative, not dBFS), of the channel mean of `y`."""
+    f, p = mono_psd(y, sr, nperseg)
+    return float(10 * np.log10(p[(f > lo) & (f < hi)].mean() + 1e-20))

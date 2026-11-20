@@ -353,17 +353,18 @@ def fit_room(dry, mix, sr, spec, ignored, cfg):
     """Return (wet stereo at the fitted level, info). The room is the song's own decay time; its level is the one that brings
     the rebuilt mix's spectrum closest to the original over the frames that are not sung or rapped."""
     import mixer
-    from .gate import free_mask, stft_mag
+    from .gate import HOP, free_mask, stft_complex, stft_mag
     rs = cfg['resynth']
     wet = mixer.reverb_bus(dry.T.astype('float64'), spec, sr, seed=rs['reverb_seed']).T[:, :dry.shape[1]].astype('float32')
     M = stft_mag(mix.mean(axis=0))
-    free = free_mask(np.arange(M.shape[1]) * 1024 / sr, ignored)
+    free = free_mask(np.arange(M.shape[1]) * HOP / sr, ignored)
     if free.sum() < 20:
         free = np.ones(M.shape[1], bool)
     best, dry_err = None, None
+    D, W = stft_complex(dry.mean(axis=0)), stft_complex(wet.mean(axis=0))      # the STFT is linear: one transform each, not one per gain
     for g_db in rs['reverb_grid_db']:
         g = 10 ** (g_db / 20.0) if g_db > -90 else 0.0
-        err = mag_error(M, stft_mag((dry + g * wet).mean(axis=0)), free)
+        err = mag_error(M, np.abs(D + g * W), free)
         if dry_err is None:
             dry_err = err
         if best is None or err < best[0] * 0.99:                          # a louder room must buy a real (1 %) improvement

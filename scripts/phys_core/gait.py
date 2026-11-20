@@ -83,8 +83,3 @@ def grf(n, sr=44100, peak=800.0, style='walk', heel=False):
     return peak * np.clip(env, 0.0, None)
 
 
-def body_sway(seconds, sr=44100, cadence_spm=112.0, depth=0.06):
-    """Slow vertical body movement at twice the step rate: a walk is not a static head."""
-    n = max(1, int(seconds * sr))
-    t = np.arange(n) / sr
-    return 1.0 + depth * np.sin(2 * np.pi * (2.0 * cadence_spm / 60.0) * t)

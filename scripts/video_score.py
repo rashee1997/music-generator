@@ -63,13 +63,31 @@ def film_config(project=None):
 
 
 def extract_dialogue(video, out_wav):
-    """The picture's own audio, as a working track. Returns None when the container has no audio stream."""
+    """The picture's own audio, as a working track. Call it only for a picture that has an audio stream: a
+    failed extraction raises, because returning None would mix a picture with speech as if it had none."""
     os.makedirs(os.path.dirname(os.path.abspath(out_wav)), exist_ok=True)
-    p = subprocess.run(['ffmpeg', '-y', '-hide_banner', '-nostdin', '-i', video, '-vn', '-ac', '2', '-ar', '44100', out_wav],
-                       stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL)
+    try:
+        p = subprocess.run(['ffmpeg', '-y', '-hide_banner', '-nostdin', '-i', video, '-vn', '-ac', '2', '-ar', '44100',
+                            out_wav], stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL,
+                           timeout=video_probe.FFMPEG_TIMEOUT_S)
+    except subprocess.TimeoutExpired:
+        raise RuntimeError(f'ffmpeg timed out after {video_probe.FFMPEG_TIMEOUT_S}s extracting the audio of {video}') from None
     if p.returncode != 0 or not os.path.exists(out_wav):
-        return None
+        raise RuntimeError(f'ffmpeg failed ({p.returncode}) extracting the audio of {video}: '
+                           f'{p.stderr.decode("utf-8", "replace").strip()[-600:]}')
     return out_wav
+
+
+def parse_silence(text):
+    """'a-b,c-d' (seconds) -> [(a, b), ...]: the spotting's no-music windows for this cue."""
+    out = []
+    for part in str(text or '').split(','):
+        if part.strip():
+            a, b = part.split('-', 1)
+            out.append((float(a), float(b)))
+            if out[-1][1] <= out[-1][0]:
+                raise ValueError(f'silence window "{part}": the end must be after the start')
+    return out
 
 
 def ensure_preset(project, kind, spec):
@@ -98,7 +116,7 @@ def cue_config(preset='default', project=None):
     return film
 
 
-def run(video, project, title=None, brief='', preset='default', profile=None, out=None, verbose=True):
+def run(video, project, title=None, brief='', preset='default', profile=None, out=None, verbose=True, silence=None):
     """The whole job. Returns (report dict, exit code)."""
     project = os.path.abspath(project)
     cfg = cue_config(preset, project)
@@ -141,13 +159,13 @@ def run(video, project, title=None, brief='', preset='default', profile=None, ou
         if verbose:
             print(f"  speech: {speech['share'] * 100:.1f} % of the picture, {len(speech['segments'])} segments")
 
-    ctx = context_mod.build(probe_rep, analysis, mapping, speech=speech)
+    ctx = context_mod.build(probe_rep, analysis, mapping, speech=speech, silence=silence)
     scenes = ctx['scenes']
     frames = {}
     if scenes and analysis.get('shot_scale', {}).get('enabled', True):
         frames = __import__('analysis.shot_scale', fromlist=['shot_scale']).sample_scene_frames(
             video, scenes, analysis)
-        ctx = context_mod.build(probe_rep, analysis, mapping, frames_by_scene=frames, speech=speech)
+        ctx = context_mod.build(probe_rep, analysis, mapping, frames_by_scene=frames, speech=speech, silence=silence)
         if verbose:
             scales = [sc['shot_scale'] for sc in ctx['scenes']]
             print(f'  context: {len(ctx["shots"])} shots in {len(scenes)} scenes, scales {scales}')
@@ -157,7 +175,7 @@ def run(video, project, title=None, brief='', preset='default', profile=None, ou
     sheet = video_direction.direction_sheet(probe_rep, one, brief, title=name, context=ctx, film=cfg)
     sheet_path = os.path.join(project, 'direction', 'direction_sheet.json')
     video_direction.write_direction(sheet, sheet_path)
-    score = video_direction.score_from_sheet(sheet, one, probe_rep, context=ctx, mapping=mapping)
+    score = video_direction.score_from_sheet(sheet, one, probe_rep, context=ctx, mapping=mapping, film=cfg)
     score['piece_type'] = score.get('piece_type') or 'video_dialogue'
     score_path = os.path.join(project, 'scores', f'{s}_score.json')
     with open(score_path, 'w', encoding='utf-8') as fh:
@@ -175,24 +193,24 @@ def run(video, project, title=None, brief='', preset='default', profile=None, ou
 
     def programme_rows(score_now, master_wav, ci_rows):
         """Runs inside pipeline stage 6: build the program, then return the picture rows."""
-        mix_rep, mask_lengths = {}, {}
+        mix_rep = {}
         if dialogue_wav:
             voice = video_program_mix.load(dialogue_wav)
             if verbose:
                 print(f"  voice: {'chain applied' if not dialogue_cfg.get('no_voice_chain') else 'raw'}")
             voice = video_program_mix.voice_chain(voice, dialogue_cfg)
             music = video_program_mix.load(master_wav)
-            mask = speech_mod.mask_at(speech['mask'], speech['times'], len(voice), video_program_mix.SR) \
-                if speech else None
             mix, _, _, d_mask, mix_rep = video_program_mix.build(
                 voice, music, [], dialogue_cfg, hit_times=sheet['hits_at'], limit_s=picture_s)
-            mask_for_master, mask_lengths = d_mask, dict(mask=len(d_mask))
+            mask_for_master = d_mask
         else:
             mix = video_program_mix.load(master_wav)[:int(round(picture_s * video_program_mix.SR))]
             mask_for_master = None
             mix_rep = dict(note='no audio in the source: the cue plays alone', speech_measured=False)
-        program, sr = video_program_mix.master(mix, prof, loudness_mode=prof.get('loudness_mode'),
-                                               speech_mask=mask_for_master)
+        mastered = video_program_mix.master(mix, prof, loudness_mode=prof.get('loudness_mode'),
+                                            speech_mask=mask_for_master)
+        program, sr = mastered
+        applied_mode = mastered.applied            # the mode that really ran, for video.gating_mode
         import soundfile as sf
         sf.write(program_wav, program, sr, subtype='PCM_24')
         if verbose:
@@ -201,7 +219,8 @@ def run(video, project, title=None, brief='', preset='default', profile=None, ou
         mux_rep = video_mux.mux(video, program_wav, container, one['mux'], verbose=verbose)
         rows, extras = gate_pass_rows(score_now, context=ctx, probe=probe_rep, program_wav=program_wav,
                                       mix_report=mix_rep, gating=dict(delivery['gate'], **hits_cfg),
-                                      master_profile=prof, hits=sheet['hits'])
+                                      master_profile=prof, hits=sheet['hits'], mapping=mapping,
+                                      applied_mode=applied_mode, silence_windows=ctx.get('silence_windows'))
         programme.update(dict(program=program_wav, mux=mux_rep, mix=mix_rep, extras=extras))
         block = dict(preset=preset, source=probe_rep['source'], reel=reel_id,
                      probe=os.path.relpath(probe_path, project),
@@ -257,6 +276,7 @@ def main():
     ap.add_argument('--profile', default=None, help='streaming | broadcast | cinema | netflix | prime | youtube')
     ap.add_argument('--out', default=None)
     ap.add_argument('--selftest', action='store_true')
+    ap.add_argument('--silence', default=None, help='spotting no-music windows in seconds, e.g. 4.0-6.5,12-14')
     ap.add_argument('--quiet', action='store_true')
     a = ap.parse_args()
     if a.selftest:
@@ -267,7 +287,8 @@ def main():
     import cli_util
     cli_util.require_file(a.video, 'video file')
     cli_util.require_dir(a.project, 'project folder')
-    res = run(a.video, a.project, a.title, a.brief, a.preset, a.profile, a.out, verbose=not a.quiet)
+    res = run(a.video, a.project, a.title, a.brief, a.preset, a.profile, a.out, verbose=not a.quiet,
+              silence=parse_silence(a.silence))
     sys.exit(0 if res['report'].get('status') == 'PASSED' else 1)
 
 

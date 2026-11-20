@@ -57,17 +57,20 @@ def prior_template(voice, cfg):
 
 def cluster_vectors(vecs, threshold):
     """Single-pass leader clustering: a vector joins the nearest cluster centre within `threshold`, else starts a new one."""
-    centres, label = [], []
+    centres, label, sums, counts = [], [], [], []
     for v in vecs:
         d = [distance(v, c) for c in centres]
         if d and min(d) <= threshold:
             k = int(np.argmin(d))
+            sums[k] = sums[k] + v
+            counts[k] += 1
         else:
             centres.append(v.copy())
+            sums.append(np.array(v, dtype=float))
+            counts.append(1)
             k = len(centres) - 1
         label.append(k)
-        members = [vecs[i] for i, l in enumerate(label) if l == k]
-        centres[k] = np.mean(members, axis=0)
+        centres[k] = sums[k] / counts[k]                  # running mean of the members: O(1) per vector, not a rescan
     return label, centres
 
 

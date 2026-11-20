@@ -114,11 +114,6 @@ def get(m, name=None):
     return base
 
 
-def speed_of_sound(m):
-    """Longitudinal speed in the material, m/s: sqrt(E / rho)."""
-    return math.sqrt(m['young_modulus_gpa'] * 1e9 / max(m['density'], 1e-9))
-
-
 def t60(f1_hz, m, damp_exp=None):
     """-60 dB time of the first mode from the loss factor: T60 = 2.2 / (f * eta).
 
@@ -140,14 +135,6 @@ def mode_t60(t60_1, ratios, damp_exp=None):
 def porous(m):
     """Flow resistivity (N s/m4) if the family absorbs, else 0."""
     return max(0.0, float(m.get('flow_resistivity', 0.0)))
-
-
-def is_brittle(m):
-    return m['family'] in ('brittle', 'metal')
-
-
-def is_fibrous(m):
-    return m['family'] == 'fibrous'
 
 
 def is_granular(m):

@@ -24,6 +24,8 @@ mixer already used, so a preset can ask for them without leaving the engine.
 Every kernel takes and returns float32 arrays shaped (samples, channels), the layout the rest of the skill
 uses. Nothing here reads a preset or a file: values arrive as arguments, decisions stay in the mixer.
 """
+import sys
+
 import numpy as np
 from scipy import signal
 
@@ -221,12 +223,8 @@ def envelope(x, sr=44100, attack_ms=8.0, release_ms=150.0, rate=CONTROL_RATE, ho
     blk = max(1, int(sr // rate))
     n = len(mono) // blk + 1
     m = np.pad(mono, (0, n * blk - len(mono))).reshape(n, blk).max(1)
-    a = np.exp(-1.0 / (attack_ms / 1000.0 * rate))
-    r = np.exp(-1.0 / (release_ms / 1000.0 * rate))
-    e = np.zeros(n)
-    for i in range(1, n):
-        c = a if m[i] > e[i - 1] else r
-        e[i] = c * e[i - 1] + (1 - c) * m[i]
+    e = np.zeros(n)                             # the follower has always started from rest: block 0 stays 0
+    e[1:] = _follow_rows(m[1:, None], rate, attack_ms, release_ms)[:, 0]
     if hold_tail and n > 1:
         e[-1] = e[-2]
     return np.interp(np.arange(len(mono)), np.arange(n) * blk + blk / 2, e)
@@ -299,9 +297,9 @@ def compressor(x, sr=44100, threshold_db=-18.0, ratio=2.0, attack_ms=10.0, relea
         g = np.interp(t, centres, gain[:, 0]).astype(np.float32)[:, None]
     else:
         g = np.stack([np.interp(t, centres, gain[:, ch]) for ch in range(gain.shape[1])], 1).astype(np.float32)
-    wet = y * g
+    wet = y * g * 10.0 ** (float(makeup_db) / 20.0)      # make-up belongs to the compressed path: the dry path stays dry
     out = wet if mix >= 1.0 else y * (1.0 - mix) + wet * mix
-    return (out * 10.0 ** (float(makeup_db) / 20.0)).astype(np.float32)
+    return out.astype(np.float32)
 
 
 def multiband_compressor(x, sr=44100, bands=None, **kw):
@@ -312,11 +310,14 @@ def multiband_compressor(x, sr=44100, bands=None, **kw):
 
     The split is a 2nd-order band-pass per band. The sum is not sample-exact in phase (a Linkwitz-Riley
     network would be); a preset that needs that should keep `dynamics.multiband` off.
+    Whatever the declared bands do not cover (input minus the sum of the unprocessed band parts) is added back
+    untouched, so a gap between bands passes through instead of being discarded.
     """
     y = to_2d(x).astype(np.float32)
     if not bands:
         return y
     out = np.zeros_like(y)
+    covered = np.zeros_like(y)
     for b in bands:
         lo = max(20.0, float(b.get('lo', 20.0)))
         hi = min(sr / 2.0 - 50.0, float(b.get('hi', sr / 2.0 - 50.0)))
@@ -324,13 +325,14 @@ def multiband_compressor(x, sr=44100, bands=None, **kw):
             continue
         sos = signal.butter(2, [lo, hi], btype='band', fs=sr, output='sos')
         part = signal.sosfilt(sos, y, axis=0).astype(np.float32)
+        covered += part
         part = compressor(part, sr, threshold_db=b.get('threshold_db', -20.0), ratio=b.get('ratio', 2.0),
                           attack_ms=b.get('attack_ms', 15.0), release_ms=b.get('release_ms', 150.0),
                           knee_db=b.get('knee_db', 0.0), detector=b.get('detector', 'peak'),
                           stereo_link=True, **{k: v for k, v in kw.items() if k in
                                                ('lookahead_ms', 'rate', 'sidechain')})
         out += part * 10.0 ** (float(b.get('gain_db', 0.0)) / 20.0)
-    return out
+    return (out + (y - covered)).astype(np.float32)
 
 
 def dynamic_eq(x, sr=44100, f=1000.0, q=1.0, threshold_db=-24.0, ratio=2.0, attack_ms=5.0,
@@ -350,17 +352,23 @@ def dynamic_eq(x, sr=44100, f=1000.0, q=1.0, threshold_db=-24.0, ratio=2.0, atta
     return (rest + band * 10.0 ** (float(gain_db) / 20.0)).astype(np.float32)
 
 
-def transient_shaper(x, sr=44100, attack=0.0, sustain=0.0, fast_ms=3.0, slow_ms=60.0):
+def transient_shaper(x, sr=44100, attack=0.0, sustain=0.0, fast_ms=3.0, slow_ms=60.0, ref_db=20.0):
     """attack/sustain in dB. Positive attack sharpens the front of a note, negative softens it;
-    sustain is the body after the front. 0/0 returns the input untouched."""
+    sustain is the body after the front. 0/0 returns the input untouched.
+
+    The front is measured as the fast envelope over the slow one, in dB. The gain follows it linearly and reaches
+    the full `attack` dB when the front stands `ref_db` over the body (20 dB: a clear attack) and stays there, so
+    `attack=3` never moves a note by more than +3 dB. `sustain` is the same on the other side: its full dB when
+    the body stands `ref_db` over the front."""
     if attack == 0.0 and sustain == 0.0:
         return to_2d(x).astype(np.float32)
     y = to_2d(x).astype(np.float32)
     fast = envelope(y, sr, fast_ms, fast_ms * 2.0)
     slow = envelope(y, sr, slow_ms, slow_ms * 2.0)
-    delta = np.log10((fast + EPS) / (slow + EPS))                # >0 on a transient, <=0 on a sustain
-    body = np.clip(-delta, 0.0, 1.0)
-    curve = 10.0 ** ((attack * np.clip(delta, 0.0, 2.0) + sustain * body) / 20.0)
+    delta = 20.0 * np.log10((fast + EPS) / (slow + EPS))         # dB; >0 on a transient, <=0 on a sustain
+    front = np.clip(delta / float(ref_db), 0.0, 1.0)
+    body = np.clip(-delta / float(ref_db), 0.0, 1.0)
+    curve = 10.0 ** ((attack * front + sustain * body) / 20.0)
     return (y * curve[:, None]).astype(np.float32)
 
 
@@ -384,56 +392,6 @@ def fade_out_at(x, sr=44100, times=(), ms=4.0):
         seg = y[i0:i1]
         y[i0:i1] = (seg * ramp[n - seg.shape[0]:]).astype(np.float32)
     return y
-
-
-def declick(x, sr=44100, mad_z=8.0, floor_frac=0.02, cluster_ms=1.5, repair_ms=0.8):
-    """Repair isolated single-sample discontinuities left in a sampled patch.
-
-    A bank's edited sample can carry a step that no playing produced: measured on one SoundFont djembe, an isolated
-    impulse 2-43 ms into the hit, on about a hit in four, and on a shaker on nearly a third of them. The step is a
-    defect, not a transient, so it is removed rather than mixed away: a short linear bridge over the step. Only an
-    isolated jump is bridged -- a dense noise burst (a shaker's attack) and a steep monotone attack are left alone,
-    which is the same distinction the stem gate draws.
-    """
-    y = to_2d(x).astype(np.float32)
-    if len(y) < 64:
-        return y
-    peak = float(np.max(np.abs(y))) or 1.0
-    from scipy.signal import butter, sosfiltfilt
-    sos = butter(4, min(6000.0, sr * 0.45), 'high', fs=sr, output='sos')
-    h = sosfiltfilt(sos, y.astype(np.float64), axis=0).mean(axis=1)
-    r = np.diff(h)
-    med = float(np.median(r))
-    mad = float(np.median(np.abs(r - med))) * 1.4826 + 1e-12
-    cand = np.flatnonzero((np.abs(r - med) > mad_z * mad) & (np.abs(r) > floor_frac * peak))
-    if cand.size == 0:
-        return y
-    groups, cur = [], [int(cand[0])]
-    for c in cand[1:]:
-        if (int(c) - cur[-1]) / sr * 1000.0 <= cluster_ms:
-            cur.append(int(c))
-        else:
-            groups.append(cur)
-            cur = [int(c)]
-    groups.append(cur)
-    n_rep = max(2, int(round(repair_ms * sr / 1000.0)))
-    fixed = 0
-    for g in groups:
-        if (g[-1] - g[0]) / sr * 1000.0 > cluster_ms:
-            continue                                   # a dense burst: noise, not a step
-        k = int(g[int(np.argmax(np.abs(r[g])))])
-        a, b = k - n_rep, k + n_rep
-        if a < 1 or b >= len(y) - 1:
-            continue
-        # the jump must be isolated: the local slope either side has to be far smaller than the step itself
-        local = float(np.median(np.abs(r[a:b]))) + 1e-12
-        if abs(float(r[k])) < 4.0 * local:
-            continue
-        left, right = y[a - 1], y[b]
-        w = np.linspace(0.0, 1.0, b - a + 1, dtype=np.float32)[:, None]
-        y[a:b + 1] = (left[None, :] * (1.0 - w) + right[None, :] * w).astype(np.float32)
-        fixed += 1
-    return y if fixed == 0 else y.astype(np.float32)
 
 
 def repair_clicks(x, sr=44100, mad_z=8.0, floor_frac=0.02, cluster_ms=1.5, isolate_ms=10.0,   # floor_frac is FS
@@ -483,7 +441,9 @@ def repair_clicks(x, sr=44100, mad_z=8.0, floor_frac=0.02, cluster_ms=1.5, isola
     look = max(4, int(0.002 * sr))
     try:
         from gate_checks import _is_attack             # the gate's own test: repair must agree with measurement
-    except Exception:
+    except Exception as exc:                          # a different rule would change which clicks are repaired: say so
+        sys.stderr.write(f'[dsp] WARN repair_clicks: gate_checks._is_attack is unavailable ({exc!r}); '
+                         f'using the built-in monotone-rise rule instead\n')
         _is_attack = None
     kept = []
     for i, (k, amp) in enumerate(ev):
@@ -636,31 +596,6 @@ def enhance_sf2_dynamics(x, sr=44100, role='chord', velocity=None):
         # harmonics and drops the free level, so gain staging never inherits a hidden boost from this stage.
         y = (np.tanh(y * drive) / drive).astype(np.float32)
     return y
-
-
-def _apply_bands(x, sr, bands):
-    """Filter chain from [(type, f, gain_db, q)] using SciPy (slope/order is ours to choose)."""
-    y = np.asarray(x, dtype=np.float32)
-    for kind, f, gain, q in bands:
-        f = float(np.clip(float(f), 20.0, sr / 2.0 - 50.0))
-        if kind in ('hp', 'highpass'):
-            y = signal.sosfilt(signal.butter(2, f, 'high', fs=sr, output='sos'), y, axis=0).astype(np.float32)
-        elif kind in ('lp', 'lowpass'):
-            y = signal.sosfilt(signal.butter(2, f, 'low', fs=sr, output='sos'), y, axis=0).astype(np.float32)
-        else:
-            y = _peak(y, sr, f, float(gain), float(q))
-    return y
-
-
-def _peak(x, sr, f, gain_db, q):
-    """RBJ peaking EQ, applied with a short biquad cascade (no Pedalboard needed)."""
-    from scipy.signal import lfilter
-    A = 10.0 ** (float(gain_db) / 40.0)
-    w0 = 2.0 * np.pi * min(max(float(f), 10.0), sr / 2.0 - 50.0) / sr
-    alpha = np.sin(w0) / (2.0 * max(float(q), 0.05))
-    b = np.array([1 + alpha * A, -2 * np.cos(w0), 1 - alpha * A])
-    a = np.array([1 + alpha / A, -2 * np.cos(w0), 1 - alpha / A])
-    return lfilter(b / a[0], a / a[0], x, axis=0).astype(np.float32)
 
 
 def slope_filter(x, sr=44100, f=80.0, kind='hp', order=4):

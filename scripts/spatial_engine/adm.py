@@ -113,6 +113,20 @@ def _adm_position(engine_az, engine_el, engine_dist, name='object'):
     return -_wrap180(az), el, d
 
 
+def _mean_azimuth(az_deg):
+    """The mean of an engine azimuth (degrees, +right) path, each value wrapped to [-180, 180) first. One rule for
+    the bus fold (levelling) and the file fold (gate), so an object that sweeps is the same position in both."""
+    a = (np.asarray(az_deg, np.float64) + 180.0) % 360.0 - 180.0
+    return float(np.mean(a))
+
+
+def _fold_add(out, channel, az_deg):
+    """Add one object channel to a two-channel fold with a constant-power pan at ``az_deg`` (engine azimuth)."""
+    th = (np.clip(((az_deg + 180.0) % 360.0 - 180.0) / 90.0, -1.0, 1.0) + 1.0) * np.pi / 4.0
+    out[:, 0] += channel * np.cos(th)
+    out[:, 1] += channel * np.sin(th)
+
+
 class AdmBus:
     """A mixer bus that keeps every track apart and remembers where it is: add(name, signal, spec),
     add_reverb(signal), result().
@@ -203,10 +217,8 @@ class AdmBus:
         if self.bed is not None:
             out[:] += audio[:, n_obj:n_obj + 2]
         for i, (_, _, az, _el, _d, p, _role) in enumerate(self.objects):
-            a = float(np.mean(p[:, 0])) if p is not None else float(az)
-            th = (np.clip(((a + 180.0) % 360.0 - 180.0) / 90.0, -1.0, 1.0) + 1.0) * np.pi / 4.0
-            out[:, 0] += audio[:, i] * np.cos(th)
-            out[:, 1] += audio[:, i] * np.sin(th)
+            a = _mean_azimuth(p[:, 0]) if p is not None else float(az)
+            _fold_add(out, audio[:, i], a)
         return out.astype(np.float32)
 
     def chna(self):
@@ -427,7 +439,7 @@ def write(path, audio, sr, xml, chna):
         for tag, body in chunks:
             f.write(tag + DW.pack(_field(body)) + body + (b'\x00' if len(body) % 2 else b''))
         f.write(b'data' + DW.pack(data_field))
-        n_write, block = 1 << 20, 8192 * channels
+        block = 8192                                        # frames per write: the buffer is block x channels
         for start in range(0, frames, block):
             f.write(_pcm24_block(audio[start:start + block]))
         if data_bytes % 2:
@@ -453,10 +465,13 @@ def fold_to_stereo(parsed):
     azimuth_of = {}
     for chan in root.findall('.//e:audioChannelFormat', _NS):
         cid = (chan.get('audioChannelFormatID') or '')
-        blk = chan.find('e:audioBlockFormat', _NS)
-        pos = blk.find("e:position[@coordinate='azimuth']", _NS) if blk is not None else None
-        if pos is not None and (pos.text or '').strip():
-            azimuth_of[cid] = float(pos.text)
+        vals = []
+        for blk in chan.findall('e:audioBlockFormat', _NS):
+            pos = blk.find("e:position[@coordinate='azimuth']", _NS)
+            if pos is not None and (pos.text or '').strip():
+                vals.append(float(pos.text))
+        if vals:
+            azimuth_of[cid] = np.asarray(vals, np.float64)
     track_to_channel = {}
     for tr in root.findall('.//e:audioTrackFormat', _NS):
         tid = tr.get('audioTrackFormatID') or ''
@@ -471,15 +486,15 @@ def fold_to_stereo(parsed):
     out = np.zeros((audio.shape[0], 2), np.float64)
     for i, (_idx, _uid, track_format, pack_format) in enumerate(chna):
         if pack_format == BED_PACK:            # a bed channel pair is already a stereo feed
-            out[:, 0 if _idx % 2 else 1] += audio[:, i]
+            if track_format not in (BED[0][1], BED[1][1]):
+                raise ValueError(f'channel {i + 1} ({track_format}) is in the bed pack but is neither bed track')
+            out[:, 0 if track_format == BED[0][1] else 1] += audio[:, i]      # the bed's side is its track format
             continue
         cid = track_to_channel.get(track_format)
         if cid not in azimuth_of:
             raise ValueError(f'channel {i + 1} ({track_format}) has no object azimuth; cannot fold it')
-        # ADM azimuth (+left) back to the engine's constant-power pan (+right)
-        th = (np.clip(-azimuth_of[cid] / 90.0, -1.0, 1.0) + 1.0) * np.pi / 4.0
-        out[:, 0] += audio[:, i] * np.cos(th)
-        out[:, 1] += audio[:, i] * np.sin(th)
+        # ADM azimuth (+left) back to the engine's (+right), averaged over the blocks like AdmBus.stereo_fold
+        _fold_add(out, audio[:, i], _mean_azimuth(-np.asarray(azimuth_of[cid], np.float64)))
     return out.astype(np.float32)
 
 

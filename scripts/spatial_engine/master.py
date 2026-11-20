@@ -40,10 +40,29 @@ def channel_peaks(audio, sr):
     return [float(dsp.true_peak_db(y[:, i], sr)) for i in range(y.shape[1])]
 
 
-def _dc_block(audio, layout_name, sr, hz=24.0):
+DEFAULT_LUFS = -14.0       # the stereo master chain's own defaults (mixer.master_chain / mixer.fades): the shipped
+DEFAULT_FADE_OUT_S = 0.6   # profiles carry no fade_out, so this is the one place the spatial paths read it from
+
+
+def resolved(score):
+    """The master values every spatial deliverable shares, resolved the way the stereo chain resolves them
+    (mixer._master_cfg: the chosen profile, then the score's own values): {'lufs', 'fade_out', 'highpass_hz'}.
+    A profile name that is not in the mix preset's `mastering.profiles` is an error here, not a silent fallback to
+    the default profile."""
+    import mixer
+    m = dict((score or {}).get('master') or {})
+    cfg = mixer._master_cfg(m, mixer._mix())
+    name = cfg['_profile']
+    if name not in (cfg['_profiles'] or {}):
+        raise ValueError(f'master profile "{name}" is not in mastering.profiles; known: {sorted(cfg["_profiles"] or {})}')
+    return dict(lufs=float(cfg.get('lufs', DEFAULT_LUFS)), fade_out=float(cfg.get('fade_out', DEFAULT_FADE_OUT_S)),
+                highpass_hz=float(cfg['_cfg']['highpass_hz']))
+
+
+def _dc_block(audio, layout_name, sr, hz=None):
     """Remove sub-audio content from every main channel; LFE keeps its band.
 
-    The stereo master chain starts with a 24 Hz high-pass (mixer.master_chain). This path had no filter of any kind, so a
+    The stereo master chain starts with a high-pass (mastering.highpass_hz, 24 Hz shipped; `hz` is that value). This path had no filter of any kind, so a
     residual offset or very slow drift in the stems reached the deliverable unfiltered, scaled by one gain. Measured on a
     7.1 delivery: a 1 s block mean wandered 0.015 FS in FL (limit 0.001) while every stem passed the same row at
     0.0007 or below. LFE is skipped: its band is 20-120 Hz by definition.
@@ -55,7 +74,11 @@ def _dc_block(audio, layout_name, sr, hz=24.0):
     except Exception:
         names = []
     out = np.array(audio, dtype=np.float64, copy=True)
-    sos = butter(2, hz, btype='highpass', fs=sr, output='sos')
+    if hz is None:                                    # not given: the mix preset's mastering.highpass_hz
+        hz = resolved({})['highpass_hz']
+    if not hz or float(hz) <= 0.0:                    # mastering.highpass_hz 0 switches the high-pass off
+        return out
+    sos = butter(2, float(hz), btype='highpass', fs=sr, output='sos')
     for i in range(out.shape[1]):
         if i < len(names) and names[i] == 'LFE':
             continue
@@ -124,16 +147,12 @@ def master(audio, score, target, sr=44100):
         raise ValueError('a spatial deliverable needs a layout in its target preset')
     ceiling = float(target.get('true_peak_dbtp', -1.5))
     score = score or {}
-    try:
-        cfg = mixer._master_cfg(dict(score.get('master') or {}), mixer._mix())
-        lufs_target = float(cfg.get('lufs', -14.0))
-        fade_out = float(cfg.get('fade_out', 0.6))
-    except Exception:                     # a bare score with no context: the engine's own delivery target
-        lufs_target, fade_out = -14.0, 0.6
+    rs = resolved(score)
+    lufs_target, fade_out = rs['lufs'], rs['fade_out']
     if (target.get('loudness') or {}).get('target_lufs') is not None:      # a format with a loudness of its own
         lufs_target = float(target['loudness']['target_lufs'])
     y = mixer.trim_tail(np.asarray(audio, dtype=np.float32), sr)
-    y = _dc_block(y, layout_name, sr).astype(np.float32)
+    y = _dc_block(y, layout_name, sr, rs['highpass_hz']).astype(np.float32)
     measured, method = programme_lufs(y, layout_name, sr, target)
     gain_db = lufs_target - measured
     lim = target.get('limiter') or {}

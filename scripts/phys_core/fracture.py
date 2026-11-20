@@ -74,7 +74,7 @@ def fragments(material, energy_j=1.0, rng=None, count=None, brittle=None):
     sigma = 0.45 if brittle else 0.3
     sizes = np.exp(sigma * rng.standard_normal(count))
     sizes = np.clip(sizes, 0.15, 3.0)
-    order = np.sort(sizes)[::-1]
+    order = np.sort(sizes)                              # the small pieces leave first, as the docstring says
     delays = np.cumsum(np.abs(rng.standard_normal(count)) * (0.012 if brittle else 0.03))
     return list(zip(order.tolist(), delays.tolist()))
 

@@ -69,7 +69,7 @@ class Blocks:
         if len(w) != y.shape[1]:
             raise ValueError(f'{len(w)} loudness weights for {y.shape[1]} channels')
         k = k_weight(y, self.sr)
-        power = (k * k) @ w                         # weighted instantaneous power, one column
+        power = np.einsum('ij,ij,j->i', k, k, w)    # weighted instantaneous power, no N x C temporaries
         c = np.concatenate([[0.0], np.cumsum(power)])
         starts = np.arange(0, len(power) - n_block + 1, self.hop)
         self.z = (c[starts + n_block] - c[starts]) / float(n_block)
@@ -118,14 +118,20 @@ class Blocks:
             return np.array([self._gated(self.z)])
         return np.array([self._gated(self.z[i:i + n]) for i in range(0, len(self.z) - n + 1, step)])
 
+    @classmethod
+    def lra_gate(cls, st):
+        """The short-term values that count for a loudness range: above the absolute gate, then above the
+        POWER mean of those minus 20 LU (EBU Tech 3342; an arithmetic mean of dB values would sit too low)."""
+        st = np.asarray(st, dtype=np.float64)
+        st = st[st > ABS_GATE]
+        if not len(st):
+            return st
+        power = 10.0 ** ((st - OFFSET) / 10.0)
+        return st[st > float(cls._db(np.mean(power))) + LRA_GATE]
+
     def lra(self, hop_s=0.5):
         """Loudness range, LU (EBU Tech 3342): the spread of the short-term loudness between its gated percentiles."""
-        st = self.short_term(hop_s)
-        st = st[st > ABS_GATE]
-        if len(st) < 5:
-            return 0.0
-        power = 10.0 ** ((st - OFFSET) / 10.0)
-        st = st[st > float(self._db(np.mean(power))) + LRA_GATE]
+        st = self.lra_gate(self.short_term(hop_s))
         if len(st) < 5:
             return 0.0
         lo, hi = np.percentile(st, LRA_PCT)

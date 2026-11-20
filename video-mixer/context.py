@@ -40,7 +40,7 @@ from analysis import shot_scale as shot_scale_mod      # noqa: E402
 PHASE_STEPS = 64
 
 
-def cut_phase(cuts, bpm, fps=0.0, cfg=None):
+def cut_phase(cuts, bpm, fps=0.0):
     """Fit a beat grid to every cut and report how far off the grid they sit.
 
     Two-stage search: a coarse sweep over one period, then a refinement around
@@ -190,8 +190,12 @@ def _motion_profile(motion_mean):
     return 'fast'
 
 
-def build(probe, cfg_analysis, cfg_mapping=None, frames_by_scene=None, speech=None, bpm=None):
-    """The whole context for one reel. `probe` is video_probe.probe()'s report."""
+def build(probe, cfg_analysis, cfg_mapping=None, frames_by_scene=None, speech=None, bpm=None, silence=None):
+    """The whole context for one reel. `probe` is video_probe.probe()'s report.
+
+    `silence` is the spotting's no-music windows, [(start_s, end_s)] in this reel's time. A scene that lies
+    inside one is marked `music_gap`; without it no scene is, and `video.cue_silence` has nothing to judge.
+    """
     src = probe.get('source') or {}
     duration = float(src.get('duration_s') or 0.0)
     fps = float(src.get('fps') or 0.0)
@@ -211,6 +215,9 @@ def build(probe, cfg_analysis, cfg_mapping=None, frames_by_scene=None, speech=No
 
     scenes = group_scenes(shots, motion_hits, cfg_analysis)
     speech_per_scene(scenes, speech)
+    windows = [(float(a), float(b)) for a, b in silence or []]
+    for s in scenes:
+        s['music_gap'] = any(a - 1e-6 <= s['start_s'] and s['end_s'] <= b + 1e-6 for a, b in windows)
 
     if frames_by_scene:
         for s in scenes:
@@ -249,8 +256,8 @@ def build(probe, cfg_analysis, cfg_mapping=None, frames_by_scene=None, speech=No
                            strength=round(float(h.get('strength', 0.0)), 5),
                            dir=h.get('dir') or 'static', kind='peak')
                       for h in motion_hits],
-        cut_phase=cut_phase(cuts, bpm, fps, cfg_analysis),
-        silence_windows=silence_windows(scenes),
+        cut_phase=cut_phase(cuts, bpm, fps),
+        silence_windows=windows if windows else silence_windows(scenes),
         speech=dict(share=round(float((speech or {}).get('share') or 0.0), 4),
                     segments=[list(s) for s in (speech or {}).get('segments') or []],
                     per_second=(speech or {}).get('per_second') or [],

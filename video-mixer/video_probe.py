@@ -32,6 +32,8 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
+import threading
 
 import numpy as np
 
@@ -39,12 +41,23 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
+# Hang guards, not limits: a stalled ffmpeg/ffprobe is killed instead of blocking a render forever.
+# Starting values: ffprobe reads headers (seconds); a decode pass over a feature-length film is minutes to an hour.
+FFPROBE_TIMEOUT_S = 120
+FFMPEG_TIMEOUT_S = 6 * 3600
+
+from analysis.shot_scale import luma_of        # noqa: E402  (the one luma weighting, shared with shot scale)
+
 SCD_RE = re.compile(r'lavfi\.scd\.score:\s*(-?[\d.]+),\s*lavfi\.scd\.time:\s*(-?[\d.]+)')
 
 
-def _run(cmd, binary=False):
-    """Run ffmpeg/ffprobe. Returns (stdout, stderr); raises with the tool's own message on failure."""
-    p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL)
+def _run(cmd, binary=False, timeout=FFMPEG_TIMEOUT_S):
+    """Run ffmpeg/ffprobe. Returns (stdout, stderr); raises with the tool's own message on failure or timeout."""
+    try:
+        p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL,
+                           timeout=timeout)
+    except subprocess.TimeoutExpired:
+        raise RuntimeError(f'{os.path.basename(cmd[0])} timed out after {timeout}s') from None
     err = p.stderr.decode('utf-8', 'replace')
     if p.returncode != 0:
         raise RuntimeError(f'{os.path.basename(cmd[0])} failed ({p.returncode}): {err.strip()[-800:]}')
@@ -52,7 +65,8 @@ def _run(cmd, binary=False):
 
 
 def ffprobe_json(path):
-    out, _ = _run(['ffprobe', '-v', 'error', '-print_format', 'json', '-show_format', '-show_streams', path])
+    out, _ = _run(['ffprobe', '-v', 'error', '-print_format', 'json', '-show_format', '-show_streams', path],
+                  timeout=FFPROBE_TIMEOUT_S)
     return json.loads(out)
 
 
@@ -94,7 +108,7 @@ def keyframe_times(path):
     """Keyframe timestamps only. Cheap: ffprobe skips non-key frames instead of decoding them."""
     try:
         out, _ = _run(['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-skip_frame', 'nokey',
-                       '-show_entries', 'frame=pts_time', '-of', 'csv=p=0', path])
+                       '-show_entries', 'frame=pts_time', '-of', 'csv=p=0', path], timeout=FFMPEG_TIMEOUT_S)
     except RuntimeError:
         return []
     times = []
@@ -131,6 +145,36 @@ def _thin(items, min_gap_s, t_index=0):
     return kept
 
 
+def _read_frames(cmd, frame_bytes, timeout=FFMPEG_TIMEOUT_S):
+    """Yield one frame's bytes at a time from an ffmpeg rawvideo pipe, so memory stays flat however long the
+    picture is. Raises RuntimeError with the tool's message if ffmpeg fails or runs past `timeout`."""
+    with tempfile.TemporaryFile() as err:
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=err, stdin=subprocess.DEVNULL)
+        timed_out = []
+
+        def _kill():
+            timed_out.append(True)
+            p.kill()
+
+        timer = threading.Timer(timeout, _kill)
+        timer.start()
+        try:
+            while True:
+                buf = p.stdout.read(frame_bytes)
+                if len(buf) < frame_bytes:
+                    break
+                yield buf
+        finally:
+            timer.cancel()
+            p.stdout.close()
+            rc = p.wait()
+        if rc != 0:
+            err.seek(0)
+            tail = err.read().decode('utf-8', 'replace').strip()[-800:]
+            what = 'timed out' if timed_out else f'failed ({rc})'
+            raise RuntimeError(f'{os.path.basename(cmd[0])} {what}: {tail}')
+
+
 def frame_metrics(path, cfg):
     """Per-frame luma, motion, horizontal centre of motion and warmth, read one frame at a time.
 
@@ -139,16 +183,17 @@ def frame_metrics(path, cfg):
     """
     fps = float(cfg['analysis_fps'])
     w, h = int(cfg['analysis_width']), int(cfg['analysis_height'])
-    out, _ = _run(['ffmpeg', '-hide_banner', '-nostats', '-nostdin', '-v', 'error', '-i', path, '-an',
-                   '-vf', f'fps={fps},scale={w}:{h},format=rgb24', '-f', 'rawvideo', '-'], binary=True)
+    cmd = ['ffmpeg', '-hide_banner', '-nostats', '-nostdin', '-v', 'error', '-i', path, '-an',
+           '-vf', f'fps={fps},scale={w}:{h},format=rgb24', '-f', 'rawvideo', '-']
     frame_bytes = w * h * 3
-    n = len(out) // frame_bytes
+    n = 0
     luma, motion, centre, warmth = [], [], [], []
     prev = None
     xs = np.arange(w, dtype=np.float32)
-    for i in range(n):
-        rgb = np.frombuffer(out, np.uint8, count=frame_bytes, offset=i * frame_bytes).reshape(h, w, 3).astype(np.float32)
-        lum = (0.2126 * rgb[:, :, 0] + 0.7152 * rgb[:, :, 1] + 0.0722 * rgb[:, :, 2]) / 255.0
+    for buf in _read_frames(cmd, frame_bytes):
+        n += 1
+        rgb = np.frombuffer(buf, np.uint8).reshape(h, w, 3).astype(np.float32)
+        lum = luma_of(rgb)
         luma.append(float(lum.mean()))
         r, b = rgb[:, :, 0].mean(), rgb[:, :, 2].mean()
         warmth.append(float((r - b) / (r + b + 1e-6)))
@@ -162,6 +207,20 @@ def frame_metrics(path, cfg):
             centre.append(float((d.sum(axis=0) * xs).sum() / total / (w - 1) * 2.0 - 1.0) if total > 1e-6 else 0.0)
         prev = lum
     return dict(fps=fps, frames=n, luma=luma, motion=motion, centre=centre, warmth=warmth)
+
+
+def motion_peaks(frames):
+    """Every local maximum of the frame-difference curve, (t, strength), with no threshold and no thinning.
+
+    The hit list is thresholded and thinned from the same curve; these are the movement beats measured apart from
+    that choice, so `video.motion_sync` can judge a hit against something other than itself.
+    """
+    from scipy.signal import find_peaks
+    motion = np.asarray(frames['motion'], np.float64)
+    if len(motion) < 3:
+        return []
+    idx, _ = find_peaks(motion)
+    return [(float(i) / frames['fps'], float(motion[i])) for i in idx if motion[i] > 0]
 
 
 def motion_hits(frames, cfg):
@@ -209,6 +268,9 @@ def probe(path, cfg, verbose=False):
                motion_hits=[dict(t=round(t, 4), strength=round(float(v), 5)) for t, v in motion_hits(frames, pcfg)],
                energy=energy_curve(frames, cfg['direction_map']['energy_curve_bins']),
                luma_mean=round(float(np.mean(frames['luma'])) if frames['luma'] else 0.0, 4),
+               luma_min=round(float(np.min(frames['luma'])) if frames['luma'] else 0.0, 4),
+               luma_max=round(float(np.max(frames['luma'])) if frames['luma'] else 0.0, 4),
+               motion_peaks=[dict(t=round(t, 4), strength=round(v, 5)) for t, v in motion_peaks(frames)],
                warmth_mean=round(float(np.mean(frames['warmth'])) if frames['warmth'] else 0.0, 4),
                centre_mean=round(float(np.mean(frames['centre'])) if frames['centre'] else 0.0, 4),
                centre_range=[round(float(np.min(frames['centre'])), 4), round(float(np.max(frames['centre'])), 4)] if frames['centre'] else [0.0, 0.0],

@@ -46,6 +46,7 @@ import pedalboard as pb
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import airabs
 import presets
+from phys_core import excite
 
 SR = 44100
 NORMALIZED = ('rain_physical', 'cricket_chorus', 'bird_chorus', 'model_layer', 'noise_bed',
@@ -60,6 +61,12 @@ BED_REF_RMS = 0.25          # the amplitude a noise/stridulation bed is normaliz
 def _bandpass(x, low, high, sr=SR):
     sos = signal.butter(2, [max(10.0, low), min(sr * 0.49, high)], btype='bandpass', fs=sr, output='sos')
     return signal.sosfilt(sos, x).astype(np.float32)
+
+
+def _impact_rise(sr):
+    """(samples, raised-cosine ramp) of a real impact's 2.5 ms rise, so a ring never starts with a one-sample step."""
+    att = max(2, int(0.0025 * sr))
+    return att, (0.5 - 0.5 * np.cos(np.pi * np.arange(att) / att)).astype(np.float32)
 
 
 def _highpass(x, cutoff, sr=SR):
@@ -273,8 +280,7 @@ def synth_impulse_cluster(sec, sr=SR, rng=None, event_rate=8.0, freq_low=1400.0,
     total_events = int(sec * event_rate)
     decay_samps = max(20, int((decay_ms / 1000.0) * sr))
     dt = np.arange(decay_samps) / sr
-    att = max(2, int(0.0025 * sr))                                    # finite impact rise, not a single-sample step
-    rise = (0.5 - 0.5 * np.cos(np.pi * np.arange(att) / att)).astype(np.float32)
+    att, rise = _impact_rise(sr)                                      # finite impact rise, not a single-sample step
     
     for _ in range(total_events):
         pos = int(rng.uniform(0, n - decay_samps - 1))
@@ -405,11 +411,7 @@ def synth_doppler_sweep(sec, sr=SR, rng=None, f_start=350.0, f_end=170.0, pass_t
 
 def _turbulence(n, sr, rng, corner_hz):
     """Unit-variance gust series: PSD ~ (1+(f/fc)^2)^(-5/6), the -5/3 turbulence slope above fc (von Karman/Kaimal)."""
-    spec = np.fft.rfft(rng.standard_normal(n))
-    f = np.fft.rfftfreq(n, 1.0 / sr)
-    spec *= (1.0 + (f / max(1e-3, corner_hz)) ** 2) ** (-5.0 / 12.0)
-    spec[0] = 0.0
-    z = np.fft.irfft(spec, n)
+    z = excite.gust_series(n, sr, rng, corner_hz)
     return (z / max(1e-9, z.std())).astype(np.float32)
 
 
@@ -433,8 +435,7 @@ def synth_rain(sec, sr=SR, rng=None, rate_mm_h=5.0, surface='water', bubble_prob
     t = np.arange(ev_len) / sr
     # a real impact builds over two or three milliseconds; starting a 12 kHz ring at full level on the first sample
     # is a single-sample step, which the stem gate rightly reads as a click (12 isolated impulses in one rain bed)
-    att = max(2, int(0.0025 * sr))
-    rise = (0.5 - 0.5 * np.cos(np.pi * np.arange(att) / att)).astype(np.float32)
+    att, rise = _impact_rise(sr)
     for pos in rng.integers(0, max(1, n - ev_len - 1), int(sec * rate)):
         d = float(np.clip(0.3 + rng.exponential(1.0 / lam), 0.3, 6.0))
         amp = loud * 3.778 * d ** 0.67 * d ** 2 / 60.0            # momentum-like, ~1 for a 4 mm drop
@@ -818,8 +819,8 @@ def render_environment_preset(name_or_dict, duration_s=30.0, sr=SR, seed=42):
                 known = ', '.join(sorted(presets.load('environments')))
                 raise ValueError(f'unknown environment "{name_or_dict}" (it would render as silence). Known: {known}')
 
-    if isinstance(cfg.get('scene'), dict) or cfg.get('scene_layers'):
-        import env_engine.render as _env_render       # the physical scene path; the layer path below is unchanged
+    import env_engine.render as _env_render           # the physical scene path; the layer path below is unchanged
+    if isinstance(cfg.get('scene'), dict) or _env_render.has_scene_layers(cfg):
         return _env_render.render_preset(cfg, duration_s=duration_s, sr=sr, seed=seed)
 
     rng = np.random.default_rng(seed)
@@ -842,6 +843,8 @@ def render_environment_preset(name_or_dict, duration_s=30.0, sr=SR, seed=42):
         if canon in ('cricket_chorus', 'animal_call') and 'temp_c' not in kw:   # cold-blooded callers follow the air
             kw['temp_c'] = float((lyr.get('atmosphere') or cfg.get('atmosphere') or {}).get('temp_c', 20.0))
         mono = fn(duration_s, sr, rng, **kw)
+        if len(mono) != n:                     # a primitive's own rounding can land 1 sample off duration_s*sr
+            mono = np.pad(mono, (0, n - len(mono))) if len(mono) < n else mono[:n]
 
         # new physical primitives are brought to a common RMS first, so gain_db means the same for each of them.
         # Every bed primitive is on this scale now (a cicada layer and an air layer used to sit on different axes).
@@ -900,11 +903,6 @@ def render_environment_preset(name_or_dict, duration_s=30.0, sr=SR, seed=42):
             pan_val = float(lyr.get('pan', 0.0))
             stereo_layer = _pan_stereo(mono, pan_val)
             
-        if len(stereo_layer) != n:             # a primitive's own rounding can land 1 sample off duration_s*sr
-            if len(stereo_layer) < n:
-                stereo_layer = np.pad(stereo_layer, ((0, n - len(stereo_layer)), (0, 0)))
-            else:
-                stereo_layer = stereo_layer[:n]
         out_stereo += stereo_layer
         
     # Spectral unmasking according to preset's blending configuration

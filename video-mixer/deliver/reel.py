@@ -89,8 +89,37 @@ def _fit(y, n):
     return np.pad(y, ((0, n - len(y)), (0, 0)))
 
 
-def assemble(cuesheet, film_dir, duration_s, cfg=None, reel=None):
-    """(audio, report). A silent cue is a gap, not a mistake: silence is a cue."""
+def cue_report_path(film_dir, cue_id):
+    """Where a cue's certified report lives: the cue is a complete project, so reports/ci_report.json."""
+    return os.path.join(film_dir, 'cues', str(cue_id), 'reports', 'ci_report.json')
+
+
+def load_cue_reports(cuesheet, film_dir, reel=None):
+    """{cue id: certified report dict, or None when the cue has no readable report}. Silent cues are left out."""
+    out = {}
+    for p in planned_placements(cuesheet, reel):
+        if p['silence']:
+            continue
+        path = cue_report_path(film_dir, p['id'])
+        rep = None
+        if os.path.exists(path):
+            try:
+                with open(path, encoding='utf-8') as fh:
+                    rep = json.load(fh)
+            except (OSError, ValueError):
+                rep = None
+        if isinstance(rep, dict):
+            rep = dict(rep, cue=p['id'], title=rep.get('title') or p.get('title') or p['id'])
+        out[p['id']] = rep
+    return out
+
+
+def assemble(cuesheet, film_dir, duration_s, cfg=None, reel=None, cue_reports=None):
+    """(audio, report). A silent cue is a gap, not a mistake: silence is a cue.
+
+    cue_reports ({id: report}, see load_cue_reports): when given, only a cue whose report says PASSED
+    is placed (AGENTS 9.2); any other cue is left out and named, so reel.placement fails.
+    """
     cfg = dict(DEFAULTS, **(cfg or {}))
     sr = int(cfg['sample_rate'])
     n = int(round(float(duration_s) * sr))
@@ -105,6 +134,13 @@ def assemble(cuesheet, film_dir, duration_s, cfg=None, reel=None):
             row.update(placed=False, note='spotting marked this cue silent: the reel keeps the gap')
             rows.append(row)
             continue
+        if cue_reports is not None:
+            crep = cue_reports.get(p['id'])
+            if not isinstance(crep, dict) or str(crep.get('status')) != 'PASSED':
+                why = 'no certified report' if not isinstance(crep, dict) else f'status {crep.get("status")}'
+                row.update(placed=False, certified=False, note=f'cue not certified ({why}): not assembled')
+                rows.append(row)
+                continue
         wav = p['wav']
         if not wav:
             row.update(placed=False, note='no master named for this cue')
@@ -132,10 +168,15 @@ def assemble(cuesheet, film_dir, duration_s, cfg=None, reel=None):
         audio[i:j] += y[:j - i]
         row.update(placed=True, samples=j - i, source=os.path.relpath(path, film_dir).replace('\\', '/'))
         rows.append(row)
+    # Sweep the placed intervals with a running maximum end, so a cue is compared with every earlier one
+    # that is still sounding (an unplaced silent row between two cues never breaks the pair).
     overlaps = []
-    for a, b in zip(rows, rows[1:]):
-        if a.get('placed') and b.get('placed') and float(b['start_s']) < float(a['end_s']) - 1e-6:
-            overlaps.append((a['id'], b['id'], round(float(a['end_s']) - float(b['start_s']), 3)))
+    latest = None
+    for r in sorted((r for r in rows if r.get('placed')), key=lambda r: float(r['start_s'])):
+        if latest is not None and float(r['start_s']) < float(latest['end_s']) - 1e-6:
+            overlaps.append((latest['id'], r['id'], round(float(latest['end_s']) - float(r['start_s']), 3)))
+        if latest is None or float(r['end_s']) > float(latest['end_s']):
+            latest = r
     report = dict(duration_s=round(float(duration_s), 3), sample_rate=sr, cues=rows,
                   overlaps=[dict(a=a, b=b, overlap_s=s) for a, b, s in overlaps],
                   placed=sum(1 for r in report_rows_placed(rows) if r),
@@ -173,7 +214,7 @@ def reel_verdict(cue_reports, rows):
     cue_uncertified = [r.get('title') or r.get('cue') for r in cue_reports or []
                        if str(r.get('status')) != 'PASSED']
     own_fails = sum(1 for lvl, _, _ in rows if lvl == 'FAIL')
-    fails = cue_fails + own_fails
+    fails = cue_fails + own_fails + len(cue_uncertified)
     return dict(status='PASSED' if fails == 0 else 'FAILED', cue_fails=cue_fails,
                 reel_fails=own_fails, uncertified_cues=cue_uncertified,
                 cues=len(cue_reports or []),
@@ -212,9 +253,13 @@ def main():
     sheet = load_cuesheet(film_dir)
     if duration is None:
         duration = max(p['end_s'] for p in planned_placements(sheet, a.reel))
-    audio, report = assemble(sheet, film_dir, duration, film.get('delivery') or {}, reel=a.reel)
+    cue_reports = load_cue_reports(sheet, film_dir, a.reel)
+    audio, report = assemble(sheet, film_dir, duration, film.get('delivery') or {}, reel=a.reel,
+                             cue_reports=cue_reports)
     rows = reel_rows(report)
-    verdict = reel_verdict([], rows)
+    verdict = reel_verdict(
+        [r if r is not None else dict(cue=cid, title=cid, status='MISSING') for cid, r in cue_reports.items()],
+        rows)
     wav, rep = write_reel(film_dir, a.reel, audio, report, verdict, a.out)
     for lvl, name, detail in rows:
         print(f'[{lvl:4s}] {name:20s} {detail}')

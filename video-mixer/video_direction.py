@@ -39,6 +39,8 @@ for p in (HERE, os.path.join(SKILL, 'scripts')):
     if p not in sys.path:
         sys.path.insert(0, p)
 
+import context as _context_mod      # noqa: E402  (module-level imports of this file are lazy the other way round)
+
 
 def tempo_from_cuts(cut_times, cfg, fps):
     """A tempo the cuts sit on. Each cut interval is taken as 1, 2, 4 or 8 beats; the closest to `prefer_bpm`
@@ -100,31 +102,49 @@ def staging_from_centre(centre, cfg):
     return out
 
 
-def hits_from_probe(rep, cfg, bpm, duration_s):
-    """Cut hits first, then motion hits, thinned to the preset's gap and per-minute budget.
+def plan_hits(rep, cfg, bpm, duration_s):
+    """(kept, dropped): cut hits first, then motion hits, thinned to the preset's gap and per-minute budget.
 
     A cut is a hard sync point (the picture jumps and the ear already flinches there), a movement inside a shot is a
-    soft one (a few frames either way are inaudible). Only the hard ones are judged against the cut list.
+    soft one (a few frames either way are inaudible). Only the hard ones are judged against the cut list, so they
+    are placed first: a movement can never take a cut's slot, and a movement is added only where it keeps the gap to
+    every hit already placed. A cut that gets no hit (gap to the previous cut, or the budget) is returned in
+    `dropped` with its reason, never lost silently.
     """
     h = cfg['hits']
     classes = h.get('classes') or {}
     min_gap = float(h['min_gap_beats']) * 60.0 / float(bpm)
     budget = int(np.ceil(max(duration_s, 0.1) / 60.0 * int(h['max_hits_per_minute'])))
-    want = [(c['t'], h['cut_sound'], float(h['cut_velocity']), 'cut') for c in rep['cuts']]
-    want += [(m['t'], h['motion_sound'], float(h['motion_velocity']), 'motion') for m in rep['motion_hits']]
-    kept = []
-    for t, sound, vel, kind in sorted(want):
+
+    def make(t, sound, vel, kind):
+        return dict(t_s=round(float(t), 4), sound=sound, velocity=vel, kind=kind,
+                    sync='hard' if kind == 'cut' else 'soft',
+                    # a cut or a movement is dead on; a reaction accent is chosen by the spotting, never guessed
+                    **({'class': 'dead_on'} if classes else {}))
+
+    kept, dropped = [], []
+    for t in sorted(float(c['t']) for c in rep['cuts']):
         if t <= 0:
             continue
         if kept and t - kept[-1]['t_s'] < min_gap:
+            dropped.append(dict(t_s=round(t, 4), kind='cut', reason='min_gap'))
+        elif len(kept) >= budget:
+            dropped.append(dict(t_s=round(t, 4), kind='cut', reason='budget'))
+        else:
+            kept.append(make(t, h['cut_sound'], float(h['cut_velocity']), 'cut'))
+    for t in sorted(float(m['t']) for m in rep['motion_hits']):
+        if t <= 0 or len(kept) >= budget:
             continue
-        kept.append(dict(t_s=round(float(t), 4), sound=sound, velocity=vel, kind=kind,
-                         sync='hard' if kind == 'cut' else 'soft',
-                         # a cut or a movement is dead on; a reaction accent is chosen by the spotting, never guessed
-                         **({'class': 'dead_on'} if classes else {})))
-        if len(kept) >= budget:
-            break
-    return kept
+        if any(abs(t - k['t_s']) < min_gap for k in kept):
+            continue
+        kept.append(make(t, h['motion_sound'], float(h['motion_velocity']), 'motion'))
+    kept.sort(key=lambda k: k['t_s'])
+    return kept, dropped
+
+
+def hits_from_probe(rep, cfg, bpm, duration_s):
+    """The placed hits of `plan_hits` (see there for the order, the gap and the budget)."""
+    return plan_hits(rep, cfg, bpm, duration_s)[0]
 
 
 def sections_from_energy(rep, cfg, duration_s):
@@ -180,7 +200,7 @@ def direction_sheet(rep, cfg, brief_text='', title=None, context=None, film=None
     mode = mode_from_luma(float(rep['luma_mean']), dm)
     master = cfg['master_profiles'][cfg['master']['profile']]
     feels = [w for w in brief_text.split() if w] or ['cinematic', 'restrained']
-    hits = hits_from_probe(rep, cfg, tempo['bpm'], duration)
+    hits, dropped_cuts = plan_hits(rep, cfg, tempo['bpm'], duration)
     mix_cfg, gate_cfg = cfg['mix'], cfg['gate']
     has_audio = bool(src['has_audio'])
     why = {'cut': 'a picture cut: the frame jumps and the ear flinches there anyway',
@@ -238,6 +258,8 @@ def direction_sheet(rep, cfg, brief_text='', title=None, context=None, film=None
                    out_s=round(duration, 3), duration_s=round(duration, 3), fps=float(src['fps']),
                    cuts=[c['t'] for c in rep['cuts']], cuts_count=len(rep['cuts']), cut_source=rep['cut_source'],
                    motion_hits=len(rep['motion_hits']), energy=rep['energy'],
+                   dropped_cuts=dropped_cuts,
+                   motion_peaks=[float(m['t']) for m in rep.get('motion_peaks') or []],
                    luma=rep['luma_mean'], warmth=rep['warmth_mean'], centre=rep['centre_mean'],
                    azimuth=round(azimuth_from_centre(float(rep['centre_mean']), dm), 2),
                    has_audio=has_audio,
@@ -258,8 +280,7 @@ def direction_sheet(rep, cfg, brief_text='', title=None, context=None, film=None
         sheet['video']['scenes'] = context.get('scenes') or []
         sheet['video']['motion_beats'] = context.get('motion_beats') or []
         sheet['video']['cut_phase'] = context.get('cut_phase') or {}
-        sheet['video']['silence_windows'] = [(float(s['start_s']), float(s['end_s']))
-                                            for s in context.get('scenes') or [] if s.get('music_gap')]
+        sheet['video']['silence_windows'] = _context_mod.silence_windows(context)
         sheet['story'] = (f"{len(context.get('shots') or [])} shots in {len(context.get('scenes') or [])} scenes; "
                           f"{context.get('reel', {}).get('motion_profile', 'unknown')} movement; "
                           f"{'speech present' if has_audio else 'no speech'}")
@@ -411,12 +432,15 @@ def apply_section_arrangement(score, sheet, mapping_cfg):
     return score
 
 
-def score_from_sheet(sheet, cfg, rep, context=None, mapping=None):
+def score_from_sheet(sheet, cfg, rep, context=None, mapping=None, film=None):
     """Build the score through compose (so every musical decision stays in the engine), then place the hits.
 
     Hits are written at fractional beats: beat = t_s * bpm / 60. compose.add_hit_points rounds to half beats,
     which would throw a cut hit up to a beat away, so it is bypassed on purpose. A reaction-class hit is written
     `after_s` past its picture moment, and the offset travels with it so the gate can check the class was honoured.
+
+    `film` (the film presets, optional) lets the score carry the delivery gate's limits (motion window, density,
+    shot-scale tolerance) so the score-side rows judge against presets, not literals.
     """
     import compose
     has_audio = bool(rep['source']['has_audio'])
@@ -438,12 +462,19 @@ def score_from_sheet(sheet, cfg, rep, context=None, mapping=None):
     score['mix_preset'] = cfg['mix_preset']['name']
     score['piece_type'] = sheet['piece_type']
     score['video'] = sheet['video']
+    # two independent numbers for protected video.duration_lock: the picture as probed, and the score's own length
+    score['video']['picture_duration_s'] = float(rep['source']['duration_s'])
+    nominal = (score.get('meta') or {}).get('duration_s_nominal')
+    if nominal is not None:
+        score['video']['score_duration_s'] = float(nominal)
     beat = 60.0 / float(sheet['tempo_bpm'])
     dur_beats = float(cfg['hits']['duration_s']) / beat
     hit_pos = cfg['staging']['drum']
     hits_cfg = cfg['hits']
     placed = []
-    for i, h in enumerate(hits_from_probe(rep, cfg, sheet['tempo_bpm'], sheet['duration_s'])):
+    plan, dropped_cuts = plan_hits(rep, cfg, sheet['tempo_bpm'], sheet['duration_s'])
+    score['video']['dropped_cuts'] = dropped_cuts
+    for i, h in enumerate(plan):
         cls, shift = class_shift(h, hits_cfg)
         score['tracks'].append(dict(name=f'hit_{i + 1:02d}', instrument=h['sound'], role='sfx',
                                     spatial=dict(azimuth=0.0, elevation=float(hit_pos['elevation']),
@@ -470,10 +501,14 @@ def score_from_sheet(sheet, cfg, rep, context=None, mapping=None):
         score['video']['scenes'] = context.get('scenes') or []
         score['video']['motion_beats'] = context.get('motion_beats') or []
         score['video']['cut_phase'] = context.get('cut_phase') or {}
-        score['video']['silence_windows'] = [(float(s['start_s']), float(s['end_s']))
-                                            for s in context.get('scenes') or [] if s.get('music_gap')]
+        score['video']['silence_windows'] = _context_mod.silence_windows(context)
     score['video']['hits_cfg'] = dict(hits_cfg)
-    score['video']['gate_cfg'] = dict((cfg.get('gate') or {}))
+    gate_cfg = dict((cfg.get('gate') or {}))
+    if film:
+        gate_cfg.update((film.get('delivery') or {}).get('gate') or {})
+    if mapping is not None and mapping.get('shot_scale_max_density') is not None:
+        gate_cfg['shot_scale_max_density'] = dict(mapping['shot_scale_max_density'])
+    score['video']['gate_cfg'] = gate_cfg
     score['video']['sections'] = [{k: s.get(k) for k in ('name', 'start_s', 'end_s', 'energy', 'shot_scale',
                                                          'density', 'roles_present')}
                                   for s in score.get('sections') or []]

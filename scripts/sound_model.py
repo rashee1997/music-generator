@@ -41,6 +41,9 @@ import sys
 import numpy as np
 from scipy.signal import lfilter, sosfilt, butter
 
+from phys_core import excite as _excite
+from phys_core import resonate as _resonate
+
 SR = 44100
 MAX_WORK = 6e8              # estimated multiply-adds for one render (about 10 s of CPU on a laptop); above this the model is refused
 MAX_VOICES = 24
@@ -295,10 +298,7 @@ def _colored_noise(rng, n, color):
 def _band(x, band, sr, order=2):
     if not band:
         return x
-    lo, hi = max(float(band[0]), 20.0), min(float(band[1]), sr / 2 - 100)
-    if hi <= lo:
-        return x
-    return sosfilt(butter(order, [lo, hi], btype='band', fs=sr, output='sos'), x)
+    return _resonate.bandpass(x, band[0], band[1], sr, order)
 
 
 def _interp_curve(points, t, default=0.0):
@@ -322,13 +322,7 @@ def excitation(ex, dur, sr, rng, pitch=1.0, speed_scale=1.0):
     n = max(1, int(round(dur * sr)))
     k = ex['kind']
     if k == 'impact':
-        m = max(2, int(round(ex['tau'] * sr)))
-        m = min(m, n)
-        t = np.arange(m) / (m)
-        pulse = 1 - np.cos(2 * np.pi * t)                 # 1 - cos(2 pi t / tau), 0 <= t <= tau   (FoleyAutomatic, impact force)
-        out = np.zeros(n)
-        out[:m] = pulse / max(pulse.sum(), 1e-12)
-        return out
+        return _excite.impact_pulse(ex['tau'], sr, n)    # 1 - cos(2 pi t / tau), 0 <= t <= tau   (FoleyAutomatic, impact force)
     if k == 'burst':
         x = _colored_noise(rng, n, ex['color']) * np.exp(-np.arange(n) / sr / ex['tau'])
         return x / (np.abs(x).max() + 1e-12) * 0.2
@@ -424,12 +418,8 @@ def modal_bank(x, rs, sr, rng, pitch=1.0):
 
 def bubble_event(rs, dur, sr, pitch=1.0):
     """Minnaert bubble: f = 3.26 / r (r in metres), a decaying sine whose pitch rises a little (the bubble shrinks as it rings)."""
-    f0 = (rs['f_hz'] if rs.get('f_hz') else 3.26 / (float(rs['radius_mm']) * 1e-3)) * pitch
-    f0 = min(f0, sr / 2 - 300)
-    n = max(2, int(round(dur * sr)))
-    t = np.arange(n) / sr
-    d = 6.907755 / rs['t60']
-    return np.exp(-d * t) * np.sin(2 * np.pi * f0 * (t + 0.5 * rs['rise'] * d * t * t))
+    f_hz = rs['f_hz'] if rs.get('f_hz') else 3.26 / (float(rs['radius_mm']) * 1e-3)
+    return _resonate.bubble(f_hz, rs['t60'], dur, sr, rs['rise'], pitch)
 
 
 def resonate(x, rs, sr, rng, pitch=1.0):

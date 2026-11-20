@@ -246,10 +246,7 @@ def lufs(x, sr=SR):
     x = to_stereo(x)
     if len(x) < int(0.5 * sr):
         x = np.pad(x, ((0, int(0.5 * sr) - len(x)), (0, 0)))
-    try:
-        v = dsp.meter(sr).integrated_loudness(x.astype(np.float64))
-    except Exception:
-        v = -70.0
+    v = dsp.meter(sr).integrated_loudness(x.astype(np.float64))     # a meter error propagates: -70 means silence
     return -70.0 if not np.isfinite(v) else float(v)
 
 
@@ -288,26 +285,13 @@ def true_peak_db(x, sr=SR, over=4):
     return dsp.true_peak_db(x, sr, over)
 
 
-def rms_db(x):
-    return float(20 * np.log10(np.sqrt(np.mean(np.square(x))) + 1e-12))
+rms_db = dsp.rms_db                 # one RMS-in-dB for the engine (video_program_mix reads it as mixer.rms_db)
 
 
 def _run(board, x, sr=SR):
     x = to_stereo(x)
     y = board(np.ascontiguousarray(x.T), sr)
     return np.ascontiguousarray(y.T)
-
-
-def pan_stereo(x, pan, mode='legacy'):
-    """Constant-power balance. pan -1..1 ; 0 leaves the stereo image untouched.
-
-    mode='energy' keeps a stereo source's image (a -3 dB floor on the far channel instead of nulling it);
-    'legacy' is the amplitude balance this engine has always used."""
-    if mode == 'energy':
-        return dsp.pan_energy(x, pan)
-    th = (float(pan) + 1) * np.pi / 4
-    gl, gr = np.cos(th) * np.sqrt(2), np.sin(th) * np.sqrt(2)
-    return x * np.array([gl, gr], dtype=np.float32)
 
 
 def width_ms(x, width):
@@ -388,10 +372,15 @@ def _space_owned(cfg):
 
 def make_ir(room='hall', sr=SR, seed=3):
     """Stereo IR: sparse early reflections + decorrelated noise tail whose highs die faster than lows."""
+    if isinstance(room, str) and room not in ROOMS:
+        room = resolve_space(room) or room          # a space preset's name: use the room it describes
     if isinstance(room, dict):
         room = (room['room']['rt60'], room['room']['pre_delay_ms'], room['room']['hf_decay'],
                 room['room']['early_level'])
-    key = (json.dumps(room, sort_keys=True) if isinstance(room, dict) else str(room), sr, seed)
+    elif isinstance(room, str) and room not in ROOMS:
+        raise ValueError(f"unknown room {room!r}: known rooms are {', '.join(sorted(ROOMS))} "
+                         f"(or the name of a space preset that has a `room` block)")
+    key = (str(room), sr, seed)
     space_cfg = mix_schema.section(_mix(), 'space')         # the IR is built from the piece's space section
     irc = space_cfg['ir']
     key = key + (json.dumps(irc, sort_keys=True),)
@@ -399,7 +388,7 @@ def make_ir(room='hall', sr=SR, seed=3):
     cached = _IR_CACHE.get(key)
     if cached is not None and cache_ir:
         return cached
-    rt60, pre, hf, er = ROOMS.get(room, ROOMS['hall']) if isinstance(room, str) else room
+    rt60, pre, hf, er = ROOMS[room] if isinstance(room, str) else room
     rng = np.random.default_rng(seed)
     n = int((rt60 * float(irc['length_factor']) + pre / 1000.0 + float(irc['length_pad_s'])) * sr)
     t = np.arange(n) / sr
@@ -457,10 +446,6 @@ def reverb_bus(x, room='hall', sr=SR, hp=None, lp=None, seed=3, gated=False, gat
 # ---------------------------------------------------------------------------------------------
 # role chains / spectral profiles
 # ---------------------------------------------------------------------------------------------
-
-def _peak(f, g, q=1.0):
-    return pb.PeakFilter(cutoff_frequency_hz=f, gain_db=g, q=q)
-
 
 def _band(b):
     """One preset EQ band, normalised (f/freq, gain, q)."""
@@ -673,6 +658,36 @@ def gain_stage(x, l, role, spec, gs=None, sr=SR):
     return float(gain)
 
 
+_DISTANCE_KEYS = (('ref_m', 'air_absorption_ref_distance'), ('falloff', 'direct_falloff_scale'),
+                  ('air_damping', 'air_absorption_damping'), ('min_cutoff_hz', 'min_air_cutoff_hz'),
+                  ('reverb_exponent', 'reverb_distance_scale'))      # space preset `distance` key -> mix `spatial` key
+
+
+def _spatial_cfg(mx, space):
+    """The mix preset's `spatial` section with the distance law of a project-owned space laid over it."""
+    cfg = dict(mx.get('spatial') or {})
+    dc = space.get('distance', {}) if _space_owned(space) else {}
+    for k_sp, k_mix in _DISTANCE_KEYS:
+        if k_sp in dc:
+            cfg[k_mix] = dc[k_sp]
+    return cfg
+
+
+def _air_absorb(x, sp, dist, ref_d, damp, min_cut, sr):
+    """Air absorption beyond the reference distance: the measured model when the track names a temperature or
+    humidity, else a one-pole low-pass whose cutoff falls with distance."""
+    if 'temp_c' in sp or 'rh' in sp:
+        import airabs
+        return airabs.apply(x, dist - 1.0, temp_c=float(sp.get('temp_c', 20.0)), rh=float(sp.get('rh', 50.0)), sr=sr)
+    cutoff = max(min_cut, min(sr * 0.45, 22000.0 / (1.0 + damp * (dist - ref_d))))
+    return signal.sosfilt(signal.butter(1, cutoff, btype='lowpass', fs=sr, output='sos'), x, axis=0).astype(np.float32)
+
+
+def _direct_gain(dist, falloff):
+    """The direct level at `dist` metres (1 at one metre or nearer)."""
+    return 1.0 / (1.0 + falloff * (dist - 1.0)) if dist > 1.0 else 1.0
+
+
 def reverb_send_level(spec, mx=None, space=None):
     """The reverb send for this stem: its `reverb` times the distance factor (DRR), never mutating `spec`."""
     mx = mx or _mix()
@@ -682,13 +697,7 @@ def reverb_send_level(spec, mx=None, space=None):
         return base
     space = _space() if space is None else space
     dist = max(0.5, float(sp.get('distance', 1.5)))
-    cfg = dict(mx.get('spatial') or {})
-    dc = space.get('distance', {}) if _space_owned(space) else {}
-    for k_sp, k_mix in (('ref_m', 'air_absorption_ref_distance'), ('falloff', 'direct_falloff_scale'),
-                        ('air_damping', 'air_absorption_damping'), ('min_cutoff_hz', 'min_air_cutoff_hz'),
-                        ('reverb_exponent', 'reverb_distance_scale')):
-        if k_sp in dc:
-            cfg[k_mix] = dc[k_sp]
+    cfg = _spatial_cfg(mx, space)
     ref_d = float(sp.get('ref_distance', cfg.get('air_absorption_ref_distance', 1.5)))
     drr = (mx.get('space') or {}).get('drr') or {}
     if drr.get('enabled'):
@@ -742,7 +751,7 @@ def _chain_key(name, x, spec, mx, sr, n):
     import compute
     import stem_cache
     return stem_cache.digest(dict(version=MIX_CACHE_VERSION, cache=stem_cache.CACHE_VERSION, stem=name,
-                                  audio=stem_cache.audio_hash(x, size=16), spec=stem_cache.jsonable(spec),
+                                  audio=stem_cache.audio_hash(x, size=16, stride=1), spec=stem_cache.jsonable(spec),
                                   mix=stem_cache.jsonable(mx), sr=int(sr), frames=int(n),
                                   compute=compute.cache_tag(), code=_code_tag()), size=16)
 
@@ -822,7 +831,7 @@ def process_chain(name, x, spec, sr=SR, ctx=None):
         chain += _chain_objects(schain)
     for d in spec.get('eq', []) or []:
         if d.get('order') and d.get('type') in ('hp', 'highpass', 'lp', 'lowpass'):
-            x = dsp.slope_filter(x, sr, d['f'], d['type'], d['order'])
+            x = dsp.slope_filter(x, sr, _band(d)['f'], d['type'], d['order'])
         else:
             chain.append(eq_object(d))
     if 'hp' in spec:
@@ -833,8 +842,9 @@ def process_chain(name, x, spec, sr=SR, ctx=None):
     if comp is False or comp == 0:
         comp = None
     if isinstance(comp, dict) and str(dyn.get('engine', 'pedalboard')) == 'pedalboard':
-        chain.append(pb.Compressor(threshold_db=comp.get('thr', -22), ratio=comp.get('ratio', 2.5),
-                                   attack_ms=comp.get('attack', 15), release_ms=comp.get('release', 150)))
+        cp = mix_schema.comp_params(comp)
+        chain.append(pb.Compressor(threshold_db=cp['thr'], ratio=cp['ratio'],
+                                   attack_ms=cp['attack'], release_ms=cp['release']))
     if spec.get('saturation', 0):
         chain.insert(0, pb.Distortion(drive_db=spec['saturation']))
     if chain:
@@ -908,7 +918,7 @@ def _width_inplace(x, width):
 
 
 def _pan_inplace(x, pan, mode='legacy'):
-    """pan_stereo() written into the buffer it is given. 'energy' has its own law, so it stays a copy."""
+    """The constant-power balance written into the buffer it is given. 'energy' has its own law, so it stays a copy."""
     if mode == 'energy':
         return dsp.pan_energy(x, pan)
     th = (float(pan) + 1) * np.pi / 4
@@ -952,8 +962,9 @@ def _dsp_dynamics(x, dyn, sr, comp_done=False):
     dynamic EQ/transient shaping. Only reached when a preset asks for it."""
     comp = dyn.get('comp')
     if isinstance(comp, dict) and not comp_done:
-        x = dsp.compressor(x, sr, threshold_db=comp.get('thr', -22), ratio=comp.get('ratio', 2.5),
-                           attack_ms=comp.get('attack', 15), release_ms=comp.get('release', 150),
+        cp = mix_schema.comp_params(comp)
+        x = dsp.compressor(x, sr, threshold_db=cp['thr'], ratio=cp['ratio'],
+                           attack_ms=cp['attack'], release_ms=cp['release'],
                            knee_db=float(dyn.get('knee_db', 0.0)), detector=str(dyn.get('detector', 'peak')),
                            stereo_link=bool(dyn.get('stereo_link', True)),
                            lookahead_ms=float(dyn.get('lookahead_ms', 0.0)),
@@ -964,7 +975,7 @@ def _dsp_dynamics(x, dyn, sr, comp_done=False):
     if dyn.get('multiband'):
         x = dsp.multiband_compressor(x, sr, dyn['multiband'])
     for b in (dyn.get('dynamic_eq') or []):
-        x = dsp.dynamic_eq(x, sr, f=b.get('f', 1000.0), q=b.get('q', 1.0),
+        x = dsp.dynamic_eq(x, sr, f=b.get('f', b.get('freq', 1000.0)), q=b.get('q', 1.0),
                            threshold_db=b.get('threshold_db', -24.0), ratio=b.get('ratio', 2.0),
                            attack_ms=b.get('attack_ms', 5.0), release_ms=b.get('release_ms', 80.0),
                            knee_db=b.get('knee_db', 3.0), gain_db=b.get('gain_db', 0.0))
@@ -1016,13 +1027,7 @@ def _place(name, x, spec, mx, sr):
     imm = _imm()
     az, el, dist = place_of(spec, imm)
 
-    sp_cfg = dict(mx.get('spatial') or {})
-    dc = _space().get('distance', {}) if _space_owned(_space()) else {}
-    for k_sp, k_mix in (('ref_m', 'air_absorption_ref_distance'), ('falloff', 'direct_falloff_scale'),
-                        ('air_damping', 'air_absorption_damping'), ('min_cutoff_hz', 'min_air_cutoff_hz'),
-                        ('reverb_exponent', 'reverb_distance_scale')):
-        if k_sp in dc:
-            sp_cfg[k_mix] = dc[k_sp]
+    sp_cfg = _spatial_cfg(mx, _space())
     ref_d = float(sp.get('ref_distance', sp_cfg.get('air_absorption_ref_distance', 1.5)))
     damp = float(sp.get('air_damping', sp_cfg.get('air_absorption_damping', 0.40)))
     min_cut = float(sp.get('min_cutoff_hz', sp_cfg.get('min_air_cutoff_hz', 3200.0)))
@@ -1092,16 +1097,11 @@ def _place(name, x, spec, mx, sr):
                                         acoustic_space=space_arg, externalize=True, sr=sr)
     # A. distance air absorption
     own_distance = spec.get('scene_distance_m') is not None
-    if not binaural and not own_distance and dist > ref_d and sp.get('air_absorption', True) and ('temp_c' in sp or 'rh' in sp):
-        import airabs
-        x = airabs.apply(x, dist - 1.0, temp_c=float(sp.get('temp_c', 20.0)), rh=float(sp.get('rh', 50.0)), sr=sr)
-    elif not binaural and not own_distance and dist > ref_d and sp.get('air_absorption', True):
-        cutoff = max(min_cut, min(sr * 0.45, 22000.0 / (1.0 + damp * (dist - ref_d))))
-        sos_air = signal.butter(1, cutoff, btype='lowpass', fs=sr, output='sos')
-        x = signal.sosfilt(sos_air, x, axis=0).astype(np.float32)
+    if not binaural and not own_distance and dist > ref_d and sp.get('air_absorption', True):
+        x = _air_absorb(x, sp, dist, ref_d, damp, min_cut, sr)
     # B. 1/r direct level (in place from here on: this stem's buffer is already private to this mix)
     if not binaural and not own_distance and dist > 1.0:
-        x *= np.float32(1.0 / (1.0 + falloff * (dist - 1.0)))
+        x *= np.float32(_direct_gain(dist, falloff))
     # C. apparent source width
     spread = float(np.clip(float(sp.get('spread', 0.0)), 0.0, 1.0))
     w = float(sp.get('width', spec.get('width', 1.0))) * (1.0 + spread)
@@ -1123,14 +1123,9 @@ def _distance(x, spec, sp, dist, ref_d, damp, min_cut, falloff, sr):
     if spec.get('scene_distance_m') is not None:        # a physical scene already propagated itself
         return x
     if dist > ref_d and sp.get('air_absorption', True):
-        if 'temp_c' in sp or 'rh' in sp:
-            import airabs
-            x = airabs.apply(x, dist - 1.0, temp_c=float(sp.get('temp_c', 20.0)), rh=float(sp.get('rh', 50.0)), sr=sr)
-        else:
-            cutoff = max(min_cut, min(sr * 0.45, 22000.0 / (1.0 + damp * (dist - ref_d))))
-            x = signal.sosfilt(signal.butter(1, cutoff, btype='lowpass', fs=sr, output='sos'), x, axis=0)
+        x = _air_absorb(x, sp, dist, ref_d, damp, min_cut, sr)
     if dist > 1.0:
-        x = x * (1.0 / (1.0 + falloff * (dist - 1.0)))
+        x = x * np.float32(_direct_gain(dist, falloff))
     return np.asarray(x, dtype=np.float32)
 
 
@@ -1217,26 +1212,17 @@ def _master_cfg(m, mx):
     return out
 
 
-def _short_term(x, sr, win_s=3.0, hop_s=0.5):
-    """The loudness of each 3 s window. One K-weighting pass for the whole programme (loudness.Blocks): this used to
-    filter every window again, which was most of the time a master spent measuring itself."""
-    import loudness
-    return list(loudness.Blocks(to_stereo(x), sr).gated_series(win_s, hop_s))
-
-
 def master_measures(x, sr=SR):
     """What the delivery report needs: integrated/short-term loudness, LRA, crest, true peak, mono fold."""
-    st = np.array(_short_term(x, sr), dtype=float)
-    st = st[np.isfinite(st)]
-    if len(st):
-        st = st[st > -70.0]                        # EBU R128 absolute gate
-        if len(st):
-            st = st[st > float(np.mean(st)) - 20.0]   # ... and the relative gate, or a silent intro inflates LRA
+    import loudness
+    blocks = loudness.Blocks(to_stereo(x), sr)              # one K-weighting pass for every number below
+    st = np.array(blocks.gated_series(3.0, 0.5), dtype=float)
+    st = loudness.Blocks.lra_gate(st[np.isfinite(st)])      # absolute gate, then the power-mean relative gate
     return {
         'lufs': lufs(x, sr),
         'short_term_max': float(st.max()) if len(st) else float('nan'),
         'short_term_min': float(st.min()) if len(st) else float('nan'),
-        'lra': float(np.percentile(st, 95) - np.percentile(st, 10)) if len(st) > 4 else 0.0,
+        'lra': blocks.lra(),                                  # EBU Tech 3342, from the standard's own series
         'true_peak': true_peak_db(x, sr),
         'sample_peak': float(20 * np.log10(np.abs(x).max() + 1e-12)),
         'crest': dsp.crest_db(x),
@@ -1282,7 +1268,14 @@ def master_chain(x, m, sr=SR, ctx=None):
         lim = pb.Pedalboard([pb.Limiter(threshold_db=ceiling - float(fb['margin_db']), release_ms=float(fb['release_ms']))])
     crest_floor = float(mm.get('crest_floor_db', 0.0))
     conv = mm.get('converge') or {}
-    gain_db = target - lufs(x, sr)
+    if int(conv['max_iterations']) < 1:
+        raise ValueError('mastering.converge.max_iterations must be at least 1: with none, the limiter never runs')
+    in_lufs = lufs(x, sr)
+    if in_lufs <= -69.9:               # silence reads -70: a gain of target + 70 dB would only amplify the noise floor
+        sys.stderr.write('[master] the programme is silent (-70 LUFS); no gain applied to reach the target.\n')
+        gain_db = 0.0
+    else:
+        gain_db = target - in_lufs
     y = x
     for _ in range(int(conv['max_iterations'])):                                               # converge on loudness with the limiter in the loop
         y = _run(lim, x * 10 ** (gain_db / 20.0), sr)
@@ -1900,7 +1893,6 @@ def mix_and_master(score, stems, out_path, master=True, sr=SR, report=True, ctx=
     side_gain = float(mm_cfg.get('side_gain', 1.0))
     if mid_gain != 1.0 or side_gain != 1.0:
         out = apply_mid_side(out, mid_gain=mid_gain, side_gain=side_gain)
-    full = 1.0 - 1.0 / (1 << 23)
     over = int(np.sum(np.abs(out) >= 1.0))         # the no-master path clipped without ever saying so
     if over:
         sys.stderr.write(f'[export] {over} samples above full scale before the write (master skipped); '

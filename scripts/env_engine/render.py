@@ -73,13 +73,12 @@ def render_preset(name_or_dict, duration_s=30.0, sr=SR, seed=42):
     """
     import presets
     if isinstance(name_or_dict, dict):
-        cfg, name = name_or_dict, name_or_dict.get('name', '<inline>')
+        cfg = name_or_dict
     else:
         cfg = presets.find_environment(name_or_dict)
         if not cfg:
             raise ValueError(f'unknown environment "{name_or_dict}" (it would render as silence). '
                              f'Known: {", ".join(sorted(presets.load("environments")))}')
-        name = name_or_dict
 
     if has_scene(cfg):
         return render_scene_layer(cfg['scene'], duration_s, sr, seed, cfg)

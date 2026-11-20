@@ -129,12 +129,23 @@ def lvl2cc(level):
     return int(np.clip(round(127 * np.sqrt(amp)), 0, 127))
 
 
-def curve_at(points, beat):
+def curve_arrays(points):
+    """A curve's points as two arrays, built once: (xs, ys), or None for no curve."""
     if not points:
+        return None
+    return (np.array([p[0] for p in points], dtype=float), np.array([p[1] for p in points], dtype=float))
+
+
+def curve_at(points, beat):
+    """The curve at one beat or an array of beats. `points` may be the raw points or `curve_arrays(points)`."""
+    if points is None or not len(points):
         return 1.0
-    xs = [p[0] for p in points]
-    ys = [p[1] for p in points]
-    return float(np.interp(beat, xs, ys))
+    if isinstance(points, tuple) and len(points) == 2 and isinstance(points[0], np.ndarray):
+        xs, ys = points
+    else:
+        xs, ys = curve_arrays(points)
+    out = np.interp(beat, xs, ys)
+    return float(out) if np.ndim(out) == 0 else out
 
 
 # Pitch-bend range per microtone channel, set with RPN 0 at the channel's first note. The old default (+-2 semitones)
@@ -272,18 +283,10 @@ def _expr_curve(kind, n_steps, dur, rng):
         dec = float(kind.get('decay_s', 0.1))
         sus = float(kind.get('sustain_level', 0.7))
         rel = float(kind.get('release_s', 0.1))
-        g = np.ones(n_steps)
-        for i, ti in enumerate(t):
-            if ti < atk:
-                g[i] = ti / max(atk, 1e-4)
-            elif ti < atk + dec:
-                frac = (ti - atk) / max(dec, 1e-4)
-                g[i] = 1.0 - (1.0 - sus) * frac
-            elif ti < dur - rel:
-                g[i] = sus
-            else:
-                frac = max(0.0, (dur - ti) / max(rel, 1e-4))
-                g[i] = sus * frac
+        a_s, d_s, r_s = max(atk, 1e-4), max(dec, 1e-4), max(rel, 1e-4)
+        g = np.select([t < atk, t < atk + dec, t < dur - rel],
+                      [t / a_s, 1.0 - (1.0 - sus) * ((t - atk) / d_s), sus],
+                      default=sus * np.maximum(0.0, (dur - t) / r_s))
         return np.clip(g, 0.05, 1.0)
     if kind == 'bow':
         g = 0.55 + 0.45 * (0.5 - 0.5 * np.cos(np.pi * np.clip(t / 0.14, 0, 1)))      # raised-cosine attack, no hump swell
@@ -440,9 +443,12 @@ def _sfz_track(tr, tm, cfg, seed, ts, swing, global_dyn, raw_inst, inst_cfg, qua
     _record(name, **hz.event_stats(ev, tm))
     track_dyn = tr.get('dynamics')
 
+    _g_pts, _t_pts = curve_arrays(global_dyn), curve_arrays(track_dyn)      # built once, not per call
+
     def dyn_level(t_sec):
-        b = float(tm.beat(t_sec))
-        return curve_at(global_dyn, b) * (curve_at(track_dyn, b) if track_dyn else 1.0)
+        b = tm.beat(t_sec)                                   # a time or an array of times
+        b = float(b) if np.ndim(b) == 0 else b
+        return curve_at(_g_pts, b) * (curve_at(_t_pts, b) if _t_pts is not None else 1.0)
     offs = np.array([e['t'] + e['dur'] for e in ev], dtype=float)
     try:
         x = sfz_render.render(ev, offs, tm, blk, dyn_level, SR, quality=quality, polyphony=polyphony)
@@ -603,9 +609,12 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
     track_dyn = tr.get('dynamics')
     detune = float(tr.get('detune_cents', 0.0))
 
+    _g_pts, _t_pts = curve_arrays(global_dyn), curve_arrays(track_dyn)      # built once, not per call
+
     def dyn_level(t_sec):
-        b = float(tm.beat(t_sec))
-        return curve_at(global_dyn, b) * (curve_at(track_dyn, b) if track_dyn else 1.0)
+        b = tm.beat(t_sec)                                   # a time or an array of times
+        b = float(b) if np.ndim(b) == 0 else b
+        return curve_at(_g_pts, b) * (curve_at(_t_pts, b) if _t_pts is not None else 1.0)
 
     if is_drum:
         vox.program(9, 128, preset, drums=True)
@@ -721,7 +730,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
                 if j % 2:
                     fade = np.clip(1.0 - np.arange(n_steps) * step / 0.05, 0.0, 1.0)
                     g = g * (1.0 - 0.06 * fade)
-            lv = np.array([dyn_level(t) for t in ts_]) * g
+            lv = np.asarray(dyn_level(ts_), dtype=float) * g
             # initial state BEFORE the note-on, so it starts at the right level and pitch
             micro_spread = 0.8 if role in ('chord', 'pad') else 3.0     # a chord's notes must not beat against each other
             micro = rng.normal(0, micro_spread) + detune + e.get('c', 0.0)
@@ -836,34 +845,45 @@ _CODE_HASH = None
 # returned a stale stem from the cache, which is the one thing a cache keyed on code must never do.
 _RENDER_CODE = ('render_natural.py', 'dsp.py', 'sfz_render.py', 'environment.py', 'humanize.py', 'vocals.py',
                 'sound_model.py', 'clone_instrument.py', 'spatial.py', 'airabs.py', 'mechanics.py', 'world.py',
-                'soundbank.py', 'presets.py', 'mix_schema.py', 'cli_util.py')
+                'soundbank.py', 'presets.py', 'mix_schema.py', 'cli_util.py', 'sfz_libs.py')
 _RENDER_PACKAGES = ('vocal_engine', 'phys_core', 'env_engine', 'sfx_engine', 'spatial_hrtf', 'spatial_engine')
 
 
 def _code_hash():
-    """Identity of the code that makes the bytes: a cache must never return a stem from another renderer version."""
+    """Identity of the code that makes the bytes: a cache must never return a stem from another renderer version.
+    One implementation, `stem_cache.code_hash`, shared with the mixer and the stem gate."""
     global _CODE_HASH
     if _CODE_HASH is None:
-        h = hashlib.sha1()
-        here = os.path.dirname(os.path.abspath(__file__))
-        for f in _RENDER_CODE:
-            p = os.path.join(here, f)
-            try:
-                with open(p, 'rb') as fh:
-                    h.update(f.encode('utf-8'))
-                    h.update(fh.read())
-            except OSError:
-                h.update(b'missing:' + f.encode('utf-8'))
-        for pkg in _RENDER_PACKAGES:                     # a package's modules are code too, not data
-            for p in sorted(glob.glob(os.path.join(here, pkg, '*.py'))):
-                try:
-                    with open(p, 'rb') as fh:
-                        h.update(os.path.relpath(p, here).replace(os.sep, '/').encode('utf-8'))
-                        h.update(fh.read())
-                except OSError:
-                    h.update(b'missing:' + p.encode('utf-8'))
-        _CODE_HASH = h.hexdigest()
+        _CODE_HASH = stem_cache.code_hash(os.path.dirname(os.path.abspath(__file__)), _RENDER_CODE, _RENDER_PACKAGES)
     return _CODE_HASH
+
+
+def _sfz_patch_id(tr):
+    """For a track played from an SFZ library: the resolved patch file, its size and mtime. Installing, replacing or
+    removing a library changes the stem without touching the score or the code, so it belongs in the key. None for any
+    other track. Resolves the way sfz_render.render does (the first installed of the block and its alternatives)."""
+    try:
+        import sfz_libs
+        import sfz_render
+        raw_inst = str(tr.get('instrument', 'piano'))
+        if raw_inst.startswith(('clone:', 'sfx:', 'env:')):
+            return None
+        inst_cfg = presets.find_instrument(raw_inst) or presets.find_instrument(_name(raw_inst))
+        blk = sfz_render.block_of(raw_inst, tr, inst_cfg)
+        if not blk:
+            return None
+        for lib, patch in sfz_libs.block_choices(blk):
+            if not lib or not patch:
+                continue
+            try:
+                path = sfz_libs.find_patch(lib, patch)
+            except (LookupError, SystemExit):
+                continue
+            st = os.stat(path)
+            return [str(path), st.st_size, int(st.st_mtime)]
+        return 'unresolved'
+    except Exception:
+        return 'unresolved'
 
 
 def _preset_fingerprint(tr):
@@ -911,6 +931,7 @@ def _track_cache_key(tr, seed, ts, swing, tm, global_dyn, sr, sfpath=None):
             sf_id = str(sfpath)
     sig = json.dumps(dict(tr=stem_cache.dry_track(tr), seed=seed, ts=list(ts), swing=swing, global_dyn=global_dyn,
                           sr=sr, renderer=_RENDERER_VERSION, code=_code_hash(), sf=sf_id, oversample=_oversample(),
+                          sfz_patch=_sfz_patch_id(tr),
                           presets=stem_cache.dry_presets(_preset_fingerprint(tr))),
                      sort_keys=True, default=str)
     h = hashlib.sha1(sig.encode('utf-8'))
@@ -927,6 +948,11 @@ def _render_cached(tr, name, tm, sfpath, global_dyn, cfg, seed, ts, swing):
     if os.path.isfile(cache_path):
         x, file_sr = sf.read(cache_path, dtype='float32', always_2d=True)
         if file_sr == SR:
+            for _p in (cache_path, meta_path):          # stem_cache.prune deletes oldest-first: a reused stem is the newest
+                try:
+                    os.utime(_p, None)
+                except OSError:
+                    pass
             entry = {}
             try:
                 with open(meta_path, encoding='utf-8') as fh:
@@ -961,11 +987,17 @@ def _mark_accompanied(tr, tracks):
     humanize.py leads the melody early only on those notes; a solo line stays on the beat."""
     if tr.get('role') not in ('melody', 'counter'):
         return tr
-    others = [(n['t'], n['t'] + n.get('d', 0)) for o in tracks if o is not tr and o.get('role') != 'drum'
-              for n in o.get('notes', [])]
+    iv = [(n['t'], n['t'] + n.get('d', 0)) for o in tracks if o is not tr and o.get('role') != 'drum'
+          for n in o.get('notes', [])]
+    # a <= t < b for some interval: sort by onset, keep the running maximum end of every interval that started at or
+    # before t, and ask whether it lies beyond t (one searchsorted per melody note instead of a scan of every note)
+    iv.sort(key=lambda ab: ab[0])
+    starts = np.array([a for a, _ in iv], dtype=float)
+    ends = np.maximum.accumulate(np.array([b for _, b in iv], dtype=float)) if iv else np.zeros(0)
     notes = []
     for n in tr.get('notes', []):
-        sounding = any(a <= n['t'] < b for a, b in others)
+        k = int(np.searchsorted(starts, n['t'], side='right'))        # intervals with a <= t
+        sounding = k > 0 and ends[k - 1] > n['t']
         notes.append(dict(n, acc=1.0 if sounding else 0.0))
     return dict(tr, notes=notes)
 
@@ -1039,6 +1071,8 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
     tm = hz.tempo_map_for(score, seed=seed)      # the pipeline's reported duration is built the same way
     cfg = score.get('humanize', 'natural')
     _reset_stats()
+    with _STATS_LOCK:
+        REPORT.clear()                 # per-track entries of an earlier score must not leak into this one
     stems = {}
     marked = [(i, tr.get('name', f'track{i}'), _mark_accompanied(tr, score['tracks'])) for i, tr in enumerate(score['tracks'])]
     sfz_jobs = [(i, name, tr) for i, name, tr in marked if _is_sfz_track(tr)]
@@ -1166,7 +1200,8 @@ def main():
         p_dir = os.path.dirname(p_dir)
     if os.path.isdir(os.path.join(p_dir, 'presets')):
         presets.add_project(p_dir)
-    score = json.load(open(a.score, encoding='utf-8'))
+    with open(a.score, encoding='utf-8') as _fh:
+        score = json.load(_fh)
     stems, tm = build_stems(score, a.soundfont, a.seed)
     print('humanize report (ms offset from the nominal grid, velocity spread):')
     for k, v in REPORT.items():

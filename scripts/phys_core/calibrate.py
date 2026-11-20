@@ -26,6 +26,9 @@ its intensity while that happens, so here it is one function, once, at the end:
     normalize "peak"    scale to peak_ceiling. Explicitly requested only; it destroys intensity relationships.
     normalize "rms"     scale to level_db dBFS RMS. Same caveat.
 
+`highpass_hz` (default 18, a starting value) is the corner of the 2nd-order high-pass that removes DC and sub-audible
+offset before levelling; 0 or less turns it off so the sub-bass fundamental of a heavy impact keeps its weight.
+
 Amplitude from energy: sound pressure is proportional to the square root of the radiated energy, so a break that
 releases 4x the energy is 6 dB louder, not "normalized to 0.9". `reference_j` is the energy that maps to 0 dB before
 level_db, and it is one constant for the whole engine so it cannot hide a per-sound fudge.
@@ -35,6 +38,7 @@ import numpy as np
 REFERENCE_J = 1.0
 PEAK_CEILING = 0.99
 NORMALIZE = ('energy', 'none', 'peak', 'rms')
+KEYS = ('normalize', 'level_db', 'reference_j', 'peak_ceiling', 'highpass_hz')
 
 
 def amplitude(energy_j, reference_j=REFERENCE_J):
@@ -47,12 +51,12 @@ def problems(cal):
     if not isinstance(cal, dict):
         return ['calibration: must be an object {"normalize": ..., "level_db": ...}']
     for k in cal:
-        if k not in ('normalize', 'level_db', 'reference_j', 'peak_ceiling'):
-            out.append(f'calibration: unknown key "{k}" (known: normalize, level_db, reference_j, peak_ceiling)')
+        if k not in KEYS:
+            out.append(f'calibration: unknown key "{k}" (known: {", ".join(KEYS)})')
     n = cal.get('normalize', 'energy')
     if n not in NORMALIZE:
         out.append(f'calibration.normalize "{n}": use one of {", ".join(NORMALIZE)}')
-    for k in ('level_db', 'reference_j', 'peak_ceiling'):
+    for k in ('level_db', 'reference_j', 'peak_ceiling', 'highpass_hz'):
         if k in cal and (isinstance(cal[k], bool) or not isinstance(cal[k], (int, float))):
             out.append(f'calibration.{k}: needs a number')
     return out

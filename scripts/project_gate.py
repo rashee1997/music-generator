@@ -440,6 +440,9 @@ def _mix_immersive(score):
     return imm if imm.get('enabled') else None
 
 
+mix_immersive = _mix_immersive          # the one reader of a score's enabled immersive block (quality_gate uses it too)
+
+
 def staging_report(score, project):
     """One line per track: where it sits and by which route the mixer will spatialise it (information, never blocks)."""
     presets.add_project(str(project))
@@ -515,27 +518,35 @@ def stage_problems(score, project):
     return out
 
 
+def requested_place(tr, pc, cfg):
+    """(role, elevation, spatial, instrument) of one track as the score asks for it: track spatial, else the instrument
+    preset `pc`, else the mix preset's height_by_role (when `cfg`, its immersive block, is on). The elevation stays the
+    REQUESTED one: bass and drums are anchors at 0 deg and the mixer floors them (mixer.py), so a caller that reports the
+    placement the mixer applies floors them itself (quality_gate._place_of); the gate rows use this value to tell the
+    writer that the height will be ignored."""
+    inst = tr.get('instrument', '')
+    tr_sp = tr.get('spatial') or {}
+    sp = dict((pc or {}).get('spatial') or {})
+    sp.update(tr_sp)
+    role = tr.get('role') or (pc or {}).get('role') or 'chord'
+    imm = cfg if (cfg or {}).get('enabled') else None
+    if imm and 'elevation' not in tr_sp and float(sp.get('elevation', 0.0)) == 0.0:
+        el = float((imm.get('height_by_role') or {}).get(role, 0.0))
+    elif 'elevation' in sp:
+        el = sp['elevation']
+    else:
+        el = (cfg.get('height_by_role') or {}).get(role, 0.0) if cfg else 0.0
+    return role, float(el), sp, inst
+
+
 def effective_elevations(score, cfg, project):
-    """{track name: (role, elevation, spatial, instrument)} as the score asks for it: track spatial, else instrument
-    preset, else height_by_role. The mixer floors bass and drums at 0 deg; the value here stays the requested one so
-    the gate can tell the writer it will be ignored."""
+    """{track name: (role, elevation, spatial, instrument)}, see requested_place."""
     presets.add_project(str(project))
     out = {}
-    imm = cfg if (cfg or {}).get('enabled') else None
     for i, tr in enumerate(score.get('tracks', [])):
         inst = tr.get('instrument', '')
         pc = presets.exact('instruments', inst) or presets.exact('vocals', inst) or {}
-        tr_sp = tr.get('spatial') or {}
-        sp = dict(pc.get('spatial') or {})
-        sp.update(tr_sp)
-        role = tr.get('role') or pc.get('role') or 'chord'
-        if imm and 'elevation' not in tr_sp and float(sp.get('elevation', 0.0)) == 0.0:
-            el = float((imm.get('height_by_role') or {}).get(role, 0.0))
-        elif 'elevation' in sp:
-            el = sp['elevation']
-        else:
-            el = (cfg.get('height_by_role') or {}).get(role, 0.0) if cfg else 0.0
-        out[tr.get('name', f'track{i}')] = (role, float(el), sp, inst)
+        out[tr.get('name', f'track{i}')] = requested_place(tr, pc, cfg)
     return out
 
 

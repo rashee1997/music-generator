@@ -326,7 +326,7 @@ class MusicPipeline:
             print(f"  Wrote {name} deliverable: {out_wav}")
         return out_wav
 
-    def discover_and_run_music21_analysis(self, score, out_wav, out_midi=None):
+    def discover_and_run_music21_analysis(self, score, out_wav, out_midi=None, project_dir=None):
         """Auto-discovers and attaches a flexible music21 analysis script from the project's scripts/ folder.
         If a project provides its own scripts/analyze_music21.py, it runs it.
         Otherwise, falls back to the dynamic music21 analysis engine in templates/analyze_music21_template.py.
@@ -335,11 +335,14 @@ class MusicPipeline:
         if score.get('analysis_script'):
             candidates.append(score['analysis_script'])
             
-        out_parent = os.path.dirname(os.path.abspath(out_wav))
-        proj_dir = os.path.dirname(out_parent)
+        # The project is the one the run was given (or the latest registered in presets), never a folder worked out
+        # from the output path: `--out /x/y/z.wav` must not run `/x/scripts/analyze_music21.py`.
+        proj_dir = os.path.abspath(project_dir) if project_dir else (
+            os.path.dirname(presets.PROJECT_ROOTS[-1]) if presets.PROJECT_ROOTS else None)
         # One canonical hook: setup_project.py writes <project>/scripts/analyze_music21.py. No CWD or
         # sibling-folder guesses: the project gate has already proven this folder exists.
-        candidates.append(os.path.join(proj_dir, 'scripts', 'analyze_music21.py'))
+        if proj_dir:
+            candidates.append(os.path.join(proj_dir, 'scripts', 'analyze_music21.py'))
         
         script_path = None
         for c in candidates:
@@ -347,8 +350,8 @@ class MusicPipeline:
                 script_path = c
                 break
                 
-        reports_dir = os.path.join(proj_dir, 'reports')
-        reports_dir = reports_dir if os.path.isdir(reports_dir) else None
+        reports_dir = os.path.join(proj_dir, 'reports') if proj_dir else None
+        reports_dir = reports_dir if reports_dir and os.path.isdir(reports_dir) else None
         
         if script_path:
             try:
@@ -380,7 +383,7 @@ class MusicPipeline:
     # Stage 6: Automated CI/CD Quality Gate Suite
     # -----------------------------------------------------------------------------------------
     def stage6_ci_quality_suite(self, score, stems, out_wav, out_midi=None, stem_rows=None, mode='full',
-                                video_rows=None):
+                                video_rows=None, project_dir=None):
         """Stage 6: Exhaustive battery of objective audio & mix tests.
 
         One call to quality_gate.run_gate, not a hand-copied subset of it: every row the gate knows (score and render
@@ -404,7 +407,7 @@ class MusicPipeline:
                 ci_rows.append(('WARN' if lvl == 'FAIL' else lvl, f'mix:{name}', detail))
 
         # Auto-attach flexible music21 symbolic analysis
-        m21_rows = self.discover_and_run_music21_analysis(score, out_wav, out_midi=out_midi)
+        m21_rows = self.discover_and_run_music21_analysis(score, out_wav, out_midi=out_midi, project_dir=project_dir)
         if m21_rows:
             ci_rows.extend(m21_rows)
 
@@ -577,7 +580,8 @@ class MusicPipeline:
         mp = os.path.join(stems_dir, 'stems.json')
         if os.path.isfile(mp):
             try:
-                manifest = json.load(open(mp, encoding='utf-8'))
+                with open(mp, encoding='utf-8') as fh:
+                    manifest = json.load(fh)
             except Exception as e:
                 print(f"  [WARN] stems.json unreadable, stems are taken to start at 0: {e}")
         for f in os.listdir(stems_dir):
@@ -716,7 +720,8 @@ class MusicPipeline:
             stems = self.load_stems_from_dir(resolved_stems_dir) if resolved_stems_dir else {}
 
             # Stage 6: Automated CI Quality Suite
-            ci_rows, fails, warns = self.stage6_ci_quality_suite(score, stems, target_wav, out_midi=out_midi)
+            ci_rows, fails, warns = self.stage6_ci_quality_suite(score, stems, target_wav, out_midi=out_midi,
+                                                                project_dir=(os.path.abspath(project) if project else None))
 
             # Stage 7: Packaging & Report
             if not json_report:
@@ -874,7 +879,7 @@ class MusicPipeline:
         ci_rows, fails, warns = self.stage6_ci_quality_suite(score, stems, draft_wav, out_midi=out_midi,
                                                             stem_rows=stem_rows,
                                                             mode='draft' if draft else 'full',
-                                                            video_rows=video_rows)
+                                                            video_rows=video_rows, project_dir=project_dir)
 
         if project_dir:
             try:
