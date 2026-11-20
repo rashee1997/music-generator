@@ -276,3 +276,11 @@ Compare the forced-choice numbers. The version that moves the target is the one 
 - [ ] The bass is low and centred; pads are high-passed; nothing stacks at the same pitch and rhythm.
 - [ ] `naturalness_check` (via listen) shows no clipping and no FAIL on loudness or true peak.
 - [ ] Delivered: WAV, MIDI, the sheet, the listen report in plain words, and one line on what was not checked.
+
+## Declared arrangements (no composing script)
+
+A piece whose notes follow patterns (a tune, a chord cycle, drum bars, runs, a form) can be written as data. Put every
+value in `scores/<title>_arrangement.json` and expand it with `python scripts/arrange.py <that file>`; the engine holds no
+key, tempo, scale, chord, phrase, pattern or level, and rejects an unknown key or a missing reference. The keys are listed
+in the module's docstring. `projects/alarm_dawn/scores/dawn_alarm_arrangement.json` is a worked example (ten tracks, seven
+sections, one tune, per-section levels). Use a composing script only for what data cannot say.

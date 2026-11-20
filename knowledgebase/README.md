@@ -23,7 +23,7 @@ Read one file at a time. `scripts/research_kb.py` pulls the file a piece needs.
 | `genre-and-feel/emotion-cues.md` | Which musical cues carry emotion (mode, tempo, register, dynamics, articulation, timbre), their direction of effect, and why valence is hard to measure | partly-sourced |
 | `genre-and-feel/commercial-promo.md` | Commercial tempo, ducking and voice-over rules, musical-theatre build | unverified |
 | `genre-and-feel/dynamic-flow.md` | Section flow rules and lo-fi, ambient, horror, jazz, rock and game values | unverified |
-| `genre-and-feel/short-form-functional-music.md` | Phone-speaker band, hook and alert length, and the working figures for a ringtone | partly-sourced |
+| `genre-and-feel/short-form-functional-music.md` | Phone-speaker band, hook and alert length, alarm and wake-up findings, and the working figures for a ringtone or alarm | partly-sourced |
 | `genre-and-feel/psychoacoustic-genre.md` | Genre and mood tempo, interval, timbre and reverb values | unverified |
 | `media/game-music.md` | Stem layers, transition modes and loop folding | unverified |
 | `media/game-sfx.md` | Hit variation, impact stages, footstep surfaces and interface tones | unverified |

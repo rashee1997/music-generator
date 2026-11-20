@@ -1,0 +1,44 @@
+{
+  "name": "dawn_alarm_room",
+  "character": "A small, bright wooden room with a short tail: every plucked and blown note blooms for about three-quarters of a second and is gone before the next hook entry, so the tune stays readable on a phone speaker and the loop point carries no wash.",
+  "room": {
+    "rt60": 0.75,
+    "pre_delay_ms": 12,
+    "hf_decay": 0.6,
+    "early_level": 0.35
+  },
+  "reflections": {
+    "ground_delay_ms": 5.0,
+    "ground_gain": 0.45,
+    "ground_cutoff_hz": 5000,
+    "lateral_delay_ms": 11.0,
+    "lateral_gain": 0.42,
+    "lateral_cutoff_hz": 4200,
+    "reverb_decay_s": 0.7,
+    "ceiling_delay_ms": 9.0,
+    "ceiling_gain": 0.36,
+    "rear_delay_ms": 17.0,
+    "rear_gain": 0.32
+  },
+  "distance": {
+    "ref_m": 1.5,
+    "falloff": 0.18,
+    "air_damping": 0.4,
+    "min_cutoff_hz": 3600,
+    "reverb_exponent": 0.65,
+    "pre_delay_law": {
+      "base_ms": 12.0,
+      "per_m": 3.0,
+      "max_ms": 30.0
+    }
+  },
+  "binaural": {
+    "bed": false,
+    "spot": false
+  },
+  "sources": [
+    "KB short-form-functional-music (a tail that is still sounding when the next hook enters smears the tune on a small speaker: working rule, per search result for small-speaker mixing guidance)",
+    "STARTING VALUE: rt60 0.75 s is about one and a half beats at 120 BPM; every delay and gain here is a starting value for a small room, not a measurement of one",
+    "CARRIED OVER from the ringtone project: the same small bright room; a tail still sounding when the next stage's hook enters smears a tune on a small speaker (starting value)"
+  ]
+}

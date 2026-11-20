@@ -1,0 +1,55 @@
+{
+  "name": "oud_lead",
+  "description": "Arab oud: carries the tune in the passing section and a decorated counter-line later.",
+  "character": "A fretless pear-shaped lute plucked with a plectrum: a warm, woody pluck whose long notes are decorated with a quick trill, answering the tune a few milliseconds behind it the way an Arab ensemble does.",
+  "gm": "oud",
+  "role": "lead",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 7.0,
+    "drift_ms": 7.0,
+    "vel_sigma": 6.0
+  },
+  "spatial": {
+    "azimuth": 50.0,
+    "distance": 1.7
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 220.0
+    },
+    {
+      "type": "peak",
+      "f": 2800,
+      "gain": -1.5,
+      "q": 1.0
+    },
+    {
+      "type": "lp",
+      "f": 4500.0
+    }
+  ],
+  "gain_db": -1.5,
+  "reverb": 0.12,
+  "articulation": {
+    "overlap_ms": 40.0,
+    "gate": 1.0,
+    "release_ms": 220.0
+  },
+  "mechanics_class": "plucked",
+  "sources": [
+    "KB arabic (heterophony: instruments play the same melody each with its own ornaments and a micro-delay of about 12 ms; the oud trill and its plectrum pluck; the maqsum cycle)",
+    "ESTIMATE: the SoundFont nylon guitar stands in for the oud: no quarter-tone or fretless slide is available on a fixed-pitch pentatonic line",
+    "STARTING VALUE: onset_fade_ms 8: several strokes land together on every strong beat and their sharp starts add into one impulse the click row flags; a soft attack is also what \"smooth\" asks for",
+    "MEASURED: the mastered file had click events at the onsets of overlapping notes, where the sampler tick lands on a still-ringing note and soften_onsets leaves it alone by design; STARTING VALUE: low-pass at 6000 Hz, above what a phone speaker returns",
+    "STARTING VALUE: gate 1.0 with a 40 ms overlap: at gate 0.9 a note ended 10 % early and the stem gate found a 35 ms digital-silence hole between two plucks",
+    "STARTING VALUE: low-pass at 4.5 kHz: a phone speaker returns little above about 5 kHz (KB short-form-functional-music), and the sharp edges of plucked and struck onsets above it are what the click row reacts to",
+    "MEASURED: short_form_report found 10.5% of the master below 200 Hz and 13.9% from 200 to 300 Hz, where a phone speaker returns little; STARTING VALUE: high-pass at 220 Hz",
+    "CARRIED OVER from the ringtone project 'Confluence', where each filter, fade and level in this preset was set by a measurement (click count, stem.dropout, equal_loudness); not re-measured for the alarm until the gate runs"
+  ],
+  "vibrato": {
+    "depth_cents": 0.0
+  },
+  "onset_fade_ms": 8.0
+}

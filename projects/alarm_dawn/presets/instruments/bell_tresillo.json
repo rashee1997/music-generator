@@ -1,0 +1,48 @@
+{
+  "name": "bell_tresillo",
+  "description": "Double bell in the three-three-two pattern.",
+  "character": "A pair of metal bells struck in the three-three-two pattern: a bright, short accent that tells the ear where the pulse leans and keeps the interlock clear.",
+  "gm": "drums",
+  "role": "drum",
+  "humanize": {
+    "preset": "tight",
+    "timing_ms": 3.0,
+    "drift_ms": 3.0,
+    "vel_sigma": 4.0
+  },
+  "spatial": {
+    "azimuth": 37.0,
+    "distance": 2.4
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 500
+    },
+    {
+      "type": "lp",
+      "f": 4500.0
+    }
+  ],
+  "gain_db": -8.0,
+  "reverb": 0.06,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 0.3,
+    "release_ms": 100.0
+  },
+  "mechanics_class": "drum",
+  "sources": [
+    "KB african (the bell pattern of three-three-two keeps the cycle together)",
+    "KB indian-film-fusion (the three-three-two Tisra grouping)",
+    "ESTIMATE: level and placement are starting values",
+    "MEASURED: a leave-one-out on the summed stems cut the click events from 85 to 27 without the koto and to 33 without the shaker; STARTING VALUE: low-pass at 6.5 kHz because a phone speaker returns little above 5-6 kHz and the sweeps fire a pluck every 25-60 ms",
+    "STARTING VALUE: onset_fade_ms 10: several strokes land together on every strong beat and their sharp starts add into one impulse the click row flags; a soft attack is also what \"smooth\" asks for",
+    "STARTING VALUE: low-pass at 4.5 kHz: a phone speaker returns little above about 5 kHz (KB short-form-functional-music), and the sharp edges of plucked and struck onsets above it are what the click row reacts to",
+    "CARRIED OVER from the ringtone project 'Confluence', where each filter, fade and level in this preset was set by a measurement (click count, stem.dropout, equal_loudness); not re-measured for the alarm until the gate runs"
+  ],
+  "vibrato": {
+    "depth_cents": 0.0
+  },
+  "onset_fade_ms": 10.0
+}

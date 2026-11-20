@@ -88,3 +88,27 @@ Each point below was a gate row that failed on a first draft and was fixed in th
 - **Release the old chord before the next one.** A whole tone between two chords' low notes beats for as long as the tails overlap, so the pad notes end before the next chord starts.
 - **Open voicings for a pentatonic pad.** Fifths and fourths, no whole tone between neighbours in the low register.
 - **Keep a fixed-pitch percussion instrument off the melody's notes.** A pitched bell sits where its own pitch is; a sustained melody note a quarter of a critical band from it is rough.
+
+## 8. An alarm is a ringtone with a different job
+
+A wake-up alarm must interrupt a sleeper and then keep working until someone acts. It differs from a ringtone in four
+ways; the facts and starting values are in `knowledgebase/genre-and-feel/short-form-functional-music.md` section 5.
+
+| | Ringtone | Alarm |
+|---|---|---|
+| Goal | be recognised, survive repetition | wake, then keep waking |
+| Form | one piece with an ending | one cell in stages of rising pressure, which a phone loops |
+| Pressure | a gentle arc with a breath | one-way: each stage adds notes per second, register, a layer and level |
+| First stage | the hook at full strength | the hook quiet and hum-able, so the sleeper is not startled |
+| Loudness | -14 LUFS (start) | -12 LUFS (start), -1.5 dBTP |
+
+1. **Declare the piece, do not code it.** Write `scores/<title>_arrangement.json` (tempo, scale, chords, lines, patterns,
+   runs, sections, events, levels) and run `python scripts/arrange.py <it>`. The engine holds no musical value: change a
+   number in the JSON, never in a script. `scripts/arrange.py` documents every key and rejects an unknown one.
+2. **Escalate with levers that do not break the gate.** Add notes per second (a pattern with more notes), raise the register
+   of the hook (an `octave` on its line), bring in a layer, raise the section's `scale`. Do not add a siren, a sharp 2-5 kHz
+   peak or a sub-bass: the clicks, `stem.*` and `fold.*` rows will name them.
+3. **Keep the harmony inside one scale.** A pentatonic has no half-step, so a four-stage build cannot rub.
+4. **Judge** with `short_form_report.py` and `arc_report.py`: the arc must rise stage by stage, and the report's
+   "no stretch more than 12 LU under the integrated level" is the wrong test for an alarm that starts quiet by design, so
+   say which section is quiet on purpose.

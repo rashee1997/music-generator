@@ -1,0 +1,12 @@
+{
+  "overrides": {
+    "album": "Dawn Alarm",
+    "comment": "one-minute wake-up alarm, D major pentatonic, four stages of rising pressure; kalimba, bansuri, oud, koto, marimba and world percussion (SoundFont stand-ins)"
+  },
+  "derive_from_score": {
+    "title": true,
+    "genre": true,
+    "comment": true,
+    "year": true
+  }
+}

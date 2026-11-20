@@ -133,7 +133,7 @@ Before Phase 4, open every file in the row that matches the request; union sever
 | Request type | Open |
 |---|---|
 | **ANY PIECE** | `SKILL.md`, `references/workflow/brief-reading.md`, `references/workflow/music-direction.md`, `references/workflow/director-craft.md`, `references/workflow/intent-and-focus.md`, `references/spatial/acoustic-laws.md`, `references/mixing/mix-rules.md`, `references/mixing/humanization.md`, `references/mixing/quality-gate.md` |
-| **Ringtone / alert / jingle / any piece meant to be recognised in seconds, or a loop** | `references/scoring/short-form-and-ringtones.md`, `knowledgebase/genre-and-feel/short-form-functional-music.md`, `references/workflow/director-craft.md`, `scripts/helpers/short_form_report.py` |
+| **Ringtone / alert / alarm / jingle / any piece meant to be recognised in seconds, or a loop** | `references/scoring/short-form-and-ringtones.md`, `knowledgebase/genre-and-feel/short-form-functional-music.md`, `references/workflow/director-craft.md`, `scripts/helpers/short_form_report.py` |
 | **Intent/mood words/focus/roles** | `references/workflow/intent-and-focus.md`, `scripts/intent.py`, `scripts/roles.py` |
 | **Cinematic / epic / trailer / hybrid orchestral / thriller / "unknown, hostile place"** | `references/scoring/cinematic-commercial-grade.md`, `knowledgebase/genre-and-feel/cinematic-hybrid-scoring.md`, `references/scoring/emotion-and-scoring.md`, `references/workflow/scene-recipes.md` |
 | **Mood/film/underscore/background** | `references/workflow/scene-recipes.md`, `references/scoring/emotion-and-scoring.md`, `knowledgebase/media/video-scoring.md` |

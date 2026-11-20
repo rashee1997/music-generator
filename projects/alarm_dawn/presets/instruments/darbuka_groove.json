@@ -1,0 +1,48 @@
+{
+  "name": "darbuka_groove",
+  "description": "Maqsum groove on world hand-drum samples, tabla fills before sections.",
+  "character": "A goblet hand drum playing the Arab maqsum cycle: deep dum on the one and the five, bright tak between, with tabla syllables for the fills before each new section.",
+  "gm": "drums",
+  "role": "drum",
+  "humanize": {
+    "preset": "tight",
+    "timing_ms": 3.0,
+    "drift_ms": 3.0,
+    "vel_sigma": 4.0
+  },
+  "spatial": {
+    "azimuth": 25.0,
+    "distance": 1.9
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 220.0
+    },
+    {
+      "type": "lp",
+      "f": 5000
+    }
+  ],
+  "gain_db": -3.0,
+  "reverb": 0.06,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 0.3,
+    "release_ms": 80.0
+  },
+  "mechanics_class": "drum",
+  "sources": [
+    "KB arabic (maqsum 4/4: dum tak rest tak dum rest tak rest)",
+    "KB pan-indian (tabla syllables for rolls and fills)",
+    "ESTIMATE: level and placement are starting values",
+    "STARTING VALUE: low-pass at 5 kHz: the rim strokes (tak) are 1.5 ms impulses the click row flags, and a phone speaker returns little above 5 kHz",
+    "STARTING VALUE: onset_fade_ms 12: several strokes land together on every strong beat and their sharp starts add into one impulse the click row flags; a soft attack is also what \"smooth\" asks for",
+    "MEASURED: short_form_report found 10.5% of the master below 200 Hz and 13.9% from 200 to 300 Hz, where a phone speaker returns little; STARTING VALUE: high-pass at 220 Hz",
+    "CARRIED OVER from the ringtone project 'Confluence', where each filter, fade and level in this preset was set by a measurement (click count, stem.dropout, equal_loudness); not re-measured for the alarm until the gate runs"
+  ],
+  "vibrato": {
+    "depth_cents": 0.0
+  },
+  "onset_fade_ms": 12.0
+}
