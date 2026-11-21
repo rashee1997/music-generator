@@ -155,6 +155,11 @@ an original score feel wrong by comparison, and the reason composers are asked t
 - `references` takes **words**: "a slow cello line over a soft pulse, like the opening of a documentary", never a
   track name and never a melody that belongs to someone. The writing has to be original for legal reasons and because
   a copy is a locked door.
+- **A film composer's or a film's style is a list of devices, not a name.** Write what the sound is made of: "a sustained
+  pipe-organ pedal under a rising pulsed arpeggio, low brass swells at the turning points, a simple theme that returns
+  larger, a hard cut into silence". Do not write the composer, the film or a melody of theirs into the sheet or the score
+  (the sheet is words, the writing is original). A "like X" brief is read into those devices in the craft pass
+  (`references/workflow/director-craft.md` section 1) and the research note.
 - With a temp track, read what the brief wants from it (texture, tempo, space), write that into the sheet, and judge
   the draft against the sheet.
 

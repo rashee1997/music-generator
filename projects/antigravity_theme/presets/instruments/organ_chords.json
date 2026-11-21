@@ -1,0 +1,37 @@
+{
+  "name": "organ_chords",
+  "description": "The organ's manuals",
+  "character": "The organ's manuals: an open chord that swells with the cue and is the loudest voice at the peak.",
+  "gm": "church_organ",
+  "role": "pad",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": 75.0,
+    "elevation": 12.0,
+    "distance": 4.0,
+    "kind": "spot",
+    "binaural": true
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 110
+    }
+  ],
+  "gain_db": -4,
+  "reverb": 0.3,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 1.0,
+    "release_ms": 300.0
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring (a sustained organ or low-string bed, a pulse that keeps going, low brass at the turning points: per its section 2) | the part's job in the cue",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements"
+  ]
+}

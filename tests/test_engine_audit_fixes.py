@@ -346,5 +346,26 @@ class Render(unittest.TestCase):
         self.assertNotEqual(a, b)
 
 
+class IntentSuddenLoud(unittest.TestCase):
+    """m_sudden_loud compared MIDI velocities (1-127) with a 0..1 threshold, so any two different notes within a beat
+    were a "sudden loud" jump and every piece that forbade it failed."""
+
+    def _score(self, v1, v2):
+        return dict(tracks=[dict(name='a', notes=[dict(t=0.0, d=1.0, p=60, v=v1), dict(t=0.5, d=1.0, p=62, v=v2)])])
+
+    def test_a_small_midi_step_is_not_a_jump(self):
+        import intent
+        self.assertFalse(intent.m_sudden_loud(self._score(64, 77))[0])
+
+    def test_a_large_midi_step_is_a_jump(self):
+        import intent
+        self.assertTrue(intent.m_sudden_loud(self._score(20, 120))[0])
+
+    def test_unit_scale_still_works(self):
+        import intent
+        self.assertTrue(intent.m_sudden_loud(self._score(0.2, 0.9))[0])
+        self.assertFalse(intent.m_sudden_loud(self._score(0.5, 0.6))[0])
+
+
 if __name__ == '__main__':
     unittest.main()

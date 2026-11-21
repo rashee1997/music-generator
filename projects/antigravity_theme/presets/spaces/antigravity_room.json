@@ -1,0 +1,140 @@
+{
+  "name": "antigravity_room",
+  "character": "A large stone hall with a long dark tail, the church-and-concert-hall space a pipe organ and orchestra sit in: every part shares it, so the cue sounds like one ensemble in one building.",
+  "room": {
+    "rt60": 2.8,
+    "pre_delay_ms": 30,
+    "hf_decay": 0.5,
+    "early_level": 0.35
+  },
+  "reflections": {
+    "path_physics": true,
+    "ref_m": 1.5,
+    "ground_delay_ms": 6.5,
+    "ground_gain": 0.4,
+    "ground_cutoff_hz": 3500,
+    "lateral_delay_ms": 16.0,
+    "lateral_gain": 0.4,
+    "lateral_cutoff_hz": 3000,
+    "ceiling_delay_ms": 18.0,
+    "ceiling_gain": 0.4,
+    "rear_delay_ms": 26.0,
+    "rear_gain": 0.35,
+    "geometry": {
+      "width_m": 30.0,
+      "depth_m": 45.0,
+      "height_m": 22.0,
+      "listener": {
+        "x": 15.0,
+        "y": 18.0,
+        "z": 1.6
+      },
+      "materials": {
+        "floor": "concrete",
+        "ceiling": "plaster",
+        "walls": "concrete"
+      },
+      "material_set": "room_materials",
+      "max_order": 2,
+      "max_taps": 10,
+      "min_level_db": -34.0
+    },
+    "late": {
+      "enabled": true,
+      "rt60_s": "auto",
+      "pre_delay_ms": "auto",
+      "hf_decay": 0.5,
+      "level_db": -18.0,
+      "count": 8,
+      "spread_deg": 90.0,
+      "rise_s": 0.05,
+      "seed": 31,
+      "bands_hz": [
+        125,
+        250,
+        500,
+        1000,
+        2000,
+        4000,
+        8000
+      ]
+    }
+  },
+  "distance": {
+    "ref_m": 1.5,
+    "falloff": 0.18,
+    "air_damping": 0.45,
+    "min_cutoff_hz": 2800,
+    "reverb_exponent": 0.65,
+    "pre_delay_law": {
+      "base_ms": 32.0,
+      "per_m": 3.5,
+      "max_ms": 30.0
+    },
+    "near_field": {
+      "enabled": true,
+      "model": "dvf",
+      "max_m": 1.0,
+      "head_radius_m": 0.0875,
+      "strength": 1.0,
+      "lf_boost": 2.0,
+      "lf_hz": 700.0,
+      "min_gain": 0.35,
+      "max_gain": 3.0
+    }
+  },
+  "binaural": {
+    "bed": false,
+    "spot": true
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring (reverb is one shared room for every instrument, the send per role in the mix preset)",
+    "STARTING VALUE: rt60 2.3 s and every delay and gain are the scaffold's defaults for a large room; not a measurement of any hall",
+    "Late tail and reflections from the room geometry (Eyring), scripts/spatial_hrtf/room.py; absorption coefficients from presets/materials/room_materials.json (concrete, plaster)",
+    "STARTING VALUE: box sizes (a 30 x 45 x 22 m hall, a 60 x 80 x 45 m vast space at the Orbit scene, a 12 x 16 x 7 m small room at the Horizon scene) and listener positions; no measurement of any real room"
+  ],
+  "scenes": [
+    {
+      "anchor": {
+        "section": "Orbit"
+      },
+      "transition_bars": 2,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 60.0,
+          "depth_m": 80.0,
+          "height_m": 45.0,
+          "listener": {
+            "x": 30.0,
+            "y": 30.0,
+            "z": 1.6
+          }
+        },
+        "late": {
+          "level_db": -14.0
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "Horizon"
+      },
+      "transition_s": 0.4,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 12.0,
+          "depth_m": 16.0,
+          "height_m": 7.0,
+          "listener": {
+            "x": 6.0,
+            "y": 6.0,
+            "z": 1.6
+          }
+        },
+        "late": {
+          "level_db": -26.0
+        }
+      }
+    }
+  ]
+}

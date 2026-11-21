@@ -275,13 +275,19 @@ def m_min_silence_long(score):
     return bars >= 4.0, f'longest silence {bars:.1f} bars'
 
 
+def _unit_v(v):
+    """A velocity on the 0..1 scale: a score may write MIDI 1-127 or 0..1 (a value above 1 is MIDI)."""
+    v = float(v)
+    return v / 127.0 if v > 1.0 else v
+
+
 def m_sudden_loud(score):
     for t in score.get('tracks') or []:
         prev = None
         for n in sorted(t.get('notes') or [], key=lambda n: float(n.get('t', 0.0))):
             if prev is not None:
                 dt = float(n.get('t', 0.0)) - float(prev.get('t', 0.0))
-                dv = abs(float(n.get('v', 0.5)) - float(prev.get('v', 0.5)))
+                dv = abs(_unit_v(n.get('v', 0.5)) - _unit_v(prev.get('v', 0.5)))
                 if dt <= 1.0 and dv > 0.40:
                     return True, f'{t.get("name")} jumps {dv:.2f} of velocity in {dt:.2f} beats'
             prev = n

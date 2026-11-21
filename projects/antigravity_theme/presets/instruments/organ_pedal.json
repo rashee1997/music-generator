@@ -1,0 +1,37 @@
+{
+  "name": "organ_pedal",
+  "description": "A pipe organ's low pedal",
+  "character": "A pipe organ's low pedal: a sustained root and fifth that never leaves, the floor of the cue.",
+  "gm": "church_organ",
+  "role": "drone",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": -10.0,
+    "elevation": 0.0,
+    "distance": 3.5,
+    "kind": "spot",
+    "binaural": true
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 35
+    }
+  ],
+  "gain_db": -3,
+  "reverb": 0.3,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 1.0,
+    "release_ms": 300.0
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring (a sustained organ or low-string bed, a pulse that keeps going, low brass at the turning points: per its section 2) | the part's job in the cue",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements"
+  ]
+}

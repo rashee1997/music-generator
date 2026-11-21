@@ -475,9 +475,77 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
     run and a parallel stage would wait on that slot forever instead of reporting the failure.
     """
     try:
+        vt = _velocity_timbre(tr)
+        if vt:
+            return _render_velocity_layers(tr, vt, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead)
         return _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead)
     finally:
         _return_slot()
+
+
+VELOCITY_TIMBRE_KEYS = ('points', 'bands', 'order')
+
+
+def _velocity_timbre(tr):
+    """The `velocity_timbre` block of a track or its instrument preset (None = off). Unknown keys are an error, and so
+    is asking for it on a track that is not a plain SoundFont track: an SFZ library has its own velocity layers and a
+    clone, effect, environment or voice has no velocity layer to emulate."""
+    raw_inst = str(tr.get('instrument', 'piano'))
+    inst_cfg = presets.find_instrument(raw_inst) or presets.find_instrument(_name(raw_inst))
+    blk = tr.get('velocity_timbre') or (inst_cfg or {}).get('velocity_timbre')
+    if not blk:
+        return None
+    name = tr.get('name', raw_inst)
+    if raw_inst.startswith(('clone:', 'sfx:', 'env:', 'sfz:')) or tr.get('sfz') or (inst_cfg or {}).get('sfz'):
+        raise ValueError(f'track "{name}": velocity_timbre emulates a SoundFont\'s missing velocity layers; '
+                         f'this track is not a plain SoundFont track')
+    if not isinstance(blk, dict) or any(k not in VELOCITY_TIMBRE_KEYS for k in blk):
+        raise ValueError(f'track "{name}": velocity_timbre takes only {", ".join(VELOCITY_TIMBRE_KEYS)} (got {blk!r})')
+    pts = blk.get('points')
+    if (not isinstance(pts, list) or len(pts) < 2 or any(not isinstance(p, (list, tuple)) or len(p) != 2 for p in pts)
+            or any(not (0 <= float(p[0]) <= 127 and float(p[1]) > 0) for p in pts)
+            or [float(p[0]) for p in pts] != sorted(float(p[0]) for p in pts)):
+        raise ValueError(f'track "{name}": velocity_timbre.points is a list of [velocity 0-127, low-pass Hz] pairs, '
+                         f'two or more, in rising velocity order (got {pts!r})')
+    if int(blk.get('bands', 4)) < 2:
+        raise ValueError(f'track "{name}": velocity_timbre.bands must be 2 or more')
+    return blk
+
+
+def _render_velocity_layers(tr, vt, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead):
+    """A SoundFont has one sample per key, so velocity moves level and nothing else: the SF2 default velocity-to-cutoff
+    modulator (a soft note is darker) is not applied by TinySoundFont. This plays the track's notes in `bands` groups
+    by written velocity, one render per group, and low-passes each group at the cutoff the preset's `points` give for
+    that group's mean velocity (log-frequency interpolation between points), then sums them: a soft note is warmer and a
+    hard one open, per note, from numbers in the preset. A note's neighbours in another band are invisible to the
+    humanizer, so overlap-based articulation (a slur across two bands) is not shared between layers."""
+    notes = list(tr.get('notes') or [])
+    if not notes:
+        return _render_track({k: v for k, v in tr.items() if k != 'velocity_timbre'}, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead)
+    vels = np.array([float(n.get('v', 80)) for n in notes])
+    nb = int(vt.get('bands', 4))
+    edges = np.quantile(vels, np.linspace(0.0, 1.0, nb + 1)[1:-1]) if len(set(vels)) > 1 else []
+    idx = np.searchsorted(np.asarray(edges), vels, side='right') if len(edges) else np.zeros(len(vels), int)
+    pts = vt['points']
+    xs, fs = np.array([float(p[0]) for p in pts]), np.log([float(p[1]) for p in pts])
+    layers, info = [], []
+    for b in sorted(set(idx.tolist())):
+        sub = [n for n, i in zip(notes, idx) if i == b]
+        mv = float(np.mean([float(n.get('v', 80)) for n in sub]))
+        lp = float(np.exp(np.interp(mv, xs, fs)))
+        t2 = {k: v for k, v in tr.items() if k != 'velocity_timbre'}
+        t2['notes'] = sub
+        x = _render_track(t2, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead)
+        x = dsp.slope_filter(x, sr=SR, f=lp, kind='lp', order=int(vt.get('order', 2)))
+        layers.append(x)
+        info.append(dict(band=b, notes=len(sub), mean_vel=round(mv, 1), lowpass_hz=round(lp)))
+    _record(tr.get('name', 'track'), velocity_layers=info)
+    n = max(len(x) for x in layers)
+    out = np.zeros((n, layers[0].shape[1] if layers[0].ndim > 1 else 1), np.float32)
+    for x in layers:
+        x2 = x if x.ndim > 1 else x[:, None]
+        out[:len(x2)] += x2
+    return out
 
 
 def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None):
