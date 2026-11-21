@@ -307,15 +307,15 @@
       "space": "collision_course_room"
     },
     "debris_celesta": {
-      "azimuth": 0.0,
+      "azimuth": -20.0,
       "elevation": 25.0,
-      "distance": 1.0,
+      "distance": 1.2,
       "space": "collision_course_room"
     },
     "debris_harp": {
-      "azimuth": 0.0,
+      "azimuth": 20.0,
       "elevation": 10.0,
-      "distance": 1.0,
+      "distance": 1.2,
       "space": "collision_course_room"
     }
   },
