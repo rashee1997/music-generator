@@ -33,7 +33,8 @@
   "sources": [
     "KB cinematic-hybrid-scoring (a sustained organ or low-string bed, a pulse that keeps going, low brass at the turning points: per its section 2) | the part's job in the cue",
     "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements",
-    "STARTING VALUE: velocity_timbre points from KB soundfont-velocity-and-realism section 4 (soft is darker; not calibrated)"
+    "STARTING VALUE: velocity_timbre points from KB soundfont-velocity-and-realism section 4 (soft is darker; not calibrated)",
+    "MEASURED: stem.tick read the bed's chord attacks (36 strong onsets, 7.7 dB rise each, one per bar) as a pulse, because the gate's grid test also matches 43% of random onsets on a 93 ms grid; STARTING VALUE: onset_fade_ms 300, a slow bow attack, which turns each chord entry into a swell the onset detector reads as a gentle rise"
   ],
   "velocity_timbre": {
     "points": [
@@ -55,5 +56,6 @@
       ]
     ],
     "bands": 4
-  }
+  },
+  "onset_fade_ms": 300.0
 }
