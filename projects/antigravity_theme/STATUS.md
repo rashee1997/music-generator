@@ -52,3 +52,21 @@
 - Nothing was auditioned: feel, instrument, pulse, tempo and key checks of listen.py did not run (earshot is not installed). Whether it sounds like a space film score, whether the theme is memorable, and how the 7.1 field and the height read are not measured. A 7.1 layout has no height channels, and nothing in the immersive path is auditioned.
 - The SoundFont is General MIDI: it cannot sound like a commercial orchestral library.
 - The delivered file is 66.5 s, not 60.0 s: the tail rings past the cut. A duration tolerance (and a trim) is the follow-up you asked for.
+
+## Version 2 (v05): 120 s story cut, stereo + 8-channel 7.1 + ADM objects
+The piece was extended in place (not a new project): the first 60 s keep version 1's structure, bar 16 is now the collision, and the
+new sections Debris, Escape and Drift tell the rest. Brief: 120 s, ADM object-based spatial, 8 channel, suspense, tension, a high-speed
+space object, collision and escape, music that visualises the story, FLAC 8 channel output.
+
+- Story: Weightless (suspense) 0-15 s, Ascent (detection, a far object) 15-30 s, Orbit (the object closes) 30-45 s, Singularity (the final rush) 45-56 s, Horizon (the collision at 60 s on the downbeat of bar 16, then a cut) 56-60 s, Debris (cold, empty, fragments flying outward) 60-75 s, Escape (a fast pulse, a heroic theme, a second climb, the object leaving) 75-105 s, Drift (relief) 105-120 s.
+- The objects are instruments (no sound effects were asked for or used): `violin_runs` is the object (a moving source from far behind to the centre at 60 s, then away to the rear), `debris_celesta` and `debris_harp` are fragments flying outward, `harp_arp` orbits in the escape, `taiko_hits` lands the collision.
+- Deliverables, all certified in one run (CERTIFIED PASS, 0 FAIL, v05): out/master.wav (stereo), out/master_7_1.wav (8 channels), out/master_adm.wav (strict BW64 / ADM, 19 object tracks; the strict container row passed), and FLAC copies of the stereo and 7.1 renders (lossless: the 8-channel decode matched the WAV sample for sample).
+- Measured: stereo -14.3 LUFS, LRA 21.4 LU, crest 17.3 dB; 7.1 imm.loudness -14.0 LKFS, imm.surround_ratio -2.1 dB (window -9 to -2), imm.fold_coherence +0.37; ADM true peak -3.0 dBTP.
+- arc_report (LUFS means): Weightless -31.1, Ascent -24.2, Orbit -15.4, Singularity -10.1, Horizon -16.9, Debris -30.1, Escape -14.8, Drift -26.5; rank correlation with the declared energy +0.89; quiet stretches 0-21 s, 63-77 s and 111.5-126 s are the suspense, the aftermath and the relief the sheet asks for.
+- What the gate decided (all fixed in the notes and presets, no row loosened): a doubled pedal attack at the join, run shapes that were too predictable (mixed steps and skips), the ending's tension (open D and A fifths and a trombone D), cello and horn dropping out against louder sections (levels, and the first Escape cello note rested because the track's lean put it before the section line), tiny holes in the string bed (its sample ends about 3.6 s into a held note, so the notes end before that), the climbing line's Bb (a Bb4 sits 26 Hz from the A4 that every low D's third harmonic makes: replaced by A) and z_separation in the longer piece (clock tick and debris harp raised).
+- WARNs: one-frame roughness at 85.5 s; imm_band (harp, bed, tick and choir carry almost no energy above 4 kHz, so their height reads weakly); imm_externalization and imm_iacc_early (all first reflections from the front); modulation_flutter on the strings theme and choir; violin_runs 6.0 dB in 2.5-5 kHz (warn at 6); pattern rows for taiko and debris_harp (loops by design).
+
+### Not checked (version 2)
+- Nothing was auditioned (earshot is not installed); whether the story reads, whether the object sounds like it moves, and how the 7.1 and ADM fields sound are not measured. The ADM file is an open-standard BW64/ADM file, not a certified Dolby Atmos master, and no renderer was run on it here.
+- The delivered files are 126.5 s: 120 s of music and a 6.5 s ring-out after the end. A duration tolerance and a trim are the follow-up.
+- The SoundFont is General MIDI; height cues of a SoundFont sample with little energy above 4 kHz are weak.
