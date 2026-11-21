@@ -12,7 +12,7 @@
   },
   "spatial": {
     "azimuth": 110.0,
-    "elevation": 14.0,
+    "elevation": 20.0,
     "distance": 1.4,
     "kind": "spot",
     "binaural": true
@@ -33,7 +33,8 @@
   "sources": [
     "KB cinematic-hybrid-scoring (a sustained organ or low-string bed, a pulse that keeps going, low brass at the turning points: per its section 2) | the part's job in the cue",
     "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements",
-    "STARTING VALUE: velocity_timbre points from KB soundfont-velocity-and-realism section 4 (soft is darker; not calibrated)"
+    "STARTING VALUE: velocity_timbre points from KB soundfont-velocity-and-realism section 4 (soft is darker; not calibrated)",
+    "MEASURED: spatial.z_separation read clock_tick and timpani_hits both in the 500-4000 Hz band in the climax, 20 degrees apart with 14 degrees of height (limit 25 degrees or 15 degrees of height); STARTING VALUE: clock_tick elevation 20, 20 degrees above the timpani"
   ],
   "mechanics_class": "plucked",
   "velocity_timbre": {

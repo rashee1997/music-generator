@@ -12,7 +12,7 @@
   },
   "spatial": {
     "azimuth": 20.0,
-    "elevation": 10.0,
+    "elevation": 30.0,
     "distance": 1.2,
     "kind": "spot",
     "binaural": true,
@@ -23,7 +23,7 @@
         {
           "bar": 17,
           "azimuth": 20,
-          "elevation": 10,
+          "elevation": 30.0,
           "distance": 1.2
         },
         {
@@ -57,7 +57,8 @@
   "sources": [
     "KB cinematic-hybrid-scoring (a pulse that keeps going, low brass and sub weight at the turning points, the last section a peak or a cliff: its section 2) | the part's job in the cue",
     "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements",
-    "STARTING VALUE: velocity_timbre points from KB soundfont-velocity-and-realism section 4 (soft is darker; not calibrated)"
+    "STARTING VALUE: velocity_timbre points from KB soundfont-velocity-and-realism section 4 (soft is darker; not calibrated)",
+    "MEASURED: spatial.z_separation read debris_harp 15 degrees from piano_arp; STARTING VALUE: debris_harp elevation 30 to 40, at least 15 degrees above the piano arpeggio's 8"
   ],
   "velocity_timbre": {
     "points": [

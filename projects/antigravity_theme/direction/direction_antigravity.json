@@ -292,7 +292,7 @@
     },
     "clock_tick": {
       "azimuth": 110.0,
-      "elevation": 14.0,
+      "elevation": 20.0,
       "distance": 1.4,
       "space": "antigravity_room"
     },
@@ -322,7 +322,7 @@
     },
     "debris_harp": {
       "azimuth": 20.0,
-      "elevation": 10.0,
+      "elevation": 30.0,
       "distance": 1.2,
       "space": "antigravity_room"
     }
@@ -470,7 +470,7 @@
       "organ_chords": 12,
       "harp_arp": 28,
       "choir_oohs": 36,
-      "clock_tick": 14,
+      "clock_tick": 20,
       "piano_theme": 6,
       "piano_arp": 8,
       "horn_theme": 6,
