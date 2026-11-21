@@ -35,7 +35,8 @@
     "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements",
     "STARTING VALUE: velocity_timbre points from KB soundfont-velocity-and-realism section 4 (soft is darker; not calibrated)",
     "MEASURED: stem.tick read the bed's chord attacks (36 strong onsets, 7.7 dB rise each, one per bar) as a pulse, because the gate's grid test also matches 43% of random onsets on a 93 ms grid; STARTING VALUE: onset_fade_ms 300, a slow bow attack, which turns each chord entry into a swell the onset detector reads as a gentle rise",
-    "MEASURED: imm.surround_ratio read the 7.1 surround energy at -1.6 dB against the front stage twice (window -9.0 to -2.0), unchanged by moving the timpani and lowering the late field; this part sits at the sides or behind. STARTING VALUE: gain_db -6 -> -7.5, a bed that sits a little further under the front-stage parts"
+    "MEASURED: imm.surround_ratio read the 7.1 surround energy at -1.6 dB against the front stage twice (window -9.0 to -2.0), unchanged by moving the timpani and lowering the late field; this part sits at the sides or behind. STARTING VALUE: gain_db -6 -> -7.5, a bed that sits a little further under the front-stage parts",
+    "MEASURED: with the escape section added, stem.tick read the bed's chord entries again (65 strong onsets, 3.4 dB rise, 93 ms grid); STARTING VALUE: onset_fade_ms 600, a slower bow swell into each chord"
   ],
   "velocity_timbre": {
     "points": [
@@ -58,5 +59,5 @@
     ],
     "bands": 4
   },
-  "onset_fade_ms": 300.0
+  "onset_fade_ms": 600.0
 }
