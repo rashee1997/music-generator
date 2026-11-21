@@ -3,7 +3,7 @@
   "character": "A wide, dark-to-bright orchestral cue on one shared hall: a low organ pedal and cello pulse hold the floor, the theme sits in the middle, and the master is loud enough to land a hard cut at the end.",
   "carve_db": -4.0,
   "max_boost_db": 12.0,
-  "note": "Starting values: -14 LUFS and -1.5 dBTP follow KB cinematic-hybrid-scoring section 4 (film music mastered at about -14 LUFS: per search result); the crest floor is a working figure; room send per role is the scaffold's, not calibrated. The ambisonic bus is order 4 (25 channels), the shipped value of the other immersive projects; heights follow the instrument presets; stereo_decode speakers because the stereo master is for loudspeakers.",
+  "note": "Starting values: -14 LUFS and -1.5 dBTP follow KB cinematic-hybrid-scoring section 4 (film music mastered at about -14 LUFS: per search result); the crest floor is a working figure; room send per role is the scaffold's, not calibrated. The ambisonic bus is order 4 (25 channels), the shipped value of the other immersive projects; heights follow the instrument presets; stereo_decode speakers because the stereo master is for loudspeakers. The master high-pass is 30 Hz, third order (starting value): master.dc read a 1 s drift of 0.00214 (limit 0.001) from the 34-45 Hz organ pedal; the cinematic reference lists this fix.",
   "gain_staging": {
     "strategy": "legacy",
     "ref_lufs": -24.0,
@@ -281,7 +281,9 @@
         "tone": "warm",
         "glue": true
       }
-    }
+    },
+    "highpass_hz": 30.0,
+    "highpass_order": 3
   },
   "role_chains": {
     "melody": {
