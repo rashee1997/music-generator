@@ -23,7 +23,7 @@
       "f": 60
     }
   ],
-  "gain_db": -4,
+  "gain_db": -5.0,
   "reverb": 0.28,
   "articulation": {
     "overlap_ms": 0.0,
@@ -33,7 +33,8 @@
   "sources": [
     "KB cinematic-hybrid-scoring (a sustained organ or low-string bed, a pulse that keeps going, low brass at the turning points: per its section 2) | the part's job in the cue",
     "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements",
-    "STARTING VALUE: velocity_timbre points from KB soundfont-velocity-and-realism section 4 (soft is darker; not calibrated)"
+    "STARTING VALUE: velocity_timbre points from KB soundfont-velocity-and-realism section 4 (soft is darker; not calibrated)",
+    "MEASURED: imm.surround_ratio read the 7.1 surround energy at -1.6 dB against the front stage twice (window -9.0 to -2.0), unchanged by moving the timpani and lowering the late field; this part sits at the sides or behind. STARTING VALUE: gain_db -4 -> -5.0, a bed that sits a little further under the front-stage parts"
   ],
   "velocity_timbre": {
     "points": [
