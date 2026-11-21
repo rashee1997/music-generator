@@ -44,7 +44,7 @@
       "rt60_s": "auto",
       "pre_delay_ms": "auto",
       "hf_decay": 0.5,
-      "level_db": -18.0,
+      "level_db": -21.0,
       "count": 8,
       "spread_deg": 90.0,
       "rise_s": 0.05,
@@ -92,7 +92,8 @@
     "STARTING VALUE: rt60 2.3 s and every delay and gain are the scaffold's defaults for a large room; not a measurement of any hall",
     "Late tail and reflections from the room geometry (Eyring), scripts/spatial_hrtf/room.py; absorption coefficients from presets/materials/room_materials.json (concrete, plaster)",
     "STARTING VALUE: box sizes (a 30 x 45 x 22 m hall, a 60 x 80 x 45 m vast space at the Orbit scene, a 12 x 16 x 7 m small room at the Horizon scene) and listener positions; no measurement of any real room",
-    "MEASURED: the roughness failure sat in the reverb tail after the cut (0.077-0.078 against 0.070 at 60-61 s) with ring-out partials in the master that no stem plays; STARTING VALUE: the Orbit scene's late level -19 dB (was -14) and a 50 x 70 x 35 m box (was 60 x 80 x 45), a shorter and quieter vast space"
+    "MEASURED: the roughness failure sat in the reverb tail after the cut (0.077-0.078 against 0.070 at 60-61 s) with ring-out partials in the master that no stem plays; STARTING VALUE: the Orbit scene's late level -19 dB (was -14) and a 50 x 70 x 35 m box (was 60 x 80 x 45), a shorter and quieter vast space",
+    "MEASURED: imm.surround_ratio read the 7.1 surround energy at -1.6 dB against the front stage; STARTING VALUE: the base late-field level -21 dB (was -18), since the diffuse tail is decoded to the surround speakers"
   ],
   "scenes": [
     {
