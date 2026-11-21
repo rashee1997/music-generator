@@ -32,6 +32,8 @@
   },
   "sources": [
     "KB cinematic-hybrid-scoring (a sustained organ or low-string bed, a pulse that keeps going, low brass at the turning points: per its section 2) | the part's job in the cue",
-    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements"
-  ]
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements",
+    "MEASURED: stem.tick read the chord entries (12 strong onsets, 4.9 dB rise, one per bar) as a pulse on a 93 ms grid, the same false positive as the string bed; STARTING VALUE: onset_fade_ms 300, a slow swell into each chord"
+  ],
+  "onset_fade_ms": 300.0
 }
