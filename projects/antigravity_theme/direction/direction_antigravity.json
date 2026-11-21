@@ -1,27 +1,28 @@
 {
   "title": "Antigravity",
-  "project": "A one-minute orchestral theme cue for deep-space exploration, delivered in stereo and 7.1",
+  "project": "A two-minute orchestral space cue in object-based spatial audio (stereo, 7.1 and ADM objects): a fast object closes, collides, and the survivors escape",
   "version": 1,
   "medium": "film cue",
-  "brief": "create a 60 second sample theme, antigravity, in the manner of a large-scale space-exploration film score: orchestra, organ, deep space",
+  "brief": "create a 60 second sample theme, antigravity, in the manner of a large-scale space-exploration film score: orchestra, organ, deep space | update: 120 seconds, ADM object based spatial, 8 channel, suspense, tension, a high-speed space object, collision, escaping; the music should visualise the story; FLAC 8 channel output",
   "audience": "a viewer or listener who wants to feel the scale of space and a small human hope inside it",
-  "purpose": "a short theme cue that grows from near-silence to a single overwhelming peak and cuts to a held organ note and one piano note",
+  "purpose": "a 120 second cue in which every spatial move is a story beat: the object approaches from far behind, the impact lands in the middle of the room at 60 s, debris scatters, and the survivors escape",
   "point_of_view": "a traveller in the dark: the floor is a low organ, the clock is a dry tick, and the theme is a human voice that grows",
   "job": [
     "state a simple eight-note theme in the first twenty seconds so it can be remembered",
     "add one lever at each section (a pulse, a new voice, the full ensemble, the peak)",
     "end the cue as a cliff: a hard cut into a held organ pedal and a single piano note, not a fade of the peak"
   ],
-  "story": "a pedal and a clock, a piano says the theme, a horn carries it, strings and an organ join, a rising line reaches the top, and everything stops except one held note",
-  "duration_s": 60.0,
+  "story": "a pedal and a clock; a far object appears; it comes closer and faster; impact and a cut to silence; fragments flying outward; a fast escape and a heroic climb; relief",
+  "duration_s": 120.0,
   "in_point_s": 0.0,
-  "out_point_s": 60.0,
-  "ending": "hard_out",
+  "out_point_s": 120.0,
+  "ending": "tail_out",
   "feel": [
+    "suspense",
+    "tension",
+    "dread",
     "wonder",
-    "vast",
-    "hopeful",
-    "tense"
+    "relief"
   ],
   "avoid_feel": [
     "comic",
@@ -43,8 +44,8 @@
       "start_s": 15.0,
       "end_s": 30.0,
       "energy": 0.5,
-      "action": "the cue starts to move: a pulse and a bed arrive under the theme",
-      "music": "a French horn takes the theme an octave down; the piano arpeggio, the tremolo strings and the cellos begin; the first timpani hits",
+      "action": "detection: something is out there; a pulse and a bed arrive under the theme, and a far object streaks behind the listener",
+      "music": "a French horn takes the theme an octave down; the piano arpeggio, the tremolo strings and the cellos begin; the first timpani hits; a first far violin run crosses behind the listener",
       "role": "establish"
     },
     {
@@ -52,8 +53,8 @@
       "start_s": 30.0,
       "end_s": 45.0,
       "energy": 0.8,
-      "action": "the full ensemble arrives and the theme is sung by strings and horn together",
-      "music": "strings and horn play the theme, the harp doubles the arpeggio, organ chords and choir join, low trombone swells, timpani on every bar and a roll at the end",
+      "action": "the object closes at high speed and the full ensemble arrives",
+      "music": "strings and horn play the theme, the harp doubles the arpeggio, organ chords and choir join, low trombone swells, timpani on every bar and a roll at the end; the violin runs get faster and nearer",
       "role": "build"
     },
     {
@@ -61,8 +62,8 @@
       "start_s": 45.0,
       "end_s": 56.25,
       "energy": 1.0,
-      "action": "the peak: one climbing line to the highest note while everything plays",
-      "music": "strings and horn climb in octaves from D to D, the organ is loudest, timpani rolls into each turn",
+      "action": "the final rush: the object arrives at the centre of the room",
+      "music": "strings and horn climb in octaves from D to D, the organ is loudest, timpani rolls into each turn; the violin streak is at its fastest and nearest",
       "role": "peak"
     },
     {
@@ -70,8 +71,35 @@
       "start_s": 56.25,
       "end_s": 60.0,
       "energy": 0.3,
-      "action": "a hard cut: everything stops but a held organ pedal and one piano note",
-      "music": "a single timpani hit on the downbeat, then only the organ pedal and one piano D ring out",
+      "action": "the collision on the downbeat of bar 16, then a hard cut into silence",
+      "music": "timpani and taiko on the downbeat of the last bar of the first half, then only the organ pedal and one piano note ring",
+      "role": "button"
+    },
+    {
+      "name": "Debris",
+      "start_s": 60.0,
+      "end_s": 75.0,
+      "energy": 0.3,
+      "action": "the aftermath: cold, empty, fragments flying outward; the clock has stopped",
+      "music": "the pedal alone and a quiet low bed; celesta and harp glints scatter to the left and right and up; the piano remembers two notes of the theme",
+      "role": "transition"
+    },
+    {
+      "name": "Escape",
+      "start_s": 75.0,
+      "end_s": 105.0,
+      "energy": 0.85,
+      "action": "survival: the clock restarts, a fast pulse, a heroic theme, a second climb to the top",
+      "music": "a sixteenth-note piano arpeggio and harp orbit, cello eighths, timpani and taiko, strings and horn sing the theme, violin runs flee and recede, the climbing line again",
+      "role": "build"
+    },
+    {
+      "name": "Drift",
+      "start_s": 105.0,
+      "end_s": 120.0,
+      "energy": 0.25,
+      "action": "relief: silence returns, one held chord, a slow clock and a last high piano note",
+      "music": "the pedal, a soft open D and A chord in the strings, organ and choir, the piano fragment, one high piano D",
       "role": "button"
     }
   ],
@@ -80,7 +108,7 @@
       "name": "the Antigravity theme",
       "first_at_s": 0.0,
       "shape": "eight slow notes: up a fifth, down to the third, up to the root of the next chord, up a minor third, then a fall to the fifth of the last chord; every note is a chord tone",
-      "returns": "15 s: horn, an octave lower. 30 s: strings and horn together. 45 s: the same notes rise to a climbing line that reaches the top, then one piano D rings alone"
+      "returns": "15 s: horn. 30 s: strings and horn. 45 s: the climbing line. 71 s: two notes. 78 s: heroic horn and strings an octave apart. 94 s: the climbing line again. 108 s: two notes and one high piano D"
     }
   ],
   "instruments": [
@@ -96,13 +124,18 @@
     "brass_low",
     "timpani_hits",
     "clock_tick",
-    "choir_oohs"
+    "choir_oohs",
+    "violin_runs",
+    "taiko_hits",
+    "debris_celesta",
+    "debris_harp"
   ],
   "avoid_sounds": [
     "synth lead",
     "drum kit",
     "electric guitar",
-    "four-on-the-floor kick"
+    "four-on-the-floor kick",
+    "sound effects"
   ],
   "pulse": "steady",
   "tempo_bpm": [
@@ -111,34 +144,34 @@
   ],
   "key": "D",
   "mode": "minor",
-  "energy": 0.65,
+  "energy": 0.6,
   "space": "antigravity_room",
   "hits_at": [
     30.0,
-    45.0,
-    56.25
+    60.0,
+    64.0
   ],
   "hits": [
     {
       "t": 30.0,
       "kind": "musical",
       "sync": "soft",
-      "sound": "the full ensemble and the first octave doubling of the theme",
-      "why": "the orbit section must feel like a new level, not a drift"
+      "sound": "the full ensemble and the first rush of the object",
+      "why": "the approach must feel like a new level"
     },
     {
-      "t": 45.0,
+      "t": 60.0,
       "kind": "musical",
       "sync": "hard",
-      "sound": "the climbing line begins and the timpani rolls into it",
-      "why": "the peak must be heard coming"
+      "sound": "timpani and taiko on one hit at the centre of the room, the object arriving",
+      "why": "the collision is the centre of the story"
     },
     {
-      "t": 56.25,
+      "t": 64.0,
       "kind": "musical",
       "sync": "hard",
-      "sound": "a single timpani hit, then silence except the organ pedal and one piano note",
-      "why": "the cliff: a cut is a stronger ending than a fade"
+      "sound": "a cut into silence, then glints flying outward",
+      "why": "a cut is stronger than a decay, and the debris needs a clean start"
     }
   ],
   "mix_intent": {
@@ -147,7 +180,8 @@
       "piano_theme",
       "strings_theme",
       "organ_chords",
-      "brass_low"
+      "brass_low",
+      "violin_runs"
     ],
     "sits_under": [
       "organ_pedal",
@@ -157,12 +191,18 @@
       "cello_pulse",
       "timpani_hits",
       "clock_tick",
-      "choir_oohs"
+      "choir_oohs",
+      "taiko_hits",
+      "debris_celesta",
+      "debris_harp"
     ],
     "must_hear": [
       "the organ pedal from the first second",
       "the theme in the middle register",
-      "the hard cut at the end"
+      "the hard cut at the end",
+      "the object approaching from behind",
+      "the debris flying outward",
+      "the object leaving"
     ],
     "leave_free_hz": []
   },
@@ -175,7 +215,8 @@
     "stage": "web",
     "output_targets": [
       "stereo",
-      "immersive_7_1"
+      "immersive_7_1",
+      "adm_bw64"
     ]
   },
   "references": [
@@ -260,12 +301,36 @@
       "elevation": 36.0,
       "distance": 4.5,
       "space": "antigravity_room"
+    },
+    "violin_runs": {
+      "azimuth": -160.0,
+      "elevation": 8.0,
+      "distance": 10.0,
+      "space": "antigravity_room"
+    },
+    "taiko_hits": {
+      "azimuth": 150.0,
+      "elevation": 0.0,
+      "distance": 4.5,
+      "space": "antigravity_room"
+    },
+    "debris_celesta": {
+      "azimuth": -20.0,
+      "elevation": 25.0,
+      "distance": 1.2,
+      "space": "antigravity_room"
+    },
+    "debris_harp": {
+      "azimuth": 20.0,
+      "elevation": 10.0,
+      "distance": 1.2,
+      "space": "antigravity_room"
     }
   },
   "expression": {
-    "sonic_picture": "In the first ten seconds a very low organ pedal sits under a dry wooden tick while a close soft piano plays eight slow notes; in the middle a horn carries the theme over a running piano arpeggio and cello pulse, and strings and an organ widen the sound; at the peak every part is in and a climbing line reaches the top; the last note is a held organ pedal and one piano note after a hard cut.",
+    "sonic_picture": "In the first ten seconds a very low organ pedal sits under a dry celesta tick while a close soft piano plays eight slow notes; a far violin streak appears behind the listener and comes closer and faster; at 60 s every instrument lands on one hit in the centre and stops; fragments scatter outward; a fast pulse and a heroic line escape; the last note is one high piano D.",
     "performer": "The organist holds the pedal and swells the manuals slowly. The pianist plays the theme softly, letting each note ring, and keeps the arpeggio even. The horn player breathes at the end of each two-bar phrase. The cellists keep the eighth-note pulse and dig in on the beat. The timpanist plays single hits on the turns and a roll into the peak. The percussionist keeps the tick light.",
-    "producer_moves": "Each section adds one lever: the tick and pedal, then the horn and the pulse, then the full ensemble, then the climbing line. The organ is the loudest voice at the peak. The last bar stops everything except the pedal and one piano note: the cut is the effect. Every part shares one hall; the brightness of each bowed or blown part follows its written velocity.",
+    "producer_moves": "Each section adds one lever: the tick and pedal, then the horn and the pulse, then the full ensemble, then the climbing line. The organ is the loudest voice at the peak. The last bar stops everything except the pedal and one piano note: the cut is the effect. Every part shares one hall; the brightness of each bowed or blown part follows its written velocity. The object is a moving source: it comes from behind, hits at the centre and leaves. The room opens into a vast cold space after the impact.",
     "anti_generic": "The generic version is a pad and a drum loop that swells and fades; this one has a theme that is stated, carried, doubled and climbed, a clock that never stops until the cut, and an ending that ends the cue instead of fading it.",
     "cues": [
       {
@@ -312,6 +377,33 @@
         "dynamics": "mezzo forte",
         "articulation": "ringing",
         "timbre": "bare"
+      },
+      {
+        "section": "Debris",
+        "arousal": "low",
+        "mode_register": "D minor, one pedal and glints",
+        "tempo_trend": "steady",
+        "dynamics": "piano",
+        "articulation": "ringing glints",
+        "timbre": "cold and bare"
+      },
+      {
+        "section": "Escape",
+        "arousal": "high",
+        "mode_register": "D minor with hope, high register",
+        "tempo_trend": "steady",
+        "dynamics": "forte",
+        "articulation": "a fast pulse and a heroic theme",
+        "timbre": "bright and full"
+      },
+      {
+        "section": "Drift",
+        "arousal": "low",
+        "mode_register": "D, a held open chord and one note",
+        "tempo_trend": "steady",
+        "dynamics": "mezzo piano",
+        "articulation": "ringing and falling",
+        "timbre": "soft"
       }
     ],
     "theme": {
@@ -324,7 +416,7 @@
   },
   "immersive": {
     "enabled": true,
-    "why": "the cue is about being inside something enormous: the organ and the low brass are the hull around the listener, the theme comes from ahead, and the arpeggio, the strings and the choir move through the space, so a field can say what a stereo mix can only suggest",
+    "why": "the cue is a story told by where things are: the object arrives from far behind and hits at the centre, the debris flies outward, the ship leaves behind; the organ and low brass are the hull around the listener",
     "engine": "hoa_bus",
     "anchors": [
       "organ_pedal",
@@ -332,7 +424,8 @@
       "brass_low",
       "timpani_hits",
       "horn_theme",
-      "clock_tick"
+      "clock_tick",
+      "taiko_hits"
     ],
     "movers": [
       {
@@ -354,6 +447,21 @@
         "part": "piano_arp",
         "why": "the pulse drifts slowly right and back so the field breathes",
         "path": "25 degrees right, drifting to 45 by bar 10 and back"
+      },
+      {
+        "part": "violin_runs",
+        "why": "it is the object: it approaches, collides and then leaves as the escaping ship",
+        "path": "from far behind on the left at 10 m, closing to the front at 1.2 m by the collision at 60 s, then from the centre to behind on the right at 10 m over the escape"
+      },
+      {
+        "part": "debris_celesta",
+        "why": "fragments thrown out of the impact",
+        "path": "from the centre outward to 110 degrees on the left and 25 degrees up over seven bars"
+      },
+      {
+        "part": "debris_harp",
+        "why": "fragments thrown out of the impact on the other side",
+        "path": "from the centre outward to 120 degrees on the right and 35 degrees up over seven bars"
       }
     ],
     "height": {
@@ -365,7 +473,10 @@
       "clock_tick": 14,
       "piano_theme": 6,
       "piano_arp": 8,
-      "horn_theme": 6
+      "horn_theme": 6,
+      "violin_runs": 8,
+      "debris_celesta": 25,
+      "debris_harp": 35
     },
     "room_changes": [
       {
@@ -377,17 +488,26 @@
         "at_section": "Horizon",
         "why": "the cut: the space collapses to a small dry room so the last two notes sit close and bare",
         "transition_s": 0.4
+      },
+      {
+        "at_section": "Debris",
+        "why": "after the impact the space is vast, cold and empty",
+        "transition_s": 7.5
       }
     ],
     "must_hear": [
       "the organ pedal under and around the listener from the first second",
       "the strings arriving from behind at the orbit section",
       "the harp circling the listener",
-      "the room collapsing at the last bar"
+      "the room collapsing at the last bar",
+      "the object approaching from behind",
+      "the impact in the middle of the room",
+      "the debris flying outward"
     ],
     "deliverables": [
       "stereo",
-      "immersive_7_1"
+      "immersive_7_1",
+      "adm_bw64"
     ],
     "notes": "the sheet records intent; the mix, space and instrument presets execute it. Heights, keyframes and room geometry are in presets. A 7.1 layout has no height channels, so elevation is carried in the stereo (binaural-aware) path and in the field that is decoded to the eight speakers; a 7.1.4 target would add the overhead pair."
   },
@@ -433,5 +553,5 @@
     "preset": "default",
     "notes": "music-only piece"
   },
-  "notes": "The sound is the General MIDI SoundFont: it has one sample per key and no velocity layers, so a velocity_timbre block in each bowed, blown and struck preset darkens soft notes per note (a starting-value curve). The cue is original: it uses the devices of a space-exploration score (an organ floor, a clock tick, a pulse that grows, a hard cut), not any composer's notes."
+  "notes": "The sound is the General MIDI SoundFont: it has one sample per key and no velocity layers, so a velocity_timbre block in each bowed, blown and struck preset darkens soft notes per note (a starting-value curve). The cue is original: it uses the devices of a space-exploration score (an organ floor, a clock tick, a pulse that grows, a hard cut), not any composer's notes. Version 2 adds the object, the collision at 60 s, the debris and the escape; the first 60 s keep the measured fixes of version 1."
 }

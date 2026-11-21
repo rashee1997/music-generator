@@ -11,9 +11,9 @@
     "vel_sigma": 5.0
   },
   "spatial": {
-    "azimuth": -150.0,
+    "azimuth": -160.0,
     "elevation": 8.0,
-    "distance": 9.0,
+    "distance": 10.0,
     "kind": "spot",
     "binaural": true,
     "trajectory": {
@@ -27,67 +27,67 @@
           "distance": 10
         },
         {
+          "bar": 5,
+          "azimuth": -150,
+          "elevation": 8,
+          "distance": 9
+        },
+        {
           "bar": 9,
-          "azimuth": -150,
+          "azimuth": -140,
           "elevation": 8,
-          "distance": 9
+          "distance": 8
         },
         {
-          "bar": 17,
-          "azimuth": -150,
-          "elevation": 8,
-          "distance": 9
-        },
-        {
-          "bar": 22,
-          "azimuth": -60,
+          "bar": 12,
+          "azimuth": -80,
           "elevation": 8,
           "distance": 5
         },
         {
-          "bar": 26,
-          "azimuth": -30,
+          "bar": 14,
+          "azimuth": -35,
           "elevation": 8,
           "distance": 3
         },
         {
-          "bar": 30,
-          "azimuth": -5,
+          "bar": 15,
+          "azimuth": -10,
           "elevation": 8,
-          "distance": 1.5
+          "distance": 1.8
         },
         {
-          "bar": 31,
+          "bar": 16,
           "azimuth": 0,
           "elevation": 8,
           "distance": 1.2
         },
         {
-          "bar": 40,
+          "bar": 20,
           "azimuth": 0,
           "elevation": 8,
           "distance": 1.2
         },
         {
-          "bar": 41,
+          "bar": 21,
           "azimuth": 10,
           "elevation": 8,
           "distance": 1.5
         },
         {
-          "bar": 46,
+          "bar": 25,
           "azimuth": 80,
           "elevation": 8,
           "distance": 3
         },
         {
-          "bar": 54,
-          "azimuth": 160,
+          "bar": 28,
+          "azimuth": 140,
           "elevation": 8,
-          "distance": 8
+          "distance": 7
         },
         {
-          "bar": 60,
+          "bar": 32,
           "azimuth": 170,
           "elevation": 8,
           "distance": 10

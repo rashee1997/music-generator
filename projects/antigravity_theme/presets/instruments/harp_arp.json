@@ -49,6 +49,36 @@
           "azimuth": -20,
           "elevation": 28,
           "distance": 2.8
+        },
+        {
+          "bar": 21,
+          "azimuth": -20,
+          "elevation": 28,
+          "distance": 2.8
+        },
+        {
+          "bar": 24,
+          "azimuth": -140,
+          "elevation": 28,
+          "distance": 2.8
+        },
+        {
+          "bar": 27,
+          "azimuth": 100,
+          "elevation": 28,
+          "distance": 2.8
+        },
+        {
+          "bar": 30,
+          "azimuth": -20,
+          "elevation": 28,
+          "distance": 2.8
+        },
+        {
+          "bar": 32,
+          "azimuth": -20,
+          "elevation": 28,
+          "distance": 2.8
         }
       ]
     }
