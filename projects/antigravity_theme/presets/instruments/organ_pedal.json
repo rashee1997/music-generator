@@ -21,6 +21,10 @@
     {
       "type": "hp",
       "f": 35
+    },
+    {
+      "type": "lp",
+      "f": 260
     }
   ],
   "gain_db": -3,
@@ -32,6 +36,7 @@
   },
   "sources": [
     "KB cinematic-hybrid-scoring (a sustained organ or low-string bed, a pulse that keeps going, low brass at the turning points: per its section 2) | the part's job in the cue",
-    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements"
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements",
+    "MEASURED: the pedal's 5th harmonic (about 367 Hz, an F#4) sat 18 Hz from the horn's F4 in the Bb bar and cochlear_roughness read the beating (0.076 against 0.070); STARTING VALUE: low-pass at 260 Hz, so the pedal is the floor of the cue and its upper harmonics do not collide with the theme"
   ]
 }
