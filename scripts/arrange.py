@@ -24,6 +24,8 @@ Arrangement keys (all strictly validated: an unknown key is an error, never igno
   sections [{name, bars:[a,z], energy, chords:[..], chord_at:{bar: chord}}]   form; chords cycle over the bars.
   events [{track, do, ref, bar | bars, ...}]    do: line | pattern | run | note. Common keys: every [m,r] (only bars
                                         with bar % m == r), skip [bars], scale (a number or {section: number}; 0 = rest).
+                                        vary "bar" picks a pattern variant by absolute bar number, so a skipped bar
+                                        keeps the others' variants (default: by position in the event's bars).
                                         line: octave vel shift scoop{gl,gs,leap,rest} trill{d,above,min_len,vel}
                                         from to.  pattern: until take.  run: beat pitch shape n step v0 v1 tail.
                                         note: beat d p v + extras.
@@ -38,7 +40,7 @@ TOP = {'title', 'bpm', 'ts', 'key', 'mode', 'seed', 'score', 'scale', 'shapes', 
        'tracks', 'sections', 'events'}
 EVENT_KEYS = {'track', 'do', 'ref', 'bar', 'bars', 'every', 'skip', 'scale', 'octave', 'vel', 'shift', 'scoop', 'trill',
               'from', 'to', 'until', 'take', 'beat', 'pitch', 'shape', 'n', 'step', 'v0', 'v1', 'tail', 'd', 'p', 'v',
-              'extra', 'why'}
+              'extra', 'why', 'vary'}
 
 
 class ArrangementError(ValueError):
@@ -213,7 +215,7 @@ class Arranger:
                 if kind == 'line':
                     self.do_line(ev, bar)
                 elif kind == 'pattern':
-                    self.do_pattern(ev, bar, i)
+                    self.do_pattern(ev, bar, bar - 1 if ev.get('vary') == 'bar' else i)
                 elif kind == 'run':
                     self.do_run(ev, bar)
                 else:

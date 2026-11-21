@@ -11,7 +11,7 @@
     "vel_sigma": 3.0
   },
   "spatial": {
-    "azimuth": 78.0,
+    "azimuth": -105.0,
     "distance": 3.0
   },
   "eq": [
@@ -35,7 +35,8 @@
   "sources": [
     "KB indian-film-fusion (suspended and add9 voicings that omit the third leave room for the ornamented notes of the melody instruments)",
     "ESTIMATE: level and placement are starting values",
-    "MEASURED: short_form_report found 10.5% of the master below 200 Hz and 13.9% from 200 to 300 Hz, where a phone speaker returns little; STARTING VALUE: high-pass at 280 Hz"
+    "MEASURED: short_form_report found 10.5% of the master below 200 Hz and 13.9% from 200 to 300 Hz, where a phone speaker returns little; STARTING VALUE: high-pass at 280 Hz",
+    "MEASURED: after the piece was declared in JSON (velocity jitter changed by a few steps) spatial.z_separation read the pad 8 degrees from the koto in the climax (envelope overlap 0.51, limit 25 degrees); the pad moves to -105 degrees"
   ],
   "vibrato": {
     "depth_cents": 0.0

@@ -12,7 +12,7 @@
   - contrast: a new carrier, register or colour at every boundary; the Breath drops 14 LU; the return is the first full tutti
   - ending: settles on D6 then Dadd9 and rings out
 - [x] 4. Presets: ten instrument presets (each with `character` and `sources`), room `confluence_room`, mix `confluence_mix`; `presets.py validate` clean
-- [x] 5. Score: scores/confluence_score.json, written by scripts/compose_ringtone.py (notes and roles only)
+- [x] 5. Score: the piece is declared in scores/confluence_arrangement.json and expanded by `python scripts/arrange.py` into scores/confluence_score.json (notes and roles only). The old compose_ringtone.py was retired: the port gave the same notes, timing and durations; only the humanising velocity jitter differs (at most 6 steps)
 - [x] 6. `pipeline.py ... --project` ends CERTIFIED PASS with 0 FAIL (stereo only, `output_targets: ["stereo"]`)
 - [x] 7. Revision: many one-lever changes, listed under Decisions; the gate was never loosened
 - [x] 8. listen.py ran (measurements only: earshot is not installed)
@@ -38,8 +38,8 @@
 - [x] n/a: no scene ambience
 - [x] yes: the reply lists what was not checked
 
-## Measurements on the delivered file
-- 61.27 s, 44.1 kHz, 24-bit stereo, -14.2 LUFS, -1.5 dBTP, crest 15.8 dB
+## Measurements on the delivered file (v05, rendered from the declared arrangement)
+- 61.26 s, 44.1 kHz, 24-bit stereo, -14.2 LUFS, -1.5 dBTP, crest 15.8 dB (the arc, band and hook figures below are from v04 and were re-read for v05: 89% in 300-5000 Hz, 2.8% below 200 Hz, density spread 0.19, no short_form flags)
 - arc_report: Hook -18.7, Hook joined -15.6, Passing -14.9, Lift -12.4, Breath -27.3, Return -12.6, Turnaround -18.1 LUFS (mean); no stretch more than 12 LU under the integrated level
 - expression_report: rank correlation with the declared energy +0.54; interval entropy 2.95 bits, range 24 semitones, 18% identical bars
 - short_form_report: 89% of the energy in 300-5000 Hz, 2.8% below 200 Hz; 10 onsets in the first 3 s; the opening 5-note shape returns 9 times; density spread 0.19; no flags
@@ -57,6 +57,8 @@
 - The gate decided several details, each a fact: stem.dead on a sparse koto (a koto note added to the Turnaround), spiral_tension_arc (the last two bars now settle on the tonic chords), melodic entropy (varied zither shapes), spatial.z_separation (a 25-degree lattice), cochlear_roughness (open voicings, pad released before the next chord, the bansuri obbligato over the oud removed because its A5 sat a quarter critical band from the high agogo), equal_loudness (the SoundFont rattle measured +14.9 dB in 2.5-5 kHz, so manjira and agogo replace it), clicks (a leave-one-out through the real mix and master found the cymbal sample and the zither sweeps; manjira, slower sweeps, performer timing offsets and a 7 kHz master low-pass reached 0).
 - A gapless loop was not delivered. The gate's `end.abrupt` row asks for a release and has no loop-aware replacement; adding one would change when a row applies, which is a gate-policy decision left to the owner. The piece ends with a ring-out on the tonic chords instead.
 - The SoundFont stands in for the traditional instruments: kalimba for mbira, flute for bansuri, nylon guitar for oud, koto for guzheng, marimba. The mbira buzz, the bansuri wobble and any oud slide are not modelled.
+
+- After the move to JSON, two facts changed the render: a click at 39.9 s (the bar-20 zither run, velocities 56-76 became 54-74) and spatial.z_separation (the pad moved from 78 to -105 degrees). Both were fixed in the data, not in a threshold.
 
 ## Not checked
 - Nothing was auditioned: the feel, instrument, pulse, tempo and key checks of listen.py did not run (earshot is not installed). Whether the tune is catchy and the blend pleasant is not measured.

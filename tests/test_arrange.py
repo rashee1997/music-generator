@@ -57,6 +57,13 @@ class Arrange(unittest.TestCase):
         kit = next(t for t in s['tracks'] if t['name'] == 'kit')
         self.assertEqual(len({round(n['t'] // 4) for n in kit['notes']}), 2)    # bars 2 and 4 only
 
+    def test_vary_by_bar_survives_a_skipped_bar(self):
+        sp = spec()
+        sp['events'] = [dict(track='pad', do='pattern', ref='p', bars=[1, 4], skip=[1], vary='bar')]
+        pad = next(t for t in arrange.build(sp)['tracks'] if t['name'] == 'pad')
+        # bar 2 -> variant 1 (B[1]=57), bar 3 -> variant 0 (B[0]=50), bar 4 -> variant 1 (57)
+        self.assertEqual([n['p'] for n in pad['notes']], [57, 50, 57])
+
     def test_run_stays_in_the_scale(self):
         lead = next(t for t in arrange.build(spec())['tracks'] if t['name'] == 'lead')
         run = [n for n in lead['notes'] if 6.9 < n['t'] < 8.0]
@@ -96,14 +103,22 @@ class Arrange(unittest.TestCase):
 
 
 class Shipped(unittest.TestCase):
-    def test_the_alarm_arrangement_builds(self):
-        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        p = os.path.join(root, 'projects', 'alarm_dawn', 'scores', 'dawn_alarm_arrangement.json')
+    """Every shipped project that is declared as data: the committed score is exactly what the engine writes."""
+    ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    def _check(self, project, stem, tracks):
+        p = os.path.join(self.ROOT, 'projects', project, 'scores', stem + '_arrangement.json')
         with open(p, encoding='utf-8') as fh:
             s = arrange.build(json.load(fh))
-        self.assertEqual(len(s['tracks']), 10)
+        self.assertEqual(len(s['tracks']), tracks)
         with open(p.replace('_arrangement', '_score'), encoding='utf-8') as fh:
-            self.assertEqual(json.load(fh), json.loads(json.dumps(s)))         # the committed score is what the engine writes
+            self.assertEqual(json.load(fh), json.loads(json.dumps(s)))
+
+    def test_the_alarm_arrangement_builds(self):
+        self._check('alarm_dawn', 'dawn_alarm', 10)
+
+    def test_the_ringtone_arrangement_builds(self):
+        self._check('ringtone_confluence', 'confluence', 10)
 
 
 if __name__ == '__main__':
