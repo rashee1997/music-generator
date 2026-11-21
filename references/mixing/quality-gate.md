@@ -181,6 +181,7 @@ More rows, from the score alone (`scripts/preflight_levels.py`; estimates, WARN 
 | `preflight.arc` | parts playing x velocity x curve per section against the declared section energy (rank correlation under 0.5 is where `section.energy` fails) |
 | `preflight.tempo` | a tempo map spanning more than 25 %: `tempo.audio` will fail against one declared value; record a measured skip |
 | `preflight.roughness` | two different instruments a second apart for three beats or more (Plomp and Levelt 1965) |
+| `preflight.roughness_partials` | the score's hottest frames when every note is given its overtones (`scripts/roughness_forecast.py`); WARN only, a screening model |
 
 One-shot effects, rendered once and judged alone (`scripts/preset_probe.py`): `probe.silent` and `probe.clip` and `probe.start` FAIL; `probe.tail` and `probe.dc` WARN (`probe.dc` is silent when every track that plays the effect sets `dc_hp_hz`).
 
@@ -388,3 +389,25 @@ It imports `naturalness_check.analyse` / `verdicts` / `cochlear_roughness_check`
 it too (a bright, hot or narrow master is not the rebuild's fault). `naturalness_check.analyse(..., audio=(samples, sr))`
 measures an array in memory for this. Waveforms are never subtracted: the rebuild has its own phase, so spectra, levels
 and statistics are compared. See `references/workflow/extraction.md` for the rows.
+
+### Roughness: forecast it, diagnose it, never loosen it
+
+`cochlear_roughness` reads the ten strongest partials of each 1 s frame, so it fails on overtones that no written note
+shows: a D2's sixth harmonic and a D3's third are both A4, 26 Hz from a Bb4. Use the tools in this order and do not guess
+at notes first:
+
+1. **Before the render**: `python scripts/preflight_lint.py <score> <project>` prints `preflight.roughness_partials`
+   with the worst frames and the two partials that beat; `python scripts/roughness_forecast.py forecast <score> --project <dir>`
+   lists every hot frame. Measure the instruments once so it stops using default overtone profiles:
+   `roughness_forecast.py partials <project>/stems/<track>.wav <score> <track>` and paste the list into the instrument preset
+   as `"partials": [...]`.
+2. **After a failing render**: `roughness_forecast.py diagnose <project>/out/_draft_master.wav --stems <project>/stems --score <score>`
+   runs the gate's own row and names, for each frame over the limit, the clashing partial pairs and the stems that hold a peak at
+   each frequency. It takes seconds; a full pipeline run takes minutes.
+3. **Fix in the piece**: move or re-octave the part that owns the partial, keep a bass note off the pitch whose harmonic lands on
+   a melody note, lower the part's level, or low-pass a bass preset (`eq` `lp`) so its upper harmonics are not a second voice.
+   Never raise the limit.
+
+How far to trust the forecast: on one piece (Antigravity) its frame ranking correlated with the measured frames at about 0.17
+with default overtone profiles and 0.24 with profiles measured from the stems (Spearman, 82 frames), and it ranked the single
+worst measured frame first. It is a screen that points at where to look; `diagnose` is the measurement.

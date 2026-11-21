@@ -358,6 +358,8 @@ def checks(score, project_dir=None, lookup=None, patch_range=None, probe=True, r
     rows += placement_rows(score, lookup)
     import preflight_levels
     rows += preflight_levels.checks(score)
+    import roughness_forecast
+    rows += roughness_forecast.forecast_rows(score, lambda name_kind, name=None: lookup(*(name_kind if isinstance(name_kind, tuple) else ('instrument', name_kind))) if name is None else lookup(name_kind, name))
     if probe:
         import preset_probe
         rows += preset_probe.probe_rows(score, lambda name: lookup('sfx', name), render)

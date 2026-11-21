@@ -1,0 +1,38 @@
+{
+  "name": "roughness_forecast",
+  "character": "Partial-amplitude profiles and release times the score-side roughness forecast uses when an instrument preset has no measured `partials` list of its own. Every number is a starting value: measure the instrument with `roughness_forecast.py partials` and put the result in its preset.",
+  "default_partials": [1.0, 0.6, 0.45, 0.35, 0.28, 0.22, 0.18, 0.15],
+  "default_release_s": 0.4,
+  "by_gm": {
+    "church_organ": [0.6, 0.7, 0.6, 0.7, 0.6, 1.0, 0.5, 0.5, 0.35, 0.3],
+    "piano": [1.0, 0.7, 0.4, 0.3, 0.2, 0.15, 0.1, 0.08],
+    "harp": [1.0, 0.5, 0.3, 0.2, 0.12, 0.08],
+    "celesta": [1.0, 0.3, 0.2, 0.15, 0.1],
+    "french_horn": [1.0, 0.8, 0.5, 0.35, 0.25, 0.2, 0.15, 0.1],
+    "trombone": [1.0, 0.85, 0.6, 0.45, 0.35, 0.25, 0.2, 0.15],
+    "string_ensemble": [1.0, 0.7, 0.55, 0.45, 0.35, 0.3, 0.25, 0.2],
+    "slow_strings": [1.0, 0.7, 0.55, 0.45, 0.35, 0.3, 0.25, 0.2],
+    "tremolo_strings": [1.0, 0.7, 0.55, 0.45, 0.35, 0.3, 0.25, 0.2],
+    "cello": [1.0, 0.8, 0.6, 0.45, 0.35, 0.25, 0.2, 0.15],
+    "choir_aahs": [1.0, 0.6, 0.45, 0.3, 0.2, 0.15],
+    "timpani": [1.0, 0.5, 0.3, 0.2, 0.12]
+  },
+  "release_s": {
+    "church_organ": 1.2,
+    "piano": 0.8,
+    "harp": 0.8,
+    "celesta": 0.8,
+    "french_horn": 0.5,
+    "trombone": 0.5,
+    "string_ensemble": 0.9,
+    "slow_strings": 0.9,
+    "cello": 0.6,
+    "choir_aahs": 0.9,
+    "timpani": 1.0
+  },
+  "provenance": [
+    "STARTING VALUE: every profile is a working shape (a sawtooth-like fall for bowed and blown, a faster fall for plucked and struck), not a measurement of the SoundFont.",
+    "MEASURED in this repository: the General MIDI church organ pedal stem of the Antigravity project at 57.5 s had its sixth harmonic (440 Hz) about 20 dB above the others, which is why the church_organ profile peaks at the sixth partial; the other families have no measurement.",
+    "The pair model and the frame rule are the audio row's own (scripts/naturalness_check.py, knowledgebase/sound-design/roughness.md)."
+  ]
+}

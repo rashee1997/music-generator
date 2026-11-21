@@ -85,3 +85,12 @@ Vassilakis (2001, 2005), as published on the SRA pages:
 - ISO 226 gives equal-loudness contours for pure tones, not for a partial inside a complex tone; it is
   used here only as the reason to weight each partial against the hearing threshold. The exact ISO 226
   arithmetic is not implemented (standard is paywalled; only definitions were read).
+
+## What the score-side forecast was measured to do
+
+`scripts/roughness_forecast.py` applies the audio row's pair model to a score whose notes are given overtone profiles.
+Measured on one piece (a 60 s orchestral cue, 82 comparable frames): rank correlation with the measured frames 0.17 with
+the default profiles in `references/data/roughness_forecast.json` and 0.24 with profiles measured from the dry stems; it ranked
+the worst measured frame first. One piece is not a calibration: treat it as a screen, and confirm with the row itself.
+The default profiles are starting values; the church organ profile peaks at its sixth partial because one stem measured
+that (+20 dB at 440 Hz for a D2).

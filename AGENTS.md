@@ -98,7 +98,7 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 
 ### PHASE 8: RENDER & ITERATE
 - [ ] **8.1** Render: `python scripts/pipeline.py <dir>/scores/<title>_score.json --project <dir> --max-attempts 3` (background for long runs)
-- [ ] **8.1b** Before a long render run `python scripts/preflight_lint.py <dir>/scores/<title>_score.json <dir>` (stage 2 runs it too): fix every FAIL (note outside the patch range, one-shot cut short) and read every WARN, since each one cost a full render when it was found by the audio rows. `references/mixing/quality-gate.md` section 3g.
+- [ ] **8.1b** Before a long render run `python scripts/preflight_lint.py <dir>/scores/<title>_score.json <dir>` (stage 2 runs it too): fix every FAIL (note outside the patch range, one-shot cut short) and read every WARN, since each one cost a full render when it was found by the audio rows. `preflight.roughness_partials` names the overtones that will beat; after a failing render run `python scripts/roughness_forecast.py diagnose <draft_master> --stems <dir>/stems --score <score>` before changing a note (`references/mixing/quality-gate.md`, end of the file). `references/mixing/quality-gate.md` section 3g.
 - [ ] **8.2** Read scoreboard, not early logs. Fix ONE thing at a time based on gate failures. Max 5 attempts.
 - [ ] **8.3** For immersive pieces, fix imm_* rows in presets/score, never loosen. `imm_kinematics`: spread the
       keyframes. `imm_low_fold` / `mix.band_fold`: narrow the stem the row names. `imm_clarity`: lower the space's
