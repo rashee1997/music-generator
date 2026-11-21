@@ -27,7 +27,7 @@ Arrangement keys (all strictly validated: an unknown key is an error, never igno
                                         vary "bar" picks a pattern variant by absolute bar number, so a skipped bar
                                         keeps the others' variants (default: by position in the event's bars).
                                         line: octave vel shift scoop{gl,gs,leap,rest} trill{d,above,min_len,vel}
-                                        from to.  pattern: until take.  run: beat pitch shape n step v0 v1 tail.
+                                        from to.  pattern: until take.  run: beat pitch shape n step v0 v1 tail ceiling.
                                         note: beat d p v + extras.
 """
 import argparse
@@ -40,7 +40,7 @@ TOP = {'title', 'bpm', 'ts', 'key', 'mode', 'seed', 'score', 'scale', 'shapes', 
        'tracks', 'sections', 'events'}
 EVENT_KEYS = {'track', 'do', 'ref', 'bar', 'bars', 'every', 'skip', 'scale', 'octave', 'vel', 'shift', 'scoop', 'trill',
               'from', 'to', 'until', 'take', 'beat', 'pitch', 'shape', 'n', 'step', 'v0', 'v1', 'tail', 'd', 'p', 'v',
-              'extra', 'why', 'vary'}
+              'extra', 'why', 'vary', 'ceiling'}
 
 
 class ArrangementError(ValueError):
@@ -180,7 +180,7 @@ class Arranger:
 
     def do_run(self, ev, bar):
         r = dict(self.runs[ev['ref']])
-        for k in ('n', 'step', 'v0', 'v1', 'tail', 'shape'):
+        for k in ('n', 'step', 'v0', 'v1', 'tail', 'shape', 'ceiling'):
             if k in ev:
                 r[k] = ev[k]
         p, shape = ev.get('pitch', r['first']), self.shapes[r['shape']]

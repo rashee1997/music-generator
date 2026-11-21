@@ -1,0 +1,44 @@
+{
+  "name": "organ_pedal",
+  "description": "A pipe organ's low pedal",
+  "character": "A pipe organ's low pedal: a sustained root and fifth that never leaves, the floor of the cue.",
+  "gm": "church_organ",
+  "role": "drone",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": -10.0,
+    "elevation": 0.0,
+    "distance": 3.5,
+    "kind": "spot",
+    "binaural": true
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 35
+    },
+    {
+      "type": "lp",
+      "f": 160
+    }
+  ],
+  "gain_db": -3,
+  "reverb": 0.3,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 1.0,
+    "release_ms": 300.0
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring (a sustained organ or low-string bed, a pulse that keeps going, low brass at the turning points: per its section 2) | the part's job in the cue",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements",
+    "MEASURED: the pedal's 5th harmonic (about 367 Hz, an F#4) sat 18 Hz from the horn's F4 in the Bb bar and cochlear_roughness read the beating (0.076 against 0.070); STARTING VALUE: low-pass at 260 Hz, so the pedal is the floor of the cue and its upper harmonics do not collide with the theme",
+    "MEASURED: at 57-59 s the dry pedal stem carries its 6th harmonic A4 (440 Hz, +20 dB) and a weaker Bb4 (466 Hz, -17 dB), 25 Hz apart, and the master tail at 60.6 s shows the same pair (cochlear_roughness 0.077 against 0.070 at 61.0 s, with 260 Hz low-pass); STARTING VALUE: low-pass at 160 Hz, so only the pedal's fundamental and second partial remain",
+    "CARRIED OVER from the project 'Antigravity', where each filter, fade, level and placement here was set by a measurement (roughness, stem.tick, master.dc, imm.surround_ratio)"
+  ]
+}

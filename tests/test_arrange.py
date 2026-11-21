@@ -64,6 +64,12 @@ class Arrange(unittest.TestCase):
         # bar 2 -> variant 1 (B[1]=57), bar 3 -> variant 0 (B[0]=50), bar 4 -> variant 1 (57)
         self.assertEqual([n['p'] for n in pad['notes']], [57, 50, 57])
 
+    def test_a_run_event_can_lower_its_ceiling(self):
+        sp = spec()
+        sp['events'] = [dict(track='lead', do='run', ref='r', bar=1, beat=0.0, n=12, pitch=60, shape='up', ceiling=70)]
+        lead = next(t for t in arrange.build(sp)['tracks'] if t['name'] == 'lead')
+        self.assertTrue(lead['notes'] and max(n['p'] for n in lead['notes']) <= 70)
+
     def test_run_stays_in_the_scale(self):
         lead = next(t for t in arrange.build(spec())['tracks'] if t['name'] == 'lead')
         run = [n for n in lead['notes'] if 6.9 < n['t'] < 8.0]

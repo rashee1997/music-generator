@@ -1,0 +1,80 @@
+{
+  "name": "debris_harp",
+  "description": "Harp glissando fragments thrown to the right and up after the impact.",
+  "character": "Harp glissando fragments thrown to the right and up after the impact.",
+  "gm": "harp",
+  "role": "arp",
+  "humanize": {
+    "preset": "tight",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": 0.0,
+    "elevation": 10.0,
+    "distance": 1.0,
+    "kind": "spot",
+    "binaural": true,
+    "trajectory": {
+      "spatial_role": "mover",
+      "doppler_strength": 1.0,
+      "keyframes": [
+        {
+          "bar": 33,
+          "azimuth": 0,
+          "elevation": 10,
+          "distance": 1.0
+        },
+        {
+          "bar": 40,
+          "azimuth": 120,
+          "elevation": 35,
+          "distance": 7.0
+        },
+        {
+          "bar": 60,
+          "azimuth": 120,
+          "elevation": 35,
+          "distance": 7.0
+        }
+      ]
+    }
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 200
+    }
+  ],
+  "gain_db": -8,
+  "reverb": 0.2,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 1.0,
+    "release_ms": 300.0
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring (a pulse that keeps going, low brass and sub weight at the turning points, the last section a peak or a cliff: its section 2) | the part's job in the cue",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements",
+    "STARTING VALUE: velocity_timbre points from KB soundfont-velocity-and-realism section 4 (soft is darker; not calibrated)"
+  ],
+  "velocity_timbre": {
+    "points": [
+      [
+        25,
+        2500
+      ],
+      [
+        60,
+        4500
+      ],
+      [
+        127,
+        9500
+      ]
+    ],
+    "bands": 4
+  },
+  "mechanics_class": "plucked"
+}

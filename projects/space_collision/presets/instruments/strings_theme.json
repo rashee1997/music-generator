@@ -1,0 +1,85 @@
+{
+  "name": "strings_theme",
+  "description": "A string section playing the theme on top of the horn, wide and singing.",
+  "character": "A string section playing the theme on top of the horn, wide and singing.",
+  "gm": "string_ensemble",
+  "role": "lead",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": -50.0,
+    "elevation": 18.0,
+    "distance": 3.0,
+    "kind": "spot",
+    "binaural": true,
+    "trajectory": {
+      "spatial_role": "mover",
+      "doppler_strength": 0.0,
+      "keyframes": [
+        {
+          "bar": 9,
+          "azimuth": -150,
+          "elevation": 10,
+          "distance": 5.5
+        },
+        {
+          "bar": 12,
+          "azimuth": -50,
+          "elevation": 18,
+          "distance": 3.0
+        },
+        {
+          "bar": 16,
+          "azimuth": -50,
+          "elevation": 18,
+          "distance": 3.0
+        }
+      ]
+    }
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 160
+    }
+  ],
+  "gain_db": -2.0,
+  "reverb": 0.3,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 1.0,
+    "release_ms": 300.0
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring (a sustained organ or low-string bed, a pulse that keeps going, low brass at the turning points: per its section 2) | the part's job in the cue",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements",
+    "STARTING VALUE: velocity_timbre points from KB soundfont-velocity-and-realism section 4 (soft is darker; not calibrated)",
+    "MEASURED: imm.surround_ratio read -1.8 dB against the front stage (window -9.0 to -2.0) after the side and rear beds were lowered 1.0-1.5 dB (it was -1.6); this part carries the theme on the front stage. STARTING VALUE: gain_db -3 -> -2.0, the theme a little further above the field",
+    "CARRIED OVER from the project 'Antigravity', where each filter, fade, level and placement here was set by a measurement (roughness, stem.tick, master.dc, imm.surround_ratio)"
+  ],
+  "velocity_timbre": {
+    "points": [
+      [
+        25,
+        1800
+      ],
+      [
+        60,
+        3200
+      ],
+      [
+        100,
+        6500
+      ],
+      [
+        127,
+        9500
+      ]
+    ],
+    "bands": 4
+  }
+}
