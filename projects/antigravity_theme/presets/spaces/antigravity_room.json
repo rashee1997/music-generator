@@ -91,7 +91,8 @@
     "KB cinematic-hybrid-scoring (reverb is one shared room for every instrument, the send per role in the mix preset)",
     "STARTING VALUE: rt60 2.3 s and every delay and gain are the scaffold's defaults for a large room; not a measurement of any hall",
     "Late tail and reflections from the room geometry (Eyring), scripts/spatial_hrtf/room.py; absorption coefficients from presets/materials/room_materials.json (concrete, plaster)",
-    "STARTING VALUE: box sizes (a 30 x 45 x 22 m hall, a 60 x 80 x 45 m vast space at the Orbit scene, a 12 x 16 x 7 m small room at the Horizon scene) and listener positions; no measurement of any real room"
+    "STARTING VALUE: box sizes (a 30 x 45 x 22 m hall, a 60 x 80 x 45 m vast space at the Orbit scene, a 12 x 16 x 7 m small room at the Horizon scene) and listener positions; no measurement of any real room",
+    "MEASURED: the roughness failure sat in the reverb tail after the cut (0.077-0.078 against 0.070 at 60-61 s) with ring-out partials in the master that no stem plays; STARTING VALUE: the Orbit scene's late level -19 dB (was -14) and a 50 x 70 x 35 m box (was 60 x 80 x 45), a shorter and quieter vast space"
   ],
   "scenes": [
     {
@@ -101,17 +102,17 @@
       "transition_bars": 2,
       "space_overrides": {
         "geometry": {
-          "width_m": 60.0,
-          "depth_m": 80.0,
-          "height_m": 45.0,
+          "width_m": 50.0,
+          "depth_m": 70.0,
+          "height_m": 35.0,
           "listener": {
-            "x": 30.0,
-            "y": 30.0,
+            "x": 25.0,
+            "y": 26.0,
             "z": 1.6
           }
         },
         "late": {
-          "level_db": -14.0
+          "level_db": -19.0
         }
       }
     },
