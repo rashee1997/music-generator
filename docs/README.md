@@ -13,6 +13,7 @@ Everything a reader or an agent needs beyond the front page. Each entry below is
 | [roughness_model.md](roughness_model.md) | The decision note for the cochlear-roughness check: what it fixed, the model as implemented, and the calibration measured from fixtures. | Before changing `cochlear_roughness_check` in `scripts/naturalness_check.py`. |
 | [roughness_listening_sheet.md](roughness_listening_sheet.md) | The listening sheet used to judge roughness takes against the measurement. | When calibrating or re-checking the roughness threshold. |
 | [THEATRICAL-REALISM-PLAN.md](THEATRICAL-REALISM-PLAN.md) | The eight-quality realism plan: what the engine already did, what was added, what is still planned, and the acceptance measurement for each. | Before changing `level_timbre`, `ensemble`, `elastic`, the `theatrical` mix stage or `realism_report.py`. |
+| [VIRTUAL-SPEAKER-QA.md](VIRTUAL-SPEAKER-QA.md) | The general channel-QA layer: real layouts, the 36-point AmbiX virtual array, and the per-bar channel fault rows. Implementation map and limits. | Before changing `channel_qa.py`, `ambix_qa_36`, or the `channel.virtual` / `channel.bars` rows. |
 
 ## Documents outside this folder
 

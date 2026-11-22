@@ -138,7 +138,7 @@ the click check; the all-round decoder holds plane-wave power within 4 dB peak t
 
 | Target | File | What it is |
 |---|---|---|
-| `ambix` | `master_ambix.wav` | the bus itself as AmbiX (ACN order, SN3D), fifth order. Any ambisonic decoder can put it on any loudspeakers or headphones later, and it can still be rotated (head tracking, 360 video) |
+| `ambix` | `master_ambix.wav` | the bus itself as AmbiX (ACN order, SN3D), fifth order. Any ambisonic decoder can put it on any loudspeakers or headphones later, and it can still be rotated (head tracking, 360 video). The gate decodes it with AllRAD/max-rE to the 36-point `ambix_qa_36` virtual array for `channel.virtual` and `channel.bars` (`references/spatial/virtual-speaker-qa.md`) |
 | `adm_bw64` | `master_adm.wav` | one channel per placed track with its position over time as ADM metadata, plus the reverb return as a stereo bed. The playback renderer does the panning |
 | any target with `"rate_hz": 48000` (shipped: `stereo_48k`) | as its preset says | the finished programme resampled last; the true peak is measured again at the new rate and the whole file is turned down if it now passes the ceiling |
 

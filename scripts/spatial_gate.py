@@ -236,6 +236,72 @@ def adm_rows(score, wav_path, out):
     return
 
 
+def _conflict_text(c):
+    """One line for a per-bar finding, in the terms a mixer can act on."""
+    if c['kind'] == 'balance':
+        return (f"bar {c['bar']} {c['group']} balance {c['delta_db']:+.1f} dB "
+                f"({c['ratio_db']:+.1f} dB against {c['neighbour_db']:+.1f} dB in both neighbours)")
+    if c['kind'] == 'polarity':
+        return (f"bar {c['bar']} {c['channel_name']} polarity inverted "
+                f"(corr {c['corr_prev']:+.2f}/{c['corr_next']:+.2f} against the neighbours)")
+    return (f"bar {c['bar']} {c['channel_name']} {c['kind']} {c['delta_db']:+.1f} dB "
+            f"(neighbours at {c['neighbour_db']:+.1f} dB)")
+
+
+def channel_rows(score, audio, sr, target, out):
+    """Per-channel and per-bar rows for any channel count.
+
+    `channel.virtual` puts the file on the positions it claims (a real loudspeaker layout, or the 36-point
+    virtual sphere for order-5 AmbiX) or says that it has no layout and is checked per channel. `channel.bars`
+    then looks for an isolated bar where one channel jumps, drops out, flips polarity or swings the balance
+    while the other channels stay still. The narrow question is deliberate: a one-bar accent moves every
+    channel in the bar and is not a channel fault.
+    """
+    import channel_qa
+    import gate_profiles
+    gate = gate_profiles.resolve(score)
+    want_virtual = gate.on('channel.virtual')
+    want_bars = gate.on('channel.bars')
+    if not (want_virtual or want_bars):
+        return
+    params = {k: gate.param('channel.bars', k) for k in channel_qa.PARAMS}
+    try:
+        a = channel_qa.analyse(score, audio, sr, target, params)
+    except Exception as exc:
+        if want_virtual:
+            _row(out, 'FAIL', 'channel.virtual',
+                 f'{target}: cannot put the delivered file on the layout it claims ({exc})')
+        return
+    if want_virtual:
+        finite = bool(np.isfinite(a['signals']).all() and
+                      (a.get('raw') is None or np.isfinite(a['raw']).all()))
+        if not finite:
+            _row(out, 'FAIL', 'channel.virtual',
+                 f"{target}: {a['note']}; a decoded or delivered channel holds NaN or an infinite sample")
+        else:
+            _row(out, 'PASS', 'channel.virtual', f"{target}: {a['note']}; every channel is finite")
+    if not want_bars:
+        return
+    bars = int(a['bars'])
+    if bars < 3:
+        _row(out, 'INFO', 'channel.bars',
+             f'{target}: {bars} bar(s) checked on {a["channels"]} channel(s); fewer than three bars, so no '
+             f'bar has two neighbours to compare against')
+        return
+    conflicts = a['conflicts']
+    if not conflicts:
+        _row(out, 'PASS', 'channel.bars',
+             f'{target}: {bars} bars checked on {a["channels"]} channel(s); no isolated channel jump, '
+             f'dropout, balance swing or polarity conflict in any bar')
+        return
+    shown = '; '.join(_conflict_text(c) for c in conflicts[:6])
+    more = f' (+{len(conflicts) - 6} more)' if len(conflicts) > 6 else ''
+    _row(out, 'FAIL', 'channel.bars',
+         f'{target}: {len(conflicts)} isolated per-bar channel conflict(s): {shown}{more}. '
+         f'Check that channel\'s automation, pan and polarity in that bar; a deliberate one-bar effect can be '
+         f'relaxed in the score gate with a measured reason, never by editing the row')
+
+
 def finite_row(audio, out, name='the delivered file'):
     """render.finite: a NaN or an infinity in any channel. Players differ on what they do with one (silence, a full
     scale burst), so no file that holds one is delivered."""
@@ -285,6 +351,7 @@ def output_rows(score, wav_path, out):
             _row(out, 'FAIL' if worst > ceiling else 'PASS', 'delivery.true_peak',
                  f'{name}: worst channel true peak {worst:+.1f} dBTP (ceiling {ceiling:+.1f} dBTP; '
                  f'per channel {", ".join(f"{p:+.1f}" for p in peaks)})')
+        channel_rows(score, sig.audio, sig.sr, name, out)
         if n_ch == 1:
             continue
         if n_ch == 2:

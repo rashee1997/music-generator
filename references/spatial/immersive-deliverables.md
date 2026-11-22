@@ -58,7 +58,11 @@ differs from it in the last bits of float32, so the gate certifies the render th
 
 - The layout positions are the nominal ones of ITU-R BS.2051; the gate windows, the fold coefficients for overhead
   speakers, the limiter times and the fold-down band limits are starting values. None was tuned on a room.
-- The `fold.*` rows compare long-term spectra after level matching. They are not a listening test.
+- The `fold.*` rows compare long-term spectra after level matching. They are not a listening test. The
+  `channel.virtual` / `channel.bars` rows add a per-bar, per-channel check; for AmbiX they decode to the 36-point
+  `ambix_qa_36` virtual array first. That virtual array is an observation grid, not a room.
+- The `channel.bars` thresholds are starting values. A deliberate whole-bar accent is not a channel fault; a
+  one-bar send, dropout, polarity or pan fault is what the row is for.
 - A binaural master summed to one channel is notched by the delay between the ears. That is the head, not a fault, and
   it is why `mono` is its own target.
 - The GPU kernels run only on a machine that has one. A piece certified on the CPU says nothing about the GPU render

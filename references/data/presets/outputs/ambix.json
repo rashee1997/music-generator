@@ -51,6 +51,10 @@
   "renderer": "hoa",
   "true_peak_dbtp": -3.0,
   "layout": null,
+  "gate": {
+    "virtual_layout": "ambix_qa_36",
+    "min_virtual_channels": 36
+  },
   "sources": [
     "Nachbar, Zotter, Deleflie & Sontacchi (2011), AmbiX - a suggested ambisonics format: ACN ordering, SN3D normalisation",
     "Loudness is set on channel 1 (W, the plain pressure) because a sound field has no loudness until it is decoded; the -3.0 dBTP ceiling is this project's delivery policy for a multichannel file"

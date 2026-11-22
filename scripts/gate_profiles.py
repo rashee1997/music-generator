@@ -251,6 +251,18 @@ ROWS = {
     'mix.band_fold':     dict(meaning='mono fold-down loss in each auditory band, 100-5000 Hz',
                               params={'max_db': (3.5, 2.0, 9.0), 'floor_db': (30.0, 12.0, 60.0)}),
     'imm.kinematics':    dict(meaning='no source travels faster than its role allows'),
+    # per-channel and per-bar delivery QA for any channel count (scripts/channel_qa.py,
+    # references/spatial/virtual-speaker-qa.md). A real layout uses its speaker positions; order-5 AmbiX
+    # decodes to the 36-point ambix_qa_36 sphere; an undeclared file is still checked per channel.
+    'channel.virtual':  dict(meaning='the delivered channels map to the layout the target claims, or to the virtual speaker sphere for AmbiX'),
+    'channel.bars':     dict(meaning='an isolated bar where one channel jumps, drops out, flips polarity or swings the spatial balance while the other channels stay still', params={
+        'jump_db': (8.0, 3.0, 30.0),
+        'dropout_db': (15.0, 6.0, 40.0),
+        'balance_db': (4.0, 1.0, 12.0),
+        'stable_db': (3.0, 1.0, 9.0),
+        'polarity_corr': (-0.5, -0.95, -0.1),
+        'polarity_neighbor': (0.2, 0.0, 0.9),
+    }),
     'render.finite':     dict(meaning='no NaN or infinite sample in any delivered channel', protected=True),
     'feel.effort':     dict(meaning='kinematic effort / respiration'),
     'feel.spiral':     dict(meaning='tonal tension arc'),

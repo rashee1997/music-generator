@@ -1,0 +1,375 @@
+{
+  "name": "ambix_qa_36",
+  "character": "A 36-point near-uniform Fibonacci sphere for QA-decoding fifth-order AmbiX: enough virtual loudspeakers for 36 ACN/SN3D channels, with no gaps at the poles and no real room assumed.",
+  "channels": 36,
+  "speakers": [
+    {
+      "name": "V01",
+      "azimuth": 68.754,
+      "elevation": 76.464,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V02",
+      "azimuth": -153.738,
+      "elevation": 66.444,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V03",
+      "azimuth": -16.231,
+      "elevation": 59.442,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V04",
+      "azimuth": 121.277,
+      "elevation": 53.664,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V05",
+      "azimuth": -101.215,
+      "elevation": 48.59,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V06",
+      "azimuth": 36.293,
+      "elevation": 43.983,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V07",
+      "azimuth": 173.8,
+      "elevation": 39.709,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V08",
+      "azimuth": -48.692,
+      "elevation": 35.685,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V09",
+      "azimuth": 88.816,
+      "elevation": 31.855,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V10",
+      "azimuth": -133.676,
+      "elevation": 28.179,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V11",
+      "azimuth": 3.832,
+      "elevation": 24.624,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V12",
+      "azimuth": 141.339,
+      "elevation": 21.168,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V13",
+      "azimuth": -81.153,
+      "elevation": 17.792,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V14",
+      "azimuth": 56.355,
+      "elevation": 14.478,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V15",
+      "azimuth": -166.137,
+      "elevation": 11.212,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V16",
+      "azimuth": -28.63,
+      "elevation": 7.984,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V17",
+      "azimuth": 108.878,
+      "elevation": 4.78,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V18",
+      "azimuth": -113.614,
+      "elevation": 1.592,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V19",
+      "azimuth": 23.894,
+      "elevation": -1.592,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V20",
+      "azimuth": 161.401,
+      "elevation": -4.78,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V21",
+      "azimuth": -61.091,
+      "elevation": -7.984,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V22",
+      "azimuth": 76.417,
+      "elevation": -11.212,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V23",
+      "azimuth": -146.075,
+      "elevation": -14.478,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V24",
+      "azimuth": -8.568,
+      "elevation": -17.792,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V25",
+      "azimuth": 128.94,
+      "elevation": -21.168,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V26",
+      "azimuth": -93.552,
+      "elevation": -24.624,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V27",
+      "azimuth": 43.956,
+      "elevation": -28.179,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V28",
+      "azimuth": -178.536,
+      "elevation": -31.855,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V29",
+      "azimuth": -41.029,
+      "elevation": -35.685,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V30",
+      "azimuth": 96.479,
+      "elevation": -39.709,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V31",
+      "azimuth": -126.013,
+      "elevation": -43.983,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V32",
+      "azimuth": 11.495,
+      "elevation": -48.59,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V33",
+      "azimuth": 149.002,
+      "elevation": -53.664,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V34",
+      "azimuth": -73.49,
+      "elevation": -59.442,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V35",
+      "azimuth": 64.018,
+      "elevation": -66.444,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "V36",
+      "azimuth": -158.474,
+      "elevation": -76.464,
+      "loudness_weight_db": 0.0
+    }
+  ],
+  "decode_only": true,
+  "sources": [
+    "Zotter & Frank (2012), All-Round Ambisonic Decoding (AllRAD) and Ambisonic panning: a dense, near-uniform virtual loudspeaker sphere is panned to the real layout",
+    "Nachbar, Zotter, Deleflie & Sontacchi (2011), AmbiX: ACN channel order and SN3D normalisation",
+    "ITU-R BS.2051-3: the speaker-position convention (azimuth positive to the left, elevation positive up) used by the layout presets"
+  ],
+  "downmix": {
+    "V01": [
+      0.9829,
+      0.1843
+    ],
+    "V02": [
+      -0.528,
+      0.8493
+    ],
+    "V03": [
+      0.6002,
+      0.7998
+    ],
+    "V04": [
+      0.963,
+      -0.2696
+    ],
+    "V05": [
+      -0.0977,
+      0.9952
+    ],
+    "V06": [
+      0.8922,
+      0.4517
+    ],
+    "V07": [
+      0.7443,
+      -0.6678
+    ],
+    "V08": [
+      0.3527,
+      0.9357
+    ],
+    "V09": [
+      0.9999,
+      0.0103
+    ],
+    "V10": [
+      -0.372,
+      0.9282
+    ],
+    "V11": [
+      0.7304,
+      0.6831
+    ],
+    "V12": [
+      0.9013,
+      -0.4332
+    ],
+    "V13": [
+      0.0771,
+      0.997
+    ],
+    "V14": [
+      0.9572,
+      0.2894
+    ],
+    "V15": [
+      -0.6166,
+      0.7873
+    ],
+    "V16": [
+      0.5103,
+      0.86
+    ],
+    "V17": [
+      0.9865,
+      -0.164
+    ],
+    "V18": [
+      -0.2046,
+      0.9788
+    ],
+    "V19": [
+      0.8382,
+      0.5454
+    ],
+    "V20": [
+      0.8121,
+      -0.5835
+    ],
+    "V21": [
+      0.2496,
+      0.9683
+    ],
+    "V22": [
+      0.993,
+      0.1183
+    ],
+    "V23": [
+      -0.47,
+      0.8826
+    ],
+    "V24": [
+      0.6523,
+      0.758
+    ],
+    "V25": [
+      0.9428,
+      -0.3333
+    ],
+    "V26": [
+      -0.031,
+      0.9995
+    ],
+    "V27": [
+      0.9204,
+      0.3911
+    ],
+    "V28": [
+      -0.698,
+      0.7161
+    ],
+    "V29": [
+      0.4145,
+      0.9101
+    ],
+    "V30": [
+      0.9984,
+      -0.0565
+    ],
+    "V31": [
+      -0.3091,
+      0.951
+    ],
+    "V32": [
+      0.7744,
+      0.6327
+    ],
+    "V33": [
+      0.8703,
+      -0.4924
+    ],
+    "V34": [
+      0.1436,
+      0.9896
+    ],
+    "V35": [
+      0.9744,
+      0.2248
+    ],
+    "V36": [
+      -0.5626,
+      0.8267
+    ]
+  }
+}

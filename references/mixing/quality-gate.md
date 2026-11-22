@@ -274,12 +274,19 @@ against the target it claims to be. A format that was not requested is never che
 | `fold.timbre` | every layout target, beside a loudspeaker stereo master | the layout folded to two channels with its own `downmix` coefficients against the stereo master, per auditory band, after level matching | target preset `gate.fold_band_max_db`, `fold_floor_db` |
 | `fold.reference` | `mono` and layout targets | WARN: the first deliverable is not a loudspeaker stereo master, so the fold comparison was not made | none |
 | `render.finite` | every target | a NaN or an infinite sample in any channel (protected: no profile can switch it off) | none: one is a fault |
+| `channel.virtual` | every delivered file | the file's channels against the positions the target claims: a real layout's speakers, or the 36-point `ambix_qa_36` virtual sphere for order-5 AmbiX; fails a wrong channel count, too few virtual speakers or a non-finite decoded channel | target `gate.virtual_layout` / `gate.min_virtual_channels` for AmbiX; layout speaker count otherwise |
+| `channel.bars` | every delivered file | per-bar per-channel RMS, comparing an interior bar with both neighbours: isolated jump, dropout, left/right-front/back-floor/height balance swing, or polarity inversion while the other channels stay still | gate profile `channel.bars` parameters (`jump_db`, `dropout_db`, `balance_db`, `stable_db`, `polarity_corr`, `polarity_neighbor`) |
 | `adm.container` | the `adm_bw64` target | the container itself, read from the bytes: `BW64` magic + saturated outer size, `ds64` first with the 64-bit file and data sizes matching the file, `fmt `/`chna`/`axml`/`data` agreement, unique ADM IDs with every reference resolved (or a BS.2094 common definition), each `chna` row mapping one channel to one `audioTrackUID`, block times contiguous from 0 to the file end, positions in range | `scripts/spatial_engine/adm.py` `validate_file` (structure, not a threshold) |
 | `adm.channels` | the `adm_bw64` target | tracks, sample rate, frames, bit depth read from the parsed container, and that each track maps to exactly one ADM object | `adm.parse` |
 | `adm.loudness` | the `adm_bw64` target | names the loudness policy in the report: BS.1770 loudness of a constant-power stereo fold of the objects, applied as one programme gain at render time. This is this engine's internal levelling reference, not a standard-required loudness (an object file has no loudness until a renderer folds it), so the row reports the method rather than inventing a target | `spatial_engine/adm.py` `AdmBus.report` |
 
 The `fold.*` rows compare long-term spectra. They catch a band that cancels, doubles or goes dull between formats;
-they do not see a part that drops out for two bars, which is what the per-file rows and `listen.py` are for. A
+they do not see a part that drops out for two bars, which is what `channel.bars` and the per-file rows are for. A
+one-bar channel fault is isolated against both neighbours while the other channels stay still, so a deliberate
+whole-bar accent is not reported as a channel fault. AmbiX has no speaker positions of its own: `channel.virtual`
+decodes order-5 ACN/SN3D to `ambix_qa_36` with the engine's AllRAD/max-rE decoder first, and `channel.bars` then
+measures the virtual speakers. An undeclared channel file is still checked per channel, without spatial balance.
+The rules and sources are in `references/spatial/virtual-speaker-qa.md`. A
 `fold.mono` FAIL is a fact about the stereo master (something in that band is out of phase between its channels, or
 panned so hard that the sum loses it): narrow, re-pan or lower the widening of the part that lives there. A
 `fold.timbre` FAIL is a fact about the layout render: check the part's `spatial` place and the layout's `downmix`.

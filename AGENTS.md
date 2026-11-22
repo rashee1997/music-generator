@@ -161,8 +161,8 @@ Before Phase 4, open every file in the row that matches the request; union sever
 | **Game music/loops/adaptive** | `knowledgebase/media/game-music.md`, `knowledgebase/media/game-sfx.md` |
 | **Exact theme/chord sheet/timecodes** | `references/workflow/custom-scripts.md`, `references/workflow/creative-composition.md`, `templates/custom_score_template.py` |
 | **Spatial/3D/headphone** | `references/spatial/spatial-presets-and-scoring.md` |
-| **Immersive/height/surround** | `references/spatial/immersive-spatial.md`, `references/spatial/spatial-presets-and-scoring.md`, `references/mixing/quality-gate.md` §5b |
-| **Mono / 5.1 / any loudspeaker layout / GPU render** | `references/spatial/immersive-deliverables.md`, `references/mixing/quality-gate.md` §5b, `scripts/compute.py` |
+| **Immersive/height/surround** | `references/spatial/immersive-spatial.md`, `references/spatial/spatial-presets-and-scoring.md`, `references/spatial/virtual-speaker-qa.md`, `references/mixing/quality-gate.md` §5b |
+| **Mono / 5.1 / any loudspeaker layout / GPU render** | `references/spatial/immersive-deliverables.md`, `references/spatial/virtual-speaker-qa.md`, `references/mixing/quality-gate.md` §5b, `scripts/compute.py` |
 | **Clone instrument** | `references/instruments-and-vocals/instrument-cloning.md`, `scripts/clone_instrument.py` |
 | **Extract MIDI/stems** | `references/workflow/extraction.md`, `scripts/extract_pipeline.py` |
 | **Mix/master existing stems** | `references/mixing/mixing-and-mastering.md`, `scripts/mixer.py`, `scripts/mix_diagnostics.py` |

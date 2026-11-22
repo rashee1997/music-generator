@@ -36,6 +36,15 @@
     "bow.breath_gap": {
       "gap_beats": 0.08
     },
+    "channel.bars": {
+      "balance_db": 4.0,
+      "dropout_db": 15.0,
+      "jump_db": 8.0,
+      "polarity_corr": -0.5,
+      "polarity_neighbor": 0.2,
+      "stable_db": 3.0
+    },
+    "channel.virtual": {},
     "channels": {},
     "choked_resonance": {},
     "chord_voicing_and_strum": {},
