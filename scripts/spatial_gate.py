@@ -271,6 +271,9 @@ def channel_rows(score, audio, sr, target, out):
         if want_virtual:
             _row(out, 'FAIL', 'channel.virtual',
                  f'{target}: cannot put the delivered file on the layout it claims ({exc})')
+        elif want_bars:
+            _row(out, 'FAIL', 'channel.bars',
+                 f'{target}: cannot measure the per-bar channels because the layout mapping failed ({exc})')
         return
     if want_virtual:
         finite = bool(np.isfinite(a['signals']).all() and
