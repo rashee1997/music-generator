@@ -660,7 +660,9 @@ def gain_stage(x, l, role, spec, gs=None, sr=SR):
 
 _DISTANCE_KEYS = (('ref_m', 'air_absorption_ref_distance'), ('falloff', 'direct_falloff_scale'),
                   ('air_damping', 'air_absorption_damping'), ('min_cutoff_hz', 'min_air_cutoff_hz'),
-                  ('reverb_exponent', 'reverb_distance_scale'))      # space preset `distance` key -> mix `spatial` key
+                  ('reverb_exponent', 'reverb_distance_scale'), ('proximity_db', 'proximity_db'),
+                  ('proximity_hz', 'proximity_hz'),
+                  ('er_distance_exponent', 'er_distance_exponent'))      # space preset `distance` key -> mix `spatial` key
 
 
 def _spatial_cfg(mx, space):
@@ -686,6 +688,19 @@ def _air_absorb(x, sp, dist, ref_d, damp, min_cut, sr):
 def _direct_gain(dist, falloff):
     """The direct level at `dist` metres (1 at one metre or nearer)."""
     return 1.0 / (1.0 + falloff * (dist - 1.0)) if dist > 1.0 else 1.0
+
+
+def _proximity(x, dist, ref_d, max_db, hz, sr):
+    """Low-frequency body for a close panned source (spatial.proximity_gain); no-op at the reference distance."""
+    if float(max_db) <= 0.0 or float(dist) >= float(ref_d):
+        return x
+    import spatial
+    return spatial.proximity_gain(x, float(dist), ref_m=float(ref_d), max_db=float(max_db), hz=float(hz), sr=sr)
+
+
+def _use_proximity(sp_cfg, sp):
+    return (float(sp.get('proximity_db', sp_cfg.get('proximity_db', 0.0)) or 0.0),
+            float(sp.get('proximity_hz', sp_cfg.get('proximity_hz', 200.0)) or 200.0))
 
 
 def reverb_send_level(spec, mx=None, space=None):
@@ -1093,8 +1108,11 @@ def _place(name, x, spec, mx, sr):
         if traj:
             x = spatial.render_trajectory(x.mean(axis=1), traj, acoustic_space=space_arg)
         else:
+            p_db, p_hz = _use_proximity(sp_cfg, sp)
             x = spatial.spatialize_stem(x.mean(axis=1), azimuth_deg=az, elevation_deg=el, distance_m=dist,
-                                        acoustic_space=space_arg, externalize=True, sr=sr)
+                                        acoustic_space=space_arg, externalize=True,
+                                        proximity_db=p_db, proximity_hz=p_hz,
+                                        er_distance_exponent=sp_cfg.get('er_distance_exponent'), sr=sr)
     # A. distance air absorption
     own_distance = spec.get('scene_distance_m') is not None
     if not binaural and not own_distance and dist > ref_d and sp.get('air_absorption', True):
@@ -1102,6 +1120,9 @@ def _place(name, x, spec, mx, sr):
     # B. 1/r direct level (in place from here on: this stem's buffer is already private to this mix)
     if not binaural and not own_distance and dist > 1.0:
         x *= np.float32(_direct_gain(dist, falloff))
+    if not binaural and not own_distance:
+        p_db, p_hz = _use_proximity(sp_cfg, sp)
+        x = _proximity(x, dist, ref_d, p_db, p_hz, sr)
     # C. apparent source width
     spread = float(np.clip(float(sp.get('spread', 0.0)), 0.0, 1.0))
     w = float(sp.get('width', spec.get('width', 1.0))) * (1.0 + spread)
@@ -1126,7 +1147,8 @@ def _distance(x, spec, sp, dist, ref_d, damp, min_cut, falloff, sr):
         x = _air_absorb(x, sp, dist, ref_d, damp, min_cut, sr)
     if dist > 1.0:
         x = x * np.float32(_direct_gain(dist, falloff))
-    return np.asarray(x, dtype=np.float32)
+    p_db, p_hz = _use_proximity(_spatial_cfg(_mix(), _space()), sp)
+    return _proximity(np.asarray(x, dtype=np.float32), dist, ref_d, p_db, p_hz, sr)
 
 
 # orchestral-style seating so layers do not stack in the middle (-1 left .. +1 right)
@@ -1539,6 +1561,118 @@ def sympathetic_bed(score, processed, specs, mx, sr=SR):
     return widen(to_stereo(y), amount=float(cfg['width']), sr=sr)
 
 
+def theatrical_send_gain(dry, sr=SR, cfg=None):
+    """How much of the room send survives each instant: less while the direct sound is attacking.
+
+    A hall heard from the audience is not a wash: the attack of a bow, a felt hammer or a stick reaches the ear
+    before the room answers, so the direct sound leads the early reflections and the tail. That is a
+    direct-to-reverberant ratio that changes *within* a note. The stem's reverb send is static, so this measures
+    the front of each event (fast envelope over slow envelope) and dips the send by at most `duck_db` there.
+    It is the detail-vs-depth control, not a de-verb: a sustained body keeps its send.
+
+    `cfg` is the mix preset's `theatrical` section. Returns one gain per sample.
+    """
+    th = cfg if isinstance(cfg, dict) else {}
+    d = dict(mix_schema.DEFAULTS['theatrical']['detail'], **(th.get('detail') or {}))
+    if not d.get('enabled', True) or float(d.get('duck_db', 0.0)) <= 0.0:
+        return np.ones(len(dry), np.float32)
+    fast = dsp.envelope(dry, sr, max(1.0, float(d.get('attack_ms', 4.0))),
+                        max(2.0, float(d.get('release_ms', 40.0))))
+    slow = dsp.envelope(dry, sr, 60.0, 240.0)
+    ref = max(3.0, float(d.get('ref_db', 18.0)))
+    front = np.clip(20.0 * np.log10((fast + 1e-12) / (slow + 1e-12)) / ref, 0.0, 1.0)
+    return (10.0 ** (-float(d.get('duck_db', 2.5)) * front / 20.0)).astype(np.float32)
+
+
+def _theatrical_low_mid(y, sr, cfg):
+    """The 180-420 Hz dynamic lean, linked across the channels it is given."""
+    lm = dict(mix_schema.DEFAULTS['theatrical']['low_mid'], **(cfg.get('low_mid') or {}))
+    if not lm.get('enabled', True) or float(lm.get('max_dip_db', 0.0)) <= 0.0:
+        return y
+    lo = max(40.0, float(lm.get('low_hz', 180.0)))
+    hi = min(sr * 0.45, float(lm.get('high_hz', 420.0)))
+    if hi <= lo:
+        return y
+    f = 0.5 * (lo + hi)
+    q = f / (hi - lo)
+    # A threshold in dBFS is wrong here: this stage runs before the master, so the same programme can sit at any
+    # level. The band's own loud level (95th percentile of its sounding frames) minus `range_db` is the threshold,
+    # so the lean follows the density of the piece rather than its pre-master gain.
+    band = signal.sosfilt(signal.butter(2, [lo, hi], btype='band', fs=sr, output='sos'), y, axis=0)
+    lvl = 20.0 * np.log10(dsp.envelope(band, sr, 50.0, 200.0) + 1e-12)
+    sounding = lvl[lvl > float(lvl.max()) - 45.0]
+    threshold = float(np.percentile(sounding, 95.0)) - float(lm.get('range_db', 6.0)) if sounding.size else -30.0
+    # a maximum dip at 6 dB over threshold becomes the ratio that produces it
+    ceiling = 1.0 / (1.0 - float(np.clip(float(lm.get('max_dip_db', 2.0)) / 6.0, 0.0, 0.9)))
+    ratio = max(1.0, min(float(lm.get('ratio', 2.0)), ceiling))
+    return dsp.dynamic_eq(y, sr, f=f, q=q, threshold_db=threshold,
+                          ratio=ratio, attack_ms=float(lm.get('attack_ms', 20.0)),
+                          release_ms=float(lm.get('release_ms', 180.0)),
+                          knee_db=float(lm.get('knee_db', 6.0)), gain_db=0.0)
+
+
+def _theatrical_air_curve(y, sr, cfg):
+    """One gain curve for the air shelf, from the piece's own loud end (None = no lift)."""
+    air = dict(mix_schema.DEFAULTS['theatrical']['air'], **(cfg.get('air') or {}))
+    if not air.get('enabled', True) or float(air.get('max_lift_db', 0.0)) <= 0.0:
+        return None
+    env = dsp.envelope(y, sr, 60.0, 240.0)
+    edb = 20.0 * np.log10(env + 1e-12)
+    sounding = edb[edb > float(edb.max()) - 50.0]
+    if sounding.size < 8:
+        return None
+    ref = float(np.percentile(sounding, 95.0))
+    span = max(1.0, float(air.get('window_db', 6.0)))
+    lift = float(air['max_lift_db']) * np.clip((edb - (ref - span)) / span, 0.0, 1.0)
+    return (10.0 ** (lift / 20.0)).astype(np.float32), float(air.get('hz', 9000.0))
+
+
+def _apply_theatrical_air(y, curve, sr):
+    if curve is None:
+        return y
+    gain, hz = curve
+    hz = min(sr * 0.45, hz)
+    hf = signal.sosfilt(signal.butter(2, hz, btype='high', fs=sr, output='sos'), y, axis=0).astype(np.float32)
+    return (y + hf * (gain - 1.0)[:, None]).astype(np.float32)
+
+
+def theatrical_tone(x, sr=SR, cfg=None):
+    """The programme-side half of the theatrical stage: lean low-mids and air that survives a dense peak.
+
+    `low_mid` compresses only 180-420 Hz when that band is loud, so many heavy layers cannot thicken the region
+    where the ear localises weight and loses the sub. `air` lifts the top octave near the piece's own loud end,
+    capped at `max_lift_db` and faded out `window_db` below it: at a quiet moment there is nothing to restore, at
+    a dense peak the field does not fold inward and lose its upper air. Both are starting values, not
+    measurements of a room.
+
+    `cfg` is the mix preset's `theatrical` section. A multichannel bus is left to its own master.
+    """
+    c = cfg if isinstance(cfg, dict) else {}
+    y = to_stereo(x).astype(np.float32)
+    y = _theatrical_low_mid(y, sr, c)
+    return _apply_theatrical_air(y, _theatrical_air_curve(y, sr, c), sr).astype(np.float32)
+
+
+def theatrical_multichannel(x, sr=SR, cfg=None, skip=()):
+    """The same stage for a discrete deliverable: every full-range channel, LFE left alone.
+
+    The low-mid compressor is linked across the full-range channels and the air shelf follows one programme
+    curve, so a dense peak cannot move the front image; the LFE keeps its band because a 180-420 Hz lean and a
+    9 kHz shelf are not bass-management decisions. `skip` is a set of channel indices to leave untouched.
+    """
+    c = cfg if isinstance(cfg, dict) else {}
+    y = dsp.to_2d(x).astype(np.float32)
+    skip = {int(i) for i in (skip or ())}
+    idx = [i for i in range(y.shape[1]) if i not in skip]
+    if not idx:
+        return y
+    main = y[:, idx]
+    main = _theatrical_low_mid(main, sr, c)
+    main = _apply_theatrical_air(main, _theatrical_air_curve(main, sr, c), sr)
+    y[:, idx] = main
+    return y.astype(np.float32)
+
+
 def _imm():
     """The active mix preset's immersive block when it is switched on, else None."""
     c = _mix().get('immersive') or {}
@@ -1759,6 +1893,13 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
             bus.add('sympathetic_resonance', bed, bed_spec)
         else:
             dry += bed
+    th = mix_schema.section(mx, 'theatrical')
+    detail_gain = None
+    if th.get('enabled') and bus is None:
+        dry_ref = np.zeros((n, 2), np.float32)
+        for y in processed.values():
+            dry_ref[:min(len(y), n)] += y[:min(len(y), n)]
+        detail_gain = theatrical_send_gain(dry_ref, sr, th)
     law = _space().get('distance', {}).get('pre_delay_law') if _space_owned(_space()) else None
     STATE['sends'] = {}
     for name, y in processed.items():
@@ -1769,6 +1910,8 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
         send_level = reverb_send_level(specs[name], mx, _space())
         STATE['sends'][name] = send_level
         ys = y * send_level
+        if detail_gain is not None:
+            ys = ys * detail_gain[:len(ys), None]
         sp_ = specs[name].get('spatial')
         if law and sp_:
             k = int(float(np.clip(law['base_ms'] - law['per_m'] * float(sp_.get('distance', 1.5)), 0.0,
@@ -1789,7 +1932,11 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
             mix = dry
     else:
         mix = dry
-    out = bus.result() if bus is not None else mix
+    if th.get('enabled') and bus is None:
+        out = theatrical_tone(mix, sr, th)
+        mix = out
+    else:
+        out = bus.result() if bus is not None else mix
     # a mix bus can collect a slow drift from summed low beds and reverbs; DC-block it once, below hearing
     if getattr(out, 'ndim', 1) == 2 and len(out):
         sos = signal.butter(2, 30.0, btype='high', fs=sr, output='sos')   # sub-38 Hz only wanders the block mean; nothing musical lives there

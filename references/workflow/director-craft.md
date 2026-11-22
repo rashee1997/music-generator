@@ -46,6 +46,13 @@ stops this piece being it. If the score's first idea is that sentence, rewrite t
 | No contrast | one level from start to end | an arc with a floor and a peak | `scripts/helpers/arc_report.py` |
 | The piece stops instead of ending | a cut | an ending plan, a harmony that lands, a tail that dies in the room | the end rows |
 | Machine timing | everything on the grid | a humanize preset per role; a tight grid only for the parts that need it | `scripts/helpers/expression_report.py` |
+| One timbre at every level | a synth patch or a sample player: soft and loud are the same colour | `timbre_dynamics` on a part whose written dynamics really move, or `velocity_timbre` bands | realism report dimension 1 |
+| A section of one player | a very good soloist multiplied, no ensemble weight | `ensemble.players` on the section part, 2-8, with cents and ms scatter | realism report dimension 2 |
+| Attack inside the room | soft transients in a wash, no tactile front | `theatrical.detail` send duck, the transient shape in `dynamics`, a closer distance for the detail part | realism report dimension 4 |
+| Thick low-mids, soft impact | weight without authority; the sub is masked | `theatrical.low_mid`, a high-pass on every part that does not own the region, one low-end owner | realism report dimension 5 |
+| Glass in the top register | pitch-stretched samples, formants moved | move that register to a real high sample or rewrite it; a correction stage is planned | realism report dimension 3 |
+| The peak closes in | the field folds at density, the air goes | `theatrical.air`, less reverb low-pass at the peak, a limiter that is not working on the top octave alone | realism report dimension 7 |
+| Bar-locked phrases | note-level life, bar-level machine | score `elastic` with breaths at the harmonic turns; keep it off a dance pulse | realism report dimension 8, `expression_report.py` |
 | Bright and loud everywhere | fatigue | a part owns each band; the carrier is carved room in the mix | `mix:spectral overlap`, `lead_carve` |
 
 A counter that moves a number but not the sentence in the second column has not fixed the failure.

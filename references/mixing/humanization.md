@@ -129,6 +129,37 @@ get no vibrato.
 The noises of the instrument itself (bow, key, breath, damper at each onset and release) are `render.mechanics` in
 the mix preset; a preset picks its class with `mechanics_class`.
 
+## 3d. A section is several players (`ensemble`)
+
+One track is one player. A sampled string or brass section is therefore one very good player multiplied, not a
+room of them. A track can declare players:
+
+```json
+"ensemble": {"players": 4, "spread_cents": 5, "spread_ms": 10, "vel_spread": 3}
+```
+
+The renderer expands each written note into `players` copies before humanisation. Each player draws one fixed
+offset for the whole piece (intonation, timing, level) and a small per-note jitter, so the section is stable and
+not a chorus. Measured scatter in real small sections is 2-13 cents and 20-50 ms (ISMA 2019; Rasch), so these
+are at the tight end on purpose: copies of one sample correlate more than independent players. Pitched section
+parts only; a drum, effect or environment part raises, and a solo declares nothing. 2-8 players; above that the
+answer is a multisampled section, not eight copies.
+
+## 3e. Macro phrase breathing (`elastic`)
+
+Per-note humanisation does not make a bar breathe. The score can ask for long-range elasticity and a collective
+breath:
+
+```json
+"elastic": {"amount": 0.04, "corr_beats": 12, "breaths": [16, 48], "breath_s": 0.08}
+```
+
+`amount` is the peak deviation (about +/-4 %), centred so the average tempo is unchanged; `corr_beats` is how many
+beats a deviation lasts (about two bars); each beat in `breaths` adds `breath_s` seconds for every player at once,
+which is what a conductor's preparatory breath does. It sits on top of the per-phrase rubato and the final
+ritardando. Keep it off a dance or trailer pulse: the pulse is the pulse. Ensemble tempo excursion measured 7-10 %
+over a performance (ISPS), so 4 % is the inside of the expressive range, not the outside.
+
 ## 4. What humanization cannot fix
 
 - Wrong notes, clashing voicings, notes outside the instrument's range, bad register balance. Fix the score.

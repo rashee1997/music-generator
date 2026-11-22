@@ -12,6 +12,7 @@ Everything a reader or an agent needs beyond the front page. Each entry below is
 | [VOCAL-TRACT-WAVEGUIDE.md](VOCAL-TRACT-WAVEGUIDE.md) | The acoustic-tube model behind the vocal tract: the Kelly–Lochbaum reference network, the 3-way pharynx junction, area-function inversion, measured cost and gate plan. `waveguide.mode: "physical"` derives formants and bandwidths from the tube; the render path itself is still the resonator bank. | Before changing `vocal_engine/waveguide.py`, `tract.py`, `nasal.py` or the `tract`/`humming` data blocks. |
 | [roughness_model.md](roughness_model.md) | The decision note for the cochlear-roughness check: what it fixed, the model as implemented, and the calibration measured from fixtures. | Before changing `cochlear_roughness_check` in `scripts/naturalness_check.py`. |
 | [roughness_listening_sheet.md](roughness_listening_sheet.md) | The listening sheet used to judge roughness takes against the measurement. | When calibrating or re-checking the roughness threshold. |
+| [THEATRICAL-REALISM-PLAN.md](THEATRICAL-REALISM-PLAN.md) | The eight-quality realism plan: what the engine already did, what was added, what is still planned, and the acceptance measurement for each. | Before changing `level_timbre`, `ensemble`, `elastic`, the `theatrical` mix stage or `realism_report.py`. |
 
 ## Documents outside this folder
 

@@ -286,6 +286,19 @@ DEFAULTS = {
         'validate_export': True,       # check the written file: peak, true peak, length, channels
         'report': True,
     },
+    # Theatrical realism (references/mixing/theatrical-realism.md). Off by default: every number here is a
+    # decision about a cue, not a house rule. `low_mid` keeps the 180-420 Hz region from thickening a dense
+    # peak; `air` retains the top octave as the programme gets loud; `detail` lets the direct sound lead the
+    # room on attacks, so close detail sits in front of the hall instead of inside it. Starting values.
+    'theatrical': {
+        'enabled': False,
+        'low_mid': {'enabled': True, 'low_hz': 180.0, 'high_hz': 420.0, 'max_dip_db': 2.0,
+                    'range_db': 10.0, 'ratio': 2.0, 'attack_ms': 20.0, 'release_ms': 180.0,
+                    'knee_db': 6.0},
+        'air': {'enabled': True, 'hz': 9000.0, 'max_lift_db': 1.5, 'window_db': 6.0},
+        'detail': {'enabled': True, 'duck_db': 2.5, 'attack_ms': 4.0, 'release_ms': 40.0,
+                   'ref_db': 18.0},
+    },
     # headphone immersion (references/spatial/immersive-spatial.md). Off by default, so an older piece mixes exactly as before.
     # `pair` is how a stereo stem keeps its width: two sources at +-width/2, level normalised for input coherence.
     'immersive': {
@@ -485,6 +498,19 @@ def validate(mix):
             if key not in defaults:
                 problems.append(f'mix.{sec}.{key}: unknown key (the engine would ignore it); '
                                 f'known: {", ".join(sorted(defaults))}')
+    th = mix.get('theatrical')
+    if isinstance(th, dict):
+        for key in th:
+            if key not in DEFAULTS['theatrical']:
+                problems.append(f'mix.theatrical.{key}: unknown key (the engine would ignore it); '
+                                f'known: {", ".join(sorted(DEFAULTS["theatrical"]))}')
+        for part in ('low_mid', 'air', 'detail'):
+            got_part = th.get(part)
+            if isinstance(got_part, dict):
+                for key in got_part:
+                    if key not in DEFAULTS['theatrical'][part]:
+                        problems.append(f'mix.theatrical.{part}.{key}: unknown key (the engine would ignore it); '
+                                        f'known: {", ".join(sorted(DEFAULTS["theatrical"][part]))}')
     for (sec, key), (kind, lo, hi) in RANGES.items():
         val = (mix.get(sec) or {}).get(key) if isinstance(mix.get(sec), dict) else None
         if val is None:

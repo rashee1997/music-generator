@@ -206,6 +206,13 @@ it; an SFZ stem gets it when the block is present, for a library with a single v
 `{"low_hz": 1500, "span_hz": 2600, "floor": 0.55, "curve": 1.2}`. The corner is `low_hz` plus `span_hz` times the mean
 velocity; `floor` is how much of the full band a silent moment keeps. An unknown key is an error.
 
+**The theatrical stage** (`theatrical`, off by default) is the programme-side realism decision: a dynamic dip in
+180-420 Hz while that band is loud (`low_mid`), a capped 9 kHz lift that scales with the mastered programme level
+(`air`), and a shared-send dip that lasts only through an attack (`detail`). It is stereo-only; a discrete
+multichannel master keeps its own stage. It is not a substitute for the piece's own dynamics: the coupling of
+timbre to loudness, section scatter and bar-scale breathing are decided on the track and in the score. Rules:
+`references/mixing/theatrical-realism.md`; facts: `knowledgebase/sound-design/theatrical-realism.md`.
+
 **Numbers that live in the mix preset, not in the mixer.**
 
 | Section | Keys | What they are |

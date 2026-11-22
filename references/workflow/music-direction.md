@@ -258,10 +258,10 @@ before the score; they are read by `quality_gate.direction_rows` and by `scripts
 | Field | Decide | The test it can fail |
 |---|---|---|
 | `sonic_picture` | stand in the room: what the listener hears in the first ten seconds, in the middle and in the last note, in plain physical words (distance, size, materials, who is near) | the score's first ten seconds contain what it says |
-| `performer` | who plays each part and what a human does: where the player breathes, leans on a beat, lets a note die, plays slightly behind or ahead | `humanize` and `articulation` are set to say it |
+| `performer` | who plays each part and what a human does: where the player breathes, leans on a beat, lets a note die, plays slightly behind or ahead; how many players share a section part, and whether the same player is the same player all piece | `humanize`, `articulation` and, for a section, `ensemble` are set to say it |
 | `producer_moves` | what a producer does that a score does not say: a filter that opens over sixteen bars, a full stop before a hit, a reverb throw on the last note | each move has a preset key or a score event |
 | `anti_generic` | the generic version of this cue in one sentence, and the one thing that stops this cue being it | the sentence names a measurable difference (a pulse that changes, a leap on a weak beat) |
-| `cues` | per section: `arousal` (low, mid, high), `mode_register`, `tempo_trend`, `dynamics`, `articulation`, `timbre` | `expression.arousal_order` compares the written notes with the sections' `energy` |
+| `cues` | per section: `arousal` (low, mid, high), `mode_register`, `tempo_trend`, `dynamics`, `articulation`, `timbre` (what changes in the colour when the section gets loud, not only how much louder it gets) | `expression.arousal_order` compares the written notes with the sections' `energy`; realism report dimension 1 measures the colour |
 | `theme` | the melody's identity: `contour`, `interval_character`, `rhythm_cell`, `why_memorable`, `variation_plan` (how it changes each time it returns) | `melody.variety` measures interval entropy, range, leaps and bars that repeat exactly |
 
 The cue table follows the research on what carries emotion in music: mode, tempo, register, dynamics, articulation
@@ -269,6 +269,14 @@ and timbre, acting mostly additively (`knowledgebase/genre-and-feel/emotion-cues
 section that leaves one open gets the default of the last section, which is how a tense cue ends up calm.
 
 Rules:
+
+**Theatrical realism is decided here, not fixed in the mix.** Three declarations carry it and all three are read by
+the engine: a part whose colour changes with loudness says so with `timbre_dynamics`; a section says how many
+players it has with `ensemble`; the score says how the bar breathes with `elastic`. If the sheet's `performer` field
+cannot say which of those applies, the piece has not decided how it is played. The facts and the working figures are
+in `knowledgebase/sound-design/theatrical-realism.md`; the rules and the blocks are in
+[`theatrical-realism.md`](../mixing/theatrical-realism.md). Measure the result with
+`python scripts/realism_report.py` after the render, and put its WARNs in the director's second review.
 
 1. **Write the theme as a shape, not a mood.** "Heroic" is not a theme. "A rise of a fifth, a step back, then a fall,
    long-short-short-long, the leap on the weak beat, inverted at the return" is one. A melody an agent writes without a shape

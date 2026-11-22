@@ -138,8 +138,12 @@ def programme_lufs(audio, layout_name, sr, target):
 REPORT = {}          # the last multichannel master: target, method, loudness reached, limiter depth (for the gate)
 
 
-def master(audio, score, target, sr=44100):
-    """Trim, level, limit and fade a multichannel programme for delivery. Returns float32 (N, channels)."""
+def master(audio, score, target, sr=44100, mix=None):
+    """Trim, level, limit and fade a multichannel programme for delivery. Returns float32 (N, channels).
+
+    `mix` is the resolved mix preset when the caller has one; without it the thread's current mix is used. It is
+    passed explicitly because this stage runs after the mixer's context has been restored.
+    """
     import mixer
     target = dict(target or {})
     layout_name = target.get('layout')
@@ -153,6 +157,12 @@ def master(audio, score, target, sr=44100):
         lufs_target = float(target['loudness']['target_lufs'])
     y = mixer.trim_tail(np.asarray(audio, dtype=np.float32), sr)
     y = _dc_block(y, layout_name, sr, rs['highpass_hz']).astype(np.float32)
+    th = ((mix if mix is not None else (mixer._mix() or {})).get('theatrical') or {})
+    if th.get('enabled'):
+        from . import config
+        names = list(config.channel_names(layout_name))
+        skip = {i for i, name in enumerate(names) if name == 'LFE'}
+        y = mixer.theatrical_multichannel(y, sr, th, skip=skip)
     measured, method = programme_lufs(y, layout_name, sr, target)
     gain_db = lufs_target - measured
     lim = target.get('limiter') or {}
@@ -185,5 +195,6 @@ def master(audio, score, target, sr=44100):
     reached = programme_lufs(out, layout_name, sr, target)[0]
     REPORT.clear()
     REPORT.update(layout=layout_name, method=method, target_lufs=lufs_target, reached_lufs=float(reached),
-                  limiter=bool(lim.get('enabled')), limiter_depth_db=float(depth), ceiling_dbtp=ceiling)
+                  limiter=bool(lim.get('enabled')), limiter_depth_db=float(depth), ceiling_dbtp=ceiling,
+                  theatrical=bool(th.get('enabled')))
     return mixer.fades(out, sr, fout=fade_out)

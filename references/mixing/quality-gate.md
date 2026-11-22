@@ -221,6 +221,18 @@ numbers, come from a **gate profile**: a preset of kind `gate` (`references/data
 - Commands: `gate_profiles.py list | rows | explain score.json | new <name> --from tense --project D | check`. The project gate runs
   `check`, rejects an unknown `piece_type`, and warns when the type was inferred.
 
+## 3h. Realism measurements are advisory, not rows
+
+`python scripts/realism_report.py out/master.wav --score ... --stems out/stems --project .` measures the eight
+qualities in `knowledgebase/sound-design/theatrical-realism.md`: timbre against loudness, section scatter,
+transient variety, direct-to-reverberant depth, low-mid against sub, air absorption at distance, air at density and
+bar-scale phrasing. It prints `PASS` / `WARN` / `N/A` per dimension. They are **not** gate rows on purpose: the
+thresholds are starting values, several need dry stems the gate may not have, and a WARN is a question for the
+director, not a faulty render. Report them beside the gate, never instead of it. The gate rows a theatrical change
+actually threatens are `cochlear_roughness` (added harmonics), `masking` and `balance` (a lifted air band), `master.dc`
+and `fold.mono` (a low-mid stage), and `loudness` / `true_peak` (the air lift). Fix the part or the preset; never
+loosen a row to make the realism report look better.
+
 ## 4. What the gate cannot judge
 
 - Whether the phrasing sounds human, whether the style is right, cultural correctness, taste. Listen (`listen.py`,

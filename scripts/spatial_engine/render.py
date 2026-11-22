@@ -485,7 +485,8 @@ def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None, leng
     subtype = str(target.get('subtype') or 'PCM_24')
     if renderer == 'spatial':
         from . import master
-        audio = master.master(spatial_mix(score, stems, target_name, sr, ctx), score, target, sr)
+        audio = master.master(spatial_mix(score, stems, target_name, sr, ctx), score, target, sr,
+                              mix=(ctx.mix if ctx is not None else None))
     elif renderer == 'binaural':
         audio = binaural_mix(score, stems, sr, ctx)
     elif renderer == 'mono':

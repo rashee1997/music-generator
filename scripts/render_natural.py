@@ -416,6 +416,139 @@ def _tilt_block(tr, inst_cfg, name):
     return blk
 
 
+ENSEMBLE_KEYS = ('players', 'spread_cents', 'spread_ms', 'vel_spread')
+TIMBRE_KEYS = ('drive', 'tilt_db', 'tilt_hz', 'band_hz', 'amount', 'smooth_s',
+               'quiet_pct', 'loud_pct', 'oversample')
+REGISTER_KEYS = ('split_pitch', 'ref_pitch', 'pivot_hz', 'db_per_oct', 'max_db')
+VARIETY_KEYS = ('gain_db', 'tilt_db', 'width_ms')
+
+
+def _ensemble_block(tr, name):
+    """A track's `ensemble` block (None = one player). Unknown keys and a one-player section are errors."""
+    blk = tr.get('ensemble')
+    if not blk:
+        return None
+    if not isinstance(blk, dict):
+        raise ValueError(f'track "{name}": ensemble must be an object with '
+                         f'{", ".join(ENSEMBLE_KEYS)}; got {type(blk).__name__}')
+    unknown = sorted(set(blk) - set(ENSEMBLE_KEYS))
+    if unknown:
+        raise ValueError(f'track "{name}": ensemble takes only {", ".join(ENSEMBLE_KEYS)} '
+                         f'(got {blk!r})')
+    if int(blk.get('players', 0) or 0) < 2:
+        raise ValueError(f'track "{name}": ensemble.players must be at least 2 (a solo is one player)')
+    if int(blk['players']) > 8:
+        raise ValueError(f'track "{name}": ensemble.players above 8 is a library, not a section; '
+                         f'use a multisampled section instead')
+    return blk
+
+
+def _expand_ensemble(tr, notes, tm, role, seed):
+    """Expand a section track into its players before humanisation (see humanize.ensemble_expand)."""
+    name = tr.get('name', tr.get('instrument', 'track'))
+    blk = _ensemble_block(tr, name)
+    if not blk:
+        return notes
+    if role in ('drum', 'environment', 'fx'):
+        raise ValueError(f'track "{name}": ensemble is for pitched section parts; a {role} part has no section')
+    bpm = float(np.atleast_1d(getattr(tm, 'base_bpm', 96.0)).ravel()[0])
+    out = hz.ensemble_expand(notes, players=int(blk['players']),
+                             spread_cents=float(blk.get('spread_cents', 5.0)),
+                             spread_ms=float(blk.get('spread_ms', 10.0)),
+                             vel_spread=float(blk.get('vel_spread', 3.0)), bpm=bpm, seed=seed)
+    _record(name, ensemble=f"{int(blk['players'])} players")
+    return out
+
+
+def _timbre_block(tr):
+    """A track's or instrument preset's `timbre_dynamics` block (None = off). Unknown keys are an error."""
+    raw = str(tr.get('instrument', ''))
+    inst_cfg = presets.find_instrument(raw) or presets.find_instrument(_name(raw))
+    blk = tr.get('timbre_dynamics') or (inst_cfg or {}).get('timbre_dynamics')
+    if not blk:
+        return None
+    if raw.startswith(('sfx:', 'env:', 'clone:')):
+        raise ValueError(f'track "{tr.get("name", raw)}": timbre_dynamics is for a played instrument, not {raw}')
+    if not isinstance(blk, dict):
+        raise ValueError(f'track "{tr.get("name", raw)}": timbre_dynamics must be an object')
+    unknown = sorted(set(blk) - set(TIMBRE_KEYS))
+    if unknown:
+        raise ValueError(f'track "{tr.get("name", raw)}": timbre_dynamics takes only {", ".join(TIMBRE_KEYS)} '
+                         f'(got {blk!r})')
+    return blk
+
+
+def _apply_timbre(tr, x):
+    """Loudness-dependent timbre for a stem that asked for it (dsp.level_timbre)."""
+    blk = _timbre_block(tr)
+    if not blk or x is None or tr.get('_register_split'):
+        return x
+    return dsp.level_timbre(x, sr=SR, **blk)
+
+
+def _register_block(tr):
+    """A track's `register` block (None = off). Unknown keys and impossible pitches are errors."""
+    blk = tr.get('register')
+    if not blk:
+        return None
+    if not isinstance(blk, dict):
+        raise ValueError(f'track "{tr.get("name")}": register must be an object with {", ".join(REGISTER_KEYS)}')
+    unknown = sorted(set(blk) - set(REGISTER_KEYS))
+    if unknown:
+        raise ValueError(f'track "{tr.get("name")}": register takes only {", ".join(REGISTER_KEYS)} '
+                         f'(got {blk!r})')
+    split = int(blk.get('split_pitch', 72))
+    ref = int(blk.get('ref_pitch', split))
+    if not (0 <= split <= 127 and 0 <= ref <= 127):
+        raise ValueError(f'track "{tr.get("name")}": register.split_pitch/ref_pitch must be MIDI notes 0..127')
+    return blk
+
+
+def _variety_block(tr):
+    """A track's `transient_variety` block (None = off). Unknown keys are an error."""
+    blk = tr.get('transient_variety')
+    if not blk:
+        return None
+    if not isinstance(blk, dict):
+        raise ValueError(f'track "{tr.get("name")}": transient_variety must be an object with '
+                         f'{", ".join(VARIETY_KEYS)}')
+    unknown = sorted(set(blk) - set(VARIETY_KEYS))
+    if unknown:
+        raise ValueError(f'track "{tr.get("name")}": transient_variety takes only {", ".join(VARIETY_KEYS)} '
+                         f'(got {blk!r})')
+    return blk
+
+
+def _apply_variety(tr, x, tm, seed):
+    """Per-onset attack variation for repeated plucks and percussion (dsp.transient_variety)."""
+    blk = _variety_block(tr)
+    if not blk or x is None:
+        return x
+    if tr.get('_register_split'):
+        return x
+    if str(tr.get('instrument', '')).startswith('env:'):
+        raise ValueError(f'track "{tr.get("name")}": transient_variety is for repeated attacks, not an environment')
+    times = [float(tm.sec(float(n['t']))) for n in tr.get('notes', [])]
+    return dsp.transient_variety(x, sr=SR, times=times, seed=seed, **blk)
+
+
+def _register_split(tr):
+    """Notes below and at/above the register split, or None when the track must not be split."""
+    blk = _register_block(tr)
+    if not blk or tr.get('_register_split'):
+        return None
+    raw = str(tr.get('instrument', 'piano'))
+    if raw.startswith(('sfx:', 'env:', 'clone:')) or tr.get('role') in ('drum', 'environment'):
+        return None
+    split = int(blk.get('split_pitch', 72))
+    notes = [n for n in tr.get('notes', []) if isinstance(n.get('p'), (int, float))]
+    lo = [n for n in notes if int(n['p']) < split]
+    hi = [n for n in notes if int(n['p']) >= split]
+    if not hi:
+        return None
+    return blk, lo, hi
+
+
 def _is_sfz_track(tr):
     """True when render_track would take the SFZ path for this track (mirrors its dispatch order)."""
     raw_inst = str(tr.get('instrument', 'piano'))
@@ -435,6 +568,7 @@ def _sfz_track(tr, tm, cfg, seed, ts, swing, global_dyn, raw_inst, inst_cfg, qua
     name = tr.get('name', raw_inst)
     role = tr.get('role', (inst_cfg or {}).get('role', 'melody'))
     notes = [dict(n, p=cli_util.midi_int(n['p'], f"track {name}: ")) for n in tr.get('notes', [])]
+    notes = _expand_ensemble(tr, notes, tm, role, seed)
     # The preset's articulation is passed here exactly as the GM path passes it: without it every held note took
     # the role's default gate (0.90 for bass, 0.95 for chord), so an SFZ string note was cut 5-10% short and the
     # piece's last note died 0.5-1.7 s before its written end (stem.edge, stem.dropout on all four string parts).
@@ -475,10 +609,36 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
     run and a parallel stage would wait on that slot forever instead of reporting the failure.
     """
     try:
-        vt = _velocity_timbre(tr)
-        if vt:
-            return _render_velocity_layers(tr, vt, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead)
-        return _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead)
+        split = _register_split(tr)
+        if split:
+            blk, lo, hi = split
+            base = {k: v for k, v in tr.items() if k not in ('register', 'timbre_dynamics', 'transient_variety')}
+            hi_tr = dict(base, notes=hi, _register_split=True)
+            y_hi = render_track(hi_tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead)
+            mean_p = float(np.mean([float(n['p']) for n in hi]))
+            y_hi = dsp.register_tone(y_hi, sr=SR, semitones=mean_p - float(blk.get('ref_pitch', blk.get('split_pitch', 72))),
+                                     pivot_hz=float(blk.get('pivot_hz', 1500.0)),
+                                     db_per_oct=float(blk.get('db_per_oct', 1.5)),
+                                     max_db=float(blk.get('max_db', 6.0)))
+            if lo:
+                y_lo = render_track(dict(base, notes=lo, _register_split=True), tm, sfpath, global_dyn, cfg,
+                                    seed, ts, swing, key_lead)
+                n = max(len(y_hi), len(y_lo))
+                out = np.zeros((n, y_hi.shape[1]), np.float32)
+                out[:len(y_lo)] += y_lo
+                out[:len(y_hi)] += y_hi
+                x = out
+            else:
+                x = y_hi
+            _record(tr.get('name', tr.get('instrument', 'track')), register=dict(above=int(len(hi)), below=int(len(lo))))
+        else:
+            vt = _velocity_timbre(tr)
+            if vt:
+                x = _render_velocity_layers(tr, vt, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead)
+            else:
+                x = _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead)
+        x = _apply_timbre(tr, x)
+        return _apply_variety(tr, x, tm, seed)
     finally:
         _return_slot()
 
@@ -667,6 +827,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
         n = dict(n)
         n['p'] = _drum_key(n['p']) if is_drum else cli_util.midi_int(n['p'], f"track {tr.get('name')}: ")
         notes.append(n)
+    notes = _expand_ensemble(tr, notes, tm, role, seed)
     swing_u = tr.get('swing_unit', 0.25 if tr.get('swing_16th') or (swing > 0.5 and any(abs(n['t'] * 4 - round(n['t'] * 4)) < 1e-4 and abs(n['t'] * 2 - round(n['t'] * 2)) > 1e-4 for n in notes)) else 0.5)
     ev = hz.humanize_track(notes, tm, tr.get('humanize', cfg), role=role, seed=seed, ts=tuple(ts), swing=swing, swing_unit=swing_u,
                            detune_cents=tr.get('detune_cents', 0.0), strum_dir=tr.get('strum', 'alt'), instrument=inst,
@@ -904,7 +1065,7 @@ def _track_cache_dir():
     return d
 
 
-_RENDERER_VERSION = 'natural-7'   # bump when the renderer changes what a stem sounds like or reports
+_RENDERER_VERSION = 'natural-8'   # bump when the renderer changes what a stem sounds like or reports
 _CODE_HASH = None
 
 

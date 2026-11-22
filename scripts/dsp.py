@@ -564,6 +564,153 @@ def resonator_bank(x, sr, freqs, q):
     return out
 
 
+def level_timbre(x, sr=44100, drive=0.5, tilt_db=2.0, tilt_hz=2800.0, band_hz=(140.0, 7000.0),
+                 amount=0.6, smooth_s=0.35, quiet_pct=20.0, loud_pct=95.0, oversample=2):
+    """A source whose timbre changes with its own loudness, not only its level.
+
+    A brass note played softly is dominated by its first partials; played loudly its high-frequency slope
+    flattens (Fletcher et al. 1999 measure about -30 dB/octave at a low level and -10 dB/octave at a high one on
+    a trumpet) and the spectral centroid rises. The same direction holds for a bowed string, where spectral
+    centroid rises with bow force and from pp to f (Schoonderwaldt 2009; Chudy 2016), and for wind noise, whose
+    share of the spectrum falls as the dynamic rises (JASA 2018). A SoundFont maps velocity to gain only, so the
+    engine has to put that coupling back.
+
+    The coupling is measured *within the stem*, not from an absolute level: short-term RMS is mapped between the
+    piece's own quiet and loud percentiles, so a soft passage and a loud one are compared with each other. The
+    nonlinear residue of a soft-clipped copy of the 140 Hz-7 kHz band is added in proportion to that measure, and
+    a high shelf follows it. Both are level-compensated, so the part's pattern level does not move: this changes
+    colour, not loudness. At `drive=0, tilt_db=0` the function returns its input.
+
+    Values are arguments, never decisions: an instrument preset or a track owns them. `drive` 0.5 and
+    `tilt_db` 2.0 dB are starting values, not measurements of any one instrument.
+    """
+    y = to_2d(x).astype(np.float32)
+    if len(y) < int(0.1 * sr):
+        return y
+    drive, tilt_db, amount = float(drive), float(tilt_db), float(amount)
+    if drive <= 0.0 and tilt_db <= 0.0:
+        return y
+    if drive < 0.0 or tilt_db < 0.0 or amount < 0.0:
+        raise ValueError('level_timbre: drive, tilt_db and amount cannot be negative')
+    if not (0.0 <= float(quiet_pct) < float(loud_pct) <= 100.0):
+        raise ValueError('level_timbre: quiet_pct must be below loud_pct (0..100)')
+    if int(oversample) not in (1, 2, 4):
+        raise ValueError('level_timbre: oversample must be 1, 2 or 4')
+    from scipy.ndimage import uniform_filter1d
+    mono = np.abs(y).max(axis=1).astype(np.float64)
+    ms = uniform_filter1d(mono ** 2, size=max(1, int(0.05 * sr)), mode='nearest')
+    lvl = 10.0 * np.log10(ms + EPS)
+    active = lvl > float(lvl.max()) - 55.0
+    if int(active.sum()) < 16:
+        return y
+    quiet = float(np.percentile(lvl[active], float(quiet_pct)))
+    loud = float(np.percentile(lvl[active], float(loud_pct)))
+    if loud - quiet < 2.0:                     # one dynamic: there is no coupling to follow
+        return y
+    u = np.clip((lvl - quiet) / (loud - quiet), 0.0, 1.0)
+    u = uniform_filter1d(u, size=max(1, int(float(smooth_s) * sr)), mode='nearest').astype(np.float32)
+
+    lo, hi = float(band_hz[0]), min(float(band_hz[1]), sr * 0.45)
+    if not (20.0 < lo < hi):
+        raise ValueError(f'level_timbre: band_hz {band_hz!r} is not a usable band at {sr} Hz')
+    band = signal.sosfilt(signal.butter(4, [lo, hi], btype='band', fs=sr, output='sos'), y, axis=0).astype(np.float32)
+    gain = 1.0 + drive * u
+    if int(oversample) > 1:
+        # the residue is generated at a higher rate and brought back through the anti-image filter, so the
+        # harmonics it adds land below Nyquist instead of folding over the top octave
+        band_o = signal.resample_poly(band, int(oversample), 1, axis=0).astype(np.float32)
+        gain_o = signal.resample_poly(gain, int(oversample), 1).astype(np.float32)
+        add = (np.tanh(band_o * gain_o[:, None]) - band_o).astype(np.float32)
+        add = signal.resample_poly(add, 1, int(oversample), axis=0).astype(np.float32)
+        add = add[:len(y)] if len(add) >= len(y) else np.pad(add, ((0, len(y) - len(add)), (0, 0)))
+    else:
+        add = (np.tanh(band * gain[:, None]) - band).astype(np.float32)
+    out = y + (amount * u[:, None] * add).astype(np.float32)
+    if tilt_db > 0.0:
+        hf = signal.sosfilt(signal.butter(2, min(float(tilt_hz), sr * 0.45), btype='high', fs=sr, output='sos'),
+                            y, axis=0).astype(np.float32)
+        out = out + hf * (10.0 ** ((tilt_db * u) / 20.0) - 1.0).astype(np.float32)[:, None]
+    rms_in = float(np.sqrt(np.mean(y.astype(np.float64) ** 2) + EPS))
+    rms_out = float(np.sqrt(np.mean(out.astype(np.float64) ** 2) + EPS))
+    if np.isfinite(rms_out) and rms_out > EPS:
+        out *= np.float32(rms_in / rms_out)
+    if not np.isfinite(out).all():
+        raise ValueError('level_timbre: produced non-finite samples (check drive/tilt_db/band_hz)')
+    return out.astype(np.float32)
+
+
+def register_tone(x, sr=44100, semitones=0.0, pivot_hz=1500.0, db_per_oct=1.5, max_db=6.0):
+    """Reduce the formant shift of a sampled note transposed above its comfortable register.
+
+    Resampling a sample upward moves its whole spectral envelope up by the transposition ratio, so the formants
+    and the spectral centroid rise with pitch even when the player did not change colour (an effect audible at a
+    fifth; Driedger/Mueller 2016). A high shelf that falls with the transposition is a first-order correction, not
+    a formant-preserving resynthesis: it removes the excess top that the resampling added and leaves the note's
+    level where it was. `semitones` is how far above `pivot_hz`'s register the note sits; `db_per_oct` is the cut
+    per octave, capped at `max_db`. Values are starting values and belong to the instrument preset or track.
+
+    0 semitones or 0 dB/octave returns the input, so a part that does not ask for it is unchanged.
+    """
+    y = to_2d(x).astype(np.float32)
+    if float(db_per_oct) < 0.0 or float(max_db) < 0.0:
+        raise ValueError('register_tone: db_per_oct and max_db cannot be negative')
+    cut = float(db_per_oct) * max(0.0, float(semitones)) / 12.0
+    cut = min(cut, float(max_db))
+    if cut <= 0.0 or len(y) < 8:
+        return y
+    hz = min(sr * 0.45, max(20.0, float(pivot_hz)))
+    hf = signal.sosfilt(signal.butter(2, hz, btype='high', fs=sr, output='sos'), y, axis=0).astype(np.float32)
+    out = y + hf * np.float32(10.0 ** (-cut / 20.0) - 1.0)
+    rms_in = float(np.sqrt(np.mean(y.astype(np.float64) ** 2) + EPS))
+    rms_out = float(np.sqrt(np.mean(out.astype(np.float64) ** 2) + EPS))
+    if np.isfinite(rms_out) and rms_out > EPS:
+        out *= np.float32(rms_in / rms_out)
+    if not np.isfinite(out).all():
+        raise ValueError('register_tone: produced non-finite samples')
+    return out.astype(np.float32)
+
+
+def transient_variety(x, sr=44100, times=(), gain_db=1.0, tilt_db=1.5, width_ms=25.0, seed=0):
+    """Give each repeated onset its own attack level and bite, without changing the written rhythm.
+
+    A round-robin library still plays the same handful of attacks, and a doubled pluck or a percussion family can
+    read as one sample triggered again (measured attack similarity is the `realism_report` transient row). This adds
+    a deterministic per-onset gain of +/-`gain_db` and a short high-band emphasis of +/-`tilt_db`, shaped by a
+    raised-cosine window of `width_ms` around each onset. It cannot invent a new sample, and it never moves an onset
+    in time. `times` are seconds; onsets closer together than the window are one event.
+
+    Values are starting values; the track or preset owns them. gain_db=tilt_db=0 returns the input.
+    """
+    y = to_2d(x).astype(np.float32)
+    if float(gain_db) < 0.0 or float(tilt_db) < 0.0 or float(width_ms) <= 0.0:
+        raise ValueError('transient_variety: gain_db, tilt_db and width_ms must be non-negative')
+    if float(gain_db) == 0.0 and float(tilt_db) == 0.0:
+        return y
+    n = len(y)
+    span = max(1, int(float(width_ms) * sr / 1000.0))
+    rng = np.random.default_rng(int(seed) + 15485863)
+    gain = np.ones(n, np.float32)
+    tilt = np.zeros(n, np.float32)
+    last = -1
+    for t in sorted(float(v) for v in times):
+        i = int(round(t * sr))
+        if i < 0 or i >= n or i - last < span:
+            continue
+        last = i
+        a = float(rng.uniform(-float(gain_db), float(gain_db)))
+        b = float(rng.uniform(-float(tilt_db), float(tilt_db)))
+        lo, hi = max(0, i - span // 2), min(n, i + span // 2)
+        w = 0.5 - 0.5 * np.cos(np.linspace(0.0, np.pi, hi - lo, dtype=np.float32))
+        gain[lo:hi] *= (10.0 ** (a / 20.0) * w + (1.0 - w)).astype(np.float32)
+        tilt[lo:hi] += (b * w).astype(np.float32)
+    hf = signal.sosfilt(signal.butter(2, min(sr * 0.45, 2000.0), btype='high', fs=sr, output='sos'),
+                        y, axis=0).astype(np.float32)
+    out = y * gain[:, None] + hf * (10.0 ** (tilt / 20.0) - 1.0).astype(np.float32)[:, None]
+    if not np.isfinite(out).all():
+        raise ValueError('transient_variety: produced non-finite samples')
+    return out.astype(np.float32)
+
+
 def enhance_sf2_dynamics(x, sr=44100, role='chord', velocity=None):
     """Restores transient snap and velocity-driven harmonic excitement to SF2 stems.
 

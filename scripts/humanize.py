@@ -64,6 +64,9 @@ PRESETS = {
 TIMING = dict(note_lag1=0.5, drift_corr_beats=6.0, vel_dur=0.018, tune_drift_cents=1.2, just_ratio=0.45,
               push_tempo_power=0.4, subdiv_push_ms=1.2)
 
+# A score's `elastic` block: long-range tempo breathing, and a collective breath hold at named beats.
+ELASTIC_KEYS = ('amount', 'corr_beats', 'breaths', 'breath_s')
+
 # deviation of just intonation from 12-TET, in cents, by interval above the chord's lowest sounding note
 JUST = {1: 11.7, 2: 3.9, 3: 15.6, 4: -13.7, 5: -2.0, 6: -9.8, 7: 2.0, 8: 13.7, 9: -15.6, 10: 17.6, 11: -11.7}
 
@@ -135,10 +138,13 @@ class TempoMap:
 
     TempoMap(100) is a plain constant tempo. TempoMap(100, points=[[0,100],[32,84]]) ramps linearly.
     rubato: amplitude of the phrase arch (0.03 = +-3 % tempo). ritard: fraction slowed at the very end.
+    elastic: long-range tempo deviation (0.04 = +-4 % over `elastic_corr_beats`), zero-mean so the average tempo
+    is unchanged. breaths: beats where the whole ensemble takes a short collective breath (`breath_s` seconds).
     """
 
     def __init__(self, bpm, total_beats=64, points=None, rubato=0.0, phrase_beats=16, wander=0.0,
-                 ritard=0.0, ritard_beats=6, fermata=None, seed=1):
+                 ritard=0.0, ritard_beats=6, fermata=None, seed=1, elastic=0.0,
+                 elastic_corr_beats=12.0, breaths=None, breath_s=0.06):
         rng = np.random.default_rng(seed)
         step = 1.0 / 48.0
         T = total_beats + 16
@@ -154,6 +160,12 @@ class TempoMap:
             f *= 1 + rubato * (np.sin(np.pi * x) - 2 / np.pi)
         if wander:
             f *= 1 + wander * _smooth_noise(rng, len(g), corr=8 / step)
+        if elastic:
+            # phrase-scale elasticity, not a per-note wobble: a correlation length of several bars, and an
+            # exactly zero-mean curve so the piece does not get slower or faster on average, only more or less urgent
+            e = _smooth_noise(rng, len(g), corr=max(2.0, float(elastic_corr_beats) / step))
+            body = g <= float(total_beats)             # centre on the piece, not on the padded map
+            f *= 1 + float(elastic) * (e - float(e[body].mean() if body.any() else e.mean()))
         if ritard:
             a = total_beats - ritard_beats
             x = np.clip((g - a) / ritard_beats, 0, 1)
@@ -163,6 +175,9 @@ class TempoMap:
         if fermata:                               # [(beat, extra_seconds), ...] - hold a note/chord longer
             for b, extra in fermata:
                 secs += np.where(g > b, extra, 0.0)
+        if breaths:                               # a held breath before a harmonic turn, shared by every player
+            for b in breaths:
+                secs += np.where(g > float(b), float(breath_s), 0.0)
         self.g, self.secs, self.base_bpm, self.total_beats = g, secs, base, total_beats
 
     def sec(self, beats):
@@ -194,8 +209,24 @@ def tempo_map_for(score, seed=None, pad_beats=1):
     preset = PRESETS.get(cfg if isinstance(cfg, str) else 'natural', PRESETS['natural'])
     rub = score.get('rubato', preset.get('rubato', 0.02))
     wander = score.get('wander', 0.0 if cfg == 'tight' else 0.004)
+    elastic = score.get('elastic') or {}
+    if not isinstance(elastic, dict):
+        raise ValueError(f"score.elastic must be an object {{{', '.join(ELASTIC_KEYS)}}}, got {type(elastic).__name__}")
+    unknown = sorted(set(elastic) - set(ELASTIC_KEYS))
+    if unknown:
+        raise ValueError(f"score.elastic: unknown key(s) {', '.join(unknown)}; known: {', '.join(ELASTIC_KEYS)}")
+    el_amount = float(elastic.get('amount', 0.0))
+    el_corr = float(elastic.get('corr_beats', 12.0))
+    el_breaths = [float(b) for b in (elastic.get('breaths') or [])]
+    el_breath_s = float(elastic.get('breath_s', 0.06))
+    if el_amount < 0.0 or el_amount > 0.25:
+        raise ValueError('score.elastic.amount: expected 0..0.25 (a quarter of the tempo is not elasticity)')
+    if el_breath_s < 0.0 or el_breath_s > 2.0:
+        raise ValueError('score.elastic.breath_s: expected 0..2 seconds')
+    seed = seed if seed is not None else score.get('seed', 1)
     tm = TempoMap(score.get('bpm', 90), total_beats=total + pad_beats, points=score.get('tempo_points'),
                   rubato=rub, wander=wander, ritard=score.get('ritard', 0.3),
+                  elastic=el_amount, elastic_corr_beats=el_corr, breaths=el_breaths, breath_s=el_breath_s,
                   ritard_beats=score.get('ritard_beats', 6), phrase_beats=score.get('phrase_beats', 16),
                   fermata=score.get('fermata'), seed=seed)
     # one shared wander for the whole piece: every track of a section drifts together instead of apart
@@ -224,6 +255,60 @@ def apply_swing(notes, swing=0.5, unit=0.5):
             cap = 0.45 * (room - n['t']) if room is not None else shift
             t_new = n['t'] + min(shift, max(0.0, cap))
         out.append(dict(n, t=t_new) if t_new != n['t'] else n)
+    return out
+
+
+ENSEMBLE_KEYS = ('players', 'spread_cents', 'spread_ms', 'vel_spread')
+
+
+def ensemble_expand(notes, players=4, spread_cents=5.0, spread_ms=10.0, vel_spread=3.0, bpm=96.0, seed=0):
+    """One written line -> `players` independent players of a section, as notes for the renderer.
+
+    A sampled section track is one player multiplied, which is why a large string or brass section can read as a
+    single very good player rather than a room of them. Real sections are a few cents apart (measured standard
+    deviations of 2-13 cents in small violin sections, ISMA 2019; 14 cents is the tolerated F0 scatter in a choir,
+    Ternstrom 1993), their bow/breath onsets are 20-50 ms apart (Rasch; Keller), and no two players have the same
+    bow pressure, so each has a fixed intonation, timing and level offset, with per-note jitter on top.
+
+    Each player gets one fixed offset drawn once (so it is the same player for the whole piece) and one small
+    per-note deviation. `c` is added to any cents already on the note, so a microtonal line keeps its own tuning.
+    `spread_ms` is a peak offset in milliseconds at the score's tempo; it is converted to beats here.
+
+    Use it on a section part, not on a drum kit or a solo: a solo is one player by definition, and the engine's
+    other humanisation already covers that. Values are starting values until a piece is measured.
+    """
+    n_pl = int(players)
+    if n_pl < 2:
+        raise ValueError('ensemble: players must be at least 2 (a solo is not a section)')
+    if n_pl > 8:
+        raise ValueError('ensemble: above 8 players, use a real multisampled section')
+    if float(spread_cents) < 0.0 or float(spread_ms) < 0.0 or float(vel_spread) < 0.0:
+        raise ValueError('ensemble: spread_cents, spread_ms and vel_spread cannot be negative')
+    rng = np.random.default_rng(int(seed) + 104729)
+    # stratified offsets: every player is somewhere in the section, not four copies drawn from a bell curve
+    base = np.linspace(-1.0, 1.0, n_pl)
+    base = base + rng.uniform(-0.3, 0.3, n_pl) / max(n_pl - 1, 1)
+    cents = base * float(spread_cents)
+    delay_ms = base * float(spread_ms) + rng.normal(0.0, max(0.5, float(spread_ms) * 0.2), n_pl)
+    level = rng.normal(0.0, float(vel_spread), n_pl)
+    length = 1.0 + rng.normal(0.0, 0.02, n_pl)
+    beats_per_ms = float(bpm) / 60000.0
+    out = []
+    for nt in notes:
+        for k in range(n_pl):
+            e = dict(nt)
+            e['t'] = float(nt['t']) + float(delay_ms[k]) * beats_per_ms
+            e['c'] = float(nt.get('c', 0.0)) + float(cents[k]) + float(rng.normal(0.0, max(0.2, float(spread_cents) * 0.12)))
+            e['d'] = max(0.02, float(nt.get('d', 1.0)) * float(length[k]))
+            v = nt.get('v', 0.7)
+            if float(v) <= 1.0:
+                # a level offset in MIDI units is a fraction of the velocity scale, not of the note's own value
+                e['v'] = float(np.clip(float(v) * (1.0 + float(level[k]) / 127.0), 0.01, 1.0))
+            else:
+                e['v'] = float(np.clip(float(v) + float(level[k]), 1.0, 127.0))
+            e['player'] = k
+            out.append(e)
+    out.sort(key=lambda z: (z['t'], z['p']))
     return out
 
 

@@ -120,6 +120,11 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **9.4c** Check the expression against the sheet: `python scripts/helpers/expression_report.py scores/<title>_score.json --direction direction/<sheet>.json`. It reports whether the written notes follow the sections' declared energy (tempo, density, velocity, register, staccato share) and whether the melody has variety (interval entropy, range, leaps, bars that repeat exactly). It is non-neural, uses starting-value anchors and says nothing about valence or taste; report its flags and what you changed.
 - [ ] **9.4d** Short-form or looping piece (a ringtone, an alert, a jingle): `python scripts/helpers/short_form_report.py out/master.wav --score scores/<title>_score.json --loop`. It measures the loop seam, the energy in the phone band, the onsets in the first seconds, how often the opening shape returns and whether the density moves. Report its FLAG lines and what you changed; its defaults are starting values, and it does not say a tune is catchy.
 - [ ] **9.4e** The director's second review (`references/workflow/director-craft.md` section 5): in `STATUS.md`, which failures of its section 2 the piece could still show and the measurement that says it does not, the one thing a human producer would change first, and what was not heard or measured. A piece that passes every row and fails this review goes back to 4.9, not to the gate.
+- [ ] **9.4f** For a cue briefed as theatrical, cinematic, orchestral or "less synthetic": run
+      `python scripts/realism_report.py out/master.wav --score scores/<title>_score.json --stems out/stems --project <dir>`.
+      Report every `WARN` with the dimension it names, and fix the part, the preset or the placement. The measurements are
+      advisory, not gate rows (`references/mixing/quality-gate.md` section 3h); the gate rows a theatrical change can break
+      are listed there.
 - [ ] **9.5** Listen: `python scripts/listen.py out/master.wav --direction direction/<sheet>.json` (if missing, say so)
 - [ ] **9.6** Complete self-check in `references/workflow/self-check.md` in STATUS.md (all yes/no)
 - [ ] **9.7** Report: what was done, what was checked, what was NOT checked, gate results, the version number delivered, any limitations. Update STATUS.md.
@@ -165,6 +170,7 @@ Before Phase 4, open every file in the row that matches the request; union sever
 | **Full orchestra/SFZ/real samples/library by name, or a natural SoundFont sound** | Section 5 below + `references/instruments-and-vocals/soundfont-realism.md`, `knowledgebase/sound-design/soundfont-velocity-and-realism.md`, `references/instruments-and-vocals/sfz-libraries.md`, `references/instruments-and-vocals/natural-instruments.md`, `references/mixing/mixing-and-mastering.md` |
 | **Choose/write gate profile** | `references/mixing/quality-gate.md` §3c, `scripts/gate_profiles.py` (list/rows/explain), Section 6 |
 | **Robotic/flat/wrong mood/no beat** | `references/mixing/humanization.md`, `references/instruments-and-vocals/natural-instruments.md`, `references/scoring/emotion-and-scoring.md`, `references/workflow/music-direction.md` |
+| **Theatrical / Hollywood / "less synthetic" / orchestral realism** | `knowledgebase/sound-design/theatrical-realism.md`, `references/mixing/theatrical-realism.md`, `scripts/realism_report.py`, `references/instruments-and-vocals/soundfont-realism.md`, `references/mixing/humanization.md` |
 | **Gate row failed** | `references/mixing/quality-gate.md`, `references/workflow/troubleshooting-and-limits.md` |
 
 If none match, open `knowledgebase/README.md`, ask the reference finder (`python scripts/find_references.py "<the brief>"`), and record the choice in STATUS.md.

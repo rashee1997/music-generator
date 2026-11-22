@@ -45,6 +45,22 @@ hard one open. Rules:
   a legato line within a narrow velocity range, or give it its own track.
 - It cannot add a real second layer: the attack and the harmonic series stay those of the one sample. Say so.
 
+## 2b. A continuous loudness-timbre coupling: `timbre_dynamics`
+
+`velocity_timbre` splits written velocities into bands. A part whose written velocities already move can instead
+ask for a continuous coupling: the rendered level of the stem controls a nonlinear residue and a high shelf, so a
+swell gets brighter as it rises and a quiet passage keeps its body.
+
+```json
+"timbre_dynamics": {"drive": 0.5, "tilt_db": 2.0, "tilt_hz": 2800, "band_hz": [140, 7000],
+                    "amount": 0.6, "smooth_s": 0.35}
+```
+
+It is level-compensated: colour, not pattern level. The sub is excluded from the nonlinear band so the low end
+stays clean. A stem with no dynamic range is returned unchanged. Do not put it on `sfx:`, `env:` or `clone:` tracks.
+Facts: `knowledgebase/sound-design/theatrical-realism.md` section 1. It cannot add the missing fortissimo sample;
+say so in the report.
+
 ## 3. Layering and articulation
 
 - A sustained part gets a short attack under it: `timpani` or `pizzicato` under `strings`, a staccato `horn` under a
