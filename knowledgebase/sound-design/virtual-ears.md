@@ -4,7 +4,7 @@ title: Virtual ears - cochlear, hair-cell and adaptation model for QA
 domain: sound-design
 status: partly-sourced
 sources: [https://arxiv.org/html/2404.17490v1, https://raw.githubusercontent.com/google/carfac/master/LICENSE, https://github.com/tomstoll/PyZBC2014, https://github.com/mrkrd/cochlea]
-used_by: [knowledgebase/sound-design/roughness.md, docs/PSYCHOACOUSTICS.md]
+used_by: [scripts/auditory.py, scripts/ear_rows.py, knowledgebase/sound-design/roughness.md, docs/PSYCHOACOUSTICS.md]
 updated: 2026-11-23
 ---
 

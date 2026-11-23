@@ -4,7 +4,7 @@ title: Melodic expectation - information content and entropy from a PPM model
 domain: sound-design
 status: partly-sourced
 sources: [https://joss.theoj.org/papers/3f2e7b31cf9ee2f96ba631ff2617f8c5, https://par.nsf.gov/servlets/purl/10565624]
-used_by: [docs/PSYCHOACOUSTICS.md]
+used_by: [scripts/expectation.py, scripts/pattern_audit.py, docs/PSYCHOACOUSTICS.md]
 updated: 2026-11-23
 ---
 

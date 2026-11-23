@@ -10,9 +10,9 @@ This system is grounded in established auditory neuroscience and music perceptio
 | **Harmonic Resolution Gravity** | `pattern_audit.py`, `theory.py` | Chromatic non-scale tension notes must step to adjacent chord tones; exempts microtonal ornamentation ($c \neq 0$) | Huron (2001) |
 | **Chew's 3D Spiral Array Tonal Tension** | `pattern_audit.py` | Helical line-of-fifths projection measuring Cloud Diameter, Cloud Momentum, Tensile Strain from tonic | Chew (2000, 2001) |
 | **Witek-Vuust Syncopation Curve** | `pattern_audit.py` | Dynamic metric tree for any meter ($4/4, 3/4, 6/8, 5/4, 7/8, 12/8$). Bar Syncopation Index ($BSI$): $0.15 \le BSI \le 5.5$ | Witek et al. (2014) |
-| **IDyOM Information Entropy** | `pattern_audit.py` | Shannon entropy $H = -\sum p_i \log_2 p_i$ and Markov surprise $I = -\log_2 P$. Optimal interest: $1.2 \le H \le 3.8$ bits | Pearce & Wiggins (2006) |
+| **IDyOM-style information content** | `expectation.py`, rows in `pattern_audit.py` | Prediction by partial matching (escape C, order 3) over pitch interval, scale degree and inter-onset ratio; each note predicted before it is learned. Information content $I = -\log_2 P(e \mid context)$ and entropy $H = -\sum p_i \log_2 p_i$ per note. Row limits: `feel.entropy` and `expr.surprise_grounded` in `gate_profiles.ROWS` | Pearce & Wiggins (2004, 2006) |
 | **Plomp-Levelt & Sethares Cochlear Sensory Roughness** | `naturalness_check.py` | 1.0s Hann-windowed basilar membrane critical-band analysis 80–6000 Hz. Detects overtone clashes and cadence resolution | Plomp & Levelt (1965), Sethares (1993) |
-| **Moore-Glasberg ERB Binaural Masking** | `mixer.py`, `spatial.py` | 8 Equivalent Rectangular Bandwidth filters ($250 - 4000\text{ Hz}$) with $+3.5\text{ dB}$ Binaural Masking Level Difference ($\Delta BMLD$) stereo panning bonus | Moore & Glasberg (1983, 1996) |
+| **Moore-Glasberg ERB Binaural Masking** | `mixer.py`, `spatial.py`, scales in `auditory.py` | 8 Equivalent Rectangular Bandwidth filters ($250 - 4000\text{ Hz}$) with $+3.5\text{ dB}$ Binaural Masking Level Difference ($\Delta BMLD$) stereo panning bonus | Moore & Glasberg (1983, 1996) |
 | **Environmental Bed Stability** | `quality_gate.py` | Dropout-free ambient beds ($>-58\text{ dBFS}$), gain pumping limit ($|\Delta\text{RMS}| \le 3.8\text{ dB}$) | - |
 
 ## Key Equations
@@ -38,6 +38,26 @@ Applied as stereo panning bonus in the $250-4000\text{ Hz}$ ERB range.
 
 ### Critical Band Roughness
 Analyzed via critical band decomposition with beating detection in adjacent frequency components.
+
+## Virtual ears (advisory rows)
+
+Code: `scripts/ear_model/`, rows in `scripts/ear_rows.py`, scales in `scripts/auditory.py`, facts in
+`knowledgebase/sound-design/virtual-ears.md`. A streaming model (5 s chunks, state carried) turns the master into a neural
+activity pattern at 2240 Hz: middle-ear weighting (inverse absolute threshold), a serial cascade of asymmetric resonators at
+ERB spacing (channel = stage input minus stage output), a block-rate compressive gain spread over neighbouring channels
+(feed-forward, so one numpy pass; CARFAC proper feeds the level back into each stage), hair-cell rectification, saturation
+and low-pass, and two-time-constant divisive adaptation. Rows: `ear.fatigue`, `ear.masking`, `ear.mod_roughness`,
+`ear.pitch_salience`, `ear.iacc`. All are INFO or WARN: starting values calibrated on synthetic fixtures. Known limits: the hair
+cell saturates, so modulation roughness under-reads loud material; pitch salience stops near 700 Hz; fatigue is a proxy.
+
+## Three-front layout with two low-frequency channels
+
+`lrc_lfe2` (L, R, C, LFE1, LFE2) is a project layout, not a BS.2051 system (`knowledgebase/sound-design/layout-3-2.md`). The
+low-frequency pair is mono and in phase below `decorrelate_above_hz` (40 Hz) and decorrelated above it by a bounded
+all-pass cascade (3 ms total group delay), so the two subs add under the corner and excite different room modes above it.
+Fold chain: 3.2 -> 3.1 (the two LFEs summed with gain $1/\sqrt{2(1+\rho)}$, $\rho$ their correlation) -> BS.775 stereo.
+Rows: `lfe.polarity` (FAIL for an inverted sub), `lfe.sum_coherence`, `lfe.fold_loss`, `lfe.modal_spread` (a model of a box
+room, not the listener's room), `front.fold_phantom` (centre folded into L/R against a real centre through the measured head set).
 
 ## Spatial and room acoustics (Immersive 2.0)
 

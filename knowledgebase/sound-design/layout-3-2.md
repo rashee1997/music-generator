@@ -4,7 +4,7 @@ title: Three-front loudspeaker layout with two low-frequency channels
 domain: sound-design
 status: partly-sourced
 sources: [https://www.itu.int/rec/R-REC-BS.775, https://www.itu.int/rec/R-REC-BS.2051, https://www.aes.org/e-lib/browse.cfm?elib=13988]
-used_by: [knowledgebase/sound-design/virtual-speaker-qa.md]
+used_by: [scripts/spatial_engine/lfe_qa.py, scripts/spatial_engine/bass.py, knowledgebase/sound-design/virtual-speaker-qa.md]
 updated: 2026-11-23
 ---
 

@@ -36,3 +36,19 @@ The virtual array is not a room or a listening test. The per-bar RMS test cannot
 does not decide whether a deliberate one-bar effect is musically right. A 36-point Fibonacci sphere is an
 observation grid, not a certified spherical design; AllRAD's 1200-point internal sampling is what makes the
 decoder. Thresholds are starting values and are relaxed only with a measured reason.
+
+## Two low-frequency channels and a three-front stage
+
+`scripts/spatial_engine/lfe_qa.py` and `spatial_gate.lfe_rows` add, for a layout with two `lfe` speakers (`lrc_lfe2`):
+
+| Row | Reads | Fails or warns |
+|---|---|---|
+| `lfe.polarity` | zero-lag correlation of LFE1 and LFE2 (and the best within +-1 ms) | FAIL when opposed (default below -0.3 with real correlation) |
+| `lfe.sum_coherence` | correlation over 20 Hz to `decorrelate_above_hz` | WARN under 0.9 |
+| `lfe.fold_loss` | level the 3.2 -> 3.1 fold gains or loses per 1/3 octave | WARN beyond 1.5 dB |
+| `lfe.modal_spread` | spatial spread of a virtual box room, one sub against two | WARN when two are worse; INFO otherwise |
+| `front.fold_phantom` | ITD and ILD of the centre folded into L/R against a real centre, measured head set | WARN beyond 100 microseconds or 2 dB |
+
+`lfe.modal_spread` is a model of the room in the layout's `qa.listening_room` (a starting value), not of the listener's. A
+front-only layout declares its own decoder bounds in `gate.decode_uniformity_max_db` (measured 0.34 dB for AllRAD2 and
+3.26 dB for AllRAD on `lrc_lfe2`), instead of loosening `imm.decode_uniformity`.

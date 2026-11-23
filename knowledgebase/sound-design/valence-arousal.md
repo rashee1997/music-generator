@@ -4,7 +4,7 @@ title: Valence and arousal - what an audio arc can and cannot say about feeling
 domain: sound-design
 status: unverified
 sources: []
-used_by: [knowledgebase/sound-design/expectation-idyom.md]
+used_by: [scripts/affect.py, knowledgebase/sound-design/expectation-idyom.md]
 updated: 2026-11-23
 ---
 
