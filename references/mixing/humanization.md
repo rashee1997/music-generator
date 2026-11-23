@@ -19,8 +19,8 @@ nuance in custom scripts.
 | Aspect | What real players do | What humanize.py does |
 |---|---|---|
 | Melody vs accompaniment | The melody voice sounds ~10-30 ms **before** the other voices and is played louder ("melody lead", Goebl 2001; the velocity advantage is the cause, not a choice) | melody offset = -lead_ms (20 ms natural), melody velocity +8, chords -6, pads -10 |
-| Timing error | Not white noise. A slow drift (1/f-like) plus note-to-note errors that are **anti-correlated** (a late note is followed by an early one). Drummers: inter-beat-interval SD roughly 9-15 ms in good playing | per-note error `e[i] - 0.5 e[i-1]` (sigma 7 ms) + smooth drift (9 ms) |
-| Tempo | Breathes: slight speed-up into the middle of a phrase, slowing at the end, big final ritardando | `TempoMap`: phrase arch (+-2.5 %), slow wander (0.6 %), final ritardando (35 %, last 6 beats) |
+| Timing error | Not white noise: long-range (1/f^beta) correlations in both intervals and amplitudes, plus note-to-note errors that are **anti-correlated** along one limb (a late note is followed by an early one). Drummers: inter-beat-interval SD roughly 9-15 ms in good playing | spectral 1/f^beta short-scale error plus per-limb `e[i] - 0.5 e[i-1]` (sigma 7 ms), and a shared 1/f drift (9 ms) |
+| Tempo | Breathes on the real phrases: speed-up into a phrase's middle, slowing at its end, and a final ritardando that follows a stopping runner's braking curve | `TempoMap`: arch on the figure's phrase spans (+-2.5 %), 1/f wander (0.6 %), final ritardando 35 % over the last 6 beats with q = 3 |
 | Dynamics | Downbeats stronger; phrases swell to a peak and relax; higher notes slightly louder in a rising line; last note of a phrase softer | metric accent, phrase arch (+-3.5), pitch-contour term, phrase-end relax |
 | Chords | Never struck at one instant: guitar strum 20-80 ms, piano roll 5-20 ms, harp roll 20-40 ms | strum spread 10 ms (up/down alternating) |
 | Articulation | Legato notes overlap the next one by tens of ms; staccato = ~50 % length; every note length varies a few % | overlap 35 ms on legato roles, +-4 % duration jitter, `"art":"staccato"` honoured |
@@ -28,13 +28,13 @@ nuance in custom scripts.
 | Note shape | A bowed/blown note is not a flat rectangle: it blooms, then fades | per-note CC11 expression curves (`bow`, `breath`) |
 | Pedal / sustain | Piano: pedal changes with each harmony, lifted just before the new chord | `auto_pedal`: lift 40 ms before each chord change |
 | Drums | Kick tight/early, snare a touch late, hats loose; ghost notes (very soft) between backbeats; a fill every 4-8 bars; the same hit is never twice identical | piece-specific push (kick -3 ms, snare +5 ms), velocity jitter, `drum_bar` ghost notes + fills |
-| Swing | Off-beat 8ths late: 0.5 = straight, ~0.58 light, ~0.66 triplet feel, jazz tempo-dependent | `score["swing"]` |
+| Swing | Off-beat 8ths late: 0.5 = straight, ~0.58 light, ~0.66 triplet feel. The ratio falls as the tempo rises (BUR ~3.5:1 slow, 2:1 medium-fast, 1:1 near 280 bpm), a soloist swings less than the ride cymbal, and the short side of a pair has a physical floor near 95 ms | `score["swing"]`, or `"swing": "auto"` for the tempo-derived ratio; `apply_swing(..., bpm=, role=)` |
 | Tuning | Not exactly equal-tempered every note; ensembles are a few cents apart | random +-3 cents per note on per-note channels, `detune_cents` per track |
 
-KTH performance rules (Friberg, Bresin & Sundberg) add more expressive rules - "high loud", "phrase arch",
-"final ritard", "duration contrast", "punctuation" (tiny gap after a phrase), "leap articulation".
-The humanizer implements the first three plus the legato/phrase-end behaviour. You can add the rest by hand
-in custom scripts (shorten notes before big leaps, add 30-80 ms gaps at phrase ends).
+KTH performance rules (Friberg, Bresin & Sundberg 2006): "high loud", "phrase arch", "final ritard",
+"duration contrast", "double duration", "faster uphill", "punctuation", "repetition articulation", "high sharp" and
+"leap articulation" are all in the model now, each with its own `TIMING` weight (section 1b, 1d). They act on the
+notes, not on the score: switch a rule off by setting its weight to 0.
 
 ## 1b. The timing model's own keys (all overridable)
 
@@ -50,6 +50,20 @@ of them. They exist because the old model had one behaviour for every piece.
 | `just_ratio` | 0.45 | chord tones bend toward just intonation (major third ~-13.7 cents, fifth ~+2); 0 = 12-TET |
 | `push_tempo_power` | 0.4 | scales the fixed drum push with tempo (96 bpm is the reference) |
 | `subdiv_push_ms` | 1.2 | extra hat push when the part is written in 16ths or faster |
+| `fractal_beta` | 0.85 | slope of the 1/f^beta timing, drift and velocity wander (measured band 0.5-1.0) |
+| `short_scale_beats` | 8 | the crossover between the short process and the shared long one (Sogorski et al. 2018: ~8 beats) |
+| `short_share` | 0.22 | share of the short-scale timing variance that is 1/f rather than white motor error; per preset (0.15 tight .. 0.30 loose) |
+| `vel_time_couple` | 0.35 | on drums, how much velocity wander follows the microtiming (Rasanen et al. 2015) |
+| `duration_contrast` | 0.06 | shorten short notes / lengthen long ones (KTH) |
+| `double_duration` | 0.10 | soften a written 2:1 pair by ~10 % each way |
+| `faster_uphill_ms` | 2.0 | an ascending step leans forward, up to 2 ms (0.35 ms per semitone) |
+| `punctuation_ms` | 12 | micro-phrase comma: lengthen the turn's last note, delay the next gesture |
+| `repetition_gap_ms` | 14 | air before a repeated identical pitch, taken off the held note's end (no onset move) |
+| `high_sharp_cents` | 1.5 | high register sits slightly sharp (per octave above C4), figure roles only |
+| `vel_lead_ms` | 6 | a harder stroke arrives sooner: the loud note of a chord leads it (Goebl 2005) |
+| `phrase_tempo_vel` | 2 | phrase dynamics track the phrase rubato (Todd 1992) |
+| `melodic_charge_vel` / `_dur` | 2.0 / 0.015 | velocity and length grow with a figure note's circle-of-fifths distance from the sounding root |
+| `harmonic_charge_vel` / `_dur` | 1.5 / 0.010 | the same for a chord root's distance from the tonic |
 
 **The drift is shared, not per track.** `tempo_map_for()` attaches one `shared_drift` curve to the tempo map, and every
 track of the piece reads it. Before this each track drew its own drift, so two players of one section wandered apart by
@@ -84,6 +98,36 @@ A `groove` or `texture` piece has no figure, so nothing gets the melody lead; th
 surface. The mix's `level_by_role` and `widen_by_role` follow the same roles, so phrasing and level cannot disagree
 about what a part is.
 
+## 1d. The newer parts of the model
+
+- **Two scales, one exponent.** Timing error is generated as 1/f^beta noise in the frequency domain, split at
+  `short_scale_beats` (8): the short band (`timing_ms`, per player, larger in jazz/loose) and the long band
+  (`drift_ms`, shared by the whole section). The old Gaussian-smoothed white noise had one correlation length
+  and no scale-free regime, which is what listeners rate as less human than 1/f.
+- **One motor stream per limb/finger.** The lag-1 correction now runs inside each stream: one limb on a kit
+  (kick {35,36}, snare {37,38,40}, hats/ride {42,44,46,51,53,59}, ...) and one pitch on a keyboard. A simultaneous
+  kick and hi-hat are two limbs; two notes of one chord are two fingers. Correlating the flat sorted list made the
+  hi-hat's error depend on the kick's and note 2 of a chord on note 1, which is not motor behaviour.
+- **The close is kinematics, not a parabola.** `ritard_q` (default 3) sets v(x) = [1 + (w^q - 1)x]^(1/q) with
+  w = 1 - ritard: constant braking power, the curve that fits measured final ritardandi and the best-rated
+  decelerations (Friberg & Sundberg 1999). `ritard_q: 2` gives constant braking force.
+- **Swing has a tempo.** `swing: "auto"` derives the beat-upbeat ratio from the tempo, the figure roles swing at
+  60 % of the accompaniment's depth, and no swung pair is allowed a short side under 95 ms, so fast passages
+  straighten themselves instead of asking for an unplayable note.
+- **The phrase is one structure.** `tempo_map_for(score)` reads the figure's real phrase spans and puts the rubato
+  arches on them; `humanize_track` reads the same spans for its velocity arches and its phrase-end relax, and its
+  velocity follows the local tempo factor (`phrase_tempo_vel`). A fixed 16-beat rubato over a 5-beat phrase swelled
+  where the line did not.
+- **The humanizer can hear the harmony.** `tempo_map_for` also carries the tonic and the sounding chord roots (the
+  lowest note of each chord/pad/bass cluster). A figure note's distance from the root on the circle of fifths, and a
+  root's distance from the tonic, raise velocity and length a little (KTH melodic/harmonic charge).
+- **Moods are a separate axis.** `MOODS` (`tender`, `bright`, `solemn`, `urgent`) scale level, gate, accent,
+  duration contrast, strum and rubato on top of any groove preset (GERM: Juslin, Friberg & Bresin 2001). Set
+  `"mood"` on the score, or pass `mood=` to `humanize_track`; an unknown name raises.
+- **Not implemented: oscillator coupling between players.** Ensemble coupling is the shared drift only. The renderer
+  humanizes each track in its own worker, so a first-order phase correction of one part toward another (Hennig 2014)
+  would need a cross-track pass that the parallel render does not have.
+
 ## 2. Presets (in `humanize.PRESETS`)
 
 | Preset | timing_ms | lead_ms | drift_ms | vel_sigma | rubato | Feel |
@@ -113,9 +157,9 @@ term is negative at lag 1; louder notes are longer; a major third sits about 14 
 instrument articulation overrides the role overlap; the drum push grows at a slower tempo. Run it before changing a
 number here.
 
-A measured caveat worth knowing: with the default drift and motor amplitudes, the *total* deviation's lag-1 is positive
-(~+0.6) because the slow wander dominates. That is realistic for tempo drift, but it means the module's old claim that
-neighbouring notes are anti-correlated describes the motor term, not the sum.
+A measured caveat worth knowing: the *motor* term is negative at lag 1 (about -0.4), but the *total* deviation's
+lag-1 is whatever the slow wander and the 1/f short band make it - with a large `drift_ms` it can be positive. That is
+realistic for tempo drift; it means "neighbouring notes are anti-correlated" describes the motor term, not the sum.
 
 ## 3c. Vibrato that wanders (`vibrato.model: "ou"`)
 
@@ -175,6 +219,7 @@ events = hz.humanize_track(notes, tm, 'natural', role='melody', seed=3)         
 print(hz.event_stats(events, tm))                                                   # timing/velocity spread
 ```
 Note fields you can set by hand: `"art": "staccato"|"legato"`, `"v"` (0..1), `"d"` (beats). Role names: melody counter chord pad bass arp drum fx.
+`humanize_track` also takes `mood=`, `swing='auto'`, `key=` and `chord_roots=` when a caller has them outside a score.
 
 ## 6. The six acoustic laws
 

@@ -376,7 +376,9 @@ def _gate_key(name, audio_hash, track, score, secs, dur, gp):
         track={k: (track or {}).get(k) for k in ('name', 'role', 'instrument', 'notes')},
         bpm=score.get('bpm'), ts=score.get('ts'),          # flat-bpm-ok: part of the cache key, not a conversion
         tempo={k: score.get(k) for k in ('tempo_points', 'humanize', 'rubato', 'wander', 'ritard', 'ritard_beats',
-                                         'phrase_beats', 'fermata', 'seed')},    # every input of humanize.tempo_map_for
+                                         'phrase_beats', 'fermata', 'elastic', 'mood', 'seed', 'ritard_q')},
+        #   every score-level input of humanize.tempo_map_for; its note-dependent inputs (total length, the figure's
+        #   phrase spans) are in `dur` and `audio` - a map that moves the notes re-renders them
  dur=round(float(dur), 4), profile=gp.label,
         sections=[(s.get('name'), round(float(s['start_s']), 4), round(float(s['end_s']), 4), s.get('dyn'))
                   for s in secs],

@@ -20,14 +20,20 @@ Why this exists: a MIDI score where every note lands exactly on the grid with th
 sounds like a machine no matter how good the samples are. Real players differ from the grid in
 structured ways (research summary in references/mixing/humanization.md):
 
-  * the melody leads the accompaniment by ~15-30 ms and is played louder (Goebl 2001)
-  * timing error is NOT white noise: it drifts slowly (1/f-like) and neighbouring errors are
-    anti-correlated (a late note is followed by an early one) - so we use drift + (e[i]-0.5*e[i-1])
-  * phrases breathe: tiny accelerando into the middle, slowing at the end, big ritardando at the close
-  * dynamics follow the beat (downbeat > offbeat), the phrase (arch), and the pitch contour
+  * the melody leads the accompaniment by ~15-30 ms and is played louder (Goebl 2001); part of that lead is a
+    hammer-velocity artifact, so a louder note inside a chord also starts earlier (Goebl et al. 2005)
+  * timing error is NOT white noise: it is long-range correlated (1/f^beta) and neighbouring errors are
+    anti-correlated along one limb/finger (a late note is followed by an early one) - so we use a two-scale
+    fractal drift plus an anti-correlated motor error per limb, never across limbs
+  * phrases breathe: tiny accelerando into the middle, slowing at the end, big ritardando at the close; the close
+    follows the kinematics of a stopping runner (v(x) with q = 3), not a parabola (Friberg & Sundberg 1999)
+  * dynamics follow the beat (downbeat > offbeat), the phrase (arch), the pitch contour, and the tonal charge of the
+    moment (KTH melodic/harmonic charge)
   * chords are never struck at the same instant: strums / rolls spread 5-30 ms
-  * notes overlap or detach according to articulation; durations vary a few percent
-  * drums: kick tight, snare a hair late, hats loose, ghost notes quiet, accents patterned
+  * notes overlap or detach according to articulation; durations vary a few percent, and the KTH Duration Contrast /
+    Double Duration / Faster Uphill / Punctuation / Repetition rules keep a rhythm from reading as a table
+  * drums: kick tight, snare a hair late, hats loose, ghost notes quiet, accents patterned; the swing ratio itself
+    shrinks as the tempo rises, because the short side of a swung pair has a physical floor (Friberg & Sundstrom 2002)
 
 Everything is seeded, so the same score + seed always renders identically.
 
@@ -39,6 +45,7 @@ Output event (dict, SECONDS): {"t","dur","p","v"(1-127),"role","beat"}
 
     from humanize import humanize_track, TempoMap, PRESETS
 """
+import re
 import sys
 
 import numpy as np
@@ -47,13 +54,18 @@ import pattern_audit as pa                          # one definition of "machine
 import roles as rolelib                             # one role vocabulary, shared with the gate and the mixer
 
 PRESETS = {
-    # timing_ms = per-note gaussian sigma; lead_ms = how early the melody sits; drift_ms = slow ensemble wander
-    'tight':   dict(timing_ms=3,  drum_ms=2,  lead_ms=8,  drift_ms=3,  vel_sigma=3, rubato=0.00, wander=0.000, strum_ms=4,  ritard=0.20, accent=0.6),
-    'natural': dict(timing_ms=7,  drum_ms=5,  lead_ms=20, drift_ms=9,  vel_sigma=5, rubato=0.025, wander=0.006, strum_ms=10, ritard=0.35, accent=1.0),
-    'loose':   dict(timing_ms=12, drum_ms=9,  lead_ms=25, drift_ms=15, vel_sigma=7, rubato=0.04, wander=0.010, strum_ms=16, ritard=0.40, accent=1.2),
-    'rubato':  dict(timing_ms=9,  drum_ms=6,  lead_ms=28, drift_ms=12, vel_sigma=6, rubato=0.07, wander=0.015, strum_ms=22, ritard=0.50, accent=0.8),
-    'punchy':  dict(timing_ms=4,  drum_ms=2,  lead_ms=10, drift_ms=4,  vel_sigma=4, rubato=0.01, wander=0.002, strum_ms=6,  ritard=0.20, accent=1.3, upbeat=True),
-    'bouncy':  dict(timing_ms=5,  drum_ms=3,  lead_ms=12, drift_ms=5,  vel_sigma=5, rubato=0.01, wander=0.003, strum_ms=8,  ritard=0.20, accent=1.4, upbeat=True),
+    # timing_ms = short-scale (<8 beats) per-note jitter sigma; lead_ms = how early the melody sits;
+    # drift_ms = long-scale (>=8 beats) shared ensemble wander; short_share = how much of the short-scale timing
+    # variance is 1/f rather than white motor error. Sogorski, Geisel & Priesemann (2018) measured two power-law
+    # regimes in >100 jazz and rock/pop recordings: a short process below ~8 beats that is much larger in jazz, and a
+    # long process above ~8 beats (the shared tempo drift) that is similar across genres. So `timing_ms` is the
+    # short, genre-dependent part and `drift_ms` the long, shared one - they are not interchangeable.
+    'tight':   dict(timing_ms=3,  drum_ms=2,  lead_ms=8,  drift_ms=3,  vel_sigma=3, rubato=0.00, wander=0.000, strum_ms=4,  ritard=0.20, accent=0.6, short_share=0.15),
+    'natural': dict(timing_ms=7,  drum_ms=5,  lead_ms=20, drift_ms=9,  vel_sigma=5, rubato=0.025, wander=0.006, strum_ms=10, ritard=0.35, accent=1.0, short_share=0.22),
+    'loose':   dict(timing_ms=12, drum_ms=9,  lead_ms=25, drift_ms=15, vel_sigma=7, rubato=0.04, wander=0.010, strum_ms=16, ritard=0.40, accent=1.2, short_share=0.30),
+    'rubato':  dict(timing_ms=9,  drum_ms=6,  lead_ms=28, drift_ms=12, vel_sigma=6, rubato=0.07, wander=0.015, strum_ms=22, ritard=0.50, accent=0.8, short_share=0.30),
+    'punchy':  dict(timing_ms=4,  drum_ms=2,  lead_ms=10, drift_ms=4,  vel_sigma=4, rubato=0.01, wander=0.002, strum_ms=6,  ritard=0.20, accent=1.3, upbeat=True, short_share=0.15),
+    'bouncy':  dict(timing_ms=5,  drum_ms=3,  lead_ms=12, drift_ms=5,  vel_sigma=5, rubato=0.01, wander=0.003, strum_ms=8,  ritard=0.20, accent=1.4, upbeat=True, short_share=0.18),
 }
 
 # The timing model's own defaults, merged under a preset. They are values, not choices: a preset or a score overrides
@@ -61,8 +73,22 @@ PRESETS = {
 # `drift_corr_beats` is how slowly the shared wander moves; `vel_dur` couples a louder note to a slightly longer one;
 # `tune_drift_cents` lets a phrase drift in intonation together; `just_ratio` bends chord tones towards just intonation
 # (0 = equal temperament, 1 = full just intonation); the drum keys scale the fixed push with tempo and subdivision.
+#
+# fractal_beta / short_scale_beats / short_share: timing and loudness are scale-free (1/f^beta), not one Gaussian
+# cutoff. beta ~0.85 is inside the 0.5-1.0 band measured for both inter-beat intervals and hit amplitudes.
+# vel_time_couple: on percussion, loudness itself follows the microtiming (Rasanen et al. 2015: Porcaro's hi-hat has
+# 1/f long-range correlation in BOTH intervals and amplitudes, plus short-range anti-correlation).
+# The KTH local rules (Friberg, Bresin & Sundberg 2006): duration_contrast, double_duration (the 2:1 softening),
+# faster_uphill_ms, punctuation_ms, repetition_gap_ms, high_sharp_cents.
+# vel_lead_ms: the hammer-velocity part of melody lead (Goebl 2001; Goebl et al. 2005), only on hammered/plucked
+# instruments; phrase_tempo_vel couples phrase rubato to phrase dynamics (Todd 1992);
+# melodic_charge_* / harmonic_charge_*: KTH tonal tension (Sundberg et al. 1991) from circle-of-fifths distance.
 TIMING = dict(note_lag1=0.5, drift_corr_beats=6.0, vel_dur=0.018, tune_drift_cents=1.2, just_ratio=0.45,
-              push_tempo_power=0.4, subdiv_push_ms=1.2)
+              push_tempo_power=0.4, subdiv_push_ms=1.2,
+              fractal_beta=0.85, short_scale_beats=8.0, short_share=0.22, vel_time_couple=0.35,
+              duration_contrast=0.06, double_duration=0.10, faster_uphill_ms=2.0, punctuation_ms=12.0,
+              repetition_gap_ms=14.0, high_sharp_cents=1.5, vel_lead_ms=6.0, phrase_tempo_vel=2.0,
+              melodic_charge_vel=2.0, melodic_charge_dur=0.015, harmonic_charge_vel=1.5, harmonic_charge_dur=0.010)
 
 # A score's `elastic` block: long-range tempo breathing, and a collective breath hold at named beats.
 ELASTIC_KEYS = ('amount', 'corr_beats', 'breaths', 'breath_s')
@@ -92,9 +118,43 @@ ROLE = {
 # profile, which is how a drone ended up shaped like a comp. Unknown roles now raise in roles.canonical().
 FIG = rolelib.LEAD
 
+# GERM expression profiles (Juslin, Friberg & Bresin 2001; Bresin & Friberg 2011): a mood is a bundle of the same
+# variables - level, articulation, accent, rubato, strum - not a different humanizer. They scale on top of a groove
+# preset, so `tight` + `tender` and `loose` + `tender` are both possible. Values are starting values.
+MOODS = {
+    'tender': dict(vel=-6.0, gate=+0.04, accent=0.85, duration_contrast=0.70, strum=1.35, rubato=1.25),
+    'bright': dict(vel=+5.0, gate=-0.02, accent=1.15, duration_contrast=1.30, strum=0.75, rubato=0.85),
+    'solemn': dict(vel=-3.0, gate=+0.02, accent=1.05, duration_contrast=0.85, strum=1.15, rubato=0.70),
+    'urgent': dict(vel=+4.0, gate=-0.06, accent=1.25, duration_contrast=1.50, strum=0.50, rubato=0.35),
+}
+
 # drum piece offsets in ms (kick tight/early, snare lays back, hats loose)
 DRUM_PUSH = {36: -3.0, 35: -3.0, 38: +5.0, 40: +5.0, 37: +3.0, 39: +4.0, 42: +1.0, 44: +1.0, 46: +2.0,
              51: +2.0, 59: +2.0, 49: 0.0, 57: 0.0}
+
+# A limb is one motor program. The lag-1 correction belongs to it and to nothing else: a simultaneous kick and hi-hat
+# are two limbs, and two notes of one chord are two fingers. (Frühauf et al. 2013; Senn et al. 2016 on groove loss.)
+DRUM_LIMB = {35: 'kick', 36: 'kick', 37: 'stick', 38: 'snare', 39: 'clap', 40: 'snare', 41: 'tom_low',
+             43: 'tom_low', 45: 'tom_mid', 47: 'tom_mid', 48: 'tom_high', 50: 'tom_high',
+             42: 'hat', 44: 'hat', 46: 'hat', 51: 'ride', 53: 'ride', 59: 'ride', 49: 'crash', 52: 'crash',
+             55: 'crash', 57: 'crash'}
+
+# instruments whose onset is a hammer or a pluck, where a harder stroke really does arrive sooner (Goebl 2001)
+VEL_LEAD_WORDS = ('piano', 'celesta', 'harpsichord', 'clav', 'marimba', 'vibra', 'xylophone', 'glocken', 'kalimba',
+                  'guitar', 'lute', 'harp', 'sitar', 'santoor', 'kora', 'banjo', 'mandolin', 'dulcimer', 'cimbalom')
+
+# Circle-of-fifths position of each pitch class (C=0, G=1, D=2, ...). Tonal distance is the short way round it.
+CIRCLE = {0: 0, 7: 1, 2: 2, 9: 3, 4: 4, 11: 5, 6: 6, 1: 7, 8: 8, 3: 9, 10: 10, 5: 11}
+NOTE_PC = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11}
+
+# swing: BUR (beat-upbeat ratio) falls nearly linearly with tempo and reaches 1:1 at ~280 BPM, and the short side of a
+# pair has a physical floor around 95 ms (Friberg & Sundstrom 2002). Starting values.
+SWING_BUR_SLOW, SWING_BUR_FAST = 3.5, 1.0
+SWING_BPM_SLOW, SWING_BPM_FAST = 60.0, 280.0
+SWING_FLOOR_S = 0.095
+SWING_FIG_DEPTH = 0.6        # a soloist swings less than the ride cymbal behind them
+
+CHORD_ROLES = ('chord', 'pad', 'bass', 'arp', 'texture')
 
 
 def _vel127(v):
@@ -113,12 +173,134 @@ def _smooth_noise(rng, n, corr):
     return (y - y.mean()) / (s if s > 1e-9 else 1.0)
 
 
+def _fractal_noise(rng, n, beta=0.85, fc=None, highpass=False):
+    """1/f^beta noise with unit std, shaped in the frequency domain.
+
+    Human timing and loudness are long-range correlated rather than smoothed white noise: every frequency bin of a
+    white draw is scaled by f**(-beta/2), so the series carries a scale-free cascade instead of a single Gaussian
+    cutoff (Rasanen et al. 2015 on intervals AND amplitudes; Sogorski, Geisel & Priesemann 2018 on the two regimes).
+    `fc` (cycles per sample) is a soft band edge: with `highpass` the slow trend is removed (the short-scale process,
+    inside `short_scale_beats`), without it the fast detail is removed (the long-scale process, the shared wander).
+    """
+    n = int(n)
+    if n <= 0:
+        return np.zeros(0)
+    if n < 3:
+        return np.zeros(n)
+    w = rng.standard_normal(n)
+    spec = np.fft.rfft(w)
+    f = np.fft.rfftfreq(n)
+    f = np.where(f <= 0.0, 1.0 / n, f)
+    amp = f ** (-0.5 * float(beta))
+    if fc and float(fc) > 0.0:
+        lp = 1.0 / (1.0 + (f / float(fc)) ** 4)
+        amp = amp * ((1.0 - lp) if highpass else lp)
+    y = np.fft.irfft(spec * amp, n)
+    y = y - y.mean()
+    s = float(y.std())
+    return y / s if s > 1e-12 else np.zeros(n)
+
+
+def _limb_of(pitch):
+    """The motor stream a drum pitch belongs to (a kit is several limbs, not one hand)."""
+    return DRUM_LIMB.get(int(pitch), f'other{int(pitch)}')
+
+
+def _circle_distance(pc, root_pc):
+    """Tonal charge of a pitch class against a root: 0 at the root, 1 at the tritone (circle-of-fifths distance)."""
+    d = abs(CIRCLE[int(pc) % 12] - CIRCLE[int(root_pc) % 12]) % 12
+    return min(d, 12 - d) / 6.0
+
+
+def key_tonic(key):
+    """'D minor' / 'Bb' / 'F#' / 2 -> tonic pitch class (None when the score names no key)."""
+    if key is None:
+        return None
+    if isinstance(key, (int, float, np.integer, np.floating)):
+        return int(key) % 12
+    m = re.match(r'\s*([A-Ga-g])([#b]?)', str(key))
+    if not m:
+        return None
+    pc = NOTE_PC[m.group(1).upper()] + {'#': 1, 'b': -1}.get(m.group(2), 0)
+    return pc % 12
+
+
+def _figure_track(tracks):
+    """The track that carries the line (melody | lead | vocal), which is the one whose phrases the piece breathes on."""
+    for tr in tracks or []:
+        try:
+            role = rolelib.canonical(tr.get('role'))
+        except Exception:
+            continue
+        if role in FIG and tr.get('notes'):
+            return tr
+    return None
+
+
+def score_phrase_spans(tracks):
+    """Real phrase boundaries of the figure, as [(start_beat, end_beat), ...]; None when the piece has no figure.
+
+    The tempo arches and the velocity arches must be the same phrases. A fixed `phrase_beats=16` rubato over a line
+    whose phrases are 5 or 21 beats long is uncoordinated by construction: it swells where the melody does not.
+    """
+    tr = _figure_track(tracks)
+    if not tr:
+        return None
+    ns = sorted([dict(n, d=float(n.get('d', 1.0))) for n in tr['notes']], key=lambda n: (float(n['t']), n.get('p', 0)))
+    ids = _phrase_ids(ns)
+    if not ids:
+        return None
+    starts, ends = [], []
+    for k in sorted(set(ids)):
+        idx = [i for i, q in enumerate(ids) if q == k]
+        starts.append(float(ns[idx[0]]['t']))
+        ends.append(float(ns[idx[-1]]['t']) + max(float(ns[idx[-1]]['d']), 0.25))
+    spans = []
+    for i, (s0, _e) in enumerate(zip(starts, ends)):
+        s1 = starts[i + 1] if i + 1 < len(starts) else ends[i]
+        if s1 > s0:
+            spans.append((s0, s1))
+    return spans or None
+
+
+def score_chord_roots(tracks):
+    """(beats, pitch classes) of the sounding harmony: the lowest note of every chord/pad/bass cluster.
+
+    A melody note's tonal charge is measured against the root actually sounding under it. Without this the humanizer
+    can only hear its own track, and a chromatic passing tone and a chord tone are indistinguishable.
+    """
+    notes = []
+    for tr in tracks or []:
+        try:
+            role = rolelib.canonical(tr.get('role'))
+        except Exception:
+            continue
+        if role not in CHORD_ROLES:
+            continue
+        for n in tr.get('notes', []) or []:
+            try:
+                notes.append((float(n['t']), float(n['p'])))
+            except (KeyError, TypeError, ValueError):
+                continue
+    if not notes:
+        return None
+    notes.sort()
+    beats, roots = [], []
+    for t, pitch in notes:
+        if beats and abs(t - beats[-1]) <= 1e-6:
+            roots[-1] = min(roots[-1], pitch)
+        else:
+            beats.append(t)
+            roots.append(pitch)
+    return np.array(beats, float), np.array([int(round(r)) % 12 for r in roots], int)
+
+
 def shared_drift(seed, total_beats, preset='natural', points=512):
     """One slow wander for the whole piece, as (beats, values), so every track drifts together.
 
     Measured before this: each track built its own drift, so two players of the same section wandered apart by tens of
     milliseconds. A section shares its tempo drift and differs only in the small motor error of each note, which is
-    what `note_lag1` produces.
+    what `note_lag1` produces. Its shape is 1/f^beta below the drift correlation length, not one Gaussian cutoff.
     """
     c = dict(PRESETS['natural'])
     c.update(TIMING)
@@ -129,7 +311,9 @@ def shared_drift(seed, total_beats, preset='natural', points=512):
     rng = np.random.default_rng(int(seed) + 7919)
     g = np.linspace(0.0, max(1.0, float(total_beats)), int(points))
     span = float(c.get('drift_corr_beats', 6.0)) * 8.0
-    vals = _smooth_noise(rng, int(points), corr=max(2.0, span))
+    beats_per_point = max(float(total_beats), 1.0) / max(int(points), 1)
+    vals = _fractal_noise(rng, int(points), beta=float(c.get('fractal_beta', 0.85)),
+                          fc=beats_per_point / max(span, 1.0))
     return g, vals * 0.5          # 0.5: the curve is multiplied by drift_ms at use, matching the old amplitude
 
 
@@ -138,17 +322,24 @@ class TempoMap:
 
     TempoMap(100) is a plain constant tempo. TempoMap(100, points=[[0,100],[32,84]]) ramps linearly.
     rubato: amplitude of the phrase arch (0.03 = +-3 % tempo). ritard: fraction slowed at the very end.
+    ritard_q: the deceleration law of the close. q=3 (constant braking power) is the curve that fits measured final
+    ritardandi and the highest-rated decelerations in listening tests (Friberg & Sundberg 1999); q=2 is the constant
+    braking force. The old 1-ritard*x**2 was a parabola with no measurable support.
+    phrase_spans: [(start_beat, end_beat)] - the figure's real phrases. When given, the rubato arch is placed on those
+    and a rest carries no swell, instead of assuming a 16-beat period.
     elastic: long-range tempo deviation (0.04 = +-4 % over `elastic_corr_beats`), zero-mean so the average tempo
     is unchanged. breaths: beats where the whole ensemble takes a short collective breath (`breath_s` seconds).
     """
 
     def __init__(self, bpm, total_beats=64, points=None, rubato=0.0, phrase_beats=16, wander=0.0,
                  ritard=0.0, ritard_beats=6, fermata=None, seed=1, elastic=0.0,
-                 elastic_corr_beats=12.0, breaths=None, breath_s=0.06):
+                 elastic_corr_beats=12.0, breaths=None, breath_s=0.06, ritard_q=3.0, phrase_spans=None,
+                 fractal_beta=None):
         rng = np.random.default_rng(seed)
         step = 1.0 / 48.0
         T = total_beats + 16
         g = np.arange(0, T, step)
+        beta = float(TIMING['fractal_beta'] if fractal_beta is None else fractal_beta)
         if points:
             pts = sorted(points)
             base = np.interp(g, [p[0] for p in pts], [p[1] for p in pts])
@@ -156,20 +347,33 @@ class TempoMap:
             base = np.full_like(g, float(bpm))
         f = np.ones_like(g)
         if rubato:
-            x = (g % phrase_beats) / phrase_beats
-            f *= 1 + rubato * (np.sin(np.pi * x) - 2 / np.pi)
+            if phrase_spans:
+                arch = np.ones_like(g)
+                for s0, s1 in phrase_spans:
+                    m = (g >= s0) & (g < s1)
+                    if not m.any() or s1 <= s0:
+                        continue
+                    x = (g[m] - s0) / (s1 - s0)
+                    arch[m] = 1 + rubato * (np.sin(np.pi * x) - 2 / np.pi)
+                f *= arch
+            else:
+                x = (g % phrase_beats) / phrase_beats
+                f *= 1 + rubato * (np.sin(np.pi * x) - 2 / np.pi)
         if wander:
-            f *= 1 + wander * _smooth_noise(rng, len(g), corr=8 / step)
+            f *= 1 + wander * _fractal_noise(rng, len(g), beta=beta, fc=step / 8.0)
         if elastic:
             # phrase-scale elasticity, not a per-note wobble: a correlation length of several bars, and an
             # exactly zero-mean curve so the piece does not get slower or faster on average, only more or less urgent
-            e = _smooth_noise(rng, len(g), corr=max(2.0, float(elastic_corr_beats) / step))
+            e = _fractal_noise(rng, len(g), beta=beta, fc=step / max(2.0, float(elastic_corr_beats)))
             body = g <= float(total_beats)             # centre on the piece, not on the padded map
             f *= 1 + float(elastic) * (e - float(e[body].mean() if body.any() else e.mean()))
         if ritard:
             a = total_beats - ritard_beats
             x = np.clip((g - a) / ritard_beats, 0, 1)
-            f *= 1 - ritard * x ** 2
+            q = float(ritard_q) if ritard_q and float(ritard_q) > 0.0 else 3.0
+            w = max(0.05, 1.0 - float(ritard))
+            f *= (1.0 + (w ** q - 1.0) * x) ** (1.0 / q)
+        self.factor = f.copy()                    # the tempo multiplier alone, for local_tempo()/phrase coupling
         spb = 60.0 / (base * f)
         secs = np.concatenate([[0], np.cumsum(spb[:-1] * step)])
         if fermata:                               # [(beat, extra_seconds), ...] - hold a note/chord longer
@@ -194,6 +398,10 @@ class TempoMap:
     def beat(self, seconds):
         return np.interp(np.asarray(seconds, dtype=float), self.secs, self.g)
 
+    def local_tempo(self, beats):
+        """The tempo multiplier at a beat (1.0 = the written tempo): rubato, wander, elasticity and the final ritard."""
+        return np.interp(np.asarray(beats, dtype=float), self.g, self.factor, left=1.0, right=1.0)
+
     @property
     def length(self):
         return float(self.sec(self.total_beats))
@@ -202,7 +410,11 @@ class TempoMap:
 def tempo_map_for(score, seed=None, pad_beats=1):
     """The one TempoMap of a score. The renderer and the pipeline both call this, so the reported duration,
     the ritardando position and the rendered audio cannot disagree (they were built independently with
-    different rubato, ritard and total length)."""
+    different rubato, ritard and total length).
+
+    It also carries the piece's phrase spans, tonic and sounding chord roots, so a track's humanization can place its
+    arches on the real phrases and hear the harmony under its own line.
+    """
     tracks = score.get('tracks', []) or []
     total = max([float(n['t']) + float(n.get('d', 0.0)) for t in tracks for n in t.get('notes', [])] or [16.0])
     cfg = score.get('humanize', 'natural')
@@ -223,26 +435,64 @@ def tempo_map_for(score, seed=None, pad_beats=1):
         raise ValueError('score.elastic.amount: expected 0..0.25 (a quarter of the tempo is not elasticity)')
     if el_breath_s < 0.0 or el_breath_s > 2.0:
         raise ValueError('score.elastic.breath_s: expected 0..2 seconds')
+    mood = score.get('mood')
+    mood = str(mood).lower() if mood is not None else None
+    if mood in MOODS:                       # an expression profile scales the rubato (GERM: urgency is less rubato)
+        rub = float(rub) * float(MOODS[mood].get('rubato', 1.0))
+    elif mood is not None:
+        mood = None                         # a score word that is not one of the profiles shapes nothing here
     seed = seed if seed is not None else score.get('seed', 1)
     tm = TempoMap(score.get('bpm', 90), total_beats=total + pad_beats, points=score.get('tempo_points'),
                   rubato=rub, wander=wander, ritard=score.get('ritard', 0.3),
                   elastic=el_amount, elastic_corr_beats=el_corr, breaths=el_breaths, breath_s=el_breath_s,
                   ritard_beats=score.get('ritard_beats', 6), phrase_beats=score.get('phrase_beats', 16),
+                  ritard_q=score.get('ritard_q', 3.0), phrase_spans=score_phrase_spans(tracks),
                   fermata=score.get('fermata'), seed=seed)
     # one shared wander for the whole piece: every track of a section drifts together instead of apart
     tm.shared_drift = shared_drift(seed if seed is not None else score.get('seed', 1), tm.total_beats, cfg)
+    tm.key = key_tonic(score.get('key'))
+    tm.chord_roots = score_chord_roots(tracks)
+    tm.mood = mood
     return tm
 
 
-def apply_swing(notes, swing=0.5, unit=0.5):
+def auto_swing(bpm):
+    """The swing ratio a player actually uses at a tempo, as a swing value (0.5 straight): BUR falls with tempo."""
+    t = np.clip((SWING_BPM_FAST - float(bpm)) / (SWING_BPM_FAST - SWING_BPM_SLOW), 0.0, 1.0)
+    bur = SWING_BUR_FAST + (SWING_BUR_SLOW - SWING_BUR_FAST) * float(t)
+    return bur / (1.0 + bur)
+
+
+def apply_swing(notes, swing=0.5, unit=0.5, bpm=None, role=None):
     """Shift off-beat subdivisions late. swing 0.5 = straight, 0.58 light, 0.66 = triplet feel.
+
+    swing='auto' takes the ratio from the tempo (auto_swing): ~3.5:1 when slow, 2:1 at medium-fast, straight when
+    fast. A figure role swings less than the accompaniment (SWING_FIG_DEPTH), which is what a soloist does over a
+    ride cymbal. The short side of a pair never drops below SWING_FLOOR_S, so a fast passage straightens itself
+    instead of asking for a 40 ms note.
 
     The shift is capped at 45 % of the gap to the next onset, so a dense swung passage can never reorder or
     overlap notes (at 16th density a 0.66 swing used to hand a note to its successor).
     """
-    if abs(swing - 0.5) < 1e-3:
+    if isinstance(swing, str):
+        if swing.lower() != 'auto':
+            raise ValueError(f"swing: expected a number or 'auto', got {swing!r}")
+        swing = auto_swing(120.0 if bpm is None else bpm)
+    eff = float(swing)
+    if role is not None:
+        try:
+            if rolelib.canonical(role) in FIG:
+                eff = 0.5 + SWING_FIG_DEPTH * (eff - 0.5)
+        except Exception:
+            pass
+    if abs(eff - 0.5) < 1e-3:
         return notes
-    shift = (swing - 0.5) * 2 * unit
+    shift = (eff - 0.5) * 2 * unit
+    if bpm:
+        room = unit - float(bpm) * SWING_FLOOR_S / 60.0      # the short side, in beats, at the floor
+        shift = min(shift, max(0.0, room))
+        if shift <= 1e-9:
+            return notes
     times = sorted({round(float(n['t']), 9) for n in notes})
     nxt = {a: b for a, b in zip(times, times[1:])}
     out = []
@@ -345,19 +595,52 @@ def _phrase_ids(notes_sorted, gap_beats=1.0, max_beats=16.0):
             cur += 1
             start = n['t']
         ids.append(cur)
-        last_end = max(last_end or 0, n['t'] + n['d'])
+        last_end = max(last_end or 0, n['t'] + n.get('d', 0.0))
     return ids
+
+
+def _motor_streams(ns, is_drum):
+    """The streams whose successive onsets one motor program controls: one limb on a kit, one key/finger on a keyboard.
+
+    The lag-1 correction belongs to that stream. Applied across the flat sorted list it correlated a hi-hat's error
+    with a kick struck at the same instant (two limbs), and note 2 of a chord with note 1 of the same chord (two
+    fingers, one keystroke), distorting the strum offset.
+    """
+    streams = {}
+    for i, nt in enumerate(ns):
+        k = _limb_of(nt['p']) if is_drum else int(nt['p'])
+        streams.setdefault(k, []).append(i)
+    return [streams[k] for k in sorted(streams, key=str)]
+
+
+def _mood_profile(c):
+    """Apply the GERM expression profile named in `c['mood']` (already merged from the score/preset), if any."""
+    name = c.get('mood')
+    if not name:
+        return
+    prof = MOODS.get(str(name).lower())
+    if prof is None:
+        raise ValueError(f"mood: unknown expression {name!r}; known: {', '.join(sorted(MOODS))}")
+    c['vel_bias'] = c.get('vel_bias', 0.0) + float(prof.get('vel', 0.0))
+    c['gate_bias'] = c.get('gate_bias', 0.0) + float(prof.get('gate', 0.0))
+    c['accent'] = float(c.get('accent', 1.0)) * float(prof.get('accent', 1.0))
+    c['duration_contrast'] = float(c.get('duration_contrast', 0.0)) * float(prof.get('duration_contrast', 1.0))
+    c['strum_ms'] = float(c.get('strum_ms', 0.0)) * float(prof.get('strum', 1.0))
 
 
 def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing=0.5, swing_unit=0.5,
                    legato_overlap_ms=35, strum_dir='alt', detune_cents=0.0, instrument=None,
-                   drift=None, articulation=None, bpm=None):
+                   drift=None, articulation=None, bpm=None, mood=None, key=None, chord_roots=None,
+                   tempo_swing=None):
     """Humanize one track. Returns events in seconds sorted by time. cfg = preset name or dict.
 
     drift: (beats, values) from shared_drift(). When None the tempo map's own `shared_drift` is used, so every track of a
     piece that came from tempo_map_for() drifts together.
     articulation: {overlap_ms, gate, release_ms} from the instrument preset; overrides the role's fixed legato numbers.
     bpm: the tempo, for the drum push's tempo scaling (falls back to the tempo map).
+    mood: a GERM expression profile (MOODS) layered on the groove preset; falls back to the tempo map's score mood.
+    key / chord_roots: the tonic and the sounding roots, for tonal charge; fall back to the tempo map's.
+    tempo_swing: alias for `swing` that also accepts 'auto'.
     """
     c = dict(PRESETS['natural'])
     c.update(TIMING)
@@ -376,9 +659,17 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
             bpm = float(np.atleast_1d(getattr(tm, 'base_bpm', 96.0)).ravel()[0])
         except Exception:
             bpm = 96.0
+    if mood is None:
+        mood = getattr(tm, 'mood', None)
+    if mood:
+        c['mood'] = mood
+    _mood_profile(c)                               # level, gate, accent, duration contrast and strum, scaled
     if drift is None:
         drift = getattr(tm, 'shared_drift', None)
-    ns = apply_swing([dict(n) for n in notes], swing, swing_unit)
+    if tempo_swing is not None:
+        swing = tempo_swing
+    # the swing ratio belongs to the tempo and to the role: a soloist swings less than the ride cymbal
+    ns = apply_swing([dict(n) for n in notes], swing, swing_unit, bpm=bpm, role=base_role)
     ns.sort(key=lambda n: (n['t'], n['p']))
     if not ns:
         return []
@@ -390,22 +681,45 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
     for i, k in enumerate(pid):
         phrases.setdefault(k, []).append(i)
 
-    # ---- timing noise: slow drift + anti-correlated per-note error --------------------------
+    # ---- timing noise: two-scale 1/f drift + per-limb anti-correlated motor error -----------
     n = len(ns)
-    sig = (c['drum_ms'] if is_drum else c['timing_ms']) / 1000.0
-    e = rng.standard_normal(n + 1) * sig
-    # motor error: each note is pulled back by a fraction of the previous one, which is where the negative lag-1
-    # correlation of a real player comes from
-    anti = e[1:] - float(c.get('note_lag1', 0.5)) * e[:-1]
+    t_beats = np.array([nt['t'] for nt in ns], dtype=float)
+    d_beats = np.array([nt['d'] for nt in ns], dtype=float)
+    p = np.array([nt['p'] for nt in ns], dtype=float)
+    start_boost = np.zeros(n)
+    # a drum's own motor jitter stays conservative (<10 ms): beyond that the groove degrades (Fruhauf 2013)
+    sig = (min(float(c['drum_ms']), 8.0) if is_drum else float(c['timing_ms'])) / 1000.0
+    gaps = np.diff(np.sort(t_beats)) if n > 1 else np.array([])
+    gap = float(np.median(gaps)) if len(gaps) else 1.0
+    step_beats = max(1e-6, gap)
+    beta = float(c.get('fractal_beta', 0.85))
+    share = float(np.clip(c.get('short_share', 0.0), 0.0, 1.0))
+    frac = _fractal_noise(rng, n, beta=beta,
+                          fc=step_beats / max(1e-6, float(c.get('short_scale_beats', 8.0))), highpass=True)
+    frac_term = frac * sig * np.sqrt(share)      # the short-scale (<8 beats) 1/f process, per player
+    motor_sig = sig * np.sqrt(max(0.0, 1.0 - share))
+    # motor error: each note is pulled back by a fraction of the previous one of the SAME limb/finger, which is where
+    # the negative lag-1 correlation of a real player comes from. Never across limbs or across a chord's fingers.
+    anti = np.zeros(n)
+    lag1 = float(c.get('note_lag1', 0.5))
+    for stream in _motor_streams(ns, is_drum):
+        m = len(stream)
+        e = rng.standard_normal(m) * motor_sig
+        a = e.copy()
+        if m > 1:
+            a[1:] = e[1:] - lag1 * e[:-1]
+        anti[np.asarray(stream)] = a
+    anti = anti + frac_term
     # slow wander: shared by every track of the piece when the tempo map carries one (tempo_map_for builds it)
     if isinstance(drift, (tuple, list)) and len(drift) == 2:
         grid, vals = np.asarray(drift[0], float), np.asarray(drift[1], float)
-        drift_term = np.interp(np.array([nt['t'] for nt in ns], float), grid, vals) * (c['drift_ms'] / 1000.0)
+        drift_term = np.interp(t_beats, grid, vals) * (c['drift_ms'] / 1000.0)
     elif drift is not None and len(drift):
         d = np.interp(np.linspace(0, 1, n), np.linspace(0, 1, len(drift)), np.asarray(drift, float))
         drift_term = d * (c['drift_ms'] / 1000.0)
     else:
-        drift_term = _smooth_noise(rng, n, corr=float(c.get('drift_corr_beats', 6.0))) * (c['drift_ms'] / 1000.0) * 0.5
+        drift_term = (_fractal_noise(rng, n, beta=beta, fc=step_beats / max(1.0, float(c.get('drift_corr_beats', 6.0))))
+                      * (c['drift_ms'] / 1000.0) * 0.5)
 
     # group simultaneous onsets (chords) for strum spreading
     groups = {}
@@ -414,7 +728,7 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
     strum_off = np.zeros(n)
     flip = 0
     guitar = 'guitar' in str(instrument or '').lower()
-    for key, idx in groups.items():
+    for key_, idx in groups.items():
         if len(idx) > 1 and base_role in ('chord', 'pad', 'arp', 'counter', 'texture') and c['strum_ms'] > 0:
             idx_sorted = sorted(idx, key=lambda j: ns[j]['p'])
             span_in = max(ns[j]['t'] for j in idx) - min(ns[j]['t'] for j in idx)
@@ -428,6 +742,14 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
             for rank, j in enumerate(order):
                 strum_off[j] = span * rank / max(len(order) - 1, 1)
 
+    # simultaneous onsets (0.04 beat) - one chord, one cluster
+    clusters = []
+    for i in range(n):
+        if clusters and ns[i]['t'] - ns[clusters[-1][0]]['t'] <= 0.04:
+            clusters[-1].append(i)
+        else:
+            clusters.append([i])
+
     # a melody leads the accompaniment only when something else sounds with it (render_natural sets note 'acc')
     accomp = np.array([float(nt.get('acc', 1.0)) for nt in ns])
     lead = rd['off'] * c['lead_ms'] / 1000.0 * accomp
@@ -435,10 +757,9 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
     # ---- velocities ---------------------------------------------------------------------------
     v = np.array([_vel127(nt.get('v', 0.7)) for nt in ns], dtype=float)
     v_in = v.copy()                                    # what the score wrote, before any human shaping
-    p = np.array([nt['p'] for nt in ns], dtype=float)
     upbeat = bool(c.get('upbeat', False) or c.get('upbeats', False))
     acc = np.array([_beat_accent(nt['t'], ts, upbeat=upbeat) for nt in ns])
-    v += rd['vel']
+    v += rd['vel'] + float(c.get('vel_bias', 0.0))
     v += c['accent'] * (acc - 0.35) * 9.0                          # downbeats stronger
     for k, idx in phrases.items():                                # phrase arch + pitch-contour loudness
         m = len(idx)
@@ -461,9 +782,14 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
         runs, cur = [], []
         for i in range(n):
             if ns[i]['d'] > 0.5:
+                # flush first: a long note between two short runs used to leave `cur` open, merging runs that a rest
+                # or a held note separates
+                if len(cur) >= 4:
+                    runs.append(cur)
+                cur = []
                 continue
-            gap = ns[i]['t'] - ns[cur[-1]]['t'] if cur else 0.0
-            if cur and 0.01 < gap <= 0.5 + 1e-6:
+            gap_i = ns[i]['t'] - ns[cur[-1]]['t'] if cur else 0.0
+            if cur and 0.01 < gap_i <= 0.5 + 1e-6:
                 cur.append(i)
             else:
                 if len(cur) >= 4:
@@ -481,16 +807,14 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
             v[run] += 5.0 * sgn * np.linspace(-0.5, 0.5, len(run))
             v[run[int(np.argmax(pr))]] += 3.0
     vs = c['vel_sigma']
-    v += _smooth_noise(rng, n, corr=3) * vs * 0.6 + rng.standard_normal(n) * vs * 0.6
+    v += _fractal_noise(rng, n, beta=beta, fc=step_beats / 3.0) * vs * 0.6 + rng.standard_normal(n) * vs * 0.6
+    vtc = float(c.get('vel_time_couple', 0.0))
+    if vtc > 0 and is_drum and vs:
+        # on percussion the amplitude and the microtiming share their long-range correlation (Rasanen et al. 2015)
+        v += vtc * vs * np.clip(frac, -2.0, 2.0)
 
     # automatic chord voicing (Goebl 2001): a score that wrote one velocity for every chord tone gets the top voice
     # lifted, the inner voices tucked back and the bass anchored. Uses the input velocities, so shaped scores are left alone.
-    clusters = []
-    for i in range(n):
-        if clusters and ns[i]['t'] - ns[clusters[-1][0]]['t'] <= 0.04:
-            clusters[-1].append(i)
-        else:
-            clusters.append([i])
     if base_role in ('chord', 'pad', 'arp', 'texture'):
         for cl in clusters:
             if len(cl) < 3 or v_in[cl].std() >= 1.5:
@@ -501,23 +825,37 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
                 v[j] -= 3.0
             v[order[-1]] += 5.0
 
-    # ---- build events -------------------------------------------------------------------------
-    t_beats = np.array([nt['t'] for nt in ns])
-    d_beats = np.array([nt['d'] for nt in ns])
-    start_boost = np.zeros(n)
-
-    def _drum_run(run):
-        """A run of rapid same-pitch hits with no dynamic contour is a machine gun: accent alternately."""
-        if not pa._machine_run(v[run]):
-            return
-        m = len(run)
-        for pos, i in enumerate(run):
-            v[i] += 5.0 if pos % 2 == 0 else -5.0
-            if v[run[-1]] > v[run[0]]:                 # an ascending build gets an exponential arch
-                v[i] += 4.0 * ((pos / max(m - 1, 1)) ** 1.6 - 0.5)
-            start_boost[i] += rng.uniform(-0.003, 0.003)
-
+    # ---- KTH local rules, durations and onsets (Friberg, Bresin & Sundberg 2006) --------------
+    ms2b = float(bpm) / 60000.0                        # beats per millisecond
     if not is_drum:
+        # Duration Contrast: short notes a little shorter, long ones a little longer, so the rhythm reads
+        dc = float(c.get('duration_contrast', 0.0))
+        if dc > 0:
+            for idx in phrases.values():
+                ii = np.asarray(idx, int)
+                med = float(np.median(d_beats[ii]))
+                if med <= 1e-9:
+                    continue
+                r = d_beats[ii] / med
+                sh, lo = r < 0.75, r > 1.5
+                if sh.any():
+                    d_beats[ii[sh]] *= (1.0 - 0.5 * dc)
+                if lo.any():
+                    d_beats[ii[lo]] *= (1.0 + 0.5 * dc)
+        # Double Duration: a written 2:1 pair is played softer than 2:1 - lengthen the short, shorten the long
+        dd = float(c.get('double_duration', 0.0))
+        if dd > 0:
+            for i in range(1, n):
+                if ns[i]['t'] - ns[i - 1]['t'] < 1e-9:          # simultaneous: a chord, not a pair
+                    continue
+                a, b = float(d_beats[i - 1]), float(d_beats[i])
+                if a <= 1e-9 or b <= 1e-9:
+                    continue
+                ratio = a / b
+                if 1.8 <= ratio <= 2.2:
+                    d_beats[i - 1], d_beats[i] = a * (1.0 - dd), b * (1.0 + dd)
+                elif 1.8 <= 1.0 / ratio <= 2.2:
+                    d_beats[i - 1], d_beats[i] = a * (1.0 + dd), b * (1.0 - dd)
         for i in range(1, n):
             if base_role in FIG + ('counter',) and abs(ns[i]['p'] - ns[i - 1]['p']) >= 5:
                 start_boost[i] += 0.008                # agogic delay on the arrival of a leap
@@ -527,6 +865,34 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
             if 'c' in nt or 'gl' in nt:                # microtones / glides / chromatic tension lean in
                 v[i] += 3.0
                 d_beats[i] *= 1.04
+        # Faster Uphill: an ascending line leans forward, a few ms per step
+        fu = float(c.get('faster_uphill_ms', 0.0))
+        if fu > 0 and base_role in FIG + ('counter',):
+            for i in range(1, n):
+                rise = float(p[i] - p[i - 1])
+                if rise > 0:
+                    start_boost[i] -= min(fu, 0.35 * rise) / 1000.0
+        # Punctuation: a micro-phrase comma - a fragment that departs at least a whole tone and then turns back -
+        # is lengthened on its last note and the next gesture waits for it
+        pu = float(c.get('punctuation_ms', 0.0))
+        if pu > 0 and base_role in FIG + ('counter',) and n >= 3:
+            for i in range(2, n):
+                a = float(p[i - 1] - p[i - 2])
+                b = float(p[i] - p[i - 1])
+                if abs(a) < 2.0 or abs(b) < 2.0 or np.sign(a) == np.sign(b):
+                    continue
+                if ns[i]['t'] - ns[i - 1]['t'] > 2.0:  # a rest already separates them
+                    continue
+                d_beats[i - 1] += 0.6 * pu * ms2b
+                start_boost[i] += pu * ms2b
+        # Repetition Articulation: the same pitch twice in a row needs air before the re-attack
+        rg = float(c.get('repetition_gap_ms', 0.0))
+        if rg > 0:
+            gap_b = rg * ms2b
+            for i in range(1, n):
+                if ns[i]['p'] != ns[i - 1]['p'] or ns[i]['t'] - ns[i - 1]['t'] < 1e-9:
+                    continue
+                d_beats[i - 1] = max(0.3 * d_beats[i - 1], d_beats[i - 1] - gap_b)
     else:
         by_p = {}
         for i, nt in enumerate(ns):
@@ -537,13 +903,56 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
                 if ns[b]['t'] - ns[a]['t'] <= 0.55 + 1e-9:
                     run.append(b)
                 else:
-                    _drum_run(run)
+                    _drum_run(run, v, ns, start_boost, rng)
                     run = [b]
-            _drum_run(run)
+            _drum_run(run, v, ns, start_boost, rng)
         for i in range(1, n):                          # layered hits flam instead of phase-locking
             if abs(ns[i]['t'] - ns[i - 1]['t']) < 0.003 and ns[i]['p'] != ns[i - 1]['p']:
                 start_boost[i] += 0.003 if i % 2 else -0.003
 
+    # ---- tonal tension: KTH melodic charge and harmonic charge --------------------------------
+    tonic = key_tonic(key) if key is not None else getattr(tm, 'key', None)
+    roots = chord_roots if chord_roots is not None else getattr(tm, 'chord_roots', None)
+    mc_v, mc_d = float(c.get('melodic_charge_vel', 0.0)), float(c.get('melodic_charge_dur', 0.0))
+    hc_v, hc_d = float(c.get('harmonic_charge_vel', 0.0)), float(c.get('harmonic_charge_dur', 0.0))
+    if tonic is not None:
+        if (mc_v or mc_d) and roots is not None and len(roots[0]):
+            rb, rp = np.asarray(roots[0], float), np.asarray(roots[1], int)
+            if base_role in FIG + ('counter',):
+                at = np.clip(np.searchsorted(rb, t_beats + 1e-9, side='right') - 1, 0, len(rb) - 1)
+                ch = np.array([_circle_distance(int(p[i]) % 12, int(rp[at[i]])) for i in range(n)])
+                v += mc_v * ch
+                d_beats *= 1.0 + mc_d * ch
+        if (hc_v or hc_d) and base_role in ('chord', 'pad', 'arp', 'texture'):
+            for cl in clusters:
+                root = int(min(ns[j]['p'] for j in cl)) % 12
+                ch = _circle_distance(root, tonic)
+                if ch <= 0.0:
+                    continue
+                v[cl] += hc_v * ch
+                d_beats[cl] *= 1.0 + hc_d * ch
+
+    # ---- phrase tempo -> phrase dynamics (Todd 1992) -----------------------------------------
+    ptv = float(c.get('phrase_tempo_vel', 0.0))
+    if ptv > 0 and base_role in FIG + ('counter',) and hasattr(tm, 'local_tempo'):
+        lt = np.asarray(tm.local_tempo(t_beats), float)
+        m = float(lt.mean()) if len(lt) else 0.0
+        if m > 1e-9:
+            v += ptv * np.clip((lt / m - 1.0) / 0.05, -2.0, 2.0)     # a swell where the tempo leans forward
+
+    # ---- melody lead that follows velocity (Goebl 2001; Goebl et al. 2005) --------------------
+    vl = float(c.get('vel_lead_ms', 0.0))
+    if vl > 0 and not is_drum:
+        fac = 1.0 if any(w in str(instrument or '').lower() for w in VEL_LEAD_WORDS) else 0.25
+        for cl in clusters:
+            if len(cl) < 2:
+                continue
+            mv = float(v_in[cl].mean())
+            for j in cl:
+                # a harder stroke throws its hammer sooner: the loud note of a chord arrives first
+                start_boost[j] -= fac * vl / 1000.0 * float(v_in[j] - mv) / 64.0
+
+    # ---- build events -------------------------------------------------------------------------
     t0 = tm.sec(t_beats)
     t1 = tm.sec(t_beats + d_beats)
     grace = np.zeros(n)                                  # grace notes (d <= 0.12 beats) tuck in before the beat, softer
@@ -551,7 +960,7 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
         for i in np.where(d_beats <= 0.12)[0]:
             grace[i] = -0.04
             v[i] *= 0.75
-    start = t0 + lead + drift_term + anti[:n] + strum_off + grace + start_boost
+    start = t0 + lead + drift_term + anti + strum_off + grace + start_boost
     if is_drum:
         # a fixed push per piece is only right at one tempo and one subdivision: scale both
         tempo_scale = (96.0 / max(40.0, float(bpm))) ** float(c.get('push_tempo_power', 0.4))
@@ -561,7 +970,7 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
         push = np.array([DRUM_PUSH.get(int(pp), 0.0) * tempo_scale for pp in p]) / 1000.0
         push = push + (subdiv / 1000.0 if subdiv else 0.0)
         start = start + push
-    dur = (t1 - t0) * rd['gate'] * (1 + rng.normal(0, 0.04, n))
+    dur = (t1 - t0) * (rd['gate'] + float(c.get('gate_bias', 0.0))) * (1 + rng.normal(0, 0.04, n))
     if not is_drum:
         # an accent is also a little longer; a soft note a little shorter (velocity-duration coupling)
         dur = dur * (1.0 + float(c.get('vel_dur', 0.0)) * (np.clip(v, 1, 127) - 90.0) / 64.0)
@@ -577,8 +986,9 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
         idx = np.where(neg)[0]
         for rank, j in enumerate(idx[np.argsort(start[idx])]):
             clamped[j] = 0.001 * min(rank, 32)
-    # intonation: a phrase drifts a few cents together, and a chord leans towards just intonation instead of being
-    # tuned to 12-TET (a major third about 14 cents flat, a fifth about 2 cents sharp)
+    # intonation: a phrase drifts a few cents together, a chord leans towards just intonation instead of being
+    # tuned to 12-TET (a major third about 14 cents flat, a fifth about 2 cents sharp), and a high register sits a
+    # touch sharp (High Sharp, ~1.5 cents per octave above C4)
     cents_extra = np.zeros(n)
     td = float(c.get('tune_drift_cents', 0.0))
     if td > 0:
@@ -592,6 +1002,9 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
             root = ns[min(cl, key=lambda j: ns[j]['p'])]['p']
             for j in cl:
                 cents_extra[j] += jr * JUST.get(int((ns[j]['p'] - root) % 12), 0.0)
+    hs = float(c.get('high_sharp_cents', 0.0))
+    if hs and base_role in FIG + ('counter',):
+        cents_extra += hs * np.clip((p - 60.0) / 12.0, 0.0, 3.0)
     ev = []
     order = np.lexsort((p, clamped))                     # strictly ordered by (onset, pitch)
     for j in order:
@@ -610,6 +1023,18 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
             if -0.001 < gap < 0.20:
                 a['dur'] = (b['t'] - a['t']) + legato_overlap_ms / 1000.0
     return sorted(ev, key=lambda e_: e_['t'])
+
+
+def _drum_run(run, v, ns, start_boost, rng):
+    """A run of rapid same-pitch hits with no dynamic contour is a machine gun: accent alternately."""
+    if not pa._machine_run(v[run]):
+        return
+    m = len(run)
+    for pos, i in enumerate(run):
+        v[i] += 5.0 if pos % 2 == 0 else -5.0
+        if v[run[-1]] > v[run[0]]:                 # an ascending build gets an exponential arch
+            v[i] += 4.0 * ((pos / max(m - 1, 1)) ** 1.6 - 0.5)
+        start_boost[i] += rng.uniform(-0.003, 0.003)
 
 
 def auto_pedal(events, tm, change_beats, lift_ms=40, re_press_ms=60):
