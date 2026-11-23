@@ -165,7 +165,7 @@ Before Phase 4, open every file in the row that matches the request; union sever
 | **Mono / 5.1 / any loudspeaker layout / GPU render** | `references/spatial/immersive-deliverables.md`, `references/spatial/virtual-speaker-qa.md`, `references/mixing/quality-gate.md` §5b, `scripts/compute.py` |
 | **Clone instrument** | `references/instruments-and-vocals/instrument-cloning.md`, `scripts/clone_instrument.py` |
 | **Extract MIDI/stems** | `references/workflow/extraction.md`, `scripts/extract_pipeline.py` |
-| **Mix/master existing stems** | `references/mixing/mixing-and-mastering.md`, `references/mixing/delivery-standards.md`, `scripts/mixer.py`, `scripts/mix_diagnostics.py` |
+| **Mix/master existing stems** | `references/mixing/mixing-and-mastering.md`, `references/mixing/delivery-standards.md`, `scripts/mixer.py` (facade) and `scripts/mix_engine/`, `scripts/mix_diagnostics.py` |
 | **Mix issues/strategy questions** | `references/mixing/mixing-and-mastering.md` §6,§8b, `scripts/mix_schema.py`, `scripts/mix_bench.py` |
 | **Full orchestra/SFZ/real samples/library by name, or a natural SoundFont sound** | Section 5 below + `references/instruments-and-vocals/soundfont-realism.md`, `knowledgebase/sound-design/soundfont-velocity-and-realism.md`, `references/instruments-and-vocals/sfz-libraries.md`, `references/instruments-and-vocals/natural-instruments.md`, `references/mixing/mixing-and-mastering.md` |
 | **Choose/write gate profile** | `references/mixing/quality-gate.md` §3c, `scripts/gate_profiles.py` (list/rows/explain), Section 6 |

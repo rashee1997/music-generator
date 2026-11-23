@@ -246,7 +246,7 @@ row in that table by itself proves the mix sounds better.
 
 **The processed-stem cache.** `<project>/.cache/mix/` keeps each stem's chain output — gain staging, EQ, dynamics,
 level, automation, fades — keyed on that stem's bytes, its resolved spec, the whole mix preset, the sample rate,
-the compute device and the engine's own code hash. Two things follow from one split in `mixer.py`: a retry
+the compute device and the engine's own code hash (every module of `mix_engine/` is hashed). Two things follow from one split in the engine: a retry
 after a one-note fix re-processes only the stems that changed, and a second output format reuses the first one's
 chain, because `process_chain` is independent of the bus while `_place` (width, pan, the head filter, the bus
 hand-over) is not. Placement therefore always runs per mix. Delete the folder to force a rebuild;
@@ -276,7 +276,7 @@ The mixing engine ([`scripts/mixer.py`](../../scripts/mixer.py)) uses Spotify's 
    - Pedalboard processes NumPy float32 arrays in `(channels, samples)` shape (`[2, N]`). Scripts automatically handle transposition between Scipy/Soundfile format (`[N, 2]`) and Pedalboard format.
 
 
-### 8c. Where the EQ comes from, and how many times it runs (traced in `mixer.py`)
+### 8c. Where the EQ comes from, and how many times it runs (traced in `mix_engine/chains.py`)
 - A stem gets **one** spectral chain: its `spectral_profile` if it names one, else its role chain (`mixer.spectral_chain`). They never run together.
 - An environment preset's own `blending` (high-pass and the vocal-pocket notch, applied in `environment.py`) runs **before** that, inside the environment render. So an ambience stem can hold two notches near 2.2-2.4 kHz: keep the blending notch or the chain's, or move one by a third of an octave.
 - A `spectral_profile` belongs to the **stem**, and an environment preset's layers are summed into one stem. A bright layer (insects above 7.2 kHz) therefore shares the stem's chain; give the preset a profile that keeps that band, or set `preserve_spectrum` on the track.

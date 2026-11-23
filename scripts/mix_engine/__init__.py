@@ -1,16 +1,13 @@
-"""mix_engine - the mixing engine's measurement and delivery layer.
+"""The mixing engine, split by stage.
 
-The bus orchestration still lives in `scripts/mixer.py` (it owns the per-stem chain, placement and the
-summing bus, and every caller imports it by name). This package owns the parts that are measurements or
-published data rather than signal flow:
+`core` owns the active-mix context and the settings lookups; `dsp_utils`, `chains`, `placement`,
+`theatrical`, `mastering` and `carve` are the stages; `bus` runs them. `meters`, `standards` and
+`masking` are the measurement and delivery layer the gate reads.
 
-  * `meters`     - loudness, true peak at two oversampling factors, PLR/PSR, band correlation.
-  * `standards`  - the delivery documents (EBU R 128, ATSC A/85, AES TD1008, Spotify policy) as data,
-                   with the figures and URLs they are read from.
-  * `masking`    - a critical-band excess measurement between the figure and the beds.
-
-Nothing here imports `mixer`, so a measurement can be tested or reused without a mix context.
+`scripts/mixer.py` is the facade: it re-exports every name from these modules so existing callers
+and tests keep working.
 """
-from . import masking, meters, standards  # noqa: F401
+from . import bus, carve, chains, core, dsp_utils, masking, mastering, meters, placement, standards, theatrical
 
-__all__ = ['masking', 'meters', 'standards']
+__all__ = ['bus', 'carve', 'chains', 'core', 'dsp_utils', 'masking', 'mastering', 'meters',
+           'placement', 'standards', 'theatrical']

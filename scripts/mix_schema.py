@@ -23,7 +23,7 @@ Three jobs:
   2. `validate(mix)` reports a key the engine would ignore, an out-of-range number or a wrong type, with
      the path of the problem. A render never guesses: an unknown key is reported, and the value is kept in
      the dict (so a newer preset is not silently rewritten) but never used.
-  3. `role_chains` and `spectral.profiles` live here as starting points rather than inline in mixer.py, so a
+  3. `role_chains` and `spectral.profiles` live here as starting points rather than inline in `mix_engine/`, so a
      project can replace them from JSON without touching code.
 
 Nothing musical is decided here: these are the values the engine shipped with, restated so they can be
