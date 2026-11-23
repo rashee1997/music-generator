@@ -87,6 +87,10 @@
     "feel.spiral": {},
     "feel.witek": {},
     "focus.declared": {},
+    "front.fold_phantom": {
+      "max_ild_db": 2.0,
+      "max_itd_us": 100.0
+    },
     "iamf.container": {},
     "imm.band": {
       "min_hf_frac": 0.003
@@ -144,6 +148,18 @@
     "key.mode": {},
     "kick.grid": {
       "min_lock": 0.7
+    },
+    "lfe.fold_loss": {
+      "max_db": 1.5
+    },
+    "lfe.modal_spread": {
+      "min_gain_db": 0.0
+    },
+    "lfe.polarity": {
+      "min_rho": -0.3
+    },
+    "lfe.sum_coherence": {
+      "min_rho": 0.9
     },
     "loudness": {},
     "low_interval_mud": {},

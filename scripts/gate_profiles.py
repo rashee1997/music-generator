@@ -264,6 +264,23 @@ ROWS = {
     'iamf.container': dict(meaning='an IAMF deliverable was written by the external encoder'),
     'imm.decode_uniformity': dict(meaning='plane-wave power spread of the all-round decoder',
                                   params={'max_spread_db': (2.0, 0.5, 12.0)}),
+    # two low-frequency channels and a three-front stage (scripts/spatial_engine/lfe_qa.py, spatial_gate.lfe_rows).
+    # Advisory except a flipped sub: limits are starting values until measured on a room.
+    'lfe.sum_coherence': dict(meaning='LFE1 and LFE2 add coherently below the decorrelation corner',
+                              params={'min_rho': (0.9, 0.5, 0.99)},
+                              hint='mode stereo_bass, a lower decorrelate_above_hz, or lfe_pan on the bass tracks'),
+    'lfe.polarity': dict(meaning='LFE1 and LFE2 are not in opposed polarity',
+                         params={'min_rho': (-0.3, -0.9, 0.0)},
+                         hint='fix lfe.polarity in the layout, or the bass preset that is inverted'),
+    'lfe.fold_loss': dict(meaning='summing the two low-frequency channels into one loses no level in any 1/3 octave',
+                          params={'max_db': (1.5, 0.5, 6.0)},
+                          hint='reduce the decorrelation (stages or max_group_delay_ms) or narrow the stereo bass'),
+    'lfe.modal_spread': dict(meaning='two subs do not widen the spatial spread of a virtual box room against one (model, advisory)',
+                             params={'min_gain_db': (0.0, -3.0, 6.0)},
+                             hint='the model is of the layout\'s qa.listening_room: change its sub positions or report that the room is unknown'),
+    'front.fold_phantom': dict(meaning='the centre folded into L and R keeps its interaural time and level cues (measured head set)',
+                               params={'max_itd_us': (100.0, 30.0, 300.0), 'max_ild_db': (2.0, 0.5, 6.0)},
+                               hint='move content off L/R toward C, or lower the inter-channel correlation of L and R'),
     # per-channel and per-bar delivery QA for any channel count (scripts/channel_qa.py,
     # references/spatial/virtual-speaker-qa.md). A real layout uses its speaker positions; order-5 AmbiX
     # decodes to the 36-point ambix_qa_36 sphere; an undeclared file is still checked per channel.

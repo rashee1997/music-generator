@@ -383,7 +383,8 @@ def channel_rows(score, audio, sr, target, out):
             power = np.sum((y @ matrix.T) ** 2, axis=1)
             db = 10.0 * np.log10(power / np.mean(power) + 1e-30)
             spread = float(db.max() - db.min())
-            limit = float(gate.param('imm.decode_uniformity', 'max_spread_db'))
+            declared = (config.threshold(lay, 'decode_uniformity_max_db') or {}).get(kind)
+            limit = float(declared) if declared is not None else float(gate.param('imm.decode_uniformity', 'max_spread_db'))
             bad = spread > limit
             _row(out, 'WARN' if bad else 'PASS', 'imm.decode_uniformity',
                  f'{target}: {kind} plane-wave power spread {spread:.2f} dB over the sphere '
@@ -409,6 +410,72 @@ def channel_rows(score, audio, sr, target, out):
          f'{target}: {len(conflicts)} isolated per-bar channel conflict(s): {shown}{more}. '
          f'Check that channel\'s automation, pan and polarity in that bar; a deliberate one-bar effect can be '
          f'relaxed in the score gate with a measured reason, never by editing the row')
+
+
+def lfe_rows(score, audio, sr, target, out):
+    """lfe.* and front.fold_phantom for a layout with two low-frequency channels or a declared three-front stage."""
+    import gate_profiles
+    import render_targets
+    from spatial_engine import config, lfe_qa
+    gate = gate_profiles.resolve(score)
+    lay = (render_targets.get(target) or {}).get('layout')
+    if not lay:
+        return
+    order = list(config.channel_names(lay))
+    lfe = config.lfe_names(lay)
+    cfg = config.lfe_cfg(lay, target)
+    if len(lfe) == 2 and audio.shape[1] == len(order):
+        a, b = (audio[:, order.index(n)] for n in lfe)
+        hi = float(cfg.get('lowpass_hz', lfe_qa.BAND_HZ[1]))
+        if gate.on('lfe.polarity'):
+            rho0, best, lag = lfe_qa.polarity(a, b, sr, hi)
+            limit = float(gate.param('lfe.polarity', 'min_rho'))
+            bad = rho0 < limit and best > 0.3
+            _row(out, 'FAIL' if bad else ('WARN' if rho0 < 0.0 else 'PASS'), 'lfe.polarity',
+                 f'{target}: {lfe[0]}/{lfe[1]} zero-lag correlation {rho0:+.2f} (best {best:.2f} at {lag:+.2f} ms; '
+                 f'fails below {limit:+.2f})' + ('; one low-frequency channel is inverted: set `lfe.polarity` or fix the '
+                                                  'bass preset' if bad else ''))
+        if gate.on('lfe.sum_coherence'):
+            fd = float(cfg.get('decorrelate_above_hz', 40.0))
+            rho = lfe_qa.coherence(a, b, sr, lfe_qa.BAND_HZ[0], fd)
+            limit = float(gate.param('lfe.sum_coherence', 'min_rho'))
+            bad = rho < limit and float(np.mean(a * a) + np.mean(b * b)) > 1e-10
+            _row(out, 'WARN' if bad else 'PASS', 'lfe.sum_coherence',
+                 f'{target}: {lfe[0]}/{lfe[1]} correlation {rho:+.2f} over {lfe_qa.BAND_HZ[0]:g}-{fd:g} Hz (want {limit:.2f} '
+                 f'or more)' + ('; the subs would cancel in that band: use mode stereo_bass or check lfe_pan' if bad else ''))
+        if gate.on('lfe.fold_loss'):
+            bands, k = lfe_qa.fold_loss_db(a, b, sr, lfe_qa.BAND_HZ[0], hi)
+            worst = max(bands, key=lambda t: abs(t[1])) if bands else (0.0, 0.0)
+            limit = float(gate.param('lfe.fold_loss', 'max_db'))
+            bad = abs(worst[1]) > limit
+            _row(out, 'WARN' if bad else 'PASS', 'lfe.fold_loss',
+                 f'{target}: folding {lfe[0]}+{lfe[1]} into one channel (gain {k:.2f}) moves the {worst[0]:.0f} Hz band '
+                 f'by {worst[1]:+.1f} dB (limit +-{limit:g} dB)' + ('; reduce the decorrelation' if bad else ''))
+        room = (config.layout(lay).get('qa') or {}).get('listening_room')
+        if gate.on('lfe.modal_spread'):
+            if room:
+                m = lfe_qa.modal_spread(room, coherent_below_hz=float(cfg.get('decorrelate_above_hz', 40.0)))
+                limit = float(gate.param('lfe.modal_spread', 'min_gain_db'))
+                bad = m['improvement_db'] < limit
+                _row(out, 'WARN' if bad else 'INFO', 'lfe.modal_spread',
+                     f"{target}: virtual {room['size_m'][0]:g}x{room['size_m'][1]:g}x{room['size_m'][2]:g} m room, RT60 "
+                     f"{room['rt60_s']:g} s: spatial spread {m['one_sub_db']:.1f} dB with one sub, {m['two_subs_db']:.1f} dB "
+                     f"with two ({m['improvement_db']:+.1f} dB). A model of a box, not the listener's room")
+            else:
+                _row(out, 'INFO', 'lfe.modal_spread', f'{target}: the layout declares no qa.listening_room; room modes not modelled')
+    front = (config.layout(lay).get('qa') or {}).get('front')
+    if front and gate.on('front.fold_phantom'):
+        try:
+            m = lfe_qa.phantom_fold_error(lay, int(sr))
+        except Exception as exc:
+            _row(out, 'WARN', 'front.fold_phantom', f'{target}: not measured ({exc})')
+        else:
+            li, ld = float(gate.param('front.fold_phantom', 'max_itd_us')), float(gate.param('front.fold_phantom', 'max_ild_db'))
+            bad = m['itd_error_us'] > li or m['ild_error_db'] > ld
+            _row(out, 'WARN' if bad else 'PASS', 'front.fold_phantom',
+                 f"{target}: the centre folded into L/R differs from a real centre by {m['itd_error_us']:.0f} us (limit {li:g}) "
+                 f"and {m['ild_error_db']:.1f} dB (limit {ld:g}); colour {m['colour_rms_db']:.1f} dB rms over 1-8 kHz. "
+                 f'Measured on noise through the head set, independent of the programme')
 
 
 def finite_row(audio, out, name='the delivered file'):
@@ -467,6 +534,7 @@ def output_rows(score, wav_path, out):
                  f'{name}: worst channel true peak {worst:+.1f} dBTP (ceiling {ceiling:+.1f} dBTP; '
                  f'per channel {", ".join(f"{p:+.1f}" for p in peaks)})')
         channel_rows(score, sig.audio, sig.sr, name, out)
+        lfe_rows(score, sig.audio, sig.sr, name, out)
         if n_ch == 1:
             continue
         if n_ch == 2:
