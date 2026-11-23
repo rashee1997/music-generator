@@ -70,6 +70,17 @@ class AllRoundDecoder(unittest.TestCase):
             self.assertLess(two, 1.5, f'{name}: AllRAD2 spread {two:.2f} dB')
             self.assertLess(two, one, f'{name}: AllRAD2 {two:.2f} dB is not better than AllRAD {one:.2f} dB')
 
+    def test_a_source_is_decoded_to_the_side_it_was_placed_on(self):
+        """Azimuth is clockwise from the front, as in the layout presets (FL is -30): both decoders must agree with the encoder.
+        AllRAD2 built its harmonics with the azimuth un-negated, so it mirrored the whole field left to right."""
+        spk = config.speakers('itu_bs2051_system_j')
+        names = [s['name'] for s in spk]
+        for kind, matrix in (('allrad', hoa.allrad_matrix), ('allrad2', hoa.allrad2_matrix)):
+            d = matrix(spk, 5)
+            for az, want in ((-30.0, 'FL'), (30.0, 'FR'), (-90.0, 'SL'), (90.0, 'SR'), (-135.0, 'BL'), (135.0, 'BR')):
+                out = d @ hoa._hrtf().gains(5, az, 0.0)[0]
+                self.assertEqual(names[int(np.argmax(np.abs(out)))], want, (kind, az))
+
     def test_speaker_decoder_follows_the_configured_kind(self):
         bus = hoa.HoaBus(48000, 5, 'speakers', dict(decoder='allrad2'), {},
                          speakers=config.speakers('itu_bs2051_system_j'))

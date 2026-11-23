@@ -86,10 +86,30 @@ class Source:
         iface = 0.0 if src_medium is listener else src_medium.transmission_db(listener)
         self.interface_db = iface
         n = len(self.gens)
-        self.gain = 10.0 ** ((float(gain_db) + iface) / 20.0) / d / math.sqrt(n)
+        self.base_gain = 10.0 ** ((float(gain_db) + iface) / 20.0) / math.sqrt(n)      # trim, interface, shared power: no spreading
+        self.gain = self.base_gain / d
         self.fir = [StreamFIR(listener.fir(max(d - 1.0, 0.0), sr)) for _ in self.gens]
         azs = [self.az] if n == 1 else list(np.linspace(-90.0, 90.0, n))      # a field spreads its emitters across the image
         self.pan = [pan_gains(a) for a in azs]
+
+    def emitter_places(self):
+        """The place of each emitter for a loudspeaker or ambisonic bus: a field's emitters are spread evenly round the listener from
+        `azimuth` (a ring, 360/N apart), at `elevations` (cycled) or `elevation`; a point source keeps its own place and trajectory."""
+        n = len(self.gens)
+        base = dict(distance=self.distance)
+        if not self.field:
+            return [dict(self.place, azimuth=self.az, elevation=self.el, distance=self.distance)]
+        els = list(self.place.get('elevations') or [self.el])
+        return [dict(base, azimuth=(self.az + 360.0 * i / n + 180.0) % 360.0 - 180.0, elevation=float(els[i % len(els)])) for i in range(n)]
+
+    def emit(self, n):
+        """The next n samples of each emitter, one mono float64 array each, as the bus wants them: in units of pressure at 1 m with the
+        trim, the interface and the shared power applied and the 1/r spreading done (the bus adds its own air absorption and room)."""
+        g = self.base_gain / max(self.distance, 1.0)
+        return [gen.process(n).astype(np.float64) * g for gen in self.gens]
+
+    def emitter_names(self):
+        return [g.name for g in self.gens]
 
     def render(self, n):
         out = np.zeros((n, 2))
@@ -101,7 +121,7 @@ class Source:
 
 
 class Biome:
-    def __init__(self, preset, sr=44100, seed=42, scheduler=None, score=None, direction=None, t0_s=0.0):
+    def __init__(self, preset, sr=44100, seed=42, scheduler=None, score=None, direction=None, t0_s=0.0, hoa=False):
         bad = schema.problems(preset)
         if bad:
             raise ValueError(f'biome "{(preset or {}).get("name")}": ' + '; '.join(bad))
@@ -119,7 +139,8 @@ class Biome:
         self.sources = []
         for g in preset.get('generators') or []:
             place = g.get('spatial') or {}
-            n = int(place.get('emitters', 2)) if place.get('field') else 1
+            coupled = int((((preset.get('spatial_coupling') or {}).get('field')) or {}).get('emitters', 12))
+            n = int(place.get('emitters', coupled if hoa else 2)) if place.get('field') else 1
             gens = [generators.build(g if n == 1 else dict(g, name=f'{g["name"]}/e{i}'), self._ctx(g)) for i in range(n)]
             self._add(gens, place, g, g.get('medium'))
         for f in preset.get('fauna') or []:
@@ -160,6 +181,40 @@ class Biome:
             self._primed = True
         self.position += int(n)
         return self._advance(int(n))
+
+    def step_emitters(self, n):
+        """The next n samples of every emitter for a bus that places sources itself: {emitter name: (n,) float64 pressure at 1 m / full
+        scale, spread by 1/r}. There is no absorption filter in this path, so no latency to prime. Do not mix it with `process`."""
+        n = int(n)
+        self._pulled += n
+        if self.planner is not None:
+            self.planner.plan_until(self._pulled / self.sr + 0.25)
+        out = {}
+        for s in self.sources:
+            for name, y in zip(s.emitter_names(), s.emit(n)):
+                out[name] = y / self.full_scale_pa
+        return out
+
+    def emitter_specs(self):
+        """{emitter name: place} for step_emitters, in the order the sources were built."""
+        out = {}
+        for s in self.sources:
+            for name, place in zip(s.emitter_names(), s.emitter_places()):
+                out[name] = place
+        return out
+
+    def render_emitters(self, seconds, chunk_s=5.0):
+        """Every emitter for `seconds` as mono float32, {name: (n,)}. Memory is sources x duration: the buses that need it hold
+        every stem in memory already."""
+        total = int(round(float(seconds) * self.sr))
+        step = max(1, int(round(float(chunk_s) * self.sr)))
+        parts, done = {}, 0
+        while done < total:
+            m = min(step, total - done)
+            for k, v in self.step_emitters(m).items():
+                parts.setdefault(k, []).append(v.astype(np.float32))
+            done += m
+        return {k: np.concatenate(v) for k, v in parts.items()}
 
     def _advance(self, n):
         self._pulled += int(n)

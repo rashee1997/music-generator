@@ -124,7 +124,7 @@ def _sub(cfg, key, where, out, required=True):
     return blk
 
 
-SPATIAL_KEYS = ('azimuth', 'elevation', 'distance', 'field', 'emitters', 'trajectory', 'binaural')
+SPATIAL_KEYS = ('azimuth', 'elevation', 'elevations', 'distance', 'field', 'emitters', 'trajectory', 'binaural')
 
 
 def spatial_problems(sp, where):
@@ -134,8 +134,12 @@ def spatial_problems(sp, where):
     for k, lo, hi in (('azimuth', -360, 360), ('elevation', -90, 90), ('distance', 0.1, 100000), ('emitters', 1, 64)):
         if k in sp and not (_num(sp[k]) and lo <= sp[k] <= hi):
             out.append(f'{where}.spatial.{k}: a number from {lo} to {hi}')
+    if 'elevations' in sp and not (isinstance(sp['elevations'], list) and sp['elevations'] and all(_num(x) and -90 <= x <= 90 for x in sp['elevations'])):
+        out.append(f'{where}.spatial.elevations: a list of elevations in degrees, -90 to 90')
     if 'field' in sp and not isinstance(sp['field'], bool):
         out.append(f'{where}.spatial.field: true or false')
+    if sp.get('trajectory') is not None and not isinstance(sp['trajectory'], dict):
+        out.append(f'{where}.spatial.trajectory: an object (keyframes or a mode, read by the spatial engine)')
     if 'emitters' in sp and not sp.get('field'):
         out.append(f'{where}.spatial.emitters: only a field has emitters (a point is one source)')
     return out

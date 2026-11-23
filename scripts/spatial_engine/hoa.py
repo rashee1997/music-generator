@@ -313,7 +313,7 @@ def _allrad2(speakers, order, points=1200):
     from spatial_hrtf import sph
     from . import pan
     az, el = _sphere_points(points)
-    Y = sph.sh_matrix(order, np.radians(az), np.radians(90.0 - el), 'real')        # (J, K)
+    Y = _hrtf().gains(order, az, el)                                                # (J, K), the encoder's own convention: azimuth clockwise
     a = sph.unity_gain(sph.max_rE_weights(order))
     a = a / np.sqrt(np.sum((2.0 * np.arange(order + 1) + 1.0) / (4.0 * np.pi) * a ** 2))
     anm = sph.repeat_per_order(a)

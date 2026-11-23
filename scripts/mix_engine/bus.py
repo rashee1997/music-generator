@@ -31,6 +31,14 @@ def process_stem(name, x, spec, sr=SR, ctx=None):
     return np.asarray(x, dtype=np.float32)
 
 
+def _biome_sources(name, placed, stem, spec, sr):
+    """The separate emitters of a biome environment track for a bus that places sources, or None for any other track."""
+    from biome import spatial as biome_spatial
+    if not biome_spatial.is_registered(name):
+        return None
+    return biome_spatial.bus_sources(name, placed, stem, spec, sr)
+
+
 def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
     """Return the pre-master mix (float32).
 
@@ -242,7 +250,12 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
     STATE['sends'] = {}
     for name, y in processed.items():
         if bus is not None:
-            bus.add(name, y, specs[name])
+            placed = _biome_sources(name, y, stems.get(name), specs[name], sr)
+            if placed:                                      # an environment track written as a biome: its emitters, not its stereo fold
+                for ename, ey, espec in placed:
+                    bus.add(ename, ey, espec)
+            else:
+                bus.add(name, y, specs[name])
         else:
             dry += y
         send_level = reverb_send_level(specs[name], mx, _space())

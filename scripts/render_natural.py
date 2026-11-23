@@ -627,6 +627,14 @@ def _sfz_track(tr, tm, cfg, seed, ts, swing, global_dyn, raw_inst, inst_cfg, qua
 _PIECE = {}                                            # the score being rendered, for biomes whose ecology reads it
 
 
+def _register_biome(tr, env_key, seed, t0, span):
+    """A biome environment track tells the spatial module what rendered it, so a bus that places sources can render its emitters."""
+    cfg = presets.find_environment(env_key)
+    if isinstance(cfg, dict) and cfg.get('schema') == 'biome/1':
+        from biome import spatial as biome_spatial
+        biome_spatial.register(tr.get('name', 'environment'), cfg, seed, SR, t0, span, _PIECE.get('score'))
+
+
 def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None):
     """Return stereo float32 stem for one track (list of notes -> audio).
 
@@ -807,8 +815,10 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
             i0 = int(t0 * SR)
             out[i0:i0 + len(seg)] = seg[:max(0, len(out) - i0)]
             _record(tr.get('name', 'environment'), dur_s=round(span, 2), start_s=round(t0, 2), env=str(env_key))
+            _register_biome(tr, env_key, seed, t0, span + 0.1)
             return out
         _record(tr.get('name', 'environment'), dur_s=round(dur_s, 2), env=str(env_key))
+        _register_biome(tr, env_key, seed, 0.0, dur_s)
         return environment.render_environment_preset(env_key, duration_s=dur_s, sr=SR, seed=seed, context=dict(score=_PIECE.get('score'), t0_s=0.0))
 
     if tr.get('synthesis') == 'formant' or (inst_cfg and inst_cfg.get('synthesis') == 'formant') or vocal_cfg or inst in vocals.INSTRUMENTS:
@@ -1326,6 +1336,8 @@ def _align_onset(name, stem, tr, tm, bpm=None, limit_ms=25.0, max_ms=200.0):
 def build_stems(score, sfpath=None, seed=None, verbose=True):
     """Humanize + render every track. Returns (stems dict name->(N,2) float32, meta, tempo map)."""
     _PIECE['score'] = score                            # an environment track's ecology reads the piece it sits in
+    from biome import spatial as _biome_spatial
+    _biome_spatial.clear()
     # The caller registers the project (pipeline.py in project mode, run_gate from the score path). This function
     # must not guess one from the working directory: run from the skill folder it would adopt the skill's own
     # presets as a project and demand a per-piece mix preset from a scratch test cue.

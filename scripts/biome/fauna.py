@@ -39,7 +39,7 @@ from env_engine import calls
 KEYS = ('name', 'call', 'elements', 'sequence', 'gap_ms', 'source', 'resonator', 'individuals', 'individual_spread', 'bouts_per_min',
         'power_w', 'niche', 'salience', 'medium', 'position', 'first_s', 'sources', 'note', 'rate_per_k', 'temp_ref_k')
 NICHE_KEYS = ('band_hz', 'active')
-POSITION_KEYS = ('azimuth', 'elevation', 'distance', 'trajectory')
+POSITION_KEYS = ('azimuth', 'elevation', 'distance', 'trajectory', 'binaural')
 LEGACY_RES = ('tract_cm', 'formants_hz', 'formant_q', 'formant_mix')
 MAX_BOUT_S = 90.0
 
