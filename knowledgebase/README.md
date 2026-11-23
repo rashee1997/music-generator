@@ -30,6 +30,9 @@ Read one file at a time. `scripts/research_kb.py` pulls the file a piece needs.
 | `media/video-scoring.md` | Frame-locked tempo, hit windows and voice-over ducking bands | unverified |
 | `sound-design/audio-cloning.md` | Pitch, timbre, groove and room values read from a recording | unverified |
 | `sound-design/roughness.md` | Auditory roughness: level, masking, critical-band and register values, and the pair model | partly-sourced |
+| `sound-design/virtual-ears.md` | Peripheral auditory model stages (middle ear, cochlear filtering and compression, hair cell, adaptation) and the quantities the gate reads from them | partly-sourced |
+| `sound-design/layout-3-2.md` | Three-front layout with two low-frequency channels: what is and is not a standard, bass management, fold-down | partly-sourced |
+| `sound-design/expectation-idyom.md` | Information content and entropy from a PPM model, and their link to expressive timing | partly-sourced |
 | `sound-design/soundfont-velocity-and-realism.md` | SF2 velocity-to-cutoff, what SF3 is, and orchestral realism techniques; working figures for `velocity_timbre` | partly-sourced |
 | `sound-design/sfx-ambience.md` | Weather, bio-acoustic and street ambience models, and blending laws | unverified |
 | `sound-design/sfx-formulas.md` | The formulas behind `sound_model.py`, each labelled with where it came from | unverified |
