@@ -50,6 +50,7 @@ import sys
 
 import numpy as np
 
+import expectation                                 # information content / entropy of the line, for the expectation coupling
 import pattern_audit as pa                          # one definition of "machine gun", shared with the gate
 import roles as rolelib                             # one role vocabulary, shared with the gate and the mixer
 
@@ -83,12 +84,18 @@ PRESETS = {
 # vel_lead_ms: the hammer-velocity part of melody lead (Goebl 2001; Goebl et al. 2005), only on hammered/plucked
 # instruments; phrase_tempo_vel couples phrase rubato to phrase dynamics (Todd 1992);
 # melodic_charge_* / harmonic_charge_*: KTH tonal tension (Sundberg et al. 1991) from circle-of-fifths distance.
+# ic_agogic_ms / ic_vel / h_breath_ms: the expectation coupling (scripts/expectation.py), all 0 = off. A note's z-scored
+# information content delays its onset by ic_agogic_ms * z (a hesitation before a surprise) and raises its velocity by
+# ic_vel * z; a position of high entropy delays the note by h_breath_ms * max(0, z_H - 0.5): a breath before an uncertain
+# note. z is clipped to +-2, so the caps are 2x the keys. Performers' timing and dynamics follow melodic surprise and
+# uncertainty with small effects (Gingras and colleagues 2016, citation to confirm); starting values.
 TIMING = dict(note_lag1=0.5, drift_corr_beats=6.0, vel_dur=0.018, tune_drift_cents=1.2, just_ratio=0.45,
               push_tempo_power=0.4, subdiv_push_ms=1.2,
               fractal_beta=0.85, short_scale_beats=8.0, short_share=0.22, vel_time_couple=0.35,
               duration_contrast=0.06, double_duration=0.10, faster_uphill_ms=2.0, punctuation_ms=12.0,
               repetition_gap_ms=14.0, high_sharp_cents=1.5, vel_lead_ms=6.0, phrase_tempo_vel=2.0,
-              melodic_charge_vel=2.0, melodic_charge_dur=0.015, harmonic_charge_vel=1.5, harmonic_charge_dur=0.010)
+              melodic_charge_vel=2.0, melodic_charge_dur=0.015, harmonic_charge_vel=1.5, harmonic_charge_dur=0.010,
+              ic_agogic_ms=0.0, ic_vel=0.0, h_breath_ms=0.0)
 
 # A score's `elastic` block: long-range tempo breathing, and a collective breath hold at named beats.
 ELASTIC_KEYS = ('amount', 'corr_beats', 'breaths', 'breath_s')
@@ -941,6 +948,13 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
         if m > 1e-9:
             v += ptv * np.clip((lt / m - 1.0) / 0.05, -2.0, 2.0)     # a swell where the tempo leans forward
 
+    # ---- expectation -> expression: hesitation before a surprise, a breath before an uncertain note ---------------
+    ic_ms, ic_v, h_ms = (float(c.get(k, 0.0)) for k in ('ic_agogic_ms', 'ic_vel', 'h_breath_ms'))
+    if (ic_ms or ic_v or h_ms) and base_role in FIG + ('counter',) and tonic is not None:
+        z_ic, z_h = expectation.note_z(ns, tonic)
+        start_boost += ic_ms / 1000.0 * z_ic + h_ms / 1000.0 * np.maximum(z_h - 0.5, 0.0)
+        v += ic_v * z_ic
+
     # ---- melody lead that follows velocity (Goebl 2001; Goebl et al. 2005) --------------------
     vl = float(c.get('vel_lead_ms', 0.0))
     if vl > 0 and not is_drum:
@@ -1051,15 +1065,52 @@ def auto_pedal(events, tm, change_beats, lift_ms=40, re_press_ms=60):
     return out
 
 
-def event_stats(events, tm):
-    """How far the humanized events moved from the nominal beat grid (what a human-ness check should see)."""
+def _resolved(cfg):
+    c = dict(PRESETS['natural'])
+    c.update(TIMING)
+    c.update(PRESETS[cfg] if isinstance(cfg, str) else (cfg or {}))
+    return c
+
+
+def coupling_report(events, tm, tonic=None):
+    """How closely a line's timing and loudness follow its melodic surprise, as Spearman rank correlations over its notes:
+    {'ic_timing_rho': IC against the onset's offset from the tempo map (ms), 'ic_vel_rho': IC against velocity,
+    'notes': n}. None where the line has too few notes (under 8) or no spread in surprise. Rubato, drift and the other
+    rules move the timing too, so the timing rho is smaller than the share the coupling alone would give."""
+    from scipy.stats import spearmanr
+    tonic = tonic if tonic is not None else getattr(tm, 'key', None)
+    if tonic is None or len(events) < 8:
+        return dict(ic_timing_rho=None, ic_vel_rho=None, notes=len(events))
+    notes = [dict(t=e['beat'], p=e['p']) for e in sorted(events, key=lambda e_: (e_['beat'], e_['p']))]
+    evs = sorted(events, key=lambda e_: (e_['beat'], e_['p']))
+    z_ic, _ = expectation.note_z(notes, tonic)
+    if float(np.std(z_ic)) < 1e-6:
+        return dict(ic_timing_rho=None, ic_vel_rho=None, notes=len(events))
+    dev = np.array([e['t'] for e in evs]) - np.asarray(tm.sec([e['beat'] for e in evs]), float)
+    vel = np.array([e['v'] for e in evs], float)
+    rho_t = spearmanr(z_ic, dev)[0] if float(np.std(dev)) > 1e-9 else None
+    rho_v = spearmanr(z_ic, vel)[0] if float(np.std(vel)) > 1e-9 else None
+    return dict(ic_timing_rho=None if rho_t is None else round(float(rho_t), 3),
+                ic_vel_rho=None if rho_v is None else round(float(rho_v), 3), notes=len(events))
+
+
+def event_stats(events, tm, cfg=None):
+    """How far the humanized events moved from the nominal beat grid (what a human-ness check should see). With `cfg`
+    (the groove preset the track used) and an active expectation coupling (ic_agogic_ms, ic_vel or h_breath_ms above 0)
+    on a line, the correlations of `coupling_report` and the keys used are added: the gate's `expr.agogic_coupling` reads them."""
     if not events:
         return {}
     nom = tm.sec([e['beat'] for e in events])
     dev = (np.array([e['t'] for e in events]) - nom) * 1000.0
     v = np.array([e['v'] for e in events])
-    return dict(notes=len(events), timing_ms_mean=round(float(dev.mean()), 1), timing_ms_std=round(float(dev.std()), 1),
-                vel_mean=round(float(v.mean()), 1), vel_std=round(float(v.std()), 1), vel_levels=int(len(set(v.tolist()))))
+    out = dict(notes=len(events), timing_ms_mean=round(float(dev.mean()), 1), timing_ms_std=round(float(dev.std()), 1),
+               vel_mean=round(float(v.mean()), 1), vel_std=round(float(v.std()), 1), vel_levels=int(len(set(v.tolist()))))
+    if cfg is not None and events[0].get('role') in FIG + ('counter',):
+        c = _resolved(cfg)
+        used = {k: float(c.get(k, 0.0)) for k in ('ic_agogic_ms', 'ic_vel', 'h_breath_ms')}
+        if any(used.values()):
+            out.update(coupling=dict(used, **coupling_report(events, tm)))
+    return out
 
 
 def humanize_report(events):

@@ -175,6 +175,34 @@ def render_checks(out):
         _row(out, 'PASS', 'channels', 'every microtone note had its own channel')
 
 
+def expression_rows(score, out):
+    """expr.agogic_coupling: for a figure line rendered with the expectation coupling on (ic_agogic_ms / ic_vel above 0), the
+    rank correlation of its onsets and velocities with its melodic surprise. Silent when no line used the coupling."""
+    import gate_profiles
+    gp = gate_profiles.resolve(score)
+    if not gp.on('expr.agogic_coupling'):
+        return
+    need = float(gp.param('expr.agogic_coupling', 'min_rho'))
+    for name, entry in sorted((rn.REPORT or {}).items()):
+        cp = (entry or {}).get('coupling')
+        if not cp:
+            continue
+        parts, low = [], False
+        for key, used, label in (('ic_timing_rho', 'ic_agogic_ms', 'timing'), ('ic_vel_rho', 'ic_vel', 'velocity')):
+            if not cp.get(used):
+                continue
+            rho = cp.get(key)
+            if rho is None:
+                parts.append(f'{label} not measured (too few notes or no spread)')
+                continue
+            parts.append(f'{label} rho {rho:+.2f}')
+            low = low or rho < need
+        if parts:
+            _row(out, 'WARN' if low else 'INFO', 'expr.agogic_coupling',
+                 f"Track '{name}': onsets/velocities against melodic surprise: {'; '.join(parts)} (want at least {need:+.2f})"
+                 + ('; raise ic_agogic_ms / ic_vel, or use a groove preset looser than tight' if low else ''))
+
+
 def spatial_check(path, score, out):
     """A score that stages sources off-centre or at a height must be heard that way. The default mixer path is amplitude pan
     only (no time difference, no elevation), so a staged score with no binaural / trajectory track renders near-mono."""
@@ -1949,6 +1977,7 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mo
     out = []
     _timed('score', lambda: score_checks(score, out))
     _timed('render', lambda: render_checks(out))
+    expression_rows(score, out)
     _timed('audio', lambda: audio_checks(rendered, score, out, metrics=metrics, analysis=analysis))
     # Deliverable rows: only the formats this score asked for, measured against the target's own data.
     import spatial_gate

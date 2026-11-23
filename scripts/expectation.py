@@ -176,6 +176,32 @@ class Expectation:
         return dict(onsets=t, pitches=p, viewpoints={k: dict(ic=ic[k], h=hh[k]) for k in seqs}, **out)
 
 
+def note_z(notes, tonic_pc, clip=2.0):
+    """(z of IC, z of H) per note of `notes`, each over the line: zero mean, unit spread, clipped to +-`clip`; 0 for a note
+    the model has no value for (the first, or a chord tone under the line's top note) and for a line with no spread.
+    This is what the humanizer scales: a note's place in the line's surprise, not an absolute number of bits."""
+    a = Expectation().analyse(notes, tonic_pc)
+    out = []
+    for key in ('ic', 'h'):
+        v = a[key]
+        ok = ~np.isnan(v)
+        z = np.zeros(len(v))
+        if ok.sum() > 2 and float(np.std(v[ok])) > 1e-6:
+            z[ok] = np.clip((v[ok] - np.mean(v[ok])) / np.std(v[ok]), -clip, clip)
+        out.append(z)
+    onsets = a['onsets']
+    res = []
+    for z in out:
+        per = np.zeros(len(notes))
+        if len(onsets):
+            for j, nt in enumerate(notes):
+                k = int(np.clip(np.searchsorted(onsets, float(nt['t']) - SIMULTANEOUS_BEATS), 0, len(onsets) - 1))
+                if abs(onsets[k] - float(nt['t'])) < SIMULTANEOUS_BEATS:
+                    per[j] = z[k]
+        res.append(per)
+    return res[0], res[1]
+
+
 def by_bar(onsets, values, beats_per_bar):
     """Mean of `values` (NaN ignored) per bar: array of length ceil(last onset / bar), NaN for a bar with no note."""
     if not len(onsets):

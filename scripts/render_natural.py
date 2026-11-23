@@ -53,7 +53,6 @@ Score format (JSON). Times are BEATS. Pitches are MIDI numbers (drums may use na
 }
 """
 import argparse
-import glob
 import hashlib
 import json
 import os
@@ -578,7 +577,7 @@ def _sfz_track(tr, tm, cfg, seed, ts, swing, global_dyn, raw_inst, inst_cfg, qua
     # piece's last note died 0.5-1.7 s before its written end (stem.edge, stem.dropout on all four string parts).
     ev = hz.humanize_track(notes, tm, tr.get('humanize', cfg), role=role, seed=seed, ts=tuple(ts), swing=swing,
                            articulation=(tr.get('articulation') or (inst_cfg or {}).get('articulation')))
-    _record(name, **hz.event_stats(ev, tm))
+    _record(name, **hz.event_stats(ev, tm, tr.get('humanize', cfg)))
     track_dyn = tr.get('dynamics')
 
     _g_pts, _t_pts = curve_arrays(global_dyn), curve_arrays(track_dyn)      # built once, not per call
@@ -723,7 +722,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
         role = tr.get('role', 'melody')
         ev = hz.humanize_track([dict(n) for n in tr.get('notes', [])], tm, tr.get('humanize', cfg), role=role,
                                seed=seed, ts=tuple(ts), swing=swing)
-        _record(tr.get('name', 'clone'), **hz.event_stats(ev, tm))
+        _record(tr.get('name', 'clone'), **hz.event_stats(ev, tm, tr.get('humanize', cfg)))
         return ci.render_events(inst_obj, ev)
     if raw_inst.startswith('sfx:'):                        # procedural effect from sfx.py; each note = one hit
         import sfx
@@ -791,7 +790,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
     if tr.get('synthesis') == 'formant' or (inst_cfg and inst_cfg.get('synthesis') == 'formant') or vocal_cfg or inst in vocals.INSTRUMENTS:
         ev = hz.humanize_track([dict(n, p=cli_util.midi_int(n['p'], f"track {tr.get('name')}: ")) for n in tr.get('notes', [])], tm, tr.get('humanize', cfg),
                                role=tr.get('role', 'melody'), seed=seed, ts=tuple(ts), swing=swing)
-        _record(tr.get('name', inst), **hz.event_stats(ev, tm))
+        _record(tr.get('name', inst), **hz.event_stats(ev, tm, tr.get('humanize', cfg)))
         merged_vocal = {}
         if vocal_cfg:
             merged_vocal.update(vocal_cfg)
@@ -837,7 +836,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
                            detune_cents=tr.get('detune_cents', 0.0), strum_dir=tr.get('strum', 'alt'), instrument=inst,
                            articulation=(tr.get('articulation') or (inst_cfg or {}).get('articulation')),
                            bpm=float(np.atleast_1d(getattr(tm, 'base_bpm', 96.0)).ravel()[0]))
-    _record(tr.get('name', inst), **hz.event_stats(ev, tm))
+    _record(tr.get('name', inst), **hz.event_stats(ev, tm, tr.get('humanize', cfg)))
     vox = Voice(sfpath, SR, _oversample())
     track_dyn = tr.get('dynamics')
     detune = float(tr.get('detune_cents', 0.0))
@@ -879,7 +878,6 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
                 vox.add(e['t'] - 0.013, 'off', 9, p)
             vox.add(e['t'], 'on', 9, p, int(np.clip(round(v), 1, 127)))
             vox.add(e['t'] + 0.12, 'off', 9, p)
-        end = max((e['t'] for e in ev), default=0)
         hit = vox.render(tail=2.5)
         # A SoundFont drum sample often starts on a single-sample step instead of rising out of silence, which the
         # stem gate (rightly) reads as a click at every hit. `onset_fade_ms` in an instrument preset ramps the first
@@ -1040,7 +1038,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
             vox.add(t, 'cc', 0, 64, val)
     if detune:
         vox.add(0, 'bend', 0, bend_value(detune))
-    last_cc, t_cc = None, 0
+    last_cc = None
     for t in np.arange(0, (ev[-1]['t'] if ev else 0) + 1, 0.015):         # dynamics curve
         cc = lvl2cc(dyn_level(t))
         if cc != last_cc:

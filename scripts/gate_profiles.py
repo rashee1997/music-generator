@@ -319,6 +319,9 @@ ROWS = {
     'expr.surprise_grounded': dict(meaning='a high-surprise note is followed by a predictable one (advisory)',
                                    params={'max_share': (0.6, 0.3, 0.9)},
                                    hint='resolve high-surprise leaps stepwise, or repeat the figure after them'),
+    'expr.agogic_coupling': dict(meaning='a line\'s onsets and velocities follow its melodic surprise when the coupling is on (advisory)',
+                                 params={'min_rho': (0.15, 0.0, 0.5)},
+                                 hint='raise ic_agogic_ms / ic_vel, or check the groove preset is not tight; rubato and drift also move the timing'),
     'expr.tension_ic': dict(meaning='harmonic tension (Chew) against melodic information content per two bars (reported)'),
 }
 

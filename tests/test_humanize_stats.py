@@ -186,6 +186,100 @@ class RenderPathTests(unittest.TestCase):
         self.assertEqual([ent for ent in slots if ent[2].locked()], [], 'a failed track left its sampler slot held')
         self.assertIsNone(getattr(rn._SLOT_STATE, 'slot', None))
 
+class ExpectationCouplingTests(unittest.TestCase):
+    """M8: ic_agogic_ms / ic_vel / h_breath_ms tie timing and loudness to melodic surprise; all 0 changes nothing."""
+    MELODY = [60, 62, 64, 65, 67, 65, 64, 62, 60, 64, 67, 72, 71, 69, 67, 65, 64, 62, 60, 59, 60, 62, 64, 67,
+              69, 71, 72, 71, 69, 67, 64, 60]
+
+    def notes(self):
+        return [dict(t=i * 0.5, d=0.45, p=p, v=0.7) for i, p in enumerate(self.MELODY)]
+
+    def tm(self):
+        return hz.TempoMap(100, total_beats=20, rubato=0.0, ritard=0.0, wander=0.0)
+
+    def play(self, **kw):
+        cfg = dict(FLAT, **kw)
+        return hz.humanize_track(self.notes(), self.tm(), cfg, role='melody', seed=3, key='C')
+
+    def test_defaults_are_off_and_leave_the_output_identical(self):
+        for k in ('ic_agogic_ms', 'ic_vel', 'h_breath_ms'):
+            self.assertEqual(hz.TIMING[k], 0.0)
+        a = self.play()
+        b = self.play(ic_agogic_ms=0.0, ic_vel=0.0, h_breath_ms=0.0)
+        self.assertEqual(a, b)
+
+    def test_off_never_touches_the_expectation_model(self):
+        import expectation
+        real = expectation.note_z
+        expectation.note_z = lambda *a, **k: (_ for _ in ()).throw(AssertionError('the model ran with the coupling off'))
+        try:
+            self.play()
+        finally:
+            expectation.note_z = real
+
+    def test_onsets_and_velocities_follow_the_surprise_within_their_caps(self):
+        import expectation
+        base = self.play()
+        on = self.play(ic_agogic_ms=20.0, ic_vel=4.0)
+        z_ic, _ = expectation.note_z(self.notes(), 0)
+        dt = np.array([a['t'] - b['t'] for a, b in zip(on, base)]) * 1000.0
+        dv = np.array([a['v'] - b['v'] for a, b in zip(on, base)], float)
+        self.assertGreater(float(np.corrcoef(dt, z_ic)[0, 1]), 0.95)
+        self.assertGreater(float(np.corrcoef(dv, z_ic)[0, 1]), 0.9)
+        self.assertLessEqual(float(np.abs(dt).max()), 2 * 20.0 + 1e-6)         # z is clipped to +-2
+        self.assertLessEqual(float(np.abs(dv).max()), 2 * 4.0 + 1.0)            # +1 for rounding to an integer velocity
+
+    def test_a_breath_only_delays_and_only_at_uncertain_notes(self):
+        base = self.play()
+        on = self.play(h_breath_ms=30.0)
+        dt = np.array([a['t'] - b['t'] for a, b in zip(on, base)]) * 1000.0
+        self.assertGreaterEqual(float(dt.min()), -1e-6)
+        self.assertGreater(float(dt.max()), 1.0)
+        self.assertLessEqual(float(dt.max()), 30.0 * 1.5 + 1e-6)               # max(0, z - 0.5) <= 1.5
+
+    def test_the_coupling_is_deterministic_for_a_seed(self):
+        self.assertEqual(self.play(ic_agogic_ms=15.0, ic_vel=3.0), self.play(ic_agogic_ms=15.0, ic_vel=3.0))
+
+    def test_only_a_line_is_coupled(self):
+        notes = [dict(t=i * 0.5, d=0.45, p=p, v=0.7) for i, p in enumerate(self.MELODY)]
+        off = hz.humanize_track(notes, self.tm(), FLAT, role='bass', seed=3, key='C')
+        on = hz.humanize_track(notes, self.tm(), dict(FLAT, ic_agogic_ms=20.0, ic_vel=4.0), role='bass', seed=3, key='C')
+        self.assertEqual(off, on)
+
+    def test_the_report_measures_the_coupling_it_applied(self):
+        cfg = dict(FLAT, ic_agogic_ms=25.0, ic_vel=5.0)
+        ev = hz.humanize_track(self.notes(), self.tm(), cfg, role='melody', seed=3, key='C')
+        tm = self.tm()
+        tm.key = 0                                   # tempo_map_for() sets the tonic from the score's key
+        stats = hz.event_stats(ev, tm, cfg)
+        self.assertEqual(stats['coupling']['ic_agogic_ms'], 25.0)
+        self.assertGreater(stats['coupling']['ic_timing_rho'], 0.5)
+        self.assertGreater(stats['coupling']['ic_vel_rho'], 0.5)
+        self.assertNotIn('coupling', hz.event_stats(self.play(), self.tm(), FLAT))
+        self.assertNotIn('coupling', hz.event_stats(self.play(), self.tm()))
+
+    def test_the_gate_row_reads_the_report(self):
+        import quality_gate
+        import render_natural as rn
+        saved = dict(rn.REPORT)
+        try:
+            rn.REPORT.clear()
+            rn.REPORT['lead'] = dict(coupling=dict(ic_agogic_ms=20.0, ic_vel=0.0, h_breath_ms=0.0, ic_timing_rho=0.4, ic_vel_rho=None, notes=30))
+            out = []
+            quality_gate.expression_rows({}, out)
+            self.assertEqual([r[0] for r in out], ['INFO'])
+            rn.REPORT['lead']['coupling']['ic_timing_rho'] = 0.02
+            out = []
+            quality_gate.expression_rows({}, out)
+            self.assertEqual([r[0] for r in out], ['WARN'])
+            rn.REPORT.clear()
+            out = []
+            quality_gate.expression_rows({}, out)
+            self.assertEqual(out, [])
+        finally:
+            rn.REPORT.clear()
+            rn.REPORT.update(saved)
+
 
 
 if __name__ == '__main__':
