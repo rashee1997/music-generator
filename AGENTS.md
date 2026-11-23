@@ -156,6 +156,7 @@ Before Phase 4, open every file in the row that matches the request; union sever
 | **Fusion (2 traditions/genres)** | `references/scoring/genre-fusion.md`, both culture rows, `references/scoring/style-rahman.md` |
 | **Vocals/hums/choirs** | `references/instruments-and-vocals/vocals-and-choirs.md`, `references/instruments-and-vocals/vocal-engine.md`, `knowledgebase/cultures/world-other.md`, culture row, `presets/vocals/` preset |
 | **Ambience/weather/nature/SFX (if requested)** | `references/spatial/environments-as-presets.md`, `references/sound-design/sound-effects.md`, `references/spatial/physical-scene.md`, `knowledgebase/sound-design/sfx-ambience.md` |
+| **A real or invented place by its physics (rainforest, alien atmosphere, animals that share time, a bed that follows the score)** | `references/spatial/biomes.md`, `knowledgebase/sound-design/biome-acoustics.md`, `references/spatial/environments-as-presets.md`, `scripts/biome/`, `scripts/phys_core/medium.py` |
 | **Physical sound (breaks/footsteps/rain/knock/creak/scatter)** | `references/spatial/physical-scene.md`, `references/sound-design/sound-effects.md` §2d, `knowledgebase/sound-design/sfx-formulas.md`, `scripts/physical.py laws` |
 | **Ad/corporate/VO/podcast** | `knowledgebase/genre-and-feel/commercial-promo.md`, `video-mixer/video_program_mix.py`, `compose.py --voiceover` |
 | **Game music/loops/adaptive** | `knowledgebase/media/game-music.md`, `knowledgebase/media/game-sfx.md` |

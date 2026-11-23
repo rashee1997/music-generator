@@ -9,6 +9,8 @@ load_when:
 
 # Ambience and rooms are project presets
 
+A place whose physics differ from Earth air, or whose animals must share time and follow the score, is a biome: `biomes.md`.
+
 Ambience (a forest, rain, a bazaar) and the room the music sits in are **written for each project, from its research**.
 The skill ships examples (`references/data/presets/environments/`, `references/data/presets/spaces/`); they are fallbacks and starting
 points, never the answer. Add ambience to a score only when the user asked for it. `setup_project.py --new-project` makes none

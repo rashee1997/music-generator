@@ -38,6 +38,7 @@ Read one file at a time. `scripts/research_kb.py` pulls the file a piece needs.
 | `sound-design/soundfont-velocity-and-realism.md` | SF2 velocity-to-cutoff, what SF3 is, and orchestral realism techniques; working figures for `velocity_timbre` | partly-sourced |
 | `sound-design/sfx-ambience.md` | Weather, bio-acoustic and street ambience models, and blending laws | unverified |
 | `sound-design/sfx-formulas.md` | The formulas behind `sound_model.py`, each labelled with where it came from | unverified |
+| `sound-design/biome-acoustics.md` | The medium (bulk state, one absorption law, interfaces), weather micro-physics, creature sources and tracts, niche overlap and the score's pockets | partly-sourced |
 | `sound-design/theatrical-realism.md` | The eight couplings a theatrical mix has and a clean synthetic one lacks: timbre vs loudness, ensemble scatter, register and transients, direct-to-reverberant depth, low-mid vs sub, air absorption, air at density, macro rubato | partly-sourced |
 | `sound-design/virtual-speaker-qa.md` | Standard loudspeaker arrangements, AllRAD decoding of order-5 AmbiX to a virtual array, and per-bar channel-fault thresholds | partly-sourced |
 

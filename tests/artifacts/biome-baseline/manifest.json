@@ -90,6 +90,24 @@
         2
       ]
     },
+    "env:titan_methane_storm": {
+      "centroid_hz": 461.5,
+      "rms_db": -63.214,
+      "sha256": "9a7a95fdb7f9bcaa6512da9dd104c17d6fa31da44b66423106fc98cf7a088858",
+      "shape": [
+        264600,
+        2
+      ]
+    },
+    "env:western_ghats_monsoon": {
+      "centroid_hz": 968.9,
+      "rms_db": -63.706,
+      "sha256": "1627a7329f5fac8d2ea3e7367b12ac0f69fa2f5bd7fc2369a777216acbf3a04d",
+      "shape": [
+        264600,
+        2
+      ]
+    },
     "env:wetland_night": {
       "centroid_hz": 1510.9,
       "rms_db": -66.889,

@@ -735,3 +735,37 @@ Sources used through search (all as snippets, none read in full):
 [Niche differentiation in soundscape ecology (arXiv 1907.12812)](https://arxiv.org/pdf/1907.12812),
 [Minnaert resonance](https://wikipedia.com/wiki/Minnaert_resonance),
 [NASA, Listening to raindrops](https://science.nasa.gov/earth-science/oceanography/listening-to-raindrops/).
+
+## 9. Implementation status (added after the build)
+
+Everything in §6 (M0 to M9) is built, each as its own commit on this branch, each with synthetic tests. The files:
+`scripts/phys_core/medium.py` (M1), `scripts/biome/` (`physics`, `context`, `generators`, `schema`, `sources`, `tract`, `fauna`,
+`fauna_schema`, `engine`, `ecology`, `ecology_schema`, `spatial`, `spatial_coupling_schema`), `scripts/env_rows.py` (M7),
+`scripts/env_migrate.py` (M9), `references/spatial/biomes.md`, `knowledgebase/sound-design/biome-acoustics.md`, and two shipped
+presets, `western_ghats_monsoon` and `titan_methane_storm`. Where the build differs from this design:
+
+| Design said | Built | Why |
+|---|---|---|
+| Earth `c` from the ideal gas, 343.2 m/s | `iso9613` takes 343.0 x sqrt(T / 293.15), the speed the repo always used | an Earth preset renders byte for byte as before (`tests/biome_baseline.py`) |
+| six modules with a 343 literal | eight scene modules read the active medium; four playback modules (head model, loudspeaker room) keep Earth's speed on purpose, declared in `tests/test_medium_wiring.py` | a head model describes where the programme is heard, not where it was recorded |
+| three absorption paths each changed | `airabs` dispatches to the active medium; every caller already used it | one choke point instead of three edits |
+| a field is a stereo pair, decorrelated | a field is N independent emitters, each from its own named random stream | the allpass decorrelator measured 0.36 (rain) and 0.63 (wind) mean `|correlation|` in `env.diffuse_field`, because phase changes cannot decorrelate tonal content; emitters measure 0.00 and 0.01 |
+| `obstacles.count_density`, rate in drops per m2 per second | `frontal_area_m2`; `rate_mm_h` is the volume that lands, the event rate follows from the drop sizes | one physical quantity decides the rate, and a rate that implies more than 250 000 impacts a second is refused with advice |
+| an animal's level in dB | `power_w`, the radiated acoustic power, required | pressure then follows the medium's impedance |
+| `ecology` resolved on the schedule | a chronological planner decides every bout before render; `Fauna` reads the plan through `scheduler.start_of` | a freeze is an absence of calls plus a fade of a call already sounding |
+| `env.foreground_salience` against bed and score | against the rest of the biome in the call's band; the score's figure stays with `ear.masking` and `env.score_pocket` | raw stems are not at mix level before the mixer's gain staging |
+| M9 deletes `ALIASES`, `LEGACY_NAMES` | kept; only the dead `apply_environmental_acoustics` and the `pedalboard` import it needed are removed | the layer engine still renders its presets, and `env_migrate.py` is an assistant, not a rewrite: it reports what carries and what does not |
+| the immersive hand-over | `biome/spatial.py`: emitters and animals are added to the bus instead of the stereo stem, at the level the mixer's chain gave the stem; the biome is rendered a second time | the bus API takes whole-piece sources |
+
+Defects found by the new tests and fixed on the way, none part of the design:
+
+- the default AllRAD2 speaker decoder was mirrored left to right (it built its harmonics with the azimuth un-negated, so a source
+  at -30 degrees came out of FR); AllRAD was right. `tests/test_immersive_31.py` now asserts both put -30/30/-90/90/-135/135 on FL/FR/SL/SR/BL/BR;
+- with the measured head data present, the `imm_cues` gate row and the HRTF test read the interaural time difference of a
+  broadband probe, which a MagLS decoder leaves free of phase above its 1.5 kHz transition; both now read a 100-700 Hz probe;
+- ten gate rows and one preflight rule had no entry in `lint_coverage.py`; `channel_qa._corr` chose arbitrarily between equal peaks of
+  opposite sign; the vocal gate read vibrato coupling from the first singer only.
+
+Still not checked: no audio was rendered for listening; the literature items of §8 were not read in full; relaxation terms for CO2
+and N2/CH4 are absent; the example presets are full of ESTIMATE on purpose (`env.declaration` says so); the thresholds of the `env.*` rows are
+starting values; the CPU row is a projection from a 3 s render and varies with the machine.

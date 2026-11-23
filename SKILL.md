@@ -109,7 +109,8 @@ One line each; every path is under `scripts/` unless it says otherwise.
 | `soundbank.py` | SoundFont discovery, instrument names and drum keys (`--list`) |
 | `world.py` | prints every scale, cycle and genre |
 | `sfx.py` | one-hit effects from presets (`list`, `make`) |
-| `environment.py` | ambience from presets and physical scenes |
+| `environment.py` | ambience from presets and physical scenes; a `biome/1` preset goes to `scripts/biome/` |
+| `env_migrate.py` | a layers environment preset to a skeleton biome, and what could not be carried |
 | `physical.py` | the physical scene engine: `laws`, `check`, `render`, `verify` |
 | `video_score.py` | score a video end to end inside a cue (`--selftest` proves every picture row can also fail) |
 | `video-mixer/deliver/reel.py` | place certified cues on a reel, one program, one verdict (`--mux`) |
@@ -213,6 +214,7 @@ exists so the agent can decide values, not so it can be quoted.
 | Video scoring/cuts | [`references/scoring/video-scoring.md`](references/scoring/video-scoring.md), `scripts/video_score.py` |
 | Vocals/choirs/hums | [`references/instruments-and-vocals/vocals-and-choirs.md`](references/instruments-and-vocals/vocals-and-choirs.md), [`references/instruments-and-vocals/vocal-engine.md`](references/instruments-and-vocals/vocal-engine.md) |
 | Cultural styles/fusion | [`knowledgebase/README.md`](knowledgebase/README.md), [`references/scoring/cultural-soul.md`](references/scoring/cultural-soul.md), [`references/scoring/genre-fusion.md`](references/scoring/genre-fusion.md) |
+| A place by its physics (biome) | [`references/spatial/biomes.md`](references/spatial/biomes.md) |
 | SFX/ambience/foley | [`references/sound-design/sound-effects.md`](references/sound-design/sound-effects.md), [`references/spatial/physical-scene.md`](references/spatial/physical-scene.md), [`references/spatial/environments-as-presets.md`](references/spatial/environments-as-presets.md) |
 | SFZ orchestra | [`references/instruments-and-vocals/sfz-libraries.md`](references/instruments-and-vocals/sfz-libraries.md), `scripts/sfz_libs.py` |
 | Instrument cloning/extraction | [`references/instruments-and-vocals/instrument-cloning.md`](references/instruments-and-vocals/instrument-cloning.md), [`references/workflow/extraction.md`](references/workflow/extraction.md) |

@@ -1,0 +1,435 @@
+{
+  "schema": "biome/1",
+  "name": "titan_methane_storm",
+  "character": "Titan lakeshore under a methane downpour: a thick cold nitrogen air that carries sound far, slow heavy drops on water-ice shore, a liquid-methane sea, and a leviathan whose call crosses the sea surface about 22 dB down (shipped example: copy into your project, replace every ESTIMATE, and tune it).",
+  "world": {
+    "g_m_s2": 1.352,
+    "listener": {
+      "medium": "air",
+      "height_m": 1.8
+    }
+  },
+  "media": {
+    "air": {
+      "model": "ideal_gas",
+      "gas": {
+        "molar_mass_kg_mol": 0.0279,
+        "gamma": 1.4,
+        "viscosity_pa_s": 6e-06,
+        "prandtl": 0.71
+      },
+      "state": {
+        "temperature_k": 94,
+        "pressure_pa": 146700
+      },
+      "c_measured_m_s": 194.0,
+      "flow": {
+        "u_ref_m_s": 0.8,
+        "z_ref_m": 1.8,
+        "profile": "power"
+      },
+      "level_ref": {
+        "basis": "power",
+        "p_ref_pa": 2e-05
+      },
+      "sources": [
+        "surface speed of sound 194.0 m/s measured by the Huygens probe (Hagermann et al. 2007; a thesis snippet, not read in full)",
+        "the ideal-gas value is 198.0 m/s, 2.1 % high, which env.medium_consistency reports",
+        "ESTIMATE: viscosity, Prandtl number and wind; the relaxation terms of Titan air are weak and left out until read from Petculescu and Lueptow 2007"
+      ]
+    },
+    "sea": {
+      "model": "liquid",
+      "c_m_s": 1400.0,
+      "rho_kg_m3": 450.0,
+      "gas": {
+        "gamma": 1.4
+      },
+      "state": {
+        "temperature_k": 94,
+        "pressure_pa": 146700
+      },
+      "sources": [
+        "ESTIMATE: the speed of sound in liquid methane and ethane; density 450 kg/m3 is a starting value"
+      ]
+    }
+  },
+  "materials": {
+    "water_ice": {
+      "family": "brittle",
+      "density": 920,
+      "young_modulus_gpa": 9.0,
+      "loss_factor": 0.004,
+      "toughness_kpa": 1500,
+      "thickness_m": 0.5,
+      "restitution": 0.5
+    }
+  },
+  "controls": {
+    "storm": {
+      "curve": [
+        [
+          0,
+          4
+        ],
+        [
+          40,
+          18
+        ],
+        [
+          90,
+          6
+        ]
+      ]
+    },
+    "gust": {
+      "ou": {
+        "mean": 1.0,
+        "sigma": 0.25,
+        "tau_s": 6.0
+      }
+    }
+  },
+  "generators": [
+    {
+      "name": "methane_rain_ice",
+      "kind": "particulate_impacts",
+      "salience": "bed",
+      "stationary": false,
+      "population": {
+        "kind": "rain",
+        "rate_mm_h": {
+          "control": "storm"
+        },
+        "rho_particle": 450.0,
+        "cd": 0.6,
+        "d_mm": [
+          1.0,
+          6.0
+        ]
+      },
+      "surface": {
+        "kind": "solid",
+        "material": "water_ice",
+        "geometry": {
+          "shape": "plate",
+          "width_m": 0.4,
+          "thickness_m": 0.05
+        },
+        "area_m2": 25.0,
+        "patches": 4
+      },
+      "spatial": {
+        "field": true,
+        "distance": 5.0,
+        "elevations": [
+          25.0,
+          45.0
+        ]
+      },
+      "sources": [
+        "terminal speed 1.43 m/s for a 4 mm methane drop (physics.terminal_velocity, gravity 1.352)",
+        "ESTIMATE: drag coefficient 0.6, sizes, area and ice moduli; check against the literature on Titan raindrops"
+      ]
+    },
+    {
+      "name": "lake_rain",
+      "kind": "particulate_impacts",
+      "salience": "bed",
+      "stationary": false,
+      "population": {
+        "kind": "rain",
+        "rate_mm_h": {
+          "control": "storm"
+        },
+        "rho_particle": 450.0,
+        "cd": 0.6,
+        "d_mm": [
+          1.0,
+          6.0
+        ]
+      },
+      "surface": {
+        "kind": "liquid",
+        "area_m2": 60.0,
+        "rho_kg_m3": 450.0
+      },
+      "bubbles": {
+        "p_by_size": [
+          [
+            2.0,
+            0.3
+          ],
+          [
+            4.0,
+            0.1
+          ]
+        ]
+      },
+      "spatial": {
+        "azimuth": 0.0,
+        "distance": 25.0,
+        "elevation": -3.0
+      },
+      "sources": [
+        "Minnaert pitch of an N2 bubble in liquid methane: 5.89 Hz m (physics.minnaert_hz)",
+        "ESTIMATE: bubble probabilities"
+      ]
+    },
+    {
+      "name": "spire_wind",
+      "kind": "turbulence",
+      "salience": "bed",
+      "obstacles": {
+        "d_m": {
+          "dist": "lognormal",
+          "median": 0.05,
+          "sigma": 0.6
+        },
+        "frontal_area_m2": 20.0,
+        "oscillators": 8
+      },
+      "flow": {
+        "u_m_s": 2.0,
+        "gust_corner_hz": 0.05,
+        "intensity": 0.4
+      },
+      "k_dipole": 0.001,
+      "broadband": {
+        "share": 0.3,
+        "band_hz": [
+          40,
+          2000
+        ]
+      },
+      "spatial": {
+        "field": true,
+        "distance": 6.0,
+        "elevations": [
+          10.0
+        ]
+      },
+      "sources": [
+        "Re about 9000 for 5 mm at 2 m/s gives about 85 Hz (physics.strouhal)",
+        "ESTIMATE: spire sizes, area and wind speeds"
+      ]
+    },
+    {
+      "name": "ice_shelf_creak",
+      "kind": "modal_field",
+      "salience": "bed",
+      "modes": {
+        "material": "water_ice",
+        "geometry": {
+          "shape": "plate",
+          "width_m": 3.0,
+          "thickness_m": 0.6
+        },
+        "modes": 8
+      },
+      "excitation": {
+        "kind": "stress",
+        "rate_hz": 0.3,
+        "energy_j": 1e-07
+      },
+      "spatial": {
+        "azimuth": 150.0,
+        "distance": 40.0,
+        "elevation": 0.0
+      },
+      "sources": [
+        "mode set from phys_core geometry and the material",
+        "ESTIMATE: ice moduli (starting values), rate and energy"
+      ]
+    }
+  ],
+  "fauna": [
+    {
+      "name": "leviathan",
+      "medium": "sea",
+      "salience": "foreground",
+      "power_w": 0.0001,
+      "bouts_per_min": 3.0,
+      "first_s": 12.0,
+      "source": {
+        "kind": "glottal_chaos",
+        "rd": 2.0,
+        "subharmonic": 0.3,
+        "chaos": 0.2
+      },
+      "elements": {
+        "rise": {
+          "f0_hz": [
+            [
+              0,
+              38
+            ],
+            [
+              1,
+              62
+            ]
+          ],
+          "ms": [
+            3500,
+            5000
+          ]
+        },
+        "fall": {
+          "f0_hz": [
+            [
+              0,
+              62
+            ],
+            [
+              1,
+              30
+            ]
+          ],
+          "ms": [
+            4000,
+            6000
+          ]
+        }
+      },
+      "sequence": [
+        "rise",
+        "fall"
+      ],
+      "resonator": {
+        "kind": "tract",
+        "segments": [
+          [
+            2.5,
+            300.0
+          ],
+          [
+            2.0,
+            900.0
+          ]
+        ],
+        "alpha_np_m": 0.001
+      },
+      "niche": {
+        "band_hz": [
+          25,
+          140
+        ]
+      },
+      "position": {
+        "azimuth": -20.0,
+        "elevation": -10.0,
+        "distance": 120.0
+      },
+      "sources": [
+        "fictional creature; nothing here claims a real animal",
+        "ESTIMATE: tract size chosen for a call near 35-60 Hz in a medium of c 1400 m/s; radiated power"
+      ]
+    },
+    {
+      "name": "sonar_skitterers",
+      "salience": "bed",
+      "power_w": 1e-05,
+      "bouts_per_min": 6.0,
+      "individuals": 5,
+      "first_s": 3.0,
+      "source": {
+        "kind": "click_train",
+        "fc_hz": 2200,
+        "q": 3.0,
+        "ici_ms": [
+          [
+            0,
+            180
+          ],
+          [
+            1,
+            12
+          ]
+        ]
+      },
+      "elements": {
+        "burst": {
+          "ms": [
+            900,
+            1300
+          ]
+        }
+      },
+      "niche": {
+        "band_hz": [
+          1600,
+          3200
+        ]
+      },
+      "position": {
+        "azimuth": 70.0,
+        "elevation": 0.0,
+        "distance": 20.0
+      },
+      "sources": [
+        "fictional; the click shape is the click_train source",
+        "ESTIMATE: every number"
+      ]
+    }
+  ],
+  "ecology": {
+    "density_budget": {
+      "events_per_s_max": 0.6
+    },
+    "niches": {
+      "auto": true,
+      "min_separation": "D<=0.4"
+    },
+    "rules": [
+      {
+        "on": {
+          "fauna": "leviathan"
+        },
+        "do": {
+          "freeze": [
+            "sonar_skitterers"
+          ],
+          "for_s": [
+            14,
+            30
+          ],
+          "fade_ms": 800,
+          "ramp_s": 10
+        }
+      }
+    ],
+    "score": {
+      "occupancy": "from_score",
+      "protect_roles": [
+        "melody",
+        "lead",
+        "vocal",
+        "drone"
+      ],
+      "margin_db": 4,
+      "pocket_threshold": 0.3
+    }
+  },
+  "spatial_coupling": {
+    "field": {
+      "kind": "diffuse",
+      "emitters": 12,
+      "order": 5,
+      "correlation_target": 0.2
+    },
+    "room": {
+      "space": "outdoor_open"
+    },
+    "decode_hint": [
+      "stereo",
+      "immersive_7_1",
+      "immersive_3_2"
+    ]
+  },
+  "reference": {
+    "full_scale_pa": 2.0
+  },
+  "sources": [
+    "Shipped example of a fictional medium. The numbers that exist are Titan's state (Huygens), its measured speed of sound, and the computed c, rho and impedance; the rest is marked ESTIMATE."
+  ]
+}

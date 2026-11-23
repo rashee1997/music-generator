@@ -142,6 +142,10 @@ class Generator:
         """The rms pressure at 1 m the physics predicts at time t_s (None when there is no closed form)."""
         return None
 
+    def events_per_s(self, t_s=0.0):
+        """Events a second at time t_s, or None for a generator that is not made of events."""
+        return None
+
     def _block(self):
         raise NotImplementedError
 
@@ -226,6 +230,7 @@ class Turbulence(Generator):
 class Particulate(Generator):
     kind = 'particulate_impacts'
     N_BINS = 8
+    MAX_EVENTS_PER_S = 250000.0          # a downpour over a small yard; beyond this the preset asks for more than a bed can say
 
     def __init__(self, cfg, ctx):
         super().__init__(cfg, ctx)
@@ -334,6 +339,10 @@ class Particulate(Generator):
             return np.zeros(np.shape(d_mm))
         return np.interp(d_mm, self.bub_tab[:, 0], self.bub_tab[:, 1])
 
+    def events_per_s(self, t_s=0.0):
+        d, pdf, v, per_m2_s = self.population(float(self.ctx.controls.value(self.rate_ref, float(t_s))))
+        return per_m2_s * self.area
+
     def expected_rms_pa(self, t_s=0.0):
         """Uncorrelated events: p_rms^2 = (events per second) x Z x (mean radiated energy) / 4 pi."""
         rate = float(self.ctx.controls.value(self.rate_ref, float(t_s)))
@@ -347,7 +356,11 @@ class Particulate(Generator):
         t_mid = (self.index + 0.5) * B / sr
         rate = float(self.ctx.controls.value(self.rate_ref, t_mid))
         d, pdf, v, per_m2_s = self.population(rate)
-        n_ev = int(self.rng.poisson(per_m2_s * self.area * B / sr))
+        per_s = per_m2_s * self.area
+        if per_s > self.MAX_EVENTS_PER_S:
+            raise ValueError(f'generator "{self.name}": {per_s:,.0f} impacts a second at {rate:g} mm/h over {self.area:g} m2 (limit {self.MAX_EVENTS_PER_S:,.0f}): '
+                             f'lower rate_mm_h or area_m2, or make the particles bigger (d_mm); at this density they are one wash, not events')
+        n_ev = int(self.rng.poisson(per_s * B / sr))
         pos = self.rng.integers(0, B, n_ev)
         size = self.rng.choice(len(d), size=n_ev, p=pdf)
         patch = self.rng.integers(0, K, n_ev)
@@ -432,6 +445,9 @@ class ModalField(Generator):
         att = max(2, int(RAMP_S * self.sr))
         ramp[:att] = 0.5 - 0.5 * np.cos(np.pi * np.arange(att) / att)
         return unit_energy(w * ramp, self.sr)
+
+    def events_per_s(self, t_s=0.0):
+        return None if self.kindx == 'continuous' else float(self.ctx.controls.value(self.rate, float(t_s)))
 
     def expected_rms_pa(self, t_s=0.0):
         if self.kindx == 'continuous':

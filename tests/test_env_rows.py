@@ -218,6 +218,13 @@ class Measured(unittest.TestCase):
             generators.Particulate.expected_rms_pa = real
         self.assertEqual(lv, 'FAIL', msg)
 
+    def test_a_gust_dominated_or_sparse_generator_is_not_compared(self):
+        gusty = preset(generators=[wind(flow=dict(u_m_s=3.0, intensity=0.4))])
+        self.assertIn('gust-dominated', one(env_rows.level_row, gp(), rec(gusty), window_s=5.0)[2])
+        sparse = preset(generators=[dict(name='ice', kind='modal_field', modes={'list': [[500.0, 0.3, 0.0]]}, sources=['test'],
+                                         excitation=dict(kind='poisson', rate_hz=0.3, energy_j=1e-9))])
+        self.assertIn('too few', one(env_rows.level_row, gp(), rec(sparse), window_s=10.0)[2])
+
     def test_a_rate_that_follows_a_curve_is_not_judged_against_one_number(self):
         p = preset(generators=[rain(population=dict(kind='rain', rate_mm_h={'control': 'r'}, cd=1.1))], controls={'r': {'curve': [[0, 5], [60, 50]]}})
         self.assertIn('not measured', one(env_rows.level_row, gp(), rec(p), window_s=5.0)[2])
@@ -268,6 +275,16 @@ class Measured(unittest.TestCase):
         self.assertEqual(one(env_rows.cpu_row, gp(), rec(preset()), timer=clock(0.5), probe_s=3.0)[0], 'INFO')        # 10 s a minute
         self.assertEqual(one(env_rows.cpu_row, gp(), rec(preset()), timer=clock(1.0), probe_s=3.0)[0], 'WARN')        # 20
         self.assertEqual(one(env_rows.cpu_row, gp(), rec(preset()), timer=clock(2.0), probe_s=3.0)[0], 'FAIL')        # 40
+
+
+class Overlap(unittest.TestCase):
+    def test_individuals_of_one_animal_are_counted_once(self):
+        a = [(0.0, 4.0), (2.0, 4.0), (10.0, 1.0)]                      # two individuals overlapping, then a lone call
+        self.assertEqual(env_rows._union(a), [[0.0, 6.0], [10.0, 11.0]])
+        self.assertAlmostEqual(env_rows._calling_s(a), 7.0)
+        b = [(1.0, 3.0), (3.0, 10.0)]
+        self.assertAlmostEqual(env_rows._overlap_s(a, b), 5.0 + 1.0)    # 1-6 s and 10-11 s, never more than the shorter animal's own time
+        self.assertLessEqual(env_rows._overlap_s(a, b), min(env_rows._calling_s(a), env_rows._calling_s(b)))
 
 
 class Measures(unittest.TestCase):

@@ -253,9 +253,24 @@ class ParticulateGen(unittest.TestCase):
                     surface=dict(kind='solid', material='leaf_green', area_m2=50.0, patches=3), **kw)
 
     def test_ten_times_the_rain_is_at_least_nine_db_louder(self):
-        a = rms(G.build(self.rain(2.0), ctx()).render(4.0))
-        b = rms(G.build(self.rain(20.0), ctx()).render(4.0))
+        a = rms(G.build(self.rain(1.0), ctx()).render(4.0))
+        b = rms(G.build(self.rain(10.0), ctx()).render(4.0))
         self.assertGreater(20 * math.log10(b / a), 9.0)
+
+    def test_an_impossible_event_rate_is_refused_with_advice(self):
+        cfg = self.rain(400.0)
+        cfg['surface'] = dict(kind='liquid', area_m2=30.0)
+        cfg['population'] = dict(kind='rain', rate_mm_h=400.0, cd=1.1, d_mm=[0.3, 1.5])
+        with self.assertRaises(ValueError) as cm:
+            G.build(cfg, ctx()).render(0.5)
+        self.assertIn('impacts a second', str(cm.exception))
+        self.assertIn('area_m2', str(cm.exception))
+
+    def test_events_per_second_follows_the_rate_and_the_area(self):
+        a = G.build(self.rain(2.0), ctx()).events_per_s(0.0)
+        b = G.build(self.rain(8.0), ctx()).events_per_s(0.0)
+        self.assertGreater(a, 1000.0)
+        self.assertGreater(b, 1.5 * a)                                  # sub-linear: heavier rain has bigger drops, so fewer per litre
 
     def test_no_rain_is_silence(self):
         self.assertEqual(float(np.abs(G.build(self.rain(0.0), ctx()).render(1.0)).max()), 0.0)
@@ -266,7 +281,7 @@ class ParticulateGen(unittest.TestCase):
         self.assertLess(20 * math.log10(t / e), -8.0)
 
     def test_the_rate_follows_a_control_curve(self):
-        c = ctx(controls={'storm': {'curve': [[0, 1], [4, 1], [4.01, 40], [8, 40]]}})
+        c = ctx(controls={'storm': {'curve': [[0, 1], [4, 1], [4.01, 15], [8, 15]]}})
         y = G.build(self.rain({'control': 'storm'}), c).render(8.0)
         self.assertGreater(rms(y[5 * SR:]) / rms(y[:3 * SR]), 5.0)
 
@@ -302,7 +317,7 @@ class ParticulateGen(unittest.TestCase):
         self.assertGreater(rms(y), 0.0)
 
     def test_the_output_is_finite_and_float32(self):
-        y = G.build(self.rain(60.0), ctx()).render(2.0)
+        y = G.build(self.rain(15.0), ctx()).render(2.0)
         self.assertEqual(y.dtype, np.float32)
         self.assertTrue(np.isfinite(y).all())
 

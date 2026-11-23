@@ -41,7 +41,6 @@ import zlib
 import numpy as np
 import scipy.signal as signal
 import soundfile as sf
-import pedalboard as pb
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import airabs
@@ -942,31 +941,6 @@ def render_environment_preset(name_or_dict, duration_s=30.0, sr=SR, seed=42, con
         out_stereo *= (10.0 ** (overall_db / 20.0))
         
     return out_stereo.astype(np.float32)
-
-
-def apply_environmental_acoustics(stereo_audio, sr=SR, distance_m=10.0, ir_path=None):
-    """Apply physical distance dampening and room/outdoor convolution acoustics via Pedalboard."""
-    x = stereo_audio.T.copy() if stereo_audio.ndim == 2 else np.stack([stereo_audio, stereo_audio], axis=0)
-    chain = []
-    
-    # Distance high-frequency air dampening (ISO 9613-1 acoustic absorption)
-    if distance_m > 5.0:
-        roll_off_hz = max(1200.0, 10000.0 - (distance_m * 120.0))
-        chain.append(pb.LowpassFilter(cutoff_frequency_hz=roll_off_hz))
-        chain.append(pb.HighShelfFilter(cutoff_frequency_hz=6000.0, gain_db=-min(12.0, distance_m * 0.15), q=0.7))
-        
-    # Impulse response convolution if provided
-    if ir_path and os.path.exists(ir_path):
-        ir_data, ir_sr = sf.read(ir_path)
-        ir_arr = ir_data.T.copy() if ir_data.ndim == 2 else np.stack([ir_data, ir_data], axis=0)
-        chain.append(pb.Convolution(ir_arr, mix=0.35, sample_rate=ir_sr))
-        
-    if not chain:
-        return stereo_audio
-        
-    board = pb.Pedalboard(chain)
-    out = board(x, sr)
-    return out.T.astype(np.float32)
 
 
 def main():

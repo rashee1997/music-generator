@@ -139,7 +139,7 @@ positions are presets of the kind `layouts`. A project adds a format (7.1.2, a r
 | `mixer` | `mix_and_master(score, stems, out)`, `mix_stems`, `master_chain` (`BrickwallLimiter`), `reverb_bus` (`NoiseGate`), `make_ir`, `duck_gain` |
 | `vocals` | `render_choir`, `sing`, `add_vocal_harmonies` (`PitchShift`), `add_vocal_chorus` (`Chorus`), `apply_vocal_dsp` |
 | `sfx` | `make`, `timeline`, `synth`, `apply_lofi` (`Bitcrush`/`GSM`/`MP3`), `apply_ladder_filter` (`LadderFilter`), `apply_delay` (`Delay`) |
-| `environment` | `render_environment_preset`, `apply_environmental_acoustics` (`Convolution`, `HighShelfFilter`, `LowpassFilter`) |
+| `environment` | `render_environment_preset` |
 | `spatial` | `spatialize_stem(audio, azimuth, elevation, distance, space, ...)`, `brown_duda_head_shadow`, `kuhn_itd`, `apply_near_field_divergence`, `render_trajectory`, `encode_ambisonic_bformat`, `decode_ambisonic_to_binaural` |
 | `clone_instrument` | `load_instrument(path)`, `render_events(inst, events)` (for custom rendering) |
 | `video_program_mix` | `build(voice, music, sfx, cfg['mix'])` (music under narration) |

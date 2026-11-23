@@ -105,12 +105,28 @@ def bouts(biome, span):
     return {k: sorted(v) for k, v in out.items()}
 
 
+def _union(intervals):
+    """[(start, duration)] -> disjoint [(start, end)]: an animal with several individuals is calling whenever any of them is."""
+    out = []
+    for s, d in sorted(intervals):
+        if out and s <= out[-1][1]:
+            out[-1][1] = max(out[-1][1], s + d)
+        else:
+            out.append([s, s + d])
+    return out
+
+
 def _overlap_s(a, b):
-    tot, j = 0.0, 0
-    for s, d in a:
-        for s2, d2 in b:
-            tot += max(0.0, min(s + d, s2 + d2) - max(s, s2))
+    """Seconds in which both animals are calling, counting each moment once."""
+    ua, ub, tot = _union(a), _union(b), 0.0
+    for s, e in ua:
+        for s2, e2 in ub:
+            tot += max(0.0, min(e, e2) - max(s, s2))
     return tot
+
+
+def _calling_s(a):
+    return sum(e - s for s, e in _union(a))
 
 
 # ------------------------------------------------------------------------------------------------ static rows
@@ -191,7 +207,7 @@ def niche_row(gp, rec, biome, plan, out):
         for b in cfgs[i + 1:]:
             d = ecology.schoener(ecology.band_shares(*a['niche']['band_hz']), ecology.band_shares(*b['niche']['band_hz']))
             pa, pb = plan.get(a['name'], []), plan.get(b['name'], [])
-            ta, tb = sum(x[1] for x in pa), sum(x[1] for x in pb)
+            ta, tb = _calling_s(pa), _calling_s(pb)
             co = _overlap_s(pa, pb) / min(ta, tb) if min(ta, tb) > 0 else 0.0
             lv.append('FAIL' if (d >= fd and co >= fc) else 'WARN' if (d >= wd and co >= wc) else 'INFO')
             rows.append(f'{a["name"]}/{b["name"]}: D {d:.2f}, calling together {100 * co:.0f} % of the shorter one\'s time')
@@ -285,7 +301,7 @@ def level_row(gp, rec, out, window_s=20.0):
     from biome import engine
     label = f'"{rec["track"]}"'
     p = rec['preset']
-    rows, lv = [], []
+    rows, lv, skipped = [], [], []
     mx, fl = gp.param('env.level_physical', 'max_db'), gp.param('env.level_physical', 'fail_db')
     for g in p.get('generators') or []:
         b = engine.Biome(_solo(p, {g['name']}), seed=7)
@@ -294,15 +310,23 @@ def level_row(gp, rec, out, window_s=20.0):
         want = gen.expected_rms_pa(t_mid)
         if want is None or want <= 0 or (g.get('population') and isinstance(g['population'].get('rate_mm_h'), dict)) or isinstance(((g.get('flow') or {}).get('u_m_s')), dict):
             continue
+        if g['kind'] == 'turbulence' and float((g.get('flow') or {}).get('intensity', 0.2)) > 0.15:
+            skipped.append(f'{g["name"]}: gust-dominated (a few gust cycles in the window): not compared')
+            continue
+        rate = gen.events_per_s(t_mid)
+        if rate is not None and rate * window_s < 100.0:
+            skipped.append(f'{g["name"]}: {rate * window_s:.0f} events in the window, too few for the mean to hold: not compared')
+            continue
         y = gen.render(window_s).astype(np.float64)
         got = float(np.sqrt(np.mean(y ** 2)))
         db = 20.0 * math.log10(max(got, 1e-30) / want)
         lv.append('FAIL' if abs(db) > fl else 'WARN' if abs(db) > mx else 'INFO')
         rows.append(f'{g["name"]}: {got:.2e} Pa against the physics\' {want:.2e} ({db:+.1f} dB)')
     if not rows:
-        _row(out, 'INFO', 'env.level_physical', f'{label}: no generator with a constant rate and a closed-form prediction: not measured')
+        _row(out, 'INFO', 'env.level_physical', f'{label}: no generator with a constant rate and a closed-form prediction: not measured'
+             + (' (' + '; '.join(skipped) + ')' if skipped else ''))
         return
-    _row(out, _worst(lv), 'env.level_physical', f'{label}: ' + '; '.join(rows) + ('' if _worst(lv) == 'INFO' else '. Remove any normalisation; check k_dipole, efficiency, area_m2'))
+    _row(out, _worst(lv), 'env.level_physical', f'{label}: ' + '; '.join(rows + skipped) + ('' if _worst(lv) == 'INFO' else '. Remove any normalisation; check k_dipole, efficiency, area_m2'))
 
 
 def window_deviation(y, sr=SR, n_windows=8):
