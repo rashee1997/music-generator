@@ -31,7 +31,7 @@ class Targets(unittest.TestCase):
     def test_named_targets_exist(self):
         self.assertEqual(render_targets.names(),
                          ['stereo', 'binaural', 'immersive_7_1', 'immersive_7_1_4', 'immersive_7_1_2', 'ambix', 'stereo_48k',
-                          'adm_bw64', 'immersive_5_1', 'immersive_5_1_2', 'immersive_5_1_4', 'mono'])
+                          'adm_bw64', 'atmos_music', 'immersive_5_1', 'iamf', 'immersive_5_1_2', 'immersive_5_1_4', 'mono'])
         self.assertEqual(render_targets.default(), ['stereo', 'immersive_7_1'])
 
     def test_every_shipped_target_is_buildable(self):

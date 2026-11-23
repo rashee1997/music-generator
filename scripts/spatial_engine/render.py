@@ -473,6 +473,41 @@ def conform_length(audio, n):
     return out
 
 
+def iamf_encoder():
+    """The AOMedia iamf-tools encoder this run can call, or None.
+
+    The tool is a separate C++ build (github.com/AOMediaCodec/iamf-tools); this engine does not vendor it. Point
+    `IAMF_ENCODER` at its `encoder_main` binary, or have one of the known names on PATH.
+    """
+    import os
+    import shutil
+    return (os.environ.get('IAMF_ENCODER') or shutil.which('iamf-tools-encoder')
+            or shutil.which('encoder_main'))
+
+
+def _iamf_encode(adm_path, out_path, work):
+    """Encode one ADM BW64 file to IAMF with the external encoder. Missing tool is an error naming the fix."""
+    import glob
+    import os
+    import shutil
+    import subprocess
+    exe = iamf_encoder()
+    if not exe:
+        raise ValueError('the "iamf" deliverable needs AOMedia iamf-tools (github.com/AOMediaCodec/iamf-tools): '
+                         'build its encoder_main and set IAMF_ENCODER to that path. No IAMF encoder was found, so '
+                         'no file was written')
+    proc = subprocess.run([exe, f'--adm_filename={adm_path}', f'--output_iamf_directory={work}'],
+                          capture_output=True, text=True)
+    if proc.returncode != 0:
+        raise ValueError(f'iamf-tools failed ({proc.returncode}): {(proc.stderr or proc.stdout).strip()[-800:]}')
+    made = sorted(glob.glob(os.path.join(work, '*.iamf')))
+    if not made:
+        raise ValueError('iamf-tools wrote no .iamf file: nothing was delivered')
+    os.makedirs(os.path.dirname(os.path.abspath(out_path)) or '.', exist_ok=True)
+    shutil.move(made[0], out_path)
+    return out_path
+
+
 def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None, length_s=None):
     """Build one requested deliverable and write it. The target preset's `renderer` names the route.
 
@@ -501,13 +536,56 @@ def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None, leng
         if length_s is not None:
             audio = conform_length(audio, round(float(length_s) * sr))
         audio = to_rate(audio, sr, rate, ceiling)   # rescales at the target rate, re-alarms its true peak
-        out_path = adm.write(path, audio, rate, bus.xml(len(audio), rate), bus.chna())
+        from mix_engine import dsp_utils as _du
+        from . import master as _master
+        fold = bus.stereo_fold(audio)
+        measured = dict(integrated_lufs=float(_du.lufs(fold, rate)),
+                        max_true_peak_dbtp=float(max(_master.channel_peaks(audio, rate))))
+        out_path = adm.write(path, audio, rate, bus.xml(len(audio), rate, measured), bus.chna())
         report = bus.report(len(audio), rate)
         report.update({'format': 'BW64', 'file': str(out_path), 'true_peak_ceiling_dbtp': ceiling,
+                       'integrated_lufs': measured['integrated_lufs'],
+                       'max_true_peak_dbtp': measured['max_true_peak_dbtp'],
+                       'loudness_renderer': 'urn:rashee1997:music-generator:adm-stereo-fold',
+                       'conform_ms': (None if length_s is None
+                                      else float((len(audio) / float(rate) - float(length_s)) * 1000.0)),
                        'validation': 'scripts/spatial_engine/adm.py validate_file (structural; gate rows in '
                                      'scripts/spatial_gate.py). No third-party validator ran.'})
         with open(str(out_path) + '.adm_report.json', 'w', encoding='utf-8') as fh:
             json.dump(report, fh, indent=2)
+        return out_path
+    elif renderer == 'iamf':
+        import glob
+        import json
+        import os as _os
+        import shutil
+        import subprocess
+        import tempfile
+        from . import adm
+        audio, bus = adm_mix(score, stems, target, sr, ctx)
+        if length_s is not None:
+            audio = conform_length(audio, round(float(length_s) * sr))
+        audio = to_rate(audio, sr, rate, ceiling)
+        from mix_engine import dsp_utils as _du
+        from . import master as _master
+        fold = bus.stereo_fold(audio)
+        measured = dict(integrated_lufs=float(_du.lufs(fold, rate)),
+                        max_true_peak_dbtp=float(max(_master.channel_peaks(audio, rate))))
+        work = tempfile.mkdtemp(prefix='iamf_')
+        adm_path = _os.path.join(work, 'master_adm.wav')
+        adm.write(adm_path, audio, rate, bus.xml(len(audio), rate, measured), bus.chna())
+        out_path = _iamf_encode(adm_path, path, work)
+        report = bus.report(len(audio), rate)
+        report.update({'format': 'IAMF', 'file': str(out_path), 'encoder': iamf_encoder(),
+                       'integrated_lufs': measured['integrated_lufs'],
+                       'max_true_peak_dbtp': measured['max_true_peak_dbtp'],
+                       'conform_ms': (None if length_s is None
+                                      else float((len(audio) / float(rate) - float(length_s)) * 1000.0)),
+                       'validation': 'encoded by AOMedia iamf-tools from this engine\'s ADM BW64; the container was '
+                                     'checked structurally here, not decoded by libiamf'})
+        with open(str(out_path) + '.iamf_report.json', 'w', encoding='utf-8') as fh:
+            json.dump(report, fh, indent=2)
+        shutil.rmtree(work, ignore_errors=True)
         return out_path
     elif renderer == 'mix_master':
         import mixer

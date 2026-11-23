@@ -1,0 +1,31 @@
+{
+  "name": "atmos_music",
+  "character": "Object-based music delivery in the shape the public Apple Immersive Audio Source Profile and Dolby Atmos Music documents describe: strict BW64 with ADM metadata, 24-bit PCM at 48 kHz, integrated loudness no hotter than -18 LKFS measured with ITU-R BS.1770, true peak no higher than -1 dBTP, no full-range content in the low-frequency channel, and a duration within 50 ms of the stereo master. The engine writes the ADM BW64 file and measures it; it does not encode Dolby Atmos, does not produce a DAMF master, and this file is not vendor-certified.",
+  "label": "ADM BW64, music immersive profile (-18 LKFS)",
+  "order": 9,
+  "aliases": [
+    "atmos",
+    "apple_immersive",
+    "music_immersive"
+  ],
+  "channels": 0,
+  "channel_order": [],
+  "file": "master_atmos.wav",
+  "renderer": "adm",
+  "true_peak_dbtp": -1.0,
+  "rate_hz": 48000,
+  "subtype": "PCM_24",
+  "layout": null,
+  "loudness": {
+    "ceiling_lufs": -18.0,
+    "method": "bs1770_stereo_fold"
+  },
+  "conform_max_ms": 50.0,
+  "sources": [
+    "Apple, Immersive Audio Source Profile (Apple Video and Audio Asset Guide): BWF ADM, 24-bit LPCM at 48 or 96 kHz, integrated loudness not above -18 LKFS and true peak not above -1 dBTP per ITU-R BS.1770, no full-frequency content in the LFE, stereo and immersive durations within 50 ms",
+    "Dolby Atmos Music Master Delivery Specification and Delivery Playbook (public figures): 24-bit PCM at 48 kHz, -18 LKFS integrated, -1 dBTP, at most 128 PCM channels and 118 objects, LFE band-limited. This engine does not write a Dolby Atmos master file and no Dolby tool validated the output",
+    "ITU-R BS.2076-3 (02/2025) for the metadata: audioFormatExtended version ITU-R_BS.2076-3, loudnessMetadata with the engine's own stereo-fold method and renderer URI, because the loudness of object audio depends on the renderer (BS.1770-5 Annex 4)",
+    "The ceiling is measured on the engine's constant-power stereo fold of the objects, not by a Dolby renderer; the row and the render report both say so. The -18 LKFS and -1 dBTP figures are the public delivery targets, not a certified measurement",
+    "This target is a validation profile, not a certification: a file that passes its rows is inside the published ceilings this engine can measure, and nothing more"
+  ]
+}

@@ -35,7 +35,29 @@ SR = 44100
 ORDER = 5
 SPEED_OF_SOUND = 343.0
 _cache = {}
-MAGLS_VERSION = 2      # bump when the way a MagLS set is built or stored changes: it is part of the disk-cache tag
+MAGLS_VERSION = 3      # bump when the way a MagLS set is built or stored changes: it is part of the disk-cache tag
+DEFAULT_F_TRANS_CAP_HZ = 1500.0   # the psychoacoustic ceiling for the LS -> MagLS crossover: phase errors above
+# ~1.5 kHz are inaudible (Engel et al. 2022; the 680 Hz value MMagLS used at order 1 is the low-order end of it).
+DIFFUSE_EQ_MAX_DB = 6.0           # cap on the diffuse-field correction: beyond this the set, not the decoder, is wrong
+
+
+def _hrtf_cfg():
+    """The immersive.hrtf block of the current mix, or {} outside a mix (tests, direct calls)."""
+    try:
+        import mix_context
+        return (((mix_context.current().mix or {}).get('immersive') or {}).get('hrtf')) or {}
+    except Exception:
+        return {}
+
+
+def f_trans(order=ORDER):
+    """Crossover from the linear solution to MagLS: the preset's value, else min(N*600, 1500) Hz.
+
+    N*600 is the order-dependent transform criterion (Hold et al. 2023); capping it at 1500 Hz follows the
+    perceptual evidence that phase above ~1.5 kHz is inaudible (Engel et al. 2022). The preset can override it.
+    """
+    v = _hrtf_cfg().get('f_trans_hz')
+    return float(v) if v else float(min(int(order) * 600.0, DEFAULT_F_TRANS_CAP_HZ))
 _dataset = {'path': None, 'name': 'fabian'}
 
 
@@ -80,28 +102,41 @@ def _load_hrirs(sr=SR):
     return type(h)(left, right, h.azi, h.zen, sr)
 
 
-def magls(order=ORDER):
+def magls(order=ORDER, f_trans_hz=None, diffuse_eq=None):
     """(2, (order+1)^2, 256) filters from harmonic signals to the left / right ear. Built once per head set (about 4 s),
-    then kept on disk."""
+    then kept on disk.
+
+    `f_trans_hz` is where the linear solution hands over to MagLS (default: the preset, else min(N*600, 1500) Hz);
+    `diffuse_eq` corrects plain MagLS's diffuse-field excess from the loaded set (default: the preset's
+    `immersive.hrtf.diffuse_eq`, true).
+    """
+    cfg = _hrtf_cfg()
+    ft = float(f_trans_hz if f_trans_hz is not None else f_trans(order))
+    deq = bool(cfg.get('diffuse_eq', True)) if diffuse_eq is None else bool(diffuse_eq)
     src = _dataset['path'] or os.path.join(data.HRIR_DIR, f'HRIRs_default_{SR}.mat')
     try:
         st = os.stat(src)
         key = (src, st.st_mtime_ns, st.st_size)      # a file replaced in place is a different set, in memory too
     except OSError:
         key = (src, None, None)
-    if (order, key) not in _cache:
-        tag = _magls_tag(src, order)
+    key = (order, ft, deq) + key
+    if key not in _cache:
+        tag = _magls_tag(src, order, ft, deq)
         path = os.path.join(os.path.dirname(data.HRIR_DIR), f'magls_o{order}_{SR}_{tag}.npy')
         if tag and os.path.exists(path):
-            _cache[(order, key)] = np.load(path)
+            _cache[key] = np.load(path)
         else:
-            _cache[(order, key)] = decoder.magls_bin(_load_hrirs(SR), order)
+            hrirs = _load_hrirs(SR)
+            dec = decoder.magls_bin(hrirs, order, f_trans=ft)
+            if deq:
+                dec, _ = diffuse_field_eq(dec, hrirs, SR)
+            _cache[key] = dec
             if tag:
-                np.save(path, _cache[(order, key)].astype(np.float32))
-    return _cache[(order, key)]
+                np.save(path, _cache[key].astype(np.float32))
+    return _cache[key]
 
 
-def _magls_tag(src, order):
+def _magls_tag(src, order, f_trans_hz=None, diffuse_eq=False):
     """Disk-cache tag of a MagLS set: SHA-256 of the head file's bytes, of the decoder source that builds the set,
     and MAGLS_VERSION, so replacing the file in place or changing the decoder never reuses stale filters. '' when the
     file cannot be read (nothing is then cached on disk)."""
@@ -114,8 +149,54 @@ def _magls_tag(src, order):
             h.update(b'|')
     except OSError:
         return ''
-    h.update(f'v{MAGLS_VERSION}|o{order}|sr{SR}'.encode('ascii'))
+    h.update(f'v{MAGLS_VERSION}|o{order}|sr{SR}|f{f_trans_hz}|d{int(bool(diffuse_eq))}'.encode('ascii'))
     return h.hexdigest()[:16]
+
+
+def _smooth_octaves(freqs, db, width_oct=1.0 / 6.0):
+    """A 1/6-octave moving average in the log-frequency domain (bins below 20 Hz keep their value)."""
+    out = np.array(db, dtype=float, copy=True)
+    for i, f in enumerate(freqs):
+        if f < 20.0:
+            continue
+        lo, hi = f / 2.0 ** (0.5 * width_oct), f * 2.0 ** (0.5 * width_oct)
+        m = (freqs >= lo) & (freqs <= hi)
+        if m.any():
+            out[i] = float(np.mean(db[m]))
+    return out
+
+
+def diffuse_field_eq(dec, hrirs, sr=SR, max_db=DIFFUSE_EQ_MAX_DB):
+    """Correct plain MagLS's diffuse-field excess with the loaded head set's own magnitude.
+
+    Plain MagLS optimises each direction's magnitude; its diffuse-field response is not constrained, and the
+    literature measures up to +10 dB excess above 8 kHz (Helmholz/Deppisch/Ahrens) with the SMR error falling
+    from 4.2 dB to about 2 dB once corrected. This computes, per ear, the ratio of the set's own diffuse-field
+    power to the decoder's, smooths it over 1/6 octave, caps it at `max_db`, and applies it to the filters as a
+    zero-phase magnitude (the filters are already magnitude-optimised above f_trans, so their phase is not the
+    thing to change).
+
+    Returns (corrected dec, metrics) where metrics holds the RMS deviation above 2 kHz before and after in dB.
+    """
+    dec = np.asarray(dec, dtype=float)
+    taps = dec.shape[-1]
+    nfft = max(1024, taps)
+    freqs = np.fft.rfftfreq(nfft, 1.0 / float(sr))
+    band = freqs >= 2000.0
+    azi, zen = np.asarray(hrirs.azi, float), np.asarray(hrirs.zen, float)
+    y = sph.sh_matrix(int(np.sqrt(dec.shape[1]) - 1), azi, zen, 'real')       # (dirs, K)
+    out = np.empty_like(dec)
+    metrics = {}
+    for ear, hrir in ((0, hrirs.left), (1, hrirs.right)):
+        ref = np.mean(np.abs(np.fft.rfft(np.asarray(hrir, float), nfft, axis=1)) ** 2, axis=0)
+        got = np.mean(np.abs(np.fft.rfft(y @ dec[ear], nfft, axis=1)) ** 2, axis=0)
+        dev = 10.0 * np.log10((got + 1e-30) / (ref + 1e-30))
+        metrics[f'ear{ear}_before_db'] = float(np.sqrt(np.mean(dev[band] ** 2))) if band.any() else 0.0
+        corr = _smooth_octaves(freqs, np.clip(-dev, -float(max_db), float(max_db)))
+        metrics[f'ear{ear}_after_db'] = float(np.sqrt(np.mean((dev[band] + corr[band]) ** 2))) if band.any() else 0.0
+        spec = np.fft.rfft(dec[ear], nfft, axis=-1) * (10.0 ** (corr / 20.0))[None, :]
+        out[ear] = np.fft.irfft(spec, nfft, axis=-1)[..., :taps]
+    return out, metrics
 
 
 def gains(order, azimuth_deg, elevation_deg):

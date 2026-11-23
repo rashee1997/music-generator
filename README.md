@@ -26,9 +26,13 @@ One ambisonic mix, judged once, delivered in every channel count. No format is a
 | `immersive_5_1`, `_5_1_2`, `_5_1_4` | 6 / 8 / 10 | VBAP (Pulkki 1997) onto ITU-R BS.2051-3 layouts, a Linkwitz-Riley low-frequency channel (Linkwitz 1976), all-pass decorrelation of the surrounds (Kendall 1995) | `imm.*`, `fold.timbre` |
 | `immersive_7_1`, `_7_1_2`, `_7_1_4` | 8 / 10 / 12 | a 7.1 ring with 0, 2 or 4 overhead loudspeakers (see [Limits](#limits)) | `imm.*`, `fold.timbre` |
 | `ambix` | 36 (order 5) | the field itself, ACN order, SN3D (Nachbar et al. 2011) | `delivery.true_peak` |
-| `adm_bw64` | one per object | Audio Definition Model in BW64 (ITU-R BS.2076-2, BS.2088-1) | `adm.*` |
+| `adm_bw64` | one per object | Audio Definition Model in BW64 (ITU-R BS.2076-3, BS.2088-1) with `loudnessMetadata` | `adm.*` |
+| `atmos_music` | one per object | the same ADM file against the public music delivery figures: 48 kHz/24-bit, -18 LKFS ceiling, -1 dBTP, 50 ms conform | `delivery.loudness_ceiling`, `delivery.conform` |
+| `iamf` | one per object | the ADM file through the external AOMedia iamf-tools encoder; absent encoder is an error, never a fallback | `iamf.container` |
 
 List `stereo` first: the `fold.*` rows compare every other format with it. A format that fails its rows stays in `out/_draft_master_<format>.wav`. Every certified stereo master is kept as `out/master_vNN.wav`.
+
+What 3.1 added: AllRAD2 as the default loudspeaker decoder (plane-wave power spread under 0.6 dB on the six layouts at order 5, against 4.7-7.9 dB for AllRAD), a 1500 Hz MagLS crossover with a capped diffuse-field EQ, opt-in near-field-coded HOA for close static sources, ADM BS.2076-3 with a measured `loudnessMetadata`, and the `atmos_music` / `iamf` deliverables.
 
 What 3.0 added: rendered mono (`MonoBus`); BS.1770 loudness and a linked true-peak limiter for any channel count; the `fold.*` and `imm.loudness` rows; CPU or GPU chosen once (`scripts/compute.py`, `MUSICGEN_DEVICE`); parallel mixing (`render.mix_workers`); and master, room and decode choices as preset keys.
 

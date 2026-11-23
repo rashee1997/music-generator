@@ -274,6 +274,15 @@ def encode_many(bus, signals, gains):
 
 
 _ALLRAD = {}
+_ALLRAD2 = {}
+
+
+def _sphere_points(points):
+    """A Fibonacci sphere: near-uniform directions, any count, no external grid files."""
+    i = np.arange(points) + 0.5
+    el = np.degrees(np.arcsin(1.0 - 2.0 * i / points))
+    az = (np.degrees(i * np.pi * (3.0 - np.sqrt(5.0))) + 180.0) % 360.0 - 180.0
+    return az, el
 
 
 def allrad_matrix(speakers, order, points=1200):
@@ -283,6 +292,41 @@ def allrad_matrix(speakers, order, points=1200):
     if key not in _ALLRAD:
         _ALLRAD[key] = _allrad(speakers, order, points)
     return _ALLRAD[key]
+
+
+def allrad2_matrix(speakers, order, points=1200):
+    """AllRAD2 (Zotter & Frank, AES 2018), kept per layout.
+
+    AllRAD's loudness error comes from the linear superposition of the sampled-Ambisonic panning function and
+    VBAP: each is energy-preserving, but the sum of the two is not. AllRAD2 superimposes their *squares*, takes the
+    square root, and decodes with the resulting panning function. The paper reports a loudness spread of 2.75 dB
+    for AllRAD and 0.22 dB for AllRAD2 on the 4+5+0 layout (nine loudspeakers, order not stated in the abstract).
+    """
+    key = (json.dumps(speakers, sort_keys=True, default=str), int(order), int(points))
+    if key not in _ALLRAD2:
+        _ALLRAD2[key] = _allrad2(speakers, order, points)
+    return _ALLRAD2[key]
+
+
+def _allrad2(speakers, order, points=1200):
+    """(speakers, K) AllRAD2 decoder on a Fibonacci kernel, normalised to unit mean plane-wave power."""
+    from spatial_hrtf import sph
+    from . import pan
+    az, el = _sphere_points(points)
+    Y = sph.sh_matrix(order, np.radians(az), np.radians(90.0 - el), 'real')        # (J, K)
+    a = sph.unity_gain(sph.max_rE_weights(order))
+    a = a / np.sqrt(np.sum((2.0 * np.arange(order + 1) + 1.0) / (4.0 * np.pi) * a ** 2))
+    anm = sph.repeat_per_order(a)
+    bld = Y @ (anm[:, None] * Y.T)                                                  # band-limited Dirac on the kernel
+    names = [s['name'] for s in speakers]
+    g = np.zeros((points, len(names)))
+    for j in range(points):
+        for name, v in pan.gains(az[j], el[j], speakers).items():
+            g[j, names.index(name)] = v
+    square = np.sqrt(4.0 * np.pi / points * (bld ** 2) @ (g ** 2))                     # AllRAD2 panning, (J, L)
+    d = 4.0 * np.pi / points * square.T @ Y                                           # (L, K)
+    power = np.mean(np.sum((Y @ d.T) ** 2, axis=1))
+    return d / np.sqrt(power)
 
 
 def probe_brir(imm, space, sr=44100, azimuth=0.0, distance=2.0, seconds=2.5, score=None):
@@ -398,7 +442,7 @@ class _FieldSink:
             self._h = h
             self._hist = np.zeros((self.L - 1, self.k), np.float32)
         elif self.decode == 'speakers':
-            self._d = allrad_matrix(bus.speakers, bus.order).astype(np.float32).T    # (K, speakers)
+            self._d = bus.speaker_matrix().astype(np.float32).T    # (K, speakers)
         else:
             self._scale = ambix(np.ones((1, self.k), np.float32))[0]
 
@@ -457,7 +501,16 @@ class HoaBus:
         self.k = (self.order + 1) ** 2
         self.imm, self.space, self.score = imm or {}, space or {}, score or {}
         self.speakers, self.room_only = speakers, room_only
+        self.speaker_decoder = str((self.imm.get('decoder') or 'allrad2'))
+        if self.speaker_decoder not in ('allrad', 'allrad2'):
+            raise ValueError(f'immersive.decoder "{self.speaker_decoder}" is not one of allrad, allrad2')
         self.sources, self.reverb = [], None
+
+    def speaker_matrix(self):
+        """The decode matrix this piece asked for: AllRAD2 by default, AllRAD when an older preset says so."""
+        if self.speaker_decoder == 'allrad':
+            return allrad_matrix(self.speakers, self.order)
+        return allrad2_matrix(self.speakers, self.order)
 
     # ------------------------------------------------------------------ what the mixer hands in
     def add(self, name, y, spec):
@@ -669,7 +722,17 @@ class HoaBus:
                         ears = H.apply_near_field(ears, az_s, el_s, d_s, near, sr)
                     stereo[:n] += ears
                 else:
-                    encode(bus, direct, g)
+                    nfc_cfg = self.imm.get('nfc') or {}
+                    if (nfc_cfg.get('enabled') and p is None and dist < float(nfc_cfg.get('max_m', 1.0))
+                            and not self.room_only):
+                        from . import nfc as nfc_mod
+                        sigs = nfc_mod.apply(direct, self.order, dist, sr,
+                                             float(nfc_cfg.get('ref_m', 1.0)),
+                                             float(nfc_cfg.get('max_gain_db', 30.0)))
+                        for m in range(self.order + 1):
+                            encode(bus, sigs[:, m], g[m * m:(m + 1) * (m + 1)])
+                    else:
+                        encode(bus, direct, g)
             refl_own = (track_space or {}).get('reflections') if track_space else None
             for refl, w in ([(refl_own, None)] if refl_own else states):
                 if not isinstance(refl, dict):

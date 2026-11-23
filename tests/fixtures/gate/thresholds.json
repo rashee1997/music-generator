@@ -59,8 +59,14 @@
     },
     "delivery.bit_depth": {},
     "delivery.channels": {},
+    "delivery.conform": {
+      "max_abs_ms": 50.0
+    },
     "delivery.duration": {
       "tolerance_s": 0.5
+    },
+    "delivery.loudness_ceiling": {
+      "max_lufs": -18.0
     },
     "delivery.sample_rate": {},
     "delivery.standard": {},
@@ -81,6 +87,7 @@
     "feel.spiral": {},
     "feel.witek": {},
     "focus.declared": {},
+    "iamf.container": {},
     "imm.band": {
       "min_hf_frac": 0.003
     },
@@ -95,6 +102,9 @@
     "imm.cues": {
       "min_ild_db": 8.0,
       "min_itd_ms": 0.3
+    },
+    "imm.decode_uniformity": {
+      "max_spread_db": 2.0
     },
     "imm.elevation": {
       "min_tilt_db": 3.0

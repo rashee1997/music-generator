@@ -255,9 +255,14 @@ class AdmBus:
                     loudness_method='BS.1770 loudness of a constant-power stereo fold of the objects '
                                     '(engine-internal levelling reference; an object file has no loudness)')
     
-    def xml(self, n, sr=None):
-        """The axml chunk: ADM (BS.2076) in the canonical element order (programme, content, objects, packs,
-        channel formats, stream formats, track formats, track UIDs)."""
+    def xml(self, n, sr=None, loudness=None):
+        """The axml chunk: ADM (BS.2076-3) in the canonical element order (programme, content, objects, packs,
+        channel formats, stream formats, track formats, track UIDs).
+
+        `loudness` is the measurement the render made on the file: {'integrated_lufs', 'max_true_peak_dbtp'}.
+        It is written as loudnessMetadata with the method named as a renderer, which BS.1770-5 Annex 4 requires
+        to be reported for object audio.
+        """
         sr = int(sr or self.sr)
         if not self.objects and self.bed is None:
             raise ValueError('an ADM file needs at least one object or a bed; the bus is empty')
@@ -266,13 +271,21 @@ class AdmBus:
         dur = _time(n / float(sr))
         root = ET.Element('ebuCoreMain', {'xmlns': 'urn:ebu:metadata-schema:ebuCore_2016', 'xml:lang': 'en'})
         afx = ET.SubElement(ET.SubElement(ET.SubElement(root, 'coreMetadata'), 'format'), 'audioFormatExtended',
-                            version='ITU-R_BS.2076-2')
+                            version='ITU-R_BS.2076-3')
         title = str(self.score.get('title') or 'programme')
         chna = self.chna()
         # programme + content (content references every object, bed included)
         prog = ET.SubElement(afx, 'audioProgramme', audioProgrammeID='APR_1001', audioProgrammeName=title,
                              start=_time(0), end=dur)
         ET.SubElement(prog, 'audioContentIDRef').text = 'ACO_1001'
+        lm = ET.SubElement(prog, 'loudnessMetadata')
+        if isinstance(loudness, dict):
+            if loudness.get('integrated_lufs') is not None:
+                ET.SubElement(lm, 'integratedLoudness').text = f"{float(loudness['integrated_lufs']):.1f}"
+            if loudness.get('max_true_peak_dbtp') is not None:
+                ET.SubElement(lm, 'maxTruePeak').text = f"{float(loudness['max_true_peak_dbtp']):.1f}"
+        ET.SubElement(lm, 'renderer', uri='urn:rashee1997:music-generator:adm-stereo-fold',
+                      name='constant-power stereo fold of the objects (engine levelling reference)', version='3.1')
         content = ET.SubElement(afx, 'audioContent', audioContentID='ACO_1001', audioContentName=title)
         for i in range(len(self.objects)):
             ET.SubElement(content, 'audioObjectIDRef').text = f'AO_{0x1001 + i:04X}'
@@ -833,6 +846,16 @@ def _validate_bodies(path, expect_sr=None):
             if not pf.startswith('AP_') or len(pf) != 11:
                 problems.append(f'chna track {idx} packFormat {pf!r} is not AP_ + 8 hex')
     if axml is not None:
+        try:
+            root = ET.fromstring(axml)
+            afx = root.find('.//e:audioFormatExtended', _NS)
+            version = afx.get('version') if afx is not None else None
+            if version != 'ITU-R_BS.2076-3':
+                problems.append(f'audioFormatExtended version is {version!r}, not ITU-R_BS.2076-3')
+            if afx is not None and afx.find('.//e:loudnessMetadata', _NS) is None:
+                problems.append('no loudnessMetadata: the file does not say how its loudness was measured')
+        except ET.ParseError as e:
+            problems.append(f'axml is not well-formed XML: {e}')
         # NOTE 2 of BS.2088-2 section 2.1 permits axml after data, so chunk placement is not judged here;
         # the writer emits it before data, where ADM readers expect to find it without seeking past the audio.
         problems += validate_adm(axml, chna or [], sr=parsed['sr'], channels=parsed['channels'])

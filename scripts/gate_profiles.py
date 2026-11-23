@@ -256,6 +256,14 @@ ROWS = {
     'mix.band_fold':     dict(meaning='mono fold-down loss in each auditory band, 100-5000 Hz',
                               params={'max_db': (3.5, 2.0, 9.0), 'floor_db': (30.0, 12.0, 60.0)}),
     'imm.kinematics':    dict(meaning='no source travels faster than its role allows'),
+    # Immersive 3.1: delivery ceilings and decoder uniformity (scripts/spatial_gate.py)
+    'delivery.loudness_ceiling': dict(meaning='integrated loudness against the ceiling the target declares',
+                                     params={'max_lufs': (-18.0, -24.0, -10.0)}),
+    'delivery.conform': dict(meaning='duration against the certified stereo master',
+                             params={'max_abs_ms': (50.0, 10.0, 200.0)}),
+    'iamf.container': dict(meaning='an IAMF deliverable was written by the external encoder'),
+    'imm.decode_uniformity': dict(meaning='plane-wave power spread of the all-round decoder',
+                                  params={'max_spread_db': (2.0, 0.5, 12.0)}),
     # per-channel and per-bar delivery QA for any channel count (scripts/channel_qa.py,
     # references/spatial/virtual-speaker-qa.md). A real layout uses its speaker positions; order-5 AmbiX
     # decodes to the 36-point ambix_qa_36 sphere; an undeclared file is still checked per channel.

@@ -315,8 +315,11 @@ DEFAULTS = {
                            'drone': 0.0, 'ostinato': 0.0},
         'max_elevation': 60.0,
         'min_height_tracks': 1,
-        # a listener's own head set: '' = the bundled FABIAN set, else a name in <project>/presets/hrtf/ or a path
-        'hrtf': {'dataset': ''},
+        # a listener's own head set: '' = the bundled FABIAN set, else a name in <project>/presets/hrtf/ or a path.
+        # f_trans_hz is where MagLS takes over from the linear solution; 1500 Hz is the psychoacoustic crossover
+        # (Engel et al. 2022; MMagLS 2025), not the order-dependent N*600 = 3 kHz at order 5.
+        # diffuse_eq corrects plain MagLS's high-frequency diffuse-field excess from the loaded head data.
+        'hrtf': {'dataset': '', 'f_trans_hz': 1500.0, 'diffuse_eq': True},
         'pair': {'width_deg_bed': 40.0, 'width_deg_stereo': 12.0},
         'gate': {'max_late_iacc': 0.4},
         # 'per_stem' places each track with its own head filter (the engine every older piece was mixed with);
@@ -329,6 +332,13 @@ DEFAULTS = {
         # or 'speakers' (a loudspeaker pair, layout `stereo_layout`, no head filter: what fold.mono assumes)
         'stereo_decode': 'binaural',
         'stereo_layout': 'stereo_bs775',
+        # how an ambisonic field is decoded to loudspeakers: 'allrad2' (panning-invariant loudness, Zotter & Frank
+        # 2018) or 'allrad' (the pre-3.1 matrix). Applies to the bus's speaker decode and the ambix QA decode.
+        'decoder': 'allrad2',
+        # Near-field-coded encoding (Daniel 2003): a source closer than `max_m` gets per-order distance filters
+        # so the field keeps a spherical wavefront. Off by default: it changes what every decoder receives, and the
+        # low-frequency boost is capped (Favrot & Buchholz regularise at 30 dB). Direct sound only.
+        'nfc': {'enabled': False, 'max_m': 1.0, 'ref_m': 1.0, 'max_gain_db': 30.0},
         # how far an "anchor" source (bass, drums, or `spatial_role: "anchor"`) may sway around its place
         'anchor_max_span_deg': 6.0,
         # the fastest a source may travel, read by the imm_kinematics row. Starting values, not measured limits.
@@ -450,6 +460,7 @@ ENUMS = {
     ('gain_staging', 'strategy'): ('legacy', 'adaptive'),
     ('immersive', 'engine'): ('per_stem', 'hoa_bus'),
     ('immersive', 'stereo_decode'): ('binaural', 'speakers'),
+    ('immersive', 'decoder'): ('allrad', 'allrad2'),
     ('dynamics', 'engine'): ('pedalboard', 'dsp'),
     ('dynamics', 'detector'): ('peak', 'rms'),
     ('sidechain', 'mode'): ('legacy', 'explicit', 'off'),
@@ -522,6 +533,26 @@ def validate(mix):
                     if key not in DEFAULTS['theatrical'][part]:
                         problems.append(f'mix.theatrical.{part}.{key}: unknown key (the engine would ignore it); '
                                         f'known: {", ".join(sorted(DEFAULTS["theatrical"][part]))}')
+    imm = mix.get('immersive')
+    if isinstance(imm, dict) and isinstance(imm.get('hrtf'), dict):
+        for key in imm['hrtf']:
+            if key not in DEFAULTS['immersive']['hrtf']:
+                problems.append(f'mix.immersive.hrtf.{key}: unknown key (the engine would ignore it); '
+                                f'known: {", ".join(sorted(DEFAULTS["immersive"]["hrtf"]))}')
+        ft = imm['hrtf'].get('f_trans_hz')
+        if ft is not None and (not isinstance(ft, (int, float)) or isinstance(ft, bool)
+                               or not 200.0 <= float(ft) <= 12000.0):
+            problems.append(f'mix.immersive.hrtf.f_trans_hz: {ft} is outside 200..12000 Hz')
+    if isinstance(imm, dict) and isinstance(imm.get('nfc'), dict):
+        for key in imm['nfc']:
+            if key not in DEFAULTS['immersive']['nfc']:
+                problems.append(f'mix.immersive.nfc.{key}: unknown key (the engine would ignore it); '
+                                f'known: {", ".join(sorted(DEFAULTS["immersive"]["nfc"]))}')
+        for key, (lo, hi) in (('max_m', (0.2, 2.0)), ('ref_m', (0.2, 3.0)), ('max_gain_db', (0.0, 40.0))):
+            v = imm['nfc'].get(key)
+            if v is not None and (not isinstance(v, (int, float)) or isinstance(v, bool)
+                                  or not lo <= float(v) <= hi):
+                problems.append(f'mix.immersive.nfc.{key}: {v} is outside {lo}..{hi}')
     for (sec, key), (kind, lo, hi) in RANGES.items():
         val = (mix.get(sec) or {}).get(key) if isinstance(mix.get(sec), dict) else None
         if val is None:

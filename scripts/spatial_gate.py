@@ -200,6 +200,85 @@ def _own_fold(tgt, new, target_name, limit, floor, out):
           f'was delivered, so the comparison is the layout against its own fold'))
 
 
+def _selected_target(score, wav_path, default='adm_bw64'):
+    """The target this file is: its file name picks it out of the selected list, else the given default."""
+    import render_targets
+    base = os.path.basename(str(wav_path))
+    for name in render_targets.resolve(score)['selected']:
+        if base.endswith(render_targets.filename(name)):
+            return name
+    return default
+
+
+def delivery_sidecar_rows(wav_path, target_name, out):
+    """Rows a target declares against the render's own report: a loudness ceiling and a conform window.
+
+    Only a target that names one gets the row. The values are read from `<file>.<format>_report.json`,
+    written by the renderer from measurements on the delivered audio; no sidecar means the row says what
+    could not be checked instead of passing.
+    """
+    import json
+    import render_targets
+    tgt = render_targets.get(target_name) or {}
+    ceiling = (tgt.get('loudness') or {}).get('ceiling_lufs')
+    conform = tgt.get('conform_max_ms')
+    if ceiling is None and conform is None:
+        return
+    report = {}
+    for suffix in ('.adm_report.json', '.iamf_report.json'):
+        path = str(wav_path) + suffix
+        if os.path.exists(path):
+            try:
+                with open(path, encoding='utf-8') as fh:
+                    report = json.load(fh)
+            except (OSError, ValueError):
+                report = {}
+            break
+    if ceiling is not None:
+        got = report.get('integrated_lufs')
+        if got is None:
+            _row(out, 'WARN', 'delivery.loudness_ceiling',
+                 f'{target_name}: the render report is missing, so the {float(ceiling):+.1f} LKFS ceiling '
+                 f'could not be checked')
+        else:
+            bad = float(got) > float(ceiling) + 1e-6
+            _row(out, 'FAIL' if bad else 'PASS', 'delivery.loudness_ceiling',
+                 f'{target_name}: {float(got):.1f} LKFS on the engine stereo fold (ceiling '
+                 f'{float(ceiling):+.1f} LKFS)'
+                 + ('; the render is over the ceiling the target declares' if bad else ''))
+    if conform is not None:
+        got = report.get('conform_ms')
+        if got is None:
+            _row(out, 'WARN', 'delivery.conform',
+                 f'{target_name}: no certified stereo master length was recorded, so the '
+                 f'{float(conform):g} ms conform window could not be checked')
+        else:
+            bad = abs(float(got)) > float(conform) + 1e-6
+            _row(out, 'FAIL' if bad else 'PASS', 'delivery.conform',
+                 f'{target_name}: {float(got):+.1f} ms against the certified stereo master '
+                 f'(window +-{float(conform):g} ms)'
+                 + ('; the files do not start and end together' if bad else ''))
+
+
+def iamf_rows(score, wav_path, out):
+    """An IAMF file exists and starts like an ISO-BMFF/IAMF stream. It was encoded outside this project."""
+    import render_targets
+    name = _selected_target(score, wav_path, 'iamf')
+    try:
+        with open(str(wav_path), 'rb') as fh:
+            head = fh.read(16)
+    except OSError as exc:
+        _row(out, 'FAIL', 'iamf.container', f'{name}: cannot read the file ({exc})')
+        return
+    ok = len(head) >= 12 and head[4:8] in (b'ftyp', b'iamf')
+    _row(out, 'FAIL' if not ok else 'PASS', 'iamf.container',
+         (f'{name}: the file does not start with an ISO-BMFF/IAMF box: it is not the encoded deliverable'
+          if not ok else
+          f'{name}: ISO-BMFF/IAMF container written by the external encoder; it was not decoded or '
+          f'profile-validated here'))
+    delivery_sidecar_rows(wav_path, name, out)
+
+
 def adm_rows(score, wav_path, out):
     """Rows for an ADM BW64 deliverable: the container itself (BW64 magic, ds64, fmt/chna/axml/data
     agreement) and the ADM integrity (IDs unique and resolved, chna mapping, block times, positions),
@@ -208,7 +287,8 @@ def adm_rows(score, wav_path, out):
     import render_targets
     from spatial_engine import adm
     from spatial_engine import master
-    ceiling = render_targets.true_peak('adm_bw64')
+    name = _selected_target(score, wav_path, 'adm_bw64')
+    ceiling = render_targets.true_peak(name)
     problems = adm.validate_file(str(wav_path))
     _row(out, 'FAIL' if problems else 'PASS', 'adm.container',
          (f'adm_bw64: BW64 container/metadata problems: {"; ".join(problems)}' if problems
@@ -231,8 +311,9 @@ def adm_rows(score, wav_path, out):
              f'adm_bw64: worst channel true peak {worst:+.1f} dBTP (ceiling {ceiling:+.1f} dBTP; '
              f'per channel {", ".join(f"{p:+.1f}" for p in peaks)})')
     _row(out, 'PASS', 'adm.loudness',
-         'adm_bw64 loudness is levelled at render time on a constant-power stereo fold of the objects '
+         f'{name} loudness is levelled at render time on a constant-power stereo fold of the objects '
          '(engine-internal reference, BS.1770 loudness of the fold; an object file has no loudness of itself)')
+    delivery_sidecar_rows(wav_path, name, out)
     return
 
 
@@ -259,6 +340,7 @@ def channel_rows(score, audio, sr, target, out):
     """
     import channel_qa
     import gate_profiles
+    import render_targets
     gate = gate_profiles.resolve(score)
     want_virtual = gate.on('channel.virtual')
     want_bars = gate.on('channel.bars')
@@ -283,6 +365,28 @@ def channel_rows(score, audio, sr, target, out):
                  f"{target}: {a['note']}; a decoded or delivered channel holds NaN or an infinite sample")
         else:
             _row(out, 'PASS', 'channel.virtual', f"{target}: {a['note']}; every channel is finite")
+    if gate.on('imm.decode_uniformity'):
+        import mixer
+        from spatial_engine import config, hoa
+        from spatial_hrtf import sph
+        lay = (render_targets.get(target) or {}).get('layout')
+        if lay and len(config.speakers(lay)) > 2:
+            order = int(((mixer._mix() or {}).get('immersive') or {}).get('order', 5))
+            spk = config.speakers(lay)
+            az, el = hoa._sphere_points(400)
+            y = sph.sh_matrix(order, np.radians(az), np.radians(90.0 - el), 'real')
+            kind = str(((mixer._mix() or {}).get('immersive') or {}).get('decoder') or 'allrad2')
+            matrix = (hoa.allrad_matrix(spk, order, points=400) if kind == 'allrad'
+                      else hoa.allrad2_matrix(spk, order, points=400))
+            power = np.sum((y @ matrix.T) ** 2, axis=1)
+            db = 10.0 * np.log10(power / np.mean(power) + 1e-30)
+            spread = float(db.max() - db.min())
+            limit = float(gate.param('imm.decode_uniformity', 'max_spread_db'))
+            bad = spread > limit
+            _row(out, 'WARN' if bad else 'PASS', 'imm.decode_uniformity',
+                 f'{target}: {kind} plane-wave power spread {spread:.2f} dB over the sphere '
+                 f'(limit {limit:g} dB)'
+                 + ('; a direction will be audibly louder than another' if bad else ''))
     if not want_bars:
         return
     bars = int(a['bars'])
@@ -323,9 +427,15 @@ def output_rows(score, wav_path, out):
     # An ADM deliverable is recognised by having been requested and by the target's file name: its channel
     # count is the piece's, not the format's (channels 0 in the preset), and its container is BW64, which
     # the soundfile-based reader cannot open -- so it gets its own structural branch below.
-    if 'adm_bw64' in render_targets.resolve(score)['selected'] and \
-            os.path.basename(str(wav_path)).endswith(render_targets.filename('adm_bw64')):
+    selected = render_targets.resolve(score)['selected']
+    base = os.path.basename(str(wav_path))
+    if any((render_targets.get(n) or {}).get('renderer') == 'adm' and base.endswith(render_targets.filename(n))
+           for n in selected):
         adm_rows(score, wav_path, out)
+        return
+    if any((render_targets.get(n) or {}).get('renderer') == 'iamf' and base.endswith(render_targets.filename(n))
+           for n in selected):
+        iamf_rows(score, wav_path, out)
         return
     import gate_audio
     try:

@@ -90,3 +90,25 @@ reads as drift, which is why the high-pass, and not a looser row, is the fix.
 ## Choosing what to render
 
 Each format is its own mixing pass, run one after another after the stereo master is certified, so a render with six formats takes about six times as long. With no format named the default is `stereo` plus `immersive_7_1` (8 channels). `pipeline.py --only <comma list>` renders only those and overrides the score; name `stereo` first because the `fold.*` rows compare every other format with it. A 7.1 file as the only format used to fail three rows on a 117 s cue. Two of them were measurements taken on the wrong basis and are fixed: `master.dc` no longer reads the low-frequency channel (it carries the sub, not the programme), the loudness row reads the basis the master was levelled on (`loudness.method`), and the peak of the two-channel fold is reported INFO instead of failing, because `delivery.true_peak` certifies every delivered channel against the format's own ceiling and a fold is a sum of channels. A genuine clip in one channel still fails `clipping`, so the fix for that is the master chain or the send, never the row. `--only immersive_7_1_2` therefore certifies that format alone; `fold.mono` / `fold.timbre` still compare a format with a stereo master, so a run delivering both keeps `stereo` first.
+
+## Immersive 3.1 deliverables: truthful ADM loudness, `atmos_music`, IAMF
+
+**ADM metadata is now BS.2076-3 (02/2025).** The `audioFormatExtended` version says `ITU-R_BS.2076-3`, and every ADM
+file carries a `loudnessMetadata` block. The renderer measures the integrated loudness (BS.1770 on the engine's
+constant-power stereo fold) and the maximum true peak on the delivered audio and writes both, with the method named as a
+renderer URI (`urn:rashee1997:music-generator:adm-stereo-fold`). This is deliberate: BS.1770-5 Annex 4 notes that object
+audio has no loudness of its own, only the loudness of a render, so a number without the renderer would be a claim the
+file cannot support. The structural validator rejects a file whose version is not -3 or that has no `loudnessMetadata`.
+
+**`atmos_music` target.** ADM BW64, 24-bit PCM at 48 kHz, integrated loudness ceiling -18 LKFS, true peak -1 dBTP,
+duration within 50 ms of the certified stereo master. Those are the public Apple Immersive Audio Source Profile and
+Dolby Atmos Music delivery figures. The engine writes and measures an ADM file and checks `delivery.loudness_ceiling` and
+`delivery.conform`; it does not encode Dolby Atmos, does not write a DAMF master and is not vendor-certified. The
+loudness row measures the engine's own stereo fold, and says so.
+
+**`iamf` target.** The engine writes its ADM BW64 file and calls the external AOMedia `iamf-tools` encoder
+(`IAMF_ENCODER`, or `iamf-tools-encoder` / `encoder_main` on PATH) to write the `.iamf` stream. Nothing is vendored: if
+the encoder is absent the render raises an error naming the tool and writes no file, rather than falling back silently.
+The delivered file is checked as an ISO-BMFF/IAMF container (`iamf.container`) and its render report is checked for the
+same loudness/conform figures; it is not decoded with libiamf and not profile-validated here. Both targets are listed in
+`render_targets` and can be named in `output_targets` like any other format.
