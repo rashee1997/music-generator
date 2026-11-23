@@ -812,8 +812,10 @@ def _match_lufs(x, target_lufs, sr=SR):
     return y.astype(np.float32)
 
 
-def render_environment_preset(name_or_dict, duration_s=30.0, sr=SR, seed=42):
-    """Renders any environmental soundscape preset driven entirely by JSON configuration."""
+def render_environment_preset(name_or_dict, duration_s=30.0, sr=SR, seed=42, context=None):
+    """Renders any environmental soundscape preset driven entirely by JSON configuration.
+
+    `context` ({"score", "direction", "t0_s"}) is what a biome's ecology reads of the piece; the layer and scene engines ignore it."""
     if isinstance(name_or_dict, dict):
         cfg = name_or_dict
     else:
@@ -829,7 +831,7 @@ def render_environment_preset(name_or_dict, duration_s=30.0, sr=SR, seed=42):
 
     if cfg.get('schema'):                                # `biome/1`: the universal, medium-aware engine (scripts/biome)
         import biome.engine as _biome
-        return _biome.render_preset(cfg, duration_s=duration_s, sr=sr, seed=seed)
+        return _biome.render_preset(cfg, duration_s=duration_s, sr=sr, seed=seed, **{k: v for k, v in (context or {}).items() if k in ('score', 'direction', 't0_s')})
 
     import env_engine.render as _env_render           # the physical scene path; the layer path below is unchanged
     if isinstance(cfg.get('scene'), dict) or _env_render.has_scene_layers(cfg):

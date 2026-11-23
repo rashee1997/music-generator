@@ -103,6 +103,8 @@ class Fauna(Generator):
         self.next = [None] * self.n_ind
         self.active = []                      # (start sample, waveform)
         self.starts = []                      # every bout begun, (individual, start s, duration s): what the ecology rules read
+        self.silences = []                    # (t0, t1, fade_s, ramp_s): a rule holds this animal silent
+        self._dur_cache = {}
 
     def _params(self, name):
         return {**self.src_defaults, **(self.elements[name] or {})}
@@ -155,20 +157,58 @@ class Fauna(Generator):
             return float(self.first_s)
         return float(self.sched[ind].uniform(0.1, 1.0) * self.mean_gap)
 
+    def call_duration(self, ind, k):
+        """How long bout k of individual `ind` lasts (s): the planner needs it before the bout is rendered. The bout is synthesized
+        from its own named stream, so this is the length it will really have."""
+        key = (ind, k)
+        if key not in self._dur_cache:
+            self._dur_cache[key] = len(self._call(self.ctx.rng(f'{self.name}/i{ind}/b{k}'), ind)) / self.sr
+        return self._dur_cache[key]
+
+    def add_silence(self, t0, t1, fade_s, ramp_s):
+        """Hold the animal silent from t0 to t1: a call already sounding fades out over fade_s, and it comes back over ramp_s."""
+        fade = max(float(fade_s), 1e-3)
+        self.silences.append((float(t0), max(float(t1), float(t0) + fade), fade, max(float(ramp_s), 0.0)))
+
+    def _gain(self, s0, n):
+        """1 before a silence, a raised-cosine fade to 0 over `fade`, 0 until t1, then a ramp (or a step) back to 1."""
+        g = np.ones(n)
+        t = (s0 + np.arange(n)) / self.sr
+        for t0, t1, fade, ramp in self.silences:
+            if t[-1] < t0 or t[0] >= t1 + ramp:
+                continue
+            down = np.where(t < t0 + fade, 0.5 * (1.0 + np.cos(np.pi * np.clip((t - t0) / fade, 0.0, 1.0))), 0.0)
+            up = np.clip((t - t1) / ramp, 0.0, 1.0) if ramp > 0 else (t >= t1).astype(float)
+            up = 0.5 * (1.0 - np.cos(np.pi * up)) if ramp > 0 else up
+            g *= np.where(t < t0, 1.0, np.where(t < t1, down, up))
+        return g
+
+    def _begin(self, ind, t):
+        w = self._call(self.ctx.rng(f'{self.name}/i{ind}/b{self.bout[ind]}'), ind)
+        self.active.append((int(round(t * self.sr)), w))
+        self.starts.append((ind, t, len(w) / self.sr))
+        self.bout[ind] += 1
+        return len(w) / self.sr
+
     def _block(self):
         B, sr = self.B, self.sr
         s0 = self.index * B
         end_s = (s0 + B) / sr
+        planned = hasattr(self.scheduler, 'start_of')
         for ind in range(self.n_ind):
+            if planned:                                   # an ecology planner decided every start in advance
+                while True:
+                    t = self.scheduler.start_of(self.name, ind, self.bout[ind])
+                    if t is None or t >= end_s:
+                        break
+                    self._begin(ind, t)
+                continue
             if self.next[ind] is None and self.bout[ind] == 0:
                 self.next[ind] = self._first(ind)
             while self.next[ind] is not None and self.next[ind] < end_s:
                 t = self.next[ind]
-                w = self._call(self.ctx.rng(f'{self.name}/i{ind}/b{self.bout[ind]}'), ind)
-                self.active.append((int(round(t * sr)), w))
-                self.starts.append((ind, t, len(w) / sr))
-                self.bout[ind] += 1
-                self.next[ind] = self._next_start(ind, t, len(w) / sr)
+                dur = self._begin(ind, t)
+                self.next[ind] = self._next_start(ind, t, dur)
         out = np.zeros(B)
         keep = []
         for a, w in self.active:
@@ -178,7 +218,7 @@ class Fauna(Generator):
             if a + len(w) > s0 + B:
                 keep.append((a, w))
         self.active = keep
-        return out
+        return out * self._gain(s0, B) if self.silences else out
 
 
 def build(cfg, ctx, scheduler=None):

@@ -27,7 +27,7 @@ from biome import SCHEMA_ID, context
 from phys_core import geometry, materials as mat_mod, medium as medium_mod
 
 TOP_KEYS = ('schema', 'name', 'character', 'world', 'media', 'medium', 'interfaces', 'materials', 'controls', 'generators',
-            'fauna', 'ecology', 'spatial_coupling', 'reference', 'sources', 'note')
+            'fauna', 'ecology', 'spatial_coupling', 'reference', 'sources', 'note', 'kind', '_source')   # kind and _source: what the preset loader writes
 WORLD_KEYS = ('g_m_s2', 'day_length_s', 'listener')
 SALIENCE = ('bed', 'foreground')
 COMMON = ('name', 'kind', 'salience', 'gain_db', 'spatial', 'sources', 'note', 'medium')
@@ -292,6 +292,8 @@ def problems(preset):
     if preset.get('schema') != SCHEMA_ID:
         out.append(f'schema: "{SCHEMA_ID}" expected, got {preset.get("schema")!r}')
     out += [f'unknown top-level key "{k}" (known: {", ".join(TOP_KEYS)})' for k in preset if k not in TOP_KEYS]
+    if preset.get('kind', 'environments') != 'environments':
+        out.append(f'kind: a biome is an environments preset, not "{preset["kind"]}"')
     if not preset.get('character') or not str(preset.get('character')).strip():
         out.append('character: one sentence on the place and why these parts')
     if 'medium' in preset and 'media' in preset:

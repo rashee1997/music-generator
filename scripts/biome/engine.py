@@ -38,7 +38,7 @@ import math
 import numpy as np
 from scipy import signal
 
-from biome import SCHEMA_ID, fauna as fauna_mod, generators, schema
+from biome import SCHEMA_ID, ecology, fauna as fauna_mod, generators, schema
 from biome.context import Context
 from phys_core import medium as medium_mod
 
@@ -121,7 +121,7 @@ class Source:
 
 
 class Biome:
-    def __init__(self, preset, sr=44100, seed=42, scheduler=None):
+    def __init__(self, preset, sr=44100, seed=42, scheduler=None, score=None, direction=None, t0_s=0.0):
         bad = schema.problems(preset)
         if bad:
             raise ValueError(f'biome "{(preset or {}).get("name")}": ' + '; '.join(bad))
@@ -141,8 +141,23 @@ class Biome:
             self._add(generators.build(g, self._ctx(g)), g.get('spatial') or {}, g, g.get('medium'))
         for f in preset.get('fauna') or []:
             self._add(fauna_mod.build(f, self._ctx(f), scheduler), f.get('position') or {}, f, f.get('medium'))
+        self.fauna = [s.gen for s in self.sources if isinstance(s.gen, fauna_mod.Fauna)]
+        self.planner, self.occupancy = None, None
+        eco = preset.get('ecology')
+        if eco is not None and self.fauna:
+            if scheduler is not None:
+                raise ValueError('give either a scheduler or an ecology block, not both: both decide when an animal calls')
+            sections, hits = ecology.section_times(score, direction)
+            sc = eco.get('score') or {}
+            if score and sc.get('occupancy', 'from_score') == 'from_score':
+                self.occupancy = ecology.Occupancy.from_score(score, direction, protect_roles=sc.get('protect_roles', ecology.FIGURE),
+                                                              margin_db=float(sc.get('margin_db', 3.0)))
+            self.planner = ecology.Planner(self.fauna, eco, self.base.controls, self.occupancy, sections, hits, t0_s)
+            for f in self.fauna:
+                f.scheduler = self.planner
         self._primed = False
         self.position = 0
+        self._pulled = 0
 
     def _ctx(self, cfg):
         m = self.media[cfg['medium']] if cfg.get('medium') else self.listener
@@ -156,6 +171,9 @@ class Biome:
         return next(s for s in self.sources if s.name == name)
 
     def _step(self, n):
+        self._pulled += int(n)
+        if self.planner is not None:                   # decide every call that can sound in this chunk (and the block after it)
+            self.planner.plan_until(self._pulled / self.sr + 0.25)
         out = np.zeros((n, 2))
         for s in self.sources:
             out += s.render(n)
@@ -182,15 +200,20 @@ class Biome:
         parts = list(self.stream(seconds, chunk_s))
         return np.concatenate(parts) if parts else np.zeros((0, 2), np.float32)
 
+    def ecology_report(self):
+        """The plan of the calls and the rules that shaped it ({} when the preset has no ecology)."""
+        return self.planner.report() if self.planner else {}
+
     def report(self):
         """What was built, for the gate rows and the report: one dict per source."""
         return [dict(name=s.name, kind=getattr(s.gen, 'kind', ''), distance_m=s.distance, azimuth=s.az, elevation=s.el,
                      field=s.field, interface_db=s.interface_db, medium=s.gen.med.name) for s in self.sources]
 
 
-def render_preset(cfg, duration_s=30.0, sr=44100, seed=42):
-    """Stereo float32 for a `biome/1` preset: the hand-over environment.render_environment_preset uses."""
-    return Biome(cfg, sr=sr, seed=seed).render(duration_s)
+def render_preset(cfg, duration_s=30.0, sr=44100, seed=42, score=None, direction=None, t0_s=0.0):
+    """Stereo float32 for a `biome/1` preset: the hand-over environment.render_environment_preset uses. `score` and `direction`
+    let its ecology read the piece (pockets, sections, hits); `t0_s` is where this bed starts in the piece."""
+    return Biome(cfg, sr=sr, seed=seed, score=score, direction=direction, t0_s=t0_s).render(duration_s)
 
 
 def is_biome(cfg):

@@ -624,6 +624,9 @@ def _sfz_track(tr, tm, cfg, seed, ts, swing, global_dyn, raw_inst, inst_cfg, qua
     return x
 
 
+_PIECE = {}                                            # the score being rendered, for biomes whose ecology reads it
+
+
 def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None):
     """Return stereo float32 stem for one track (list of notes -> audio).
 
@@ -790,7 +793,8 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
             # +0.1 s of ambience past the end: the notes say when the place is audible, and a bed that stops on the last
             # written sample leaves its final ~70-100 ms below the stem's own -60 dB line, which reads as a truncated stem
             # (stem.edge). The tail is trimmed by the timeline slice below when it runs past the piece.
-            seg = environment.render_environment_preset(env_key, duration_s=span + 0.1, sr=SR, seed=seed)
+            seg = environment.render_environment_preset(env_key, duration_s=span + 0.1, sr=SR, seed=seed,
+                                                        context=dict(score=_PIECE.get('score'), t0_s=t0))
             # 20 ms, not 2 s: the stem gate measures a stem's audible span against its written notes, and any fade long
             # enough to shape the entrance put the last ~90-190 ms of every bed 60 dB under the stem's own peak, which
             # reads as a truncated stem. A 20 ms ramp is still click-free, and the bed's own preset shapes the sound.
@@ -805,7 +809,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
             _record(tr.get('name', 'environment'), dur_s=round(span, 2), start_s=round(t0, 2), env=str(env_key))
             return out
         _record(tr.get('name', 'environment'), dur_s=round(dur_s, 2), env=str(env_key))
-        return environment.render_environment_preset(env_key, duration_s=dur_s, sr=SR, seed=seed)
+        return environment.render_environment_preset(env_key, duration_s=dur_s, sr=SR, seed=seed, context=dict(score=_PIECE.get('score'), t0_s=0.0))
 
     if tr.get('synthesis') == 'formant' or (inst_cfg and inst_cfg.get('synthesis') == 'formant') or vocal_cfg or inst in vocals.INSTRUMENTS:
         ev = hz.humanize_track([dict(n, p=cli_util.midi_int(n['p'], f"track {tr.get('name')}: ")) for n in tr.get('notes', [])], tm, tr.get('humanize', cfg),
@@ -1321,6 +1325,7 @@ def _align_onset(name, stem, tr, tm, bpm=None, limit_ms=25.0, max_ms=200.0):
 
 def build_stems(score, sfpath=None, seed=None, verbose=True):
     """Humanize + render every track. Returns (stems dict name->(N,2) float32, meta, tempo map)."""
+    _PIECE['score'] = score                            # an environment track's ecology reads the piece it sits in
     # The caller registers the project (pipeline.py in project mode, run_gate from the score path). This function
     # must not guess one from the working directory: run from the skill folder it would adopt the skill's own
     # presets as a project and demand a per-piece mix preset from a scratch test cue.
