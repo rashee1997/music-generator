@@ -354,6 +354,23 @@ cut to paste into the piece's mix preset, bounded by `max_trim_db` (2-3 dB is th
 This is a K-weighted/equal-loudness **approximation**, not a certified ISO 226 loudness meter, and it judges a stem's balance,
 not the master's; it cannot hear whether the brightness is intended. Listen before cutting.
 
+## 5e. Delivery, micro-dynamics and mono bands
+
+Four rows were added for evidence that is measurable but has no validated pass mark. They report; they do not
+invent a threshold.
+
+- **`delivery.standard`** - the preset's `mastering.standard` names a document (`ebu_r128`, `atsc_a85`,
+  `aes_td1008`, `spotify`). A declared target or ceiling that contradicts that document is a FAIL (a preset bug);
+  a delivered file outside the document's own tolerance is a WARN; a platform policy is INFO. Figures, versions
+  and URLs: [`delivery-standards.md`](delivery-standards.md).
+- **`master.micro_dynamics`** - PLR (EBU Tech 3401), PSR (AES EBU 373), LRA (EBU Tech 3342) and true peak at 4x
+  and 8x oversampling. INFO always: no document defines a pass mark, and the measured association with listener
+  preference is weak (LDR rho = +0.26, De Man & Reiss 2015).
+- **`master.mono_bands`** - the octave band (63 Hz-8 kHz) that loses the most in a mono fold, when it loses more
+  than 3 dB, with its L/R correlation. WARN at most: a broadband correlation hides a narrow cancellation.
+- **`masking.excess`** - the beds' level against the figure per critical band, and one band up (upward spread).
+  INFO only: a band-level proxy, not a calibrated masking model.
+
 ## 5c. One list of rows, whoever runs the gate
 
 ### Two stages: stems before the mix, master after

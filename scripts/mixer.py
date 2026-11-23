@@ -51,6 +51,7 @@ import pedalboard as pb
 
 import dsp
 import mix_context
+import mix_engine.meters as meters
 import mix_schema
 import presets
 import roles as rolelib
@@ -282,7 +283,8 @@ def dialogue_gated_lufs(x, sr=SR, mask=None, min_seg_s=0.2):
 
 
 def true_peak_db(x, sr=SR, over=4):
-    return dsp.true_peak_db(x, sr, over)
+    """True peak, measured by mix_engine.meters (4x is the BS.1770-5 reference; the gate judges 8x too)."""
+    return meters.true_peak_db(x, sr, over)
 
 
 rms_db = dsp.rms_db                 # one RMS-in-dB for the engine (video_program_mix reads it as mixer.rms_db)
@@ -1235,22 +1237,12 @@ def _master_cfg(m, mx):
 
 
 def master_measures(x, sr=SR):
-    """What the delivery report needs: integrated/short-term loudness, LRA, crest, true peak, mono fold."""
-    import loudness
-    blocks = loudness.Blocks(to_stereo(x), sr)              # one K-weighting pass for every number below
-    st = np.array(blocks.gated_series(3.0, 0.5), dtype=float)
-    st = loudness.Blocks.lra_gate(st[np.isfinite(st)])      # absolute gate, then the power-mean relative gate
-    return {
-        'lufs': lufs(x, sr),
-        'short_term_max': float(st.max()) if len(st) else float('nan'),
-        'short_term_min': float(st.min()) if len(st) else float('nan'),
-        'lra': blocks.lra(),                                  # EBU Tech 3342, from the standard's own series
-        'true_peak': true_peak_db(x, sr),
-        'sample_peak': float(20 * np.log10(np.abs(x).max() + 1e-12)),
-        'crest': dsp.crest_db(x),
-        'mono_fold': dsp.mono_fold_db(x),
-        'correlation': dsp.correlation(x),
-    }
+    """What the delivery report needs: loudness, LRA, crest, true peak at 4x and 8x, PLR/PSR, mono bands.
+
+    Owned by `mix_engine.meters` (one implementation of each definition); this name stays because every
+    caller and the gate import it from the mixer.
+    """
+    return meters.master_measures(to_stereo(x), sr)
 
 
 def master_chain(x, m, sr=SR, ctx=None):
@@ -1431,7 +1423,33 @@ def apply_lead_carve(processed, specs, mx=None, sr=SR, intent=None):
     thr = float(cfg.get('threshold_db', -30.0))
     att = float(cfg.get('attack_ms', 6.0))
     rel = float(cfg.get('release_ms', 120.0))
-    for pair in (cfg.get('bands_hz') or []):
+    bands = [list(p) for p in (cfg.get('bands_hz') or [])]
+    if str(cfg.get('mode') or 'bands').lower() == 'masking':
+        # opt-in: measure where the beds actually sit over the figure, and carve those bands only. The
+        # measurement is a band-level proxy (mix_engine.masking); the cap keeps one bad estimate from
+        # turning into a hole.
+        import mix_engine.masking as masking
+        beds_sig = None
+        for nm, sp in specs.items():
+            if nm == lead or sp.get('role') not in roles or nm not in processed:
+                continue
+            if cfg.get('skip_ducked', True) and sp.get('duck_by'):
+                continue
+            y = to_stereo(processed[nm])
+            if beds_sig is None:
+                beds_sig = y.copy()
+            else:
+                m = max(len(beds_sig), len(y))
+                beds_sig = (np.pad(beds_sig, ((0, m - len(beds_sig)), (0, 0)))
+                            + np.pad(y, ((0, m - len(y)), (0, 0))))
+        if beds_sig is not None:
+            excess = masking.band_excess_db(src, beds_sig, sr)
+            floor = float(cfg.get('mask_floor_db', 0.0))
+            picked = [r for r in excess if np.isfinite(r['excess_db']) and r['excess_db'] > floor]
+            picked.sort(key=lambda r: r['excess_db'], reverse=True)
+            bands = [[float(r['band_hz'][0]), float(r['band_hz'][1])]
+                     for r in picked[:max(1, int(cfg.get('max_bands', 3)))]]
+    for pair in bands:
         lo, hi = float(pair[0]), float(pair[1])
         f, q = _band_center_q(lo, hi)
         sos = signal.butter(2, [lo, hi], btype='band', fs=sr, output='sos')
@@ -1910,6 +1928,13 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
         send_level = reverb_send_level(specs[name], mx, _space())
         STATE['sends'][name] = send_level
         ys = y * send_level
+        pre = _space().get('predelay_ms_by_role') or {}
+        if pre:
+            ms = float(pre.get(specs[name].get('role'), pre.get('default', 0.0)) or 0.0)
+            if ms > 0:
+                k = int(ms * sr / 1000.0)
+                if k > 0:
+                    ys = np.pad(ys, ((k, 0), (0, 0)))[:len(ys)]   # pre-delay on the send, never the dry path
         if detail_gain is not None:
             ys = ys * detail_gain[:len(ys), None]
         sp_ = specs[name].get('spatial')

@@ -666,6 +666,16 @@ def audio_checks(path, score, out, metrics=None, analysis=None):
         x = np.repeat(_multi, 2, axis=1) if _multi.shape[1] == 1 else _multi
         sr = _multi_sr
         r = nc.analyse(path, target_lufs=target, audio=(x, sr))
+    # True peak: judge the larger of the 4x and 8x estimates. BS.1770-5 Annex 2 defines the 4x reference
+    # method, and EBU Tech 3343 documents that it can under-read by about 0.5 dB at 48 kHz.
+    try:
+        import mix_engine.meters as _meters
+        _tp = _meters.true_peak_report(x, sr)
+        r['true_peak_4x'] = _tp['true_peak_4x']
+        r['true_peak_8x'] = _tp['true_peak_8x']
+        r['true_peak'] = max(float(r.get('true_peak', _tp['true_peak'])), _tp['true_peak'])
+    except Exception as exc:
+        _row(out, 'INFO', 'true peak', f'8x oversampled true peak not measured ({exc}); the 4x value stands')
     spatial_check(path, score, out)
     for level, msg in nc.verdicts(r, target=target):
         _row(out, level, 'audio', msg)
@@ -675,6 +685,33 @@ def audio_checks(path, score, out, metrics=None, analysis=None):
                                       'target under the limiter. Lower the target or the dynamics range, or accept it and say so')
     elif _basis:
         _row(out, 'PASS', 'loudness', f'{r["lufs"]:.1f} LUFS{_basis} against a {target:g} target (+{d:+.1f} LU)')
+    # The standard a profile declares is data: a profile whose numbers contradict the document it names
+    # is a configuration fault (FAIL), and a delivery that misses the document's own tolerance is a WARN.
+    import mixer as _mixer
+    _std = ((_mixer._mix().get('mastering') or {}).get('standard') or '').strip().lower()
+    if _std:
+        import mix_engine.standards as _standards
+        for msg in _standards.declaration_problems(_std, target, tp_target):
+            _row(out, 'FAIL', 'delivery.standard', msg + '. Fix the mix preset, not the gate')
+        _level, _msg = _standards.file_problems(_std, r['lufs'], r['true_peak'])
+        _row(out, _level, 'delivery.standard', _msg)
+    try:
+        _mm = _mixer.master_measures(x, sr)
+        _row(out, 'INFO', 'master.micro_dynamics',
+             f"PLR {_mm['plr']:.1f} LU, PSR {_mm['psr']:.1f} LU, LRA {_mm['lra']:.1f} LU, true peak "
+             f"{_mm['true_peak']:.2f} dBTP (4x {_mm['true_peak_4x']:.2f}, 8x {_mm['true_peak_8x']:.2f}): reported, "
+             f"not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)")
+        _worst = None
+        for _band in _mm.get('mono_bands') or []:
+            if _worst is None or _band['fold_loss_db'] < _worst['fold_loss_db']:
+                _worst = _band
+        if _worst and _worst['fold_loss_db'] < -3.0:
+            _row(out, 'WARN', 'master.mono_bands',
+                 f"the {_worst['band_hz'][0]}-{_worst['band_hz'][1]} Hz band folds to mono "
+                 f"{_worst['fold_loss_db']:+.1f} dB (correlation {_worst['correlation']:+.2f}): a broadband "
+                 f"correlation does not see this; check that part's width")
+    except Exception as _exc:
+        _row(out, 'INFO', 'master.micro_dynamics', f'not measured: {_exc}')
     # True peak: a delivered multichannel target has a ceiling of its own and is certified channel by channel
     # (spatial_gate.delivery.true_peak). A fold is a sum of channels, so its peak is not a delivery limit: judging it
     # against the two-channel policy failed a 7.1 file whose every channel was under its own ceiling.
@@ -901,6 +938,46 @@ def _role_in(role, want):
         return rolelib.canonical(role) in want
     except rolelib.UnknownRole:
         return False
+
+
+def critical_band_rows(stems, score, sr=44100):
+    """Advisory per-band masking excess: how far the beds sit over the figure, critical band by band.
+
+    The existing `masking.vs_melody` row is the calibrated one; this is the measurement the literature
+    describes (same-band and upward-spread comparison) reported as INFO. No pass mark is asserted, because
+    none has been validated for music masters.
+    """
+    rows = []
+    import mixer
+    import gate_profiles
+    import mix_engine.masking as masking
+    if mixer.STATE.get('processed'):
+        played = mixer.STATE['processed']
+        stems = {k: v for k, v in played.items() if k in stems} or stems
+    gp = gate_profiles.resolve(score)
+    roles = {t.get('name'): t.get('role') for t in score.get('tracks', [])}
+    focus = set(gp.focus_roles())
+    leads = [n for n in stems if _role_in(roles.get(n), focus)]
+    beds = [n for n in stems if _role_in(roles.get(n), ('pad', 'chord', 'arp', 'counter', 'drone', 'texture'))
+            and n not in leads]
+    if not leads or not beds:
+        return rows
+    def _energy(n):
+        y = np.asarray(stems[n], dtype=float)
+        return float(np.mean(y ** 2))
+    lead = max(leads, key=_energy)
+    bed = None
+    for n in beds:
+        y = np.asarray(stems[n], dtype=float)
+        if bed is None:
+            bed = y.copy()
+        else:
+            m = max(len(bed), len(y))
+            bed = np.pad(bed, ((0, m - len(bed)), (0, 0))) + np.pad(y, ((0, m - len(y)), (0, 0)))
+    excess = masking.band_excess_db(stems[lead], bed, sr)
+    _worst, msg = masking.describe(excess)
+    rows.append(('INFO', 'masking.excess', msg))
+    return rows
 
 
 def masking_rows(stems, score, sr=44100, out=None):
@@ -1913,6 +1990,7 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mo
                                              'did not run'))
         if stems is not None:
             out.extend(masking_rows(stems, score))
+            out.extend(critical_band_rows(stems, score))
             out.extend(nc.modulation_flutter_check(stems, score))
     else:
         out.append(('INFO', 'gate_draft', 'draft mode: tier 2 rows (masking, roughness, immersive, chroma, kick, '

@@ -44,15 +44,20 @@ Per instrument starting points (cut / boost): piano cut 300-400 / boost 3-5 k ai
 
 ## 3. Loudness and delivery
 
-| Target | Integrated LUFS | True peak |
-|---|---|---|
-| YouTube / YouTube Shorts | -14 | -1.5 dBTP |
-| TikTok / Reels | -14 | -1 dBTP (check on a phone speaker; push 2-4 kHz) |
-| Spotify / streaming | -14 | -2 dBTP |
-| Podcasts (Apple) | -16 | -1 dBTP |
-| Film / cinematic underscore | -18 to -16 (leave dynamics) | -1.5 dBTP |
-| Broadcast (EBU R128) | -23 | -1 dBTP |
-| Music bed under speech (deliver stem) | about -20 to -18 | -2 dBTP |
+| Target | Integrated LUFS | True peak | Source |
+|---|---|---|---|
+| Broadcast, EBU R 128 | -23 | -1 dBTP | EBU R 128 v5 (2023), +-0.2 LU in QC |
+| Television, ATSC A/85 | -24 LKFS | -2 dBTP | ATSC A/85:2026-07, +-2 dB |
+| Streaming music, AES TD1008 | -16 | -1 dBTP | AES TD1008 (2021); -14 for an album's loudest track |
+| Spotify (platform policy, not a standard) | -14, normalised both ways | -1 dBTP; -2 dBTP when hotter than -14 LUFS | Spotify loudness documentation |
+| Film / cinematic underscore | -18 to -16 (leave dynamics) | -1.5 dBTP | starting values |
+| Music bed under speech (deliver stem) | about -20 to -18 | -2 dBTP | starting values |
+| Podcast | -16 | -1 dBTP | starting values |
+
+Apple Music and YouTube publish no music loudness target. The figures commonly quoted for them (-16 and -14) are
+third-party measurements, not specifications, so they are not listed as rules. A mix preset can declare which
+document it implements with `mastering.standard`; the gate then checks the declared numbers against it. Figures,
+tolerances, versions and URLs are in [`delivery-standards.md`](delivery-standards.md).
 
 Never exceed 0 dBFS; measure true peak with oversampling (mixer does). Keep the noise floor below -60 dB. Delivery
 sample rate 44.1 kHz (music) or 48 kHz (video, matches picture), 24-bit WAV; export MP3 192-320 kbps only for sharing.
@@ -90,6 +95,10 @@ For pure-Python algorithmic reverb synthesis models and topologies, see [`knowle
 
 Send levels: lead 0.2, pads 0.3, piano 0.18, drums 0.08, bass 0 (bass and kick stay dry). Longer reverb = slower tempo and
 fewer notes, or it smears.
+
+A send pre-delay keeps a part clear of its own tail. `space.predelay_ms_by_role` delays only the send, never the dry
+path; 20-80 ms is the practitioner range for a vocal (iZotope, guidance rather than a measured optimum), and the
+~30 ms precedence/Haas boundary is the perceptual reason it is audible (AES Convention Paper 10264, 2019).
 
 **Space is a brief decision, not an afterthought.** `room` sets the impulse response; `mix.reverb_return` sets how
 much wet signal returns (1.0 is neutral, 1.5 for a "reverb mix", 0.6 dry). `compose.py` sets both from the brief:

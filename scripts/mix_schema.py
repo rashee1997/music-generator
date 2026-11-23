@@ -144,6 +144,9 @@ DEFAULTS = {
     # decision about the piece, not a house rule: a preset that enables it states which roles yield and how far.
     'lead_carve': {
         'enabled': False,
+        'mode': 'bands',               # bands: the fixed bands below. masking: the bands measured over the lead
+        'mask_floor_db': 0.0,          # masking mode: only bands where the beds are this far over the lead
+        'max_bands': 3,                # masking mode: how many of the worst bands may be carved
         'source': None,                # a track name; None = the loudest melody track
         'bands_hz': [[250.0, 1200.0], [1200.0, 4500.0]],
         'ratio': 2.0,
@@ -187,6 +190,9 @@ DEFAULTS = {
         # the room send a track starts with. `default` is every role; add a role to give it its own
         # (a starting set for a new piece: bass 0.0, drum 0.08, pad 0.30, drone 0.26, melody 0.22).
         'send_by_role': {'default': 0.18},
+        # extra delay on a role's send, in ms (the dry path is never delayed). A starting range for a
+        # vocal is 20-80 ms (iZotope); values are the piece's, not a house rule.
+        'predelay_ms_by_role': {},
         'drr': {'enabled': False, 'target_db': 0.0, 'ref_m': 1.5, 'exponent': 0.65},
         # early reflections of the synthesised room: `taps` impulses per channel inside `window_s`, the first at
         # `first_gain`, each next one `tap_decay` of the one before; their RMS is `level` x the tail's RMS
@@ -248,6 +254,7 @@ DEFAULTS = {
     },
     'mastering': {
         'profile': 'default',          # a name in "profiles"; the score's master block still wins
+        'standard': None,              # ebu_r128 | atsc_a85 | aes_td1008 | spotify: the document this profile implements
         'profiles': {
             'default': {'lufs': -14.0, 'true_peak': -1.5, 'tone': 'neutral', 'glue': True},
             'streaming': {'lufs': -14.0, 'true_peak': -2.0, 'tone': 'neutral', 'glue': True},
@@ -422,6 +429,8 @@ RANGES = {
     ('lead_carve', 'threshold_db'): ('db', -60.0, 0.0),
     ('lead_carve', 'attack_ms'): ('num', 0.0, 100.0),
     ('lead_carve', 'release_ms'): ('num', 5.0, 2000.0),
+    ('lead_carve', 'mask_floor_db'): ('db', -24.0, 24.0),
+    ('lead_carve', 'max_bands'): ('num', 1, 8),
     ('mastering', 'crest_floor_db'): ('num', 0.0, 30.0),
     ('mastering', 'true_peak_write_guard_db'): ('num', 0.0, 0.5),
     ('mastering', 'highpass_order'): ('num', 1.0, 6.0),
@@ -444,6 +453,8 @@ ENUMS = {
     ('dynamics', 'engine'): ('pedalboard', 'dsp'),
     ('dynamics', 'detector'): ('peak', 'rms'),
     ('sidechain', 'mode'): ('legacy', 'explicit', 'off'),
+    ('lead_carve', 'mode'): ('bands', 'masking'),
+    ('mastering', 'standard'): ('ebu_r128', 'atsc_a85', 'aes_td1008', 'spotify'),
     ('automation', 'curve'): ('linear', 'cosine', 'exponential'),
 }
 COMPUTE_DEVICES = ('auto', 'cpu', 'cuda', 'mps')

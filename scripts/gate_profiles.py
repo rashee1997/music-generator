@@ -93,6 +93,11 @@ ROWS = {
     'end.abrupt': dict(meaning='the master ends at full level with no release', params={
         'min_decay_db': (12.0, 8.0, 20.0), 'floor_db': (-45.0, -60.0, -30.0)}),
     'master.dc': dict(meaning='DC offset on the master', params={'dc_max': (0.001, 0.0005, 0.01)}),
+    # measured delivery, reported rather than judged: no document defines a pass mark for these
+    'master.micro_dynamics': dict(meaning='PLR/PSR/LRA and the 4x/8x true-peak reading (reported)'),
+    'master.mono_bands': dict(meaning='per-band L/R correlation and mono-fold loss (reported)'),
+    'delivery.standard': dict(meaning='the delivered file against the standard its profile declares'),
+    'masking.excess': dict(meaning='the beds level over the figure per critical band (proxy, advisory)'),
     'tempo.audio': dict(meaning='measured tempo against the score/sheet', params={
         'tol_bpm': (2.0, 1.0, 5.0), 'tol_pct': (2.0, 1.0, 5.0), 'drift_bpm': (2.0, 1.0, 5.0)}),
     'section.energy': dict(meaning='section level against the promised energy arc', params={
