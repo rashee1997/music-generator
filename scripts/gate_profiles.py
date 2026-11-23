@@ -313,7 +313,13 @@ ROWS = {
     'feel.effort':     dict(meaning='kinematic effort / respiration'),
     'feel.spiral':     dict(meaning='tonal tension arc'),
     'feel.witek':      dict(meaning='groove pleasure curve'),
-    'feel.entropy':    dict(meaning='melodic information entropy'),
+    'feel.entropy':    dict(meaning='melodic information content of a line (PPM model, scripts/expectation.py): not a loop, not a random walk',
+                            params={'min_bits': (1.15, 0.5, 2.0), 'max_bits': (4.4, 3.5, 4.6)}),
+    'expr.ic_profile': dict(meaning='information content and uncertainty of each melodic line, per bar (reported)'),
+    'expr.surprise_grounded': dict(meaning='a high-surprise note is followed by a predictable one (advisory)',
+                                   params={'max_share': (0.6, 0.3, 0.9)},
+                                   hint='resolve high-surprise leaps stepwise, or repeat the figure after them'),
+    'expr.tension_ic': dict(meaning='harmonic tension (Chew) against melodic information content per two bars (reported)'),
 }
 
 

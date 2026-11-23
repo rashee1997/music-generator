@@ -98,7 +98,7 @@ for _name in ('vocal.integrity', 'vocal.clicks', 'vocal.breath', 'vocal.ensemble
               'vocal.formant_tuning', 'vocal.consonant', 'vocal.coarticulation', 'vocal.perturbation', 'vocal.passaggio', 'vocal.vibrato',
               'vocal.identity', 'vocal.spatial'):
     COVERAGE[_name] = (A, 'measured on the rendered vocal stems')
-for _name in ('feel.contour', 'feel.resolution', 'feel.groove', 'feel.effort', 'feel.spiral', 'feel.witek', 'feel.entropy'):
+for _name in ('feel.contour', 'feel.resolution', 'feel.groove', 'feel.effort', 'feel.spiral', 'feel.witek', 'feel.entropy', 'expr.ic_profile', 'expr.surprise_grounded', 'expr.tension_ic'):
     COVERAGE[_name] = ('stage2', 'pattern_audit.cognitive_feel_checks')
 for _name in ('imm.iacc_early', 'imm.clarity', 'imm.low_fold', 'mix.band_fold', 'imm.kinematics', 'render.finite'):
     COVERAGE[_name] = (A, 'the room, the fold-down or the delivered channels of the render')

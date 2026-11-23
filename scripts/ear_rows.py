@@ -165,7 +165,10 @@ def rows(score, path, stems=None):
     out = []
     if not wanted:
         return out
-    master, sr = nc.load(path)
+    try:
+        master, sr = nc.load(path)
+    except (OSError, RuntimeError, ValueError) as exc:
+        return [('INFO', r, f'not measured: the rendered file could not be read ({exc})') for r in wanted]
     ear = EarModel(sr)
     summary = None
     if any(r in wanted for r in ('ear.fatigue', 'ear.mod_roughness', 'ear.pitch_salience')):

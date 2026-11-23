@@ -100,9 +100,17 @@
       "floor_db": -45.0,
       "min_decay_db": 12.0
     },
+    "expr.ic_profile": {},
+    "expr.surprise_grounded": {
+      "max_share": 0.6
+    },
+    "expr.tension_ic": {},
     "feel.contour": {},
     "feel.effort": {},
-    "feel.entropy": {},
+    "feel.entropy": {
+      "max_bits": 4.4,
+      "min_bits": 1.15
+    },
     "feel.groove": {},
     "feel.resolution": {},
     "feel.spiral": {},
