@@ -147,7 +147,7 @@ class Placement(unittest.TestCase):
         point = self.one(broad(azimuth=0, distance=3.0))
         field = self.one(broad(field=True, distance=3.0))
         self.assertGreater(corr(point[:, 0], point[:, 1]), 0.99)
-        self.assertLess(corr(field[:, 0], field[:, 1]), 0.6)
+        self.assertLess(abs(corr(field[:, 0], field[:, 1])), 0.1)
         self.assertAlmostEqual(rms(field), rms(point), delta=0.25 * rms(point))          # decorrelating keeps the level
 
     def test_a_source_in_the_sea_is_heard_through_the_interface(self):
@@ -230,13 +230,25 @@ class Pieces(unittest.TestCase):
         from scipy import signal
         self.assertLess(float(np.abs(got - signal.fftconvolve(x, ir)[:len(x)]).max()), 1e-9)
 
-    def test_the_decorrelator_is_stateful_and_keeps_the_magnitude(self):
-        x = np.random.default_rng(2).standard_normal(20000)
-        d = engine.StreamDecorrelator(np.random.default_rng(3), SR)
-        y = np.concatenate([d.process(x[:7000]), d.process(x[7000:])])
-        e = engine.StreamDecorrelator(np.random.default_rng(3), SR)
-        self.assertLess(float(np.abs(y - e.process(x)).max()), 1e-9)
-        self.assertAlmostEqual(rms(y[2000:, 0]), rms(x[2000:]), delta=0.1 * rms(x))
+    def test_a_field_is_independent_emitters_spread_across_the_image(self):
+        b = engine.Biome(only(dict(wind(), spatial=dict(field=True, emitters=4, distance=3.0))), seed=1)
+        self.assertEqual(b.report()[0]['emitters'], 4)
+        src = b.sources[0]
+        self.assertEqual(len(src.gens), 4)
+        self.assertEqual([g.name for g in src.gens], ['wind/e0', 'wind/e1', 'wind/e2', 'wind/e3'])
+        self.assertEqual(b.report()[0]['name'], 'wind')
+        az = [math.degrees(math.asin(x)) for x in np.linspace(-1, 1, 4)]
+        self.assertEqual(len(src.pan), 4)
+        self.assertGreater(src.pan[3][1], src.pan[3][0])
+        self.assertGreater(src.pan[0][0], src.pan[0][1])
+        self.assertAlmostEqual(az[0], -90.0)
+
+    def test_emitters_are_uncorrelated_and_share_the_power_of_one_point(self):
+        broad = lambda **sp: dict(wind(**sp), broadband=dict(share=1.0, band_hz=[150, 12000]))      # noqa: E731
+        two = engine.Biome(only(broad(field=True, distance=2.0)), seed=1).render(4.0)
+        point = engine.Biome(only(broad(azimuth=0, distance=2.0)), seed=1).render(4.0)
+        self.assertLess(abs(corr(two[:, 0], two[:, 1])), 0.1)
+        self.assertAlmostEqual(rms(two) ** 2, rms(point) ** 2, delta=0.25 * rms(point) ** 2)
 
     def test_pan_gains_are_constant_power(self):
         for az in (-90, -30, 0, 45, 90):

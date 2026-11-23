@@ -2023,6 +2023,8 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mo
             out.extend(critical_band_rows(stems, score))
             import ear_rows
             out.extend(ear_rows.rows(score, rendered, stems))
+            import env_rows
+            out.extend(env_rows.rows(score, rendered, stems, project_dir=project_dir))
             out.extend(nc.modulation_flutter_check(stems, score))
     else:
         out.append(('INFO', 'gate_draft', 'draft mode: tier 2 rows (masking, roughness, immersive, chroma, kick, '

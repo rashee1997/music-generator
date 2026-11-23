@@ -27,8 +27,8 @@ cross-fade, so there is no seam.
 
 Placement here is the stereo hand-over (environment.render_environment_preset returns a stereo bed): a point source is
 spread by 1/r, filtered by the listener medium's absorption over its distance, crossed through the interface when it
-lives in another medium (T = 4 Z1 Z2 / (Z1 + Z2)^2), and panned by azimuth; a `field` source is decorrelated into a wide
-bed. Elevation, trajectories and the ambisonic bus are the spatial engine's business (biome/spatial.py).
+lives in another medium (T = 4 Z1 Z2 / (Z1 + Z2)^2), and panned by azimuth; a `field` source is several independent emitters spread
+across the image. Elevation, trajectories and the ambisonic bus are the spatial engine's business (biome/spatial.py).
 
 Every source is delayed by the same LATENCY (the group delay of its absorption filter), absorbed here by priming, so the
 output is aligned with the sources.
@@ -43,7 +43,7 @@ from biome.context import Context
 from phys_core import medium as medium_mod
 
 LATENCY = medium_mod.TAPS // 2
-PLACE_KEYS = ('azimuth', 'elevation', 'distance', 'field', 'trajectory', 'binaural')
+PLACE_KEYS = ('azimuth', 'elevation', 'distance', 'field', 'emitters', 'trajectory', 'binaural')
 
 
 class StreamFIR:
@@ -61,32 +61,6 @@ class StreamFIR:
         return y[:n]
 
 
-class StreamDecorrelator:
-    """Mono to two weakly correlated channels with a cascade of random-radius allpass sections on an ERB scale (the magnitude
-    is untouched, so the mono fold stays close in level). Same construction as environment.decorrelate, but stateful."""
-
-    def __init__(self, rng, sr, stages=24, r_hi=0.985):
-        import auditory
-        centres = auditory.erb_centres(100.0, min(16000.0, 0.45 * sr), stages)
-        self.sos, self.zi = [], []
-        for _ in (0, 1):
-            rows = []
-            for fc in centres:
-                w = 2 * np.pi * float(fc) * rng.uniform(0.9, 1.1) / sr
-                rad = float(rng.uniform(r_hi - 0.085, r_hi))
-                c = -2.0 * rad * np.cos(w)
-                rows.append([rad * rad, c, 1.0, 1.0, c, rad * rad])
-            sos = np.array(rows)
-            self.sos.append(sos)
-            self.zi.append(np.zeros((len(rows), 2)))
-
-    def process(self, x):
-        out = np.empty((len(x), 2))
-        for ch in (0, 1):
-            out[:, ch], self.zi[ch] = signal.sosfilt(self.sos[ch], x, zi=self.zi[ch])
-        return out
-
-
 def pan_gains(azimuth_deg):
     """Constant-power stereo gains (left, right) for an azimuth in degrees (0 front, +90 right)."""
     p = float(np.clip(math.sin(math.radians(float(azimuth_deg))), -1.0, 1.0))
@@ -95,11 +69,15 @@ def pan_gains(azimuth_deg):
 
 
 class Source:
-    """One generator or animal with its path to the listener."""
+    """One generator or animal with its path to the listener. A `field` source is `emitters` independent copies of its generator
+    (each seeded by its own name, so they are uncorrelated by construction, like drops landing all around the listener), each
+    carrying 1/sqrt(emitters) of the amplitude and placed across the image; a point source is one."""
 
-    def __init__(self, gen, place, listener, src_medium, sr, rng, gain_db=0.0):
-        self.gen, self.place = gen, dict(place)
-        self.name = gen.name
+    def __init__(self, gens, place, listener, src_medium, sr, gain_db=0.0):
+        self.gens = list(gens)
+        self.gen = self.gens[0]
+        self.place = dict(place)
+        self.name = self.gen.name.split('/e')[0] if len(self.gens) > 1 else self.gen.name
         d = max(float(self.place.get('distance', 1.0)), 0.1)
         self.distance = d
         self.field = bool(self.place.get('field', False))
@@ -107,17 +85,19 @@ class Source:
         self.el = float(self.place.get('elevation', 0.0))
         iface = 0.0 if src_medium is listener else src_medium.transmission_db(listener)
         self.interface_db = iface
-        self.gain = 10.0 ** ((float(gain_db) + iface) / 20.0) / d
-        self.fir = StreamFIR(listener.fir(max(d - 1.0, 0.0), sr))
-        self.dec = StreamDecorrelator(rng, sr) if self.field else None
-        self.pan = pan_gains(self.az)
+        n = len(self.gens)
+        self.gain = 10.0 ** ((float(gain_db) + iface) / 20.0) / d / math.sqrt(n)
+        self.fir = [StreamFIR(listener.fir(max(d - 1.0, 0.0), sr)) for _ in self.gens]
+        azs = [self.az] if n == 1 else list(np.linspace(-90.0, 90.0, n))      # a field spreads its emitters across the image
+        self.pan = [pan_gains(a) for a in azs]
 
     def render(self, n):
-        x = self.gen.process(n).astype(np.float64) * self.gain
-        y = self.fir.process(x)
-        if self.field:
-            return self.dec.process(y) * math.sqrt(0.5)             # two channels share the power one point source would have
-        return np.stack([y * self.pan[0], y * self.pan[1]], axis=1)
+        out = np.zeros((n, 2))
+        for gen, fir, (gl, gr) in zip(self.gens, self.fir, self.pan):
+            y = fir.process(gen.process(n).astype(np.float64) * self.gain)
+            out[:, 0] += y * gl
+            out[:, 1] += y * gr
+        return out
 
 
 class Biome:
@@ -138,9 +118,12 @@ class Biome:
         self.base = base
         self.sources = []
         for g in preset.get('generators') or []:
-            self._add(generators.build(g, self._ctx(g)), g.get('spatial') or {}, g, g.get('medium'))
+            place = g.get('spatial') or {}
+            n = int(place.get('emitters', 2)) if place.get('field') else 1
+            gens = [generators.build(g if n == 1 else dict(g, name=f'{g["name"]}/e{i}'), self._ctx(g)) for i in range(n)]
+            self._add(gens, place, g, g.get('medium'))
         for f in preset.get('fauna') or []:
-            self._add(fauna_mod.build(f, self._ctx(f), scheduler), f.get('position') or {}, f, f.get('medium'))
+            self._add([fauna_mod.build(f, self._ctx(f), scheduler)], f.get('position') or {}, f, f.get('medium'))
         self.fauna = [s.gen for s in self.sources if isinstance(s.gen, fauna_mod.Fauna)]
         self.planner, self.occupancy = None, None
         eco = preset.get('ecology')
@@ -163,29 +146,34 @@ class Biome:
         m = self.media[cfg['medium']] if cfg.get('medium') else self.listener
         return self.base.with_medium(m) if m is not self.base.medium else self.base
 
-    def _add(self, gen, place, cfg, medium_name):
+    def _add(self, gens, place, cfg, medium_name):
         src_m = self.media[medium_name] if medium_name else self.listener
-        self.sources.append(Source(gen, place, self.listener, src_m, self.sr, self.base.rng(cfg['name'] + '/place'), cfg.get('gain_db', 0.0)))
+        self.sources.append(Source(gens, place, self.listener, src_m, self.sr, cfg.get('gain_db', 0.0)))
 
     def source(self, name):
         return next(s for s in self.sources if s.name == name)
 
-    def _step(self, n):
+    def step_parts(self, n):
+        """The next n samples of every source, {name: (n, 2) float64 in pascals at the listener}. `process` is their sum."""
+        if not self._primed:
+            self._advance(LATENCY)                    # the absorption filters delay by LATENCY samples: let that pass first
+            self._primed = True
+        self.position += int(n)
+        return self._advance(int(n))
+
+    def _advance(self, n):
         self._pulled += int(n)
         if self.planner is not None:                   # decide every call that can sound in this chunk (and the block after it)
             self.planner.plan_until(self._pulled / self.sr + 0.25)
-        out = np.zeros((n, 2))
-        for s in self.sources:
-            out += s.render(n)
-        return (out / self.full_scale_pa).astype(np.float32)
+        return {s.name: s.render(n) for s in self.sources}
 
     def process(self, n):
         """The next n samples, (n, 2) float32, in units of the reference full scale (Pa / full_scale_pa)."""
-        if not self._primed:
-            self._step(LATENCY)                       # the absorption filters delay by LATENCY samples: let that pass first
-            self._primed = True
-        self.position += int(n)
-        return self._step(int(n))
+        parts = self.step_parts(n)
+        out = np.zeros((int(n), 2))
+        for y in parts.values():
+            out += y
+        return (out / self.full_scale_pa).astype(np.float32)
 
     def stream(self, seconds, chunk_s=5.0):
         total = int(round(float(seconds) * self.sr))
@@ -207,7 +195,7 @@ class Biome:
     def report(self):
         """What was built, for the gate rows and the report: one dict per source."""
         return [dict(name=s.name, kind=getattr(s.gen, 'kind', ''), distance_m=s.distance, azimuth=s.az, elevation=s.el,
-                     field=s.field, interface_db=s.interface_db, medium=s.gen.med.name) for s in self.sources]
+                     field=s.field, emitters=len(s.gens), interface_db=s.interface_db, medium=s.gen.med.name) for s in self.sources]
 
 
 def render_preset(cfg, duration_s=30.0, sr=44100, seed=42, score=None, direction=None, t0_s=0.0):

@@ -138,6 +138,10 @@ class Generator:
         self._carry = y[B:B + self.tail_len].copy()
         return y[:B]
 
+    def expected_rms_pa(self, t_s=0.0):
+        """The rms pressure at 1 m the physics predicts at time t_s (None when there is no closed form)."""
+        return None
+
     def _block(self):
         raise NotImplementedError
 
@@ -180,6 +184,11 @@ class Turbulence(Generator):
         self.med.reynolds(1.0, 1.0)                        # raises now, with its message, when the medium has no viscosity
         self.n_ctl = 10
         self.ctl_len = self.B // self.n_ctl
+
+    def expected_rms_pa(self, t_s=0.0):
+        u = float(self.ctx.controls.value(self.u_ref, float(t_s)))
+        w = physics.dipole_power(self.k_dipole, self.med.rho, u, self.area, self.med.c)
+        return physics.pressure_rms_from_power(self.med.z, w) * math.sqrt(1.0 + 15.0 * self.intensity ** 2)     # E[(1 + i z)^6]
 
     def _block(self):
         B, sr, n = self.B, self.sr, self.n_ctl
@@ -325,6 +334,14 @@ class Particulate(Generator):
             return np.zeros(np.shape(d_mm))
         return np.interp(d_mm, self.bub_tab[:, 0], self.bub_tab[:, 1])
 
+    def expected_rms_pa(self, t_s=0.0):
+        """Uncorrelated events: p_rms^2 = (events per second) x Z x (mean radiated energy) / 4 pi."""
+        rate = float(self.ctx.controls.value(self.rate_ref, float(t_s)))
+        d, pdf, v, per_m2_s = self.population(rate)
+        e_a = self.eff * 0.5 * (self.rho_p * math.pi * d ** 3 / 6.0) * v ** 2
+        mean_e = float((pdf * e_a).sum())
+        return math.sqrt(per_m2_s * self.area * self.med.z * mean_e / (4.0 * math.pi))
+
     def _block(self):
         B, sr, K, nb = self.B, self.sr, self.K, self.N_BINS
         t_mid = (self.index + 0.5) * B / sr
@@ -415,6 +432,12 @@ class ModalField(Generator):
         att = max(2, int(RAMP_S * self.sr))
         ramp[:att] = 0.5 - 0.5 * np.cos(np.pi * np.arange(att) / att)
         return unit_energy(w * ramp, self.sr)
+
+    def expected_rms_pa(self, t_s=0.0):
+        if self.kindx == 'continuous':
+            return float(self.ctx.controls.value(self.level, float(t_s)))
+        rate = float(self.ctx.controls.value(self.rate, float(t_s)))
+        return math.sqrt(rate * self.med.z * self.energy * math.exp(self.sigma ** 2) / (4.0 * math.pi))
 
     def _block(self):
         B, sr = self.B, self.sr

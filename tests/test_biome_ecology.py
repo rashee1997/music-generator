@@ -361,6 +361,7 @@ class Integration(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             os.makedirs(os.path.join(d, 'presets', 'environments'))
             p = preset([animal('bird', (400, 480), rate=20.0, salience='foreground', first_s=1.0)], {'score': {'p_force': 0.0}})
+            p['generators'] = []                                            # only the bird, so the stem shows when it calls
             json.dump(dict(p, name='eco_bed', character='a bird that waits for the lead'), open(os.path.join(d, 'presets', 'environments', 'eco_bed.json'), 'w'))
             presets.reset_projects()
             presets.add_project(d)
@@ -371,8 +372,8 @@ class Integration(unittest.TestCase):
                 stems, _ = rn.build_stems(sc, verbose=False)
                 self.assertIs(rn._PIECE['score'], sc)
                 bed = stems['bed']
-                quiet = float(np.abs(bed[:int(14 * SR)]).max())            # the lead holds A4 for 16 s: the bird waits
-                later = float(np.abs(bed[int(18 * SR):]).max())
+                quiet = float(np.abs(bed[:int(7.5 * SR)]).max())           # the lead holds A4 for 8 s (16 beats at 120 bpm): the bird waits
+                later = float(np.abs(bed[int(10 * SR):]).max())
                 self.assertGreater(later, 0.0)
                 self.assertGreater(later, quiet)
             finally:

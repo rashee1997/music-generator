@@ -30,7 +30,7 @@ TOP_KEYS = ('schema', 'name', 'character', 'world', 'media', 'medium', 'interfac
             'fauna', 'ecology', 'spatial_coupling', 'reference', 'sources', 'note', 'kind', '_source')   # kind and _source: what the preset loader writes
 WORLD_KEYS = ('g_m_s2', 'day_length_s', 'listener')
 SALIENCE = ('bed', 'foreground')
-COMMON = ('name', 'kind', 'salience', 'gain_db', 'spatial', 'sources', 'note', 'medium')
+COMMON = ('name', 'kind', 'salience', 'gain_db', 'spatial', 'sources', 'note', 'medium', 'stationary')
 
 # path -> (default, low, high, unit, doc)
 NUMBERS = {
@@ -124,6 +124,23 @@ def _sub(cfg, key, where, out, required=True):
     return blk
 
 
+SPATIAL_KEYS = ('azimuth', 'elevation', 'distance', 'field', 'emitters', 'trajectory', 'binaural')
+
+
+def spatial_problems(sp, where):
+    if not isinstance(sp, dict):
+        return [f'{where}.spatial: an object']
+    out = [f'{where}.spatial: unknown key "{k}" (known: {", ".join(SPATIAL_KEYS)})' for k in sp if k not in SPATIAL_KEYS]
+    for k, lo, hi in (('azimuth', -360, 360), ('elevation', -90, 90), ('distance', 0.1, 100000), ('emitters', 1, 64)):
+        if k in sp and not (_num(sp[k]) and lo <= sp[k] <= hi):
+            out.append(f'{where}.spatial.{k}: a number from {lo} to {hi}')
+    if 'field' in sp and not isinstance(sp['field'], bool):
+        out.append(f'{where}.spatial.field: true or false')
+    if 'emitters' in sp and not sp.get('field'):
+        out.append(f'{where}.spatial.emitters: only a field has emitters (a point is one source)')
+    return out
+
+
 def generator_problems(cfg, controls=None, where='generator'):
     if not isinstance(cfg, dict):
         return [f'{where}: an object']
@@ -138,6 +155,10 @@ def generator_problems(cfg, controls=None, where='generator'):
     out += [f'{where}: unknown key "{k}" for kind {kind} (known: {", ".join(KEYS[kind])})' for k in cfg if k not in KEYS[kind]]
     if cfg.get('salience', 'bed') not in SALIENCE:
         out.append(f'{where}.salience: one of {", ".join(SALIENCE)}')
+    if 'spatial' in cfg:
+        out += spatial_problems(cfg['spatial'], where)
+    if 'stationary' in cfg and not isinstance(cfg['stationary'], bool):
+        out.append(f'{where}.stationary: true or false (a bed that must hold its level and never loop; env.loop_stationarity measures it)')
     if 'gain_db' in cfg and not _num(cfg['gain_db']):
         out.append(f'{where}.gain_db: a number (a trim in dB on top of the physical level)')
     if kind == 'turbulence':

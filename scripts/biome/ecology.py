@@ -65,6 +65,20 @@ def _beats_per_bar(score):
         return 4.0
 
 
+def track_timing(score, tr):
+    """(t0, span) in seconds of an environment track: where its notes begin and how long it sounds (the whole piece for a
+    `full_length` track or one without notes), as render_natural places it."""
+    sec = _tempo(score or {})
+    ends = [float(n['t']) + float(n.get('d', 1.0)) for t in (score or {}).get('tracks') or [] for n in t.get('notes') or []]
+    total = sec(max(ends)) if ends else 0.0
+    notes = tr.get('notes') or []
+    if notes and not tr.get('full_length'):
+        t0 = float(sec(min(float(n['t']) for n in notes)))
+        t1 = min(total, float(sec(max(float(n['t']) + float(n.get('d', 1.0)) for n in notes))))
+        return t0, max(1.0, t1 - t0)
+    return 0.0, max(1.0, total)
+
+
 def section_times(score=None, direction=None):
     """({section name: [(start_s, end_s), ...]}, [hit times s]) from a score's plan and a direction sheet's sections and hits."""
     out, hits = {}, []

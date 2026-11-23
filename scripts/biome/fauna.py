@@ -165,6 +165,19 @@ class Fauna(Generator):
             self._dur_cache[key] = len(self._call(self.ctx.rng(f'{self.name}/i{ind}/b{k}'), ind)) / self.sr
         return self._dur_cache[key]
 
+    def bouts_until(self, horizon_s):
+        """[(individual, start s, duration s)] the animal's own schedule gives up to `horizon_s`, on a fresh copy: the live animal's
+        state is not touched. (With an ecology planner the plan, not this, says when it calls.)"""
+        twin = Fauna(self.cfg, self.ctx)
+        out = []
+        for ind in range(twin.n_ind):
+            t, k = twin._first(ind), 0
+            while t < horizon_s:
+                dur = twin.call_duration(ind, k)
+                out.append((ind, t, dur))
+                t, k = twin._next_start(ind, t, dur), k + 1
+        return sorted(out, key=lambda b: b[1])
+
     def add_silence(self, t0, t1, fade_s, ramp_s):
         """Hold the animal silent from t0 to t1: a call already sounding fades out over fade_s, and it comes back over ramp_s."""
         fade = max(float(fade_s), 1e-3)
