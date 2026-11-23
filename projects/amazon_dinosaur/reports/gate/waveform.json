@@ -1,0 +1,73 @@
+{
+  "duration_s": 118.4698866213152,
+  "sections": [
+    {
+      "name": "first sight",
+      "start_s": 0.0,
+      "end_s": 32.0,
+      "dyn": 0.25
+    },
+    {
+      "name": "herd rises",
+      "start_s": 32.0,
+      "end_s": 64.0,
+      "dyn": 0.55
+    },
+    {
+      "name": "predator dread",
+      "start_s": 64.0,
+      "end_s": 85.3,
+      "dyn": 0.7
+    },
+    {
+      "name": "chase",
+      "start_s": 85.3,
+      "end_s": 106.7,
+      "dyn": 0.9
+    },
+    {
+      "name": "awe finale",
+      "start_s": 106.7,
+      "end_s": 117.3,
+      "dyn": 1.0
+    }
+  ],
+  "flags": [
+    [
+      0.0348,
+      "stem.tick",
+      "choir_pad",
+      "PASS"
+    ],
+    [
+      10.7044,
+      "stem.tick",
+      "strings_pad",
+      "PASS"
+    ],
+    [
+      32.0435,
+      "stem.tick",
+      "celli_ostinato",
+      "PASS"
+    ],
+    [
+      42.7247,
+      "stem.tick",
+      "trombones_braam",
+      "PASS"
+    ],
+    [
+      42.7247,
+      "stem.tick",
+      "tuba_braam",
+      "PASS"
+    ],
+    [
+      106.5912,
+      "stem.tick",
+      "trumpets_fanfare",
+      "PASS"
+    ]
+  ]
+}

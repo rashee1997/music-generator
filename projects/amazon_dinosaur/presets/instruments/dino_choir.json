@@ -1,0 +1,72 @@
+{
+ "name": "dino_choir",
+ "description": "Wordless choir: vowel pad for awe in wonder and finale, long chord tones, no text, no funk backing vocals",
+ "character": "Wordless choir: vowel pad for awe in wonder and finale, long chord tones, no text, no funk backing vocals",
+ "gm": "choir_aahs",
+ "role": "pad",
+ "humanize": {
+  "preset": "natural",
+  "timing_ms": 6.0,
+  "drift_ms": 6.0,
+  "vel_sigma": 4.0
+ },
+ "spatial": {
+  "azimuth": 35,
+  "elevation": 0.0,
+  "distance": 7.0,
+  "binaural": true
+ },
+ "eq": [
+  {
+   "type": "hp",
+   "f": 200
+  },
+  {
+   "type": "peak",
+   "f": 350,
+   "gain": -3.0,
+   "q": 1.0
+  },
+  {
+   "type": "lp",
+   "f": 7000
+  }
+ ],
+ "gain_db": -11.0,
+ "reverb": 0.35,
+ "articulation": {
+  "overlap_ms": 30.0,
+  "gate": 1.0,
+  "release_ms": 180.0
+ },
+ "sources": [
+  "KB cinematic-hybrid-scoring (pressure: pulse that does not stop, low brass/sub weight, constant percussion, rising device)",
+  "KB soundfont-velocity-and-realism (velocity drives brightness; layer short attack over sustain; one shared room)",
+  "KB psychoacoustic-genre Adventurous_Cinematic_Frontier (horn half-note melody leaping fifths, timpani root/fifth, 116-126 feel slowed to 90 for awe not march)",
+  "Web: Hans Zimmer cathartic ostinato - short cell repeated and cumulatively intensified (Lehman, Manufacturing the Epic Score)",
+  "Web: Zimmer brass - low root/octave braam, trombones as staccato accents with percussion and low strings; horns for melody (UJAM/Bax/Zimmer tutorials)",
+  "Web: Jurassic Park orchestration - low/middle strings and winds first, horns soft, wordless choir added later, reverent wonder (Film Music Notes, Williams theme analysis) - original theme here, not a copy",
+  "ESTIMATE: azimuth/distance/EQ/gain are starting values, measured after first render"
+ ],
+ "velocity_timbre": {
+  "points": [
+   [
+    25,
+    1800
+   ],
+   [
+    60,
+    3200
+   ],
+   [
+    100,
+    6500
+   ],
+   [
+    127,
+    9500
+   ]
+  ],
+  "bands": 4
+ }
+}

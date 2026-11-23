@@ -870,9 +870,8 @@ def process_chain(name, x, spec, sr=SR, ctx=None):
         x = _dsp_dynamics(x, dyn, sr, comp_done=isinstance(comp, dict)
                           and str(dyn.get('engine', 'pedalboard')) == 'pedalboard')
 
-    # 4 low-end hygiene
-    if role == 'bass' or spec.get('mono_below'):
-        x = mono_below(x, spec.get('mono_below', 120), sr)
+    # 4 low-end hygiene is applied AFTER placement (`_mono_after_place`): below the pan and the head filter it can
+    # only collapse a dry stem, and a binaural route adds its interaural time after it.
     # level (in place: the chain above already made this stem's private copy)
     x *= np.float32(10 ** (float(spec.get('gain_db', 0.0)) / 20.0))
     # macro automation for environment
@@ -912,12 +911,29 @@ def process_chain(name, x, spec, sr=SR, ctx=None):
     return np.asarray(x, dtype=np.float32)      # already float32: astype() copied every stem a second time
 
 
+def _mono_after_place(x, spec, sr, role=None):
+    """The preset's mono collapse, applied where it can still act: after the pan, the width and the head filter have
+    put the two channels in the relation the master will have.
+
+    It used to run in the stem chain, before placement. There it collapsed the dry stem and the binaural route then
+    added its interaural time on top, so the filter could not remove what the row measures: a wide, sustained part
+    gave the same mono loss with `mono_below` 1100 and 3000 (measured 4.0 dB in the 2.5-2.8 kHz band), and the only
+    lever left was turning the binaural route off - which the height rows require. Placement-time it is a real lever.
+    """
+    hz = spec.get('mono_below')
+    if hz is None and (role or spec.get('role')) == 'bass':
+        hz = 120.0
+    if hz and float(hz) > 0.0 and x.ndim == 2 and x.shape[1] == 2:
+        x = mono_below(x, float(hz), sr)
+    return x
+
+
 def process_stem(name, x, spec, sr=SR, ctx=None):
     """One stem through the chain and then placed for this mix's bus."""
     x = process_chain(name, x, spec, sr, ctx)
     if x.size == 0:
         return x
-    x = _place(name, x, spec, _mix(), sr)
+    x = _mono_after_place(_place(name, x, spec, _mix(), sr), spec, sr)
     if not np.isfinite(x).all():
         raise ValueError(f'stem "{name}" produced non-finite samples (check its eq/comp/spatial values)')
     return np.asarray(x, dtype=np.float32)
@@ -1784,7 +1800,8 @@ def mix_stems(score, stems, sr=SR, ctx=None, bus=None):
         x = got if hit else process_chain(nm, v, specs[nm], sr, ctx)
         if not hit and x.size:
             _cache_put(cache, keys.get(nm), nm, x, n)   # before placement: the cache holds the dry chain output,
-        y = fit(_place(nm, x, specs[nm], mx, sr), n) if x.size else fit(x, n)   # and _place may work in place
+        y = _place(nm, x, specs[nm], mx, sr) if x.size else x   # _place may work in place
+        y = fit(_mono_after_place(y, specs[nm], sr), n) if y.size else fit(y, n)
         return nm, y, hit
 
     try:
