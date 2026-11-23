@@ -106,6 +106,55 @@
       "floor_db": -45.0,
       "min_decay_db": 12.0
     },
+    "env.cpu_budget": {
+      "fail_s_per_min": 30.0,
+      "max_s_per_min": 12.0
+    },
+    "env.declaration": {},
+    "env.density_budget": {
+      "max_over": 0.25
+    },
+    "env.diffuse_field": {
+      "fail_over": 0.25,
+      "target": 0.2,
+      "warn_over": 0.1
+    },
+    "env.ecology_rules": {},
+    "env.foreground_salience": {
+      "max_db": 15.0,
+      "max_over_s": 10.0,
+      "max_share_low": 0.3,
+      "min_db": 3.0
+    },
+    "env.level_physical": {
+      "fail_db": 8.0,
+      "max_db": 3.0
+    },
+    "env.loop_stationarity": {
+      "fail_repeat": 0.8,
+      "fail_seam_db": 1.5,
+      "fail_window_dev": 3.5,
+      "max_repeat": 0.4,
+      "max_seam_db": 0.5,
+      "max_window_dev": 2.0
+    },
+    "env.medium_consistency": {
+      "fail_err_alpha": 0.1,
+      "fail_err_c": 0.15,
+      "max_err_alpha": 0.02,
+      "max_err_c": 0.03,
+      "max_f1_err": 0.03
+    },
+    "env.niche_collision": {
+      "fail_co": 0.5,
+      "fail_d": 0.7,
+      "warn_co": 0.25,
+      "warn_d": 0.4
+    },
+    "env.score_pocket": {
+      "fail_in_pocket": 0.6,
+      "min_in_pocket": 0.85
+    },
     "expr.agogic_coupling": {
       "min_rho": 0.15
     },
