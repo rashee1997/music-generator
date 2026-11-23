@@ -75,6 +75,27 @@
       "max_ms": 1000.0,
       "min_ms": 20.0
     },
+    "ear.fatigue": {
+      "f_max": 0.6,
+      "lufs_range_lu": 2.0,
+      "min_seconds": 5.0
+    },
+    "ear.iacc": {
+      "max_iacc": 0.98,
+      "min_iacc": 0.1
+    },
+    "ear.masking": {
+      "min_frames": 0.7,
+      "min_share": 0.5
+    },
+    "ear.mod_roughness": {
+      "max_index": 0.6,
+      "min_frames": 3
+    },
+    "ear.pitch_salience": {
+      "min_frames": 0.5,
+      "min_salience": 0.25
+    },
     "end.abrupt": {
       "floor_db": -45.0,
       "min_decay_db": 12.0

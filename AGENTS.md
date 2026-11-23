@@ -270,6 +270,7 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
 | Dark/unresolved/suspense (no cadence) | `tense` | SKIPS "resolves to tonic" |
 | Effects/ambience only (no notes) | `effects_only` | Declares an empty focus and skips the row |
 
+- The virtual-ear rows (`ear.fatigue`, `ear.masking`, `ear.mod_roughness`, `ear.pitch_salience`, `ear.iacc`) are advisory (INFO / WARN, never FAIL) and their numbers are starting values calibrated on synthetic fixtures only. `ambient` (which covers drone pieces) relaxes `ear.fatigue` to 0.75 over 15 s because a held bed is its subject; the reason and the measurement are in `presets/gate/ambient.json`. Any other profile that holds a pad on purpose does the same, with its own measurement, never in advance.
 - Read brief for demands. If demands conflict with profile flags, don't pick it.
 - Mixed situations: create custom profile with `python scripts/gate_profiles.py new <name> --from <closest> --project <dir>`. Can merge with list like `["cinematic", "dance"]`.
 - Start strict. Only relax/skip AFTER measurement with reason naming the measurement. Never in advance.

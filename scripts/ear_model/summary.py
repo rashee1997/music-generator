@@ -12,8 +12,8 @@ Per frame of `summary.frame_s` seconds (1 s):
   depth        mean adaptation depth per channel (how much of the slow store is in use)
   fatigue      depth averaged over channels, weighted by excitation: a proxy for sustained drive that a loudness
                meter cannot see (a dense saturated pad and a sparse texture can share a LUFS value)
-  roughness    envelope modulation between `mod_band_hz` (30-150 Hz) as a depth, squared, averaged over channels
-               weighted by excitation: independent of the partial-pair model in naturalness_check
+  roughness    envelope modulation between `mod_band_hz` (30-150 Hz) as a depth (median of four quarter-frames, at most 1), squared, averaged over the active
+               channels above `rough_min_hz`, weighted by excitation: independent of the partial-pair model in naturalness_check
   salience     height of the highest peak of the summary autocorrelation of the NAP (Meddis & Hewitt) inside
                `pitch_hz`, normalised by lag zero, 0..1; f0 is its lag. The NAP is sampled at 2240 Hz, so the pitch
                range stops near 700 Hz: above it the row is unmeasured, not low
@@ -23,7 +23,7 @@ Per frame of `summary.frame_s` seconds (1 s):
 Nothing is stored per sample: only a (frames, channels) matrix per quantity.
 """
 import numpy as np
-from scipy.signal import butter, sosfilt, sosfilt_zi
+from scipy.signal import butter, sosfilt
 
 
 class Summariser:
@@ -34,6 +34,8 @@ class Summariser:
         self.band = [float(v) for v in s['mod_band_hz']]
         self.pitch = [float(v) for v in s['pitch_hz']]
         self.k_res = float(s['resolved_harmonics'])
+        self.rough_min = float(s['rough_min_hz'])
+        self.floor = float(s['active_floor'])
         self.bp = butter(2, self.band, btype='band', fs=ear.nap_rate, output='sos')
 
     def run(self, x, chunk_s=None):
@@ -63,12 +65,24 @@ class Summariser:
         dep = depth.mean(axis=1)
         w = exc / (exc.sum() + 1e-12)
         bp, zi = sosfilt(self.bp, nap.astype(np.float64), axis=1, zi=zi)
-        mod_depth = np.sqrt(np.mean(bp ** 2, axis=1)) / (exc + 1e-9)
+        # depth per quarter of the frame, then the median: a single note onset or gate edge is a transient in one
+        # quarter, sustained modulation is in all four, and only the second is roughness
+        q = self.frame // 4
+        seg = bp[:, :4 * q].reshape(bp.shape[0], 4, q)
+        base = nap[:, :4 * q].reshape(nap.shape[0], 4, q).mean(axis=2)
+        ref = np.maximum(base, self.floor * max(float(exc.max()), 1e-9))          # a silent quarter must not divide by ~0
+        mod_depth = np.minimum(np.median(np.sqrt(np.mean(seg ** 2, axis=2)) / ref, axis=1), 1.0)
         active = exc.sum() > 1e-6
+        rough = 0.0
+        if active:
+            use = (exc > self.floor * exc.max()) & (self.ear.fc >= self.rough_min)
+            if use.any():
+                wu = exc[use] / exc[use].sum()
+                rough = float((wu * mod_depth[use] ** 2).sum())
         sal, f0 = self._pitch(nap) if active else (0.0, 0.0)
         res = float(w[self.ear.fc < self.k_res * f0].sum()) if f0 > 0 else 0.0
         return dict(excitation=exc, depth=dep, fatigue=float((w * dep).sum()) if active else 0.0,
-                    roughness=float((w * mod_depth ** 2).sum()) if active else 0.0,
+                    roughness=rough,
                     salience=sal, f0_hz=f0, resolved=res), zi
 
     def _pitch(self, nap):

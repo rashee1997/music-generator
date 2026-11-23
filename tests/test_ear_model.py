@@ -190,3 +190,96 @@ class Scales(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class Rows(unittest.TestCase):
+    """M6: the ear rows on synthetic programmes with a known answer."""
+
+    def setUp(self):
+        import tempfile
+        self.tmp = tempfile.TemporaryDirectory()
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def wav(self, x):
+        import soundfile as sf
+        path = os.path.join(self.tmp.name, 'm.wav')
+        x = np.asarray(x, dtype=np.float32)
+        sf.write(path, np.stack([x, x], axis=1) if x.ndim == 1 else x, SR, subtype='FLOAT')
+        return path
+
+    def levels(self, score, x, stems=None):
+        import ear_rows
+        return {r[1]: r for r in ear_rows.rows(score, self.wav(x), stems)}
+
+    @staticmethod
+    def pad(seconds=12.0, seed=7):
+        rng = np.random.default_rng(seed)
+        t = np.arange(int(SR * seconds)) / SR
+        p = sum(np.sin(2 * np.pi * f * t + rng.uniform(0, 6)) for f in rng.uniform(150, 3000, 16))
+        return p / np.abs(p).max()
+
+    def test_a_dense_steady_pad_warns_and_sparse_bursts_do_not(self):
+        pad = 0.9 * self.pad()
+        t = np.arange(len(pad)) / SR
+        burst = pad * ((t % 1.0) < 0.1)
+        burst *= float(np.sqrt(np.mean(pad ** 2) / np.mean(burst ** 2)))
+        self.assertEqual(self.levels({}, pad)['ear.fatigue'][0], 'WARN')
+        self.assertEqual(self.levels({}, np.clip(burst, -1, 1))['ear.fatigue'][0], 'INFO')
+
+    def test_fatigue_needs_a_stable_loudness(self):
+        pad = 0.9 * self.pad()
+        t = np.arange(len(pad)) / SR
+        swell = pad * (0.05 + 0.95 * np.clip(t / t[-1], 0, 1) ** 3)          # a long crescendo: not a stable loudness
+        self.assertEqual(self.levels({}, swell)['ear.fatigue'][0], 'INFO')
+
+    def test_roughness_row_separates_a_semitone_from_a_fifth_in_the_middle_register(self):
+        import sys as _s
+        _s.path.insert(0, os.path.join(HERE, 'fixtures', 'roughness'))
+        import make_fixtures as mf
+        gate = {'gate': {'ear.mod_roughness': {'mode': 'relax', 'max_index': 0.25, 'reason': 'test: the shipped limit is a starting value'}}}
+        def prog(semi):
+            return (0.5 * (mf.tone(523.25, -24.0, 8.0) + mf.tone(523.25 * 2 ** (semi / 12), -24.0, 8.0))).astype(np.float32)
+        self.assertEqual(self.levels(gate, prog(1))['ear.mod_roughness'][0], 'WARN')
+        self.assertEqual(self.levels(gate, prog(7))['ear.mod_roughness'][0], 'INFO')
+
+    def stems(self, lead_amp, pad_amp, seconds=6.0):
+        t = np.arange(int(SR * seconds)) / SR
+        lead = sum(lead_amp * np.sin(2 * np.pi * 220 * h * t) / h for h in range(1, 6)).astype(np.float32)
+        noise = (pad_amp * np.random.default_rng(5).standard_normal(len(t))).astype(np.float32)
+        score = {'tracks': [{'name': 'lead', 'role': 'melody'}, {'name': 'pad', 'role': 'pad'}]}
+        return score, {'lead': np.stack([lead, lead], 1), 'pad': np.stack([noise, noise], 1)}, lead + noise
+
+    def test_a_buried_figure_warns_on_masking_and_pitch(self):
+        score, stems, mix = self.stems(0.02, 0.4)
+        got = self.levels(score, mix, stems)
+        self.assertEqual(got['ear.masking'][0], 'WARN')
+        self.assertEqual(got['ear.pitch_salience'][0], 'WARN')
+
+    def test_a_clear_figure_passes_masking_and_pitch(self):
+        score, stems, mix = self.stems(0.3, 0.005)
+        got = self.levels(score, mix, stems)
+        self.assertEqual(got['ear.masking'][0], 'INFO')
+        self.assertEqual(got['ear.pitch_salience'][0], 'INFO')
+
+    def test_iacc_is_reported_for_a_two_channel_master(self):
+        row = self.levels({}, 0.3 * self.pad(4.0))['ear.iacc']
+        self.assertEqual(row[0], 'INFO')
+        self.assertIn('mean 1.00', row[2])
+
+    def test_every_row_is_registered_with_hint_ranges_and_coverage(self):
+        import gate_profiles
+        import lint_coverage
+        for rid in ('ear.fatigue', 'ear.masking', 'ear.mod_roughness', 'ear.pitch_salience', 'ear.iacc'):
+            row = gate_profiles.ROWS[rid]
+            self.assertTrue(row.get('hint'), rid)
+            self.assertFalse(row.get('protected'))
+            for name, (default, lo, hi) in row['params'].items():
+                self.assertTrue(lo <= default <= hi, (rid, name))
+            self.assertIn(rid, lint_coverage.COVERAGE)
+
+    def test_no_ear_row_can_fail(self):
+        for score, x, stems in [({}, 0.9 * self.pad(), None)]:
+            for r in self.levels(score, x, stems).values():
+                self.assertIn(r[0], ('INFO', 'WARN'))

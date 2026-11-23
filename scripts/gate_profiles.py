@@ -281,6 +281,22 @@ ROWS = {
     'front.fold_phantom': dict(meaning='the centre folded into L and R keeps its interaural time and level cues (measured head set)',
                                params={'max_itd_us': (100.0, 30.0, 300.0), 'max_ild_db': (2.0, 0.5, 6.0)},
                                hint='move content off L/R toward C, or lower the inter-channel correlation of L and R'),
+    # the virtual ear (scripts/ear_model, scripts/ear_rows.py): advisory, starting values calibrated on synthetic fixtures only
+    'ear.fatigue': dict(meaning='sustained neural adaptation at a stable loudness (a dense pad a loudness meter does not see)',
+                        params={'f_max': (0.6, 0.3, 0.9), 'min_seconds': (5.0, 2.0, 30.0), 'lufs_range_lu': (2.0, 0.5, 6.0)},
+                        hint='thin the pad, add rests or motion, lower the bed gain_db, or high-pass it'),
+    'ear.masking': dict(meaning='the figure keeps its share of neural activity in its own channels against the beds',
+                        params={'min_share': (0.5, 0.2, 0.9), 'min_frames': (0.7, 0.3, 1.0)},
+                        hint='lane EQ, lead_carve, a lower bed level or a different register'),
+    'ear.mod_roughness': dict(meaning='30-150 Hz envelope modulation of the neural pattern (saturates with level: under-reads loud material)',
+                              params={'max_index': (0.6, 0.2, 1.0), 'min_frames': (3, 1, 10)},
+                              hint='roughness_forecast.py diagnose names the clashing partials; move the part'),
+    'ear.pitch_salience': dict(meaning='the figure keeps a clear pitch inside the mix (fundamentals up to about 700 Hz)',
+                               params={'min_salience': (0.25, 0.05, 0.8), 'min_frames': (0.5, 0.2, 1.0)},
+                               hint='raise the register, remove a co-registered bed, or change the timbre'),
+    'ear.iacc': dict(meaning='interaural correlation of the neural patterns of a two-channel master, 500-880 Hz',
+                     params={'min_iacc': (0.1, 0.0, 0.5), 'max_iacc': (0.98, 0.8, 1.0)},
+                     hint='set the placement; widen or narrow the stems'),
     # per-channel and per-bar delivery QA for any channel count (scripts/channel_qa.py,
     # references/spatial/virtual-speaker-qa.md). A real layout uses its speaker positions; order-5 AmbiX
     # decodes to the 36-point ambix_qa_36 sphere; an undeclared file is still checked per channel.

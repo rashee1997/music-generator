@@ -104,6 +104,8 @@ for _name in ('imm.iacc_early', 'imm.clarity', 'imm.low_fold', 'mix.band_fold', 
     COVERAGE[_name] = (A, 'the room, the fold-down or the delivered channels of the render')
 for _name in ('lfe.sum_coherence', 'lfe.polarity', 'lfe.fold_loss', 'lfe.modal_spread', 'front.fold_phantom'):
     COVERAGE[_name] = (A, 'the two low-frequency channels and the front stage of the delivered programme')
+for _name in ('ear.fatigue', 'ear.masking', 'ear.mod_roughness', 'ear.pitch_salience', 'ear.iacc'):
+    COVERAGE[_name] = (A, 'the neural activity pattern of the rendered master and stems')
 COVERAGE['imm.kinematics'] = ('score', 'the trajectories are in the presets and the score; checked by the immersive config')
 
 PREFLIGHT_ROWS = (

@@ -10,8 +10,9 @@ Stages, per chunk of a few seconds, all state carried between chunks (`zi` / `zf
 one to float32 rounding:
 
   middle ear   linear-phase FIR whose gain is the inverse of the absolute threshold (auditory.ath_db), clipped
-  cochlea      serial cascade of asymmetric resonators at ERB spacing (a pole pair with a zero pair above it); the
-               output of stage k is channel k, so each channel is shaped by every stage basal to it (Lyon)
+  cochlea      serial cascade of asymmetric resonators at ERB spacing (a pole pair with a zero pair above it); channel
+               k is the input of stage k minus its output, so it is shaped by every stage basal to it (Lyon) and has no
+               low-frequency tail: a unit-gain cascade tap alone drives every basal channel with a low tone
   compression  a gain per channel and per block of `block` samples (about 3 ms), from the block's level smoothed in
                time and spread over neighbouring channels (suppression); feed-forward, vectorised over all channels.
                CARFAC proper feeds the level back into each stage's damping; that needs a coefficient update every
@@ -124,9 +125,10 @@ class EarModel:
         y, self.z_me = lfilter(self.me_taps, [1.0], x.astype(np.float64), zi=self.z_me)
         tap = np.empty((n, T), dtype=np.float32)
         for k, (b, a) in enumerate(self.car):
-            y, self.z_car[k] = lfilter(b, a, y, zi=self.z_car[k])
-            tap[k] = y
-        del y
+            prev = y
+            y, self.z_car[k] = lfilter(b, a, prev, zi=self.z_car[k])
+            tap[k] = prev - y          # the stage's input minus its output: a band-pass at the stage, no low-frequency tail
+        del y, prev
         # block-rate level, smoothed in time, spread over neighbouring channels
         nb = T // B
         blocks = tap.reshape(n, nb, B)
@@ -142,6 +144,7 @@ class EarModel:
         nap = np.empty((n, T // self.decimate), dtype=np.float32)
         depth = np.empty_like(nap)
         sat = float(self.p['ihc']['sat'])
+        thr = float(self.p['ihc'].get('threshold', 0.0))
         c0 = float(self.p['adapt']['c'])
         D = self.decimate
         for c in range(n):
@@ -149,6 +152,7 @@ class EarModel:
             g, _ = lfilter([1.0 - self.agc_up], [1.0, -self.agc_up], g, zi=[self.last_gain[c] * self.agc_up])
             self.last_gain[c] = g[-1]
             v = tap[c].astype(np.float64) * g
+            v -= thr
             np.maximum(v, 0.0, out=v)
             v = v / (v + sat)
             v, self.z_ihc[c] = sosfilt(self.ihc_sos, v, zi=self.z_ihc[c])

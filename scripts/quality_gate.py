@@ -932,6 +932,31 @@ def _role_in(role, want):
         return False
 
 
+def figure_and_bed(score, stems):
+    """(figure stem name, summed bed signal or None, bed names) as the masking rows pick them: the loudest stem whose role
+    is in the profile's focus, against the sum of every pad / chord / arp / counter / drone / texture stem that is not
+    a figure. (None, None, []) when either side is missing."""
+    import gate_profiles
+    gp = gate_profiles.resolve(score)
+    roles = {t.get('name'): t.get('role') for t in score.get('tracks', [])}
+    focus = set(gp.focus_roles())
+    leads = [n for n in stems if _role_in(roles.get(n), focus)]
+    beds = [n for n in stems if _role_in(roles.get(n), ('pad', 'chord', 'arp', 'counter', 'drone', 'texture'))
+            and n not in leads]
+    if not leads or not beds:
+        return None, None, []
+    lead = max(leads, key=lambda n: float(np.mean(np.asarray(stems[n], dtype=float) ** 2)))
+    bed = None
+    for n in beds:
+        y = np.asarray(stems[n], dtype=float)
+        if bed is None:
+            bed = y.copy()
+        else:
+            m = max(len(bed), len(y))
+            bed = np.pad(bed, ((0, m - len(bed)), (0, 0))) + np.pad(y, ((0, m - len(y)), (0, 0)))
+    return lead, bed, beds
+
+
 def critical_band_rows(stems, score, sr=44100):
     """Advisory per-band masking excess: how far the beds sit over the figure, critical band by band.
 
@@ -941,31 +966,13 @@ def critical_band_rows(stems, score, sr=44100):
     """
     rows = []
     import mixer
-    import gate_profiles
     import mix_engine.masking as masking
     if mixer.STATE.get('processed'):
         played = mixer.STATE['processed']
         stems = {k: v for k, v in played.items() if k in stems} or stems
-    gp = gate_profiles.resolve(score)
-    roles = {t.get('name'): t.get('role') for t in score.get('tracks', [])}
-    focus = set(gp.focus_roles())
-    leads = [n for n in stems if _role_in(roles.get(n), focus)]
-    beds = [n for n in stems if _role_in(roles.get(n), ('pad', 'chord', 'arp', 'counter', 'drone', 'texture'))
-            and n not in leads]
-    if not leads or not beds:
+    lead, bed, _ = figure_and_bed(score, stems)
+    if lead is None:
         return rows
-    def _energy(n):
-        y = np.asarray(stems[n], dtype=float)
-        return float(np.mean(y ** 2))
-    lead = max(leads, key=_energy)
-    bed = None
-    for n in beds:
-        y = np.asarray(stems[n], dtype=float)
-        if bed is None:
-            bed = y.copy()
-        else:
-            m = max(len(bed), len(y))
-            bed = np.pad(bed, ((0, m - len(bed)), (0, 0))) + np.pad(y, ((0, m - len(y)), (0, 0)))
     excess = masking.band_excess_db(stems[lead], bed, sr)
     _worst, msg = masking.describe(excess)
     rows.append(('INFO', 'masking.excess', msg))
@@ -1380,7 +1387,7 @@ def balance_rows(score, stems=None, out=None, sr=44100):
                 elif over > warn_over:
                     rows.append(('WARN', 'balance', f'"{n}" ({roles[n]}) plays {db - lead:+.1f} dB against the lead; allowed {allow:+.0f}'))
             if not rows:
-                rows.append(('PASS', 'balance', f'every accompaniment stem sits within its role allowance of the lead'))
+                rows.append(('PASS', 'balance', 'every accompaniment stem sits within its role allowance of the lead'))
         elif gp.fallback('balance.vs_lead') == 'balance.layers' and gp.on('balance.layers'):
             rows += layer_balance_rows(score, lv, roles, gp)
         elif gp.on('balance.vs_lead'):
@@ -1858,7 +1865,7 @@ def metadata_rows(score, out, project_dir=None, wav_path=None):
             except Exception as exc:
                 problems.append(f'{os.path.basename(master)} cannot be read for tags ({exc})')
             if not in_file:
-                problems.append(f'the WAV itself carries no tags (a delivered file must: title, artist, ... inside it)')
+                problems.append('the WAV itself carries no tags (a delivered file must: title, artist, ... inside it)')
             else:
                 for key in sorted(tags):
                     if key in ingest_metadata.INFO_TAGS and str(tags.get(key)) != str(in_file.get(key, '')):
@@ -1976,6 +1983,8 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mo
         if stems is not None:
             out.extend(masking_rows(stems, score))
             out.extend(critical_band_rows(stems, score))
+            import ear_rows
+            out.extend(ear_rows.rows(score, rendered, stems))
             out.extend(nc.modulation_flutter_check(stems, score))
     else:
         out.append(('INFO', 'gate_draft', 'draft mode: tier 2 rows (masking, roughness, immersive, chroma, kick, '

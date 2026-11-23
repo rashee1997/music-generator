@@ -32,7 +32,8 @@
   "ihc": {
     "sat": 0.05,
     "lowpass_hz": 1200.0,
-    "order": 2
+    "order": 2,
+    "threshold": 0.003
   },
   "adapt": {
     "tau_fast_ms": 10.0,
@@ -58,7 +59,9 @@
     "iacc_band_hz": [
       500.0,
       880.0
-    ]
+    ],
+    "rough_min_hz": 200.0,
+    "active_floor": 0.05
   },
   "sources": [
     "Glasberg & Moore 1990: ERB scale for channel spacing (scripts/auditory.py)",
@@ -67,6 +70,8 @@
     "car.zeta, zero_ratio, agc.*, ihc.*, adapt.*, nap.*: starting values chosen so a tone's channel response is about one ERB wide (tests/test_ear_model.py measures it); none is fitted to physiological data",
     "adapt.tau_fast_ms 10 and tau_slow_ms 60 are starting values; the depletion index is a fatigue proxy, not a measured neural quantity",
     "summary.mod_band_hz 30-150 Hz: roughness modulation range around its 70 Hz maximum (knowledgebase/sound-design/roughness.md); pitch_hz 50-700 because the NAP is decimated to 2240 Hz",
-    "summary.iacc_band_hz 500-880 Hz: the 880 Hz NAP anti-alias limit leaves this part of the 500-2000 Hz band the room measures use (imm.iacc_early); a starting value"
+    "summary.iacc_band_hz 500-880 Hz: the 880 Hz NAP anti-alias limit leaves this part of the 500-2000 Hz band the room measures use (imm.iacc_early); a starting value",
+    "summary.rough_min_hz 200: below it a quarter critical band is beating, not roughness (docs/roughness_model.md, the existing band start); active_floor 0.05: channels under 5 % of the strongest excitation are ignored so a near-silent channel cannot produce a large modulation depth (starting value)",
+    "ihc.threshold 0.003 (about -50 dBFS at the channel output): below it a hair cell does not respond. Without it the first-order low-frequency tail of every basal stage, multiplied by the adaptation gain, drove all 48 channels for a 250 Hz tone; with it 5 channels stay above half the peak (measured in this session on 250 Hz, 1 kHz and 3 kHz tones). A starting value"
   ]
 }

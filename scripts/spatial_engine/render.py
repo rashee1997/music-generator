@@ -583,11 +583,9 @@ def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None, leng
             json.dump(report, fh, indent=2)
         return out_path
     elif renderer == 'iamf':
-        import glob
         import json
         import os as _os
         import shutil
-        import subprocess
         import tempfile
         from . import adm
         audio, bus = adm_mix(score, stems, target, sr, ctx)
