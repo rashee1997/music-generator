@@ -81,6 +81,15 @@ class AllRoundDecoder(unittest.TestCase):
 class MagLS(unittest.TestCase):
     """B: the crossover defaults to min(N*600, 1500) Hz and the diffuse-field EQ is capped and applied."""
 
+    def setUp(self):
+        # the default is read outside a mix; a mix context left installed by an earlier test would override it
+        import mix_context
+        self._prev_ctx = mix_context.make_current(None)
+
+    def tearDown(self):
+        import mix_context
+        mix_context.make_current(self._prev_ctx)
+
     def test_crossover_default_follows_order(self):
         self.assertEqual(binaural.f_trans(5), 1500.0)
         self.assertEqual(binaural.f_trans(2), 1200.0)

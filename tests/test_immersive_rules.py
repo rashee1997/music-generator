@@ -159,11 +159,13 @@ class TestPresetOwnedSpatial(unittest.TestCase):
         are off-axis; measuring against that single source is what made the first diagnosis wrong."""
         x = _noise().astype(np.float32)
         st = np.stack([x, x], 1)
-        pair = binaural.spatialize_pair(st, 0, 0, 1.5, 40)
+        pair = binaural.spatialize_pair(st, 0, 0, 1.0, 40)            # at the 1 m reference, where the 1/r distance gain is 1
 
         def rms(y):
             return np.sqrt((np.asarray(y, float) ** 2).mean())
         self.assertLess(abs(20 * np.log10(rms(pair) / rms(st))), 2.0)
+        far = binaural.spatialize_pair(st, 0, 0, 2.0, 40)              # and the distance gain is the only thing that changes with range
+        self.assertAlmostEqual(20 * np.log10(rms(far) / rms(pair)), -6.02, delta=0.3)
 
     def test_immersive_rows_are_profile_rows(self):
         import gate_profiles as gpf

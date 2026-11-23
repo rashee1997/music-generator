@@ -292,11 +292,17 @@ def immersive_rows(score, path, stems, out):
         return
     sr = 44100
     probe = signal.sosfilt(signal.butter(4, [300, 6000], 'band', fs=sr, output='sos'), np.random.default_rng(1).standard_normal(sr))
+    probe_lo = signal.sosfilt(signal.butter(4, [100, 700], 'band', fs=sr, output='sos'), np.random.default_rng(1).standard_normal(sr))
     if gp.on('imm.cues'):
         min_ild = float(gp.param('imm.cues', 'min_ild_db'))
         min_itd = float(gp.param('imm.cues', 'min_itd_ms'))
-        r_ild, r_itd = _cues(hb.spatialize(probe, 60, 0, 1.0))
-        l_ild, l_itd = _cues(hb.spatialize(probe, -60, 0, 1.0))
+        r_ild, _ = _cues(hb.spatialize(probe, 60, 0, 1.0))
+        l_ild, _ = _cues(hb.spatialize(probe, -60, 0, 1.0))
+        # The interaural time difference is read where the decoder renders interaural phase: below its transition
+        # frequency. A MagLS decoder leaves the phase above it free (that is the method), so a broadband
+        # cross-correlation reads noise there, not the cue.
+        _, r_itd = _cues(hb.spatialize(probe_lo, 60, 0, 1.0))
+        _, l_itd = _cues(hb.spatialize(probe_lo, -60, 0, 1.0))
         if r_ild > min_ild and l_ild < -min_ild and r_itd < -min_itd and l_itd > min_itd:
             _row(out, 'PASS', 'imm_cues', f'probe at +-60 deg: level difference {r_ild:+.1f}/{l_ild:+.1f} dB, time difference {r_itd:+.2f}/{l_itd:+.2f} ms')
         else:
