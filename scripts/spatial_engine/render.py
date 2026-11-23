@@ -560,6 +560,28 @@ def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None, leng
         with open(str(out_path) + '.adm_report.json', 'w', encoding='utf-8') as fh:
             json.dump(report, fh, indent=2)
         return out_path
+    elif renderer == 'adm_speakers':
+        import json
+        from . import adm, master as _master
+        layout_name = target.get('layout')
+        audio = _master.master(spatial_mix(score, stems, target_name, sr, ctx), score, target, sr,
+                               mix=(ctx.mix if ctx is not None else None))
+        if length_s is not None:
+            audio = conform_length(audio, round(float(length_s) * sr))
+        audio = to_rate(audio, sr, rate, ceiling)
+        bed = adm.SpeakerBed(layout_name, rate, score)
+        measured = dict(integrated_lufs=float(_master.programme_lufs(audio, layout_name, rate, target)[0]),
+                        max_true_peak_dbtp=float(max(_master.channel_peaks(audio, rate))))
+        out_path = adm.write(path, audio, rate, bed.xml(len(audio), rate, measured), bed.chna())
+        report = bed.report(len(audio), rate)
+        report.update({'format': 'BW64', 'file': str(out_path), 'true_peak_ceiling_dbtp': ceiling,
+                       'integrated_lufs': measured['integrated_lufs'], 'max_true_peak_dbtp': measured['max_true_peak_dbtp'],
+                       'conform_ms': (None if length_s is None
+                                      else float((len(audio) / float(rate) - float(length_s)) * 1000.0)),
+                       'validation': 'scripts/spatial_engine/adm.py validate_file (structural). No third-party validator ran.'})
+        with open(str(out_path) + '.adm_report.json', 'w', encoding='utf-8') as fh:
+            json.dump(report, fh, indent=2)
+        return out_path
     elif renderer == 'iamf':
         import glob
         import json

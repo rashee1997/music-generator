@@ -291,24 +291,26 @@ def adm_rows(score, wav_path, out):
     ceiling = render_targets.true_peak(name)
     problems = adm.validate_file(str(wav_path))
     _row(out, 'FAIL' if problems else 'PASS', 'adm.container',
-         (f'adm_bw64: BW64 container/metadata problems: {"; ".join(problems)}' if problems
-          else f'adm_bw64: strict BW64 (BS.2088) container with valid ADM metadata (BS.2076): '
+         (f'{name}: BW64 container/metadata problems: {"; ".join(problems)}' if problems
+          else f'{name}: strict BW64 (BS.2088) container with valid ADM metadata (BS.2076): '
                f'magic, ds64, fmt, chna, axml and data agree; IDs resolve; blocks tile the file'))
     try:
         parsed = adm.parse(str(wav_path))
     except ValueError as e:
-        _row(out, 'FAIL', 'adm.channels', f'adm_bw64: cannot read the file to verify its channels ({e})')
+        _row(out, 'FAIL', 'adm.channels', f'{name}: cannot read the file to verify its channels ({e})')
         return
     finite_row(parsed['audio'], out, os.path.basename(str(wav_path)))
     _row(out, 'PASS', 'adm.channels',
-         f"adm_bw64: {parsed['channels']} track(s) at {parsed['sr']} Hz, "
+         f"{name}: {parsed['channels']} track(s) at {parsed['sr']} Hz, "
          f"{parsed['frames']} frames, {parsed['fmt']['bits']}-bit PCM; "
-         f"each track maps to one ADM object (no fold-down)")
+         + ('each channel is one named loudspeaker of the layout (DirectSpeakers pack)'
+            if (render_targets.get(name) or {}).get('renderer') == 'adm_speakers'
+            else 'each track maps to one ADM object (no fold-down)'))
     peaks = master.channel_peaks(parsed['audio'], parsed['sr'])
     worst = float(np.max(peaks)) if len(peaks) else float('-inf')
     if ceiling is not None:
         _row(out, 'FAIL' if worst > ceiling else 'PASS', 'delivery.true_peak',
-             f'adm_bw64: worst channel true peak {worst:+.1f} dBTP (ceiling {ceiling:+.1f} dBTP; '
+             f'{name}: worst channel true peak {worst:+.1f} dBTP (ceiling {ceiling:+.1f} dBTP; '
              f'per channel {", ".join(f"{p:+.1f}" for p in peaks)})')
     _row(out, 'PASS', 'adm.loudness',
          f'{name} loudness is levelled at render time on a constant-power stereo fold of the objects '
@@ -429,7 +431,7 @@ def output_rows(score, wav_path, out):
     # the soundfile-based reader cannot open -- so it gets its own structural branch below.
     selected = render_targets.resolve(score)['selected']
     base = os.path.basename(str(wav_path))
-    if any((render_targets.get(n) or {}).get('renderer') == 'adm' and base.endswith(render_targets.filename(n))
+    if any((render_targets.get(n) or {}).get('renderer') in ('adm', 'adm_speakers') and base.endswith(render_targets.filename(n))
            for n in selected):
         adm_rows(score, wav_path, out)
         return
@@ -495,18 +497,20 @@ def output_rows(score, wav_path, out):
                     'target or accept it' if off and got < want else ''))
         # low-frequency channel: nothing above the stopband may leave it
         idx = cfg.get('channel')
-        if isinstance(idx, str):                      # the layout names its channel; the target may give an index
-            idx = (order.index(idx) + 1) if idx in order else None
-        if idx is not None and cfg.get('stopband_hz'):
-            i = int(idx) - 1
+        for one in (idx if isinstance(idx, list) else [idx]):
+            if isinstance(one, str):                  # the layout names its channel; the target may give an index
+                one = (order.index(one) + 1) if one in order else None
+            if one is None or not cfg.get('stopband_hz'):
+                continue
+            i = int(one) - 1
             if 0 <= i < n_ch:
                 from spatial_engine import bass
                 leak = bass.stopband_leak_db(sig.audio[:, i], sig.sr, cfg, reference=sig.audio)
                 limit = float(cfg.get('stopband_db', -45.0))
                 _row(out, 'FAIL' if leak > limit else 'PASS', 'imm.lfe_stopband',
-                     f'{name}: low-frequency channel energy above {float(cfg["stopband_hz"]):g} Hz is {leak:+.1f} dB '
-                     f'relative to the programme (limit {limit:+.1f} dB)'
-                     + ('; check the send and the mains high-pass' if leak > limit else ''))
+                     f'{name}: low-frequency channel {order[i] if i < len(order) else i + 1} energy above '
+                     f'{float(cfg["stopband_hz"]):g} Hz is {leak:+.1f} dB relative to the programme '
+                     f'(limit {limit:+.1f} dB)' + ('; check the send and the mains high-pass' if leak > limit else ''))
         gate = config.threshold(lay_name, 'surround_ratio_db')
         surrounds = [n for n in order if n in ('BL', 'BR', 'SL', 'SR')]
         fronts = [n for n in order if n in ('FL', 'FR', 'FC')]

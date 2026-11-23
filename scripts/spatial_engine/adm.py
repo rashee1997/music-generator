@@ -342,6 +342,110 @@ class AdmBus:
         return b'<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(root, encoding='utf-8')
 
 
+SPEAKER_PACK = 'AP_00011001'      # the custom range (IDs from 1001 hex): no common definition exists for a 3.2 layout
+SPEAKER_LABELS = {'L': 'M+030', 'R': 'M-030', 'C': 'M+000'}   # BS.2051 names; azimuth is positive to the left
+
+
+class SpeakerBed:
+    """A finished loudspeaker programme as an ADM DirectSpeakers pack (typeLabel 0001), one channel format per speaker.
+
+    Unlike AdmBus this holds no objects: the audio is already on the layout, so the metadata only names each channel
+    (`speakerLabel`), gives its nominal position, and marks a low-frequency channel with a low-pass frequency. The label
+    of a main speaker comes from `SPEAKER_LABELS` by speaker name, else from its azimuth as M+/-ddd; the
+    low-frequency channels keep their own names (LFE1, LFE2).
+
+        bed = SpeakerBed('lrc_lfe2', sr, score); write(path, audio, sr, bed.xml(len(audio), sr), bed.chna())
+    """
+
+    def __init__(self, layout_name, sr=44100, score=None):
+        from . import config
+        self.layout_name, self.sr, self.score = layout_name, int(sr), score or {}
+        self.speakers = [dict(sp) for sp in config.layout(layout_name).get('speakers') or []]
+        self.stopband = (config.layout(layout_name).get('lfe') or {}).get('stopband_hz')
+
+    def label(self, sp):
+        if sp.get('lfe'):
+            return str(sp['name'])
+        if sp['name'] in SPEAKER_LABELS:
+            return SPEAKER_LABELS[sp['name']]
+        az = int(round(-_wrap180(float(sp['azimuth']))))
+        return f"M{'+' if az >= 0 else '-'}{abs(az):03d}"
+
+    def channel_count(self):
+        return len(self.speakers)
+
+    def _hex(self, i):
+        return f'{0x00011001 + i:08X}'
+
+    def chna(self):
+        return [(i + 1, f'ATU_{i + 1:08X}', f'AT_{self._hex(i)}_01', SPEAKER_PACK) for i in range(len(self.speakers))]
+
+    def report(self, n_samples=None, sr=None):
+        return dict(renderer='adm_speakers', container='BW64 (ITU-R BS.2088, strict form)', sample_rate=int(sr or self.sr),
+                    bit_depth=BITS, channels=len(self.speakers), layout=self.layout_name,
+                    labels={sp['name']: self.label(sp) for sp in self.speakers})
+
+    def xml(self, n, sr=None, loudness=None):
+        sr = int(sr or self.sr)
+        dur = _time(n / float(sr))
+        root = ET.Element('ebuCoreMain', {'xmlns': 'urn:ebu:metadata-schema:ebuCore_2016', 'xml:lang': 'en'})
+        afx = ET.SubElement(ET.SubElement(ET.SubElement(root, 'coreMetadata'), 'format'), 'audioFormatExtended',
+                            version='ITU-R_BS.2076-3')
+        title = str(self.score.get('title') or 'programme')
+        prog = ET.SubElement(afx, 'audioProgramme', audioProgrammeID='APR_1001', audioProgrammeName=title,
+                             start=_time(0), end=dur)
+        ET.SubElement(prog, 'audioContentIDRef').text = 'ACO_1001'
+        lm = ET.SubElement(prog, 'loudnessMetadata')
+        if isinstance(loudness, dict):
+            if loudness.get('integrated_lufs') is not None:
+                ET.SubElement(lm, 'integratedLoudness').text = f"{float(loudness['integrated_lufs']):.1f}"
+            if loudness.get('max_true_peak_dbtp') is not None:
+                ET.SubElement(lm, 'maxTruePeak').text = f"{float(loudness['max_true_peak_dbtp']):.1f}"
+        ET.SubElement(lm, 'renderer', uri='urn:rashee1997:music-generator:bs1770-layout-weights',
+                      name='BS.1770 with the layout channel weights, low-frequency channels excluded', version='3.2')
+        content = ET.SubElement(afx, 'audioContent', audioContentID='ACO_1001', audioContentName=title)
+        ET.SubElement(content, 'audioObjectIDRef').text = 'AO_1001'
+        obj = ET.SubElement(afx, 'audioObject', audioObjectID='AO_1001', audioObjectName=f'{self.layout_name} bed',
+                            start=_time(0), duration=dur)
+        ET.SubElement(obj, 'audioPackFormatIDRef').text = SPEAKER_PACK
+        chna = self.chna()
+        for row in chna:
+            ET.SubElement(obj, 'audioTrackUIDRef').text = row[1]
+        pack = ET.SubElement(afx, 'audioPackFormat', audioPackFormatID=SPEAKER_PACK,
+                             audioPackFormatName=self.layout_name, typeLabel='0001', typeDefinition='DirectSpeakers')
+        for i in range(len(self.speakers)):
+            ET.SubElement(pack, 'audioChannelFormatIDRef').text = 'AC_' + self._hex(i)
+        for i, sp in enumerate(self.speakers):
+            hexid = self._hex(i)
+            chan = ET.SubElement(afx, 'audioChannelFormat', audioChannelFormatID='AC_' + hexid,
+                                 audioChannelFormatName=str(sp['name']), typeLabel='0001',
+                                 typeDefinition='DirectSpeakers')
+            blk = ET.SubElement(chan, 'audioBlockFormat', audioBlockFormatID=f'AB_{hexid}_00000001',
+                                rtime=_time(0), duration=dur)
+            ET.SubElement(blk, 'speakerLabel').text = self.label(sp)
+            adm_az, adm_el, adm_d = _adm_position(sp['azimuth'], sp.get('elevation', 0.0), 1.0, name=sp['name'])
+            for coord, val in (('azimuth', adm_az), ('elevation', adm_el), ('distance', adm_d)):
+                ET.SubElement(blk, 'position', coordinate=coord).text = f'{val:.3f}'
+            if sp.get('lfe') and self.stopband:
+                ET.SubElement(chan, 'frequency', typeDefinition='lowPass').text = f'{float(self.stopband):g}'
+        for i, sp in enumerate(self.speakers):
+            hexid = self._hex(i)
+            stream = ET.SubElement(afx, 'audioStreamFormat', audioStreamFormatID='AS_' + hexid,
+                                   audioStreamFormatName='PCM_' + str(sp['name']), formatLabel='0001',
+                                   formatDefinition='PCM')
+            ET.SubElement(stream, 'audioChannelFormatIDRef').text = 'AC_' + hexid
+            ET.SubElement(stream, 'audioTrackFormatIDRef').text = f'AT_{hexid}_01'
+            track = ET.SubElement(afx, 'audioTrackFormat', audioTrackFormatID=f'AT_{hexid}_01',
+                                  audioTrackFormatName='PCM_' + str(sp['name']), formatLabel='0001',
+                                  formatDefinition='PCM')
+            ET.SubElement(track, 'audioStreamFormatIDRef').text = 'AS_' + hexid
+        for _, uid, track_format, pack_format in chna:
+            u = ET.SubElement(afx, 'audioTrackUID', UID=uid, sampleRate=str(sr), bitDepth=str(BITS))
+            ET.SubElement(u, 'audioTrackFormatIDRef').text = track_format
+            ET.SubElement(u, 'audioPackFormatIDRef').text = pack_format
+        return b'<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(root, encoding='utf-8')
+
+
 def _blocks(path, n, sr, name='object'):
     """[(rtime_s, duration_s, az, el, dist)] for one moving object, contiguous to the file end.
 

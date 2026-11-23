@@ -1,0 +1,40 @@
+{
+  "name": "adm_3_2",
+  "character": "The 3.2 programme as an ADM DirectSpeakers pack in a strict BW64 container: five channels (L, R, C, LFE1, LFE2) with their loudspeaker labels and positions as metadata. Same programme and level as immersive_3_2. Open-standard ADM, not a vendor master.",
+  "label": "ADM BW64 3.2 loudspeaker bed",
+  "order": 9.6,
+  "aliases": [
+    "adm_3_2",
+    "adm_speakers"
+  ],
+  "channels": 5,
+  "channel_order": [
+    "L",
+    "R",
+    "C",
+    "LFE1",
+    "LFE2"
+  ],
+  "file": "master_adm_3_2.wav",
+  "renderer": "adm_speakers",
+  "true_peak_dbtp": -3.0,
+  "layout": "lrc_lfe2",
+  "sources": [
+    "ITU-R BS.2076 DirectSpeakers pack (typeLabel 0001) in a BW64 container (BS.2088); the pack and channel IDs are in the custom range (AP_00011001), not a common definition, because no common definition exists for this layout (from memory: custom IDs start at 1001 hex; verify against BS.2076)",
+    "Speaker labels M+030, M-030, M+000, LFE1, LFE2 follow the BS.2051 naming (from memory); LFE positions are nominal and the LFE channel formats carry a low-pass frequency element equal to the layout's stopband",
+    "Validation is this engine's structural reader (adm.validate_file); no third-party validator ran for this layout"
+  ],
+  "limiter": {
+    "enabled": true,
+    "lookahead_ms": 5.0,
+    "release_ms": 120.0,
+    "oversample": 4,
+    "max_reduction_db": 6.0,
+    "max_iterations": 4,
+    "tolerance_lu": 0.2,
+    "margin_db": 0.1
+  },
+  "loudness": {
+    "method": "bs1770_layout"
+  }
+}

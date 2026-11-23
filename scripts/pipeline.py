@@ -311,7 +311,7 @@ class MusicPipeline:
         from spatial_engine import render as spatial_render
         name = target or ((render_targets.resolve(score)['selected'] or ['stereo'])[0])
         renderer = (render_targets.get(name) or {}).get('renderer')
-        if renderer in ('spatial', 'binaural', 'mono'):
+        if renderer in ('spatial', 'binaural', 'mono', 'adm_speakers'):
             spatial_render.render_deliverable(score, stems, name, out_wav)
             try:                       # the same advisory diagnostics the stereo path leaves for the gate
                 import mix_diagnostics
