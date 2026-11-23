@@ -55,8 +55,8 @@ def targets_for(score, channels, path=None):
 
 def _erb_bands(lo=100.0, hi=5000.0):
     """Edges of the auditory bands between lo and hi (one ERB each): the bands quality_gate.fold_rows uses."""
-    import quality_gate
-    return quality_gate._erb_edges()
+    import auditory
+    return auditory.erb_edges(lo, hi)
 
 
 def band_levels(x, sr, edges):

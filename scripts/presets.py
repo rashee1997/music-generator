@@ -66,6 +66,7 @@ KINDS = {
     'sfzlib': dict(required=['character', 'licence', 'type']),   # a downloadable SFZ library or engine (scripts/sfz_libs.py)
     'video': dict(required=['character', 'probe', 'direction_map', 'staging', 'mix_preset', 'mix', 'master', 'mux']),   # scoring to picture (scripts/video_score.py)
     'film': dict(required=['character']),      # one concern of film scoring: analysis, mapping, hits, dialogue, delivery
+    'ear': dict(required=['character', 'rate_hz', 'channels']),     # parameters of the peripheral auditory model (scripts/ear_model)
     'intent': dict(required=['character']),    # the vocabulary a brief is resolved in: emotions, registers, scenes, tensions, synonyms
 }
 

@@ -33,6 +33,8 @@ import numpy as np
 import soundfile as sf
 from scipy import ndimage, signal
 
+import auditory
+
 PEAK_PROMINENCE_DB = 15.0   # a roughness peak must stand this far above its local spectral floor (random noise peaks reach about 11 dB)
 PEAK_FLOOR_BINS = 101       # width of the local floor (median) in bins; the frames are 1 s, so 101 Hz
 # Roughness is measured where the ear is actually sensitive to it. Below 200 Hz a fifth of two fundamentals scores as "rough"
@@ -325,12 +327,6 @@ def verdicts(r, bpm=None, target=None):
     return out
 
 
-def _bark(f):
-    """Critical-band rate in Bark (Traunmuller): 26.81*f/(1960+f) - 0.53."""
-    f = np.asarray(f, dtype=float)
-    return 26.81 * f / (1960.0 + f) - 0.53
-
-
 def cochlear_roughness_check(path_or_audio, sr=44100, score=None, model=None):
     """2.1 Cochlear sensory roughness, two models.
 
@@ -410,14 +406,6 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None, model=None):
             lufs_file = None
     calib = (calib_spl_db - lufs_file) if lufs_file is not None else 0.0
 
-    def ath_of(freqs):
-        try:
-            import quality_gate
-            return np.asarray(quality_gate._ath_db(freqs), dtype=float)
-        except Exception:                       # naturalness_check used on its own, without the gate package
-            k = np.maximum(np.asarray(freqs, dtype=float), 20.0) / 1000.0
-            return 3.64 * k ** -0.8 - 6.5 * np.exp(-0.6 * (k - 3.3) ** 2) + 1e-3 * k ** 4
-
     hann = np.hanning(win)
     freqs = np.fft.rfftfreq(win, 1.0 / sr)
     band_mask = (freqs >= ROUGHNESS_BAND_HZ[0]) & (freqs <= ROUGHNESS_BAND_HZ[1])
@@ -493,8 +481,8 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None, model=None):
         # ---- level-aware: absolute level, masked threshold, Vassilakis amplitude terms
         a_abs = mag[top_idx][order] / (win * 0.5)                 # sine amplitude, full scale = 1
         spl = 20.0 * np.log10(np.maximum(a_abs, 1e-12)) + calib   # dB SPL at the calibration playback level
-        z = _bark(f_p)
-        ath = ath_of(f_p)
+        z = auditory.bark(f_p)
+        ath = auditory.ath_db(f_p)
         mask = np.full(len(f_p), -np.inf)
         for j in range(len(f_p)):
             dz = np.abs(z - z[j])

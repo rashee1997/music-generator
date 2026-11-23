@@ -45,6 +45,7 @@ import pedalboard as pb
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import airabs
+import auditory
 import presets
 from phys_core import excite
 
@@ -756,9 +757,7 @@ def decorrelate(mono, sr=SR, seed=0, stages=32, f_lo=100.0, f_hi=16000.0, r_hi=0
     Measured on white noise: L/R correlation ~0.35, mono sum ~-1.7 dB. High radii (r_hi) ring, so beds (rain wash, wind)
     keep 0.985 and event layers (calls, syllables, bubbles) use a lower r_hi such as 0.86 (see EVENT_RADIUS).
     """
-    erb = lambda f: 21.4 * np.log10(1.0 + 0.00437 * f)
-    inv = lambda e: (10.0 ** (e / 21.4) - 1.0) / 0.00437
-    centres = inv(np.linspace(erb(f_lo), erb(f_hi), int(stages)))
+    centres = auditory.erb_centres(f_lo, f_hi, stages)
     chans = []
     for ch in (0, 1):
         r = np.random.default_rng(seed * 2 + ch)

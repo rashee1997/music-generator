@@ -36,6 +36,7 @@ try:
 except Exception:
     median_filter = None
 
+import auditory
 import gate_checks as gc
 import gate_audio
 import gate_clock
@@ -432,14 +433,6 @@ def fold_loss(x, sr=44100, nperseg=4096):
     return f, 0.5 * (pl + pr), 0.25 * (pl + pr + 2.0 * np.real(plr))
 
 
-def _erb_edges(lo=100.0, hi=5000.0):
-    """Band edges one ERB apart (Glasberg & Moore 1990) from lo to hi."""
-    def rate(f):
-        return 21.4 * np.log10(4.37e-3 * f + 1.0)
-    k = np.arange(np.ceil(rate(lo)), np.floor(rate(hi)) + 1.0)
-    return (10.0 ** (k / 21.4) - 1.0) / 4.37e-3
-
-
 def fold_rows(score, path, out, audio=None, sr=44100):
     """mix.band_fold for any two-channel master and imm.low_fold for an immersive one: what a mono speaker loses,
     band by band. A broadband fold-down number hides a single band that cancels."""
@@ -459,7 +452,7 @@ def fold_rows(score, path, out, audio=None, sr=44100):
     # 698-803 Hz for one source at 60 degrees); imm_foldown and imm_low_fold judge that master instead.
     if gp.on('mix.band_fold') and not immersive:
         lim, floor = float(gp.param('mix.band_fold', 'max_db')), float(gp.param('mix.band_fold', 'floor_db'))
-        edges = _erb_edges()
+        edges = auditory.erb_edges()
         bands = [(a, b, chan[(f >= a) & (f < b)].sum(), mono[(f >= a) & (f < b)].sum())
                  for a, b in zip(edges[:-1], edges[1:])]
         top = max((c for _, _, c, _ in bands), default=0.0)
@@ -1048,7 +1041,7 @@ def masking_rows(stems, score, sr=44100, out=None):
     congested = []
     compared = 0                      # lead/bed window pairs that exist; a stem shorter than one window has none
     for fc in center_freqs:
-        erb = 24.7 * (4.37 * fc / 1000.0 + 1.0)
+        erb = float(auditory.erb_bandwidth(fc))
         flo = max(20.0, fc - erb / 2.0)
         fhi = min(sr / 2.0 - 50.0, fc + erb / 2.0)
         sos = butter(2, [flo, fhi], btype='band', fs=sr, output='sos')
@@ -1595,13 +1588,6 @@ def spatial_separation_rows(score, stems=None, out=None, sr=44100):
     return rows
 
 
-def _ath_db(f):
-    """Terhardt's absolute threshold of hearing (dB SPL) for f in Hz: the sensitivity dip near 3.3 kHz that ISO 226's
-    threshold region encodes. Used as a relative weighting, never as an absolute SPL calibration."""
-    k = np.maximum(np.asarray(f, dtype=np.float64), 20.0) / 1000.0
-    return 3.64 * k ** -0.8 - 6.5 * np.exp(-0.6 * (k - 3.3) ** 2) + 1e-3 * k ** 4
-
-
 def equal_loudness_rows(score, stems=None, out=None, sr=44100):
     """Equal-loudness (K-weighted) harshness in the 2.5-5 kHz ear-sensitivity zone. A bright synth lead or a raw sample can
     sit far louder there than its mids once the ear's sensitivity is weighted, which reads as harsh even when the plain
@@ -1634,7 +1620,7 @@ def equal_loudness_rows(score, stems=None, out=None, sr=44100):
         if len(mono) < 4096 or not np.any(mono):
             continue
         f, p = gate_audio.mono_psd(mono.astype(np.float64), sr, 4096)
-        w = 10.0 ** ((float(_ath_db(1000.0)) - _ath_db(f)) / 10.0)     # sensitivity relative to 1 kHz
+        w = 10.0 ** ((float(auditory.ath_db(1000.0)) - auditory.ath_db(f)) / 10.0)     # sensitivity relative to 1 kHz
         pw = p * w
         band = (f >= lo) & (f <= hi)
         ref = (f >= ref_lo) & (f < lo)
