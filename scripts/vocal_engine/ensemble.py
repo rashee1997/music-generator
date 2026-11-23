@@ -205,6 +205,14 @@ def render(events, sr=44100, cfg=None, seed=1, hum=False, default_vowel=None, vo
                         if _v is not None:
                             R['technique'].setdefault(_k, []).append(float(_v))
                     R['consonants'] += r.get('consonants') or []
+                else:
+                    # Vibrato coupling is read where it is measurable (see the pick below), and a short phrase of the
+                    # first singer can be too short to show a 5 Hz modulation. The other singers' measurements of the
+                    # same two numbers are candidates too, always as a pair so the lists stay the same length.
+                    tq = r.get('technique') or {}
+                    if tq.get('vib_am_db') is not None and tq.get('vib_am_corr') is not None:
+                        R['technique'].setdefault('vib_am_db', []).append(float(tq['vib_am_db']))
+                        R['technique'].setdefault('vib_am_corr', []).append(float(tq['vib_am_corr']))
                 R['longest_phrase_s'] = max(R['longest_phrase_s'], r['voiced_end'] - r['t0'])
                 cap = scfg['breathing']['capacity_s']
                 R['capacity_s'] = cap if R['capacity_s'] is None else min(R['capacity_s'], cap)

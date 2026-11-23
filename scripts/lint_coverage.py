@@ -109,11 +109,17 @@ for _name in ('ear.fatigue', 'ear.masking', 'ear.mod_roughness', 'ear.pitch_sali
 COVERAGE['emotion.arc_arousal'] = (A, 'the rendered sections against the direction sheet')
 COVERAGE['emotion.arc_valence'] = (A, 'the rendered sections against the direction sheet')
 COVERAGE['expr.agogic_coupling'] = (A, 'the humanized events of the rendered figure lines')
+for _name in ('channel.bars', 'channel.virtual'):
+    COVERAGE[_name] = (A, 'the delivered channels of the render, bar by bar or through a virtual speaker')
+for _name in ('delivery.conform', 'delivery.loudness_ceiling', 'delivery.standard', 'iamf.container'):
+    COVERAGE[_name] = (A, 'the delivered file measured against its format or standard')
+for _name in ('imm.decode_uniformity', 'masking.excess', 'master.micro_dynamics', 'master.mono_bands'):
+    COVERAGE[_name] = (A, 'the rendered master and its decodes')
 COVERAGE['imm.kinematics'] = ('score', 'the trajectories are in the presets and the score; checked by the immersive config')
 
 PREFLIGHT_ROWS = (
     'preflight.range', 'preflight.sfx_length', 'preflight.section_edge', 'preflight.unison', 'preflight.figure_level', 'preflight.placement',
-    'preflight.stem_level', 'preflight.arc', 'preflight.tempo', 'preflight.roughness',
+    'preflight.stem_level', 'preflight.arc', 'preflight.tempo', 'preflight.roughness', 'preflight.roughness_partials',
     'probe.silent', 'probe.clip', 'probe.start', 'probe.tail', 'probe.dc',
 )
 

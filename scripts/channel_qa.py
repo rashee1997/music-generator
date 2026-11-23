@@ -103,7 +103,11 @@ def _corr(a, b, max_lag=64):
     c = np.correlate(a, b, mode='full')
     mid = len(b) - 1
     lo, hi = max(0, mid - int(max_lag)), min(len(c), mid + int(max_lag) + 1)
-    i = lo + int(np.argmax(np.abs(c[lo:hi])))
+    mag = np.abs(c[lo:hi])
+    # A sustained tone has peaks of both signs a half period apart that are almost equally strong, so the largest one
+    # alone is arbitrary. Among the peaks within 5 % of the strongest, the one nearest zero lag decides.
+    near = np.flatnonzero(mag >= 0.95 * mag.max())
+    i = lo + int(near[np.argmin(np.abs(lo + near - mid))])
     return float(c[i] / den)
 
 
