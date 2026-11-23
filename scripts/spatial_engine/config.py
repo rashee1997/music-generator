@@ -49,12 +49,13 @@ def speakers(layout_name):
     return out
 
 
-def lfe_speaker(layout_name):
-    lay = layout(layout_name)
-    for sp in lay.get('speakers') or []:
-        if sp.get('lfe'):
-            return dict(sp)
-    return None
+def lfe_speakers(layout_name):
+    """Every low-frequency speaker of a layout, in channel order (one for 5.1 / 7.1, two for 3.2)."""
+    return [dict(sp) for sp in layout(layout_name).get('speakers') or [] if sp.get('lfe')]
+
+
+def lfe_names(layout_name):
+    return [sp['name'] for sp in lfe_speakers(layout_name)]
 
 
 def channel_names(layout_name):

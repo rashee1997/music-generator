@@ -71,8 +71,9 @@ def _dc_block(audio, layout_name, sr, hz=None):
     from . import config
     try:
         names = list(config.channel_names(layout_name))
+        lfe = set(config.lfe_names(layout_name))
     except Exception:
-        names = []
+        names, lfe = [], set()
     out = np.array(audio, dtype=np.float64, copy=True)
     if hz is None:                                    # not given: the mix preset's mastering.highpass_hz
         hz = resolved({})['highpass_hz']
@@ -80,7 +81,7 @@ def _dc_block(audio, layout_name, sr, hz=None):
         return out
     sos = butter(2, float(hz), btype='highpass', fs=sr, output='sos')
     for i in range(out.shape[1]):
-        if i < len(names) and names[i] == 'LFE':
+        if i < len(names) and names[i] in lfe:
             continue
         out[:, i] = sosfilt(sos, out[:, i])
     return out
@@ -161,7 +162,8 @@ def master(audio, score, target, sr=44100, mix=None):
     if th.get('enabled'):
         from . import config
         names = list(config.channel_names(layout_name))
-        skip = {i for i, name in enumerate(names) if name == 'LFE'}
+        lfe = set(config.lfe_names(layout_name))
+        skip = {i for i, name in enumerate(names) if name in lfe}
         y = mixer.theatrical_multichannel(y, sr, th, skip=skip)
     measured, method = programme_lufs(y, layout_name, sr, target)
     gain_db = lufs_target - measured

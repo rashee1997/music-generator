@@ -16,7 +16,7 @@ hard stopband above the layout's `stopband_hz` keeps the channel from leaking in
 The crossover, the send level and the stopband come from the layout/target presets, never from this file.
 """
 import numpy as np
-from scipy.signal import butter, sosfilt
+from scipy.signal import butter, lfilter, sosfilt
 
 
 def lr4(y, sr, cutoff_hz, kind='low'):
@@ -40,18 +40,108 @@ def send_gain(send_db):
     return float(10.0 ** (float(send_db) / 20.0))
 
 
-def lfe_bus(sends, sr, cfg):
+def lfe_bus(sends, sr, cfg, weights=None):
     """Sum the low-passed sends, apply the send gain, then enforce the stopband guard.
 
     `sends` is a list of mono arrays. `cfg` is config.lfe_cfg(): lowpass_hz, stopband_hz, stopband_db, send_db.
+    `weights` (one linear gain per send) is the per-track share of this channel; without it every send counts fully.
     """
+    out = _low_sum(sends, sr, cfg, weights)
+    return release_fade(guard(out, sr, cfg), sr, cfg)
+
+
+def _low_sum(sends, sr, cfg, weights=None):
     cutoff = float(cfg.get('lowpass_hz'))
     gain = send_gain(cfg.get('send_db', 0.0))
     n = max((len(s) for s in sends), default=0)
     out = np.zeros(n, dtype=np.float64)
-    for s in sends:
-        out[:len(s)] += lowpass(s, sr, cutoff) * gain
-    return release_fade(guard(out, sr, cfg), sr, cfg)
+    for i, s in enumerate(sends):
+        w = 1.0 if weights is None else float(weights[i])
+        if w:
+            out[:len(s)] += lowpass(s, sr, cutoff) * (gain * w)
+    return out
+
+
+def pan_weights(pans):
+    """Equal-power shares (LFE1, LFE2) for per-track `lfe_pan` values in [-1, 1]: -1 is LFE1 only, +1 is LFE2 only."""
+    theta = (np.clip(np.asarray(pans, dtype=np.float64), -1.0, 1.0) + 1.0) * (np.pi / 4.0)
+    return np.cos(theta), np.sin(theta)
+
+
+def allpass_cascade(y, sr, stages, max_group_delay_ms):
+    """Phase-only decorrelation with a bounded total group delay.
+
+    A first-order all-pass y[n] = -a x[n] + x[n-1] + a y[n-1] delays low frequencies by (1 + a) / (1 - a) samples, so
+    `stages` sections of N/stages samples each add N = max_group_delay_ms in total. The coefficients differ per stage
+    (spread of 0.5x..1.5x the mean delay) so the cascade is not one repeated delay. Magnitude is flat.
+    """
+    stages = max(1, int(stages))
+    n_total = max(2.0, float(max_group_delay_ms) * sr / 1000.0)
+    shares = np.linspace(0.5, 1.5, stages) if stages > 1 else np.ones(1)
+    shares = shares / shares.sum() * n_total
+    out = np.asarray(y, dtype=np.float64)
+    for n in shares:
+        a = float(np.clip((n - 1.0) / (n + 1.0), 0.0, 0.999))
+        out = lfilter([-a, 1.0], [1.0, -a], out)
+    return out
+
+
+def delay_samples(y, n):
+    """Delay by a whole number of samples (zero fill, same length). A negative `n` is an error: a file cannot advance."""
+    n = int(n)
+    if n < 0:
+        raise ValueError('an LFE delay cannot be negative')
+    if n == 0:
+        return y
+    out = np.zeros_like(y)
+    out[n:] = y[:len(y) - n] if n < len(y) else 0.0
+    return out
+
+
+def lfe_bus_pair(sends, pans, sr, cfg):
+    """Two low-frequency channels (LFE1, LFE2) from the same sends. Returns (lfe1, lfe2), equal length.
+
+    cfg.mode:
+      stereo_bass (default)  equal-power split by each track's `lfe_pan`; LFE2 is made incoherent with LFE1 above
+                             `decorrelate_above_hz` by a bounded all-pass cascade, and identical below it, so the two
+                             add coherently under the corner and excite different room modes above it.
+      dual_mono              both channels carry the single-channel bus unchanged (a 5.1 bus on two outputs).
+      modal_split            the split of stereo_bass without decorrelation; for a room whose delay and polarity are
+                             known and written in `delay_ms` / `polarity`.
+    cfg.delay_ms [d1, d2] and cfg.polarity [p1, p2] apply to every mode, in the order LFE1, LFE2.
+    """
+    mode = str(cfg.get('mode', 'stereo_bass'))
+    if mode not in ('stereo_bass', 'dual_mono', 'modal_split'):
+        raise ValueError(f'lfe mode "{mode}" is not one of stereo_bass, dual_mono, modal_split')
+    if mode == 'dual_mono':
+        w1 = w2 = None
+    else:
+        w1, w2 = pan_weights(pans)
+    b1 = _low_sum(sends, sr, cfg, w1)
+    b2 = _low_sum(sends, sr, cfg, w2)
+    if mode == 'stereo_bass':
+        d = cfg.get('decorrelation') or {}
+        fd = float(cfg.get('decorrelate_above_hz', 40.0))
+        # Both channels go through the same LR4 split and re-sum (that sum is itself an all-pass, so it must be common to
+        # both or it would put the channels in antiphase at the corner); only LFE2's upper band gets the cascade.
+        b1 = lowpass(b1, sr, fd) + highpass(b1, sr, fd)
+        b2 = lowpass(b2, sr, fd) + allpass_cascade(highpass(b2, sr, fd), sr, d.get('stages', 4),
+                                                   d.get('max_group_delay_ms', 3.0))
+    out = []
+    delays, pols = list(cfg.get('delay_ms') or [0.0, 0.0]), list(cfg.get('polarity') or [1, 1])
+    for b, ms, pol in zip((b1, b2), delays, pols):
+        b = delay_samples(b, round(float(ms) * sr / 1000.0)) * (-1.0 if float(pol) < 0 else 1.0)
+        out.append(release_fade(guard(b, sr, cfg), sr, cfg))
+    return out[0], out[1]
+
+
+def lfe_channels(sends, pans, sr, cfg, count):
+    """The low-frequency channels for a layout with `count` of them (1 or 2), as a list of arrays."""
+    if count == 1:
+        return [lfe_bus(sends, sr, cfg)]
+    if count == 2:
+        return list(lfe_bus_pair(sends, pans, sr, cfg))
+    raise ValueError(f'{count} low-frequency channels: the engine routes one or two')
 
 
 def release_fade(bus, sr, cfg):

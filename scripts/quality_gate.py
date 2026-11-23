@@ -887,11 +887,10 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
         from gate_audio import Signal as _Sig
         from spatial_engine import config as _spatial_config
         order = list(delivered[1].get('channel_order') or [])
-        lfe = _spatial_config.lfe_speaker(delivered[1]['layout'])
-        if lfe is not None and lfe['name'] in order and sig.channels > 1:
-            i = order.index(lfe['name'])
-            dc_sig = _Sig(np.delete(sig.audio, i, axis=1), sig.sr)
-            dc_note = f' ({delivered[0]}: the low-frequency channel "{lfe["name"]}" is excluded, it carries the sub)'
+        lfe = [n for n in _spatial_config.lfe_names(delivered[1]['layout']) if n in order]
+        if lfe and sig.channels > 1:
+            dc_sig = _Sig(np.delete(sig.audio, [order.index(n) for n in lfe], axis=1), sig.sr)
+            dc_note = f' ({delivered[0]}: the low-frequency channel(s) {", ".join(lfe)} excluded, they carry the sub)'
     res = gc.check_dc(dc_sig)
     level = 'FAIL' if res['value'] > res['threshold'] else 'PASS'
     _row(out, level, 'master.dc', res['detail'] + dc_note)

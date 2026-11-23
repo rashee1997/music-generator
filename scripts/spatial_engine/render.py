@@ -56,13 +56,13 @@ def render_stems(stems, layout_name, target_name=None, score=None, specs=None, s
         specs = specs_from_score(score) if score else {}
     names = config.channel_names(layout_name)
     spk = config.speakers(layout_name)
-    lfe_spk = config.lfe_speaker(layout_name)
+    lfe_spk = config.lfe_speakers(layout_name)
     cfg = config.lfe_cfg(layout_name, target_name)
     roles = set(cfg.get('roles') or [])
     decorated = (config.layout(layout_name).get('decorrelation') or {})
     n = max((len(_mono(v)) for v in stems.values()), default=0)
     mix = {name: np.zeros(n, dtype=np.float64) for name in names}
-    sends = []
+    sends, pans = [], []
     for name, y in stems.items():
         spec = dict(specs.get(name) or {})
         x = _mono(y)
@@ -73,18 +73,20 @@ def render_stems(stems, layout_name, target_name=None, score=None, specs=None, s
         el = float(spec.get('elevation', 0.0))
         if role in roles and cfg.get('lowpass_hz'):
             sends.append(x)
+            pans.append(float(spec.get('lfe_pan', 0.0) or 0.0))
             mains = bass.highpass(x, sr, float(cfg['lowpass_hz']))
         else:
             mains = x
         layer = spec.get('lfe_send_db')
         if layer is not None and cfg.get('lowpass_hz'):      # an optional complement send for a full-range track
             sends.append(x * bass.send_gain(float(layer)))
+            pans.append(float(spec.get('lfe_pan', 0.0) or 0.0))
         for sp_name, g in pan.gains(az, el, spk).items():
             if g:
                 mix[sp_name][:len(mains)] += mains * g
     if cfg.get('lowpass_hz') and sends and lfe_spk:
-        lfe = bass.lfe_bus(sends, sr, cfg)
-        mix[lfe_spk['name']][:len(lfe)] += lfe
+        for sp, low in zip(lfe_spk, bass.lfe_channels(sends, pans, sr, cfg, len(lfe_spk))):
+            mix[sp['name']][:len(low)] += low
     mix = decorrelate.bus(mix, decorated, sr)
     probs = config.problems(layout_name)
     if probs:                                      # data is broken: say so instead of writing a crooked file
@@ -150,13 +152,14 @@ class LayoutBus:
         layout = config.layout(layout_name)
         self.names = config.channel_names(layout_name)
         self.speakers = config.speakers(layout_name)
-        self.lfe_speaker = config.lfe_speaker(layout_name)
+        self.lfe_speakers = config.lfe_speakers(layout_name)
         self.lfe = config.lfe_cfg(layout_name, target_name)
         self.roles = set(self.lfe.get('roles') or [])
         self.reverb = layout.get('reverb') or {}
         self.decorrelation = layout.get('decorrelation') or {}
         self.parts = {name: [] for name in self.names}
         self.low_sends = []
+        self.low_pans = []
         self.room = None
         self.imm, self.score = None, None      # set by the mixer when the piece is immersive
 
@@ -182,12 +185,14 @@ class LayoutBus:
         cutoff = self.lfe.get('lowpass_hz')
         if role in self.roles and cutoff:
             self.low_sends.append(mono)
+            self.low_pans.append(float(spec.get('lfe_pan', 0.0) or 0.0))
             mains = bass.highpass(mono, self.sr, float(cutoff))
         else:
             mains = mono
         extra = spec.get('lfe_send_db')            # an optional complement send for a full-range track
         if extra is not None and cutoff:
             self.low_sends.append(mono * bass.send_gain(float(extra)))
+            self.low_pans.append(float(spec.get('lfe_pan', 0.0) or 0.0))
         # The mixer keeps a track's place in `spatial`; a flat azimuth/elevation is still accepted for a caller
         # that hands raw specs. Reading only the flat pair put every track at 0 deg (front centre).
         sp = spec.get('spatial') or {}
@@ -259,12 +264,13 @@ class LayoutBus:
             for i, speaker in enumerate(self.speakers):
                 m = min(n, len(room))
                 mix[speaker['name']][:m] += room[:m, i]
-        if self.lfe_speaker is not None and self.low_sends:
-            low = bass.lfe_bus(self.low_sends, self.sr, self.lfe)
-            mix[self.lfe_speaker['name']][:len(low)] += low
+        if self.lfe_speakers and self.low_sends:
+            lows = bass.lfe_channels(self.low_sends, self.low_pans, self.sr, self.lfe, len(self.lfe_speakers))
+            for sp, low in zip(self.lfe_speakers, lows):
+                mix[sp['name']][:len(low)] += low
         # The low-frequency channel is never decorrelated: it is not a spatial channel, and phase-scrambling a sub
         # only smears it. (decorrelate.bus treats `names` as the channels to leave alone.)
-        skip = [self.lfe_speaker['name']] if self.lfe_speaker else None
+        skip = [sp['name'] for sp in self.lfe_speakers] or None
         mix = decorrelate.bus(mix, self.decorrelation, self.sr, names=skip)
         return np.stack([mix[name] for name in self.names], axis=1)
 
