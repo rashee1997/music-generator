@@ -63,6 +63,7 @@
       "tolerance_s": 0.5
     },
     "delivery.sample_rate": {},
+    "delivery.standard": {},
     "dropout": {
       "floor_below_db": 45.0,
       "max_ms": 1000.0,
@@ -137,12 +138,15 @@
     "loudness": {},
     "low_interval_mud": {},
     "machine_gun_percussion": {},
+    "masking.excess": {},
     "masking.vs_melody": {
       "margin_db": 3.0
     },
     "master.dc": {
       "dc_max": 0.001
     },
+    "master.micro_dynamics": {},
+    "master.mono_bands": {},
     "meta.tags": {
       "max_missing": 0
     },
