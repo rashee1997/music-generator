@@ -74,16 +74,21 @@ def apply(x, distance_m, temp_c=None, rh=None, pressure_kpa=None, sr=SR):
     return iso_apply(x, distance_m, *st, sr=sr)
 
 
+def iso_fir(distance_m, temp_c=20.0, rh=50.0, pressure_kpa=101.325, sr=SR):
+    """The impulse response (TAPS taps, linear phase, centred) of distance_m of Earth air: the filter iso_apply convolves with."""
+    freqs = np.linspace(0.0, sr / 2.0, TAPS // 2 + 1)
+    gain = 10.0 ** (-iso_alpha_db_per_m(freqs, temp_c, rh, pressure_kpa) * float(distance_m) / 20.0)
+    n = TAPS - 1
+    ir = np.roll(np.fft.irfft(gain, n=n), n // 2)    # zero-phase response, centred
+    return np.append(ir, 0.0) * signal.windows.blackman(TAPS)
+
+
 def iso_apply(x, distance_m, temp_c=20.0, rh=50.0, pressure_kpa=101.325, sr=SR):
     """The ISO 9613-1 linear-phase filter for distance_m of Earth air."""
     x = np.asarray(x, dtype=np.float32)
     if distance_m <= 0:
         return x
-    freqs = np.linspace(0.0, sr / 2.0, TAPS // 2 + 1)
-    gain = 10.0 ** (-iso_alpha_db_per_m(freqs, temp_c, rh, pressure_kpa) * float(distance_m) / 20.0)
-    n = TAPS - 1
-    ir = np.roll(np.fft.irfft(gain, n=n), n // 2)    # zero-phase response, centred
-    ir = np.append(ir, 0.0) * signal.windows.blackman(TAPS)
+    ir = iso_fir(distance_m, temp_c, rh, pressure_kpa, sr)
     import compute
     out = (compute.fftconvolve(x, ir.astype(np.float32)) if compute.on_gpu()
            else signal.fftconvolve(x, ir if x.ndim == 1 else ir[:, None], mode='full', axes=0))

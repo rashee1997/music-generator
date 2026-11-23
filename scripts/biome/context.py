@@ -140,3 +140,10 @@ class Context:
 
     def rng(self, name):
         return rng_of(self.seed, name)
+
+    def with_medium(self, medium):
+        """The same context seen from another medium (a creature that lives in the sea): controls and seeds are shared."""
+        import copy
+        c = copy.copy(self)
+        c.medium = medium
+        return c

@@ -274,6 +274,23 @@ class Medium:
             return airabs.iso_alpha_db_per_m(f, self.temp_c, self.rh, self.pressure_pa / 1000.0)
         return 8.685889638 * self.alpha_np_per_m(f)
 
+    def fir(self, distance_m, sr=44100):
+        """The linear-phase impulse response (TAPS taps, group delay TAPS // 2 samples) of distance_m of this medium; a
+        unit impulse at the centre when the distance is zero. `absorb` is the whole-buffer convolution with it."""
+        if distance_m <= 0:
+            ir = np.zeros(TAPS)
+            ir[TAPS // 2] = 1.0
+            return ir
+        if self.model == 'iso9613':
+            import airabs
+            return airabs.iso_fir(distance_m, self.temp_c, self.rh, self.pressure_pa / 1000.0, sr)
+        from scipy import signal
+        freqs = np.linspace(0.0, sr / 2.0, TAPS // 2 + 1)
+        gain = 10.0 ** (-self.alpha_db_per_m(freqs) * float(distance_m) / 20.0)
+        n = TAPS - 1
+        ir = np.roll(np.fft.irfft(gain, n=n), n // 2)
+        return np.append(ir, 0.0) * signal.windows.blackman(TAPS)
+
     def absorb(self, x, distance_m, sr=44100):
         """Filter x ((N,) or (N, C)) for distance_m of this medium: gain 10^(-alpha r / 20), linear phase, no spreading.
         Earth air is delegated to airabs.apply, so its output is bit-identical to the old path."""

@@ -322,10 +322,12 @@ def problems(preset):
         out += mat_mod.problems(m, f'materials.{n}')
     controls = preset.get('controls')
     out += context.control_problems(controls)
-    gens = preset.get('generators')
-    if not isinstance(gens, list) or not gens:
-        out.append('generators: a non-empty list')
+    gens = preset.get('generators', [])
+    if not isinstance(gens, list):
+        out.append('generators: a list')
         gens = []
+    if not gens and not preset.get('fauna'):
+        out.append('a biome needs generators or fauna (or both): there is nothing to hear')
     names = set()
     for g in gens:
         out += generator_problems(g, controls)

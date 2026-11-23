@@ -694,6 +694,9 @@ def preset_problems(cfg):
     A preset may also be a physical scene (`scene`, or `scene_layers`: a list of scenes mixed as one bed). Those go to
     phys_core for validation, and nothing is validated twice.
     """
+    if cfg.get('schema'):                                    # a `biome/1` preset: its own validator owns every key
+        import biome.schema as _bs
+        return _bs.problems(cfg)
     if isinstance(cfg.get('scene'), dict):
         import phys_core.scene as _scene
         return [f'scene: {p}' for p in _scene.problems(cfg['scene'])]
@@ -730,6 +733,8 @@ def preset_is_bed(cfg):
     One owner for the rule: project_gate, the docs and any caller ask this instead of reading `layers` themselves."""
     if not isinstance(cfg, dict):
         return False
+    if cfg.get('schema'):                                    # a biome is a bed when any generator is one (salience defaults to bed)
+        return any(g.get('salience', 'bed') == 'bed' for g in cfg.get('generators', []))
     if cfg.get('scene') or cfg.get('scene_layers'):
         import env_engine.render as _env_render
         return _env_render.is_bed(cfg)
@@ -821,6 +826,10 @@ def render_environment_preset(name_or_dict, duration_s=30.0, sr=SR, seed=42):
             else:
                 known = ', '.join(sorted(presets.load('environments')))
                 raise ValueError(f'unknown environment "{name_or_dict}" (it would render as silence). Known: {known}')
+
+    if cfg.get('schema'):                                # `biome/1`: the universal, medium-aware engine (scripts/biome)
+        import biome.engine as _biome
+        return _biome.render_preset(cfg, duration_s=duration_s, sr=sr, seed=seed)
 
     import env_engine.render as _env_render           # the physical scene path; the layer path below is unchanged
     if isinstance(cfg.get('scene'), dict) or _env_render.has_scene_layers(cfg):
