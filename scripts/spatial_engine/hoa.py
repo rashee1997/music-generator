@@ -32,11 +32,11 @@ import threading
 import numpy as np
 
 import compute
+from phys_core import medium
 from scipy import signal
 
 from . import trajectory
 
-C = 343.0
 ABS_FIR_TAPS = 129                      # room.absorption_fir's own length: a tap's absorption filter is never longer
 IN_RAM_BYTES = 768 * 1024 * 1024       # a longer field is kept in a temporary file instead of in memory
 BLOCK = 1 << 18
@@ -500,6 +500,7 @@ class HoaBus:
         self.sr, self.order, self.decode = int(sr), int(order), decode
         self.k = (self.order + 1) ** 2
         self.imm, self.space, self.score = imm or {}, space or {}, score or {}
+        self.medium = medium.from_score(self.score)            # the place's air (or sea, or CO2): c, absorption, Doppler scale
         self.speakers, self.room_only = speakers, room_only
         self.speaker_decoder = str((self.imm.get('decoder') or 'allrad2'))
         if self.speaker_decoder not in ('allrad', 'allrad2'):
@@ -686,7 +687,7 @@ class HoaBus:
             p = trajectory.anchor(p, az, el, dist, float(self.imm.get('anchor_max_span_deg', 6.0)))
         track_space = mixer.resolve_space(sp['space']) if sp.get('space') else None
         near = ((track_space or self.space).get('distance') or {}).get('near_field')
-        temp_c, rh = float(sp.get('temp_c', 20.0)), float(sp.get('rh', 50.0))
+        temp_c, rh = (None if sp.get('temp_c') is None else float(sp['temp_c'])), (None if sp.get('rh') is None else float(sp['rh']))
         hw = mixer.pair_half_width(y, sp, self.imm) if p is None else 0.0
         parts = ([(y[:, 0], az - hw, 0.707), (y[:, 1], az + hw, 0.707)] if hw > 0 and y.shape[1] == 2
                  else [(y.mean(axis=1), az, 1.0)])
@@ -702,7 +703,7 @@ class HoaBus:
                 g = H.gains(self.order, a0, el)[0]
             else:
                 d_s = trajectory.at_samples(p, 2, 0, n)
-                lead = dop * (d_s - d_s.min()) / C * sr                     # the path the sound still has to travel
+                lead = dop * (d_s - d_s.min()) / medium.speed_of_sound() * sr                     # the path the sound still has to travel
                 direct = (read(raw, t - lead) if dop else raw) / np.maximum(d_s, 1.0)
                 f = np.fft.rfftfreq(H.DVF_BLOCK, 1.0 / sr)
                 alpha = airabs.alpha_db_per_m(f, temp_c, rh)
@@ -768,9 +769,10 @@ class HoaBus:
             direct, images = room.image_tracks(geom, p[:, 0], p[:, 1], p[:, 2], sr=sr)
             t = np.arange(n, dtype=float)
             grid = np.arange(len(direct)) * trajectory.HOP
-            lead = dop * (direct - direct.min()) / C
+            c_m = medium.speed_of_sound()
+            lead = dop * (direct - direct.min()) / c_m
             for im in images:
-                delay = np.interp(t, grid, (lead + (im['path_m'] - direct) / C) * sr)
+                delay = np.interp(t, grid, (lead + (im['path_m'] - direct) / c_m) * sr)
                 s = read(raw, t - delay)
                 if physics:
                     s = s / np.interp(t, grid, im['path_m'])
@@ -788,7 +790,7 @@ class HoaBus:
                     continue
                 s = np.zeros(n)
                 s[d:] = raw[:n - d] * gain
-                extra = C * d / sr
+                extra = medium.speed_of_sound() * d / sr
                 if physics:
                     s = s / max(d_mean + extra, 1e-6)
                 s = signal.sosfilt(signal.butter(2, min(sr * 0.45, float(refl.get(key + '_cutoff_hz', cutoff))),
@@ -821,6 +823,11 @@ class HoaBus:
 
     # ------------------------------------------------------------------ the field and its decoders
     def field(self):
+        """The piece, decoded, with the score's medium as the active one (see `_field`)."""
+        with medium.use(self.medium):
+            return self._field()
+
+    def _field(self):
         """The piece, decoded: ((n, out_channels) output, the (n, 2) bypass sum, None).
 
         No (n, K) field exists at any point. Every source writes row blocks into a `_FieldSink`, which decodes each

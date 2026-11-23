@@ -36,7 +36,6 @@ import numpy as np
 from scipy import signal
 from scipy.interpolate import PchipInterpolator
 
-C = 343.0
 SR = 44100
 ELEMENT_KEYS = {'f0_hz', 'ms', 'harmonics', 'rolloff', 'noise', 'subharmonic', 'biphonation', 'jump', 'pulse_hz',
                 'pulse_duty', 'vibrato_hz', 'vibrato_cents', 'attack', 'release', 'level_db'}
@@ -44,11 +43,14 @@ PRESET_ONLY = {'name', 'kind', 'character', 'sources', 'note', 'notes', '_source
 DEFAULT_ELEMENTS = {'note': dict(f0_hz=[[0.0, 900.0], [0.4, 1250.0], [1.0, 820.0]], ms=[180.0, 260.0], harmonics=4)}
 
 
-def tube_formants(length_cm, sr=SR, count=5):
-    """Resonances of a tube closed at the source and open at the mouth: (2k - 1) c / (4 L)."""
+def tube_formants(length_cm, sr=SR, count=5, c=None):
+    """Resonances of a tube closed at the source and open at the mouth: (2k - 1) c / (4 L), c of the active medium."""
+    if c is None:
+        from phys_core import medium
+        c = medium.speed_of_sound()
     if not length_cm or float(length_cm) <= 0:
         return []
-    out = [(2 * k - 1) * C / (4.0 * float(length_cm) / 100.0) for k in range(1, int(count) + 1)]
+    out = [(2 * k - 1) * float(c) / (4.0 * float(length_cm) / 100.0) for k in range(1, int(count) + 1)]
     return [f for f in out if f < 0.45 * sr]
 
 

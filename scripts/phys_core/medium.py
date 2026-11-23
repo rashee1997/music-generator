@@ -271,7 +271,7 @@ class Medium:
         """Pure-tone absorption, dB/m. Earth air goes through airabs (the ISO routine) so it is unchanged."""
         if self.model == 'iso9613':
             import airabs
-            return airabs.alpha_db_per_m(f, self.temp_c, self.rh, self.pressure_pa / 1000.0)
+            return airabs.iso_alpha_db_per_m(f, self.temp_c, self.rh, self.pressure_pa / 1000.0)
         return 8.685889638 * self.alpha_np_per_m(f)
 
     def absorb(self, x, distance_m, sr=44100):
@@ -282,7 +282,7 @@ class Medium:
             return x
         if self.model == 'iso9613':
             import airabs
-            return airabs.apply(x, distance_m, temp_c=self.temp_c, rh=self.rh, pressure_kpa=self.pressure_pa / 1000.0, sr=sr)
+            return airabs.iso_apply(x, distance_m, temp_c=self.temp_c, rh=self.rh, pressure_kpa=self.pressure_pa / 1000.0, sr=sr)
         from scipy import signal
         freqs = np.linspace(0.0, sr / 2.0, TAPS // 2 + 1)
         gain = 10.0 ** (-self.alpha_db_per_m(freqs) * float(distance_m) / 20.0)

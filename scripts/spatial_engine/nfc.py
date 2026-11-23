@@ -24,7 +24,6 @@ tap is a distant image source, and the cue it would carry is below the level whe
 """
 import numpy as np
 
-C = 343.0
 DEFAULT_CAP_DB = 30.0
 
 
@@ -36,7 +35,8 @@ def order_gains(freqs, order, distance_m, ref_m=1.0, cap_db=DEFAULT_CAP_DB):
     """
     from spatial_hrtf import sph
     f = np.maximum(np.asarray(freqs, float), 1.0)
-    k = 2.0 * np.pi * f / C
+    from phys_core import medium
+    k = 2.0 * np.pi * f / medium.speed_of_sound()
     r = max(float(distance_m), 1e-3)
     ref = max(float(ref_m), 1e-3)
     if abs(r - ref) < 1e-9:

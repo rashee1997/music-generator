@@ -79,7 +79,8 @@ def porous_absorption(freq_hz, sigma, thickness_m=0.001):
     f = np.maximum(np.asarray(freq_hz, dtype=float), 1e-6)
     sigma = max(float(sigma), 1.0)
     x = f / sigma
-    c = 343.0
+    from . import medium
+    c = medium.speed_of_sound()
     im_k = (2 * np.pi * f / c) * (1.0 + 7.81 * np.power(x, -0.618))
     return np.exp(-im_k * max(float(thickness_m), 1e-9))
 

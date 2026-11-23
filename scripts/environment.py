@@ -59,6 +59,10 @@ BED_REF_RMS = 0.25          # the amplitude a noise/stridulation bed is normaliz
 # Core Filters
 # ---------------------------------------------------------------------------------------------
 
+def _opt(v):
+    return None if v is None else float(v)
+
+
 def _bandpass(x, low, high, sr=SR):
     sos = signal.butter(2, [max(10.0, low), min(sr * 0.49, high)], btype='bandpass', fs=sr, output='sos')
     return signal.sosfilt(sos, x).astype(np.float32)
@@ -867,8 +871,7 @@ def render_environment_preset(name_or_dict, duration_s=30.0, sr=SR, seed=42):
         dist = max(0.5, float(sp.get('distance', 2.0)))
         atm = lyr.get('atmosphere') or cfg.get('atmosphere')   # {"temp_c": 20, "rh": 50} -> real ISO 9613-1
         if atm and dist > 1.0:
-            mono = airabs.apply(mono, dist - 1.0, temp_c=float(atm.get('temp_c', 20.0)),
-                                rh=float(atm.get('rh', 50.0)), sr=sr)
+            mono = airabs.apply(mono, dist - 1.0, temp_c=_opt(atm.get('temp_c')), rh=_opt(atm.get('rh')), sr=sr)
         elif dist > 2.0:
             cutoff = max(3200.0, min(sr * 0.45, 22000.0 / (1.0 + 0.35 * (dist - 2.0))))
             sos_air = signal.butter(1, cutoff, btype='lowpass', fs=sr, output='sos')

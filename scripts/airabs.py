@@ -28,8 +28,8 @@ SR = 44100
 TAPS = 1025  # odd, so the centre tap is an exact integer delay
 
 
-def alpha_db_per_m(f, temp_c=20.0, rh=50.0, pressure_kpa=101.325):
-    """ISO 9613-1 pure-tone absorption coefficient (dB/m) at frequencies f (Hz)."""
+def iso_alpha_db_per_m(f, temp_c=20.0, rh=50.0, pressure_kpa=101.325):
+    """ISO 9613-1 pure-tone absorption coefficient (dB/m) at frequencies f (Hz): Earth air, whatever the active medium."""
     f = np.asarray(f, dtype=np.float64)
     T = temp_c + 273.15
     T0, T01, pr = 293.15, 273.16, 101.325
@@ -45,13 +45,42 @@ def alpha_db_per_m(f, temp_c=20.0, rh=50.0, pressure_kpa=101.325):
                               + 0.1068 * np.exp(-3352.0 / T) / (fr_n + f2 / fr_n)))
 
 
-def apply(x, distance_m, temp_c=20.0, rh=50.0, pressure_kpa=101.325, sr=SR):
-    """Filter x ((N,) or (N, C)) for distance_m of air. Returns float32, same shape."""
+def _route(temp_c, rh, pressure_kpa):
+    """(medium, (temp_c, rh, pressure_kpa) or None). Earth air takes its own state unless the caller overrides it; any
+    other active medium is asked, and an Earth-air setting given for it is an error, never silently ignored."""
+    from phys_core import medium
+    m = medium.active()
+    if m.model != 'iso9613':
+        if temp_c is not None or rh is not None or pressure_kpa is not None:
+            raise ValueError(f'temp_c / rh / pressure are Earth-air settings, but the active medium is "{m.name}" '
+                             f'({m.model}); put its state in the medium block instead')
+        return m, None
+    return m, (m.temp_c if temp_c is None else float(temp_c), m.rh if rh is None else float(rh),
+               m.pressure_pa / 1000.0 if pressure_kpa is None else float(pressure_kpa))
+
+
+def alpha_db_per_m(f, temp_c=None, rh=None, pressure_kpa=None):
+    """Absorption (dB/m) of the ACTIVE medium at f (Hz). Earth air is ISO 9613-1 at the medium's state (20 C, 50 % RH,
+    101.325 kPa unless the medium or the caller says otherwise); another medium answers with its own law."""
+    m, st = _route(temp_c, rh, pressure_kpa)
+    return iso_alpha_db_per_m(f, *st) if st else m.alpha_db_per_m(f)
+
+
+def apply(x, distance_m, temp_c=None, rh=None, pressure_kpa=None, sr=SR):
+    """Filter x ((N,) or (N, C)) for distance_m of the active medium. Returns float32, same shape."""
+    m, st = _route(temp_c, rh, pressure_kpa)
+    if st is None:
+        return m.absorb(x, distance_m, sr)
+    return iso_apply(x, distance_m, *st, sr=sr)
+
+
+def iso_apply(x, distance_m, temp_c=20.0, rh=50.0, pressure_kpa=101.325, sr=SR):
+    """The ISO 9613-1 linear-phase filter for distance_m of Earth air."""
     x = np.asarray(x, dtype=np.float32)
     if distance_m <= 0:
         return x
     freqs = np.linspace(0.0, sr / 2.0, TAPS // 2 + 1)
-    gain = 10.0 ** (-alpha_db_per_m(freqs, temp_c, rh, pressure_kpa) * float(distance_m) / 20.0)
+    gain = 10.0 ** (-iso_alpha_db_per_m(freqs, temp_c, rh, pressure_kpa) * float(distance_m) / 20.0)
     n = TAPS - 1
     ir = np.roll(np.fft.irfft(gain, n=n), n // 2)    # zero-phase response, centred
     ir = np.append(ir, 0.0) * signal.windows.blackman(TAPS)
