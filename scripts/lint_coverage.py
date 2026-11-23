@@ -106,6 +106,8 @@ for _name in ('lfe.sum_coherence', 'lfe.polarity', 'lfe.fold_loss', 'lfe.modal_s
     COVERAGE[_name] = (A, 'the two low-frequency channels and the front stage of the delivered programme')
 for _name in ('ear.fatigue', 'ear.masking', 'ear.mod_roughness', 'ear.pitch_salience', 'ear.iacc'):
     COVERAGE[_name] = (A, 'the neural activity pattern of the rendered master and stems')
+COVERAGE['emotion.arc_arousal'] = (A, 'the rendered sections against the direction sheet')
+COVERAGE['emotion.arc_valence'] = (A, 'the rendered sections against the direction sheet')
 COVERAGE['expr.agogic_coupling'] = (A, 'the humanized events of the rendered figure lines')
 COVERAGE['imm.kinematics'] = ('score', 'the trajectories are in the presets and the score; checked by the immersive config')
 

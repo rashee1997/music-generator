@@ -417,6 +417,16 @@ def problems():
             for k in (e.get('qa') or {}):
                 if k not in QA_KEYS:
                     out.append(f'{kind}.{cid}: qa key "{k}" is not one the report reads ({QA_KEYS})')
+    va = (presets.load('intent').get('valence_arousal') or {}).get('emotions') or {}
+    for cid in sorted(set(voc.get('emotions') or {}) - set(va)):
+        out.append(f'valence_arousal.{cid}: no valence/arousal coordinates, so an arc cannot be compared with this emotion')
+    for cid, c in va.items():
+        if cid not in (voc.get('emotions') or {}):
+            out.append(f'valence_arousal.{cid}: not an emotion of the vocabulary')
+        for axis in ('valence', 'arousal'):
+            v = c.get(axis)
+            if not isinstance(v, (int, float)) or not -1.0 <= float(v) <= 1.0:
+                out.append(f'valence_arousal.{cid}.{axis}: expected a number from -1 to 1, got {v!r}')
     for w, targets in _synonyms().items():
         if not targets:
             out.append(f'synonyms.{w}: points at nothing')

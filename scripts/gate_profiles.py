@@ -322,6 +322,12 @@ ROWS = {
     'expr.agogic_coupling': dict(meaning='a line\'s onsets and velocities follow its melodic surprise when the coupling is on (advisory)',
                                  params={'min_rho': (0.15, 0.0, 0.5)},
                                  hint='raise ic_agogic_ms / ic_vel, or check the groove preset is not tight; rubato and drift also move the timing'),
+    'emotion.arc_arousal': dict(meaning='the measured arousal of each section follows the order of the sheet\'s section energy (advisory)',
+                                params={'min_rho': (0.6, 0.0, 0.95)},
+                                hint='change the density, level or register of the section in the notes; the sheet is the promise'),
+    'emotion.arc_valence': dict(meaning='the measured valence has the sign the brief\'s emotion words imply (advisory, a weak measure)',
+                                params={'neutral_band': (0.3, 0.1, 0.6)},
+                                hint='mode and harmonic clashes; listen before changing the notes'),
     'expr.tension_ic': dict(meaning='harmonic tension (Chew) against melodic information content per two bars (reported)'),
 }
 

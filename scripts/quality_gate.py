@@ -1762,6 +1762,9 @@ def direction_rows(score, out, project_dir=None, wav_path=None, mode='full'):
                         'no direction/*.json: the delivered file is not judged against a sheet (draft run)'))
         return
     _expression_rows(score, sheet, out)
+    if mode == 'full' and wav_path and os.path.isfile(wav_path):
+        import affect
+        out.extend(affect.rows(score, sheet, wav_path))
     delivery = sheet.get('delivery') or {}
     info = None
     if wav_path and os.path.isfile(wav_path):

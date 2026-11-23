@@ -96,6 +96,12 @@
       "min_frames": 0.5,
       "min_salience": 0.25
     },
+    "emotion.arc_arousal": {
+      "min_rho": 0.6
+    },
+    "emotion.arc_valence": {
+      "neutral_band": 0.3
+    },
     "end.abrupt": {
       "floor_db": -45.0,
       "min_decay_db": 12.0
