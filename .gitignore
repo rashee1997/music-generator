@@ -104,3 +104,10 @@ projects/*/.cache/
 projects/*/reports/gate/
 
 projects/*/libs
+
+# optional SoundFont banks fetched by scripts/setup_project.py --soundfonts (the manifest and licence notes are tracked)
+assets/soundfonts/*.sf2
+assets/soundfonts/*.sf3
+assets/soundfonts/*.part
+assets/soundfonts/INSTALLED.json
+assets/soundfonts/LICENSES.md

@@ -181,6 +181,8 @@ def validate():
             if kind == 'vocals':                      # numbers out of range, unknown style / register / expression / vowel
                 from vocal_engine import config as vcfg
                 problems += [f'vocals/{name}: {w} ({p.get("_source")})' for w in vcfg.validate(p)]
+            if kind == 'instruments':                 # which SoundFont plays it, and where in a non-GM bank
+                problems += [f'instruments/{name}: {w} ({p.get("_source")})' for w in soundfont_problems(p)]
             if kind == 'mix':                         # unknown key, bad range, malformed EQ band, unknown profile
                 import mix_schema
                 problems += [f'mix/{name}: {w} ({p.get("_source")})' for w in mix_schema.validate(p)]
@@ -188,6 +190,30 @@ def validate():
             import render_targets
             problems += [f'outputs: {w}' for w in render_targets.manifest_problems()]
     return problems
+
+
+def soundfont_problems(p):
+    """Problems with an instrument preset's optional `soundfont` and `program_map` (assets/soundfonts/MANIFEST.json).
+    `soundfont` names a bank of the manifest; `program_map` is {bank key: {"bank": int, "program": int[, "drums": bool]}}
+    for banks whose preset order is not General MIDI. Neither key is required: a preset without them plays the default bank."""
+    out = []
+    if 'soundfont' not in p and 'program_map' not in p:
+        return out
+    import soundbank
+    known = soundbank.catalog()
+    if 'soundfont' in p and p['soundfont'] not in known:
+        out.append(f'soundfont "{p["soundfont"]}" is not a bank of assets/soundfonts/MANIFEST.json ({", ".join(known)})')
+    pm = p.get('program_map')
+    if pm is not None and not isinstance(pm, dict):
+        out.append('program_map must be an object {bank key: {"bank": n, "program": n}}')
+    for key, e in (pm or {}).items() if isinstance(pm, dict) else []:
+        if key not in known:
+            out.append(f'program_map names "{key}", which is not a bank of the manifest ({", ".join(known)})')
+        if not (isinstance(e, dict) and all(isinstance(e.get(k), int) and not isinstance(e.get(k), bool) for k in ('bank', 'program'))):
+            out.append(f'program_map.{key} needs integer "bank" and "program"')
+        elif not (0 <= e['bank'] <= 16383 and 0 <= e['program'] <= 127):
+            out.append(f'program_map.{key}: bank must be 0..16383 and program 0..127')
+    return out
 
 
 def scaffold(kind, name, project_dir, from_name=None):

@@ -271,6 +271,26 @@ def _borrow_synth(sfpath, sample_rate, max_instances=1):
     return slot
 
 
+def release_synths(sfpath=None):
+    """Free the cached Synths of one SoundFont (or all): a bank is parsed into RAM whole, so a score that plays several banks
+    must let one go before it loads the next, and before the mixer and the gate run. Nothing may be rendering."""
+    import gc
+    target = None if sfpath is None else os.path.abspath(str(sfpath))
+    with _STATS_LOCK:
+        for key in [k for k in _SYNTH_CACHE if target is None or k[1] == target]:
+            slots = _SYNTH_CACHE.pop(key)
+            for ent in slots:
+                ent[0] = None
+                ent[1] = None
+            slots.clear()
+    gc.collect()
+    try:                                  # hand the freed pages back to the system where the C library can (glibc); a no-op elsewhere
+        import ctypes
+        ctypes.CDLL('libc.so.6').malloc_trim(0)
+    except (OSError, AttributeError):
+        pass
+
+
 def bend_value(cents):
     if abs(cents) > BEND_SEMIS * 100:
         _count('clipped')
@@ -823,6 +843,8 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
         bank, preset, is_drum = sb.resolve(base)
     else:
         bank, preset, is_drum = sb.resolve(inst)
+    # a non-default SoundFont may order its presets differently: the preset's (or the track's) `program_map` says where
+    bank, preset, is_drum = sb.program_for(sb.bank_key(tr, inst_cfg), (bank, preset, is_drum), inst_cfg, tr)
     role = tr.get('role', 'drum' if is_drum else 'chord')
     rng = np.random.default_rng(seed)
     notes = []
@@ -849,7 +871,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
         return curve_at(_g_pts, b) * (curve_at(_t_pts, b) if _t_pts is not None else 1.0)
 
     if is_drum:
-        vox.program(9, 128, preset, drums=True)
+        vox.program(9, bank, preset, drums=True)
         # no drum ever repeats one identical PCM sample: accents move, rapid strokes alternate sample or level,
         # and layered handclaps get a second (softer) pair of hands
         hand = any(k in str(tr.get('name', '')).lower() for k in HAND_PERC_WORDS)
@@ -1315,9 +1337,9 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
     sfz_jobs = [(i, name, tr) for i, name, tr in marked if _is_sfz_track(tr)]
     other_jobs = [(i, name, tr) for i, name, tr in marked if not _is_sfz_track(tr)]
 
-    def _other(job):
+    def _other(job, path=None):
         i, name, tr = job
-        return name, _render_cached(tr, name, tm, sfpath, score.get('dynamics'), cfg,
+        return name, _render_cached(tr, name, tm, path or sfpath, score.get('dynamics'), cfg,
                                     _track_seed(name, tr, tm, cfg), ts, score.get('swing', 0.5))
 
     def _keep(result):
@@ -1329,36 +1351,55 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
                 print(f'  rendered  {name}', flush=True)
         stems[name] = stem
 
-    # Stems are independent: their own seed, their own sampler slot. One at a time was the single biggest cost of
-    # this stage (the sampler is one Synth, and the loop waited on it); the count is bounded by cores and by memory
-    # (`resources.stem_workers`), never by the piece.
-    workers = _stem_workers(len(other_jobs)) if other_jobs else 1
-    if workers > 1 and len(other_jobs) > 1:
-        if verbose:
-            print(f'  rendering {len(other_jobs)} track(s) across {workers} parallel worker(s) ...', flush=True)
-        ex = ThreadPoolExecutor(max_workers=min(workers, len(other_jobs)))
-        futs = []
-        try:
-            futs = [ex.submit(_other, job) for job in other_jobs]
-            # as_completed, not map: one slow track (a formant vocal line takes tens of seconds) must not hide the
-            # stems that already finished behind it in the log.
-            for fut in as_completed(futs):
-                _keep(fut.result())
-        except BaseException:
-            # A track failed: the queued ones are cancelled and the running ones finish, so the error comes back now
-            # instead of after the rest of the piece has been rendered.
-            for f in futs:
-                f.cancel()
-            ex.shutdown(wait=True)
-            raise
-        else:
-            ex.shutdown(wait=True)
-    else:
-        for job in other_jobs:
+    # One SoundFont is parsed into RAM whole, so tracks are rendered bank by bank: every bank a score names is found first
+    # (a missing one is reported before anything renders), the tracks of one bank are rendered together, and the bank is
+    # released before the next is loaded and before the mixer and the gate run. A score that plays only the default bank
+    # keeps it cached, exactly as before.
+    keys = {name: sb.bank_key(tr, presets.find_instrument(str(tr.get('instrument', 'piano')))
+                              or presets.find_instrument(_name(str(tr.get('instrument', 'piano')))))
+            for i, name, tr in other_jobs}
+    extra = sb.bank_paths([k for k in keys.values() if k != sb.DEFAULT_BANK])
+    paths = dict(extra, **{sb.DEFAULT_BANK: sfpath})
+    order = list(dict.fromkeys([sb.DEFAULT_BANK] + [keys[name] for i, name, tr in other_jobs]))
+    multi = bool(extra)
+    for bank in order:
+        jobs = [job for job in other_jobs if keys[job[1]] == bank]
+        path = paths[bank]
+        if not jobs:
+            continue
+        if verbose and multi:
+            print(f'  SoundFont {bank}: {len(jobs)} track(s)', flush=True)
+        # Stems are independent: their own seed, their own sampler slot. One at a time was the single biggest cost of
+        # this stage (the sampler is one Synth, and the loop waited on it); the count is bounded by cores and by memory
+        # (`resources.stem_workers`), never by the piece.
+        workers = _stem_workers(len(jobs)) if jobs else 1
+        if workers > 1 and len(jobs) > 1:
             if verbose:
-                print(f'  rendering {job[1]:12s} ({job[2].get("instrument")}) ...', flush=True)
-            _keep(_other(job))
-
+                print(f'  rendering {len(jobs)} track(s) across {workers} parallel worker(s) ...', flush=True)
+            ex = ThreadPoolExecutor(max_workers=min(workers, len(jobs)))
+            futs = []
+            try:
+                futs = [ex.submit(_other, job, path) for job in jobs]
+                # as_completed, not map: one slow track (a formant vocal line takes tens of seconds) must not hide the
+                # stems that already finished behind it in the log.
+                for fut in as_completed(futs):
+                    _keep(fut.result())
+            except BaseException:
+                # A track failed: the queued ones are cancelled and the running ones finish, so the error comes back now
+                # instead of after the rest of the piece has been rendered.
+                for f in futs:
+                    f.cancel()
+                ex.shutdown(wait=True)
+                raise
+            else:
+                ex.shutdown(wait=True)
+        else:
+            for job in jobs:
+                if verbose:
+                    print(f'  rendering {job[1]:12s} ({job[2].get("instrument")}) ...', flush=True)
+                _keep(_other(job, path))
+        if multi:
+            release_synths(path)
     if sfz_jobs:
         # sfizz_render is one independent, CPU-bound subprocess per track with no internal thread flag (confirmed via
         # --help): the only real speedup is running several of these subprocesses at once. Each worker keeps its own
