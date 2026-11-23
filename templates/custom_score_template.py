@@ -54,7 +54,7 @@ BPM = 72
 BEATS_PER_BAR = 4
 KEY = Key('D', 'dorian')                                      # Key(tonic, mode). modes: see theory.MODES
 SEED = 11                                                     # same seed = same performance
-HUMANIZE = 'natural'                                          # tight | natural | loose | rubato  (or a dict)
+HUMANIZE = 'natural'                                          # tight | natural | loose | rubato | punchy | bouncy  (or a dict)
 ROOM = 'hall'                                                 # studio room_warm chamber plate hall large_hall cathedral cave
 LUFS = -16                                                    # -14 streaming / video, -16 film/ambient, -18 underscore
 PROGRESSION = 'i-IV-i-VII   i-IV-VII-i'                       # roman numerals, one chord per bar. 8 bars here

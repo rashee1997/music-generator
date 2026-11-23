@@ -124,7 +124,7 @@ about what a part is.
 - **Moods are a separate axis.** `MOODS` (`tender`, `bright`, `solemn`, `urgent`) scale level, gate, accent,
   duration contrast, strum and rubato on top of any groove preset (GERM: Juslin, Friberg & Bresin 2001). Set
   `"mood"` on the score, or pass `mood=` to `humanize_track`; an unknown name raises.
-- **Not implemented: oscillator coupling between players.** Ensemble coupling is the shared drift only. The renderer
+- **A declared limit: oscillator coupling between players.** Ensemble coupling is the shared drift only. The renderer
   humanizes each track in its own worker, so a first-order phase correction of one part toward another (Hennig 2014)
   would need a cross-track pass that the parallel render does not have.
 
@@ -136,9 +136,33 @@ about what a part is.
 | natural | 7 | 20 | 9 | 5 | 2.5 % | default: a good studio player |
 | loose | 12 | 25 | 15 | 7 | 4 % | folk, jazz, lo-fi, live band |
 | rubato | 9 | 28 | 12 | 6 | 7 % | solo piano, film ballads, ambient |
+| punchy | 4 | 10 | 4 | 4 | 1 % | pop, rock, funk: the offbeat gets the accent, the grid stays tight |
+| bouncy | 5 | 12 | 5 | 5 | 1 % | dance, funk, light swing: lift on the upbeats without leaving the grid |
+
+`punchy` and `bouncy` are the two presets whose accent lands on the offbeat (`upbeat=True` in `PRESETS`), which is why
+they read as a groove rather than a sloppier `natural`.
 
 Pass a dict to override any key: `"humanize": {"timing_ms": 5, "lead_ms": 30, "strum_ms": 18}`.
 Per-track: `"humanize": "loose"` inside a track overrides the score setting.
+
+### 2b. What the score can set
+
+The tempo and expression keys below are read by `tempo_map_for()` (and so by the renderer and the gate clock) or by
+`humanize_track()` (directly, or through the renderer). They live in the score, next to `bpm` and `humanize`; a
+per-track `humanize` dict overrides the track's preset, never these score-level keys.
+
+| Score key | What it sets |
+|---|---|
+| `humanize` | preset name (or dict) per score, and `"humanize"` inside a track overrides it for that track |
+| `swing` | offbeat placement: 0.5 straight, 0.58 light, 0.66 triplet feel; `"auto"` takes the ratio from the tempo |
+| `rubato`, `wander` | phrase-arch amplitude, and the slow shared tempo wander |
+| `ritard`, `ritard_beats`, `ritard_q` | the final ritardando: depth, length, and the braking law (3 = constant braking power) |
+| `phrase_beats` | the rubato period used only when the figure has no phrase spans to follow |
+| `tempo_points` | explicit tempo map, `[[beat, bpm], ...]`, linear between points |
+| `fermata` | held beats, `[(beat, extra_seconds), ...]` |
+| `elastic` | long-range breathing: `{amount, corr_beats, breaths, breath_s}` (section 3e) |
+| `mood` | `tender`, `bright`, `solemn` or `urgent`: an expression profile on top of the preset (section 1d) |
+| `key` | the tonic, used by the figure's tonal charge (a wrong key changes phrasing, not notes) |
 
 ## 3. Instrument-specific advice
 

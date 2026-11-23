@@ -440,7 +440,8 @@ def tempo_map_for(score, seed=None, pad_beats=1):
     if mood in MOODS:                       # an expression profile scales the rubato (GERM: urgency is less rubato)
         rub = float(rub) * float(MOODS[mood].get('rubato', 1.0))
     elif mood is not None:
-        mood = None                         # a score word that is not one of the profiles shapes nothing here
+        # an unknown word is an error, never a silent wash: a typo in a four-name vocabulary is a mistake, not a mood
+        raise ValueError(f"score.mood: unknown expression {mood!r}; known: {', '.join(sorted(MOODS))}")
     seed = seed if seed is not None else score.get('seed', 1)
     tm = TempoMap(score.get('bpm', 90), total_beats=total + pad_beats, points=score.get('tempo_points'),
                   rubato=rub, wander=wander, ritard=score.get('ritard', 0.3),

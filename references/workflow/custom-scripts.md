@@ -73,8 +73,11 @@ The loop is the same as in `music-direction.md`: decide, write, direct, render, 
 ```python
 score = dict(
   title="...", bpm=72, ts=[4, 4], seed=7,
-  humanize="natural",                     # tight | natural | loose | rubato | {dict}
-  swing=0.5, rubato=0.03, ritard=0.35, ritard_beats=6,
+  humanize="natural",                     # tight | natural | loose | rubato | punchy | bouncy | {dict}
+  swing=0.5, rubato=0.03, ritard=0.35, ritard_beats=6, ritard_q=3,
+  wander=0.006, phrase_beats=16,          # slow shared tempo wander; rubato period without phrase spans
+  mood=None,                              # tender | bright | solemn | urgent: an expression profile on top of the preset
+  elastic=dict(amount=0.04, corr_beats=12),   # optional long-range breathing (humanization.md 3e)
   tempo_points=[[0, 72], [32, 60]],       # optional tempo map (beat, bpm)
   fermata=[(48, 1.5)],                    # hold beat 48 for 1.5 s extra
   dynamics=[[0, .4], [16, .9], [32, .3]], # global loudness arc 0..1 by beat (the emotion)
@@ -131,7 +134,7 @@ positions are presets of the kind `layouts`. A project adds a format (7.1.2, a r
 | `direct` | `add_pulse(score, start, end, gain_db, dyn)`, `add_line(score, name, instrument, at_beat, phrase, ...)`, `add_notes`, `set_gain`, `set_arc`, `remove_track`, `copy_track(score, name, new, transpose, shift_beats)`, `tempo(score, bpm)` |
 | `theory` | `Key("D","dorian")`, `key.pitch(degree)`, `parse_progression(key, "i-VI-III-VII")`, `voice_lead(chord, prev, lo, hi)`, `bass_note`, `TEXTURES[name](voicing, bar_beats, vel, rng)` (block, half, arp8, arp16, alberti, fingerpick, pulse, comp, strum, waltz, ostinato, sparse), `bass_line(kind, ...)`, `drum_bar(kind, bb, vel, rng, fill, crash)`, `make_phrase`, `vary_phrase`, `harmony_line`, `clamp_register`, `note_name` |
 | `compose` | `compose(brief)` (a score from a preset; edit it), `add_hit_points(score, hits, bpm, bb, key, rng)`, `export_midi(score, path)`, `fit_tempo_and_bars` |
-| `humanize` | `TempoMap`, `humanize_track`, `event_stats`, `PRESETS` |
+| `humanize` | `TempoMap`, `tempo_map_for`, `humanize_track`, `event_stats`, `PRESETS`, `MOODS`, `auto_swing` |
 | `render_natural` | `build_stems(score)`, `render_track`, `REPORT` |
 | `mixer` | `mix_and_master(score, stems, out)`, `mix_stems`, `master_chain` (`BrickwallLimiter`), `reverb_bus` (`NoiseGate`), `make_ir`, `duck_gain` |
 | `vocals` | `render_choir`, `sing`, `add_vocal_harmonies` (`PitchShift`), `add_vocal_chorus` (`Chorus`), `apply_vocal_dsp` |

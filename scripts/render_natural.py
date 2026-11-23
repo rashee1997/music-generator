@@ -34,8 +34,12 @@ What it does for each track (see references/instruments-and-vocals/natural-instr
 Score format (JSON). Times are BEATS. Pitches are MIDI numbers (drums may use names: "kick","snare","hat_closed").
 {
   "title": "Rain on the window", "bpm": 66, "ts": [4,4], "key": "D minor",
-  "seed": 7, "humanize": "natural",          # tight | natural | loose | rubato | {custom dict, see humanize.PRESETS}
-  "swing": 0.5, "rubato": 0.03, "ritard": 0.35, "ritard_beats": 6,
+  "seed": 7, "humanize": "natural",          # tight | natural | loose | rubato | punchy | bouncy | {custom dict, see humanize.PRESETS}
+  "swing": 0.5,                              # 0.5 = straight, 0.58 light, 0.66 triplet; "auto" follows the tempo
+  "rubato": 0.03, "ritard": 0.35, "ritard_beats": 6, "ritard_q": 3,
+  "wander": 0.006, "phrase_beats": 16,       # slow tempo wander; rubato period when the figure has no phrase spans
+  "mood": "tender",                          # optional: tender | bright | solemn | urgent
+  "elastic": {"amount": 0.04, "corr_beats": 12},   # optional long-range tempo breathing
   "tempo_points": [[0,66],[48,60]],           # optional tempo map (linear ramps)
   "dynamics": [[0,0.5],[32,0.9],[64,0.4]],    # optional global loudness arc 0..1 (beats) - the emotional shape
   "room": "hall", "master": {"lufs": -14, "true_peak": -1.5},
@@ -1158,7 +1162,13 @@ def _track_cache_key(tr, seed, ts, swing, tm, global_dyn, sr, sfpath=None):
             sf_id = [os.path.abspath(str(sfpath)), st.st_size, int(st.st_mtime)]
         except OSError:
             sf_id = str(sfpath)
+    # the map's harmonic and expression inputs that do not move a single onset: mood, tonic and the sounding roots
+    # shape velocity, gate and length, so with rubato 0 they leave `tm.secs` unchanged and only these keep a cached
+    # stem from surviving a change that the listener would hear.
+    roots = getattr(tm, 'chord_roots', None)
+    roots_sig = None if roots is None else [[round(float(b), 4) for b in roots[0]], [int(r) for r in roots[1]]]
     sig = json.dumps(dict(tr=stem_cache.dry_track(tr), seed=seed, ts=list(ts), swing=swing, global_dyn=global_dyn,
+                          mood=getattr(tm, 'mood', None), key=getattr(tm, 'key', None), roots=roots_sig,
                           sr=sr, renderer=_RENDERER_VERSION, code=_code_hash(), sf=sf_id, oversample=_oversample(),
                           sfz_patch=_sfz_patch_id(tr),
                           presets=stem_cache.dry_presets(_preset_fingerprint(tr))),
