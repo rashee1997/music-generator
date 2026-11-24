@@ -1,0 +1,14 @@
+{
+  "name": "asynchrony",
+  "character": "The vertical spread of a real ensemble: the bass and drums are the reference, the treble parts sit a few milliseconds behind, and no two performances spread by the same amount.",
+  "amount_ms": 0.0,
+  "cap_ms": 35.0,
+  "families": {"drums": 0.0, "bass": -0.6, "keys": 0.0, "guitar": 0.1, "pad": 0.35, "strings": 0.5,
+               "winds": 0.35, "brass": 0.25, "vocal": 0.4, "other": 0.2},
+  "provenance": {
+    "direction": "Rasch (mean ensemble asynchrony 36 ms, 30-50 ms), Tahvanainen et al. 2015 (20-50 ms; within a string section +/-30 ms), TISMIR 2026 (bass leads by ~22 ms, lags by ~15 ms; melody lead ~17 ms, ~29 ms at downbeats).",
+    "amount_ms": "starting value: 0 disables the field; 12 is the inside of the measured 20-50 ms spread",
+    "cap_ms": "starting value: the upper edge of the measured spread",
+    "families": "starting values: the sign is measured (treble behind the reference in orchestral playing), the weight is not"
+  }
+}

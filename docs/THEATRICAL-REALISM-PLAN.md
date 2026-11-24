@@ -12,13 +12,13 @@ Measurement: `scripts/realism_report.py`.
 | # | Quality | What existed | What was missing | Now |
 |---|---|---|---|---|
 | 1 | Timbre changes with loudness | `dynamic_tilt` (GM/SFZ stems, a level-following low-pass) and `enhance_sf2_dynamics` | no continuous harmonic/bite coupling on a general stem; `dynamic_tilt` only darkens a soft note | `dsp.level_timbre` + track `timbre_dynamics` (opt-in) |
-| 2 | Ensemble imperfection | per-note detune, shared drift, anti-correlated timing; drums already vary | one track = one player; a section never had players | `humanize.ensemble_expand` + track `ensemble` |
+| 2 | Ensemble imperfection | per-note detune, shared drift, anti-correlated timing; drums already vary | one track = one player; a section never had players | `humanize_engine.ensemble.ensemble_expand` (via the `humanize` facade) + track `ensemble` |
 | 3 | Register and transient consistency | round-robin drum samples, per-hit velocity jitter | high-register formant stretch unaddressed; no per-onset transient variation on plucks | `register` (split + shelf correction) and `transient_variety` (per-onset gain/bite), opt-in |
 | 4 | Tactile close detail vs hall | early reflections, HRTF direct path, static send per stem | send does not change within a note, so attacks sit in the wash | `theatrical.detail` send duck; `proximity_db` and `er_distance_exponent` on the space |
 | 5 | Low-mid clarity vs sub | role EQ, low-end hygiene, dynamic EQ per stem | no programme-level dynamic control of 180-450 Hz | `theatrical.low_mid` |
 | 6 | Radial distance | ISO 9613-1 air absorption, near-field HRTF, distance-scaled send | proximity warmth and distance-aware ER balance are not in the panned path | `proximity_db` low shelf + `er_distance_exponent`; both preset-owned |
 | 7 | Openness at peak density | air band untouched; reverb return low-passed | no density-dependent air retention | `theatrical.air` |
-| 8 | Macro phrase breathing | phrase rubato, wander, final ritardando, fermata | no bar-scale elasticity or ensemble breath | `humanize.TempoMap` `elastic` + score `elastic` |
+| 8 | Macro phrase breathing | phrase rubato, wander, final ritardando, fermata | no bar-scale elasticity or ensemble breath | `humanize_engine.timemap.TempoMap` `elastic` + score `elastic` |
 
 ## 2. Phase 0: make it measurable (done)
 
@@ -56,7 +56,7 @@ Track or instrument preset:
 
 ### 2. Section scatter
 
-`humanize.ensemble_expand` gives each player a fixed intonation, timing, velocity and length offset for the
+`humanize_engine.ensemble.ensemble_expand` gives each player a fixed intonation, timing, velocity and length offset for the
 whole piece plus per-note jitter. `render_natural` expands notes before humanisation on both the GM and SFZ paths.
 `tests/test_theatrical.py::EnsembleTests` asserts every note reaches every player, the cents and ms spreads are
 inside the measured section ranges, the result is deterministic, a solo raises, and no copy is an exact clone.

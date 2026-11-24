@@ -12,7 +12,7 @@ load_when:
 Use this file when the brief names a country, a tradition or a world instrument: Indian (Hindustani, Carnatic, Bollywood,
 bhangra), Arabic, Turkish, Persian, Greek, Chinese, Japanese, K-pop and Korean, Indonesian, Rio and Brazilian, Latin,
 Caribbean, African, Andean, Celtic, flamenco, klezmer, and the older Western styles. Everything here lives in
-`scripts/world.py` (data) and is merged into `compose.py`, `theory.py`, `soundbank.py`, `humanize.py` and
+`scripts/world.py` (data) and is merged into `compose.py`, `theory.py`, `soundbank.py` and
 `render_natural.py`. `python3 scripts/world.py` prints every scale, cycle and genre it knows.
 
 Values are **exact** (defined by the tradition or worked out in the code) or **approximate** (a starting value to

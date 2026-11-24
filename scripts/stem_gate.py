@@ -365,7 +365,7 @@ def _gate_code():
     if _GATE_CODE is None:
         _GATE_CODE = stem_cache.code_hash(os.path.join(_SKILL, 'scripts'),
                                           ('stem_gate.py', 'gate_checks.py', 'gate_profiles.py', 'gate_audio.py',
-                                           'gate_clock.py', 'humanize.py', 'dsp.py'), ('phys_core',))
+                                           'gate_clock.py', 'humanize.py', 'dsp.py'), ('phys_core', 'humanize_engine'))
     return _GATE_CODE
 
 

@@ -134,7 +134,7 @@ positions are presets of the kind `layouts`. A project adds a format (7.1.2, a r
 | `direct` | `add_pulse(score, start, end, gain_db, dyn)`, `add_line(score, name, instrument, at_beat, phrase, ...)`, `add_notes`, `set_gain`, `set_arc`, `remove_track`, `copy_track(score, name, new, transpose, shift_beats)`, `tempo(score, bpm)` |
 | `theory` | `Key("D","dorian")`, `key.pitch(degree)`, `parse_progression(key, "i-VI-III-VII")`, `voice_lead(chord, prev, lo, hi)`, `bass_note`, `TEXTURES[name](voicing, bar_beats, vel, rng)` (block, half, arp8, arp16, alberti, fingerpick, pulse, comp, strum, waltz, ostinato, sparse), `bass_line(kind, ...)`, `drum_bar(kind, bb, vel, rng, fill, crash)`, `make_phrase`, `vary_phrase`, `harmony_line`, `clamp_register`, `note_name` |
 | `compose` | `compose(brief)` (a score from a preset; edit it), `add_hit_points(score, hits, bpm, bb, key, rng)`, `export_midi(score, path)`, `fit_tempo_and_bars` |
-| `humanize` | `TempoMap`, `tempo_map_for`, `humanize_track`, `event_stats`, `PRESETS`, `MOODS`, `auto_swing` |
+| `humanize` | `TempoMap`, `tempo_map_for`, `humanize_track`, `event_stats`, `humanize_metrics`, `PRESETS`, `MOODS`, `auto_swing`; the engine modules are in `scripts/humanize_engine/` (`scripts/humanize_report.py` measures a score without rendering) |
 | `render_natural` | `build_stems(score)`, `render_track`, `REPORT` |
 | `mixer` | `mix_and_master(score, stems, out)`, `mix_stems`, `master_chain` (`BrickwallLimiter`), `reverb_bus` (`NoiseGate`), `make_ir`, `duck_gain` |
 | `vocals` | `render_choir`, `sing`, `add_vocal_harmonies` (`PitchShift`), `add_vocal_chorus` (`Chorus`), `apply_vocal_dsp` |

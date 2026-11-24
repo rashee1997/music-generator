@@ -86,7 +86,7 @@ Each is named with its source and the file that implements it. Derivations are i
 * **Propagation:** 1/r spreading, ISO 9613-1 air absorption, Doppler, image-source reflections (Allen & Berkley 1979), Eyring reverberation (1930), room measures (ISO 3382-1). `scripts/airabs.py`, `scripts/spatial_hrtf/`
 * **Layouts:** ITU-R BS.2051-3 positions, BS.775-3 two-channel fold-down, Linkwitz-Riley 4th-order crossover (Linkwitz 1976), all-pass decorrelation (Kendall 1995). `scripts/spatial_engine/`
 * **Gates:** critical-band roughness (Plomp & Levelt 1965; Daniel & Weber 1997), Terhardt's hearing threshold as a relative weighting, spiral-array tonal tension (Chew 2000), bar syncopation index (Witek et al. 2014). `scripts/quality_gate.py`
-* **Performance and voice:** KTH performance rules (Friberg et al. 2006), Liljencrants-Fant glottal model (Fant et al. 1985). `scripts/humanize.py`, `scripts/vocal_engine/`
+* **Performance and voice:** KTH performance rules (Friberg et al. 2006), Liljencrants-Fant glottal model (Fant et al. 1985). `scripts/humanize.py` (facade) + `scripts/humanize_engine/`, `scripts/vocal_engine/`
 
 Citations are as the code and its docs state them; page numbers were not re-checked against the publishers' pages.
 

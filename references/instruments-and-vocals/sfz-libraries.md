@@ -95,7 +95,9 @@ or in the score: `"instrument": "sfz:sso/Strings - Notation/1st Violins Legato"`
 | `trim_db` | stem level; the library's own level differs from the GM bank, set it by measuring |
 | `fallback` | `"gm"`: play the SoundFont when the library is missing. Printed, counted in `STATS['sfz_fallback']`, never silent. Default none: a missing library is an error |
 
-Timing and velocity are humanized first (same as the GM path). The dynamics curve is sent as controller values; controllers go out
+Timing and velocity are humanized first (same as the GM path), and the pocket and ensemble-asynchrony fields
+apply on both paths because they only move onsets and levels. The SFZ path cannot apply a per-note cent offset
+or a pitch scoop, so ensemble intonation scatter and `detune_cents` remain GM-path levers. The dynamics curve is sent as controller values; controllers go out
 50 ms before the first note (a controller on the same tick as a note-on arrives too late for that note).
 
 ## Making it sound natural

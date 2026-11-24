@@ -170,7 +170,7 @@ Before Phase 4, open every file in the row that matches the request; union sever
 | **Mix issues/strategy questions** | `references/mixing/mixing-and-mastering.md` §6,§8b, `scripts/mix_schema.py`, `scripts/mix_bench.py` |
 | **Full orchestra/SFZ/real samples/library by name, or a natural SoundFont sound** | Section 5 below + `references/instruments-and-vocals/soundfont-realism.md`, `knowledgebase/sound-design/soundfont-velocity-and-realism.md`, `references/instruments-and-vocals/sfz-libraries.md`, `references/instruments-and-vocals/natural-instruments.md`, `references/mixing/mixing-and-mastering.md` |
 | **Choose/write gate profile** | `references/mixing/quality-gate.md` §3c, `scripts/gate_profiles.py` (list/rows/explain), Section 6 |
-| **Robotic/flat/wrong mood/no beat** | `references/mixing/humanization.md`, `references/instruments-and-vocals/natural-instruments.md`, `references/scoring/emotion-and-scoring.md`, `references/workflow/music-direction.md` |
+| **Robotic/flat/wrong mood/no beat** | `references/mixing/humanization.md`, `scripts/humanize_engine/`, `references/instruments-and-vocals/natural-instruments.md`, `references/scoring/emotion-and-scoring.md`, `references/workflow/music-direction.md` |
 | **Theatrical / Hollywood / "less synthetic" / orchestral realism** | `knowledgebase/sound-design/theatrical-realism.md`, `references/mixing/theatrical-realism.md`, `scripts/realism_report.py`, `references/instruments-and-vocals/soundfont-realism.md`, `references/mixing/humanization.md` |
 | **Gate row failed** | `references/mixing/quality-gate.md`, `references/workflow/troubleshooting-and-limits.md` |
 
@@ -457,3 +457,42 @@ Rules:
    what could not be measured, and `cut_source` names the detector that ran. Never guess a field.
 6. **Prove it can fail.** `python scripts/video_score.py --selftest` runs each row with a positive and a negative
    control; a row that cannot fail is not a row. Run it after any change under `video-mixer/`.
+
+---
+
+## 11. The humanize engine (modules, ownership, sign)
+
+`scripts/humanize.py` is the facade. The engine is `scripts/humanize_engine/`, one module per concern. A
+humanization change belongs in the module that owns the number, and its starting value belongs in
+`config.py`; a per-piece value belongs in the score, the instrument preset or a preset file.
+
+| Path | Owns | Does not |
+|---|---|---|
+| `humanize_engine/config.py` | `PRESETS`, `TIMING`, `MOODS`, `ROLE`, tuning tables, `HUMANIZE_KEYS` and `resolve()` | judge a piece |
+| `humanize_engine/noise.py` | smooth / 1/f noise, the piece's one shared drift curve | place a note |
+| `humanize_engine/form.py` | phrases, motor streams, metric weight, tonal charge, key parsing | hold a preset value |
+| `humanize_engine/timemap.py` | `TempoMap`, `tempo_map_for`, phrase spans, sounding roots | write a note |
+| `humanize_engine/swing.py` | swing ratio, off-beat shift, on-beat delay | decide whether to swing |
+| `humanize_engine/ensemble.py` | section expansion, the per-part asynchrony field | couple parts in a feedback loop |
+| `humanize_engine/microtiming.py` | short/long 1/f error, per-limb motor error, tempo-relative spread | velocity, durations |
+| `humanize_engine/dynamics.py` | accent, phrase arch, contour, runs, chord voicing, velocity wander | timing |
+| `humanize_engine/articulation.py` | gate, velocity-duration coupling, legato overlap, pedal | choose an articulation |
+| `humanize_engine/drums.py` + `pocket.py` | kit runs, flams, pushed/laid-back pockets | invent a groove |
+| `humanize_engine/track.py` | stage order and event assembly | hold a threshold |
+| `humanize_engine/report.py` | `event_stats`, `coupling_report`, grid/ensemble metrics | edit a score |
+
+Rules:
+
+1. **The facade keeps every name.** `import humanize as hz` must keep working for the renderer, the gate,
+   the tests and installed projects. Never import the facade from an engine module.
+2. **The package stays flat.** `stem_cache.code_hash` hashes `<package>/*.py` one level deep; a nested
+   folder is invisible to both cache keys (`render_natural._RENDER_PACKAGES`,
+   `stem_gate._gate_code`), which would let an edit return stale audio or a stale gate row.
+3. **A `humanize` dict is schema-checked.** `config.HUMANIZE_KEYS` is the accepted set; an unknown key
+   raises with the known list. `{"preset": "loose", ...}` selects the base preset before the overrides.
+4. **Measure, do not claim.** `python scripts/humanize_report.py <score.json>` prints the tempo-adjusted
+   deviation, lag-1, velocity/duration coupling, DNVR/DNODR, swing ratio and ensemble spread. It is
+   advisory; it never edits the piece and it is not a gate row.
+5. **Opt-in stays opt-in.** `timing_beat_frac`, `pocket`, `swing_downbeat_ms` and `score.asynchrony` all
+   default to the old behaviour. A default that changes every render is a version bump, not a tweak.
+

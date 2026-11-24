@@ -67,6 +67,7 @@ KINDS = {
     'video': dict(required=['character', 'probe', 'direction_map', 'staging', 'mix_preset', 'mix', 'master', 'mux']),   # scoring to picture (scripts/video_score.py)
     'film': dict(required=['character']),      # one concern of film scoring: analysis, mapping, hits, dialogue, delivery
     'ear': dict(required=['character', 'rate_hz', 'channels']),     # parameters of the peripheral auditory model (scripts/ear_model)
+    'humanize': dict(required=['character']),      # one groove pocket: per-instrument timing and velocity offsets (scripts/humanize_engine/pocket.py)
     'intent': dict(required=['character']),    # the vocabulary a brief is resolved in: emotions, registers, scenes, tensions, synonyms
 }
 
@@ -186,10 +187,63 @@ def validate():
             if kind == 'mix':                         # unknown key, bad range, malformed EQ band, unknown profile
                 import mix_schema
                 problems += [f'mix/{name}: {w} ({p.get("_source")})' for w in mix_schema.validate(p)]
+            if kind == 'humanize':                    # a groove pocket: unknown limb, bad offset, bad tempo power
+                problems += [f'humanize/{name}: {w} ({p.get("_source")})' for w in humanize_problems(p)]
         if kind == 'outputs':                         # a target names a real layout, renderer, ceiling; files are unique
             import render_targets
             problems += [f'outputs: {w}' for w in render_targets.manifest_problems()]
     return problems
+
+
+HUMANIZE_LIMBS = ('kick', 'snare', 'clap', 'hat', 'ride', 'crash', 'stick', 'tom_low', 'tom_mid', 'tom_high')
+
+
+def humanize_problems(p):
+    """Problems with a groove pocket: unknown limb, out-of-range offset or level, bad tempo power."""
+    out = []
+    if 'families' in p:                       # the ensemble asynchrony preset, not a pocket
+        families = p.get('families')
+        if not isinstance(families, dict) or not families:
+            return ['"families" must be a non-empty object']
+        for fam, weight in families.items():
+            try:
+                val = float(weight)
+            except (TypeError, ValueError):
+                out.append(f'families.{fam}: not a number')
+                continue
+            if not -1.0 <= val <= 1.0:
+                out.append(f'families.{fam}: {val} outside -1..1')
+        return out
+    if not isinstance(p.get('instruments'), dict) or not p.get('instruments'):
+        return ['missing "instruments" (the per-limb table)']
+    for limb, spec in p['instruments'].items():
+        if limb not in HUMANIZE_LIMBS:
+            out.append(f'unknown limb "{limb}" (known: {", ".join(HUMANIZE_LIMBS)})')
+            continue
+        if not isinstance(spec, dict):
+            out.append(f'{limb}: expected an object with ms and vel')
+            continue
+        unknown = sorted(set(spec) - {'ms', 'vel'})
+        if unknown:
+            out.append(f'{limb}: unknown key(s) {", ".join(unknown)}')
+        for key, lo, hi in (('ms', -60.0, 60.0), ('vel', -20.0, 20.0)):
+            if key in spec:
+                try:
+                    val = float(spec[key])
+                except (TypeError, ValueError):
+                    out.append(f'{limb}.{key}: not a number')
+                    continue
+                if not lo <= val <= hi:
+                    out.append(f'{limb}.{key}: {val} outside {lo}..{hi}')
+    if 'tempo_power' in p:
+        try:
+            tp = float(p['tempo_power'])
+        except (TypeError, ValueError):
+            out.append('tempo_power: not a number')
+        else:
+            if not 0.0 <= tp <= 1.0:
+                out.append(f'tempo_power: {tp} outside 0..1')
+    return out
 
 
 def soundfont_problems(p):

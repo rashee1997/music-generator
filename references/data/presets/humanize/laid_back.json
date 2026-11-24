@@ -1,0 +1,20 @@
+{
+  "name": "laid_back",
+  "character": "A backbeat behind the beat: the snare sits late and a little louder, the hi-hat a hair early and softer, the kick still the anchor. The feel of a drummer playing behind a steady pulse.",
+  "tempo_power": 0.4,
+  "instruments": {
+    "kick": {"ms": -2.0, "vel": 0.0},
+    "snare": {"ms": 8.0, "vel": 4.0},
+    "clap": {"ms": 8.0, "vel": 3.0},
+    "hat": {"ms": -3.0, "vel": 1.0},
+    "ride": {"ms": -1.0, "vel": 0.0},
+    "tom_low": {"ms": 3.0, "vel": 2.0},
+    "tom_mid": {"ms": 3.0, "vel": 2.0},
+    "tom_high": {"ms": 2.0, "vel": 2.0}
+  },
+  "provenance": {
+    "direction": "Câmara et al. 2020b and 'There's More to Timing than Time' (Music Perception 2024): laid-back strokes are later and louder than on-the-beat ones.",
+    "ms": "starting value: the direction is measured, the exact offset is not; keep the rhythm section inside the 10 ms groove bound",
+    "vel": "starting value"
+  }
+}

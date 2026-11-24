@@ -10,8 +10,8 @@ load_when:
 # Humanization: why machines sound robotic and what to change
 
 A score where every note starts exactly on the grid, with the same loudness and the same length, sounds
-mechanical even with real recorded samples. Human performances deviate in **structured** ways. `scripts/humanize.py`
-applies the following automatically (preset `natural` by default). Use this page to tune it or to hand-write
+mechanical even with real recorded samples. Human performances deviate in **structured** ways. `scripts/humanize.py` (the facade over
+`scripts/humanize_engine/`) applies the following automatically (preset `natural` by default). Use this page to tune it or to hand-write
 nuance in custom scripts.
 
 ## 1. The deviations that matter (with numbers)
@@ -29,7 +29,11 @@ nuance in custom scripts.
 | Pedal / sustain | Piano: pedal changes with each harmony, lifted just before the new chord | `auto_pedal`: lift 40 ms before each chord change |
 | Drums | Kick tight/early, snare a touch late, hats loose; ghost notes (very soft) between backbeats; a fill every 4-8 bars; the same hit is never twice identical | piece-specific push (kick -3 ms, snare +5 ms), velocity jitter, `drum_bar` ghost notes + fills |
 | Swing | Off-beat 8ths late: 0.5 = straight, ~0.58 light, ~0.66 triplet feel. The ratio falls as the tempo rises (BUR ~3.5:1 slow, 2:1 medium-fast, 1:1 near 280 bpm), a soloist swings less than the ride cymbal, and the short side of a pair has a physical floor near 95 ms | `score["swing"]`, or `"swing": "auto"` for the tempo-derived ratio; `apply_swing(..., bpm=, role=)` |
-| Tuning | Not exactly equal-tempered every note; ensembles are a few cents apart | random +-3 cents per note on per-note channels, `detune_cents` per track |
+| Tuning | Not exactly equal-tempered every note; ensembles are a few cents apart | random +-3 cents per note on per-note channels, `detune_cents` per track (the renderer applies it) |
+| Tempo-relative spread | Microtiming is a fraction of the beat (0.026 beats in funk, 0.068 in swing), not a fixed number of ms | `timing_beat_frac` (default 0: the old absolute `timing_ms`); capped by `timing_cap_ms`, drums stay under 10 ms |
+| Vertical spread between parts | An ensemble is 20-50 ms apart; the bass is the reference, treble parts sit behind it, and the melody leads at downbeats more than elsewhere | `score.asynchrony` -> one stable signed offset per named part (`ensemble.asynchrony_field`), capped at 35 ms |
+| Pushed / laid-back | A pocket is timing AND dynamics: a laid-back snare is later and louder, a pushed hi-hat is earlier and louder | `pocket` on a drum track -> `references/data/presets/humanize/<name>.json`, per limb ms + velocity delta |
+| Swing shape | Measured swing delays the on-beat note too, and a soloist's ratio curve is not a scaled drummer's | `swing_downbeat_ms` (0-20 ms, default 0) on top of the off-beat shift |
 
 KTH performance rules (Friberg, Bresin & Sundberg 2006): "high loud", "phrase arch", "final ritard",
 "duration contrast", "double duration", "faster uphill", "punctuation", "repetition articulation", "high sharp" and
@@ -124,9 +128,26 @@ about what a part is.
 - **Moods are a separate axis.** `MOODS` (`tender`, `bright`, `solemn`, `urgent`) scale level, gate, accent,
   duration contrast, strum and rubato on top of any groove preset (GERM: Juslin, Friberg & Bresin 2001). Set
   `"mood"` on the score, or pass `mood=` to `humanize_track`; an unknown name raises.
-- **A declared limit: oscillator coupling between players.** Ensemble coupling is the shared drift only. The renderer
-  humanizes each track in its own worker, so a first-order phase correction of one part toward another (Hennig 2014)
-  would need a cross-track pass that the parallel render does not have.
+- **A declared limit: feedback coupling between players.** The vertical spread is the deterministic asynchrony field
+  (section 1f); there is no first-order phase correction of one part toward another's realised timing (Hennig 2014).
+  That would need a score-level pass over every humanized part before the parallel render, and is not in the engine.
+
+## 1e. Tempo-relative spread, ensemble field, pockets, swing shape
+
+- **`timing_beat_frac`** (default 0): the short-scale sigma becomes a fraction of the beat, floored at
+  `timing_ms` and capped by `timing_cap_ms` (40 ms; drums 10 ms). Measured microtiming is 0.026 beats in funk
+  and 0.068 in swing (Frontiers in Psychology 2016), so a ballad and a dance should not share a fixed ms value.
+- **`score.asynchrony`** `{amount_ms}` (absent = off): `tempo_map_for()` attaches one stable signed offset per
+  named part, from instrument family (bass and drums reference; strings, winds, brass, voices behind) and the
+  seed; the renderer passes each track's name and `humanize_track(..., part=)` adds it. Capped at 35 ms a side.
+  Measured spread: 20-50 ms between players, 30-50 ms between sections (Rasch; Tahvanainen et al. 2015), bass
+  leading by ~22 ms and treble lagging (TISMIR 2026). Weights are starting values; the sign is measured.
+- **`pocket`** (drum tracks): replaces the fixed per-piece push with a per-limb table of signed ms and a
+  velocity delta (`references/data/presets/humanize/<name>.json`, validated by `presets.py`). The direction is
+  measured (laid-back strokes later and louder, pushed ones earlier and more intense; Music Perception 2024;
+  JNMR 2017 found a 2-26 ms hi-hat lead); magnitudes are starting values.
+- **`swing_downbeat_ms`** (default 0, clipped +/-20 ms): delays the notes on a beat, because measured swing is
+  a long-short pair with a late on-beat note too (Communications Physics 2022).
 
 ## 2. Presets (in `humanize.PRESETS`)
 
@@ -161,6 +182,7 @@ per-track `humanize` dict overrides the track's preset, never these score-level 
 | `tempo_points` | explicit tempo map, `[[beat, bpm], ...]`, linear between points |
 | `fermata` | held beats, `[(beat, extra_seconds), ...]` |
 | `elastic` | long-range breathing: `{amount, corr_beats, breaths, breath_s}` (section 3e) |
+| `asynchrony` | `{amount_ms}`: the vertical spread between named parts (section 1f); 0 or absent = no field |
 | `mood` | `tender`, `bright`, `solemn` or `urgent`: an expression profile on top of the preset (section 1d) |
 | `key` | the tonic, used by the figure's tonal charge (a wrong key changes phrasing, not notes) |
 
@@ -176,7 +198,11 @@ per-track `humanize` dict overrides the track's preset, never these score-level 
 
 ## 3b. Checking the model, not trusting it
 
-`tests/test_humanize_stats.py` asserts the claims instead of the code: two tracks of a piece share one drift; the motor
+`python scripts/humanize_report.py <score.json>` prints the tempo-adjusted deviation, lag-1 correlation,
+velocity/duration coupling, DNVR/DNODR, estimated swing ratio and the ensemble spread, without rendering audio.
+It is advisory: it reports, it never edits the piece, and it is not a gate row.
+
+`tests/test_humanize_stats.py` and `tests/test_humanize_engine.py` assert the claims instead of the code: two tracks of a piece share one drift; the motor
 term is negative at lag 1; louder notes are longer; a major third sits about 14 cents flat under `just_ratio: 1`; an
 instrument articulation overrides the role overlap; the drum push grows at a slower tempo. Run it before changing a
 number here.
@@ -241,6 +267,7 @@ import humanize as hz
 tm = hz.TempoMap(72, total_beats=64, rubato=0.03, ritard=0.4, fermata=[(32, 1.2)])   # hold beat 32 for +1.2 s
 events = hz.humanize_track(notes, tm, 'natural', role='melody', seed=3)             # seconds, MIDI velocity
 print(hz.event_stats(events, tm))                                                   # timing/velocity spread
+print(hz.humanize_metrics({'lead': events}, tm))                                    # the report's numbers
 ```
 Note fields you can set by hand: `"art": "staccato"|"legato"`, `"v"` (0..1), `"d"` (beats). Role names: melody counter chord pad bass arp drum fx.
 `humanize_track` also takes `mood=`, `swing='auto'`, `key=` and `chord_roots=` when a caller has them outside a score.

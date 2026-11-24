@@ -1,0 +1,20 @@
+{
+  "name": "pushed",
+  "character": "Ahead of the beat: the hi-hat pushes the pulse and is accented, the snare leans in slightly, the kick stays on the grid.",
+  "tempo_power": 0.4,
+  "instruments": {
+    "kick": {"ms": 0.0, "vel": 0.0},
+    "snare": {"ms": -3.0, "vel": 2.0},
+    "clap": {"ms": -3.0, "vel": 2.0},
+    "hat": {"ms": -6.0, "vel": 5.0},
+    "ride": {"ms": -4.0, "vel": 3.0},
+    "tom_low": {"ms": -2.0, "vel": 1.0},
+    "tom_mid": {"ms": -2.0, "vel": 1.0},
+    "tom_high": {"ms": -1.0, "vel": 1.0}
+  },
+  "provenance": {
+    "direction": "Câmara et al. 2020a/b and 'There's More to Timing than Time' (Music Perception 2024): pushed strokes are earlier and more intense; jazz drummers play the hi-hat 2-26 ms ahead of the pulse (JNMR 2017).",
+    "ms": "starting value inside the measured 2-26 ms hi-hat lead",
+    "vel": "starting value"
+  }
+}

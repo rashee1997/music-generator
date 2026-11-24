@@ -198,6 +198,7 @@ class StemCacheKey(unittest.TestCase):
             stem_gate._gate_code()
         stem_gate._GATE_CODE = None
         self.assertIn('humanize.py', m.call_args[0][1])
+        self.assertIn('humanize_engine', m.call_args[0][2])
 
 
 class OnePlacement(unittest.TestCase):

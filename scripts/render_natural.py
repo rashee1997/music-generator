@@ -596,7 +596,8 @@ def _sfz_track(tr, tm, cfg, seed, ts, swing, global_dyn, raw_inst, inst_cfg, qua
     # the role's default gate (0.90 for bass, 0.95 for chord), so an SFZ string note was cut 5-10% short and the
     # piece's last note died 0.5-1.7 s before its written end (stem.edge, stem.dropout on all four string parts).
     ev = hz.humanize_track(notes, tm, tr.get('humanize', cfg), role=role, seed=seed, ts=tuple(ts), swing=swing,
-                           articulation=(tr.get('articulation') or (inst_cfg or {}).get('articulation')))
+                           articulation=(tr.get('articulation') or (inst_cfg or {}).get('articulation')),
+                           part=name)
     _record(name, **hz.event_stats(ev, tm, tr.get('humanize', cfg)))
     track_dyn = tr.get('dynamics')
 
@@ -752,7 +753,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
         inst_obj = ci.load_instrument(path)
         role = tr.get('role', 'melody')
         ev = hz.humanize_track([dict(n) for n in tr.get('notes', [])], tm, tr.get('humanize', cfg), role=role,
-                               seed=seed, ts=tuple(ts), swing=swing)
+                               seed=seed, ts=tuple(ts), swing=swing, part=tr.get('name', 'clone'))
         _record(tr.get('name', 'clone'), **hz.event_stats(ev, tm, tr.get('humanize', cfg)))
         return ci.render_events(inst_obj, ev)
     if raw_inst.startswith('sfx:'):                        # procedural effect from sfx.py; each note = one hit
@@ -823,7 +824,8 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
 
     if tr.get('synthesis') == 'formant' or (inst_cfg and inst_cfg.get('synthesis') == 'formant') or vocal_cfg or inst in vocals.INSTRUMENTS:
         ev = hz.humanize_track([dict(n, p=cli_util.midi_int(n['p'], f"track {tr.get('name')}: ")) for n in tr.get('notes', [])], tm, tr.get('humanize', cfg),
-                               role=tr.get('role', 'melody'), seed=seed, ts=tuple(ts), swing=swing)
+                               role=tr.get('role', 'melody'), seed=seed, ts=tuple(ts), swing=swing,
+                               part=tr.get('name', inst))
         _record(tr.get('name', inst), **hz.event_stats(ev, tm, tr.get('humanize', cfg)))
         merged_vocal = {}
         if vocal_cfg:
@@ -871,7 +873,8 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
     ev = hz.humanize_track(notes, tm, tr.get('humanize', cfg), role=role, seed=seed, ts=tuple(ts), swing=swing, swing_unit=swing_u,
                            detune_cents=tr.get('detune_cents', 0.0), strum_dir=tr.get('strum', 'alt'), instrument=inst,
                            articulation=(tr.get('articulation') or (inst_cfg or {}).get('articulation')),
-                           bpm=float(np.atleast_1d(getattr(tm, 'base_bpm', 96.0)).ravel()[0]))
+                           bpm=float(np.atleast_1d(getattr(tm, 'base_bpm', 96.0)).ravel()[0]),
+                           part=tr.get('name', inst))
     _record(tr.get('name', inst), **hz.event_stats(ev, tm, tr.get('humanize', cfg)))
     vox = Voice(sfpath, SR, _oversample())
     track_dyn = tr.get('dynamics')
@@ -1103,7 +1106,7 @@ def _track_cache_dir():
     return d
 
 
-_RENDERER_VERSION = 'natural-8'   # bump when the renderer changes what a stem sounds like or reports
+_RENDERER_VERSION = 'natural-9'   # bump when the renderer changes what a stem sounds like or reports
 _CODE_HASH = None
 
 
@@ -1113,7 +1116,8 @@ _CODE_HASH = None
 _RENDER_CODE = ('render_natural.py', 'dsp.py', 'sfz_render.py', 'environment.py', 'humanize.py', 'vocals.py',
                 'sound_model.py', 'clone_instrument.py', 'spatial.py', 'airabs.py', 'mechanics.py', 'world.py',
                 'soundbank.py', 'presets.py', 'mix_schema.py', 'cli_util.py', 'sfz_libs.py')
-_RENDER_PACKAGES = ('vocal_engine', 'phys_core', 'env_engine', 'sfx_engine', 'spatial_hrtf', 'spatial_engine')
+_RENDER_PACKAGES = ('vocal_engine', 'phys_core', 'env_engine', 'sfx_engine', 'spatial_hrtf', 'spatial_engine',
+                    'humanize_engine')
 
 
 def _code_hash():
@@ -1203,6 +1207,7 @@ def _track_cache_key(tr, seed, ts, swing, tm, global_dyn, sr, sfpath=None):
     roots_sig = None if roots is None else [[round(float(b), 4) for b in roots[0]], [int(r) for r in roots[1]]]
     sig = json.dumps(dict(tr=stem_cache.dry_track(tr), seed=seed, ts=list(ts), swing=swing, global_dyn=global_dyn,
                           mood=getattr(tm, 'mood', None), key=getattr(tm, 'key', None), roots=roots_sig,
+                          asynchrony=getattr(tm, 'asynchrony_sig', None),
                           sr=sr, renderer=_RENDERER_VERSION, code=_code_hash(), sf=sf_id, oversample=_oversample(),
                           sfz_patch=_sfz_patch_id(tr),
                           presets=stem_cache.dry_presets(_preset_fingerprint(tr))),
