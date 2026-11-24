@@ -23,8 +23,12 @@ import copy
 
 
 def merge(base, over):
-    """A new dict: `over` laid over `base`, nested dicts merged."""
-    out = copy.deepcopy(base)
-    for k, v in (over or {}).items():
+    """A new dict: `over` laid over `base`, nested dicts merged. An absent section (`None`) is an empty one."""
+    if over is None:
+        return copy.deepcopy(base)
+    if not isinstance(over, dict):
+        return copy.deepcopy(over)
+    out = copy.deepcopy(base) if isinstance(base, dict) else {}
+    for k, v in over.items():
         out[k] = merge(out[k], v) if isinstance(v, dict) and isinstance(out.get(k), dict) else copy.deepcopy(v)
     return out

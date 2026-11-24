@@ -9,6 +9,8 @@ import zlib
 
 import numpy as np
 
+import roles as rolelib
+
 
 ENSEMBLE_KEYS = ('players', 'spread_cents', 'spread_ms', 'vel_spread')
 
@@ -73,8 +75,16 @@ _BRASS_WORDS = ('trumpet', 'trombone', 'horn', 'tuba', 'brass', 'cornet', 'fluge
 
 
 def family_of(track):
-    """The instrument family a part's asynchrony is drawn from (a coarse, stable label)."""
-    role = str((track or {}).get('role') or '').lower()
+    """The instrument family a part's asynchrony is drawn from (a coarse, stable label).
+
+    The role is canonicalised first: a part written as `percussion`, `drums` or `beat` is a drum part here, exactly
+    as it is everywhere else (scripts/roles.py is the one vocabulary).
+    """
+    raw_role = (track or {}).get('role')
+    try:
+        role = rolelib.canonical(raw_role) if raw_role else ''
+    except rolelib.UnknownRole:
+        role = ''
     inst = str((track or {}).get('instrument') or '').lower()
     if role == 'drum':
         return 'drums'
@@ -116,15 +126,23 @@ def asynchrony_field(score, seed=1):
         raise ValueError('score.asynchrony.amount_ms: expected 0..80')
     if amount <= 0.0:
         return {}, None
-    table = {}
-    cap = 35.0
-    try:
-        import presets
-        cfg = presets.get('humanize', 'asynchrony')
-        table = cfg.get('families') or {}
-        cap = float(cfg.get('cap_ms', cap))
-    except (KeyError, ValueError, ImportError):
-        table = {}
+    import presets
+    cfg = presets.get('humanize', 'asynchrony')      # shipped preset: absent or malformed is an error, not a default
+    if not isinstance(cfg, dict):
+        raise ValueError('humanize preset "asynchrony" must be an object')
+    unknown = sorted(k for k in cfg if not k.startswith('_')                      # `_source` is the loader's provenance
+                     and k not in {'name', 'character', 'amount_ms', 'cap_ms', 'families', 'provenance'})
+    if unknown:
+        raise ValueError(f'humanize preset "asynchrony": unknown key(s) {", ".join(unknown)}')
+    table = cfg.get('families')
+    if not isinstance(table, dict) or not table:
+        raise ValueError('humanize preset "asynchrony": families must be a non-empty object of family -> weight')
+    for fam, weight in table.items():
+        if isinstance(weight, bool) or not isinstance(weight, (int, float)):
+            raise ValueError(f'humanize preset "asynchrony": family {fam!r} weight must be a number')
+    cap = float(cfg.get('cap_ms', 35.0))
+    if not 0.0 <= cap <= 80.0:
+        raise ValueError('humanize preset "asynchrony": cap_ms must be 0..80')
     out = {}
     for tr in (score or {}).get('tracks', []) or []:
         name = str(tr.get('name') or '')

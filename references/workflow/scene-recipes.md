@@ -143,7 +143,7 @@ for i in 0.3 0.6 0.95; do python3 scripts/compose.py --emotion hopeful --genre o
 triumphant, `pulse: "steady"`. Run `listen.py` on each. Check that the calm state does not read tense, and that
 the high state does not read sad.
 
-**Crossfade:** fade out one state and fade in the next at a bar line (see `music-direction.md` section 5).
+**Crossfade:** fade out one state and fade in the next at a bar line (see `music-direction-revision.md` section 5).
 
 ## 7. Jingle or logo sting (3-6 s)
 
@@ -265,6 +265,6 @@ culture is printed there.
 
 ## Mix and deliver
 
-Each recipe ends the same way: `listen.py` against the sheet; one or two levers from `music-direction.md` section 6;
+Each recipe ends the same way: `listen.py` against the sheet; one or two levers from `music-direction-revision.md` section 6;
 `scripts/mixer.py` or `video-mixer/video_program_mix.py` for the final balance under voice or picture; deliver the WAV, the MIDI, the
 sheet and the report.

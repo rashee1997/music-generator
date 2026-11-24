@@ -131,8 +131,9 @@ about what a part is.
 - **A declared limit: the coupling is first-order and score-level.** Each part is corrected once, toward one
   anchor, from the onsets it shares with it; there is no iterative re-estimation after the correction, no
   part-to-part network (a string section correcting toward the cello while the cello follows the bass), and
-  ensemble expansion's per-player jitter is not in the estimate. Breath and hand-span constraints are still not
-  modelled: a phrase a player cannot play is not shortened by the engine.
+  ensemble expansion's per-player jitter is not in the estimate (the curve is per written onset, and the render
+  applies it to every player). Breath and hand-span constraints are still not modelled: a phrase a player cannot
+  play is not shortened by the engine.
 
 ## 1e. Tempo-relative spread, ensemble field, pockets, swing shape
 
@@ -153,7 +154,11 @@ about what a part is.
 - **`score.coupling`** (absent = off): `{mode: "phase", gain: 0.6, anchor: "auto", window_beats: 2, cap_ms: 25}`.
   A pre-pass humanizes every part without audio, measures each one's asynchrony against the anchor (drums, then
   bass) at the onsets they share, and gives each part a bounded, smoothed correction curve that
-  `humanize_track` adds to its onsets. This is the measured first-order linear correction (J. R. Soc. Interface
+  `humanize_track` adds to its onsets. The pre-pass takes the render's own arguments (swing unit, strum
+  direction, instrument, articulation), so the curve is estimated from the performance that plays, and its
+  result is cached by score, seed, renderer and resolved presets, so a fully cached rebuild does not
+  re-humanize every track to rediscover the same curves. An `anchor` naming a track that did not render is an
+  error, not a fallback. This is the measured first-order linear correction (J. R. Soc. Interface
   2014; the coordination structure listeners hear, PLOS One 2025), not a new offset: the stable vertical field
   of section 1f supplies the spread, this removes part of it. `gain` is a starting value at the 0.6 the
   first-order model predicts for minimal asynchrony variance; `cap_ms` bounds what one player can be moved.

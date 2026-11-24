@@ -345,7 +345,6 @@ def shot_scale_row(sections, scenes, cfg, out):
     allowed = (cfg.get('shot_scale_max_density') or {})
     checked = 0
     bad = []
-    by_id = {s.get('id'): s for s in scenes or []}
     for sec in sections or []:
         scale = sec.get('shot_scale')
         density = sec.get('density')

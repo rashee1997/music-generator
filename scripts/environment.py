@@ -310,7 +310,6 @@ def synth_stridulation_bed(sec, sr=SR, rng=None, low_hz=5200.0, high_hz=8500.0,
     """Amplitude-pulsed high-frequency band noise (cicadas, crickets, insects, sand drift)."""
     rng = rng or np.random.default_rng(505)
     n = int(sec * sr)
-    t = np.arange(n) / sr
     white = rng.standard_normal(n).astype(np.float32)
     
     band = _bandpass(white, low_hz, high_hz, sr=sr)

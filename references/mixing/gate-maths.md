@@ -1,3 +1,12 @@
+---
+title: Gate maths
+summary: What each gate row measures, and whether its number is calibrated.
+tags: [gate, threshold, measurement, calibration, rows]
+load_when:
+  - writing or questioning a gate threshold
+  - a row's number needs a source
+---
+
 # Gate maths: what each row measures, and whether its number is calibrated
 
 Companion to `quality-gate.md`. Every row below is implemented once in `scripts/gate_checks.py` and returns
@@ -123,6 +132,6 @@ declares.
 | `master.mono_bands` | per octave band: r = corr(L, R); loss = 10 log10(E[M^2] / ((E[L^2] + E[R^2]) / 2)) | WARN when the worst loss < -3 dB |
 | `masking.excess` | per critical band: 10 log10(bed mean square) - 10 log10(figure mean square); spread is the same against one band down | always INFO |
 
-True peak is reported at 4x and 8x oversampling (BS.1770-5 Annex 2; EBU Tech 3343 documents the 4x under-read);
+True peak is reported at 4x and 8x oversampling (BS.1770-5 Annex 2; EBU Tech 3343 covers the 4x under-read);
 the gate judges the larger. The 3 dB mono-band figure and the band set are starting values, not calibrated
 thresholds, and `masking.excess` asserts none at all.

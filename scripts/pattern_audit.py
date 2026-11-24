@@ -523,7 +523,7 @@ def groove_pocket_lock(score):
 
     total_beats = max(n['t'] + n.get('d', 1.0) for n in all_notes)
     if total_beats < num * 4:
-        return [('PASS', 'groove_pocket_lock', 'Rhythmic duration under 4 bars; groove pocket check skipped')]
+        return [('INFO', 'groove_pocket_lock', 'Rhythmic duration under 4 bars: not measured, not passed')]
 
     grid_len = int(np.ceil(total_beats * steps_per_beat)) + total_bar_steps * 2 + 16
     grid = np.zeros(grid_len, dtype=float)

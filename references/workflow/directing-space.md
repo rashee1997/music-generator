@@ -104,7 +104,7 @@ itself, re-renderable later) or `adm_bw64` (objects and their positions) when th
 
 A failing immersive row is a fact about the presets or the score: spread the keyframes, narrow the stem the row names,
 lower the space's `late.level_db`, bring a side wall in. Never loosen the row. The rows and their fixes are in
-`references/mixing/quality-gate.md` section 5b; the engine and its physics are in
+`references/mixing/quality-gate-rows.md` section 5d; the engine and its physics are in
 `references/spatial/immersive-spatial.md` section 2c.
 
 ## 8. Honesty rules for this block

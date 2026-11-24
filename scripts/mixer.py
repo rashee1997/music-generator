@@ -15,6 +15,8 @@ This module re-exports every name from those modules, so `import mixer` and `mix
 working for callers that predate the split. Tests that patch a name here (for example
 `mixer._space_owned`) are honoured: the engine asks this module's copy at call time.
 """
+import types
+
 from mix_engine import bus as _bus
 from mix_engine import carve as _carve
 from mix_engine import chains as _chains
@@ -29,11 +31,18 @@ _SKIP = {'annotations'}
 
 for _module in _MODULES:
     for _name, _value in vars(_module).items():
-        if _name.startswith('__') or _name in _SKIP:
-            continue
+        if _name.startswith('__') or _name in _SKIP or isinstance(_value, types.ModuleType):
+            continue          # imported modules (numpy, os, ...) are not part of the mixer's surface
         globals()[_name] = _value
+
+# what `from mixer import *` gives: the API, not helpers and not imported modules. Underscore names stay reachable
+# as attributes (`mixer._space_owned`) because tests patch this module's copy; they are simply not star-imported.
+__all__ = sorted(n for n, _v in globals().items()
+                 if not n.startswith('_') and not isinstance(_v, types.ModuleType))
 
 del _module, _name, _value
 
 if __name__ == '__main__':
+    from mix_engine.bus import main
+
     main()

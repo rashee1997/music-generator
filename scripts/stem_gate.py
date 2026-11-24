@@ -32,6 +32,7 @@ import numpy as np
 import gate_checks as gc
 import gate_clock
 import gate_profiles
+import roles as rolelib
 import stem_cache
 from gate_audio import Signal, DECIM_SR
 
@@ -46,7 +47,7 @@ warnings.filterwarnings('ignore', message=r'Compilation requested for previously
                         category=Warning, module=r'numba\..*')
 
 PERCUSSIVE = {'drum', 'drums', 'percussion', 'kit', 'brush', 'shaker', 'cymbal', 'kick', 'snare', 'hat', 'hihat', 'tom'}
-TONAL_ROLES = {'melody', 'pad', 'chord', 'arp', 'counter', 'bass', 'drone', 'harmony', 'lead'}
+TONAL_ROLES = {'melody', 'pad', 'chord', 'arp', 'counter', 'bass', 'drone', 'lead'}   # canonical roles only
 VOCAL_HINTS = ('vocal', 'voice', 'choir', 'hum', 'singer', 'soprano', 'alto', 'tenor', 'bass_voice')
 
 
@@ -54,10 +55,21 @@ def _track(score, name):
     return next((t for t in score.get('tracks', []) if t.get('name') == name), None)
 
 
+def _role_of(track):
+    """The canonical role of a track (scripts/roles.py), or '' when it has none or an unknown one."""
+    raw = (track or {}).get('role')
+    if not raw:
+        return ''
+    try:
+        return rolelib.canonical(raw)
+    except rolelib.UnknownRole:
+        return ''
+
+
 def _is_percussive(track):
     if not track:
         return False
-    role = str(track.get('role') or '').lower()
+    role = _role_of(track)
     inst = str(track.get('instrument') or '').lower()
     name = str(track.get('name') or '').lower()
     # Whole words only: 'Bottom Pad' contains 'tom' and 'Chat Pad' contains 'hat', and neither is a drum.
@@ -210,6 +222,8 @@ def _res_row(level, name, res, stem=None):
 
 
 def _emit(rows, metrics, rid, level, res, name):
+    if res.get('skipped'):
+        level = 'INFO'          # a measurement that did not run can never certify the row it belongs to
     r, m = _res_row(level, rid, res, name)
     rows.append(r)
     metrics.append(m)
@@ -288,8 +302,7 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
         if gp.on('stem.end'):
             res = gc.check_abrupt_end(sig, expected_dur=dur, floor_db=gp.param('stem.end', 'floor_db'),
                                       min_decay_db=gp.param('stem.end', 'min_decay_db'))
-            if not res.get('skipped'):
-                _emit(rows, metrics, 'stem.end', 'FAIL' if res.get('fail') else 'PASS', res, name)
+            _emit(rows, metrics, 'stem.end', 'FAIL' if res.get('fail') else 'PASS', res, name)     # skipped -> INFO
         else:
             _skip(rows, metrics, 'stem.end', name, gp)
 
@@ -300,7 +313,7 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
     # An `sfx`/`fx` track is the same case: its written length is a trigger for a one-shot sound, and the sound's own
     # attack and decay are the instrument, not an edit. (roles.py canonicalises every effect role to `fx`, so checking
     # only the literal string 'sfx' let a one-shot through to a row that cannot apply to it.)
-    is_fx = str((track or {}).get('role') or '').lower() in ('sfx', 'fx')
+    is_fx = _role_of(track) == 'fx'
     if iv and (perc or is_fx):
         _skip(rows, metrics, 'stem.edge', name, gp,
               why='a ' + ('percussive' if perc else 'one-shot effect') + ' note length is a trigger, not a sound length')
@@ -333,9 +346,9 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
             else:
                 _skip(rows, metrics, 'stem.dead', name, gp)
 
-    if track is not None and perc and str(track.get('role', '')).lower() in TONAL_ROLES:
+    if track is not None and perc and _role_of(track) in TONAL_ROLES:
         _skip(rows, metrics, 'stem.flatness', name, gp, why='a percussive stem is not a sustained tone')
-    if track is not None and not perc and str(track.get('role', '')).lower() in TONAL_ROLES:
+    if track is not None and not perc and _role_of(track) in TONAL_ROLES:
         if gp.on('stem.flatness'):
             res = gc.check_flatness(sig, threshold=gp.param('stem.flatness', 'threshold'),
                                     min_ms=gp.param('stem.flatness', 'min_ms'))

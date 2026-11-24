@@ -270,7 +270,7 @@ def diagnose(wav, stems_dir=None, score=None, top=3):
     # the gate's two rules: a chronically high median (above the absolute limit) fails on its own, else a frame must
     # also stand ROUGHNESS_RELATIVE above the piece's median
     thr = nc.ROUGHNESS_MEDIAN if med > nc.ROUGHNESS_MEDIAN else max(nc.ROUGHNESS_MEDIAN, nc.ROUGHNESS_RELATIVE * med)
-    win, hop = int(sr), int(sr // 2)
+    hop = int(sr // 2)
     mono = x.mean(axis=1)
     stems = {}
     if stems_dir and os.path.isfile(os.path.join(stems_dir, 'stems.json')):

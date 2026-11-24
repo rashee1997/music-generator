@@ -15,6 +15,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', 'scripts'))
 sys.path.insert(0, HERE)
 
+import gate_checks as gc
 import gate_fixture as fx
 import stem_gate
 
@@ -85,6 +86,19 @@ class StemGateTest(unittest.TestCase):
     def test_dead_stem_fires(self):
         rows, meta, fails = _stem_case('lead', lambda x: np.zeros_like(x))
         self.assertIn('stem.dead', fails, fails)
+
+    def test_unmeasured_row_is_info_not_pass(self):
+        """A row whose measurement did not run (no librosa) must never certify the stem: no PASS, an INFO that says so."""
+        real = gc.check_flatness
+        gc.check_flatness = lambda *a, **k: dict(value=0.0, threshold=0.1, unit='flatness', times=[],
+                                                 margin=0.0, detail='librosa missing: flatness row not measured',
+                                                 skipped=True)
+        try:
+            rows, _meta, _fails = _stem_case('pad', lambda s: s)
+        finally:
+            gc.check_flatness = real
+        levels = {lvl for lvl, rid, _ in rows if rid == 'stem.flatness'}
+        self.assertEqual(levels, {'INFO'}, rows)
 
     def test_report(self):
         cases = [

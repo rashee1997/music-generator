@@ -146,6 +146,72 @@ class RendererWiring(unittest.TestCase):
         self.assertIn('coupling_correction_ms', rn._report_entry('lead'))
         self.assertEqual(tm.phase_stats['anchor'], 'bass')
 
+    def test_unknown_anchor_is_an_error(self):
+        score = self._score({'mode': 'phase', 'anchor': 'kazoo'})
+        with self.assertRaises(ValueError):
+            hz.coupling.resolve_block(score)
+        with self.assertRaises(ValueError):
+            hz.coupling._pick_anchor({'bass': [1], 'lead': [1]}, {'bass': 'bass', 'lead': 'melody'}, 'kazoo')
+
+    def test_prepass_uses_the_render_swing_grid(self):
+        """The pre-pass must humanize with the same swing unit and strum direction the render uses, or the curve is
+        estimated from off-beat onsets the render never plays."""
+        rn = self.rn
+        seen = []
+        real = hz.humanize_track
+
+        def spy(notes, tm, cfg, **kw):
+            seen.append(kw)
+            shift = 0.02 if kw.get('part') == 'lead' else 0.0
+            return [dict(t=float(n['t']) + shift, beat=float(n['t']), p=int(n['p']), v=90, dur=0.5) for n in notes]
+
+        import tempfile
+        old_dir = rn._track_cache_dir
+        with tempfile.TemporaryDirectory() as d:
+            rn._track_cache_dir = lambda: os.path.join(d, 'stems')
+            hz.humanize_track = spy
+            try:
+                score = self._score({'mode': 'phase', 'anchor': 'bass', 'window_beats': 0})
+                score['swing'] = 0.6
+                score['tracks'][1]['notes'] = [dict(t=b + 0.25, d=0.2, p=72, v=90) for b in range(4)]
+                tm = hz.tempo_map_for(score, seed=5)
+                marked = [(i, t['name'], rn._mark_accompanied(t, score['tracks']))
+                          for i, t in enumerate(score['tracks'])]
+                rn._reset_stats()
+                rn.REPORT.clear()
+                rn._coupling_prepass(score, tm, marked, 'natural', 5, (4, 4), 0.6)
+            finally:
+                hz.humanize_track = real
+                rn._track_cache_dir = old_dir
+        lead = [k for k in seen if k.get('part') == 'lead'][0]
+        self.assertEqual(lead['swing_unit'], 0.25)
+        self.assertEqual(lead['strum_dir'], 'alt')
+
+    def test_prepass_cache_replays_the_same_curves(self):
+        """A second pre-pass with the same score/seed/presets is served from its cache, with the same curves and report."""
+        rn = self.rn
+        import tempfile
+        old_dir = rn._track_cache_dir
+        score = self._score({'mode': 'phase', 'anchor': 'bass', 'window_beats': 0})
+        marked = [(i, t['name'], rn._mark_accompanied(t, score['tracks'])) for i, t in enumerate(score['tracks'])]
+        with tempfile.TemporaryDirectory() as d:
+            rn._track_cache_dir = lambda: os.path.join(d, 'stems')
+            try:
+                tm1 = hz.tempo_map_for(score, seed=5)
+                rn._reset_stats()
+                rn.REPORT.clear()
+                rn._coupling_prepass(score, tm1, marked, 'natural', 5, (4, 4), 0.5)
+                first = (dict(tm1.phase_curves), dict(tm1.phase_stats), dict(rn._report_entry('lead')))
+                tm2 = hz.tempo_map_for(score, seed=5)
+                rn._reset_stats()
+                rn.REPORT.clear()
+                rn._coupling_prepass(score, tm2, marked, 'natural', 5, (4, 4), 0.5)
+                second = (dict(tm2.phase_curves), dict(tm2.phase_stats), dict(rn._report_entry('lead')))
+            finally:
+                rn._track_cache_dir = old_dir
+        self.assertEqual(first, second)
+        self.assertTrue(first[0]['lead'])
+
     def test_prepass_is_off_when_not_asked(self):
         rn = self.rn
         score = self._score()

@@ -98,11 +98,11 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 
 ### PHASE 8: RENDER & ITERATE
 - [ ] **8.1** Render: `python scripts/pipeline.py <dir>/scores/<title>_score.json --project <dir> --max-attempts 3` (background for long runs)
-- [ ] **8.1b** Before a long render run `python scripts/preflight_lint.py <dir>/scores/<title>_score.json <dir>` (stage 2 runs it too): fix every FAIL (note outside the patch range, one-shot cut short) and read every WARN, since each one cost a full render when it was found by the audio rows. `preflight.roughness_partials` names the overtones that will beat; after a failing render run `python scripts/roughness_forecast.py diagnose <draft_master> --stems <dir>/stems --score <score>` before changing a note (`references/mixing/quality-gate.md`, end of the file). `references/mixing/quality-gate.md` section 3g.
+- [ ] **8.1b** Before a long render run `python scripts/preflight_lint.py <dir>/scores/<title>_score.json <dir>` (stage 2 runs it too): fix every FAIL (note outside the patch range, one-shot cut short) and read every WARN, since each one cost a full render when it was found by the audio rows. `preflight.roughness_partials` names the overtones that will beat; after a failing render run `python scripts/roughness_forecast.py diagnose <draft_master> --stems <dir>/stems --score <score>` before changing a note (`references/mixing/quality-gate-rows.md`, end of the file). `references/mixing/quality-gate.md` section 3g.
 - [ ] **8.2** Read scoreboard, not early logs. Fix ONE thing at a time based on gate failures. Max 5 attempts.
 - [ ] **8.3** For immersive pieces, fix imm_* rows in presets/score, never loosen. `imm_kinematics`: spread the
       keyframes. `imm_low_fold` / `mix.band_fold`: narrow the stem the row names. `imm_clarity`: lower the space's
-      `late.level_db`. Table: `references/mixing/quality-gate.md` §5b.
+      `late.level_db`. Table: `references/mixing/quality-gate-rows.md` §5c.
 - [ ] **8.4a** Output formats: if the user names none, use the default, stereo plus 8-channel `immersive_7_1` (`presets/outputs/_default.json`); never render `all` or every format unasked, because the order-5 AmbiX and the ADM objects take most of a long render. To render only some formats, pass `--only <list>` on the command line (stereo first), not a changed score. A 7.1.2 file as the sole target is certifiable: `master.dc` no longer reads the low-frequency channel (it carries the sub, not the programme), the loudness row reads the basis the master was levelled on (`loudness.method`), and a fold's true peak is INFO because `delivery.true_peak` certifies every delivered channel against the format's own ceiling. `fold.mono` / `fold.timbre` still compare a format with a stereo master, so a run that delivers both keeps `stereo` first.
 - [ ] **8.4** Extra deliverables are `output_targets` names, never a script: `immersive_3_2` / `adm_3_2` (a project layout, L C R + LFE1 LFE2, not a broadcast standard; say so in the delivery note), `mono` (rendered, not folded),
       `immersive_5_1` / `_5_1_2` / `_5_1_4` and the 7.1 family (loudspeaker layouts), `ambix` (sound field), `adm_bw64`
@@ -162,8 +162,8 @@ Before Phase 4, open every file in the row that matches the request; union sever
 | **Game music/loops/adaptive** | `knowledgebase/media/game-music.md`, `knowledgebase/media/game-sfx.md` |
 | **Exact theme/chord sheet/timecodes** | `references/workflow/custom-scripts.md`, `references/workflow/creative-composition.md`, `templates/custom_score_template.py` |
 | **Spatial/3D/headphone** | `references/spatial/spatial-presets-and-scoring.md` |
-| **Immersive/height/surround** | `references/spatial/immersive-spatial.md`, `references/spatial/spatial-presets-and-scoring.md`, `references/spatial/virtual-speaker-qa.md`, `references/mixing/quality-gate.md` §5b |
-| **Mono / 5.1 / any loudspeaker layout / GPU render** | `references/spatial/immersive-deliverables.md`, `references/spatial/virtual-speaker-qa.md`, `references/mixing/quality-gate.md` §5b, `scripts/compute.py` |
+| **Immersive/height/surround** | `references/spatial/immersive-spatial.md`, `references/spatial/spatial-presets-and-scoring.md`, `references/spatial/virtual-speaker-qa.md`, `references/mixing/quality-gate-rows.md` §5c |
+| **Mono / 5.1 / any loudspeaker layout / GPU render** | `references/spatial/immersive-deliverables.md`, `references/spatial/virtual-speaker-qa.md`, `references/mixing/quality-gate-rows.md` §5c, `scripts/compute.py` |
 | **Clone instrument** | `references/instruments-and-vocals/instrument-cloning.md`, `scripts/clone_instrument.py` |
 | **Extract MIDI/stems** | `references/workflow/extraction.md`, `scripts/extract_pipeline.py` |
 | **Mix/master existing stems** | `references/mixing/mixing-and-mastering.md`, `references/mixing/delivery-standards.md`, `scripts/mixer.py` (facade) and `scripts/mix_engine/`, `scripts/mix_diagnostics.py` |

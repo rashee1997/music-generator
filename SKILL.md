@@ -45,7 +45,7 @@ Follow these steps in order. Never skip steps.
 | 4 | **Create presets** | `python scripts/presets.py scaffold instruments/vocals/environments/calls/sfx <name> --project <dir>`. Each needs unique spatial placement. A `calls` preset is one animal's call as data, played by an environment layer (`"primitive": "animal_call"`). | Presets in project with character, spatial.azimuth/distance |
 | 5 | **Write score** | Create `<dir>/scores/<title>_score.json` (declarative, references presets). Use [`templates/custom_score_template.py`](templates/custom_score_template.py) for exact control. | Valid JSON with tracks referencing presets |
 | 6 | **Render & gate** | `python scripts/pipeline.py <dir>/scores/<title>_score.json --project <dir>` | `out/master.wav` (a copy of the newest version), `out/master_vNN.wav`, `out/versions.json`, `<master>.json` tags, `stems/`, `midi/`, `reports/ci_report.json` with 0 FAIL |
-| 7 | **Revise** | Change ONE lever at a time ([`references/workflow/music-direction.md`](references/workflow/music-direction.md) §6). Re-run step 6 until green (max 5 attempts). | All gates pass |
+| 7 | **Revise** | Change ONE lever at a time ([`references/workflow/music-direction-revision.md`](references/workflow/music-direction-revision.md) §6). Re-run step 6 until green (max 5 attempts). | All gates pass |
 | 8 | **Listen & deliver** | `python scripts/listen.py out/master.wav --direction direction/<sheet>.json` | Verify and report results |
 
 ## What the piece is: focus and intent

@@ -31,6 +31,33 @@ def render(layers, sec=2.0):
     return env.render_environment_preset({'layers': layers}, duration_s=sec, sr=SR, seed=3)
 
 
+class AnalysisFixes(unittest.TestCase):
+    """The failures found by the repository analysis, each kept fixed by a test."""
+
+    def test_deep_merge_treats_an_absent_section_as_empty(self):
+        import deep_merge
+        self.assertEqual(deep_merge.merge(None, {'a': {'b': 1}}), {'a': {'b': 1}})
+        self.assertEqual(deep_merge.merge({'a': 1}, None), {'a': 1})
+        self.assertEqual(deep_merge.merge({'a': {'b': 1}}, {'a': {'c': 2}}), {'a': {'b': 1, 'c': 2}})
+
+    def test_focus_of_strict_rejects_a_typo(self):
+        import roles
+        with self.assertRaises(roles.UnknownRole):
+            roles.focus_of({'focus': 'groovey'}, strict=True)
+        self.assertEqual(roles.focus_of({'focus': 'groovey'}), 'melody')      # lenient callers keep the default
+
+    def test_asynchrony_preset_is_checked_not_defaulted(self):
+        import humanize as hz
+        old = presets.get
+        presets.get = lambda kind, name: {'name': name, 'families': {'strings': 'loud'}}
+        try:
+            with self.assertRaises(ValueError):
+                hz.asynchrony_field({'asynchrony': {'amount_ms': 10},
+                                     'tracks': [{'name': 'vln', 'role': 'strings'}]})
+        finally:
+            presets.get = old
+
+
 class Strict:
     def __enter__(self):
         self.old, presets.STRICT = presets.STRICT, True

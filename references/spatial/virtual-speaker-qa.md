@@ -3,7 +3,12 @@ id: virtual-speaker-qa
 title: Virtual speaker arrangements and per-bar channel QA for any channel count
 domain: sound-design
 status: partly-sourced
-sources: [https://www.itu.int/dms_pubrec/itu-r/rec/bs/R-REC-BS.2051-3-202205-I%21%21PDF-E.pdf, https://tech.ebu.ch/docs/tech/tech3304.pdf, https://www.isdcf.com/resources/test-content/audio/, https://www.aes.org/publications/elibrary-page/?id=16554, https://arxiv.org/abs/2210.00378, https://www2.iis.fraunhofer.de/AAC/multichannel.html]
+summary: Virtual speaker arrangements and the per-bar channel QA rows for any channel count.
+tags: [immersive, speakers, channel, qa, layout]
+load_when:
+  - a channel.bars or delivered-layout row fails
+  - choosing a speaker layout for a delivery
+sources: [ITU-R BS.2051-3, EBU Tech 3304, ISDCF test content, AES e-library paper 16554, arXiv 2210.00378, Fraunhofer multichannel reference]
 used_by: [scripts/channel_qa.py, scripts/spatial_gate.py, references/spatial/virtual-speaker-qa.md, knowledgebase/sound-design/virtual-speaker-qa.md]
 updated: 2026-11-22
 ---
@@ -12,7 +17,7 @@ updated: 2026-11-22
 
 > **Partly sourced.** The ITU, EBU and ISDCF documents were read as search-result excerpts and their published
 > structure, not as complete conformance runs. The AllRAD and energy-vector sources are cited for the decoder
-> design, not for a calibrated threshold. The numbers in `channel.bars` are starting values; they have not been
+> design, not for a calibrated threshold. The numbers in `channel.bars` are starting values; they are not yet
 > tuned on a listening corpus.
 
 A multichannel master can pass peak, loudness and format rows and still have one channel wrong for one bar: a

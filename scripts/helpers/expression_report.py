@@ -27,7 +27,6 @@ module reports and warns; `quality_gate.direction_rows` turns a flag into a WARN
 import argparse
 import json
 import math
-import os
 import sys
 from collections import Counter
 
@@ -244,7 +243,7 @@ def expression_block_problems(sheet):
 def report(score_path, sheet_path=None):
     score = json.load(open(score_path, encoding='utf-8'))
     rho, rows, flag = arousal_order(score)
-    print(f'arousal index by section (tempo, density, velocity, register, staccato; starting-value anchors)')
+    print('arousal index by section (tempo, density, velocity, register, staccato; starting-value anchors)')
     print(f'{"section":<18}{"energy":>8}{"index":>8}   cues')
     for r in rows:
         print(f'{r["name"]:<18}{r["energy"]!s:>8}{r["index"]:>8.2f}   ' + ' '.join(f'{k}={v:.2f}' for k, v in r['parts'].items()))

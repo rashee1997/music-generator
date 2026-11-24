@@ -121,8 +121,8 @@ That leaves six levers, in this order:
    constant 1.0: one CC value for the whole piece, which is the organ-like sustain. The crescendo has to exist in the score.
 4. **Phrase each note.** A monophonic line also gets a per-note arch (`note_dyn`): a slow loss of support across a held
    note and, at a phrase end, a taper over its last `release_s`, because a sustaining player varies the dynamic level
-   while the note sounds and a library models that with CC crossfades (sfzformat.com, [Sustained note
-   basics](https://sfzformat.com/tutorials/sustained_note_basics)). The taper needs a rest after the note
+   while the note sounds and a library models that with CC crossfades (the sfzformat.com Sustained note basics
+   tutorial). The taper needs a rest after the note
    (`phrase_gap_s`): a continuous line is not ducked before every new note. One MIDI channel carries the whole track, so
    a chord would have every voice shaped together: the arch is applied only when no note outlasts the next onset by more
    than 60 ms. `note_dyn: false` switches it off. The numbers are starting values until a project measures its line.

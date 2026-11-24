@@ -255,7 +255,6 @@ class MusicPipeline:
         except Exception as exc:                  # a lint that cannot run must say so, never stop the render by itself
             print(f"  [WARN] preflight_lint did not run ({exc})")
         fails = sum(1 for kind, _, _ in rows if kind == 'FAIL')
-        warns = sum(1 for kind, _, _ in rows if kind == 'WARN')
         clean = (fails == 0)
         for kind, name, msg in rows:
             if self.verbose:
@@ -683,7 +682,7 @@ class MusicPipeline:
             resolved_stems_dir = stems_dir or discovered.get('stems_dir')
 
             if self.verbose:
-                print(f"\n[CI/CD Mode: QUALITY CHECK ONLY (No Re-Rendering)]")
+                print("\n[CI/CD Mode: QUALITY CHECK ONLY (No Re-Rendering)]")
                 print(f"  Target Master Audio : {target_wav}")
                 print(f"  Project Root        : {discovered.get('project_dir')}")
                 print(f"  Discovered Score    : {resolved_score_path}")
@@ -1024,7 +1023,7 @@ class MusicPipeline:
                     print(f"    - {f_}")
             else:
                 print(f"  CONTINUE: attempt {n}/{max_attempts}, {fails} FAIL. Change ONE lever "
-                      f"(references/workflow/music-direction.md section 6) and run again.")
+                      f"(references/workflow/music-direction-revision.md section 6) and run again.")
         print("=" * 80)
         return report
 

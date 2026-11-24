@@ -58,6 +58,8 @@ import json
 import os
 import sys
 import threading
+
+import roles as rolelib
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import numpy as np
@@ -596,6 +598,7 @@ def _sfz_track(tr, tm, cfg, seed, ts, swing, global_dyn, raw_inst, inst_cfg, qua
     # the role's default gate (0.90 for bass, 0.95 for chord), so an SFZ string note was cut 5-10% short and the
     # piece's last note died 0.5-1.7 s before its written end (stem.edge, stem.dropout on all four string parts).
     ev = hz.humanize_track(notes, tm, tr.get('humanize', cfg), role=role, seed=seed, ts=tuple(ts), swing=swing,
+                           swing_unit=_swing_unit(tr, notes, swing), strum_dir=tr.get('strum', 'alt'),
                            articulation=(tr.get('articulation') or (inst_cfg or {}).get('articulation')),
                            part=name)
     _record(name, **hz.event_stats(ev, tm, tr.get('humanize', cfg)))
@@ -743,6 +746,15 @@ def _render_velocity_layers(tr, vt, tm, sfpath, global_dyn, cfg, seed, ts, swing
     return out
 
 
+def _swing_unit(tr, notes, swing):
+    """The subdivision swing applies to: a track's own `swing_unit`, else 16ths when the score is swung and the line
+    plays off-16th onsets, else 8ths. One function, so the humanizer call in every render path and in the coupling
+    pre-pass swings on the same grid."""
+    return tr.get('swing_unit', 0.25 if tr.get('swing_16th') or (
+        swing > 0.5 and any(abs(n['t'] * 4 - round(n['t'] * 4)) < 1e-4 and abs(n['t'] * 2 - round(n['t'] * 2)) > 1e-4
+                            for n in notes)) else 0.5)
+
+
 def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None):
     raw_inst = str(tr.get('instrument', 'piano'))
     if raw_inst.startswith('clone:'):                      # user-cloned instrument (clone_instrument.py)
@@ -752,8 +764,10 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
             path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', path)
         inst_obj = ci.load_instrument(path)
         role = tr.get('role', 'melody')
-        ev = hz.humanize_track([dict(n) for n in tr.get('notes', [])], tm, tr.get('humanize', cfg), role=role,
-                               seed=seed, ts=tuple(ts), swing=swing, part=tr.get('name', 'clone'))
+        cnotes = [dict(n) for n in tr.get('notes', [])]
+        ev = hz.humanize_track(cnotes, tm, tr.get('humanize', cfg), role=role,
+                               seed=seed, ts=tuple(ts), swing=swing, swing_unit=_swing_unit(tr, cnotes, swing),
+                               strum_dir=tr.get('strum', 'alt'), part=tr.get('name', 'clone'))
         _record(tr.get('name', 'clone'), **hz.event_stats(ev, tm, tr.get('humanize', cfg)))
         return ci.render_events(inst_obj, ev)
     if raw_inst.startswith('sfx:'):                        # procedural effect from sfx.py; each note = one hit
@@ -823,8 +837,10 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
         return environment.render_environment_preset(env_key, duration_s=dur_s, sr=SR, seed=seed, context=dict(score=_PIECE.get('score'), t0_s=0.0))
 
     if tr.get('synthesis') == 'formant' or (inst_cfg and inst_cfg.get('synthesis') == 'formant') or vocal_cfg or inst in vocals.INSTRUMENTS:
-        ev = hz.humanize_track([dict(n, p=cli_util.midi_int(n['p'], f"track {tr.get('name')}: ")) for n in tr.get('notes', [])], tm, tr.get('humanize', cfg),
+        vnotes = [dict(n, p=cli_util.midi_int(n['p'], f"track {tr.get('name')}: ")) for n in tr.get('notes', [])]
+        ev = hz.humanize_track(vnotes, tm, tr.get('humanize', cfg),
                                role=tr.get('role', 'melody'), seed=seed, ts=tuple(ts), swing=swing,
+                               swing_unit=_swing_unit(tr, vnotes, swing), strum_dir=tr.get('strum', 'alt'),
                                part=tr.get('name', inst))
         _record(tr.get('name', inst), **hz.event_stats(ev, tm, tr.get('humanize', cfg)))
         merged_vocal = {}
@@ -869,7 +885,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
         n['p'] = _drum_key(n['p']) if is_drum else cli_util.midi_int(n['p'], f"track {tr.get('name')}: ")
         notes.append(n)
     notes = _expand_ensemble(tr, notes, tm, role, seed)
-    swing_u = tr.get('swing_unit', 0.25 if tr.get('swing_16th') or (swing > 0.5 and any(abs(n['t'] * 4 - round(n['t'] * 4)) < 1e-4 and abs(n['t'] * 2 - round(n['t'] * 2)) > 1e-4 for n in notes)) else 0.5)
+    swing_u = _swing_unit(tr, notes, swing)
     ev = hz.humanize_track(notes, tm, tr.get('humanize', cfg), role=role, seed=seed, ts=tuple(ts), swing=swing, swing_unit=swing_u,
                            detune_cents=tr.get('detune_cents', 0.0), strum_dir=tr.get('strum', 'alt'), instrument=inst,
                            articulation=(tr.get('articulation') or (inst_cfg or {}).get('articulation')),
@@ -1290,19 +1306,40 @@ def _mark_accompanied(tr, tracks):
     return dict(tr, notes=notes)
 
 
+def _coupling_key(score, tm, marked, cfg, seed, ts, swing):
+    """Identity of a coupling pre-pass: the score, the seed, the renderer and the presets that move an onset."""
+    sig = dict(score=score, seed=seed, ts=list(ts), swing=swing, renderer=_RENDERER_VERSION, code=_code_hash(),
+               asynchrony=getattr(tm, 'asynchrony_sig', None),
+               presets=[[name, stem_cache.dry_track(tr), _preset_fingerprint(tr)] for _i, name, tr in marked])
+    return stem_cache.digest(sig)
+
+
 def _coupling_prepass(score, tm, marked, cfg, seed, ts, swing):
     """Cross-track phase correction, computed once per piece before the parallel render.
 
     Every participating part is humanized without audio, the asynchrony against the anchor is measured at the
     onsets they share, and each part gets a bounded, smoothed correction curve on `tm.phase_curves` that
-    `humanize_track` adds to its onsets. The curves are deterministic functions of the score and seed, and a
-    part's curve is in its cache key, so stems stay cacheable. Ensemble expansion (per-player jitter) is not
-    modelled here: it averages out at the section level and the correction is first-order.
+    `humanize_track` adds to its onsets. The humanize call takes the same arguments the render path takes (swing
+    unit, strum direction, instrument, articulation), so the curve is estimated from the performance that plays.
+
+    Ensemble expansion is not applied here: the curve is per written onset, and a section's per-player offsets are
+    symmetric jitter around that onset; the render applies the same curve to every player. The result is cached by
+    score, seed, renderer and resolved presets, so a rebuild whose stems are all cache hits does not re-humanize
+    every track to rediscover the same curves.
     """
     block = hz.coupling.resolve_block(score)
     tm.phase_curves = {}
     tm.phase_stats = None
     if block['mode'] != 'phase':
+        return
+    cache = os.path.join(os.path.dirname(_track_cache_dir()), 'coupling',
+                         _coupling_key(score, tm, marked, cfg, seed, ts, swing) + '.json')
+    hit = stem_cache.load_json(cache)
+    if hit and isinstance(hit.get('curves'), dict):
+        tm.phase_curves = {str(k): [(float(b), float(v)) for b, v in curve] for k, curve in hit['curves'].items()}
+        tm.phase_stats = hit.get('stats')
+        for name, ms in (hit.get('records') or {}).items():
+            _record(name, coupling_correction_ms=ms)
         return
     events, roles = {}, {}
     for i, name, tr in marked:
@@ -1311,7 +1348,11 @@ def _coupling_prepass(score, tm, marked, cfg, seed, ts, swing):
             continue
         inst_cfg = presets.find_instrument(raw) or presets.find_instrument(_name(raw))
         role = tr.get('role') or ('drum' if (inst_cfg or {}).get('percussion') else 'chord')
-        is_drum = role == 'drum' or bool((inst_cfg or {}).get('percussion'))
+        try:
+            role_key = rolelib.canonical(role)
+        except rolelib.UnknownRole:
+            role_key = ''
+        is_drum = role_key == 'drum' or bool((inst_cfg or {}).get('percussion'))
         notes = []
         try:
             for n in tr.get('notes', []):
@@ -1325,16 +1366,25 @@ def _coupling_prepass(score, tm, marked, cfg, seed, ts, swing):
         try:
             events[name] = hz.humanize_track(notes, tm, tr.get('humanize', cfg), role=role,
                                              seed=_track_seed(name, tr, tm, cfg), ts=tuple(ts), swing=swing,
+                                             swing_unit=_swing_unit(tr, notes, swing),
+                                             strum_dir=tr.get('strum', 'alt'),
                                              articulation=(tr.get('articulation') or (inst_cfg or {}).get('articulation')),
-                                             instrument=raw, part=name)
+                                             instrument=_name(raw), part=name)
         except (ValueError, KeyError, TypeError) as exc:
             print(f'  coupling: skipped {name} ({exc})', flush=True)
             continue
         roles[name] = role
     tm.phase_curves, tm.phase_stats = hz.coupling.phase_correction(events, tm, block, roles=roles)
+    records = {}
     for name, curve in tm.phase_curves.items():
         if curve:
-            _record(name, coupling_correction_ms=round(max(abs(v) for _, v in curve) * 1000.0, 2))
+            ms = round(max(abs(v) for _, v in curve) * 1000.0, 2)
+            records[name] = ms
+            _record(name, coupling_correction_ms=ms)
+    stem_cache.save_json(cache, dict(version=stem_cache.CACHE_VERSION,
+                                     curves={k: [[float(b), float(v)] for b, v in c]
+                                             for k, c in tm.phase_curves.items()},
+                                     stats=tm.phase_stats, records=records))
 
 
 def _dc_block(x, sr=44100, cutoff_hz=5.0, order=2):

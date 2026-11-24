@@ -10,7 +10,6 @@ import numpy as np
 import expectation
 
 from .config import FIG
-from .form import _circle_distance
 
 
 def _resolved(cfg):
@@ -106,19 +105,18 @@ def grid_metrics(events, tm):
     # DNVR: how different the velocities of simultaneous notes are (a machine writes one level)
     groups = {}
     for e in ev:
-        groups.setdefault(round(float(e['beat']) * 4), []).append(e['v'])
-    ratios = [float(np.ptp(g)) / max(1.0, float(np.mean(g))) for g in groups.values() if len(g) > 1]
+        groups.setdefault(round(float(e['beat']) * 4), []).append(e)
+    ratios = [float(np.ptp([x['v'] for x in g])) / max(1.0, float(np.mean([x['v'] for x in g])))
+              for g in groups.values() if len(g) > 1]
     out['dnvr'] = round(float(np.mean(ratios)), 4) if ratios else None
     # DNODR: the onset spread of those same groups, relative to the line's own median interval
     gaps = np.diff(np.unique(np.round([e['t'] for e in ev], 6)))
     ioi = float(np.median(gaps)) if len(gaps) else 0.0
     spreads = []
-    for k, g in groups.items():
-        if len(g) < 2:
+    for g in groups.values():                    # the groups already hold their events: no rescan of the line per group
+        if len(g) < 2 or ioi <= 1e-9:
             continue
-        times = [e['t'] for e in ev if round(float(e['beat']) * 4) == k]
-        if ioi > 1e-9 and len(times) > 1:
-            spreads.append(float(np.ptp(times)) / ioi)
+        spreads.append(float(np.ptp([x['t'] for x in g])) / ioi)
     out['dnodr'] = round(float(np.mean(spreads)), 4) if spreads else None
     # swing: pairs whose onsets are a half-beat apart; BUR = long side / short side
     times = np.unique(np.round(t, 6))

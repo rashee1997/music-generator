@@ -274,7 +274,6 @@ def rules_row(gp, rec, biome, plan, out):
                 if t0 <= s < t1:
                     bad.append(f'{n} begins a call at {s:.1f} s inside its freeze {t0:.1f}-{t1:.1f} s')
     for i, r in enumerate(rules):
-        targets = list(r['do'].get('freeze') or []) + ([r['do']['answer']] if r['do'].get('answer') else [])
         fired = any(rep['windows'].get(n) for n in r['do'].get('freeze') or []) or (r['do'].get('answer') and plan.get(r['do']['answer']))
         if not fired:
             idle.append(f'rule {i} ({r["on"]}) never fired in the span')
@@ -432,7 +431,6 @@ def salience_row(gp, rec, biome, plan, out, window_s=90.0):
     secs = min(window_s, rec['span'])
     biome.planner and biome.planner.plan_until(secs + 1.0)
     fr = int(FRAME_S * SR)
-    series = {f.name: ([], []) for f in fg}
     sos = {f.name: signal.butter(2, [float(f.cfg['niche']['band_hz'][0]), min(float(f.cfg['niche']['band_hz'][1]), 0.45 * SR)], 'band', fs=SR, output='sos') for f in fg}
     zi = {n: [np.zeros((sos[n].shape[0], 2)), np.zeros((sos[n].shape[0], 2))] for n in sos}
     left, step = int(secs * SR), 5 * SR

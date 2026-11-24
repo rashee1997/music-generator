@@ -164,7 +164,7 @@ puts the melody in the singing range of the lead instrument (flute C5-C6, violin
 2. Where is the picture/voice? (voiceover?) Where are the cuts / reveals? (hit points)
 3. How long, and does it loop? (duration, loop)
 4. Pick emotion + genre + key/mode + tempo from the table; write the brief.
-5. Render, run `scripts/listen.py` against a direction sheet, revise one lever, re-render (`music-direction.md` section 6). Offer 2 variations (different seed / genre) when the brief is open.
+5. Render, run `scripts/listen.py` against a direction sheet, revise one lever, re-render (`music-direction-revision.md` section 6). Offer 2 variations (different seed / genre) when the brief is open.
 
 
 ---

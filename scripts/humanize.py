@@ -22,7 +22,7 @@ The engine itself lives in `scripts/humanize_engine/`, one module per concern:
 This module re-exports every name from those modules, so `import humanize` and `humanize.foo(...)`
 keep working for callers that predate the split. The engine never imports this facade.
 """
-import sys
+import types
 
 from humanize_engine import (articulation, config, coupling, drums, dynamics, ensemble, form, microtiming,
                              noise, pocket, report, swing, timemap, track)
@@ -33,13 +33,21 @@ _SKIP = {'annotations'}
 
 for _module in _MODULES:
     for _name, _value in vars(_module).items():
-        if _name.startswith('__') or _name in _SKIP:
-            continue
+        if _name.startswith('__') or _name in _SKIP or isinstance(_value, types.ModuleType):
+            continue          # imported modules (numpy, roles, ...) are not part of the humanizer's surface
         globals()[_name] = _value
+
+# what `from humanize import *` gives: the API, not helpers and not imported modules
+__all__ = sorted(n for n, _v in globals().items()
+                 if not n.startswith('_') and not isinstance(_v, types.ModuleType))
 
 del _module, _name, _value
 
 if __name__ == '__main__':
+    from humanize_engine.report import humanize_report
+    from humanize_engine.timemap import TempoMap
+    from humanize_engine.track import humanize_track
+
     tm = TempoMap(100, total_beats=16, rubato=0.03, ritard=0.35)
     notes = [dict(t=i * 0.5, d=0.45, p=60 + (i % 5) * 2, v=0.7, role='melody') for i in range(32)]
     ev = humanize_track(notes, tm, 'natural', role='melody', seed=1)

@@ -20,12 +20,12 @@ caller working. Rules and module ownership: `AGENTS.md` section 11. The behaviou
 | 5 | Pockets (`pocket`) as data | a pushed or laid-back feel is timing **and** dynamics, per limb and tempo-dependent | `pocket.py`, `references/data/presets/humanize/*.json` |
 | 6 | Swing on-beat delay (`swing_downbeat_ms`) | measured swing delays the on-beat note too | `swing.py` |
 | 7 | The ensemble asynchrony field (`score.asynchrony`) | the parts of a real ensemble are 20-50 ms apart, with the bass as the reference; the engine had only a shared drift | `ensemble.py`, `timemap.py`, `track.py` |
-| 8 | Cross-track phase correction (`score.coupling`) | the asynchrony field gives the spread but no coordination; the measured model is a first-order correction toward the reference | `coupling.py`, `render_natural._coupling_prepass` |
+| 8 | Cross-track phase correction (`score.coupling`) | the asynchrony field gives the spread but no coordination; the measured model is a first-order correction toward the reference. The pre-pass takes the render's own humanize arguments and its curves are cached, so a cached rebuild estimates nothing twice | `coupling.py`, `render_natural._coupling_prepass` |
 | 9 | `scripts/humanize_report.py` | "more human" was unfalsifiable: no tempo-adjusted deviation, spread, swing ratio or expressive-performance ratio | `report.py` |
 
-All four new score/track keys default to the old behaviour, so a score that does not ask renders exactly as
-before. The renderer version is `natural-9` because the schema fix can change the example presets that named
-a base preset.
+All the opt-in score/track keys default to the old behaviour, so a score that does not ask renders exactly as
+before. The renderer version is `natural-10`: `natural-9` was the schema fix (it can change the example
+presets that named a base preset) and `natural-10` is the coupling pre-pass.
 
 ## 2. The new keys
 
@@ -37,7 +37,7 @@ a base preset.
 | `swing_downbeat_ms` | same | 0 | delay the notes that land on a beat (clipped +/-20 ms) |
 | `pocket` | drum track `humanize` | none | a named pocket from `references/data/presets/humanize/` |
 | `asynchrony` | score | absent | `{amount_ms}`: one stable signed offset per named part, capped 35 ms |
-| `coupling` | score | absent | `{mode: "phase", gain, anchor, window_beats, cap_ms}`: first-order phase correction between parts; each part's curve is in its cache key |
+| `coupling` | score | absent | `{mode: "phase", gain, anchor, window_beats, cap_ms}`: first-order phase correction between parts; each part's curve is in its cache key, the pre-pass itself is cached by score/seed/presets, and an unknown `anchor` is an error |
 
 ## 3. Measurement
 

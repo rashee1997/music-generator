@@ -13,7 +13,7 @@ load_when:
 
 ## 1. Core Rule: Dynamic, Custom Analysis Per Composition
 
-> **POLICY** The pipeline attempts symbolic analysis with the bundled default template when `music21` is available; a project's `scripts/analyze_music21.py` can override it. A custom analyzer is optional, not a prerequisite for composition or rendering.
+> **POLICY** The pipeline attempts symbolic analysis with the bundled default template when `music21` is available; a project's own `<project>/scripts/analyze_music21.py` can override it. A custom analyzer is optional, not a prerequisite for composition or rendering.
 > The default template is a generic overview, not a piece-specific validator. For a question the default does not measure, author a targeted analysis for that composition's musical universe, cultural lineage, instrumentation, and intent rather than treating generic results as proof.
 
 When analyzing a piece with `music21`, first inspect the piece's specific targets:
@@ -72,7 +72,7 @@ Then dynamically author the piece's custom analysis script to interrogate those 
 
 When a composition needs symbolic analysis beyond the bundled overview:
 1. Export the composition to MIDI (`.mid`) when MIDI parsing is appropriate; the bundled template can also build a symbolic score directly from the score JSON.
-2. Optionally write a project-specific analyzer at `scripts/analyze_music21.py` (or use the score's `analysis_script` path).
+2. Optionally write a project-specific analyzer at `<project>/scripts/analyze_music21.py` (or use the score's `analysis_script` path).
 3. Import `music21 as m21` and load the MIDI with `m21.converter.parse(midi_path)`, or construct the symbolic score from the score data.
 4. Run targeted interrogations matching the creative brief:
    * **Tonality check:** Confirm the mode (e.g. D Major/Mixolydian) matches the intended emotional affect (adventure, wonder, heroism).

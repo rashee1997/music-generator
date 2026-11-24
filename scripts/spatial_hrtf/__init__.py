@@ -9,20 +9,20 @@ from pathlib import Path
 file_dir = Path(__file__).parent.absolute()
 __version__ = "vendored from spaudiopy master a75c282 (2026-10-18)"   # upstream asks git for this; no repo here
 
-from . import decoder
-from . import grids
-from . import io
-from . import process
-from . import parsa
-from . import sph
-from . import sig
-from . import utils
+import importlib
+
+_SUBMODULES = ('binaural', 'data', 'decoder', 'grids', 'io', 'parsa', 'plot', 'process', 'room', 'sph', 'sig', 'utils')
+__all__ = list(_SUBMODULES)
 
 
 def __getattr__(name):
-    """`plot` is loaded on first use: it imports matplotlib, which a render never needs (0.35 s of every import,
-    and a hard dependency of the mix when it was imported here)."""
-    if name == 'plot':
-        import importlib
-        return importlib.import_module('.plot', __name__)
+    """Every submodule loads on first use.
+
+    `plot` alone used to be lazy because it imports matplotlib; the rest were eager, so `from spatial_hrtf import sph`
+    (the gate's channel rows) dragged in `decoder -> io` and `process`, and a machine without h5py or resampy could
+    not run the quality gate at all. A gate that cannot import a helper must still be able to report the rows it can
+    measure, so nothing is imported until a caller asks for it.
+    """
+    if name in _SUBMODULES:
+        return importlib.import_module('.' + name, __name__)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

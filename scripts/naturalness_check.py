@@ -357,7 +357,7 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None, model=None):
     mono = x.mean(axis=1) if x.ndim == 2 else x
     dur = len(mono) / sr
     if dur < 1.0:
-        return [('PASS', 'cochlear_roughness', 'Audio duration < 1.0s; roughness check skipped')], dict(mean_roughness=0.0, max_roughness=0.0)
+        return [('INFO', 'cochlear_roughness', 'Audio duration < 1.0s: not measured, not passed')], dict(mean_roughness=0.0, max_roughness=0.0)
 
     # the model, its numbers and the two legacy knobs all come from the `roughness` row of the gate profile
     intent = dict(is_ambient=False, is_tense=False, is_dance=False, is_cliffhanger=False)

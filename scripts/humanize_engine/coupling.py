@@ -24,6 +24,8 @@ jitter note to note; `cap_ms` bounds what one player can be moved by the couplin
 """
 import numpy as np
 
+import roles as rolelib
+
 COUPLING_KEYS = ('mode', 'gain', 'anchor', 'window_beats', 'cap_ms')
 MODES = ('off', 'phase')
 
@@ -48,17 +50,34 @@ def resolve_block(score):
     window = float(blk.get('window_beats', 2.0))
     if not 0.0 <= window <= 16.0:
         raise ValueError('score.coupling.window_beats: expected 0..16')
-    return dict(mode=mode, gain=gain, anchor=str(blk.get('anchor', 'auto') or 'auto'),
-                window_beats=window, cap_ms=cap_ms)
+    anchor = str(blk.get('anchor', 'auto') or 'auto')
+    names = [str(t.get('name')) for t in (score or {}).get('tracks', []) or [] if t.get('name')]
+    if anchor != 'auto' and names and anchor not in names:
+        raise ValueError(f"score.coupling.anchor: no track named {anchor!r}; tracks: {', '.join(names)}")
+    return dict(mode=mode, gain=gain, anchor=anchor, window_beats=window, cap_ms=cap_ms)
+
+
+def _role_of(roles, name):
+    """The canonical role of a part (scripts/roles.py), or '' when it has none or an unknown one."""
+    try:
+        return rolelib.canonical((roles or {}).get(name))
+    except rolelib.UnknownRole:
+        return ''
 
 
 def _pick_anchor(parts, roles, wanted):
-    """The reference part: an explicit name, or drums -> bass -> the first named part."""
+    """The reference part: an explicit name, or drums -> bass -> the first named part.
+
+    An explicit anchor that is not among the parts is an error: silently anchoring on the alphabetically first
+    part would report a correction against a reference the score never asked for.
+    """
     if wanted and wanted != 'auto':
-        return wanted if wanted in parts else sorted(parts)[0]
-    for family in (('drums', 'drum'), ('bass', 'bass', 'bassline')):
+        if wanted not in parts:
+            raise ValueError(f'coupling.anchor: {wanted!r} did not render a part; parts: {", ".join(sorted(parts))}')
+        return wanted
+    for family in (('drum',), ('bass',)):
         for name in sorted(parts):
-            if str((roles or {}).get(name, '')).lower() in family:
+            if _role_of(roles, name) in family:
                 return name
     return sorted(parts)[0]
 
@@ -79,8 +98,11 @@ def phase_correction(events_by_part, tm, block=None, roles=None):
     # onsets are matched by nearest written beat, not by an exact float: humanization moves each part by a few
     # tens of ms, so two parts playing "the same" beat are never at the same float. 0.08 beats is well under a
     # 32nd note and well over any microtiming the engine applies, so it clusters the same written onset only.
-    abeats = np.array(sorted({float(e['beat']) for e in parts[anchor]}), float)
-    atimes = np.array([next(float(x['t']) for x in parts[anchor] if float(x['beat']) == float(b)) for b in abeats], float)
+    atimes_by_beat = {}
+    for e in parts[anchor]:                       # one pass: the per-beat rescan was O(unique onsets x anchor notes)
+        atimes_by_beat.setdefault(float(e['beat']), float(e['t']))
+    abeats = np.array(sorted(atimes_by_beat), float)
+    atimes = np.array([atimes_by_beat[b] for b in abeats], float)
     gain = float(block.get('gain', 0.6))
     cap = float(block.get('cap_ms', 25.0)) / 1000.0
     window = float(block.get('window_beats', 2.0))

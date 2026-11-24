@@ -148,12 +148,20 @@ def is_focus(name, focus):
         return False
 
 
-def focus_of(score):
-    """The declared focus of a score: meta.focus, then score.focus, then the historical default."""
+def focus_of(score, strict=False):
+    """The declared focus of a score: meta.focus, then score.focus, then the historical default.
+
+    strict=True raises UnknownRole for a word the engine has no focus for. The gate uses it so a typo is a FAIL
+    naming the word, not a silent melody piece; callers that only need the default keep the lenient behaviour.
+    """
     meta = score.get('meta') or {}
     raw = score.get('focus') or meta.get('focus') or 'melody'
     n = normalise(raw)
-    return n if n in FOCUS_ROLES else 'melody'
+    if n in FOCUS_ROLES:
+        return n
+    if strict:
+        raise UnknownRole(f'focus {raw!r} is not one of {", ".join(FOCUS)}')
+    return 'melody'
 
 
 def focus_roles(focus):

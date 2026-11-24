@@ -1287,19 +1287,27 @@ def focus_rows(score, out=None):
         return rows
     meta = score.get('meta') or {}
     explicit = score.get('focus') or meta.get('focus')
-    want = list(_roles.focus_roles(_roles.focus_of(score))) if explicit else list(gp.focus_roles())
+    try:
+        focus_name = _roles.focus_of(score, strict=True)
+    except _roles.UnknownRole:
+        rows.append(('FAIL', 'focus.declared',
+                     f'{explicit!r} is not a focus this engine knows; use one of {", ".join(_roles.FOCUS)}'))
+        if out is not None:
+            out.extend(rows)
+        return rows
+    want = list(_roles.focus_roles(focus_name)) if explicit else list(gp.focus_roles())
     if not want:
         rows.append(('INFO', 'focus.declared', 'this type has no line by definition; nothing to check'))
         return rows
     found = _roles.tracks_by_role(score, want, min_notes=4)
     if found:
         names = ', '.join(f'{t.get("name", "?")} ({r})' for t, r in found[:4])
-        how = f'declared focus {_roles.focus_of(score)}' if explicit else f'{gp.label} expects one'
+        how = f'declared focus {focus_name}' if explicit else f'{gp.label} expects one'
         prof = set(gp.focus_roles())
-        dec = set(_roles.focus_roles(_roles.focus_of(score)))
+        dec = set(_roles.focus_roles(focus_name))
         if explicit and prof and not (prof & dec):
             rows.append(('WARN', 'focus.declared',
-                         f'carried by {names}; the piece declares focus {_roles.focus_of(score)}, but {gp.label} '
+                         f'carried by {names}; the piece declares focus {focus_name}, but {gp.label} '
                          f'is judged around {", ".join(sorted(prof))}. Set piece_type to the type that matches, '
                          'or the report will apply the wrong rule'))
         else:
@@ -1988,9 +1996,15 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mo
     _timed('render', lambda: render_checks(out))
     expression_rows(score, out)
     _timed('audio', lambda: audio_checks(rendered, score, out, metrics=metrics, analysis=analysis))
-    # Deliverable rows: only the formats this score asked for, measured against the target's own data.
-    import spatial_gate
-    _timed('outputs', lambda: spatial_gate.output_rows(score, rendered, out))
+    # Deliverable rows: only the formats this score asked for, measured against the target's own data. A missing
+    # optional dependency (the HRTF stack, an ffmpeg build) must be a row, not the end of the report: a gate that
+    # dies while importing a helper certifies nothing and explains nothing.
+    try:
+        import spatial_gate
+        _timed('outputs', lambda: spatial_gate.output_rows(score, rendered, out))
+    except Exception as exc:
+        out.append(('WARN', 'outputs', f'the deliverable rows did not run ({type(exc).__name__}: {exc}); '
+                                     'no delivered format was measured'))
     project_dir = os.path.dirname(s_dir) if s_dir else None
     _timed('master_extra', lambda: master_extra_rows(score, rendered, out, metrics=metrics,
                                                      project_dir=project_dir))
