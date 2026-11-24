@@ -473,7 +473,8 @@ humanization change belongs in the module that owns the number, and its starting
 | `humanize_engine/form.py` | phrases, motor streams, metric weight, tonal charge, key parsing | hold a preset value |
 | `humanize_engine/timemap.py` | `TempoMap`, `tempo_map_for`, phrase spans, sounding roots | write a note |
 | `humanize_engine/swing.py` | swing ratio, off-beat shift, on-beat delay | decide whether to swing |
-| `humanize_engine/ensemble.py` | section expansion, the per-part asynchrony field | couple parts in a feedback loop |
+| `humanize_engine/ensemble.py` | section expansion, the per-part asynchrony field | correct one part toward another |
+| `humanize_engine/coupling.py` | the opt-in `score.coupling` block: first-order phase correction, its curves and cache signature | iterate, or invent a tempo |
 | `humanize_engine/microtiming.py` | short/long 1/f error, per-limb motor error, tempo-relative spread | velocity, durations |
 | `humanize_engine/dynamics.py` | accent, phrase arch, contour, runs, chord voicing, velocity wander | timing |
 | `humanize_engine/articulation.py` | gate, velocity-duration coupling, legato overlap, pedal | choose an articulation |
@@ -493,6 +494,7 @@ Rules:
 4. **Measure, do not claim.** `python scripts/humanize_report.py <score.json>` prints the tempo-adjusted
    deviation, lag-1, velocity/duration coupling, DNVR/DNODR, swing ratio and ensemble spread. It is
    advisory; it never edits the piece and it is not a gate row.
-5. **Opt-in stays opt-in.** `timing_beat_frac`, `pocket`, `swing_downbeat_ms` and `score.asynchrony` all
-   default to the old behaviour. A default that changes every render is a version bump, not a tweak.
+5. **Opt-in stays opt-in.** `timing_beat_frac`, `pocket`, `swing_downbeat_ms`, `score.asynchrony` and
+   `score.coupling` all default to the old behaviour. A default that changes every render is a version
+   bump, not a tweak.
 

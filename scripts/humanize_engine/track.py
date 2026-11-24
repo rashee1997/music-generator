@@ -23,6 +23,7 @@ import roles as rolelib
 from . import pocket as pocketlib
 from .articulation import auto_pedal, finalize_durations
 from .config import DRUM_PUSH, FIG, JUST, ROLE, VEL_LEAD_WORDS, resolve
+from .coupling import curve_at
 from .drums import _drum_run
 from .dynamics import shape_velocity
 from .form import (_circle_distance, _limb_of, _mood_profile, _phrase_ids, _vel127, key_tonic)
@@ -307,6 +308,11 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
     # a named part reads the piece's ensemble asynchrony: one field, built by tempo_map_for
     async_ms = float((getattr(tm, 'asynchrony', None) or {}).get(str(part), 0.0)) if part is not None else 0.0
     start = start + async_ms / 1000.0
+    # and its own phase-coupling correction, when the score asked for one (build_stems pre-pass)
+    if part is not None:
+        curve = (getattr(tm, 'phase_curves', None) or {}).get(str(part))
+        if curve:
+            start = start + curve_at(curve, t_beats)
     dur = finalize_durations(t0, t1, rd, c, v, phrases, base_role, is_drum, rng, n, FIG + ('counter',))
     # A negative offset near bar 1 used to collapse every affected note onto sample 0, phase-locking a chord and
     # leaving the list unsorted. Clamp, then stagger the clamped onsets so the attack order survives.

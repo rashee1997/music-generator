@@ -1,8 +1,9 @@
 # Humanize engine plan
 
 Status: the engine split, the schema fix, tempo-relative spread, pockets, the swing on-beat delay, the
-ensemble asynchrony field and the humanize report are implemented and tested. Cross-track phase correction
-and breath/phrase constraints are not implemented; both are stated as limits rather than approximated.
+ensemble asynchrony field, cross-track phase coupling (`score.coupling`) and the humanize report are
+implemented and tested. Breath/phrase constraints, iterative coupling and a part-to-part coupling network are
+not implemented; they are stated as limits rather than approximated.
 
 The engine is `scripts/humanize_engine/`; `scripts/humanize.py` is the facade that keeps every existing
 caller working. Rules and module ownership: `AGENTS.md` section 11. The behaviour reference:
@@ -19,7 +20,8 @@ caller working. Rules and module ownership: `AGENTS.md` section 11. The behaviou
 | 5 | Pockets (`pocket`) as data | a pushed or laid-back feel is timing **and** dynamics, per limb and tempo-dependent | `pocket.py`, `references/data/presets/humanize/*.json` |
 | 6 | Swing on-beat delay (`swing_downbeat_ms`) | measured swing delays the on-beat note too | `swing.py` |
 | 7 | The ensemble asynchrony field (`score.asynchrony`) | the parts of a real ensemble are 20-50 ms apart, with the bass as the reference; the engine had only a shared drift | `ensemble.py`, `timemap.py`, `track.py` |
-| 8 | `scripts/humanize_report.py` | "more human" was unfalsifiable: no tempo-adjusted deviation, spread, swing ratio or expressive-performance ratio | `report.py` |
+| 8 | Cross-track phase correction (`score.coupling`) | the asynchrony field gives the spread but no coordination; the measured model is a first-order correction toward the reference | `coupling.py`, `render_natural._coupling_prepass` |
+| 9 | `scripts/humanize_report.py` | "more human" was unfalsifiable: no tempo-adjusted deviation, spread, swing ratio or expressive-performance ratio | `report.py` |
 
 All four new score/track keys default to the old behaviour, so a score that does not ask renders exactly as
 before. The renderer version is `natural-9` because the schema fix can change the example presets that named
@@ -35,6 +37,7 @@ a base preset.
 | `swing_downbeat_ms` | same | 0 | delay the notes that land on a beat (clipped +/-20 ms) |
 | `pocket` | drum track `humanize` | none | a named pocket from `references/data/presets/humanize/` |
 | `asynchrony` | score | absent | `{amount_ms}`: one stable signed offset per named part, capped 35 ms |
+| `coupling` | score | absent | `{mode: "phase", gain, anchor, window_beats, cap_ms}`: first-order phase correction between parts; each part's curve is in its cache key |
 
 ## 3. Measurement
 
@@ -47,11 +50,11 @@ the split so a refactor that moves one float fails.
 
 ## 4. Not implemented, and why
 
-- **Feedback phase correction between parts.** The asynchrony field is deterministic and per part; a
-  first-order correction of one part toward another's realised timing (Hennig 2014; the
-  coupled-oscillator humanizer, PLOS One 2025) needs a score-level pass over every humanized part before
-  the parallel render, plus a cache key over the coupled result. The measured spread is already covered by
-  the field; the coordination structure is the part that remains.
+- **Iterative and networked coupling.** The implemented correction is first-order: every part is pulled once
+  toward one anchor from the onsets they share, with a bounded, smoothed curve. A second pass, a
+  part-to-part network (a section following its principal while the principal follows the bass), and per-player
+  ensemble jitter in the estimate are not modelled; the curve is recomputed only when the score or seed
+  changes, which is what keeps stems cacheable.
 - **Breath and hand-span constraints.** The sources found are orchestration practice, not measurements;
   under the project's own rule no number goes in without a research note. A phrase a player cannot play is
   still a documented limit.
@@ -68,4 +71,5 @@ the split so a refactor that moves one float fails.
 | pocket | laid-back snare later and louder than the hat, pushed hat earlier than the snare, unknown name raises |
 | swing delay | every on-beat event moves by exactly the configured ms |
 | asynchrony | bass negative, strings positive, deterministic, absent/zero means no field, a named part receives exactly its offset |
+| coupling | off by default; a 12 ms late part loses 60% of its RMS deviation and keeps the rest; correction is capped at 25 ms; the anchor is drums then bass; a part with one shared onset gets no curve; the curve is in the cache key and the report |
 | report | a humanized line has non-zero deviation; a grid-perfect line is flat with no lag-1 and no swing; a known 10 ms offset reads 10 ms |

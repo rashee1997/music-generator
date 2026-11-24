@@ -13,8 +13,8 @@ kit behaviour; `track` runs the stages; `report` measures what came out.
 `scripts/humanize.py` is the facade: it re-exports every name from these modules so existing callers and
 tests keep working. The engine never imports the facade.
 """
-from . import (articulation, config, drums, dynamics, ensemble, form, microtiming, noise, pocket, report,
-               swing, timemap, track)
+from . import (articulation, config, coupling, drums, dynamics, ensemble, form, microtiming, noise, pocket,
+               report, swing, timemap, track)
 
-__all__ = ['articulation', 'config', 'drums', 'dynamics', 'ensemble', 'form', 'microtiming', 'noise',
-           'pocket', 'report', 'swing', 'timemap', 'track']
+__all__ = ['articulation', 'config', 'coupling', 'drums', 'dynamics', 'ensemble', 'form', 'microtiming',
+           'noise', 'pocket', 'report', 'swing', 'timemap', 'track']

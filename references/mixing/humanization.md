@@ -128,9 +128,11 @@ about what a part is.
 - **Moods are a separate axis.** `MOODS` (`tender`, `bright`, `solemn`, `urgent`) scale level, gate, accent,
   duration contrast, strum and rubato on top of any groove preset (GERM: Juslin, Friberg & Bresin 2001). Set
   `"mood"` on the score, or pass `mood=` to `humanize_track`; an unknown name raises.
-- **A declared limit: feedback coupling between players.** The vertical spread is the deterministic asynchrony field
-  (section 1f); there is no first-order phase correction of one part toward another's realised timing (Hennig 2014).
-  That would need a score-level pass over every humanized part before the parallel render, and is not in the engine.
+- **A declared limit: the coupling is first-order and score-level.** Each part is corrected once, toward one
+  anchor, from the onsets it shares with it; there is no iterative re-estimation after the correction, no
+  part-to-part network (a string section correcting toward the cello while the cello follows the bass), and
+  ensemble expansion's per-player jitter is not in the estimate. Breath and hand-span constraints are still not
+  modelled: a phrase a player cannot play is not shortened by the engine.
 
 ## 1e. Tempo-relative spread, ensemble field, pockets, swing shape
 
@@ -148,6 +150,13 @@ about what a part is.
   JNMR 2017 found a 2-26 ms hi-hat lead); magnitudes are starting values.
 - **`swing_downbeat_ms`** (default 0, clipped +/-20 ms): delays the notes on a beat, because measured swing is
   a long-short pair with a late on-beat note too (Communications Physics 2022).
+- **`score.coupling`** (absent = off): `{mode: "phase", gain: 0.6, anchor: "auto", window_beats: 2, cap_ms: 25}`.
+  A pre-pass humanizes every part without audio, measures each one's asynchrony against the anchor (drums, then
+  bass) at the onsets they share, and gives each part a bounded, smoothed correction curve that
+  `humanize_track` adds to its onsets. This is the measured first-order linear correction (J. R. Soc. Interface
+  2014; the coordination structure listeners hear, PLOS One 2025), not a new offset: the stable vertical field
+  of section 1f supplies the spread, this removes part of it. `gain` is a starting value at the 0.6 the
+  first-order model predicts for minimal asynchrony variance; `cap_ms` bounds what one player can be moved.
 
 ## 2. Presets (in `humanize.PRESETS`)
 

@@ -1106,7 +1106,7 @@ def _track_cache_dir():
     return d
 
 
-_RENDERER_VERSION = 'natural-9'   # bump when the renderer changes what a stem sounds like or reports
+_RENDERER_VERSION = 'natural-10'   # bump when the renderer changes what a stem sounds like or reports
 _CODE_HASH = None
 
 
@@ -1188,6 +1188,15 @@ def _track_seed(name, tr, tm, cfg):
     return int(hashlib.sha256(sig.encode('utf-8')).hexdigest()[:8], 16) % (2 ** 31 - 1)
 
 
+def _phase_sig(tm, name):
+    """The phase-coupling correction curve of one part, in the cache key: a coupling pre-pass that moves one
+    part's onsets must not leave another render's stem looking current. None when the score asked for none."""
+    curve = (getattr(tm, 'phase_curves', None) or {}).get(str(name))
+    if not curve:
+        return None
+    return [[round(float(b), 4), round(float(v), 6)] for b, v in curve]
+
+
 def _track_cache_key(tr, seed, ts, swing, tm, global_dyn, sr, sfpath=None):
     """A hash of everything that changes the rendered bytes: the track, the tempo map, the renderer code, the
     resolved presets and the SoundFont itself. Same score + same project + same code -> same key, any process.
@@ -1208,6 +1217,7 @@ def _track_cache_key(tr, seed, ts, swing, tm, global_dyn, sr, sfpath=None):
     sig = json.dumps(dict(tr=stem_cache.dry_track(tr), seed=seed, ts=list(ts), swing=swing, global_dyn=global_dyn,
                           mood=getattr(tm, 'mood', None), key=getattr(tm, 'key', None), roots=roots_sig,
                           asynchrony=getattr(tm, 'asynchrony_sig', None),
+                          phase=_phase_sig(tm, tr.get('name')),
                           sr=sr, renderer=_RENDERER_VERSION, code=_code_hash(), sf=sf_id, oversample=_oversample(),
                           sfz_patch=_sfz_patch_id(tr),
                           presets=stem_cache.dry_presets(_preset_fingerprint(tr))),
@@ -1278,6 +1288,53 @@ def _mark_accompanied(tr, tracks):
         sounding = k > 0 and ends[k - 1] > n['t']
         notes.append(dict(n, acc=1.0 if sounding else 0.0))
     return dict(tr, notes=notes)
+
+
+def _coupling_prepass(score, tm, marked, cfg, seed, ts, swing):
+    """Cross-track phase correction, computed once per piece before the parallel render.
+
+    Every participating part is humanized without audio, the asynchrony against the anchor is measured at the
+    onsets they share, and each part gets a bounded, smoothed correction curve on `tm.phase_curves` that
+    `humanize_track` adds to its onsets. The curves are deterministic functions of the score and seed, and a
+    part's curve is in its cache key, so stems stay cacheable. Ensemble expansion (per-player jitter) is not
+    modelled here: it averages out at the section level and the correction is first-order.
+    """
+    block = hz.coupling.resolve_block(score)
+    tm.phase_curves = {}
+    tm.phase_stats = None
+    if block['mode'] != 'phase':
+        return
+    events, roles = {}, {}
+    for i, name, tr in marked:
+        raw = str(tr.get('instrument', ''))
+        if raw.startswith(('env:', 'sfx:')):
+            continue
+        inst_cfg = presets.find_instrument(raw) or presets.find_instrument(_name(raw))
+        role = tr.get('role') or ('drum' if (inst_cfg or {}).get('percussion') else 'chord')
+        is_drum = role == 'drum' or bool((inst_cfg or {}).get('percussion'))
+        notes = []
+        try:
+            for n in tr.get('notes', []):
+                n = dict(n)
+                n['p'] = _drum_key(n['p']) if is_drum else cli_util.midi_int(n['p'], f'track {name}: ')
+                notes.append(n)
+        except (KeyError, TypeError, ValueError):
+            continue                      # a malformed note is reported by the render, not guessed at here
+        if not notes:
+            continue
+        try:
+            events[name] = hz.humanize_track(notes, tm, tr.get('humanize', cfg), role=role,
+                                             seed=_track_seed(name, tr, tm, cfg), ts=tuple(ts), swing=swing,
+                                             articulation=(tr.get('articulation') or (inst_cfg or {}).get('articulation')),
+                                             instrument=raw, part=name)
+        except (ValueError, KeyError, TypeError) as exc:
+            print(f'  coupling: skipped {name} ({exc})', flush=True)
+            continue
+        roles[name] = role
+    tm.phase_curves, tm.phase_stats = hz.coupling.phase_correction(events, tm, block, roles=roles)
+    for name, curve in tm.phase_curves.items():
+        if curve:
+            _record(name, coupling_correction_ms=round(max(abs(v) for _, v in curve) * 1000.0, 2))
 
 
 def _dc_block(x, sr=44100, cutoff_hz=5.0, order=2):
@@ -1356,6 +1413,7 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
         REPORT.clear()                 # per-track entries of an earlier score must not leak into this one
     stems = {}
     marked = [(i, tr.get('name', f'track{i}'), _mark_accompanied(tr, score['tracks'])) for i, tr in enumerate(score['tracks'])]
+    _coupling_prepass(score, tm, marked, cfg, seed, ts, score.get('swing', 0.5))
     sfz_jobs = [(i, name, tr) for i, name, tr in marked if _is_sfz_track(tr)]
     other_jobs = [(i, name, tr) for i, name, tr in marked if not _is_sfz_track(tr)]
 

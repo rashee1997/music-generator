@@ -12,6 +12,7 @@ The engine itself lives in `scripts/humanize_engine/`, one module per concern:
     microtiming.py  the timing stage: two-scale 1/f error and per-limb motor error
     dynamics.py     the velocity stage: accent, phrase arch, contour, runs, chord voicing
     articulation.py gate, duration rules, legato overlap and the piano pedal
+    coupling.py     cross-track phase correction (opt-in `score.coupling`)
     drums.py        kit runs, flams and pocket application
     pocket.py       a pushed/laid-back groove as data (timing AND velocity per limb)
     track.py        humanize_track: stage order and event assembly
@@ -23,11 +24,11 @@ keep working for callers that predate the split. The engine never imports this f
 """
 import sys
 
-from humanize_engine import (articulation, config, drums, dynamics, ensemble, form, microtiming, noise,
-                             pocket, report, swing, timemap, track)
+from humanize_engine import (articulation, config, coupling, drums, dynamics, ensemble, form, microtiming,
+                             noise, pocket, report, swing, timemap, track)
 
 _MODULES = (config, noise, form, timemap, swing, ensemble, drums, dynamics, microtiming, articulation,
-            pocket, report, track)
+            coupling, pocket, report, track)
 _SKIP = {'annotations'}
 
 for _module in _MODULES:
