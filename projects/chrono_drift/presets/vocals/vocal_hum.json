@@ -1,0 +1,31 @@
+{
+  "name": "vocal_hum",
+  "description": "Warm organic humming formant choir in mid-backstage",
+  "synthesis": "formant",
+  "vowel": "m",
+  "character": "a small close group humming with the mouth closed, warm and a little shy, breathing between phrases",
+  "hum": true,
+  "expression": "gentle",
+  "ensemble": {
+    "voices": 4,
+    "cohesion": 0.4,
+    "pitch_spread_cents": 8.0
+  },
+  "vibrato": {
+    "depth_cents": 18.0,
+    "rate_hz": 4.8
+  },
+  "articulation": {
+    "attack_ms": 250.0,
+    "release_ms": 400.0
+  },
+  "gain_db": -10.0,
+  "reverb": 0.38,
+  "spatial": {
+    "azimuth": 20.0,
+    "elevation": 6.0,
+    "distance": 2.8,
+    "space": "hall",
+    "binaural": true
+  }
+}

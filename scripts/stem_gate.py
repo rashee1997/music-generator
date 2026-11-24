@@ -255,8 +255,14 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
     bpm = _clock(score, [])           # run_stem_gate reports a tempo map that cannot be built, once
 
     if gp.on('stem.dc'):
-        res = gc.check_dc(sig, dc_max=gp.param('stem.dc', 'dc_max'))
-        _emit(rows, metrics, 'stem.dc', 'FAIL' if res['value'] > res['threshold'] else 'PASS', res, name)
+        if _role_of(track) == 'fx':
+            # A one-shot effect stem is silent between hits, so the 1 s block means run from zero to the hit's own
+            # mean: that is the hit, not a DC baseline. The row cannot apply, and says so (INFO), like stem.edge.
+            _skip(rows, metrics, 'stem.dc', name, gp,
+                  why='a one-shot effect stem has no sustained baseline to drift')
+        else:
+            res = gc.check_dc(sig, dc_max=gp.param('stem.dc', 'dc_max'))
+            _emit(rows, metrics, 'stem.dc', 'FAIL' if res['value'] > res['threshold'] else 'PASS', res, name)
     else:
         _skip(rows, metrics, 'stem.dc', name, gp)
 
@@ -327,7 +333,12 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
 
     if perc:
         _skip(rows, metrics, 'stem.tick', name, gp, why='a percussive stem is allowed a pulse')
-    if track is not None and _beatless(track, bpm):
+    if _role_of(track) == 'fx':
+        # Three irregular whooshes are a sequence of triggers, not a stem that should hold still; an event pattern
+        # with no pulse is what the row exists to find, so it cannot judge one.
+        _skip(rows, metrics, 'stem.tick', name, gp,
+              why='a one-shot effect stem is a sequence of triggers, not a pulse to hold still')
+    elif track is not None and _beatless(track, bpm):
         if gp.on('stem.tick'):
             res = gc.check_tick(sig, rho_min=gp.param('stem.tick', 'rho'),
                                 min_events=int(gp.param('stem.tick', 'min_events')),

@@ -971,9 +971,19 @@ def figure_and_bed(score, stems):
     is in the profile's focus, against the sum of every pad / chord / arp / counter / drone / texture stem that is not
     a figure. (None, None, []) when either side is missing."""
     import gate_profiles
+    import roles as rolelib
     gp = gate_profiles.resolve(score)
     roles = {t.get('name'): t.get('role') for t in score.get('tracks', [])}
+    # A declared focus wins over the profile default: a `cinematic` cue may be led by a line, a texture or a
+    # drone, and with the profile's whole list a loud drone was picked as "the figure" for a piece that declared
+    # `melody`, so the masking and pitch rows judged the pedal against itself.
+    explicit = score.get('focus') or (score.get('meta') or {}).get('focus')
     focus = set(gp.focus_roles())
+    if explicit:
+        try:
+            focus = set(rolelib.focus_roles(rolelib.focus_of(score, strict=True)))
+        except rolelib.UnknownRole:
+            pass
     leads = [n for n in stems if _role_in(roles.get(n), focus)]
     beds = [n for n in stems if _role_in(roles.get(n), ('pad', 'chord', 'arp', 'counter', 'drone', 'texture'))
             and n not in leads]
@@ -1518,6 +1528,10 @@ def _place_of(score, tr, imm):
     if inst:
         try:
             pc = presets.exact('instruments', inst) or presets.exact('vocals', inst) or {}
+            # Sound effects live under presets/sfx and are named `sfx:<preset>`: the mixer finds them there, so a
+            # placement row that only looked in instruments judged the whoosh at 0 deg while it played at -120.
+            if not pc and inst.startswith('sfx:'):
+                pc = presets.exact('sfx', inst.split(':', 1)[1]) or {}
         except Exception:
             pc = {}
     role, el, sp, _ = project_gate.requested_place(dict(tr, instrument=inst), pc, imm)
@@ -1538,6 +1552,8 @@ def _has_staging(score, tr):
     if inst:
         try:
             pc = presets.exact('instruments', inst) or presets.exact('vocals', inst) or {}
+            if not pc and inst.startswith('sfx:'):
+                pc = presets.exact('sfx', inst.split(':', 1)[1]) or {}
         except Exception:
             pc = {}
         if pc.get('spatial'):

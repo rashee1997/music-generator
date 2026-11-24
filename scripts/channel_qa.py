@@ -23,6 +23,11 @@ This module measures only. Thresholds come from the gate profile (`gate_profiles
 """
 import numpy as np
 
+try:  # SciPy's FFT path is O(n log n); NumPy's direct correlate is O(n*m) and stalls on a full bar.
+    from scipy.signal import correlate as _signal_correlate
+except Exception:  # pragma: no cover - SciPy is a render dependency, the fallback keeps the row runnable
+    _signal_correlate = None
+
 # Starting values, not calibrated against a corpus. They are registered as gate-profile parameters so a
 # piece type can relax or skip a row with a reason rather than the engine hiding the measurement.
 PARAMS = {
@@ -95,19 +100,38 @@ def _corr(a, b, max_lag=64):
     Zero-lag correlation of two bars of a sustained tone can be negative just because the bar boundary lands at
     a different phase. The best lag removes that boundary phase; an inverted bar still has a negative peak.
     """
-    a = np.asarray(a, dtype=np.float64) - np.mean(a)
-    b = np.asarray(b, dtype=np.float64) - np.mean(b)
+    a = np.asarray(a, dtype=np.float64)
+    b = np.asarray(b, dtype=np.float64)
+    n = min(len(a), len(b))
+    if n < 2:
+        return 0.0
+    # Correlate the truncated pair: the lag sums only cover samples both bars have.
+    a = a[:n] - np.mean(a[:n])
+    b = b[:n] - np.mean(b[:n])
     den = float(np.sqrt(np.sum(a * a) * np.sum(b * b)))
     if den <= 1e-20:
         return 0.0
-    c = np.correlate(a, b, mode='full')
-    mid = len(b) - 1
-    lo, hi = max(0, mid - int(max_lag)), min(len(c), mid + int(max_lag) + 1)
-    mag = np.abs(c[lo:hi])
+    lag = max(1, min(int(max_lag), n - 1))
+    if _signal_correlate is not None:
+        # The same linear cross-correlation as np.correlate, in O(n log n) instead of O(n*m). A 3.3 s bar at
+        # 44.1 kHz is 1.5e5 samples, so the direct path cost ~2e10 multiply-adds per call; NumPy's own docs
+        # point to scipy.signal.correlate for arrays around 1e5, and SciPy documents method='fft' as the fast path.
+        # FFT rounding is ~1e-12 relative, far below the polarity thresholds this feeds.
+        full = np.asarray(_signal_correlate(a, b, mode='full', method='fft'), dtype=np.float64)
+        mid = n - 1
+        c = full[mid - lag:mid + lag + 1]
+    else:
+        c = np.empty(2 * lag + 1, dtype=np.float64)
+        for j, d in enumerate(range(-lag, lag + 1)):
+            if d >= 0:
+                c[j] = float(np.dot(a[d:], b[:n - d]))
+            else:
+                c[j] = float(np.dot(a[:n + d], b[-d:]))
+    mag = np.abs(c)
     # A sustained tone has peaks of both signs a half period apart that are almost equally strong, so the largest one
     # alone is arbitrary. Among the peaks within 5 % of the strongest, the one nearest zero lag decides.
     near = np.flatnonzero(mag >= 0.95 * mag.max())
-    i = lo + int(near[np.argmin(np.abs(lo + near - mid))])
+    i = int(near[np.argmin(np.abs(near - lag))])
     return float(c[i] / den)
 
 
@@ -140,10 +164,16 @@ def _groups(positions):
 
 
 def _energy(signals, a, b, idx):
+    """Mean energy of a group of channels over one bar.
+
+    The mean, not the sum: a left/right or front/back ratio must not depend on how many speakers the layout
+    gives each side. Summing the channel means made a four-speaker back group read about 1.25 dB louder than a
+    three-speaker front group carrying the same level, which moved the balance row without any pan changing.
+    """
     if a >= b or not idx:
         return 0.0
     seg = np.asarray(signals[a:b], dtype=np.float64)[:, idx]
-    return float(np.sum(np.mean(np.square(seg), axis=0)))
+    return float(np.mean(np.square(seg)))
 
 
 def _conflicts(signals, levels, edges, positions, names, params):
@@ -154,6 +184,12 @@ def _conflicts(signals, levels, edges, positions, names, params):
     stable = float(params['stable_db'])
     neigh = float(params['polarity_neighbor'])
     groups = _groups(positions)
+    # Each balance test reads three bars of one group, so measure every group's bars once instead of three times.
+    group_energy = {}
+    for label, ia, ib in groups:
+        group_energy[label] = (
+            [_energy(signals, edges[k], edges[k + 1], ia) for k in range(len(edges) - 1)],
+            [_energy(signals, edges[k], edges[k + 1], ib) for k in range(len(edges) - 1)])
     found = []
     seen = set()
 
@@ -162,8 +198,14 @@ def _conflicts(signals, levels, edges, positions, names, params):
         if key in seen:
             return
         seen.add(key)
-        item = dict(bar=bar + 1, channel=ch + 1, channel_name=names[ch] if ch < len(names) else f'CH{ch + 1}',
-                    kind=kind, delta_db=float(delta))
+        # A balance finding is about a whole group, not one channel: its index is -1, and indexing names[-1]
+        # used to label it with the layout's last speaker (SR on 7.1). Keep the record honest instead.
+        if ch < 0:
+            item = dict(bar=bar + 1, channel=None, channel_name='group', kind=kind, delta_db=float(delta))
+        else:
+            item = dict(bar=bar + 1, channel=ch + 1,
+                        channel_name=names[ch] if ch < len(names) else f'CH{ch + 1}',
+                        kind=kind, delta_db=float(delta))
         item.update(extra)
         found.append(item)
 
@@ -212,12 +254,9 @@ def _conflicts(signals, levels, edges, positions, names, params):
                     add(b, ch, 'polarity', 0.0, corr_prev=cp, corr_next=cn)
         # One-bar spatial swing: the whole grouping moves while both neighbours agree.
         for label, ia, ib in groups:
-            ep, ec, en = (_energy(signals, edges[b - 1], edges[b], ia),
-                          _energy(signals, edges[b], edges[b + 1], ia),
-                          _energy(signals, edges[b + 1], edges[b + 2], ia))
-            fp, fc, fn = (_energy(signals, edges[b - 1], edges[b], ib),
-                          _energy(signals, edges[b], edges[b + 1], ib),
-                          _energy(signals, edges[b + 1], edges[b + 2], ib))
+            left, right = group_energy[label]
+            ep, ec, en = left[b - 1], left[b], left[b + 1]
+            fp, fc, fn = right[b - 1], right[b], right[b + 1]
             if min(ep, en, fp, fn) <= 1e-20:
                 continue
             rp, rc, rn = 10.0 * np.log10((ep + 1e-20) / (fp + 1e-20)), \

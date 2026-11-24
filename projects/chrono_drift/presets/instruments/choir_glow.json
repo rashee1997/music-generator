@@ -1,0 +1,64 @@
+{
+  "name": "choir_glow",
+  "character": "A distant choir overhead on the left, open vowels doubling the top of the chord through the fall.",
+  "description": "A human glow above the listener during the collapse; it does not sing words and it does not lead.",
+  "gm": "choir_aahs",
+  "role": "texture",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 8.0,
+    "drift_ms": 8.0,
+    "vel_sigma": 4.0
+  },
+  "spatial": {
+    "azimuth": -110.0,
+    "elevation": 20.0,
+    "distance": 4.5,
+    "kind": "spot",
+    "binaural": true
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 220
+    },
+    {
+      "type": "lp",
+      "f": 9000
+    }
+  ],
+  "gain_db": -14.0,
+  "reverb": 0.36,
+  "articulation": {
+    "overlap_ms": 40.0,
+    "gate": 0.99,
+    "release_ms": 500.0
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring | a distant choral texture above the ensemble at the peak",
+    "KB soundfont-velocity-and-realism section 4 | soft notes are darker; a starting-value curve",
+    "ESTIMATE: azimuth -110 deg, 38 deg up, 4.5 m and gain -14 dB are starting values for this piece"
+  ],
+  "mechanics_class": "blown",
+  "velocity_timbre": {
+    "points": [
+      [
+        25,
+        1400
+      ],
+      [
+        60,
+        2600
+      ],
+      [
+        100,
+        5200
+      ],
+      [
+        127,
+        7800
+      ]
+    ],
+    "bands": 4
+  }
+}

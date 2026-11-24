@@ -910,7 +910,7 @@ class MusicPipeline:
 
         # Additional requested formats: rendered only after the primary is certified, so one format's failure never
         # takes the certified master with it; each is checked against its own format rows before it enters out/.
-        extra_paths, certified = [], []
+        extra_paths, certified, extra_bad = [], [], []
         if fails == 0 and not draft and project_dir and len(outputs['selected']) > 1:
             self.log('5b', 'Additional deliverable formats')
             import spatial_gate
@@ -934,6 +934,7 @@ class MusicPipeline:
                     for n, d in bad:
                         print(f"  [FAIL] {n}: {d}")
                     print(f"  [WARN] {extra} did not pass its own format rows; its file stays at {extra_draft}")
+                    extra_bad.append(extra)
                     continue
                 final = os.path.join(project_dir, 'out', rel)
                 os.replace(extra_draft, final)
@@ -1004,15 +1005,27 @@ class MusicPipeline:
                 Path(json_report).write_text(json.dumps(report, indent=2), encoding='utf-8') if json_report else None
 
         elapsed = time.time() - t_start
+        if extra_bad:
+            # A requested format that failed its own rows is not a certified delivery, even though the stereo
+            # master above it is safe: this used to print "all gates passed" with the 8-channel file still a draft.
+            report['deliverables']['failed_formats'] = list(extra_bad)
+            report['gate']['stopped'] = 'extra_format'
         print("=" * 80)
-        status_str = "CERTIFIED PASS" if fails == 0 else f"BUILT WITH {fails} FAILS"
+        status_str = ("CERTIFIED PASS" if fails == 0 and not extra_bad else
+                      f"BUILT WITH {fails} FAILS" if fails else
+                      f"STEREO CERTIFIED, {len(extra_bad)} FORMAT(S) FAILED")
         print(f"  PIPELINE COMPLETE ({elapsed:.1f}s) -> {status_str}")
         if self.verbose:
             print(self.timing_report())
         print(f"  Master: {out_wav} ({analysis_summary(report)})")
         if project_dir:
             n = len(report['attempts'])
-            if fails == 0:
+            if fails == 0 and extra_bad:
+                print(f"  STOP: the stereo master is certified, but {len(extra_bad)} requested format(s) failed "
+                      f"their own rows and are not delivered: {', '.join(extra_bad)}.")
+                print("  Fix the failing format rows in the presets or the score, then run again; the certified "
+                      "stereo master stays at out/master.wav.")
+            elif fails == 0:
                 print(f"  STOP: all gates passed after {n} attempt(s). Run listen.py, then deliver.")
                 import importlib.util
                 if importlib.util.find_spec('earshot') is None:

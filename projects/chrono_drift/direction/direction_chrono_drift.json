@@ -1,0 +1,347 @@
+{
+  "title": "Chrono Drift",
+  "project": "A 30-second 8-channel cinematic cue for a time-travel sequence: a ship drifts, a wormhole opens, it falls through, and the field goes quiet.",
+  "version": 1,
+  "medium": "film cue",
+  "brief": "create realistic 30 sec 8 channel music and tests all qa gates including ears , use sf2 , SFX ambinces , it's about space time travel",
+  "audience": "a listener in a 7.1 room or on headphones who should feel the scale of space and the moment time folds",
+  "purpose": "a 30-second 7.1 cue in which the field tells the story: the ship sits in a wide cold space, a wormhole opens behind it, the fall lands as one hit in the centre, and the last note is left alone in the room",
+  "point_of_view": "the traveller's: the low pedal is the hull, the clock is the ship's own time, and the fall is heard from inside it",
+  "job": [
+    "state a short theme on the piano in the first eight seconds so the fall has something to lose",
+    "add one lever per section: strings and a pulse, then brass and the impact, then nothing",
+    "end on a tail, not a fade: the cut at 23.3 s leaves one piano note and the room"
+  ],
+  "story": "a pedal and a clock in a cold field; a whoosh crosses from behind as the wormhole opens; strings and harp rise; the clock stops, brass and choir arrive, and the ship falls on one impact at 20 s; at 23.3 s everything cuts to a pedal and a last piano D.",
+  "duration_s": 30.0,
+  "in_point_s": 0.0,
+  "out_point_s": 30.0,
+  "ending": "tail_out",
+  "feel": [
+    "wonder",
+    "mysterious",
+    "tense"
+  ],
+  "avoid_feel": [
+    "cheerful",
+    "comic",
+    "calm"
+  ],
+  "sections": [
+    {
+      "name": "Drift",
+      "start_s": 0.0,
+      "end_s": 10.0,
+      "energy": 0.18,
+      "action": "the ship hangs in a wide cold field; nothing moves but the clock",
+      "music": "the sub pedal holds D2, the celesta clock ticks every beat, and the piano states the theme alone",
+      "role": "place"
+    },
+    {
+      "name": "Approach",
+      "start_s": 10.0,
+      "end_s": 16.667,
+      "energy": 0.45,
+      "action": "a wormhole mouth opens behind the ship; the field tilts toward it",
+      "music": "the strings enter with a D minor swell, the harp answers in eighths, the timpani marks each bar, and the whoosh crosses from the rear left",
+      "role": "build"
+    },
+    {
+      "name": "Collapse",
+      "start_s": 16.667,
+      "end_s": 23.333,
+      "energy": 0.95,
+      "action": "the ship falls through; time folds and the frame shakes",
+      "music": "low brass stabs on the bar, the choir rises overhead, the timpani rolls, and the fall lands on one impact at 20 s; the strings climb to the top of their range and the clock keeps ticking underneath",
+      "role": "peak"
+    },
+    {
+      "name": "Afterglow",
+      "start_s": 23.333,
+      "end_s": 30.0,
+      "energy": 0.2,
+      "action": "silence after the fall; the ship is somewhere else",
+      "music": "everything cuts to the sub pedal, the clock and one long piano D, the strings hold a bare fifth, and the room tail carries the end",
+      "role": "button"
+    }
+  ],
+  "motifs": [
+    {
+      "name": "the drift theme",
+      "first_at_s": 0.4,
+      "shape": "eight notes: up a fifth, down a third, up a sixth to the octave, then step down and settle on the third; every note is a chord tone",
+      "returns": "10 s under the strings; 16.9 s as a two-note fragment while the brass takes over; 24 s as one long D5 alone"
+    }
+  ],
+  "instruments": [
+    "sub_pedal",
+    "piano_theme",
+    "clock_tick",
+    "strings_swell",
+    "harp_glint",
+    "timpani_hits",
+    "brass_low",
+    "choir_glow",
+    "sfx_whoosh",
+    "sfx_impact",
+    "deep_field"
+  ],
+  "avoid_sounds": [
+    "drum kit",
+    "electric guitar",
+    "four-on-the-floor kick",
+    "comedy brass"
+  ],
+  "pulse": "steady",
+  "tempo_bpm": [
+    72,
+    72
+  ],
+  "key": "D",
+  "mode": "minor",
+  "energy": 0.6,
+  "space": "chrono_drift_room",
+  "hits_at": [
+    10.0,
+    16.667,
+    20.0,
+    23.333
+  ],
+  "hits": [
+    {
+      "t": 10.0,
+      "kind": "motion",
+      "sync": "soft",
+      "sound": "the whoosh enters from the rear left as the strings swell",
+      "why": "the wormhole opening is a movement inside the field, not an edit"
+    },
+    {
+      "t": 16.667,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the clock stops and low brass lands on the bar",
+      "why": "the new level must be audible before the fall"
+    },
+    {
+      "t": 20.0,
+      "kind": "cut",
+      "sync": "hard",
+      "sound": "the impact: a sub drop and a noise crack in the centre",
+      "why": "the fall is the centre of the story and must land on the frame"
+    },
+    {
+      "t": 23.333,
+      "kind": "cut",
+      "sync": "hard",
+      "sound": "a cut to the pedal and one piano D",
+      "why": "a cut is stronger than a decay, and the afterglow needs a clean start"
+    }
+  ],
+  "mix_intent": {
+    "hero": "piano_theme",
+    "support": [
+      "strings_swell",
+      "brass_low",
+      "harp_glint"
+    ],
+    "sits_under": [
+      "sub_pedal",
+      "clock_tick",
+      "choir_glow",
+      "timpani_hits",
+      "sfx_whoosh",
+      "sfx_impact",
+      "deep_field"
+    ],
+    "must_hear": [
+      "the pedal from the first second",
+      "the theme in the first ten seconds",
+      "the whoosh crossing behind the listener",
+      "the impact at 20 s",
+      "the cut at 23.3 s"
+    ],
+    "leave_free_hz": []
+  },
+  "loudness_lufs": -16.0,
+  "true_peak_max": -1.5,
+  "delivery": {
+    "format": "wav",
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "stage": "web",
+    "output_targets": [
+      "stereo",
+      "immersive_7_1"
+    ]
+  },
+  "references": [
+    "a sustained low pedal under a pulse that keeps time, a simple theme that returns larger, low brass at the turning points, and a hard cut into a held note",
+    "the field is the story: an object arrives from behind, hits in the centre, and leaves"
+  ],
+  "spatial_staging": {
+    "sub_pedal": {
+      "azimuth": -8.0,
+      "elevation": 0.0,
+      "distance": 3.5,
+      "space": "chrono_drift_room"
+    },
+    "piano_theme": {
+      "azimuth": 0.0,
+      "elevation": 8.0,
+      "distance": 1.8,
+      "space": "chrono_drift_room"
+    },
+    "harp_glint": {
+      "azimuth": -45.0,
+      "elevation": 18.0,
+      "distance": 2.4,
+      "space": "chrono_drift_room"
+    },
+    "strings_swell": {
+      "azimuth": 10.0,
+      "elevation": 30.0,
+      "distance": 3.2,
+      "space": "chrono_drift_room"
+    },
+    "brass_low": {
+      "azimuth": -150.0,
+      "elevation": 2.0,
+      "distance": 3.8,
+      "space": "chrono_drift_room"
+    },
+    "choir_glow": {
+      "azimuth": -110.0,
+      "elevation": 20.0,
+      "distance": 4.5,
+      "space": "chrono_drift_room"
+    },
+    "timpani_hits": {
+      "azimuth": 100.0,
+      "elevation": 0.0,
+      "distance": 4.2,
+      "space": "chrono_drift_room"
+    },
+    "clock_tick": {
+      "azimuth": 110.0,
+      "elevation": 18.0,
+      "distance": 1.5,
+      "space": "chrono_drift_room"
+    },
+    "sfx_whoosh": {
+      "azimuth": -120.0,
+      "elevation": 28.0,
+      "distance": 9.0,
+      "space": "chrono_drift_room"
+    },
+    "sfx_impact": {
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "distance": 1.5,
+      "space": "chrono_drift_room"
+    },
+    "deep_field": {
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "distance": 8.0,
+      "space": "chrono_drift_room"
+    }
+  },
+  "expression": {
+    "sonic_picture": "In the first ten seconds a low pedal sits under a dry high clock while a close piano states eight slow notes in a wide, cold room. The strings arrive behind and above on the right, and a breathy whoosh crosses from the rear left to the centre. At 20 s the fall lands as a single sub impact in the middle of the room, with brass and choir around it. At 23.3 s everything stops except the pedal and one piano D, which rings until the file ends.",
+    "performer": "The organist holds the pedal without swell and lets the room do the work. The pianist plays the theme softly, lets each note ring into the next, and almost stops before the fall. The string section leans into beat one of each bar and eases off before the chord change. The timpanist plays single hits on the bar and a short roll into the impact. The clock is mechanical: exactly on the beat, never expressive, because it is time and it does not stop for the ship.",
+    "producer_moves": "The clock is the one part that never stops, so the fall happens around it and time keeps running; everything else is removed at 23.333 s. The whoosh is the only part with a trajectory, so it is the only thing that moves while the bed stays still. The room opens at the collapse and closes at 23.333 s, so the last piano note is close and the tail is the room leaving. The master is limited to -16 LUFS and -1.5 dBTP so the impact keeps its transient.",
+    "anti_generic": "The generic version is a sustained pad, a rising arpeggio and a trailer hit at the end; what stops this one is that a single clock keeps time through the fall, and the theme is left alone on one note after the cut instead of being doubled by the full ensemble.",
+    "cues": [
+      {
+        "section": "Drift",
+        "arousal": "low",
+        "mode_register": "D minor, low pedal and middle piano",
+        "tempo_trend": "steady",
+        "dynamics": "piano",
+        "articulation": "ringing, unhurried",
+        "timbre": "cold and bare"
+      },
+      {
+        "section": "Approach",
+        "arousal": "mid",
+        "mode_register": "D minor, middle register",
+        "tempo_trend": "steady",
+        "dynamics": "mezzo piano to mezzo forte",
+        "articulation": "legato strings over even harp",
+        "timbre": "warm and widening"
+      },
+      {
+        "section": "Collapse",
+        "arousal": "high",
+        "mode_register": "D minor, low brass to high strings",
+        "tempo_trend": "steady, then a roll",
+        "dynamics": "forte to fortissimo at the impact",
+        "articulation": "short brass stabs, a timpani roll, a sustained choir",
+        "timbre": "bright and massive"
+      },
+      {
+        "section": "Afterglow",
+        "arousal": "low",
+        "mode_register": "D, one pedal and one high piano note",
+        "tempo_trend": "none",
+        "dynamics": "pianissimo",
+        "articulation": "ringing and falling",
+        "timbre": "soft and distant"
+      }
+    ],
+    "theme": {
+      "contour": "up a fifth, down a third, up a sixth to the octave, then step down and settle on the third",
+      "interval_character": "mostly steps with two leaps of a fifth and a sixth, all between chord tones",
+      "rhythm_cell": "long, short, long, short, short, short, long",
+      "why_memorable": "the leap to the octave lands on a weak beat and the line never resolves to the tonic",
+      "variation_plan": "piano alone; under the strings an octave lower; a two-note fragment before the fall; one long D5 alone at the end"
+    }
+  },
+  "focus": "melody",
+  "intent": {
+    "emotions": [
+      "wonder",
+      "mysterious"
+    ],
+    "registers": [
+      "cinematic"
+    ],
+    "scenes": [
+      "build"
+    ],
+    "tensions": [
+      "pedal",
+      "rising_line"
+    ],
+    "avoid": [
+      "four_on_floor"
+    ]
+  },
+  "piece_type": "cinematic",
+  "gate_reason": "a film cue with a stated theme, a build, a hard impact and a tail: the cinematic profile, nothing relaxed",
+  "video": {
+    "enabled": false,
+    "source": null,
+    "in_s": 0.0,
+    "out_s": null,
+    "fps": null,
+    "duration_s": null,
+    "cuts": [],
+    "cut_source": null,
+    "motion_hits": 0,
+    "cut_sync": {
+      "early_ms": 45,
+      "late_ms": 125
+    },
+    "dialogue": {
+      "present": false,
+      "duck_db": -9.0,
+      "snr_min_db": 15.0
+    },
+    "master_profile": null,
+    "deliverable": null,
+    "preset": "default",
+    "notes": "music-only cue: no picture file"
+  },
+  "notes": "The palette is the GeneralUser GS SoundFont (one sample per key, no velocity layers), so every bowed, blown and struck preset carries a velocity_timbre curve from the knowledge base. The ambience is a project environment preset with three noise layers; the whoosh and the impact are project sfx presets, both built from the shipped recipes and cited to real-sound research. The cue is original: it uses the devices of a space cue (a pedal, a clock, a moving object, one impact, a cut), not any composer's notes."
+}

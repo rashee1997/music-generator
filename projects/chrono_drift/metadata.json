@@ -1,0 +1,15 @@
+{
+  "overrides": {
+    "artist": "Rasheed H",
+    "album": "Chrono Drift - Original Cue",
+    "publisher": "Independent",
+    "copyright": "© 2026 Rasheed H",
+    "licence": "All rights reserved"
+  },
+  "derive_from_score": {
+    "title": true,
+    "genre": true,
+    "comment": true,
+    "year": true
+  }
+}

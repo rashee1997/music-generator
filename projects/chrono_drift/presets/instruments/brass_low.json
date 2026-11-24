@@ -1,0 +1,20 @@
+{
+  "name": "brass_low",
+  "character": "Low trombones stabbing power chords from the rear left: the weight of the fall, not a melody.",
+  "description": "The weight: low brass on the bar through the collapse, silent after the cut.",
+  "gm": "trombone",
+  "role": "chord",
+  "humanize": {"preset": "natural", "timing_ms": 6.0, "drift_ms": 5.0, "vel_sigma": 5.0},
+  "spatial": {"azimuth": -150.0, "elevation": 2.0, "distance": 3.8, "kind": "spot", "binaural": true},
+  "eq": [{"type": "hp", "f": 55}, {"type": "peak", "f": 500, "gain": -1.0, "q": 1.0}],
+  "gain_db": -9.0,
+  "reverb": 0.28,
+  "articulation": {"overlap_ms": 10.0, "gate": 0.85, "release_ms": 200.0},
+  "sources": [
+    "KB cinematic-hybrid-scoring | low brass at the turning points, not throughout",
+    "KB soundfont-velocity-and-realism section 4 | soft notes are darker; a starting-value curve",
+    "ESTIMATE: azimuth -150 deg, 3.8 m, gain -9 dB and EQ are starting values for this piece"
+  ],
+  "mechanics_class": "blown",
+  "velocity_timbre": {"points": [[25, 900], [60, 1800], [100, 3800], [127, 6200]], "bands": 4}
+}

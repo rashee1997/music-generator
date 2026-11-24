@@ -1,0 +1,66 @@
+{
+  "name": "strings_swell",
+  "character": "A string section entering from behind and above on the right, leaning into beat one and easing off before each change.",
+  "description": "The bed: a string ensemble swelling D minor under the approach, climbing over the fall, and holding a bare fifth after the cut.",
+  "gm": "string_ensemble",
+  "role": "pad",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 7.0,
+    "drift_ms": 7.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": 10.0,
+    "elevation": 30.0,
+    "distance": 3.2,
+    "kind": "spot",
+    "binaural": true
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 150
+    },
+    {
+      "type": "peak",
+      "f": 330,
+      "gain": -2.0,
+      "q": 1.0
+    }
+  ],
+  "gain_db": -7.0,
+  "reverb": 0.32,
+  "articulation": {
+    "overlap_ms": 25.0,
+    "gate": 0.98,
+    "release_ms": 420.0
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring | sustained strings as the bed under a rising cue",
+    "KB soundfont-velocity-and-realism section 4 | soft notes are darker; a starting-value curve, not a measurement",
+    "ESTIMATE: azimuth 48 deg, 22 deg up, 3.2 m, gain -7 dB and EQ are starting values for this piece"
+  ],
+  "mechanics_class": "bowed",
+  "velocity_timbre": {
+    "points": [
+      [
+        25,
+        1700
+      ],
+      [
+        60,
+        3100
+      ],
+      [
+        100,
+        6200
+      ],
+      [
+        127,
+        9000
+      ]
+    ],
+    "bands": 4
+  }
+}

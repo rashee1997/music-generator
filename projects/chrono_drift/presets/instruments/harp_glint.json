@@ -1,0 +1,60 @@
+{
+  "name": "harp_glint",
+  "character": "A close harp answering the piano in even eighths from the left, then resting through the whole fall.",
+  "description": "The answer: a harp arpeggio in the piano's rests, gone before the collapse.",
+  "gm": "harp",
+  "role": "counter",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 4.0
+  },
+  "spatial": {
+    "azimuth": -45.0,
+    "elevation": 18.0,
+    "distance": 2.4,
+    "kind": "spot",
+    "binaural": true
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 180
+    },
+    {
+      "type": "lp",
+      "f": 12000
+    }
+  ],
+  "gain_db": -11.0,
+  "reverb": 0.26,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 0.96,
+    "release_ms": 300.0
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring | a second voice speaking in the carrier's rests, not over it",
+    "KB soundfont-velocity-and-realism section 4 | soft notes are darker; a starting-value curve",
+    "ESTIMATE: azimuth -60 deg, 16 deg up, 2.4 m and gain -11 dB are starting values for this piece"
+  ],
+  "mechanics_class": "plucked",
+  "velocity_timbre": {
+    "points": [
+      [
+        25,
+        2400
+      ],
+      [
+        60,
+        4400
+      ],
+      [
+        127,
+        9300
+      ]
+    ],
+    "bands": 4
+  }
+}
