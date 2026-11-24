@@ -18,9 +18,11 @@ Rebuilt from scratch on 2026-11-24 (`projects/chrono_drift` deleted first; nothi
 
 | item | value |
 |---|---|
-| master | `out/master_v04.wav` (= `out/master.wav`), version 4, 44.1 kHz, 24-bit, stereo, 127.34 s (120.0 s cue + 7.3 s room tail) |
-| loudness | −16.38 LUFS integrated, −1.50 dBTP true peak, crest 17.7 dB |
-| verdict | **STEREO CERTIFIED**; the 3.2 immersive format failed its own rows and was not delivered |
+| master | `out/master_v06.wav` (= `out/master.wav`), version 6, 44.1 kHz, 24-bit, stereo, 127.34 s (120.0 s cue + 7.3 s room tail) |
+| loudness | −16.32 LUFS integrated, −1.50 dBTP true peak |
+| 7.1 | `out/master_7_1.wav`, 8 channels (ITU-R BS.2051 System H), 125.6 s, −16.5 LKFS on the delivered channels with the layout weights, LFE at −43 dBFS (about 20 dB under the front stage), surrounds −4.9 dB against the front stage |
+| ADM | `out/master_adm.wav`, strict BW64 with ADM, 9 objects + a stereo reverb bed, 11 tracks |
+| verdict | **CERTIFIED PASS on all three requested formats** (stereo, immersive_7_1, adm_bw64) |
 | score | D phrygian, 152 BPM, 4/4, 9 tracks, no SFX, no ambience |
 
 ## The piece
@@ -98,16 +100,16 @@ Effect measured on this project's delivered 7.1 file: `channel.bars` went from *
 
 ## Not done / limits
 
-- **Immersive: objects delivered, 7.1 loudspeakers still failing one real row.** "3.3" was clarified as ADM object-based
+- **Immersive: delivered.** Both eight-channel deliverables certify. The history of the row is kept below. "3.3" was clarified as ADM object-based
   spatial audio in eight channels, which here is two formats: `adm_bw64` (one object per placed track, ITU-R BS.2076 metadata in
   a BW64 container) and `immersive_7_1` (ITU-R BS.2051 System H, eight discrete channels). The ADM file **passed every row**
   (11 tracks: 9 objects + a stereo reverb bed, captured before the last send trims). The 7.1 file now passes `channel.bars` and
-  every other row except `imm.surround_ratio`, which reads **+0.3 dB** against a −9..−2 dB window: the surrounds in this mix sit
-  level with the front stage, so about 2.3 dB of real trim is still owed in the space or the sends. It was withheld rather than
-  delivered uncertified.
-- **The low-frequency channel is effectively empty in the 7.1 file** (−60 dBFS RMS): the pedal lives at 73 Hz and above while the
-  LFE low-passes at 80 Hz with a −10 dB send. That is a mix decision still to make, not a gate row, and it is why the per-bar row
-  used to light up on it.
+  now passes every row: after removing the measurement's +1.25 dB channel-count bias the surrounds were still level with the
+  front stage, and the fix was in the mix — the late field 3 dB down, the side and rear reflections cut by a third, the role sends
+  down 20 % — which measures **−4.9 dB** against a −9..−2 dB window.
+- **The low-frequency channel was nearly empty** (−60 dBFS RMS) because the send plus the crossover cost about 25 dB on a pedal
+  whose sub-80 Hz band is already 30 dB under the programme. The project's own 7.1 preset raises the send to +2 dB: the channel now
+  sits at −43 dBFS, roughly 20 dB under the front stage, and `imm.lfe_stopband` is −64 dB above 120 Hz.
 - **`listen.py` did not run.** Nothing here has been judged by the ears, only measured.
 - The last nine renders were `--max-attempts 1` single passes after a specific measured change, not automatic retries.
 - `reports/ci_report.json` for the certified stereo pass is the record; earlier attempts are in `/tmp/render*.log`, which is not versioned.
