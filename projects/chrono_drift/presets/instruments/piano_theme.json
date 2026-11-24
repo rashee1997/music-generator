@@ -1,62 +1,57 @@
 {
   "name": "piano_theme",
-  "character": "A close, soft grand piano stating the eight-note theme alone, each note left to ring into the cold room.",
-  "description": "The carrier: a close grand piano on the theme, then a two-note fragment before the fall and one long D afterwards.",
+  "character": "A close grand piano in free fall: the theme stated bare, each note left to ring while the room around it keeps stretching.",
+  "description": "The figure: an eight-note descent-ascent in D phrygian, stated alone, doubled in octaves at the crush, broken into a two-note fragment in the dilation, and left as one D at the horizon.",
   "gm": "piano",
   "role": "melody",
   "humanize": {
     "preset": "natural",
-    "timing_ms": 7.0,
+    "timing_ms": 6.0,
     "drift_ms": 6.0,
-    "vel_sigma": 5.0
+    "vel_sigma": 6.0
   },
   "spatial": {
     "azimuth": 0.0,
     "elevation": 8.0,
-    "distance": 1.8,
+    "distance": 1.6,
     "kind": "spot",
     "binaural": true
   },
   "eq": [
     {
       "type": "hp",
-      "f": 90
+      "f": 90.0
     },
     {
       "type": "peak",
-      "f": 260,
+      "f": 260.0,
       "gain": -1.5,
       "q": 1.0
+    },
+    {
+      "type": "lp",
+      "f": 12000.0
     }
   ],
   "gain_db": -2.0,
-  "reverb": 0.25,
+  "reverb": 0.28,
   "articulation": {
     "overlap_ms": 0.0,
     "gate": 1.0,
     "release_ms": 320.0
   },
-  "sources": [
-    "KB cinematic-hybrid-scoring | a simple theme stated early so it can be remembered and then doubled larger",
-    "KB soundfont-velocity-and-realism section 4 | a GM piano has one sample per key, so velocity_timbre darkens soft notes per note (starting value, not calibrated)",
-    "ESTIMATE: azimuth -22 deg, 1.8 m, gain -2 dB and EQ are starting values for this piece, not measurements"
-  ],
-  "mechanics_class": "plucked",
+  "mechanics_class": "keys",
   "velocity_timbre": {
     "points": [
-      [
-        25,
-        2400
-      ],
-      [
-        60,
-        4400
-      ],
-      [
-        127,
-        9200
-      ]
+      [25, 2200],
+      [60, 4200],
+      [127, 9000]
     ],
     "bands": 4
-  }
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring | the figure must be stated early and small so its later doubling reads as the same shape grown, not a new tune",
+    "KB soundfont-velocity-and-realism section 4 | one sample per key, so velocity_timbre darkens the soft statements per note: a starting-value curve, not measured on this bank",
+    "ESTIMATE: azimuth 0 deg, 8 deg up, 1.6 m, gain -2 dB, HP 90 Hz and the 260 Hz dip are starting values for a close grand in a very large room"
+  ]
 }

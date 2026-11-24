@@ -81,7 +81,7 @@ score_data = {
         {"name": "vocal_pad", "instrument": "vocal_hum", "role": "pad", "notes": pad_notes}
     ]
 }
-if True:      # ambience only when the user asked for it
+if False:      # ambience only when the user asked for it
     score_data["tracks"].append({"name": "forest_env", "instrument": "env:forest_canopy_3d", "role": "environment", "notes": []})
 
 with open(SCORE_JSON, 'w', encoding='utf-8') as f:

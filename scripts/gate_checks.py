@@ -457,14 +457,46 @@ def _peak_ratio(a):
     return float((hi - med) / (hi + med + EPS))
 
 
+def _slow_component(x, sr, cutoff_hz=2.0):
+    """(slow component, its sample rate): the part of a channel below `cutoff_hz`, which is what a DC drift is.
+
+    A 1 s block mean is a boxcar decimation, and a boxcar is a poor anti-alias filter: a 73 Hz programme tone (a low
+    pedal, a timp) still leaves about A / (pi f) in every block mean, so the row read a loud low note as "DC drift"
+    (measured on a master whose 40 Hz high-pass leaves no offset at all). Low-passing the waveform first, steeply,
+    means only sub-2 Hz content can reach the block means.
+    """
+    from scipy.signal import butter, decimate, sosfiltfilt
+    if cutoff_hz <= 0.0 or cutoff_hz >= 0.5 * float(sr) or len(x) < 64:
+        return np.asarray(x, dtype=np.float64), float(sr)
+    y, sr2 = np.asarray(x, dtype=np.float64), float(sr)
+    # An 8th-order filter at 2 Hz on a 44.1 kHz signal has a normalised corner of 9e-5 and is numerically fragile, so
+    # the signal is decimated first (zero-phase FIR anti-alias at a few hundred Hz, where the corner is still low but
+    # the filter is well conditioned), then low-passed at the decimated rate.
+    # One decimation only, to a few hundred Hz: a second stage at 8 Hz aliased a 73 Hz note down to about 1 Hz
+    # (73 - 9*8), which is exactly the drift it was supposed to exclude.
+    q = int(sr2 // 400.0)
+    if q >= 2 and len(y) > 4 * q:
+        y = decimate(y, q, ftype='fir', zero_phase=True)
+        sr2 /= q
+    if sr2 <= 4.0 * cutoff_hz:
+        return y, sr2
+    sos = butter(4, cutoff_hz / (0.5 * sr2), btype='low', output='sos')
+    return sosfiltfilt(sos, y), sr2
+
+
 def check_dc(sig, dc_max=0.001, drift_max=0.001):
-    """Per-channel DC mean and 1 s block drift."""
+    """Per-channel DC mean, and the drift of the sub-2 Hz component between 1 s blocks."""
     channels = sig.audio.shape[1]
     means = [float(np.mean(sig.audio[:, c])) for c in range(channels)]
-    block = max(1, int(sig.sr))
     drift = 0.0
     for c in range(channels):
-        x = sig.audio[:, c]
+        x, sr2 = _slow_component(sig.audio[:, c], sig.sr)
+        block = max(1, int(round(sr2)))            # one second at the slow component's own rate
+        # The decimating filter starts on a step of its own (measured: 0.24 FS in the first samples, which read as
+        # 8e-3 of "drift" on a tone with no offset). One second is dropped at each end; nothing is lost from a
+        # multi-second file and a file too short to have an interior is not judged on its edges.
+        if len(x) > 4 * block:
+            x = x[block:len(x) - block]
         n = len(x) // block
         if n >= 2:
             bm = x[:n * block].reshape(n, block).mean(axis=1)
@@ -514,42 +546,94 @@ def check_flatness(sig, threshold=0.10, level_floor_db=-50.0, min_ms=50.0, hop=5
     return _result(best, threshold, 'flatness', hits, detail, windows=len(hits))
 
 
+def tempo_from_onsets(y, sr, hop=512, lo_bpm=50.0, hi_bpm=220.0):
+    """(BPM, peak strength) from the autocorrelation of the onset envelope, or (None, strength).
+
+    A beat tracker reports a *beat* tempo from a dynamic-programming pass and, measured here, it does not do this
+    reliably on every signal: librosa 1.0.1's `beat_track` returned 0.0 BPM on a perfect 152 BPM click track, and
+    99.4 BPM on a 152 BPM orchestral master whose onset envelope autocorrelates at exactly 152.0 (2:3 of 152 is
+    101.3, which is what it locked to). The autocorrelation peak in a musical tempo window is the measured
+    periodicity of the onsets, which is what this row asks about; the beat tracker's answer is kept as a cross-check
+    in the detail string instead of deciding the row.
+    """
+    oenv = librosa.onset.onset_strength(y=np.asarray(y, dtype=np.float32), sr=sr, hop_length=hop)
+    if oenv.size < 16 or not np.any(oenv > 0):
+        return None, 0.0
+    # A signal without onsets (a held tone, a bed) autocorrelates smoothly and has a spurious peak at any lag:
+    # require the envelope to actually contain attacks before it is allowed to name a tempo.
+    med = float(np.median(oenv))
+    sd = float(np.std(oenv)) + 1e-12
+    prom = (float(np.max(oenv)) - med) / sd
+    if prom < 3.0:
+        return None, 0.0
+    n_onsets = int(np.count_nonzero(oenv > med + 0.25 * (float(np.max(oenv)) - med)))
+    rate = n_onsets / (len(oenv) / (float(sr) / float(hop)))
+    if n_onsets < 12 or rate < 0.4:
+        return None, 0.0
+    # mean-removed, unit-variance envelope: the raw one carries the programme's loudness contour, which lifts every
+    # lag in the window and hides the periodicity (measured: the 152.0 lag peaked at only 1.05x the window median
+    # before this; after it, 152.0 stands 5.7 % clear of the next candidate).
+    ac = librosa.autocorrelate((oenv - med) / sd, max_size=len(oenv))
+    if not np.isfinite(ac).all() or ac[0] <= 0:
+        return None, 0.0
+    fps = float(sr) / float(hop)
+    lags = np.arange(2, len(ac))
+    bpms = 60.0 * fps / lags
+    sel = (bpms >= lo_bpm) & (bpms <= hi_bpm)
+    if not np.any(sel):
+        return None, 0.0
+    cand = np.asarray(ac[lags[sel]], dtype=np.float64)
+    i = int(np.argmax(cand))
+    peak = float(cand[i])
+    strength = peak / (float(np.std(cand)) + 1e-12)
+    lag = float(lags[sel][i])
+    # parabolic refinement of the lag peak, so a tempo that is not an integer number of frames is not rounded
+    if 0 < i < len(cand) - 1:
+        a, b, c = cand[i - 1], cand[i], cand[i + 1]
+        den = a - 2.0 * b + c
+        if abs(den) > 1e-12:
+            lag += 0.5 * (a - c) / den
+    return 60.0 * fps / lag, strength
+
+
 def check_tempo(sig, bpm_ref, tol_bpm=2.0, tol_pct=2.0, drift_bpm=2.0):
-    """Beat-tracked tempo against the score/sheet, plus drift over four quarters."""
+    """Tempo from the onset periodicity against the score/sheet, plus drift over four quarters."""
     if librosa is None or not bpm_ref:
         return _result(0.0, tol_bpm, 'BPM', [], 'librosa missing or no reference tempo', skipped=True)
     try:
-        est, beats = librosa.beat.beat_track(y=sig.mono, sr=sig.sr, units='time')
-        bpm = float(np.asarray(est).reshape(-1)[0])
-    except TypeError:                                   # older librosa: no units keyword
-        est, frames = librosa.beat.beat_track(y=sig.mono, sr=sig.sr)
-        bpm = float(np.asarray(est).reshape(-1)[0])
-        beats = librosa.frames_to_time(frames, sr=sig.sr)
+        bpm, strength = tempo_from_onsets(sig.mono, sig.sr)
     except Exception as exc:
-        return _result(0.0, tol_bpm, 'BPM', [], f'beat tracker failed: {exc}', skipped=True)
-    if bpm <= 0.0:
+        return _result(0.0, tol_bpm, 'BPM', [], f'onset tempo estimate failed: {exc}', skipped=True)
+    if bpm is None or strength < 1.0:
         return _result(0.0, tol_bpm, 'BPM', [],
-                       'beat tracker found no pulse: tempo not judged (a bed or rubato piece may have none)',
-                       skipped=True)
-    # Drift from one beat list, not four independent trackers: a quarter of a piece is too short to track reliably
-    # (measured on a clean 74 BPM render: four short trackers reported 49.4 BPM of drift on a steady tempo).
-    beats = np.asarray(beats, dtype=np.float64)
-    vals = []
+                       f'no isochronous pulse in the onsets (peak strength {strength:.1f}): tempo not judged '
+                       '(a bed or rubato piece may have none)', skipped=True)
+    try:                                        # the beat tracker, reported but not decisive (see tempo_from_onsets)
+        est, _ = librosa.beat.beat_track(y=sig.mono, sr=sig.sr, units='time')
+        beat_bpm = float(np.asarray(est).reshape(-1)[0])
+    except Exception:
+        beat_bpm = float('nan')
     quarter = sig.dur / 4.0
+    vals = []
     for i in range(4):
-        seg = beats[(beats >= i * quarter) & (beats < (i + 1) * quarter)]
-        if seg.size >= 3:
-            ioi = np.diff(seg)
-            vals.append(60.0 / float(np.median(ioi)))
+        seg = sig.mono[int(i * quarter * sig.sr):int(min(sig.dur, (i + 1) * quarter) * sig.sr)]
+        if len(seg) < sig.sr:
+            continue
+        try:
+            v, s = tempo_from_onsets(seg, sig.sr)
+        except Exception:
+            v = None
+        if v is not None and s >= 1.0:
+            vals.append(v)
     drift = (max(vals) - min(vals)) if len(vals) > 1 else 0.0
     tol = max(float(tol_bpm), float(bpm_ref) * float(tol_pct) / 100.0)
-    # Drift is reported, not decisive: on a steady 74 BPM render the beat tracker's quarter medians differed by 4.1 BPM
-    # with no tempo change in the music, so failing on it would be a false positive. The full-track estimate decides.
+    # Drift is reported, not decisive: quarter-length estimates are noisy even on a metronomic render.
     fail = abs(bpm - float(bpm_ref)) > tol
-    detail = (f'measured {bpm:.1f} BPM vs {float(bpm_ref):.1f} (tolerance {tol:.1f}); '
-              f'four-quarter drift {drift:.1f} BPM reported, not decisive (tracker jitter)')
+    detail = (f'measured {bpm:.1f} BPM vs {float(bpm_ref):.1f} (tolerance {tol:.1f}) from the onset-envelope '
+              f'autocorrelation (peak {strength:.1f}x the median); beat tracker said {beat_bpm:.1f}; '
+              f'four-quarter drift {drift:.1f} BPM reported, not decisive')
     return _result(abs(bpm - float(bpm_ref)), tol, 'BPM', [], detail,
-                   measured_bpm=bpm, drift_bpm=drift, fail=bool(fail))
+                   measured_bpm=bpm, beat_tracker_bpm=beat_bpm, drift_bpm=drift, fail=bool(fail))
 
 
 def section_bounds(score, dur, sheet=None, problems=None):

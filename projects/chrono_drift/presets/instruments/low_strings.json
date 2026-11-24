@@ -1,0 +1,67 @@
+{
+  "name": "low_strings",
+  "character": "A broad low string section swelling under the piano, closer to a slow tide than a pad: it breathes in on the bar line and lets go before the next change.",
+  "description": "The bed: string ensemble in three- and four-note low voicings, an unbroken sustained layer that widens at the crush and thins to a bare fifth at the horizon.",
+  "gm": "string_ensemble",
+  "role": "pad",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 7.0,
+    "drift_ms": 8.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": 14.0,
+    "elevation": 28.0,
+    "distance": 3.4,
+    "kind": "spot",
+    "binaural": true
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 150.0
+    },
+    {
+      "type": "peak",
+      "f": 320.0,
+      "gain": -2.0,
+      "q": 1.0
+    }
+  ],
+  "gain_db": -9.0,
+  "reverb": 0.4,
+  "articulation": {
+    "overlap_ms": 30.0,
+    "gate": 0.98,
+    "release_ms": 450.0
+  },
+  "mechanics_class": "bowed",
+  "vibrato": {
+    "depth_cents": 6.0,
+    "rate_hz": 5.2,
+    "delay_ms": 320.0
+  },
+  "velocity_timbre": {
+    "points": [
+      [
+        25,
+        1600
+      ],
+      [
+        60,
+        3000
+      ],
+      [
+        127,
+        8000
+      ]
+    ],
+    "bands": 4
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring section 1 | sustained strings are the bed the pressure rides on; the bed itself must not carry the pulse",
+    "KB soundfont-velocity-and-realism section 4 | velocity_timbre makes the quiet bars warmer than the crush instead of just quieter; starting values",
+    "ESTIMATE: azimuth 14 deg, 28 deg up, 3.4 m, gain -8 dB and 40 percent room send are starting values for a section heard from inside a large field"
+  ]
+}

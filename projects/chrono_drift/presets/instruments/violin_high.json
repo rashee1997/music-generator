@@ -1,0 +1,62 @@
+{
+  "name": "violin_high",
+  "character": "One violin high and left, bowing through the collapse above the brass: a strained line that climbs a semitone at a time and never settles on a comfortable note.",
+  "description": "The strain: a solo violin line in the top octave, entering at the crush, holding through the dilation and climbing into the horizon.",
+  "gm": "violin",
+  "role": "counter",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 7.0,
+    "vel_sigma": 6.0
+  },
+  "spatial": {
+    "azimuth": -18.0,
+    "elevation": 24.0,
+    "distance": 2.8,
+    "kind": "spot",
+    "binaural": true
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 200.0
+    },
+    {
+      "type": "peak",
+      "f": 2800.0,
+      "gain": 1.0,
+      "q": 0.9
+    },
+    {
+      "type": "lp",
+      "f": 14000.0
+    }
+  ],
+  "gain_db": -9.0,
+  "reverb": 0.33,
+  "articulation": {
+    "overlap_ms": 25.0,
+    "gate": 0.97,
+    "release_ms": 300.0
+  },
+  "mechanics_class": "bowed",
+  "vibrato": {
+    "depth_cents": 11.0,
+    "rate_hz": 5.4,
+    "delay_ms": 220.0
+  },
+  "velocity_timbre": {
+    "points": [
+      [35, 2500],
+      [70, 4500],
+      [127, 9500]
+    ],
+    "bands": 3
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring section 2 | tension escalates by rising step by step and by bowing harder; the line climbs chromatically rather than leaping",
+    "KB soundfont-velocity-and-realism section 4 | the sustained high notes gain brightness as they press; velocity_timbre carries it per note; starting values",
+    "ESTIMATE: azimuth -18 deg, 24 deg up, 2.8 m, gain -9 dB are starting values for a solo violin placed above and left of the listener"
+  ]
+}

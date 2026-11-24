@@ -167,12 +167,6 @@
           "v": 60
         }
       ]
-    },
-    {
-      "name": "forest_texture",
-      "instrument": "env:forest_canopy_3d",
-      "role": "environment",
-      "notes": []
     }
   ]
 }

@@ -1,166 +1,191 @@
 {
   "title": "Chrono Drift",
-  "project": "A 30-second 8-channel cinematic cue for a time-travel sequence: a ship drifts, a wormhole opens, it falls through, and the field goes quiet.",
-  "version": 1,
-  "medium": "film cue",
-  "brief": "create realistic 30 sec 8 channel music and tests all qa gates including ears , use sf2 , SFX ambinces , it's about space time travel",
-  "audience": "a listener in a 7.1 room or on headphones who should feel the scale of space and the moment time folds",
-  "purpose": "a 30-second 7.1 cue in which the field tells the story: the ship sits in a wide cold space, a wormhole opens behind it, the fall lands as one hit in the centre, and the last note is left alone in the room",
-  "point_of_view": "the traveller's: the low pedal is the hull, the clock is the ship's own time, and the fall is heard from inside it",
+  "project": "original cue, no picture attached",
+  "version": 2,
+  "medium": "film",
+  "brief": "make the chrono drift fully musical, deep lush space time travel in black hole, immersive 3.3, don't use SFX or whoosh sounds, music should be tense fast at high gravity pull because black hole, make the 120 sec score",
+  "audience": "a listener in a dark room on a large system: they already know what an orchestra under pressure sounds like, so they will hear it immediately if the tension is only volume",
+  "purpose": "120 seconds of orchestral pressure in which gravity is the subject: the pulse accelerates, the harmony refuses to settle, and the deep field around the listener keeps opening",
+  "point_of_view": "inside the fall, not watching it: the listener is the object being pulled, so there is no heroic motif and no triumphant cadence, only a figure that keeps being stretched",
   "job": [
-    "state a short theme on the piano in the first eight seconds so the fall has something to lose",
-    "add one lever per section: strings and a pulse, then brass and the impact, then nothing",
-    "end on a tail, not a fade: the cut at 23.3 s leaves one piano note and the room"
+    "hold one accelerating pulse from the first bar to the last so the pull is physical, not implied",
+    "state the fall figure small and alone before anything else so its later doubling is recognisable",
+    "keep the low end and the deep field changing, so the sense of scale grows rather than repeats",
+    "land the crush as the loudest moment of the cue and cut to a bare pedal, so the ending is a cliff edge and not a fade"
   ],
-  "story": "a pedal and a clock in a cold field; a whoosh crosses from behind as the wormhole opens; strings and harp rise; the clock stops, brass and choir arrive, and the ship falls on one impact at 20 s; at 23.3 s everything cuts to a pedal and a last piano D.",
-  "duration_s": 30.0,
+  "story": "A pedal appears in a huge empty field; a cello starts counting sixteenths that get louder and closer; the theme states itself once, small; at 41 s the mass arrives, brass and choir and the violin climbing; at 72.6 s everything is cut back to slow harp and a stretched version of the theme; it builds a second time into the horizon and stops on one piano D.",
+  "duration_s": 120.0,
   "in_point_s": 0.0,
-  "out_point_s": 30.0,
-  "ending": "tail_out",
+  "out_point_s": 120.0,
+  "ending": "combination",
   "feel": [
-    "wonder",
-    "mysterious",
-    "tense"
+    "vast",
+    "tense",
+    "lush",
+    "relentless",
+    "heavy"
   ],
   "avoid_feel": [
-    "cheerful",
-    "comic",
-    "calm"
+    "synthetic",
+    "robotic",
+    "flat",
+    "triumphant",
+    "ambient-drift",
+    "whooshy"
   ],
   "sections": [
     {
-      "name": "Drift",
+      "name": "accretion",
       "start_s": 0.0,
-      "end_s": 10.0,
-      "energy": 0.18,
-      "action": "the ship hangs in a wide cold field; nothing moves but the clock",
-      "music": "the sub pedal holds D2, the celesta clock ticks every beat, and the piano states the theme alone",
+      "end_s": 15.79,
+      "energy": 0.22,
+      "action": "nothing moves yet; the field itself is audible and the object is already falling",
+      "music": "sub pedal on D alone, a low string fifth fading in, the fall figure on piano, four notes only, no drum",
       "role": "place"
     },
     {
-      "name": "Approach",
-      "start_s": 10.0,
-      "end_s": 16.667,
-      "energy": 0.45,
-      "action": "a wormhole mouth opens behind the ship; the field tilts toward it",
-      "music": "the strings enter with a D minor swell, the harp answers in eighths, the timpani marks each bar, and the whoosh crosses from the rear left",
+      "name": "tidal",
+      "start_s": 15.79,
+      "end_s": 41.05,
+      "energy": 0.5,
+      "action": "the pull becomes measurable: everything starts to lean toward the centre",
+      "music": "cello sixteenths enter and do not stop; timpani one stroke per bar; the figure stated complete; strings widen to four voices",
       "role": "build"
     },
     {
-      "name": "Collapse",
-      "start_s": 16.667,
-      "end_s": 23.333,
+      "name": "crush",
+      "start_s": 41.05,
+      "end_s": 72.63,
       "energy": 0.95,
-      "action": "the ship falls through; time folds and the frame shakes",
-      "music": "low brass stabs on the bar, the choir rises overhead, the timpani rolls, and the fall lands on one impact at 20 s; the strings climb to the top of their range and the clock keeps ticking underneath",
+      "action": "the mass arrives; light bends; the object is stretched",
+      "music": "low brass stabs and choir under a chromatic violin line climbing a semitone at a time; the figure in octaves; timpani twice per bar",
       "role": "peak"
     },
     {
-      "name": "Afterglow",
-      "start_s": 23.333,
-      "end_s": 30.0,
-      "energy": 0.2,
-      "action": "silence after the fall; the ship is somewhere else",
-      "music": "everything cuts to the sub pedal, the clock and one long piano D, the strings hold a bare fifth, and the room tail carries the end",
+      "name": "dilation",
+      "start_s": 72.63,
+      "end_s": 94.74,
+      "energy": 0.55,
+      "action": "time thins out: the same events, further apart",
+      "music": "hard cut to harp arpeggios and choir; the figure stretched to double length on piano; the cello pulse halved; no brass",
+      "role": "release"
+    },
+    {
+      "name": "horizon",
+      "start_s": 94.74,
+      "end_s": 113.68,
+      "energy": 0.92,
+      "action": "the last pull before the boundary: the loudest stretch of the cue",
+      "music": "everything returns, brass on the bar, violin climbing to its top note, timpani roll, and a single crash of the full section at 110.5 s",
+      "role": "peak"
+    },
+    {
+      "name": "last light",
+      "start_s": 113.68,
+      "end_s": 120.0,
+      "energy": 0.15,
+      "action": "the boundary is crossed and nothing follows it",
+      "music": "the pedal and one piano D in the room, no other part, tail to the end of the file",
       "role": "button"
     }
   ],
   "motifs": [
     {
-      "name": "the drift theme",
-      "first_at_s": 0.4,
-      "shape": "eight notes: up a fifth, down a third, up a sixth to the octave, then step down and settle on the third; every note is a chord tone",
-      "returns": "10 s under the strings; 16.9 s as a two-note fragment while the brass takes over; 24 s as one long D5 alone"
+      "name": "the fall figure",
+      "first_at_s": 5.5,
+      "shape": "D up to F, back to E, Eb, D, down to C and back to D: a rise of a minor third, a semitone fall, two steps down and a step home",
+      "returns": "complete at 22 s under the pulse; in octaves and doubled by brass at 44 s; stretched to double length at 76 s; in the top octave under the violin at 104 s; alone as one D at 115 s"
     }
   ],
   "instruments": [
     "sub_pedal",
     "piano_theme",
-    "clock_tick",
-    "strings_swell",
-    "harp_glint",
-    "timpani_hits",
+    "low_strings",
+    "cello_ostinato",
     "brass_low",
     "choir_glow",
-    "sfx_whoosh",
-    "sfx_impact",
-    "deep_field"
+    "timpani_hits",
+    "violin_high",
+    "harp_figures"
   ],
   "avoid_sounds": [
+    "whoosh",
+    "riser",
+    "impact effect",
+    "braam",
+    "reverse cymbal",
+    "sound design",
     "drum kit",
-    "electric guitar",
-    "four-on-the-floor kick",
-    "comedy brass"
+    "four-on-the-floor"
   ],
-  "pulse": "steady",
+  "pulse": "accelerating sixteenths",
   "tempo_bpm": [
-    72,
-    72
+    152,
+    152
   ],
   "key": "D",
-  "mode": "minor",
-  "energy": 0.6,
-  "space": "chrono_drift_room",
+  "mode": "phrygian",
+  "energy": 0.78,
+  "space": "black_hole_field",
   "hits_at": [
-    10.0,
-    16.667,
-    20.0,
-    23.333
+    41.05,
+    72.63,
+    110.53,
+    113.68
   ],
   "hits": [
     {
-      "t": 10.0,
-      "kind": "motion",
-      "sync": "soft",
-      "sound": "the whoosh enters from the rear left as the strings swell",
-      "why": "the wormhole opening is a movement inside the field, not an edit"
-    },
-    {
-      "t": 16.667,
+      "t": 41.05,
       "kind": "musical",
-      "sync": "soft",
-      "sound": "the clock stops and low brass lands on the bar",
-      "why": "the new level must be audible before the fall"
+      "sync": "hard",
+      "sound": "low brass and choir enter together under the violin",
+      "why": "the mass arrives here; the pulse has been counting toward it since 15.8 s, so it must land exactly on the bar"
     },
     {
-      "t": 20.0,
+      "t": 72.63,
       "kind": "cut",
       "sync": "hard",
-      "sound": "the impact: a sub drop and a noise crack in the centre",
-      "why": "the fall is the centre of the story and must land on the frame"
+      "sound": "full stop, then harp and choir",
+      "why": "the release is a cut, not a taper: everything stops on the bar and the room keeps the tail"
     },
     {
-      "t": 23.333,
+      "t": 110.53,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "full section on D, timpani roll into it",
+      "why": "the crest of the cue, and the only place where every part is on the same note"
+    },
+    {
+      "t": 113.68,
       "kind": "cut",
       "sync": "hard",
-      "sound": "a cut to the pedal and one piano D",
-      "why": "a cut is stronger than a decay, and the afterglow needs a clean start"
+      "sound": "everything out except the pedal and one piano D",
+      "why": "the boundary crossing: the cue ends by removing the music, not by resolving it"
     }
   ],
   "mix_intent": {
     "hero": "piano_theme",
     "support": [
-      "strings_swell",
-      "brass_low",
-      "harp_glint"
+      "cello_ostinato",
+      "low_strings",
+      "violin_high",
+      "brass_low"
     ],
     "sits_under": [
       "sub_pedal",
-      "clock_tick",
       "choir_glow",
       "timpani_hits",
-      "sfx_whoosh",
-      "sfx_impact",
-      "deep_field"
+      "harp_figures"
     ],
     "must_hear": [
-      "the pedal from the first second",
-      "the theme in the first ten seconds",
-      "the whoosh crossing behind the listener",
-      "the impact at 20 s",
-      "the cut at 23.3 s"
+      "the pedal and the first four piano notes in the first six seconds",
+      "the sixteenths from 15.8 s",
+      "the brass entry at 41 s",
+      "the cut at 72.6 s",
+      "one piano D after 113.7 s"
     ],
-    "leave_free_hz": []
+    "leave_free_hz": [],
+    "executed_by": "carried on the score as mix_intent; the mix preset's lead_carve and level_by_role act on it"
   },
   "loudness_lufs": -16.0,
   "true_peak_max": -1.5,
@@ -171,137 +196,188 @@
     "stage": "web",
     "output_targets": [
       "stereo",
-      "immersive_7_1"
+      "immersive_3_2"
     ]
   },
   "references": [
-    "a sustained low pedal under a pulse that keeps time, a simple theme that returns larger, low brass at the turning points, and a hard cut into a held note",
-    "the field is the story: an object arrives from behind, hits in the centre, and leaves"
+    "hybrid trailer pressure",
+    "phrygian modal tension",
+    "large-hall orchestral depth"
   ],
   "spatial_staging": {
     "sub_pedal": {
       "azimuth": -8.0,
       "elevation": 0.0,
-      "distance": 3.5,
-      "space": "chrono_drift_room"
+      "distance": 4.0,
+      "space": "black_hole_field"
     },
     "piano_theme": {
       "azimuth": 0.0,
       "elevation": 8.0,
-      "distance": 1.8,
-      "space": "chrono_drift_room"
+      "distance": 1.6,
+      "space": "black_hole_field"
     },
-    "harp_glint": {
-      "azimuth": -45.0,
-      "elevation": 18.0,
-      "distance": 2.4,
-      "space": "chrono_drift_room"
+    "harp_figures": {
+      "azimuth": 48.0,
+      "elevation": 12.0,
+      "distance": 2.6,
+      "space": "black_hole_field"
     },
-    "strings_swell": {
-      "azimuth": 10.0,
-      "elevation": 30.0,
-      "distance": 3.2,
-      "space": "chrono_drift_room"
+    "low_strings": {
+      "azimuth": 14.0,
+      "elevation": 28.0,
+      "distance": 3.4,
+      "space": "black_hole_field"
+    },
+    "cello_ostinato": {
+      "azimuth": -38.0,
+      "elevation": 0.0,
+      "distance": 2.2,
+      "space": "black_hole_field"
     },
     "brass_low": {
-      "azimuth": -150.0,
-      "elevation": 2.0,
-      "distance": 3.8,
-      "space": "chrono_drift_room"
+      "azimuth": 152.0,
+      "elevation": 6.0,
+      "distance": 3.0,
+      "space": "black_hole_field"
     },
     "choir_glow": {
-      "azimuth": -110.0,
-      "elevation": 20.0,
-      "distance": 4.5,
-      "space": "chrono_drift_room"
+      "azimuth": -108.0,
+      "elevation": 22.0,
+      "distance": 4.6,
+      "space": "black_hole_field"
     },
     "timpani_hits": {
-      "azimuth": 100.0,
+      "azimuth": 26.0,
       "elevation": 0.0,
-      "distance": 4.2,
-      "space": "chrono_drift_room"
+      "distance": 3.6,
+      "space": "black_hole_field"
     },
-    "clock_tick": {
-      "azimuth": 110.0,
-      "elevation": 18.0,
-      "distance": 1.5,
-      "space": "chrono_drift_room"
-    },
-    "sfx_whoosh": {
-      "azimuth": -120.0,
-      "elevation": 28.0,
-      "distance": 9.0,
-      "space": "chrono_drift_room"
-    },
-    "sfx_impact": {
-      "azimuth": 0.0,
-      "elevation": 0.0,
-      "distance": 1.5,
-      "space": "chrono_drift_room"
-    },
-    "deep_field": {
-      "azimuth": 0.0,
-      "elevation": 0.0,
-      "distance": 8.0,
-      "space": "chrono_drift_room"
+    "violin_high": {
+      "azimuth": -18.0,
+      "elevation": 24.0,
+      "distance": 2.8,
+      "space": "black_hole_field"
     }
   },
+  "immersive": {
+    "enabled": true,
+    "why": "the piece is about a field, not a stage: the room has to be bigger than the instruments and it has to keep opening as the pull grows, so the arrangement does the tension and the field does the scale",
+    "engine": "hoa_bus",
+    "anchors": [
+      "sub_pedal",
+      "piano_theme",
+      "cello_ostinato"
+    ],
+    "movers": [
+      {
+        "part": "violin_high",
+        "why": "it is the line being stretched: it climbs while the room holds still",
+        "path": "rises from 24 deg up on the left to nearly overhead across the crush, then returns to 24 deg for the horizon"
+      }
+    ],
+    "height": {
+      "low_strings": 28,
+      "choir_glow": 22,
+      "violin_high": 24
+    },
+    "room_changes": [
+      {
+        "at_section": "crush",
+        "why": "the tail lengthens as the object nears the mass",
+        "transition_s": 8.0
+      },
+      {
+        "at_section": "last light",
+        "why": "the field becomes the only thing left: the longest tail of the cue",
+        "transition_s": 2.0
+      }
+    ],
+    "must_hear": [
+      "the field around the listener from the first second",
+      "the room lengthening into the crush",
+      "the string section above, not around"
+    ],
+    "deliverables": [
+      "stereo",
+      "immersive_3_2"
+    ],
+    "notes": "3.3 (three front and three low-frequency channels) is not a layout this engine routes: it caps low-frequency channels at two, so the immersive deliverable is the project 3.2 layout (L C R + LFE1 LFE2), declared here rather than implied."
+  },
   "expression": {
-    "sonic_picture": "In the first ten seconds a low pedal sits under a dry high clock while a close piano states eight slow notes in a wide, cold room. The strings arrive behind and above on the right, and a breathy whoosh crosses from the rear left to the centre. At 20 s the fall lands as a single sub impact in the middle of the room, with brass and choir around it. At 23.3 s everything stops except the pedal and one piano D, which rings until the file ends.",
-    "performer": "The organist holds the pedal without swell and lets the room do the work. The pianist plays the theme softly, lets each note ring into the next, and almost stops before the fall. The string section leans into beat one of each bar and eases off before the chord change. The timpanist plays single hits on the bar and a short roll into the impact. The clock is mechanical: exactly on the beat, never expressive, because it is time and it does not stop for the ship.",
-    "producer_moves": "The clock is the one part that never stops, so the fall happens around it and time keeps running; everything else is removed at 23.333 s. The whoosh is the only part with a trajectory, so it is the only thing that moves while the bed stays still. The room opens at the collapse and closes at 23.333 s, so the last piano note is close and the tail is the room leaving. The master is limited to -16 LUFS and -1.5 dBTP so the impact keeps its transient.",
-    "anti_generic": "The generic version is a sustained pad, a rising arpeggio and a trailer hit at the end; what stops this one is that a single clock keeps time through the fall, and the theme is left alone on one note after the cut instead of being doubled by the full ensemble.",
+    "sonic_picture": "In the first ten seconds a sub pedal sits under a wide string fifth while a close piano states four notes of the fall figure and lets each one ring into a very large room. By the middle the sixteenths are running and the theme has been stated whole; at 41 s the brass and choir arrive together and the violin starts climbing. At 72.6 s the music is cut and the same theme returns at half speed over harp. The last thing heard is one piano D with nothing under it.",
+    "performer": "The cellist bows sixteenths with a hard, short stroke and leans on beats one and three. The pianist plays the figure softly and lets the notes ring into each other, then plays it in octaves at the crush with weight and no rubato. The violinist climbs chromatically, pressing harder as the line rises. The timpanist plays single strokes and one short roll into each turning point. The choir never articulates: it breathes in and out with the strings.",
+    "producer_moves": "Nothing is faded in except the opening bed; every other entrance is a cut on the bar. The release at 72.6 s removes all the low end at once, so the harp is heard in the same room the brass just left. Reverb throw on the last piano D; the cue is not faded out, it simply stops at 120 s in the tail.",
+    "anti_generic": "The generic version is a riser into a braam, a four-note ostinato on the root and a drum loop. What stops it here is that the pulse is a bowed sixteenth figure on chord tones that changes pitch every bar, the figure is stated alone first and never becomes a hook, and the loudest moment is a chord, not an effect.",
     "cues": [
       {
-        "section": "Drift",
-        "arousal": "low",
-        "mode_register": "D minor, low pedal and middle piano",
+        "section": "accretion",
+        "arousal": "low but weighted",
+        "mode_register": "phrygian, low",
         "tempo_trend": "steady",
-        "dynamics": "piano",
-        "articulation": "ringing, unhurried",
-        "timbre": "cold and bare"
+        "dynamics": "pp",
+        "articulation": "sustained, ringing",
+        "timbre": "dark, distant, wide"
       },
       {
-        "section": "Approach",
-        "arousal": "mid",
-        "mode_register": "D minor, middle register",
-        "tempo_trend": "steady",
-        "dynamics": "mezzo piano to mezzo forte",
-        "articulation": "legato strings over even harp",
-        "timbre": "warm and widening"
+        "section": "tidal",
+        "arousal": "rising",
+        "mode_register": "phrygian, low-mid",
+        "tempo_trend": "steady with the pulse tightening",
+        "dynamics": "mp to f",
+        "articulation": "short bowed sixteenths against long pads",
+        "timbre": "close and dry against a huge room"
       },
       {
-        "section": "Collapse",
+        "section": "crush",
         "arousal": "high",
-        "mode_register": "D minor, low brass to high strings",
-        "tempo_trend": "steady, then a roll",
-        "dynamics": "forte to fortissimo at the impact",
-        "articulation": "short brass stabs, a timpani roll, a sustained choir",
-        "timbre": "bright and massive"
+        "mode_register": "phrygian, full range",
+        "tempo_trend": "fixed but feels faster as density rises",
+        "dynamics": "ff",
+        "articulation": "marcato brass, hard bowing, chromatic climb",
+        "timbre": "bright and dense at the top, heavy at the bottom"
       },
       {
-        "section": "Afterglow",
-        "arousal": "low",
-        "mode_register": "D, one pedal and one high piano note",
+        "section": "dilation",
+        "arousal": "held",
+        "mode_register": "phrygian, mid",
+        "tempo_trend": "halved feel",
+        "dynamics": "mp",
+        "articulation": "plucked and sustained, no attacks in the low end",
+        "timbre": "open, reverberant, thin"
+      },
+      {
+        "section": "horizon",
+        "arousal": "highest",
+        "mode_register": "phrygian, full range",
+        "tempo_trend": "steady to the crest",
+        "dynamics": "ff to fff at the crest",
+        "articulation": "everything hard, timpani roll",
+        "timbre": "maximum density and width"
+      },
+      {
+        "section": "last light",
+        "arousal": "empty",
+        "mode_register": "tonic only",
         "tempo_trend": "none",
-        "dynamics": "pianissimo",
-        "articulation": "ringing and falling",
-        "timbre": "soft and distant"
+        "dynamics": "p",
+        "articulation": "one struck note",
+        "timbre": "the room alone"
       }
     ],
     "theme": {
-      "contour": "up a fifth, down a third, up a sixth to the octave, then step down and settle on the third",
-      "interval_character": "mostly steps with two leaps of a fifth and a sixth, all between chord tones",
-      "rhythm_cell": "long, short, long, short, short, short, long",
-      "why_memorable": "the leap to the octave lands on a weak beat and the line never resolves to the tonic",
-      "variation_plan": "piano alone; under the strings an octave lower; a two-note fragment before the fall; one long D5 alone at the end"
+      "contour": "arch that fails: up a minor third, a semitone back down, two steps down, then home",
+      "interval_character": "steps and semitones throughout; one fourth leap only in the stretched dilation statement",
+      "rhythm_cell": "long, short, short, long, held",
+      "why_memorable": "the semitone Eb is the phrygian colour and it arrives late in the phrase, so the ear is still waiting for it when it lands",
+      "variation_plan": "bare at 5.5 s; whole at 22 s; doubled in octaves at 44 s; stretched to double length at 76 s; in the top octave at 104 s; reduced to one D at 115 s"
     }
   },
   "focus": "melody",
   "intent": {
     "emotions": [
-      "wonder",
-      "mysterious"
+      "tense",
+      "awe"
     ],
     "registers": [
       "cinematic"
@@ -314,11 +390,19 @@
       "rising_line"
     ],
     "avoid": [
-      "four_on_floor"
+      "four_on_floor",
+      "major_cadence"
+    ],
+    "must_hear": [
+      "the pedal from the first second",
+      "the sixteenths from 15.8 s",
+      "the brass at 41 s",
+      "the cut at 72.6 s",
+      "one piano D after 113.7 s"
     ]
   },
   "piece_type": "cinematic",
-  "gate_reason": "a film cue with a stated theme, a build, a hard impact and a tail: the cinematic profile, nothing relaxed",
+  "gate_reason": "a film cue built on pressure carriers, a figure and an accelerating pulse: the cinematic profile judges the figure, the balance and the immersive rows without pretending a black hole resolves",
   "video": {
     "enabled": false,
     "source": null,
@@ -341,7 +425,7 @@
     "master_profile": null,
     "deliverable": null,
     "preset": "default",
-    "notes": "music-only cue: no picture file"
+    "notes": "music-only sheet: no picture, nothing to sync"
   },
-  "notes": "The palette is the GeneralUser GS SoundFont (one sample per key, no velocity layers), so every bowed, blown and struck preset carries a velocity_timbre curve from the knowledge base. The ambience is a project environment preset with three noise layers; the whoosh and the impact are project sfx presets, both built from the shipped recipes and cited to real-sound research. The cue is original: it uses the devices of a space cue (a pedal, a clock, a moving object, one impact, a cut), not any composer's notes."
+  "notes": "120.0 s at 152 BPM in 4/4 is 76 bars exactly. Every value above is a target the gate or a helper can check; numbers for height, distance and room geometry live in the presets."
 }

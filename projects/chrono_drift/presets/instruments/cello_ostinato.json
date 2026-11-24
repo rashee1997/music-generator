@@ -1,0 +1,63 @@
+{
+  "name": "cello_ostinato",
+  "character": "A single cello driving sixteenths hard from the left, bow biting the string on every beat so the pulse pushes forward instead of ticking.",
+  "description": "The engine of the cue: a repeating cell of six notes on the sounding chord, in sixteenths, with a raised accent on beats one and three and a new pitch each time the chord turns.",
+  "gm": "cello",
+  "role": "ostinato",
+  "humanize": {
+    "preset": "tight",
+    "timing_ms": 3.0,
+    "drift_ms": 4.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": -38.0,
+    "elevation": 0.0,
+    "distance": 2.2,
+    "kind": "spot",
+    "binaural": true
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 70.0
+    },
+    {
+      "type": "peak",
+      "f": 220.0,
+      "gain": 1.0,
+      "q": 0.9
+    },
+    {
+      "type": "peak",
+      "f": 900.0,
+      "gain": -2.0,
+      "q": 1.0
+    },
+    {
+      "type": "lp",
+      "f": 7000.0
+    }
+  ],
+  "gain_db": -5.0,
+  "reverb": 0.22,
+  "articulation": {
+    "overlap_ms": 8.0,
+    "gate": 0.9,
+    "release_ms": 120.0
+  },
+  "mechanics_class": "bowed",
+  "velocity_timbre": {
+    "points": [
+      [25, 900],
+      [60, 2000],
+      [127, 5000]
+    ],
+    "bands": 3
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring section 1 | the pulse that does not stop is the first carrier of pressure; a short low-string figure made of chord tones, changed on each repeat",
+    "KB soundfont-velocity-and-realism section 4 | a hard stroke is brighter, so velocity_timbre opens the bow bite on the accents; starting values",
+    "ESTIMATE: azimuth -38 deg, 2.2 m, gain -5 dB and the 8 ms overlap are starting values for a solo cello sitting close and left"
+  ]
+}
