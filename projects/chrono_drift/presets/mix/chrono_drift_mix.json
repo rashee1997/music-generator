@@ -279,20 +279,20 @@
       "enabled": true
     },
     "send_by_role": {
-      "default": 0.16,
+      "default": 0.128,
       "bass": 0.0,
       "drum": 0.08,
       "percussion": 0.08,
-      "pad": 0.26,
-      "texture": 0.3,
-      "drone": 0.2,
-      "melody": 0.18,
-      "lead": 0.18,
-      "vocal": 0.22,
-      "environment": 0.2,
-      "ostinato": 0.12,
-      "arp": 0.28,
-      "counter": 0.24
+      "pad": 0.208,
+      "texture": 0.24,
+      "drone": 0.16,
+      "melody": 0.144,
+      "lead": 0.144,
+      "vocal": 0.176,
+      "environment": 0.16,
+      "ostinato": 0.096,
+      "arp": 0.224,
+      "counter": 0.192
     },
     "drr": {
       "enabled": false,

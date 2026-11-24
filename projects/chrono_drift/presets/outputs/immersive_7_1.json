@@ -1,0 +1,66 @@
+{
+  "name": "immersive_7_1",
+  "character": "Discrete 7.1 surround for a listener-level ring of eight loudspeakers, with a dedicated low-frequency channel.",
+  "label": "7.1 surround (ITU-R BS.2051 System H)",
+  "order": 3,
+  "aliases": [
+    "7.1",
+    "7_1",
+    "surround"
+  ],
+  "channels": 8,
+  "channel_order": [
+    "FL",
+    "FR",
+    "FC",
+    "LFE",
+    "BL",
+    "BR",
+    "SL",
+    "SR"
+  ],
+  "file": "master_7_1.wav",
+  "renderer": "spatial",
+  "true_peak_dbtp": -3.0,
+  "layout": "itu_bs2051_system_h",
+  "lfe": {
+    "channel": 4,
+    "send_db": 2.0,
+    "lowpass_hz": 80.0,
+    "stopband_hz": 120.0,
+    "stopband_db": -45.0,
+    "roles": [
+      "bass",
+      "sub_bass",
+      "sub_brass",
+      "drone",
+      "kick"
+    ]
+  },
+  "gate": {
+    "stereo_correlation_min": 0.15,
+    "fold_band_max_db": 6.0,
+    "fold_floor_db": 30.0
+  },
+  "sources": [
+    "ITU-R BS.2051-3: System H is the 7.1 loudspeaker layout (FL FR FC LFE BL BR SL SR)",
+    "ITU-R BS.1770-4: the LFE channel is excluded from the loudness measurement",
+    "The -3.0 dBTP ceiling is this project's delivery policy for a multichannel file that carries an LFE channel, not a measured acoustic value",
+    "Loudness is measured on the delivered channels with the layout's channel weights (ITU-R BS.1770, `loudness.method`: bs1770_layout); it used to be the loudness of the two-channel fold, which a project can still ask for with \"stereo_fold\"",
+    "The linked limiter (5 ms look-ahead, 120 ms release, at most 6 dB of reduction) and the fold-down band limit (6 dB) are starting values, not measured ones",
+    "The -10 dB low-frequency send in the shipped preset left this piece's 73 Hz pedal at -60 dBFS (measured against a front stage at -25 dBFS): the send and the crossover together are about 25 dB, and the piece's sub-80 Hz content is itself 30 dB under its programme. The project raises the send to +2 dB, which lands the channel near -44 dBFS."
+  ],
+  "loudness": {
+    "method": "bs1770_layout"
+  },
+  "limiter": {
+    "enabled": true,
+    "lookahead_ms": 5.0,
+    "release_ms": 120.0,
+    "oversample": 4,
+    "max_reduction_db": 6.0,
+    "max_iterations": 4,
+    "tolerance_lu": 0.2,
+    "margin_db": 0.1
+  }
+}
