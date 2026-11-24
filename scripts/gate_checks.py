@@ -497,6 +497,12 @@ def check_dc(sig, dc_max=0.001, drift_max=0.001):
         # multi-second file and a file too short to have an interior is not judged on its edges.
         if len(x) > 4 * block:
             x = x[block:len(x) - block]
+        elif len(x) > 16:
+            # A delivery shorter than four seconds has no room for a one-second guard at each end, and the filter's
+            # own start-up was 8e-3 of "drift" on a clean 2 s control. Drop an eighth at each edge instead; a file
+            # left with one block is judged on its mean, which is the row's other half.
+            edge = max(1, len(x) // 8)
+            x = x[edge:len(x) - edge]
         n = len(x) // block
         if n >= 2:
             bm = x[:n * block].reshape(n, block).mean(axis=1)
@@ -566,9 +572,17 @@ def tempo_from_onsets(y, sr, hop=512, lo_bpm=50.0, hi_bpm=220.0):
     prom = (float(np.max(oenv)) - med) / sd
     if prom < 3.0:
         return None, 0.0
-    n_onsets = int(np.count_nonzero(oenv > med + 0.25 * (float(np.max(oenv)) - med)))
+    # Count the attacks with the adaptive detector, not with a threshold set against the file's own peak: on a cue
+    # that runs from a quiet opening to a loud climax, only the climax attacks clear `median + 25 % of peak`
+    # (measured: 37 frames in 127 s on a cue with a quarter-note timpani pulse throughout, so the row declined to
+    # judge the tempo of a piece that plainly has one).
+    try:
+        detected = librosa.onset.onset_detect(onset_envelope=oenv, sr=sr, hop_length=hop, units='time')
+    except Exception:
+        detected = np.array([])
+    n_onsets = int(len(detected))
     rate = n_onsets / (len(oenv) / (float(sr) / float(hop)))
-    if n_onsets < 12 or rate < 0.4:
+    if n_onsets < 8 or rate < 0.4:
         return None, 0.0
     # mean-removed, unit-variance envelope: the raw one carries the programme's loudness contour, which lifts every
     # lag in the window and hides the periodicity (measured: the 152.0 lag peaked at only 1.05x the window median
@@ -593,7 +607,24 @@ def tempo_from_onsets(y, sr, hop=512, lo_bpm=50.0, hi_bpm=220.0):
         den = a - 2.0 * b + c
         if abs(den) > 1e-12:
             lag += 0.5 * (a - c) / den
-    return 60.0 * fps / lag, strength
+    bpm = 60.0 * fps / lag
+    # The autocorrelation peak can sit on a metrical level below the beat: a part that attacks every two beats
+    # makes the envelope periodic at half the tempo (measured: the gate's own 120 BPM control fixture read 60.0, a
+    # peak 7x the median). The spacing between consecutive attacks says which level they are on, so a peak whose
+    # period is a whole multiple of that spacing is lifted to it -- never above hi_bpm, so a piece with eighth-note
+    # material keeps its quarter-note beat instead of being read at double tempo.
+    onsets = detected
+    if len(onsets) > 3:
+        gaps = np.diff(np.asarray(onsets, dtype=np.float64))
+        gaps = gaps[gaps > 1e-3]
+        if gaps.size >= 3:
+            spacing = float(np.median(gaps))
+            if spacing > 0:
+                ratio = (60.0 / bpm) / spacing
+                k = int(round(ratio))
+                if k >= 2 and abs(ratio - k) <= 0.2 * k and bpm * k <= hi_bpm:
+                    bpm *= k
+    return bpm, strength
 
 
 def check_tempo(sig, bpm_ref, tol_bpm=2.0, tol_pct=2.0, drift_bpm=2.0):
@@ -624,6 +655,14 @@ def check_tempo(sig, bpm_ref, tol_bpm=2.0, tol_pct=2.0, drift_bpm=2.0):
         except Exception:
             v = None
         if v is not None and s >= 1.0:
+            # A quarter can lock onto a subdivision or a multiple of the beat (measured: quarters of a metronomic
+            # 152 BPM cue read 76.0, i.e. half, and the spread was reported as 75.8 BPM of "drift" on a render that
+            # does not drift at all). Snap each quarter to the nearest metrical relative of the whole-piece estimate
+            # before the spread, so the number means tempo drift and not a metrical-level disagreement.
+            for mult in (0.25, 1.0 / 3.0, 0.5, 2.0 / 3.0, 0.75, 1.0, 4.0 / 3.0, 1.5, 2.0, 3.0, 4.0):
+                if abs(v * mult - bpm) <= max(2.0, 0.04 * bpm):
+                    v = v * mult
+                    break
             vals.append(v)
     drift = (max(vals) - min(vals)) if len(vals) > 1 else 0.0
     tol = max(float(tol_bpm), float(bpm_ref) * float(tol_pct) / 100.0)

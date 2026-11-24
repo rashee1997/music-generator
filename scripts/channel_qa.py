@@ -37,6 +37,8 @@ PARAMS = {
     'stable_db': 3.0,            # how still the whole bar must be for an isolated channel fault
     'polarity_corr': -0.5,       # a bar correlated this negatively with both neighbours is inverted
     'polarity_neighbor': 0.2,    # ...while both neighbours must agree in polarity
+    'floor_abs_db': -65.0,       # a bar under this is not judged for a channel fault at all
+    'floor_programme_db': 40.0,  # ...nor one this far under the piece's own programme level
 }
 
 _REPORT_LIMIT = 6
@@ -94,24 +96,62 @@ def _db(x):
     return float(20.0 * np.log10(np.sqrt(np.mean(np.square(x)) + 1e-20)))
 
 
+POLARITY_BAND_HZ = 500.0     # above this a half period is under 1 ms, so a lag search can tell an inverted bar
+                             # from a delayed one; below it the two are the same signal
+LOWEST_JUDGED_HZ = POLARITY_BAND_HZ
+
+
+def _band(x, sr):
+    """The part of a bar that carries an identifiable waveform: everything above POLARITY_BAND_HZ."""
+    x = np.asarray(x, dtype=np.float64)
+    if not sr or x.size < 64:
+        return x
+    try:
+        from scipy.signal import butter, sosfilt
+        sos = butter(4, POLARITY_BAND_HZ / (0.5 * float(sr)), btype='highpass', output='sos')
+        return np.asarray(sosfilt(sos, x), dtype=np.float64)
+    except Exception:                       # pragma: no cover - SciPy is a render dependency
+        spec = np.fft.rfft(x)
+        freq = np.fft.rfftfreq(len(x), 1.0 / float(sr))
+        spec[freq < POLARITY_BAND_HZ] = 0.0
+        return np.fft.irfft(spec, n=len(x))
+
+
 def _corr(a, b, max_lag=64):
-    """Signed normalized cross-correlation at the best small lag.
+    """Signed normalized cross-correlation at the best small lag (no ambiguity flag).
+
+    The per-bar row uses `_corr_curve`, which also says whether the pair can be judged at all; this wrapper keeps
+    the plain number for callers that only want the correlation.
+    """
+    return _corr_curve(a, b, max_lag=max_lag)[0]
+
+
+def _corr_curve(a, b, max_lag=None, sr=None):
+    """Signed normalized cross-correlation at the best small lag, and whether the pair is judgeable.
 
     Zero-lag correlation of two bars of a sustained tone can be negative just because the bar boundary lands at
     a different phase. The best lag removes that boundary phase; an inverted bar still has a negative peak.
+
+    The lag window must reach half a period of the lowest note being judged. A fixed 64 samples does that at
+    8 kHz (8 ms, 62 Hz) and fails at 44.1 kHz (1.45 ms, 345 Hz): below 345 Hz the window cannot reach the
+    periodic peak at all, so a clean 220 Hz tone scored -0.96 against its own next bar and was reported as a
+    polarity inversion. The window now follows the sample rate, and is capped at a quarter of the bar so a long
+    bar cannot let the search slide onto unrelated content.
     """
     a = np.asarray(a, dtype=np.float64)
     b = np.asarray(b, dtype=np.float64)
     n = min(len(a), len(b))
     if n < 2:
-        return 0.0
+        return 0.0, True
     # Correlate the truncated pair: the lag sums only cover samples both bars have.
     a = a[:n] - np.mean(a[:n])
     b = b[:n] - np.mean(b[:n])
     den = float(np.sqrt(np.sum(a * a) * np.sum(b * b)))
     if den <= 1e-20:
-        return 0.0
-    lag = max(1, min(int(max_lag), n - 1))
+        return 0.0, True
+    if max_lag is None:
+        max_lag = 0.5 * float(sr) / LOWEST_JUDGED_HZ if sr else 64.0
+    lag = max(1, min(int(round(max_lag)), max(1, n // 4)))
     if _signal_correlate is not None:
         # The same linear cross-correlation as np.correlate, in O(n log n) instead of O(n*m). A 3.3 s bar at
         # 44.1 kHz is 1.5e5 samples, so the direct path cost ~2e10 multiply-adds per call; NumPy's own docs
@@ -132,7 +172,11 @@ def _corr(a, b, max_lag=64):
     # alone is arbitrary. Among the peaks within 5 % of the strongest, the one nearest zero lag decides.
     near = np.flatnonzero(mag >= 0.95 * mag.max())
     i = int(near[np.argmin(np.abs(near - lag))])
-    return float(c[i] / den)
+    # ...and when both signs reach the peak the signal is periodic inside the window: an inverted copy and a copy
+    # delayed by half a period are the same waveform, so the pair cannot be judged for polarity at all.
+    top = float(mag.max())
+    ambiguous = bool(top > 1e-12 and min(abs(float(c.max())), abs(float(c.min()))) >= 0.9 * top)
+    return float(c[i] / den), ambiguous
 
 
 def _level_matrix(signals, edges):
@@ -176,13 +220,20 @@ def _energy(signals, a, b, idx):
     return float(np.mean(np.square(seg)))
 
 
-def _conflicts(signals, levels, edges, positions, names, params):
+def _conflicts(signals, levels, edges, positions, names, params, sr=None):
     """Isolated per-bar channel faults and spatial balance swings."""
     signals = np.asarray(signals, dtype=np.float64)
     jump, drop, bal, pol = (float(params[k]) for k in
                             ('jump_db', 'dropout_db', 'balance_db', 'polarity_corr'))
     stable = float(params['stable_db'])
     neigh = float(params['polarity_neighbor'])
+    # A bar far under the piece's own programme level is not a channel event: it is what an empty channel, a
+    # tail-only bar or a channel the arrangement never feeds looks like. Without a floor, a 7.1 LFE sitting at
+    # -60 dBFS while the programme ran at -25 dBFS produced 29 of 33 reported faults (jumps, dropouts and
+    # polarity among them), all of them inaudible.
+    active = levels[levels > float(params['floor_abs_db'])]
+    programme = float(np.median(active)) if active.size else float(params['floor_abs_db'])
+    floor = max(float(params['floor_abs_db']), programme - float(params['floor_programme_db']))
     groups = _groups(positions)
     # Each balance test reads three bars of one group, so measure every group's bars once instead of three times.
     group_energy = {}
@@ -225,14 +276,19 @@ def _conflicts(signals, levels, edges, positions, names, params):
         # A one-bar hole: both neighbours sit above it and agree with each other. The bar as a whole may
         # move (one channel of four is a real level change); the test is that the other channels did not.
         holes = np.where((cur < prev - drop) & (cur < nxt - drop) &
-                         (np.abs(prev - nxt) <= stable))[0]
+                         (np.abs(prev - nxt) <= stable) &
+                         (np.maximum(np.maximum(prev, cur), nxt) > floor))[0]
         holes = [int(ch) for ch in holes if isolated(int(ch))]
         for ch in holes:
             add(b, ch, 'dropout', float(prev[ch] - cur[ch]),
                 neighbour_db=float(0.5 * (prev[ch] + nxt[ch])))
         # A one-bar lift or dip, away from both neighbours in the same direction. A mute is reported as a
         # dropout above, not twice.
-        move = (dprev * dnext > 0.0) & (np.minimum(np.abs(dprev), np.abs(dnext)) > jump)
+        # A jump is a level move; in a channel that is under the floor there is no level to move, so these are
+        # judged on the bar itself. A dropout is judged on its neighbours instead, because a channel that falls to
+        # silence has left the programme and the bar it left behind is quiet by definition.
+        move = ((dprev * dnext > 0.0) & (np.minimum(np.abs(dprev), np.abs(dnext)) > jump) &
+                (cur > floor))
         if holes:
             move[holes] = False
         for ch in np.where(move)[0]:
@@ -243,26 +299,52 @@ def _conflicts(signals, levels, edges, positions, names, params):
         if len(edges) > 3:
             a0, a1 = edges[b], edges[b + 1]
             for ch in range(signals.shape[1]):
-                if levels[b, ch] <= -60.0:
+                if levels[b, ch] <= floor:
                     continue
-                x = signals[a0:a1, ch]
-                p = signals[edges[b - 1]:edges[b], ch]
-                n = signals[edges[b + 1]:edges[b + 2], ch]
+                if positions is not None and positions[ch] is None:
+                    continue        # a low-frequency channel: its phase belongs to the crossover, not to a bar
+                x = _band(signals[a0:a1, ch], sr)
+                p = _band(signals[edges[b - 1]:edges[b], ch], sr)
+                n = _band(signals[edges[b + 1]:edges[b + 2], ch], sr)
                 m = min(len(x), len(p), len(n))
-                cp, cn = _corr(x[:m], p[:m]), _corr(x[:m], n[:m])
+                # Polarity is a question about a waveform. A bar whose energy is all low has none to compare: a
+                # 73 Hz pedal "inverted" is a half-period delay, and a pedal on another note shares nothing with
+                # its neighbours. Skip those instead of reporting a fault the audio does not contain.
+                full = float(np.mean(signals[a0:a1, ch] ** 2)) + 1e-20
+                if m < 2 or float(np.mean(x[:m] ** 2)) <= 1e-4 * full:     # no content above 500 Hz
+                    continue
+                cp, amb_p = _corr_curve(x[:m], p[:m], sr=sr)
+                cn, amb_n = _corr_curve(x[:m], n[:m], sr=sr)
+                if amb_p or amb_n:
+                    continue
                 if max(cp, cn) < pol and min(abs(cp), abs(cn)) > neigh:
                     add(b, ch, 'polarity', 0.0, corr_prev=cp, corr_next=cn)
-        # One-bar spatial swing: the whole grouping moves while both neighbours agree.
+        # One-bar spatial swing: the whole grouping moves while both neighbours agree, and the bar's own total
+        # level stays put -- the same condition the jump and dropout rows use, so a part entering mid-bar is not
+        # read as a pan fault.
+        totals = 10.0 * np.log10(np.mean(np.power(10.0, levels / 10.0), axis=1) + 1e-20)
         for label, ia, ib in groups:
             left, right = group_energy[label]
             ep, ec, en = left[b - 1], left[b], left[b + 1]
             fp, fc, fn = right[b - 1], right[b], right[b + 1]
             if min(ep, en, fp, fn) <= 1e-20:
                 continue
+            if 10.0 * np.log10(min(ec, fc) + 1e-20) <= floor:
+                continue        # a swing between two nearly empty groups is the room, not a pan
             rp, rc, rn = 10.0 * np.log10((ep + 1e-20) / (fp + 1e-20)), \
                 10.0 * np.log10((ec + 1e-20) / (fc + 1e-20)), \
                 10.0 * np.log10((en + 1e-20) / (fn + 1e-20))
-            if abs(rc - rp) > bal and abs(rc - rn) > bal and abs(rp - rn) <= stable:
+            swing = min(abs(rc - rp), abs(rc - rn))
+            whole = abs(totals[b] - 0.5 * (totals[b - 1] + totals[b + 1]))
+            # A bar that sits between its neighbours' totals is part of a swell or a fade, not an isolated event:
+            # on a cue that rises 13 dB across three bars, the middle bar's image moves because a new part is
+            # arriving, which is the arrangement. An isolated bar (a peak or a dip) is the case this row wants.
+            ramping = (totals[b - 1] < totals[b] < totals[b + 1]) or (totals[b - 1] > totals[b] > totals[b + 1])
+            # A pan fault moves one side against the other, so the image moves further than the bar's own level does.
+            # When the whole bar moved at least that far, something entered or the bar was accented: that is the
+            # arrangement, not a channel (measured: bar 4 of a cue moved 4.9 dB left/right while its total rose
+            # 7 dB as a part entered, and was reported as a pan fault).
+            if swing > bal and abs(rp - rn) <= stable and swing > whole and not ramping:
                 add(b, -1, 'balance', rc - 0.5 * (rp + rn), group=label,
                     ratio_db=float(rc), neighbour_db=float(0.5 * (rp + rn)))
     return found
@@ -346,13 +428,13 @@ def analyse(score, audio, sr, target=None, params=None):
     edges = _bar_edges(score, sr, len(prepared['signals']) / float(sr))
     levels = _level_matrix(prepared['signals'], edges)
     conflicts = _conflicts(prepared['signals'], levels, edges, prepared['positions'],
-                           prepared['names'], p)
+                           prepared['names'], p, sr=sr)
     # An AmbiX channel fault is spread across every decoded speaker by the decoder, so it can fail the
     # isolation test in the virtual domain. The raw ACN channels are checked too: a lost or inverted ACN
     # channel is exactly the sort of one-bar fault this row exists to find.
     if prepared.get('raw') is not None:
         raw_levels = _level_matrix(prepared['raw'], edges)
-        conflicts += _conflicts(prepared['raw'], raw_levels, edges, None, prepared['raw_names'], p)
+        conflicts += _conflicts(prepared['raw'], raw_levels, edges, None, prepared['raw_names'], p, sr=sr)
         conflicts.sort(key=lambda c: (c['bar'], c['channel'], c['kind']))
     prepared.update(edges=edges, levels=levels, bars=len(edges) - 1, conflicts=conflicts, params=p)
     return prepared

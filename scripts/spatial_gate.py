@@ -583,8 +583,12 @@ def output_rows(score, wav_path, out):
         surrounds = [n for n in order if n in ('BL', 'BR', 'SL', 'SR')]
         fronts = [n for n in order if n in ('FL', 'FR', 'FC')]
         if gate and surrounds and fronts:
-            s = np.sqrt(sum(np.mean(np.square(sig.audio[:, order.index(n)])) for n in surrounds))
-            f = np.sqrt(sum(np.mean(np.square(sig.audio[:, order.index(n)])) for n in fronts))
+            # Mean over the group, not the sum: four surrounds against three fronts, summed, reads +1.25 dB
+            # louder at an identical per-speaker level (20*log10(sqrt(4/3))), so the -9..-2 dB window could
+            # not be met by a level-neutral field. channel_qa._energy carries the same fix for the balance
+            # rows. The window itself is unchanged.
+            s = np.sqrt(float(np.mean([np.mean(np.square(sig.audio[:, order.index(n)])) for n in surrounds])))
+            f = np.sqrt(float(np.mean([np.mean(np.square(sig.audio[:, order.index(n)])) for n in fronts])))
             ratio = float(20.0 * np.log10((s + 1e-20) / (f + 1e-20)))
             lo, hi = float(gate[0]), float(gate[1])
             _row(out, 'PASS' if lo <= ratio <= hi else 'FAIL', 'imm.surround_ratio',
@@ -594,8 +598,11 @@ def output_rows(score, wav_path, out):
         beds = [sp['name'] for sp in config.layout(lay_name)['speakers']
                 if float(sp.get('elevation', 0.0)) <= 0 and not sp.get('lfe')]
         if hlimit is not None and heights and beds:
-            h = np.sqrt(sum(np.mean(np.square(sig.audio[:, order.index(n)])) for n in heights))
-            b = np.sqrt(sum(np.mean(np.square(sig.audio[:, order.index(n)])) for n in beds))
+            # Same count correction: a 7.1.2 bed is seven speakers against two overhead ones, so a sum
+            # compared heights 5.44 dB (20*log10(sqrt(7/2))) hotter than they are per speaker and failed a
+            # correctly mixed bed. The ceiling is unchanged.
+            h = np.sqrt(float(np.mean([np.mean(np.square(sig.audio[:, order.index(n)])) for n in heights])))
+            b = np.sqrt(float(np.mean([np.mean(np.square(sig.audio[:, order.index(n)])) for n in beds])))
             rel = float(20.0 * np.log10((h + 1e-20) / (b + 1e-20)))
             _row(out, 'PASS' if rel <= float(hlimit) else 'FAIL', 'imm.height_arc',
                  f'{name}: height channels {rel:+.1f} dB against the listener-level beds (ceiling {float(hlimit):+.1f} dB)')

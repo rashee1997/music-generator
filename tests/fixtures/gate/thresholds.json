@@ -39,6 +39,8 @@
     "channel.bars": {
       "balance_db": 4.0,
       "dropout_db": 15.0,
+      "floor_abs_db": -65.0,
+      "floor_programme_db": 40.0,
       "jump_db": 8.0,
       "polarity_corr": -0.5,
       "polarity_neighbor": 0.2,

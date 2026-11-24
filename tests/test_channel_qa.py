@@ -67,7 +67,12 @@ class AnyChannel(unittest.TestCase):
         self.assertIn((2, 3, 'dropout'), kinds)
 
     def test_a_one_bar_channel_polarity_flip_is_found(self):
-        x = tone()
+        # A harmonic note, not a pure sine: the row judges polarity above 500 Hz, where an inverted bar aligns
+        # at -1 and a delayed one does not. For a single pure tone an inversion is a half-period delay, and the
+        # row declines to guess (see tests/test_gate_false_positives.py).
+        t = np.arange(int(8.0 * SR)) / SR
+        note = sum((1.0 / k) * np.sin(2 * np.pi * 220.0 * k * t) for k in range(1, 10))
+        x = np.repeat((0.2 * note / np.max(np.abs(note)))[:, None], 4, axis=1)
         lo, hi = middle_bar(analyse(x))
         x[lo:hi, 2] *= -1.0
         kinds = [(c['bar'], c['channel'], c['kind']) for c in analyse(x)['conflicts']]

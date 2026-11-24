@@ -21,13 +21,28 @@ import gate_checks as gc  # noqa: E402
 SR = 44100
 
 
-def clicks(bpm, seconds=20.0, sr=SR):
+def clicks(bpm, seconds=20.0, sr=SR, every=1):
     y = np.zeros(int(sr * seconds), dtype=np.float64)
-    n = int(bpm / 60.0 * seconds)
-    for k in range(n):
-        i = int(k * 60.0 / bpm * sr)
+    period = 60.0 / bpm * every
+    k = 0
+    while k * period < seconds:
+        i = int(k * period * sr)
         y[i:i + 220] = np.hanning(220)
+        k += 1
     return gate_audio.Signal(y, sr)
+
+
+def dynamic_clicks(bpm=120.0, seconds=48.0, loud_from=40.0):
+    """A cue with a quiet opening and a loud climax: the shape the peak-relative onset count under-measured."""
+    y = np.zeros(int(SR * seconds), dtype=np.float64)
+    period = 60.0 / bpm
+    k = 0
+    while k * period < seconds:
+        i = int(k * period * SR)
+        amp = 0.6 if i / SR >= loud_from else 0.02
+        y[i:i + 220] = amp * np.hanning(220)
+        k += 1
+    return gate_audio.Signal(y, SR)
 
 
 class Tempo(unittest.TestCase):
@@ -41,6 +56,26 @@ class Tempo(unittest.TestCase):
     def test_a_wrong_tempo_still_fails(self):
         res = gc.check_tempo(clicks(152.0), 96.0)
         self.assertTrue(res['fail'], res['detail'])
+
+    def test_eighth_note_material_does_not_double_the_tempo(self):
+        # A part attacking on every eighth note must not be carried up to 240 BPM: the lift stops at the tempo
+        # window's own ceiling, so the beat stays where the piece declares it.
+        res = gc.check_tempo(clicks(120.0, every=0.5), 120.0)
+        self.assertFalse(res.get('skipped'), res['detail'])
+        self.assertAlmostEqual(res['value'], 0.0, delta=2.0, msg=res['detail'])
+
+    def test_drift_is_not_the_spread_of_metrical_level_errors(self):
+        # Quarters of a metronomic 152 BPM cue read 76.0 BPM (half) and the spread was reported as 75.8 BPM of drift
+        # on a render that does not drift at all; each quarter is snapped to a metrical relative of the whole first.
+        res = gc.check_tempo(clicks(152.0, seconds=40.0), 152.0)
+        self.assertLess(res['drift_bpm'], 2.0, res['detail'])
+
+    def test_a_wide_dynamic_range_still_gets_its_tempo_judged(self):
+        # 48 s at 120 BPM with a quiet opening and a loud last eight seconds: a peak-relative onset count found 16
+        # attacks (0.33/s) and declined to judge a piece with a pulse on every beat.
+        res = gc.check_tempo(dynamic_clicks(), 120.0)
+        self.assertFalse(res.get('skipped'), res['detail'])
+        self.assertAlmostEqual(res['value'], 0.0, delta=2.0, msg=res['detail'])
 
     def test_no_pulse_is_skipped_not_passed(self):
         y = np.zeros(SR * 5, dtype=np.float64) + 0.01 * np.sin(2 * np.pi * 40 * np.arange(SR * 5) / SR)
