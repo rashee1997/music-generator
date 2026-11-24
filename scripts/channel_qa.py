@@ -39,6 +39,7 @@ PARAMS = {
     'polarity_neighbor': 0.2,    # ...while both neighbours must agree in polarity
     'floor_abs_db': -65.0,       # a bar under this is not judged for a channel fault at all
     'floor_programme_db': 40.0,  # ...nor one this far under the piece's own programme level
+    'balance_spread_db': 2.5,    # a group swing is a pan fault only if the group's channels moved together
 }
 
 _REPORT_LIMIT = 6
@@ -226,6 +227,7 @@ def _conflicts(signals, levels, edges, positions, names, params, sr=None):
     jump, drop, bal, pol = (float(params[k]) for k in
                             ('jump_db', 'dropout_db', 'balance_db', 'polarity_corr'))
     stable = float(params['stable_db'])
+    spread_max = float(params['balance_spread_db'])
     neigh = float(params['polarity_neighbor'])
     # A bar far under the piece's own programme level is not a channel event: it is what an empty channel, a
     # tail-only bar or a channel the arrangement never feeds looks like. Without a floor, a 7.1 LFE sitting at
@@ -292,6 +294,8 @@ def _conflicts(signals, levels, edges, positions, names, params, sr=None):
         if holes:
             move[holes] = False
         for ch in np.where(move)[0]:
+            if positions is not None and positions[int(ch)] is None:
+                continue        # a low channel's level follows its source's pitch and envelope, not a bar routing fault
             if isolated(int(ch)):
                 add(b, int(ch), 'jump', float(0.5 * (dprev[ch] + dnext[ch])),
                     neighbour_db=float(0.5 * (prev[ch] + nxt[ch])))
@@ -335,16 +339,16 @@ def _conflicts(signals, levels, edges, positions, names, params, sr=None):
                 10.0 * np.log10((ec + 1e-20) / (fc + 1e-20)), \
                 10.0 * np.log10((en + 1e-20) / (fn + 1e-20))
             swing = min(abs(rc - rp), abs(rc - rn))
-            whole = abs(totals[b] - 0.5 * (totals[b - 1] + totals[b + 1]))
-            # A bar that sits between its neighbours' totals is part of a swell or a fade, not an isolated event:
-            # on a cue that rises 13 dB across three bars, the middle bar's image moves because a new part is
-            # arriving, which is the arrangement. An isolated bar (a peak or a dip) is the case this row wants.
-            ramping = (totals[b - 1] < totals[b] < totals[b + 1]) or (totals[b - 1] > totals[b] > totals[b + 1])
-            # A pan fault moves one side against the other, so the image moves further than the bar's own level does.
-            # When the whole bar moved at least that far, something entered or the bar was accented: that is the
-            # arrangement, not a channel (measured: bar 4 of a cue moved 4.9 dB left/right while its total rose
-            # 7 dB as a part entered, and was reported as a pan fault).
-            if swing > bal and abs(rp - rn) <= stable and swing > whole and not ramping:
+            # A group swing is a pan or a trim: the whole group moves together. When the channels of one group change
+            # by different amounts, the content changed instead -- a part entered, left or crossed the mid line -- and
+            # the same energy moved for a musical reason (measured: a cue's back group swung 5 dB for one bar because
+            # one of its two channels dropped 7 dB while the other dropped 2). Channel levels are the evidence, so a
+            # coherent move of the group is required.
+            moves_a = [0.5 * ((levels[b, i] - levels[b - 1, i]) + (levels[b, i] - levels[b + 1, i])) for i in ia]
+            moves_b = [0.5 * ((levels[b, i] - levels[b - 1, i]) + (levels[b, i] - levels[b + 1, i])) for i in ib]
+            spread = max(max(moves_a) - min(moves_a), max(moves_b) - min(moves_b))
+            group_move = float(np.mean(moves_b) - np.mean(moves_a))
+            if swing > bal and abs(rp - rn) <= stable and spread <= spread_max and abs(group_move) > bal:
                 add(b, -1, 'balance', rc - 0.5 * (rp + rn), group=label,
                     ratio_db=float(rc), neighbour_db=float(0.5 * (rp + rn)))
     return found

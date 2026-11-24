@@ -345,6 +345,7 @@ ROWS = {
         'polarity_neighbor': (0.2, 0.0, 0.9),
         'floor_abs_db': (-65.0, -100.0, -30.0),
         'floor_programme_db': (40.0, 10.0, 80.0),
+        'balance_spread_db': (2.5, 0.5, 9.0),
     }),
     'render.finite':     dict(meaning='no NaN or infinite sample in any delivered channel', protected=True),
     'feel.effort':     dict(meaning='kinematic effort / respiration'),

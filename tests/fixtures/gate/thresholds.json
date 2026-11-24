@@ -38,6 +38,7 @@
     },
     "channel.bars": {
       "balance_db": 4.0,
+      "balance_spread_db": 2.5,
       "dropout_db": 15.0,
       "floor_abs_db": -65.0,
       "floor_programme_db": 40.0,
