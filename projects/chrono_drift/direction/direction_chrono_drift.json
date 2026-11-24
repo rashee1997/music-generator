@@ -299,10 +299,11 @@
       "the string section above, not around"
     ],
     "deliverables": [
-      "stereo",
-      "immersive_3_2"
+      "stereo (the certified master)",
+      "immersive_7_1: eight discrete channels, ITU-R BS.2051 System H (FL FR FC LFE BL BR SL SR)",
+      "adm_bw64: object-based ADM in a BW64 container, one channel per placed track with its position over time as ADM metadata, reverb return as a stereo bed"
     ],
-    "notes": "3.3 (three front and three low-frequency channels) is not a layout this engine routes: it caps low-frequency channels at two, so the immersive deliverable is the project 3.2 layout (L C R + LFE1 LFE2), declared here rather than implied."
+    "notes": "Immersive delivery is 8-channel: a discrete 7.1 bed (ITU-R BS.2051 System H) and an ADM object file (ITU-R BS.2076 metadata in ITU-R BS.2088 BW64). The engine has no 4-channel '3.3' layout; 3.2 (L C R + two LFE) was an earlier mapping of the same request and is replaced by these two."
   },
   "expression": {
     "sonic_picture": "In the first ten seconds a sub pedal sits under a wide string fifth while a close piano states four notes of the fall figure and lets each one ring into a very large room. By the middle the sixteenths are running and the theme has been stated whole; at 41 s the brass and choir arrive together and the violin starts climbing. At 72.6 s the music is cut and the same theme returns at half speed over harp. The last thing heard is one piano D with nothing under it.",

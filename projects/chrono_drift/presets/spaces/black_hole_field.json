@@ -45,7 +45,7 @@
       "rt60_s": "auto",
       "pre_delay_ms": "auto",
       "hf_decay": 0.42,
-      "level_db": -13.0,
+      "level_db": -19.0,
       "count": 8,
       "spread_deg": 180.0,
       "rise_s": 0.04,

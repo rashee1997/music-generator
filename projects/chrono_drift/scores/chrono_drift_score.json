@@ -69,7 +69,8 @@
  },
  "output_targets": [
   "stereo",
-  "immersive_3_2"
+  "immersive_7_1",
+  "adm_bw64"
  ],
  "dynamics": [
   [

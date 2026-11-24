@@ -18,8 +18,8 @@ Rebuilt from scratch on 2026-11-24 (`projects/chrono_drift` deleted first; nothi
 
 | item | value |
 |---|---|
-| master | `out/master_v01.wav` (= `out/master.wav`), version 1, 44.1 kHz, 24-bit, stereo, 127.34 s (120.0 s cue + 7.3 s room tail) |
-| loudness | −16.31 LUFS integrated, −1.50 dBTP true peak, crest 17.4 dB |
+| master | `out/master_v04.wav` (= `out/master.wav`), version 4, 44.1 kHz, 24-bit, stereo, 127.34 s (120.0 s cue + 7.3 s room tail) |
+| loudness | −16.38 LUFS integrated, −1.50 dBTP true peak, crest 17.7 dB |
 | verdict | **STEREO CERTIFIED**; the 3.2 immersive format failed its own rows and was not delivered |
 | score | D phrygian, 152 BPM, 4/4, 9 tracks, no SFX, no ambience |
 
@@ -53,6 +53,36 @@ Rebuilt from scratch on 2026-11-24 (`projects/chrono_drift` deleted first; nothi
 | `channel.bars` | sub pedal one-bar polarity flip | the overlapping pedal note per bar was removed |
 | `stem.edge` | 510 ms trailing silence | the last pedal note is held past the end of the score |
 
+## Gate fixes made after this cue (general, not project-specific)
+
+Everything below was a measurement that decided a row wrongly; no threshold moved (`tests/test_gate_no_loosening.py`
+still passes, and the regenerated snapshot adds two parameters and changes no number).
+
+1. **`channel_qa` polarity** judged a bar against its neighbours with a fixed ±64-sample lag search. At 44.1 kHz that is
+   1.45 ms, the half-period of 345 Hz, so a bar of anything lower could not be aligned: a clean, never-inverted 220 Hz
+   tone read **−0.96** against its own next bar and was reported as a polarity inversion, while the same code at 8 kHz
+   (where the unit test runs) read +0.96. The search now follows the sample rate and is capped at a quarter bar, polarity
+   is judged on the band above 500 Hz where inversion is not just a delay, and a pair is skipped when both signs reach the
+   peak (an inverted copy and a half-period-delayed copy are the same waveform).
+2. **`channel_qa` level floors**: the only guard was an absolute −60 dBFS, so a 7.1 LFE sitting at −60 dBFS produced 29
+   of 33 reported faults at levels between −48 and −111 dBFS while the programme ran at −25. Jump and dropout now need the
+   channel to be part of the programme, the low-frequency channel is never judged for polarity, and a balance swing must
+   move the image further than the bar's own total (a part entering mid-bar is not a pan fault).
+3. **`imm.surround_ratio` and `imm.height_arc` summed channel means over groups of different sizes**: four surrounds
+   against three fronts read **+1.25 dB** at an identical per-speaker level, and seven beds against two heights **+5.44 dB**.
+   Both now use the group mean, the same correction `channel_qa._energy` already documented. The windows and ceilings are
+   unchanged.
+4. **`check_dc` on files shorter than four seconds** was decided by its own decimating filter's start-up (8e-3 of "drift"
+   on a clean 2 s control): the guard is now proportional on a short file.
+5. **`check_tempo`**: the onset count that decides whether a tempo can be judged was peak-relative, so a cue that runs from
+   a quiet opening to a loud climax counted only its climax attacks (37 frames in 127 s, a quarter-note pulse throughout)
+   and declined to judge it. It now counts with the adaptive detector. The four-quarter drift was the spread of quarters that
+   had locked onto half or double the beat (75.8 BPM of "drift" on a render that does not drift); each quarter is snapped to
+   the nearest metrical relative first.
+
+Effect measured on this project's delivered 7.1 file: `channel.bars` went from **33 conflicts to 0** over 80 bars, and
+`imm.surround_ratio` now reports the true per-speaker figure (+0.3 dB instead of +1.5 dB).
+
 ## Engine fixes made for this cue (general, not project-specific)
 
 1. **`gate_checks.check_dc`** measured "DC drift" as the spread of 1-second block means. A block mean is a boxcar decimation, and
@@ -68,12 +98,16 @@ Rebuilt from scratch on 2026-11-24 (`projects/chrono_drift` deleted first; nothi
 
 ## Not done / limits
 
-- **Immersive was requested and is not delivered.** The brief says "immersive 3.3". No such layout exists here (the engine knows
-  `immersive_3_2`, L C R + LFE1 LFE2); a third low-frequency channel is not something `spatial_engine.bass.lfe_channels` routes
-  (it raises beyond two), so the request was mapped to the 3.2 project layout and declared on the sheet. The 3.2 render then failed
-  one row of its own: `channel.bars` reported 56 isolated per-bar LFE polarity inversions from bar 16, because a bass pedal that
-  changes pitch every two bars gives the low channel a phase that flips bar to bar. The stereo master is certified and the 3.2 file
-  was withheld (`out/_draft_master_3_2.wav`) rather than delivered uncertified.
+- **Immersive: objects delivered, 7.1 loudspeakers still failing one real row.** "3.3" was clarified as ADM object-based
+  spatial audio in eight channels, which here is two formats: `adm_bw64` (one object per placed track, ITU-R BS.2076 metadata in
+  a BW64 container) and `immersive_7_1` (ITU-R BS.2051 System H, eight discrete channels). The ADM file **passed every row**
+  (11 tracks: 9 objects + a stereo reverb bed, captured before the last send trims). The 7.1 file now passes `channel.bars` and
+  every other row except `imm.surround_ratio`, which reads **+0.3 dB** against a −9..−2 dB window: the surrounds in this mix sit
+  level with the front stage, so about 2.3 dB of real trim is still owed in the space or the sends. It was withheld rather than
+  delivered uncertified.
+- **The low-frequency channel is effectively empty in the 7.1 file** (−60 dBFS RMS): the pedal lives at 73 Hz and above while the
+  LFE low-passes at 80 Hz with a −10 dB send. That is a mix decision still to make, not a gate row, and it is why the per-bar row
+  used to light up on it.
 - **`listen.py` did not run.** Nothing here has been judged by the ears, only measured.
 - The last nine renders were `--max-attempts 1` single passes after a specific measured change, not automatic retries.
 - `reports/ci_report.json` for the certified stereo pass is the record; earlier attempts are in `/tmp/render*.log`, which is not versioned.
