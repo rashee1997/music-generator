@@ -27,7 +27,7 @@ continuous rows get a band-energy sensitivity, discrete rows get event attributi
 can satisfy is reported as a conflict with the interval that has no solution instead of becoming another render.
 """
 from .artifacts import Case                                  # noqa: F401
-from .engine import autopsy, classify                        # noqa: F401
+from .engine import autopsy, classify, settle_only            # noqa: F401
 from . import catalog, history, margins, rows, solve          # noqa: F401
 
 __all__ = ['Case', 'autopsy', 'catalog', 'classify', 'history', 'margins', 'rows', 'solve']

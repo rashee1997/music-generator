@@ -13,7 +13,7 @@ import os
 
 from . import margins
 
-KIND_WORD = {'linear': 'solved', 'partial': 'best admissible set (row not cleared)',
+KIND_WORD = {'replay': 'replay-proved', 'replay (unproven)': 'replay-direction (inside model error)', 'linear': 'solved', 'partial': 'best admissible set (row not cleared)',
              'greedy': 'best single moves', 'nothing to move': 'nothing to move',
              'no binding row': 'nothing binding', 'no rows': 'no rows'}
 
@@ -45,7 +45,7 @@ class Report:
             domains=dict(run=self.run_domains, skipped=self.skipped),
             model=dict(first_order=self.analysis.first_order, rows=len(self.analysis.rows),
                        levers=[lv.as_dict() for lv in {l.id: l for l in self.analysis.levers}.values()]),
-            plan=self.plan.as_dict(), notes=self.analysis.notes)
+            plan=self.plan.as_dict(), forensics=self.analysis.forensics, notes=self.analysis.notes)
 
     # -- human form -------------------------------------------------------------------------------
     def _lines(self):
@@ -58,6 +58,9 @@ class Report:
             push('sources: ' + ', '.join(f'{k}={v}' for k, v in self.case.sources.items()))
         if self.remeasured:
             push('re-measured on the master with the gate\'s own checkers: ' + ', '.join(self.remeasured))
+        if getattr(self.case, 'drift', None):
+            push('**inputs changed after this render** (' + ', '.join(self.case.drift[:6]) + '): the rows and stems below '
+                 'describe the previous mix, so no proposal is settled and a lever read from the presets may already be applied')
         if getattr(self.case, 'stale', False):
             push('**the audio on disk is newer than the verdict**: the pending render has not been judged, so only the '
                  'verdict\'s rows are used; re-render to measure the current mix')
@@ -74,6 +77,26 @@ class Report:
             att = (r.get('raw') or {}).get('attribution')
             if att:
                 push('  - transient attributed to ' + ', '.join(f"{a['stem']} {100 * a['share']:.0f}%" for a in att))
+        if self.analysis.forensics:
+            push('')
+            push('## Forensics (signal level)')
+            for e in self.analysis.forensics:
+                own = ', '.join(f"{o['stem']} {100 * o['share']:.0f}%" for o in e['owners']) or 'no single owner'
+                push(f"- **{e['t']:.3f}s** {e['kind']}: {own}; step {e['step']:.4f} vs threshold {e['threshold']:.4f} "
+                     f"({e['over_threshold_db']:+.1f} dB over, z {e['z']})"
+                     + ('' if e['trusted'] else f" - decomposition fit {e['fit_ratio']}x, treat as indicative"))
+                for n in e['notes'][:2]:
+                    if n.get('continuous'):
+                        push(f"  - under it: {n['track']} is a continuous bed with no onset, so the step is in its "
+                             f"texture, not on a note")
+                        for ly in n.get('layers') or []:
+                            push(f"    - impulsive layer in its preset: `{ly['layer']}` ({ly['primitive']}"
+                                 f"{', ' + str(ly['gain_db']) + ' dB' if ly.get('gain_db') is not None else ''}"
+                                 f"{', ' + str(ly['rate']) + ' events/s' if ly.get('rate') else ''}) - a candidate for the "
+                                 f"transient, not a measurement")
+                        continue
+                    push(f"  - under it: {n['track']} pitch {n['pitch']} vel {n['velocity']}, event is "
+                         f"{n['after_onset_ms']:+.0f} ms from that note's onset (written {n['written_len']} beats)")
         push('')
         push('## Domains')
         push(f"ran: {', '.join(self.run_domains) or 'none'}")
@@ -107,6 +130,28 @@ class Report:
             for k, (before, after) in worst:
                 arrow = '->' if abs(after - before) > 1e-6 else '  '
                 push(f"  {k}: {before:+.2f} {arrow} {after:+.2f}")
+        if getattr(self.plan, 'experiments', None):
+            push('')
+            push('## Replay-verified candidates (each priced by running the gate\'s own checker on the modelled mix)')
+            for e in self.plan.experiments[:8]:
+                mv = ', '.join(f'{k} {v:+.0f} dB' for k, v in e['moves'].items())
+                tail = (f", {e['margin_db']:.0f} dB clear of the threshold" if e.get('margin_db') is not None
+                        and e['value'] == 0 else '')
+                push(f"- {mv}: {e['baseline']} -> {e['value']} ({e['verdict']}{tail})")
+            push('  - a cut is a high shelf at the row\'s corner added to `inst_eq.<stem>` in the mix preset; the model '
+                 'replaces the stem\'s band by a scaled copy, so the real shelf is the measurement')
+        try:
+            from . import history as _h
+            cal = _h.calibration(self.case.project)
+        except Exception:
+            cal = []
+        if cal:
+            hit = sum(1 for _l, pr, out in cal if pr == 0 and out == 'cleared')
+            miss = [(l, pr, out) for l, pr, out in cal if not (pr == 0 and out == 'cleared')]
+            push('')
+            push(f"## Prediction record: {len(cal)} settled, {hit} held, {len(miss)} did not")
+            for l, pr, out in miss[:6]:
+                push(f"- `{l}`: replay predicted {pr} event(s), the render said {out}")
         push('')
         push('## Conflicts (no value satisfies both)')
         if not self.plan.conflicts:

@@ -6,22 +6,22 @@
     "warns": 0,
     "rows": 102,
     "profile": "indo_afro_sunrise",
-    "total_ms": 3303.1895310268737,
+    "total_ms": 138.44789299992044,
     "timings": {
-      "bansuri": 1003.151226992486,
-      "bass": 2166.3804489944596,
-      "canopy": 2034.323586995015,
-      "djembe": 566.8689000012819,
-      "guitar": 2189.090525993379,
-      "horns": 896.3635349937249,
-      "kit": 706.2531519914046,
-      "marimba": 632.6954160176683,
-      "shekere": 878.5717769933399,
-      "sitar": 1043.008942011511,
-      "tabla": 685.6879190017935,
-      "tanpura": 1178.8434630143456
+      "bansuri": 0.0,
+      "bass": 0.0,
+      "canopy": 0.0,
+      "djembe": 0.0,
+      "guitar": 0.0,
+      "horns": 0.0,
+      "kit": 0.0,
+      "marimba": 0.0,
+      "shekere": 0.0,
+      "sitar": 0.0,
+      "tabla": 0.0,
+      "tanpura": 0.0
     },
-    "workers": 7,
+    "workers": 3,
     "metrics": [
       {
         "row": "stem.dc",
@@ -287,10 +287,10 @@
         "stage": "stem",
         "stem": "bass",
         "level": "PASS",
-        "value": 0.2533831180146481,
+        "value": 0.2533831180146479,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": -0.0966168819853519,
+        "margin": -0.09661688198535207,
         "worst_times_s": [
           8.5566
         ],
@@ -370,18 +370,18 @@
         "stage": "stem",
         "stem": "canopy",
         "level": "PASS",
-        "value": 2.9789608450944704e-07,
+        "value": 2.9789609116564354e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009997021039154907,
+        "margin": -0.0009997021039088343,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"canopy\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -3.569820192677841e-10,
-          -3.557060867596794e-10
+          -3.56998571700211e-10,
+          -3.5569916584971195e-10
         ],
-        "drift": 2.9789608450944704e-07
+        "drift": 2.9789609116564354e-07
       },
       {
         "row": "stem.clipping",
@@ -468,10 +468,10 @@
         "stage": "stem",
         "stem": "canopy",
         "level": "PASS",
-        "value": 0.8172780288461554,
+        "value": 0.8172780265579681,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": 0.46727802884615544,
+        "margin": 0.46727802655796813,
         "worst_times_s": [
           0.0348
         ],
@@ -482,7 +482,7 @@
         "events": 430,
         "cv": 0.1499049377178755,
         "grid_matched": 182,
-        "tempogram_ratio": 0.9999830759069769,
+        "tempogram_ratio": 0.9999830759069568,
         "plp_ratio": 0.9999999999983707,
         "rise_db": 1.584,
         "rise_onsets": 430
@@ -530,18 +530,18 @@
         "stage": "stem",
         "stem": "djembe",
         "level": "PASS",
-        "value": 4.878387477736926e-06,
+        "value": 4.878383407107275e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.000995121612522263,
+        "margin": -0.0009951216165928927,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"djembe\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -9.689762627773135e-07,
-          -5.219259315166326e-07
+          -8.723838329714282e-07,
+          -4.3803116810333253e-07
         ],
-        "drift": 4.878387477736926e-06
+        "drift": 4.878383407107275e-06
       },
       {
         "row": "stem.clipping",
@@ -1002,18 +1002,18 @@
         "stage": "stem",
         "stem": "kit",
         "level": "PASS",
-        "value": 2.699728010789667e-06,
+        "value": 2.6997280107895596e-06,
         "unit": "FS",
         "threshold": 0.001,
         "margin": -0.0009973002719892105,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"kit\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"kit\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          8.501245236905321e-09,
-          3.463841771097504e-08
+          -3.924256300325764e-08,
+          -3.4327662032493044e-08
         ],
-        "drift": 2.699728010789667e-06
+        "drift": 2.6997280107895596e-06
       },
       {
         "row": "stem.clipping",
@@ -1585,18 +1585,18 @@
         "stage": "stem",
         "stem": "tabla",
         "level": "PASS",
-        "value": 1.4580398501669006e-06,
+        "value": 1.4580398657396715e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.000998541960149833,
+        "margin": -0.0009985419601342604,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"tabla\": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"tabla\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          3.1088939099017586e-14,
-          -2.9952643322797933e-13
+          4.657396973919789e-08,
+          6.727302196415622e-08
         ],
-        "drift": 1.4580398501669006e-06
+        "drift": 1.4580398657396715e-06
       },
       {
         "row": "stem.clipping",
@@ -1828,10 +1828,10 @@
         "stage": "stem",
         "stem": "tanpura",
         "level": "PASS",
-        "value": 0.17134207531643558,
+        "value": 0.1713420753164356,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": -0.1786579246835644,
+        "margin": -0.17865792468356437,
         "worst_times_s": [
           0.0348
         ],
@@ -1842,7 +1842,7 @@
         "events": 21,
         "cv": 1.1022910588165373,
         "grid_matched": 5,
-        "tempogram_ratio": 0.9455152154820432,
+        "tempogram_ratio": 0.9455152154820434,
         "plp_ratio": 0.9967106503403476,
         "rise_db": 18.151,
         "rise_onsets": 21
@@ -1934,8 +1934,8 @@
       }
     ],
     "duration_s": 72.39578231292516,
-    "cached_stems": 0,
-    "measured_stems": 12
+    "cached_stems": 12,
+    "measured_stems": 0
   },
   "rows": [
     {
@@ -2191,7 +2191,7 @@
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"kit\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"kit\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -2351,7 +2351,7 @@
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"tabla\": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"tabla\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",

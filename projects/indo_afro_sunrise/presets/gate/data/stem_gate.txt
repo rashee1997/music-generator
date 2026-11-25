@@ -1,4 +1,4 @@
-stem gate: 0 FAIL, 0 WARN, 102 rows, profile indo_afro_sunrise, 3303 ms
+stem gate: 0 FAIL, 0 WARN, 102 rows, profile indo_afro_sunrise, 138 ms
 [PASS] stem.dc: stem "bansuri": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "bansuri": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "bansuri": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -49,7 +49,7 @@ stem gate: 0 FAIL, 0 WARN, 102 rows, profile indo_afro_sunrise, 3303 ms
 [PASS] stem.edge: stem "horns": audible span 34.275-49.080 s against score notes 34.286-48.686 s: leading silence -11 ms, trailing silence -394 ms (limit 25 ms)
 [PASS] stem.dead: stem "horns": own median -28.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve
 [PASS] stem.flatness: stem "horns": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
-[PASS] stem.dc: stem "kit": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+[PASS] stem.dc: stem "kit": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "kit": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "kit": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1410 event(s) rejected as a dense burst, 100 as a steep attack; max cluster span 1.497 ms
 [INFO] stem.dropout: stem "kit": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit
@@ -81,7 +81,7 @@ stem gate: 0 FAIL, 0 WARN, 102 rows, profile indo_afro_sunrise, 3303 ms
 [PASS] stem.edge: stem "sitar": audible span 34.280-69.370 s against score notes 34.286-68.555 s: leading silence -6 ms, trailing silence -815 ms (limit 25 ms)
 [PASS] stem.dead: stem "sitar": own median -37.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve
 [PASS] stem.flatness: stem "sitar": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
-[PASS] stem.dc: stem "tabla": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+[PASS] stem.dc: stem "tabla": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "tabla": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "tabla": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 47 event(s) rejected as a dense burst, 58 as a steep attack; max cluster span 0.612 ms
 [INFO] stem.dropout: stem "tabla": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit

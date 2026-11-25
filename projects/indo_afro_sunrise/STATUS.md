@@ -42,3 +42,16 @@
   CI report is not written because the run stopped at the master rows.
 - Cache note: `projects/<dir>/.cache` holds the processed stems; a stale entry there hides a preset change, so clear it
   before judging an EQ edit.
+
+
+## State at the 2026-11-25 benchmark run (debug-engine work)
+
+- Gate: **certified PASS, 0 FAIL** (render 5). `clicks` went 3 -> 1 -> 2 -> 0 events.
+- Cause (measured, not guessed): master `clicks` were 8-9 sigma events only 0.2-1.1 dB over a MAD threshold that moves with
+  the HF floor; owners were `shekere`, the `canopy` bed (insects layer) and `tabla`, never `guitar`/`kit` as the first autopsy said.
+- Changes in the mix preset (`inst_eq`, keyed by instrument name): high shelf 5.5 kHz: shekere -9, tabla -3, djembe -3, kit -3,
+  `env:amazon_rainforest` -3 dB. The earlier `canopy` key was dead (stem byte-identical in three renders) and was removed.
+- The final plan was a **direction inside model error** (0 dB margin, model resolution 1.7 dB); the render held it. One render is
+  not a proof it will hold on another seed.
+- Not checked: `listen.py`, `arc_report.py`, `expression_report.py`; the HF cuts were not auditioned. `spectral.equal_loudness`
+  on `kit` is still a WARN (9.0 dB, fail at 10).

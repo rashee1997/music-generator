@@ -93,3 +93,43 @@ python scripts/debug_audio.py <project> --level WARN          # when nothing fai
 python scripts/debug_audio.py <project> --json                # machine form
 python scripts/debug_audio.py <project> --record clicks=onset.kit.all=1 --outcome worse
 ```
+
+
+## Signal-level forensics (added after the indo-afro benchmark)
+
+The first engine priced a click row by a straight line and attributed it by loudness. Measured on a real render that was
+wrong in four ways, each of which made a fix come back. Each is now a module behaviour and a test
+(`tests/test_audio_debug_forensics.py`).
+
+| Failure seen | Cause | What the engine does now |
+|---|---|---|
+| Blamed `guitar`, `kit`, `shekere` by loudness; the step was the `canopy` bed | a stem's unscaled amplitude says nothing about the master (the mixer lifts a bed ~16 dB) | `forensics.Mixdown`: regress the master on the processed stems **in the row's own band** (the gate's `HP_HZ`/`CLICK_ORDER`), attribute each event by the stem's *mixed* contribution to the step; R^2 and per-event fit are printed |
+| Cutting a bed's highs raised the event count (3 to 5 to 11) | the row is a MAD z-score: the threshold is a function of the HF floor (the same design as MAD-based click detectors, see Sources), so the row is **not monotone** in any stem | levers are priced by **replay through the gate's own `check_clicks`**; a monotone slope is used only when the replay is monotone, otherwise the lever is priced at zero and the report says why |
+| `inst_eq["canopy"]` did nothing for three renders | the mixer reads `inst_eq[<instrument>]` (`env:amazon_rainforest`), not the track name | `catalog.inst_key` mirrors the mixer's lookup; after an applied move `history.settle` compares the stem's fingerprint taken at proposal time and records `unreachable` |
+| A "fixed" row failed again by one event | replay scaled the whole band by the nominal gain; a 5.5 kHz shelf cuts less near its corner | the move is applied with the same Pedalboard `HighShelfFilter` the mixer uses (`forensics.shelf_hp`); an environment layer is a gain on its own layer, rebuilt with the track's own seed (`forensics.layer_signals`) |
+| Moves that exposed the next owner | one cut at a time | `forensics.plan_clicks` closes the loop in simulation: owners of events within 3 dB of the line, one 3 dB cut, re-explain, repeat; the profile (events at 0/1/2/3 dB tighter) is the objective |
+
+### False proof, and how it is bounded
+- **Sham replay** (`forensics.validate`): replay with no change must give back the gate's own events at the gate's own times;
+  if not, every candidate is labelled UNVERIFIED and is never adopted.
+- **Model resolution** (`forensics.resolution_db`): the 90th-percentile error of the model's steps against the master's
+  (1.7 dB on the benchmark). A candidate is *proved* only if it clears with at least that margin; otherwise the status is
+  `replay-direction (inside model error)` and the next render is the test.
+- **Backtest**: undoing a cut whose effect was measured predicted 0 events where the render had 1 (an event 0.4 dB over the
+  line), which is the reason for the resolution rule. Do not read a 0-dB-margin candidate as a result.
+- **Prediction record**: every proposal stores its predicted value; `history.settle` records `cleared`, `better`,
+  `no change`, `worse` or `unreachable` against the next render (also on a render with no failure), and the report prints
+  held/missed. Settling is refused while `Case.drift` shows presets or the score newer than the master.
+- A move that would *raise* a floor to hide an event is not offered: it is the loosening the workflow forbids.
+
+### z-separation
+`quality_gate.z_pairs` is the gate's pair table (the row now reads it, so the engine and the gate cannot disagree);
+`zplace.solve` finds the smallest azimuth/elevation change that clears **every** pair (not only the failing one), keeps
+anchors (bass, drums) fixed, keeps a unique spot per part, and says when no placement can (the overlap itself must fall).
+
+### Sources
+- Essentia ClickDetector (robust noise-power threshold): https://essentia.upf.edu/reference/std_ClickDetector.html
+- MAD-based local-noise click detection (threshold = MAD x 1.4826 x k): https://pub.dev/packages/audio_defect_detector
+- High-pass residual detection fails on HF-rich material: https://lirias.kuleuven.be/retrieve/731585
+- AR prediction-error detection (the family of the gate's LPC check): Godsill & Rayner, *Digital Audio Restoration*, https://sigproc.eng.cam.ac.uk/Main/SJGSpringer
+- Sham intervention before trusting a replay probe: https://arxiv.org/pdf/2608.15685

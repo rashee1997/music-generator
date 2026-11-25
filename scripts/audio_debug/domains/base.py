@@ -45,7 +45,10 @@ class Lever:
 
 
 class Analysis:
-    def __init__(self, rows=(), levers=(), coefficients=None, notes=(), measured=(), first_order=True):
+    def __init__(self, rows=(), levers=(), coefficients=None, notes=(), measured=(), first_order=True,
+                 forensics=None, experiments=()):
+        self.forensics = list(forensics or [])        # per-event signal evidence (owner shares, type, notes)
+        self.experiments = list(experiments)          # replay-verified moves: priced through the gate's own checker
         self.rows = list(rows)
         self.levers = list(levers)
         self.coefficients = dict(coefficients or {})
@@ -58,6 +61,8 @@ class Analysis:
         self.levers.extend(other.levers)
         self.coefficients.update(other.coefficients)
         self.notes.extend(other.notes)
+        self.forensics.extend(other.forensics)
+        self.experiments.extend(other.experiments)
         self.measured.extend(other.measured)
         self.first_order = self.first_order and other.first_order
         return self

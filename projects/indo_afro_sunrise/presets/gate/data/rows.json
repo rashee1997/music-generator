@@ -267,10 +267,10 @@
     "stage": "stem",
     "stem": "bass",
     "level": "PASS",
-    "value": 0.2533831180146481,
+    "value": 0.2533831180146479,
     "unit": "rho",
     "threshold": 0.35,
-    "margin": -0.0966168819853519,
+    "margin": -0.09661688198535207,
     "worst_times_s": [
      8.5566
     ],
@@ -350,18 +350,18 @@
     "stage": "stem",
     "stem": "canopy",
     "level": "PASS",
-    "value": 2.9789608450944704e-07,
+    "value": 2.9789609116564354e-07,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009997021039154907,
+    "margin": -0.0009997021039088343,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "stem \"canopy\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
     "channel_means": [
-     -3.569820192677841e-10,
-     -3.557060867596794e-10
+     -3.56998571700211e-10,
+     -3.5569916584971195e-10
     ],
-    "drift": 2.9789608450944704e-07
+    "drift": 2.9789609116564354e-07
    },
    {
     "row": "stem.clipping",
@@ -448,10 +448,10 @@
     "stage": "stem",
     "stem": "canopy",
     "level": "PASS",
-    "value": 0.8172780288461554,
+    "value": 0.8172780265579681,
     "unit": "rho",
     "threshold": 0.35,
-    "margin": 0.46727802884615544,
+    "margin": 0.46727802655796813,
     "worst_times_s": [
      0.0348
     ],
@@ -462,7 +462,7 @@
     "events": 430,
     "cv": 0.1499049377178755,
     "grid_matched": 182,
-    "tempogram_ratio": 0.9999830759069769,
+    "tempogram_ratio": 0.9999830759069568,
     "plp_ratio": 0.9999999999983707,
     "rise_db": 1.584,
     "rise_onsets": 430
@@ -510,18 +510,18 @@
     "stage": "stem",
     "stem": "djembe",
     "level": "PASS",
-    "value": 4.878387477736926e-06,
+    "value": 4.878383407107275e-06,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.000995121612522263,
+    "margin": -0.0009951216165928927,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "stem \"djembe\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
     "channel_means": [
-     -9.689762627773135e-07,
-     -5.219259315166326e-07
+     -8.723838329714282e-07,
+     -4.3803116810333253e-07
     ],
-    "drift": 4.878387477736926e-06
+    "drift": 4.878383407107275e-06
    },
    {
     "row": "stem.clipping",
@@ -982,18 +982,18 @@
     "stage": "stem",
     "stem": "kit",
     "level": "PASS",
-    "value": 2.699728010789667e-06,
+    "value": 2.6997280107895596e-06,
     "unit": "FS",
     "threshold": 0.001,
     "margin": -0.0009973002719892105,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"kit\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+    "detail": "stem \"kit\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
     "channel_means": [
-     8.501245236905321e-09,
-     3.463841771097504e-08
+     -3.924256300325764e-08,
+     -3.4327662032493044e-08
     ],
-    "drift": 2.699728010789667e-06
+    "drift": 2.6997280107895596e-06
    },
    {
     "row": "stem.clipping",
@@ -1565,18 +1565,18 @@
     "stage": "stem",
     "stem": "tabla",
     "level": "PASS",
-    "value": 1.4580398501669006e-06,
+    "value": 1.4580398657396715e-06,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.000998541960149833,
+    "margin": -0.0009985419601342604,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"tabla\": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+    "detail": "stem \"tabla\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
     "channel_means": [
-     3.1088939099017586e-14,
-     -2.9952643322797933e-13
+     4.657396973919789e-08,
+     6.727302196415622e-08
     ],
-    "drift": 1.4580398501669006e-06
+    "drift": 1.4580398657396715e-06
    },
    {
     "row": "stem.clipping",
@@ -1808,10 +1808,10 @@
     "stage": "stem",
     "stem": "tanpura",
     "level": "PASS",
-    "value": 0.17134207531643558,
+    "value": 0.1713420753164356,
     "unit": "rho",
     "threshold": 0.35,
-    "margin": -0.1786579246835644,
+    "margin": -0.17865792468356437,
     "worst_times_s": [
      0.0348
     ],
@@ -1822,7 +1822,7 @@
     "events": 21,
     "cv": 1.1022910588165373,
     "grid_matched": 5,
-    "tempogram_ratio": 0.9455152154820432,
+    "tempogram_ratio": 0.9455152154820434,
     "plp_ratio": 0.9967106503403476,
     "rise_db": 18.151,
     "rise_onsets": 21
@@ -1890,28 +1890,24 @@
     "row": "clicks",
     "stage": "mix",
     "stem": null,
-    "level": "FAIL",
-    "value": 3.0,
+    "level": "PASS",
+    "value": 0.0,
     "unit": "events",
     "threshold": 0.0,
-    "margin": 3.0,
-    "worst_times_s": [
-     12.3458,
-     22.2765,
-     55.2405
-    ],
+    "margin": 0.0,
+    "worst_times_s": [],
     "calibrated": true,
-    "detail": "3 clustered impulse event(s) (MAD), 3 LPC frame(s); 1356 event(s) rejected as a dense burst, 249 as a steep attack; max cluster span 1.497 ms"
+    "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1508 event(s) rejected as a dense burst, 230 as a steep attack; max cluster span 1.497 ms"
    },
    {
     "row": "loudness",
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -14.282311158960974,
+    "value": -14.276355663774476,
     "unit": "LUFS",
     "threshold": -14.0,
-    "margin": -2.217688841039026,
+    "margin": -2.223644336225524,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-14.3 LUFS vs target -14.0 (tolerance 2.5 LU)"
@@ -1921,10 +1917,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -1.5007495008015257,
+    "value": -1.5003507542655536,
     "unit": "dBTP",
     "threshold": -1.5,
-    "margin": -0.0007495008015256932,
+    "margin": -0.0003507542655536433,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-1.50 dBTP vs ceiling -1.5"
@@ -1960,10 +1956,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 61.05803103254304,
+    "value": 61.077468227372194,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -49.05803103254304,
+    "margin": -49.077468227372194,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "end level -127.3 dBFS (limit -45), decay over final 300 ms 61.1 dB (limit 12); natural release"
@@ -1986,10 +1982,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 8.525337273318578e-06,
+    "value": 8.53602553636348e-06,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009914746627266815,
+    "margin": -0.0009914639744636365,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
@@ -1999,13 +1995,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 0.18768796084523842,
+    "value": 0.19883722766864764,
     "unit": "BPM",
     "threshold": 2.24,
-    "margin": -2.052312039154762,
+    "margin": -2.0411627723313526,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "measured 112.2 BPM vs 112.0 (tolerance 2.2) from the onset-envelope autocorrelation (peak 3.2x the median); beat tracker said 112.3; four-quarter drift 0.6 BPM reported, not decisive"
+    "detail": "measured 112.2 BPM vs 112.0 (tolerance 2.2) from the onset-envelope autocorrelation (peak 3.4x the median); beat tracker said 112.3; four-quarter drift 0.7 BPM reported, not decisive"
    },
    {
     "row": "section.energy",
@@ -2025,28 +2021,28 @@
       "start_s": 0.0,
       "end_s": 17.1429,
       "energy": 0.32,
-      "level_db": -29.490352050761135
+      "level_db": -29.514286200774684
      },
      {
       "name": "grove",
       "start_s": 17.1429,
       "end_s": 34.2857,
       "energy": 0.7,
-      "level_db": -20.86594109431222
+      "level_db": -20.864577686295554
      },
      {
       "name": "high_sun",
       "start_s": 34.2857,
       "end_s": 51.4286,
       "energy": 0.95,
-      "level_db": -15.314867954726019
+      "level_db": -15.301673320321079
      },
      {
       "name": "golden_hour",
       "start_s": 51.4286,
       "end_s": 68.5714,
       "energy": 0.6,
-      "level_db": -20.492276432759464
+      "level_db": -20.487555476961205
      }
     ]
    }

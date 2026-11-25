@@ -61,6 +61,7 @@ class Case:
         self.master = master
         self.sources = sources             # which files this case was built from
         self.stale = bool(stale)           # the audio on disk is newer than the verdict that judged it
+        self.drift = []                    # inputs edited after the master was written
         self._cache = {}
 
     # -- loading ---------------------------------------------------------------------------------
@@ -160,7 +161,30 @@ class Case:
                 stale = False
         if stale:
             sources['warning'] = 'the audio is newer than the verdict: the pending render has not been judged'
-        return cls(project, score, rows, mix, instruments, stems, master, sources, stale=stale)
+        case = cls(project, score, rows, mix, instruments, stems, master, sources, stale=stale)
+        case.drift = case._drift()
+        if case.drift:
+            sources['drift'] = ('the presets or score changed after this master was rendered: ' + ', '.join(case.drift[:4])
+                                + ' - the autopsy describes the previous mix until you re-render')
+        return case
+
+    def _drift(self):
+        """Files the render reads that are newer than the master it produced (the render has not seen them)."""
+        if not self.master or not os.path.isfile(self.master):
+            return []
+        t0 = os.path.getmtime(self.master)
+        newer = []
+        pats = [os.path.join(self.project, 'presets', d, '*.json') for d in ('mix', 'instruments', 'vocals', 'spaces',
+                                                                          'environments', 'sfx')]
+        pats.append(os.path.join(self.project, 'scores', '*_score.json'))
+        for pat in pats:
+            for path in glob.glob(pat):
+                try:
+                    if os.path.getmtime(path) > t0 + 1.0:
+                        newer.append(os.path.relpath(path, self.project))
+                except OSError:
+                    continue
+        return sorted(newer)
 
     # -- access ----------------------------------------------------------------------------------
     def stem(self, name):
@@ -180,6 +204,11 @@ class Case:
 
     def stem_names(self):
         return sorted(self._stems)
+
+    def stem_paths(self, name):
+        """Every cached copy of a processed stem, oldest first: one per distinct mix the project has rendered."""
+        paths = glob.glob(os.path.join(self.project, '.cache', 'mix', '*', name + '.npy'))
+        return sorted(paths, key=os.path.getmtime)
 
     def role(self, name):
         for tr in self.score.get('tracks', []):

@@ -1,5 +1,5 @@
 {
-  "duration_s": 69.72725623582767,
+  "duration_s": 69.72727891156462,
   "sections": [
     {
       "name": "dawn",
@@ -50,24 +50,6 @@
       "stem.tick",
       "bass",
       "PASS"
-    ],
-    [
-      12.3458,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      22.2765,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      55.2405,
-      "clicks",
-      "master",
-      "FAIL"
     ]
   ]
 }

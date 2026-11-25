@@ -36,18 +36,24 @@ class Plan:
         self.t = t
         self.status = status
         self.clearing = dict(clearing or {})     # the smallest move that makes every judged row pass, if one exists
+        self.experiments = []                    # replay-verified moves (see forensics.py)
 
     def as_dict(self):
         return dict(status=self.status, worst_safety=self.t, deltas=self.deltas, clearing=self.clearing,
                     predicted={k: list(v) for k, v in self.predicted.items()},
-                    conflicts=self.conflicts, closed=self.closed, burned=self.burned, notes=self.notes)
+                    conflicts=self.conflicts, closed=self.closed, burned=self.burned, notes=self.notes,
+                    experiments=self.experiments)
 
 
 def _burned(lever, key, history):
     """True when this exact lever was already tried for this row and did not clear it."""
     for h in history or ():
         if h.get('lever') == lever.id and h.get('row') and key.startswith(h['row']):
-            if h.get('outcome') in ('no change', 'worse', 'same'):
+            if h.get('outcome') in ('no change', 'worse', 'same', 'unreachable'):
+                # An entry the engine wrote itself knows which setting it tried. A cut that failed at -3 dB says nothing
+                # about -6 dB, so the lever is spent only while it still sits on the setting that failed.
+                if 'target' in h and abs(float(h['target']) - lever.current) > 0.26:
+                    continue
                 return True
     return False
 

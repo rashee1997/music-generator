@@ -1566,27 +1566,29 @@ def _wrap_deg(d):
     return 360.0 - d if d > 180.0 else d
 
 
-def spatial_separation_rows(score, stems=None, out=None, sr=44100):
-    """Z-axis separation in the climax. Two parts that hold the same midrange band at the same time and level mask each
-    other; HRTF height and azimuth separate them where an EQ cut would only make both dull. Measured on the loudest quarter
-    of the piece (the climax), never assumed. A pair passes on min_sep_deg of angular separation or min_elev_deg of height;
-    height only counts where the mixer renders it. Environment stems are excluded (their width is spread/kind, not a spot)."""
-    rows = []
+def z_pairs(score, stems=None, sr=44100):
+    """The pair table `spatial.z_separation` judges: every pair of non-environment parts that hold the 500-4000 Hz band
+    together in the climax, with the placement the mixer will apply. None when the profile does not judge the row or
+    there is nothing to compare; otherwise a dict (params, parts, pairs, unplaced).
+
+    The row below reads only this table, and so does the debug engine: a second implementation of the pair rule was how
+    the autopsy priced placement as "one degree per degree" and proposed moves the gate then failed again.
+    """
     import gate_profiles
     gp = gate_profiles.resolve(score)
     if not gp.on('spatial.z_separation'):
-        return rows                          # listed once, with its reason, by the profile notes
+        return None
     import mixer
     st = mixer.STATE.get('processed') or stems
     if not st:
-        return rows
+        return None
     tracks = {t.get('name'): t for t in score.get('tracks', [])}
     cand = [n for n, t in tracks.items() if n in st and t.get('role') != 'environment'
             and not str(t.get('instrument', '')).startswith('env:')]
     frames = {n: _band_frames(st[n], sr) for n in cand}
     frames = {n: f for n, f in frames.items() if f is not None and len(f) >= 4}
     if len(frames) < 2:
-        return rows
+        return None
     k = min(len(f) for f in frames.values())
     frames = {n: f[:k] for n, f in frames.items()}
     total = np.sum(list(frames.values()), axis=0)
@@ -1594,15 +1596,14 @@ def spatial_separation_rows(score, stems=None, out=None, sr=44100):
     climax = np.zeros(k, dtype=bool)
     climax[np.argsort(total)[-min(top, k):]] = True
 
-    overlap_min = float(gp.param('spatial.z_separation', 'overlap_min'))
-    min_sep = float(gp.param('spatial.z_separation', 'min_sep_deg'))
-    min_elev = float(gp.param('spatial.z_separation', 'min_elev_deg'))
+    params = dict(overlap_min=float(gp.param('spatial.z_separation', 'overlap_min')),
+                  min_sep=float(gp.param('spatial.z_separation', 'min_sep_deg')),
+                  min_elev=float(gp.param('spatial.z_separation', 'min_elev_deg')))
     imm = _mix_immersive(score)
     where = {n: _place_of(score, tracks[n], imm) for n in frames}
     staged = {n: _has_staging(score, tracks[n]) for n in frames}
     unplaced = 0
-
-    fights, closest = [], None
+    pairs = []
     names = sorted(frames)
     for i, a in enumerate(names):
         for b in names[i + 1:]:
@@ -1618,11 +1619,37 @@ def spatial_separation_rows(score, stems=None, out=None, sr=44100):
             az_b, el_b, sp_b, role_b, h_b = where[b]
             delev = abs(el_a - el_b) if (h_a and h_b) else 0.0
             daz = _wrap_deg(az_a - az_b)
-            sep = float(np.hypot(daz, delev))
-            if closest is None or ov > closest[2]:
-                closest = (a, b, ov, sep, daz, delev)
-            if ov >= overlap_min and sep < min_sep and delev < min_elev:
-                fights.append((ov, a, b, sep, daz, delev, h_a and h_b, sp_a, sp_b))
+            pairs.append(dict(a=a, b=b, overlap=ov, sep=float(np.hypot(daz, delev)), daz=float(daz),
+                              delev=float(delev), heights=bool(h_a and h_b), sp_a=sp_a, sp_b=sp_b))
+    parts = {n: dict(az=where[n][0], el=where[n][1], role=where[n][3], rendered=where[n][4]) for n in names}
+    return dict(params=params, parts=parts, pairs=pairs, unplaced=unplaced)
+
+
+def z_fights(table):
+    """The pairs of a `z_pairs` table that fail the rule, worst overlap first."""
+    p = table['params']
+    out = [q for q in table['pairs']
+           if q['overlap'] >= p['overlap_min'] and q['sep'] < p['min_sep'] and q['delev'] < p['min_elev']]
+    return sorted(out, key=lambda q: -q['overlap'])
+
+
+def spatial_separation_rows(score, stems=None, out=None, sr=44100):
+    """Z-axis separation in the climax. Two parts that hold the same midrange band at the same time and level mask each
+    other; HRTF height and azimuth separate them where an EQ cut would only make both dull. Measured on the loudest quarter
+    of the piece (the climax), never assumed. A pair passes on min_sep_deg of angular separation or min_elev_deg of height;
+    height only counts where the mixer renders it. Environment stems are excluded (their width is spread/kind, not a spot)."""
+    rows = []
+    table = z_pairs(score, stems, sr)
+    if table is None:
+        return rows
+    overlap_min, min_sep, min_elev = (table['params'][k] for k in ('overlap_min', 'min_sep', 'min_elev'))
+    unplaced = table['unplaced']
+    fights = [(q['overlap'], q['a'], q['b'], q['sep'], q['daz'], q['delev'], q['heights'], q['sp_a'], q['sp_b'])
+              for q in z_fights(table)]
+    closest = None
+    for q in table['pairs']:
+        if closest is None or q['overlap'] > closest[2]:
+            closest = (q['a'], q['b'], q['overlap'], q['sep'], q['daz'], q['delev'])
 
     if fights:
         fights.sort(reverse=True)

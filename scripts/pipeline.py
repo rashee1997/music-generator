@@ -899,10 +899,19 @@ class MusicPipeline:
                 _case.score = score or _case.score
                 _rep = audio_debug.autopsy(_case)
                 print(f"  [AUTOPSY] {_rep.plan.status}: {len(_rep.plan.deltas)} move(s), "
-                      f"{len(_rep.plan.conflicts)} conflict(s), domains {', '.join(_rep.run_domains) or 'none'} "
+                      f"{len(_rep.plan.conflicts)} conflict(s), {len(getattr(_rep.plan, 'experiments', []))} replay candidate(s), domains {', '.join(_rep.run_domains) or 'none'} "
                       f"-> reports/debug_audio.md")
             except Exception as exc:      # a diagnostic must never turn a draft into a crash
                 print(f"  [WARN] autopsy skipped ({exc})")
+
+        elif project_dir:
+            try:        # a fix the previous autopsy proposed is settled against this clean render
+                import audio_debug
+                _case = audio_debug.Case.load(project_dir)
+                for _h in audio_debug.settle_only(_case):
+                    print(f"  [AUTOPSY] settled {_h['lever']} {_h['delta']:+g}: {_h['outcome']}")
+            except Exception as exc:
+                print(f"  [WARN] autopsy settle skipped ({exc})")
 
         published = None
         if fails == 0 and not draft:
