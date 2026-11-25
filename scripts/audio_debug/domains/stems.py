@@ -17,10 +17,11 @@ def _note_gaps(case, stem):
         return []
     notes = sorted((n for n in (tr.get('notes') or []) if isinstance(n, dict) and 't' in n), key=lambda n: n['t'])
     bpm = float(case.score.get('tempo') or case.score.get('bpm') or 100.0)
-    spb = 60.0 / bpm
+    spb = 60.0 / bpm                       # seconds per beat: a note's `d` is written in beats
     out = []
     for a, b in zip(notes, notes[1:]):
-        out.append((b['t'] - a['t'], (b['t'] - a['t']), spb))
+        gap = (b['t'] - a['t']) * spb - float(a.get('d') or 0.0) * spb
+        out.append((max(0.0, gap), (b['t'] - a['t']) * spb, spb))
     return out
 
 
@@ -52,6 +53,7 @@ def analyse(case, rows, history=()):
                 if share:
                     coef[(key, lv.id)] = share
         gaps = _note_gaps(case, stem) if r['row'] == 'stem.dropout' else []
+        gaps = [g for g in gaps if g[0] > 0]        # a simultaneous hit is not a gap to be opened
         if gaps:
             tight = min(gaps, key=lambda g: g[0])
             notes.append(f'{stem}: the tightest gap in the score is {tight[0] * 1000:.0f} ms at beat spacing '

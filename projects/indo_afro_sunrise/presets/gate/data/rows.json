@@ -1906,10 +1906,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -14.327620059908902,
+    "value": -14.327597994819556,
     "unit": "LUFS",
     "threshold": -14.0,
-    "margin": -2.1723799400910977,
+    "margin": -2.1724020051804445,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-14.3 LUFS vs target -14.0 (tolerance 2.5 LU)"
@@ -1919,10 +1919,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -1.4982908553945384,
+    "value": -1.4982902402050045,
     "unit": "dBTP",
     "threshold": -1.5,
-    "margin": 0.0017091446054615655,
+    "margin": 0.0017097597949955468,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-1.50 dBTP vs ceiling -1.5"
@@ -1958,10 +1958,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 68.67524753421523,
+    "value": 68.67562729640501,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -56.67524753421523,
+    "margin": -56.67562729640501,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "end level -127.7 dBFS (limit -45), decay over final 300 ms 68.7 dB (limit 12); natural release"
@@ -1984,10 +1984,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 9.90646193992156e-06,
+    "value": 9.918006606280144e-06,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009900935380600785,
+    "margin": -0.0009900819933937198,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
@@ -1997,10 +1997,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 0.22383102629321172,
+    "value": 0.22382536676514064,
     "unit": "BPM",
     "threshold": 2.24,
-    "margin": -2.0161689737067885,
+    "margin": -2.0161746332348596,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "measured 112.2 BPM vs 112.0 (tolerance 2.2) from the onset-envelope autocorrelation (peak 3.3x the median); beat tracker said 112.3; four-quarter drift 0.7 BPM reported, not decisive"
@@ -2023,28 +2023,28 @@
       "start_s": 0.0,
       "end_s": 17.1429,
       "energy": 0.32,
-      "level_db": -29.545862265568676
+      "level_db": -29.545838340952436
      },
      {
       "name": "grove",
       "start_s": 17.1429,
       "end_s": 34.2857,
       "energy": 0.7,
-      "level_db": -20.834408464745827
+      "level_db": -20.834388792062963
      },
      {
       "name": "high_sun",
       "start_s": 34.2857,
       "end_s": 51.4286,
       "energy": 0.95,
-      "level_db": -15.388491826581241
+      "level_db": -15.388465477301507
      },
      {
       "name": "golden_hour",
       "start_s": 51.4286,
       "end_s": 68.5714,
       "energy": 0.6,
-      "level_db": -20.522448474727604
+      "level_db": -20.52242694921582
      }
     ]
    }

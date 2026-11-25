@@ -15,6 +15,7 @@ from __future__ import annotations
 import os
 
 from . import Case, domains, margins, measure, report, rows as rowmap, solve
+from . import history as history_mod
 
 
 def classify(case, level=None):
@@ -33,6 +34,10 @@ def classify(case, level=None):
 
 def autopsy(case, level=None, history=None, write=True, stamp=None):
     """Analyse the rows in question and return the report object (also written under reports/)."""
+    if history is None:
+        # The pipeline runs this without arguments; a lever already spent must still be burned, or the automated
+        # autopsy proposes the same failed experiment as the manual one did.
+        history = history_mod.load(case.project)
     binding, advisory, other = classify(case, level)
     used_level = level
     if not binding and not level:
@@ -69,6 +74,7 @@ def autopsy(case, level=None, history=None, write=True, stamp=None):
         touched_note = ', '.join(sorted(touched))
     else:
         touched_note = ''
+    skipped = rowmap.skipped_domains(binding + advisory, run)   # after risk closure, so a loaded domain is not "skipped"
 
     plan = solve.plan(analysis, history=history or ()) if analysis.rows else solve.Plan(status='no rows')
     known = {r['row'] for r in analysis.rows}
