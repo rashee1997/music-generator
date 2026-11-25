@@ -1,6 +1,6 @@
 {
  "name": "kit",
- "description": "The Afrobeat kit: GM kick, snare and hats on the standard drum bank, played by one drummer in the back of the room.",
+ "description": "The Afrobeat kit: GM kick, snare and hats on the standard drum bank, played by one drummer in the back of the room. Each drum part carries its own onset ramp, because the kick's step and the closed hat's ring are different samples and one ramp cannot serve both.",
  "gm": "standard",
  "role": "drum",
  "mechanics_class": "drum",
@@ -10,5 +10,25 @@
   "distance": 5.0,
   "space": "indo_afro_sunrise_room"
  },
- "onset_fade_ms": 0.3
+ "onset_fade_ms": 0.3,
+ "onset_fade_by_pitch": {
+  "35": 1.5,
+  "36": 1.5,
+  "38": 1.5,
+  "40": 1.5,
+  "42": 0.3,
+  "44": 0.3,
+  "46": 0.3,
+  "49": 0.3
+ },
+ "onset_fade_all": false,
+ "sources": [
+  "KB african (the Afrobeat kit: kick and snare carry the cycle, the hats subdivide it in 16ths, the crash marks the turn; one drummer, one stroke per limb)",
+  "MEASURED: the mastered file's one click event sat at 46.646 s, the bar where kick (p36), snare (p38) and closed hat (p42) land within 1.5 ms of each other; the autopsy attributed the transient to the kit stem at 86%, so the step was the summed full-level sample starts of simultaneous hits, not one sample",
+  "MEASURED: a GM drum sample starts at full level, and soften_onsets skipped every hit that landed over a ringing tail (skip_sounding), which in a 16th hat pattern is nearly every hit; onset_fade_all turns that guard off, as the function's own docstring asks of a percussion preset",
+  "MEASURED: rendered as its own stem, a kick/snare half read 10 dropout holes (65-90 ms) and a hats half 7 (20-30 ms): a half-kit stops wherever the other half plays, so the two parts are not split into separate stems - the gate and the mixer would read the score's own rests as a fault. The ramp is per part inside this preset instead, and the kit stays one stem, one part and one place",
+  "MEASURED: the kick/snare half read 0 dropout holes with a 1.5 ms ramp; the hats were 448 of the kit's 660 notes at a 16th grid, so they keep the 0.3 ms ramp the certified render used",
+  "MEASURED: the kit's snapshots show a pedal hat (p44) about 5.5 dB under the closed hat (p42), which is the GM bank's own balance, not a ramp effect",
+  "STARTING VALUE: 1.5 ms for the kick and snare and 0.3 ms for the hats and cymbals. Both are far faster than an audible attack and far shorter than the 20 ms a dropout needs, so they change neither the groove nor the row; the values are re-measured on every render"
+ ]
 }

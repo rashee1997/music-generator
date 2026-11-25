@@ -6,20 +6,20 @@
     "warns": 0,
     "rows": 102,
     "profile": "indo_afro_sunrise",
-    "total_ms": 3465.5587970046327,
+    "total_ms": 4232.086615986191,
     "timings": {
-      "bansuri": 1025.6988390174229,
-      "bass": 2162.4023530166596,
-      "canopy": 2051.149652019376,
-      "djembe": 751.5865520108491,
-      "guitar": 2167.9931039980147,
-      "horns": 981.7883280047681,
-      "kit": 814.5319739996921,
-      "marimba": 914.7716669831425,
-      "shekere": 882.6260850182734,
-      "sitar": 941.7722660000436,
-      "tabla": 747.5271440052893,
-      "tanpura": 829.9906920001376
+      "bansuri": 1477.372468012618,
+      "bass": 2840.5692300002556,
+      "canopy": 2640.5027840228286,
+      "djembe": 851.2412199925166,
+      "guitar": 2812.6011560088955,
+      "horns": 1370.707547001075,
+      "kit": 873.76091000624,
+      "marimba": 938.0029930034652,
+      "shekere": 862.5587580027059,
+      "sitar": 1111.245901993243,
+      "tabla": 795.5891549936496,
+      "tanpura": 1329.2297509906348
     },
     "workers": 7,
     "metrics": [
@@ -530,18 +530,18 @@
         "stage": "stem",
         "stem": "djembe",
         "level": "PASS",
-        "value": 5.034062291551012e-06,
+        "value": 5.034062404920364e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.000994965937708449,
+        "margin": -0.0009949659375950797,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"djembe\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)",
         "channel_means": [
-          -8.562931996424322e-07,
-          -4.638510889033992e-07
+          -8.511615415664798e-07,
+          -4.611651044349263e-07
         ],
-        "drift": 5.034062291551012e-06
+        "drift": 5.034062404920364e-06
       },
       {
         "row": "stem.clipping",
@@ -568,10 +568,10 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"djembe\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2 event(s) rejected as a dense burst, 157 as a steep attack; max cluster span 1.156 ms",
+        "detail": "stem \"djembe\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 4 event(s) rejected as a dense burst, 157 as a steep attack; max cluster span 1.156 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 2,
+        "rejected": 4,
         "attacks_ignored": 157,
         "max_cluster_span_ms": 1.1564625850340136
       },
@@ -579,15 +579,15 @@
         "row": "stem.dropout",
         "stage": "stem",
         "stem": "djembe",
-        "level": "PASS",
+        "level": "INFO",
         "value": 0.0,
-        "unit": "ms",
-        "threshold": 20.0,
-        "margin": -20.0,
+        "unit": "",
+        "threshold": 0.0,
+        "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"djembe\": longest hole 0 ms (limit 20-1000 ms), floor -76.3 dBFS; 0 hole(s)",
-        "holes": []
+        "skipped": true,
+        "detail": "stem \"djembe\": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit"
       },
       {
         "row": "stem.cut",
@@ -1002,18 +1002,18 @@
         "stage": "stem",
         "stem": "kit",
         "level": "PASS",
-        "value": 4.517346562565056e-06,
+        "value": 3.0875714840205607e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.000995482653437435,
+        "margin": -0.0009969124285159794,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"kit\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -2.2015129880751807e-08,
-          -1.8187005293871746e-08
+          -7.526194383395608e-09,
+          -5.5289412503400016e-09
         ],
-        "drift": 4.517346562565056e-06
+        "drift": 3.0875714840205607e-06
       },
       {
         "row": "stem.clipping",
@@ -1040,26 +1040,26 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1338 event(s) rejected as a dense burst, 111 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1299 event(s) rejected as a dense burst, 91 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 1338,
-        "attacks_ignored": 111,
+        "rejected": 1299,
+        "attacks_ignored": 91,
         "max_cluster_span_ms": 1.4965986394557824
       },
       {
         "row": "stem.dropout",
         "stage": "stem",
         "stem": "kit",
-        "level": "PASS",
+        "level": "INFO",
         "value": 0.0,
-        "unit": "ms",
-        "threshold": 20.0,
-        "margin": -20.0,
+        "unit": "",
+        "threshold": 0.0,
+        "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"kit\": longest hole 0 ms (limit 20-1000 ms), floor -98.7 dBFS; 0 hole(s)",
-        "holes": []
+        "skipped": true,
+        "detail": "stem \"kit\": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit"
       },
       {
         "row": "stem.cut",
@@ -1114,35 +1114,35 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"kit\": own median -23.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve",
+        "detail": "stem \"kit\": own median -23.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "dawn",
             "start_s": 0.0,
-            "measured_db": -25.43,
-            "expected_db": -29.72,
+            "measured_db": -24.57,
+            "expected_db": -29.81,
             "dyn": 0.32
           },
           {
             "section": "grove",
             "start_s": 17.1429,
-            "measured_db": -24.13,
-            "expected_db": -22.92,
+            "measured_db": -24.77,
+            "expected_db": -23.01,
             "dyn": 0.7
           },
           {
             "section": "high_sun",
             "start_s": 34.2857,
-            "measured_db": -23.0,
-            "expected_db": -20.27,
+            "measured_db": -22.75,
+            "expected_db": -20.36,
             "dyn": 0.95
           },
           {
             "section": "golden_hour",
             "start_s": 51.4286,
-            "measured_db": -22.55,
-            "expected_db": -24.26,
+            "measured_db": -21.67,
+            "expected_db": -24.35,
             "dyn": 0.6
           }
         ],
@@ -1295,18 +1295,18 @@
         "stage": "stem",
         "stem": "shekere",
         "level": "PASS",
-        "value": 6.61303844783751e-07,
+        "value": 6.609005092233767e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009993386961552162,
+        "margin": -0.0009993390994907766,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"shekere\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.235320748616381e-07,
-          -2.5019552517423544e-07
+          -1.235347091455147e-07,
+          -2.5020083006476795e-07
         ],
-        "drift": 6.61303844783751e-07
+        "drift": 6.609005092233767e-07
       },
       {
         "row": "stem.clipping",
@@ -1344,15 +1344,15 @@
         "row": "stem.dropout",
         "stage": "stem",
         "stem": "shekere",
-        "level": "PASS",
+        "level": "INFO",
         "value": 0.0,
-        "unit": "ms",
-        "threshold": 20.0,
-        "margin": -20.0,
+        "unit": "",
+        "threshold": 0.0,
+        "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"shekere\": longest hole 0 ms (limit 20-1000 ms), floor -110.6 dBFS; 0 hole(s)",
-        "holes": []
+        "skipped": true,
+        "detail": "stem \"shekere\": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit"
       },
       {
         "row": "stem.cut",
@@ -1634,15 +1634,15 @@
         "row": "stem.dropout",
         "stage": "stem",
         "stem": "tabla",
-        "level": "PASS",
+        "level": "INFO",
         "value": 0.0,
-        "unit": "ms",
-        "threshold": 20.0,
-        "margin": -20.0,
+        "unit": "",
+        "threshold": 0.0,
+        "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"tabla\": longest hole 0 ms (limit 20-1000 ms), floor -161.3 dBFS; 0 hole(s)",
-        "holes": []
+        "skipped": true,
+        "detail": "stem \"tabla\": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit"
       },
       {
         "row": "stem.cut",
@@ -2076,12 +2076,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"djembe\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2 event(s) rejected as a dense burst, 157 as a steep attack; max cluster span 1.156 ms"
+      "detail": "stem \"djembe\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 4 event(s) rejected as a dense burst, 157 as a steep attack; max cluster span 1.156 ms"
     },
     {
-      "level": "PASS",
+      "level": "INFO",
       "row": "stem.dropout",
-      "detail": "stem \"djembe\": longest hole 0 ms (limit 20-1000 ms), floor -76.3 dBFS; 0 hole(s)"
+      "detail": "stem \"djembe\": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit"
     },
     {
       "level": "INFO",
@@ -2201,12 +2201,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1338 event(s) rejected as a dense burst, 111 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1299 event(s) rejected as a dense burst, 91 as a steep attack; max cluster span 1.497 ms"
     },
     {
-      "level": "PASS",
+      "level": "INFO",
       "row": "stem.dropout",
-      "detail": "stem \"kit\": longest hole 0 ms (limit 20-1000 ms), floor -98.7 dBFS; 0 hole(s)"
+      "detail": "stem \"kit\": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit"
     },
     {
       "level": "INFO",
@@ -2226,7 +2226,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"kit\": own median -23.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve"
+      "detail": "stem \"kit\": own median -23.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve"
     },
     {
       "level": "PASS",
@@ -2284,9 +2284,9 @@
       "detail": "stem \"shekere\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 592 event(s) rejected as a dense burst, 29 as a steep attack; max cluster span 0.091 ms"
     },
     {
-      "level": "PASS",
+      "level": "INFO",
       "row": "stem.dropout",
-      "detail": "stem \"shekere\": longest hole 0 ms (limit 20-1000 ms), floor -110.6 dBFS; 0 hole(s)"
+      "detail": "stem \"shekere\": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit"
     },
     {
       "level": "INFO",
@@ -2364,9 +2364,9 @@
       "detail": "stem \"tabla\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 47 event(s) rejected as a dense burst, 58 as a steep attack; max cluster span 0.612 ms"
     },
     {
-      "level": "PASS",
+      "level": "INFO",
       "row": "stem.dropout",
-      "detail": "stem \"tabla\": longest hole 0 ms (limit 20-1000 ms), floor -161.3 dBFS; 0 hole(s)"
+      "detail": "stem \"tabla\": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit"
     },
     {
       "level": "INFO",

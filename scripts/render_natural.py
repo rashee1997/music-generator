@@ -343,6 +343,27 @@ def _oversample():
         return 1
 
 
+def _onset_ramps(inst_cfg, tr):
+    """(by_pitch, default_ms, skip_sounding) for a drum track.
+
+    The same preset plays kick, snare and cymbals, and those are different samples: a ramp long enough to smooth a
+    kick's step can cut the ring of the closed hat 134 ms behind it, and a ramp short enough for the hats leaves the
+    kick's step standing. `onset_fade_by_pitch` maps a MIDI drum key to its own ramp (`{"36": 1.5, "42": 0.3}`);
+    `onset_fade_ms` is the ramp for every key the map does not name. Both are read from the track first, so a score
+    can try a value without editing the preset.
+    """
+    cfg = inst_cfg or {}
+    raw = tr.get('onset_fade_by_pitch')
+    if raw is None:
+        raw = cfg.get('onset_fade_by_pitch')
+    by_pitch = {str(k): float(v) for k, v in (raw or {}).items()}
+    ms = float(tr.get('onset_fade_ms') or cfg.get('onset_fade_ms') or 0.0)
+    force = tr.get('onset_fade_all')
+    if force is None:
+        force = cfg.get('onset_fade_all')
+    return by_pitch, ms, not bool(force)
+
+
 def _onset_ramp(inst_cfg, tr):
     """(ms, skip_sounding) for this track's onset ramp.
 
@@ -926,7 +947,20 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
         hand = any(k in str(tr.get('name', '')).lower() for k in HAND_PERC_WORDS)
         jrng = np.random.default_rng(seed + 7)
         last_t = {}
-        for e in ev:
+        # A drum note is released 120 ms in. When the next hit of the same pitch lands sooner than that - a humanized
+        # 16th at 112 bpm can close by 20 ms - the release cut the *new* hit instead of the old one, and that hit went
+        # silent, which the stem gate read as a dropout hole at a hit that had no audio. The melodic path already clamps
+        # its note-offs to just before the next onset of the same pitch; the drum path now does the same, so a release
+        # never outlives the note it belongs to.
+        rel, _nxt = [], {}
+        for e in reversed(ev):
+            t = e['t'] + 0.12
+            if e['p'] in _nxt:
+                t = max(e['t'] + 0.005, min(t, _nxt[e['p']] - 0.004))
+            rel.append(t)
+            _nxt[e['p']] = e['t']
+        rel.reverse()
+        for i, e in enumerate(ev):
             lvl = dyn_level(e['t'])
             v = e['v'] * (0.72 + 0.28 * lvl)
             p = e['p']
@@ -948,17 +982,22 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
                 vox.add(e['t'] - 0.025, 'on', 9, p, int(np.clip(v * 0.3, 1, 127)))
                 vox.add(e['t'] - 0.013, 'off', 9, p)
             vox.add(e['t'], 'on', 9, p, int(np.clip(round(v), 1, 127)))
-            vox.add(e['t'] + 0.12, 'off', 9, p)
+            vox.add(rel[i], 'off', 9, p)
         hit = vox.render(tail=2.5)
         # A SoundFont drum sample often starts on a single-sample step instead of rising out of silence, which the
         # stem gate (rightly) reads as a click at every hit. `onset_fade_ms` in an instrument preset ramps the first
         # 2-3 ms of each fresh hit: far faster than any audible attack, and the step is gone.
-        fade_ms, skip_sounding = _onset_ramp(inst_cfg, tr)
-        if fade_ms > 0:
-            hit = dsp.soften_onsets(hit, sr=SR, times=[e['t'] for e in ev], ms=fade_ms,
-                                    skip_sounding=skip_sounding)
-        # every drum note is released 120 ms in, while the sample is still ringing: a hard cut there is a click
-        hit = dsp.fade_out_at(hit, sr=SR, times=[e['t'] + 0.12 for e in ev], ms=4.0)
+        by_pitch, default_ms, skip_sounding = _onset_ramps(inst_cfg, tr)
+        groups = {}
+        for e in ev:
+            ms = float(by_pitch.get(str(e['p']), by_pitch.get(e['p'], default_ms)) or 0.0)
+            if ms > 0:
+                groups.setdefault(round(ms, 4), []).append(e['t'])
+        for ms, times in groups.items():
+            hit = dsp.soften_onsets(hit, sr=SR, times=times, ms=ms, skip_sounding=skip_sounding)
+        # every drum note is released while the sample is still ringing: a hard cut there is a click. The release is
+        # 120 ms in, or just before the next hit of the same pitch when that lands sooner (`rel`).
+        hit = dsp.fade_out_at(hit, sr=SR, times=rel, ms=4.0)
         return dsp.enhance_sf2_dynamics(hit, sr=SR, role=role, velocity=_mean_vel(ev))
 
     # note-off times: let a plucked body ring past the written note-off, but never into a re-strike of the same pitch

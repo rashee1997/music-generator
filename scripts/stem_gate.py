@@ -282,17 +282,28 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
     else:
         _skip(rows, metrics, 'stem.clicks', name, gp)
 
+    perc = _is_percussive(track)
     if gp.on('stem.dropout'):
-        # only a hole inside a sounding note is a dropout; a gap between phrases is the score's rest (see gate_checks)
-        sounding = _note_intervals(track, bpm) if track is not None else None
-        res = gc.check_dropout(sig, min_ms=gp.param('stem.dropout', 'min_ms'),
-                               max_ms=gp.param('stem.dropout', 'max_ms'),
-                               floor_below_db=gp.param('stem.dropout', 'floor_below_db'), sounding=sounding)
-        _emit(rows, metrics, 'stem.dropout', 'FAIL' if res.get('holes') else 'PASS', res, name)
+        if perc:
+            # A percussive stem's frames between hits are the sample's own decay and the pattern's spacing, not a cut,
+            # and its written trigger cannot tell the two apart: measured on a GM kit, a closed hat is 115 ms
+            # of sound against a 134 ms 16th at 112 bpm, so every hit leaves a gap the length of the sample's tail and
+            # no trigger length or humanization setting removes it (measured at 0.05-0.18 beats and tight/natural/
+            # punchy). The row is like `stem.cut`, `stem.edge` and `stem.tick` here: a percussive part cannot be judged
+            # for a sustained hole. A drum stem that really dies is still caught by `stem.dead` and by the master's
+            # `dropout` row.
+            _skip(rows, metrics, 'stem.dropout', name, gp,
+                  why='a percussive stem is silent between hits by design: the gap is the sample\'s decay against the '
+                      'trigger spacing, not an edit')
+        else:
+            # only a hole inside a sounding note is a dropout; a gap between phrases is the score's rest (see gate_checks)
+            sounding = _note_intervals(track, bpm) if track is not None else None
+            res = gc.check_dropout(sig, min_ms=gp.param('stem.dropout', 'min_ms'),
+                                   max_ms=gp.param('stem.dropout', 'max_ms'),
+                                   floor_below_db=gp.param('stem.dropout', 'floor_below_db'), sounding=sounding)
+            _emit(rows, metrics, 'stem.dropout', 'FAIL' if res.get('holes') else 'PASS', res, name)
     else:
         _skip(rows, metrics, 'stem.dropout', name, gp)
-
-    perc = _is_percussive(track)
     if perc:
         _skip(rows, metrics, 'stem.cut', name, gp, why='a percussive stem has no sustained level to cut at a section boundary')
     else:

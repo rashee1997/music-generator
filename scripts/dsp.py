@@ -526,7 +526,15 @@ def soften_onsets(x, sr=44100, times=(), ms=2.0, skip_sounding=True):
             continue
         if skip_sounding and float(np.max(np.abs(y[max(0, i0 - 1):i0]))) > 0.02 * peak:
             continue                                    # already sounding: a flam or a layer, not a fresh onset
-        y[i0:i0 + n] *= ramp
+        w = ramp
+        if not skip_sounding:
+            # On a hit that lands over a still-ringing one the ramp starts at the level already there, not at zero:
+            # multiplying a ringing tail down to 0 is a step of its own (measured: a kit read 28 click events in the
+            # master with a 1.5/0.3 ms ramp from zero, 0 with the guard on). From the tail's own level the seam stays
+            # continuous and most of the new attack is still stretched.
+            a = min(1.0, float(np.max(np.abs(y[max(0, i0 - 2):i0]))) / peak)
+            w = a + (1.0 - a) * ramp
+        y[i0:i0 + n] *= w
     return y
 
 

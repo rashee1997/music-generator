@@ -1,4 +1,4 @@
-stem gate: 0 FAIL, 0 WARN, 102 rows, profile indo_afro_sunrise, 3466 ms
+stem gate: 0 FAIL, 0 WARN, 102 rows, profile indo_afro_sunrise, 4232 ms
 [PASS] stem.dc: stem "bansuri": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "bansuri": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "bansuri": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -26,8 +26,8 @@ stem gate: 0 FAIL, 0 WARN, 102 rows, profile indo_afro_sunrise, 3466 ms
 [PASS] stem.dead: stem "canopy": own median -46.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve
 [PASS] stem.dc: stem "djembe": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)
 [PASS] stem.clipping: stem "djembe": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
-[PASS] stem.clicks: stem "djembe": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2 event(s) rejected as a dense burst, 157 as a steep attack; max cluster span 1.156 ms
-[PASS] stem.dropout: stem "djembe": longest hole 0 ms (limit 20-1000 ms), floor -76.3 dBFS; 0 hole(s)
+[PASS] stem.clicks: stem "djembe": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 4 event(s) rejected as a dense burst, 157 as a steep attack; max cluster span 1.156 ms
+[INFO] stem.dropout: stem "djembe": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit
 [INFO] stem.cut: stem "djembe": not applied: a percussive stem has no sustained level to cut at a section boundary
 [INFO] stem.edge: stem "djembe": not applied: a percussive note length is a trigger, not a sound length
 [INFO] stem.tick: stem "djembe": not applied: a percussive stem is allowed a pulse
@@ -51,12 +51,12 @@ stem gate: 0 FAIL, 0 WARN, 102 rows, profile indo_afro_sunrise, 3466 ms
 [PASS] stem.flatness: stem "horns": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [PASS] stem.dc: stem "kit": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "kit": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
-[PASS] stem.clicks: stem "kit": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1338 event(s) rejected as a dense burst, 111 as a steep attack; max cluster span 1.497 ms
-[PASS] stem.dropout: stem "kit": longest hole 0 ms (limit 20-1000 ms), floor -98.7 dBFS; 0 hole(s)
+[PASS] stem.clicks: stem "kit": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1299 event(s) rejected as a dense burst, 91 as a steep attack; max cluster span 1.497 ms
+[INFO] stem.dropout: stem "kit": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit
 [INFO] stem.cut: stem "kit": not applied: a percussive stem has no sustained level to cut at a section boundary
 [INFO] stem.edge: stem "kit": not applied: a percussive note length is a trigger, not a sound length
 [INFO] stem.tick: stem "kit": not applied: a percussive stem is allowed a pulse
-[PASS] stem.dead: stem "kit": own median -23.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve
+[PASS] stem.dead: stem "kit": own median -23.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve
 [PASS] stem.dc: stem "marimba": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "marimba": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "marimba": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -68,7 +68,7 @@ stem gate: 0 FAIL, 0 WARN, 102 rows, profile indo_afro_sunrise, 3466 ms
 [PASS] stem.dc: stem "shekere": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "shekere": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "shekere": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 592 event(s) rejected as a dense burst, 29 as a steep attack; max cluster span 0.091 ms
-[PASS] stem.dropout: stem "shekere": longest hole 0 ms (limit 20-1000 ms), floor -110.6 dBFS; 0 hole(s)
+[INFO] stem.dropout: stem "shekere": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit
 [INFO] stem.cut: stem "shekere": not applied: a percussive stem has no sustained level to cut at a section boundary
 [INFO] stem.edge: stem "shekere": not applied: a percussive note length is a trigger, not a sound length
 [INFO] stem.tick: stem "shekere": not applied: a percussive stem is allowed a pulse
@@ -84,7 +84,7 @@ stem gate: 0 FAIL, 0 WARN, 102 rows, profile indo_afro_sunrise, 3466 ms
 [PASS] stem.dc: stem "tabla": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "tabla": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "tabla": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 47 event(s) rejected as a dense burst, 58 as a steep attack; max cluster span 0.612 ms
-[PASS] stem.dropout: stem "tabla": longest hole 0 ms (limit 20-1000 ms), floor -161.3 dBFS; 0 hole(s)
+[INFO] stem.dropout: stem "tabla": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit
 [INFO] stem.cut: stem "tabla": not applied: a percussive stem has no sustained level to cut at a section boundary
 [INFO] stem.edge: stem "tabla": not applied: a percussive note length is a trigger, not a sound length
 [INFO] stem.tick: stem "tabla": not applied: a percussive stem is allowed a pulse

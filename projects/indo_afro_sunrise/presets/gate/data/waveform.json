@@ -1,5 +1,5 @@
 {
-  "duration_s": 69.6390022675737,
+  "duration_s": 69.63897959183673,
   "sections": [
     {
       "name": "dawn",
@@ -52,7 +52,19 @@
       "PASS"
     ],
     [
-      46.646,
+      12.3458,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      22.2765,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      55.2405,
       "clicks",
       "master",
       "FAIL"

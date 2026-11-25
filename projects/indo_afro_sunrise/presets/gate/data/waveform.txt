@@ -6,9 +6,11 @@ sections:
   grove: 17.14-34.29 s, dyn 0.70
   high_sun: 34.29-51.43 s, dyn 0.95
   golden_hour: 51.43-68.57 s, dyn 0.60
-flagged times: 5
+flagged times: 7
   0.035s stem.tick [PASS] canopy
   0.035s stem.tick [PASS] tanpura
   4.574s stem.tick [PASS] guitar
   8.557s stem.tick [PASS] bass
-  46.646s clicks [FAIL] master
+  12.346s clicks [FAIL] master
+  22.276s clicks [FAIL] master
+  55.240s clicks [FAIL] master
