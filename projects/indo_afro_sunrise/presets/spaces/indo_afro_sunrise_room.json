@@ -1,0 +1,39 @@
+{
+ "name": "indo_afro_sunrise_room",
+ "character": "A forest clearing at first light: no walls, a ground bounce from the damp floor, a long soft tail into the canopy and almost no early energy, so the hand drums stay close and the ambience sits above.",
+ "room": {
+  "rt60": 3.4,
+  "pre_delay_ms": 18,
+  "hf_decay": 0.7,
+  "early_level": 0.22
+ },
+ "reflections": {
+  "ground_delay_ms": 7.0,
+  "ground_gain": 0.55,
+  "ground_cutoff_hz": 3800,
+  "lateral_delay_ms": 16.0,
+  "lateral_gain": 0.36,
+  "lateral_cutoff_hz": 3000,
+  "reverb_decay_s": 3.2,
+  "ceiling_delay_ms": 22.0,
+  "ceiling_gain": 0.3,
+  "rear_delay_ms": 30.0,
+  "rear_gain": 0.34
+ },
+ "distance": {
+  "ref_m": 1.5,
+  "falloff": 0.2,
+  "air_damping": 0.55,
+  "min_cutoff_hz": 2600,
+  "reverb_exponent": 0.7,
+  "pre_delay_law": {
+   "base_ms": 30.0,
+   "per_m": 3.5,
+   "max_ms": 30.0
+  }
+ },
+ "binaural": {
+  "bed": false,
+  "spot": true
+ }
+}

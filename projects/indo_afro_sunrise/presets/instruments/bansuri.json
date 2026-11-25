@@ -1,0 +1,48 @@
+{
+ "name": "bansuri",
+ "description": "A bamboo transverse flute (bass G bansuri, keyless): the player breathes in the phrase gaps, leans into the long note with a 140 ms meend glide and adds a light 5-6 Hz gamaka on held notes, never a constant vibrato (bansuri_bamboo_flute in knowledgebase/cultures/flutes.md).",
+ "gm": "bansuri",
+ "role": "melody",
+ "humanize": {
+  "preset": "natural",
+  "timing_ms": 6.0,
+  "drift_ms": 6.0,
+  "vel_sigma": 4.0
+ },
+ "spatial": {
+  "azimuth": 8.0,
+  "elevation": 12.0,
+  "distance": 2.2,
+  "space": "indo_afro_sunrise_room"
+ },
+ "eq": [
+  {
+   "type": "hp",
+   "f": 220.0
+  },
+  {
+   "type": "peak",
+   "f": 2600.0,
+   "gain": 2.0,
+   "q": 1.1
+  },
+  {
+   "type": "peak",
+   "f": 800.0,
+   "gain": 1.0,
+   "q": 1.0
+  },
+  {
+   "type": "lp",
+   "f": 11000.0
+  }
+ ],
+ "gain_db": -1.5,
+ "reverb": 0.26,
+ "articulation": {
+  "overlap_ms": 25.0,
+  "gate": 0.98,
+  "release_ms": 140.0
+ },
+ "mechanics_class": "keys"
+}

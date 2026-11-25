@@ -1,0 +1,103 @@
+{
+  "duration_s": 69.6390022675737,
+  "sections": [
+    {
+      "name": "dawn",
+      "start_s": 0.0,
+      "end_s": 17.1429,
+      "dyn": 0.32
+    },
+    {
+      "name": "grove",
+      "start_s": 17.1429,
+      "end_s": 34.2857,
+      "dyn": 0.7
+    },
+    {
+      "name": "high_sun",
+      "start_s": 34.2857,
+      "end_s": 51.4286,
+      "dyn": 0.95
+    },
+    {
+      "name": "golden_hour",
+      "start_s": 51.4286,
+      "end_s": 68.5714,
+      "dyn": 0.6
+    }
+  ],
+  "flags": [
+    [
+      0.0348,
+      "stem.tick",
+      "canopy",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "tanpura",
+      "PASS"
+    ],
+    [
+      0.559,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      0.583,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      1.6311,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      2.7019,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      3.2362,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      3.2602,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      3.9244,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      4.4662,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      4.5743,
+      "stem.tick",
+      "guitar",
+      "PASS"
+    ],
+    [
+      8.5566,
+      "stem.tick",
+      "bass",
+      "PASS"
+    ]
+  ]
+}

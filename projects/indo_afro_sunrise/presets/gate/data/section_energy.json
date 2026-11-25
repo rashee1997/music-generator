@@ -1,0 +1,43 @@
+{
+  "row": "section.energy",
+  "stage": "mix",
+  "stem": null,
+  "level": "PASS",
+  "value": 0.7999999999999999,
+  "unit": "rho",
+  "threshold": 0.5,
+  "margin": 0.29999999999999993,
+  "worst_times_s": [],
+  "calibrated": false,
+  "detail": "Spearman rho 0.80 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
+  "table": [
+    {
+      "name": "dawn",
+      "start_s": 0.0,
+      "end_s": 17.1429,
+      "energy": 0.32,
+      "level_db": -29.735538952118866
+    },
+    {
+      "name": "grove",
+      "start_s": 17.1429,
+      "end_s": 34.2857,
+      "energy": 0.7,
+      "level_db": -20.984016044219555
+    },
+    {
+      "name": "high_sun",
+      "start_s": 34.2857,
+      "end_s": 51.4286,
+      "energy": 0.95,
+      "level_db": -15.427486278940021
+    },
+    {
+      "name": "golden_hour",
+      "start_s": 51.4286,
+      "end_s": 68.5714,
+      "energy": 0.6,
+      "level_db": -20.68183158475538
+    }
+  ]
+}

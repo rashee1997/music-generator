@@ -1,0 +1,337 @@
+{
+  "rows": [
+    {
+      "stem": "bansuri",
+      "table": [
+        {
+          "section": "dawn",
+          "start_s": 0.0,
+          "measured_db": -39.21,
+          "expected_db": -35.65,
+          "dyn": 0.32
+        },
+        {
+          "section": "grove",
+          "start_s": 17.1429,
+          "measured_db": -31.41,
+          "expected_db": -28.85,
+          "dyn": 0.7
+        },
+        {
+          "section": "high_sun",
+          "start_s": 34.2857,
+          "measured_db": -20.7,
+          "expected_db": -26.2,
+          "dyn": 0.95
+        },
+        {
+          "section": "golden_hour",
+          "start_s": 51.4286,
+          "measured_db": -27.58,
+          "expected_db": -30.19,
+          "dyn": 0.6
+        }
+      ]
+    },
+    {
+      "stem": "bass",
+      "table": [
+        {
+          "section": "dawn",
+          "start_s": 0.0,
+          "measured_db": -38.32,
+          "expected_db": -38.75,
+          "dyn": 0.32
+        },
+        {
+          "section": "grove",
+          "start_s": 17.1429,
+          "measured_db": -33.07,
+          "expected_db": -31.95,
+          "dyn": 0.7
+        },
+        {
+          "section": "high_sun",
+          "start_s": 34.2857,
+          "measured_db": -27.44,
+          "expected_db": -29.3,
+          "dyn": 0.95
+        },
+        {
+          "section": "golden_hour",
+          "start_s": 51.4286,
+          "measured_db": -32.12,
+          "expected_db": -33.29,
+          "dyn": 0.6
+        }
+      ]
+    },
+    {
+      "stem": "canopy",
+      "table": [
+        {
+          "section": "dawn",
+          "start_s": 0.0,
+          "measured_db": -46.5,
+          "expected_db": -53.4,
+          "dyn": 0.32
+        },
+        {
+          "section": "grove",
+          "start_s": 17.1429,
+          "measured_db": -48.29,
+          "expected_db": -46.61,
+          "dyn": 0.7
+        },
+        {
+          "section": "high_sun",
+          "start_s": 34.2857,
+          "measured_db": -46.61,
+          "expected_db": -43.95,
+          "dyn": 0.95
+        }
+      ]
+    },
+    {
+      "stem": "djembe",
+      "table": [
+        {
+          "section": "dawn",
+          "start_s": 0.0,
+          "measured_db": -27.62,
+          "expected_db": -32.81,
+          "dyn": 0.32
+        },
+        {
+          "section": "grove",
+          "start_s": 17.1429,
+          "measured_db": -26.96,
+          "expected_db": -26.01,
+          "dyn": 0.7
+        },
+        {
+          "section": "high_sun",
+          "start_s": 34.2857,
+          "measured_db": -25.75,
+          "expected_db": -23.36,
+          "dyn": 0.95
+        },
+        {
+          "section": "golden_hour",
+          "start_s": 51.4286,
+          "measured_db": -26.35,
+          "expected_db": -27.35,
+          "dyn": 0.6
+        }
+      ]
+    },
+    {
+      "stem": "guitar",
+      "table": [
+        {
+          "section": "dawn",
+          "start_s": 0.0,
+          "measured_db": -42.05,
+          "expected_db": -40.21,
+          "dyn": 0.32
+        },
+        {
+          "section": "grove",
+          "start_s": 17.1429,
+          "measured_db": -34.31,
+          "expected_db": -33.42,
+          "dyn": 0.7
+        },
+        {
+          "section": "high_sun",
+          "start_s": 34.2857,
+          "measured_db": -28.69,
+          "expected_db": -30.76,
+          "dyn": 0.95
+        },
+        {
+          "section": "golden_hour",
+          "start_s": 51.4286,
+          "measured_db": -33.81,
+          "expected_db": -34.75,
+          "dyn": 0.6
+        }
+      ]
+    },
+    {
+      "stem": "horns",
+      "table": [
+        {
+          "section": "high_sun",
+          "start_s": 34.2857,
+          "measured_db": -28.64,
+          "expected_db": -28.64,
+          "dyn": 0.95
+        }
+      ]
+    },
+    {
+      "stem": "kit",
+      "table": [
+        {
+          "section": "dawn",
+          "start_s": 0.0,
+          "measured_db": -25.43,
+          "expected_db": -29.72,
+          "dyn": 0.32
+        },
+        {
+          "section": "grove",
+          "start_s": 17.1429,
+          "measured_db": -24.12,
+          "expected_db": -22.92,
+          "dyn": 0.7
+        },
+        {
+          "section": "high_sun",
+          "start_s": 34.2857,
+          "measured_db": -23.0,
+          "expected_db": -20.27,
+          "dyn": 0.95
+        },
+        {
+          "section": "golden_hour",
+          "start_s": 51.4286,
+          "measured_db": -22.55,
+          "expected_db": -24.26,
+          "dyn": 0.6
+        }
+      ]
+    },
+    {
+      "stem": "marimba",
+      "table": [
+        {
+          "section": "grove",
+          "start_s": 17.1429,
+          "measured_db": -45.55,
+          "expected_db": -44.12,
+          "dyn": 0.7
+        },
+        {
+          "section": "high_sun",
+          "start_s": 34.2857,
+          "measured_db": -39.83,
+          "expected_db": -41.46,
+          "dyn": 0.95
+        }
+      ]
+    },
+    {
+      "stem": "shekere",
+      "table": [
+        {
+          "section": "dawn",
+          "start_s": 0.0,
+          "measured_db": -57.16,
+          "expected_db": -62.64,
+          "dyn": 0.32
+        },
+        {
+          "section": "grove",
+          "start_s": 17.1429,
+          "measured_db": -56.53,
+          "expected_db": -55.84,
+          "dyn": 0.7
+        },
+        {
+          "section": "high_sun",
+          "start_s": 34.2857,
+          "measured_db": -56.43,
+          "expected_db": -53.18,
+          "dyn": 0.95
+        },
+        {
+          "section": "golden_hour",
+          "start_s": 51.4286,
+          "measured_db": -56.41,
+          "expected_db": -57.18,
+          "dyn": 0.6
+        }
+      ]
+    },
+    {
+      "stem": "sitar",
+      "table": [
+        {
+          "section": "high_sun",
+          "start_s": 34.2857,
+          "measured_db": -33.77,
+          "expected_db": -35.87,
+          "dyn": 0.95
+        },
+        {
+          "section": "golden_hour",
+          "start_s": 51.4286,
+          "measured_db": -41.5,
+          "expected_db": -39.86,
+          "dyn": 0.6
+        }
+      ]
+    },
+    {
+      "stem": "tabla",
+      "table": [
+        {
+          "section": "grove",
+          "start_s": 17.1429,
+          "measured_db": -37.09,
+          "expected_db": -36.35,
+          "dyn": 0.7
+        },
+        {
+          "section": "high_sun",
+          "start_s": 34.2857,
+          "measured_db": -35.54,
+          "expected_db": -33.7,
+          "dyn": 0.95
+        },
+        {
+          "section": "golden_hour",
+          "start_s": 51.4286,
+          "measured_db": -36.35,
+          "expected_db": -37.69,
+          "dyn": 0.6
+        }
+      ]
+    },
+    {
+      "stem": "tanpura",
+      "table": [
+        {
+          "section": "dawn",
+          "start_s": 0.0,
+          "measured_db": -56.86,
+          "expected_db": -54.89,
+          "dyn": 0.32
+        },
+        {
+          "section": "grove",
+          "start_s": 17.1429,
+          "measured_db": -53.68,
+          "expected_db": -48.09,
+          "dyn": 0.7
+        },
+        {
+          "section": "high_sun",
+          "start_s": 34.2857,
+          "measured_db": -43.78,
+          "expected_db": -45.44,
+          "dyn": 0.95
+        },
+        {
+          "section": "golden_hour",
+          "start_s": 51.4286,
+          "measured_db": -39.49,
+          "expected_db": -49.43,
+          "dyn": 0.6
+        }
+      ]
+    }
+  ]
+}

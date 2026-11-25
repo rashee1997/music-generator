@@ -1,0 +1,21 @@
+file: /workspace/chats/c7f800ed356753289887290c/projects/indo_afro_sunrise/out/_draft_master.wav
+duration_s: 69.639
+sample_rate: 44100
+sections:
+  dawn: 0.00-17.14 s, dyn 0.32
+  grove: 17.14-34.29 s, dyn 0.70
+  high_sun: 34.29-51.43 s, dyn 0.95
+  golden_hour: 51.43-68.57 s, dyn 0.60
+flagged times: 12
+  0.035s stem.tick [PASS] canopy
+  0.035s stem.tick [PASS] tanpura
+  0.559s clicks [FAIL] master
+  0.583s clicks [FAIL] master
+  1.631s clicks [FAIL] master
+  2.702s clicks [FAIL] master
+  3.236s clicks [FAIL] master
+  3.260s clicks [FAIL] master
+  3.924s clicks [FAIL] master
+  4.466s clicks [FAIL] master
+  4.574s stem.tick [PASS] guitar
+  8.557s stem.tick [PASS] bass
