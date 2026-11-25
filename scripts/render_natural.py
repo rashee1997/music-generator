@@ -343,6 +343,22 @@ def _oversample():
         return 1
 
 
+def _onset_ramp(inst_cfg, tr):
+    """(ms, skip_sounding) for this track's onset ramp.
+
+    `onset_fade_ms` ramps the first samples of each onset; by default an onset that lands on a still-ringing hit is
+    left alone (a sustained instrument's legato must not be cut). A percussion preset sets `onset_fade_all: true`
+    because every drum hit is a fresh sample: in a dense pattern none of them starts from silence, so the guard
+    would skip the very hits whose full-level sample start reads as a click.
+    """
+    cfg = inst_cfg or {}
+    ms = float(tr.get('onset_fade_ms') or cfg.get('onset_fade_ms') or 0.0)
+    force = tr.get('onset_fade_all')
+    if force is None:
+        force = cfg.get('onset_fade_all')
+    return ms, not bool(force)
+
+
 class Voice:
     """One Synth instance playing one track; collects events then renders."""
 
@@ -937,9 +953,10 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
         # A SoundFont drum sample often starts on a single-sample step instead of rising out of silence, which the
         # stem gate (rightly) reads as a click at every hit. `onset_fade_ms` in an instrument preset ramps the first
         # 2-3 ms of each fresh hit: far faster than any audible attack, and the step is gone.
-        fade_ms = float(tr.get('onset_fade_ms') or (inst_cfg or {}).get('onset_fade_ms') or 0.0)
+        fade_ms, skip_sounding = _onset_ramp(inst_cfg, tr)
         if fade_ms > 0:
-            hit = dsp.soften_onsets(hit, sr=SR, times=[e['t'] for e in ev], ms=fade_ms)
+            hit = dsp.soften_onsets(hit, sr=SR, times=[e['t'] for e in ev], ms=fade_ms,
+                                    skip_sounding=skip_sounding)
         # every drum note is released 120 ms in, while the sample is still ringing: a hard cut there is a click
         hit = dsp.fade_out_at(hit, sr=SR, times=[e['t'] + 0.12 for e in ev], ms=4.0)
         return dsp.enhance_sf2_dynamics(hit, sr=SR, role=role, velocity=_mean_vel(ev))
@@ -1076,9 +1093,10 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
             if open_p.get(ch) == e['p']:
                 open_p[ch] = None
         stem = mechanics.add(vox.render(tail=3.0), tr, ev, sr=SR, seed=seed)
-        fade_ms = float(tr.get('onset_fade_ms') or (inst_cfg or {}).get('onset_fade_ms') or 0.0)
+        fade_ms, skip_sounding = _onset_ramp(inst_cfg, tr)
         if fade_ms > 0:   # the preset's own 2-3 ms ramp, for sampled patches that start on a step
-            stem = dsp.soften_onsets(stem, sr=SR, times=[e['t'] for e in ev], ms=fade_ms)
+            stem = dsp.soften_onsets(stem, sr=SR, times=[e['t'] for e in ev], ms=fade_ms,
+                                     skip_sounding=skip_sounding)
         return dsp.enhance_sf2_dynamics(stem, sr=SR, role=role, velocity=_mean_vel(ev))
 
     # shared channel (piano, guitar, plucked, mallets)

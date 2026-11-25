@@ -1,0 +1,243 @@
+{
+ "stamp": "20261125T033740",
+ "project": "indo_afro_sunrise",
+ "level": "FAIL",
+ "sources": {
+  "score": "/workspace/chats/c7f800ed356753289887290c/projects/indo_afro_sunrise/scores/indo_afro_sunrise_score.json",
+  "gate_data": [
+   "level.json",
+   "rows.json",
+   "section_energy.json",
+   "spectrogram.json",
+   "stem_gate.json",
+   "stem_levels.json",
+   "stereo.json",
+   "waveform.json"
+  ],
+  "stems": "12 processed stems from .cache/mix",
+  "master": "out/_draft_master.wav",
+  "verdict": "2026-11-25T03:34:16Z"
+ },
+ "binding": [
+  {
+   "row": "clicks",
+   "stem": null,
+   "level": "FAIL",
+   "value": 1.0,
+   "threshold": 0.0,
+   "unit": "events",
+   "safety": -1.0,
+   "detail": "1 clustered impulse event(s) (MAD), 1 LPC frame(s); 1355 event(s) rejected as a dense burst, 258 as a steep attack; max cluster span 1.497 ms"
+  }
+ ],
+ "advisory": [
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  }
+ ],
+ "domains": {
+  "run": [
+   "master"
+  ],
+  "skipped": {
+   "stems": 24
+  }
+ },
+ "model": {
+  "first_order": true,
+  "rows": 5,
+  "levers": [
+   {
+    "id": "render.oversample",
+    "domain": "master",
+    "kind": "oversample",
+    "stem": null,
+    "current": 4.0,
+    "lo": 1.0,
+    "hi": 8.0,
+    "step": 1.0,
+    "unit": "x",
+    "text": "master oversampling before the limiter"
+   },
+   {
+    "id": "onset.kit.ms",
+    "domain": "master",
+    "kind": "onset",
+    "stem": "kit",
+    "current": 0.3,
+    "lo": 0.0,
+    "hi": 3.0,
+    "step": 0.1,
+    "unit": "ms",
+    "text": "kit onset ramp"
+   },
+   {
+    "id": "note.kit.d",
+    "domain": "master",
+    "kind": "note_len",
+    "stem": "kit",
+    "current": 0.3047,
+    "lo": 0.24470000000000003,
+    "hi": 0.3647,
+    "step": 0.020833333333333332,
+    "unit": "beats",
+    "text": "kit written note length (mean 0.3047 beats)"
+   }
+  ]
+ },
+ "plan": {
+  "status": "partial",
+  "worst_safety": -0.10920668663630077,
+  "deltas": {
+   "onset.kit.ms": 1.0
+  },
+  "predicted": {
+   "clicks::-": [
+    -1.0,
+    -0.14341108751055398
+   ],
+   "loudness::-": [
+    -0.10920668663630077,
+    -0.10920668663630077
+   ],
+   "true peak::-": [
+    -0.0005697148684871886,
+    -0.0005697148684871886
+   ],
+   "clipping::-": [
+    0.0,
+    0.0
+   ],
+   "master.dc::-": [
+    0.09900935380600785,
+    0.09900935380600785
+   ]
+  },
+  "conflicts": [],
+  "closed": [],
+  "burned": [],
+  "notes": [
+   "no admissible combination clears clicks; the best set leaves it at safety -0.14. The rows that limit it have no lever here - fix those first, or change the piece rather than the knob"
+  ]
+ },
+ "notes": [
+  "clicks has 1 event(s) at 46.646s; the transient is kit 86%, bansuri 9%, sitar 3%"
+ ]
+}

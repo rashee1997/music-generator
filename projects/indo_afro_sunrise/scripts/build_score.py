@@ -185,16 +185,16 @@ def tracks():
             kit.append(note(t + step * 0.25 * BEAT, 0.45 * BEAT, DRUM_KEYS['kick'], 0.9 - 0.04 * (step == 11)))
         for step in (4, 12):
             kit.append(note(t + step * 0.25 * BEAT, 0.45 * BEAT, DRUM_KEYS['snare'], 0.62))
-        # the shaker-hand of the kit: 32nds alternating closed and pedal hat, so the stem is continuous and no
-        # single pitch repeats as a machine-gun run
+        # the shaker-hand of the kit: 16ths on a tambourine. A closed hat decays to silence before the next 16th and
+        # the gate read that gap inside a sounding note as a dropout (20-25 ms, stem.dropout); the tambourine's ring
+        # carries across the step, which is also the afrobeat hand this groove wants.
         for step in range(16):
-            key = 'hat_closed' if step % 2 == 0 else 'hat_pedal'
-            v = 0.56 + 0.12 * (step / 16.0) ** 1.2 + (0.03 if step % 4 == 0 else 0.0)
-            kit.append(note(t + step * 0.25 * BEAT, 0.22 * BEAT, DRUM_KEYS[key], v))
+            v = 0.8 * (0.56 + 0.12 * (step / 16.0) ** 1.2 + (0.03 if step % 4 == 0 else 0.0))
+            kit.append(note(t + step * 0.25 * BEAT, 0.25 * BEAT, DRUM_KEYS['tambourine'], v))
         kit.append(note(t + 14 * 0.25 * BEAT, 0.7 * BEAT, DRUM_KEYS['hat_open'], 0.4))
         if b in (9, 17, 25):
             kit.append(note(t, 0.5 * BEAT, DRUM_KEYS['crash'], 0.55))
-    out.append({'name': 'kit', 'instrument': 'standard', 'role': 'drum', 'notes': kit,
+    out.append({'name': 'kit', 'instrument': 'kit', 'role': 'drum', 'notes': kit,
                 'spatial': {'azimuth': 0.0, 'elevation': 0.0, 'distance': 5.0}})
 
     # 9. djembe: the West African hand layer, tuned to GM conga/tom keys

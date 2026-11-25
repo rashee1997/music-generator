@@ -183,7 +183,7 @@
         {
           "section": "grove",
           "start_s": 17.1429,
-          "measured_db": -24.12,
+          "measured_db": -24.13,
           "expected_db": -22.92,
           "dyn": 0.7
         },

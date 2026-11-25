@@ -125,10 +125,18 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
       Report every `WARN` with the dimension it names, and fix the part, the preset or the placement. The measurements are
       advisory, not gate rows (`references/mixing/quality-gate.md` section 3h); the gate rows a theatrical change can break
       are listed there.
+- [ ] **9.4g** **A FAIL, before any edit:** run `python scripts/debug_audio.py <project>`. It reads the gate's own
+      numbers, imports and runs only the domains that own a failing row (master, stems, spectral, spatial, channels,
+      HRTF/binaural, chemistry, ears, direction), and writes `reports/debug_audio.md`. Use it to answer three things
+      before touching a preset: which stem/band/channel the row is actually made of, which declared lever moves it, and
+      whether the rows it must not break can be satisfied by the same value. When the autopsy reports a **conflict**, no
+      value of that lever clears both rows: fix the score, the sample or the density instead of turning the knob again.
+      Record what you tried with `--record <row>=<lever>=<delta> --outcome <cleared|no change|worse>` so a failed
+      experiment is never proposed twice. The engine renders nothing and changes nothing.
 - [ ] **9.5** Listen: `python scripts/listen.py out/master.wav --direction direction/<sheet>.json` (if missing, say so)
 - [ ] **9.6** Complete self-check in `references/workflow/self-check.md` in STATUS.md (all yes/no)
 - [ ] **9.7** Report: what was done, what was checked, what was NOT checked, gate results, the version number delivered, any limitations. Update STATUS.md.
-- `reports/` holds two kinds of file and nothing else: the research notes (`research_*.md`) and the CI report (`ci_report.json`). Every gate artefact — profile, `gate/chem/`, `level.json`, `stem_gate.json`, `section_energy.json`, the spectrogram/waveform/stereo PNGs — is written under `presets/gate/` (figures in `presets/gate/figures/`) and is versioned with the project. `reports/` is versioned too: it is research evidence and the CI verdict, not scratch space.
+- `reports/` holds three kinds of file and nothing else: the research notes (`research_*.md`), the CI report (`ci_report.json`), and the debug autopsy written by `scripts/debug_audio.py` (`debug_audio.md`, `debug_audio.json`, `debug_history.jsonl`). The autopsy is a record of what a render measured and what the solver would move, so it belongs to that piece's history; it is never an input to the gate. Every gate artefact — profile, `gate/chem/`, `level.json`, `stem_gate.json`, `section_energy.json`, the spectrogram/waveform/stereo PNGs — is written under `presets/gate/` (figures in `presets/gate/figures/`) and is versioned with the project. `reports/` is versioned too: it is research evidence and the CI verdict, not scratch space.
 
 ---
 
@@ -173,7 +181,7 @@ Before Phase 4, open every file in the row that matches the request; union sever
 | **Choose/write gate profile** | `references/mixing/quality-gate.md` §3c, `scripts/gate_profiles.py` (list/rows/explain), Section 6 |
 | **Robotic/flat/wrong mood/no beat** | `references/mixing/humanization.md`, `scripts/humanize_engine/`, `references/instruments-and-vocals/natural-instruments.md`, `references/scoring/emotion-and-scoring.md`, `references/workflow/music-direction.md` |
 | **Theatrical / Hollywood / "less synthetic" / orchestral realism** | `knowledgebase/sound-design/theatrical-realism.md`, `references/mixing/theatrical-realism.md`, `scripts/realism_report.py`, `references/instruments-and-vocals/soundfont-realism.md`, `references/mixing/humanization.md` |
-| **Gate row failed** | `references/mixing/quality-gate.md`, `references/workflow/troubleshooting-and-limits.md` |
+| **Gate row failed** | `references/mixing/quality-gate.md`, `references/workflow/troubleshooting-and-limits.md`, `references/mixing/debug-engine.md` |
 
 If none match, open `knowledgebase/README.md`, ask the reference finder (`python scripts/find_references.py "<the brief>"`), and record the choice in STATUS.md.
 
@@ -287,7 +295,7 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
 - Start strict. Only relax/skip AFTER measurement with reason naming the measurement. Never in advance.
 - Hard limits in code: `loudness`, `true_peak`, `clipping`, `silence`, `clicks`, `channels` are protected, and `roughness` and `pattern.flags_max` cannot be skipped. Every number has a range.
 - Put `piece_type` in score and direction sheet, and make it the name of the project's own `presets/gate/<name>.json`.
-- Everything the gate reads lives in `presets/gate/`: the profile(s), the chemistry presets (`presets/gate/chem/model.json`, `moods.json`, `genres.json`), every gate data file (`level.json`, `stem_gate.json`, `section_energy.json`, ...) and every figure (`presets/gate/figures/*.png`). Nothing the gate produces belongs in `reports/`.
+- Everything the gate reads lives in `presets/gate/`: the profile(s), the chemistry presets (`presets/gate/chem/model.json`, `moods.json`, `genres.json`), every gate data file (`level.json`, `stem_gate.json`, `section_energy.json`, ...) and every figure (`presets/gate/figures/*.png`). Nothing the gate produces belongs in `reports/`; the one exception is the debug autopsy (`debug_audio.*`), which reads the gate's numbers and records what was tried, and is not an input to any row.
 - One-off exceptions go in score as `"gate": {"<row>": {"mode": "relax", "reason": "...", ...}}`
 
 ---

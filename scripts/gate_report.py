@@ -71,6 +71,13 @@ def write_reports(wav_path, score, out_dir, stem_meta=None, mix_meta=None, image
         return {}
     metrics = list((stem_meta or {}).get('metrics') or []) + list((mix_meta or {}).get('metrics') or [])
     flags = _flags(metrics)
+    # Every row the gate judged, with the numbers behind it, beside the figures. The rows are already built with
+    # value/threshold/unit/worst_times_s and were previously used only for the plot marks and then dropped; the debug
+    # engine and any later analysis read this file instead of re-parsing a formatted verdict.
+    if metrics:
+        os.makedirs(out_dir, exist_ok=True)
+        with open(os.path.join(out_dir, 'rows.json'), 'w', encoding='utf-8') as fh:
+            json.dump(dict(meta=dict(stage='rows', rows=len(metrics), metrics=metrics)), fh, indent=1)
     try:
         sig = load(wav_path)
     except Exception as exc:

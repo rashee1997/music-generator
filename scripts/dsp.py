@@ -503,14 +503,16 @@ def trim_digital_lead(x, sr=44100, max_ms=150.0):
     return np.concatenate([y[lead:], np.zeros((lead, y.shape[1]), np.float32)]).astype(np.float32)
 
 
-def soften_onsets(x, sr=44100, times=(), ms=2.0):
-    """A short raised-cosine ramp at each onset that starts from silence.
+def soften_onsets(x, sr=44100, times=(), ms=2.0, skip_sounding=True):
+    """A short raised-cosine ramp at each onset.
 
     A sampled drum or shaker often begins on a single-sample step: its PCM starts at full level instead of rising
     out of silence, so the high-pass residual shows a clustered impulse at every hit (measured: a GM shaker read
     an impulse on 250 of its 352 hits). Two to three milliseconds is faster than any audible attack, so the
     transient is unchanged, but the step that reads as a click is gone. An onset that lands inside a still-ringing
-    hit is left alone: ramping there would cut the ringing body, not a step.
+    hit is left alone when `skip_sounding` is on: on a sustained instrument that would cut the ringing body, not a
+    step. A percussion track passes `skip_sounding=False`, because a drum hit is a fresh sample even over the ring
+    of the previous one, and in a dense pattern no hit ever starts from silence.
     """
     y = to_2d(x).astype(np.float32)
     n = int(round(float(ms) * sr / 1000.0))
@@ -522,7 +524,7 @@ def soften_onsets(x, sr=44100, times=(), ms=2.0):
         i0 = int(round(float(t) * sr))
         if not (0 < i0 < len(y) - n):
             continue
-        if float(np.max(np.abs(y[max(0, i0 - 1):i0]))) > 0.02 * peak:
+        if skip_sounding and float(np.max(np.abs(y[max(0, i0 - 1):i0]))) > 0.02 * peak:
             continue                                    # already sounding: a flam or a layer, not a fresh onset
         y[i0:i0 + n] *= ramp
     return y

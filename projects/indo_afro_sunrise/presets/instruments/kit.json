@@ -1,0 +1,14 @@
+{
+ "name": "kit",
+ "description": "The Afrobeat kit: GM kick, snare and hats on the standard drum bank, played by one drummer in the back of the room.",
+ "gm": "standard",
+ "role": "drum",
+ "mechanics_class": "drum",
+ "spatial": {
+  "azimuth": 0.0,
+  "elevation": 0.0,
+  "distance": 5.0,
+  "space": "indo_afro_sunrise_room"
+ },
+ "onset_fade_ms": 0.3
+}

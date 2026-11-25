@@ -890,6 +890,20 @@ class MusicPipeline:
             except Exception as exc:      # the gate verdict stands even if a figure could not be drawn
                 print(f"  [WARN] gate report figures not written ({exc})")
 
+        if fails and project_dir:
+            # The autopsy reads the gate's own numbers, runs only the domains that own a failing row and writes
+            # reports/debug_audio.md. It never changes the render, so a diagnostic error cannot cost a master.
+            try:
+                import audio_debug
+                _case = audio_debug.Case.load(project_dir)
+                _case.score = score or _case.score
+                _rep = audio_debug.autopsy(_case)
+                print(f"  [AUTOPSY] {_rep.plan.status}: {len(_rep.plan.deltas)} move(s), "
+                      f"{len(_rep.plan.conflicts)} conflict(s), domains {', '.join(_rep.run_domains) or 'none'} "
+                      f"-> reports/debug_audio.md")
+            except Exception as exc:      # a diagnostic must never turn a draft into a crash
+                print(f"  [WARN] autopsy skipped ({exc})")
+
         published = None
         if fails == 0 and not draft:
             if project_dir:

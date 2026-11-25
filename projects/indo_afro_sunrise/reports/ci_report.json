@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-25T01:51:36Z",
+  "timestamp": "2026-11-25T03:34:16Z",
   "status": "FAILED",
   "deliverables": {
     "master_wav": "/workspace/chats/c7f800ed356753289887290c/projects/indo_afro_sunrise/out/_draft_master.wav",
@@ -33,22 +33,22 @@
     "stem_count": 12
   },
   "measurements": {
-    "integrated_lufs": -14.31088925806047,
-    "true_peak_dbtp": -1.4983013136232846,
-    "crest_factor_db": 16.04210783378752,
-    "mono_loss_db": -0.5272389886289669,
-    "mono_phone_loss_db": -0.3026238908839229,
+    "integrated_lufs": -14.327620059908902,
+    "true_peak_dbtp": -1.4982908553945384,
+    "crest_factor_db": 15.984357626291413,
+    "mono_loss_db": -0.5328938325402692,
+    "mono_phone_loss_db": -0.3057055631101905,
     "clipped_samples": 0,
-    "mean_roughness": 0.0346,
-    "max_roughness": 0.0346,
+    "mean_roughness": 0.034,
+    "max_roughness": 0.034,
     "witek_bsi": 0.12,
     "melodic_entropy_bits": 1.58,
     "spiral_strain_end": 0.43
   },
   "ci_summary": {
     "pass": 142,
-    "warn": 32,
-    "fail": 2
+    "warn": 29,
+    "fail": 1
   },
   "ci_checks": [
     {
@@ -314,7 +314,7 @@
     {
       "level": "PASS",
       "check": "stem.clicks",
-      "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1335 event(s) rejected as a dense burst, 110 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1338 event(s) rejected as a dense burst, 111 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
@@ -579,7 +579,7 @@
     {
       "level": "PASS",
       "check": "mix_preset",
-      "detail": "\"indo_afro_sunrise_mix\" customises 12 mix value(s): automation, dynamics, gain_staging, immersive, inst_eq, lead_carve"
+      "detail": "\"indo_afro_sunrise_mix\" customises 13 mix value(s): automation, dynamics, gain_staging, immersive, inst_eq, lead_carve"
     },
     {
       "level": "WARN",
@@ -749,7 +749,7 @@
     {
       "level": "PASS",
       "check": "audio",
-      "detail": "dynamics move (short-term loudness std 4.5 dB, range 12.3 LU)"
+      "detail": "dynamics move (short-term loudness std 4.7 dB, range 12.5 LU)"
     },
     {
       "level": "WARN",
@@ -759,7 +759,7 @@
     {
       "level": "INFO",
       "check": "master.micro_dynamics",
-      "detail": "PLR 12.8 LU, PSR 8.6 LU, LRA 12.6 LU, true peak -1.50 dBTP (4x -1.50, 8x -1.50): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
+      "detail": "PLR 12.8 LU, PSR 8.7 LU, LRA 12.7 LU, true peak -1.50 dBTP (4x -1.50, 8x -1.50): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
     },
     {
       "level": "PASS",
@@ -769,12 +769,12 @@
     {
       "level": "FAIL",
       "check": "clicks",
-      "detail": "69 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 69 and LPC 59. Check the sample start or add a 2-5 ms fade-in at that note"
+      "detail": "1 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 1 and LPC 1. Check the sample start or add a 2-5 ms fade-in at that note"
     },
     {
       "level": "WARN",
       "check": "natural_aliasing",
-      "detail": "15-22 kHz holds -38.3 dB of the 200 Hz-16 kHz band (limit -45); above that it is sampler interpolation images, not instrument (fix: render.oversample in the mix preset)"
+      "detail": "15-22 kHz holds -44.2 dB of the 200 Hz-16 kHz band (limit -45); above that it is sampler interpolation images, not instrument (fix: render.oversample in the mix preset)"
     },
     {
       "level": "INFO",
@@ -809,7 +809,7 @@
     {
       "level": "PASS",
       "check": "dropout",
-      "detail": "longest hole 0 ms (limit 20-1000 ms), floor -65.7 dBFS; 0 hole(s)"
+      "detail": "longest hole 0 ms (limit 20-1000 ms), floor -65.5 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -819,7 +819,7 @@
     {
       "level": "PASS",
       "check": "end.abrupt",
-      "detail": "end level -127.9 dBFS (limit -45), decay over final 300 ms 68.7 dB (limit 12); natural release"
+      "detail": "end level -127.7 dBFS (limit -45), decay over final 300 ms 68.7 dB (limit 12); natural release"
     },
     {
       "level": "PASS",
@@ -834,7 +834,7 @@
     {
       "level": "PASS",
       "check": "tempo.audio",
-      "detail": "measured 112.2 BPM vs 112.0 (tolerance 2.2) from the onset-envelope autocorrelation (peak 3.0x the median); beat tracker said 112.3; four-quarter drift 0.8 BPM reported, not decisive"
+      "detail": "measured 112.2 BPM vs 112.0 (tolerance 2.2) from the onset-envelope autocorrelation (peak 3.3x the median); beat tracker said 112.3; four-quarter drift 0.7 BPM reported, not decisive"
     },
     {
       "level": "PASS",
@@ -954,17 +954,12 @@
     {
       "level": "PASS",
       "check": "spatial.z_separation",
-      "detail": "closest competing pair \"djembe\"/\"marimba\": band envelope overlap 0.70 (limit 0.50), 65 deg apart (azimuth 65, elevation 8); every pair that shares the midrange in the climax is separated"
+      "detail": "closest competing pair \"djembe\"/\"marimba\": band envelope overlap 0.71 (limit 0.50), 65 deg apart (azimuth 65, elevation 8); every pair that shares the midrange in the climax is separated"
     },
     {
       "level": "WARN",
       "check": "spectral.equal_loudness",
       "detail": "\"kit\" (drum) puts 9.4 dB more ear-weighted level in 2500-5000 Hz than its 500-2500 Hz mids (warn 6, fail 10). Trim about 3.0 dB at 3536 Hz in the mix preset: \"inst_eq\": {\"kit\": [{\"type\": \"peak\", \"f\": 3536, \"gain\": -3.0, \"q\": 1.0}]}"
-    },
-    {
-      "level": "FAIL",
-      "check": "spectral.equal_loudness",
-      "detail": "\"shekere\" (percussion) puts 17.2 dB more ear-weighted level in 2500-5000 Hz than its 500-2500 Hz mids (warn 6, fail 10). Trim about 3.0 dB at 3536 Hz in the mix preset: \"inst_eq\": {\"shekere\": [{\"type\": \"peak\", \"f\": 3536, \"gain\": -3.0, \"q\": 1.0}]}"
     },
     {
       "level": "PASS",
@@ -984,17 +979,17 @@
     {
       "level": "INFO",
       "check": "masking.excess",
-      "detail": "the beds sit above the figure in 80-120 Hz +45.2 dB, 180-250 Hz +42.4 dB, 120-180 Hz +41.7 dB (band-level masking proxy; a report, not a threshold)"
+      "detail": "the beds sit above the figure in 80-120 Hz +45.2 dB, 180-250 Hz +43.5 dB, 120-180 Hz +42.1 dB (band-level masking proxy; a report, not a threshold)"
     },
     {
       "level": "INFO",
       "check": "ear.fatigue",
-      "detail": "adaptation index peaks at 0.60 (warn above 0.6 for 5 s at stable loudness)"
+      "detail": "adaptation index peaks at 0.59 (warn above 0.6 for 5 s at stable loudness)"
     },
     {
       "level": "WARN",
       "check": "ear.mod_roughness",
-      "detail": "30-150 Hz envelope modulation index stays above 0.6 for 3 frames from 11 s (peak 0.96). Name the clashing partials with `roughness_forecast.py diagnose`, then move the part. Advisory: the hair cell saturates, so loud material is under-read"
+      "detail": "30-150 Hz envelope modulation index stays above 0.6 for 3 frames from 11 s (peak 1.00). Name the clashing partials with `roughness_forecast.py diagnose`, then move the part. Advisory: the hair cell saturates, so loud material is under-read"
     },
     {
       "level": "WARN",
@@ -1004,7 +999,7 @@
     {
       "level": "WARN",
       "check": "ear.pitch_salience",
-      "detail": "\"bansuri\" keeps its pitch (salience >= 0.25, same f0 within 6 %) in 8% of its pitched frames (want 50%). The pitch is lost in the mix: raise the register, remove a co-registered bed, or change the timbre"
+      "detail": "\"bansuri\" keeps its pitch (salience >= 0.25, same f0 within 6 %) in 6% of its pitched frames (want 50%). The pitch is lost in the mix: raise the register, remove a co-registered bed, or change the timbre"
     },
     {
       "level": "INFO",
@@ -1017,39 +1012,39 @@
       "detail": "7 inferred pools at 0.25 s steps, tiers DA_ant B, DA_con B, NE B, CORT C, OXT C, END C, PSNS C; every constant is a starting value and no chem row can FAIL. A row says the arc contains (or lacks) the elicitors of a reward cycle: anticipation, consummation, load, warmth, drive, recovery. It does not say a listener will feel anything (docs/NEUROCHEMICAL-AFFECT-PLAN.md)"
     },
     {
-      "level": "WARN",
+      "level": "INFO",
       "check": "chem.reward_build",
-      "detail": "there is no measurable change at the strongest measured change at 50.5 s (the sheet declares no hits_at) to build towards (the change measures below the event floor), so the anticipation has nothing to earn. 0.0 s lead, peak 0.49. Lever: lengthen the build before the hit, withhold the tonic, or move the arrival later in the score. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
+      "detail": "the build earns the strongest measured change at 14.0 s (the sheet declares no hits_at): 13.2 s of lead, rank correlation +0.75, peak 0.65. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
     },
     {
       "level": "WARN",
       "check": "chem.reward_arrival",
-      "detail": "the consummation pool peaks at 0.15 at 0.5 s (want 0.5); the hit changes the level by -0.1 dB (want 3). Lever: put a real change at the hit (timbre, low end, a voice, a register change) instead of a level nudge. Tier B (Salimpoor 2011 measured ventral-striatal release at the peak; the model only infers it); inputs: arrival, surprise, low_end, vocal, fatigue. the sheet declares no hit, so only the peak was judged"
+      "detail": "the consummation pool peaks at 0.50 at 14.8 s (want 0.5); the hit changes the level by -0.0 dB (want 3). Lever: put a real change at the hit (timbre, low end, a voice, a register change) instead of a level nudge. Tier B (Salimpoor 2011 measured ventral-striatal release at the peak; the model only infers it); inputs: arrival, surprise, low_end, vocal, fatigue. the sheet declares no hit, so only the peak was judged"
     },
     {
       "level": "INFO",
       "check": "chem.stress_load",
-      "detail": "tension is carried and released: load averages 0.20, 0.0 s unresolved, 100% of peaks resolve. Tier C (stress is a proxy: de Witte 2019 found d = 0.35 hormonal across 104 trials, and context dominates); inputs: tension, roughness, surprise, consonance"
+      "detail": "tension is carried and released: load averages 0.21, 0.0 s unresolved, 100% of peaks resolve. Tier C (stress is a proxy: de Witte 2019 found d = 0.35 hormonal across 104 trials, and context dominates); inputs: tension, roughness, surprise, consonance"
     },
     {
       "level": "WARN",
       "check": "chem.affiliation",
-      "detail": "warmth averages 0.28 (want 0.45); only 44% of the sounding figure is legato or held (want 50%). Lever: give the lead a singable legato contour, add a voice or a hum, or slow the harmonic rhythm. Tier C (peripheral oxytocin assays disagree: Ooishi 2017 raised it, group singing lowered it); inputs: legato, vocal, consonance, slow_tempo, pulse"
+      "detail": "warmth averages 0.29 (want 0.45); only 44% of the sounding figure is legato or held (want 50%). Lever: give the lead a singable legato contour, add a voice or a hum, or slow the harmonic rhythm. Tier C (peripheral oxytocin assays disagree: Ooishi 2017 raised it, group singing lowered it); inputs: legato, vocal, consonance, slow_tempo, pulse"
     },
     {
       "level": "WARN",
       "check": "chem.motor_drive",
-      "detail": "the drive pool averages 0.28 (want 0.4); bar syncopation 0.12 is outside the 0.4-4.8 window (Witek 2014 inverted U); measured pulse clarity 0.13 (want 0.4). Lever: syncopate the cell into the 0.4-4.8 BSI window, or give the kick and bass one owner. Tier C (effort and entrainment read from a pain-threshold proxy: Tarr 2015, Pearce 2016); inputs: pulse, low_end, density, slow_tempo"
+      "detail": "the drive pool averages 0.30 (want 0.4); bar syncopation 0.12 is outside the 0.4-4.8 window (Witek 2014 inverted U); measured pulse clarity 0.20 (want 0.4). Lever: syncopate the cell into the 0.4-4.8 BSI window, or give the kick and bass one owner. Tier C (effort and entrainment read from a pain-threshold proxy: Tarr 2015, Pearce 2016); inputs: pulse, low_end, density, slow_tempo"
     },
     {
       "level": "INFO",
       "check": "chem.recovery",
-      "detail": "the piece comes down: 43% below its peak, load ends at 0.06, arousal at 0.35. Tier C (recovery from listening alone is weak: g = 0.15, CI -0.21..0.52, n.s., 2022 meta-analysis); inputs: recovery, consonance, legato, tension"
+      "detail": "the piece comes down: 49% below its peak, load ends at 0.05, arousal at 0.35. Tier C (recovery from listening alone is weak: g = 0.15, CI -0.21..0.52, n.s., 2022 meta-analysis); inputs: recovery, consonance, legato, tension"
     },
     {
-      "level": "WARN",
+      "level": "INFO",
       "check": "chem.arc_variety",
-      "detail": "only 2 of 7 pools move (want 3). Lever: change the state between sections and delete a duplicate arrival. Reads the traced pools, not the listener; a second identical arrival releases less because the availability pool is spent (the anti-cliche term in gate/chem/model.json)"
+      "detail": "3 of 7 pools move, 0% of the piece is flat, 0.87 arrivals per minute. Reads the traced pools, not the listener; a second identical arrival releases less because the availability pool is spent (the anti-cliche term in gate/chem/model.json)"
     },
     {
       "level": "INFO",
@@ -1074,27 +1069,22 @@
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"kit\" and \"canopy\" overlap within 4 dB in presence, brilliance, air; separate them with level, pan or a complementary EQ rather than more compression"
-    },
-    {
-      "level": "WARN",
-      "check": "mix:spectral overlap",
       "detail": "\"tanpura\" and \"bass\" overlap within 4 dB in presence, brilliance, air; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"tabla\" and \"sitar\" overlap within 4 dB in sub, mid, presence; separate them with level, pan or a complementary EQ rather than more compression"
+      "detail": "\"marimba\" and \"djembe\" overlap within 4 dB in mid, presence, brilliance; separate them with level, pan or a complementary EQ rather than more compression"
+    },
+    {
+      "level": "WARN",
+      "check": "mix:spectral overlap",
+      "detail": "\"marimba\" and \"shekere\" overlap within 4 dB in sub, low-mid, brilliance; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "INFO",
       "check": "mix:reverb buildup",
       "detail": "10 stems route to the shared room; if the mix reads as washy, lower the return (mix.reverb_return) before shortening the room"
-    },
-    {
-      "level": "WARN",
-      "check": "mix:intelligibility",
-      "detail": "the lead sits -12.6 dB against the beds in 1-4 kHz: words and articulation will be covered. Carve the beds there or lift the lead"
     },
     {
       "level": "INFO",
@@ -1128,7 +1118,7 @@
     "stopped": null,
     "cache": {
       "dir": "/workspace/chats/c7f800ed356753289887290c/projects/indo_afro_sunrise/.cache/mix",
-      "hits": 0,
+      "hits": 1,
       "stems": 12
     },
     "stages": {
@@ -1139,20 +1129,20 @@
         "warns": 0,
         "rows": 102,
         "profile": "indo_afro_sunrise",
-        "total_ms": 4011.4734139933717,
+        "total_ms": 575.1782830047887,
         "timings": {
-          "bansuri": 1252.5586429983377,
-          "bass": 2579.535286000464,
-          "canopy": 2364.1407869872637,
-          "djembe": 894.7134579939302,
-          "guitar": 2574.7651339916047,
-          "horns": 1030.0747709989082,
-          "kit": 948.2067810022272,
-          "marimba": 965.4827709891833,
-          "shekere": 981.4893870207015,
-          "sitar": 1245.8482010115404,
-          "tabla": 881.7295220214874,
-          "tanpura": 1073.3566110138781
+          "bansuri": 0.0,
+          "bass": 0.0,
+          "canopy": 0.0,
+          "djembe": 0.0,
+          "guitar": 0.0,
+          "horns": 0.0,
+          "kit": 439.3412469944451,
+          "marimba": 0.0,
+          "shekere": 0.0,
+          "sitar": 0.0,
+          "tabla": 0.0,
+          "tanpura": 0.0
         },
         "workers": 7,
         "metrics": [
@@ -2135,18 +2125,18 @@
             "stage": "stem",
             "stem": "kit",
             "level": "PASS",
-            "value": 4.492661770835715e-06,
+            "value": 4.517346562565056e-06,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.0009955073382291644,
+            "margin": -0.000995482653437435,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "stem \"kit\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
             "channel_means": [
-              -2.2484774584328812e-08,
-              -1.901010974829272e-08
+              -2.2015129880751807e-08,
+              -1.8187005293871746e-08
             ],
-            "drift": 4.492661770835715e-06
+            "drift": 4.517346562565056e-06
           },
           {
             "row": "stem.clipping",
@@ -2173,11 +2163,11 @@
             "margin": 0.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1335 event(s) rejected as a dense burst, 110 as a steep attack; max cluster span 1.497 ms",
+            "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1338 event(s) rejected as a dense burst, 111 as a steep attack; max cluster span 1.497 ms",
             "mad_count": 0,
             "lpc_count": 0,
-            "rejected": 1335,
-            "attacks_ignored": 110,
+            "rejected": 1338,
+            "attacks_ignored": 111,
             "max_cluster_span_ms": 1.4965986394557824
           },
           {
@@ -2260,7 +2250,7 @@
               {
                 "section": "grove",
                 "start_s": 17.1429,
-                "measured_db": -24.12,
+                "measured_db": -24.13,
                 "expected_db": -22.92,
                 "dyn": 0.7
               },
@@ -3067,45 +3057,38 @@
           }
         ],
         "duration_s": 72.39578231292516,
-        "cached_stems": 0,
-        "measured_stems": 12
+        "cached_stems": 11,
+        "measured_stems": 1
       },
       "mix": {
         "stage": "mix",
-        "fails": 2,
-        "warns": 32,
+        "fails": 1,
+        "warns": 29,
         "metrics": [
           {
             "row": "clicks",
             "stage": "mix",
             "stem": null,
             "level": "FAIL",
-            "value": 69.0,
+            "value": 1.0,
             "unit": "events",
             "threshold": 0.0,
-            "margin": 69.0,
+            "margin": 1.0,
             "worst_times_s": [
-              0.559,
-              0.583,
-              1.6311,
-              2.7019,
-              3.2362,
-              3.2602,
-              3.9244,
-              4.4662
+              46.646
             ],
             "calibrated": true,
-            "detail": "69 clustered impulse event(s) (MAD), 59 LPC frame(s); 1912 event(s) rejected as a dense burst, 236 as a steep attack; max cluster span 1.497 ms"
+            "detail": "1 clustered impulse event(s) (MAD), 1 LPC frame(s); 1355 event(s) rejected as a dense burst, 258 as a steep attack; max cluster span 1.497 ms"
           },
           {
             "row": "loudness",
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -14.31088925806047,
+            "value": -14.327620059908902,
             "unit": "LUFS",
             "threshold": -14.0,
-            "margin": -2.1891107419395297,
+            "margin": -2.1723799400910977,
             "worst_times_s": [],
             "calibrated": true,
             "detail": "-14.3 LUFS vs target -14.0 (tolerance 2.5 LU)"
@@ -3115,10 +3098,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -1.4983013136232846,
+            "value": -1.4982908553945384,
             "unit": "dBTP",
             "threshold": -1.5,
-            "margin": 0.0016986863767154414,
+            "margin": 0.0017091446054615655,
             "worst_times_s": [],
             "calibrated": true,
             "detail": "-1.50 dBTP vs ceiling -1.5"
@@ -3134,7 +3117,7 @@
             "margin": -20.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "longest hole 0 ms (limit 20-1000 ms), floor -65.7 dBFS; 0 hole(s)"
+            "detail": "longest hole 0 ms (limit 20-1000 ms), floor -65.5 dBFS; 0 hole(s)"
           },
           {
             "row": "cut.hard",
@@ -3154,13 +3137,13 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 68.69009672328119,
+            "value": 68.67524753421523,
             "unit": "dB",
             "threshold": 12.0,
-            "margin": -56.69009672328119,
+            "margin": -56.67524753421523,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "end level -127.9 dBFS (limit -45), decay over final 300 ms 68.7 dB (limit 12); natural release"
+            "detail": "end level -127.7 dBFS (limit -45), decay over final 300 ms 68.7 dB (limit 12); natural release"
           },
           {
             "row": "clipping",
@@ -3180,10 +3163,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 9.863231349386493e-06,
+            "value": 9.90646193992156e-06,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.0009901367686506136,
+            "margin": -0.0009900935380600785,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
@@ -3193,13 +3176,13 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 0.17904247996081324,
+            "value": 0.22383102629321172,
             "unit": "BPM",
             "threshold": 2.24,
-            "margin": -2.060957520039187,
+            "margin": -2.0161689737067885,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "measured 112.2 BPM vs 112.0 (tolerance 2.2) from the onset-envelope autocorrelation (peak 3.0x the median); beat tracker said 112.3; four-quarter drift 0.8 BPM reported, not decisive"
+            "detail": "measured 112.2 BPM vs 112.0 (tolerance 2.2) from the onset-envelope autocorrelation (peak 3.3x the median); beat tracker said 112.3; four-quarter drift 0.7 BPM reported, not decisive"
           },
           {
             "row": "section.energy",
@@ -3219,28 +3202,28 @@
                 "start_s": 0.0,
                 "end_s": 17.1429,
                 "energy": 0.32,
-                "level_db": -29.735538952118866
+                "level_db": -29.545862265568676
               },
               {
                 "name": "grove",
                 "start_s": 17.1429,
                 "end_s": 34.2857,
                 "energy": 0.7,
-                "level_db": -20.984016044219555
+                "level_db": -20.834408464745827
               },
               {
                 "name": "high_sun",
                 "start_s": 34.2857,
                 "end_s": 51.4286,
                 "energy": 0.95,
-                "level_db": -15.427486278940021
+                "level_db": -15.388491826581241
               },
               {
                 "name": "golden_hour",
                 "start_s": 51.4286,
                 "end_s": 68.5714,
                 "energy": 0.6,
-                "level_db": -20.68183158475538
+                "level_db": -20.522448474727604
               }
             ]
           }
@@ -3407,6 +3390,104 @@
       "failing": [
         "clicks: 69 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 69 and LPC 59. Check the sample start or add a 2-5 ms fade-in at that note",
         "spectral.equal_loudness: \"shekere\" (percussion) puts 17.2 dB more ear-weighted level in 2500-5000 Hz than its 500-2500 Hz mids (warn 6, fail 10). Trim about 3.0 dB at 3536 Hz in the mix preset: \"inst_eq\": {\"shekere\": [{\"type\": \"peak\", \"f\": 3536, \"gain\": -3.0, \"q\": 1.0}]}"
+      ]
+    },
+    {
+      "attempt": 18,
+      "time": "2026-11-25T02:20:25Z",
+      "fails": 1,
+      "failing": [
+        "clicks: 1 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 1 and LPC 1. Check the sample start or add a 2-5 ms fade-in at that note"
+      ]
+    },
+    {
+      "attempt": 19,
+      "time": "2026-11-25T02:22:43Z",
+      "fails": 1,
+      "failing": [
+        "stem.dropout: stem \"kit\": longest hole 25 ms (limit 20-1000 ms), floor -98.9 dBFS; 3 hole(s)"
+      ]
+    },
+    {
+      "attempt": 20,
+      "time": "2026-11-25T02:29:09Z",
+      "fails": 1,
+      "failing": [
+        "stem.dropout: stem \"kit\": longest hole 25 ms (limit 20-1000 ms), floor -98.7 dBFS; 1 hole(s)"
+      ]
+    },
+    {
+      "attempt": 21,
+      "time": "2026-11-25T02:34:39Z",
+      "fails": 1,
+      "failing": [
+        "stem.dropout: stem \"kit\": longest hole 35 ms (limit 20-1000 ms), floor -99.3 dBFS; 1 hole(s)"
+      ]
+    },
+    {
+      "attempt": 22,
+      "time": "2026-11-25T02:41:59Z",
+      "fails": 1,
+      "failing": [
+        "clicks: 1 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 1 and LPC 1. Check the sample start or add a 2-5 ms fade-in at that note"
+      ]
+    },
+    {
+      "attempt": 23,
+      "time": "2026-11-25T02:44:41Z",
+      "fails": 1,
+      "failing": [
+        "stem.dropout: stem \"kit\": longest hole 20 ms (limit 20-1000 ms), floor -98.6 dBFS; 1 hole(s)"
+      ]
+    },
+    {
+      "attempt": 24,
+      "time": "2026-11-25T02:50:19Z",
+      "fails": 3,
+      "failing": [
+        "percussion_flam: Drum track has 56 phase-locked simultaneous hits between snare and tambourine. Offset secondary layered percussion (e.g. tambourine/clap) by +0.02 to +0.03 beats (~10-15ms) for a natural human flam.",
+        "clicks: 19 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 19 and LPC 16. Check the sample start or add a 2-5 ms fade-in at that note",
+        "intent.avoid: sudden_loud happens: kit jumps 0.43 of velocity in 0.00 beats. The piece declares it away (one note jumping more than 0.4 of the velocity scale within a beat); change the arrangement, or change the declaration"
+      ]
+    },
+    {
+      "attempt": 25,
+      "time": "2026-11-25T02:54:58Z",
+      "fails": 1,
+      "failing": [
+        "clicks: 1 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 1 and LPC 1. Check the sample start or add a 2-5 ms fade-in at that note"
+      ]
+    },
+    {
+      "attempt": 26,
+      "time": "2026-11-25T02:57:21Z",
+      "fails": 1,
+      "failing": [
+        "stem.dropout: stem \"kit\": longest hole 40 ms (limit 20-1000 ms), floor -98.5 dBFS; 6 hole(s)"
+      ]
+    },
+    {
+      "attempt": 27,
+      "time": "2026-11-25T03:03:25Z",
+      "fails": 1,
+      "failing": [
+        "clicks: 1 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 1 and LPC 1. Check the sample start or add a 2-5 ms fade-in at that note"
+      ]
+    },
+    {
+      "attempt": 28,
+      "time": "2026-11-25T03:29:39Z",
+      "fails": 1,
+      "failing": [
+        "clicks: 31 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 31 and LPC 31. Check the sample start or add a 2-5 ms fade-in at that note"
+      ]
+    },
+    {
+      "attempt": 29,
+      "time": "2026-11-25T03:34:16Z",
+      "fails": 1,
+      "failing": [
+        "clicks: 1 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 1 and LPC 1. Check the sample start or add a 2-5 ms fade-in at that note"
       ]
     }
   ]

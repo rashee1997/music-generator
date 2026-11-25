@@ -15,7 +15,7 @@ import stem_cache
 from .core import REF_LUFS, SR, STATE, _active_db, _gs, _install, _max_boost_db, _mix
 from .dsp_utils import _band, _curve, _dsp_dynamics, _run, active_lufs, dynamics_cfg, eq_object, mono_below, to_stereo
 
-MIX_CACHE_VERSION = 1                   # bump when the chain's output would change without its inputs changing
+MIX_CACHE_VERSION = 2                   # bump when the chain's output would change without its inputs changing
 
 _CODE_TAG = None                        # the engine's own identity, hashed once per process
 
@@ -175,6 +175,10 @@ def process_chain(name, x, spec, sr=SR, ctx=None):
     if spec.get('chain') != 'none':
         schain, source = spectral_chain(role, spec, mx)
         chain += _chain_objects(schain)
+        # The mix preset's per-instrument tone moves belong to the stem's chain too. `role_board()` read them and
+        # nothing called it from here, so an `inst_eq` entry that named an instrument never reached the stem: the
+        # row that asks for a 3-5 kHz cut was answered by a preset entry that did nothing.
+        chain += [eq_object(b) for b in from_table(mx.get('inst_eq') or {}, spec.get('inst') or name, [])]
     for d in spec.get('eq', []) or []:
         if d.get('order') and d.get('type') in ('hp', 'highpass', 'lp', 'lowpass'):
             x = dsp.slope_filter(x, sr, _band(d)['f'], d['type'], d['order'])

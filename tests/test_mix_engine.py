@@ -182,6 +182,35 @@ class Chains(unittest.TestCase):
         mixer.use_mix(None)
         self.assertEqual(mixer._level_by_role()['environment'], -14.0)
         self.assertEqual(presets.mix()['level_by_role']['environment'], -14.0)
+    def test_onset_ramp_skips_a_ringing_bed_unless_the_track_asks(self):
+        """A drum hit is a fresh sample even when the previous one is still ringing: `onset_fade_all` is how a
+        percussion preset says so, and the default still protects a sustained instrument's legato."""
+        x = np.full((4410, 2), 0.3, dtype=np.float32)
+        x[1000:] = 0.5                     # a fresh onset inside a ringing bed
+        t = [1000.0 / SR]
+        guarded = dsp.soften_onsets(x, SR, times=t, ms=2.0)
+        forced = dsp.soften_onsets(x, SR, times=t, ms=2.0, skip_sounding=False)
+        self.assertAlmostEqual(float(guarded[1000, 0]), 0.5, places=5)   # left alone on a sustained part
+        self.assertLess(float(forced[1000, 0]), 0.05)                    # ramped for a percussion hit
+    def test_mix_preset_inst_eq_reaches_the_processed_stem(self):
+        """An `inst_eq` entry names an instrument, so it has to reach that instrument's chain: `role_board()` read
+        it and `process_chain` never called it, so a cut the gate asked a preset for did nothing to the stem."""
+        noise = (np.random.default_rng(0).standard_normal((SR // 2, 2)) * 0.05).astype(np.float32)
+
+        def rendered(mx):
+            prev = mix_context.make_current(mix_context.MixContext(mx, {}, name='t'))
+            try:
+                return mixer.process_chain('shaker', noise, dict(inst='shaker', role='pad'))
+            finally:
+                mix_context.make_current(prev)
+
+        def tilt(x):                       # level-independent: both runs are gain-staged to their own loudness
+            return dsp.band_db(x, SR, 4000.0, 12000.0) - dsp.band_db(x, SR, 300.0, 1500.0)
+
+        flat = rendered(mix_schema.with_defaults({}))
+        cut = rendered(mix_schema.with_defaults({'inst_eq': {'shaker': [{'type': 'lp', 'f': 1500}]}}))
+        self.assertLess(tilt(cut), tilt(flat) - 6.0)
+
 
 
 class Ducking(unittest.TestCase):

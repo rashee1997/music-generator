@@ -6230,7 +6230,7 @@
   },
   {
    "name": "kit",
-   "instrument": "standard",
+   "instrument": "kit",
    "role": "drum",
    "notes": [
     {

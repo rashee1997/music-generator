@@ -40,54 +40,6 @@
       "PASS"
     ],
     [
-      0.559,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      0.583,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      1.6311,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      2.7019,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      3.2362,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      3.2602,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      3.9244,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      4.4662,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
       4.5743,
       "stem.tick",
       "guitar",
@@ -98,6 +50,12 @@
       "stem.tick",
       "bass",
       "PASS"
+    ],
+    [
+      46.646,
+      "clicks",
+      "master",
+      "FAIL"
     ]
   ]
 }

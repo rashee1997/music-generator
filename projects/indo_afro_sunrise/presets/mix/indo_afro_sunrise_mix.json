@@ -784,17 +784,26 @@
   "min_height_tracks": 3,
   "stereo_decode": "speakers"
  },
+ "render": {
+  "oversample": 4
+ },
  "inst_eq": {
   "shekere": [
    {
     "type": "peak",
-    "f": 3536.0,
-    "gain": -10.0,
-    "q": 1.0
+    "f": 900.0,
+    "gain": 6.0,
+    "q": 0.5
+   },
+   {
+    "type": "peak",
+    "f": 4000.0,
+    "gain": -13.0,
+    "q": 0.6
    },
    {
     "type": "lp",
-    "f": 6000.0
+    "f": 7000.0
    }
   ]
  }
