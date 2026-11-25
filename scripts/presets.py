@@ -69,6 +69,7 @@ KINDS = {
     'ear': dict(required=['character', 'rate_hz', 'channels']),     # parameters of the peripheral auditory model (scripts/ear_model)
     'humanize': dict(required=['character']),      # one groove pocket: per-instrument timing and velocity offsets (scripts/humanize_engine/pocket.py)
     'intent': dict(required=['character']),    # the vocabulary a brief is resolved in: emotions, registers, scenes, tensions, synonyms
+    'chem': dict(required=['character']),      # the inferred-neurochemistry model, its mood targets and its genre families (scripts/chem_model)
 }
 
 
@@ -192,6 +193,11 @@ def validate():
         if kind == 'outputs':                         # a target names a real layout, renderer, ceiling; files are unique
             import render_targets
             problems += [f'outputs: {w}' for w in render_targets.manifest_problems()]
+    try:                                              # the chem presets: kinetics, mood targets, genre families
+        import chem_model.config as chem_config
+        problems += [f'chem: {w}' for w in chem_config.problems()]
+    except Exception as exc:                           # a missing preset is reported, never silently skipped
+        problems.append(f'chem: the presets could not be validated ({type(exc).__name__}: {exc})')
     return problems
 
 

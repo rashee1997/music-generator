@@ -1,0 +1,47 @@
+{
+  "name": "moods",
+  "character": "What each mood in the intent vocabulary asks a piece's inferred chemistry to do. The target is built from the mood's own valence/arousal coordinates (references/data/presets/intent/valence_arousal.json) by two axis shifts, with a per-mood override only where a two-axis model plainly fails - so any mood the intent vocabulary can resolve has a target without a hand-written table.",
+  "provenance": "Starting values [start]: the axis shifts and every override are modelling choices, not measurements. They say what a piece of that mood should contain, and docs/NEUROCHEMICAL-AFFECT-PLAN.md section 5 explains why the layer is ingredient-level only (individual differences dominate: 5-10 % of listeners are music-anhedonic).",
+  "base": 0.5,
+  "dimensions": ["reward_build", "reward_arrival", "stress_load", "affiliation", "motor_drive", "recovery", "arc_variety"],
+  "axes": {
+    "arousal": {
+      "shift": {"motor_drive": 0.35, "reward_arrival": 0.25, "stress_load": 0.2, "recovery": -0.3},
+      "why": "[start] high arousal in this repo's coordinates means more density, level and onset rate (affect.arc_arousal), which is the same material that drives the motor and arrival pools."
+    },
+    "valence": {
+      "shift": {"affiliation": 0.3, "reward_arrival": 0.2, "stress_load": -0.35, "recovery": 0.25},
+      "why": "[start] the valence axis here is mode minus clash, so a positive valence is expected to read as warmer, more consonant and better resolved."
+    }
+  },
+  "overrides": {
+    "grief": {"affiliation": 0.72, "motor_drive": 0.2, "reward_build": 0.45,
+              "why": "a two-axis model puts grief near zero affiliation; the sad-music literature and the mode/valence proxy both point the other way, toward a warm, voice-like, static piece."},
+    "sad": {"affiliation": 0.62, "motor_drive": 0.25,
+            "why": "as grief: sad pieces are slower and less motor-driven than the arousal axis alone predicts."},
+    "melancholy": {"affiliation": 0.6, "motor_drive": 0.25,
+                   "why": "as grief: the axis model under-reads the affiliative pull of a slow minor piece."},
+    "scary": {"affiliation": 0.2, "recovery": 0.2,
+              "why": "horror wants no comfort and no come-down: the piece should end unresolved, which the recovery axis of a negative-valence state does not express."},
+    "dark_epic": {"affiliation": 0.25, "recovery": 0.2,
+                  "why": "as scary: threat without warmth, and the ending is the peak, not a release."},
+    "tense": {"recovery": 0.2,
+              "why": "suspense is carried to the last bar by design; a resolved ending is a different brief."},
+    "calm": {"motor_drive": 0.2, "stress_load": 0.25,
+             "why": "calm is defined by the absence of drive and load, which a straight read of low arousal still leaves too high."},
+    "dreamy": {"motor_drive": 0.2, "affiliation": 0.7,
+               "why": "dreamlike states are static and warm; the arousal axis alone would ask for a pulse the brief does not want."},
+    "epic": {"reward_build": 0.65, "arc_variety": 0.55,
+             "why": "an epic is a long build with several states; the axis model has no room to ask for length."},
+    "triumphant": {"reward_build": 0.6,
+                   "why": "a triumph is prepared by a long build; the arousal axis alone has no room to ask for length."},
+    "majestic": {"reward_build": 0.6,
+                 "why": "as triumphant: grandeur is a build, not a level."},
+    "focused": {"stress_load": 0.3, "arc_variety": 0.45,
+                "why": "concentration wants little tension and few states; a two-axis point cannot say 'stay in one place'."}
+  },
+  "max_words": 3,
+  "excess_weight": 0.5,
+  "excess_why": "[start] the row asks whether the piece has what the mood needs: falling short counts fully, exceeding the target counts half, so a piece with more build than the mood asks for is not scored as wrong as one with none.",
+  "why": "[start] at most three emotion words are averaged into one target; more than three are different briefs and their average is nobody's piece."
+}

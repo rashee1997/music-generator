@@ -717,36 +717,30 @@ def spiral_tension_arc(score):
     return rows
 
 
-def witek_groove_curve(score):
-    """1.2 Witek-Vuust Inverted-U Groove & Syncopation Pleasure Curve (Witek 2014, Vuust 2018).
-    Measures Bar Syncopation Index (BSI) across the metric tree of any time signature.
+def bar_syncopation(score):
+    """Witek's Bar Syncopation Index of the drum/bass/arp cell, or None when the piece has no rhythm part to score.
+
+    The one place the index is computed: the `feel.witek` row and the chem model's motor pool both read it, so a
+    change to the metric tree moves both. Weighted by the 16th-note metric hierarchy of the score's own time signature.
     """
-    rows = []
-    intent = get_intent_profile(score)
     ts = score.get('ts', [4, 4])
     weights, steps_per_beat, total_bar_steps = build_metric_tree(ts)
     num, _ = ts if (isinstance(ts, (list, tuple)) and len(ts) >= 2) else (4, 4)
-
     rhythm_tracks = [t for t in score.get('tracks', []) if _role(t) in ('drum', 'bass', 'arp')]
     if not rhythm_tracks:
-        return rows
-
+        return None
     rhythm_notes = [n for t in rhythm_tracks for n in t.get('notes', []) if 't' in n]
     if not rhythm_notes:
-        return rows
-
+        return None
     vels = [_vel(n) for n in rhythm_notes]
     med_v = float(np.median(vels)) if vels else 0.5
-
     step_hits = set()
     for n in rhythm_notes:
         if _vel(n) >= med_v * 0.85:
             step_hits.add(int(round(n['t'] * steps_per_beat)))
-
     total_beats = max(n['t'] + n.get('d', 1.0) for n in rhythm_notes)
     total_bars = max(1.0, total_beats / num)
     total_steps_piece = int(np.ceil(total_beats * steps_per_beat))
-
     syncopation = 0.0
     for s in range(total_steps_piece - 1):
         if s in step_hits:
@@ -756,8 +750,18 @@ def witek_groove_curve(score):
             w_s = weights[pos_s]
             if w_s > w_w and (s + 1) not in step_hits:
                 syncopation += (w_s - w_w)
+    return float(syncopation / total_bars)
 
-    bsi = float(syncopation / total_bars)
+
+def witek_groove_curve(score):
+    """1.2 Witek-Vuust Inverted-U Groove & Syncopation Pleasure Curve (Witek 2014, Vuust 2018).
+    Measures Bar Syncopation Index (BSI) across the metric tree of any time signature.
+    """
+    rows = []
+    intent = get_intent_profile(score)
+    bsi = bar_syncopation(score)
+    if bsi is None:
+        return rows
 
     if intent['is_ambient']:
         rows.append(('PASS', 'witek_groove_curve', f"Ambient/free-pulse mode: BSI {bsi:.2f}/bar conforms to meditative profile"))

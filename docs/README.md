@@ -15,6 +15,7 @@ Everything a reader or an agent needs beyond the front page. Each entry below is
 | [HUMANIZE-ENGINE-PLAN.md](HUMANIZE-ENGINE-PLAN.md) | The humanize engine: the module split, the keys added (tempo-relative spread, pockets, swing delay, ensemble asynchrony), the measurement, and what is not implemented. | Before changing anything under `scripts/humanize_engine/`, or when a performance question needs a number. |
 | [THEATRICAL-REALISM-PLAN.md](THEATRICAL-REALISM-PLAN.md) | The eight-quality realism plan: what the engine already did, what was added, what is still planned, and the acceptance measurement for each. | Before changing `level_timbre`, `ensemble`, `elastic`, the `theatrical` mix stage or `realism_report.py`. |
 | [VIRTUAL-SPEAKER-QA.md](VIRTUAL-SPEAKER-QA.md) | The general channel-QA layer: real layouts, the 36-point AmbiX virtual array, and the per-bar channel fault rows. Implementation map and limits. | Before changing `channel_qa.py`, `ambix_qa_36`, or the `channel.virtual` / `channel.bars` rows. |
+| [NEUROCHEMICAL-AFFECT-PLAN.md](NEUROCHEMICAL-AFFECT-PLAN.md) | The `chem.*` layer beside the virtual ears: the evidence and its effect sizes, the release/clearance/adaptation model, the ten advisory rows and their JSON presets, the report, and the calibration that is still open. Implemented (M1-M6); section 10 is what shipped. | Before adding a `chem.*` row or changing `scripts/chem_model/`, `chem_rows.py`, or the direction sheet's `expression.chem`. |
 
 ## Documents outside this folder
 

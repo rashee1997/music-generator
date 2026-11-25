@@ -272,6 +272,15 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
 | Effects/ambience only (no notes) | `effects_only` | Declares an empty focus and skips the row |
 
 - The virtual-ear rows (`ear.fatigue`, `ear.masking`, `ear.mod_roughness`, `ear.pitch_salience`, `ear.iacc`) are advisory (INFO / WARN, never FAIL) and their numbers are starting values calibrated on synthetic fixtures only. `ambient` (which covers drone pieces) relaxes `ear.fatigue` to 0.75 over 15 s because a held bed is its subject; the reason and the measurement are in `presets/gate/ambient.json`. Any other profile that holds a pad on purpose does the same, with its own measurement, never in advance.
+- The chem rows (`chem.model`, `chem.reward_build`, `chem.reward_arrival`, `chem.stress_load`, `chem.affiliation`,
+  `chem.motor_drive`, `chem.recovery`, `chem.arc_variety`, `chem.mood_connection`, `chem.genre_connection`) are
+  advisory too, and unlike every other group **none of them can FAIL**: they read an *inferred* neurochemical state
+  from elicitors the gate already measures (expectation, Chew tension, groove, the virtual ear), and the chills model
+  they are closest to predicts barely over chance (AUC 0.56-0.60), so a piece cannot be failed for a predicted
+  feeling. The pools, their kinetics and the mood/genre targets are JSON in `references/data/presets/chem/`, so a new
+  mood or genre is a preset edit and not a code change. `python scripts/helpers/chem_report.py` prints the traces when
+  a brief asked for emotional connection. Never optimise a generator against these rows - that produces
+  riser-impact cliche. `docs/NEUROCHEMICAL-AFFECT-PLAN.md`.
 - Read brief for demands. If demands conflict with profile flags, don't pick it.
 - Mixed situations: create custom profile with `python scripts/gate_profiles.py new <name> --from <closest> --project <dir>`. Can merge with list like `["cinematic", "dance"]`.
 - Start strict. Only relax/skip AFTER measurement with reason naming the measurement. Never in advance.

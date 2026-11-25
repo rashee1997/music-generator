@@ -106,6 +106,9 @@ for _name in ('lfe.sum_coherence', 'lfe.polarity', 'lfe.fold_loss', 'lfe.modal_s
     COVERAGE[_name] = (A, 'the two low-frequency channels and the front stage of the delivered programme')
 for _name in ('ear.fatigue', 'ear.masking', 'ear.mod_roughness', 'ear.pitch_salience', 'ear.iacc'):
     COVERAGE[_name] = (A, 'the neural activity pattern of the rendered master and stems')
+for _name in ('chem.model', 'chem.reward_build', 'chem.reward_arrival', 'chem.stress_load', 'chem.affiliation',
+              'chem.motor_drive', 'chem.recovery', 'chem.arc_variety', 'chem.mood_connection', 'chem.genre_connection'):
+    COVERAGE[_name] = (A, 'the traced pools from the score, the rendered master and the virtual ear (scripts/chem_model)')
 for _name in ('env.declaration', 'env.medium_consistency', 'env.niche_collision', 'env.score_pocket', 'env.foreground_salience', 'env.loop_stationarity',
               'env.density_budget', 'env.level_physical', 'env.diffuse_field', 'env.ecology_rules', 'env.cpu_budget'):
     COVERAGE[_name] = (A, 'the biome presets of the score rendered and planned against the score')

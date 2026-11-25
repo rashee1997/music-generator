@@ -44,6 +44,17 @@ def _row(out, level, name, detail):
     out.append((level, name, detail))
 
 
+def summary_for(path):
+    """The mono summary of a rendered master, or None when it cannot be read. One call, shared by the ear rows and
+    the chem rows (the model takes about 6 s a minute of audio; it must not run twice in one gate pass)."""
+    from ear_model import EarModel, Summariser
+    try:
+        master, sr = nc.load(path)
+    except (OSError, RuntimeError, ValueError):
+        return None
+    return Summariser(EarModel(sr)).run(_mono(master))
+
+
 def fatigue_row(gp, summary, master, sr, out):
     f_max = float(gp.param('ear.fatigue', 'f_max'))
     min_s = float(gp.param('ear.fatigue', 'min_seconds'))
@@ -157,8 +168,9 @@ def iacc_row(gp, ear_cls, master, sr, score, out):
          + ('. Near 1 is a mono image, near 0 an unrelated pair: set the placement, widen or narrow the stems' if bad else ''))
 
 
-def rows(score, path, stems=None):
-    """The ear rows for a rendered master (and its stems, when the caller has them)."""
+def rows(score, path, stems=None, summary=None):
+    """The ear rows for a rendered master (and its stems, when the caller has them). `summary` is a mono summary the
+    caller already computed (`summary_for`), so a chem run in the same pass does not read the master twice."""
     from ear_model import EarModel, Summariser
     gp = gate_profiles.resolve(score)
     wanted = [r for r in ('ear.fatigue', 'ear.mod_roughness', 'ear.masking', 'ear.pitch_salience', 'ear.iacc') if gp.on(r)]
@@ -170,8 +182,7 @@ def rows(score, path, stems=None):
     except (OSError, RuntimeError, ValueError) as exc:
         return [('INFO', r, f'not measured: the rendered file could not be read ({exc})') for r in wanted]
     ear = EarModel(sr)
-    summary = None
-    if any(r in wanted for r in ('ear.fatigue', 'ear.mod_roughness', 'ear.pitch_salience')):
+    if summary is None and any(r in wanted for r in ('ear.fatigue', 'ear.mod_roughness', 'ear.pitch_salience')):
         summary = Summariser(ear).run(_mono(master))
     if 'ear.fatigue' in wanted:
         fatigue_row(gp, summary, master, sr, out)

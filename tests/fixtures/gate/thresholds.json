@@ -49,6 +49,45 @@
     },
     "channel.virtual": {},
     "channels": {},
+    "chem.affiliation": {
+      "min_legato": 0.5,
+      "min_mean": 0.45
+    },
+    "chem.arc_variety": {
+      "max_arrivals_per_min": 1.0,
+      "max_flat_share": 0.6,
+      "min_states": 3
+    },
+    "chem.genre_connection": {},
+    "chem.model": {},
+    "chem.mood_connection": {
+      "max_distance": 0.25
+    },
+    "chem.motor_drive": {
+      "bsi_hi": 4.8,
+      "bsi_lo": 0.4,
+      "min_mean": 0.4,
+      "min_pulse": 0.4
+    },
+    "chem.recovery": {
+      "max_final_cort": 0.4,
+      "min_drop_frac": 0.35
+    },
+    "chem.reward_arrival": {
+      "max_offset_s": 2.0,
+      "min_contrast_db": 3.0,
+      "min_peak": 0.5
+    },
+    "chem.reward_build": {
+      "min_lead_s": 4.0,
+      "min_peak": 0.45,
+      "min_rho": 0.4
+    },
+    "chem.stress_load": {
+      "max_mean_load": 0.35,
+      "max_unresolved_s": 8.0,
+      "min_resolve_frac": 0.6
+    },
     "choked_resonance": {},
     "chord_voicing_and_strum": {},
     "chroma.concordance": {
