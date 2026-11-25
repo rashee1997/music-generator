@@ -100,6 +100,21 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
     for d in (direction_dir, inst_dir, vocal_dir, spaces_dir, mix_dir, sfx_dir, video_dir, gate_dir, ref_dir, scores_dir, midi_dir, stems_dir, reports_dir, scripts_dir, out_dir) + ((env_dir,) if ambience else ()):
         d.mkdir(parents=True, exist_ok=True)
 
+    # A custom gate profile is mandatory for a project: the shipped profiles are starting points, and a piece is
+    # judged by its own document. The file starts as a clone of `melodic` with the character still to be written.
+    prof_path = gate_dir / f'{slug}.json'
+    if not prof_path.exists():
+        base = Path(__file__).resolve().parent.parent / 'references' / 'data' / 'presets' / 'gate' / 'melodic.json'
+        try:
+            body = json.loads(base.read_text(encoding='utf-8'))
+        except (OSError, ValueError):
+            body = {'name': 'melodic', 'extends': 'melodic'}
+        body['name'] = slug
+        body['extends'] = 'melodic'
+        body['character'] = ('ONE SENTENCE: why this piece is judged by these rows and where it departs from '
+                            '`melodic` (fill before the first render; the project gate blocks a placeholder)')
+        prof_path.write_text(json.dumps(body, indent=1), encoding='utf-8')
+
     # Delivery metadata: the standard tags live in the skill (presets/metadata/metadata.json); this file only
     # overrides them for this piece. scripts/helpers/ingest_metadata.py reads both at certification.
     meta_file = proj_dir / 'metadata.json'

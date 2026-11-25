@@ -58,6 +58,7 @@ if SCRIPTS_DIR not in sys.path:
 import cli_util
 import compose
 import envcheck
+import gate_profiles
 import gate_report
 import stem_cache
 import stem_gate
@@ -841,7 +842,7 @@ class MusicPipeline:
         self.log('4b', 'Stem Gate (each stem measured alone, before the mix)')
         stem_rows, stem_meta = stem_gate.run_stem_gate(
             score, stems, sr=SR, workers=resources.gate_workers(),
-            report_dir=(os.path.join(project_dir, 'reports', 'gate') if project_dir else None),
+            report_dir=(gate_profiles.data_dir(project_dir) if project_dir else None),
             mode='draft' if draft else 'full',
             cache_path=(os.path.join(project_dir, '.cache', 'gate', 'stem_qa.json') if project_dir else None))
         self.stem_meta = stem_meta
@@ -882,7 +883,8 @@ class MusicPipeline:
 
         if project_dir:
             try:
-                gate_report.write_reports(draft_wav, score, os.path.join(project_dir, 'reports', 'gate'),
+                gate_report.write_reports(draft_wav, score, gate_profiles.data_dir(project_dir),
+                                          images_dir=gate_profiles.figures_dir(project_dir),
                                           stem_meta=stem_meta,
                                           mix_meta=dict(stage='mix', metrics=self.mix_metrics))
             except Exception as exc:      # the gate verdict stands even if a figure could not be drawn
@@ -960,7 +962,7 @@ class MusicPipeline:
                               stages=dict(stem=stem_meta,
                                           mix=dict(stage='mix', fails=fails, warns=warns,
                                                    metrics=self.mix_metrics,
-                                                   images=(os.path.join(project_dir, 'reports', 'gate')
+                                                   images=(gate_profiles.figures_dir(project_dir)
                                                            if project_dir else None))))
         report['deliverables']['stems_dir'] = stems_dir
         report['deliverables']['stem_count'] = len(stems) if stems_dir else 0

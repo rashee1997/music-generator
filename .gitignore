@@ -64,7 +64,7 @@ desktop.ini
 out/
 stems/
 midi/
-reports/
+/reports/
 cache/
 temp/
 tmp/
@@ -101,7 +101,6 @@ projects/*/stems/
 projects/*/midi/
 projects/*/out/
 projects/*/.cache/
-projects/*/reports/gate/
 
 projects/*/libs
 
@@ -111,3 +110,6 @@ assets/soundfonts/*.sf3
 assets/soundfonts/*.part
 assets/soundfonts/INSTALLED.json
 assets/soundfonts/LICENSES.md
+
+# gate artefacts are part of the project (presets/gate), not throwaway reports
+# (nothing to ignore: gate data and figures are versioned with the project)

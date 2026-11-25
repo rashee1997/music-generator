@@ -19,8 +19,8 @@ predicted feeling):
     chem.motor_drive      the body has a pulse to lock to, inside the Witek window
     chem.recovery         the piece comes down, or declares that it will not
     chem.arc_variety      the piece is more than one chemical state
-    chem.mood_connection  the signature answers the mood the sheet declares (chem/moods.json)
-    chem.genre_connection the signature answers the genre the score declares (chem/genres.json)
+    chem.mood_connection  the signature answers the mood the sheet declares (gate/chem/moods.json)
+    chem.genre_connection the signature answers the genre the score declares (gate/chem/genres.json)
 
 Every detail names the confidence tier and the inputs that were actually measured. Remediation names a lever in the
 score or the presets, never a threshold.
@@ -61,7 +61,7 @@ def model_row(problems, rep, out):
         _add(out, 'WARN', 'chem.model',
              'the chem presets did not validate: ' + '; '.join(problems[:3])
              + (' ...' if len(problems) > 3 else '')
-             + '. The other chem rows report only what they could still measure; fix references/data/presets/chem/ first')
+             + '. The other chem rows report only what they could still measure; fix references/data/presets/gate/chem/ first')
         return
     cfg = rep['model']
     _add(out, 'INFO', 'chem.model',
@@ -230,7 +230,7 @@ def variety_row(gp, rep, out):
         f'{v["arrivals_per_min"]:.2f} arrivals per minute')
     _add(out, 'WARN' if bad else 'INFO', 'chem.arc_variety',
          f'{said}. Reads the traced pools, not the listener; a second identical arrival releases less because the '
-         f'availability pool is spent (the anti-cliche term in chem/model.json)')
+         f'availability pool is spent (the anti-cliche term in gate/chem/model.json)')
 
 
 def mood_row(gp, rep, out):
@@ -261,7 +261,7 @@ def mood_row(gp, rep, out):
     said = bad[0] if bad else f'the signature answers {words} within {dist:.2f}'
     _add(out, 'WARN' if bad else 'INFO', 'chem.mood_connection',
          f'{said}'
-         f'{tail}. Asked: {asked}. Measured: {got}. Target built from {m["why"]} (chem/moods.json); tier C '
+         f'{tail}. Asked: {asked}. Measured: {got}. Target built from {m["why"]} (gate/chem/moods.json); tier C '
          f'(inferred, and individual differences dominate)')
 
 
@@ -271,7 +271,7 @@ def genre_row(gp, rep, out):
     if not g.get('constraints'):
         _add(out, 'INFO', 'chem.genre_connection',
              f'genre "{g["genre"] or "undeclared"}" maps to the "{g["family"]}" family, which sets no constraint: the '
-             f'signature is reported by the rows above. Declare meta.genre, or add the genre to chem/genres.json')
+             f'signature is reported by the rows above. Declare meta.genre, or add the genre to gate/chem/genres.json')
         return
     breaks = targets.breaches(got, g)
     asked = ', '.join(f'{d} {"min" if "min" in lim else "max"} {list(lim.values())[0]:g}'
@@ -288,7 +288,7 @@ def genre_row(gp, rep, out):
     _add(out, level, 'chem.genre_connection',
          f'{said}. Asked: {asked} (tolerance {g["tolerance"]:g}); measured: '
          f'{", ".join(f"{d} {got[d]:.2f}" for d in g["constraints"])}{tail}. Family reason: {g["why"]}. '
-         f'Tier C (the signature is inferred; chem/genres.json)')
+         f'Tier C (the signature is inferred; gate/chem/genres.json)')
 
 
 def report_rows(rep, gp, problems=None, wanted=None):

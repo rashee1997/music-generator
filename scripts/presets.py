@@ -28,6 +28,7 @@ Kinds (each file is one named preset; the file's "name" or its filename is the k
   instruments  any instrument: gm (the General MIDI name it plays with), expression, vibrato, sustained, bowed, plucked
   sfx          one-hit effect: character, model (voices; sound_model.py) or generator + params or spec, seconds, sources
   gate         piece type for the quality gate: character, extends, flags, detect, rows {row: mode/reason/params}
+  chem         the inferred-chemistry gate presets (read from gate/chem/, not chem/)
 
     python3 scripts/presets.py list                      # every preset and where it comes from
     python3 scripts/presets.py show cultures tamil       # the merged values
@@ -46,6 +47,7 @@ import deep_merge
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SKILL_PRESETS = os.path.abspath(os.path.join(HERE, '..', 'references', 'data', 'presets'))
+KIND_DIRS = {'chem': os.path.join('gate', 'chem')}   # the chem presets are gate presets: presets/gate/chem/
 PROJECT_ROOTS = []                       # the latest project added wins, over the skill
 
 KINDS = {
@@ -94,7 +96,7 @@ def _files(kind):
     """(name, path, root) for every preset file of a kind, skill first, then projects."""
     out = []
     for root in [SKILL_PRESETS] + PROJECT_ROOTS:
-        d = os.path.join(root, kind)
+        d = os.path.join(root, KIND_DIRS.get(kind, kind))
         if os.path.isdir(d):
             for fn in sorted(os.listdir(d)):
                 if fn.endswith('.json'):

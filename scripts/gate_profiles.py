@@ -301,7 +301,7 @@ ROWS = {
     # number a starting value and no row ever a FAIL (docs/NEUROCHEMICAL-AFFECT-PLAN.md section 4.1). A profile may
     # skip one for a type of music whose brief is different, with the measurement that says so.
     'chem.model': dict(meaning='the chem presets validated, and what the layer reads and does not read',
-                       hint='fix references/data/presets/chem/model.json, moods.json or genres.json; the row names the key'),
+                       hint='fix references/data/presets/gate/chem/model.json, moods.json or genres.json; the row names the key'),
     'chem.reward_build': dict(meaning='the anticipation pool earns the arrival instead of the piece just getting louder',
                               params={'min_lead_s': (4.0, 1.0, 20.0), 'min_rho': (0.4, 0.0, 0.95), 'min_peak': (0.45, 0.1, 0.9)},
                               hint='lengthen the build, withhold the tonic, raise the tension before the hit, or move the arrival later'),
@@ -331,7 +331,7 @@ ROWS = {
                                  hint='the row names the furthest dimension and its lever; change the notes, not the mood word'),
     'chem.genre_connection': dict(meaning='the inferred signature answers the genre the score declares',
                                   params={},
-                                  hint='the family constraint is in references/data/presets/chem/genres.json; fix the part the row names'),
+                                  hint='the family constraint is in references/data/presets/gate/chem/genres.json; fix the part the row names'),
     # the acoustic biome (scripts/biome, scripts/env_rows.py): environment tracks written as `biome/1` presets. Starting values: none has
     # been calibrated on real recordings; the declaration and medium rows check facts, the rest are advisory
     'env.declaration': dict(meaning='a biome preset is valid, and every number in it names its source or says ESTIMATE',
@@ -740,6 +740,53 @@ class Profile:
         for e in self.errors:
             out.append(('FAIL', 'piece_type', e))
         return out
+
+
+GATE_DIR = os.path.join('presets', 'gate')
+FIGURE_SUBDIR = 'figures'
+DATA_SUBDIR = 'data'
+
+
+def artifacts_dir(project):
+    """Where a project's gate lives: presets/gate/ (the profile and every gate data file, never reports/)."""
+    return os.path.abspath(os.path.join(str(project), GATE_DIR))
+
+
+def figures_dir(project):
+    """The only place gate visualisations go: presets/gate/figures/."""
+    return os.path.join(artifacts_dir(project), FIGURE_SUBDIR)
+
+
+def data_dir(project):
+    """The gate's data files (level.json, stem_gate.json, waveform.json, section_energy.json, ...): presets/gate/data/."""
+    return os.path.join(artifacts_dir(project), DATA_SUBDIR)
+
+
+def profile_files(project):
+    """The project's own gate profiles (file stems), from presets/gate/*.json."""
+    d = artifacts_dir(project)
+    if not os.path.isdir(d):
+        return []
+    return sorted(os.path.splitext(f)[0] for f in os.listdir(d) if f.endswith('.json'))
+
+
+def project_profile_problems(score, project):
+    """A project must carry its own gate profile. A shipped profile is a starting point, not a project's decision."""
+    import presets as _presets
+    own = profile_files(project)
+    if not own:
+        return ['no custom gate profile: a project must own presets/gate/<name>.json '
+                '(scaffold: python scripts/gate_profiles.py new <name> --from <closest> --project <dir>)']
+    if score is None:
+        return []
+    decl = score.get('piece_type')
+    want = decl if isinstance(decl, list) else ([decl] if decl else [])
+    want = [_presets._norm(w) for w in want if w]
+    missing = [w for w in want if w not in own]
+    if missing:
+        return [f'piece_type names {missing}, which is a shipped profile; this project owns {own}. '
+                f'Declare a profile of this project (a custom gate is mandatory) or scaffold {missing[0]} into it']
+    return []
 
 
 def resolve(score):

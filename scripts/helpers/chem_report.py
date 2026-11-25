@@ -19,7 +19,7 @@ What it prints
     - every chem.* row as the gate would print it
 
 The pool values are inferred states (proxy), not measurements; the constants are starting values in
-references/data/presets/chem/model.json and no corpus has calibrated them (docs/NEUROCHEMICAL-AFFECT-PLAN.md).
+references/data/presets/gate/chem/model.json and no corpus has calibrated them (docs/NEUROCHEMICAL-AFFECT-PLAN.md).
 """
 import argparse
 import json

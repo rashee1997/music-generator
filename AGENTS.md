@@ -44,7 +44,7 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **1.3** Determine project type and fill in STATUS.md
 
 ### PHASE 2: SETUP
-- [ ] **2.1** Create project: `python scripts/setup_project.py --new-project <dir> --title "<Title>"` (only add `--ambience` if explicitly requested). The scaffold includes `presets/gate/` (for the piece's gate profile) and `<dir>/metadata.json` (delivery tags).
+- [ ] **2.1** Create project: `python scripts/setup_project.py --new-project <dir> --title "<Title>"` (only add `--ambience` if explicitly requested). The scaffold includes `presets/gate/` (the piece's **own** gate profile, cloned from `melodic` with its `character` still to be written) and `<dir>/metadata.json` (delivery tags). A project cannot render on a shipped gate profile: fill the scaffolded one before Phase 6.
 - [ ] **2.2** Write only into `<dir>/`, never into the skill folder
 - [ ] **2.3** Fill `<dir>/metadata.json` with the real delivery values (artist, album, year, publisher, ISRC, copyright, licence). These override the standard tags in `presets/metadata/metadata.json`. Title and genre are derived from the score; do not hardcode tags in a script.
 
@@ -88,7 +88,7 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
       patch family, a written dynamics arc, no expectation of per-note vibrato).
 
 ### PHASE 6: GATE PROFILE
-- [ ] **6.1** Choose profile from table or create custom. Check with `python scripts/gate_profiles.py list` and `rows`
+- [ ] **6.1** A custom gate profile is **mandatory** for a project: `python scripts/gate_profiles.py new <name> --from <closest> --project <dir>` writes `presets/gate/<name>.json`, and the score's `piece_type` must name it. The table above says which shipped profile to start from, not which one to declare; `project_gate.py` blocks a render whose `piece_type` is a shipped name. Check with `python scripts/gate_profiles.py list` and `rows`.
 - [ ] **6.2** Put `piece_type` in score and direction sheet
 - [ ] **6.3** Only relax/skip after measurement with explicit reason. Never relax in advance.
 
@@ -128,6 +128,7 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **9.5** Listen: `python scripts/listen.py out/master.wav --direction direction/<sheet>.json` (if missing, say so)
 - [ ] **9.6** Complete self-check in `references/workflow/self-check.md` in STATUS.md (all yes/no)
 - [ ] **9.7** Report: what was done, what was checked, what was NOT checked, gate results, the version number delivered, any limitations. Update STATUS.md.
+- `reports/` holds two kinds of file and nothing else: the research notes (`research_*.md`) and the CI report (`ci_report.json`). Every gate artefact — profile, `gate/chem/`, `level.json`, `stem_gate.json`, `section_energy.json`, the spectrogram/waveform/stereo PNGs — is written under `presets/gate/` (figures in `presets/gate/figures/`) and is versioned with the project. `reports/` is versioned too: it is research evidence and the CI verdict, not scratch space.
 
 ---
 
@@ -277,7 +278,7 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
   advisory too, and unlike every other group **none of them can FAIL**: they read an *inferred* neurochemical state
   from elicitors the gate already measures (expectation, Chew tension, groove, the virtual ear), and the chills model
   they are closest to predicts barely over chance (AUC 0.56-0.60), so a piece cannot be failed for a predicted
-  feeling. The pools, their kinetics and the mood/genre targets are JSON in `references/data/presets/chem/`, so a new
+  feeling. The pools, their kinetics and the mood/genre targets are JSON in `references/data/presets/gate/chem/`, so a new
   mood or genre is a preset edit and not a code change. `python scripts/helpers/chem_report.py` prints the traces when
   a brief asked for emotional connection. Never optimise a generator against these rows - that produces
   riser-impact cliche. `docs/NEUROCHEMICAL-AFFECT-PLAN.md`.
@@ -285,7 +286,8 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
 - Mixed situations: create custom profile with `python scripts/gate_profiles.py new <name> --from <closest> --project <dir>`. Can merge with list like `["cinematic", "dance"]`.
 - Start strict. Only relax/skip AFTER measurement with reason naming the measurement. Never in advance.
 - Hard limits in code: `loudness`, `true_peak`, `clipping`, `silence`, `clicks`, `channels` are protected, and `roughness` and `pattern.flags_max` cannot be skipped. Every number has a range.
-- Put `piece_type` in score and direction sheet.
+- Put `piece_type` in score and direction sheet, and make it the name of the project's own `presets/gate/<name>.json`.
+- Everything the gate reads lives in `presets/gate/`: the profile(s), the chemistry presets (`presets/gate/chem/model.json`, `moods.json`, `genres.json`), every gate data file (`level.json`, `stem_gate.json`, `section_energy.json`, ...) and every figure (`presets/gate/figures/*.png`). Nothing the gate produces belongs in `reports/`.
 - One-off exceptions go in score as `"gate": {"<row>": {"mode": "relax", "reason": "...", ...}}`
 
 ---

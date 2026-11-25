@@ -149,7 +149,7 @@ Every row also produces a number record: `out/ci_report.json` has `gate.mode`, `
 and each stage's `metrics` lists `row`, `stem`, `level`, `value`, `threshold`, `margin`, `unit`, `worst_times_s`,
 `calibrated` and `detail`. `scripts/gate_report.py` writes a PNG beside a `.txt` and `.json` for the waveform with section
 boundaries and flags, the log spectrogram, the short-term level, stereo correlation, per-stem level against the dynamics
-curve and section energy against the sheet, under `<project>/reports/gate/`.
+curve and section energy against the sheet, under `<project>/presets/gate/` (and every PNG in `presets/gate/figures/`).
 
 Every stem row is a gate-profile row too. `stem_gate.run_stem_gate` resolves the same profile as the mix gate
 (`gate_profiles.resolve(score)`), so the piece's `piece_type` decides whether `stem.clicks`, `stem.dropout`, `stem.cut`,
@@ -157,7 +157,7 @@ Every stem row is a gate-profile row too. `stem_gate.run_stem_gate` resolves the
 `stem.present` and `stem.duplicate` apply, uses the profile's parameter values for each, and a `skip`/`relax` needs the
 profile's written reason. A skipped row is printed (`[INFO] stem.<row>: SKIPPED by profile <label>: <reason>`), never
 silently dropped, and an unknown `piece_type` is a FAIL in both stages. The chosen profile label is in
-`reports/gate/stem_gate.json` and `ci_report.json`. `quality_gate.py <score> --timings` prints the per-group wall time of
+`presets/gate/stem_gate.json` and `ci_report.json`. `quality_gate.py <score> --timings` prints the per-group wall time of
 a local mix-gate run.
 
 There is one implementation of the row list: `quality_gate.run_gate`. `quality_gate.py <score> --wav <master>` calls it

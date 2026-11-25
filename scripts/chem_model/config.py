@@ -8,9 +8,9 @@
 
 Three data files, no numbers in Python:
 
-    chem/model.json    the reaction kinetics, the elicitor weights, the dimension anchors, the levers
-    chem/moods.json    valence/arousal -> the chemical signature a mood asks for (every mood the intent vocabulary has)
-    chem/genres.json   genre -> the constraints its connection has to meet (every genre compose.py ships)
+    gate/chem/model.json    the reaction kinetics, the elicitor weights, the dimension anchors, the levers
+    gate/chem/moods.json    valence/arousal -> the chemical signature a mood asks for (every mood the intent vocabulary has)
+    gate/chem/genres.json   genre -> the constraints its connection has to meet (every genre compose.py ships)
 
 The rules are the repository's (AGENTS.md sections 1 and 7.16): a number carries a source or the words "starting
 value", an unknown key is an error and never silently ignored, and nothing here is a measurement - the layer is an

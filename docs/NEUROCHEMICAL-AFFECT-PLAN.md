@@ -146,7 +146,7 @@ R_i(t)  = sum_j  w_ij * u_j(t)
 - `k_des` is adaptation: a repeated arrival releases less. This is the formal reason a piece with
   six identical drops reads as flat, and it is the anti-cliché mechanism.
 - `Vmax`, `Km`, `k`, `tau_rec`, `k_des`, and every `w_ij` live in
-  `references/data/presets/chem/model.json` with `provenance` on each block. All are **[start]**.
+  `references/data/presets/gate/chem/model.json` with `provenance` on each block. All are **[start]**.
 
 Time constants (model choices, not measurements) **[start]**:
 
@@ -294,7 +294,7 @@ anything.*
 | **M0** | KB + docs | `knowledgebase/sound-design/neurochemical-affect.md` (header, evidence tiers, every number labelled); row in `knowledgebase/README.md`; this doc in `docs/README.md`; `python tests/check_kb.py` | `check_kb.py` |
 | **M1** | Feature bus | `scripts/chem_model/features.py`: one function per `u_j`, all reused from `affect`/`expectation`/`ear_model`/`pattern_audit`; returns a `(time, feature)` matrix plus a `measured` mask | each feature monotone on a synthetic cue; missing input → `measured=False`, not 0 |
 | **M2** | Kinetics | `scripts/chem_model/pools.py`: the ODE, preset loader, `provenance` required; 4 Hz Euler with an 8 Hz convergence check | mass-balance: no pool negative; zero input decays to 0; step response peaks then decays; duplicate arrivals give a smaller second peak |
-| **M3** | Preset | `references/data/presets/chem/model.json` with every constant labelled `[start]` and a reason; `chem.py` facade | unknown key raises; a missing block raises; defaults documented |
+| **M3** | Preset | `references/data/presets/gate/chem/model.json` with every constant labelled `[start]` and a reason; `chem.py` facade | unknown key raises; a missing block raises; defaults documented |
 | **M4** | Rows | `scripts/chem_rows.py` + `gate_profiles.ROWS` entries; wire after `ear_rows`; pass the ear summary; `lint_coverage.py` | positive/negative controls per row; every row is INFO/WARN only; detail names measured inputs |
 | **M5** | Report | `scripts/helpers/chem_report.py`, same CLI shape as `arc_report.py` | report on the fixture set; flat cue vs build cue ordering |
 | **M6** | Direction | optional `expression.chem` in the sheet template + `director-craft.md` seventh answer | sheet validates; absent block is a WARN, not a crash; section names must match the score |
@@ -418,9 +418,9 @@ Not read in full: `quality_gate.py`, `intent.py`, `presets.py`, the renderer, `v
 | `scripts/chem_model/__init__.py` | one `evaluate(score, path, sheet, summary, gp)` call for the whole layer |
 | `scripts/chem_rows.py` | the ten rows, INFO/WARN only |
 | `scripts/helpers/chem_report.py` | the trace report, same shape as `arc_report.py` |
-| `references/data/presets/chem/model.json` | seven pools, their kinetics, the elicitor→pool weights, the elicitor definitions, the dimension anchors, the levers, the confidence tiers |
-| `references/data/presets/chem/moods.json` | valence/arousal axis shifts plus a per-mood override where two axes fail |
-| `references/data/presets/chem/genres.json` | eleven genre families and the mapping of all 121 shipped genres (plus aliases) onto them |
+| `references/data/presets/gate/chem/model.json` | seven pools, their kinetics, the elicitor→pool weights, the elicitor definitions, the dimension anchors, the levers, the confidence tiers |
+| `references/data/presets/gate/chem/moods.json` | valence/arousal axis shifts plus a per-mood override where two axes fail |
+| `references/data/presets/gate/chem/genres.json` | eleven genre families and the mapping of all 121 shipped genres (plus aliases) onto them |
 | `tests/test_chem_gate.py` | 27 controls: kinetics, feature bus, ordering, every row positively and negatively |
 
 ### 10.2 How it runs
@@ -428,7 +428,7 @@ Not read in full: `quality_gate.py`, `intent.py`, `presets.py`, the renderer, `v
 `quality_gate.py` computes the virtual ear's mono summary once (`ear_rows.summary_for`) and passes it to both
 `ear_rows.rows` and `chem_rows.rows`, so the NAP runs once per gate pass. The chem rows read the master, the score,
 and the project's direction sheet (`_direction_sheet`); they run with the other tier-2 rows, in `mode != 'draft'`.
-A project preset under `<project>/presets/chem/` overrides any shipped value (the normal preset layering), and a gate
+A project preset under `<project>/presets/gate/chem/` overrides any shipped value (the normal preset layering), and a gate
 profile may skip a chem row for a type of music whose brief is different, with the measurement that says so.
 
 ### 10.3 The rows, as implemented
@@ -444,7 +444,7 @@ profile may skip a chem row for a type of music whose brief is different, with t
 | `chem.recovery` | `min_drop_frac` 0.35 (0.05-0.9), `max_final_cort` 0.4 (0.1-0.9) |
 | `chem.arc_variety` | `min_states` 3 (1-7), `max_flat_share` 0.6 (0.2-1.0), `max_arrivals_per_min` 1.0 (0.2-4) |
 | `chem.mood_connection` | `max_distance` 0.25 (0.05-0.6) |
-| `chem.genre_connection` | none: the family constraint and its tolerance are in `chem/genres.json` |
+| `chem.genre_connection` | none: the family constraint and its tolerance are in `gate/chem/genres.json` |
 
 Every detail names the tier and the inputs it actually measured. `tense` (a profile that declares a piece ending on
 its peak) turns the stress and recovery WARN into INFO with that reason said in the row: a declared cliff is a brief,
@@ -454,7 +454,7 @@ not a fault, and nothing is relaxed.
 
 - **Mood.** The sheet's `intent.emotions` (and `score.meta.emotion`) resolve through `intent.resolve_word` to the
   intent vocabulary, then the mood's own valence/arousal coordinates move seven dimension targets by two axis shifts
-  in `chem/moods.json`. A per-mood override fixes the cases two axes cannot express (grief's affiliation, scary's
+  in `gate/chem/moods.json`. A per-mood override fixes the cases two axes cannot express (grief's affiliation, scary's
   absence of comfort, calm's absence of drive). All 24 emotions are covered by construction and tested.
 - **Genre.** All 121 genres `compose.py` ships map to one of eleven families. A family holds only the constraints that
   family is defined by, so a constraint the style does not care about never warns a good piece in it.
@@ -477,7 +477,7 @@ not a fault, and nothing is relaxed.
 6. **No event, no build.** Below a measured change of 0.2 at the hit there is nothing to earn, and `chem.reward_build`
    says that instead of reporting a lead time against a non-event.
 7. **The mood distance is asymmetric.** Falling short of a mood target counts fully, exceeding it counts
-   `excess_weight` (0.5 in `chem/moods.json`): the row asks whether the piece *has* what the mood needs, so a cue with
+   `excess_weight` (0.5 in `gate/chem/moods.json`): the row asks whether the piece *has* what the mood needs, so a cue with
    more build than the mood asks for must not be scored as wrong as one with none. `chem.mood_connection` is the one
    row that could otherwise warn every ambitious piece.
 

@@ -658,6 +658,7 @@ def gate_problems(score, project):
     import gate_profiles
     import sfz_libs
     out = gate_profiles.problems([str(project)]) + sfz_libs.problems([str(project)])
+    out += gate_profiles.project_profile_problems(score, project)
     if score is not None:
         out += gate_profiles.resolve(score).errors + sfz_libs.sfz_problems(score, project)
     return out
