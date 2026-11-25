@@ -1,4 +1,4 @@
-stem gate: 0 FAIL, 0 WARN, 102 rows, profile indo_afro_sunrise, 4232 ms
+stem gate: 0 FAIL, 0 WARN, 102 rows, profile indo_afro_sunrise, 3362 ms
 [PASS] stem.dc: stem "bansuri": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "bansuri": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "bansuri": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -51,7 +51,7 @@ stem gate: 0 FAIL, 0 WARN, 102 rows, profile indo_afro_sunrise, 4232 ms
 [PASS] stem.flatness: stem "horns": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [PASS] stem.dc: stem "kit": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "kit": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
-[PASS] stem.clicks: stem "kit": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1299 event(s) rejected as a dense burst, 91 as a steep attack; max cluster span 1.497 ms
+[PASS] stem.clicks: stem "kit": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1299 event(s) rejected as a dense burst, 89 as a steep attack; max cluster span 1.497 ms
 [INFO] stem.dropout: stem "kit": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit
 [INFO] stem.cut: stem "kit": not applied: a percussive stem has no sustained level to cut at a section boundary
 [INFO] stem.edge: stem "kit": not applied: a percussive note length is a trigger, not a sound length

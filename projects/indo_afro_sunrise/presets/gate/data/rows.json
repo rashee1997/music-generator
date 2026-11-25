@@ -982,18 +982,18 @@
     "stage": "stem",
     "stem": "kit",
     "level": "PASS",
-    "value": 3.0875714840205607e-06,
+    "value": 3.987194432706655e-06,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009969124285159794,
+    "margin": -0.0009960128055672933,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "stem \"kit\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
     "channel_means": [
-     -7.526194383395608e-09,
-     -5.5289412503400016e-09
+     -1.2239503263553207e-08,
+     -1.0207864445023774e-08
     ],
-    "drift": 3.0875714840205607e-06
+    "drift": 3.987194432706655e-06
    },
    {
     "row": "stem.clipping",
@@ -1020,11 +1020,11 @@
     "margin": 0.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1299 event(s) rejected as a dense burst, 91 as a steep attack; max cluster span 1.497 ms",
+    "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1299 event(s) rejected as a dense burst, 89 as a steep attack; max cluster span 1.497 ms",
     "mad_count": 0,
     "lpc_count": 0,
     "rejected": 1299,
-    "attacks_ignored": 91,
+    "attacks_ignored": 89,
     "max_cluster_span_ms": 1.4965986394557824
    },
    {
@@ -1107,7 +1107,7 @@
      {
       "section": "grove",
       "start_s": 17.1429,
-      "measured_db": -24.77,
+      "measured_db": -24.78,
       "expected_db": -23.01,
       "dyn": 0.7
      },
@@ -1121,7 +1121,7 @@
      {
       "section": "golden_hour",
       "start_s": 51.4286,
-      "measured_db": -21.67,
+      "measured_db": -21.71,
       "expected_db": -24.35,
       "dyn": 0.6
      }
@@ -1891,27 +1891,32 @@
     "stage": "mix",
     "stem": null,
     "level": "FAIL",
-    "value": 3.0,
+    "value": 23.0,
     "unit": "events",
     "threshold": 0.0,
-    "margin": 3.0,
+    "margin": 23.0,
     "worst_times_s": [
+     11.7782,
      12.3458,
+     13.9082,
+     14.454,
+     16.4568,
+     18.7508,
      22.2765,
-     55.2405
+     23.0422
     ],
     "calibrated": true,
-    "detail": "3 clustered impulse event(s) (MAD), 3 LPC frame(s); 1376 event(s) rejected as a dense burst, 255 as a steep attack; max cluster span 1.497 ms"
+    "detail": "23 clustered impulse event(s) (MAD), 23 LPC frame(s); 1398 event(s) rejected as a dense burst, 250 as a steep attack; max cluster span 1.497 ms"
    },
    {
     "row": "loudness",
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -14.277332238691363,
+    "value": -14.275943844673785,
     "unit": "LUFS",
     "threshold": -14.0,
-    "margin": -2.222667761308637,
+    "margin": -2.224056155326215,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-14.3 LUFS vs target -14.0 (tolerance 2.5 LU)"
@@ -1921,10 +1926,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -1.500748270074178,
+    "value": -1.5007495008015257,
     "unit": "dBTP",
     "threshold": -1.5,
-    "margin": -0.0007482700741781034,
+    "margin": -0.0007495008015256932,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-1.50 dBTP vs ceiling -1.5"
@@ -1960,10 +1965,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 68.0763915228323,
+    "value": 68.08063719955805,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -56.076391522832296,
+    "margin": -56.080637199558055,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "end level -127.0 dBFS (limit -45), decay over final 300 ms 68.1 dB (limit 12); natural release"
@@ -1986,10 +1991,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 8.685689644160573e-06,
+    "value": 8.714991141864294e-06,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009913143103558394,
+    "margin": -0.0009912850088581357,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
@@ -1999,10 +2004,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 0.18980673820918526,
+    "value": 0.1879496438770616,
     "unit": "BPM",
     "threshold": 2.24,
-    "margin": -2.050193261790815,
+    "margin": -2.0520503561229386,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "measured 112.2 BPM vs 112.0 (tolerance 2.2) from the onset-envelope autocorrelation (peak 3.2x the median); beat tracker said 112.3; four-quarter drift 0.6 BPM reported, not decisive"
@@ -2025,28 +2030,28 @@
       "start_s": 0.0,
       "end_s": 17.1429,
       "energy": 0.32,
-      "level_db": -29.491300428488437
+      "level_db": -29.49191737976609
      },
      {
       "name": "grove",
       "start_s": 17.1429,
       "end_s": 34.2857,
       "energy": 0.7,
-      "level_db": -20.86792649950825
+      "level_db": -20.867598278135702
      },
      {
       "name": "high_sun",
       "start_s": 34.2857,
       "end_s": 51.4286,
       "energy": 0.95,
-      "level_db": -15.313560989308481
+      "level_db": -15.311929449228982
      },
      {
       "name": "golden_hour",
       "start_s": 51.4286,
       "end_s": 68.5714,
       "energy": 0.6,
-      "level_db": -20.49250190325748
+      "level_db": -20.490383244715215
      }
     ]
    }

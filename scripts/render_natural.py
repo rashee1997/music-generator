@@ -960,6 +960,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
             rel.append(t)
             _nxt[e['p']] = e['t']
         rel.reverse()
+        calls, rels = {}, {}
         for i, e in enumerate(ev):
             lvl = dyn_level(e['t'])
             v = e['v'] * (0.72 + 0.28 * lvl)
@@ -975,29 +976,48 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
                 p = alt[0]                                         # the family's next sample (round robin)
             if p == 39 and e['v'] > 90 and jrng.random() < 0.35:    # a clap is several pairs of hands, not one sample
                 off = jrng.uniform(-0.008, 0.008)
-                vox.add(max(0.0, e['t'] + off), 'on', 9, 37, int(np.clip(v * 0.28, 1, 127)))
-                vox.add(max(0.0, e['t'] + off) + 0.1, 'off', 9, 37)
+                t_on, t_off = max(0.0, e['t'] + off), max(0.0, e['t'] + off) + 0.1
+                calls.setdefault(37, []).append((t_on, 'on', 37, int(np.clip(v * 0.28, 1, 127))))
+                calls.setdefault(37, []).append((t_off, 'off', 37, 0))
+                rels.setdefault(37, []).append(t_off)
             last_t[e['p']] = e['t']
             if hand and jrng.random() < 0.25 and e['v'] / 127.0 > 0.5 and e['t'] > 0.04:   # 32nd-note flam: soft hit 25 ms before
-                vox.add(e['t'] - 0.025, 'on', 9, p, int(np.clip(v * 0.3, 1, 127)))
-                vox.add(e['t'] - 0.013, 'off', 9, p)
-            vox.add(e['t'], 'on', 9, p, int(np.clip(round(v), 1, 127)))
-            vox.add(rel[i], 'off', 9, p)
-        hit = vox.render(tail=2.5)
-        # A SoundFont drum sample often starts on a single-sample step instead of rising out of silence, which the
-        # stem gate (rightly) reads as a click at every hit. `onset_fade_ms` in an instrument preset ramps the first
-        # 2-3 ms of each fresh hit: far faster than any audible attack, and the step is gone.
+                calls.setdefault(p, []).append((e['t'] - 0.025, 'on', p, int(np.clip(v * 0.3, 1, 127))))
+                calls.setdefault(p, []).append((e['t'] - 0.013, 'off', p, 0))
+                rels.setdefault(p, []).append(e['t'] - 0.013)
+            calls.setdefault(p, []).append((e['t'], 'on', p, int(np.clip(round(v), 1, 127))))
+            rels.setdefault(p, []).append(rel[i])
+        # One buffer per pitch, each ramped and released on its own, then summed. A drum sample starts at full level,
+        # so its first sample is a step; the ramp removes it. On a shared buffer that ramp cannot work: it multiplies
+        # every pitch's ring at that instant, which either cuts the other parts (a ramp from zero) or leaves the step
+        # standing (a ramp from the ring's level). Measured on this kit: both shared-buffer ramps read worse on the
+        # master's click row than no ramp at all (23 and 3 events), because three hits land within 1.5 ms there.
+        # Per pitch, the ring at an onset is the same pitch's own, and the release below ends it 4 ms earlier.
         by_pitch, default_ms, skip_sounding = _onset_ramps(inst_cfg, tr)
-        groups = {}
-        for e in ev:
-            ms = float(by_pitch.get(str(e['p']), by_pitch.get(e['p'], default_ms)) or 0.0)
+        vox._release()          # the shared buffer is not used from here: give its synth slot back before borrowing more
+        hit = None
+        for p, evs in calls.items():
+            pv = Voice(sfpath, SR, _oversample())
+            pv.program(9, bank, preset, drums=True)
+            for t, kind, pp, vv in evs:
+                pv.add(t, kind, 9, pp, vv)
+            part = pv.render(tail=2.5)
+            ms = float(by_pitch.get(str(p), by_pitch.get(p, default_ms)) or 0.0)
             if ms > 0:
-                groups.setdefault(round(ms, 4), []).append(e['t'])
-        for ms, times in groups.items():
-            hit = dsp.soften_onsets(hit, sr=SR, times=times, ms=ms, skip_sounding=skip_sounding)
-        # every drum note is released while the sample is still ringing: a hard cut there is a click. The release is
-        # 120 ms in, or just before the next hit of the same pitch when that lands sooner (`rel`).
-        hit = dsp.fade_out_at(hit, sr=SR, times=rel, ms=4.0)
+                part = dsp.soften_onsets(part, sr=SR, times=[t for t, kind, _pp, _vv in evs if kind == 'on'],
+                                         ms=ms, skip_sounding=skip_sounding)
+            # every drum note is released while the sample is still ringing: a hard cut there is a click. The release
+            # is 120 ms in, or just before the next hit of the same pitch when that lands sooner (`rel`).
+            part = dsp.fade_out_at(part, sr=SR, times=rels.get(p, ()), ms=4.0)
+            if hit is None:
+                hit = part
+            else:
+                n = max(len(hit), len(part))
+                if len(hit) < n:
+                    hit = np.pad(hit, ((0, n - len(hit)), (0, 0)))
+                elif len(part) < n:
+                    part = np.pad(part, ((0, n - len(part)), (0, 0)))
+                hit = hit + part
         return dsp.enhance_sf2_dynamics(hit, sr=SR, role=role, velocity=_mean_vel(ev))
 
     # note-off times: let a plucked body ring past the written note-off, but never into a re-strike of the same pitch

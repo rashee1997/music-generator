@@ -6,20 +6,20 @@
     "warns": 0,
     "rows": 102,
     "profile": "indo_afro_sunrise",
-    "total_ms": 4232.086615986191,
+    "total_ms": 3361.939219001215,
     "timings": {
-      "bansuri": 1477.372468012618,
-      "bass": 2840.5692300002556,
-      "canopy": 2640.5027840228286,
-      "djembe": 851.2412199925166,
-      "guitar": 2812.6011560088955,
-      "horns": 1370.707547001075,
-      "kit": 873.76091000624,
-      "marimba": 938.0029930034652,
-      "shekere": 862.5587580027059,
-      "sitar": 1111.245901993243,
-      "tabla": 795.5891549936496,
-      "tanpura": 1329.2297509906348
+      "bansuri": 1131.6269579983782,
+      "bass": 2184.663127991371,
+      "canopy": 2044.3471259786747,
+      "djembe": 695.6731389800552,
+      "guitar": 2225.6566940050106,
+      "horns": 1057.5009070162196,
+      "kit": 685.2883299870882,
+      "marimba": 704.1108619887382,
+      "shekere": 847.0063519780524,
+      "sitar": 872.0970250142273,
+      "tabla": 590.9495289961342,
+      "tanpura": 1091.464953002287
     },
     "workers": 7,
     "metrics": [
@@ -1002,18 +1002,18 @@
         "stage": "stem",
         "stem": "kit",
         "level": "PASS",
-        "value": 3.0875714840205607e-06,
+        "value": 3.987194432706655e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009969124285159794,
+        "margin": -0.0009960128055672933,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"kit\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -7.526194383395608e-09,
-          -5.5289412503400016e-09
+          -1.2239503263553207e-08,
+          -1.0207864445023774e-08
         ],
-        "drift": 3.0875714840205607e-06
+        "drift": 3.987194432706655e-06
       },
       {
         "row": "stem.clipping",
@@ -1040,11 +1040,11 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1299 event(s) rejected as a dense burst, 91 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1299 event(s) rejected as a dense burst, 89 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
         "rejected": 1299,
-        "attacks_ignored": 91,
+        "attacks_ignored": 89,
         "max_cluster_span_ms": 1.4965986394557824
       },
       {
@@ -1127,7 +1127,7 @@
           {
             "section": "grove",
             "start_s": 17.1429,
-            "measured_db": -24.77,
+            "measured_db": -24.78,
             "expected_db": -23.01,
             "dyn": 0.7
           },
@@ -1141,7 +1141,7 @@
           {
             "section": "golden_hour",
             "start_s": 51.4286,
-            "measured_db": -21.67,
+            "measured_db": -21.71,
             "expected_db": -24.35,
             "dyn": 0.6
           }
@@ -2201,7 +2201,7 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1299 event(s) rejected as a dense burst, 91 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1299 event(s) rejected as a dense burst, 89 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "INFO",

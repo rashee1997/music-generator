@@ -183,7 +183,7 @@
         {
           "section": "grove",
           "start_s": 17.1429,
-          "measured_db": -24.77,
+          "measured_db": -24.78,
           "expected_db": -23.01,
           "dyn": 0.7
         },
@@ -197,7 +197,7 @@
         {
           "section": "golden_hour",
           "start_s": 51.4286,
-          "measured_db": -21.67,
+          "measured_db": -21.71,
           "expected_db": -24.35,
           "dyn": 0.6
         }
