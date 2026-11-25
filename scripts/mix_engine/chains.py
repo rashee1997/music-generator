@@ -60,7 +60,12 @@ def role_board(role, inst='', mx=None):
 
 def base_names(inst):
     """The names an instrument answers to, own name first: a preset called lead_flute is built on 'flute'
-    (its gm / instrument key), and a world name such as quena stands in for a General MIDI sound."""
+    (its gm / instrument key), and a world name such as quena stands in for a General MIDI sound.
+
+    `inst` is a name, or the preset dict itself: a caller that already resolved the preset must not have its
+    `inst_eq` lookup miss because it passed the dict instead of the string."""
+    if isinstance(inst, dict):
+        inst = inst.get('name') or inst.get('instrument') or inst.get('gm') or ''
     name = str(inst).lower().replace(' ', '_')
     out = [name]
     try:
