@@ -22,3 +22,23 @@
    `spatial.elevation` and `spatial.space` are stored but not applied.
 
 ## Decisions / feedback
+
+## State at the 2026-11-25 render (attempt 1)
+
+- Gate profile: `presets/gate/indo_afro_sunrise.json` (own profile, `extends: melodic`, no row changed), and the
+  score declares `piece_type: indo_afro_sunrise`. Gate data in `presets/gate/data/`, figures in `presets/gate/figures/`.
+- Stem gate: **green** — 102 rows, 0 FAIL. The kit needed its hi-hats at 16ths with a note shorter than the step
+  (a longer written length puts a short GM sample's dead tail inside a sounding note and the row calls it a dropout).
+- Master: **2 FAIL**
+  - `clicks` — 69 high-pass-MAD events on the summed master, none of them single-sample jumps; each stem passes on
+    its own, so the row is reading the stack of on-beat percussion attacks, not a cut. Changes tried and measured:
+    a softer master (`dynamics.engine: dsp`, knee 6 dB, 5 ms lookahead), −15 LUFS and a crest floor of 8 dB, hats moved
+    off the beat. None moved the count; the arrangement fix (spreading the percussion onsets by 10–30 ms) raised the
+    kit's dropout count instead, so it was reverted.
+  - `spectral.equal_loudness` — shekere 17.2 dB bright in 2.5–5 kHz. The `inst_eq` cuts written for it (−4, then −10 dB
+    at 3536 Hz plus a 6 kHz low-pass) do not reach the processed stem: the value is identical before and after, so the
+    instrument preset's own `eq` is not in the chain the row measures.
+- Not run yet: `listen.py` (nothing auditioned), `arc_report.py`, `expression_report.py`, `chem_report.py`, and the
+  CI report is not written because the run stopped at the master rows.
+- Cache note: `projects/<dir>/.cache` holds the processed stems; a stale entry there hides a preset change, so clear it
+  before judging an EQ edit.
