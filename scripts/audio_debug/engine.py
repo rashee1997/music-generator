@@ -53,12 +53,32 @@ def autopsy(case, level=None, history=None, write=True, stamp=None):
         from .domains import base
         analysis = base.Analysis()
 
+    # Risk closure. A lever is not free just because its own row is the only one failing: changing a stem's ramp or
+    # band moves every row that stem has, in domains that had nothing to fail and were therefore skipped. Bring those
+    # rows in as constraints before solving, which is what turns a one-knob fix into a check that it breaks nothing.
+    touched = {lv.stem for lv in analysis.levers if lv.stem
+               and any(abs(c) > 0 and lid == lv.id for (_k, lid), c in analysis.coefficients.items())}
+    if touched:
+        extra = [r for r in case.rows if r.get('stem') in touched
+                 and rowmap.domain_of(r.get('row')) not in run]
+        for name in rowmap.domains_for(extra):
+            analysis.merge(domains.analyse(name, case,
+                                           [r for r in extra if rowmap.domain_of(r.get('row')) == name],
+                                           history=history or ()))
+            run.append(name)
+        touched_note = ', '.join(sorted(touched))
+    else:
+        touched_note = ''
+
     plan = solve.plan(analysis, history=history or ()) if analysis.rows else solve.Plan(status='no rows')
     known = {r['row'] for r in analysis.rows}
     for r in binding:
         if r['row'] not in known:                    # a row no module claimed is still reported, never dropped
             analysis.notes.append(f"{r['row']}: no domain module examines this row yet")
 
+    if touched_note:
+        analysis.notes.append(f'risk closure: the levers that move this row belong to {touched_note}, so every row of '
+                              f'those stems was loaded as a constraint before the plan was solved')
     rep = report.Report(case=case, analysis=analysis, plan=plan, binding=binding, advisory=advisory,
                         run_domains=run, skipped=skipped, level=used_level or 'FAIL', stamp=stamp,
                         remeasured=measured)

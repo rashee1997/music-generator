@@ -74,7 +74,7 @@ def note_len_levers(case, domain='stems', only_stems=None):
         name = tr.get('name')
         if only_stems is not None and name not in only_stems:
             continue
-        notes = tr.get('notes') or []
+        notes = [n for n in (tr.get('notes') or []) if isinstance(n, dict) and 'd' in n]
         if not notes:
             continue
         ds = [float(n.get('d') or 0.0) for n in notes]
@@ -82,7 +82,7 @@ def note_len_levers(case, domain='stems', only_stems=None):
             continue
         cur = round(sum(ds) / len(ds), 4)
         out.append(base.Lever(f'note.{name}.d', domain, 'note_len', cur, max(0.01, cur - LEN_SPAN), cur + LEN_SPAN,
-                              1.0 / 48, 'beats', f'{name} written note length (mean {cur:g} beats)', stem=name,
+                              1.0 / 96, 'beats', f'{name} written note length (mean {cur:g} beats)', stem=name,
                               burns=('stem.dropout',)))
     return out
 

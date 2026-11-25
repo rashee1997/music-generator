@@ -91,6 +91,16 @@ class Report:
             unit = lv.unit if lv else ''
             where = f' {lv.text}' if lv else ''
             push(f"- `{lid}` {d:+.2f} {unit}{where}")
+        if self.plan.clearing:
+            push('')
+            push('clearing set (smallest total move that puts every judged row at zero or better):')
+            for lid, d in sorted(self.plan.clearing.items(), key=lambda kv: -abs(kv[1])):
+                lv = next((l for l in self.analysis.levers if l.id == lid), None)
+                push(f"- `{lid}` {d:+.2f} {lv.unit if lv else ''} {lv.text if lv else ''}")
+        elif 'partial' in str(self.plan.status):
+            push('')
+            push('**no admissible value clears the failing row**: the levers this project declares cannot reach it, so '
+                 'the change belongs in the score, the sample or the density')
         if self.plan.predicted:
             push('')
             worst = sorted(self.plan.predicted.items(), key=lambda kv: kv[1][1])[:6]
@@ -121,7 +131,7 @@ class Report:
         if self.analysis.notes:
             push('## Measurements behind this')
             for n in self.analysis.notes[:24]:
-                push(f'- {n}')
+                push(f'- {n if isinstance(n, str) else n!r}')
             push('')
         if self.plan.notes:
             push('## Solver')

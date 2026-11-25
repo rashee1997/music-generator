@@ -2,11 +2,11 @@
   "meta": {
     "stage": "stem",
     "mode": "full",
-    "fails": 0,
+    "fails": 1,
     "warns": 0,
     "rows": 102,
     "profile": "indo_afro_sunrise",
-    "total_ms": 575.1782830047887,
+    "total_ms": 622.9584449902177,
     "timings": {
       "bansuri": 0.0,
       "bass": 0.0,
@@ -14,7 +14,7 @@
       "djembe": 0.0,
       "guitar": 0.0,
       "horns": 0.0,
-      "kit": 439.3412469944451,
+      "kit": 421.3950599951204,
       "marimba": 0.0,
       "shekere": 0.0,
       "sitar": 0.0,
@@ -1002,18 +1002,18 @@
         "stage": "stem",
         "stem": "kit",
         "level": "PASS",
-        "value": 4.517346562565056e-06,
+        "value": 4.628221348899529e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.000995482653437435,
+        "margin": -0.0009953717786511005,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"kit\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -2.2015129880751807e-08,
-          -1.8187005293871746e-08
+          -2.3290951269476773e-08,
+          -2.1023660411957436e-08
         ],
-        "drift": 4.517346562565056e-06
+        "drift": 4.628221348899529e-06
       },
       {
         "row": "stem.clipping",
@@ -1040,26 +1040,43 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1338 event(s) rejected as a dense burst, 111 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1336 event(s) rejected as a dense burst, 109 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 1338,
-        "attacks_ignored": 111,
+        "rejected": 1336,
+        "attacks_ignored": 109,
         "max_cluster_span_ms": 1.4965986394557824
       },
       {
         "row": "stem.dropout",
         "stage": "stem",
         "stem": "kit",
-        "level": "PASS",
-        "value": 0.0,
+        "level": "FAIL",
+        "value": 25.000000000005684,
         "unit": "ms",
         "threshold": 20.0,
-        "margin": -20.0,
-        "worst_times_s": [],
+        "margin": 5.000000000005684,
+        "worst_times_s": [
+          45.255,
+          46.345,
+          55.975
+        ],
         "calibrated": false,
-        "detail": "stem \"kit\": longest hole 0 ms (limit 20-1000 ms), floor -98.7 dBFS; 0 hole(s)",
-        "holes": []
+        "detail": "stem \"kit\": longest hole 25 ms (limit 20-1000 ms), floor -98.8 dBFS; 3 hole(s)",
+        "holes": [
+          {
+            "start_s": 45.255,
+            "length_ms": 20.0
+          },
+          {
+            "start_s": 46.345,
+            "length_ms": 25.0
+          },
+          {
+            "start_s": 55.975,
+            "length_ms": 20.0
+          }
+        ]
       },
       {
         "row": "stem.cut",
@@ -1120,29 +1137,29 @@
           {
             "section": "dawn",
             "start_s": 0.0,
-            "measured_db": -25.43,
-            "expected_db": -29.72,
+            "measured_db": -25.42,
+            "expected_db": -29.75,
             "dyn": 0.32
           },
           {
             "section": "grove",
             "start_s": 17.1429,
-            "measured_db": -24.13,
-            "expected_db": -22.92,
+            "measured_db": -24.15,
+            "expected_db": -22.95,
             "dyn": 0.7
           },
           {
             "section": "high_sun",
             "start_s": 34.2857,
-            "measured_db": -23.0,
-            "expected_db": -20.27,
+            "measured_db": -23.04,
+            "expected_db": -20.3,
             "dyn": 0.95
           },
           {
             "section": "golden_hour",
             "start_s": 51.4286,
-            "measured_db": -22.55,
-            "expected_db": -24.26,
+            "measured_db": -22.57,
+            "expected_db": -24.29,
             "dyn": 0.6
           }
         ],
@@ -2201,12 +2218,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1338 event(s) rejected as a dense burst, 111 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1336 event(s) rejected as a dense burst, 109 as a steep attack; max cluster span 1.497 ms"
     },
     {
-      "level": "PASS",
+      "level": "FAIL",
       "row": "stem.dropout",
-      "detail": "stem \"kit\": longest hole 0 ms (limit 20-1000 ms), floor -98.7 dBFS; 0 hole(s)"
+      "detail": "stem \"kit\": longest hole 25 ms (limit 20-1000 ms), floor -98.8 dBFS; 3 hole(s)"
     },
     {
       "level": "INFO",

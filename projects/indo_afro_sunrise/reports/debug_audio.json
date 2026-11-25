@@ -1,5 +1,5 @@
 {
- "stamp": "20261125T033740",
+ "stamp": "20261125T034612",
  "project": "indo_afro_sunrise",
  "level": "FAIL",
  "sources": {
@@ -14,9 +14,8 @@
    "stereo.json",
    "waveform.json"
   ],
-  "stems": "12 processed stems from .cache/mix",
   "master": "out/_draft_master.wav",
-  "verdict": "2026-11-25T03:34:16Z"
+  "verdict": "2026-11-25T03:39:15Z"
  },
  "binding": [
   {
@@ -28,6 +27,16 @@
    "unit": "events",
    "safety": -1.0,
    "detail": "1 clustered impulse event(s) (MAD), 1 LPC frame(s); 1355 event(s) rejected as a dense burst, 258 as a steep attack; max cluster span 1.497 ms"
+  },
+  {
+   "row": "stem.dropout",
+   "stem": "kit",
+   "level": "FAIL",
+   "value": 25.000000000005684,
+   "threshold": 20.0,
+   "unit": "ms",
+   "safety": -0.25,
+   "detail": "stem \"kit\": longest hole 25 ms (limit 20-1000 ms), floor -98.8 dBFS; 3 hole(s)"
   }
  ],
  "advisory": [
@@ -154,15 +163,14 @@
  ],
  "domains": {
   "run": [
-   "master"
+   "master",
+   "stems"
   ],
-  "skipped": {
-   "stems": 24
-  }
+  "skipped": {}
  },
  "model": {
   "first_order": true,
-  "rows": 5,
+  "rows": 179,
   "levers": [
    {
     "id": "render.oversample",
@@ -177,8 +185,92 @@
     "text": "master oversampling before the limiter"
    },
    {
+    "id": "gain.shekere",
+    "domain": "stems",
+    "kind": "gain",
+    "stem": "shekere",
+    "current": -6.0,
+    "lo": -12.0,
+    "hi": 0.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "shekere instrument trim"
+   },
+   {
+    "id": "gain.tabla",
+    "domain": "stems",
+    "kind": "gain",
+    "stem": "tabla",
+    "current": -3.5,
+    "lo": -9.5,
+    "hi": 2.5,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "tabla instrument trim"
+   },
+   {
+    "id": "gain.bansuri",
+    "domain": "stems",
+    "kind": "gain",
+    "stem": "bansuri",
+    "current": -1.5,
+    "lo": -7.5,
+    "hi": 4.5,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "bansuri instrument trim"
+   },
+   {
+    "id": "gain.djembe",
+    "domain": "stems",
+    "kind": "gain",
+    "stem": "djembe",
+    "current": -3.0,
+    "lo": -9.0,
+    "hi": 3.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "djembe instrument trim"
+   },
+   {
+    "id": "inst_eq.shekere.0",
+    "domain": "stems",
+    "kind": "eq",
+    "stem": "shekere",
+    "current": 6.0,
+    "lo": -6.0,
+    "hi": 12.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "shekere peak 900 Hz q0.5"
+   },
+   {
+    "id": "inst_eq.shekere.1",
+    "domain": "stems",
+    "kind": "eq",
+    "stem": "shekere",
+    "current": -13.0,
+    "lo": -25.0,
+    "hi": -1.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "shekere peak 4000 Hz q0.6"
+   },
+   {
+    "id": "inst_eq.shekere.2",
+    "domain": "stems",
+    "kind": "eq",
+    "stem": "shekere",
+    "current": 0.0,
+    "lo": -12.0,
+    "hi": 12.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "shekere lp 7000 Hz q1"
+   },
+   {
     "id": "onset.kit.ms",
-    "domain": "master",
+    "domain": "stems",
     "kind": "onset",
     "stem": "kit",
     "current": 0.3,
@@ -189,37 +281,171 @@
     "text": "kit onset ramp"
    },
    {
+    "id": "note.tanpura.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "tanpura",
+    "current": 16.3125,
+    "lo": 16.2525,
+    "hi": 16.3725,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "tanpura written note length (mean 16.3125 beats)"
+   },
+   {
+    "id": "note.bass.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "bass",
+    "current": 0.6667,
+    "lo": 0.6067,
+    "hi": 0.7266999999999999,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "bass written note length (mean 0.6667 beats)"
+   },
+   {
+    "id": "note.guitar.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "guitar",
+    "current": 0.22,
+    "lo": 0.16,
+    "hi": 0.28,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "guitar written note length (mean 0.22 beats)"
+   },
+   {
+    "id": "note.marimba.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "marimba",
+    "current": 0.3,
+    "lo": 0.24,
+    "hi": 0.36,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "marimba written note length (mean 0.3 beats)"
+   },
+   {
+    "id": "note.bansuri.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "bansuri",
+    "current": 0.7526,
+    "lo": 0.6926000000000001,
+    "hi": 0.8126,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "bansuri written note length (mean 0.7526 beats)"
+   },
+   {
+    "id": "note.sitar.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "sitar",
+    "current": 0.22,
+    "lo": 0.16,
+    "hi": 0.28,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "sitar written note length (mean 0.22 beats)"
+   },
+   {
+    "id": "note.horns.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "horns",
+    "current": 0.35,
+    "lo": 0.29,
+    "hi": 0.41,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "horns written note length (mean 0.35 beats)"
+   },
+   {
     "id": "note.kit.d",
-    "domain": "master",
+    "domain": "stems",
     "kind": "note_len",
     "stem": "kit",
     "current": 0.3047,
     "lo": 0.24470000000000003,
     "hi": 0.3647,
-    "step": 0.020833333333333332,
+    "step": 0.010416666666666666,
     "unit": "beats",
     "text": "kit written note length (mean 0.3047 beats)"
+   },
+   {
+    "id": "note.djembe.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "djembe",
+    "current": 0.5,
+    "lo": 0.44,
+    "hi": 0.56,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "djembe written note length (mean 0.5 beats)"
+   },
+   {
+    "id": "note.tabla.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "tabla",
+    "current": 0.5,
+    "lo": 0.44,
+    "hi": 0.56,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "tabla written note length (mean 0.5 beats)"
+   },
+   {
+    "id": "note.shekere.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "shekere",
+    "current": 0.5,
+    "lo": 0.44,
+    "hi": 0.56,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "shekere written note length (mean 0.5 beats)"
+   },
+   {
+    "id": "note.canopy.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "canopy",
+    "current": 70.0,
+    "lo": 69.94,
+    "hi": 70.06,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "canopy written note length (mean 70 beats)"
    }
   ]
  },
  "plan": {
   "status": "partial",
-  "worst_safety": -0.10920668663630077,
+  "worst_safety": -1.0,
   "deltas": {
-   "onset.kit.ms": 1.0
+   "onset.kit.ms": -0.3,
+   "note.kit.d": -0.03125
   },
+  "clearing": {},
   "predicted": {
    "clicks::-": [
     -1.0,
-    -0.14341108751055398
+    -1.0
    ],
    "loudness::-": [
-    -0.10920668663630077,
-    -0.10920668663630077
+    0.02,
+    0.02
    ],
    "true peak::-": [
-    -0.0005697148684871886,
-    -0.0005697148684871886
+    0.02,
+    0.02
    ],
    "clipping::-": [
     0.0,
@@ -228,16 +454,417 @@
    "master.dc::-": [
     0.09900935380600785,
     0.09900935380600785
+   ],
+   "stem.dropout::kit": [
+    -0.2500000000002842,
+    -1.0720535714288557
+   ],
+   "stem.dc::bansuri": [
+    0.0999679472039481,
+    0.0999679472039481
+   ],
+   "stem.clipping::bansuri": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::bansuri": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::bansuri": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::bansuri": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::bansuri": [
+    1.0,
+    1.0
+   ],
+   "stem.dead::bansuri": [
+    0.02,
+    0.02
+   ],
+   "stem.flatness::bansuri": [
+    2.0,
+    2.0
+   ],
+   "stem.dc::bass": [
+    0.0999710790957025,
+    0.0999710790957025
+   ],
+   "stem.clipping::bass": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::bass": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::bass": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::bass": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::bass": [
+    1.0,
+    1.0
+   ],
+   "stem.tick::bass": [
+    0.4830844099267595,
+    0.4830844099267595
+   ],
+   "stem.dead::bass": [
+    0.02,
+    0.02
+   ],
+   "stem.flatness::bass": [
+    2.0,
+    2.0
+   ],
+   "stem.dc::canopy": [
+    0.09997021039154906,
+    0.09997021039154906
+   ],
+   "stem.clipping::canopy": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::canopy": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::canopy": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::canopy": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::canopy": [
+    1.0,
+    1.0
+   ],
+   "stem.tick::canopy": [
+    0.02,
+    0.02
+   ],
+   "stem.dead::canopy": [
+    0.02,
+    0.02
+   ],
+   "stem.dc::djembe": [
+    0.09949659377084491,
+    0.09949659377084491
+   ],
+   "stem.clipping::djembe": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::djembe": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::djembe": [
+    1.0,
+    1.0
+   ],
+   "stem.dead::djembe": [
+    0.02,
+    0.02
+   ],
+   "stem.dc::guitar": [
+    0.09983539497466457,
+    0.09983539497466457
+   ],
+   "stem.clipping::guitar": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::guitar": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::guitar": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::guitar": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::guitar": [
+    1.0,
+    1.0
+   ],
+   "stem.tick::guitar": [
+    0.02,
+    0.02
+   ],
+   "stem.dead::guitar": [
+    0.02,
+    0.02
+   ],
+   "stem.flatness::guitar": [
+    2.0,
+    2.0
+   ],
+   "stem.dc::horns": [
+    0.09997941009542534,
+    0.09997941009542534
+   ],
+   "stem.clipping::horns": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::horns": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::horns": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::horns": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::horns": [
+    1.0,
+    1.0
+   ],
+   "stem.dead::horns": [
+    0.02,
+    0.02
+   ],
+   "stem.flatness::horns": [
+    2.0,
+    2.0
+   ],
+   "stem.dc::kit": [
+    0.0995482653437435,
+    0.0995482653437435
+   ],
+   "stem.clipping::kit": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::kit": [
+    0.0,
+    0.0
+   ],
+   "stem.dead::kit": [
+    0.02,
+    0.02
+   ],
+   "stem.dc::marimba": [
+    0.09999419318409326,
+    0.09999419318409326
+   ],
+   "stem.clipping::marimba": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::marimba": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::marimba": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::marimba": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::marimba": [
+    1.0,
+    1.0
+   ],
+   "stem.dead::marimba": [
+    0.02,
+    0.02
+   ],
+   "stem.flatness::marimba": [
+    2.0,
+    2.0
+   ],
+   "stem.dc::shekere": [
+    0.09993386961552161,
+    0.09993386961552161
+   ],
+   "stem.clipping::shekere": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::shekere": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::shekere": [
+    1.0,
+    1.0
+   ],
+   "stem.dead::shekere": [
+    0.02,
+    0.02
+   ],
+   "stem.dc::sitar": [
+    0.09996924115597115,
+    0.09996924115597115
+   ],
+   "stem.clipping::sitar": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::sitar": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::sitar": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::sitar": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::sitar": [
+    1.0,
+    1.0
+   ],
+   "stem.dead::sitar": [
+    0.02,
+    0.02
+   ],
+   "stem.flatness::sitar": [
+    2.0,
+    2.0
+   ],
+   "stem.dc::tabla": [
+    0.09985440328162515,
+    0.09985440328162515
+   ],
+   "stem.clipping::tabla": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::tabla": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::tabla": [
+    1.0,
+    1.0
+   ],
+   "stem.dead::tabla": [
+    0.02,
+    0.02
+   ],
+   "stem.dc::tanpura": [
+    0.09998804120755748,
+    0.09998804120755748
+   ],
+   "stem.clipping::tanpura": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::tanpura": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::tanpura": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::tanpura": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::tanpura": [
+    1.0,
+    1.0
+   ],
+   "stem.tick::tanpura": [
+    0.8932896234178219,
+    0.8932896234178219
+   ],
+   "stem.dead::tanpura": [
+    0.02,
+    0.02
+   ],
+   "stem.flatness::tanpura": [
+    2.0,
+    2.0
    ]
   },
-  "conflicts": [],
-  "closed": [],
+  "conflicts": [
+   {
+    "lever": "onset.kit.ms",
+    "text": "kit onset ramp",
+    "unit": "ms",
+    "feasible": [
+     -0.3,
+     -5.0
+    ],
+    "bounds": [
+     -0.3,
+     2.7
+    ],
+    "rows": [
+     {
+      "row": "stem.dropout",
+      "needs": -5.0,
+      "safety": -0.25
+     }
+    ],
+    "why": "kit onset ramp cannot satisfy stem.dropout at once: the moves that pass one row fail the other, and the bounds leave no value between"
+   }
+  ],
+  "closed": [
+   "clicks"
+  ],
   "burned": [],
   "notes": [
-   "no admissible combination clears clicks; the best set leaves it at safety -0.14. The rows that limit it have no lever here - fix those first, or change the piece rather than the knob"
+   "no admissible combination clears clicks, stem.dropout; the best set leaves it at safety -1.07. The rows that limit it have no lever here - fix those first, or change the piece rather than the knob"
   ]
  },
  "notes": [
-  "clicks has 1 event(s) at 46.646s; the transient is kit 86%, bansuri 9%, sitar 3%"
+  {
+   "t": 0.0,
+   "d": 70.0,
+   "p": 60,
+   "v": 0.5
+  },
+  "clicks: no processed stems and no written onset at that instant, so the impulse could not be attributed",
+  "kit: the tightest gap in the score is 0 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "bansuri: the tightest gap in the score is 250 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "bass: the tightest gap in the score is 500 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "djembe: the tightest gap in the score is 250 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "guitar: the tightest gap in the score is 20 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "horns: the tightest gap in the score is 15 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "kit: the tightest gap in the score is 0 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "marimba: the tightest gap in the score is 500 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "shekere: the tightest gap in the score is 250 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "sitar: the tightest gap in the score is 250 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "tabla: the tightest gap in the score is 250 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "tanpura: the tightest gap in the score is 0 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "bansuri: the tightest gap in the score is 250 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "bass: the tightest gap in the score is 500 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "djembe: the tightest gap in the score is 250 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "guitar: the tightest gap in the score is 20 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "horns: the tightest gap in the score is 15 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "marimba: the tightest gap in the score is 500 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "shekere: the tightest gap in the score is 250 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "sitar: the tightest gap in the score is 250 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "tabla: the tightest gap in the score is 250 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "tanpura: the tightest gap in the score is 0 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "risk closure: the levers that move this row belong to bansuri, bass, canopy, djembe, guitar, horns, kit, marimba, shekere, sitar, tabla, tanpura, so every row of those stems was loaded as a constraint before the plan was solved"
  ]
 }

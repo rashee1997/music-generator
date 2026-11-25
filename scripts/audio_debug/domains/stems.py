@@ -15,7 +15,7 @@ def _note_gaps(case, stem):
     tr = case.track(stem)
     if not tr:
         return []
-    notes = sorted(tr.get('notes') or [], key=lambda n: n['t'])
+    notes = sorted((n for n in (tr.get('notes') or []) if isinstance(n, dict) and 't' in n), key=lambda n: n['t'])
     bpm = float(case.score.get('tempo') or case.score.get('bpm') or 100.0)
     spb = 60.0 / bpm
     out = []
@@ -34,10 +34,17 @@ def analyse(case, rows, history=()):
         for lv in levers:
             if lv.stem and stem and lv.stem != stem:
                 continue
-            if r['row'] in ('stem.dead', 'stem.loudness', 'stem.rms') and lv.kind == 'gain':
-                coef[(key, lv.id)] = 1.0
-            elif r['row'] == 'stem.dropout' and lv.kind in ('note_len', 'onset'):
-                coef[(key, lv.id)] = 1.0        # both open or close a gap, in opposite directions
+            if r['row'] in ('stem.loudness', 'stem.rms') and lv.kind == 'gain':
+                coef[(key, lv.id)] = 1.0        # a trim moves a measured level one dB per dB
+            elif r['row'] == 'stem.dead':
+                # A dead stem is silence: no trim makes it audible, and pricing one here let the programme "cure" a
+                # silent part by pulling four unrelated trims down 6 dB.
+                coef[(key, lv.id)] = 0.0
+            elif r['row'] == 'stem.dropout' and lv.kind == 'onset':
+                coef[(key, lv.id)] = 1.0        # a millisecond of ramp is a millisecond of silence before the hit
+            elif r['row'] == 'stem.dropout' and lv.kind == 'note_len':
+                beat_ms = 60000.0 / float(case.score.get('bpm') or case.score.get('tempo') or 100.0)
+                coef[(key, lv.id)] = -beat_ms   # a beat of note length is that many ms of gap closed
             elif r['row'] in ('stem.cut', 'stem.edge') and lv.kind == 'fade':
                 coef[(key, lv.id)] = 1.0
             elif r['row'] in ('stem.clicks', 'stem.clipping') and lv.kind in ('eq', 'onset'):
@@ -50,4 +57,4 @@ def analyse(case, rows, history=()):
             notes.append(f'{stem}: the tightest gap in the score is {tight[0] * 1000:.0f} ms at beat spacing '
                          f'{tight[2]:.3f} s ({60 / tight[2]:.0f} bpm sixteenths); the note lengths and the ramp '
                          f'share this number, so they cannot be moved independently')
-    return base.Analysis(rows=rows, levers=levers, coefficients=coef, notes=notes), {}
+    return base.Analysis(rows=rows, levers=levers, coefficients=coef, notes=notes)

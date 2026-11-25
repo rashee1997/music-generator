@@ -55,7 +55,39 @@ def analyse(case, rows, history=()):
             if amp > 0:
                 scored.append((amp, stem))
         if not scored:
-            notes.append(f"{r['row']}: no processed stems on disk, so the impulse could not be attributed")
+            # No stem cache (a run that stopped before mixing, or a cleaned cache): the score still says who plays at
+            # that instant, so attribute by written onset instead of giving up on the row.
+            for tr in case.score.get('tracks', []):
+                # The nearest written onset, not an exact match: humanisation shifts a note tens of milliseconds and
+                # the impulse sits on the attack, not on the beat.
+                notes = tr.get('notes') or []
+                if not notes:
+                    continue
+                near = min(notes, key=lambda n: abs(float(n.get('t', -9)) - ev[0][0]))
+                gap = abs(float(near.get('t', -9)) - ev[0][0])
+                if gap <= 0.06:            # an attack, not "a note somewhere nearby": 150 ms matched every bed too
+                    scored.append((float(near.get('v', 0.5)) / (1.0 + 400.0 * gap), tr.get('name')))
+            if scored:
+                total = sum(a for a, _s in scored)
+                top = [(s, a / total) for a, s in sorted(scored, reverse=True)[:3]]
+                r['raw']['attribution'] = [{'stem': s, 'share': round(v, 3), 'method': 'score onset'}
+                                           for s, v in top]
+                notes.append(f"{r['row']}: no processed stems, so the owner is read from the score's written onsets at "
+                             f"{ev[0][0]:.3f}s: " + ', '.join(f'{s} {100 * v:.0f}%' for s, v in top))
+                n = float(r.get('value') or len(ev) or 0.0)
+                for stem, share in top[:1]:
+                    for lv in catalog.stem_levers(case, [dict(stem=stem)], domain='master'):
+                        if lv.id not in [x.id for x in lv_list]:
+                            lv_list.append(lv)
+                        if lv.kind == 'onset':
+                            coef[(key, lv.id)] = -share * n
+                        elif lv.kind == 'eq':
+                            band = catalog.band_share_for(case, lv, r)
+                            if band:
+                                coef[(key, lv.id)] = -share * n * band
+                continue
+            notes.append(f"{r['row']}: no processed stems and no written onset at that instant, so the impulse could "
+                         f"not be attributed")
             continue
         scored.sort(reverse=True)
         total = sum(a for a, _s in scored)

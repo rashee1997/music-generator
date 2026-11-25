@@ -26,7 +26,7 @@ from . import margins
 
 class Plan:
     def __init__(self, deltas=None, predicted=None, conflicts=(), closed=(), burned=(), notes=(), t=None,
-                 status='ok'):
+                 status='ok', clearing=None):
         self.deltas = deltas or {}          # lever id -> recommended move in the lever's unit
         self.predicted = predicted or {}    # row key -> (safety now, safety after)
         self.conflicts = list(conflicts)
@@ -35,9 +35,10 @@ class Plan:
         self.notes = list(notes)
         self.t = t
         self.status = status
+        self.clearing = dict(clearing or {})     # the smallest move that makes every judged row pass, if one exists
 
     def as_dict(self):
-        return dict(status=self.status, worst_safety=self.t, deltas=self.deltas,
+        return dict(status=self.status, worst_safety=self.t, deltas=self.deltas, clearing=self.clearing,
                     predicted={k: list(v) for k, v in self.predicted.items()},
                     conflicts=self.conflicts, closed=self.closed, burned=self.burned, notes=self.notes)
 
@@ -95,7 +96,10 @@ def plan(analysis, history=(), max_rows=None):
             A[:, j] = 0.0
             burned.append(dict(lever=lv.id, text=lv.text, rows=sorted({seen[k]['row'] for k in hits})))
 
-    live = [j for j in range(len(levers)) if np.any(A[:, j] != 0.0)]
+    # Only a lever that moves a *binding* row is allowed to move at all: a change nothing in question needs is not a
+    # fix, and an unpinned lever gets walked by the tie-break and reported as if it mattered.
+    live = [j for j in range(len(levers))
+            if any(abs(A[row_keys.index(k), j]) > 0 for k in binding if k in row_keys)]
     dead = [j for j in range(len(levers)) if j not in live]
     closed = [seen[k]['row'] for k in row_keys if k in binding and not np.any(A[row_keys.index(k), :] != 0.0)]
 
@@ -107,7 +111,7 @@ def plan(analysis, history=(), max_rows=None):
     n, m = len(levers), len(row_keys)
     c = np.zeros(n + 1)
     c[-1] = -1.0
-    c[:n] = 1e-4                                  # tie-break: the smallest total move
+    c[:n] = 0.01                                  # fewest levers: a move has to buy real safety to be worth it
     A_ub = np.hstack([-A, np.ones((m, 1))])
     # A lever that moves no judged row is pinned: otherwise the tie-break walks it for no reason and the plan
     # recommends a change with no predicted effect.
@@ -141,6 +145,13 @@ def plan(analysis, history=(), max_rows=None):
     predicted = {k: (float(s[i]), float(after[i])) for i, k in enumerate(row_keys)}
     conflicts = _conflicts(seen, row_keys, levers, A, s, binding)
     notes = []
+    # Second stage: the max-min plan stops as soon as the failing row reaches the next-tightest one, which balances the
+    # margins but may leave the row still failing. When it does, ask the other question - the smallest total move that
+    # makes every judged row pass (safety >= 0) - and report it as the clearing set. L1, so it prefers one lever over
+    # several half-measures; infeasible means no admissible value clears the row at all.
+    clearing = {}
+    if moves and min((after[row_keys.index(k)] for k in binding if k in row_keys), default=0.0) < 0:
+        clearing = _clearing(A, s, levers, dead)
     # A solved programme can still end below zero when the rows it must not break have no lever of their own: the
     # honest verdict then is "this is the best admissible set, and it does not clear the row", not "solved".
     worst_after = min((after[row_keys.index(k)] for k in binding if k in row_keys), default=0.0)
@@ -154,8 +165,40 @@ def plan(analysis, history=(), max_rows=None):
         notes.append('the box-constrained programme is infeasible; the plan is the best single-move set, see conflicts')
     if not moves:
         notes.append('no admissible move improves the binding rows: every lever is burned, closed or already optimal')
-    return Plan(deltas=moves, predicted=predicted, conflicts=conflicts, closed=closed, burned=burned,
+    plan = Plan(deltas=moves, predicted=predicted, conflicts=conflicts, closed=closed, burned=burned,
                 notes=notes, t=t, status=status)
+    plan.clearing = clearing
+    return plan
+
+
+def _clearing(A, s, levers, dead):
+    """The smallest total move that puts every judged row at safety >= 0, or {} when no value does."""
+    n = len(levers)
+    if n == 0:
+        return {}
+    try:
+        from scipy.optimize import linprog
+    except Exception:
+        return {}
+    # d = dp - dn with dp, dn >= 0; minimise the sum of both, which is |d|
+    A2 = np.hstack([A, -A])
+    c = np.ones(2 * n)
+    bounds = []
+    for j, lv in enumerate(levers):
+        span = 0.0 if j in dead else max(0.0, lv.hi - lv.current)
+        down = 0.0 if j in dead else max(0.0, lv.current - lv.lo)
+        bounds += [(0.0, span), (0.0, down)]
+    # s + A d >= 0  <=>  -(A d) <= s
+    res = linprog(c, A_ub=-A2, b_ub=s, bounds=bounds, method='highs')
+    if res.status != 0 or res.x is None:
+        return {}
+    d = res.x[:n] - res.x[n:]
+    out = {}
+    for j, lv in enumerate(levers):
+        snapped = lv.snap(d[j])
+        if abs(snapped) > 1e-9:
+            out[lv.id] = snapped
+    return out
 
 
 def _greedy(A, s, binding, row_keys, levers):

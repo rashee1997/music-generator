@@ -67,7 +67,13 @@ def safety(row):
     s = sense(row)
     ss = scale(row) or 1.0
     room = (thr - val) if s == 'max' else (val - thr)
-    return room / ss, s, ss
+    safety = room / ss
+    if row.get('level') == 'PASS' and safety < 0:
+        # The gate accepted this row, so its own tolerance band is wider than this row's scale (a loudness target with
+        # a +/- band, say). Scoring it negative would let a passing row throttle every proposal and would contradict
+        # the verdict the report quotes; keep it just above zero instead.
+        return 0.02, s, ss
+    return safety, s, ss
 
 
 def describe(s):
