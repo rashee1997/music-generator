@@ -56,13 +56,13 @@ def render_stems(stems, layout_name, target_name=None, score=None, specs=None, s
         specs = specs_from_score(score) if score else {}
     names = config.channel_names(layout_name)
     spk = config.speakers(layout_name)
-    lfe_spk = config.lfe_speaker(layout_name)
+    lfe_spk = config.lfe_speakers(layout_name)
     cfg = config.lfe_cfg(layout_name, target_name)
     roles = set(cfg.get('roles') or [])
     decorated = (config.layout(layout_name).get('decorrelation') or {})
     n = max((len(_mono(v)) for v in stems.values()), default=0)
     mix = {name: np.zeros(n, dtype=np.float64) for name in names}
-    sends = []
+    sends, pans = [], []
     for name, y in stems.items():
         spec = dict(specs.get(name) or {})
         x = _mono(y)
@@ -73,18 +73,20 @@ def render_stems(stems, layout_name, target_name=None, score=None, specs=None, s
         el = float(spec.get('elevation', 0.0))
         if role in roles and cfg.get('lowpass_hz'):
             sends.append(x)
+            pans.append(float(spec.get('lfe_pan', 0.0) or 0.0))
             mains = bass.highpass(x, sr, float(cfg['lowpass_hz']))
         else:
             mains = x
         layer = spec.get('lfe_send_db')
         if layer is not None and cfg.get('lowpass_hz'):      # an optional complement send for a full-range track
             sends.append(x * bass.send_gain(float(layer)))
+            pans.append(float(spec.get('lfe_pan', 0.0) or 0.0))
         for sp_name, g in pan.gains(az, el, spk).items():
             if g:
                 mix[sp_name][:len(mains)] += mains * g
     if cfg.get('lowpass_hz') and sends and lfe_spk:
-        lfe = bass.lfe_bus(sends, sr, cfg)
-        mix[lfe_spk['name']][:len(lfe)] += lfe
+        for sp, low in zip(lfe_spk, bass.lfe_channels(sends, pans, sr, cfg, len(lfe_spk))):
+            mix[sp['name']][:len(low)] += low
     mix = decorrelate.bus(mix, decorated, sr)
     probs = config.problems(layout_name)
     if probs:                                      # data is broken: say so instead of writing a crooked file
@@ -138,6 +140,7 @@ class LayoutBus:
     The interface is the one `bus` in mix_stems expects: add(name, signal, spec), add_reverb(signal), result().
     """
     places_tracks = True               # with immersive on, the mixer hands tracks over unplaced
+    unplaced = True                    # ... and without it too: a track panned for two speakers is not placed for eight
 
     def __init__(self, layout_name, target_name=None, sr=44100):
         problems = config.problems(layout_name)
@@ -149,13 +152,14 @@ class LayoutBus:
         layout = config.layout(layout_name)
         self.names = config.channel_names(layout_name)
         self.speakers = config.speakers(layout_name)
-        self.lfe_speaker = config.lfe_speaker(layout_name)
+        self.lfe_speakers = config.lfe_speakers(layout_name)
         self.lfe = config.lfe_cfg(layout_name, target_name)
         self.roles = set(self.lfe.get('roles') or [])
         self.reverb = layout.get('reverb') or {}
         self.decorrelation = layout.get('decorrelation') or {}
         self.parts = {name: [] for name in self.names}
         self.low_sends = []
+        self.low_pans = []
         self.room = None
         self.imm, self.score = None, None      # set by the mixer when the piece is immersive
 
@@ -181,16 +185,23 @@ class LayoutBus:
         cutoff = self.lfe.get('lowpass_hz')
         if role in self.roles and cutoff:
             self.low_sends.append(mono)
+            self.low_pans.append(float(spec.get('lfe_pan', 0.0) or 0.0))
             mains = bass.highpass(mono, self.sr, float(cutoff))
         else:
             mains = mono
         extra = spec.get('lfe_send_db')            # an optional complement send for a full-range track
         if extra is not None and cutoff:
             self.low_sends.append(mono * bass.send_gain(float(extra)))
+            self.low_pans.append(float(spec.get('lfe_pan', 0.0) or 0.0))
         # The mixer keeps a track's place in `spatial`; a flat azimuth/elevation is still accepted for a caller
         # that hands raw specs. Reading only the flat pair put every track at 0 deg (front centre).
         sp = spec.get('spatial') or {}
-        azimuth = float(sp.get('azimuth', spec.get('azimuth', 0.0)))
+        # A track with a stereo `pan` and no place of its own sits on the front stage at that pan: full left is the
+        # layout's front-left loudspeaker (`reverb.front_azimuth_max` is the front stage's half-width). It used to
+        # arrive already panned for two speakers, be averaged to one channel and land in the centre loudspeaker,
+        # so a piece that was never staged in 3-D came out of 7.1 as mono in the centre.
+        from_pan = float(np.clip(float(spec.get('pan', 0.0) or 0.0), -1.0, 1.0)) * float(self.reverb.get('front_azimuth_max', 0.0))
+        azimuth = float(sp.get('azimuth', spec.get('azimuth', from_pan)))
         elevation = float(sp.get('elevation', spec.get('elevation', 0.0)))
         path = None
         if self.imm and sp:                    # an immersive piece: the role's height, and the track's own path
@@ -253,14 +264,89 @@ class LayoutBus:
             for i, speaker in enumerate(self.speakers):
                 m = min(n, len(room))
                 mix[speaker['name']][:m] += room[:m, i]
-        if self.lfe_speaker is not None and self.low_sends:
-            low = bass.lfe_bus(self.low_sends, self.sr, self.lfe)
-            mix[self.lfe_speaker['name']][:len(low)] += low
+        if self.lfe_speakers and self.low_sends:
+            lows = bass.lfe_channels(self.low_sends, self.low_pans, self.sr, self.lfe, len(self.lfe_speakers))
+            for sp, low in zip(self.lfe_speakers, lows):
+                mix[sp['name']][:len(low)] += low
         # The low-frequency channel is never decorrelated: it is not a spatial channel, and phase-scrambling a sub
         # only smears it. (decorrelate.bus treats `names` as the channels to leave alone.)
-        skip = [self.lfe_speaker['name']] if self.lfe_speaker else None
+        skip = [sp['name'] for sp in self.lfe_speakers] or None
         mix = decorrelate.bus(mix, self.decorrelation, self.sr, names=skip)
         return np.stack([mix[name] for name in self.names], axis=1)
+
+
+class MonoBus:
+    """The summing target of the one-channel deliverable.
+
+    A mono file made by adding the two channels of a stereo or headphone master inherits everything that master did
+    to place its sources: a hard-panned part comes out 3 dB down, widened parts lose what was added out of phase, and
+    a head-filtered source is notched where its two ears disagree. So mono is rendered instead: mixer.mix_stems makes
+    every per-track decision as usual, hands each track over without pan, width or head filter (`unplaced`), and this
+    bus adds them at the level the mix gave them.
+
+    A track that is stereo in itself (a sampled piano, a decorrelated bed) and the shared reverb return still have
+    two channels. Their mid is taken, and the level lost by averaging two channels that are not identical is given
+    back with one gain, bounded by the target's `mono.compensate_max_db`: two unrelated channels average 3 dB down,
+    and nothing is ever boosted beyond that bound to rescue a part whose channels cancel.
+    """
+    unplaced = True
+
+    def __init__(self, sr=44100, cfg=None):
+        self.sr = int(sr)
+        self.cfg = dict(cfg or {})
+        self.parts = []
+        self.compensation = {}
+
+    def _one(self, name, y):
+        y = np.asarray(y, dtype=np.float64)
+        if y.ndim == 1 or y.shape[1] == 1:
+            return y.reshape(-1)
+        mid = 0.5 * (y[:, 0] + y[:, 1])
+        limit = float(self.cfg.get('compensate_max_db', 0.0))
+        if limit <= 0.0:
+            return mid
+        want = float(np.mean(y[:, 0] ** 2 + y[:, 1] ** 2)) / 2.0
+        have = float(np.mean(mid ** 2))
+        if have <= 0.0 or want <= 0.0:
+            return mid
+        gain_db = float(np.clip(10.0 * np.log10(want / have), 0.0, limit))
+        self.compensation[name] = gain_db
+        return mid * 10.0 ** (gain_db / 20.0)
+
+    def add(self, name, y, spec):
+        x = self._one(name, y)
+        if x.size:
+            self.parts.append(x)
+
+    def add_reverb(self, ret):
+        if ret is not None and len(ret):
+            self.parts.append(self._one('reverb_return', ret))
+
+    def result(self):
+        n = max((len(p) for p in self.parts), default=0)
+        out = np.zeros(n, dtype=np.float64)
+        for p in self.parts:
+            out[:len(p)] += p
+        return out.astype(np.float32)[:, None]
+
+
+def mono_mix(score, stems, target, sr=44100, ctx=None):
+    """The one-channel deliverable: the same mix, summed by a MonoBus, through the same master chain."""
+    import mixer
+    from . import master
+    ctx = mixer._context_for(score, ctx)
+    bus = MonoBus(sr, (target or {}).get('mono'))
+    mix = mixer.trim_tail(mixer.mix_stems(score, stems, sr, ctx, bus=bus), sr)
+    master_cfg = dict(score.get('master') or {})
+    # The master chain is a two-channel chain; a one-channel programme goes through it as two identical channels
+    # (which is how a mono file is played on a stereo system, and the loudness the target is set on).
+    out = mixer.master_chain(np.repeat(mix, 2, axis=1), master_cfg, sr, ctx)
+    out = mixer.fades(out, sr, fout=master.resolved(score)['fade_out'])
+    REPORT['mono'] = dict(compensation_db=dict(bus.compensation))
+    return out[:, :1]
+
+
+REPORT = {}
 
 
 def spatial_mix(score, stems, target_name, sr=44100, ctx=None):
@@ -303,12 +389,13 @@ def binaural_mix(score, stems, sr=44100, ctx=None):
     spatial.py when it is not).
     """
     import mixer
+    from . import master
     with _immersive(score, ctx) as bctx:
         mix = mixer.mix_stems(score, stems, sr, bctx)
         mix = mixer.trim_tail(mix, sr)
         master_cfg = dict(score.get('master') or {})
         out = mixer.master_chain(mix, master_cfg, sr, bctx)
-        out = mixer.fades(out, sr, fout=float(master_cfg.get('fade_out', 0.6)))
+        out = mixer.fades(out, sr, fout=master.resolved(score)['fade_out'])
     return out
 
 
@@ -322,13 +409,13 @@ def _level(audio, ref, score, target, sr):
     report (AdmBus.report) and in spatial_gate's adm.loudness row."""
     import mixer
     from . import master
-    cfg = mixer._master_cfg(dict(score.get('master') or {}), mixer._mix())
-    gain_db = float(cfg.get('lufs', -14.0)) - float(mixer.lufs(ref, sr))
+    rs = master.resolved(score)
+    gain_db = rs['lufs'] - float(mixer.lufs(ref, sr))
     if not np.isfinite(gain_db):
         gain_db = 0.0
     ceiling = float(target.get('true_peak_dbtp', -1.5))
     gain_db = min(gain_db, ceiling - 0.05 - max(master.channel_peaks(audio, sr)))
-    return mixer.fades(audio * np.float32(10.0 ** (gain_db / 20.0)), sr, fout=float(cfg.get('fade_out', 0.6)))
+    return mixer.fades(audio * np.float32(10.0 ** (gain_db / 20.0)), sr, fout=rs['fade_out'])
 
 
 def hoa_mix(score, stems, target, sr=44100, ctx=None):
@@ -338,7 +425,9 @@ def hoa_mix(score, stems, target, sr=44100, ctx=None):
     from . import hoa
     with _immersive(score, ctx) as bctx:
         imm = bctx.mix['immersive']
-        bus = hoa.HoaBus(sr, int(target.get('order') or imm.get('order', 5)), 'ambix', imm, bctx.space, score)
+        # `order` in a target preset is its place in the listing, not an ambisonic order: reading it here wrote
+        # a 49-channel file for a target that promises 36. The field's order is `ambisonic_order`.
+        bus = hoa.HoaBus(sr, int(target.get('ambisonic_order') or imm.get('order', 5)), 'ambix', imm, bctx.space, score)
         field = mixer.trim_tail(mixer.mix_stems(score, stems, sr, bctx, bus=bus), sr)
         return _level(field, np.repeat(field[:, :1], 2, axis=1), score, target, sr)   # W is the plain pressure
 
@@ -372,8 +461,64 @@ def to_rate(audio, sr, rate, ceiling=None):
     return out
 
 
-def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None):
-    """Build one requested deliverable and write it. The target preset's `renderer` names the route."""
+def conform_length(audio, n):
+    """`audio` made exactly `n` samples long. Every format trims its own silent tail from its own mix, and the field,
+    object and loudspeaker mixes have different tails, so the files of one piece ended up tens of milliseconds apart
+    (a 36-channel AmbiX 27 ms shorter than its stereo master). Shorter: padded with silence. Longer: cut, with a 10 ms
+    fade so the cut is not a step."""
+    n = int(n)
+    if len(audio) == n:
+        return audio
+    if len(audio) < n:
+        pad = np.zeros((n - len(audio),) + audio.shape[1:], audio.dtype)
+        return np.concatenate([audio, pad], axis=0)
+    out = np.array(audio[:n])
+    k = min(n, int(0.010 * 44100))
+    if k > 1:
+        out[-k:] *= np.linspace(1.0, 0.0, k, dtype=out.dtype).reshape((k,) + (1,) * (out.ndim - 1))
+    return out
+
+
+def iamf_encoder():
+    """The AOMedia iamf-tools encoder this run can call, or None.
+
+    The tool is a separate C++ build (github.com/AOMediaCodec/iamf-tools); this engine does not vendor it. Point
+    `IAMF_ENCODER` at its `encoder_main` binary, or have one of the known names on PATH.
+    """
+    import os
+    import shutil
+    return (os.environ.get('IAMF_ENCODER') or shutil.which('iamf-tools-encoder')
+            or shutil.which('encoder_main'))
+
+
+def _iamf_encode(adm_path, out_path, work):
+    """Encode one ADM BW64 file to IAMF with the external encoder. Missing tool is an error naming the fix."""
+    import glob
+    import os
+    import shutil
+    import subprocess
+    exe = iamf_encoder()
+    if not exe:
+        raise ValueError('the "iamf" deliverable needs AOMedia iamf-tools (github.com/AOMediaCodec/iamf-tools): '
+                         'build its encoder_main and set IAMF_ENCODER to that path. No IAMF encoder was found, so '
+                         'no file was written')
+    proc = subprocess.run([exe, f'--adm_filename={adm_path}', f'--output_iamf_directory={work}'],
+                          capture_output=True, text=True)
+    if proc.returncode != 0:
+        raise ValueError(f'iamf-tools failed ({proc.returncode}): {(proc.stderr or proc.stdout).strip()[-800:]}')
+    made = sorted(glob.glob(os.path.join(work, '*.iamf')))
+    if not made:
+        raise ValueError('iamf-tools wrote no .iamf file: nothing was delivered')
+    os.makedirs(os.path.dirname(os.path.abspath(out_path)) or '.', exist_ok=True)
+    shutil.move(made[0], out_path)
+    return out_path
+
+
+def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None, length_s=None):
+    """Build one requested deliverable and write it. The target preset's `renderer` names the route.
+
+    `length_s` is the length of the certified master: every format that is built on its own is conformed to it, so
+    the files of one piece start and end together."""
     target = config.target(target_name) or {}
     renderer = target.get('renderer')
     rate = int(target.get('rate_hz') or sr)
@@ -381,9 +526,12 @@ def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None):
     subtype = str(target.get('subtype') or 'PCM_24')
     if renderer == 'spatial':
         from . import master
-        audio = master.master(spatial_mix(score, stems, target_name, sr, ctx), score, target, sr)
+        audio = master.master(spatial_mix(score, stems, target_name, sr, ctx), score, target, sr,
+                              mix=(ctx.mix if ctx is not None else None))
     elif renderer == 'binaural':
         audio = binaural_mix(score, stems, sr, ctx)
+    elif renderer == 'mono':
+        audio = mono_mix(score, stems, target, sr, ctx)
     elif renderer == 'hoa':
         audio = hoa_mix(score, stems, target, sr, ctx)
     elif renderer == 'adm':
@@ -391,14 +539,79 @@ def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None):
         import os as _os
         from . import adm
         audio, bus = adm_mix(score, stems, target, sr, ctx)
+        if length_s is not None:
+            audio = conform_length(audio, round(float(length_s) * sr))
         audio = to_rate(audio, sr, rate, ceiling)   # rescales at the target rate, re-alarms its true peak
-        out_path = adm.write(path, audio, rate, bus.xml(len(audio), rate), bus.chna())
+        from mix_engine import dsp_utils as _du
+        from . import master as _master
+        fold = bus.stereo_fold(audio)
+        measured = dict(integrated_lufs=float(_du.lufs(fold, rate)),
+                        max_true_peak_dbtp=float(max(_master.channel_peaks(audio, rate))))
+        out_path = adm.write(path, audio, rate, bus.xml(len(audio), rate, measured), bus.chna())
         report = bus.report(len(audio), rate)
         report.update({'format': 'BW64', 'file': str(out_path), 'true_peak_ceiling_dbtp': ceiling,
+                       'integrated_lufs': measured['integrated_lufs'],
+                       'max_true_peak_dbtp': measured['max_true_peak_dbtp'],
+                       'loudness_renderer': 'urn:rashee1997:music-generator:adm-stereo-fold',
+                       'conform_ms': (None if length_s is None
+                                      else float((len(audio) / float(rate) - float(length_s)) * 1000.0)),
                        'validation': 'scripts/spatial_engine/adm.py validate_file (structural; gate rows in '
                                      'scripts/spatial_gate.py). No third-party validator ran.'})
         with open(str(out_path) + '.adm_report.json', 'w', encoding='utf-8') as fh:
             json.dump(report, fh, indent=2)
+        return out_path
+    elif renderer == 'adm_speakers':
+        import json
+        from . import adm, master as _master
+        layout_name = target.get('layout')
+        audio = _master.master(spatial_mix(score, stems, target_name, sr, ctx), score, target, sr,
+                               mix=(ctx.mix if ctx is not None else None))
+        if length_s is not None:
+            audio = conform_length(audio, round(float(length_s) * sr))
+        audio = to_rate(audio, sr, rate, ceiling)
+        bed = adm.SpeakerBed(layout_name, rate, score)
+        measured = dict(integrated_lufs=float(_master.programme_lufs(audio, layout_name, rate, target)[0]),
+                        max_true_peak_dbtp=float(max(_master.channel_peaks(audio, rate))))
+        out_path = adm.write(path, audio, rate, bed.xml(len(audio), rate, measured), bed.chna())
+        report = bed.report(len(audio), rate)
+        report.update({'format': 'BW64', 'file': str(out_path), 'true_peak_ceiling_dbtp': ceiling,
+                       'integrated_lufs': measured['integrated_lufs'], 'max_true_peak_dbtp': measured['max_true_peak_dbtp'],
+                       'conform_ms': (None if length_s is None
+                                      else float((len(audio) / float(rate) - float(length_s)) * 1000.0)),
+                       'validation': 'scripts/spatial_engine/adm.py validate_file (structural). No third-party validator ran.'})
+        with open(str(out_path) + '.adm_report.json', 'w', encoding='utf-8') as fh:
+            json.dump(report, fh, indent=2)
+        return out_path
+    elif renderer == 'iamf':
+        import json
+        import os as _os
+        import shutil
+        import tempfile
+        from . import adm
+        audio, bus = adm_mix(score, stems, target, sr, ctx)
+        if length_s is not None:
+            audio = conform_length(audio, round(float(length_s) * sr))
+        audio = to_rate(audio, sr, rate, ceiling)
+        from mix_engine import dsp_utils as _du
+        from . import master as _master
+        fold = bus.stereo_fold(audio)
+        measured = dict(integrated_lufs=float(_du.lufs(fold, rate)),
+                        max_true_peak_dbtp=float(max(_master.channel_peaks(audio, rate))))
+        work = tempfile.mkdtemp(prefix='iamf_')
+        adm_path = _os.path.join(work, 'master_adm.wav')
+        adm.write(adm_path, audio, rate, bus.xml(len(audio), rate, measured), bus.chna())
+        out_path = _iamf_encode(adm_path, path, work)
+        report = bus.report(len(audio), rate)
+        report.update({'format': 'IAMF', 'file': str(out_path), 'encoder': iamf_encoder(),
+                       'integrated_lufs': measured['integrated_lufs'],
+                       'max_true_peak_dbtp': measured['max_true_peak_dbtp'],
+                       'conform_ms': (None if length_s is None
+                                      else float((len(audio) / float(rate) - float(length_s)) * 1000.0)),
+                       'validation': 'encoded by AOMedia iamf-tools from this engine\'s ADM BW64; the container was '
+                                     'checked structurally here, not decoded by libiamf'})
+        with open(str(out_path) + '.iamf_report.json', 'w', encoding='utf-8') as fh:
+            json.dump(report, fh, indent=2)
+        shutil.rmtree(work, ignore_errors=True)
         return out_path
     elif renderer == 'mix_master':
         import mixer
@@ -411,5 +624,7 @@ def render_deliverable(score, stems, target_name, path, sr=44100, ctx=None):
         return path
     else:
         raise ValueError(f'deliverable "{target_name}" names renderer {renderer!r}, which the engine does not have')
+    if length_s is not None:
+        audio = conform_length(audio, round(float(length_s) * sr))
     write(path, to_rate(audio, sr, rate, ceiling), rate, subtype=subtype)
     return path

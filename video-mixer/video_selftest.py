@@ -241,6 +241,14 @@ def run():
         sync_rows = []
         G.motion_sync_row(beats, [{'t_s': 1.6, 'kind': 'motion'}], cfg['gate'], sync_rows)
         check(results, 'control: late movement hit fails', sync_rows[0][0] == 'FAIL', sync_rows[0][2])
+        sync_rows = []
+        G.motion_sync_row([{'t': 1.0}], [{'t_s': 1.0, 'kind': 'motion'}], cfg['gate'], sync_rows, independent=False)
+        check(results, 'control: circular beats are not a pass', sync_rows[0][0] == 'INFO', sync_rows[0][2])
+        tp_rows = []
+        tp_prof = dict(prof, true_peak_db=float(mx.true_peak_db(program, sr)) - 0.05)
+        G.master_row(program_wav, dict(tp_prof, lufs=float(mx.lufs(program, sr))), dict(cfg['gate'], loudness_tolerance_lu=50.0),
+                     tp_rows)
+        check(results, 'control: a peak 0.05 dB over the ceiling fails', tp_rows[0][0] == 'FAIL', tp_rows[0][2])
 
         cls_rows = []
         G.hit_class_row([{'t': 2.0, 'class': 'dead_on', 'offset_s': 0.0}], film_hits, cls_rows)

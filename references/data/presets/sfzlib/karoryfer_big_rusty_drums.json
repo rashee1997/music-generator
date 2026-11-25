@@ -1,0 +1,29 @@
+{
+  "name": "karoryfer_big_rusty_drums",
+  "character": "Karoryfer Big Rusty Drums: a close-miked rock drum kit published as SFZ on the sfzinstruments GitHub organisation",
+  "type": "library",
+  "licence": "see the repository's own licence file (not read)",
+  "licence_url": "https://github.com/sfzinstruments/karoryfer.big-rusty-drums",
+  "share_alike": false,
+  "attribution": "Big Rusty Drums, Karoryfer Samples",
+  "homepage": "https://github.com/sfzinstruments/karoryfer.big-rusty-drums",
+  "families": [
+    "drums"
+  ],
+  "verified": false,
+  "source": {
+    "kind": "manual"
+  },
+  "entry": ".",
+  "parts": {
+    "all": {
+      "what": "the library as its author publishes it",
+      "manual": "https://github.com/sfzinstruments/karoryfer.big-rusty-drums",
+      "manual_note": "Open the page, download the SFZ instrument (Code, Download ZIP), then run: sfz_libs.py install-local karoryfer_big_rusty_drums <downloaded.zip> --project <dir>. Then name it in an instrument preset: \"sfz\": {\"library\": \"karoryfer_big_rusty_drums\", \"patch\": \"<path/to/patch>\"}."
+    }
+  },
+  "default_parts": [
+    "all"
+  ],
+  "notes": "Listed from the sfzinstruments organisation; the page was not opened when this entry was written. Read the repository's licence file before use."
+}

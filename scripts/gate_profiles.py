@@ -93,6 +93,11 @@ ROWS = {
     'end.abrupt': dict(meaning='the master ends at full level with no release', params={
         'min_decay_db': (12.0, 8.0, 20.0), 'floor_db': (-45.0, -60.0, -30.0)}),
     'master.dc': dict(meaning='DC offset on the master', params={'dc_max': (0.001, 0.0005, 0.01)}),
+    # measured delivery, reported rather than judged: no document defines a pass mark for these
+    'master.micro_dynamics': dict(meaning='PLR/PSR/LRA and the 4x/8x true-peak reading (reported)'),
+    'master.mono_bands': dict(meaning='per-band L/R correlation and mono-fold loss (reported)'),
+    'delivery.standard': dict(meaning='the delivered file against the standard its profile declares'),
+    'masking.excess': dict(meaning='the beds level over the figure per critical band (proxy, advisory)'),
     'tempo.audio': dict(meaning='measured tempo against the score/sheet', params={
         'tol_bpm': (2.0, 1.0, 5.0), 'tol_pct': (2.0, 1.0, 5.0), 'drift_bpm': (2.0, 1.0, 5.0)}),
     'section.energy': dict(meaning='section level against the promised energy arc', params={
@@ -251,11 +256,152 @@ ROWS = {
     'mix.band_fold':     dict(meaning='mono fold-down loss in each auditory band, 100-5000 Hz',
                               params={'max_db': (3.5, 2.0, 9.0), 'floor_db': (30.0, 12.0, 60.0)}),
     'imm.kinematics':    dict(meaning='no source travels faster than its role allows'),
+    # Immersive 3.1: delivery ceilings and decoder uniformity (scripts/spatial_gate.py)
+    'delivery.loudness_ceiling': dict(meaning='integrated loudness against the ceiling the target declares',
+                                     params={'max_lufs': (-18.0, -24.0, -10.0)}),
+    'delivery.conform': dict(meaning='duration against the certified stereo master',
+                             params={'max_abs_ms': (50.0, 10.0, 200.0)}),
+    'iamf.container': dict(meaning='an IAMF deliverable was written by the external encoder'),
+    'imm.decode_uniformity': dict(meaning='plane-wave power spread of the all-round decoder',
+                                  params={'max_spread_db': (2.0, 0.5, 12.0)}),
+    # two low-frequency channels and a three-front stage (scripts/spatial_engine/lfe_qa.py, spatial_gate.lfe_rows).
+    # Advisory except a flipped sub: limits are starting values until measured on a room.
+    'lfe.sum_coherence': dict(meaning='LFE1 and LFE2 add coherently below the decorrelation corner',
+                              params={'min_rho': (0.9, 0.5, 0.99)},
+                              hint='mode stereo_bass, a lower decorrelate_above_hz, or lfe_pan on the bass tracks'),
+    'lfe.polarity': dict(meaning='LFE1 and LFE2 are not in opposed polarity',
+                         params={'min_rho': (-0.3, -0.9, 0.0)},
+                         hint='fix lfe.polarity in the layout, or the bass preset that is inverted'),
+    'lfe.fold_loss': dict(meaning='summing the two low-frequency channels into one loses no level in any 1/3 octave',
+                          params={'max_db': (1.5, 0.5, 6.0)},
+                          hint='reduce the decorrelation (stages or max_group_delay_ms) or narrow the stereo bass'),
+    'lfe.modal_spread': dict(meaning='two subs do not widen the spatial spread of a virtual box room against one (model, advisory)',
+                             params={'min_gain_db': (0.0, -3.0, 6.0)},
+                             hint='the model is of the layout\'s qa.listening_room: change its sub positions or report that the room is unknown'),
+    'front.fold_phantom': dict(meaning='the centre folded into L and R keeps its interaural time and level cues (measured head set)',
+                               params={'max_itd_us': (100.0, 30.0, 300.0), 'max_ild_db': (2.0, 0.5, 6.0)},
+                               hint='move content off L/R toward C, or lower the inter-channel correlation of L and R'),
+    # the virtual ear (scripts/ear_model, scripts/ear_rows.py): advisory, starting values calibrated on synthetic fixtures only
+    'ear.fatigue': dict(meaning='sustained neural adaptation at a stable loudness (a dense pad a loudness meter does not see)',
+                        params={'f_max': (0.6, 0.3, 0.9), 'min_seconds': (5.0, 2.0, 30.0), 'lufs_range_lu': (2.0, 0.5, 6.0)},
+                        hint='thin the pad, add rests or motion, lower the bed gain_db, or high-pass it'),
+    'ear.masking': dict(meaning='the figure keeps its share of neural activity in its own channels against the beds',
+                        params={'min_share': (0.5, 0.2, 0.9), 'min_frames': (0.7, 0.3, 1.0)},
+                        hint='lane EQ, lead_carve, a lower bed level or a different register'),
+    'ear.mod_roughness': dict(meaning='30-150 Hz envelope modulation of the neural pattern (saturates with level: under-reads loud material)',
+                              params={'max_index': (0.6, 0.2, 1.0), 'min_frames': (3, 1, 10)},
+                              hint='roughness_forecast.py diagnose names the clashing partials; move the part'),
+    'ear.pitch_salience': dict(meaning='the figure keeps a clear pitch inside the mix (fundamentals up to about 700 Hz)',
+                               params={'min_salience': (0.25, 0.05, 0.8), 'min_frames': (0.5, 0.2, 1.0)},
+                               hint='raise the register, remove a co-registered bed, or change the timbre'),
+    'ear.iacc': dict(meaning='interaural correlation of the neural patterns of a two-channel master, 500-880 Hz',
+                     params={'min_iacc': (0.1, 0.0, 0.5), 'max_iacc': (0.98, 0.8, 1.0)},
+                     hint='set the placement; widen or narrow the stems'),
+    # the inferred-neurochemical layer (scripts/chem_model, scripts/chem_rows.py): advisory, INFO/WARN at most, every
+    # number a starting value and no row ever a FAIL (docs/NEUROCHEMICAL-AFFECT-PLAN.md section 4.1). A profile may
+    # skip one for a type of music whose brief is different, with the measurement that says so.
+    'chem.model': dict(meaning='the chem presets validated, and what the layer reads and does not read',
+                       hint='fix references/data/presets/gate/chem/model.json, moods.json or genres.json; the row names the key'),
+    'chem.reward_build': dict(meaning='the anticipation pool earns the arrival instead of the piece just getting louder',
+                              params={'min_lead_s': (4.0, 1.0, 20.0), 'min_rho': (0.4, 0.0, 0.95), 'min_peak': (0.45, 0.1, 0.9)},
+                              hint='lengthen the build, withhold the tonic, raise the tension before the hit, or move the arrival later'),
+    'chem.reward_arrival': dict(meaning='a consummation event lands at the declared hit, with a real change in it',
+                                params={'min_peak': (0.5, 0.1, 0.9), 'max_offset_s': (2.0, 0.5, 8.0), 'min_contrast_db': (3.0, 0.5, 9.0)},
+                                hint='put a timbre, low-end, voice or register change at the hit instead of a level nudge'),
+    'chem.stress_load': dict(meaning='tension is carried and then resolved, not accumulated',
+                             params={'max_mean_load': (0.35, 0.05, 1.0), 'max_unresolved_s': (8.0, 2.0, 30.0),
+                                     'min_resolve_frac': (0.6, 0.2, 1.0)},
+                             hint='resolve the dominant, thin the cluster, add a breath, move roughness out of the figure band'),
+    'chem.affiliation': dict(meaning='there is something voice-like to bond with',
+                             params={'min_mean': (0.45, 0.1, 0.9), 'min_legato': (0.5, 0.1, 0.95)},
+                             hint='a singable legato contour, a voice or hum, a slower harmonic rhythm, warmth at 150-400 Hz'),
+    'chem.motor_drive': dict(meaning='the body has a pulse to lock to, inside the Witek syncopation window',
+                             params={'bsi_lo': (0.4, 0.0, 2.0), 'bsi_hi': (4.8, 2.0, 8.0), 'min_pulse': (0.4, 0.1, 0.9),
+                                     'min_mean': (0.4, 0.1, 0.9)},
+                             hint='syncopate the cell into the window, give the kick and bass one owner, keep the peak long enough'),
+    'chem.recovery': dict(meaning='the piece comes down, or declares that it will not',
+                          params={'min_drop_frac': (0.35, 0.05, 0.9), 'max_final_cort': (0.4, 0.1, 0.9)},
+                          hint='a resolution section: slower, consonant, thinner, with a cadence; a cliff is a declared ending, not a pass'),
+    'chem.arc_variety': dict(meaning='the piece is more than one chemical state',
+                             params={'min_states': (3, 1, 7), 'max_flat_share': (0.6, 0.2, 1.0),
+                                     'max_arrivals_per_min': (1.0, 0.2, 4.0)},
+                             hint='change the state between sections and delete a duplicate arrival (a repeat releases less)'),
+    'chem.mood_connection': dict(meaning='the inferred signature answers the mood the direction sheet declares',
+                                 params={'max_distance': (0.25, 0.05, 0.6)},
+                                 hint='the row names the furthest dimension and its lever; change the notes, not the mood word'),
+    'chem.genre_connection': dict(meaning='the inferred signature answers the genre the score declares',
+                                  params={},
+                                  hint='the family constraint is in references/data/presets/gate/chem/genres.json; fix the part the row names'),
+    # the acoustic biome (scripts/biome, scripts/env_rows.py): environment tracks written as `biome/1` presets. Starting values: none has
+    # been calibrated on real recordings; the declaration and medium rows check facts, the rest are advisory
+    'env.declaration': dict(meaning='a biome preset is valid, and every number in it names its source or says ESTIMATE',
+                            hint='fix the field the message names; replace an ESTIMATE with a measurement from the research note'),
+    'env.medium_consistency': dict(meaning='the declared medium agrees with itself, with the measured speed of sound, with the bus and with the tubes of its animals',
+                                   params={'max_err_c': (0.03, 0.005, 0.2), 'fail_err_c': (0.15, 0.05, 0.5), 'max_err_alpha': (0.02, 0.005, 0.2),
+                                           'fail_err_alpha': (0.10, 0.02, 0.5), 'max_f1_err': (0.03, 0.005, 0.2)},
+                                   hint='set c_measured_m_s or a gas gamma and molar mass that reproduce it; declare the same medium on the score; replace a module constant with the medium'),
+    'env.niche_collision': dict(meaning='animals whose bands overlap (Schoener D) do not call at the same time',
+                                params={'warn_d': (0.4, 0.1, 0.9), 'warn_co': (0.25, 0.05, 0.9), 'fail_d': (0.7, 0.3, 1.0), 'fail_co': (0.5, 0.1, 1.0)},
+                                hint='move niche.band_hz apart, change their active windows, lower individuals, or set ecology.niches.auto'),
+    'env.score_pocket': dict(meaning='foreground calls fall where the score leaves their band open',
+                             params={'min_in_pocket': (0.85, 0.5, 1.0), 'fail_in_pocket': (0.6, 0.2, 0.95)},
+                             hint='raise ecology.score.pocket_threshold, widen margin_db, lower the animal\'s bouts_per_min, or move its niche band'),
+    'env.foreground_salience': dict(meaning='a foreground call is heard above its surroundings without covering a figure',
+                                    params={'min_db': (3.0, 0.0, 12.0), 'max_db': (15.0, 6.0, 30.0), 'max_share_low': (0.3, 0.05, 0.8), 'max_over_s': (10.0, 1.0, 120.0)},
+                                    hint='raise the call\'s power_w or lower the beds in its band; move the call off the lead\'s band'),
+    'env.loop_stationarity': dict(meaning='a bed declared stationary holds its level and spectrum, has no seam at a chunk edge and does not repeat',
+                                  params={'max_window_dev': (2.0, 0.5, 6.0), 'fail_window_dev': (3.5, 1.0, 10.0), 'max_seam_db': (0.5, 0.1, 3.0),
+                                          'fail_seam_db': (1.5, 0.3, 6.0), 'max_repeat': (0.4, 0.1, 0.9), 'fail_repeat': (0.8, 0.3, 1.0)},
+                                  hint='raise the gust corner or intensity, give the control curve more variance, or split a tiled bed into two named generators'),
+    'env.density_budget': dict(meaning='the calls begun per second stay inside the ecology budget',
+                               params={'max_over': (0.25, 0.0, 2.0)},
+                               hint='lower bouts_per_min or individuals, add a control rest curve, thin the beds; ear.fatigue judges the stem'),
+    'env.level_physical': dict(meaning='a generator\'s rendered pressure matches what its own physics predicts (nothing normalised it away)',
+                               params={'max_db': (3.0, 0.5, 12.0), 'fail_db': (8.0, 2.0, 30.0)},
+                               hint='remove any normalisation; check k_dipole, efficiency, area_m2 and the rate curve'),
+    'env.diffuse_field': dict(meaning='a field source is as decorrelated as its spatial_coupling asks',
+                              params={'target': (0.2, 0.0, 1.0), 'warn_over': (0.1, 0.02, 0.5), 'fail_over': (0.25, 0.05, 0.8)},
+                              hint='more emitters, a different correlation_target, or a wider decorrelator'),
+    'env.ecology_rules': dict(meaning='every freeze rule was honoured and every rule fired at least once',
+                              hint='check the rule names against sections and animals; a trigger that never calls never fires'),
+    'env.cpu_budget': dict(meaning='the biome renders in a bounded time per minute of audio (measured on a short render, a projection)',
+                           params={'max_s_per_min': (12.0, 1.0, 120.0), 'fail_s_per_min': (30.0, 5.0, 600.0)},
+                           hint='fewer oscillators, patches, individuals or emitters'),
+    # per-channel and per-bar delivery QA for any channel count (scripts/channel_qa.py,
+    # references/spatial/virtual-speaker-qa.md). A real layout uses its speaker positions; order-5 AmbiX
+    # decodes to the 36-point ambix_qa_36 sphere; an undeclared file is still checked per channel.
+    'channel.virtual':  dict(meaning='the delivered channels map to the layout the target claims, or to the virtual speaker sphere for AmbiX'),
+    'channel.bars':     dict(meaning='an isolated bar where one channel jumps, drops out, flips polarity or swings the spatial balance while the other channels stay still', params={
+        'jump_db': (8.0, 3.0, 30.0),
+        'dropout_db': (15.0, 6.0, 40.0),
+        'balance_db': (4.0, 1.0, 12.0),
+        'stable_db': (3.0, 1.0, 9.0),
+        'polarity_corr': (-0.5, -0.95, -0.1),
+        'polarity_neighbor': (0.2, 0.0, 0.9),
+        'floor_abs_db': (-65.0, -100.0, -30.0),
+        'floor_programme_db': (40.0, 10.0, 80.0),
+        'balance_spread_db': (2.5, 0.5, 9.0),
+    }),
     'render.finite':     dict(meaning='no NaN or infinite sample in any delivered channel', protected=True),
     'feel.effort':     dict(meaning='kinematic effort / respiration'),
     'feel.spiral':     dict(meaning='tonal tension arc'),
     'feel.witek':      dict(meaning='groove pleasure curve'),
-    'feel.entropy':    dict(meaning='melodic information entropy'),
+    'feel.entropy':    dict(meaning='melodic information content of a line (PPM model, scripts/expectation.py): not a loop, not a random walk',
+                            params={'min_bits': (1.15, 0.5, 2.0), 'max_bits': (4.4, 3.5, 4.6)}),
+    'expr.ic_profile': dict(meaning='information content and uncertainty of each melodic line, per bar (reported)'),
+    'expr.surprise_grounded': dict(meaning='a high-surprise note is followed by a predictable one (advisory)',
+                                   params={'max_share': (0.6, 0.3, 0.9)},
+                                   hint='resolve high-surprise leaps stepwise, or repeat the figure after them'),
+    'expr.agogic_coupling': dict(meaning='a line\'s onsets and velocities follow its melodic surprise when the coupling is on (advisory)',
+                                 params={'min_rho': (0.15, 0.0, 0.5)},
+                                 hint='raise ic_agogic_ms / ic_vel, or check the groove preset is not tight; rubato and drift also move the timing'),
+    'emotion.arc_arousal': dict(meaning='the measured arousal of each section follows the order of the sheet\'s section energy (advisory)',
+                                params={'min_rho': (0.6, 0.0, 0.95)},
+                                hint='change the density, level or register of the section in the notes; the sheet is the promise'),
+    'emotion.arc_valence': dict(meaning='the measured valence has the sign the brief\'s emotion words imply (advisory, a weak measure)',
+                                params={'neutral_band': (0.3, 0.1, 0.6)},
+                                hint='mode and harmonic clashes; listen before changing the notes'),
+    'expr.tension_ic': dict(meaning='harmonic tension (Chew) against melodic information content per two bars (reported)'),
 }
 
 
@@ -476,6 +622,7 @@ def _merge_profile(name, allp):
         flags |= set(p.get('flags', []))
         focus = presets._deep_merge(focus, p.get('focus') or {})
         for rid, cfg in (p.get('rows') or {}).items():
+            rid = canonical(rid)            # mode()/param() look rows up by canonical id: store them the same way
             rows[rid] = presets._deep_merge(rows.get(rid, {}), cfg)
     return flags, rows, focus
 
@@ -593,6 +740,53 @@ class Profile:
         for e in self.errors:
             out.append(('FAIL', 'piece_type', e))
         return out
+
+
+GATE_DIR = os.path.join('presets', 'gate')
+FIGURE_SUBDIR = 'figures'
+DATA_SUBDIR = 'data'
+
+
+def artifacts_dir(project):
+    """Where a project's gate lives: presets/gate/ (the profile and every gate data file, never reports/)."""
+    return os.path.abspath(os.path.join(str(project), GATE_DIR))
+
+
+def figures_dir(project):
+    """The only place gate visualisations go: presets/gate/figures/."""
+    return os.path.join(artifacts_dir(project), FIGURE_SUBDIR)
+
+
+def data_dir(project):
+    """The gate's data files (level.json, stem_gate.json, waveform.json, section_energy.json, ...): presets/gate/data/."""
+    return os.path.join(artifacts_dir(project), DATA_SUBDIR)
+
+
+def profile_files(project):
+    """The project's own gate profiles (file stems), from presets/gate/*.json."""
+    d = artifacts_dir(project)
+    if not os.path.isdir(d):
+        return []
+    return sorted(os.path.splitext(f)[0] for f in os.listdir(d) if f.endswith('.json'))
+
+
+def project_profile_problems(score, project):
+    """A project must carry its own gate profile. A shipped profile is a starting point, not a project's decision."""
+    import presets as _presets
+    own = profile_files(project)
+    if not own:
+        return ['no custom gate profile: a project must own presets/gate/<name>.json '
+                '(scaffold: python scripts/gate_profiles.py new <name> --from <closest> --project <dir>)']
+    if score is None:
+        return []
+    decl = score.get('piece_type')
+    want = decl if isinstance(decl, list) else ([decl] if decl else [])
+    want = [_presets._norm(w) for w in want if w]
+    missing = [w for w in want if w not in own]
+    if missing:
+        return [f'piece_type names {missing}, which is a shipped profile; this project owns {own}. '
+                f'Declare a profile of this project (a custom gate is mandatory) or scaffold {missing[0]} into it']
+    return []
 
 
 def resolve(score):

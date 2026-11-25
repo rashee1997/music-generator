@@ -1,0 +1,57 @@
+{
+  "name": "choir_glow",
+  "character": "A distant choir on open vowels behind the listener, more air than words: it appears where the field itself seems to sing and leaves before it becomes a feature.",
+  "description": "The aura: mixed choir on oohs, long tones only, entering under the crush and returning through the dilation and the last ascent.",
+  "gm": "choir_aahs",
+  "role": "texture",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 12.0,
+    "drift_ms": 12.0,
+    "vel_sigma": 4.0
+  },
+  "spatial": {
+    "azimuth": -108.0,
+    "elevation": 22.0,
+    "distance": 4.6,
+    "kind": "spot",
+    "binaural": true
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 180.0
+    },
+    {
+      "type": "peak",
+      "f": 900.0,
+      "gain": -2.0,
+      "q": 1.0
+    },
+    {
+      "type": "lp",
+      "f": 8000.0
+    }
+  ],
+  "gain_db": -11.0,
+  "reverb": 0.45,
+  "articulation": {
+    "overlap_ms": 40.0,
+    "gate": 0.99,
+    "release_ms": 700.0
+  },
+  "mechanics_class": "bowed",
+  "velocity_timbre": {
+    "points": [
+      [30, 1200],
+      [60, 2600],
+      [127, 6500]
+    ],
+    "bands": 3
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring section 2 | a cluster or held chord needs inner movement; the choir moves only when the strings do, so it reads as colour under them",
+    "KB soundfont-velocity-and-realism section 4 | soft choral entries are darker; velocity_timbre keeps them behind the strings; starting values",
+    "ESTIMATE: azimuth -108 deg, 22 deg up, 4.6 m and -11 dB gain are starting values for a choir heard from the far left of a very large field"
+  ]
+}

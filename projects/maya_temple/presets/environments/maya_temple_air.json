@@ -1,0 +1,32 @@
+{
+  "name": "maya_temple_air",
+  "description": "The inside of a stone temple: still, cold air in a long chamber, a slow movement in it that is not wind.",
+  "character": "The inside of a stone temple: still, cold air in a long chamber, a slow movement in it that is not wind.",
+  "layers": [
+    {
+      "name": "chamber_air",
+      "primitive": "noise_bed",
+      "kind": "bed",
+      "gain_db": -18.0,
+      "low_hz": 110,
+      "high_hz": 700,
+      "mod_rate_hz": 0.03,
+      "mod_depth": 0.1,
+      "spatial": {
+        "azimuth": 0,
+        "elevation": 10,
+        "distance": 6
+      }
+    }
+  ],
+  "blending": {
+    "high_pass_hz": 110,
+    "vocal_pocket_notch_hz": 2200,
+    "vocal_pocket_notch_db": -3.0,
+    "overall_gain_db": -10.0
+  },
+  "sources": [
+    "stone_temple_interior"
+  ],
+  "note": "A bed only: the drips, the door and the whistle are separate tracks in the score. Band and level are ESTIMATES."
+}

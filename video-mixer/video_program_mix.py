@@ -70,13 +70,31 @@ def voice_chain(v, cfg):
     return mx._run(board, v)
 
 
+def moving_average_same(x, k):
+    """np.convolve(x, ones(k) / k, 'same') in O(n): a prefix sum instead of a k-tap convolution.
+
+    Same zero padding at the edges as np.convolve. np.convolve returns max(len(x), k) samples, so a signal shorter
+    than the window (where that differs from len(x)) is left to np.convolve itself; it is cheap there.
+    """
+    x = np.asarray(x)
+    n, k = len(x), int(k)
+    if k <= 1 or n < k:
+        return np.convolve(x, np.ones(k) / k, mode='same')
+    c = np.concatenate([[0.0], np.cumsum(x, dtype=np.float64)])
+    h = (k - 1) // 2
+    i = np.arange(n)
+    hi = np.minimum(n, i + h + 1)
+    lo = np.maximum(0, i + h + 1 - k)
+    return (c[hi] - c[lo]) / k
+
+
 def speech_mask(v, cfg, sr=SR):
     """1 while the voice is active, with a hold so the short pauses between words do not release the duck."""
     e = mx.envelope(v, sr, attack_ms=cfg['speech_envelope_attack_ms'], release_ms=cfg['speech_envelope_release_ms'])
     ref = np.percentile(e[e > 1e-5], 95) if (e > 1e-5).any() else 1.0
     active = (e > ref * 10 ** (cfg['speech_threshold_db'] / 20.0)).astype(float)
     hold = max(1, int(cfg['speech_hold_s'] * sr))
-    return np.convolve(active, np.ones(hold) / hold, mode='same') > cfg['speech_hold_frac']
+    return moving_average_same(active, hold) > cfg['speech_hold_frac']
 
 
 def band(x, lo, hi, sr=SR):
@@ -92,7 +110,7 @@ def duck_curve(voice, n, mask, cfg, sr=SR):
                      lookahead_ms=cfg['lookahead_ms'])
     g = np.where(mask, g, np.maximum(g, 10 ** (cfg['duck_floor_db'] / 20.0)))
     smooth = max(1, int(cfg['duck_smooth_s'] * sr))
-    return np.convolve(g, np.ones(smooth) / smooth, mode='same')
+    return moving_average_same(g, smooth)
 
 
 def spectral_duck(music, voice, n, mask, cfg, sr=SR):
@@ -106,7 +124,11 @@ def spectral_duck(music, voice, n, mask, cfg, sr=SR):
     banded = band(music, lo, hi, sr)
     rest = music - banded
     g = duck_curve(voice, n, mask, cfg, sr)
-    extra = abs(float(cfg['duck_depth_db']) / float(cfg['duck_db'])) if cfg['duck_db'] else 0.0
+    duck, depth = float(cfg['duck_db']), float(cfg['duck_depth_db'])
+    if duck * depth < 0:
+        raise ValueError(f'duck_db ({duck:g}) and duck_depth_db ({depth:g}) have opposite signs: the speech band '
+                         f'would duck less than the rest. Give both the same sign in the dialogue preset.')
+    extra = abs(depth / duck) if duck else 0.0
     return (rest * g[:, None] + banded * (g ** (1.0 + extra))[:, None]).astype(np.float32)
 
 
@@ -132,11 +154,16 @@ def fit_music(music, n, cfg, sr=SR):
     m = music
     if len(m) < n:
         xf = max(1, int(min(cfg['loop_crossfade_max_s'], len(m) / sr / 4.0) * sr))
-        out = m.copy()
-        while len(out) < n:
-            w = np.sin(np.linspace(0, np.pi / 2, xf)) ** 2
-            out[-xf:] = out[-xf:] * (1 - w[:, None]) + m[:xf] * w[:, None]
-            out = np.concatenate([out, m[xf:]])
+        step = len(m) - xf
+        loops = -(-(n - len(m)) // step)               # ceil: each pass appends `step` samples
+        out = np.empty((len(m) + loops * step,) + m.shape[1:], m.dtype)   # one allocation, no per-loop copy
+        out[:len(m)] = m
+        w = (np.sin(np.linspace(0, np.pi / 2, xf)) ** 2)[:, None]
+        pos = len(m)
+        for _ in range(loops):
+            out[pos - xf:pos] = out[pos - xf:pos] * (1 - w) + m[:xf] * w
+            out[pos:pos + step] = m[xf:]
+            pos += step
         m = out
     return m[:n]
 
@@ -210,6 +237,19 @@ def _mask_segments(mask, sr=SR, min_gap_s=0.05):
     return [(round(a, 4), round(b, 4)) for a, b in out]
 
 
+GATING_CORRECTIONS = 3        # level corrections before the dialogue-gated target is declared not reached
+GATING_CONVERGED_LU = 0.3     # existing literal of the correction loop (not a preset key): |target - measured| below it
+
+
+class _Mastered(tuple):
+    """(audio, sample_rate), unpackable as before, that also says which loudness mode was really applied."""
+
+    def __new__(cls, pair, applied):
+        obj = super().__new__(cls, pair)
+        obj.applied = applied
+        return obj
+
+
 def master(mix, cfg, sr=SR, loudness_mode=None, speech_mask=None):
     """Program master: the loudness and true-peak ceiling of the chosen profile, then the delivery sample rate.
 
@@ -222,9 +262,10 @@ def master(mix, cfg, sr=SR, loudness_mode=None, speech_mask=None):
                      gate uses, so the master and the gate cannot disagree about
                      what "dialogue-gated" means.
 
-    When the mode is dialogue and there is no speech mask, the full-program target is
-    used and plainly labelled, never silently substituted: the gate's
-    `video.gating_mode` row fails a delivery that claims gating it did not apply.
+    When the mode is dialogue and there is no speech mask (or the gated level did not converge), the
+    full-program target is used and plainly labelled, never silently substituted: the result's `.applied`
+    attribute carries the mode that really ran, and the gate's `video.gating_mode` row compares it with the
+    declared one and fails a delivery that claims gating it did not apply.
     """
     mode = str(loudness_mode or cfg.get('gating') or cfg.get('loudness_mode') or 'full_program')
     if mode not in ('full_program', 'dialogue'):
@@ -236,14 +277,22 @@ def master(mix, cfg, sr=SR, loudness_mode=None, speech_mask=None):
         m = np.asarray(speech_mask, np.float32).reshape(-1)
         if len(m) != len(y):
             m = (np.interp(np.linspace(0, 1, len(y)), np.linspace(0, 1, max(1, len(m))), m) >= 0.5).astype(np.float32)
+        y_full = y
         applied = 'dialogue'
-        for _ in range(3):
+        # measure, correct (at most GATING_CORRECTIONS times), and measure the result: the mode is only "applied"
+        # when the final audio is inside the convergence tolerance, not when the loop merely ran out.
+        for attempt in range(GATING_CORRECTIONS + 1):
             got = mx.dialogue_gated_lufs(y, sr, m)
             if got is None:
                 applied = 'full_program'
+                y = y_full
                 break
             err = float(cfg['lufs']) - float(got)
-            if abs(err) < 0.3:
+            if abs(err) < GATING_CONVERGED_LU:
+                break
+            if attempt == GATING_CORRECTIONS:
+                applied = 'full_program'                # did not converge: say so, the gate row will fail it
+                y = y_full
                 break
             target_cfg['lufs'] = target_cfg['lufs'] + 0.8 * err
             y = mx.master_chain(mix, target_cfg, sr)
@@ -255,7 +304,7 @@ def master(mix, cfg, sr=SR, loudness_mode=None, speech_mask=None):
     target = int(cfg.get('sample_rate', sr))
     if target != sr:
         y = signal.resample_poly(y, target, sr, axis=0).astype(np.float32)
-    return y, target
+    return _Mastered((y, target), applied)
 
 
 def master_profile(cfg, name=None):

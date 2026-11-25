@@ -83,6 +83,11 @@ builds - two identical rooms crossfade to exactly the same room.
 itself, re-renderable later) or `adm_bw64` (objects and their positions) when the piece has to travel.
 
 - Ceilings follow the format: -1.5 dBTP for two channels, -3.0 dBTP for the scene formats.
+- Name every system the cue will really be played on. `mono` for a phone speaker, a radio or a public-address system:
+  it is rendered from the mix, not summed from the stereo file. `immersive_5_1` and its height variants for a living
+  room, the 7.1 family for a theatre. A format nobody will play is a format nobody checked by ear.
+- The `fold.mono` and `fold.timbre` rows compare each extra format with the stereo master, so the stereo master is
+  listed first. With `binaural` first those rows only warn.
 - A scene has no loudness until something folds it, so `loudness_lufs` on the sheet is the two-channel master's number.
 - `ambix` holds the whole field in memory while it is written; a long piece at fifth order needs a lot of RAM.
 
@@ -99,7 +104,7 @@ itself, re-renderable later) or `adm_bw64` (objects and their positions) when th
 
 A failing immersive row is a fact about the presets or the score: spread the keyframes, narrow the stem the row names,
 lower the space's `late.level_db`, bring a side wall in. Never loosen the row. The rows and their fixes are in
-`references/mixing/quality-gate.md` section 5b; the engine and its physics are in
+`references/mixing/quality-gate-rows.md` section 5d; the engine and its physics are in
 `references/spatial/immersive-spatial.md` section 2c.
 
 ## 8. Honesty rules for this block

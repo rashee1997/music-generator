@@ -32,6 +32,9 @@ import numpy as np
 from scipy.signal import butter, sosfilt
 import pedalboard as pb
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from phys_core import resonate as _resonate
+
 SR = 44100
 SKILL = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -50,8 +53,7 @@ def _noise(rng, n):
 
 
 def _bp(x, lo, hi, sr, order=2):
-    lo, hi = max(lo, 20.0), min(hi, sr / 2 - 100)
-    return sosfilt(butter(order, [lo, hi], btype='band', fs=sr, output='sos'), x)
+    return _resonate.bandpass(x, lo, hi, sr, order)
 
 
 def _lp(x, f, sr, order=2):
@@ -78,6 +80,12 @@ def _chirp(t, f0, f1, dur):
     """Phase of a glide from f0 to f1 over dur (linear in frequency)."""
     k = (f1 - f0) / max(dur, 1e-9)
     return 2 * np.pi * (f0 * t + 0.5 * k * t * t)
+
+
+def _sweep(f_hz, sr):
+    """A sine whose instantaneous frequency is `f_hz` per sample. sin(2*pi*f(t)*t) is NOT that: its frequency is
+    f(t) + t*f'(t), so a falling sweep lands far below where it was drawn. The phase is the running sum of f/sr."""
+    return np.sin(np.cumsum(2 * np.pi * np.asarray(f_hz, float) / sr))
 
 
 def _decay(t, tau):
@@ -130,12 +138,11 @@ def _norm(x, peak=0.9):
     return x * (peak / m) if m > 1e-12 else x
 
 
-def _place(x, pos_sec, sr, total):
-    out = np.zeros(total)
+def _place(out, x, pos_sec, sr):
+    """Add `x` into `out` (in place) starting at `pos_sec`."""
     i = int(pos_sec * sr)
-    seg = x[:max(0, total - i)]
+    seg = x[:max(0, len(out) - i)]
     out[i:i + len(seg)] += seg
-    return out
 
 
 # ------------------------------------------------------------------ generators
@@ -165,14 +172,14 @@ def downlifter(sec, sr, rng, **kw):
 
 def impact(sec, sr, rng, **kw):
     t = _t(sec, sr)
-    sub = np.sin(2 * np.pi * (48 - 14 * np.minimum(t, 0.4) / 0.4) * t) * _decay(t, 0.9)
+    sub = _sweep(48 - 14 * np.minimum(t, 0.4) / 0.4, sr) * _decay(t, 0.9)
     crack = _lp(_noise(rng, len(t)), 3500, sr) * _decay(t, 0.05)
     return sub + 0.6 * crack
 
 
 def boom(sec, sr, rng, **kw):
     t = _t(sec, sr)
-    body = np.sin(2 * np.pi * (62 - 25 * (1 - np.exp(-t / 0.2))) * t) * _decay(t, sec / 3.5)
+    body = _sweep(62 - 25 * (1 - np.exp(-t / 0.2)), sr) * _decay(t, sec / 3.5)
     return body + 0.25 * _lp(_noise(rng, len(t)), 180, sr) * _decay(t, sec / 2)
 
 
@@ -236,7 +243,7 @@ def birdsong(sec, sr, rng, **kw):
         f1 = f0 * rng.uniform(0.7, 1.4)                  # each call is a short glide up or down
         t = _t(d, sr)
         note = np.sin(_chirp(t, f0, f1, d)) * np.sin(np.pi * t / d) ** 0.5
-        out = out + _place(note * 0.5, pos, sr, len(out))
+        _place(out, note * 0.5, pos, sr)
         pos += d + rng.uniform(0.06, 0.5)
     return out
 
@@ -272,7 +279,7 @@ def glass_break(sec, sr, rng, **kw):
 
 def explosion(sec, sr, rng, **kw):
     t = _t(sec, sr)
-    rumble = np.sin(2 * np.pi * (55 - 20 * (1 - np.exp(-t / 0.3))) * t) * _decay(t, sec / 3)
+    rumble = _sweep(55 - 20 * (1 - np.exp(-t / 0.3)), sr) * _decay(t, sec / 3)
     debris = _bp(_noise(rng, len(t)), 300, 3000, sr) * _decay(t, sec / 4) * 0.6
     return rumble * 1.1 + debris + _lp(_noise(rng, len(t)), 150, sr) * _decay(t, 0.05)
 
@@ -301,7 +308,7 @@ def coin(sec, sr, rng, **kw):
     out = np.zeros(_n(sec, sr))
     for i, f in enumerate([1320, 1760]):
         t = _t(0.22, sr)
-        out = out + _place(np.sin(2 * np.pi * f * t) * _decay(t, 0.09), i * 0.07, sr, len(out))
+        _place(out, np.sin(2 * np.pi * f * t) * _decay(t, 0.09), i * 0.07, sr)
     return out
 
 
@@ -310,8 +317,11 @@ def heartbeat(sec, sr, rng, **kw):
     for beat in np.arange(0, sec, 0.9):
         for off, amp in [(0.0, 1.0), (0.28, 0.6)]:
             t = _t(0.18, sr)
-            thump = np.sin(2 * np.pi * (55 - 15 * t / 0.18) * t) * _decay(t, 0.05) * amp
-            out = out + _place(thump, beat + off, sr, len(out))
+            thump = _sweep(55 - 15 * t / 0.18, sr) * _decay(t, 0.05) * amp
+            # each thump is cut at 0.18 s, where its decay is still at 3 % of the peak: a hard end is a step
+            n_end = min(len(thump), int(0.02 * sr))
+            thump[len(thump) - n_end:] *= np.cos(np.linspace(0.0, np.pi / 2, n_end)) ** 2
+            _place(out, thump, beat + off, sr)
     return out
 
 
@@ -339,7 +349,7 @@ def water_drip(sec, sr, rng, **kw):
     for pos in np.sort(rng.uniform(0, sec, max(1, int(sec * 0.6)))):
         t = _t(0.12, sr)
         f = 1200 * (500 / 1200) ** (t / 0.12)
-        out = out + _place(np.sin(np.cumsum(2 * np.pi * f / sr)) * _decay(t, 0.03), pos, sr, len(out))
+        _place(out, np.sin(np.cumsum(2 * np.pi * f / sr)) * _decay(t, 0.03), pos, sr)
     return out
 
 
@@ -354,7 +364,7 @@ def typewriter(sec, sr, rng, **kw):
     out = np.zeros(_n(sec, sr))
     for pos in np.sort(rng.uniform(0, sec, max(1, int(sec * 6)))):
         t = _t(0.03, sr)
-        out = out + _place(_bp(_noise(rng, len(t)), 1800, 5000, sr) * _decay(t, 0.004), pos, sr, len(out))
+        _place(out, _bp(_noise(rng, len(t)), 1800, 5000, sr) * _decay(t, 0.004), pos, sr)
     return out
 
 
@@ -453,18 +463,8 @@ def make(name, seconds=2.0, sr=SR, seed=1, normalize=True, **kw):
 def timeline(items, total_sec, sr=SR, seed=1, **kw):
     """Lay effects on a stereo bed. items: dicts with name, at (s), seconds, gain_db, pan (-1..1), optional kw.
     Returns (N, 2) float32. Generated deterministically via procedural DSP."""
-    out = np.zeros((_n(total_sec, sr), 2))
-    for i, it in enumerate(items):
-        item_kw = dict(it.get('kw', {}))
-        x, _, _ = make(it['name'], it.get('seconds', 2.0), sr, seed + i, **item_kw)
-        x = x * 10 ** (it.get('gain_db', 0.0) / 20)
-        pan = np.clip(it.get('pan', 0.0), -1, 1)
-        l, r = np.sqrt(0.5 * (1 - pan)), np.sqrt(0.5 * (1 + pan))
-        start = int(it['at'] * sr)
-        seg = x[:max(0, len(out) - start)]
-        out[start:start + len(seg), 0] += seg * l
-        out[start:start + len(seg), 1] += seg * r
-    return out.astype(np.float32)
+    from sfx_engine import oneshot as _oneshot         # one implementation of the timeline, with the engine's make()
+    return _oneshot.timeline(items, total_sec, sr, seed, **kw)
 
 
 # ------------------------------------------------------------------ dynamic: any sound from a parameter spec

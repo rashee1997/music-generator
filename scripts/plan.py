@@ -148,7 +148,8 @@ def check_plan(plan, corr_limit=0.97):
 def main():
     if len(sys.argv) < 2:
         sys.exit('usage: plan.py score.json   (prints the plan stored by compose.py, or a plan from a brief)')
-    d = json.load(open(sys.argv[1], encoding='utf-8'))
+    with open(sys.argv[1], encoding='utf-8') as fh:
+        d = json.load(fh)
     plan = d.get('plan') or d
     if 'sections' not in plan:
         sys.exit('no plan in that file: compose.py writes one when the brief sets "plan": true')

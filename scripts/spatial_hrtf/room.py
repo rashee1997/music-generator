@@ -21,9 +21,17 @@ import sys
 import numpy as np
 from scipy import signal
 
-C = 343.0
 BANDS_HZ = (125.0, 250.0, 500.0, 1000.0, 2000.0, 4000.0, 8000.0)
 SR = 44100
+
+
+def _c():
+    """Speed of sound of the active medium (the room is a place in the scene, not the listening room)."""
+    scripts = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if scripts not in sys.path:
+        sys.path.insert(0, scripts)
+    from phys_core import medium
+    return medium.speed_of_sound()
 
 
 def material_table(name=None):
@@ -120,7 +128,7 @@ def taps(geom, azimuth_deg=0.0, elevation_deg=0.0, distance_m=2.0, sr=SR):
                 coeff *= np.power(np.sqrt(np.clip(1 - a_wall, 0, 1)), ny)
                 coeff *= np.power(np.sqrt(np.clip(1 - (a_ceil if k > 0 else a_floor), 0, 1)), nz)
                 level = float(np.sqrt(np.mean(coeff ** 2))) * direct / path
-                out.append(dict(delay_ms=(path - direct) / C * 1000.0, distance_m=float(path),
+                out.append(dict(delay_ms=(path - direct) / _c() * 1000.0, distance_m=float(path), direct_m=float(direct),
                                 azimuth=float(np.degrees(np.arctan2(ix - lx, iy - ly))),
                                 elevation=float(np.degrees(np.arcsin(np.clip((iz - lz) / path, -1, 1)))),
                                 coeffs=coeff, level=level, image=(i, j, k)))
@@ -181,7 +189,7 @@ def _box(geom):
             coefficients(table, mats.get('walls', 'plaster')), [float(b) for b in table.get('bands_hz') or BANDS_HZ])
 
 
-def eyring_rt60(geom, temp_c=20.0, rh=50.0):
+def eyring_rt60(geom, temp_c=None, rh=None):
     """(bands_hz, RT60 per band) of the box: Eyring's formula with the air term,
 
         T = 24 ln(10) / c * V / (-S ln(1 - a_mean) + 4 m V)
@@ -198,7 +206,7 @@ def eyring_rt60(geom, temp_c=20.0, rh=50.0):
     surf = 2.0 * s_plan + s_wall
     a_mean = np.clip((s_plan * (a_floor + a_ceil) + s_wall * a_wall) / surf, 1e-4, 0.999)
     m = airabs.alpha_db_per_m(bands, temp_c, rh) / (10.0 / np.log(10.0))      # dB/m -> nepers of power per metre
-    return bands, 24.0 * np.log(10.0) / C * vol / (-surf * np.log(1.0 - a_mean) + 4.0 * m * vol)
+    return bands, 24.0 * np.log(10.0) / _c() * vol / (-surf * np.log(1.0 - a_mean) + 4.0 * m * vol)
 
 
 def mixing_time_ms(geom):

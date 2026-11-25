@@ -1,0 +1,386 @@
+{
+  "title": "Confluence",
+  "project": "A one-minute phone ringtone made of instruments from five traditions",
+  "version": 1,
+  "medium": "ringtone",
+  "brief": "create a 1 minute phone ringtone: catchy, unique, seamless, smooth blend of multi-cultural instruments",
+  "audience": "one person, hearing it on a phone speaker in a noisy room, many times a day, without having chosen the moment; it should still be pleasant on the fiftieth hearing",
+  "purpose": "a ringtone that rings for up to one minute and repeats smoothly: the hook is recognisable inside three seconds, each tradition takes the tune in turn, and the harmony never rubs",
+  "point_of_view": "the listener's pocket: the music may not ask for attention with harshness or sub-bass; it earns it with a clear pluck and a tune that can be hummed",
+  "job": [
+    "be recognised in the first three seconds by a four-note rising shape and a steady pulse",
+    "interrupt a noisy room without piercing the ear: clear plucked attacks, smooth 2.5 to 3.8 kHz, no sub-bass",
+    "blend five traditions into one piece by sharing one scale, one pulse and one room, each tradition keeping its own gesture",
+    "end cleanly: the last bars settle on the tonic chords the first bar starts on and ring out, so a player that repeats the file repeats it smoothly"
+  ],
+  "story": "a thumb piano states a tune, a bamboo flute sings it back, a lute and a zither pass it round while the drums and bells lock into one pulse, everything lifts together, drops to one ringing note, then the tune returns whole and settles on the tonic",
+  "duration_s": 60.0,
+  "in_point_s": 0.0,
+  "out_point_s": 60.0,
+  "ending": "tail_out",
+  "feel": [
+    "joyful",
+    "bright",
+    "smooth"
+  ],
+  "avoid_feel": [
+    "harsh",
+    "frantic",
+    "sad",
+    "robotic"
+  ],
+  "sections": [
+    {
+      "name": "Hook",
+      "start_s": 0.0,
+      "end_s": 8.0,
+      "energy": 0.5,
+      "action": "the ringtone starts: the listener must know it is a call within three seconds",
+      "music": "the kalimba states the four-bar hook alone over a quiet scraped-gourd pulse and the maqsum on the hand drum; a soft pad and a bass note under the harmony",
+      "role": "place"
+    },
+    {
+      "name": "Hook joined",
+      "start_s": 8.0,
+      "end_s": 16.0,
+      "energy": 0.6,
+      "action": "the same tune again, so it is learned",
+      "music": "the bansuri sings the hook with a small glide while the marimba starts its three-three-two pattern; the bell and the bass join; the kalimba rests",
+      "role": "establish"
+    },
+    {
+      "name": "Passing",
+      "start_s": 16.0,
+      "end_s": 32.0,
+      "energy": 0.65,
+      "action": "the tune travels: a new voice carries it",
+      "music": "the oud carries the hook decorated with trills while the koto sweeps up the scale at each phrase end and the marimba and bell keep the interlock; the bansuri then takes the answer phrase first; the hand-cymbal pulse opens up",
+      "role": "build"
+    },
+    {
+      "name": "Lift",
+      "start_s": 32.0,
+      "end_s": 44.0,
+      "energy": 0.8,
+      "action": "everything arrives together",
+      "music": "the bansuri and the kalimba play the hook an octave apart, the oud strums the three-three-two pattern, the finger cymbals mark the backbeat, the pad opens up; a two-bar tag climbs to the highest note of the piece",
+      "role": "peak"
+    },
+    {
+      "name": "Breath",
+      "start_s": 44.0,
+      "end_s": 48.0,
+      "energy": 0.4,
+      "action": "a gap before the tune comes home",
+      "music": "the kalimba plays the question bar alone over the pad; in the last bar the drums and bass stop and one koto note rings",
+      "role": "transition"
+    },
+    {
+      "name": "Return",
+      "start_s": 48.0,
+      "end_s": 56.0,
+      "energy": 0.75,
+      "action": "the tune returns whole",
+      "music": "the kalimba and the bansuri play the hook in unison, the oud answers a beat behind, the marimba and bell and drums return together, the koto closes the last phrase with its longest sweep",
+      "role": "peak"
+    },
+    {
+      "name": "Turnaround",
+      "start_s": 56.0,
+      "end_s": 60.0,
+      "energy": 0.45,
+      "action": "the last bars lead back to the first chord",
+      "music": "the tune steps down by chord tones and rests on the tonic over D6 then Dadd9, the chords the loop starts on; the zither cascades down and rings; a tabla fill in the last beat points at the first beat; the notes ring out",
+      "role": "button"
+    }
+  ],
+  "motifs": [
+    {
+      "name": "the Confluence hook",
+      "first_at_s": 0.0,
+      "shape": "a rising fourth then two steps (A D E), a held third (F#) falling by steps; the answer repeats the first three notes and jumps to the high A, then settles on the tonic by a held fall",
+      "returns": "8 s: bansuri, same notes, with a glide. 16 s: oud, ornamented with a trill. 24 s: bansuri with the answer phrase first. 32 s: bansuri and kalimba an octave apart, then a rising tag. 46 s: the question bar alone. 48 s: unison with the best variation, a high flourish before the last note. 58 s: stepped down to rest on the tonic"
+    }
+  ],
+  "instruments": [
+    "kalimba_hook",
+    "bansuri_lead",
+    "oud_lead",
+    "koto_flourish",
+    "marimba_ostinato",
+    "open_pad",
+    "bass_pulse",
+    "darbuka_groove",
+    "shaker_pulse",
+    "bell_tresillo"
+  ],
+  "avoid_sounds": [
+    "sub-bass",
+    "distorted guitar",
+    "synth lead",
+    "siren",
+    "long reverb tail"
+  ],
+  "pulse": "steady",
+  "tempo_bpm": [
+    116,
+    124
+  ],
+  "key": "D",
+  "mode": "pentatonic_major",
+  "energy": 0.62,
+  "space": "confluence_room",
+  "hits_at": [
+    32.0,
+    46.0,
+    48.0
+  ],
+  "hits": [
+    {
+      "t": 32.0,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the finger-cymbal backbeat, the octave doubling and the open pad arrive together",
+      "why": "the lift must feel like a new level, not a gradual drift"
+    },
+    {
+      "t": 46.0,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "everything stops except one high koto note ringing over the pad",
+      "why": "a vacuum before the return makes the return land harder"
+    },
+    {
+      "t": 48.0,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the unison hook, the marimba, the bell, the bass and the hand drum return on the downbeat",
+      "why": "the tune comes home at full strength"
+    }
+  ],
+  "mix_intent": {
+    "hero": "bansuri_lead",
+    "support": [
+      "kalimba_hook",
+      "oud_lead",
+      "koto_flourish",
+      "bass_pulse"
+    ],
+    "sits_under": [
+      "marimba_ostinato",
+      "open_pad",
+      "darbuka_groove",
+      "shaker_pulse",
+      "bell_tresillo"
+    ],
+    "must_hear": [
+      "the kalimba hook, with its rising fourth, within three seconds",
+      "the maqsum pulse from the first bar",
+      "the koto sweep at the end of every four-bar phrase"
+    ],
+    "leave_free_hz": []
+  },
+  "loudness_lufs": -14.0,
+  "true_peak_max": -1.5,
+  "delivery": {
+    "format": "wav",
+    "sample_rate": 44100,
+    "bit_depth": 24,
+    "stage": "web",
+    "output_targets": [
+      "stereo"
+    ]
+  },
+  "references": [
+    "a bright wooden thumb-piano tune over a rolling hand-drum pulse, like a modern phone alert built from world instruments",
+    "a bamboo flute that sings a tune back to the plucked instrument that gave it, the way call and response works in a village ensemble"
+  ],
+  "spatial_staging": {
+    "kalimba_hook": {
+      "azimuth": -50.0,
+      "distance": 1.3,
+      "space": "confluence_room"
+    },
+    "bansuri_lead": {
+      "azimuth": 0.0,
+      "distance": 1.4,
+      "space": "confluence_room"
+    },
+    "oud_lead": {
+      "azimuth": 50.0,
+      "distance": 1.7,
+      "space": "confluence_room"
+    },
+    "koto_flourish": {
+      "azimuth": 70.0,
+      "distance": 2.0,
+      "space": "confluence_room"
+    },
+    "marimba_ostinato": {
+      "azimuth": -75.0,
+      "distance": 2.2,
+      "space": "confluence_room"
+    },
+    "open_pad": {
+      "azimuth": -105.0,
+      "distance": 3.0,
+      "space": "confluence_room"
+    },
+    "bass_pulse": {
+      "azimuth": 0.0,
+      "distance": 1.1,
+      "space": "confluence_room"
+    },
+    "darbuka_groove": {
+      "azimuth": 25.0,
+      "distance": 1.9,
+      "space": "confluence_room"
+    },
+    "shaker_pulse": {
+      "azimuth": -25.0,
+      "distance": 2.6,
+      "space": "confluence_room"
+    },
+    "bell_tresillo": {
+      "azimuth": 37.0,
+      "distance": 2.4,
+      "space": "confluence_room"
+    }
+  },
+  "expression": {
+    "sonic_picture": "In the first ten seconds a close, dry thumb piano plucks a four-note rising tune a metre in front of the listener, with a quiet scraped gourd just behind and a hand drum a little to the right and finger cymbals further right; in the middle a bamboo flute sits in the centre singing, a lute and a zither pass the tune around the edges and every drum and bell leans into one pulse; the last note is the tune coming to rest on the tonic while a plucked ring floats into the first note again.",
+    "performer": "The thumb piano player plucks evenly and lets each note ring. The flute player leans into the high notes with a short slide and breathes at the end of each phrase. The lute player decorates long notes with a quick trill and plays a hair behind the beat. The zither player sweeps up the strings with a thumb, quickly, at phrase ends. The drummer keeps the maqsum steady, ghosts the in-between strokes and fills with tabla syllables before each new section.",
+    "producer_moves": "The scraped gourd opens from a quiet pulse to full sixteenths across the passing section. A full stop of one bar before the return: drums, bass and scraped gourd drop out and one koto note rings. The reverb send is kept short so the tail never covers the next entry. The bass is lifted at 450 Hz and 900 Hz so a phone speaker plays its partials. The last bars land on the tonic and ring out.",
+    "anti_generic": "The generic version is a pentatonic arpeggio over a drum loop at one level for a minute; this one is different because the tune changes hands five times, each tradition keeps its own gesture, the density rises and falls, and one bar of near-silence makes the return land.",
+    "cues": [
+      {
+        "section": "Hook",
+        "arousal": "mid",
+        "mode_register": "major pentatonic, middle register",
+        "tempo_trend": "steady",
+        "dynamics": "mezzo piano",
+        "articulation": "plucked, ringing",
+        "timbre": "bright and dry"
+      },
+      {
+        "section": "Hook joined",
+        "arousal": "mid",
+        "mode_register": "major pentatonic, middle register",
+        "tempo_trend": "steady",
+        "dynamics": "mezzo",
+        "articulation": "legato with a glide",
+        "timbre": "breathy and warm"
+      },
+      {
+        "section": "Passing",
+        "arousal": "mid",
+        "mode_register": "major pentatonic, middle register",
+        "tempo_trend": "steady",
+        "dynamics": "mezzo",
+        "articulation": "plucked with trills",
+        "timbre": "woody and bright"
+      },
+      {
+        "section": "Lift",
+        "arousal": "high",
+        "mode_register": "major pentatonic, high register",
+        "tempo_trend": "steady",
+        "dynamics": "mezzo forte",
+        "articulation": "plucked and legato together",
+        "timbre": "bright and full"
+      },
+      {
+        "section": "Breath",
+        "arousal": "low",
+        "mode_register": "major pentatonic, middle register",
+        "tempo_trend": "steady",
+        "dynamics": "piano",
+        "articulation": "plucked, ringing",
+        "timbre": "bare"
+      },
+      {
+        "section": "Return",
+        "arousal": "high",
+        "mode_register": "major pentatonic, middle to high register",
+        "tempo_trend": "steady",
+        "dynamics": "forte",
+        "articulation": "plucked and legato together",
+        "timbre": "bright and full"
+      },
+      {
+        "section": "Turnaround",
+        "arousal": "low",
+        "mode_register": "major pentatonic, middle register",
+        "tempo_trend": "steady",
+        "dynamics": "mezzo piano",
+        "articulation": "ringing and falling",
+        "timbre": "soft"
+      }
+    ],
+    "theme": {
+      "contour": "up a fourth and two steps, hold a third, fall by steps; the answer repeats the opening, leaps to the highest note and falls to the tonic",
+      "interval_character": "mostly steps with one rising fourth and one rising sixth, no half-steps anywhere because the scale has none",
+      "rhythm_cell": "three short notes then a held three-eighths note (the three-three-two grouping), a held note on beat three of the second bar",
+      "why_memorable": "a rising fourth then steps is easy to hum, the held note gives it a place to breathe, the answer repeats the start so it is heard twice before it changes",
+      "variation_plan": "kalimba states it; bansuri repeats it with a glide; oud ornaments it with a trill; the answer phrase leads once; bansuri and kalimba double an octave apart with a rising tag; the question alone in the breath; the unison return with a high flourish; a stepped-down rest on the tonic"
+    }
+  },
+  "immersive": {
+    "enabled": false,
+    "why": "a stereo ringtone for a single phone speaker: a field would not survive the speaker, so no room does a job here",
+    "engine": "hoa_bus",
+    "anchors": [],
+    "movers": [],
+    "height": {},
+    "room_changes": [],
+    "must_hear": [],
+    "deliverables": [
+      "stereo"
+    ],
+    "notes": "stereo only; the sheet records intent and the presets execute it"
+  },
+  "focus": "melody",
+  "intent": {
+    "emotions": [
+      "joyful",
+      "playful"
+    ],
+    "registers": [
+      "natural"
+    ],
+    "scenes": [
+      "arrival"
+    ],
+    "tensions": [
+      "silence_before",
+      "ostinato"
+    ],
+    "avoid": [
+      "four_on_floor",
+      "pedal_drone_throughout"
+    ]
+  },
+  "piece_type": "melodic",
+  "gate_reason": "a tune carried by plucked and blown voices with a steady pulse and a cadence home: the melodic profile applies in full, nothing is relaxed",
+  "video": {
+    "enabled": false,
+    "source": null,
+    "fps": null,
+    "cuts": [],
+    "cut_source": null,
+    "cut_sync": {
+      "early_ms": 45,
+      "late_ms": 125
+    },
+    "dialogue": {
+      "present": false,
+      "duck_db": -9.0,
+      "snr_min_db": 15.0
+    },
+    "master_profile": null,
+    "deliverable": null,
+    "preset": "default",
+    "notes": "music-only piece"
+  },
+  "notes": "The score ends with a natural ring-out. The SoundFont supplies kalimba, flute, nylon guitar, koto and marimba in place of mbira, bansuri, oud and guzheng; guiro and zil replace the hosho and riq because the SoundFont's rattle samples measured too bright."
+}

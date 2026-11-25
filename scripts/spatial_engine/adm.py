@@ -113,6 +113,20 @@ def _adm_position(engine_az, engine_el, engine_dist, name='object'):
     return -_wrap180(az), el, d
 
 
+def _mean_azimuth(az_deg):
+    """The mean of an engine azimuth (degrees, +right) path, each value wrapped to [-180, 180) first. One rule for
+    the bus fold (levelling) and the file fold (gate), so an object that sweeps is the same position in both."""
+    a = (np.asarray(az_deg, np.float64) + 180.0) % 360.0 - 180.0
+    return float(np.mean(a))
+
+
+def _fold_add(out, channel, az_deg):
+    """Add one object channel to a two-channel fold with a constant-power pan at ``az_deg`` (engine azimuth)."""
+    th = (np.clip(((az_deg + 180.0) % 360.0 - 180.0) / 90.0, -1.0, 1.0) + 1.0) * np.pi / 4.0
+    out[:, 0] += channel * np.cos(th)
+    out[:, 1] += channel * np.sin(th)
+
+
 class AdmBus:
     """A mixer bus that keeps every track apart and remembers where it is: add(name, signal, spec),
     add_reverb(signal), result().
@@ -203,10 +217,8 @@ class AdmBus:
         if self.bed is not None:
             out[:] += audio[:, n_obj:n_obj + 2]
         for i, (_, _, az, _el, _d, p, _role) in enumerate(self.objects):
-            a = float(np.mean(p[:, 0])) if p is not None else float(az)
-            th = (np.clip(((a + 180.0) % 360.0 - 180.0) / 90.0, -1.0, 1.0) + 1.0) * np.pi / 4.0
-            out[:, 0] += audio[:, i] * np.cos(th)
-            out[:, 1] += audio[:, i] * np.sin(th)
+            a = _mean_azimuth(p[:, 0]) if p is not None else float(az)
+            _fold_add(out, audio[:, i], a)
         return out.astype(np.float32)
 
     def chna(self):
@@ -243,9 +255,14 @@ class AdmBus:
                     loudness_method='BS.1770 loudness of a constant-power stereo fold of the objects '
                                     '(engine-internal levelling reference; an object file has no loudness)')
     
-    def xml(self, n, sr=None):
-        """The axml chunk: ADM (BS.2076) in the canonical element order (programme, content, objects, packs,
-        channel formats, stream formats, track formats, track UIDs)."""
+    def xml(self, n, sr=None, loudness=None):
+        """The axml chunk: ADM (BS.2076-3) in the canonical element order (programme, content, objects, packs,
+        channel formats, stream formats, track formats, track UIDs).
+
+        `loudness` is the measurement the render made on the file: {'integrated_lufs', 'max_true_peak_dbtp'}.
+        It is written as loudnessMetadata with the method named as a renderer, which BS.1770-5 Annex 4 requires
+        to be reported for object audio.
+        """
         sr = int(sr or self.sr)
         if not self.objects and self.bed is None:
             raise ValueError('an ADM file needs at least one object or a bed; the bus is empty')
@@ -254,13 +271,21 @@ class AdmBus:
         dur = _time(n / float(sr))
         root = ET.Element('ebuCoreMain', {'xmlns': 'urn:ebu:metadata-schema:ebuCore_2016', 'xml:lang': 'en'})
         afx = ET.SubElement(ET.SubElement(ET.SubElement(root, 'coreMetadata'), 'format'), 'audioFormatExtended',
-                            version='ITU-R_BS.2076-2')
+                            version='ITU-R_BS.2076-3')
         title = str(self.score.get('title') or 'programme')
         chna = self.chna()
         # programme + content (content references every object, bed included)
         prog = ET.SubElement(afx, 'audioProgramme', audioProgrammeID='APR_1001', audioProgrammeName=title,
                              start=_time(0), end=dur)
         ET.SubElement(prog, 'audioContentIDRef').text = 'ACO_1001'
+        lm = ET.SubElement(prog, 'loudnessMetadata')
+        if isinstance(loudness, dict):
+            if loudness.get('integrated_lufs') is not None:
+                ET.SubElement(lm, 'integratedLoudness').text = f"{float(loudness['integrated_lufs']):.1f}"
+            if loudness.get('max_true_peak_dbtp') is not None:
+                ET.SubElement(lm, 'maxTruePeak').text = f"{float(loudness['max_true_peak_dbtp']):.1f}"
+        ET.SubElement(lm, 'renderer', uri='urn:rashee1997:music-generator:adm-stereo-fold',
+                      name='constant-power stereo fold of the objects (engine levelling reference)', version='3.1')
         content = ET.SubElement(afx, 'audioContent', audioContentID='ACO_1001', audioContentName=title)
         for i in range(len(self.objects)):
             ET.SubElement(content, 'audioObjectIDRef').text = f'AO_{0x1001 + i:04X}'
@@ -310,6 +335,110 @@ class AdmBus:
             for row in chna[-2:]:
                 ET.SubElement(bed, 'audioTrackUIDRef').text = row[1]
         # track UIDs tie every chna row to the audio tracks in the file
+        for _, uid, track_format, pack_format in chna:
+            u = ET.SubElement(afx, 'audioTrackUID', UID=uid, sampleRate=str(sr), bitDepth=str(BITS))
+            ET.SubElement(u, 'audioTrackFormatIDRef').text = track_format
+            ET.SubElement(u, 'audioPackFormatIDRef').text = pack_format
+        return b'<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(root, encoding='utf-8')
+
+
+SPEAKER_PACK = 'AP_00011001'      # the custom range (IDs from 1001 hex): no common definition exists for a 3.2 layout
+SPEAKER_LABELS = {'L': 'M+030', 'R': 'M-030', 'C': 'M+000'}   # BS.2051 names; azimuth is positive to the left
+
+
+class SpeakerBed:
+    """A finished loudspeaker programme as an ADM DirectSpeakers pack (typeLabel 0001), one channel format per speaker.
+
+    Unlike AdmBus this holds no objects: the audio is already on the layout, so the metadata only names each channel
+    (`speakerLabel`), gives its nominal position, and marks a low-frequency channel with a low-pass frequency. The label
+    of a main speaker comes from `SPEAKER_LABELS` by speaker name, else from its azimuth as M+/-ddd; the
+    low-frequency channels keep their own names (LFE1, LFE2).
+
+        bed = SpeakerBed('lrc_lfe2', sr, score); write(path, audio, sr, bed.xml(len(audio), sr), bed.chna())
+    """
+
+    def __init__(self, layout_name, sr=44100, score=None):
+        from . import config
+        self.layout_name, self.sr, self.score = layout_name, int(sr), score or {}
+        self.speakers = [dict(sp) for sp in config.layout(layout_name).get('speakers') or []]
+        self.stopband = (config.layout(layout_name).get('lfe') or {}).get('stopband_hz')
+
+    def label(self, sp):
+        if sp.get('lfe'):
+            return str(sp['name'])
+        if sp['name'] in SPEAKER_LABELS:
+            return SPEAKER_LABELS[sp['name']]
+        az = int(round(-_wrap180(float(sp['azimuth']))))
+        return f"M{'+' if az >= 0 else '-'}{abs(az):03d}"
+
+    def channel_count(self):
+        return len(self.speakers)
+
+    def _hex(self, i):
+        return f'{0x00011001 + i:08X}'
+
+    def chna(self):
+        return [(i + 1, f'ATU_{i + 1:08X}', f'AT_{self._hex(i)}_01', SPEAKER_PACK) for i in range(len(self.speakers))]
+
+    def report(self, n_samples=None, sr=None):
+        return dict(renderer='adm_speakers', container='BW64 (ITU-R BS.2088, strict form)', sample_rate=int(sr or self.sr),
+                    bit_depth=BITS, channels=len(self.speakers), layout=self.layout_name,
+                    labels={sp['name']: self.label(sp) for sp in self.speakers})
+
+    def xml(self, n, sr=None, loudness=None):
+        sr = int(sr or self.sr)
+        dur = _time(n / float(sr))
+        root = ET.Element('ebuCoreMain', {'xmlns': 'urn:ebu:metadata-schema:ebuCore_2016', 'xml:lang': 'en'})
+        afx = ET.SubElement(ET.SubElement(ET.SubElement(root, 'coreMetadata'), 'format'), 'audioFormatExtended',
+                            version='ITU-R_BS.2076-3')
+        title = str(self.score.get('title') or 'programme')
+        prog = ET.SubElement(afx, 'audioProgramme', audioProgrammeID='APR_1001', audioProgrammeName=title,
+                             start=_time(0), end=dur)
+        ET.SubElement(prog, 'audioContentIDRef').text = 'ACO_1001'
+        lm = ET.SubElement(prog, 'loudnessMetadata')
+        if isinstance(loudness, dict):
+            if loudness.get('integrated_lufs') is not None:
+                ET.SubElement(lm, 'integratedLoudness').text = f"{float(loudness['integrated_lufs']):.1f}"
+            if loudness.get('max_true_peak_dbtp') is not None:
+                ET.SubElement(lm, 'maxTruePeak').text = f"{float(loudness['max_true_peak_dbtp']):.1f}"
+        ET.SubElement(lm, 'renderer', uri='urn:rashee1997:music-generator:bs1770-layout-weights',
+                      name='BS.1770 with the layout channel weights, low-frequency channels excluded', version='3.2')
+        content = ET.SubElement(afx, 'audioContent', audioContentID='ACO_1001', audioContentName=title)
+        ET.SubElement(content, 'audioObjectIDRef').text = 'AO_1001'
+        obj = ET.SubElement(afx, 'audioObject', audioObjectID='AO_1001', audioObjectName=f'{self.layout_name} bed',
+                            start=_time(0), duration=dur)
+        ET.SubElement(obj, 'audioPackFormatIDRef').text = SPEAKER_PACK
+        chna = self.chna()
+        for row in chna:
+            ET.SubElement(obj, 'audioTrackUIDRef').text = row[1]
+        pack = ET.SubElement(afx, 'audioPackFormat', audioPackFormatID=SPEAKER_PACK,
+                             audioPackFormatName=self.layout_name, typeLabel='0001', typeDefinition='DirectSpeakers')
+        for i in range(len(self.speakers)):
+            ET.SubElement(pack, 'audioChannelFormatIDRef').text = 'AC_' + self._hex(i)
+        for i, sp in enumerate(self.speakers):
+            hexid = self._hex(i)
+            chan = ET.SubElement(afx, 'audioChannelFormat', audioChannelFormatID='AC_' + hexid,
+                                 audioChannelFormatName=str(sp['name']), typeLabel='0001',
+                                 typeDefinition='DirectSpeakers')
+            blk = ET.SubElement(chan, 'audioBlockFormat', audioBlockFormatID=f'AB_{hexid}_00000001',
+                                rtime=_time(0), duration=dur)
+            ET.SubElement(blk, 'speakerLabel').text = self.label(sp)
+            adm_az, adm_el, adm_d = _adm_position(sp['azimuth'], sp.get('elevation', 0.0), 1.0, name=sp['name'])
+            for coord, val in (('azimuth', adm_az), ('elevation', adm_el), ('distance', adm_d)):
+                ET.SubElement(blk, 'position', coordinate=coord).text = f'{val:.3f}'
+            if sp.get('lfe') and self.stopband:
+                ET.SubElement(chan, 'frequency', typeDefinition='lowPass').text = f'{float(self.stopband):g}'
+        for i, sp in enumerate(self.speakers):
+            hexid = self._hex(i)
+            stream = ET.SubElement(afx, 'audioStreamFormat', audioStreamFormatID='AS_' + hexid,
+                                   audioStreamFormatName='PCM_' + str(sp['name']), formatLabel='0001',
+                                   formatDefinition='PCM')
+            ET.SubElement(stream, 'audioChannelFormatIDRef').text = 'AC_' + hexid
+            ET.SubElement(stream, 'audioTrackFormatIDRef').text = f'AT_{hexid}_01'
+            track = ET.SubElement(afx, 'audioTrackFormat', audioTrackFormatID=f'AT_{hexid}_01',
+                                  audioTrackFormatName='PCM_' + str(sp['name']), formatLabel='0001',
+                                  formatDefinition='PCM')
+            ET.SubElement(track, 'audioStreamFormatIDRef').text = 'AS_' + hexid
         for _, uid, track_format, pack_format in chna:
             u = ET.SubElement(afx, 'audioTrackUID', UID=uid, sampleRate=str(sr), bitDepth=str(BITS))
             ET.SubElement(u, 'audioTrackFormatIDRef').text = track_format
@@ -374,7 +503,7 @@ def _fmt_body(channels, sr):
 
 def _pcm24_block(block):
     """float32 (frames, channels) -> 24-bit LE interleaved bytes, no clipping (|x| <= 1 already checked)."""
-    pcm = np.round(np.asarray(block, dtype=np.float64) * 8388607.0).astype('<i4')
+    pcm = np.ascontiguousarray(np.round(np.asarray(block, dtype=np.float64) * 8388607.0).astype('<i4'))   # a transposed view is not viewable as bytes
     return pcm.view(np.uint8).reshape(-1, 4)[:, :3].tobytes()
 
 
@@ -427,7 +556,7 @@ def write(path, audio, sr, xml, chna):
         for tag, body in chunks:
             f.write(tag + DW.pack(_field(body)) + body + (b'\x00' if len(body) % 2 else b''))
         f.write(b'data' + DW.pack(data_field))
-        n_write, block = 1 << 20, 8192 * channels
+        block = 8192                                        # frames per write: the buffer is block x channels
         for start in range(0, frames, block):
             f.write(_pcm24_block(audio[start:start + block]))
         if data_bytes % 2:
@@ -453,10 +582,13 @@ def fold_to_stereo(parsed):
     azimuth_of = {}
     for chan in root.findall('.//e:audioChannelFormat', _NS):
         cid = (chan.get('audioChannelFormatID') or '')
-        blk = chan.find('e:audioBlockFormat', _NS)
-        pos = blk.find("e:position[@coordinate='azimuth']", _NS) if blk is not None else None
-        if pos is not None and (pos.text or '').strip():
-            azimuth_of[cid] = float(pos.text)
+        vals = []
+        for blk in chan.findall('e:audioBlockFormat', _NS):
+            pos = blk.find("e:position[@coordinate='azimuth']", _NS)
+            if pos is not None and (pos.text or '').strip():
+                vals.append(float(pos.text))
+        if vals:
+            azimuth_of[cid] = np.asarray(vals, np.float64)
     track_to_channel = {}
     for tr in root.findall('.//e:audioTrackFormat', _NS):
         tid = tr.get('audioTrackFormatID') or ''
@@ -471,15 +603,15 @@ def fold_to_stereo(parsed):
     out = np.zeros((audio.shape[0], 2), np.float64)
     for i, (_idx, _uid, track_format, pack_format) in enumerate(chna):
         if pack_format == BED_PACK:            # a bed channel pair is already a stereo feed
-            out[:, 0 if _idx % 2 else 1] += audio[:, i]
+            if track_format not in (BED[0][1], BED[1][1]):
+                raise ValueError(f'channel {i + 1} ({track_format}) is in the bed pack but is neither bed track')
+            out[:, 0 if track_format == BED[0][1] else 1] += audio[:, i]      # the bed's side is its track format
             continue
         cid = track_to_channel.get(track_format)
         if cid not in azimuth_of:
             raise ValueError(f'channel {i + 1} ({track_format}) has no object azimuth; cannot fold it')
-        # ADM azimuth (+left) back to the engine's constant-power pan (+right)
-        th = (np.clip(-azimuth_of[cid] / 90.0, -1.0, 1.0) + 1.0) * np.pi / 4.0
-        out[:, 0] += audio[:, i] * np.cos(th)
-        out[:, 1] += audio[:, i] * np.sin(th)
+        # ADM azimuth (+left) back to the engine's (+right), averaged over the blocks like AdmBus.stereo_fold
+        _fold_add(out, audio[:, i], _mean_azimuth(-np.asarray(azimuth_of[cid], np.float64)))
     return out.astype(np.float32)
 
 
@@ -762,7 +894,7 @@ def validate_file(path, expect_sr=None):
         for tag, _size32, _off in chunks:
             if tag not in ('fmt ', 'chna', 'axml', 'data'):
                 problems.append(f'chunk {tag!r} is not part of a minimal BW64 file')
-        return problems + _validate_bodies(path)
+        return problems + _validate_bodies(path, expect_sr)
     order = [t for t, _, _ in chunks]
     if order[:1] != ['ds64']:
         problems.append(f'the first chunk is {order[:1]!r}, not ds64 (it must follow the BW64 header)')
@@ -773,7 +905,7 @@ def validate_file(path, expect_sr=None):
         problems.append('ds64 must precede data')
     if 'fmt ' in order and 'data' in order and order.index('fmt ') > order.index('data'):
         problems.append('fmt must precede data')
-    problems += _validate_bodies(path)
+    problems += _validate_bodies(path, expect_sr)
     return problems
 
 
@@ -818,6 +950,16 @@ def _validate_bodies(path, expect_sr=None):
             if not pf.startswith('AP_') or len(pf) != 11:
                 problems.append(f'chna track {idx} packFormat {pf!r} is not AP_ + 8 hex')
     if axml is not None:
+        try:
+            root = ET.fromstring(axml)
+            afx = root.find('.//e:audioFormatExtended', _NS)
+            version = afx.get('version') if afx is not None else None
+            if version != 'ITU-R_BS.2076-3':
+                problems.append(f'audioFormatExtended version is {version!r}, not ITU-R_BS.2076-3')
+            if afx is not None and afx.find('.//e:loudnessMetadata', _NS) is None:
+                problems.append('no loudnessMetadata: the file does not say how its loudness was measured')
+        except ET.ParseError as e:
+            problems.append(f'axml is not well-formed XML: {e}')
         # NOTE 2 of BS.2088-2 section 2.1 permits axml after data, so chunk placement is not judged here;
         # the writer emits it before data, where ADM readers expect to find it without seeking past the audio.
         problems += validate_adm(axml, chna or [], sr=parsed['sr'], channels=parsed['channels'])

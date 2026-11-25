@@ -1,0 +1,112 @@
+{
+  "name": "soundfonts",
+  "character": "The SoundFont banks this skill can play, with where each comes from, its licence, its size and how to check it. Only generaluser_gs is needed; every other bank is optional and is fetched with `python scripts/setup_project.py --soundfonts <name>`.",
+  "default": "generaluser_gs",
+  "status_note": "Written 2026-11-23 from an environment whose network allowed neither GitHub downloads nor the other hosts, so NO download URL below was fetched and no checksum was taken from a download. A sha256 is filled only where the file was on disk here (generaluser_gs, timgm6mb); the others are null, and setup_project.py then records the hash of what it downloaded on first use (assets/soundfonts/INSTALLED.json) and checks every later run against it. Sizes marked approximate are the figures given in the request, not measurements.",
+  "banks": {
+    "generaluser_gs": {
+      "file": "GeneralUser-GS.sf2",
+      "label": "GeneralUser GS",
+      "type": "gm_gs",
+      "size_mb": 32.3,
+      "size_status": "measured on the copy present here",
+      "urls": [
+        "https://github.com/mrbumpy409/GeneralUser-GS/raw/main/GeneralUser-GS.sf2",
+        "https://raw.githubusercontent.com/mrbumpy409/GeneralUser-GS/main/GeneralUser-GS.sf2"
+      ],
+      "sha256": "9575028c7a1f589f5770fccc8cff2734566af40cd26ed836944e9a5152688cfe",
+      "sha256_status": "reference only, NOT enforced: the hash of the copy this skill had downloaded to its cache on 2026-11-23. The upstream file is fetched from a moving branch, so soundbank.py (the default path) does not pin it",
+      "pin": false,
+      "license": {
+        "name": "GeneralUser GS License v2.0 (permissive: free for any use, commercial music included)",
+        "holder": "S. Christian Collins",
+        "url": "https://github.com/mrbumpy409/GeneralUser-GS/blob/main/documentation/LICENSE.txt",
+        "attribution": "GeneralUser GS by S. Christian Collins. Credit is appreciated, not required."
+      },
+      "gm_order": true,
+      "notes": "The default. Wired in scripts/soundbank.py (ensure_soundfont); the manifest only describes it."
+    },
+    "timgm6mb": {
+      "file": "TimGM6mb.sf2",
+      "label": "TimGM6mb",
+      "type": "gm_gs",
+      "size_mb": 5.99,
+      "size_status": "measured on the copy bundled with the pretty_midi package",
+      "urls": [],
+      "local_source": "pretty_midi",
+      "sha256": "82475b91a76de15cb28a104707d3247ba932e228bada3f47bba63c6b31aaf7a1",
+      "sha256_status": "measured on the file bundled in the pretty_midi package (the installed 0.2.11 wheel)",
+      "pin": true,
+      "license": {
+        "name": "GNU GPL v2",
+        "holder": "Tim Brechbill (TimGM6mb), as distributed with MuseScore",
+        "url": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
+        "attribution": "TimGM6mb by Tim Brechbill, GPLv2."
+      },
+      "gm_order": true,
+      "notes": "A very small bank for smoke tests and CI. It is copied from the installed pretty_midi package (no download), and it is data played at run time, not code linked into this program; GPL-2.0-only is not AGPL-3.0-compatible as a combined work, so it is never committed to this repository."
+    },
+    "muse_general": {
+      "file": "MuseScore_General.sf2",
+      "label": "MuseScore General",
+      "type": "gm_gs",
+      "size_mb": 206,
+      "size_status": "approximate, from the request",
+      "urls": [
+        "https://ftp.osuosl.org/pub/musescore/soundfont/MuseScore_General/MuseScore_General.sf2",
+        "https://github.com/musescore/MuseScore/raw/master/share/sound/MuseScore_General.sf2"
+      ],
+      "sha256": null,
+      "sha256_status": "not taken: no download was possible when this was written",
+      "pin": false,
+      "license": {
+        "name": "MIT",
+        "holder": "S. Christian Collins and the MuseScore project",
+        "url": "https://github.com/musescore/MuseScore/blob/master/share/sound/MuseScore_General_License.md",
+        "attribution": "MuseScore General, MIT licence; see the licence file at the url."
+      },
+      "gm_order": true,
+      "notes": "Acoustic and ensemble upgrade over the default. The licence and the URLs are as given in the request and were not re-read."
+    },
+    "fluid_r3_gm": {
+      "file": "FluidR3_GM.sf2",
+      "label": "FluidR3 GM",
+      "type": "gm_gs",
+      "size_mb": 142,
+      "size_status": "approximate, from the request",
+      "urls": [
+        "https://github.com/urish/cinto/raw/master/media/FluidR3%20GM.sf2"
+      ],
+      "sha256": null,
+      "sha256_status": "not taken: no download was possible when this was written",
+      "pin": false,
+      "license": {
+        "name": "MIT",
+        "holder": "Frank Wen (FluidR3)",
+        "url": "https://github.com/urish/cinto/blob/master/media/FluidR3%20Readme.md",
+        "attribution": "FluidR3 GM by Frank Wen, MIT licence."
+      },
+      "gm_order": true,
+      "notes": "Punchy brass, percussion and synths. The URL is a third-party mirror recalled from memory and unverified: if it is gone, put the file at assets/soundfonts/FluidR3_GM.sf2 yourself."
+    },
+    "sonatina_sf2": {
+      "file": "Sonatina_Symphonic_Orchestra.sf2",
+      "label": "Sonatina Symphonic Orchestra",
+      "type": "orchestral",
+      "size_mb": 517,
+      "size_status": "approximate, from the request",
+      "urls": [],
+      "sha256": null,
+      "sha256_status": "not taken: no verified download location was known",
+      "pin": false,
+      "license": {
+        "name": "Creative Commons Sampling Plus 1.0",
+        "holder": "Mattias Westlund (Sonatina Symphonic Orchestra)",
+        "url": "https://creativecommons.org/licenses/sampling+/1.0/",
+        "attribution": "Sonatina Symphonic Orchestra by Mattias Westlund and contributors, CC Sampling Plus 1.0. Sampling Plus allows sampling and remixing, not redistribution of the whole bank: do not commit or re-host it."
+      },
+      "gm_order": false,
+      "notes": "Dedicated orchestral strings, winds, brass and percussion in its own preset order, so an instrument preset must say which bank and program to play (`program_map`). No download URL is registered: obtain the .sf2 from the project's own page and place it at assets/soundfonts/Sonatina_Symphonic_Orchestra.sf2; setup_project.py will then record and verify its hash."
+    }
+  }
+}

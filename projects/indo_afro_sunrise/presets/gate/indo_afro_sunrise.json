@@ -1,0 +1,8 @@
+{
+ "name": "indo_afro_sunrise",
+ "character": "An Indo-Afro groove inside a rainforest canopy: the groove and the ambience carry the piece, so the gate keeps every melodic row and adds the immersive and environment rows, and it relaxes nothing.",
+ "extends": "melodic",
+ "why": "the piece has a figure (bansuri) and a full rhythm section, so `melodic` is the closest shipped type; this profile is the project's own document, and it starts with no row changed",
+ "flags": [],
+ "rows": {}
+}

@@ -36,7 +36,58 @@
     "bow.breath_gap": {
       "gap_beats": 0.08
     },
+    "channel.bars": {
+      "balance_db": 4.0,
+      "balance_spread_db": 2.5,
+      "dropout_db": 15.0,
+      "floor_abs_db": -65.0,
+      "floor_programme_db": 40.0,
+      "jump_db": 8.0,
+      "polarity_corr": -0.5,
+      "polarity_neighbor": 0.2,
+      "stable_db": 3.0
+    },
+    "channel.virtual": {},
     "channels": {},
+    "chem.affiliation": {
+      "min_legato": 0.5,
+      "min_mean": 0.45
+    },
+    "chem.arc_variety": {
+      "max_arrivals_per_min": 1.0,
+      "max_flat_share": 0.6,
+      "min_states": 3
+    },
+    "chem.genre_connection": {},
+    "chem.model": {},
+    "chem.mood_connection": {
+      "max_distance": 0.25
+    },
+    "chem.motor_drive": {
+      "bsi_hi": 4.8,
+      "bsi_lo": 0.4,
+      "min_mean": 0.4,
+      "min_pulse": 0.4
+    },
+    "chem.recovery": {
+      "max_final_cort": 0.4,
+      "min_drop_frac": 0.35
+    },
+    "chem.reward_arrival": {
+      "max_offset_s": 2.0,
+      "min_contrast_db": 3.0,
+      "min_peak": 0.5
+    },
+    "chem.reward_build": {
+      "min_lead_s": 4.0,
+      "min_peak": 0.45,
+      "min_rho": 0.4
+    },
+    "chem.stress_load": {
+      "max_mean_load": 0.35,
+      "max_unresolved_s": 8.0,
+      "min_resolve_frac": 0.6
+    },
     "choked_resonance": {},
     "chord_voicing_and_strum": {},
     "chroma.concordance": {
@@ -50,27 +101,126 @@
     },
     "delivery.bit_depth": {},
     "delivery.channels": {},
+    "delivery.conform": {
+      "max_abs_ms": 50.0
+    },
     "delivery.duration": {
       "tolerance_s": 0.5
     },
+    "delivery.loudness_ceiling": {
+      "max_lufs": -18.0
+    },
     "delivery.sample_rate": {},
+    "delivery.standard": {},
     "dropout": {
       "floor_below_db": 45.0,
       "max_ms": 1000.0,
       "min_ms": 20.0
     },
+    "ear.fatigue": {
+      "f_max": 0.6,
+      "lufs_range_lu": 2.0,
+      "min_seconds": 5.0
+    },
+    "ear.iacc": {
+      "max_iacc": 0.98,
+      "min_iacc": 0.1
+    },
+    "ear.masking": {
+      "min_frames": 0.7,
+      "min_share": 0.5
+    },
+    "ear.mod_roughness": {
+      "max_index": 0.6,
+      "min_frames": 3
+    },
+    "ear.pitch_salience": {
+      "min_frames": 0.5,
+      "min_salience": 0.25
+    },
+    "emotion.arc_arousal": {
+      "min_rho": 0.6
+    },
+    "emotion.arc_valence": {
+      "neutral_band": 0.3
+    },
     "end.abrupt": {
       "floor_db": -45.0,
       "min_decay_db": 12.0
     },
+    "env.cpu_budget": {
+      "fail_s_per_min": 30.0,
+      "max_s_per_min": 12.0
+    },
+    "env.declaration": {},
+    "env.density_budget": {
+      "max_over": 0.25
+    },
+    "env.diffuse_field": {
+      "fail_over": 0.25,
+      "target": 0.2,
+      "warn_over": 0.1
+    },
+    "env.ecology_rules": {},
+    "env.foreground_salience": {
+      "max_db": 15.0,
+      "max_over_s": 10.0,
+      "max_share_low": 0.3,
+      "min_db": 3.0
+    },
+    "env.level_physical": {
+      "fail_db": 8.0,
+      "max_db": 3.0
+    },
+    "env.loop_stationarity": {
+      "fail_repeat": 0.8,
+      "fail_seam_db": 1.5,
+      "fail_window_dev": 3.5,
+      "max_repeat": 0.4,
+      "max_seam_db": 0.5,
+      "max_window_dev": 2.0
+    },
+    "env.medium_consistency": {
+      "fail_err_alpha": 0.1,
+      "fail_err_c": 0.15,
+      "max_err_alpha": 0.02,
+      "max_err_c": 0.03,
+      "max_f1_err": 0.03
+    },
+    "env.niche_collision": {
+      "fail_co": 0.5,
+      "fail_d": 0.7,
+      "warn_co": 0.25,
+      "warn_d": 0.4
+    },
+    "env.score_pocket": {
+      "fail_in_pocket": 0.6,
+      "min_in_pocket": 0.85
+    },
+    "expr.agogic_coupling": {
+      "min_rho": 0.15
+    },
+    "expr.ic_profile": {},
+    "expr.surprise_grounded": {
+      "max_share": 0.6
+    },
+    "expr.tension_ic": {},
     "feel.contour": {},
     "feel.effort": {},
-    "feel.entropy": {},
+    "feel.entropy": {
+      "max_bits": 4.4,
+      "min_bits": 1.15
+    },
     "feel.groove": {},
     "feel.resolution": {},
     "feel.spiral": {},
     "feel.witek": {},
     "focus.declared": {},
+    "front.fold_phantom": {
+      "max_ild_db": 2.0,
+      "max_itd_us": 100.0
+    },
+    "iamf.container": {},
     "imm.band": {
       "min_hf_frac": 0.003
     },
@@ -85,6 +235,9 @@
     "imm.cues": {
       "min_ild_db": 8.0,
       "min_itd_ms": 0.3
+    },
+    "imm.decode_uniformity": {
+      "max_spread_db": 2.0
     },
     "imm.elevation": {
       "min_tilt_db": 3.0
@@ -125,15 +278,30 @@
     "kick.grid": {
       "min_lock": 0.7
     },
+    "lfe.fold_loss": {
+      "max_db": 1.5
+    },
+    "lfe.modal_spread": {
+      "min_gain_db": 0.0
+    },
+    "lfe.polarity": {
+      "min_rho": -0.3
+    },
+    "lfe.sum_coherence": {
+      "min_rho": 0.9
+    },
     "loudness": {},
     "low_interval_mud": {},
     "machine_gun_percussion": {},
+    "masking.excess": {},
     "masking.vs_melody": {
       "margin_db": 3.0
     },
     "master.dc": {
       "dc_max": 0.001
     },
+    "master.micro_dynamics": {},
+    "master.mono_bands": {},
     "meta.tags": {
       "max_missing": 0
     },

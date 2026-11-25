@@ -1,0 +1,30 @@
+{
+  "name": "vcsl_keys",
+  "character": "VCSL Keys: the keyboard instruments of the Versilian Community Sample Library",
+  "type": "library",
+  "licence": "CC0 1.0",
+  "licence_url": "https://versilian-studios.com/vcsl-keys/",
+  "share_alike": false,
+  "attribution": "VCSL Keys, Versilian Studios",
+  "homepage": "https://versilian-studios.com/vcsl-keys/",
+  "families": [
+    "keys",
+    "piano"
+  ],
+  "verified": true,
+  "source": {
+    "kind": "manual"
+  },
+  "entry": ".",
+  "parts": {
+    "all": {
+      "what": "the library as its author publishes it",
+      "manual": "https://versilian-studios.com/vcsl-keys/",
+      "manual_note": "Open the page, download the SFZ instrument, then run: sfz_libs.py install-local vcsl_keys <downloaded.zip> --project <dir>. Then name it in an instrument preset: \"sfz\": {\"library\": \"vcsl_keys\", \"patch\": \"<path/to/patch>\"}."
+    }
+  },
+  "default_parts": [
+    "all"
+  ],
+  "notes": "Open the page, download the SFZ instrument, then run: sfz_libs.py install-local vcsl_keys <downloaded.zip> --project <dir>. Then name it in an instrument preset: \"sfz\": {\"library\": \"vcsl_keys\", \"patch\": \"<path/to/patch>\"}."
+}

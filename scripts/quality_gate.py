@@ -36,7 +36,10 @@ try:
 except Exception:
     median_filter = None
 
+import auditory
 import gate_checks as gc
+import gate_audio
+import gate_clock
 from gate_audio import GateAudio, Signal
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -144,11 +147,19 @@ def score_checks(score, out):
     _, flags = pattern_audit.audit(score)           # audit() returns (info, flags)
     for f in flags:
         _row(out, 'WARN', 'pattern', f)
-    max_flags = score.get('pattern_flags_max', score.get('quality', {}).get('pattern_flags_max', gp.param('pattern.flags_max', 'max')))
+    max_flags = flags_limit(score, gp)
     if len(flags) >= max_flags:
         _row(out, 'FAIL', 'pattern', f'{len(flags)} repetition or flatness flags: the piece reads as a loop, not a composition')
     if not flags:
         _row(out, 'PASS', 'pattern', 'no copy-paste, grid-bound or flat-dynamics flags in the score')
+
+
+def flags_limit(score, gp):
+    """The most repetition flags a piece may carry. A score may tighten the profile's limit; it may not raise it:
+    a number written in the score skips the profile's range check, its reason and its record in the report."""
+    limit = gp.param('pattern.flags_max', 'max')
+    asked = score.get('pattern_flags_max', (score.get('quality') or {}).get('pattern_flags_max'))
+    return limit if asked is None else min(limit, asked)
 
 
 def render_checks(out):
@@ -164,10 +175,37 @@ def render_checks(out):
         _row(out, 'PASS', 'channels', 'every microtone note had its own channel')
 
 
+def expression_rows(score, out):
+    """expr.agogic_coupling: for a figure line rendered with the expectation coupling on (ic_agogic_ms / ic_vel above 0), the
+    rank correlation of its onsets and velocities with its melodic surprise. Silent when no line used the coupling."""
+    import gate_profiles
+    gp = gate_profiles.resolve(score)
+    if not gp.on('expr.agogic_coupling'):
+        return
+    need = float(gp.param('expr.agogic_coupling', 'min_rho'))
+    for name, entry in sorted((rn.REPORT or {}).items()):
+        cp = (entry or {}).get('coupling')
+        if not cp:
+            continue
+        parts, low = [], False
+        for key, used, label in (('ic_timing_rho', 'ic_agogic_ms', 'timing'), ('ic_vel_rho', 'ic_vel', 'velocity')):
+            if not cp.get(used):
+                continue
+            rho = cp.get(key)
+            if rho is None:
+                parts.append(f'{label} not measured (too few notes or no spread)')
+                continue
+            parts.append(f'{label} rho {rho:+.2f}')
+            low = low or rho < need
+        if parts:
+            _row(out, 'WARN' if low else 'INFO', 'expr.agogic_coupling',
+                 f"Track '{name}': onsets/velocities against melodic surprise: {'; '.join(parts)} (want at least {need:+.2f})"
+                 + ('; raise ic_agogic_ms / ic_vel, or use a groove preset looser than tight' if low else ''))
+
+
 def spatial_check(path, score, out):
     """A score that stages sources off-centre or at a height must be heard that way. The default mixer path is amplitude pan
     only (no time difference, no elevation), so a staged score with no binaural / trajectory track renders near-mono."""
-    import soundfile as sf
     import presets
     imm = _mix_immersive(score)
     staged, routed = 0, 0
@@ -193,8 +231,9 @@ def spatial_check(path, score, out):
             routed += bool(is_binaural)
     if not staged:
         return
+    import gate_audio
     try:
-        x, _ = sf.read(path, always_2d=True)
+        x = gate_audio.load(path).audio
     except Exception:
         return
     if x.shape[1] < 2 or float(np.std(x[:, 0])) < 1e-9 or float(np.std(x[:, 1])) < 1e-9:
@@ -217,16 +256,12 @@ def _cues(y, sr=44100):
 
 
 def _band_db(y, lo, hi, sr=44100):
-    from scipy import signal
-    f, p = signal.welch(y.mean(axis=1) if y.ndim == 2 else y, sr, nperseg=2048)
-    return float(10 * np.log10(p[(f > lo) & (f < hi)].mean() + 1e-20))
+    return gate_audio.band_level_db(y, lo, hi, sr)
 
 
 def _third_octave_db(y, lo=500.0, hi=5000.0, sr=44100):
     """1/3-octave band levels from a Welch PSD, for comparing two renderings of the same signal."""
-    from scipy import signal
-    m = y.mean(axis=1) if np.ndim(y) == 2 else np.asarray(y)
-    f, p = signal.welch(m, sr, nperseg=4096)
+    f, p = gate_audio.mono_psd(y, sr, 4096)
     out = []
     for c in np.geomspace(float(lo), float(hi), 12):
         sel = (f >= c * 2 ** (-1 / 6.0)) & (f < c * 2 ** (1 / 6.0))
@@ -241,7 +276,6 @@ def immersive_rows(score, path, stems, out):
     import gate_profiles
     import mixer
     import project_gate
-    import soundfile as sf
     from scipy import signal
     cfg = mixer.immersive_cfg(score)
     if not cfg:
@@ -258,11 +292,17 @@ def immersive_rows(score, path, stems, out):
         return
     sr = 44100
     probe = signal.sosfilt(signal.butter(4, [300, 6000], 'band', fs=sr, output='sos'), np.random.default_rng(1).standard_normal(sr))
+    probe_lo = signal.sosfilt(signal.butter(4, [100, 700], 'band', fs=sr, output='sos'), np.random.default_rng(1).standard_normal(sr))
     if gp.on('imm.cues'):
         min_ild = float(gp.param('imm.cues', 'min_ild_db'))
         min_itd = float(gp.param('imm.cues', 'min_itd_ms'))
-        r_ild, r_itd = _cues(hb.spatialize(probe, 60, 0, 1.0))
-        l_ild, l_itd = _cues(hb.spatialize(probe, -60, 0, 1.0))
+        r_ild, _ = _cues(hb.spatialize(probe, 60, 0, 1.0))
+        l_ild, _ = _cues(hb.spatialize(probe, -60, 0, 1.0))
+        # The interaural time difference is read where the decoder renders interaural phase: below its transition
+        # frequency. A MagLS decoder leaves the phase above it free (that is the method), so a broadband
+        # cross-correlation reads noise there, not the cue.
+        _, r_itd = _cues(hb.spatialize(probe_lo, 60, 0, 1.0))
+        _, l_itd = _cues(hb.spatialize(probe_lo, -60, 0, 1.0))
         if r_ild > min_ild and l_ild < -min_ild and r_itd < -min_itd and l_itd > min_itd:
             _row(out, 'PASS', 'imm_cues', f'probe at +-60 deg: level difference {r_ild:+.1f}/{l_ild:+.1f} dB, time difference {r_itd:+.2f}/{l_itd:+.2f} ms')
         else:
@@ -340,7 +380,7 @@ def immersive_rows(score, path, stems, out):
             m = np.asarray(a).mean(axis=1) if np.ndim(a) == 2 else np.asarray(a)
             if len(m) < 2048 or not np.any(m):
                 continue
-            f, p = signal.welch(m, sr, nperseg=2048)
+            f, p = gate_audio.mono_psd(m, sr, 2048)
             if p[f > 4000].sum() / (p.sum() + 1e-20) < min_frac:
                 dull.append(tname)
         _row(out, 'WARN' if dull else 'PASS', 'imm_band',
@@ -373,15 +413,20 @@ def immersive_rows(score, path, stems, out):
         _row(out, 'PASS' if iacc <= lim else 'WARN', 'imm_envelopment',
              f'late-tail interaural correlation {iacc:.2f} (limit {lim:g}); IACC alone does not prove envelopment, and the overhead part of the tail is not measured')
 
-    x, _ = sf.read(path, always_2d=True) if path else (np.zeros((1, 2)), sr)
+    # the delivered file as the rest of the gate already holds it (float64, its derived views cached), instead of a
+    # second full float64 read of the same bytes
+    x, _ = (gate_audio.load(path).audio, sr) if path else (np.zeros((1, 2)), sr)
     if x.shape[1] == 2 and len(x) > sr:
         if gp.on('imm.width'):
-            c = float(np.corrcoef(x[:, 0], x[:, 1])[0, 1])
+            c = gate_audio.channel_correlation(x[:, 0], x[:, 1])
             lim = float((gp.rows.get('imm.width') or {}).get('max_corr', gp.param('imm.width', 'max_corr')))
-            _row(out, 'WARN' if c > lim else 'PASS', 'imm_width',
-                 f'L/R correlation {c:.2f} (limit {lim:g})' + (' (nearly mono: beds are not wide)' if c > lim else ''))
+            if not np.isfinite(c):
+                _row(out, 'WARN', 'imm_width', 'a channel is silent or constant, so the L/R correlation is undefined')
+            else:
+                _row(out, 'WARN' if c > lim else 'PASS', 'imm_width',
+                     f'L/R correlation {c:.2f} (limit {lim:g})' + (' (nearly mono: beds are not wide)' if c > lim else ''))
         if gp.on('imm.foldown'):
-            drop = mixer.lufs(x, sr) - mixer.lufs(np.stack([x.mean(axis=1)] * 2, 1), sr)
+            drop = gate_audio.loudness_lufs(x, sr) - gate_audio.loudness_lufs(np.stack([x.mean(axis=1)] * 2, 1), sr)
             lim = float((gp.rows.get('imm.foldown') or {}).get('max_lu', gp.param('imm.foldown', 'max_lu')))
             _row(out, 'FAIL' if drop > lim else 'PASS', 'imm_foldown', f'mono fold-down is {drop:+.1f} LU vs the stereo master (limit {lim:g}): '
                  + ('phase cancellation will thin it on phone speakers' if drop > lim else 'holds up on a phone speaker'))
@@ -422,14 +467,6 @@ def fold_loss(x, sr=44100, nperseg=4096):
     return f, 0.5 * (pl + pr), 0.25 * (pl + pr + 2.0 * np.real(plr))
 
 
-def _erb_edges(lo=100.0, hi=5000.0):
-    """Band edges one ERB apart (Glasberg & Moore 1990) from lo to hi."""
-    def rate(f):
-        return 21.4 * np.log10(4.37e-3 * f + 1.0)
-    k = np.arange(np.ceil(rate(lo)), np.floor(rate(hi)) + 1.0)
-    return (10.0 ** (k / 21.4) - 1.0) / 4.37e-3
-
-
 def fold_rows(score, path, out, audio=None, sr=44100):
     """mix.band_fold for any two-channel master and imm.low_fold for an immersive one: what a mono speaker loses,
     band by band. A broadband fold-down number hides a single band that cancels."""
@@ -437,8 +474,9 @@ def fold_rows(score, path, out, audio=None, sr=44100):
     import mixer
     gp = gate_profiles.resolve(score)
     if audio is None:
-        import soundfile as sf
-        audio, sr = sf.read(path, always_2d=True)
+        import gate_audio
+        sig = gate_audio.load(path)
+        audio, sr = sig.audio, sig.sr
     if audio.shape[1] != 2 or len(audio) < sr:
         return
     f, chan, mono = fold_loss(audio, sr)
@@ -448,7 +486,7 @@ def fold_rows(score, path, out, audio=None, sr=44100):
     # 698-803 Hz for one source at 60 degrees); imm_foldown and imm_low_fold judge that master instead.
     if gp.on('mix.band_fold') and not immersive:
         lim, floor = float(gp.param('mix.band_fold', 'max_db')), float(gp.param('mix.band_fold', 'floor_db'))
-        edges = _erb_edges()
+        edges = auditory.erb_edges()
         bands = [(a, b, chan[(f >= a) & (f < b)].sum(), mono[(f >= a) & (f < b)].sum())
                  for a, b in zip(edges[:-1], edges[1:])]
         top = max((c for _, _, c, _ in bands), default=0.0)
@@ -577,7 +615,6 @@ def _read_delivered(path, out):
     is the same reference the renderer levelled it on. An unreadable file raises a FAIL row that names the
     reader and the file instead of a traceback.
     """
-    import soundfile as sf
     try:
         with open(path, 'rb') as fh:
             magic = fh.read(4)
@@ -594,12 +631,31 @@ def _read_delivered(path, out):
                  f'{os.path.basename(str(path))}: a BW64 deliverable that cannot be folded for the stereo rows '
                  f'({exc}); its own adm.container row names the structural fault')
             raise
-    return sf.read(path, always_2d=True)
+    import gate_audio
+    sig = gate_audio.load(path)             # one decode per file for the whole run
+    return sig.audio, sig.sr
 
 
-def audio_checks(path, score, out, metrics=None):
-    """Measurements of the rendered file against the score's own targets."""
-    master = score.get('master', {})
+def resolved_master(score):
+    """The master block the mixer was told to make: the chosen mastering profile (from the piece's mix preset), then the
+    score's own values on top, exactly as `mixer._master_cfg` resolves it. The gate used to read `score["master"]` raw, so
+    a profile's loudness and ceiling were applied by the mixer and ignored by the judge."""
+    import mixer
+    raw = dict(score.get('master') or {})
+    ctx = mixer._context_for(score)
+    cfg = mixer._master_cfg(raw, ctx.mix)
+    out = {k: cfg[k] for k in ('lufs', 'true_peak', 'tone', 'glue') if k in cfg}
+    out.update(raw)
+    return out
+
+
+def audio_checks(path, score, out, metrics=None, analysis=None):
+    """Measurements of the rendered file against the score's own targets.
+
+    `analysis`, when given, receives this run's measurement of the file (`r`, the roughness metrics and the path)
+    so the packaging stage can report them instead of measuring the same audio a second time.
+    """
+    master = resolved_master(score)
     target = master.get('lufs', -14.0)
     lufs_tol = master.get('lufs_tolerance', master.get('tolerance_lu', 2.5))
     tp_target = master.get('true_peak', -1.5)
@@ -610,31 +666,92 @@ def audio_checks(path, score, out, metrics=None):
         _multi, _multi_sr = _read_delivered(path, out)
     except Exception:
         return                     # the FAIL row that says why is already in `out`
-    _layout = None
+    _layout, _target_name, _tgt, _basis = None, None, {}, ''
     for _name in render_targets.resolve(score)['selected']:
         _tgt = render_targets.get(_name) or {}
         if _tgt.get('layout') and render_targets.channels(_name) == _multi.shape[1]:
-            _layout = _tgt['layout']
+            _layout, _target_name, _tgt = _tgt['layout'], _name, _tgt
             break
     if _layout:
         from spatial_engine import downmix as _downmix, master as _spatial_master
         x = _downmix.fold(_multi, _layout)
         sr = _multi_sr
         r = nc.analyse(path, target_lufs=target, audio=(x, sr))
-        r['lufs'] = _spatial_master.fold_lufs(_multi, _layout)
+        # The loudness is judged on the basis the master was levelled on: a target that asks for
+        # `loudness.method: bs1770_layout` was trimmed to the delivered channels' LKFS, so reading the loudness of
+        # the fold here judged a correctly levelled 7.1 master several LU off its own target.
+        r['lufs'], _lmeth = _spatial_master.programme_lufs(_multi, _layout, sr, _tgt)
+        _basis = (' on the delivered channels with this layout\'s BS.1770 weights' if _lmeth == 'bs1770_layout'
+                  else f' on the 2-channel fold of {_target_name}')
     else:
-        x = np.repeat(_multi, 2, axis=1) if _multi.shape[1] == 1 else _multi[:, :2]
+        if _multi.shape[1] > 2:
+            # Never the first two channels alone: they are not the programme of a surround or sound-field file.
+            _row(out, 'FAIL', 'audio', f'the master has {_multi.shape[1]} channels but no selected output target has a '
+                 f'layout with {_multi.shape[1]} channels, so there is no fold-down to judge loudness and balance on. '
+                 f'Select the target that names this layout (output_targets), or add its layout and output preset')
+            return
+        x = np.repeat(_multi, 2, axis=1) if _multi.shape[1] == 1 else _multi
         sr = _multi_sr
         r = nc.analyse(path, target_lufs=target, audio=(x, sr))
+    # True peak: judge the larger of the 4x and 8x estimates. BS.1770-5 Annex 2 defines the 4x reference
+    # method, and EBU Tech 3343 documents that it can under-read by about 0.5 dB at 48 kHz.
+    try:
+        import mix_engine.meters as _meters
+        _tp = _meters.true_peak_report(x, sr)
+        r['true_peak_4x'] = _tp['true_peak_4x']
+        r['true_peak_8x'] = _tp['true_peak_8x']
+        r['true_peak'] = max(float(r.get('true_peak', _tp['true_peak'])), _tp['true_peak'])
+    except Exception as exc:
+        _row(out, 'INFO', 'true peak', f'8x oversampled true peak not measured ({exc}); the 4x value stands')
     spatial_check(path, score, out)
     for level, msg in nc.verdicts(r, target=target):
         _row(out, level, 'audio', msg)
     d = r['lufs'] - target
     if abs(d) > lufs_tol:
-        _row(out, 'FAIL', 'loudness', f'{r["lufs"]:.1f} LUFS, target {target}: missed by {d:+.1f} LU. The mix is too dynamic for the '
+        _row(out, 'FAIL', 'loudness', f'{r["lufs"]:.1f} LUFS{_basis}, target {target}: missed by {d:+.1f} LU. The mix is too dynamic for the '
                                       'target under the limiter. Lower the target or the dynamics range, or accept it and say so')
-    if r['true_peak'] > tp_target + 0.3:
+    elif _basis:
+        _row(out, 'PASS', 'loudness', f'{r["lufs"]:.1f} LUFS{_basis} against a {target:g} target (+{d:+.1f} LU)')
+    # The standard a profile declares is data: a profile whose numbers contradict the document it names
+    # is a configuration fault (FAIL), and a delivery that misses the document's own tolerance is a WARN.
+    import mixer as _mixer
+    _std = ((_mixer._mix().get('mastering') or {}).get('standard') or '').strip().lower()
+    if _std:
+        import mix_engine.standards as _standards
+        for msg in _standards.declaration_problems(_std, target, tp_target):
+            _row(out, 'FAIL', 'delivery.standard', msg + '. Fix the mix preset, not the gate')
+        _level, _msg = _standards.file_problems(_std, r['lufs'], r['true_peak'])
+        _row(out, _level, 'delivery.standard', _msg)
+    try:
+        _mm = _mixer.master_measures(x, sr)
+        _row(out, 'INFO', 'master.micro_dynamics',
+             f"PLR {_mm['plr']:.1f} LU, PSR {_mm['psr']:.1f} LU, LRA {_mm['lra']:.1f} LU, true peak "
+             f"{_mm['true_peak']:.2f} dBTP (4x {_mm['true_peak_4x']:.2f}, 8x {_mm['true_peak_8x']:.2f}): reported, "
+             f"not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)")
+        _worst = None
+        for _band in _mm.get('mono_bands') or []:
+            if _worst is None or _band['fold_loss_db'] < _worst['fold_loss_db']:
+                _worst = _band
+        if _worst and _worst['fold_loss_db'] < -3.0:
+            _row(out, 'WARN', 'master.mono_bands',
+                 f"the {_worst['band_hz'][0]}-{_worst['band_hz'][1]} Hz band folds to mono "
+                 f"{_worst['fold_loss_db']:+.1f} dB (correlation {_worst['correlation']:+.2f}): a broadband "
+                 f"correlation does not see this; check that part's width")
+    except Exception as _exc:
+        _row(out, 'INFO', 'master.micro_dynamics', f'not measured: {_exc}')
+    # True peak: a delivered multichannel target has a ceiling of its own and is certified channel by channel
+    # (spatial_gate.delivery.true_peak). A fold is a sum of channels, so its peak is not a delivery limit: judging it
+    # against the two-channel policy failed a 7.1 file whose every channel was under its own ceiling.
+    _target_ceiling = render_targets.true_peak(_target_name) if _target_name else None
+    _per_channel = bool(_layout) and _target_ceiling is not None
+    tp_fail = r['true_peak'] > tp_target + 0.3 and not _per_channel
+    if tp_fail:
         _row(out, 'FAIL', 'true peak', f"{r['true_peak']:.2f} dBTP is above the ceiling {tp_target}")
+    elif _per_channel and r['true_peak'] > tp_target + 0.3:
+        _row(out, 'INFO', 'true peak',
+             f"{r['true_peak']:.2f} dBTP on the 2-channel fold of {_target_name}; every delivered channel is "
+             f"certified against this format's own ceiling of {_target_ceiling:+.1f} dBTP by delivery.true_peak. "
+             f"A fold is a sum of channels, so its peak is not a delivery limit")
     mono = x.mean(axis=1) if x.ndim == 2 else x
     # silent gap: a run of 1 s or more under -60 dBFS, away from the start and end
     win = int(0.25 * sr)
@@ -686,7 +803,7 @@ def audio_checks(path, score, out, metrics=None):
                             margin=float(abs(d) - lufs_tol), worst_times_s=[], calibrated=True,
                             detail=f'{r["lufs"]:.1f} LUFS vs target {target} (tolerance {lufs_tol} LU)'))
         metrics.append(dict(row='true peak', stage='mix', stem=None,
-                            level='FAIL' if r['true_peak'] > tp_target + 0.3 else 'PASS',
+                            level='FAIL' if tp_fail else 'PASS',
                             value=float(r['true_peak']), unit='dBTP', threshold=float(tp_target),
                             margin=float(r['true_peak'] - tp_target), worst_times_s=[], calibrated=True,
                             detail=f'{r["true_peak"]:.2f} dBTP vs ceiling {tp_target}'))
@@ -695,8 +812,7 @@ def audio_checks(path, score, out, metrics=None):
     if gp.on('natural.aliasing'):
         # the sampler resamples with linear interpolation; a note transposed up leaves images up there, and a
         # real instrument has little energy above 15 kHz unless it is a cymbal. Measured on the delivered master.
-        from scipy import signal as _sig
-        f, p = _sig.welch(mono, sr, nperseg=8192)
+        f, p = gate_audio.mono_psd(mono, sr, 8192)
         band = p[(f > 200.0) & (f < 16000.0)].sum() + 1e-20
         share = 10 * np.log10(p[f >= 15000.0].sum() / band + 1e-20)
         lim = float(gp.param('natural.aliasing', 'max_hf_share_db'))
@@ -704,9 +820,11 @@ def audio_checks(path, score, out, metrics=None):
              f'15-22 kHz holds {share:.1f} dB of the 200 Hz-16 kHz band (limit {lim:g}); above that it is sampler '
              f'interpolation images, not instrument (fix: render.oversample in the mix preset)')
     # 2.1 Plomp-Levelt & Sethares Cochlear Sensory Roughness
-    rough_rows, _ = nc.cochlear_roughness_check(x, sr=sr, score=score)
+    rough_rows, rough_metrics = nc.cochlear_roughness_check(x, sr=sr, score=score)
     for l, n, d in rough_rows:
         _row(out, l, n, d)
+    if analysis is not None:                # the packaging stage reports these, it does not re-measure them
+        analysis.update(path=str(path), r=r, rough=rough_metrics)
 
 
 def _metric(metrics, **kw):
@@ -720,7 +838,7 @@ def _score_has_pulse(score):
     `tempo.audio` measures the audio; on a rubato or arpeggiated cue a beat tracker reports a subdivision (a real project
     run measured 152 BPM for a written 84), so the row is only judged where a pulse exists to measure.
     """
-    bpm = float(score.get('bpm') or 120.0)
+    bpm = gate_clock.flat_bpm(score)          # flat-bpm-ok: only the steadiness of the gaps between note starts is judged, in beats
     for tr in score.get('tracks', []):
         role = str(tr.get('role') or '').lower()
         inst = str(tr.get('instrument') or '').lower()
@@ -745,15 +863,18 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
 
     A defect injected into the summed mix must have a row to fail; these are the unsuffixed master ids.
     """
-    sig = GateAudio(wav_path)
+    import gate_audio
+    sig = gate_audio.load(wav_path)
     program_sig = sig
     import render_targets
+    delivered = None                      # (target name, target preset) when the file is a loudspeaker layout
     for target_name in render_targets.resolve(score)['selected']:
         target = render_targets.get(target_name) or {}
         if target.get('layout') and render_targets.channels(target_name) == sig.channels:
             from gate_audio import Signal
             from spatial_engine import downmix
             program_sig = Signal(downmix.fold(sig.audio, target['layout']), sig.sr)
+            delivered = (target_name, target)
             break
     sheet = _direction_sheet(project_dir) if project_dir else {}
     secs = gc.section_bounds(score, program_sig.dur, sheet)
@@ -786,13 +907,24 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
     _metric(metrics, row='clipping', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
             threshold=res['threshold'], margin=res['margin'], worst_times_s=[], calibrated=True, detail=res['detail'])
 
-    res = gc.check_dc(sig)
+    # DC is a programme row: the low-frequency channel is not one. It carries the sub, which is content below the
+    # DC blocker's corner by design, so reading it with the programme channels failed a clean 7.1 delivery.
+    dc_sig, dc_note = sig, ''
+    if delivered:
+        from gate_audio import Signal as _Sig
+        from spatial_engine import config as _spatial_config
+        order = list(delivered[1].get('channel_order') or [])
+        lfe = [n for n in _spatial_config.lfe_names(delivered[1]['layout']) if n in order]
+        if lfe and sig.channels > 1:
+            dc_sig = _Sig(np.delete(sig.audio, [order.index(n) for n in lfe], axis=1), sig.sr)
+            dc_note = f' ({delivered[0]}: the low-frequency channel(s) {", ".join(lfe)} excluded, they carry the sub)'
+    res = gc.check_dc(dc_sig)
     level = 'FAIL' if res['value'] > res['threshold'] else 'PASS'
-    _row(out, level, 'master.dc', res['detail'])
+    _row(out, level, 'master.dc', res['detail'] + dc_note)
     _metric(metrics, row='master.dc', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
             threshold=res['threshold'], margin=res['margin'], worst_times_s=[], calibrated=False, detail=res['detail'])
 
-    bpm_ref = score.get('bpm')
+    bpm_ref = score.get('bpm')          # flat-bpm-ok: the declared tempo, which tempo.audio compares with the measured one
     # every other master row asks the piece's profile first; this one used to judge regardless, so a
     # measured, reasoned `tempo.audio` skip in a project's gate profile had no effect at all.
     import gate_profiles as _gprof
@@ -834,6 +966,63 @@ def _role_in(role, want):
         return False
 
 
+def figure_and_bed(score, stems):
+    """(figure stem name, summed bed signal or None, bed names) as the masking rows pick them: the loudest stem whose role
+    is in the profile's focus, against the sum of every pad / chord / arp / counter / drone / texture stem that is not
+    a figure. (None, None, []) when either side is missing."""
+    import gate_profiles
+    import roles as rolelib
+    gp = gate_profiles.resolve(score)
+    roles = {t.get('name'): t.get('role') for t in score.get('tracks', [])}
+    # A declared focus wins over the profile default: a `cinematic` cue may be led by a line, a texture or a
+    # drone, and with the profile's whole list a loud drone was picked as "the figure" for a piece that declared
+    # `melody`, so the masking and pitch rows judged the pedal against itself.
+    explicit = score.get('focus') or (score.get('meta') or {}).get('focus')
+    focus = set(gp.focus_roles())
+    if explicit:
+        try:
+            focus = set(rolelib.focus_roles(rolelib.focus_of(score, strict=True)))
+        except rolelib.UnknownRole:
+            pass
+    leads = [n for n in stems if _role_in(roles.get(n), focus)]
+    beds = [n for n in stems if _role_in(roles.get(n), ('pad', 'chord', 'arp', 'counter', 'drone', 'texture'))
+            and n not in leads]
+    if not leads or not beds:
+        return None, None, []
+    lead = max(leads, key=lambda n: float(np.mean(np.asarray(stems[n], dtype=float) ** 2)))
+    bed = None
+    for n in beds:
+        y = np.asarray(stems[n], dtype=float)
+        if bed is None:
+            bed = y.copy()
+        else:
+            m = max(len(bed), len(y))
+            bed = np.pad(bed, ((0, m - len(bed)), (0, 0))) + np.pad(y, ((0, m - len(y)), (0, 0)))
+    return lead, bed, beds
+
+
+def critical_band_rows(stems, score, sr=44100):
+    """Advisory per-band masking excess: how far the beds sit over the figure, critical band by band.
+
+    The existing `masking.vs_melody` row is the calibrated one; this is the measurement the literature
+    describes (same-band and upward-spread comparison) reported as INFO. No pass mark is asserted, because
+    none has been validated for music masters.
+    """
+    rows = []
+    import mixer
+    import mix_engine.masking as masking
+    if mixer.STATE.get('processed'):
+        played = mixer.STATE['processed']
+        stems = {k: v for k, v in played.items() if k in stems} or stems
+    lead, bed, _ = figure_and_bed(score, stems)
+    if lead is None:
+        return rows
+    excess = masking.band_excess_db(stems[lead], bed, sr)
+    _worst, msg = masking.describe(excess)
+    rows.append(('INFO', 'masking.excess', msg))
+    return rows
+
+
 def masking_rows(stems, score, sr=44100, out=None):
     """2.2 Moore-Glasberg ERB Critical-Band & Binaural Unmasking (Moore & Glasberg 1983).
     Evaluates 8 ERB critical bands across 250 - 4000 Hz, with up to +3.5 dB delta BMLD binaural
@@ -854,7 +1043,6 @@ def masking_rows(stems, score, sr=44100, out=None):
     leads = [n for n, r in roles.items() if _role_in(r, focus) and n in stems]
     beds = [n for n, r in roles.items() if _role_in(r, ('pad', 'chord', 'arp', 'counter', 'drone', 'texture'))
             and n in stems and n not in leads]
-    beds += [n for n in ('chorus',) if n in stems and n not in beds]
     if not leads:
         rows.append(('INFO', 'erb_binaural_masking',
                      f'not measured: no track in this type\'s focus ({", ".join(gp.focus_roles()) or "none"}). '
@@ -902,8 +1090,9 @@ def masking_rows(stems, score, sr=44100, out=None):
     bed_pans = {n: effective_pan(n) for n in beds}
 
     congested = []
+    compared = 0                      # lead/bed window pairs that exist; a stem shorter than one window has none
     for fc in center_freqs:
-        erb = 24.7 * (4.37 * fc / 1000.0 + 1.0)
+        erb = float(auditory.erb_bandwidth(fc))
         flo = max(20.0, fc - erb / 2.0)
         fhi = min(sr / 2.0 - 50.0, fc + erb / 2.0)
         sos = butter(2, [flo, fhi], btype='band', fs=sr, output='sos')
@@ -918,6 +1107,7 @@ def masking_rows(stems, score, sr=44100, out=None):
 
         for ln, ld in lead_db.items():
             l_pan = lead_pans.get(ln, 0.0)
+            compared += sum(min(len(ld), len(bd)) for bd in bed_db.values())
             for i in range(len(ld)):
                 if ld[i] < -42.0:
                     continue
@@ -939,6 +1129,10 @@ def masking_rows(stems, score, sr=44100, out=None):
                      f"{len(congested)} ERB critical-band collision window(s) where lead ({ln}) is masked by {', '.join(stems_hit)} "
                      f"around {', '.join(f'{f}Hz' for f in fcs_hit[:3])}, first at {t0:.1f}s. "
                      f"Apply a narrow parametric EQ notch at {fc}Hz or increase stereo azimuth separation (spatial.azimuth)."))
+    elif compared == 0:
+        rows.append(('INFO', 'erb_binaural_masking',
+                     f'not measured: no stem is as long as one {MASK_WIN_S:g} s analysis window, so no band had data. '
+                     'A row that could not run is not a pass.'))
     else:
         rows.append(('PASS', 'erb_binaural_masking', 'Lead vocal/melody has clear auditory separation across all 8 ERB critical bands (250-4000 Hz)'))
 
@@ -1010,9 +1204,12 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
             idx_end = max(idx_start + 1, k - int(8.0 / 0.5))
             tr = next((t for t in score.get('tracks', []) if t.get('name') == name), {})
             if tr.get('notes') and not tr.get('full_length'):      # a bed that enters late is only judged where it plays
-                bd = 60.0 / float(score.get('bpm', 90.0))
-                s0 = min(float(nt['t']) for nt in tr['notes']) * bd
-                s1 = max(float(nt['t']) + float(nt.get('d', 1.0)) for nt in tr['notes']) * bd
+                _tp = []
+                _sec = gate_clock.seconds_fn(score, _tp)        # the tempo map the renderer plays, else the shared flat default
+                for _msg in _tp:
+                    rows.append(('WARN', 'ambient_bed', f'ambient stem "{name}": {_msg}'))
+                s0 = _sec(min(float(nt['t']) for nt in tr['notes']))
+                s1 = _sec(max(float(nt['t']) + float(nt.get('d', 1.0)) for nt in tr['notes']))
                 idx_start = max(idx_start, int((s0 + 3.0) / 0.5))   # 2 s fade-in + humanize drift
                 idx_end = min(idx_end, int((s1 - 3.0) / 0.5))
             if idx_end > idx_start + 4:
@@ -1053,10 +1250,13 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
                 if len(dyn) >= 2:
                     try:
                         pts = sorted((float(b), float(v)) for b, v in dyn)
-                        bpm = float(score.get('bpm', 90.0))
+                        _tp2 = []
+                        _secs = gate_clock.seconds_fn(score, _tp2)
+                        for _msg in _tp2:
+                            rows.append(('WARN', 'ambient_bed', f'ambient stem "{name}": {_msg}'))
                         for (b0, v0), (b1, v1) in zip(pts, pts[1:]):
                             if b1 > b0 and v0 > 1e-6 and v1 > 1e-6:
-                                slope_db_s = max(slope_db_s, abs(20 * np.log10(v1 / v0)) / (b1 - b0) * bpm / 60.0)
+                                slope_db_s = max(slope_db_s, abs(20 * np.log10(v1 / v0)) / max(1e-6, float(_secs(b1)) - float(_secs(b0))))
                     except (TypeError, ValueError):
                         slope_db_s = 0.0
                 pump_limit = gp.param('ambient_bed', 'pump_db') + 0.5 * slope_db_s
@@ -1068,7 +1268,8 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
                 else:
                     rows.append(('PASS', 'ambient_bed', f'ambient stem "{name}" glides smoothly with zero dropouts or pumping (max 0.5s delta: {max_diff:.1f} dB)'))
     else:
-        rows.append(('PASS', 'ambient_fusion', f'{len(env_tracks)} ambient soundscape tracks integrated into score'))
+        rows.append(('INFO', 'ambient_fusion', f'{len(env_tracks)} ambient soundscape tracks not measured: no stems were '
+                     f'available, so dropout and pumping were not checked'))
         
     if out is not None:
         out.extend(rows)
@@ -1096,19 +1297,27 @@ def focus_rows(score, out=None):
         return rows
     meta = score.get('meta') or {}
     explicit = score.get('focus') or meta.get('focus')
-    want = list(_roles.focus_roles(_roles.focus_of(score))) if explicit else list(gp.focus_roles())
+    try:
+        focus_name = _roles.focus_of(score, strict=True)
+    except _roles.UnknownRole:
+        rows.append(('FAIL', 'focus.declared',
+                     f'{explicit!r} is not a focus this engine knows; use one of {", ".join(_roles.FOCUS)}'))
+        if out is not None:
+            out.extend(rows)
+        return rows
+    want = list(_roles.focus_roles(focus_name)) if explicit else list(gp.focus_roles())
     if not want:
         rows.append(('INFO', 'focus.declared', 'this type has no line by definition; nothing to check'))
         return rows
     found = _roles.tracks_by_role(score, want, min_notes=4)
     if found:
         names = ', '.join(f'{t.get("name", "?")} ({r})' for t, r in found[:4])
-        how = f'declared focus {_roles.focus_of(score)}' if explicit else f'{gp.label} expects one'
+        how = f'declared focus {focus_name}' if explicit else f'{gp.label} expects one'
         prof = set(gp.focus_roles())
-        dec = set(_roles.focus_roles(_roles.focus_of(score)))
+        dec = set(_roles.focus_roles(focus_name))
         if explicit and prof and not (prof & dec):
             rows.append(('WARN', 'focus.declared',
-                         f'carried by {names}; the piece declares focus {_roles.focus_of(score)}, but {gp.label} '
+                         f'carried by {names}; the piece declares focus {focus_name}, but {gp.label} '
                          f'is judged around {", ".join(sorted(prof))}. Set piece_type to the type that matches, '
                          'or the report will apply the wrong rule'))
         else:
@@ -1230,7 +1439,7 @@ def balance_rows(score, stems=None, out=None, sr=44100):
                 elif over > warn_over:
                     rows.append(('WARN', 'balance', f'"{n}" ({roles[n]}) plays {db - lead:+.1f} dB against the lead; allowed {allow:+.0f}'))
             if not rows:
-                rows.append(('PASS', 'balance', f'every accompaniment stem sits within its role allowance of the lead'))
+                rows.append(('PASS', 'balance', 'every accompaniment stem sits within its role allowance of the lead'))
         elif gp.fallback('balance.vs_lead') == 'balance.layers' and gp.on('balance.layers'):
             rows += layer_balance_rows(score, lv, roles, gp)
         elif gp.on('balance.vs_lead'):
@@ -1272,53 +1481,61 @@ Z_BAND_HZ = (500.0, 4000.0)      # where strings, brass and a bright synth lead 
 Z_FRAME_S = 0.25                 # band-envelope resolution for the overlap measure
 
 
+_BAND_FRAME_CACHE = {}       # (id(x), shape, lo, hi, win_s, sr) -> (the array itself, the frames)
+_BAND_FRAME_MAX = 128
+
+
 def _band_frames(x, sr, lo=500.0, hi=4000.0, win_s=Z_FRAME_S):
-    """RMS of the lo-hi band in win_s frames, or None when the stem is shorter than two frames."""
+    """RMS of the lo-hi band in win_s frames, or None when the stem is shorter than two frames.
+
+    Memoised per array object: the separation, masking and balance rows each band-pass the same stems, and a
+    fourth-order sosfilt over every stem, once per row, was 30 s of a 290 s gate. The cache holds the array, so
+    its identity cannot be recycled, and an edited stem is a different object and gets its own measurement.
+    """
+    key = (id(x), np.shape(x), float(lo), float(hi), float(win_s), int(sr))
+    got = _BAND_FRAME_CACHE.get(key)
+    if got is not None and got[0] is x:
+        return got[1]
     from scipy.signal import butter, sosfilt
     mono = np.asarray(x, dtype=np.float32)
     mono = mono.mean(axis=1) if mono.ndim == 2 else mono
     n = int(win_s * sr)
     if len(mono) < 2 * n:
-        return None
-    sos = butter(4, [lo, min(hi, sr * 0.45)], btype='band', fs=sr, output='sos')
-    y = sosfilt(sos, mono)
-    k = len(y) // n
-    return np.sqrt((y[:k * n].reshape(k, n) ** 2).mean(axis=1) + 1e-20)
+        out = None
+    else:
+        sos = butter(4, [lo, min(hi, sr * 0.45)], btype='band', fs=sr, output='sos')
+        y = sosfilt(sos, mono)
+        k = len(y) // n
+        out = np.sqrt((y[:k * n].reshape(k, n) ** 2).mean(axis=1) + 1e-20)
+    if len(_BAND_FRAME_CACHE) >= _BAND_FRAME_MAX:
+        _BAND_FRAME_CACHE.clear()
+    _BAND_FRAME_CACHE[key] = (x, out)
+    return out
 
 
 def _mix_immersive(score):
     """The score's mix preset's immersive block when it is on, without switching the mixer's context."""
-    import presets
-    name = score.get('mix_preset')
-    if not name:
-        return None
-    try:
-        imm = (presets.exact('mix', name) or {}).get('immersive') or {}
-    except Exception:
-        return None
-    return imm if imm.get('enabled') else None
+    import project_gate
+    return project_gate.mix_immersive(score)
 
 
 def _place_of(score, tr, imm):
     """(azimuth, elevation, spatial, role, height_rendered) as the mixer will apply them for this track."""
     import presets
+    import project_gate
     inst = str(tr.get('instrument') or '')
     pc = {}
     if inst:
         try:
             pc = presets.exact('instruments', inst) or presets.exact('vocals', inst) or {}
+            # Sound effects live under presets/sfx and are named `sfx:<preset>`: the mixer finds them there, so a
+            # placement row that only looked in instruments judged the whoosh at 0 deg while it played at -120.
+            if not pc and inst.startswith('sfx:'):
+                pc = presets.exact('sfx', inst.split(':', 1)[1]) or {}
         except Exception:
             pc = {}
-    sp = dict(pc.get('spatial') or {})
-    tr_sp = tr.get('spatial') or {}
-    sp.update(tr_sp)
-    role = tr.get('role') or pc.get('role') or 'chord'
+    role, el, sp, _ = project_gate.requested_place(dict(tr, instrument=inst), pc, imm)
     az = float(sp.get('azimuth', 0.0))
-    el = float(sp.get('elevation', 0.0))
-    if imm and 'elevation' not in tr_sp and float(el) == 0.0:
-        el = float((imm.get('height_by_role') or {}).get(role, 0.0))
-    elif 'elevation' not in sp and imm:
-        el = float((imm.get('height_by_role') or {}).get(role, 0.0))
     if imm and role in ('bass', 'drum'):
         el = 0.0                                  # the mixer keeps bass and drums on the floor
     rendered = bool(sp.get('binaural')) or bool(sp.get('trajectory')) or bool(imm)
@@ -1335,6 +1552,8 @@ def _has_staging(score, tr):
     if inst:
         try:
             pc = presets.exact('instruments', inst) or presets.exact('vocals', inst) or {}
+            if not pc and inst.startswith('sfx:'):
+                pc = presets.exact('sfx', inst.split(':', 1)[1]) or {}
         except Exception:
             pc = {}
         if pc.get('spatial'):
@@ -1347,27 +1566,29 @@ def _wrap_deg(d):
     return 360.0 - d if d > 180.0 else d
 
 
-def spatial_separation_rows(score, stems=None, out=None, sr=44100):
-    """Z-axis separation in the climax. Two parts that hold the same midrange band at the same time and level mask each
-    other; HRTF height and azimuth separate them where an EQ cut would only make both dull. Measured on the loudest quarter
-    of the piece (the climax), never assumed. A pair passes on min_sep_deg of angular separation or min_elev_deg of height;
-    height only counts where the mixer renders it. Environment stems are excluded (their width is spread/kind, not a spot)."""
-    rows = []
+def z_pairs(score, stems=None, sr=44100):
+    """The pair table `spatial.z_separation` judges: every pair of non-environment parts that hold the 500-4000 Hz band
+    together in the climax, with the placement the mixer will apply. None when the profile does not judge the row or
+    there is nothing to compare; otherwise a dict (params, parts, pairs, unplaced).
+
+    The row below reads only this table, and so does the debug engine: a second implementation of the pair rule was how
+    the autopsy priced placement as "one degree per degree" and proposed moves the gate then failed again.
+    """
     import gate_profiles
     gp = gate_profiles.resolve(score)
     if not gp.on('spatial.z_separation'):
-        return rows                          # listed once, with its reason, by the profile notes
+        return None
     import mixer
     st = mixer.STATE.get('processed') or stems
     if not st:
-        return rows
+        return None
     tracks = {t.get('name'): t for t in score.get('tracks', [])}
     cand = [n for n, t in tracks.items() if n in st and t.get('role') != 'environment'
             and not str(t.get('instrument', '')).startswith('env:')]
     frames = {n: _band_frames(st[n], sr) for n in cand}
     frames = {n: f for n, f in frames.items() if f is not None and len(f) >= 4}
     if len(frames) < 2:
-        return rows
+        return None
     k = min(len(f) for f in frames.values())
     frames = {n: f[:k] for n, f in frames.items()}
     total = np.sum(list(frames.values()), axis=0)
@@ -1375,15 +1596,14 @@ def spatial_separation_rows(score, stems=None, out=None, sr=44100):
     climax = np.zeros(k, dtype=bool)
     climax[np.argsort(total)[-min(top, k):]] = True
 
-    overlap_min = float(gp.param('spatial.z_separation', 'overlap_min'))
-    min_sep = float(gp.param('spatial.z_separation', 'min_sep_deg'))
-    min_elev = float(gp.param('spatial.z_separation', 'min_elev_deg'))
+    params = dict(overlap_min=float(gp.param('spatial.z_separation', 'overlap_min')),
+                  min_sep=float(gp.param('spatial.z_separation', 'min_sep_deg')),
+                  min_elev=float(gp.param('spatial.z_separation', 'min_elev_deg')))
     imm = _mix_immersive(score)
     where = {n: _place_of(score, tracks[n], imm) for n in frames}
     staged = {n: _has_staging(score, tracks[n]) for n in frames}
     unplaced = 0
-
-    fights, closest = [], None
+    pairs = []
     names = sorted(frames)
     for i, a in enumerate(names):
         for b in names[i + 1:]:
@@ -1399,11 +1619,37 @@ def spatial_separation_rows(score, stems=None, out=None, sr=44100):
             az_b, el_b, sp_b, role_b, h_b = where[b]
             delev = abs(el_a - el_b) if (h_a and h_b) else 0.0
             daz = _wrap_deg(az_a - az_b)
-            sep = float(np.hypot(daz, delev))
-            if closest is None or ov > closest[2]:
-                closest = (a, b, ov, sep, daz, delev)
-            if ov >= overlap_min and sep < min_sep and delev < min_elev:
-                fights.append((ov, a, b, sep, daz, delev, h_a and h_b, sp_a, sp_b))
+            pairs.append(dict(a=a, b=b, overlap=ov, sep=float(np.hypot(daz, delev)), daz=float(daz),
+                              delev=float(delev), heights=bool(h_a and h_b), sp_a=sp_a, sp_b=sp_b))
+    parts = {n: dict(az=where[n][0], el=where[n][1], role=where[n][3], rendered=where[n][4]) for n in names}
+    return dict(params=params, parts=parts, pairs=pairs, unplaced=unplaced)
+
+
+def z_fights(table):
+    """The pairs of a `z_pairs` table that fail the rule, worst overlap first."""
+    p = table['params']
+    out = [q for q in table['pairs']
+           if q['overlap'] >= p['overlap_min'] and q['sep'] < p['min_sep'] and q['delev'] < p['min_elev']]
+    return sorted(out, key=lambda q: -q['overlap'])
+
+
+def spatial_separation_rows(score, stems=None, out=None, sr=44100):
+    """Z-axis separation in the climax. Two parts that hold the same midrange band at the same time and level mask each
+    other; HRTF height and azimuth separate them where an EQ cut would only make both dull. Measured on the loudest quarter
+    of the piece (the climax), never assumed. A pair passes on min_sep_deg of angular separation or min_elev_deg of height;
+    height only counts where the mixer renders it. Environment stems are excluded (their width is spread/kind, not a spot)."""
+    rows = []
+    table = z_pairs(score, stems, sr)
+    if table is None:
+        return rows
+    overlap_min, min_sep, min_elev = (table['params'][k] for k in ('overlap_min', 'min_sep', 'min_elev'))
+    unplaced = table['unplaced']
+    fights = [(q['overlap'], q['a'], q['b'], q['sep'], q['daz'], q['delev'], q['heights'], q['sp_a'], q['sp_b'])
+              for q in z_fights(table)]
+    closest = None
+    for q in table['pairs']:
+        if closest is None or q['overlap'] > closest[2]:
+            closest = (q['a'], q['b'], q['overlap'], q['sep'], q['daz'], q['delev'])
 
     if fights:
         fights.sort(reverse=True)
@@ -1434,13 +1680,6 @@ def spatial_separation_rows(score, stems=None, out=None, sr=44100):
     return rows
 
 
-def _ath_db(f):
-    """Terhardt's absolute threshold of hearing (dB SPL) for f in Hz: the sensitivity dip near 3.3 kHz that ISO 226's
-    threshold region encodes. Used as a relative weighting, never as an absolute SPL calibration."""
-    k = np.maximum(np.asarray(f, dtype=np.float64), 20.0) / 1000.0
-    return 3.64 * k ** -0.8 - 6.5 * np.exp(-0.6 * (k - 3.3) ** 2) + 1e-3 * k ** 4
-
-
 def equal_loudness_rows(score, stems=None, out=None, sr=44100):
     """Equal-loudness (K-weighted) harshness in the 2.5-5 kHz ear-sensitivity zone. A bright synth lead or a raw sample can
     sit far louder there than its mids once the ear's sensitivity is weighted, which reads as harsh even when the plain
@@ -1462,7 +1701,6 @@ def equal_loudness_rows(score, stems=None, out=None, sr=44100):
     warn_db = float(gp.param('spectral.equal_loudness', 'warn_db'))
     fail_db = float(gp.param('spectral.equal_loudness', 'fail_db'))
     max_trim = float(gp.param('spectral.equal_loudness', 'max_trim_db'))
-    from scipy import signal as _sig
     ref_lo = 500.0
     baseline = 10.0 * np.log10(np.log2(hi / lo) / np.log2(lo / ref_lo))    # equal energy per octave reads about 0 dB
     worst = None
@@ -1473,8 +1711,8 @@ def equal_loudness_rows(score, stems=None, out=None, sr=44100):
         mono = x.mean(axis=1) if x.ndim == 2 else x
         if len(mono) < 4096 or not np.any(mono):
             continue
-        f, p = _sig.welch(mono.astype(np.float64), sr, nperseg=4096)
-        w = 10.0 ** ((float(_ath_db(1000.0)) - _ath_db(f)) / 10.0)     # sensitivity relative to 1 kHz
+        f, p = gate_audio.mono_psd(mono.astype(np.float64), sr, 4096)
+        w = 10.0 ** ((float(auditory.ath_db(1000.0)) - auditory.ath_db(f)) / 10.0)     # sensitivity relative to 1 kHz
         pw = p * w
         band = (f >= lo) & (f <= hi)
         ref = (f >= ref_lo) & (f < lo)
@@ -1522,6 +1760,38 @@ def _direction_sheet(project_dir):
     return {}
 
 
+def _expression_rows(score, sheet, out):
+    """How the music is played and heard: the sheet's `expression` block, and whether the notes carry it.
+
+    direction.expression: WARN when the block is absent, FAIL when it is present but incomplete (a half-written promise
+    decides nothing). expression.arousal_order and melody.variety come from scripts/helpers/expression_report.py and are
+    WARN at most: their anchors are starting values that no corpus has calibrated, so they flag and never fail."""
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'helpers'))
+    import expression_report as er
+    problems = er.expression_block_problems(sheet)
+    if not isinstance(sheet.get('expression'), dict):
+        out.append(('WARN', 'direction.expression', problems[0] + ' (references/workflow/music-direction.md, section 2.11)'))
+    elif problems:
+        out.append(('FAIL', 'direction.expression', '; '.join(problems)))
+    else:
+        out.append(('PASS', 'direction.expression', 'the sheet says how the music is played and heard'))
+    rho, _rows, flag = er.arousal_order(score)
+    if rho is None:
+        out.append(('INFO', 'expression.arousal_order', 'fewer than three sections with a declared energy and notes: no rank order to compare'))
+    elif flag:
+        out.append(('WARN', 'expression.arousal_order', flag))
+    else:
+        out.append(('PASS', 'expression.arousal_order', f'the written notes follow the declared section energy (rank correlation {rho:+.2f})'))
+    mv = er.melody_variety(score)
+    if mv.get('note'):
+        out.append(('INFO', 'melody.variety', mv['note']))
+    elif mv['flags']:
+        out.append(('WARN', 'melody.variety', '; '.join(mv['flags'])))
+    else:
+        out.append(('PASS', 'melody.variety', f'figure line: {mv["interval_entropy_bits"]:.2f} bits of interval entropy, '
+                    f'{mv["range_semitones"]} semitones, {100 * mv["identical_bar_share"]:.0f} % of bars repeated'))
+
+
 def direction_rows(score, out, project_dir=None, wav_path=None, mode='full'):
     """The direction sheet is a promise about the delivery, so the gate judges the delivered file against it.
 
@@ -1548,6 +1818,10 @@ def direction_rows(score, out, project_dir=None, wav_path=None, mode='full'):
             out.append(('INFO', 'delivery.direction',
                         'no direction/*.json: the delivered file is not judged against a sheet (draft run)'))
         return
+    _expression_rows(score, sheet, out)
+    if mode == 'full' and wav_path and os.path.isfile(wav_path):
+        import affect
+        out.extend(affect.rows(score, sheet, wav_path))
     delivery = sheet.get('delivery') or {}
     info = None
     if wav_path and os.path.isfile(wav_path):
@@ -1599,8 +1873,8 @@ def direction_rows(score, out, project_dir=None, wav_path=None, mode='full'):
             else:
                 out.append(('PASS', 'delivery.duration', f'{got:.2f} s matches duration_s {want:g} s'))
     if gp.on('tempo.bpm'):
-        want_bpm = sheet.get('tempo_bpm', sheet.get('bpm'))
-        bpm = score.get('bpm')
+        want_bpm = sheet.get('tempo_bpm', sheet.get('bpm'))          # flat-bpm-ok: the sheet's own promise, not a conversion
+        bpm = score.get('bpm')          # flat-bpm-ok: the declared tempo against the sheet's range
         if want_bpm and bpm:
             lo, hi = (want_bpm if isinstance(want_bpm, (list, tuple)) else [want_bpm, want_bpm])
             try:
@@ -1656,7 +1930,6 @@ def metadata_rows(score, out, project_dir=None, wav_path=None):
         return
 
     if gp.on('meta.tags'):
-        limit = int(gp.param('meta.tags', 'max_missing'))
         sidecar = os.path.splitext(master)[0] + '.json'
         problems = []
         tags = {}
@@ -1680,7 +1953,7 @@ def metadata_rows(score, out, project_dir=None, wav_path=None):
             except Exception as exc:
                 problems.append(f'{os.path.basename(master)} cannot be read for tags ({exc})')
             if not in_file:
-                problems.append(f'the WAV itself carries no tags (a delivered file must: title, artist, ... inside it)')
+                problems.append('the WAV itself carries no tags (a delivered file must: title, artist, ... inside it)')
             else:
                 for key in sorted(tags):
                     if key in ingest_metadata.INFO_TAGS and str(tags.get(key)) != str(in_file.get(key, '')):
@@ -1691,7 +1964,6 @@ def metadata_rows(score, out, project_dir=None, wav_path=None):
                      else 'metadata: ' + '; '.join(problems) + f' (fix: {fix})')))
 
     if gp.on('meta.version'):
-        limit = int(gp.param('meta.version', 'max_missing'))
         index = os.path.join(out_dir, 'versions.json')
         problems = []
         entry = None
@@ -1725,7 +1997,7 @@ def metadata_rows(score, out, project_dir=None, wav_path=None):
 
 
 def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mode='full', metrics=None,
-             timings=None):
+             timings=None, analysis=None):
     """refresh=False: the caller has just rendered this score in this process, so the renderer's counters are already
     current and the gate does not render the stems a second time (a full render takes minutes).
 
@@ -1747,7 +2019,9 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mo
         stems, _ = rn.build_stems(score, verbose=False)
         mixer.mix_and_master(score, stems, rendered)
     elif refresh:
-        rn.build_stems(score, verbose=False)          # refresh the renderer counters for this score
+        _fresh, _ = rn.build_stems(score, verbose=False)      # refreshes the renderer counters; the stems feed the stem rows
+        if stems is None:
+            stems = _fresh
     import time
     timers = {}
 
@@ -1763,10 +2037,17 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mo
     out = []
     _timed('score', lambda: score_checks(score, out))
     _timed('render', lambda: render_checks(out))
-    _timed('audio', lambda: audio_checks(rendered, score, out, metrics=metrics))
-    # Deliverable rows: only the formats this score asked for, measured against the target's own data.
-    import spatial_gate
-    _timed('outputs', lambda: spatial_gate.output_rows(score, rendered, out))
+    expression_rows(score, out)
+    _timed('audio', lambda: audio_checks(rendered, score, out, metrics=metrics, analysis=analysis))
+    # Deliverable rows: only the formats this score asked for, measured against the target's own data. A missing
+    # optional dependency (the HRTF stack, an ffmpeg build) must be a row, not the end of the report: a gate that
+    # dies while importing a helper certifies nothing and explains nothing.
+    try:
+        import spatial_gate
+        _timed('outputs', lambda: spatial_gate.output_rows(score, rendered, out))
+    except Exception as exc:
+        out.append(('WARN', 'outputs', f'the deliverable rows did not run ({type(exc).__name__}: {exc}); '
+                                     'no delivered format was measured'))
     project_dir = os.path.dirname(s_dir) if s_dir else None
     _timed('master_extra', lambda: master_extra_rows(score, rendered, out, metrics=metrics,
                                                      project_dir=project_dir))
@@ -1790,8 +2071,20 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mo
         chroma_concordance_rows(score, rendered, stems, out=out)
         kick_grid_rows(score, stems, out=out)
         soul_rows(score, out)
+        if stems is None:
+            out.append(('INFO', 'stem_rows', 'stem rows not measured: no stems were given or rendered, so balance, '
+                                             'spatial separation, equal loudness, kick grid, chroma, masking and flutter '
+                                             'did not run'))
         if stems is not None:
             out.extend(masking_rows(stems, score))
+            out.extend(critical_band_rows(stems, score))
+            import ear_rows
+            ear_summary = ear_rows.summary_for(rendered)
+            out.extend(ear_rows.rows(score, rendered, stems, summary=ear_summary))
+            import chem_rows
+            out.extend(chem_rows.rows(score, rendered, stems, summary=ear_summary, project_dir=project_dir))
+            import env_rows
+            out.extend(env_rows.rows(score, rendered, stems, project_dir=project_dir))
             out.extend(nc.modulation_flutter_check(stems, score))
     else:
         out.append(('INFO', 'gate_draft', 'draft mode: tier 2 rows (masking, roughness, immersive, chroma, kick, '
@@ -2025,16 +2318,16 @@ def kick_grid_rows(score, stems=None, out=None, sr=44100):
                   if t.get('role') == 'drum' and t['name'] in stems]
     if not drum_stems:
         return rows
-    bpm = score.get('bpm', 120.0)
-    spb = 60.0 / bpm
+    bpm = gate_clock.flat_bpm(score)          # flat-bpm-ok: the label in the report; the grid below is on the tempo map
     dm = drum_stems[0].mean(axis=1) if drum_stems[0].ndim == 2 else drum_stems[0]
     from scipy.signal import butter, sosfilt
     sos = butter(4, min(140.0, sr * 0.45), 'low', fs=sr, output='sos')
     kick = sosfilt(sos, dm)
     on = nc.onsets(kick[:, np.newaxis], sr)
     if len(on) >= 4:
-        rem = (on % spb)
-        dist = np.minimum(rem, spb - rem)
+        grid = gate_clock.beat_grid_seconds(score, float(len(dm)) / sr)
+        idx = np.clip(np.searchsorted(grid, on), 1, len(grid) - 1)
+        dist = np.minimum(np.abs(on - grid[idx - 1]), np.abs(grid[idx] - on))
         within40 = float((dist <= 0.040).sum() / len(dist))
         if within40 >= min_lock:
             rows.append(('PASS', 'kick_grid', f'{within40*100:.0f}% of kick transients lock within 40 ms of the {bpm:.0f} BPM beat grid'))

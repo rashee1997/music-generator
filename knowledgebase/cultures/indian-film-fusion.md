@@ -14,7 +14,7 @@ updated: 2026-11-04
 # Indian film fusion: rhythm-first layering
 
 > The `*_engine.py` names in this document are code listings inside it, not scripts in `scripts/`.
-> The skill's own versions of these ideas live in `theory.py`, `world.py`, `humanize.py`, `compose.py` and `direct.py`.
+> The skill's own versions of these ideas live in `theory.py`, `world.py`, `humanize.py` (the facade over `humanize_engine/`), `compose.py` and `direct.py`.
 
 ## 1. System Architecture & Execution Pipeline
 

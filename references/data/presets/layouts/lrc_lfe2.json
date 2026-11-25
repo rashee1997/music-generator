@@ -1,0 +1,145 @@
+{
+  "name": "lrc_lfe2",
+  "character": "Project layout 3.2: left, right and centre at ear level with two low-frequency channels (LFE1 left, LFE2 right). Not a broadcast standard.",
+  "channels": 5,
+  "speakers": [
+    {
+      "name": "L",
+      "azimuth": -30.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "R",
+      "azimuth": 30.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "C",
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "loudness_weight_db": 0.0
+    },
+    {
+      "name": "LFE1",
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "lfe": true,
+      "lfe_side": "left"
+    },
+    {
+      "name": "LFE2",
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "lfe": true,
+      "lfe_side": "right"
+    }
+  ],
+  "lfe": {
+    "lowpass_hz": 80.0,
+    "stopband_hz": 120.0,
+    "stopband_db": -45.0,
+    "send_db": -10.0,
+    "guard_order": 4,
+    "release_ms": 10.0,
+    "channels": [
+      "LFE1",
+      "LFE2"
+    ],
+    "mode": "stereo_bass",
+    "decorrelate_above_hz": 40.0,
+    "decorrelation": {
+      "kind": "allpass_cascade",
+      "stages": 4,
+      "max_group_delay_ms": 3.0
+    },
+    "delay_ms": [
+      0.0,
+      0.0
+    ],
+    "polarity": [
+      1,
+      1
+    ]
+  },
+  "downmix": {
+    "L": [
+      1.0,
+      0.0
+    ],
+    "R": [
+      0.0,
+      1.0
+    ],
+    "C": [
+      0.7071,
+      0.7071
+    ],
+    "LFE1": [
+      0.0,
+      0.0
+    ],
+    "LFE2": [
+      0.0,
+      0.0
+    ]
+  },
+  "gate": {
+    "stereo_correlation_min": 0.15,
+    "fold_band_max_db": 6.0,
+    "fold_floor_db": 30.0,
+    "decode_uniformity_max_db": {
+      "allrad2": 1.0,
+      "allrad": 4.0
+    }
+  },
+  "sources": [
+    "ITU-R BS.775-3: front loudspeakers at -30, 0 and +30 degrees; centre folded into both channels at 0.7071 (-3 dB). Nominal values; this is a project-defined layout, not a BS.2051 system",
+    "Low-frequency block, reverb return spread and gate windows are copied from the 5.1 layout of this engine (itu_bs2051_system_b) and are starting values: none has been measured on a three-front room",
+    "knowledgebase/sound-design/layout-3-2.md: two low-frequency channels, what is and is not a standard",
+    "decorrelate_above_hz 40 Hz and the all-pass cascade (4 stages, 3 ms total group delay: about 86 degrees of phase at 80 Hz, so the channels never approach antiphase inside the band) are starting values, not measured in a room",
+    "gate.decode_uniformity_max_db: measured on the 5th-order sphere (400 points): allrad2 0.34 dB, allrad 3.26 dB for this front-only layout; the declared limits add margin (starting values)",
+    "qa.listening_room: a 5 x 4 x 2.5 m box, RT60 0.5 s, subs in opposite floor corners, is a starting value for a virtual room, not a measured one; the row that uses it is advisory"
+  ],
+  "reverb": {
+    "front_azimuth_max": 30.0,
+    "front_db": 0.0,
+    "surround_db": -6.0,
+    "height_db": -12.0
+  },
+  "decorrelation": {
+    "enabled": false
+  },
+  "fold_chain": [
+    "lrc_lfe1",
+    "stereo_bs775"
+  ],
+  "qa": {
+    "front": {
+      "left": "L",
+      "right": "R",
+      "centre": "C"
+    },
+    "listening_room": {
+      "size_m": [
+        5.0,
+        4.0,
+        2.5
+      ],
+      "rt60_s": 0.5,
+      "subs_m": [
+        [
+          0.3,
+          0.3,
+          0.3
+        ],
+        [
+          4.7,
+          3.7,
+          0.3
+        ]
+      ]
+    }
+  }
+}

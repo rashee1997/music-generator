@@ -236,7 +236,6 @@ def render_scene(scene, sr=SR, seed=1, seconds=None):
         return sound_model.render(model_of(scene), sr, seed, seconds), {'engine': 'voices'}
     x, report = render.render_scene(scene, sr, seed, seconds)
     report = dict(report, engine='timeline')
-    sp = scene.get('spatial') or {}
     return x, report
 
 

@@ -25,6 +25,8 @@ import hashlib
 import os
 
 import numpy as np
+
+import compute
 from scipy import signal
 
 from . import data, decoder, io, room, sph
@@ -33,6 +35,29 @@ SR = 44100
 ORDER = 5
 SPEED_OF_SOUND = 343.0
 _cache = {}
+MAGLS_VERSION = 3      # bump when the way a MagLS set is built or stored changes: it is part of the disk-cache tag
+DEFAULT_F_TRANS_CAP_HZ = 1500.0   # the psychoacoustic ceiling for the LS -> MagLS crossover: phase errors above
+# ~1.5 kHz are inaudible (Engel et al. 2022; the 680 Hz value MMagLS used at order 1 is the low-order end of it).
+DIFFUSE_EQ_MAX_DB = 6.0           # cap on the diffuse-field correction: beyond this the set, not the decoder, is wrong
+
+
+def _hrtf_cfg():
+    """The immersive.hrtf block of the current mix, or {} outside a mix (tests, direct calls)."""
+    try:
+        import mix_context
+        return (((mix_context.current().mix or {}).get('immersive') or {}).get('hrtf')) or {}
+    except Exception:
+        return {}
+
+
+def f_trans(order=ORDER):
+    """Crossover from the linear solution to MagLS: the preset's value, else min(N*600, 1500) Hz.
+
+    N*600 is the order-dependent transform criterion (Hold et al. 2023); capping it at 1500 Hz follows the
+    perceptual evidence that phase above ~1.5 kHz is inaudible (Engel et al. 2022). The preset can override it.
+    """
+    v = _hrtf_cfg().get('f_trans_hz')
+    return float(v) if v else float(min(int(order) * 600.0, DEFAULT_F_TRANS_CAP_HZ))
 _dataset = {'path': None, 'name': 'fabian'}
 
 
@@ -77,19 +102,101 @@ def _load_hrirs(sr=SR):
     return type(h)(left, right, h.azi, h.zen, sr)
 
 
-def magls(order=ORDER):
+def magls(order=ORDER, f_trans_hz=None, diffuse_eq=None):
     """(2, (order+1)^2, 256) filters from harmonic signals to the left / right ear. Built once per head set (about 4 s),
-    then kept on disk."""
-    key = _dataset['path'] or 'fabian'
-    if (order, key) not in _cache:
-        tag = hashlib.sha1(key.encode('utf-8')).hexdigest()[:10]
+    then kept on disk.
+
+    `f_trans_hz` is where the linear solution hands over to MagLS (default: the preset, else min(N*600, 1500) Hz);
+    `diffuse_eq` corrects plain MagLS's diffuse-field excess from the loaded set (default: the preset's
+    `immersive.hrtf.diffuse_eq`, true).
+    """
+    cfg = _hrtf_cfg()
+    ft = float(f_trans_hz if f_trans_hz is not None else f_trans(order))
+    deq = bool(cfg.get('diffuse_eq', True)) if diffuse_eq is None else bool(diffuse_eq)
+    src = _dataset['path'] or os.path.join(data.HRIR_DIR, f'HRIRs_default_{SR}.mat')
+    try:
+        st = os.stat(src)
+        key = (src, st.st_mtime_ns, st.st_size)      # a file replaced in place is a different set, in memory too
+    except OSError:
+        key = (src, None, None)
+    key = (order, ft, deq) + key
+    if key not in _cache:
+        tag = _magls_tag(src, order, ft, deq)
         path = os.path.join(os.path.dirname(data.HRIR_DIR), f'magls_o{order}_{SR}_{tag}.npy')
-        if os.path.exists(path):
-            _cache[(order, key)] = np.load(path)
+        if tag and os.path.exists(path):
+            _cache[key] = np.load(path)
         else:
-            _cache[(order, key)] = decoder.magls_bin(_load_hrirs(SR), order)
-            np.save(path, _cache[(order, key)].astype(np.float32))
-    return _cache[(order, key)]
+            hrirs = _load_hrirs(SR)
+            dec = decoder.magls_bin(hrirs, order, f_trans=ft)
+            if deq:
+                dec, _ = diffuse_field_eq(dec, hrirs, SR)
+            _cache[key] = dec
+            if tag:
+                np.save(path, _cache[key].astype(np.float32))
+    return _cache[key]
+
+
+def _magls_tag(src, order, f_trans_hz=None, diffuse_eq=False):
+    """Disk-cache tag of a MagLS set: SHA-256 of the head file's bytes, of the decoder source that builds the set,
+    and MAGLS_VERSION, so replacing the file in place or changing the decoder never reuses stale filters. '' when the
+    file cannot be read (nothing is then cached on disk)."""
+    h = hashlib.sha256()
+    try:
+        for path in (src, decoder.__file__):
+            with open(path, 'rb') as f:
+                for chunk in iter(lambda: f.read(1 << 20), b''):
+                    h.update(chunk)
+            h.update(b'|')
+    except OSError:
+        return ''
+    h.update(f'v{MAGLS_VERSION}|o{order}|sr{SR}|f{f_trans_hz}|d{int(bool(diffuse_eq))}'.encode('ascii'))
+    return h.hexdigest()[:16]
+
+
+def _smooth_octaves(freqs, db, width_oct=1.0 / 6.0):
+    """A 1/6-octave moving average in the log-frequency domain (bins below 20 Hz keep their value)."""
+    out = np.array(db, dtype=float, copy=True)
+    for i, f in enumerate(freqs):
+        if f < 20.0:
+            continue
+        lo, hi = f / 2.0 ** (0.5 * width_oct), f * 2.0 ** (0.5 * width_oct)
+        m = (freqs >= lo) & (freqs <= hi)
+        if m.any():
+            out[i] = float(np.mean(db[m]))
+    return out
+
+
+def diffuse_field_eq(dec, hrirs, sr=SR, max_db=DIFFUSE_EQ_MAX_DB):
+    """Correct plain MagLS's diffuse-field excess with the loaded head set's own magnitude.
+
+    Plain MagLS optimises each direction's magnitude; its diffuse-field response is not constrained, and the
+    literature measures up to +10 dB excess above 8 kHz (Helmholz/Deppisch/Ahrens) with the SMR error falling
+    from 4.2 dB to about 2 dB once corrected. This computes, per ear, the ratio of the set's own diffuse-field
+    power to the decoder's, smooths it over 1/6 octave, caps it at `max_db`, and applies it to the filters as a
+    zero-phase magnitude (the filters are already magnitude-optimised above f_trans, so their phase is not the
+    thing to change).
+
+    Returns (corrected dec, metrics) where metrics holds the RMS deviation above 2 kHz before and after in dB.
+    """
+    dec = np.asarray(dec, dtype=float)
+    taps = dec.shape[-1]
+    nfft = max(1024, taps)
+    freqs = np.fft.rfftfreq(nfft, 1.0 / float(sr))
+    band = freqs >= 2000.0
+    azi, zen = np.asarray(hrirs.azi, float), np.asarray(hrirs.zen, float)
+    y = sph.sh_matrix(int(np.sqrt(dec.shape[1]) - 1), azi, zen, 'real')       # (dirs, K)
+    out = np.empty_like(dec)
+    metrics = {}
+    for ear, hrir in ((0, hrirs.left), (1, hrirs.right)):
+        ref = np.mean(np.abs(np.fft.rfft(np.asarray(hrir, float), nfft, axis=1)) ** 2, axis=0)
+        got = np.mean(np.abs(np.fft.rfft(y @ dec[ear], nfft, axis=1)) ** 2, axis=0)
+        dev = 10.0 * np.log10((got + 1e-30) / (ref + 1e-30))
+        metrics[f'ear{ear}_before_db'] = float(np.sqrt(np.mean(dev[band] ** 2))) if band.any() else 0.0
+        corr = _smooth_octaves(freqs, np.clip(-dev, -float(max_db), float(max_db)))
+        metrics[f'ear{ear}_after_db'] = float(np.sqrt(np.mean((dev[band] + corr[band]) ** 2))) if band.any() else 0.0
+        spec = np.fft.rfft(dec[ear], nfft, axis=-1) * (10.0 ** (corr / 20.0))[None, :]
+        out[ear] = np.fft.irfft(spec, nfft, axis=-1)[..., :taps]
+    return out, metrics
 
 
 def gains(order, azimuth_deg, elevation_deg):
@@ -286,7 +393,7 @@ def spatialize(audio, azimuth_deg=0.0, elevation_deg=0.0, distance_m=1.5, sr=SR,
         x = _air(x, d0, temp_c, rh, sr)
         out = np.zeros((n, 2))
         for e in (0, 1):
-            out[:, e] = signal.fftconvolve(x, g @ dec[e])[:n]
+            out[:, e] = compute.conv(x, g @ dec[e])[:n]
         if near_field:
             out = apply_near_field(out, a0, e0, d0, near_field, sr)
         return out.astype(np.float32)
@@ -297,7 +404,7 @@ def spatialize(audio, azimuth_deg=0.0, elevation_deg=0.0, distance_m=1.5, sr=SR,
         x = _doppler(x, d_t, sr)
     out = _stft_place(x, az_t, el_t, order, sr)
     out *= (1.0 / np.maximum(1.0, d_t))[:, None]
-    out = _air(out, float(np.max(d_t)), temp_c, rh, sr)
+    out = _air_moving(out, d_t, temp_c, rh, sr)
     if near_field:
         out = apply_near_field(out, az_t, el_t, d_t, near_field, sr)
     return out.astype(np.float32)
@@ -313,29 +420,68 @@ def _doppler(x, dist_t, sr, c=SPEED_OF_SOUND):
     return CubicSpline(np.arange(n), x)(idx).astype(float)
 
 
-def _stft_place(x, az_t, el_t, order=ORDER, sr=SR, block=1024, hop=256):
+def _stft_place(x, az_t, el_t, order=ORDER, sr=SR, block=1024, hop=256, chunk=128):
     """Time-varying binaural filter in the STFT domain: each frame takes the direction at that instant, so a crossing
-    source gets its cue updated every `hop` samples (~6 ms) instead of at a gain-update rate. OLA for the periodic Hann
-    window with a 4x overlap is exact for a constant filter, so a still source is unaffected."""
+    source gets its cue updated every `hop` samples (~6 ms) instead of at a gain-update rate.
+
+    Each frame is Hann-windowed, filtered by a true linear convolution (both transforms are zero-padded to
+    >= block + taps - 1, so the filter's tail does not wrap into the frame's start) and overlap-added; the sum is
+    divided by the sum of the analysis windows, which makes a still source exactly x * h. The gains of all frame
+    directions are evaluated together, `chunk` frames at a time."""
     dec = magls(order)
+    taps = dec.shape[-1]
+    nfft = 1 << int(np.ceil(np.log2(block + taps - 1)))
     n = len(x)
     pad = block
     xp = np.concatenate([np.zeros(pad), x, np.zeros(pad)])
     w = signal.get_window('hann', block, fftbins=True)
-    out = np.zeros((len(xp), 2))
+    out = np.zeros((len(xp) + nfft - block, 2))
     wsum = np.zeros(len(xp))
-    pos = np.clip((np.arange(0, len(xp) - block + 1, hop) + block / 2.0 - pad) / max(1, n - 1), 0.0, 1.0)
+    starts = np.arange(0, len(xp) - block + 1, hop)
+    pos = np.clip((starts + block / 2.0 - pad) / max(1, n - 1), 0.0, 1.0)
     k = (pos * (n - 1)).astype(int)
-    for i0, kk in zip(range(0, len(xp) - block + 1, hop), k):
-        seg = xp[i0:i0 + block] * w
-        X = np.fft.rfft(seg)
-        g = gains(order, az_t[kk], el_t[kk])[0]
+    az_t, el_t = np.asarray(az_t, float), np.asarray(el_t, float)
+    for c0 in range(0, len(starts), chunk):
+        sl = slice(c0, c0 + chunk)
+        st, kk = starts[sl], k[sl]
+        segs = xp[st[:, None] + np.arange(block)[None, :]] * w
+        X = np.fft.rfft(segs, nfft, axis=1)
+        g = gains(order, az_t[kk], el_t[kk])                                   # (F, (order+1)^2)
         for e in (0, 1):
-            H = np.fft.rfft(g @ dec[e], block)
-            out[i0:i0 + block, e] += np.fft.irfft(X * H, block) * w
-        wsum[i0:i0 + block] += w * w
+            H = np.fft.rfft(g @ dec[e], nfft, axis=1)                          # (F, nfft/2+1)
+            y = np.fft.irfft(X * H, nfft, axis=1)
+            for i0, row in zip(st, y):
+                out[i0:i0 + nfft, e] += row
+        for i0 in st:
+            wsum[i0:i0 + block] += w
+    out = out[:len(xp)]
     out /= np.maximum(wsum, 1e-9)[:, None]
     return out[pad:pad + n]
+
+
+def _air_moving(y, dist_t, temp_c, rh, sr):
+    """Air loss for a source whose distance changes: ISO 9613-1 for the path beyond one metre at each instant.
+    The filters of a grid of distances (about 1 m apart, spanning the move) are blended by the distance at each
+    sample, so the high end dulls as the source recedes and returns as it nears; a still source is one exact filter."""
+    import airabs
+    extra = np.maximum(np.asarray(dist_t, float) - 1.0, 0.0)
+    lo, hi = float(extra.min()), float(extra.max())
+    if hi <= 0.0:
+        return y
+    if hi - lo < 1e-9:
+        return airabs.apply(y, hi, temp_c=temp_c, rh=rh, sr=sr).astype(float)
+    levels = np.linspace(lo, hi, int(min(64, np.ceil(hi - lo) + 1)) + 1)
+    pos = np.interp(extra, levels, np.arange(len(levels)))
+    j0 = np.minimum(np.floor(pos).astype(int), len(levels) - 2)
+    frac = pos - j0
+    out = np.zeros_like(np.asarray(y, float))
+    for j, d in enumerate(levels):
+        wj = np.where(j0 == j, 1.0 - frac, 0.0) + np.where(j0 == j - 1, frac, 0.0)
+        if not wj.any():
+            continue
+        yj = airabs.apply(y, d, temp_c=temp_c, rh=rh, sr=sr).astype(float) if d > 0 else np.asarray(y, float)
+        out += yj * (wj[:, None] if out.ndim == 2 else wj)
+    return out
 
 
 def spatialize_pair(audio, azimuth_deg, elevation_deg, distance_m, half_width_deg, **kw):
@@ -369,8 +515,8 @@ def _place_tap(x, delay_ms, coeffs, dec, order, direction, sr):
         fir = room.absorption_fir(coeffs, sr=sr)
         s = signal.lfilter(fir, 1.0, s)
     g = gains(order, direction[0], direction[1])[0]
-    return np.stack([signal.fftconvolve(s, g @ dec[0])[:len(x)],
-                     signal.fftconvolve(s, g @ dec[1])[:len(x)]], axis=1)
+    return np.stack([compute.conv(s, g @ dec[0])[:len(x)],
+                     compute.conv(s, g @ dec[1])[:len(x)]], axis=1)
 
 
 def reflections(audio, azimuth_deg, distance_m, refl, sr=SR, order=ORDER, path_physics=True, ref_m=1.0,
@@ -401,7 +547,7 @@ def reflections(audio, azimuth_deg, distance_m, refl, sr=SR, order=ORDER, path_p
 
     if taps:
         for t in taps:
-            extra = max(0.0, float(t['distance_m']) - dist)
+            extra = max(0.0, float(t['distance_m']) - float(t.get('direct_m', dist)))   # the room's own (clamped) direct path
             level = (ref / (dist + extra)) if path_physics else 1.0
             y = _place_tap(x * level, t['delay_ms'], t['coeffs'], dec, order,
                            (t['azimuth'], t['elevation']), sr)
@@ -429,7 +575,7 @@ def reflections(audio, azimuth_deg, distance_m, refl, sr=SR, order=ORDER, path_p
         s = signal.sosfilt(signal.butter(2, min(sr * 0.45, float(refl.get(key + '_cutoff_hz', cutoff))), 'low', fs=sr, output='sos'), s)
         g = gains(order, direction[0], direction[1])[0]
         for e in (0, 1):
-            out[:, e] += signal.fftconvolve(s, g @ dec[e])[:n]
+            out[:, e] += compute.conv(s, g @ dec[e])[:n]
 
     for tap in fixed_plan(az):
         add(*tap)
@@ -475,10 +621,10 @@ def late(audio, azimuth_deg, distance_m, refl, sr=SR, order=ORDER, ref_m=1.0):
     acc = np.zeros((n, 2))
     for i, (daz, del_) in enumerate(dirs):
         ir = room.late_ir(dict(cfg, seed=int(cfg.get('seed', 7)) + i), sr)
-        tail = signal.fftconvolve(x, ir)[:n]
+        tail = compute.conv(x, ir)[:n]
         g = gains(order, daz, del_)[0]
         for e in (0, 1):
-            acc[:, e] += signal.fftconvolve(tail, g @ dec[e])[:n]
+            acc[:, e] += compute.conv(tail, g @ dec[e])[:n]
     acc /= max(1, len(dirs))
     dry = np.sqrt(np.mean(x ** 2) + 1e-12)
     got = np.sqrt(np.mean(acc ** 2) + 1e-12)

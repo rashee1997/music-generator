@@ -33,6 +33,11 @@ def _noise():
     return signal.sosfilt(signal.butter(4, [300, 6000], 'band', fs=SR, output='sos'), x)
 
 
+def _noise_low():
+    x = np.random.default_rng(1).standard_normal(SR)
+    return signal.sosfilt(signal.butter(4, [100, 700], 'band', fs=SR, output='sos'), x)
+
+
 def _cues(y):
     """(right minus left level in dB, ms the right ear lags the left)"""
     L, R = y[:, 0], y[:, 1]
@@ -69,8 +74,13 @@ class TestSofaValidation(unittest.TestCase):
 class TestHrtf(unittest.TestCase):
     def test_sides_are_mirrored_and_far_ear_is_late(self):
         x = _noise()
-        ild_r, itd_r = _cues(binaural.spatialize(x, 60, 0, 1.0))       # source on the right: right ear louder and first
-        ild_l, itd_l = _cues(binaural.spatialize(x, -60, 0, 1.0))
+        ild_r, _ = _cues(binaural.spatialize(x, 60, 0, 1.0))           # source on the right: right ear louder and first
+        ild_l, _ = _cues(binaural.spatialize(x, -60, 0, 1.0))
+        # the time difference is read below the decoder's transition frequency: a MagLS decoder leaves the interaural
+        # phase above it free by design, so a broadband correlation there is noise
+        low = _noise_low()
+        _, itd_r = _cues(binaural.spatialize(low, 60, 0, 1.0))
+        _, itd_l = _cues(binaural.spatialize(low, -60, 0, 1.0))
         self.assertGreater(ild_r, 8)
         self.assertLess(ild_l, -8)
         self.assertLess(itd_r, -0.3)

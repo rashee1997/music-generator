@@ -1,0 +1,47 @@
+{
+  "name": "kalimba_hook",
+  "description": "African thumb piano (kalimba / mbira) carrying the hook first and the high sparkle later.",
+  "character": "A thumb piano played close and dry: a bright, short-decay pluck that states the hook first, clear enough in the 500 Hz to 4 kHz band that a phone speaker returns every note.",
+  "gm": "kalimba",
+  "role": "melody",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 5.0,
+    "drift_ms": 5.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": -50.0,
+    "distance": 1.3
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 280
+    },
+    {
+      "type": "lp",
+      "f": 4500.0
+    }
+  ],
+  "gain_db": -1.0,
+  "reverb": 0.14,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 1.0,
+    "release_ms": 350.0
+  },
+  "mechanics_class": "plucked",
+  "sources": [
+    "KB african (mbira and thumb pianos: a halo of high-frequency buzz around each note; the SoundFont kalimba has none: ESTIMATE, not modelled)",
+    "KB short-form-functional-music (the hook starts inside 3 s on the instrument with the clearest attack: starting value)",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured",
+    "STARTING VALUE: onset_fade_ms 10: several strokes land together on every strong beat and their sharp starts add into one impulse the click row flags; a soft attack is also what \"smooth\" asks for",
+    "MEASURED: the mastered file had click events at the onsets of overlapping notes, where the sampler tick lands on a still-ringing note and soften_onsets leaves it alone by design; STARTING VALUE: low-pass at 6000 Hz, above what a phone speaker returns",
+    "STARTING VALUE: low-pass at 4.5 kHz: a phone speaker returns little above about 5 kHz (KB short-form-functional-music), and the sharp edges of plucked and struck onsets above it are what the click row reacts to"
+  ],
+  "vibrato": {
+    "depth_cents": 0.0
+  },
+  "onset_fade_ms": 10.0
+}

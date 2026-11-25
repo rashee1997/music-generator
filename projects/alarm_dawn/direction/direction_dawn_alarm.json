@@ -1,0 +1,388 @@
+{
+  "title": "Dawn Alarm",
+  "project": "A one-minute wake-up alarm made of instruments from five traditions",
+  "version": 1,
+  "medium": "alarm",
+  "brief": "create a 1 minute alarm tone: melodic, escalating, multi-cultural instruments; declared in JSON, rendered by an engine",
+  "audience": "one sleeper, woken by a phone speaker at bedside, who must be reached without being startled or hurt by a sharp tone, and who must still not like the sound enough to ignore it",
+  "purpose": "a wake-up alarm that rings for up to one minute and repeats smoothly: a quiet, hum-able tune that adds one lever of pressure at every stage (notes per second, a new voice, register, layers, level) and settles on the chord it starts on",
+  "point_of_view": "the sleeper's bedside: a melodic alarm, not a beep; pressure comes from density and register, not from harshness, sub-bass or a siren",
+  "job": [
+    "be a tune in the first three seconds: three repeated notes then a leap, over a pulse",
+    "wake by escalation: each stage is denser, higher or fuller than the last, with no half-step to rub",
+    "blend five traditions on one scale, one pulse and one room, the tune changing hands at each stage",
+    "end on the tonic chord the first bar starts on and ring out, so a looping player repeats it smoothly"
+  ],
+  "story": "a thumb piano calls three times and leaps, the same call is learned, then a bamboo flute takes it up an octave, a lute decorates it, everything piles in, two climbing tags reach the top, and the tune steps down to rest on the tonic",
+  "duration_s": 60.0,
+  "in_point_s": 0.0,
+  "out_point_s": 60.0,
+  "ending": "tail_out",
+  "feel": [
+    "hopeful",
+    "bright",
+    "smooth",
+    "rising"
+  ],
+  "avoid_feel": [
+    "harsh",
+    "startling",
+    "sad",
+    "robotic"
+  ],
+  "sections": [
+    {
+      "name": "Dawn",
+      "start_s": 0.0,
+      "end_s": 8.57,
+      "energy": 0.4,
+      "action": "the alarm starts: a quiet, hum-able tune on the clearest pluck, with a pulse from the first bar so the sleeper hears a beat, not a siren",
+      "music": "the kalimba states the four-bar hook alone and quietly over soft finger-cymbal quarters, two low hand-drum beats and a pad",
+      "role": "place"
+    },
+    {
+      "name": "Stir",
+      "start_s": 8.57,
+      "end_s": 17.14,
+      "energy": 0.5,
+      "action": "the same tune again, so it is learned, with more notes per second",
+      "music": "the kalimba repeats the hook; the marimba and bell lock into the three-three-two pattern, the finger cymbals go to eighths, the maqsum arrives on the hand drum, a bass note holds under",
+      "role": "establish"
+    },
+    {
+      "name": "Rise",
+      "start_s": 17.14,
+      "end_s": 25.71,
+      "energy": 0.65,
+      "action": "the tune changes voice and climbs an octave in the sparkle",
+      "music": "the bansuri sings the hook with a small glide while the kalimba doubles it an octave above; the bass starts to move and the zither flourishes at the phrase end",
+      "role": "build"
+    },
+    {
+      "name": "Wake",
+      "start_s": 25.71,
+      "end_s": 34.29,
+      "energy": 0.8,
+      "action": "a new colour carries the tune: the lute",
+      "music": "the oud carries the hook with trills over the full rhythm; the kalimba stays an octave above; the zither adds flowers on the weak beats of each bar",
+      "role": "build"
+    },
+    {
+      "name": "Lift",
+      "start_s": 34.29,
+      "end_s": 42.86,
+      "energy": 0.9,
+      "action": "everything is in the highest-density layer: backbeat, strum and the tune in two octaves",
+      "music": "the bansuri carries the hook, the kalimba an octave above, the oud strums the three-three-two pattern, the finger cymbals mark the backbeat",
+      "role": "peak"
+    },
+    {
+      "name": "Peak",
+      "start_s": 42.86,
+      "end_s": 51.43,
+      "energy": 1.0,
+      "action": "the highest register and the fullest layers: the most urgent moment",
+      "music": "two climbing tags on the bansuri and kalimba reach the highest notes; the oud doubles an octave below; the hand drum fills with tabla syllables each fourth bar",
+      "role": "peak"
+    },
+    {
+      "name": "Settle",
+      "start_s": 51.43,
+      "end_s": 60.0,
+      "energy": 0.55,
+      "action": "the pressure releases onto the tonic; a looping player starts the tune again from the chord this lands on",
+      "music": "the kalimba steps down by chord tones to rest on D; the pad and a held bass note carry D6, Asus2, D6 and Dadd9; the zither cascades down and rings",
+      "role": "button"
+    }
+  ],
+  "motifs": [
+    {
+      "name": "the Dawn call",
+      "first_at_s": 0.0,
+      "shape": "three repeated D notes then a leap of a fifth to A, a step down and a fall; the answer repeats the three D notes and leaps to B",
+      "returns": "9 s: kalimba again. 17 s: bansuri an octave under the kalimba. 26 s: oud with trills. 34 s: bansuri, kalimba and oud. 43 s: two climbing tags to the highest notes. 51 s: the stepped-down rest on the tonic"
+    }
+  ],
+  "instruments": [
+    "kalimba_hook",
+    "bansuri_lead",
+    "oud_lead",
+    "koto_flourish",
+    "marimba_ostinato",
+    "open_pad",
+    "bass_pulse",
+    "darbuka_groove",
+    "shaker_pulse",
+    "bell_tresillo"
+  ],
+  "avoid_sounds": [
+    "siren",
+    "sharp 2-5 kHz peak",
+    "sub-bass",
+    "distorted guitar",
+    "synth lead",
+    "long reverb tail"
+  ],
+  "pulse": "steady",
+  "tempo_bpm": [
+    108,
+    116
+  ],
+  "key": "D",
+  "mode": "pentatonic_major",
+  "energy": 0.7,
+  "space": "dawn_alarm_room",
+  "hits_at": [
+    17.14,
+    34.29,
+    51.43
+  ],
+  "hits": [
+    {
+      "t": 17.14,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the bansuri takes the tune and the kalimba doubles it an octave above",
+      "why": "the first change of voice tells the sleeper the alarm is moving, not stuck"
+    },
+    {
+      "t": 34.29,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the oud, the backbeat cymbals and the strum arrive together",
+      "why": "the lift is a new level of density, not a drift"
+    },
+    {
+      "t": 51.43,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the last fill and the highest note, then the pressure releases onto the tonic",
+      "why": "the peak must land before the settle, so the release is felt"
+    }
+  ],
+  "mix_intent": {
+    "hero": "bansuri_lead",
+    "support": [
+      "kalimba_hook",
+      "oud_lead",
+      "koto_flourish",
+      "bass_pulse"
+    ],
+    "sits_under": [
+      "marimba_ostinato",
+      "open_pad",
+      "darbuka_groove",
+      "shaker_pulse",
+      "bell_tresillo"
+    ],
+    "must_hear": [
+      "the kalimba call within three seconds",
+      "a pulse from the first bar",
+      "the level rising stage by stage"
+    ],
+    "leave_free_hz": []
+  },
+  "loudness_lufs": -12.0,
+  "true_peak_max": -1.5,
+  "delivery": {
+    "format": "wav",
+    "sample_rate": 44100,
+    "bit_depth": 24,
+    "stage": "web",
+    "output_targets": [
+      "stereo"
+    ]
+  },
+  "references": [
+    "a bright wooden thumb-piano call over a rolling hand-drum pulse that grows by adding voices, like a village ensemble getting up",
+    "a bamboo flute that takes the call up and carries it higher"
+  ],
+  "spatial_staging": {
+    "kalimba_hook": {
+      "azimuth": -50.0,
+      "distance": 1.3,
+      "space": "dawn_alarm_room"
+    },
+    "bansuri_lead": {
+      "azimuth": 0.0,
+      "distance": 1.4,
+      "space": "dawn_alarm_room"
+    },
+    "oud_lead": {
+      "azimuth": 50.0,
+      "distance": 1.7,
+      "space": "dawn_alarm_room"
+    },
+    "koto_flourish": {
+      "azimuth": 70.0,
+      "distance": 2.0,
+      "space": "dawn_alarm_room"
+    },
+    "marimba_ostinato": {
+      "azimuth": -75.0,
+      "distance": 2.2,
+      "space": "dawn_alarm_room"
+    },
+    "open_pad": {
+      "azimuth": -105.0,
+      "distance": 3.0,
+      "space": "dawn_alarm_room"
+    },
+    "bass_pulse": {
+      "azimuth": 0.0,
+      "distance": 1.1,
+      "space": "dawn_alarm_room"
+    },
+    "darbuka_groove": {
+      "azimuth": 25.0,
+      "distance": 1.9,
+      "space": "dawn_alarm_room"
+    },
+    "shaker_pulse": {
+      "azimuth": -25.0,
+      "distance": 2.6,
+      "space": "dawn_alarm_room"
+    },
+    "bell_tresillo": {
+      "azimuth": 37.0,
+      "distance": 2.4,
+      "space": "dawn_alarm_room"
+    }
+  },
+  "expression": {
+    "sonic_picture": "In the first ten seconds a close, dry thumb piano calls three times on one note and leaps up, over soft finger cymbals and two low hand-drum beats; in the middle a bamboo flute sings the call an octave up while the thumb piano shimmers above it and a lute trills round it; at the peak every voice is in and two tags climb to the highest notes; the last note is the call coming to rest on the tonic while a plucked ring floats into the first note again.",
+    "performer": "The thumb piano player plucks evenly, letting each note ring, and plays softer in the first stage. The flute player leans into the leap with a short slide and breathes at the end of each phrase. The lute player decorates long notes with a quick trill and plays a hair behind the beat. The zither player sweeps up the strings with a thumb at phrase ends. The drummer keeps the maqsum steady, ghosts the in-between strokes and fills with tabla syllables each fourth bar.",
+    "producer_moves": "Each stage adds one lever: notes per second, a new voice, an octave, a layer, then level. The reverb send is kept short so the tail never covers the next entry. The bass is lifted at 450 Hz and 900 Hz so a phone speaker plays its partials. The master is a 7 kHz low-pass and a 110 Hz high-pass for the phone. The last bars land on the tonic and ring out.",
+    "anti_generic": "The generic alarm is one beep repeated at one level; this one is a tune that is learned in the first stage, changes hands four times, climbs an octave and gets denser at every stage, and then comes to rest where it began.",
+    "cues": [
+      {
+        "section": "Dawn",
+        "arousal": "low",
+        "mode_register": "major pentatonic, middle register",
+        "tempo_trend": "steady",
+        "dynamics": "piano",
+        "articulation": "plucked, ringing",
+        "timbre": "bright and dry"
+      },
+      {
+        "section": "Stir",
+        "arousal": "mid",
+        "mode_register": "major pentatonic, middle register",
+        "tempo_trend": "steady",
+        "dynamics": "mezzo piano",
+        "articulation": "plucked, ringing",
+        "timbre": "bright and woody"
+      },
+      {
+        "section": "Rise",
+        "arousal": "mid",
+        "mode_register": "major pentatonic, middle to high register",
+        "tempo_trend": "steady",
+        "dynamics": "mezzo",
+        "articulation": "legato with a glide",
+        "timbre": "breathy and bright"
+      },
+      {
+        "section": "Wake",
+        "arousal": "high",
+        "mode_register": "major pentatonic, middle to high register",
+        "tempo_trend": "steady",
+        "dynamics": "mezzo forte",
+        "articulation": "plucked with trills",
+        "timbre": "woody and bright"
+      },
+      {
+        "section": "Lift",
+        "arousal": "high",
+        "mode_register": "major pentatonic, high register",
+        "tempo_trend": "steady",
+        "dynamics": "forte",
+        "articulation": "plucked and legato together",
+        "timbre": "bright and full"
+      },
+      {
+        "section": "Peak",
+        "arousal": "high",
+        "mode_register": "major pentatonic, highest register",
+        "tempo_trend": "steady",
+        "dynamics": "forte",
+        "articulation": "plucked and legato together",
+        "timbre": "bright and full"
+      },
+      {
+        "section": "Settle",
+        "arousal": "low",
+        "mode_register": "major pentatonic, middle register",
+        "tempo_trend": "steady",
+        "dynamics": "mezzo piano",
+        "articulation": "ringing and falling",
+        "timbre": "soft"
+      }
+    ],
+    "theme": {
+      "contour": "three repeated notes then a leap of a fifth, a step down and a fall; the answer leaps to the sixth degree above and falls to the tonic",
+      "interval_character": "repeated notes, one rising fifth, steps; no half-step anywhere because the scale has none",
+      "rhythm_cell": "three short notes then a held note on the leap (a three-then-long grouping), a held note on beat three of the second bar",
+      "why_memorable": "three repeats then a leap is easy to hum and is the shape of a call; the answer repeats the start so it is heard twice before it changes",
+      "variation_plan": "kalimba states it quietly; kalimba again; bansuri with a glide under a kalimba octave; oud with trills; bansuri and kalimba an octave apart; two climbing tags; a stepped-down rest on the tonic"
+    }
+  },
+  "immersive": {
+    "enabled": false,
+    "why": "a stereo ringtone for a single phone speaker: a field would not survive the speaker, so no room does a job here",
+    "engine": "hoa_bus",
+    "anchors": [],
+    "movers": [],
+    "height": {},
+    "room_changes": [],
+    "must_hear": [],
+    "deliverables": [
+      "stereo"
+    ],
+    "notes": "stereo only; the sheet records intent and the presets execute it"
+  },
+  "focus": "melody",
+  "intent": {
+    "emotions": [
+      "hopeful",
+      "energetic"
+    ],
+    "registers": [
+      "natural"
+    ],
+    "scenes": [
+      "build"
+    ],
+    "tensions": [
+      "rising_line",
+      "ostinato"
+    ],
+    "avoid": [
+      "four_on_floor",
+      "pedal_drone_throughout"
+    ]
+  },
+  "piece_type": "melodic",
+  "gate_reason": "a tune carried by plucked and blown voices with a steady pulse and a cadence home: the melodic profile applies in full, nothing is relaxed",
+  "video": {
+    "enabled": false,
+    "source": null,
+    "fps": null,
+    "cuts": [],
+    "cut_source": null,
+    "cut_sync": {
+      "early_ms": 45,
+      "late_ms": 125
+    },
+    "dialogue": {
+      "present": false,
+      "duck_db": -9.0,
+      "snr_min_db": 15.0
+    },
+    "master_profile": null,
+    "deliverable": null,
+    "preset": "default",
+    "notes": "music-only piece"
+  },
+  "notes": "The score ends with a natural ring-out because the gate has no loop-aware seam row; a looping player repeats a ring-out that lands on the chord the piece starts on. The SoundFont supplies kalimba, flute, nylon guitar, koto and marimba in place of mbira, bansuri, oud and guzheng. Declared in scores/dawn_alarm_arrangement.json and expanded by scripts/arrange.py."
+}

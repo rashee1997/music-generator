@@ -1,0 +1,172 @@
+{
+  "title": "Chrono Drift",
+  "bpm": 84.0,
+  "ts": [
+    4,
+    4
+  ],
+  "key": "D",
+  "mode": "dorian",
+  "space": "chrono_drift_room",
+  "mix_preset": "chrono_drift_mix",
+  "dynamics": [
+    [
+      0.0,
+      0.4
+    ],
+    [
+      8.0,
+      0.5
+    ],
+    [
+      16.0,
+      0.7
+    ],
+    [
+      24.0,
+      0.9
+    ],
+    [
+      28.0,
+      0.75
+    ],
+    [
+      32.0,
+      0.4
+    ]
+  ],
+  "ritard": 0.35,
+  "ritard_beats": 6,
+  "master": {
+    "lufs": -16.0,
+    "true_peak": -1.5,
+    "tone": "warm"
+  },
+  "tracks": [
+    {
+      "name": "flute_melody",
+      "instrument": "lead_flute",
+      "role": "melody",
+      "notes": [
+        {
+          "t": 0.0,
+          "d": 1.5,
+          "p": 69,
+          "v": 78
+        },
+        {
+          "t": 1.5,
+          "d": 0.5,
+          "p": 71,
+          "v": 74
+        },
+        {
+          "t": 2.0,
+          "d": 2.0,
+          "p": 74,
+          "v": 82
+        },
+        {
+          "t": 4.0,
+          "d": 1.5,
+          "p": 72,
+          "v": 76
+        },
+        {
+          "t": 5.5,
+          "d": 0.5,
+          "p": 71,
+          "v": 72
+        },
+        {
+          "t": 6.0,
+          "d": 2.0,
+          "p": 69,
+          "v": 80
+        }
+      ]
+    },
+    {
+      "name": "piano_chords",
+      "instrument": "warm_piano",
+      "role": "chord",
+      "notes": [
+        {
+          "t": 0.0,
+          "d": 3.8,
+          "p": 50,
+          "v": 62
+        },
+        {
+          "t": 0.5,
+          "d": 3.2,
+          "p": 57,
+          "v": 58
+        },
+        {
+          "t": 1.0,
+          "d": 2.8,
+          "p": 62,
+          "v": 60
+        },
+        {
+          "t": 4.0,
+          "d": 3.8,
+          "p": 53,
+          "v": 64
+        },
+        {
+          "t": 4.5,
+          "d": 3.2,
+          "p": 57,
+          "v": 60
+        },
+        {
+          "t": 5.0,
+          "d": 2.8,
+          "p": 65,
+          "v": 62
+        }
+      ]
+    },
+    {
+      "name": "bass_foundation",
+      "instrument": "acoustic_bass",
+      "role": "bass",
+      "notes": [
+        {
+          "t": 0.0,
+          "d": 3.9,
+          "p": 26,
+          "v": 72
+        },
+        {
+          "t": 4.0,
+          "d": 3.9,
+          "p": 29,
+          "v": 74
+        }
+      ]
+    },
+    {
+      "name": "vocal_pad",
+      "instrument": "vocal_hum",
+      "role": "pad",
+      "gain_db": -7.0,
+      "notes": [
+        {
+          "t": 0.0,
+          "d": 7.8,
+          "p": 50,
+          "v": 65
+        },
+        {
+          "t": 0.0,
+          "d": 7.8,
+          "p": 57,
+          "v": 60
+        }
+      ]
+    }
+  ]
+}

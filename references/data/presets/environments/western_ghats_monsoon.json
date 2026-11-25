@@ -1,0 +1,480 @@
+{
+  "schema": "biome/1",
+  "name": "western_ghats_monsoon",
+  "character": "Shola forest edge at about 1000 m in heavy monsoon rain: a leaf-drip and canopy bed, a stream below, a dawn thrush and tree frogs that fall silent when the tiger calls (shipped example: copy into your project's presets/environments/, replace every ESTIMATE from the research note, and tune it).",
+  "world": {
+    "g_m_s2": 9.81,
+    "listener": {
+      "medium": "air",
+      "height_m": 1.6
+    }
+  },
+  "medium": {
+    "model": "iso9613",
+    "gas": {
+      "molar_mass_kg_mol": 0.02897,
+      "gamma": 1.4,
+      "viscosity_pa_s": 1.81e-05,
+      "prandtl": 0.71
+    },
+    "state": {
+      "temperature_k": 292.15,
+      "pressure_pa": 89900,
+      "rh_percent": 96
+    },
+    "boundary": {
+      "canopy": {
+        "excess_db_per_m": [
+          [
+            500,
+            0.03
+          ],
+          [
+            2000,
+            0.12
+          ],
+          [
+            4000,
+            0.25
+          ],
+          [
+            8000,
+            0.5
+          ]
+        ],
+        "sources": [
+          "ESTIMATE: the shape and size of a foliage excess-attenuation table (it rises with frequency; a few tenths of a dB per metre at a few kHz); replace with the values in the research note"
+        ]
+      },
+      "ground": {
+        "material": "soil",
+        "height_m": 0.0
+      }
+    },
+    "level_ref": {
+      "basis": "power",
+      "p_ref_pa": 2e-05
+    },
+    "sources": [
+      "ISO 9613-1 for the absorption",
+      "89.9 kPa is the standard atmosphere at 1000 m (starting value)",
+      "19 C and 96 % RH: monsoon values (starting value)",
+      "viscosity and Prandtl number of air: handbook values at about 20 C"
+    ]
+  },
+  "materials": {
+    "leaf_wet": {
+      "family": "membrane",
+      "density": 900,
+      "young_modulus_gpa": 0.05,
+      "loss_factor": 0.14,
+      "thickness_m": 0.0003,
+      "flow_resistivity": 9000,
+      "restitution": 0.2
+    }
+  },
+  "controls": {
+    "rain_intensity": {
+      "curve": [
+        [
+          0,
+          12
+        ],
+        [
+          60,
+          28
+        ],
+        [
+          180,
+          18
+        ]
+      ]
+    },
+    "dawn_dusk": {
+      "curve": [
+        [
+          0,
+          0.2
+        ],
+        [
+          30,
+          1.0
+        ],
+        [
+          180,
+          0.6
+        ]
+      ]
+    }
+  },
+  "generators": [
+    {
+      "name": "canopy_rain",
+      "kind": "particulate_impacts",
+      "salience": "bed",
+      "stationary": false,
+      "population": {
+        "kind": "rain",
+        "rate_mm_h": {
+          "control": "rain_intensity"
+        },
+        "cd": 1.1,
+        "d_mm": [
+          0.8,
+          6.0
+        ]
+      },
+      "surface": {
+        "kind": "solid",
+        "material": "leaf_wet",
+        "area_m2": 40.0,
+        "patches": 4
+      },
+      "spatial": {
+        "field": true,
+        "distance": 4.0,
+        "elevations": [
+          30.0,
+          50.0
+        ]
+      },
+      "sources": [
+        "Marshall-Palmer drop sizes (scripts/biome/physics.py)",
+        "cd 1.1 gives about 8.9 m/s for a 4 mm drop (measured in tests/test_biome_generators.py)",
+        "ESTIMATE: area, patch count and radiated-energy efficiency (starting value 1e-8)"
+      ]
+    },
+    {
+      "name": "stream",
+      "kind": "particulate_impacts",
+      "salience": "bed",
+      "stationary": true,
+      "population": {
+        "kind": "rain",
+        "rate_mm_h": 20.0,
+        "cd": 1.1,
+        "d_mm": [
+          0.5,
+          2.0
+        ]
+      },
+      "surface": {
+        "kind": "liquid",
+        "area_m2": 2.0
+      },
+      "bubbles": {
+        "p_by_size": [
+          [
+            0.4,
+            0.6
+          ],
+          [
+            1.0,
+            0.25
+          ]
+        ]
+      },
+      "spatial": {
+        "azimuth": -70.0,
+        "distance": 18.0,
+        "elevation": -5.0
+      },
+      "sources": [
+        "Minnaert bubble pitch from the medium (scripts/biome/physics.py)",
+        "ESTIMATE: splash rate, sizes and bubble probabilities; measure a stream recording with scripts/ambience_reference.py"
+      ]
+    },
+    {
+      "name": "canopy_wind",
+      "kind": "turbulence",
+      "salience": "bed",
+      "obstacles": {
+        "d_m": {
+          "dist": "lognormal",
+          "median": 0.004,
+          "sigma": 0.5
+        },
+        "frontal_area_m2": 40.0,
+        "oscillators": 8
+      },
+      "flow": {
+        "u_m_s": 2.5,
+        "gust_corner_hz": 0.08,
+        "intensity": 0.35
+      },
+      "k_dipole": 0.001,
+      "strouhal": {
+        "law": "auto"
+      },
+      "broadband": {
+        "share": 0.4,
+        "band_hz": [
+          100,
+          5000
+        ]
+      },
+      "spatial": {
+        "field": true,
+        "distance": 3.0,
+        "elevations": [
+          40.0
+        ]
+      },
+      "sources": [
+        "Strouhal number by Reynolds number (scripts/biome/physics.py)",
+        "ESTIMATE: leaf-stalk sizes, frontal area and wind speed; k_dipole is a starting value"
+      ]
+    }
+  ],
+  "fauna": [
+    {
+      "name": "malabar_thrush",
+      "call": "songbird_phrase",
+      "salience": "foreground",
+      "power_w": 6e-05,
+      "bouts_per_min": 3,
+      "individuals": 2,
+      "first_s": 6.0,
+      "source": {
+        "kind": "dual_syrinx",
+        "fm_hz": 18,
+        "fm_depth": 0.04,
+        "saturation": 1.4,
+        "harmonics": 4
+      },
+      "elements": {
+        "phrase": {
+          "f_left": [
+            [
+              0,
+              2400
+            ],
+            [
+              1,
+              3100
+            ]
+          ],
+          "f_right": [
+            [
+              0,
+              2300
+            ],
+            [
+              1,
+              2900
+            ]
+          ],
+          "ms": [
+            900,
+            1300
+          ]
+        }
+      },
+      "sequence": [
+        [
+          "phrase",
+          2,
+          4
+        ]
+      ],
+      "gap_ms": [
+        120,
+        260
+      ],
+      "resonator": {
+        "kind": "tube",
+        "length_cm": 4.5
+      },
+      "niche": {
+        "band_hz": [
+          1800,
+          4200
+        ],
+        "active": {
+          "control": "dawn_dusk"
+        }
+      },
+      "position": {
+        "azimuth": 25.0,
+        "elevation": 20.0,
+        "distance": 14.0
+      },
+      "sources": [
+        "ESTIMATE: the contour, band, bout rate and radiated power; replace with values measured from a recording of the species"
+      ]
+    },
+    {
+      "name": "tree_frogs",
+      "salience": "bed",
+      "power_w": 5e-06,
+      "bouts_per_min": 10,
+      "individuals": 3,
+      "first_s": 1.0,
+      "rate_per_k": 0.04,
+      "temp_ref_k": 292.15,
+      "source": {
+        "kind": "stridulation",
+        "tooth_hz": 90,
+        "plate_hz": 2800,
+        "plate_q": 12,
+        "train": {
+          "chirp_ms": 120,
+          "period_ms": 450
+        }
+      },
+      "elements": {
+        "chorus": {
+          "ms": [
+            2500,
+            3500
+          ]
+        }
+      },
+      "niche": {
+        "band_hz": [
+          2400,
+          3400
+        ]
+      },
+      "position": {
+        "azimuth": -40.0,
+        "elevation": 0.0,
+        "distance": 9.0
+      },
+      "sources": [
+        "ESTIMATE: tooth rate, plate resonance and chirp train; a vocal-sac call should replace this stridulation stand-in once researched"
+      ]
+    },
+    {
+      "name": "tiger_roar",
+      "call": "big_cat_roar",
+      "salience": "foreground",
+      "power_w": 0.002,
+      "bouts_per_min": 0.4,
+      "first_s": 20.0,
+      "source": {
+        "kind": "glottal_chaos",
+        "rd": 1.8,
+        "subharmonic": 0.4,
+        "chaos": 0.25
+      },
+      "elements": {
+        "roar": {
+          "f0_hz": [
+            [
+              0,
+              120
+            ],
+            [
+              0.4,
+              150
+            ],
+            [
+              1,
+              90
+            ]
+          ],
+          "ms": [
+            1800,
+            2600
+          ]
+        }
+      },
+      "sequence": [
+        "roar"
+      ],
+      "resonator": {
+        "kind": "tract",
+        "segments": [
+          [
+            0.11,
+            4.0
+          ],
+          [
+            0.1,
+            9.0
+          ],
+          [
+            0.08,
+            14.0
+          ]
+        ],
+        "alpha_np_m": 0.02
+      },
+      "niche": {
+        "band_hz": [
+          60,
+          1200
+        ]
+      },
+      "position": {
+        "azimuth": 110.0,
+        "elevation": 0.0,
+        "distance": 60.0
+      },
+      "sources": [
+        "ESTIMATE: every number; the vocal-tract lengths of a large felid and the f0 of a roar are to be measured from a recording"
+      ]
+    }
+  ],
+  "ecology": {
+    "density_budget": {
+      "events_per_s_max": 1.0
+    },
+    "niches": {
+      "auto": true,
+      "min_separation": "D<=0.4"
+    },
+    "rules": [
+      {
+        "on": {
+          "fauna": "tiger_roar"
+        },
+        "do": {
+          "freeze": [
+            "malabar_thrush",
+            "tree_frogs"
+          ],
+          "for_s": [
+            10,
+            25
+          ],
+          "fade_ms": 400,
+          "ramp_s": 8
+        }
+      }
+    ],
+    "score": {
+      "occupancy": "from_score",
+      "protect_roles": [
+        "melody",
+        "lead",
+        "vocal"
+      ],
+      "margin_db": 3,
+      "pocket_threshold": 0.35
+    }
+  },
+  "spatial_coupling": {
+    "field": {
+      "kind": "diffuse",
+      "emitters": 12,
+      "order": 5,
+      "correlation_target": 0.2
+    },
+    "room": {
+      "space": "forest_canopy"
+    },
+    "decode_hint": [
+      "stereo",
+      "immersive_7_1",
+      "immersive_3_2"
+    ]
+  },
+  "reference": {
+    "full_scale_pa": 2.0
+  },
+  "sources": [
+    "Shipped example. Every block carries its own sources; those marked ESTIMATE are placeholders until the project's research note replaces them."
+  ]
+}

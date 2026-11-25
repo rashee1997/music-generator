@@ -91,11 +91,6 @@ def _modal_hit(ctx, mat, f1, ratios, t60, tau, energy, rng, pitch=1.0):
     return y / peak * calibrate.amplitude(energy, ctx['ref_j'])
 
 
-def _contact_hz(act, default_hz, size, exp=0.5):
-    """Contact corner for a small body, or the scene's own `contact_hz`."""
-    return float(act.get('contact_hz', default_hz)) * float(np.clip(size, 0.15, 4.0)) ** (-exp)
-
-
 def _grain_hit(ctx, mat, rng, act, size, velocity):
     """One grain contact, from the grain itself: its mass, its Hertz contact time, its momentum.
 
@@ -127,10 +122,7 @@ def _action(act, ctx, seed, index, n, depth):
     kind = act.get('interaction', 'impact')
     handler = INTERACTIONS_MAP.get(kind)
     if handler is not None:
-        try:
-            handler(act, ctx, rng, out, at, n, depth)
-        except (ValueError, KeyError, ZeroDivisionError):
-            raise
+        handler(act, ctx, rng, out, at, n, depth)
     for j, child in enumerate(act.get('then') or []):
         sub = dict(child)
         sub['at'] = at + float(sub.get('offset', sub.get('at', 0.0)))

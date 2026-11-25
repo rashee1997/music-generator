@@ -1,0 +1,30 @@
+{
+  "name": "acoustic_bass",
+  "description": "Grounded acoustic bass foundation",
+  "instrument": "cello",
+  "role": "bass",
+  "spatial": {
+    "azimuth": 0.0,
+    "elevation": -6.0,
+    "distance": 1.2,
+    "space": "hall"
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 35.0
+    },
+    {
+      "type": "peak",
+      "f": 90.0,
+      "gain": 2.0,
+      "q": 1.1
+    },
+    {
+      "type": "lp",
+      "f": 1200.0
+    }
+  ],
+  "gain_db": -4.0,
+  "reverb": 0.0
+}

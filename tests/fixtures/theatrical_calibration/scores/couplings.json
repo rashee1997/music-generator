@@ -1,0 +1,37 @@
+{
+  "title": "Theatrical calibration - couplings",
+  "bpm": 84,
+  "seed": 7,
+  "space": "hall",
+  "mix_preset": "off",
+  "time_signature": [4, 4],
+  "elastic": {"amount": 0.04, "corr_beats": 12, "breaths": [16], "breath_s": 0.08},
+  "tracks": [
+    {"name": "Violins", "role": "melody", "instrument": "violin", "gain_db": -7,
+     "ensemble": {"players": 4, "spread_cents": 5, "spread_ms": 10, "vel_spread": 3},
+     "timbre_dynamics": {"drive": 0.5, "tilt_db": 2.0, "band_hz": [140, 7000], "amount": 0.6},
+     "register": {"split_pitch": 74, "ref_pitch": 72, "pivot_hz": 1500, "db_per_oct": 1.5, "max_db": 6},
+     "notes": [
+       {"t": 0, "d": 2, "p": 67, "v": 0.35}, {"t": 2, "d": 2, "p": 72, "v": 0.5},
+       {"t": 4, "d": 2, "p": 76, "v": 0.75}, {"t": 6, "d": 2, "p": 74, "v": 0.55},
+       {"t": 8, "d": 4, "p": 72, "v": 0.8}, {"t": 12, "d": 2, "p": 69, "v": 0.45},
+       {"t": 14, "d": 2, "p": 64, "v": 0.3}, {"t": 16, "d": 4, "p": 67, "v": 0.65},
+       {"t": 20, "d": 2, "p": 71, "v": 0.85}, {"t": 22, "d": 2, "p": 74, "v": 0.6},
+       {"t": 24, "d": 4, "p": 79, "v": 0.9}, {"t": 28, "d": 4, "p": 72, "v": 0.4}
+     ]},
+    {"name": "Cellos", "role": "chord", "instrument": "cello", "gain_db": -5,
+     "timbre_dynamics": {"drive": 0.4, "tilt_db": 1.5, "band_hz": [80, 5000], "amount": 0.5},
+     "notes": [
+       {"t": 0, "d": 4, "p": 48, "v": 0.5}, {"t": 4, "d": 4, "p": 45, "v": 0.5},
+       {"t": 8, "d": 4, "p": 41, "v": 0.6}, {"t": 12, "d": 4, "p": 43, "v": 0.5},
+       {"t": 16, "d": 4, "p": 36, "v": 0.6}, {"t": 20, "d": 4, "p": 43, "v": 0.55},
+       {"t": 24, "d": 4, "p": 48, "v": 0.65}, {"t": 28, "d": 4, "p": 36, "v": 0.45}
+     ]},
+    {"name": "Horns", "role": "counter", "instrument": "french_horn", "gain_db": -8,
+     "timbre_dynamics": {"drive": 0.6, "tilt_db": 2.5, "band_hz": [120, 6000], "amount": 0.7},
+     "notes": [
+       {"t": 8, "d": 4, "p": 60, "v": 0.4}, {"t": 12, "d": 4, "p": 64, "v": 0.55},
+       {"t": 20, "d": 4, "p": 65, "v": 0.7}, {"t": 24, "d": 4, "p": 67, "v": 0.8}
+     ]}
+  ]
+}

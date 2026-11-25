@@ -57,7 +57,7 @@ import sys
 import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from theory import (Key, TEXTURES, bass_line, bass_note, clamp_register, drum_bar, harmony_line, make_phrase,
+from theory import (Key, TEXTURES, bass_line, clamp_register, drum_bar, harmony_line, make_phrase,
                     note_name, parse_progression, vary_phrase, voice_lead, MODES)
 import presets
 import roles
@@ -616,20 +616,20 @@ def epic_recipe(brief, G, g_name):
 
 def resolve_emotion(brief, rng=None):
     """The user's own words -> one emotion. Reads emotion, scene, style and notes, takes the first word it knows,
-    and states in meta['mood_notes'] when it had to fall back (no silent defaults)."""
+    and says so (mood_known False) when it had to fall back (no silent defaults). Returns (emotion, known)."""
     e = str(brief.get('emotion', '')).lower().strip().replace(' ', '_')
     if e in EMOTIONS:
-        return e, True, []
+        return e, True
     if e in EMOTION_ALIASES:
-        return EMOTION_ALIASES[e], True, []
+        return EMOTION_ALIASES[e], True
     for w in re.findall(r'[a-z]+', (e + ' ' + str(brief.get('scene', ''))).lower()):
         if w in EMOTIONS:
-            return w, True, []
+            return w, True
         if w in EMOTION_ALIASES:
-            return EMOTION_ALIASES[w], True, []
+            return EMOTION_ALIASES[w], True
         if w in SCENE_WORDS:
-            return SCENE_WORDS[w], True, []
-    return 'focused', False, []
+            return SCENE_WORDS[w], True
+    return 'focused', False
 
 
 def read_mods(brief):
@@ -835,6 +835,15 @@ def apply_intent(brief):
     return out, resolved
 
 
+def split_minor_suffix(tonic):
+    """('Bbm' -> ('Bb', 'aeolian')), ('C#minor' -> ('C#', 'aeolian')); a tonic with no minor suffix comes back unchanged
+    with no mode. The note name is a letter and an optional flat or sharp, not just one character."""
+    m = re.match(r'^([A-Ga-g][b#]?)(m|min|minor)$', tonic)
+    if m:
+        return m.group(1), 'aeolian'
+    return tonic, None
+
+
 def compose(brief):
     brief, _intent = apply_intent(brief)
     fp = None
@@ -845,7 +854,7 @@ def compose(brief):
     seed = int(brief.get('seed', 7))
     rng = np.random.default_rng(seed)
     mods = read_mods(brief)
-    emo, mood_known, _ = resolve_emotion(brief)
+    emo, mood_known = resolve_emotion(brief)
     if not mood_known:
         emo = mood_from_mods(mods) if mods['notes'] else 'focused'
     mood_notes = list(mods['notes'])
@@ -905,8 +914,9 @@ def compose(brief):
         mode = E['modes'][0]
     tonic = brief.get('key') or E['keys'][int(rng.integers(len(E['keys'])))]
     tonic = tonic.replace('♭', 'b').replace('♯', '#')
-    if len(tonic) > 1 and tonic[1:] in ('m', 'min', 'minor'):
-        tonic, mode = tonic[0], 'aeolian'
+    tonic, minor_mode = split_minor_suffix(tonic)
+    if minor_mode:
+        mode = minor_mode
     key = Key(tonic, mode, octave=4)
     bb = int(brief.get('beats_per_bar', G.get('bb', 3 if brief.get('ts') == 3 else 4)))
     bpm_lo, bpm_hi = E['bpm']
@@ -959,13 +969,14 @@ def compose(brief):
     # cadence: dominant before each 8-bar group end, tonic on the last bar
     if n_bars >= 8 and not loop:
         for b in range(7, n_bars - 1, 8):
-            chords_by_bar[b] = key.chord('V' if mode in ('major', 'ionian', 'mixolydian', 'lydian') else 'V')
+            chords_by_bar[b] = key.chord('V')
         chords_by_bar[-1] = key.chord('I' if key.scale[2] == 4 else 'i')
         if n_bars >= 4:
             chords_by_bar[-2] = key.chord('IV' if key.scale[2] == 4 else 'iv') if rng.random() < .5 else chords_by_bar[-2]
 
     # arc / intensity
     hits = list(brief.get('hit_points', []))
+    check_hit_types(hits)                      # a typo fails here, not after the whole score is built
     arc = brief.get('arc') or E['arc']
     inten = intensity_per_bar(arc, n_bars, intensity, [h for h in hits if h['type'] in ('shift', 'drop')], bpm, bb)
     if float(brief.get('variation', 0.45)) > 0 and n_bars >= 8:     # widen the swing so a 'steady' arc still breathes
@@ -1017,7 +1028,7 @@ def compose(brief):
             notes = ph_notes
         else:
             notes = vary_phrase(rng, key, material[letter], ch, bb, shift=int(rng.choice([0, 0, 1, -1])) if not last_ph else 0,
-                                cadence_deg=end_deg)
+                                cadence_deg=end_deg, span=span)
         for n in notes:
             melody.append(dict(n, t=n['t'] + pi * phrase_bars * bb))
     # last note rings out
@@ -1048,7 +1059,6 @@ def compose(brief):
             if kind == 'drums' and drums_kind in ('taiko', 'march', 'heartbeat', 'half'):
                 thr = min(thr, 0.35)              # the mood's own percussion (epic's taiko, passion's half-time) enters early enough to be heard
             if float(gate[bar]) < thr:
-                prev_v = prev_v
                 continue
             ch = chords_by_bar[bar]
             nxt = chords_by_bar[bar + 1] if bar + 1 < n_bars else None
@@ -1112,8 +1122,6 @@ def compose(brief):
                 shift = int(p_reg[bar]) if is_lead else 0
                 notes.append(dict(t=n['t'], d=n['d'], p=n['p'] + 12 * octs + shift, v=min(1.0, n['v'] * (0.65 + 0.5 * vel)),
                                   **({'art': 'legato'} if E['art'] >= 0.9 else {'art': 'staccato'})))
-            if layer['name'] == 'lead':
-                pass
             if notes and g_name != 'ambient':
                 # keep the lead inside a playable, singing register
                 lo_r, hi_r = (62, 88) if any(n in HIGH_LEADS for n in _base_names(inst)) else (52, 82)
@@ -1132,8 +1140,6 @@ def compose(brief):
         for k in ('gain_db', 'vibrato', 'expression'):
             if k in layer:
                 tr[k] = layer[k]
-        if kind == 'drums' and g_name in ('cinematic', 'orchestral', 'dark'):
-            pass
         tracks.append(tr)
 
     if fp:
@@ -1180,8 +1186,19 @@ def compose(brief):
     return score
 
 
+HIT_TYPES = ('impact', 'rise', 'silence', 'shift', 'drop')      # shift/drop move the intensity curve (intensity_per_bar)
+
+
+def check_hit_types(hits):
+    for h in hits:
+        if h['type'] not in HIT_TYPES:
+            raise ValueError(f"unknown hit type {h['type']!r}. Known: {', '.join(sorted(HIT_TYPES))}")
+
+
 def add_hit_points(score, hits, bpm, bb, key, rng):
-    """impact / rise / silence / stinger at specific seconds (scene cuts, reveals, logo hits)"""
+    """impact / rise / silence at specific seconds (scene cuts, reveals, logo hits). `shift` and `drop` are accepted and
+    do nothing here: intensity_per_bar() reads them. Any other type is an error, never a hit that silently vanishes."""
+    check_hit_types(hits)
     dyn = score['dynamics']
     for h in hits:
         typ = h['type']
@@ -1303,7 +1320,8 @@ def main():
         print('MODES   :', ', '.join(sorted(MODES)))
         return
     if a.brief:
-        brief = json.load(open(a.brief, encoding='utf-8'))
+        with open(a.brief, encoding='utf-8') as fh:
+            brief = json.load(fh)
         import presets
         presets.add_project(os.path.dirname(os.path.abspath(a.brief)))
     else:

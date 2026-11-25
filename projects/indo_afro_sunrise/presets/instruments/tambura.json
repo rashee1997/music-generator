@@ -1,0 +1,48 @@
+{
+ "name": "tambura",
+ "description": "A four-string tanpura played as a drone: the open strings are plucked in a slow, even cycle and left to ring, so the piece sits on a continuous harmonic floor rather than a pad (bansuri_bamboo_flute / drone_tanpura in the KB).",
+ "gm": "acoustic_guitar",
+ "role": "drone",
+ "humanize": {
+  "preset": "natural",
+  "timing_ms": 6.0,
+  "drift_ms": 6.0,
+  "vel_sigma": 4.0
+ },
+ "spatial": {
+  "azimuth": 0.0,
+  "elevation": 0.0,
+  "distance": 4.0,
+  "space": "indo_afro_sunrise_room"
+ },
+ "eq": [
+  {
+   "type": "hp",
+   "f": 70.0
+  },
+  {
+   "type": "peak",
+   "f": 240.0,
+   "gain": 1.5,
+   "q": 0.9
+  },
+  {
+   "type": "peak",
+   "f": 1800.0,
+   "gain": -2.0,
+   "q": 1.0
+  },
+  {
+   "type": "lp",
+   "f": 6500.0
+  }
+ ],
+ "gain_db": -3.0,
+ "reverb": 0.3,
+ "articulation": {
+  "overlap_ms": 60.0,
+  "gate": 1.0,
+  "release_ms": 420.0
+ },
+ "mechanics_class": "keys"
+}

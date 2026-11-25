@@ -22,6 +22,7 @@ Measurements only: no synthesis, EQ, mixing or preset values.
 """
 import json
 import os
+import re
 import time
 import warnings
 from concurrent.futures import ThreadPoolExecutor
@@ -29,7 +30,9 @@ from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 
 import gate_checks as gc
+import gate_clock
 import gate_profiles
+import roles as rolelib
 import stem_cache
 from gate_audio import Signal, DECIM_SR
 
@@ -43,8 +46,8 @@ _GATE_CODE = None
 warnings.filterwarnings('ignore', message=r'Compilation requested for previously compiled argument types',
                         category=Warning, module=r'numba\..*')
 
-PERCUSSIVE = {'drum', 'drums', 'percussion', 'kit', 'brush', 'shaker', 'cymbal', 'kick', 'snare', 'hat', 'tom'}
-TONAL_ROLES = {'melody', 'pad', 'chord', 'arp', 'counter', 'bass', 'drone', 'harmony', 'lead'}
+PERCUSSIVE = {'drum', 'drums', 'percussion', 'kit', 'brush', 'shaker', 'cymbal', 'kick', 'snare', 'hat', 'hihat', 'tom'}
+TONAL_ROLES = {'melody', 'pad', 'chord', 'arp', 'counter', 'bass', 'drone', 'lead'}   # canonical roles only
 VOCAL_HINTS = ('vocal', 'voice', 'choir', 'hum', 'singer', 'soprano', 'alto', 'tenor', 'bass_voice')
 
 
@@ -52,13 +55,27 @@ def _track(score, name):
     return next((t for t in score.get('tracks', []) if t.get('name') == name), None)
 
 
+def _role_of(track):
+    """The canonical role of a track (scripts/roles.py), or '' when it has none or an unknown one."""
+    raw = (track or {}).get('role')
+    if not raw:
+        return ''
+    try:
+        return rolelib.canonical(raw)
+    except rolelib.UnknownRole:
+        return ''
+
+
 def _is_percussive(track):
     if not track:
         return False
-    role = str(track.get('role') or '').lower()
+    role = _role_of(track)
     inst = str(track.get('instrument') or '').lower()
     name = str(track.get('name') or '').lower()
-    return role == 'drum' or any(h in inst or h in name for h in PERCUSSIVE)
+    # Whole words only: 'Bottom Pad' contains 'tom' and 'Chat Pad' contains 'hat', and neither is a drum.
+    words = set(re.findall(r'[a-z0-9]+', inst + ' ' + name))
+    words |= {w[:-1] for w in words if w.endswith('s') and len(w) > 3}            # toms, hats, kicks, snares
+    return role == 'drum' or bool(words & PERCUSSIVE)
 
 
 def _is_vocal(track):
@@ -68,16 +85,35 @@ def _is_vocal(track):
     return any(h in blob for h in VOCAL_HINTS)
 
 
+def _clock(score, problems=None):
+    """What turns a beat into seconds for this score: its own tempo map when it declares `tempo_points` (the renderer
+    plays that map, so a gate that counted at a flat BPM looked at the wrong place by up to a second), else the flat
+    BPM (gate_clock.DEFAULT_BPM when the score names none). A tempo map that cannot be built is reported through
+    `problems` (see gate_clock.tempo_map), never swallowed."""
+    return gate_clock.seconds_fn(score, problems)
+
+
+def _secs(clock, beats):
+    """Seconds of `beats` on a clock from _clock(), a TempoMap, or a flat tempo in BPM."""
+    if hasattr(clock, 'sec'):
+        return float(clock.sec(beats))
+    if callable(clock):
+        return float(clock(beats))
+    return float(beats) * 60.0 / float(clock)
+
+
 def _note_intervals(track, bpm):
+    """(start, end) seconds of every note; `bpm` is a flat tempo or the clock from _clock()."""
     out = []
     for n in track.get('notes', []) if track else []:
         try:
-            a = float(n['t']) * 60.0 / bpm
-            d = float(n.get('d', 0)) * 60.0 / bpm
+            t, d = float(n['t']), float(n.get('d', 0))
+            a = _secs(bpm, t)
+            end = _secs(bpm, t + d)
         except (KeyError, TypeError, ValueError):
             continue
         if d > 0:
-            out.append((a, a + d))
+            out.append((a, end))
     return out
 
 
@@ -123,7 +159,7 @@ def _note_window_level(sig, a, b):
 
 
 def check_dead(sig, track, score, secs, under_db=12.0, floor_db=-70.0):
-    bpm = float(score.get('bpm') or 120.0)
+    bpm = _clock(score, [])           # run_stem_gate reports a tempo map that cannot be built, once
     iv = _note_intervals(track, bpm)
     if not iv:
         return None
@@ -186,15 +222,21 @@ def _res_row(level, name, res, stem=None):
 
 
 def _emit(rows, metrics, rid, level, res, name):
+    if res.get('skipped'):
+        level = 'INFO'          # a measurement that did not run can never certify the row it belongs to
     r, m = _res_row(level, rid, res, name)
     rows.append(r)
     metrics.append(m)
 
 
-def _skip(rows, metrics, rid, name, gp):
-    """A profile skipped this row: say so, with the profile's reason. Never silently disappear."""
+def _skip(rows, metrics, rid, name, gp, why=None):
+    """A row did not run on this stem: say so, with the profile's reason (or `why`, when the row does not apply to this
+    kind of stem). Never silently disappear."""
     cfg = gp.rows.get(gate_profiles.canonical(rid)) or {}
-    detail = f'stem "{name}": SKIPPED by profile {gp.label}: {cfg.get("reason") or "no reason given"}'
+    if why:
+        detail = f'stem "{name}": not applied: {why}'
+    else:
+        detail = f'stem "{name}": SKIPPED by profile {gp.label}: {cfg.get("reason") or "no reason given"}'
     rows.append(('INFO', rid, detail))
     metrics.append(dict(row=rid, stage='stem', stem=name, level='INFO', value=0.0, unit='', threshold=0.0,
                         margin=0.0, worst_times_s=[], calibrated=False, skipped=True, detail=detail))
@@ -210,11 +252,17 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
                             unit='', threshold=0.0, margin=0.0, worst_times_s=[], calibrated=False,
                             detail=str(exc)))
         return rows, metrics
-    bpm = float(score.get('bpm') or 120.0)
+    bpm = _clock(score, [])           # run_stem_gate reports a tempo map that cannot be built, once
 
     if gp.on('stem.dc'):
-        res = gc.check_dc(sig, dc_max=gp.param('stem.dc', 'dc_max'))
-        _emit(rows, metrics, 'stem.dc', 'FAIL' if res['value'] > res['threshold'] else 'PASS', res, name)
+        if _role_of(track) == 'fx':
+            # A one-shot effect stem is silent between hits, so the 1 s block means run from zero to the hit's own
+            # mean: that is the hit, not a DC baseline. The row cannot apply, and says so (INFO), like stem.edge.
+            _skip(rows, metrics, 'stem.dc', name, gp,
+                  why='a one-shot effect stem has no sustained baseline to drift')
+        else:
+            res = gc.check_dc(sig, dc_max=gp.param('stem.dc', 'dc_max'))
+            _emit(rows, metrics, 'stem.dc', 'FAIL' if res['value'] > res['threshold'] else 'PASS', res, name)
     else:
         _skip(rows, metrics, 'stem.dc', name, gp)
 
@@ -234,17 +282,31 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
     else:
         _skip(rows, metrics, 'stem.clicks', name, gp)
 
+    perc = _is_percussive(track)
     if gp.on('stem.dropout'):
-        # only a hole inside a sounding note is a dropout; a gap between phrases is the score's rest (see gate_checks)
-        sounding = _note_intervals(track, bpm) if track is not None else None
-        res = gc.check_dropout(sig, min_ms=gp.param('stem.dropout', 'min_ms'),
-                               max_ms=gp.param('stem.dropout', 'max_ms'),
-                               floor_below_db=gp.param('stem.dropout', 'floor_below_db'), sounding=sounding)
-        _emit(rows, metrics, 'stem.dropout', 'FAIL' if res.get('holes') else 'PASS', res, name)
+        if perc:
+            # A percussive stem's frames between hits are the sample's own decay and the pattern's spacing, not a cut,
+            # and its written trigger cannot tell the two apart: measured on a GM kit, a closed hat is 115 ms
+            # of sound against a 134 ms 16th at 112 bpm, so every hit leaves a gap the length of the sample's tail and
+            # no trigger length or humanization setting removes it (measured at 0.05-0.18 beats and tight/natural/
+            # punchy). The row is like `stem.cut`, `stem.edge` and `stem.tick` here: a percussive part cannot be judged
+            # for a sustained hole. A drum stem that really dies is still caught by `stem.dead` and by the master's
+            # `dropout` row.
+            _skip(rows, metrics, 'stem.dropout', name, gp,
+                  why='a percussive stem is silent between hits by design: the gap is the sample\'s decay against the '
+                      'trigger spacing, not an edit')
+        else:
+            # only a hole inside a sounding note is a dropout; a gap between phrases is the score's rest (see gate_checks)
+            sounding = _note_intervals(track, bpm) if track is not None else None
+            res = gc.check_dropout(sig, min_ms=gp.param('stem.dropout', 'min_ms'),
+                                   max_ms=gp.param('stem.dropout', 'max_ms'),
+                                   floor_below_db=gp.param('stem.dropout', 'floor_below_db'), sounding=sounding)
+            _emit(rows, metrics, 'stem.dropout', 'FAIL' if res.get('holes') else 'PASS', res, name)
     else:
         _skip(rows, metrics, 'stem.dropout', name, gp)
-
-    if not _is_percussive(track):
+    if perc:
+        _skip(rows, metrics, 'stem.cut', name, gp, why='a percussive stem has no sustained level to cut at a section boundary')
+    else:
         if gp.on('stem.cut'):
             boundaries = [s['start_s'] for s in secs if s['start_s'] > 0.05]
             res = gc.check_cut(sig, boundaries, drop_db=gp.param('stem.cut', 'drop_db'),
@@ -257,8 +319,7 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
         if gp.on('stem.end'):
             res = gc.check_abrupt_end(sig, expected_dur=dur, floor_db=gp.param('stem.end', 'floor_db'),
                                       min_decay_db=gp.param('stem.end', 'min_decay_db'))
-            if not res.get('skipped'):
-                _emit(rows, metrics, 'stem.end', 'FAIL' if res.get('fail') else 'PASS', res, name)
+            _emit(rows, metrics, 'stem.end', 'FAIL' if res.get('fail') else 'PASS', res, name)     # skipped -> INFO
         else:
             _skip(rows, metrics, 'stem.end', name, gp)
 
@@ -269,7 +330,11 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
     # An `sfx`/`fx` track is the same case: its written length is a trigger for a one-shot sound, and the sound's own
     # attack and decay are the instrument, not an edit. (roles.py canonicalises every effect role to `fx`, so checking
     # only the literal string 'sfx' let a one-shot through to a row that cannot apply to it.)
-    if iv and not _is_percussive(track) and str((track or {}).get('role') or '').lower() not in ('sfx', 'fx'):
+    is_fx = _role_of(track) == 'fx'
+    if iv and (perc or is_fx):
+        _skip(rows, metrics, 'stem.edge', name, gp,
+              why='a ' + ('percussive' if perc else 'one-shot effect') + ' note length is a trigger, not a sound length')
+    if iv and not perc and not is_fx:
         if gp.on('stem.edge'):
             res = gc.check_edge(sig, min(a for a, _ in iv), max(b for _, b in iv),
                                 max_silence_ms=gp.param('stem.edge', 'max_silence_ms'))
@@ -277,7 +342,14 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
         else:
             _skip(rows, metrics, 'stem.edge', name, gp)
 
-    if track is not None and _beatless(track, bpm):
+    if perc:
+        _skip(rows, metrics, 'stem.tick', name, gp, why='a percussive stem is allowed a pulse')
+    if _role_of(track) == 'fx':
+        # Three irregular whooshes are a sequence of triggers, not a stem that should hold still; an event pattern
+        # with no pulse is what the row exists to find, so it cannot judge one.
+        _skip(rows, metrics, 'stem.tick', name, gp,
+              why='a one-shot effect stem is a sequence of triggers, not a pulse to hold still')
+    elif track is not None and _beatless(track, bpm):
         if gp.on('stem.tick'):
             res = gc.check_tick(sig, rho_min=gp.param('stem.tick', 'rho'),
                                 min_events=int(gp.param('stem.tick', 'min_events')),
@@ -296,7 +368,9 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
             else:
                 _skip(rows, metrics, 'stem.dead', name, gp)
 
-    if track is not None and not _is_percussive(track) and str(track.get('role', '')).lower() in TONAL_ROLES:
+    if track is not None and perc and _role_of(track) in TONAL_ROLES:
+        _skip(rows, metrics, 'stem.flatness', name, gp, why='a percussive stem is not a sustained tone')
+    if track is not None and not perc and _role_of(track) in TONAL_ROLES:
         if gp.on('stem.flatness'):
             res = gc.check_flatness(sig, threshold=gp.param('stem.flatness', 'threshold'),
                                     min_ms=gp.param('stem.flatness', 'min_ms'))
@@ -326,7 +400,7 @@ def _gate_code():
     if _GATE_CODE is None:
         _GATE_CODE = stem_cache.code_hash(os.path.join(_SKILL, 'scripts'),
                                           ('stem_gate.py', 'gate_checks.py', 'gate_profiles.py', 'gate_audio.py',
-                                           'dsp.py'), ('phys_core',))
+                                           'gate_clock.py', 'humanize.py', 'dsp.py'), ('phys_core', 'humanize_engine'))
     return _GATE_CODE
 
 
@@ -335,7 +409,12 @@ def _gate_key(name, audio_hash, track, score, secs, dur, gp):
     return stem_cache.digest(dict(
         audio=audio_hash, stem=name, code=_gate_code(),
         track={k: (track or {}).get(k) for k in ('name', 'role', 'instrument', 'notes')},
-        bpm=score.get('bpm'), ts=score.get('ts'), dur=round(float(dur), 4), profile=gp.label,
+        bpm=score.get('bpm'), ts=score.get('ts'),          # flat-bpm-ok: part of the cache key, not a conversion
+        tempo={k: score.get(k) for k in ('tempo_points', 'humanize', 'rubato', 'wander', 'ritard', 'ritard_beats',
+                                         'phrase_beats', 'fermata', 'elastic', 'mood', 'key', 'seed', 'ritard_q')},
+        #   every score-level input of humanize.tempo_map_for; its note-dependent inputs (total length, the figure's
+        #   phrase spans) are in `dur` and `audio` - a map that moves the notes re-renders them
+ dur=round(float(dur), 4), profile=gp.label,
         sections=[(s.get('name'), round(float(s['start_s']), 4), round(float(s['end_s']), 4), s.get('dyn'))
                   for s in secs],
         rows=gp.rows), size=16)
@@ -376,8 +455,10 @@ def run_stem_gate(score, stems, sr=44100, workers=2, report_dir=None, mode='full
     score = dict(score)
     score['_sr'] = int(sr)
     gp = gate_profiles.resolve(score)
+    tempo_problems = []
+    gate_clock.tempo_map(score, tempo_problems)
     dur = max((len(x) / float(sr) for x in stems.values()), default=0.0)
-    secs = gc.section_bounds(score, dur)
+    secs = gc.section_bounds(score, dur, problems=[])      # tempo_problems above carries the reason
     items = sorted(stems.items())
     workers = max(1, min(int(workers), len(items) or 1))
     timings, results = {}, []
@@ -423,6 +504,11 @@ def run_stem_gate(score, stems, sr=44100, workers=2, report_dir=None, mode='full
     for name, r, m in results:
         rows.extend(r)
         metrics.extend(m)
+
+    for msg in tempo_problems:
+        rows.append(('WARN', 'stem.tempo', msg))
+        metrics.append(dict(row='stem.tempo', stage='stem', stem=None, level='WARN', value=1.0, unit='count',
+                            threshold=0.0, margin=1.0, worst_times_s=[], calibrated=True, detail=msg))
 
     # present: every score track with notes has a stem; extra stems are a WARN
     names = {n for n, _ in items}

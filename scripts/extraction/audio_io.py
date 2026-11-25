@@ -23,6 +23,28 @@ import numpy as np
 import soundfile as sf
 
 
+# ITU-R BS.775-3 (2012) Table 2 downmix of a 5.1 / 7.1 layout to two channels: centre and every surround enter the
+# nearest side at -3 dB (0.7071), the LFE is not included. Channel order is the WAV/SMPTE one:
+# FL FR FC LFE BL BR [SL SR]. Rows are (L, R) gains per channel.
+_G = 10 ** (-3.0 / 20.0)
+_DOWNMIX = {
+    6: np.array([[1, 0], [0, 1], [_G, _G], [0, 0], [_G, 0], [0, _G]], dtype='float32'),
+    8: np.array([[1, 0], [0, 1], [_G, _G], [0, 0], [_G, 0], [0, _G], [_G, 0], [0, _G]], dtype='float32'),
+}
+
+
+def to_stereo(y):
+    """(channels, n) -> (2, n). Two channels pass through; 6 (5.1) and 8 (7.1) are downmixed with the BS.775 weights
+    above, so a centre-channel voice or dialogue is kept. Any other count has no defined order: that is an error,
+    not a silent drop of the extra channels."""
+    c = y.shape[0]
+    if c == 2:
+        return y
+    if c not in _DOWNMIX:
+        raise ValueError(f'audio_io: {c}-channel input has no defined stereo downmix (supported: 1, 2, 6 = 5.1, 8 = 7.1)')
+    return (_DOWNMIX[c].T @ y).astype('float32')
+
+
 def load(path, sr):
     """Stereo float32 (2, n) at `sr`. A mono file is duplicated to two channels."""
     try:
@@ -34,7 +56,7 @@ def load(path, sr):
         y = np.atleast_2d(y).astype('float32')
     if y.shape[0] == 1:
         y = np.vstack([y, y])
-    y = y[:2]
+    y = to_stereo(y)
     if file_sr != sr:
         import librosa
         y = np.stack([librosa.resample(c, orig_sr=file_sr, target_sr=sr) for c in y])

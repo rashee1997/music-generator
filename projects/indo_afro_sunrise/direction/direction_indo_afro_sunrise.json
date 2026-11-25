@@ -1,0 +1,381 @@
+{
+ "title": "Indo-Afro Sunrise",
+ "project": "Indo-Afro Sunrise \u2014 single piece, delivered stereo and 7.1",
+ "version": 1,
+ "medium": "album / playlist single that also has to work as an installation loop",
+ "brief": "happy upbeat indo afro, in an immersive ambience of nature, 8-channel",
+ "audience": "a listener on headphones first, then a room with an 8-channel ring; nobody is watching a picture",
+ "purpose": "lift the room for a minute and put the listener inside a canopy at first light, with the groove coming from the ground and the birds above it",
+ "point_of_view": "the listener standing in a forest clearing as the sun comes through: close to the players, inside the trees",
+ "job": [
+  "make the body move before the first chorus (the groove is the reason the piece exists)",
+  "carry an Indian voice (tanpura, bansuri, tabla, sitar) inside an Afrobeat rhythm section without either becoming a decoration",
+  "place the listener in the canopy: the ambience is a space, not a pad, and it survives the fold to stereo",
+  "end on the tonic with the drone still sounding, so the loop can restart"
+ ],
+ "story": "A drone fades in with the shaker, a bamboo flute calls twice, and by bar 9 the kit, bass and highlife guitar have taken over; the chorus lifts the flute an octave while the sitar crosses behind the listener, and after the last brass stab the groove thins to the drone and the canopy.",
+ "duration_s": 68.57,
+ "in_point_s": 0.0,
+ "out_point_s": 68.57,
+ "ending": "tail_out",
+ "feel": [
+  "joyful",
+  "buoyant",
+  "sunlit",
+  "warm",
+  "communal"
+ ],
+ "avoid_feel": [
+  "synthetic",
+  "thin",
+  "nostalgic",
+  "flat"
+ ],
+ "sections": [
+  {
+   "name": "dawn",
+   "start_s": 0.0,
+   "end_s": 17.14,
+   "energy": 0.32,
+   "action": "light comes through the canopy; the clearing is empty",
+   "music": "tanpura drone, shekere from bar 1, djembe from bar 5, two bansuri calls, the highlife guitar from bar 3",
+   "role": "place"
+  },
+  {
+   "name": "grove",
+   "start_s": 17.14,
+   "end_s": 34.29,
+   "energy": 0.7,
+   "action": "the players arrive and the ground starts to move",
+   "music": "kit, bass, marimba arpeggio and tabla enter; the flute states the theme in full",
+   "role": "build"
+  },
+  {
+   "name": "high_sun",
+   "start_s": 34.29,
+   "end_s": 51.43,
+   "energy": 0.95,
+   "action": "full sun: the clearing is loud with insects and the groove is at its widest",
+   "music": "brass stabs, sitar 16ths crossing behind, the flute an octave up, crash on the downbeat",
+   "role": "peak"
+  },
+  {
+   "name": "golden_hour",
+   "start_s": 51.43,
+   "end_s": 68.57,
+   "energy": 0.6,
+   "action": "the light thins; the canopy is heard again",
+   "music": "brass out, flute back down an octave, sitar returns at bar 29, the drone is left alone from bar 30",
+   "role": "resolve"
+  }
+ ],
+ "motifs": [
+  {
+   "name": "the call",
+   "first_at_s": 2.14,
+   "shape": "A4 up a step to B4, then a fourth up to E5 held",
+   "returns": "in the grove at bar 9 in the same register, an octave up in the chorus from bar 17, and alone on A4 at bar 30"
+  },
+  {
+   "name": "the skank",
+   "first_at_s": 4.29,
+   "shape": "three-note highlife chord on the off-beats, never on beat one",
+   "returns": "every bar from 3 to 32, thinning to two hits in golden_hour"
+  }
+ ],
+ "instruments": [
+  "tambura",
+  "bansuri",
+  "sitar",
+  "marimba",
+  "highlife_guitar",
+  "finger_bass",
+  "brass_section",
+  "standard",
+  "env:amazon_rainforest"
+ ],
+ "avoid_sounds": [
+  "supersaw leads",
+  "trap hi-hat rolls",
+  "orchestral string pads",
+  "field recordings of rain that are not in the canopy preset"
+ ],
+ "pulse": "steady afrobeat, kick on 1, 2&, 3 and 4",
+ "tempo_bpm": [
+  112,
+  112
+ ],
+ "key": "A",
+ "mode": "mixolydian",
+ "energy": 0.7,
+ "space": "indo_afro_sunrise_room",
+ "hits_at": [
+  34.2857,
+  51.4286
+ ],
+ "hits": [
+  {
+   "t": 34.2857,
+   "kind": "musical",
+   "sync": "hard",
+   "sound": "crash, brass stab and the flute jumping an octave on the downbeat of bar 17",
+   "why": "the chorus has to arrive as a place, not as a louder verse"
+  },
+  {
+   "t": 51.4286,
+   "kind": "musical",
+   "sync": "soft",
+   "sound": "brass stops, the sitar enters and the canopy comes up 2 dB",
+   "why": "the turn into golden_hour is a change of air, so it is a subtraction, not a hit"
+  }
+ ],
+ "mix_intent": {
+  "hero": "bansuri",
+  "support": [
+   "marimba",
+   "sitar",
+   "guitar",
+   "horns"
+  ],
+  "sits_under": [
+   "canopy"
+  ],
+  "must_hear": [
+   "the tanpura alone in the first two bars",
+   "the shekere before the kit enters at 17.1 s",
+   "the brass stab on the downbeat at 34.3 s",
+   "the sitar crossing from the right to behind at 42 s",
+   "the drone alone from 64 s"
+  ],
+  "leave_free_hz": [
+   700,
+   2600
+  ],
+  "executed_by": "carried on the score as mix_intent; the mix preset reads it with lead_carve {enabled, from_intent}"
+ },
+ "loudness_lufs": -14.0,
+ "true_peak_max": -1.5,
+ "delivery": {
+  "format": "wav",
+  "sample_rate": 44100,
+  "bit_depth": 24,
+  "stage": "stream",
+  "output_targets": [
+   "stereo",
+   "immersive_7_1"
+  ],
+  "played_on": "headphones and a phone (stereo), and an 8-channel ring of loudspeakers (7.1, FL FR FC LFE BL BR SL SR)"
+ },
+ "references": [
+  "afrobeat rhythm section",
+  "highlife guitar skank",
+  "bansuri phrasing in a bright raga",
+  "tanpura drone",
+  "rainforest canopy at dawn"
+ ],
+ "spatial_staging": {
+  "tanpura": {
+   "azimuth": 0.0,
+   "elevation": 0.0,
+   "distance": 4.0,
+   "space": "indo_afro_sunrise_room"
+  },
+  "bass": {
+   "azimuth": -25.0,
+   "elevation": 0.0,
+   "distance": 3.0,
+   "space": "indo_afro_sunrise_room"
+  },
+  "kit": {
+   "azimuth": 0.0,
+   "elevation": 0.0,
+   "distance": 5.0,
+   "space": "indo_afro_sunrise_room"
+  },
+  "djembe": {
+   "azimuth": -110.0,
+   "elevation": 0.0,
+   "distance": 4.5,
+   "space": "indo_afro_sunrise_room"
+  },
+  "tabla": {
+   "azimuth": 60.0,
+   "elevation": 0.0,
+   "distance": 4.5,
+   "space": "indo_afro_sunrise_room"
+  },
+  "shekere": {
+   "azimuth": 90.0,
+   "elevation": 4.0,
+   "distance": 4.0,
+   "space": "indo_afro_sunrise_room"
+  },
+  "guitar": {
+   "azimuth": -25.0,
+   "elevation": 4.0,
+   "distance": 3.0,
+   "space": "indo_afro_sunrise_room"
+  },
+  "marimba": {
+   "azimuth": -45.0,
+   "elevation": 10.0,
+   "distance": 3.5,
+   "space": "indo_afro_sunrise_room"
+  },
+  "bansuri": {
+   "azimuth": 8.0,
+   "elevation": 12.0,
+   "distance": 2.2,
+   "space": "indo_afro_sunrise_room"
+  },
+  "sitar": {
+   "azimuth": 75.0,
+   "elevation": 8.0,
+   "distance": 3.0,
+   "space": "indo_afro_sunrise_room"
+  },
+  "horns": {
+   "azimuth": 55.0,
+   "elevation": 15.0,
+   "distance": 4.0,
+   "space": "indo_afro_sunrise_room"
+  },
+  "canopy": {
+   "azimuth": -40.0,
+   "elevation": 40.0,
+   "distance": 8.0,
+   "space": "indo_afro_sunrise_room"
+  }
+ },
+ "immersive": {
+  "enabled": true,
+  "why": "the brief asks for an immersive ambience of nature: the canopy has to be above and around the listener, the sitar has to pass behind, and the eight channels are the delivery, so a stereo-only mix would lose the thing that was asked for",
+  "engine": "hoa_bus",
+  "anchors": [
+   "tanpura",
+   "bass",
+   "kit",
+   "djembe",
+   "tabla"
+  ],
+  "movers": [
+   {
+    "part": "sitar",
+    "why": "the Indian answer crosses the listener instead of sitting in one speaker",
+    "path": "starts 75 degrees right at 3 m, passes 95 degrees right by bar 21 and ends 110 degrees right at 3.2 m by bar 24"
+   },
+   {
+    "part": "marimba",
+    "why": "the arpeggio drifts left into the trees so the groove has depth",
+    "path": "starts 45 degrees left at 3.5 m, drifts to 80 degrees left by bar 16 and to 100 degrees by bar 24"
+   },
+   {
+    "part": "bansuri",
+    "why": "the flute is the figure, so it only breathes across the front: a small move keeps it the hero",
+    "path": "8 degrees right at 2.4 m, 10 degrees left at 2 m by bar 17, back to 14 degrees right by bar 24"
+   }
+  ],
+  "height": {
+   "tanpura": 0,
+   "bass": 0,
+   "kit": 0,
+   "djembe": 0,
+   "tabla": 0,
+   "shekere": 4,
+   "guitar": 4,
+   "marimba": 10,
+   "bansuri": 12,
+   "sitar": 8,
+   "horns": 6,
+   "canopy": 40
+  },
+  "room_changes": [
+   {
+    "at_section": "golden_hour",
+    "why": "the canopy thins: the room gets longer and darker as the sun drops",
+    "transition_s": 3.0
+   }
+  ],
+  "must_hear": [
+   "the canopy above and behind at the start",
+   "the sitar crossing from the right to behind at 42 s",
+   "the shekere on the right edge",
+   "the drone at 0 degrees when everything else has stopped"
+  ],
+  "deliverables": [
+   "stereo",
+   "immersive_7_1"
+  ],
+  "notes": "the sheet records the intent; the mix preset carries the height table and the engine, the space preset carries the room, and the score carries the keyframes. 7.1 is rendered, not folded, and its own channel order is FL FR FC LFE BL BR SL SR."
+ },
+ "focus": "melody",
+ "intent": {
+  "emotions": [
+   "joyful",
+   "energetic"
+  ],
+  "registers": [
+   "natural"
+  ],
+  "scenes": [
+   "arrival",
+   "establish"
+  ],
+  "tensions": [],
+  "avoid": []
+ },
+ "piece_type": "melodic",
+ "expression": {
+  "sonic_picture": "First ten seconds: a tanpura drone with a shekere and a single bamboo flute call, the canopy audible above and behind. By the middle the kit, bass and highlife guitar are running and the flute is an octave up with the sitar crossing behind. The last note is A4 held over the drone, with the canopy fading after it.",
+  "performer": "A bansuri player breathes in the gaps and leans into the long E5, with a slide up into it; the djembe and tabla players answer each other on the off-beats and never play the same stroke; the guitarist plays the skank short and lets it ring only on the last bar of each phrase.",
+  "producer_moves": "The canopy comes up 2 dB into golden_hour, the reverb send on the flute grows with the section energy, the sitar is panned by trajectory rather than by a static pan, and the last bar has no kit at all.",
+  "anti_generic": "The generic version of this brief is a four-on-the-floor kick with a 'world' flute sample and a rain loop; what stops it here is a kick on 1, 2&, 3 and 4 with the snare displaced, a tabla and a djembe that trade strokes, a tanpura that is the harmonic floor rather than a pad, and a melody that is one shape varied four ways instead of a scale run.",
+  "cues": [
+   {
+    "section": "dawn",
+    "arousal": "low",
+    "mode_register": "A mixolydian, mid",
+    "tempo_trend": "steady 112",
+    "dynamics": "mp",
+    "articulation": "legato flute, shaker staccato",
+    "timbre": "airy, woody"
+   },
+   {
+    "section": "grove",
+    "arousal": "medium-high",
+    "mode_register": "A mixolydian, mid",
+    "tempo_trend": "steady 112",
+    "dynamics": "mf",
+    "articulation": "short skank, round bass",
+    "timbre": "warm, hand-played"
+   },
+   {
+    "section": "high_sun",
+    "arousal": "high",
+    "mode_register": "A mixolydian, upper octave",
+    "tempo_trend": "steady 112",
+    "dynamics": "f",
+    "articulation": "brass marcato, sitar 16ths",
+    "timbre": "bright, brassy"
+   },
+   {
+    "section": "golden_hour",
+    "arousal": "medium",
+    "mode_register": "A mixolydian, mid",
+    "tempo_trend": "steady 112, no ritardando",
+    "dynamics": "mp to p",
+    "articulation": "legato return",
+    "timbre": "woody, distant"
+   }
+  ],
+  "theme": {
+   "contour": "arch: a step up, a fourth up to a held note, then a stepwise fall",
+   "interval_character": "mostly steps with one fourth leap that lands on E5",
+   "rhythm_cell": "long, short, long",
+   "why_memorable": "the fourth leap lands on a held note and is never transposed in the chorus, only octave-displaced",
+   "variation_plan": "stated in dawn, played in full in the grove, octave up in high_sun, back down and alone at bar 30"
+  }
+ },
+ "gate_reason": "melodic: the piece has a figure (bansuri) carrying it over a full rhythm section, and the profile keeps every row on rather than skipping the melody rows the way groove or texture would",
+ "notes": "The canopy bed is the shipped env:amazon_rainforest model (noise bed, stridulation, drips, chirp clusters) \u2014 synthesis, not a field recording. Tabla and djembe strokes are played on GM percussion keys as named stand-ins from world.py, not sampled instruments; that limit is repeated in STATUS.md."
+}

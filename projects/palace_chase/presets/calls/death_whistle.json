@@ -1,0 +1,53 @@
+{
+  "name": "death_whistle",
+  "character": "A skull-shaped clay whistle blown hard: a scream-like, noisy, rough wail that climbs and sags, not a pure whistle tone.",
+  "elements": {
+    "wail": {
+      "f0_hz": [
+        [
+          0,
+          1500
+        ],
+        [
+          0.35,
+          2400
+        ],
+        [
+          1,
+          1750
+        ]
+      ],
+      "ms": [
+        1100,
+        1700
+      ],
+      "harmonics": 14,
+      "rolloff": 0.55,
+      "noise": 0.85,
+      "subharmonic": 0.5,
+      "attack": 0.06,
+      "release": 0.4
+    }
+  },
+  "sequence": [
+    [
+      "wail",
+      1,
+      1
+    ]
+  ],
+  "gap_ms": [
+    300,
+    500
+  ],
+  "tract_cm": 6.0,
+  "formant_q": 4.0,
+  "formant_mix": 0.6,
+  "bouts_per_min": 3.0,
+  "individuals": 1,
+  "sources": [
+    "Fruhholz et al. (2024), University of Zurich: replicas of Aztec skull whistles make a noisy, non-linear, scream-like sound from two opposing chambers (press release https://news.uzh.ch/en/articles/media/2024/Totenkopfpfeife.html; study https://pmc.ncbi.nlm.nih.gov/articles/PMC11555264)",
+    "ESTIMATE: f0 1500-2400 Hz and the lengths are not measured here; the study reports noise and roughness, and its own pages give no band that was read; replace with a recording's numbers",
+    "Taylor and Reby (2010), J. Zoology 280: source-filter theory for sound production"
+  ]
+}

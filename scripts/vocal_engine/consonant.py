@@ -30,23 +30,13 @@ A new consonant is therefore a JSON row, never new Python (AGENTS.md: sounds are
 five recipe types. Everything numeric comes from the row; nothing here is a musical decision.
 """
 import numpy as np
-from scipy.signal import butter, sosfilt
 
 from . import data
 from . import nasal as nasal_mod
 from . import source, tract
+from .utils import bandpass as _bp
+from .utils import lowpass as _lp
 from .utils import rms
-
-
-def _bp(x, sr, lo, hi, order=2):
-    hi = min(max(hi, lo * 1.05), 0.45 * sr)
-    sos = butter(order, [max(20.0, lo), hi], btype='band', fs=sr, output='sos')
-    return sosfilt(sos, x)
-
-
-def _lp(x, sr, f, order=2):
-    sos = butter(order, min(max(f, 30.0), 0.45 * sr), btype='low', fs=sr, output='sos')
-    return sosfilt(sos, x)
 
 
 def _env(n, attack_ms, release_ms, sr):
@@ -61,7 +51,7 @@ def _env(n, attack_ms, release_ms, sr):
     return np.clip(x, 0.0, 1.0)
 
 
-def _buzz(n, sr, f0, rng, cn, reg=None):
+def _buzz(n, sr, f0, rng, cn, reg=None, model='pulse'):
     """Periodic excitation for the voiced consonants: the same glottal pulse the vowels use, tilted at
     `consonants.buzz_tilt_hz` with two poles (-12 dB/oct). The old 1/k sine bank was a bright additive
     buzz with no closure and no roll-off; a consonant shares the singer's source, not a different one."""
@@ -75,7 +65,7 @@ def _buzz(n, sr, f0, rng, cn, reg=None):
             reg[k] = float(np.mean(np.asarray(reg[k], dtype=float)))
     reg['tilt_hz'] = float(cn['buzz_tilt_hz'])
     y, _c, _flow = source.glottal_source(np.full(int(n), float(max(f0, 30.0))), sr, rng, reg,
-                                         breathiness=0.0, tilt_poles=2)
+                                         breathiness=0.0, tilt_poles=2, model=model)
     return y / (rms(y) + 1e-12)
 
 
@@ -97,7 +87,7 @@ def _resonate(x, formants, bandwidths, sr):
     return tract.bank(x, list(formants[:k]), list(bandwidths[:k]), gains, sr)
 
 
-def _stop(row, sr, rng, f0, vowel, cn=None, reg=None):
+def _stop(row, sr, rng, f0, vowel, cn=None, reg=None, model='pulse'):
     nc = max(int(float(row.get('closure_ms', 40.0)) * 1e-3 * sr), 8)
     nb = max(int(float(row.get('burst_ms', 6.0)) * 1e-3 * sr), 6)
     vot = max(float(row.get('vot_ms', 60.0)), 5.0)
@@ -118,14 +108,14 @@ def _stop(row, sr, rng, f0, vowel, cn=None, reg=None):
     asp = 0.35 * asp / (rms(asp) + 1e-12)
     voiced = np.zeros(nb + nv)
     if row.get('voiced'):
-        voiced = 0.35 * _resonate(_buzz(nb + nv, sr, f0, rng, cn, reg), vowel or [500.0, 1500.0, 2500.0],
+        voiced = 0.35 * _resonate(_buzz(nb + nv, sr, f0, rng, cn, reg, model), vowel or [500.0, 1500.0, 2500.0],
                                   [90.0, 120.0, 200.0], sr)
         voiced = voiced / (rms(voiced) + 1e-12) * 0.6
     tail = np.concatenate([burst, asp]) + voiced
     return np.concatenate([closure, tail]), dict(vot_ms=vot)
 
 
-def _fricative(row, sr, rng, f0, vowel, cn=None, reg=None):
+def _fricative(row, sr, rng, f0, vowel, cn=None, reg=None, model='pulse'):
     n = max(int(float(row.get('dur_ms', 110.0)) * 1e-3 * sr), 8)
     w = rng.standard_normal(n)
     band = row['band']
@@ -141,28 +131,28 @@ def _fricative(row, sr, rng, f0, vowel, cn=None, reg=None):
     return y / (rms(y) + 1e-12), dict(vot_ms=None)
 
 
-def _nasal(row, sr, rng, f0, vowel, cn=None, reg=None):
+def _nasal(row, sr, rng, f0, vowel, cn=None, reg=None, model='pulse'):
     n = max(int(float(row.get('dur_ms', 70.0)) * 1e-3 * sr), 8)
     poles = list(row.get('poles', [250.0, 1000.0]))
     bw = [70.0, 180.0, 300.0][:len(poles)]
     gains = [1.0, 0.25, 0.1][:len(poles)]
-    y = tract.bank(_buzz(n, sr, f0, rng, cn, reg), poles, bw, gains, sr)
+    y = tract.bank(_buzz(n, sr, f0, rng, cn, reg, model), poles, bw, gains, sr)
     y = nasal_mod.notch(y, float(row.get('antiformant_hz', 1000.0)), float(row.get('antiformant_bw', 160.0)), 0.85, sr)
     y = y * _env(n, 8.0, 18.0, sr)
     return y / (rms(y) + 1e-12), dict(vot_ms=None)
 
 
-def _liquid(row, sr, rng, f0, vowel, cn=None, reg=None):
+def _liquid(row, sr, rng, f0, vowel, cn=None, reg=None, model='pulse'):
     n = max(int(float(row.get('dur_ms', 60.0)) * 1e-3 * sr), 8)
-    y = _resonate(_buzz(n, sr, f0, rng, cn, reg), list(row.get('formants', [360.0, 1300.0, 2700.0])),
+    y = _resonate(_buzz(n, sr, f0, rng, cn, reg, model), list(row.get('formants', [360.0, 1300.0, 2700.0])),
                   list(row.get('bandwidths', [90.0, 120.0, 200.0])), sr)
     y = y * _env(n, 8.0, 18.0, sr)
     return y / (rms(y) + 1e-12), dict(vot_ms=None)
 
 
-def _trill(row, sr, rng, f0, vowel, cn=None, reg=None):
+def _trill(row, sr, rng, f0, vowel, cn=None, reg=None, model='pulse'):
     n = max(int(float(row.get('dur_ms', 70.0)) * 1e-3 * sr), 8)
-    y = _resonate(_buzz(n, sr, f0, rng, cn, reg), list(row.get('formants', [420.0, 1300.0, 1700.0])),
+    y = _resonate(_buzz(n, sr, f0, rng, cn, reg, model), list(row.get('formants', [420.0, 1300.0, 1700.0])),
                   list(row.get('bandwidths', [90.0, 120.0, 160.0])), sr)
     rate = max(float(row.get('rate_hz', 28.0)), 1.0)
     am = 0.15 + 0.85 * np.maximum(0.0, np.sin(2 * np.pi * rate * np.arange(n) / sr))
@@ -215,7 +205,7 @@ def measure(seg, sr):
     return dict(centroid_hz=centroid, dur_ms=dur_ms, vot_ms=dur_ms)
 
 
-def render(code, cn, sr, rng, f0=150.0, vowel=None, reg=None):
+def render(code, cn, sr, rng, f0=150.0, vowel=None, reg=None, model='pulse'):
     """code -> (signal, meta). meta carries the recipe's declared band/VOT and the measured values."""
     row = recipe(cn, code)
     if not row:
@@ -223,7 +213,7 @@ def render(code, cn, sr, rng, f0=150.0, vowel=None, reg=None):
     kind = _KINDS.get(str(row.get('type')))
     if kind is None:
         return np.zeros(0), dict(code=str(code), error=f'unknown recipe type {row.get("type")!r}')
-    y, extra = kind(row, sr, rng, f0, vowel, cn, reg)
+    y, extra = kind(row, sr, rng, f0, vowel, cn, reg, model)
     m = measure(y, sr)
     return y, dict(code=str(code), type=row.get('type'), band=row.get('band'),
                    vot_ms=extra.get('vot_ms'), measured=m)

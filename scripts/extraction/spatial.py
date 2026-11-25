@@ -26,7 +26,7 @@ A listening model's spatial claims (spatial*.json) are compared, never trusted."
 import os
 
 import numpy as np
-from scipy import signal
+from scipy import ndimage, signal
 
 from .config import jdump
 
@@ -125,12 +125,18 @@ def find_moves(rows, base_az, cfg):
     return out
 
 
+def _rms_env(x, hop):
+    """RMS envelope over `hop`-sample windows, one value per hop: the moving mean of x^2 in O(n) (it was a full-length
+    np.convolve with a `hop`-sample kernel), zero outside the signal exactly as np.convolve(..., 'same')."""
+    return np.sqrt(ndimage.uniform_filter1d(np.asarray(x, dtype=np.float64) ** 2, hop, mode='constant', cval=0.0))[::hop]
+
+
 def reverb_tail_db(stem, sr, cfg):
     """How loud the 60-250 ms after each note/hit ends is, relative to the last 100 ms before it ends (median; null if no clean ends)."""
     s = cfg['spatial']
     hop = int(0.01 * sr)
     mono = np.abs(stem).mean(axis=0)
-    env = np.sqrt(np.convolve(mono ** 2, np.ones(hop) / hop, mode='same'))[::hop]
+    env = _rms_env(mono, hop)
     db = 20 * np.log10(env + 1e-9)
     ref = db.max()
     vals = []
@@ -147,7 +153,7 @@ def rt60(mix_mono, sr, cfg):
     """RT60 from Schroeder backward integration of the decay after abrupt cut-offs in the mix; median of good fits."""
     s = cfg['spatial']
     hop = int(0.01 * sr)
-    env = np.sqrt(np.convolve(mix_mono ** 2, np.ones(hop) / hop, mode='same'))[::hop]
+    env = _rms_env(mix_mono, hop)
     db = 20 * np.log10(env + 1e-9)
     fits, i = [], 5
     while i < len(db) - 10:

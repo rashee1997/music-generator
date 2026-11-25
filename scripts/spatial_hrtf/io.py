@@ -140,6 +140,7 @@ def load_hrirs(fs, filename=None, jobs_count=None):
             fs(t).
 
     """
+    user_file = filename is not None and filename != 'dummy'
     if filename == 'dummy':
         azi, zen, _ = grids.gauss(15)
         # Create diracs as dummy
@@ -184,9 +185,19 @@ def load_hrirs(fs, filename=None, jobs_count=None):
 
         azi = np.array(np.squeeze(mat['azi']), dtype=float)
         zen = np.array(np.squeeze(mat['zen']), dtype=float)
+        if user_file:
+            # the file's angles are radians (azi in [0, 2pi], zen in [0, pi]); a file written in degrees would be
+            # read as a grid hundreds of radians wide, so say so instead of building a scrambled decoder
+            if (azi.size and float(np.max(np.abs(azi))) > 2 * np.pi + 1e-6) or \
+                    (zen.size and float(np.max(np.abs(zen))) > np.pi + 1e-6):
+                raise ValueError(f"{filename}: azi/zen must be in radians (azi within +-2pi, zen within 0..pi); "
+                                 f"max |azi| = {float(np.max(np.abs(azi))):.3f}, max zen = {float(np.max(zen)):.3f}. "
+                                 f"Convert degrees with np.deg2rad before saving the set")
 
     HRIRs = sig.HRIRs(hrir_l, hrir_r, azi, zen, hrir_fs)
-    assert HRIRs.fs == fs
+    if not user_file:
+        assert HRIRs.fs == fs
+    # a listener's own file keeps its native rate: the caller (binaural._load_hrirs) resamples it
     return HRIRs
 
 

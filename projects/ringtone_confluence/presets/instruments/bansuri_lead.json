@@ -1,0 +1,53 @@
+{
+  "name": "bansuri_lead",
+  "description": "Indian bansuri line: states the hook second, passes the tune on and returns in the lift and the return.",
+  "character": "A bamboo transverse flute in the singing style of the Hindustani bansuri: notes lean in with a short glide, long notes carry a slow gentle wobble, and the 2.5 to 3.8 kHz band is kept smooth so the lead never pierces.",
+  "gm": "bansuri",
+  "role": "lead",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": 0.0,
+    "distance": 1.4
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 300
+    },
+    {
+      "type": "peak",
+      "f": 3100,
+      "gain": -2.5,
+      "q": 1.0
+    },
+    {
+      "type": "lp",
+      "f": 7000.0
+    }
+  ],
+  "gain_db": 0.0,
+  "reverb": 0.16,
+  "articulation": {
+    "overlap_ms": 40.0,
+    "gate": 0.98,
+    "release_ms": 120.0
+  },
+  "mechanics_class": "wind",
+  "sources": [
+    "KB flutes (bansuri bamboo flute: pitch range MIDI 55-86, legato glide about 140 ms, gamaka rate about 6.2 Hz and depth about 45 cents, piercing ratio 2.5-3.8 kHz kept low)",
+    "KB indian-film-fusion (the stage-and-dance model of a gamaka; a breathy flute answers at phrase ends)",
+    "ESTIMATE: the SoundFont flute stands in for a bansuri; glides are written into the notes, the wobble is not modelled by the sampler",
+    "KB flutes (bansuri vibrato: delay 220 ms, rate 5.1 Hz, depth 14 cents)",
+    "MEASURED: the mastered file had click events at the onsets of overlapping notes, where the sampler tick lands on a still-ringing note and soften_onsets leaves it alone by design; STARTING VALUE: low-pass at 7000 Hz, above what a phone speaker returns"
+  ],
+  "vibrato": {
+    "depth_cents": 14.0,
+    "rate_hz": 5.1,
+    "delay_ms": 220.0
+  }
+}

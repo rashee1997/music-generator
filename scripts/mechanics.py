@@ -37,9 +37,10 @@ def _table():
     import mix_schema
     import presets
     try:
-        mx = mix_schema.with_defaults(presets.mix())
-    except Exception:
-        mx = mix_schema.with_defaults({})
+        preset = presets.mix()
+    except KeyError:                       # no mix preset in this project: the schema defaults are the table
+        preset = {}
+    mx = mix_schema.with_defaults(preset)  # a broken preset raises here: it must not turn into silent defaults
     return ((mx.get('render') or {}).get('mechanics') or {})
 
 
@@ -54,13 +55,21 @@ def _class_for(track, cfg):
     return None
 
 
-def _burst(rng, sr, spec, level=1.0):
-    """One short filtered noise burst with a Hann envelope, or None when the spec is switched off."""
+def _burst_len(spec, sr):
+    """Samples in one burst of this spec, or None when the spec is switched off."""
     ms = float(spec.get('ms', 0.0))
     gain_db = float(spec.get('gain_db', -96.0))
     if ms <= 0 or gain_db <= -95.0:
         return None
-    n = max(2, int(ms / 1000.0 * sr))
+    return max(2, int(ms / 1000.0 * sr))
+
+
+def _burst(rng, sr, spec, level=1.0):
+    """One short filtered noise burst with a Hann envelope, or None when the spec is switched off."""
+    n = _burst_len(spec, sr)
+    if n is None:
+        return None
+    gain_db = float(spec.get('gain_db', -96.0))
     lo, hi = float(spec.get('lo_hz', 200.0)), float(spec.get('hi_hz', 6000.0))
     lo = max(20.0, min(lo, sr * 0.45))
     hi = max(lo * 1.05, min(hi, sr * 0.45))
@@ -95,8 +104,10 @@ def add(x, track, events, sr=44100, seed=0):
         for key, at in (('onset', float(e['t'])), ('offset', float(e['t']) + dur)):
             spec_k = spec.get(key) or {}
             i0 = max(0, int(at * sr))
-            if i0 >= n or _burst(rng, sr, spec_k, 0.0) is None:
+            blen = _burst_len(spec_k, sr)
+            if i0 >= n or blen is None:
                 continue
+            rng.standard_normal(blen)        # the old on/off probe drew one burst here: keep the stream of earlier renders
             gain = level * (0.35 + 0.65 * vel)
             for c in range(out.shape[1]):    # independent per channel: the mechanism is not one mono source
                 seg = _burst(rng, sr, spec_k, gain)[:max(0, n - i0)]

@@ -1,0 +1,480 @@
+{
+  "title": "Into the Green Dark",
+  "project": "Test cue for the Immersive 3.0 engine: a deep-Amazon adventure for a game or a film trailer",
+  "version": 1,
+  "medium": "film",
+  "brief": "a Hans Zimmer-like, breathtaking immersive orchestra with SFZ samples, ambience and SFX for an adventure deep in the Amazon rainforest, in rain, tense and with a twist at every step and every second",
+  "audience": "a listener on headphones, a living-room 5.1 and a 7.1.4 room, and on a phone speaker; they know the genre and are waiting for the turn",
+  "purpose": "a 97-second Amazon adventure cue in which a walker is followed through the rain forest and the story turns three times",
+  "point_of_view": "the walker: the field is what they hear, so the footsteps are always the nearest sound and the orchestra is the dread they carry",
+  "job": [
+    "make the forest a place before the first threat: the listener should hear that it is alive, then hear it stop",
+    "turn the story three times: the forest goes silent, the key moves up a minor third mid-chase, the canopy opens and the drums answer from all around",
+    "keep one voice in the open at the start (a flute) and add a layer every few bars so the weight is earned",
+    "end unresolved: D with no third, a second set of footsteps, a held breath"
+  ],
+  "story": "A walker enters the green dark. The forest is alive, then a twig breaks and everything stops. Something follows. The monkeys warn, the rain closes in, the walker runs. At the lowest point the key changes. The canopy opens, the light is beautiful and wrong: the drums are all around, and somebody is walking behind.",
+  "duration_s": 97.6,
+  "in_point_s": 0.0,
+  "out_point_s": 97.6,
+  "ending": "tail_out",
+  "feel": [
+    "immersive",
+    "tense",
+    "adventurous",
+    "humid",
+    "vast",
+    "wondering"
+  ],
+  "avoid_feel": [
+    "comic",
+    "cosy",
+    "synthetic",
+    "robotic",
+    "cheerful",
+    "new-age cliche"
+  ],
+  "sections": [
+    {
+      "name": "canopy",
+      "start_s": 0.0,
+      "end_s": 19.9,
+      "energy": 0.5,
+      "action": "the walker steps into the green dark under a closed canopy",
+      "music": "one flute call over a D pedal in the basses; harp drops like water off leaves; footsteps begin at bar 5",
+      "role": "place"
+    },
+    {
+      "name": "closing_in",
+      "start_s": 19.9,
+      "end_s": 39.18,
+      "energy": 0.55,
+      "action": "the path narrows; something is moving",
+      "music": "celli ostinato in eighths and a heartbeat in the timpani; at bar 13 beat 3 a twig breaks and the whole forest stops; a jaguar answers at bar 15",
+      "role": "establish"
+    },
+    {
+      "name": "the_watcher",
+      "start_s": 39.18,
+      "end_s": 57.92,
+      "energy": 0.75,
+      "action": "the walker is being tracked; monkeys warn; the storm arrives",
+      "music": "the trombones and tuba enter on a D braam; ostinato goes to sixteenths; horns call on the fifths; the walker begins to run at bar 23",
+      "role": "build"
+    },
+    {
+      "name": "the_chase",
+      "start_s": 57.92,
+      "end_s": 75.81,
+      "energy": 1.0,
+      "action": "a run through the rain; the key changes up a minor third at bar 29; everything stops on beat 3 of bar 32",
+      "music": "tutti: ostinato in two layers, timpani, bass drum, brass stabs in a 3+3+2 grouping, the horn theme in D minor then in F minor",
+      "role": "peak"
+    },
+    {
+      "name": "the_clearing",
+      "start_s": 75.81,
+      "end_s": 86.29,
+      "energy": 0.8,
+      "action": "the canopy opens: light, a river, and a held breath",
+      "music": "horns on the theme in F major with chorus and harp, rain lighter; the room opens upward",
+      "role": "transition"
+    },
+    {
+      "name": "not_alone",
+      "start_s": 86.29,
+      "end_s": 97.6,
+      "energy": 0.55,
+      "action": "the drums answer from all around and a second set of footsteps comes from behind",
+      "music": "conga from two far sides in a 3+3+2 call and answer, the flute returns to the pentatonic and ends on C, a Dm9 chord without its third; one last timpani blow",
+      "role": "button"
+    }
+  ],
+  "motifs": [
+    {
+      "name": "icaro call",
+      "first_at_s": 5.03,
+      "shape": "D F G A then a long C: four rising pentatonic notes and a held flat seventh",
+      "returns": "inverted at 14.6 s, as single notes in the silence, as nervous fragments in the watcher, as a high counter-line in the clearing, slower and unresolved at the end"
+    },
+    {
+      "name": "hunter theme",
+      "first_at_s": 57.92,
+      "shape": "D, up a fifth to A, then D C Bb: a call that falls back",
+      "returns": "in F minor at the twist (66.9 s), in F major at the reveal (75.8 s), once more as a quiet D minor echo (86 s)"
+    }
+  ],
+  "instruments": [
+    "flute",
+    "celli",
+    "basses",
+    "violas",
+    "violins",
+    "horns",
+    "trombones",
+    "tuba",
+    "timpani",
+    "bass drum",
+    "cymbals",
+    "chorus",
+    "harp",
+    "conga",
+    "environment",
+    "footsteps",
+    "jaguar",
+    "monkeys"
+  ],
+  "avoid_sounds": [
+    "synth pad",
+    "electric guitar",
+    "drum kit",
+    "pop vocals",
+    "sirens",
+    "stock jungle loop"
+  ],
+  "pulse": "steady eighths in the celli that become sixteenths; footsteps are the second pulse and break into a run",
+  "tempo_bpm": [
+    78,
+    108
+  ],
+  "key": "D",
+  "mode": "minor",
+  "energy": 0.65,
+  "space": "green_dark_room",
+  "hits_at": [
+    30.82,
+    39.18,
+    57.92,
+    66.91,
+    74.69,
+    75.81,
+    91.72
+  ],
+  "hits": [
+    {
+      "t": 30.82,
+      "kind": "motion",
+      "sync": "hard",
+      "sound": "a twig breaks under the walker's foot, and everything stops",
+      "why": "the forest's sound cuts in the same beat"
+    },
+    {
+      "t": 39.18,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the low brass enters on D: the first sight of the hunter",
+      "why": "the watcher begins; weight, not volume"
+    },
+    {
+      "t": 57.92,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the full orchestra enters: the run",
+      "why": "a second braam over a bass drum and timpani"
+    },
+    {
+      "t": 66.91,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the key moves up a minor third at the loudest point",
+      "why": "the brass and strings change chords together and the thunder cracks one beat before"
+    },
+    {
+      "t": 74.69,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "everything stops for two beats",
+      "why": "silence is the biggest sound in the piece, so it must be exact"
+    },
+    {
+      "t": 75.81,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the canopy opens",
+      "why": "horns in F major over chorus; the rain lighter"
+    },
+    {
+      "t": 91.72,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the last braam and a single timpani blow",
+      "why": "Dm9 without a third, so it cannot resolve"
+    }
+  ],
+  "mix_intent": {
+    "hero": "horns",
+    "support": [
+      "celli",
+      "trombones",
+      "timpani",
+      "chorus"
+    ],
+    "sits_under": [
+      "footsteps"
+    ],
+    "must_hear": [
+      "the first twig snap at 30.7 s with nothing else sounding",
+      "the jaguar from behind on the right at 35.8 s",
+      "the key change at 66.9 s",
+      "two beats of silence at 74.7 s",
+      "the drums from both sides at 90 s"
+    ],
+    "leave_free_hz": [
+      700,
+      2600
+    ],
+    "executed_by": "carry this block on the score as `mix_intent` and set the mix preset's lead_carve to {\"enabled\": true, \"from_intent\": true}: `hero` (a track name) becomes the part the beds yield to and `leave_free_hz` the band they yield in. Without that the block is read by listen.py only."
+  },
+  "loudness_lufs": -16.0,
+  "true_peak_max": -1.5,
+  "delivery": {
+    "format": "wav",
+    "sample_rate": 44100,
+    "bit_depth": 24,
+    "stage": "cinema",
+    "output_targets": [
+      "stereo",
+      "mono",
+      "immersive_5_1",
+      "immersive_7_1_4",
+      "ambix",
+      "adm_bw64"
+    ],
+    "played_on": "a headphone listener, a living-room 5.1, a 7.1.4 theatre, a phone speaker (mono), and a game engine that takes objects (adm_bw64) or a sound field (ambix)"
+  },
+  "references": [
+    "in words, not a track: a low-brass-and-ostinato chase with a held breath before the reveal, the colour of a modern blockbuster underscore with natural rain over it",
+    "the silence at the snap is the biggest hit; the drums answering from behind are the last"
+  ],
+  "spatial_staging": {
+    "green_alto_flute": {
+      "azimuth": 12.0,
+      "elevation": 6.0,
+      "distance": 1.7,
+      "space": "green_dark_room"
+    },
+    "green_bass_clarinet": {
+      "azimuth": -15.0,
+      "elevation": 3.0,
+      "distance": 2.3,
+      "space": "green_dark_room"
+    },
+    "green_bass_drum": {
+      "azimuth": 7.0,
+      "elevation": 0.0,
+      "distance": 5.0,
+      "space": "green_dark_room"
+    },
+    "green_basses": {
+      "azimuth": -52.0,
+      "elevation": 0.0,
+      "distance": 4.0,
+      "space": "green_dark_room"
+    },
+    "green_celli_ostinato": {
+      "azimuth": -26.0,
+      "elevation": 0.0,
+      "distance": 3.2,
+      "space": "green_dark_room"
+    },
+    "green_choir": {
+      "azimuth": -2.0,
+      "elevation": 34.0,
+      "distance": 7.5,
+      "space": "green_dark_room"
+    },
+    "green_cymbals": {
+      "azimuth": 85.0,
+      "elevation": 14.0,
+      "distance": 6.2,
+      "space": "green_dark_room"
+    },
+    "green_drums_left": {
+      "azimuth": -112.0,
+      "elevation": 0.0,
+      "distance": 22.0,
+      "space": "green_dark_room"
+    },
+    "green_drums_right": {
+      "azimuth": 128.0,
+      "elevation": 0.0,
+      "distance": 30.0,
+      "space": "green_dark_room"
+    },
+    "green_harp": {
+      "azimuth": -72.0,
+      "elevation": 10.0,
+      "distance": 3.0,
+      "space": "green_dark_room"
+    },
+    "green_horns": {
+      "azimuth": 18.0,
+      "elevation": 18.0,
+      "distance": 3.6,
+      "space": "green_dark_room"
+    },
+    "green_timpani": {
+      "azimuth": 26.0,
+      "elevation": 0.0,
+      "distance": 5.6,
+      "space": "green_dark_room"
+    },
+    "green_trombones": {
+      "azimuth": -78.0,
+      "elevation": 6.0,
+      "distance": 3.9,
+      "space": "green_dark_room"
+    },
+    "green_trombones_sus": {
+      "azimuth": -64.0,
+      "elevation": 24.0,
+      "distance": 4.4,
+      "space": "green_dark_room"
+    },
+    "green_tuba": {
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "distance": 4.3,
+      "space": "green_dark_room"
+    },
+    "green_violas_ostinato": {
+      "azimuth": 52.0,
+      "elevation": 2.0,
+      "distance": 3.4,
+      "space": "green_dark_room"
+    },
+    "green_violins_sustain": {
+      "azimuth": 46.0,
+      "elevation": 26.0,
+      "distance": 4.9,
+      "space": "green_dark_room"
+    },
+    "green_violins_tremolo": {
+      "azimuth": -34.0,
+      "elevation": 22.0,
+      "distance": 4.6,
+      "space": "green_dark_room"
+    }
+  },
+  "immersive": {
+    "enabled": true,
+    "why": "the story is about what is around the walker: the forest is a dome, the threat moves through it, and the final twist is that the drums are on every side. A stereo mix can say it; a field can place it",
+    "engine": "hoa_bus",
+    "anchors": [
+      "basses",
+      "celli",
+      "tuba",
+      "timpani",
+      "bass_drum",
+      "drums_left",
+      "drums_right"
+    ],
+    "movers": [
+      {
+        "part": "jaguar_near",
+        "why": "it closes from behind to the walker's left as the watcher builds",
+        "path": "starts behind on the left at 6 m, passes to 75 degrees left and 3.6 m by bar 24"
+      },
+      {
+        "part": "jaguar_chase",
+        "why": "it keeps pace with the run: it crosses the front and falls away behind on the right",
+        "path": "left of the listener at 5 m, through the centre at 2.6 m on bar 29, behind right at 5.5 m by bar 31"
+      },
+      {
+        "part": "steps_other",
+        "why": "the twist: someone else is walking, and gets closer",
+        "path": "behind on the right at 9 m, moving round to 4.5 m during the last four bars"
+      }
+    ],
+    "height": {
+      "flute": 6,
+      "horns": 8,
+      "violins_tremolo": 22,
+      "violins_sustain": 26,
+      "choir": 34,
+      "cymbals": 14,
+      "canopy": 40,
+      "rain_heavy": 40
+    },
+    "room_changes": [
+      {
+        "at_section": "the_clearing",
+        "why": "the canopy opens: the ceiling goes and the tail falls away",
+        "transition_s": 4.8
+      },
+      {
+        "at_section": "not_alone",
+        "why": "the forest closes back in: a low ceiling and a nearer, darker tail",
+        "transition_s": 7.0
+      }
+    ],
+    "must_hear": [
+      "the jaguar crossing the front during the chase",
+      "the drums on both sides at the end",
+      "the sky opening at the reveal"
+    ],
+    "deliverables": [
+      "stereo",
+      "mono",
+      "immersive_5_1",
+      "immersive_7_1_4",
+      "ambix",
+      "adm_bw64"
+    ],
+    "notes": "the sheet records intent; the mix, space and instrument presets execute it. Keyframes, heights and room geometry are in presets/spaces/green_dark_room.json and the score; mono is rendered from the mix, not summed from the stereo master."
+  },
+  "focus": "melody",
+  "intent": {
+    "emotions": [
+      "adventure",
+      "tense",
+      "wonder"
+    ],
+    "registers": [
+      "cinematic",
+      "natural"
+    ],
+    "scenes": [
+      "dread",
+      "chase",
+      "reveal"
+    ],
+    "tensions": [
+      "ostinato",
+      "pedal",
+      "silence_before",
+      "unresolved_dominant"
+    ],
+    "avoid": [
+      "joyful",
+      "playful"
+    ]
+  },
+  "piece_type": "cinematic",
+  "gate_reason": "a build-hit-release cue with a long line (the horn theme) and structured silences: the cinematic profile, started strict",
+  "video": {
+    "enabled": false,
+    "source": null,
+    "in_s": 0.0,
+    "out_s": null,
+    "fps": null,
+    "duration_s": null,
+    "cuts": [],
+    "cut_source": null,
+    "motion_hits": 0,
+    "cut_sync": {
+      "early_ms": 45,
+      "late_ms": 125
+    },
+    "dialogue": {
+      "present": false,
+      "duck_db": -9.0,
+      "snr_min_db": 15.0
+    },
+    "master_profile": null,
+    "deliverable": null,
+    "preset": "default",
+    "notes": "music-only sheet: no picture."
+  },
+  "notes": "Every field is a target someone can check. feel and avoid_feel are what listen.py tests earshot against; sections is the cue's arc in seconds, and its names are what a trajectory or a room change is anchored to; hits_at is what listen.py looks for in the onset list, and hits is the same moments with a reason and a kind (cut, motion or musical). spatial_staging is the room seen from above: each preset must match its own spot. immersive says whether the field is doing a job, what moves and why, and where the room changes (numbers live in the presets). mix_intent says what must be audible and what must stay free. Write in plain English: earshot reads the words."
+}

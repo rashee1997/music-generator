@@ -32,6 +32,7 @@ A track plays through SFZ when its instrument is "sfz:<library>/<patch>", or its
 Humanization (timing, velocity) happens before this, in render_natural, exactly as for the GM path. Dynamics become controller curves.
 Nothing here is random: the same score gives the same samples (sfizz_render is reproducible, measured).
 """
+import bisect
 import os
 import subprocess
 import sys
@@ -188,6 +189,7 @@ def midi_for(ev, offs, blk, dyn_level, patch_name, lead=0.0):
     onsets_by_pitch = {}
     for _e in ev:
         onsets_by_pitch.setdefault(int(_e['p']), []).append(float(_e['t']))
+    pitch_sorted = {p: all(a <= b for a, b in zip(v, v[1:])) for p, v in onsets_by_pitch.items()}
     last_art = None
     slurred_in = [False] * len(ev)                                       # note j continues a slur begun earlier
     slur_next = {}                                                       # note i -> the note it slurs into
@@ -205,12 +207,18 @@ def midi_for(ev, offs, blk, dyn_level, patch_name, lead=0.0):
             if j in slur_next:
                 off = ev[slur_next[j]]['t'] + slur_ov
         elif patch_legato:                                 # old behaviour: the patch name decides (scores with no per-note "art")
-            later = [s for s in starts if s > e['t'] + 0.01]
-            if later and later[0] - off < 0.15:
-                off = later[0] + overlap
-        later_same = [s for s in onsets_by_pitch.get(int(e['p']), ()) if s > e['t'] + 0.01]
-        if later_same and off > later_same[0] - 0.01:
-            off = later_same[0] - 0.01
+            k = bisect.bisect_right(starts, e['t'] + 0.01)      # `starts` is sorted: the first onset after this note
+            if k < len(starts) and starts[k] - off < 0.15:
+                off = starts[k] + overlap
+        same = onsets_by_pitch.get(int(e['p']), ())
+        k = bisect.bisect_right(same, e['t'] + 0.01) if pitch_sorted[int(e['p'])] else None
+        if k is None:                                      # onsets not in time order: the first listed one, as before
+            later_same = [s for s in same if s > e['t'] + 0.01]
+            nxt_same = later_same[0] if later_same else None
+        else:
+            nxt_same = same[k] if k < len(same) else None
+        if nxt_same is not None and off > nxt_same - 0.01:
+            off = nxt_same - 0.01
         art = e.get('art')
         if art in ks and art != last_art:
             inst.notes.append(pretty_midi.Note(velocity=100, pitch=int(ks[art]), start=max(0.0, e['t'] - 0.05), end=e['t'] - 0.01 if e['t'] > 0.06 else 0.01))
@@ -252,6 +260,10 @@ def _is_mono(ev, tol=0.03):
 def render(ev, offs, tm, blk, dyn_level, sr, project=None, quality=10, polyphony=256):
     """Stereo float32 stem for one track. Raises SfzUnavailable when the library or engine is missing."""
     import soundfile as sf
+    try:
+        blk = sfz_libs.effective_block(blk, project)          # the library it asks for, or the first of its `alternatives` that is installed
+    except LookupError as ex:
+        raise SfzUnavailable(str(ex))
     exe, sfz = resolve(blk, project)
     pm = midi_for(ev, offs, blk, dyn_level, sfz.name, lead=LEAD_S)
     with tempfile.TemporaryDirectory() as td:

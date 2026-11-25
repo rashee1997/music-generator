@@ -49,12 +49,13 @@ def speakers(layout_name):
     return out
 
 
-def lfe_speaker(layout_name):
-    lay = layout(layout_name)
-    for sp in lay.get('speakers') or []:
-        if sp.get('lfe'):
-            return dict(sp)
-    return None
+def lfe_speakers(layout_name):
+    """Every low-frequency speaker of a layout, in channel order (one for 5.1 / 7.1, two for 3.2)."""
+    return [dict(sp) for sp in layout(layout_name).get('speakers') or [] if sp.get('lfe')]
+
+
+def lfe_names(layout_name):
+    return [sp['name'] for sp in lfe_speakers(layout_name)]
 
 
 def channel_names(layout_name):
@@ -103,13 +104,14 @@ def problems(layout_name=None):
                     out.append(f'{name}/{sp["name"]}: elevation {sp["elevation"]} is outside -90..90 degrees')
             except (KeyError, TypeError, ValueError):
                 pass
-        if not any(sp.get('lfe') for sp in sps):
-            out.append(f'{name}: no LFE speaker')
-        rv = lay.get('reverb') or {}
-        for key in ('front_azimuth_max', 'front_db', 'surround_db', 'height_db'):
-            if key not in rv:
-                out.append(f'{name}: reverb return has no "{key}" (the shared reverb would be dropped)')
-                break
+        if not lay.get('decode_only'):        # a decode_only layout (the stereo pair) is a decoder target: no LFE, no room return
+            if not any(sp.get('lfe') for sp in sps):
+                out.append(f'{name}: no LFE speaker')
+            rv = lay.get('reverb') or {}
+            for key in ('front_azimuth_max', 'front_db', 'surround_db', 'height_db'):
+                if key not in rv:
+                    out.append(f'{name}: reverb return has no "{key}" (the shared reverb would be dropped)')
+                    break
         dm = lay.get('downmix') or {}
         for sp in sps:
             if sp['name'] not in dm:

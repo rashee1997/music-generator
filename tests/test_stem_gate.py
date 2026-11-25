@@ -15,6 +15,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', 'scripts'))
 sys.path.insert(0, HERE)
 
+import gate_checks as gc
 import gate_fixture as fx
 import stem_gate
 
@@ -54,6 +55,32 @@ class StemGateTest(unittest.TestCase):
         rows, meta, fails = _stem_case('pad', lambda x: fx.add_cut(x, at=4.0, ms=500))
         self.assertIn('stem.cut', fails, fails)
 
+    def test_one_shot_fx_stem_is_not_graded_for_dc_or_tick(self):
+        """An fx stem is silent between triggers: block-mean drift is the hit, and the hits are not a pulse."""
+        sr = fx.SR
+        n = int(sr * 8.0)
+        t = np.arange(n) / sr
+        sig = np.zeros(n, np.float32)
+        for at in (2.0, 4.5, 7.0):
+            i = int(at * sr)
+            m = int(0.4 * sr)
+            seg = t[:m]
+            sig[i:i + m] = (0.4 * np.sin(2 * np.pi * 48.0 * seg) * np.exp(-seg * 4.0)).astype(np.float32)
+        score = fx.score()
+        score['tracks'] = list(score['tracks']) + [
+            {'name': 'whoosh', 'instrument': 'sfx:whoosh_warp', 'role': 'fx',
+             'notes': [{'t': 2.0, 'd': 2.0, 'p': 60, 'v': 80},
+                       {'t': 4.5, 'd': 2.0, 'p': 60, 'v': 80},
+                       {'t': 7.0, 'd': 1.0, 'p': 60, 'v': 80}]}]
+        stems = fx.build_stems()
+        stems['whoosh'] = sig
+        rows, _meta = stem_gate.run_stem_gate(score, stems, sr=sr, workers=1)
+        mine = [(lvl, rid, det) for lvl, rid, det in rows if 'whoosh' in det]
+        infos = {rid for lvl, rid, _ in mine if lvl == 'INFO'}
+        self.assertIn('stem.dc', infos, mine)
+        self.assertIn('stem.tick', infos, mine)
+        self.assertEqual([r for r in mine if r[0] == 'FAIL'], [], mine)
+
     def test_stem_edge_fires_when_a_stem_starts_late(self):
         rows, meta, fails = _stem_case('pad', lambda x: fx.trim_head(x, 0.3))
         self.assertIn('stem.edge', fails, fails)
@@ -85,6 +112,19 @@ class StemGateTest(unittest.TestCase):
     def test_dead_stem_fires(self):
         rows, meta, fails = _stem_case('lead', lambda x: np.zeros_like(x))
         self.assertIn('stem.dead', fails, fails)
+
+    def test_unmeasured_row_is_info_not_pass(self):
+        """A row whose measurement did not run (no librosa) must never certify the stem: no PASS, an INFO that says so."""
+        real = gc.check_flatness
+        gc.check_flatness = lambda *a, **k: dict(value=0.0, threshold=0.1, unit='flatness', times=[],
+                                                 margin=0.0, detail='librosa missing: flatness row not measured',
+                                                 skipped=True)
+        try:
+            rows, _meta, _fails = _stem_case('pad', lambda s: s)
+        finally:
+            gc.check_flatness = real
+        levels = {lvl for lvl, rid, _ in rows if rid == 'stem.flatness'}
+        self.assertEqual(levels, {'INFO'}, rows)
 
     def test_report(self):
         cases = [

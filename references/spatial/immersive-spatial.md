@@ -138,7 +138,7 @@ the click check; the all-round decoder holds plane-wave power within 4 dB peak t
 
 | Target | File | What it is |
 |---|---|---|
-| `ambix` | `master_ambix.wav` | the bus itself as AmbiX (ACN order, SN3D), fifth order. Any ambisonic decoder can put it on any loudspeakers or headphones later, and it can still be rotated (head tracking, 360 video) |
+| `ambix` | `master_ambix.wav` | the bus itself as AmbiX (ACN order, SN3D), fifth order. Any ambisonic decoder can put it on any loudspeakers or headphones later, and it can still be rotated (head tracking, 360 video). The gate decodes it with AllRAD/max-rE to the 36-point `ambix_qa_36` virtual array for `channel.virtual` and `channel.bars` (`references/spatial/virtual-speaker-qa.md`) |
 | `adm_bw64` | `master_adm.wav` | one channel per placed track with its position over time as ADM metadata, plus the reverb return as a stereo bed. The playback renderer does the panning |
 | any target with `"rate_hz": 48000` (shipped: `stereo_48k`) | as its preset says | the finished programme resampled last; the true peak is measured again at the new rate and the whole file is turned down if it now passes the ceiling |
 
@@ -182,6 +182,11 @@ BS.2127) opened them, reconciled `chna` against the AXML, validated the model, a
 `ear-render --strict -c` to BS.2051 `0+5+0` and `4+7+0` without warnings or overload. libadm itself was not built
 (its CMake requires Boost, which this environment lacks), so no libadm-specific schema validation result exists. It
 is an open-standard ADM file, not a Dolby Atmos master and not a certified deliverable.
+
+## 2e. Immersive 3.0: every channel count from one mix
+
+Mono, the 5.1 family, loudness and limiting of a layout file, and where the arithmetic runs (CPU or GPU) are in
+`references/spatial/immersive-deliverables.md`.
 
 ## 3. Stage 0 (project gate) and the Stage 6 immersion rows
 
@@ -265,3 +270,5 @@ Loudness, true peak, clicks and silence are the existing rows.
   If it is the only target of a score, the stereo rows of the gate read its first two channels, which are not left
   and right: list a two-channel target first.
 - The channel-based 7.1, 7.1.2 and 7.1.4 WAV renders are not object-based Atmos/ADM, and speaker-layout gate checks do not replace listening on a correctly configured playback system.
+
+Section 2f (Immersive 3.1: decoder uniformity, MagLS crossover, NFC-HOA): [`immersive-spatial-3-1.md`](immersive-spatial-3-1.md).

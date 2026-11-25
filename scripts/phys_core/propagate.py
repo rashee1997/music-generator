@@ -39,13 +39,13 @@ def distance_gain(distance_m, ref_m=REF_DISTANCE_M):
     return float(ref_m) / max(float(distance_m), float(ref_m) * 0.5)
 
 
-def air(x, sr, distance_m, temp_c=20.0, rh=50.0):
-    """ISO 9613-1 atmospheric absorption over the distance beyond 1 m."""
+def air(x, sr, distance_m, temp_c=None, rh=None):
+    """Absorption of the active medium over the distance beyond 1 m (ISO 9613-1 for Earth air)."""
     d = max(0.0, float(distance_m) - REF_DISTANCE_M)
     if d <= 1e-6:
         return x
     import airabs
-    return airabs.apply(x, d, temp_c=float(temp_c), rh=float(rh), sr=sr)
+    return airabs.apply(x, d, temp_c=temp_c, rh=rh, sr=sr)
 
 
 def canopy(x, sr, distance_m, density=0.0):
@@ -80,7 +80,7 @@ def ground(x, sr, distance_m, gain=0.35, delay_ms=7.0, cutoff_hz=3500.0):
     return out
 
 
-def fresnel_number(path_diff_m, freq_hz):
+def fresnel_number(path_diff_m, freq_hz, c=None):
     """Fresnel-Kirchhoff diffraction parameter N = 2 * delta / lambda (Maekawa 1968).
 
     delta is the extra path length around the barrier edge over the direct line, so a sound barely
@@ -88,7 +88,10 @@ def fresnel_number(path_diff_m, freq_hz):
     """
     d = max(0.0, float(path_diff_m))
     f = np.maximum(np.asarray(freq_hz, dtype=float), 1.0)
-    return 2.0 * d * f / 343.0
+    if c is None:
+        from . import medium
+        c = medium.speed_of_sound()
+    return 2.0 * d * f / float(c)
 
 
 def maekawa_il(path_diff_m, freq_hz):
@@ -199,7 +202,7 @@ def apply(mono, sr, cfg=None, materials=None):
     d = float(cfg.get('distance_m', REF_DISTANCE_M))
     x = x * distance_gain(d)
     atm = cfg.get('atmosphere') or {}
-    x = air(x, sr, d, atm.get('temp_c', 20.0), atm.get('rh', 50.0))
+    x = air(x, sr, d, atm.get('temp_c'), atm.get('rh'))
     x = canopy(x, sr, d, float(cfg.get('canopy_density', 0.0)))
     occ = cfg.get('occluder')
     if isinstance(occ, dict) and occ:

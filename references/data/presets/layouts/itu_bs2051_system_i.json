@@ -31,13 +31,13 @@
       "name": "BL",
       "azimuth": -135.0,
       "elevation": 0.0,
-      "loudness_weight_db": 1.5
+      "loudness_weight_db": 0.0
     },
     {
       "name": "BR",
       "azimuth": 135.0,
       "elevation": 0.0,
-      "loudness_weight_db": 1.5
+      "loudness_weight_db": 0.0
     },
     {
       "name": "SL",
@@ -55,13 +55,13 @@
       "name": "TFL",
       "azimuth": -30.0,
       "elevation": 30.0,
-      "loudness_weight_db": 1.5
+      "loudness_weight_db": 0.0
     },
     {
       "name": "TFR",
       "azimuth": 30.0,
       "elevation": 30.0,
-      "loudness_weight_db": 1.5
+      "loudness_weight_db": 0.0
     }
   ],
   "lfe": {

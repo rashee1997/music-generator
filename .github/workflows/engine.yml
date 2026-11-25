@@ -1,0 +1,47 @@
+name: engine
+
+on:
+  push:
+    paths:
+      - 'scripts/**'
+      - 'tests/**'
+      - '.github/workflows/engine.yml'
+  pull_request:
+    paths:
+      - 'scripts/**'
+      - 'tests/**'
+      - '.github/workflows/engine.yml'
+
+jobs:
+  engine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install the measurement stack
+        run: python -m pip install --upgrade pip numpy scipy soundfile pyloudnorm librosa matplotlib
+      - name: Compile every module
+        run: python -m compileall -q scripts tests video-mixer
+      - name: Humanize, mix, presets and intent suites
+        run: |
+          python -m unittest \
+            tests.test_humanize_engine \
+            tests.test_humanize_stats \
+            tests.test_humanize_coupling \
+            tests.test_mix_engine \
+            tests.test_mix_inert_keys \
+            tests.test_preflight_lint \
+            tests.test_intent \
+            tests.test_expectation \
+            tests.test_arrange \
+            tests.test_expression \
+            tests.test_arc_report \
+            tests.test_short_form_report \
+            tests.test_metadata_and_direction \
+            tests.test_fusion \
+            tests.test_soul \
+            tests.test_world_integrity \
+            tests.test_robust

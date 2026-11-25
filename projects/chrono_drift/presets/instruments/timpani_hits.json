@@ -1,0 +1,63 @@
+{
+  "name": "timpani_hits",
+  "character": "Two hard timpani, close and slightly right: single strokes on the bar line and short rolls that tighten into each turning point.",
+  "description": "The clock of the gravity: single hits on D and A, one per bar in the build and twice per bar at the crush, with rolls into the section changes.",
+  "gm": "timpani",
+  "role": "drum",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 4.0,
+    "drift_ms": 3.0,
+    "vel_sigma": 7.0
+  },
+  "spatial": {
+    "azimuth": 26.0,
+    "elevation": 0.0,
+    "distance": 3.6,
+    "kind": "spot",
+    "binaural": true
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 28.0
+    },
+    {
+      "type": "lowshelf",
+      "f": 90.0,
+      "gain": 2.0,
+      "q": 0.7
+    },
+    {
+      "type": "peak",
+      "f": 400.0,
+      "gain": -3.0,
+      "q": 1.1
+    },
+    {
+      "type": "lp",
+      "f": 5000.0
+    }
+  ],
+  "gain_db": -3.0,
+  "reverb": 0.35,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 1.0,
+    "release_ms": 0.0
+  },
+  "mechanics_class": "drum",
+  "velocity_timbre": {
+    "points": [
+      [30, 600],
+      [70, 2000],
+      [127, 5000]
+    ],
+    "bands": 3
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring section 1 | constant percussion with accents is one of the four carriers of pressure; here it is the only drum",
+    "KB soundfont-velocity-and-realism section 4 | a soft stroke on a timp is duller than a hard one; velocity_timbre gives the rolls their dark-to-bright move; starting values",
+    "ESTIMATE: azimuth 26 deg, 3.6 m, gain -3 dB, HP 28 Hz and the +2 dB shelf at 90 Hz are starting values for two timps close and right"
+  ]
+}

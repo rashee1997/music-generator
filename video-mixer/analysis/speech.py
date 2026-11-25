@@ -31,8 +31,11 @@ BAND_DEFAULT = (300.0, 3400.0)
 F0_RANGE_HZ = (60.0, 400.0)
 
 
-def frame_signal(y, sr, frame_ms, hop_ms):
-    """Frames of the signal, (n_frames, frame_len), plus the times of their centres."""
+CHUNK_FRAMES = 4096        # frames analysed at a time: bounds memory (2 h at 10 ms hop is 720k frames of 1100 samples)
+
+
+def _layout(y, sr, frame_ms, hop_ms):
+    """(mono signal padded to one frame, frame length, hop, frame count)."""
     y = np.asarray(y, dtype=np.float32)
     if y.ndim > 1:
         y = y.mean(axis=1)
@@ -41,7 +44,20 @@ def frame_signal(y, sr, frame_ms, hop_ms):
     n = max(8, min(n, len(y)) if len(y) else 8)
     if len(y) < n:
         y = np.pad(y, (0, n - len(y)))
-    count = 1 + max(0, (len(y) - n) // hop)
+    return y, n, hop, 1 + max(0, (len(y) - n) // hop)
+
+
+def iter_frames(y, sr, frame_ms, hop_ms, chunk=CHUNK_FRAMES):
+    """Yield (frames (k, frame_len), times of their centres) in chunks of at most `chunk` frames."""
+    y, n, hop, count = _layout(y, sr, frame_ms, hop_ms)
+    for s in range(0, count, chunk):
+        k = np.arange(s, min(count, s + chunk))
+        yield y[np.arange(n)[None, :] + hop * k[:, None]], (k * hop + n / 2.0) / float(sr)
+
+
+def frame_signal(y, sr, frame_ms, hop_ms):
+    """Frames of the signal, (n_frames, frame_len), plus the times of their centres (all at once: short inputs)."""
+    y, n, hop, count = _layout(y, sr, frame_ms, hop_ms)
     idx = np.arange(n)[None, :] + hop * np.arange(count)[:, None]
     return y[idx], (np.arange(count) * hop + n / 2.0) / float(sr)
 
@@ -75,14 +91,18 @@ def _voicing(frames, sr):
     hi = max(lo + 1, int(sr / F0_RANGE_HZ[0]))
     hi = min(hi, frames.shape[1] - 2)
     out = np.zeros(len(frames))
-    for i, fr in enumerate(frames):
-        fr = fr - fr.mean()
-        denom = float(np.dot(fr, fr)) + 1e-12
-        ac = np.correlate(fr, fr, mode='full')[len(fr) - 1:]
-        if hi <= lo or hi >= len(ac):
-            continue
-        out[i] = float(np.max(ac[lo:hi]) / denom)
-    return out
+    n = frames.shape[1]
+    if hi <= lo or hi >= n:
+        return out
+    fr = frames.astype(np.float64)
+    fr = fr - fr.mean(axis=1, keepdims=True)
+    denom = np.einsum('ij,ij->i', fr, fr) + 1e-12
+    # autocorrelation of every frame by FFT (zero-padded to avoid wrap-around), lags 0..n-1: the same numbers
+    # np.correlate(fr, fr, 'full')[n - 1:] gives, without an n x n product per frame
+    nfft = int(2 ** np.ceil(np.log2(2 * n - 1)))
+    spec = np.fft.rfft(fr, nfft, axis=1)
+    ac = np.fft.irfft(spec * np.conj(spec), nfft, axis=1)[:, :n]
+    return np.max(ac[:, lo:hi], axis=1) / denom
 
 
 def activity(y, sr, cfg):
@@ -92,10 +112,14 @@ def activity(y, sr, cfg):
              'segments': [(start_s, end_s)], 'per_second': [fraction, ...]}
     """
     sp = cfg.get('speech', cfg)
-    frames, times = frame_signal(y, sr, sp.get('frame_ms', 25.0), sp.get('hop_ms', 10.0))
-    band_db = _band_rms_db(frames, sr, sp.get('band_hz', BAND_DEFAULT))
-    flat = _flatness(frames)
-    voice = _voicing(frames, sr)
+    band_db, flat, voice, time_parts = [], [], [], []
+    for frames, t in iter_frames(y, sr, sp.get('frame_ms', 25.0), sp.get('hop_ms', 10.0)):
+        band_db.append(_band_rms_db(frames, sr, sp.get('band_hz', BAND_DEFAULT)))
+        flat.append(_flatness(frames))
+        voice.append(_voicing(frames, sr))
+        time_parts.append(t)
+    times = np.concatenate(time_parts)
+    band_db, flat, voice = np.concatenate(band_db), np.concatenate(flat), np.concatenate(voice)
     active = (band_db > float(sp.get('threshold_db', -42.0))) & \
              (flat < float(sp.get('max_flatness', 0.45))) & \
              (voice > float(sp.get('min_voicing', 0.30)))
@@ -105,16 +129,17 @@ def activity(y, sr, cfg):
     hold = float(sp.get('hold_s', 0.25))
     segs = [(a, min(b + hold, float(times[-1]) + 1e-6)) for a, b in segs]
     mask = np.zeros(len(times), np.float32)
-    for a, b in segs:
-        mask[(times >= a) & (times < b)] = 1.0
+    for a, b in segs:                                   # `times` ascends: slice by bisection, not a full scan
+        mask[np.searchsorted(times, a, 'left'):np.searchsorted(times, b, 'left')] = 1.0
     total = float(times[-1]) if len(times) else 0.0
+    csum = np.concatenate([[0.0], np.cumsum(mask, dtype=np.float64)])
     per_second = []
     for s in range(int(np.ceil(total)) if total > 0 else 0):
-        sel = (times >= s) & (times < s + 1)
-        per_second.append(round(float(mask[sel].mean()) if sel.any() else 0.0, 3))
+        lo, hi = np.searchsorted(times, [s, s + 1], 'left')
+        per_second.append(round(float(csum[hi] - csum[lo]) / (hi - lo) if hi > lo else 0.0, 3))
     return dict(mask=mask, times=times, share=round(float(mask.mean()) if len(mask) else 0.0, 4),
                 segments=[(round(a, 3), round(b, 3)) for a, b in segs], per_second=per_second,
-                frames=len(frames))
+                frames=len(times))
 
 
 def _segments(times, active):
@@ -152,4 +177,4 @@ def mask_at(mask, times, n, sr):
     return (np.interp(t, times, mask) >= 0.5).astype(np.float32)
 
 
-__all__ = ['activity', 'frame_signal', 'mask_at', 'BAND_DEFAULT']
+__all__ = ['activity', 'frame_signal', 'iter_frames', 'mask_at', 'BAND_DEFAULT']

@@ -148,6 +148,47 @@ may declare `focus` and an `intent` block, and `compose.py` fills only the field
 that the profile does not judge is a WARN naming both, because the report would apply the wrong rule. A declaration is
 never deleted to pass a row. Detail: `references/workflow/intent-and-focus.md`.
 
+## 3f. Rows for how the music is played (`quality_gate._expression_rows`, from `scripts/helpers/expression_report.py`)
+
+No neural model and no audio: the rows read the sheet and the score's notes. Anchors are starting values that no corpus has calibrated, so the measured rows warn and never fail.
+
+| Row | Judges | Result |
+|---|---|---|
+| `direction.expression` | the sheet's `expression` block (music-direction.md 2.11) | WARN when absent, FAIL when present and incomplete, PASS when complete |
+| `expression.arousal_order` | rank correlation (Spearman) between the sections' declared `energy` and an index of tempo, note density, velocity, register and staccato share per section; limit 0.5 | WARN below the limit, INFO under three sections |
+| `melody.variety` | the figure track: interval entropy (limit 1.0 bit), range (7 semitones), bars that repeat exactly (60 %), no leap in a long line | WARN on a flag, INFO without a figure track |
+
+The index follows the cue research (mode, tempo, register, dynamics, articulation, timbre; Gabrielsson and Lindstrom 2010, Eerola, Friberg and Bresin 2013). It measures how hard the written music pushes, not its valence.
+
+## 3g. Pre-render rows (`scripts/preflight_lint.py`, stage 2)
+
+Read from the score and the presets before any audio is made; each was found by a render that failed. FAIL and WARN rows print in stage 2 with the pattern-audit rows. They do not replace the audio rows.
+
+| Row | Level | Judges |
+|---|---|---|
+| `preflight.range` | FAIL | a note outside the sampled key range of its SFZ patch (silent or stretched); read from the `.sfz` and its includes |
+| `preflight.sfx_length` | FAIL | a one-shot event cut before 75 % of its sound plays (event `d`, or the next onset, shorter than the preset's `seconds`): the cut is a click |
+| `preflight.section_edge` | WARN | a sparse sound (16 beats or less) that ends in a section with none of its events |
+| `preflight.unison` | WARN | two instruments of different families on one pitch above middle C for three beats or more |
+| `preflight.figure_level` | WARN | a melody, lead or vocal part that plays mostly the quiet sections: gain staging lifts every figure-family part to full level, so give it the role `counter` |
+| `preflight.placement` | WARN | a score-placed sound within 25 degrees in azimuth and 15 in elevation of a part that plays with it |
+
+More rows, from the score alone (`scripts/preflight_levels.py`; estimates, WARN only):
+
+| Row | Judges |
+|---|---|
+| `preflight.stem_level` | a part quiet twice in a section (velocity and the dynamics curve both under 75 % of usual): the stem gate reads it as `stem.dead` |
+| `preflight.arc` | parts playing x velocity x curve per section against the declared section energy (rank correlation under 0.5 is where `section.energy` fails) |
+| `preflight.tempo` | a tempo map spanning more than 25 %: `tempo.audio` will fail against one declared value; record a measured skip |
+| `preflight.roughness` | two different instruments a second apart for three beats or more (Plomp and Levelt 1965) |
+| `preflight.roughness_partials` | the score's hottest frames when every note is given its overtones (`scripts/roughness_forecast.py`); WARN only, a screening model |
+
+One-shot effects, rendered once and judged alone (`scripts/preset_probe.py`): `probe.silent` and `probe.clip` and `probe.start` FAIL; `probe.tail` and `probe.dc` WARN (`probe.dc` is silent when every track that plays the effect sets `dc_hp_hz`).
+
+`focus.declared` and `intent.*` run in stage 2 as well. `scripts/lint_coverage.py` maps every gate row to the rule that catches it before a render, or to the reason only audio can; `tests/test_lint_coverage.py` fails when a gate row is missing from it. `scripts/gate_clock.py` is the one beats-to-seconds conversion for every gate module; `tests/test_gate_clock.py` fails when a gate module reads the flat `bpm` without `# flat-bpm-ok: <why>`.
+
+Limits are starting values from those failures. `python scripts/preflight_lint.py scores/<title>_score.json <project>` runs all of them alone.
+
 ## 3c. The gate adapts to the type of piece (gate profiles)
 
 Rules tuned on melodies false-flag a tense drone, an ambient bed, a dance loop or an effects-only piece. So which rows run, and their
@@ -180,6 +221,18 @@ numbers, come from a **gate profile**: a preset of kind `gate` (`references/data
 - Commands: `gate_profiles.py list | rows | explain score.json | new <name> --from tense --project D | check`. The project gate runs
   `check`, rejects an unknown `piece_type`, and warns when the type was inferred.
 
+## 3h. Realism measurements are advisory, not rows
+
+`python scripts/realism_report.py out/master.wav --score ... --stems out/stems --project .` measures the eight
+qualities in `knowledgebase/sound-design/theatrical-realism.md`: timbre against loudness, section scatter,
+transient variety, direct-to-reverberant depth, low-mid against sub, air absorption at distance, air at density and
+bar-scale phrasing. It prints `PASS` / `WARN` / `N/A` per dimension. They are **not** gate rows on purpose: the
+thresholds are starting values, several need dry stems the gate may not have, and a WARN is a question for the
+director, not a faulty render. Report them beside the gate, never instead of it. The gate rows a theatrical change
+actually threatens are `cochlear_roughness` (added harmonics), `masking` and `balance` (a lifted air band), `master.dc`
+and `fold.mono` (a low-mid stage), and `loudness` / `true_peak` (the air lift). Fix the part or the preset; never
+loosen a row to make the realism report look better.
+
 ## 4. What the gate cannot judge
 
 - Whether the phrasing sounds human, whether the style is right, cultural correctness, taste. Listen (`listen.py`,
@@ -202,116 +255,7 @@ numbers, come from a **gate profile**: a preset of kind `gate` (`references/data
   that register is left to `low_interval_mud`.
 - The silent-gap test looks at 0.25 s windows, so a gap shorter than one second is not reported.
 
-## 5b. Deliverable-format rows (only for the formats the score asked for)
+## Deliverable and immersive rows
 
-`spatial_gate.output_rows` reads the score's `output_targets` through `render_targets` and checks the delivered file
-against the target it claims to be. A format that was not requested is never checked and can never fail.
-
-| Row | Applies to | What is measured | Where the limit comes from |
-|---|---|---|---|
-| `delivery.true_peak` | every target | worst channel true peak after 4x oversampling | the target preset's `true_peak_dbtp` (-1.5 dBTP two-channel, -3.0 dBTP multichannel) |
-| `delivery.format` | every target | channel count against the requested targets (a target with `"channels": 0`, one channel per object, is matched by file name) | `render_targets.channels()` |
-| `stereo.correlation` | 2-channel targets | `corr(L, R)` - below the floor the centre is cancelling | target preset `gate.stereo_correlation_min` |
-| `imm.lfe_stopband` | multichannel | energy above the stopband, relative to the programme RMS | layout `lfe.stopband_hz` / `stopband_db` |
-| `imm.surround_ratio` | multichannel | surround energy (BL+BR+SL+SR) against the front stage (FL+FR+FC) | layout `gate.surround_ratio_db` |
-| `imm.height_arc` | layouts with overhead speakers | height energy against the listener-level beds | layout `gate.height_max_rel_db` |
-| `imm.fold_coherence` | multichannel | correlation of the ITU-R BS.775 fold | layout `gate.stereo_correlation_min` |
-| `render.finite` | every target | a NaN or an infinite sample in any channel (protected: no profile can switch it off) | none: one is a fault |
-| `adm.container` | the `adm_bw64` target | the container itself, read from the bytes: `BW64` magic + saturated outer size, `ds64` first with the 64-bit file and data sizes matching the file, `fmt `/`chna`/`axml`/`data` agreement, unique ADM IDs with every reference resolved (or a BS.2094 common definition), each `chna` row mapping one channel to one `audioTrackUID`, block times contiguous from 0 to the file end, positions in range | `scripts/spatial_engine/adm.py` `validate_file` (structure, not a threshold) |
-| `adm.channels` | the `adm_bw64` target | tracks, sample rate, frames, bit depth read from the parsed container, and that each track maps to exactly one ADM object | `adm.parse` |
-| `adm.loudness` | the `adm_bw64` target | names the loudness policy in the report: BS.1770 loudness of a constant-power stereo fold of the objects, applied as one programme gain at render time. This is this engine's internal levelling reference, not a standard-required loudness (an object file has no loudness until a renderer folds it), so the row reports the method rather than inventing a target | `spatial_engine/adm.py` `AdmBus.report` |
-
-The `adm_bw64` target is checked by those rows and never by `delivery.format`: its channel count is the piece's, not
-the format's, and the container is BW64, which libsndfile/soundfile cannot open (`sf.read` raises `Format not
-recognised` for the BW64 magic; it understands RF64, not BW64). `adm.parse` is therefore the reader of record, and a
-plain RIFF file that merely carries the right name fails `adm.container`.
-
-For a multichannel delivery the `loudness` row is measured on the layout's BS.775 two-channel fold, not on the mean of
-the channels: the fold is what a listener without the room hears, and a channel mean changes with the channel count.
-
-A `FAIL` here names the channel or the ratio that broke, so the fix is a preset send level or a track's position - not
-a loosened threshold. The low-frequency row is an upper limit, so the guard in `spatial_engine/bass.py` is a low-pass at
-the stopband: a high-pass there would strip the band the channel exists to carry.
-
-## 5b. Immersive rows (only when the mix preset has `immersive.enabled`)
-
-`imm_cues`, `imm_elevation`, `imm_height_rules`, `imm_externalization`, `imm_foldown` FAIL; `imm_frontback`, `imm_band`, `imm_envelopment`, `imm_width` WARN.
-Probes run through the measured-head route the mixer forces, with the numbers from `tests/test_hrtf.py`. What each row means, the height rules and the
-limits: `references/spatial/immersive-spatial.md`. A failing row is fixed in the score or presets (raise a pad, give the space a ceiling reflection, lower a bass), never by loosening the row. The rows of the ambisonic engine (`imm_kinematics`, `imm_low_fold`, `mix.band_fold`, `imm_iacc_early`, `imm_clarity`) are in the same file, section 3.
-
-## 5d. Z-axis separation and equal-loudness harshness
-
-**`spatial.z_separation`** (`overlap_min`, `min_sep_deg`, `min_elev_deg`). In the loudest quarter of the piece (the climax,
-measured, not assumed) it takes every pair of non-environment tracks that both hold the 500-4000 Hz band at a similar level
-(band-envelope overlap above `overlap_min`) and asks whether they are placed apart. A pair passes on **either** `min_sep_deg`
-of angular separation (azimuth wrapped, so +170 deg and -170 deg are 20 deg apart) **or** `min_elev_deg` of elevation
-difference. Elevation only counts where the mixer will render it (`spatial.binaural` on the track/preset, or the mix preset's
-`immersive.enabled`); a staged height with no binaural route is reported as such, because the default pan path has no height.
-The fix the row names: give one part an elevated arc (the reference for a strings-versus-low-brass collision is strings
-out at about +-50 deg azimuth and +25..35 deg elevation, low brass and timpani anchored at about +-20 deg and -10..0 deg),
-or move one of them 25 deg or more in azimuth. Do not answer it with a broadband EQ cut: the row exists because height
-separation is cheaper than carving the midrange. Beds and environments are excluded; their width comes from `spread`/`kind`.
-
-**`spectral.equal_loudness`** (`warn_db`, `fail_db`, `band_lo_hz`, `band_hi_hz`, `max_trim_db`). Per non-environment stem, the
-Welch spectrum is weighted by the ear's threshold sensitivity (Terhardt's absolute-threshold curve, the dip that ISO 226's
-threshold region encodes: `3.64 f^-0.8 - 6.5 exp(-0.6 (f/3.3 - 1)^2) + 1e-3 f^4`, kHz), and the `band_lo_hz`-`band_hi_hz`
-power is compared with the 500 Hz-`band_lo_hz` power, corrected for how many octaves each side holds (a flat, equal-energy-per-octave
-source therefore reads about 0 dB). WARN at `warn_db`, FAIL at `fail_db`; the row names the stem and prints the narrow `inst_eq`
-cut to paste into the piece's mix preset, bounded by `max_trim_db` (2-3 dB is the usual fix for a bright `.sf2` lead).
-This is a K-weighted/equal-loudness **approximation**, not a certified ISO 226 loudness meter, and it judges a stem's balance,
-not the master's; it cannot hear whether the brightness is intended. Listen before cutting.
-
-## 5c. One list of rows, whoever runs the gate
-
-### Two stages: stems before the mix, master after
-
-The gate runs twice on a generated piece:
-
-1. **`stem_gate.run_stem_gate(score, stems)`** runs in pipeline stage 4b, on each stem alone, before `mixer.mix_and_master`.
-   It measures clicks, dropout, hard cut at a section boundary, abrupt end, clipping, DC, spectral flatness, vocal
-   integrity, duplicate/present stems and a dead part against the score's dynamics. Any `stem.*` FAIL stops the run:
-   nothing is mixed and `out/` is untouched. Each stem is measured in its own thread (`GATE_WORKERS` / `--gate-workers`,
-   default 2), and the per-stem and total timings go into the report.
-2. **`quality_gate.run_gate`** runs after mixing on the draft WAV and certifies. It adds the same detectors on the master
-   under unsuffixed ids (`clicks`, `dropout`, `cut.hard`, `end.abrupt`, `clipping`, `master.dc`), plus measured-against-
-   sheet `tempo.audio` and `section.energy`. Only 0 FAIL publishes a version.
-
-`--draft` keeps stage 1 and the tier-1 master rows and skips masking, roughness, immersive, chroma, kick grid, equal
-loudness, flutter, ambience-reference and sfx rows; it never publishes. The formulas, windows and calibration status of
-every new row are in `references/mixing/gate-maths.md`.
-
-Every row also produces a number record: `out/ci_report.json` has `gate.mode`, `gate.stopped` and `gate.stages.{stem,mix}`,
-and each stage's `metrics` lists `row`, `stem`, `level`, `value`, `threshold`, `margin`, `unit`, `worst_times_s`,
-`calibrated` and `detail`. `scripts/gate_report.py` writes a PNG beside a `.txt` and `.json` for the waveform with section
-boundaries and flags, the log spectrogram, the short-term level, stereo correlation, per-stem level against the dynamics
-curve and section energy against the sheet, under `<project>/reports/gate/`.
-
-Every stem row is a gate-profile row too. `stem_gate.run_stem_gate` resolves the same profile as the mix gate
-(`gate_profiles.resolve(score)`), so the piece's `piece_type` decides whether `stem.clicks`, `stem.dropout`, `stem.cut`,
-`stem.end`, `stem.edge`, `stem.tick`, `stem.dead`, `stem.flatness`, `stem.dc`, `stem.clipping`, `stem.vocal`,
-`stem.present` and `stem.duplicate` apply, uses the profile's parameter values for each, and a `skip`/`relax` needs the
-profile's written reason. A skipped row is printed (`[INFO] stem.<row>: SKIPPED by profile <label>: <reason>`), never
-silently dropped, and an unknown `piece_type` is a FAIL in both stages. The chosen profile label is in
-`reports/gate/stem_gate.json` and `ci_report.json`. `quality_gate.py <score> --timings` prints the per-group wall time of
-a local mix-gate run.
-
-There is one implementation of the row list: `quality_gate.run_gate`. `quality_gate.py <score> --wav <master>` calls it
-after rendering; `pipeline.py` calls the same function from stage 6 with the score it rendered
-(`run_gate(None, wav_path=..., stems=..., score=score)`), so a row can never exist in one path and not the other. If a row
-is missing from a pipeline run, it is skipped by the piece's gate profile, not by the pipeline.
-
-Two groups sit on top of the gate rows:
-
-- **`mix:` rows** — the mixing diagnostics (`scripts/mix_diagnostics.py`), collected because stage 5 mixes with
-  `diagnose=True`. They are advisory by contract, so a diagnostic `FAIL` appears here as `WARN`; the gate's own
-  true-peak, clipping and silence rows own the blocking verdicts. Fix what they name rather than ignoring them.
-- **`music21_hook`** — the `analyze_music21.py` in a project's own `scripts/` folder, if present.
-
-## 6. The extraction gate borrows this gate
-
-`scripts/extraction/gate.py` (stage `gate` of `extract_pipeline.py`) judges a song rebuilt from MIDI against the original.
-It imports `naturalness_check.analyse` / `verdicts` / `cochlear_roughness_check` and `quality_gate.find_clicks` /
-`masking_rows`, runs them on the rebuilt mix and on the original, and counts a fault only when the original does not have
-it too (a bright, hot or narrow master is not the rebuild's fault). `naturalness_check.analyse(..., audio=(samples, sr))`
-measures an array in memory for this. Waveforms are never subtracted: the rebuild has its own phase, so spectra, levels
-and statistics are compared. See `references/workflow/extraction.md` for the rows.
+The rows that judge a delivered format, the immersive probes, the z-axis and mono checks, the extraction gate
+and the roughness workflow are in [`quality-gate-rows.md`](quality-gate-rows.md).

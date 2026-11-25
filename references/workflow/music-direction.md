@@ -124,6 +124,7 @@ The core targets. `listen.py` reads these directly, so fill them with words and 
 | `hits` | the same moments as `hits_at`, each with `kind` (`cut`, `motion`, `musical`), `sync` (`hard`, `soft`), `sound`, and `why` - the reason the moment needs an accent |
 | `ending` | how it leaves: `hard_out`, `tail_out`, `combination` |
 | `mix_intent` | `hero`, `support`, `sits_under` (what must win), `must_hear` (audible by when), `leave_free_hz` |
+| `expression` | how it is played and heard: `sonic_picture`, `performer`, `producer_moves`, `anti_generic`, `cues`, `theme` (2.11) |
 | `immersive` | whether the field is doing a job, and how: `why`, `engine`, `anchors`, `movers`, `height`, `room_changes`, `deliverables` (2.10) |
 | `delivery` | `format`, `sample_rate`, `bit_depth`, `stage` (`web`, `broadcast`, `cinema`), `output_targets` (the score names the same set) |
 | `references` | the reference in words, never a track (2.5) |
@@ -154,6 +155,11 @@ an original score feel wrong by comparison, and the reason composers are asked t
 - `references` takes **words**: "a slow cello line over a soft pulse, like the opening of a documentary", never a
   track name and never a melody that belongs to someone. The writing has to be original for legal reasons and because
   a copy is a locked door.
+- **A film composer's or a film's style is a list of devices, not a name.** Write what the sound is made of: "a sustained
+  pipe-organ pedal under a rising pulsed arpeggio, low brass swells at the turning points, a simple theme that returns
+  larger, a hard cut into silence". Do not write the composer, the film or a melody of theirs into the sheet or the score
+  (the sheet is words, the writing is original). A "like X" brief is read into those devices in the craft pass
+  (`references/workflow/director-craft.md` section 1) and the research note.
 - With a temp track, read what the brief wants from it (texture, tempo, space), write that into the sheet, and judge
   the draft against the sheet.
 
@@ -242,93 +248,53 @@ Whether the field does a job, which parts move and why, the height plan, the roo
 that carry them are decided in [`directing-space.md`](directing-space.md); the numbers they describe live in the
 presets, never in this sheet.
 
-## 3. Decide in the order listeners weigh cues
+### 2.11 How the music is played and heard: the `expression` block
 
-Mode is the strongest cue for happy and sad; tempo, register, dynamics, articulation and timbre follow, and the cues
-add up, so one pointing the wrong way is not cancelled by the rest. Decide in that order and make them agree. For a
-mixed feeling (bittersweet, anxious hope), take the main feeling's mode and tempo and borrow one cue from the other;
-do not average.
+This is the entry point of the whole piece. A sheet that says what the cue must do (`job`, `energy`, `feel`) still leaves
+the agent to invent what it sounds like, and an agent left to invent writes the generic version: a pad, an arpeggio and a
+drum loop in the right key. A human producer decides how the music is *played* before a note exists. Write these
+before the score; they are read by `quality_gate.direction_rows` and by `scripts/helpers/expression_report.py`.
 
-Rows and thresholds for melodic contour, interval entropy, note lengths, breath gaps, voice leading, groove pocket
-and ostinato repetition: see `references/mixing/quality-gate.md` §3e, and write to them instead of fixing failures
-later.
+| Field | Decide | The test it can fail |
+|---|---|---|
+| `sonic_picture` | stand in the room: what the listener hears in the first ten seconds, in the middle and in the last note, in plain physical words (distance, size, materials, who is near) | the score's first ten seconds contain what it says |
+| `performer` | who plays each part and what a human does: where the player breathes, leans on a beat, lets a note die, plays slightly behind or ahead; how many players share a section part, and whether the same player is the same player all piece | `humanize`, `mood`, `articulation` and, for a section, `ensemble` are set to say it |
+| `producer_moves` | what a producer does that a score does not say: a filter that opens over sixteen bars, a full stop before a hit, a reverb throw on the last note | each move has a preset key or a score event |
+| `anti_generic` | the generic version of this cue in one sentence, and the one thing that stops this cue being it | the sentence names a measurable difference (a pulse that changes, a leap on a weak beat) |
+| `cues` | per section: `arousal` (low, mid, high), `mode_register`, `tempo_trend`, `dynamics`, `articulation`, `timbre` (what changes in the colour when the section gets loud, not only how much louder it gets) | `expression.arousal_order` compares the written notes with the sections' `energy`; realism report dimension 1 measures the colour |
+| `theme` | the melody's identity: `contour`, `interval_character`, `rhythm_cell`, `why_memorable`, `variation_plan` (how it changes each time it returns) | `melody.variety` measures interval entropy, range, leaps and bars that repeat exactly |
 
-## 4. Build the picture's moments (hits, risers, silence)
+The cue table follows the research on what carries emotion in music: mode, tempo, register, dynamics, articulation
+and timbre, acting mostly additively (`knowledgebase/genre-and-feel/emotion-cues.md`). Decide all six per section; a
+section that leaves one open gets the default of the last section, which is how a tense cue ends up calm.
 
-- **Hit:** a kick or taiko with its highs cut, layers stacked low to high (sub, boom, metal or orchestral percussion),
-  each EQ'd separately, then distortion, EQ, compression and reverb; the transient lands on the frame.
-- **Riser:** pitch or filter climbing over several bars, faster and louder, peaking on the cut.
-- **Silence before the hit:** end the riser, leave a short gap, then hit; the gap makes the hit land harder.
-- **Braam:** a long, loud, low brass note (C1-C2) stacked in octaves (C0, C1, C2), pitched down, distorted and
-  reverbed, on cuts that mark a transition.
-- **Sub drop:** a low layer under the hit, EQ'd separately, felt more than heard on a large system.
+Rules:
 
-In a score these are a `rise` at `t`, a `silence`, and an `impact` on the exact beat; `compose.py` hit points do this.
-For custom placement use `direct.add_line` (a stab or fanfare) or `direct.add_pulse` (the grid under it).
+**Theatrical realism is decided here, not fixed in the mix.** Three declarations carry it and all three are read by
+the engine: a part whose colour changes with loudness says so with `timbre_dynamics`; a section says how many
+players it has with `ensemble`; the score says how the bar breathes with `elastic`. If the sheet's `performer` field
+cannot say which of those applies, the piece has not decided how it is played. The facts and the working figures are
+in `knowledgebase/sound-design/theatrical-realism.md`; the rules and the blocks are in
+[`theatrical-realism.md`](../mixing/theatrical-realism.md). Measure the result with
+`python scripts/realism_report.py` after the render, and put its WARNs in the director's second review.
 
-## 5. Adaptive music (games, interactive pieces)
+1. **Write the theme as a shape, not a mood.** "Heroic" is not a theme. "A rise of a fifth, a step back, then a fall,
+   long-short-short-long, the leap on the weak beat, inverted at the return" is one. A melody an agent writes without a shape
+   is the average of every melody it has seen.
+2. **Every return of a motif changes one thing** (interval, rhythm, register, harmony, instrument) and keeps another. The
+   plan says which, in `theme.variation_plan` and in `motifs[].returns`.
+3. **Name the human act.** "Violins sustain" is a patch. "The violins enter late, swell with the bow and drop off before the
+   change" is a performance, and it becomes `dynamics` in the score and `articulation` on the notes.
+4. **The generic version is named so it can be refused.** If the score's first idea is the sentence in `anti_generic`, rewrite it.
+5. **What the metrics cannot say stays said.** `expression_report.py` measures arousal cues and melodic variety from notes.
+   It does not measure valence, taste or whether the theme is good; say so in the report.
 
-A game hands timing to the player.
+### 2.12 The craft pass
 
-- **Vertical layering:** one base loop runs always; stems fade in or out on events, and a muted stem keeps looping in
-  sync so it can return at any point.
-- **Horizontal re-sequencing:** intro, loop and outro sections switch into one another, with fades to soften cuts.
-- Combine them: loopable stacked stems that switch sections and add layers. Sync transitions to a bar or beat, set
-  tempo and meter once, keep the first beat after a transition clean, and write loops of one to two minutes.
+After the sheet is filled and before any note, answer the six questions in [`director-craft.md`](director-craft.md) section 1:
+the hook, the arc, the density map, the lanes, the contrast and the ending. Each answer goes into a field above
+(`motifs`, `sections`, `mix_intent`, `expression`), so nothing new is added to the sheet. The same file lists the
+failures that make a piece read as generated and the counter for each, the rules for blending traditions, and the review
+after the render. A ringtone, alert or loop adds [`short-form-and-ringtones.md`](../scoring/short-form-and-ringtones.md).
 
-Direction: one key and one tempo for every state, three intensities with
-`compose.py --intensity 0.3 / 0.6 / 0.95 --loop`, a sheet per state, and `listen.py` on each.
-
-## 6. Revision levers: what to change when a target misses
-
-Change one lever at a time, render, listen. Each row starts with the most likely cause.
-
-| Target misses | First lever | Second lever | Code |
-|---|---|---|---|
-| It reads upbeat when the brief was not | check `meta.mood_notes`: if it says "no mood word recognised", name the feel. Then `energy` and `space` | add `slow`/`sparse` words, or lower `energy` one step | `compose --emotion`, `--energy`, `--space` |
-| The mood is right but the room is wrong | `space`: `large_hall` for landscape or "reverb mix", `dry` for intimate | lower the reverb return (`mix.reverb_return`) instead of the room | score `room`, `mix` |
-| `feel` loses to `avoid_feel` (forced choice under 35 %) | **mode**: major for epic, triumphant, hopeful; minor/dorian for sad, tense | tempo up 10-20 BPM for energy, down for calm | `compose.py --mode major --bpm 104` |
-| Forced choice is close (35-50 %) | a bigger **loudness arc** (quiet start, loud peak) | add a **fanfare or a hook** on the reveal | `direct.set_arc`, `direct.add_line` |
-| `avoid` word in top 3 readings | take out the layer or the harmony that reads as the wrong feel | slow the tempo or lower the register | `direct.remove_track`, `direct.set_gain` |
-| `pulse` clarity under 0.15 but `steady` wanted | add a kick on every beat from the start | make the drums `tight`, keep the tempo map flat | `direct.add_pulse` |
-| `pulse` high but `none` wanted | remove drums and bar-locked ostinatos | let the phrases rubato | `direct.remove_track` |
-| `tempo` out of range (double/half counts as passing) | set the score tempo | check the score bpm, not a render estimate | `direct.tempo`, `compose --bpm` |
-| `instruments` not named (e.g. taiko) | add a track for the instrument, or raise its gain 3-6 dB | move it up a register | `direct.add_line`, `direct.set_gain` |
-| `mode` mismatch with a weak key (r under 0.6) | do not trust the key estimate; check the sound, then decide | change the mode only if the feel check also fails | `compose --mode` |
-| `hits` missing onsets | put the hit on a beat (`hit_points` snap to half-beats) | add a sub layer under the hit (+3 dB on the impact) | `compose` hit points, `direct.add_line` |
-| `loudness` off | `master.lufs` in the score | a very dynamic piece may not reach a target; accept it | score `master` |
-| `true_peak` hot or `clipping` | lower the master input 2-3 dB | lower the loudest stem's `gain_db` | score `master`, `gain_db` |
-| `length` off | `duration_s` / bar count | a ring-out adds 2-5 s; trim the file or accept and say so | `compose --duration` |
-| An SFZ part reads as a sample player (same attack every note, flat sustain) | patch per articulation + `art` on the notes (2.9) | a written `dynamics` arc, then move an exposed sustained solo to the GM path | `sfz` block, score `dynamics` |
-
-Gate rows, thresholds and levers: see `references/mixing/quality-gate.md`.
-
-Two rules that stop revision from going round in circles:
-
-1. **A second change to the same target that does not move it means the lever is wrong.** Try another lever from the
-   same row, or the row below it.
-2. **A FAIL on `feel` is a question, not a verdict.** earshot is a model: listen yourself, or tell the user what the
-   numbers say and ask them to listen.
-
-## 7. What earshot can and cannot hear
-
-earshot listens with CLAP (text-audio similarity) and AST (AudioSet tags) plus measurements: a second opinion, not a
-human ear.
-
-**Use it for:** the forced choice (the wanted word must win more than half; `listen.py` reports FAIL when an opposite
-wins), the ranked readings (genre, mood, instruments), pulse clarity, tempo, key, onsets and an A/B comparison.
-
-**Its limits:** mood labels are wrong about one time in five; readings are not exclusive (a piece can read triumphant
-and sad at once); tempo can read double or half, and with no pulse (clarity under 0.15) there is none to trust; key
-estimates with r under 0.6 are weak; it cannot judge taste, melody, lyrics, cultural fit or whether a synth is real,
-and an instrument it does not name is not proven absent.
-
-## 8. Delivery
-
-Deliver the master WAV and the MIDI, the filled direction sheet, the `listen.py` report in plain words (which targets
-pass, which still check, what earshot heard), one or two named variations if the brief was open, and one line on what
-was not checked (taste, the real instruments, how it sits in the final video). Situation recipes, each with a brief,
-the direct calls and a sheet: `references/workflow/scene-recipes.md`.
-
-Do not say "it sounds like an orchestra" or "it is natural". Say what the sheet asked for, what the report found, and
-what is left.
+Sections 3-8 (cue order, picture moments, adaptive music, revision levers, earshot, delivery): [`music-direction-revision.md`](music-direction-revision.md).

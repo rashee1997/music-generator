@@ -71,7 +71,7 @@ def _metrics(x, sr=SR):
         meas = ar.measure_array(m, sr)
         out['centroid_hz'] = round(meas['centroid_hz'], 1)
         out['bands'] = {k: round(v, 4) for k, v in meas['bands'].items()}
-    except Exception:                                     # too short to measure: level is still comparable
+    except ValueError:                                    # too short or silent to measure: level is still comparable
         pass
     return out
 

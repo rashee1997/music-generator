@@ -55,7 +55,6 @@ import world as _world      # scales (with cents in world.MICRO) and grooves for
 MODES.update(_world.MODES)
 PARENT.update(_world.PARENT)
 
-CHORD_TONES = {'': None}
 ROMAN = {'I': 0, 'II': 1, 'III': 2, 'IV': 3, 'V': 4, 'VI': 5, 'VII': 6}
 
 
@@ -99,6 +98,9 @@ class Key:
             raise ValueError(f'bad chord symbol {sym}')
         acc, num, suf = m.groups()
         deg = ROMAN[num.upper()]
+        if deg >= len(self.parent):
+            raise ValueError(f'mode {self.mode!r} has a {len(self.parent)}-note parent scale, so it has no degree '
+                             f'{num.upper()}: give it a 7-note parent in world.PARENT')
         root = self.parent[deg] + (-1 if acc == 'b' else 1 if acc == '#' else 0)
         upper = num.isupper()
         tones = [0, 4, 7] if upper else [0, 3, 7]
@@ -115,8 +117,8 @@ class Key:
             tones = [0, 7]
         if 'maj7' in s or 'maj9' in s:
             tones = tones + [11]
-        elif '7' in s or re.search(r'(?<!add)9', s):
-            tones = tones + [10]
+        elif 'dim' not in s and ('7' in s or re.search(r'(?<!add)9', s)):
+            tones = tones + [10]         # a diminished seventh already carries its own (double-flat) seventh
         if '6' in s and 'maj' not in s:
             tones = tones + [9]
         if 'add9' in s or '9' in s:
@@ -712,21 +714,33 @@ def _step_probs(pull, prev_dir):
     return base / base.sum()
 
 
-def vary_phrase(rng, key, phrase_notes, new_chords, bb, shift=0, cadence_deg=None, bars_per_phrase=None):
+def vary_phrase(rng, key, phrase_notes, new_chords, bb, shift=0, cadence_deg=None, bars_per_phrase=None, span=None):
     """Re-use a phrase over different chords (the 'A' returns): same degrees & rhythm, strong beats re-snapped
-    to the new chords, optional transposition by `shift` scale degrees, new cadence note."""
+    to the new chords, optional transposition by `shift` scale degrees, new cadence note.
+    `span` = (lo, hi) in scale degrees, the span make_phrase wrote the phrase in: a shifted, re-snapped or
+    de-rubbed note stays inside it (the cadence note is the caller's choice and is left as given)."""
     out = []
+    lo, hi = span if span is not None else (None, None)
     for n in phrase_notes:
         bi = int(n['t'] // bb)
         ch = new_chords[min(bi, len(new_chords) - 1)]
         d = n['deg'] + shift
+        if span is not None:
+            d = int(np.clip(d, lo, hi))
         t_in = n['t'] - bi * bb
         # the stored length is d*0.97, so a 1.5-beat note is 1.455: use the flag make_phrase stored when there is one
         strong = n['strong'] if 'strong' in n else (abs(t_in) < 1e-6 or n['d'] >= 1.4 or (bb == 4 and abs(t_in - 2) < 1e-6))
         if strong:
             d = _snap(key, d, ch, 2)
+            if span is not None and not lo <= d <= hi:      # the nearest chord tone INSIDE the span
+                inside = [x for x in range(lo, hi + 1) if key.pitch(x) % 12 in ch['pcs']]
+                if inside:
+                    d = min(inside, key=lambda x: abs(x - d))
+                else:
+                    d = int(np.clip(d, lo, hi))
         if n['d'] >= 0.97:
-            d = _avoid_semitone_rub(key, d, ch, d - 3, d + 3)
+            d = _avoid_semitone_rub(key, d, ch, d - 3 if span is None else max(d - 3, lo),
+                                    d + 3 if span is None else min(d + 3, hi))
         out.append(dict(n, p=key.pitch(d), deg=d))
     if cadence_deg is not None and out:
         out[-1] = dict(out[-1], p=key.pitch(cadence_deg), deg=cadence_deg)
@@ -781,18 +795,6 @@ def apply_gamaka(notes, tonic_pc=2, rng=None, min_d=0.25):
             elif rng.random() < 0.45 and n2['d'] >= 0.5:
                 n2['gl'] = -150
         prev = n2['p']
-        out.append(n2)
-    return out
-
-
-def apply_meri(notes, breath=0.12):
-    """Shakuhachi-style head-tilt scoop on long notes (alternating up and down), and a breath gap at the end of each."""
-    out = []
-    for i, n in enumerate(notes):
-        n2 = dict(n)
-        if n2['d'] >= 1.0:
-            n2['gl'] = -110 if i % 2 == 0 else 75
-            n2['d'] = max(0.25, n2['d'] - breath)
         out.append(n2)
     return out
 

@@ -66,18 +66,6 @@ def impact_pulse(tau, sr=44100, n=None):
     return out
 
 
-def burst(tau, sr=44100, rng=None, color='white', n=None):
-    """Short broadband excitation with an exponential decay (a blast, a crack, a snap)."""
-    rng = rng or np.random.default_rng(0)
-    m = max(2, int(round(3.0 * float(tau) * sr)))
-    if n is not None:
-        m = min(m, int(n))
-    x = noise(m, rng, color=color) * np.exp(-np.arange(m) / max(tau * sr, 1.0))
-    out = np.zeros(int(n) if n is not None else m)
-    out[:m] = x / (np.abs(x).max() + 1e-12)
-    return out
-
-
 # ------------------------------------------------------------------ noise and surface profile
 def noise(n, rng, color='white', beta=None):
     """Coloured noise; `beta` sets the slope directly (power ~ f^beta, -1.5 is a natural rough surface)."""
@@ -146,13 +134,19 @@ def rolling(seconds, sr, rng, roughness=-1.2, speed=1.0):
 
 
 # ------------------------------------------------------------------ flow
-def kaimal(n, sr, rng, corner_hz=0.12, intensity=0.2):
-    """Turbulence series with the -5/3 slope above the corner frequency, unit variance, slowly varying in time."""
+def gust_series(n, sr, rng, corner_hz=0.12):
+    """Zero-mean turbulence series, PSD ~ (1 + (f/fc)^2)^(-5/6): the -5/3 slope above the corner (von Karman / Kaimal).
+    Not normalised: each caller scales it the way it always did."""
     spec = np.fft.rfft(rng.standard_normal(int(n)))
     f = np.fft.rfftfreq(int(n), 1.0 / sr)
     spec *= (1.0 + (f / max(corner_hz, 1e-3)) ** 2) ** (-5.0 / 12.0)
     spec[0] = 0.0
-    z = np.fft.irfft(spec, int(n))
+    return np.fft.irfft(spec, int(n))
+
+
+def kaimal(n, sr, rng, corner_hz=0.12, intensity=0.2):
+    """Turbulence series with the -5/3 slope above the corner frequency, unit variance, slowly varying in time."""
+    z = gust_series(n, sr, rng, corner_hz)
     z = z / (z.std() + 1e-12)
     return np.clip(1.0 + float(intensity) * z, 0.05, 3.0)
 
@@ -194,7 +188,6 @@ def stress(seconds, sr, rng, strain=0.004, rate_per_s=2.0, creep=False):
     n = max(1, int(round(seconds * sr)))
     out = np.zeros(n)
     t = 0.0
-    count = 0
     while t < seconds:
         i = int(t * sr)
         if i >= n:
@@ -204,7 +197,6 @@ def stress(seconds, sr, rng, strain=0.004, rate_per_s=2.0, creep=False):
         seg = seg[: max(1, min(len(seg), n - i))] * min(1.0, 0.2 + 200 * float(strain))
         out[i:i + len(seg)] += seg
         t += (1.0 / max(rate_per_s, 0.05)) * rng.uniform(0.6, 1.4)
-        count += 1
     if creep:
         out += 0.15 * stick_slip(seconds, sr, rng, f_slip=18.0, depth=0.25)
     return out

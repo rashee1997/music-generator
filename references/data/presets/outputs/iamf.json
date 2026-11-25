@@ -1,0 +1,22 @@
+{
+  "name": "iamf",
+  "character": "An IAMF (AOMedia Immersive Audio Model and Formats) deliverable: the engine builds its ADM BW64 file and hands it to the external AOMedia iamf-tools encoder, which writes the .iamf stream. The encoder is not vendored: build iamf-tools and point IAMF_ENCODER at its encoder_main, or put it on PATH. Selecting this target without the encoder is an error that names that fix, never a silent fallback. The file is checked structurally here; it is not decoded with libiamf or profile-validated.",
+  "label": "IAMF (external iamf-tools encoder)",
+  "order": 10,
+  "aliases": [
+    "iamf_audio"
+  ],
+  "channels": 0,
+  "channel_order": [],
+  "file": "master.iamf",
+  "renderer": "iamf",
+  "true_peak_dbtp": -1.0,
+  "rate_hz": 48000,
+  "layout": null,
+  "conform_max_ms": 50.0,
+  "sources": [
+    "AOMedia, Immersive Audio Model and Formats (IAMF) v2.0.0, approved as an AOM Final Deliverable on 2026-08-24",
+    "AOMedia iamf-tools, encoder_main: the ADM BWF input path (--adm_filename), which the tool documents as experimental for some conversions; the WAV + textproto path is the controlled one",
+    "The engine writes the ADM file itself (BS.2076-3 / BS.2088-2), then calls the external encoder; the .iamf file is not decoded or profile-validated by this project"
+  ]
+}

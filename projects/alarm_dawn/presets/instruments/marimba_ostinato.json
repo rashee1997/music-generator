@@ -1,0 +1,48 @@
+{
+  "name": "marimba_ostinato",
+  "description": "Wooden-bar rolling pattern of chord tones in three-three-two.",
+  "character": "A wooden-bar marimba playing a rolling three-three-two pattern of chord tones: the interlocking engine of the arrangement, soft and round so it supports the tune.",
+  "gm": "marimba",
+  "role": "ostinato",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 5.0,
+    "drift_ms": 5.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": -75.0,
+    "distance": 2.2
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 250.0
+    },
+    {
+      "type": "lp",
+      "f": 4500.0
+    }
+  ],
+  "gain_db": -4.0,
+  "reverb": 0.1,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 0.6,
+    "release_ms": 150.0
+  },
+  "mechanics_class": "keys",
+  "sources": [
+    "KB african (interlocking patterns across a cycle; wooden-bar instruments)",
+    "KB indian-film-fusion (the three-three-two Tisra pulse over an eight-beat cycle)",
+    "ESTIMATE: level and placement are starting values",
+    "STARTING VALUE: onset_fade_ms 8: several strokes land together on every strong beat and their sharp starts add into one impulse the click row flags; a soft attack is also what \"smooth\" asks for",
+    "STARTING VALUE: low-pass at 4.5 kHz: a phone speaker returns little above about 5 kHz (KB short-form-functional-music), and the sharp edges of plucked and struck onsets above it are what the click row reacts to",
+    "MEASURED: short_form_report found 10.5% of the master below 200 Hz and 13.9% from 200 to 300 Hz, where a phone speaker returns little; STARTING VALUE: high-pass at 250 Hz",
+    "CARRIED OVER from the ringtone project 'Confluence', where each filter, fade and level in this preset was set by a measurement (click count, stem.dropout, equal_loudness); not re-measured for the alarm until the gate runs"
+  ],
+  "vibrato": {
+    "depth_cents": 0.0
+  },
+  "onset_fade_ms": 8.0
+}

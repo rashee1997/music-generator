@@ -16,6 +16,7 @@ A row that cannot fail is not a row. Every one of these has a negative control
 in `video_selftest.py`.
 """
 import os
+from bisect import bisect_left
 
 import numpy as np
 
@@ -33,6 +34,17 @@ def _num(v, default=0.0):
     except (TypeError, ValueError):
         return default
     return f if np.isfinite(f) else default
+
+
+def _nearest(sorted_vals, t):
+    """The value of an ascending list closest to t (the lower one on a tie), found by bisection."""
+    i = bisect_left(sorted_vals, t)
+    if i <= 0:
+        return sorted_vals[0]
+    if i >= len(sorted_vals):
+        return sorted_vals[-1]
+    lo, hi = sorted_vals[i - 1], sorted_vals[i]
+    return lo if (t - lo) <= (hi - t) else hi
 
 
 def _signals():
@@ -54,17 +66,35 @@ def duration_row(probe, program_s, cfg, out):
          f'picture {picture:.3f}s, program {program_s:.3f}s -> {delta_ms:+.0f} ms (limit +/-{tol:.0f})')
 
 
-def cut_sync_row(cuts, hits, cfg, out):
+def _dropped_note(dropped):
+    """(text, n_budget) for the cuts the direction stage left without a hit: a cut_sync that only judges the
+    hits that survived must still say how many cuts did not get one."""
+    dropped = list(dropped or [])
+    if not dropped:
+        return '', 0
+    by = {}
+    for d in dropped:
+        by[d.get('reason', 'unknown')] = by.get(d.get('reason', 'unknown'), 0) + 1
+    why = ', '.join(f'{n} by {r}' for r, n in sorted(by.items()))
+    return f'; {len(dropped)} cut(s) left without a hit ({why})', by.get('budget', 0)
+
+
+def cut_sync_row(cuts, hits, cfg, out, dropped=None):
     """Offsets are signed as heard: negative = the hit arrives before the cut, positive = after it.
 
     Only hits derived from a cut are judged: a motion hit accents a movement inside a shot and has no edit to be
     late for, so judging it against the nearest cut would be measuring the wrong thing.
+
+    `dropped` lists the cut hits the direction stage could not place (min gap or budget); they are named in the
+    detail, and a cut lost to the budget is a WARN, because the picture jumped there with no accent.
     """
     cs = cfg['cut_sync']
-    cut_times = [float(c['t'] if isinstance(c, dict) else c) for c in cuts or []]
+    note, lost_to_budget = _dropped_note(dropped)
+    cut_times = sorted(float(c['t'] if isinstance(c, dict) else c) for c in cuts or [])
     cut_hits = [h for h in hits or [] if h.get('kind', 'cut') == 'cut']
     if not cut_hits:
-        _row(out, 'PASS', 'video.cut_sync', f'no cut-derived hit ({len(hits or [])} motion hits only): nothing to sync')
+        _row(out, 'WARN' if lost_to_budget else 'PASS', 'video.cut_sync',
+             f'no cut-derived hit ({len(hits or [])} motion hits only): nothing to sync' + note)
         return []
     if not cut_times:
         _row(out, 'PASS', 'video.cut_sync', 'no cut detected: hits are not tied to picture edits')
@@ -72,21 +102,25 @@ def cut_sync_row(cuts, hits, cfg, out):
     offsets = []
     for h in cut_hits:
         t = float(h['t_s'] if 't_s' in h else h['t'])
-        nearest = min(cut_times, key=lambda c: abs(c - t))
+        nearest = _nearest(cut_times, t)
         offsets.append((t, nearest, (t - nearest) * 1000.0))
     worst = max(offsets, key=lambda o: abs(o[2]))
     bad = [o for o in offsets if o[2] < -float(cs['early_ms']) or o[2] > float(cs['late_ms'])]
-    level = 'FAIL' if bad else ('WARN' if abs(worst[2]) > float(cs['aim_ms']) else 'PASS')
+    level = 'FAIL' if bad else ('WARN' if (abs(worst[2]) > float(cs['aim_ms']) or lost_to_budget) else 'PASS')
     detail = (f'{len(cut_hits)} cut hits on {len(cut_times)} cuts: worst {worst[2]:+.0f} ms at {worst[0]:.3f}s '
               f'(early limit -{cs["early_ms"]:.0f}, late limit +{cs["late_ms"]:.0f}, aim +/-{cs["aim_ms"]:.0f})')
     if bad:
         detail += f'; {len(bad)} outside the limit'
-    _row(out, level, 'video.cut_sync', detail)
+    _row(out, level, 'video.cut_sync', detail + note)
     return offsets
 
 
-def motion_sync_row(motion_beats, hits, cfg, out):
+def motion_sync_row(motion_beats, hits, cfg, out, independent=True):
     """A movement hit against the movement it accents.
+
+    `independent` says whether the beats were measured apart from the hits. The probe's thresholded motion peaks
+    ARE the hit source (same list, same rounding), so judging a hit against them gives an offset of 0 whatever
+    happens: with `independent=False` the row reports INFO "not measured" instead of a PASS it cannot fail.
 
     The window is wider than a cut's on purpose: music-to-motion synchrony is
     detected inside about 300-450 ms, narrowing towards 150-200 ms as the tempo
@@ -102,10 +136,16 @@ def motion_sync_row(motion_beats, hits, cfg, out):
         _row(out, 'WARN', 'video.motion_sync',
              f'{len(mhits)} movement hits but no movement beat was measured: the window could not be applied')
         return []
+    if not independent:
+        _row(out, 'INFO', 'video.motion_sync',
+             f'{len(mhits)} movement hits, not measured: the beats on file are the thresholded peaks the hits '
+             f'were placed from (offset 0 by construction); re-probe to record independent motion peaks')
+        return []
+    beats.sort()
     offsets = []
     for h in mhits:
         t = float(h['t_s'] if 't_s' in h else h['t'])
-        nearest = min(beats, key=lambda b: abs(b - t))
+        nearest = _nearest(beats, t)
         offsets.append((t, nearest, (t - nearest) * 1000.0))
     worst = max(offsets, key=lambda o: abs(o[2]))
     bad = [o for o in offsets if abs(o[2]) > window]
@@ -186,10 +226,10 @@ def hit_density_row(hits, cuts, duration_s, cfg, out):
     minutes = max(_num(duration_s, 0.0) / 60.0, 1e-6)
     per_min = len(hits or []) / minutes
     cuts_sorted = sorted(float(c['t'] if isinstance(c, dict) else c) for c in cuts or [])
-    hit_times = [float(h['t_s'] if 't_s' in h else h['t']) for h in hits or [] if h.get('kind', 'cut') == 'cut']
+    hit_times = sorted(float(h['t_s'] if 't_s' in h else h['t']) for h in hits or [] if h.get('kind', 'cut') == 'cut')
 
     def _hit_near(t):
-        return any(abs(t - x) <= 0.05 for x in hit_times)
+        return bool(hit_times) and abs(_nearest(hit_times, t) - t) <= 0.05
 
     pairs = list(zip(cuts_sorted, cuts_sorted[1:]))
     both = [1 for a, b in pairs if _hit_near(a) and _hit_near(b)]
@@ -206,17 +246,28 @@ def hit_density_row(hits, cuts, duration_s, cfg, out):
     _row(out, level, 'video.hit_density', detail)
 
 
-def cue_silence_row(program_wav, windows, cfg, out):
+def _read_program(program_wav, audio=None):
+    """(y float32 (n, ch), sr) of the program, or None. `audio` = (y, sr) is used as given, so a caller that
+    already decoded the file does not make every row decode it again."""
+    if audio is not None:
+        return audio
+    np_, sf = _signals()
+    if np_ is None or sf is None or not program_wav or not os.path.exists(program_wav):
+        return None
+    y, sr = sf.read(program_wav, always_2d=True)
+    return y.astype(np.float32), sr
+
+
+def cue_silence_row(program_wav, windows, cfg, out, audio=None):
     """Music energy where the spotting asked for silence. Silence is a cue, not a gap."""
     if not windows:
         _row(out, 'PASS', 'video.cue_silence', 'the spotting marked no silent section')
         return
-    np_, sf = _signals()
-    if np_ is None or sf is None or not program_wav or not os.path.exists(program_wav):
+    got = _read_program(program_wav, audio)
+    if got is None:
         _row(out, 'WARN', 'video.cue_silence', 'no program to measure: the silent windows were not checked')
         return
-    y, sr = sf.read(program_wav, always_2d=True)
-    y = y.astype(np.float32)
+    y, sr = got
     limit = float((cfg.get('cue_silence') or {}).get('max_dbfs', -50.0))
     worst, loud = None, []
     for a, b in windows:
@@ -294,7 +345,6 @@ def shot_scale_row(sections, scenes, cfg, out):
     allowed = (cfg.get('shot_scale_max_density') or {})
     checked = 0
     bad = []
-    by_id = {s.get('id'): s for s in scenes or []}
     for sec in sections or []:
         scale = sec.get('shot_scale')
         density = sec.get('density')
@@ -317,7 +367,7 @@ def shot_scale_row(sections, scenes, cfg, out):
 
 
 # ---------------------------------------------------------------- delivery
-def master_row(program_wav, profile, cfg, out, mask=None, sr=None):
+def master_row(program_wav, profile, cfg, out, mask=None, sr=None, audio=None):
     """Delivered loudness **in the profile's declared gating mode**, and true peak.
 
     `mask` is a per-sample speech mask. When the profile is dialogue-gated and no
@@ -325,12 +375,11 @@ def master_row(program_wav, profile, cfg, out, mask=None, sr=None):
     the full program: that substitution is the defect this row exists to catch.
     """
     import mixer as mx
-    np_, sf = _signals()
-    if np_ is None:
-        _row(out, 'WARN', 'video.master_compliance', 'soundfile/numpy unavailable: not measured')
+    got = _read_program(program_wav, audio)
+    if got is None:
+        _row(out, 'WARN', 'video.master_compliance', 'no program or soundfile/numpy unavailable: not measured')
         return
-    y, sr_file = sf.read(program_wav, always_2d=True)
-    y = y.astype(np.float32)
+    y, sr_file = got
     rate = int(sr or sr_file)
     mode = str(profile.get('loudness_mode') or 'full_program')
     full = float(mx.lufs(y, rate))
@@ -341,7 +390,7 @@ def master_row(program_wav, profile, cfg, out, mask=None, sr=None):
     tol = float(cfg['loudness_tolerance_lu'])
     dl = abs(measured - float(profile['lufs']))
     tp = float(mx.true_peak_db(y, rate))
-    peak_ok = tp <= float(profile['true_peak_db']) + 0.1
+    peak_ok = tp <= float(profile['true_peak_db'])      # protected row: the declared ceiling, no slack
     if mode == 'dialogue' and gated is None:
         _row(out, 'FAIL', 'video.master_compliance',
              f'profile "{mode}" is dialogue-gated but no speech was measured: the target cannot be verified '

@@ -25,6 +25,7 @@ entry and there never will be: those are compositions of mechanisms, written in 
 Adding a mechanism means adding it to its module, then moving the name from PLANNED to live. Deleting a name from
 PLANNED without implementing it is the one change this file must never take.
 """
+import inspect
 import os
 import sys
 
@@ -35,7 +36,11 @@ if _SCRIPTS not in sys.path:
 
 import sound_model
 
+from . import excite as _excite
+from . import geometry as _geometry
+from . import materials as _materials
 from . import render as _render
+from . import resonate as _resonate
 
 # still to come (Stages 5-7 of the upgrade); each is refused with its stage until then
 PLANNED = (
@@ -47,17 +52,21 @@ PLANNED = (
 _STAGES = (2, 3, 4, 5, 6, 7)
 
 
+def _public(module, skip=()):
+    """Names of the public functions a module defines itself, minus its helpers (things that are not a mechanism)."""
+    return sorted(n for n, f in vars(module).items()
+                  if inspect.isfunction(f) and not n.startswith('_') and f.__module__ == module.__name__ and n not in skip)
+
+
 def implemented():
-    """{family: sorted names} from the modules that actually run."""
+    """{family: sorted names}, read from the modules that actually run, so the list cannot drift from the code."""
     return {
         'interaction': sorted(_render.INTERACTIONS),
-        'material_family': ['brittle', 'fibrous', 'granular', 'membrane', 'absorbent', 'metal'],
-        'geometry': ['bar', 'leaf', 'membrane', 'plate', 'plate_circular', 'string', 'tube'],
-        'excite': sorted({'impact', 'burst', 'noise', 'scratch', 'stick_slip', 'rolling', 'flow', 'granular',
-                          'stress', 'pulse_train', 'friction_surface', 'turbulence'}),
-        'resonator': ['modal', 'porous', 'bubble', 'bandpass', 'none'],
-        'events': ['single', 'periodic', 'poisson', 'gamma', 'cluster', 'bounce', 'sequence', 'continuous',
-                   'dependency'],
+        'material_family': sorted({m['family'] for m in _materials.PRESETS.values()} | set(_materials.FAMILIES)),
+        'geometry': sorted(_geometry.SHAPES),
+        'excite': _public(_excite, skip=('impact_energy', 'contact_time', 'fractal_profile')),
+        'resonator': _public(_resonate, skip=('porous_absorption', 'bubble_frequency')),
+        'events': sorted(sound_model.EVENTS),
         'voice_law': sorted(sound_model.EXCITE) + sorted(sound_model.RESONATOR),
     }
 

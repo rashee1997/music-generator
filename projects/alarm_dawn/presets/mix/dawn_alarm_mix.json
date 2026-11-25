@@ -1,0 +1,105 @@
+{
+  "name": "dawn_alarm_mix",
+  "character": "A bright, dry-leaning mix of plucked and blown world instruments for a phone speaker at bedside: the tune and the pulse sit between 300 Hz and 5 kHz, the bass is carried by its upper partials, the room is small so tails clear before the next stage enters, and the master is loud and narrow so it carries in a quiet bedroom without a sharp 2-5 kHz peak.",
+  "carve_db": -4.0,
+  "max_boost_db": 12.0,
+  "note": "Carried over from the ringtone project (confluence_mix), where each master and chain value was measured; the alarm changes only the loudness target, a starting value of -12 LUFS (an alarm must carry and wake; not calibrated) and the crest floor 6 dB (starting value: a build that rises 3 stages is allowed less crest than a ringtone). only what differs from references/data/presets/mix/default.json. Starting values are marked as such in sources; none is measured on a phone. Basis: KB short-form-functional-music (a phone speaker returns roughly 300 Hz to 5 kHz; bass reaches it through upper partials in the 250-700 Hz region: per search result) | STARTING VALUE: -14 LUFS and -1.5 dBTP for a ringtone that competes with room noise; crest floor 7 dB is a working figure, not calibrated; the 450 and 900 Hz lifts on the bass are starting values chosen to put its partials where the speaker reproduces them The drum chain keeps the shipped compressor but drops the lift at 5 kHz, where a phone speaker is most sensitive (starting value). A 4 ms attack was tried and made the click count worse. The master high-pass is 60 Hz, second order (starting value): a phone returns almost nothing below 100 Hz, and the default 24 Hz first-order filter left the one-second DC drift at 0.00111 and a 40 Hz second-order one at 0.00103 against a limit of 0.001. The master tone is a 7 kHz low-pass (starting value): a phone speaker returns little above about 5-10 kHz, and a leave-one-out through the real mix and master showed that without it the sampler's high-frequency edges made 5 click events in the mastered file against 0 with it. The bass chain and the master are high-passed at 120 and 110 Hz (starting values) because short_form_report measured 10.5% of the master below 200 Hz.",
+  "gain_staging": {
+    "strategy": "legacy",
+    "ref_lufs": -24.0,
+    "peak_headroom_db": -1.0
+  },
+  "lead_carve": {
+    "enabled": true,
+    "from_intent": true
+  },
+  "space": {
+    "send_by_role": {
+      "default": 0.12,
+      "melody": 0.14,
+      "lead": 0.16,
+      "counter": 0.12,
+      "drum": 0.06,
+      "bass": 0.0,
+      "pad": 0.2
+    },
+    "return": {
+      "highpass_hz": 220.0,
+      "lowpass_hz": 7000.0
+    }
+  },
+  "role_chains": {
+    "bass": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 120
+        },
+        {
+          "type": "peak",
+          "f": 450,
+          "gain": 2.0,
+          "q": 0.9
+        },
+        {
+          "type": "peak",
+          "f": 900,
+          "gain": 1.5,
+          "q": 0.9
+        },
+        {
+          "type": "lp",
+          "f": 4500
+        }
+      ],
+      "comp": {
+        "thr": -24,
+        "ratio": 3.0,
+        "attack": 22,
+        "release": 130
+      }
+    },
+    "drum": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 60
+        },
+        {
+          "type": "peak",
+          "f": 380,
+          "gain": -2.0,
+          "q": 1.1
+        }
+      ],
+      "comp": {
+        "thr": -18,
+        "ratio": 2.8,
+        "attack": 28,
+        "release": 90
+      }
+    }
+  },
+  "mastering": {
+    "profile": "alarm",
+    "profiles": {
+      "alarm": {
+        "lufs": -12.0,
+        "true_peak": -1.5,
+        "tone": "alarm",
+        "glue": true
+      }
+    },
+    "crest_floor_db": 6.0,
+    "highpass_hz": 110.0,
+    "highpass_order": 2,
+    "tones": {
+      "alarm": [
+        {
+          "type": "lp",
+          "f": 7000.0
+        }
+      ]
+    }
+  }
+}

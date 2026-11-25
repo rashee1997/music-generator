@@ -429,13 +429,35 @@ def _arrive(sig, azimuth_deg, elevation_deg, sr=SR):
 def _path_attenuate(sig, distance_m, delay_samps, space_cfg, sr=SR):
     """A reflection obeys the same laws as the direct sound, over its own longer path: 1/r about the preset's reference
     distance (`reflections.ref_m`, default 1.5 m = the direct law's d0) plus the air the extra path crosses.
-    `reflections.path_physics` (default true) switches it off for a project mixed with the old unattenuated taps."""
+    `reflections.er_distance_exponent` (default 1.0) separates the early field's falloff from the tail's: a real room's
+    early reflections lose level with distance a little faster than the diffuse tail, and a value above 1 makes the
+    scene close in without changing the reverb return. `path_physics` (default true) switches the whole law off for a
+    project mixed with the old unattenuated taps."""
     if not space_cfg.get('path_physics', True):
         return sig
     extra = SPEED_OF_SOUND * max(0.0, float(delay_samps)) / sr
     ref = float(space_cfg.get('ref_m', 1.5))
-    out = np.asarray(sig, np.float32) * (ref / max(float(distance_m) + extra, 1e-6))
+    exponent = max(0.0, float(space_cfg.get('er_distance_exponent', 1.0)))
+    out = np.asarray(sig, np.float32) * (ref / max(float(distance_m) + extra, 1e-6)) ** exponent
     return iso9613_air_absorption(out.astype(np.float32), distance_m=extra + 1.0, sr=sr)
+
+
+def proximity_gain(x, distance_m, ref_m=1.5, max_db=0.0, hz=200.0, sr=SR):
+    """A close source gains low-frequency body from spherical divergence: a low shelf that grows as it approaches.
+
+    At the reference distance and beyond it is a no-op; below it the boost rises linearly to `max_db` at zero
+    metres, so a spot at 0.6 m gets about 60 % of the preset's value. `max_db` 0 leaves the signal untouched, and
+    the value is a starting value owned by the space preset, not a law of this file.
+    """
+    y = np.asarray(x, dtype=np.float32)
+    if float(max_db) < 0.0:
+        raise ValueError('proximity_gain: max_db cannot be negative')
+    if float(max_db) <= 0.0 or float(distance_m) >= float(ref_m):
+        return y
+    amount = float(max_db) * (float(ref_m) - max(0.0, float(distance_m))) / max(1e-6, float(ref_m))
+    cutoff = min(sr * 0.45, max(20.0, float(hz)))
+    low = signal.sosfilt(signal.butter(2, cutoff, btype='low', fs=sr, output='sos'), y, axis=0).astype(np.float32)
+    return (y + low * np.float32(10.0 ** (amount / 20.0) - 1.0)).astype(np.float32)
 
 
 def synthesize_early_reflections(x, azimuth_deg, distance_m, space_cfg, elevation_deg=0.0, sr=SR):
@@ -450,7 +472,7 @@ def synthesize_early_reflections(x, azimuth_deg, distance_m, space_cfg, elevatio
     
     # 1. Ground Reflection (floor bounce: arrives slightly from below)
     g_delay_samps = int((space_cfg.get('ground_delay_ms', 8.5) / 1000.0) * sr * (1.0 + 0.1 * dist))
-    if g_delay_samps < n:
+    if 0 < g_delay_samps < n:          # a zero delay is no reflection (x[:-0] is empty)
         g_sig = np.zeros(n, dtype=np.float32)
         g_sig[g_delay_samps:] = x[:-g_delay_samps] * space_cfg.get('ground_gain', 0.35)
         sos_g = signal.butter(2, min(sr * 0.45, space_cfg.get('ground_cutoff_hz', 3200)), btype='lowpass', fs=sr, output='sos')
@@ -462,7 +484,7 @@ def synthesize_early_reflections(x, azimuth_deg, distance_m, space_cfg, elevatio
         
     # 2. Contralateral Lateral Reflection (opposite wall / tree canopy bounce)
     lat_delay_samps = int((space_cfg.get('lateral_delay_ms', 22.0) / 1000.0) * sr * (1.0 + 0.15 * dist))
-    if lat_delay_samps < n:
+    if 0 < lat_delay_samps < n:          # a zero delay is no reflection (x[:-0] is empty)
         lat_sig = np.zeros(n, dtype=np.float32)
         lat_sig[lat_delay_samps:] = x[:-lat_delay_samps] * space_cfg.get('lateral_gain', 0.25)
         sos_lat = signal.butter(2, min(sr * 0.45, space_cfg.get('lateral_cutoff_hz', 2400)), btype='lowpass', fs=sr, output='sos')
@@ -482,7 +504,7 @@ def synthesize_early_reflections(x, azimuth_deg, distance_m, space_cfg, elevatio
     # 3. Ceiling Reflection (overhead bounce)
     ceil_delay = space_cfg.get('ceiling_delay_ms', 30.0)
     ceil_delay_samps = int((ceil_delay / 1000.0) * sr * (1.0 + 0.12 * dist))
-    if ceil_delay_samps < n:
+    if 0 < ceil_delay_samps < n:          # a zero delay is no reflection (x[:-0] is empty)
         ceil_sig = np.zeros(n, dtype=np.float32)
         ceil_sig[ceil_delay_samps:] = x[:-ceil_delay_samps] * space_cfg.get('ceiling_gain', 0.15)
         sos_c = signal.butter(2, min(sr * 0.45, 2800.0), btype='lowpass', fs=sr, output='sos')
@@ -495,7 +517,7 @@ def synthesize_early_reflections(x, azimuth_deg, distance_m, space_cfg, elevatio
     # 4. Rear Reflection (back wall bounce)
     rear_delay = space_cfg.get('rear_delay_ms', 28.0)
     rear_delay_samps = int((rear_delay / 1000.0) * sr * (1.0 + 0.18 * dist))
-    if rear_delay_samps < n:
+    if 0 < rear_delay_samps < n:          # a zero delay is no reflection (x[:-0] is empty)
         rear_sig = np.zeros(n, dtype=np.float32)
         rear_sig[rear_delay_samps:] = x[:-rear_delay_samps] * space_cfg.get('rear_gain', 0.18)
         sos_r = signal.butter(2, min(sr * 0.45, 2000.0), btype='lowpass', fs=sr, output='sos')
@@ -512,8 +534,9 @@ def synthesize_early_reflections(x, azimuth_deg, distance_m, space_cfg, elevatio
 # 7. Complete Spatialization Stem Pipeline
 # ---------------------------------------------------------------------------------------------
 
-def spatialize_stem(audio, azimuth_deg=0.0, elevation_deg=0.0, distance_m=1.0, 
-                    acoustic_space='outdoor_open', externalize=True, sr=SR):
+def spatialize_stem(audio, azimuth_deg=0.0, elevation_deg=0.0, distance_m=1.0,
+                    acoustic_space='outdoor_open', externalize=True, proximity_db=0.0,
+                    proximity_hz=200.0, er_distance_exponent=None, sr=SR):
     """Spatializes mono audio into a naturally externalized 3D physical sound field:
     1. Torso scattering for externalization.
     2. Distance attenuation & ISO 9613-1 atmospheric air absorption.
@@ -530,7 +553,9 @@ def spatialize_stem(audio, azimuth_deg=0.0, elevation_deg=0.0, distance_m=1.0,
     if isinstance(acoustic_space, dict):          # a space preset's "reflections" block; missing keys come from outdoor_open
         space_cfg = {**ACOUSTIC_SPACES['outdoor_open'], **acoustic_space}
     else:
-        space_cfg = ACOUSTIC_SPACES.get(acoustic_space, ACOUSTIC_SPACES['outdoor_open'])
+        space_cfg = dict(ACOUSTIC_SPACES.get(acoustic_space, ACOUSTIC_SPACES['outdoor_open']))
+    if er_distance_exponent is not None:
+        space_cfg['er_distance_exponent'] = float(er_distance_exponent)
     
     # 1. Torso scattering
     if externalize:
@@ -540,6 +565,7 @@ def spatialize_stem(audio, azimuth_deg=0.0, elevation_deg=0.0, distance_m=1.0,
         
     # 2. Distance attenuation + ISO 9613-1 air absorption (one reference distance: 1.5 m, as in the mixer)
     x_direct = distance_attenuation(x_body, distance_m=distance_m, d0=1.5, sr=sr)
+    x_direct = proximity_gain(x_direct, distance_m, ref_m=1.5, max_db=proximity_db, hz=proximity_hz, sr=sr)
     
     # 3. Pinna & elevation spectral cues
     x_direct = pinna_spectral_filter(x_direct, elevation_deg=elevation_deg, azimuth_deg=azimuth_deg, sr=sr)
@@ -643,7 +669,7 @@ def encode_ambisonic_bformat(audio, azimuth_deg=0.0, elevation_deg=0.0):
     """Encodes mono audio into 1st-Order Ambisonics (B-format: W, Y, Z, X).
     ACN channel ordering, SN3D normalization:
       W = omnidirectional (l=0, m=0)
-      Y = left-right dipole (l=1, m=-1)
+      Y = left-right dipole (l=1, m=-1), +Y = LEFT (AmbiX); the azimuth argument is +right, as everywhere here
       Z = up-down dipole (l=1, m=0)
       X = front-back dipole (l=1, m=1)
     Returns: (N, 4) float32 array.
@@ -656,7 +682,7 @@ def encode_ambisonic_bformat(audio, azimuth_deg=0.0, elevation_deg=0.0):
     el_rad = np.radians(float(elevation_deg))
     
     w = x * 1.0
-    y = x * (np.sin(az_rad) * np.cos(el_rad))
+    y = x * (-np.sin(az_rad) * np.cos(el_rad))      # AmbiX Y points LEFT; the engine's azimuth is +right
     z = x * (np.sin(el_rad))
     x_ch = x * (np.cos(az_rad) * np.cos(el_rad))
     
@@ -687,7 +713,7 @@ def decode_ambisonic_to_binaural(bformat, sr=SR):
         # Max-rE decoder matrix weight for 1st-order: W/sqrt(2) + (1/sqrt(3))*(X*cos + Y*sin + Z*sin)
         spk_signal = (b[:, 0] * w_weight + 
                       (1.0 / np.sqrt(3.0)) * (b[:, 3] * np.cos(az_r) * np.cos(el_r) +
-                                              b[:, 1] * np.sin(az_r) * np.cos(el_r) +
+                                              -b[:, 1] * np.sin(az_r) * np.cos(el_r) +
                                               b[:, 2] * np.sin(el_r)))
         # decode at the reference distance (1.0 m, inside the 1.5 m unity radius) so the ambisonic route is
         # level-matched with the direct binaural route instead of arriving ~8 dB down

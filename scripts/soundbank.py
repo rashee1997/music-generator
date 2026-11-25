@@ -29,10 +29,12 @@ The natural-music pipeline plays REAL recorded instrument samples from a SoundFo
 """
 import os
 import sys
+import shutil
 import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 CACHE_DIR = os.environ.get('MUSICGEN_CACHE', os.path.join(os.path.expanduser('~'), '.cache', 'music-generator'))
+DOWNLOAD_TIMEOUT_S = 60     # starting value: per socket operation, so a stalled connection fails instead of hanging
 SF_URLS = [
     # GeneralUser GS (S. Christian Collins): free for any use incl. commercial music, ~32 MB, very good GM set.
     'https://github.com/mrbumpy409/GeneralUser-GS/raw/main/GeneralUser-GS.sf2',
@@ -149,14 +151,20 @@ def _download(dst):
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     last = None
     for url in SF_URLS:
+        tmp = dst + '.part'
         try:
-            tmp = dst + '.part'
-            urllib.request.urlretrieve(url, tmp)
+            with urllib.request.urlopen(url, timeout=DOWNLOAD_TIMEOUT_S) as resp, open(tmp, 'wb') as fh:
+                shutil.copyfileobj(resp, fh, 1 << 20)       # streamed; the timeout applies to every socket read
             if os.path.getsize(tmp) > 5_000_000:
                 os.replace(tmp, dst)
                 return True
         except Exception as e:  # network blocked etc.
             last = e
+        finally:
+            try:
+                os.remove(tmp)                              # a failed or too-small download leaves no .part behind
+            except OSError:
+                pass
     sys.stderr.write(f'[soundbank] download failed: {last}\n')
     return False
 
@@ -187,6 +195,84 @@ def ensure_soundfont(verbose=False):
     except Exception:
         pass
     raise RuntimeError('No SoundFont found. pip install pretty_midi tinysoundfont (--no-deps) or set MUSICGEN_SF2=/path/to.sf2')
+
+
+# ---- the optional banks of assets/soundfonts/MANIFEST.json ---------------------------------------------------------
+DEFAULT_BANK = 'generaluser_gs'     # the bank every track plays unless it names another; ensure_soundfont() above provides it
+SF_DIR = os.path.join(HERE, '..', 'assets', 'soundfonts')
+
+
+class SoundFontMissing(RuntimeError):
+    """A score asked for a bank that is not on this machine. The message carries the command that installs it."""
+
+
+def catalog():
+    """{bank key: manifest entry} for every bank the skill knows (assets/soundfonts/MANIFEST.json)."""
+    import json
+    with open(os.path.join(SF_DIR, 'MANIFEST.json'), encoding='utf-8') as fh:
+        return json.load(fh)['banks']
+
+
+def bank_key(tr, inst_cfg=None):
+    """The bank a track plays: its own `soundfont`, else its instrument preset's, else the default. Unknown names are an error."""
+    key = (tr or {}).get('soundfont') or (inst_cfg or {}).get('soundfont') or DEFAULT_BANK
+    known = catalog()
+    if key not in known:
+        raise ValueError(f'track "{(tr or {}).get("name", "?")}" names soundfont "{key}"; known banks: {", ".join(known)}')
+    return key
+
+
+def bank_path(key, verbose=False):
+    """Path of a bank's .sf2: the default through ensure_soundfont(), any other from assets/soundfonts/, checked against its
+    pinned or recorded sha256. A bank that is not installed raises SoundFontMissing with the install command."""
+    if key == DEFAULT_BANK:
+        return ensure_soundfont(verbose)
+    known = catalog()
+    if key not in known:
+        raise ValueError(f'unknown soundfont "{key}"; known banks: {", ".join(known)}')
+    path = os.path.abspath(os.path.join(SF_DIR, known[key]['file']))
+    if not os.path.isfile(path):
+        raise SoundFontMissing(f'SoundFont "{key}" ({known[key]["label"]}, about {known[key]["size_mb"]:g} MB) is not installed: '
+                               f'{path} is missing. Install it with:  python scripts/setup_project.py --soundfonts {key}')
+    import soundfont_fetch
+    ok, msg = soundfont_fetch.verify(path, key, known[key])
+    if not ok:
+        raise SoundFontMissing(f'SoundFont "{key}" at {path} failed its checksum ({msg}). Replace it with:  '
+                               f'python scripts/setup_project.py --soundfonts {key}  (delete the file first)')
+    return path
+
+
+def bank_paths(keys):
+    """{key: path} for every bank in `keys`; every missing bank is reported at once, before anything renders."""
+    out, missing = {}, []
+    for key in dict.fromkeys(keys):
+        try:
+            out[key] = bank_path(key)
+        except SoundFontMissing as exc:
+            missing.append(str(exc))
+    if missing:
+        raise SoundFontMissing('\n'.join(missing))
+    return out
+
+
+def program_for(key, resolved, inst_cfg=None, tr=None):
+    """(bank, program, is_drum) a track plays in bank `key`.
+
+    `resolved` is what resolve() gave (General MIDI order). A `program_map` on the track or its instrument preset,
+    {"<bank key>": {"bank": n, "program": n}}, replaces it for that bank, so no bank or program number of a non-GM
+    SoundFont is written in Python. A bank that is not in General MIDI order and has no map for this instrument is an error,
+    not a silent GM guess."""
+    pm = dict((inst_cfg or {}).get('program_map') or {})
+    pm.update((tr or {}).get('program_map') or {})
+    if key in pm:
+        e = pm[key]
+        bank, program = int(e['bank']), int(e['program'])
+        return bank, program, bool(e.get('drums', bank == 128))
+    if key != DEFAULT_BANK and not catalog()[key].get('gm_order', True):
+        raise ValueError(f'soundfont "{key}" is not in General MIDI order: the instrument preset (or the track) needs '
+                         f'"program_map": {{"{key}": {{"bank": <n>, "program": <n>}}}} to say which preset plays '
+                         f'"{(inst_cfg or {}).get("name") or (tr or {}).get("instrument", "this instrument")}"')
+    return resolved
 
 
 def resolve(name):

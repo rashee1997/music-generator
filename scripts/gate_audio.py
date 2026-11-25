@@ -8,7 +8,7 @@
 
     from gate_audio import Signal, load
     a = load('out/master.wav')      # GateAudio
-    a.mono, a.decim, a.stft, a.onset_env, a.lufs, a.true_peak
+    a.mono, a.decim, a.stft, a.onset_env, a.true_peak_by_channel
 
 Every derived array is computed once, on first use, under a lock. Rows must not read the WAV or run a second STFT:
 `tests/test_gate_checks.py` asserts the cache is used. Full-rate data (`stereo`, `mono`, true peak, click residual) is
@@ -17,6 +17,8 @@ never decimated; envelopes, section levels and cut/dropout use the 8 kHz copy, w
 
 This module measures only. It has no synthesis, EQ, mixing or preset values.
 """
+import collections
+import os
 import threading
 
 import numpy as np
@@ -100,30 +102,16 @@ class Signal:
         return self._get('onset_env', make)
 
     @property
-    def lufs(self):
-        def make():
-            try:
-                import pyloudnorm as pyln
-                return float(pyln.Meter(self.sr).integrated_loudness(self.mono))
-            except Exception:
-                return float('nan')
-        return self._get('lufs', make)
-
-    @property
-    def true_peak(self):
-        def make():
-            from scipy.signal import resample_poly
-            up = resample_poly(self.audio, 4, 1, axis=0)
-            return float(20.0 * np.log10(np.max(np.abs(up)) + 1e-12))
-        return self._get('true_peak', make)
-
-    @property
     def true_peak_by_channel(self):
         """True peak per channel, in dBTP: a multichannel deliverable is checked channel by channel."""
         def make():
             from scipy.signal import resample_poly
-            up = resample_poly(self.audio, 4, 1, axis=0)
-            return 20.0 * np.log10(np.max(np.abs(up), axis=0) + 1e-12)
+            # One channel at a time: a sound-field or object file has dozens of channels, and upsampling all of them
+            # at once holds 4x the whole file in float64 (a 36-channel AmbiX piece needed about 14 GB). The result
+            # is the same numbers, channel by channel.
+            audio = self.audio if self.audio.ndim > 1 else self.audio[:, None]
+            peaks = [float(np.max(np.abs(resample_poly(audio[:, c], 4, 1)))) for c in range(audio.shape[1])]
+            return 20.0 * np.log10(np.asarray(peaks) + 1e-12)
         return self._get('true_peak_by_channel', make)
 
     def frame_db(self, frame_ms=FRAME_MS, hop_ms=HOP_MS, decimated=True):
@@ -167,5 +155,75 @@ class GateAudio(Signal):
         return int(self.audio.shape[1])
 
 
-def load(path):
-    return GateAudio(path)
+_REGISTRY = collections.OrderedDict()   # (absolute path, mtime_ns, size) -> GateAudio, most recent last
+_REGISTRY_MAX = 2                  # the delivered file, and the one it is compared with (a fold, a second layout)
+_LOCK = threading.RLock()
+
+
+def load(path, y=None, sr=None):
+    """One GateAudio per file per process, shared by every row of a run.
+
+    A gate run used to read the delivered file four times (the delivered read, the spatial check, the fold rows
+    and the master rows), and each read built its own lazily-cached views, so the decimation, STFT and true-peak
+    of one file were computed again per row. Rows measure one file: they get one object and its caches. The key
+    carries the file's mtime and size, so a re-rendered file is never described by the old one's measurements.
+
+    The registry is capped (`_REGISTRY_MAX`): a film or a multi-format run loads many files, and an unbounded
+    dict of float64 deliverables plus their caches is a leak in a long process. Evicting one is safe: a caller
+    that still holds the object keeps it alive, it just stops being shared.
+    """
+    if y is not None:                       # a caller handing its own array is not the file: no sharing
+        return GateAudio(path, y=y, sr=sr)
+    try:
+        st = os.stat(str(path))
+        key = (os.path.abspath(str(path)), st.st_mtime_ns, st.st_size)
+    except OSError:
+        return GateAudio(path)               # let the reader raise its own error, with its own message
+    with _LOCK:
+        got = _REGISTRY.get(key)
+        if got is None:
+            got = GateAudio(path)
+            _REGISTRY[key] = got
+            while len(_REGISTRY) > _REGISTRY_MAX:
+                _REGISTRY.popitem(last=False)
+        else:
+            _REGISTRY.move_to_end(key)
+    return got
+
+
+def clear():
+    """Forget every loaded file (a test that rewrites a file in place, or a long-lived process)."""
+    with _LOCK:
+        _REGISTRY.clear()
+
+
+def channel_correlation(a, b):
+    """Pearson correlation of two channels, or NaN when either is silent or constant (the value is undefined there).
+
+    np.corrcoef returns NaN for those, and every `nan < limit` / `nan > limit` is False, so a one-sided master used
+    to read as a pass on each correlation row. Callers must treat a non-finite result as a finding."""
+    a = np.asarray(a, dtype=np.float64)
+    b = np.asarray(b, dtype=np.float64)
+    if len(a) < 2 or float(np.std(a)) < 1e-12 or float(np.std(b)) < 1e-12:
+        return float('nan')
+    return float(np.corrcoef(a, b)[0, 1])
+
+
+def loudness_lufs(x, sr):
+    """Integrated loudness in LUFS of a signal, the way the mixer meters it (-70 for silence, a meter error propagates).
+    The one loudness measurement the gate rows use: a second meter would disagree with the one the master was levelled on."""
+    import mixer
+    return float(mixer.lufs(x, sr))
+
+
+def mono_psd(y, sr, nperseg):
+    """Welch power spectral density (frequencies, power) of the channel mean of `y` (a mono signal passes through)."""
+    from scipy import signal
+    m = y.mean(axis=1) if np.ndim(y) == 2 else np.asarray(y)
+    return signal.welch(m, sr, nperseg=nperseg)
+
+
+def band_level_db(y, lo, hi, sr=44100, nperseg=2048):
+    """Mean Welch power between `lo` and `hi` Hz, in dB (relative, not dBFS), of the channel mean of `y`."""
+    f, p = mono_psd(y, sr, nperseg)
+    return float(10 * np.log10(p[(f > lo) & (f < hi)].mean() + 1e-20))

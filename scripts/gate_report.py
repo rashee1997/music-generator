@@ -62,12 +62,22 @@ def _flags(metrics):
     return sorted(out)
 
 
-def write_reports(wav_path, score, out_dir, stem_meta=None, mix_meta=None):
-    """Write waveform, spectrogram, level, stereo, stem-level and section-energy figures + text."""
+def write_reports(wav_path, score, out_dir, stem_meta=None, mix_meta=None, images_dir=None):
+    """Write waveform, spectrogram, level, stereo, stem-level and section-energy figures + text.
+
+    `out_dir` takes the data (.json/.txt) and `images_dir` the figures (.png); when `images_dir` is None the figures
+    stay beside the data."""
     if not out_dir:
         return {}
     metrics = list((stem_meta or {}).get('metrics') or []) + list((mix_meta or {}).get('metrics') or [])
     flags = _flags(metrics)
+    # Every row the gate judged, with the numbers behind it, beside the figures. The rows are already built with
+    # value/threshold/unit/worst_times_s and were previously used only for the plot marks and then dropped; the debug
+    # engine and any later analysis read this file instead of re-parsing a formatted verdict.
+    if metrics:
+        os.makedirs(out_dir, exist_ok=True)
+        with open(os.path.join(out_dir, 'rows.json'), 'w', encoding='utf-8') as fh:
+            json.dump(dict(meta=dict(stage='rows', rows=len(metrics), metrics=metrics)), fh, indent=1)
     try:
         sig = load(wav_path)
     except Exception as exc:
@@ -211,5 +221,16 @@ def write_reports(wav_path, score, out_dir, stem_meta=None, mix_meta=None):
         lines += [f'{r["name"]},{r["start_s"]:.2f},{r["end_s"]:.2f},{r["energy"]:.3f},{r["level_db"]:.2f}' for r in se['table']]
         _write(out_dir, 'section_energy', fig, '\n'.join(lines), se)
         written['section_energy'] = os.path.join(out_dir, 'section_energy.png')
+
+    if images_dir and os.path.abspath(str(images_dir)) != os.path.abspath(str(out_dir)):
+        import shutil
+        os.makedirs(images_dir, exist_ok=True)
+        for f in sorted(os.listdir(out_dir)):
+            if f.endswith('.png'):
+                src, dst = os.path.join(out_dir, f), os.path.join(images_dir, f)
+                shutil.move(src, dst)
+                for k, v in list(written.items()):
+                    if str(v) == src:
+                        written[k] = dst
 
     return written

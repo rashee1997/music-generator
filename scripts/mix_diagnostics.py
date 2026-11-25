@@ -53,7 +53,6 @@ def analyse(score, stems, mix=None, master=None, sr=44100):
     roles = {t.get('name'): t.get('role', 'chord') for t in (score or {}).get('tracks', [])}
     for name in stems:
         roles.setdefault(name, 'chord')
-    n = max(len(v) for v in stems.values())
 
     # One spectrogram per stem for every band question below (see dsp.band_powers).
     bands = {name: dsp.band_powers(v, sr, _ALL_BANDS) for name, v in stems.items()}

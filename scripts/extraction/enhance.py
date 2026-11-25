@@ -23,7 +23,7 @@ The skill's registry chains (EQ, compression) are opt-in: `enhance.use_registry_
 import os
 
 import numpy as np
-from scipy import signal
+from scipy import ndimage, signal
 
 from .music_db import hz
 
@@ -40,7 +40,7 @@ def span_gain(n, sr, spans, pad, floor_db, smooth_s):
         inside[int(max(a - pad, 0) * sr):int((b + pad) * sr)] = True
     g = np.where(inside, 1.0, 10 ** (floor_db / 20.0)).astype('float32')
     k = max(int(smooth_s * sr), 1)
-    return np.convolve(g, np.ones(k) / k, mode='same').astype('float32')
+    return ndimage.uniform_filter1d(g, k, mode='nearest').astype('float32')   # edges hold the edge value: no dip at 0
 
 
 def registry_chain(x, sr, entry):

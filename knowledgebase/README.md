@@ -19,15 +19,27 @@ Read one file at a time. `scripts/research_kb.py` pulls the file a piece needs.
 | `cultures/tamil.md` | Tamil scales, gaana and kuthu feel, gamaka curves and tala grids | unverified |
 | `cultures/western.md` | Western harmony, groove timing and trailer conventions | unverified |
 | `cultures/world-other.md` | Humming formants, Celtic rhythms, Germanic motorik and Balkan metres | unverified |
+| `genre-and-feel/cinematic-hybrid-scoring.md` | Pressure carriers, tension devices, trailer shape, film-music loudness figures and sample-library realism | partly-sourced |
+| `genre-and-feel/emotion-cues.md` | Which musical cues carry emotion (mode, tempo, register, dynamics, articulation, timbre), their direction of effect, and why valence is hard to measure | partly-sourced |
 | `genre-and-feel/commercial-promo.md` | Commercial tempo, ducking and voice-over rules, musical-theatre build | unverified |
 | `genre-and-feel/dynamic-flow.md` | Section flow rules and lo-fi, ambient, horror, jazz, rock and game values | unverified |
+| `genre-and-feel/short-form-functional-music.md` | Phone-speaker band, hook and alert length, alarm and wake-up findings, and the working figures for a ringtone or alarm | partly-sourced |
 | `genre-and-feel/psychoacoustic-genre.md` | Genre and mood tempo, interval, timbre and reverb values | unverified |
 | `media/game-music.md` | Stem layers, transition modes and loop folding | unverified |
 | `media/game-sfx.md` | Hit variation, impact stages, footstep surfaces and interface tones | unverified |
 | `media/video-scoring.md` | Frame-locked tempo, hit windows and voice-over ducking bands | unverified |
 | `sound-design/audio-cloning.md` | Pitch, timbre, groove and room values read from a recording | unverified |
 | `sound-design/roughness.md` | Auditory roughness: level, masking, critical-band and register values, and the pair model | partly-sourced |
+| `sound-design/virtual-ears.md` | Peripheral auditory model stages (middle ear, cochlear filtering and compression, hair cell, adaptation) and the quantities the gate reads from them | partly-sourced |
+| `sound-design/layout-3-2.md` | Three-front layout with two low-frequency channels: what is and is not a standard, bass management, fold-down | partly-sourced |
+| `sound-design/expectation-idyom.md` | Information content and entropy from a PPM model, and their link to expressive timing | partly-sourced |
+| `sound-design/valence-arousal.md` | Valence and arousal: what an audio arc can say about feeling, the mode templates, the limits of the prediction | unverified |
+| `sound-design/soundfont-banks.md` | The optional SoundFont banks: size, preset order, licence, what each is for, how a track picks one, and the memory cost of loading several | unverified |
+| `sound-design/soundfont-velocity-and-realism.md` | SF2 velocity-to-cutoff, what SF3 is, and orchestral realism techniques; working figures for `velocity_timbre` | partly-sourced |
 | `sound-design/sfx-ambience.md` | Weather, bio-acoustic and street ambience models, and blending laws | unverified |
 | `sound-design/sfx-formulas.md` | The formulas behind `sound_model.py`, each labelled with where it came from | unverified |
+| `sound-design/biome-acoustics.md` | The medium (bulk state, one absorption law, interfaces), weather micro-physics, creature sources and tracts, niche overlap and the score's pockets | partly-sourced |
+| `sound-design/theatrical-realism.md` | The eight couplings a theatrical mix has and a clean synthetic one lacks: timbre vs loudness, ensemble scatter, register and transients, direct-to-reverberant depth, low-mid vs sub, air absorption, air at density, macro rubato | partly-sourced |
+| `sound-design/virtual-speaker-qa.md` | Standard loudspeaker arrangements, AllRAD decoding of order-5 AmbiX to a virtual array, and per-bar channel-fault thresholds | partly-sourced |
 
 See `SCHEMA.md` for the header format and the rules a new file follows.

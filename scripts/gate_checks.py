@@ -82,6 +82,32 @@ def _is_attack(mono, k, steps=ATTACK_STEPS, ratio=0.3, reach=8):
     return runs >= steps
 
 
+def _rivals(events, sr, isolate_ms, second_ratio):
+    """[bool] per (sample, amplitude) event: another event within `isolate_ms` is at least `second_ratio` as large.
+
+    Sorted by sample index, the neighbours of an event are a slice found by bisection, not a scan of every event."""
+    n = len(events)
+    if not n:
+        return []
+    ks = np.array([k for k, _ in events], dtype=np.int64)
+    amps = np.array([a for _, a in events], dtype=np.float64)
+    order = np.argsort(ks, kind='stable')
+    ks_s, amps_s = ks[order], amps[order]
+    pos = np.empty(n, dtype=np.int64)
+    pos[order] = np.arange(n)
+    reach = int(np.floor(isolate_ms * sr / 1000.0))        # sample distances are integers: |d| <= reach
+    out = []
+    for i in range(n):
+        k, a = events[i]
+        lo = int(np.searchsorted(ks_s, k - reach, side='left'))
+        hi = int(np.searchsorted(ks_s, k + reach, side='right'))
+        count = int(np.count_nonzero(amps_s[lo:hi] >= second_ratio * a))
+        if amps_s[pos[i]] >= second_ratio * a:
+            count -= 1                                       # the event itself
+        out.append(count > 0)
+    return out
+
+
 def check_clicks(sig, mad_z=8.0, floor_fs=0.02, cluster_gap_ms=1.5, isolate_ms=10.0,
                  second_ratio=0.5, quiet_ms=5.0, run_lpc=True):
     """High-pass MAD residual, clustered into impulse events, plus a Burg LPC residual count.
@@ -118,9 +144,9 @@ def check_clicks(sig, mad_z=8.0, floor_fs=0.02, cluster_gap_ms=1.5, isolate_ms=1
             events.append((k, float(abs(r[k]))))
             spans.append(span)
         kept, attacks = [], 0
+        rivals = _rivals(events, sig.sr, isolate_ms, second_ratio)
         for i, (k, a) in enumerate(events):
-            rival = any(j != i and abs(k2 - k) <= isolate_ms * sig.sr / 1000.0 and a2 >= second_ratio * a
-                        for j, (k2, a2) in enumerate(events))
+            rival = rivals[i]
             if rival:
                 rejected += 1
             elif _is_attack(mono, k):
@@ -224,13 +250,6 @@ def check_cut(sig, boundaries_s, drop_db=12.0, window_ms=20.0, hop_ms=5.0,
     if db.size < 24:
         return _result(0.0, drop_db, 'dB', [], 'too short to judge')
     d = db[:-2] - db[2:]
-    # a fade is a monotone decline over 200 ms, not a step: skip locations inside one
-    fade = np.zeros_like(db, dtype=bool)
-    k = int(round(0.2 / (hop_ms / 1000.0)))
-    for i in range(db.size):
-        a = max(0, i - k)
-        if db[a] - db[i] > 20.0 and db[i] < db[a] - 20.0:
-            fade[i] = True
     floor_ref = float(np.median(db))
     best, hits = 0.0, []
     for i in np.flatnonzero(d > drop_db):
@@ -438,14 +457,52 @@ def _peak_ratio(a):
     return float((hi - med) / (hi + med + EPS))
 
 
+def _slow_component(x, sr, cutoff_hz=2.0):
+    """(slow component, its sample rate): the part of a channel below `cutoff_hz`, which is what a DC drift is.
+
+    A 1 s block mean is a boxcar decimation, and a boxcar is a poor anti-alias filter: a 73 Hz programme tone (a low
+    pedal, a timp) still leaves about A / (pi f) in every block mean, so the row read a loud low note as "DC drift"
+    (measured on a master whose 40 Hz high-pass leaves no offset at all). Low-passing the waveform first, steeply,
+    means only sub-2 Hz content can reach the block means.
+    """
+    from scipy.signal import butter, decimate, sosfiltfilt
+    if cutoff_hz <= 0.0 or cutoff_hz >= 0.5 * float(sr) or len(x) < 64:
+        return np.asarray(x, dtype=np.float64), float(sr)
+    y, sr2 = np.asarray(x, dtype=np.float64), float(sr)
+    # An 8th-order filter at 2 Hz on a 44.1 kHz signal has a normalised corner of 9e-5 and is numerically fragile, so
+    # the signal is decimated first (zero-phase FIR anti-alias at a few hundred Hz, where the corner is still low but
+    # the filter is well conditioned), then low-passed at the decimated rate.
+    # One decimation only, to a few hundred Hz: a second stage at 8 Hz aliased a 73 Hz note down to about 1 Hz
+    # (73 - 9*8), which is exactly the drift it was supposed to exclude.
+    q = int(sr2 // 400.0)
+    if q >= 2 and len(y) > 4 * q:
+        y = decimate(y, q, ftype='fir', zero_phase=True)
+        sr2 /= q
+    if sr2 <= 4.0 * cutoff_hz:
+        return y, sr2
+    sos = butter(4, cutoff_hz / (0.5 * sr2), btype='low', output='sos')
+    return sosfiltfilt(sos, y), sr2
+
+
 def check_dc(sig, dc_max=0.001, drift_max=0.001):
-    """Per-channel DC mean and 1 s block drift."""
+    """Per-channel DC mean, and the drift of the sub-2 Hz component between 1 s blocks."""
     channels = sig.audio.shape[1]
     means = [float(np.mean(sig.audio[:, c])) for c in range(channels)]
-    block = max(1, int(sig.sr))
     drift = 0.0
     for c in range(channels):
-        x = sig.audio[:, c]
+        x, sr2 = _slow_component(sig.audio[:, c], sig.sr)
+        block = max(1, int(round(sr2)))            # one second at the slow component's own rate
+        # The decimating filter starts on a step of its own (measured: 0.24 FS in the first samples, which read as
+        # 8e-3 of "drift" on a tone with no offset). One second is dropped at each end; nothing is lost from a
+        # multi-second file and a file too short to have an interior is not judged on its edges.
+        if len(x) > 4 * block:
+            x = x[block:len(x) - block]
+        elif len(x) > 16:
+            # A delivery shorter than four seconds has no room for a one-second guard at each end, and the filter's
+            # own start-up was 8e-3 of "drift" on a clean 2 s control. Drop an eighth at each edge instead; a file
+            # left with one block is judged on its mean, which is the row's other half.
+            edge = max(1, len(x) // 8)
+            x = x[edge:len(x) - edge]
         n = len(x) // block
         if n >= 2:
             bm = x[:n * block].reshape(n, block).mean(axis=1)
@@ -458,15 +515,16 @@ def check_dc(sig, dc_max=0.001, drift_max=0.001):
 def check_clipping(sig, full=0.999):
     """Samples at or above `full`, plus flat-top runs of 3+ samples."""
     a = np.abs(sig.audio)
-    count = int(np.sum(a >= full))
+    clipped = a >= full
+    count = int(np.count_nonzero(clipped))
+    # One flat-top run = a run of 3+ consecutive clipped samples in one channel: count the samples where the third
+    # consecutive clipped sample arrives (a rising edge of "this and the two before it are all clipped").
     flats = 0
-    for c in range(a.shape[1]):
-        x = a[:, c] >= full
-        run = 0
-        for v in x:
-            run = run + 1 if v else 0
-            if run == 3:
-                flats += 1
+    if clipped.shape[0] >= 3:
+        three = clipped[2:] & clipped[1:-1] & clipped[:-2]      # this sample and the two before it are all clipped
+        starts = three.copy()
+        starts[1:] &= ~three[:-1]                               # keep only the first sample of each such stretch
+        flats = int(np.count_nonzero(starts))
     detail = f'{count} sample(s) at/above {full:g} FS, {flats} flat-top run(s)'
     return _result(count, 0.0, 'samples', [], detail, flat_runs=flats)
 
@@ -486,56 +544,144 @@ def check_flatness(sig, threshold=0.10, level_floor_db=-50.0, min_ms=50.0, hop=5
         run = run + 1 if v else 0
         if run >= run_need:
             t = (i - run + 1) * hop / float(sig.sr)
-            hits.append(t)
+            if run == run_need:                  # one window per sustained run, not one per frame of the run
+                hits.append(t)
             best = max(best, float(np.max(fl[i - run + 1:i + 1])))
     detail = (f'max sustained flatness {best:.2f} (limit {threshold:g}) over {len(hits)} window(s) '
               f'>= {min_ms:.0f} ms')
     return _result(best, threshold, 'flatness', hits, detail, windows=len(hits))
 
 
+def tempo_from_onsets(y, sr, hop=512, lo_bpm=50.0, hi_bpm=220.0):
+    """(BPM, peak strength) from the autocorrelation of the onset envelope, or (None, strength).
+
+    A beat tracker reports a *beat* tempo from a dynamic-programming pass and, measured here, it does not do this
+    reliably on every signal: librosa 1.0.1's `beat_track` returned 0.0 BPM on a perfect 152 BPM click track, and
+    99.4 BPM on a 152 BPM orchestral master whose onset envelope autocorrelates at exactly 152.0 (2:3 of 152 is
+    101.3, which is what it locked to). The autocorrelation peak in a musical tempo window is the measured
+    periodicity of the onsets, which is what this row asks about; the beat tracker's answer is kept as a cross-check
+    in the detail string instead of deciding the row.
+    """
+    oenv = librosa.onset.onset_strength(y=np.asarray(y, dtype=np.float32), sr=sr, hop_length=hop)
+    if oenv.size < 16 or not np.any(oenv > 0):
+        return None, 0.0
+    # A signal without onsets (a held tone, a bed) autocorrelates smoothly and has a spurious peak at any lag:
+    # require the envelope to actually contain attacks before it is allowed to name a tempo.
+    med = float(np.median(oenv))
+    sd = float(np.std(oenv)) + 1e-12
+    prom = (float(np.max(oenv)) - med) / sd
+    if prom < 3.0:
+        return None, 0.0
+    # Count the attacks with the adaptive detector, not with a threshold set against the file's own peak: on a cue
+    # that runs from a quiet opening to a loud climax, only the climax attacks clear `median + 25 % of peak`
+    # (measured: 37 frames in 127 s on a cue with a quarter-note timpani pulse throughout, so the row declined to
+    # judge the tempo of a piece that plainly has one).
+    try:
+        detected = librosa.onset.onset_detect(onset_envelope=oenv, sr=sr, hop_length=hop, units='time')
+    except Exception:
+        detected = np.array([])
+    n_onsets = int(len(detected))
+    rate = n_onsets / (len(oenv) / (float(sr) / float(hop)))
+    if n_onsets < 8 or rate < 0.4:
+        return None, 0.0
+    # mean-removed, unit-variance envelope: the raw one carries the programme's loudness contour, which lifts every
+    # lag in the window and hides the periodicity (measured: the 152.0 lag peaked at only 1.05x the window median
+    # before this; after it, 152.0 stands 5.7 % clear of the next candidate).
+    ac = librosa.autocorrelate((oenv - med) / sd, max_size=len(oenv))
+    if not np.isfinite(ac).all() or ac[0] <= 0:
+        return None, 0.0
+    fps = float(sr) / float(hop)
+    lags = np.arange(2, len(ac))
+    bpms = 60.0 * fps / lags
+    sel = (bpms >= lo_bpm) & (bpms <= hi_bpm)
+    if not np.any(sel):
+        return None, 0.0
+    cand = np.asarray(ac[lags[sel]], dtype=np.float64)
+    i = int(np.argmax(cand))
+    peak = float(cand[i])
+    strength = peak / (float(np.std(cand)) + 1e-12)
+    lag = float(lags[sel][i])
+    # parabolic refinement of the lag peak, so a tempo that is not an integer number of frames is not rounded
+    if 0 < i < len(cand) - 1:
+        a, b, c = cand[i - 1], cand[i], cand[i + 1]
+        den = a - 2.0 * b + c
+        if abs(den) > 1e-12:
+            lag += 0.5 * (a - c) / den
+    bpm = 60.0 * fps / lag
+    # The autocorrelation peak can sit on a metrical level below the beat: a part that attacks every two beats
+    # makes the envelope periodic at half the tempo (measured: the gate's own 120 BPM control fixture read 60.0, a
+    # peak 7x the median). The spacing between consecutive attacks says which level they are on, so a peak whose
+    # period is a whole multiple of that spacing is lifted to it -- never above hi_bpm, so a piece with eighth-note
+    # material keeps its quarter-note beat instead of being read at double tempo.
+    onsets = detected
+    if len(onsets) > 3:
+        gaps = np.diff(np.asarray(onsets, dtype=np.float64))
+        gaps = gaps[gaps > 1e-3]
+        if gaps.size >= 3:
+            spacing = float(np.median(gaps))
+            if spacing > 0:
+                ratio = (60.0 / bpm) / spacing
+                k = int(round(ratio))
+                if k >= 2 and abs(ratio - k) <= 0.2 * k and bpm * k <= hi_bpm:
+                    bpm *= k
+    return bpm, strength
+
+
 def check_tempo(sig, bpm_ref, tol_bpm=2.0, tol_pct=2.0, drift_bpm=2.0):
-    """Beat-tracked tempo against the score/sheet, plus drift over four quarters."""
+    """Tempo from the onset periodicity against the score/sheet, plus drift over four quarters."""
     if librosa is None or not bpm_ref:
         return _result(0.0, tol_bpm, 'BPM', [], 'librosa missing or no reference tempo', skipped=True)
     try:
-        est, beats = librosa.beat.beat_track(y=sig.mono, sr=sig.sr, units='time')
-        bpm = float(np.asarray(est).reshape(-1)[0])
-    except TypeError:                                   # older librosa: no units keyword
-        est, frames = librosa.beat.beat_track(y=sig.mono, sr=sig.sr)
-        bpm = float(np.asarray(est).reshape(-1)[0])
-        beats = librosa.frames_to_time(frames, sr=sig.sr)
+        bpm, strength = tempo_from_onsets(sig.mono, sig.sr)
     except Exception as exc:
-        return _result(0.0, tol_bpm, 'BPM', [], f'beat tracker failed: {exc}', skipped=True)
-    if bpm <= 0.0:
+        return _result(0.0, tol_bpm, 'BPM', [], f'onset tempo estimate failed: {exc}', skipped=True)
+    if bpm is None or strength < 1.0:
         return _result(0.0, tol_bpm, 'BPM', [],
-                       'beat tracker found no pulse: tempo not judged (a bed or rubato piece may have none)',
-                       skipped=True)
-    # Drift from one beat list, not four independent trackers: a quarter of a piece is too short to track reliably
-    # (measured on a clean 74 BPM render: four short trackers reported 49.4 BPM of drift on a steady tempo).
-    beats = np.asarray(beats, dtype=np.float64)
-    vals = []
+                       f'no isochronous pulse in the onsets (peak strength {strength:.1f}): tempo not judged '
+                       '(a bed or rubato piece may have none)', skipped=True)
+    try:                                        # the beat tracker, reported but not decisive (see tempo_from_onsets)
+        est, _ = librosa.beat.beat_track(y=sig.mono, sr=sig.sr, units='time')
+        beat_bpm = float(np.asarray(est).reshape(-1)[0])
+    except Exception:
+        beat_bpm = float('nan')
     quarter = sig.dur / 4.0
+    vals = []
     for i in range(4):
-        seg = beats[(beats >= i * quarter) & (beats < (i + 1) * quarter)]
-        if seg.size >= 3:
-            ioi = np.diff(seg)
-            vals.append(60.0 / float(np.median(ioi)))
+        seg = sig.mono[int(i * quarter * sig.sr):int(min(sig.dur, (i + 1) * quarter) * sig.sr)]
+        if len(seg) < sig.sr:
+            continue
+        try:
+            v, s = tempo_from_onsets(seg, sig.sr)
+        except Exception:
+            v = None
+        if v is not None and s >= 1.0:
+            # A quarter can lock onto a subdivision or a multiple of the beat (measured: quarters of a metronomic
+            # 152 BPM cue read 76.0, i.e. half, and the spread was reported as 75.8 BPM of "drift" on a render that
+            # does not drift at all). Snap each quarter to the nearest metrical relative of the whole-piece estimate
+            # before the spread, so the number means tempo drift and not a metrical-level disagreement.
+            for mult in (0.25, 1.0 / 3.0, 0.5, 2.0 / 3.0, 0.75, 1.0, 4.0 / 3.0, 1.5, 2.0, 3.0, 4.0):
+                if abs(v * mult - bpm) <= max(2.0, 0.04 * bpm):
+                    v = v * mult
+                    break
+            vals.append(v)
     drift = (max(vals) - min(vals)) if len(vals) > 1 else 0.0
     tol = max(float(tol_bpm), float(bpm_ref) * float(tol_pct) / 100.0)
-    # Drift is reported, not decisive: on a steady 74 BPM render the beat tracker's quarter medians differed by 4.1 BPM
-    # with no tempo change in the music, so failing on it would be a false positive. The full-track estimate decides.
+    # Drift is reported, not decisive: quarter-length estimates are noisy even on a metronomic render.
     fail = abs(bpm - float(bpm_ref)) > tol
-    detail = (f'measured {bpm:.1f} BPM vs {float(bpm_ref):.1f} (tolerance {tol:.1f}); '
-              f'four-quarter drift {drift:.1f} BPM reported, not decisive (tracker jitter)')
+    detail = (f'measured {bpm:.1f} BPM vs {float(bpm_ref):.1f} (tolerance {tol:.1f}) from the onset-envelope '
+              f'autocorrelation (peak {strength:.1f}x the median); beat tracker said {beat_bpm:.1f}; '
+              f'four-quarter drift {drift:.1f} BPM reported, not decisive')
     return _result(abs(bpm - float(bpm_ref)), tol, 'BPM', [], detail,
-                   measured_bpm=bpm, drift_bpm=drift, fail=bool(fail))
+                   measured_bpm=bpm, beat_tracker_bpm=beat_bpm, drift_bpm=drift, fail=bool(fail))
 
 
-def section_bounds(score, dur, sheet=None):
-    """[{name, start_s, end_s, dyn}] from the score plan or the direction sheet, else four equal parts."""
-    bpm = float(score.get('bpm') or 120.0)
-    bb = float((score.get('ts') or [4, 4])[0])
-    bar_s = 60.0 / bpm * bb
+def section_bounds(score, dur, sheet=None, problems=None):
+    """[{name, start_s, end_s, dyn}] from the score plan or the direction sheet, else four equal parts.
+    A tempo map that cannot be built raises, unless `problems` (a list) is given to receive the reason."""
+    import gate_clock
+    _sec = gate_clock.seconds_fn(score, problems)
+    bpb = gate_clock.bar_beats(score)
+    bar_s = float(_sec(bpb))
     out = []
     plan = (score.get('plan') or {}).get('sections') or []
     if plan:
@@ -544,8 +690,8 @@ def section_bounds(score, dur, sheet=None):
                 a = float(s['start_s'])
                 b = float(s.get('end_s', a + bar_s))
             else:
-                a = float(s.get('start_bar', 0)) * bar_s
-                b = float(s.get('end_bar', s.get('start_bar', 0) + 1)) * bar_s
+                a = float(_sec(float(s.get('start_bar', 0)) * bpb))
+                b = float(_sec(float(s.get('end_bar', s.get('start_bar', 0) + 1)) * bpb))
             out.append(dict(name=s.get('name', f'section {i + 1}'), start_s=a, end_s=min(b, dur),
                             dyn=float(s.get('dyn', s.get('energy', 0.5)))))
     elif sheet and sheet.get('sections'):
@@ -565,7 +711,7 @@ def section_energy(sig, score, sheet=None, fail_rho=0.5, warn_rho=0.7):
     """Spearman rank correlation between measured section level and the promised energy/dynamics."""
     secs = section_bounds(score, sig.dur, sheet)
     if len(secs) < 4:
-        return _result(1.0, fail_rho, 'rho', [], 'fewer than 4 sections: not judged', skipped=True)
+        return _result(1.0, fail_rho, 'rho', [], 'fewer than 4 sections: not judged', skipped=True, level='INFO')
     db, times = frame_db(sig, 20.0, 5.0)
     rows = []
     for s in secs:
@@ -578,7 +724,7 @@ def section_energy(sig, score, sheet=None, fail_rho=0.5, warn_rho=0.7):
     energies = [r['energy'] for r in rows]
     if not np.all(np.isfinite(vals)) or len(set(round(e, 6) for e in energies)) < 2:
         return _result(1.0, fail_rho, 'rho', [], 'section levels or promised energies are constant: not judged',
-                       skipped=True, table=rows)
+                       skipped=True, table=rows, level='INFO')
     from scipy.stats import spearmanr
     rho = float(spearmanr(energies, vals).correlation)
     level = 'FAIL' if rho < fail_rho else ('WARN' if rho < warn_rho else 'PASS')

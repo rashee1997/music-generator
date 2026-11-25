@@ -1,0 +1,861 @@
+{
+ "stamp": "20261125T071051",
+ "project": "indo_afro_sunrise",
+ "level": "FAIL",
+ "sources": {
+  "score": "/home/user/music-generator/projects/indo_afro_sunrise/scores/indo_afro_sunrise_score.json",
+  "gate_data": [
+   "level.json",
+   "rows.json",
+   "section_energy.json",
+   "spectrogram.json",
+   "stem_gate.json",
+   "stem_levels.json",
+   "stereo.json",
+   "waveform.json"
+  ],
+  "stems": "12 processed stems from .cache/mix",
+  "master": "out/_draft_master.wav",
+  "verdict": "2026-11-25T06:54:59Z",
+  "drift": "the presets or score changed after this master was rendered: presets/mix/indo_afro_sunrise_mix.json - the autopsy describes the previous mix until you re-render"
+ },
+ "binding": [
+  {
+   "row": "clicks",
+   "stem": null,
+   "level": "FAIL",
+   "value": 2.0,
+   "threshold": 0.0,
+   "unit": "events",
+   "safety": -2.0,
+   "detail": "2 clustered impulse event(s) (MAD), 2 LPC frame(s); 1327 event(s) rejected as a dense burst, 252 as a steep attack; max cluster span 1.497 ms"
+  }
+ ],
+ "advisory": [
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  }
+ ],
+ "domains": {
+  "run": [
+   "master",
+   "stems"
+  ],
+  "skipped": {}
+ },
+ "model": {
+  "first_order": true,
+  "rows": 21,
+  "levers": [
+   {
+    "id": "render.oversample",
+    "domain": "master",
+    "kind": "oversample",
+    "stem": null,
+    "current": 4.0,
+    "lo": 1.0,
+    "hi": 8.0,
+    "step": 1.0,
+    "unit": "x",
+    "text": "master oversampling before the limiter"
+   },
+   {
+    "id": "hf.tabla",
+    "domain": "master",
+    "kind": "hf_shelf",
+    "stem": "tabla",
+    "current": 0.0,
+    "lo": -12.0,
+    "hi": 0.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "tabla high shelf at 5500 Hz: inst_eq[\"tabla\"]"
+   },
+   {
+    "id": "hf.shekere",
+    "domain": "master",
+    "kind": "hf_shelf",
+    "stem": "shekere",
+    "current": -3.0,
+    "lo": -15.0,
+    "hi": 0.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "shekere high shelf at 5500 Hz: inst_eq[\"shekere\"]"
+   },
+   {
+    "id": "layer.canopy.insects",
+    "domain": "master",
+    "kind": "layer_gain",
+    "stem": "canopy",
+    "current": -18.0,
+    "lo": -30.0,
+    "hi": -18.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "insects layer gain_db in presets/environments/amazon_rainforest.json"
+   },
+   {
+    "id": "inst_eq.canopy.0",
+    "domain": "stems",
+    "kind": "eq",
+    "stem": "canopy",
+    "current": -3.0,
+    "lo": -15.0,
+    "hi": 9.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "canopy highshelf 5500 Hz q0.7"
+   },
+   {
+    "id": "note.canopy.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "canopy",
+    "current": 70.0,
+    "lo": 69.94,
+    "hi": 70.06,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "canopy written note length (mean 70 beats)"
+   }
+  ]
+ },
+ "plan": {
+  "status": "replay (unproven)",
+  "worst_safety": -2.0,
+  "deltas": {
+   "hf.tabla": -3.0,
+   "hf.djembe": -3.0,
+   "hf.shekere": -6.0,
+   "hf.kit": -3.0
+  },
+  "clearing": {
+   "hf.tabla": -3.0,
+   "hf.djembe": -3.0,
+   "hf.shekere": -6.0,
+   "hf.kit": -3.0
+  },
+  "predicted": {
+   "clicks::-": [
+    -2.0,
+    -2.0
+   ],
+   "loudness::-": [
+    0.02,
+    0.02
+   ],
+   "true peak::-": [
+    0.0002498336005085644,
+    0.0002498336005085644
+   ],
+   "clipping::-": [
+    0.0,
+    0.0
+   ],
+   "master.dc::-": [
+    0.09914788849676302,
+    0.09914788849676302
+   ],
+   "stem.dc::canopy": [
+    0.09997021039088343,
+    0.09997021039088343
+   ],
+   "stem.clipping::canopy": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::canopy": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::canopy": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::canopy": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::canopy": [
+    1.0,
+    1.0
+   ],
+   "stem.tick::canopy": [
+    0.02,
+    0.02
+   ],
+   "stem.dead::canopy": [
+    0.02,
+    0.02
+   ]
+  },
+  "conflicts": [
+   {
+    "lever": "layer.canopy.insects",
+    "text": "insects layer gain_db in presets/environments/amazon_rainforest.json",
+    "unit": "dB",
+    "feasible": [
+     18.0,
+     0.0
+    ],
+    "bounds": [
+     -12.0,
+     0.0
+    ],
+    "rows": [
+     {
+      "row": "clicks",
+      "needs": 18.0,
+      "safety": -2.0
+     }
+    ],
+    "why": "insects layer gain_db in presets/environments/amazon_rainforest.json cannot satisfy clicks at once: the moves that pass one row fail the other, and the bounds leave no value between"
+   }
+  ],
+  "closed": [],
+  "burned": [],
+  "notes": [
+   "no admissible move improves the binding rows: every lever is burned, closed or already optimal",
+   "best candidate clears the modelled row with 0 dB of margin but the model's own error is 1.7 dB: this is a direction, not a proof, and the next render is the test (it will be recorded against this prediction)"
+  ],
+  "experiments": [
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "iterative",
+    "value": 0,
+    "baseline": 2,
+    "near3": 3,
+    "margin_db": 0.0,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "times": [],
+    "verdict": "clears",
+    "moves": {
+     "hf.tabla": -3.0,
+     "hf.djembe": -3.0,
+     "hf.shekere": -6.0,
+     "hf.kit": -3.0
+    },
+    "robust": 0.0,
+    "proved": false
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 0,
+    "baseline": 2,
+    "margin_db": 0.0,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.shekere": -3.0,
+     "layer.canopy.insects": -3.0
+    },
+    "times": [],
+    "verdict": "clears",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.tabla": -3.0
+    },
+    "times": [
+     15.549
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.shekere": -3.0
+    },
+    "times": [
+     33.081
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.tabla": -6.0
+    },
+    "times": [
+     15.549
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.shekere": -6.0
+    },
+    "times": [
+     33.081
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.tabla": -3.0,
+     "hf.shekere": -3.0
+    },
+    "times": [
+     33.081
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.tabla": -9.0
+    },
+    "times": [
+     15.549
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.shekere": -9.0
+    },
+    "times": [
+     33.081
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.tabla": -3.0,
+     "hf.shekere": -6.0
+    },
+    "times": [
+     33.081
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.tabla": -6.0,
+     "hf.shekere": -3.0
+    },
+    "times": [
+     33.081
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.tabla": -12.0
+    },
+    "times": [
+     15.549
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.shekere": -12.0
+    },
+    "times": [
+     33.081
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.tabla": -3.0,
+     "hf.shekere": -9.0
+    },
+    "times": [
+     33.081
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.tabla": -6.0,
+     "hf.shekere": -6.0
+    },
+    "times": [
+     33.081
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.tabla": -9.0,
+     "hf.shekere": -3.0
+    },
+    "times": [
+     33.081
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.shekere": -3.0,
+     "layer.canopy.insects": -9.0
+    },
+    "times": [
+     48.428
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.tabla": -6.0,
+     "hf.shekere": -9.0
+    },
+    "times": [
+     33.081
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.tabla": -9.0,
+     "hf.shekere": -6.0
+    },
+    "times": [
+     33.081
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.tabla": -9.0,
+     "hf.shekere": -9.0
+    },
+    "times": [
+     33.081
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.7,
+    "moves": {
+     "hf.shekere": -9.0,
+     "layer.canopy.insects": -9.0
+    },
+    "times": [
+     21.963
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   }
+  ]
+ },
+ "forensics": [
+  {
+   "t": 15.5489,
+   "step": 0.03436,
+   "threshold": 0.03345,
+   "over_threshold_db": 0.23,
+   "z": 8.2,
+   "kind": "coincident transients",
+   "trusted": true,
+   "fit_ratio": 0.79,
+   "owners": [
+    {
+     "stem": "shekere",
+     "share": 0.588,
+     "signed": 0.01621
+    },
+    {
+     "stem": "canopy/insects",
+     "share": 0.277,
+     "signed": 0.00764
+    }
+   ],
+   "raw_step_fs": 0.0371,
+   "notes": [
+    {
+     "track": "canopy",
+     "pitch": null,
+     "velocity": null,
+     "onset_s": null,
+     "after_onset_ms": 0.0,
+     "written_len": null,
+     "continuous": true,
+     "layers": [
+      {
+       "layer": "drips",
+       "primitive": "impulse_cluster",
+       "gain_db": -19.0,
+       "impulsive": true,
+       "rate": 10.0
+      },
+      {
+       "layer": "birds",
+       "primitive": "fm_chirp_cluster",
+       "gain_db": -16.0,
+       "impulsive": true,
+       "rate": 0.5
+      }
+     ]
+    },
+    {
+     "track": "shekere",
+     "pitch": 82,
+     "velocity": 0.3,
+     "onset_s": 15.5,
+     "after_onset_ms": 48.9,
+     "written_len": 0.5
+    }
+   ]
+  },
+  {
+   "t": 34.7115,
+   "step": 0.03499,
+   "threshold": 0.03345,
+   "over_threshold_db": 0.39,
+   "z": 8.4,
+   "kind": "single source",
+   "trusted": true,
+   "fit_ratio": 0.86,
+   "owners": [
+    {
+     "stem": "tabla",
+     "share": 0.882,
+     "signed": -0.02952
+    }
+   ],
+   "raw_step_fs": 0.0934,
+   "notes": []
+  }
+ ],
+ "notes": [
+  "clicks: sham replay (no change) reproduces the gate's 2 event(s) exactly (decomposition R^2 0.879); counterfactuals below are priced on a model that passes its own test",
+  "clicks: model resolution 1.7 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
+  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.88); gains bansuri 2.95, bass 1.58, canopy 6.29, djembe 1.42, guitar 2.12, horns 1.32, kit 1.30, marimba 0.22, shekere 1.46, sitar 0.11, tabla 1.65, tanpura 1.32",
+  "event 15.549s [coincident transients] shekere 59%, canopy/insects 28%; step 0.0344 vs threshold 0.0335 (+0.2 dB over); nearest onset canopy pNone vNone +0 ms",
+  "event 34.712s [single source] tabla 88%; step 0.0350 vs threshold 0.0335 (+0.4 dB over)",
+  "clicks: iterative replay, profile (events at 0/1/2/3 dB tighter) (2, 4, 8, 9) -> (0, 1, 1, 1) after tabla -3 dB, djembe -3 dB, shekere -6 dB, kit -3 dB",
+  "risk closure: the levers that move this row belong to canopy, so every row of those stems was loaded as a constraint before the plan was solved"
+ ]
+}

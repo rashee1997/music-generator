@@ -18,6 +18,7 @@ dynamics and articulation are applied by the caller, so loudness is never re-nor
 import numpy as np
 
 from . import data, geometry, nasal, source, tract
+from .utils import hz_to_midi
 
 
 def resolve_register(cfg, name=None):
@@ -45,7 +46,7 @@ def register_track(cfg, name, f0):
         return base
     other = resolve_register(cfg, ladder[ladder.index(nm) + 1])
     f0 = np.asarray(f0, dtype=float)
-    midi = 69.0 + 12.0 * np.log2(np.maximum(f0, 20.0) / 440.0)
+    midi = hz_to_midi(np.maximum(f0, 20.0))
     width = max(float(p.get('width_semitones', 2.0)), 1e-3)
     w = np.clip((midi - float(p.get('midi', 60.0)) + 0.5 * width) / width, 0.0, 1.0)
     out = {}

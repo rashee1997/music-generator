@@ -158,22 +158,43 @@ def notes_from_amps(vid, amps, frame_t, cfg):
     return suppress_leakage(sorted(out, key=lambda n: (n['start_s'], n['midi'])), cfg)
 
 
+_ANALYSIS = {}
+
+
+def _mix_analysis(y, cfg):
+    """(STFT, harmonic mask, percussive mask) of a mix. The residual rounds call `separate` up to 1 + 2 * rounds times
+    on the same mix; the transform and the median-filter masks depend only on the audio and the `separate` settings, so
+    the last result is kept under a hash of both (never read after being modified: callers only multiply by it)."""
+    import hashlib
+    import json
+    key = (hashlib.sha1(np.ascontiguousarray(y).tobytes()).hexdigest(), y.shape, str(y.dtype),
+           json.dumps(cfg['separate'], sort_keys=True, default=str))
+    hit = _ANALYSIS.get('last')
+    if hit is not None and hit[0] == key:
+        return hit[1]
+    X = stft(y, cfg)
+    Mh, Mp = hp_masks(X, cfg)
+    _ANALYSIS['last'] = (key, (X, Mh, Mp))
+    return X, Mh, Mp
+
+
 def separate(y, sr, voices, spec, tuning_cents, cfg):
     """{'voices': {id: (2, n)}, 'perc', 'harm', 'residual', 'notes': {voice: refined notes}}."""
     s = cfg['separate']
     n = y.shape[1]
-    X = stft(y, cfg)
-    Mh, Mp = hp_masks(X, cfg)
+    X, Mh, Mp = _mix_analysis(y, cfg)
     Xh = X * Mh
     shape = Xh.shape[1:]
     amps, geo = solve_dictionary(voices, spec, np.abs(Xh).mean(axis=0), tuning_cents, sr, cfg)
     p = s['share_power']
     total = np.zeros(shape, 'float32')
-    for i in voices:
-        total += field(i, amps, geo, shape) ** p
+    shares = {}
+    for i in voices:                                      # one field per voice, used for the total and for its own mask
+        shares[i] = field(i, amps, geo, shape) ** p
+        total += shares[i]
     out = {}
     for i in voices:
-        M = np.where(total > 0, field(i, amps, geo, shape) ** p / np.maximum(total, 1e-12), 0.0)
+        M = np.where(total > 0, shares[i] / np.maximum(total, 1e-12), 0.0)
         if s['smooth_frames'] > 1:
             M = ndimage.uniform_filter(M, size=(1, s['smooth_frames']))
         out[i] = istft(Xh * M[None], cfg, n)

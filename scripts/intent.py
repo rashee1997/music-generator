@@ -160,7 +160,7 @@ def normalise_block(block):
 
 def _pitched(score):
     for t in score.get('tracks') or []:
-        if roles.canonical(t.get('role') or '') in ('drum', 'sfx', 'environment'):
+        if roles.canonical(t.get('role') or '') in ('drum', 'fx', 'environment'):
             continue
         for n in t.get('notes') or []:
             yield t, n
@@ -262,7 +262,7 @@ def m_thin_texture(score):
 def m_min_silence_long(score):
     bpm, end = _span(score)
     events = sorted((float(n.get('t', 0.0)), float(n.get('t', 0.0)) + float(n.get('d', 0.0) or 0.0))
-                    for _t, n in _pitched(score) if roles.canonical(_t.get('role') or '') != 'sfx')
+                    for _t, n in _pitched(score) if roles.canonical(_t.get('role') or '') != 'fx')
     if not events:
         return True, 'the piece is silent'
     reach = events[0][1]
@@ -275,13 +275,19 @@ def m_min_silence_long(score):
     return bars >= 4.0, f'longest silence {bars:.1f} bars'
 
 
+def _unit_v(v):
+    """A velocity on the 0..1 scale: a score may write MIDI 1-127 or 0..1 (a value above 1 is MIDI)."""
+    v = float(v)
+    return v / 127.0 if v > 1.0 else v
+
+
 def m_sudden_loud(score):
     for t in score.get('tracks') or []:
         prev = None
         for n in sorted(t.get('notes') or [], key=lambda n: float(n.get('t', 0.0))):
             if prev is not None:
                 dt = float(n.get('t', 0.0)) - float(prev.get('t', 0.0))
-                dv = abs(float(n.get('v', 0.5)) - float(prev.get('v', 0.5)))
+                dv = abs(_unit_v(n.get('v', 0.5)) - _unit_v(prev.get('v', 0.5)))
                 if dt <= 1.0 and dv > 0.40:
                     return True, f'{t.get("name")} jumps {dv:.2f} of velocity in {dt:.2f} beats'
             prev = n
@@ -308,7 +314,7 @@ def m_cut_synced_hits(score):
 def m_wide_range(score):
     for t in score.get('tracks') or []:
         ps = [float(n.get('p', n.get('pitch', 60))) for n in t.get('notes') or []
-              if roles.canonical(t.get('role') or '') not in ('drum', 'sfx', 'environment')]
+              if roles.canonical(t.get('role') or '') not in ('drum', 'fx', 'environment')]
         if ps and max(ps) - min(ps) > 24:
             return True, f'{t.get("name")} spans {int(max(ps) - min(ps))} semitones'
     return False, 'no track spans more than two octaves'
@@ -319,6 +325,8 @@ def m_pedal_throughout(score):
     if end <= 0:
         return False, 'no notes'
     for t in score.get('tracks') or []:
+        if roles.canonical(t.get('role') or '') in ('drum', 'fx', 'environment'):
+            continue                                          # a percussion stroke is a name, not a held pitch
         ps = [int(float(n.get('p', n.get('pitch', 60)))) for n in t.get('notes') or []]
         if not ps:
             continue
@@ -409,6 +417,16 @@ def problems():
             for k in (e.get('qa') or {}):
                 if k not in QA_KEYS:
                     out.append(f'{kind}.{cid}: qa key "{k}" is not one the report reads ({QA_KEYS})')
+    va = (presets.load('intent').get('valence_arousal') or {}).get('emotions') or {}
+    for cid in sorted(set(voc.get('emotions') or {}) - set(va)):
+        out.append(f'valence_arousal.{cid}: no valence/arousal coordinates, so an arc cannot be compared with this emotion')
+    for cid, c in va.items():
+        if cid not in (voc.get('emotions') or {}):
+            out.append(f'valence_arousal.{cid}: not an emotion of the vocabulary')
+        for axis in ('valence', 'arousal'):
+            v = c.get(axis)
+            if not isinstance(v, (int, float)) or not -1.0 <= float(v) <= 1.0:
+                out.append(f'valence_arousal.{cid}.{axis}: expected a number from -1 to 1, got {v!r}')
     for w, targets in _synonyms().items():
         if not targets:
             out.append(f'synonyms.{w}: points at nothing')

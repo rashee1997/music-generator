@@ -80,6 +80,8 @@ def grow(ctx, summary):
                             'tuning_cents': round(float(d['tuning']['cents']), 1), 'song': song, 'spatial': info.get('spatial')}
         cur['instruments'][vid] = {**prev, **base}
         changed.append(vid)
+    if not changed:                 # nothing new was measured: leave the shipped database byte for byte as it is
+        return changed
     with open(SIGNATURES, 'w', encoding='utf-8') as f:
         json.dump(cur, f, indent=1, ensure_ascii=False)
     return changed
@@ -98,10 +100,10 @@ def build_pitch_table(a4=440.0, harmonics=12):
         ra = (12194.0 ** 2 * f2 ** 2) / ((f2 + 20.6 ** 2) * np.sqrt((f2 + 107.7 ** 2) * (f2 + 737.9 ** 2)) * (f2 + 12194.0 ** 2))
         return float(20 * np.log10(ra) + 2.0)
 
-    from .music_db import note_to_midi
+    from .music_db import hz, note_to_midi
     table = {}
     for m in range(128):
-        f = a4 * 2.0 ** ((m - 69) / 12.0)
+        f = hz(m, a4=a4)
         ladder = []
         for h in range(1, harmonics + 1):
             x = m + 12 * np.log2(h)

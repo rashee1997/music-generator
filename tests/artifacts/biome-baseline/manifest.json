@@ -1,0 +1,131 @@
+{
+  "items": {
+    "call:big_cat_roar": {
+      "centroid_hz": 2206.3,
+      "rms_db": -43.376,
+      "sha256": "70718bbad16e7593e7b96605bc9c1415520ea6308e19c7d9ddcab2d22fc42f8a",
+      "shape": [
+        352800,
+        2
+      ]
+    },
+    "call:crow_caw": {
+      "centroid_hz": 3482.8,
+      "rms_db": -46.607,
+      "sha256": "ef77ff38ef8a665ae607bea17be5c96a9cf78de61b8f2329fcd350616f7336ee",
+      "shape": [
+        352800,
+        2
+      ]
+    },
+    "call:cuckoo_two_note": {
+      "centroid_hz": 551.2,
+      "rms_db": -31.852,
+      "sha256": "9b9d461ec5cf96fa6c1431bb2a99c87472d17016faf34db3c1230f86ed9e56e9",
+      "shape": [
+        352800,
+        2
+      ]
+    },
+    "call:dog_bark": {
+      "centroid_hz": 2216.4,
+      "rms_db": -47.926,
+      "sha256": "c718fa81872843fb4908753e6d33560530704a145aa62744a54afcc54d26aa21",
+      "shape": [
+        352800,
+        2
+      ]
+    },
+    "call:frog_trill": {
+      "centroid_hz": 1721.9,
+      "rms_db": -39.291,
+      "sha256": "a843be7969b3c52c235be11a657c3788e87f1b983b2470c279326d25336ec6be",
+      "shape": [
+        352800,
+        2
+      ]
+    },
+    "call:owl_hoot": {
+      "centroid_hz": 382.5,
+      "rms_db": -32.656,
+      "sha256": "56cc3835d44168cb0ec94ec86184459dc20e7c811c730f9feebbe71852d7bcba",
+      "shape": [
+        352800,
+        2
+      ]
+    },
+    "call:songbird_phrase": {
+      "centroid_hz": 4326.8,
+      "rms_db": -36.498,
+      "sha256": "4c7cbb3ffba78ee530d4505348ed683b5277f30352330236b7eaaec50f00e27e",
+      "shape": [
+        352800,
+        2
+      ]
+    },
+    "call:wolf_howl": {
+      "centroid_hz": 553.4,
+      "rms_db": -28.357,
+      "sha256": "580d061b8871c39965c940dbd0fd3540980d3bc02235856db608810c703f076a",
+      "shape": [
+        352800,
+        2
+      ]
+    },
+    "env:amazon_rainforest": {
+      "centroid_hz": 2943.2,
+      "rms_db": -62.656,
+      "sha256": "0e61b2a6a86fb5ff48bc8887f08b5a1a83709d7ca4dcf7ebda183fda1bf7c1c2",
+      "shape": [
+        264600,
+        2
+      ]
+    },
+    "env:savanna_dusk": {
+      "centroid_hz": 1239.5,
+      "rms_db": -65.619,
+      "sha256": "bb0d88be4481606248955c6c9edcf2a0ba4340b231483d5025ee337c0885939c",
+      "shape": [
+        264600,
+        2
+      ]
+    },
+    "env:titan_methane_storm": {
+      "centroid_hz": 461.5,
+      "rms_db": -63.214,
+      "sha256": "9a7a95fdb7f9bcaa6512da9dd104c17d6fa31da44b66423106fc98cf7a088858",
+      "shape": [
+        264600,
+        2
+      ]
+    },
+    "env:western_ghats_monsoon": {
+      "centroid_hz": 968.9,
+      "rms_db": -63.706,
+      "sha256": "1627a7329f5fac8d2ea3e7367b12ac0f69fa2f5bd7fc2369a777216acbf3a04d",
+      "shape": [
+        264600,
+        2
+      ]
+    },
+    "env:wetland_night": {
+      "centroid_hz": 1510.9,
+      "rms_db": -66.889,
+      "sha256": "a850cf2bf4917a2d6339eca9cf0aacf1caf3ca8cdaee46b3108209cbd27733ff",
+      "shape": [
+        264600,
+        2
+      ]
+    },
+    "env:woodland_dawn": {
+      "centroid_hz": 1496.8,
+      "rms_db": -68.476,
+      "sha256": "e4f68dac16154077fe994829072dce4fd32f347c019f451b997e57662b5ce4eb",
+      "shape": [
+        264600,
+        2
+      ]
+    }
+  },
+  "sr": 44100
+}

@@ -100,6 +100,21 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
     for d in (direction_dir, inst_dir, vocal_dir, spaces_dir, mix_dir, sfx_dir, video_dir, gate_dir, ref_dir, scores_dir, midi_dir, stems_dir, reports_dir, scripts_dir, out_dir) + ((env_dir,) if ambience else ()):
         d.mkdir(parents=True, exist_ok=True)
 
+    # A custom gate profile is mandatory for a project: the shipped profiles are starting points, and a piece is
+    # judged by its own document. The file starts as a clone of `melodic` with the character still to be written.
+    prof_path = gate_dir / f'{slug}.json'
+    if not prof_path.exists():
+        base = Path(__file__).resolve().parent.parent / 'references' / 'data' / 'presets' / 'gate' / 'melodic.json'
+        try:
+            body = json.loads(base.read_text(encoding='utf-8'))
+        except (OSError, ValueError):
+            body = {'name': 'melodic', 'extends': 'melodic'}
+        body['name'] = slug
+        body['extends'] = 'melodic'
+        body['character'] = ('ONE SENTENCE: why this piece is judged by these rows and where it departs from '
+                            '`melodic` (fill before the first render; the project gate blocks a placeholder)')
+        prof_path.write_text(json.dumps(body, indent=1), encoding='utf-8')
+
     # Delivery metadata: the standard tags live in the skill (presets/metadata/metadata.json); this file only
     # overrides them for this piece. scripts/helpers/ingest_metadata.py reads both at certification.
     meta_file = proj_dir / 'metadata.json'
@@ -309,6 +324,10 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
                   "spectral": {"max_auto_cut_db": 0.0, "preserve_spectrum_roles": ["environment"],
                                "profiles": copy.deepcopy(mix_schema.SPECTRAL_PROFILES)},   # rain, wind, water, voice, strings, ...
                   "space": {"auto_env_blend": {"enabled": True},
+                            # the room send each role starts with (starting values: a dry bass, a wet pad)
+                            "send_by_role": {"default": 0.18, "bass": 0.0, "drum": 0.08, "percussion": 0.08, "pad": 0.30,
+                                             "texture": 0.30, "drone": 0.26, "melody": 0.22, "lead": 0.22, "vocal": 0.22,
+                                             "environment": 0.20},
                             "drr": {"enabled": False, "target_db": 0.0}},
                   "sidechain": {"mode": "legacy", "band_hz": [250.0, 3800.0], "residual": 0.3,
                                 "env_plateau": True},
@@ -608,7 +627,7 @@ def scaffold_film_project(proj_path, title='Untitled Film', fps=25.0, cues=None,
     (film_dir / 'spotting' / 'cutlist.json').write_text(json.dumps(cutlist, indent=2) + '\n', encoding='utf-8')
 
     cuesheet = {
-        'cues': [dict(id=cid, title=f'TODO: what this cue is for', reel=1,
+        'cues': [dict(id=cid, title='TODO: what this cue is for', reel=1,
                       in_s=0.0, out_s=None, duration_s=None,
                       master=f'cues/{cid}/out/master.wav',
                       purpose='TODO: the job the music does here',
@@ -642,7 +661,7 @@ def scaffold_film_project(proj_path, title='Untitled Film', fps=25.0, cues=None,
     print('  analysis/              reel_<id>_probe.json, reel_<id>_context.json')
     print('  cues/<id>/             one complete music project per cue')
     print('  deliver/               reel_<id>_program.wav, reel_<id>_report.json, muxed file')
-    print(f'\nNext: probe the picture, fill spotting/cuesheet.json, then score cue by cue.')
+    print('\nNext: probe the picture, fill spotting/cuesheet.json, then score cue by cue.')
     return film_dir
 
 
@@ -655,6 +674,10 @@ def main():
     ap.add_argument('--cues', default=None, help='with --new-film: comma-separated cue ids (default M01_open)')
     ap.add_argument('--title', default='New Composition', help='title of the piece when scaffolding a new project')
     ap.add_argument('--ears', action='store_true', help='also install earshot and download its models (about 1 GB)')
+    ap.add_argument('--soundfonts', nargs='?', const='all', default=None, metavar='NAMES',
+                    help='download optional SoundFont banks into assets/soundfonts/ (all, or a comma-separated list: '
+                         'timgm6mb, muse_general, fluid_r3_gm, sonatina_sf2; generaluser_gs is the default and is fetched by setup itself), '
+                         'verify them and write assets/soundfonts/LICENSES.md; then exit. Without this flag only generaluser_gs is used')
     ap.add_argument('--venv', default=str(SKILL / '.venv'), help='where the virtual environment goes (default: .venv)')
     ap.add_argument('--earshot-home', default=str(EARSHOT_HOME), help='where earshot keeps its models')
     args = ap.parse_args()
@@ -667,6 +690,12 @@ def main():
         cues = [c.strip() for c in (args.cues or '').split(',') if c.strip()] or None
         scaffold_film_project(args.new_film, title=args.title, fps=args.fps, cues=cues, ambience=args.ambience)
         return
+
+    if args.soundfonts is not None:
+        # standard library only: this runs before (and without) the virtual environment
+        sys.path.insert(0, str(SKILL / 'scripts'))
+        import soundfont_fetch
+        sys.exit(soundfont_fetch.run(args.soundfonts))
 
     if sys.version_info < (3, 10):
         sys.exit('Python 3.10 or newer is needed. Found ' + sys.version.split()[0])
@@ -721,7 +750,7 @@ def main():
     print(f'  Activate: {activate}   (or call {venv_python(venv)} directly)')
     print('  Try:      python scripts/compose.py --list')
     if args.ears:
-        print(f'  Listen:   python scripts/listen.py cue.wav --direction templates/direction_sheet.json')
+        print('  Listen:   python scripts/listen.py cue.wav --direction templates/direction_sheet.json')
         print(f'            (models live in {Path(args.earshot_home).expanduser()}; listen.py finds them there)')
     else:
         print('  Listen:   run again with --ears to enable listen.py')

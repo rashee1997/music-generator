@@ -214,16 +214,7 @@ def peaks(f_pred, areas, length, wv, span=0.12, points=61, closed=False):
     """
     f_pred = np.asarray(f_pred, dtype=float)
     k = len(f_pred)
-    mid = np.empty(k + 1)
-    if k == 1:                                       # one mode: the neighbour gap is unknown, so bound it by 45 %
-        mid[0], mid[-1] = f_pred[0] * 0.55, f_pred[0] * 1.45
-    else:
-        mid[1:-1] = 0.5 * (f_pred[1:] + f_pred[:-1])
-        mid[0] = f_pred[0] - 0.45 * (mid[1] - f_pred[0])
-        mid[-1] = f_pred[-1] + 0.45 * (f_pred[-1] - mid[k - 1])
-    lo = np.maximum(np.maximum(f_pred * (1.0 - span), mid[:-1]), 20.0)
-    hi = np.minimum(np.maximum(f_pred * (1.0 + span), lo + 40.0), mid[1:])
-    hi = np.maximum(hi, lo + 40.0)
+    lo, hi = _peak_windows(f_pred, span)
     g = np.linspace(0.0, 1.0, points)[None, :]
     f = lo[:, None] + g * (hi - lo)[:, None]
     mag = np.abs(response(f.ravel(), areas, length, wv, closed=closed)).reshape(k, points)
@@ -238,6 +229,22 @@ def peaks(f_pred, areas, length, wv, span=0.12, points=61, closed=False):
             if abs(d) > 1e-30:
                 out[m] = out[m] + 0.5 * (y0 - y2) / d * df[m]
     return out
+
+
+def _peak_windows(f_pred, span):
+    """(lo, hi) search window per mode, each bounded by the midpoints to its neighbours so no two overlap. A window
+    narrower than 40 Hz is kept at the neighbour midpoint rather than widened into the next one."""
+    k = len(f_pred)
+    mid = np.empty(k + 1)
+    if k == 1:                                       # one mode: the neighbour gap is unknown, so bound it by 45 %
+        mid[0], mid[-1] = f_pred[0] * 0.55, f_pred[0] * 1.45
+    else:
+        mid[1:-1] = 0.5 * (f_pred[1:] + f_pred[:-1])
+        mid[0] = f_pred[0] - 0.45 * (mid[1] - f_pred[0])
+        mid[-1] = f_pred[-1] + 0.45 * (f_pred[-1] - mid[k - 1])
+    lo = np.maximum(np.maximum(f_pred * (1.0 - span), mid[:-1]), 20.0)
+    hi = np.minimum(np.maximum(f_pred * (1.0 + span), lo + 40.0), mid[1:])
+    return lo, hi
 
 
 def bandwidths(f, H, F0, floor_hz=6.0):

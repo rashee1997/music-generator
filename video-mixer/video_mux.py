@@ -31,14 +31,14 @@ import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+if HERE not in sys.path:
+    sys.path.insert(0, HERE)
+
+import video_probe          # noqa: E402  (the one ffprobe wrapper, with its timeouts)
 
 
 def _ffprobe_streams(path):
-    p = subprocess.run(['ffprobe', '-v', 'error', '-print_format', 'json', '-show_streams', '-show_format', path],
-                       stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL)
-    if p.returncode != 0:
-        raise RuntimeError(f'ffprobe failed on {path}: {p.stderr.decode("utf-8", "replace").strip()[-500:]}')
-    info = json.loads(p.stdout.decode('utf-8', 'replace'))
+    info = video_probe.ffprobe_json(path)
     v = next((s for s in info.get('streams', []) if s.get('codec_type') == 'video'), {})
     return info, v
 
@@ -81,7 +81,11 @@ def mux(video, audio, out, cfg, verbose=False):
     if cfg.get('shortest'):
         cmd += ['-shortest']
     cmd += [out]
-    p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL)
+    try:
+        p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL,
+                           timeout=video_probe.FFMPEG_TIMEOUT_S)
+    except subprocess.TimeoutExpired:
+        raise RuntimeError(f'mux timed out after {video_probe.FFMPEG_TIMEOUT_S}s') from None
     if p.returncode != 0:
         raise RuntimeError(f'mux failed ({p.returncode}): {p.stderr.decode("utf-8", "replace").strip()[-900:]}')
     src, dst = _video_identity(video), _video_identity(out)

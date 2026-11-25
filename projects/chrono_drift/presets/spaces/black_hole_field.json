@@ -1,0 +1,102 @@
+{
+  "name": "black_hole_field",
+  "character": "A field far larger than any room: 60 m across, a 30 m ceiling, and a tail long enough that a single struck note outlives the phrase it belongs to.",
+  "room": {
+    "rt60": 6.5,
+    "pre_delay_ms": 42.0,
+    "hf_decay": 0.42,
+    "early_level": 0.18
+  },
+  "reflections": {
+    "ground_delay_ms": 34.0,
+    "ground_gain": 0.22,
+    "ground_cutoff_hz": 1800,
+    "lateral_delay_ms": 58.0,
+    "lateral_gain": 0.11,
+    "lateral_cutoff_hz": 1400,
+    "reverb_decay_s": 6.5,
+    "ceiling_delay_ms": 70.0,
+    "ceiling_gain": 0.12,
+    "rear_delay_ms": 88.0,
+    "rear_gain": 0.07,
+    "path_physics": true,
+    "ref_m": 1.5,
+    "geometry": {
+      "width_m": 60.0,
+      "depth_m": 60.0,
+      "height_m": 30.0,
+      "listener": {
+        "x": 30.0,
+        "y": 20.0,
+        "z": 1.7
+      },
+      "materials": {
+        "floor": "plaster",
+        "ceiling": "plaster",
+        "walls": "plaster"
+      },
+      "material_set": "room_materials",
+      "max_order": 2,
+      "max_taps": 10,
+      "min_level_db": -34.0
+    },
+    "late": {
+      "enabled": true,
+      "rt60_s": "auto",
+      "pre_delay_ms": "auto",
+      "hf_decay": 0.42,
+      "level_db": -22.0,
+      "count": 8,
+      "spread_deg": 180.0,
+      "rise_s": 0.04,
+      "seed": 11,
+      "bands_hz": [
+        125,
+        250,
+        500,
+        1000,
+        2000,
+        4000,
+        8000
+      ]
+    }
+  },
+  "distance": {
+    "ref_m": 1.5,
+    "falloff": 0.22,
+    "air_damping": 0.36,
+    "min_cutoff_hz": 2600,
+    "reverb_exponent": 0.7,
+    "pre_delay_law": {
+      "base_ms": 38.0,
+      "per_m": 4.0,
+      "max_ms": 90.0
+    },
+    "near_field": {
+      "enabled": true,
+      "model": "dvf",
+      "max_m": 1.0,
+      "head_radius_m": 0.0875,
+      "strength": 1.0,
+      "lf_boost": 2.0,
+      "lf_hz": 700.0,
+      "min_gain": 0.35,
+      "max_gain": 3.0
+    }
+  },
+  "air": {
+    "temp_c": 18.0,
+    "rh": 40.0
+  },
+  "binaural": {
+    "bed": false,
+    "spot": true
+  },
+  "sources": [
+    "Sabine's reverberation equation, RT60 = 0.161 V / A (knowledgebase/sound-design/acoustics-room.md): a 60 x 60 x 30 m plaster box has V = 108000 m3, so the 6.5 s tail here is the order of magnitude the geometry would give, not a measured room",
+    "ITU-R BS.775 / BS.2051 front-azimuth convention (-30, 0, +30 deg) supplies the speaker angles; the field's own box is project geometry, since no real hall of this size was measured",
+    "Air absorption from ISO 9613-1 at 18 C and 40 percent relative humidity: the 2.6 kHz minimum cutoff at far distance is the air-absorption shelf, not a mix decision",
+    "knowledgebase/sound-design/immersive-spatial.md section 2c: a room whose tail must change uses scene transitions on the space preset, so the crush and last-light transitions are written in the direction sheet and executed here",
+    "ESTIMATE: early tap gains, pre-delay law, late level -13 dB and the 10-tap order are starting values for a field this size; none has been measured"
+  ]
+}

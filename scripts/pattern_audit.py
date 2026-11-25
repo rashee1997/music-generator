@@ -27,9 +27,13 @@ A flag is a question for the composer, not a verdict: a drone or a minimalist os
 import argparse
 import collections
 import json
+import os
 import sys
 
 import numpy as np
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import roles  # noqa: E402  (the one role vocabulary: a figure is melody, lead or vocal)
 
 
 def bar_sigs(notes, bb):
@@ -55,6 +59,24 @@ def best_period(sigs):
 PLUCKED = {'acoustic_guitar', 'nylon_guitar', 'harp', 'kora', 'oud', 'guzheng'}
 BRIGHT = {39: 'clap', 38: 'snare', 40: 'snare', 37: 'rim', 54: 'tambourine'}
 BRIGHT_NAMES = set(BRIGHT.values())
+
+
+def _role(t):
+    """The canonical role of a track ('' when it has none or an unknown one; roles.problems() reports those)."""
+    try:
+        return roles.canonical(t.get('role'), default='')
+    except roles.UnknownRole:
+        return ''
+
+
+def _is_figure(t):
+    """The figure family: melody, lead or vocal."""
+    return roles.is_lead(t.get('role'))
+
+
+def _is_melodic(t):
+    """A line the ear follows: the figure family or a counter-line."""
+    return _is_figure(t) or _role(t) == 'counter'
 
 
 def _vel(n):
@@ -95,7 +117,7 @@ def chord_voicing_and_strum(score):
     rows = []
     for t in score['tracks']:
         inst = str(t.get('instrument', '')).lower()
-        if t.get('role') not in ('chord', 'harmony') and 'piano' not in inst and 'guitar' not in inst:
+        if _role(t) not in ('chord', 'counter') and 'piano' not in inst and 'guitar' not in inst:
             continue
         chords = [c for c in _clusters(t.get('notes', [])) if len(c) >= 3]
         if not chords:
@@ -126,7 +148,7 @@ def choked_resonance(score):
         pct = len(short) / len(ns)
         stac = sum(1 for n in short if str(n.get('art', '')).lower() == 'staccato') / max(len(short), 1)
         avg = float(np.mean([n.get('d', 0) for n in ns]))
-        if pct >= 0.5 and (stac >= 0.5 or (t.get('role') == 'chord' and avg < 0.35)):
+        if pct >= 0.5 and (stac >= 0.5 or (_role(t) == 'chord' and avg < 0.35)):
             rows.append(('FAIL', 'choked_resonance',
                          f"Track '{t['name']}' has {pct:.0%} short staccato notes (d <= 0.42), choking SoundFont body "
                          "resonance. Increase strum durations to 0.6-1.0 beats and use 'legato' articulation."))
@@ -152,7 +174,7 @@ def _machine_run(vv):
 def machine_gun_percussion(score):
     rows = []
     for t in score['tracks']:
-        if t.get('role') != 'drum':
+        if _role(t) != 'drum':
             continue
         by_p = collections.defaultdict(list)
         for n in sorted(t.get('notes', []), key=lambda n: n['t']):
@@ -174,7 +196,7 @@ def machine_gun_percussion(score):
 def percussion_flam(score):
     rows = []
     for t in score['tracks']:
-        if t.get('role') != 'drum':
+        if _role(t) != 'drum':
             continue
         hits = []
         for n in t.get('notes', []):
@@ -203,7 +225,7 @@ def percussion_flam(score):
 def low_interval_mud(score):
     rows = []
     for t in score['tracks']:
-        if t.get('role') not in ('chord', 'pad', 'arp'):
+        if _role(t) not in ('chord', 'pad', 'arp'):
             continue
         chords = [c for c in _clusters(t.get('notes', [])) if len(c) >= 3]
         if not chords:
@@ -230,8 +252,8 @@ def spatial_glue(score):
         return []
     rows = []
     for t in tracks:
-        if 'reverb' in t and float(t['reverb'] or 0) == 0.0 and t.get('role') in ('chord', 'pad', 'arp', 'melody',
-                                                                                  'counter', 'harmony'):
+        if 'reverb' in t and float(t['reverb'] or 0) == 0.0 and (_role(t) in ('chord', 'pad', 'arp', 'counter')
+                                                                                  or _is_figure(t)):
             rows.append(('WARN', 'spatial_glue',
                          f"Track '{t['name']}' has reverb=0 in a '{room}' score, creating a dry stock-MIDI mismatch. "
                          "Set 'reverb': 0.15-0.22 so all acoustic instruments share the room."))
@@ -318,7 +340,7 @@ def melodic_contour_feel(score):
     rows = []
     intent = get_intent_profile(score)
     for t in score.get('tracks', []):
-        if t.get('role') not in ('melody', 'counter', 'lead'):
+        if not _is_melodic(t):
             continue
         raw_notes = sorted(t.get('notes', []), key=lambda n: n['t'])
         notes = [n for n in raw_notes if isinstance(n.get('p'), (int, float))]
@@ -393,10 +415,10 @@ def harmonic_resolution_feel(score):
     """
     rows = []
     intent = get_intent_profile(score)
-    mel_tracks = [t for t in score.get('tracks', []) if t.get('role') in ('melody', 'lead')]
+    mel_tracks = [t for t in score.get('tracks', []) if _is_figure(t)]
     if not mel_tracks:
-        mel_tracks = [t for t in score.get('tracks', []) if t.get('role') == 'counter']
-    harm_tracks = [t for t in score.get('tracks', []) if t.get('role') in ('chord', 'arp', 'pad', 'bass')]
+        mel_tracks = [t for t in score.get('tracks', []) if _role(t) == 'counter']
+    harm_tracks = [t for t in score.get('tracks', []) if _role(t) in ('chord', 'arp', 'pad', 'bass')]
 
     if not mel_tracks or not harm_tracks:
         return rows
@@ -408,14 +430,13 @@ def harmonic_resolution_feel(score):
     scale_pcs = None
     k_obj = score.get('key')
     if hasattr(k_obj, 'scale') and hasattr(k_obj, 'tpc'):
-        scale_pcs = {(k_obj.tpc + deg) % 12 for deg in k_obj.scale}
+        scale_pcs = k_obj.pcs()
     elif isinstance(k_obj, str):
         try:
             import theory
             parts = k_obj.split()
-            k = theory.Key(parts[0], parts[1] if len(parts) > 1 else 'major')
-            scale_pcs = {(k.tpc + deg) % 12 for deg in k.scale}
-        except Exception:
+            scale_pcs = theory.Key(parts[0], parts[1] if len(parts) > 1 else 'major').pcs()
+        except (ValueError, KeyError, IndexError):      # a key the theory module cannot parse: the scale test is skipped
             pass
 
     for t in mel_tracks:
@@ -488,7 +509,7 @@ def groove_pocket_lock(score):
     Fails if pocket_corr < 0.30 over >= 4 bars.
     """
     rows = []
-    rhythm_tracks = [t for t in score.get('tracks', []) if t.get('role') in ('drum', 'arp', 'bass')]
+    rhythm_tracks = [t for t in score.get('tracks', []) if _role(t) in ('drum', 'arp', 'bass')]
     if not rhythm_tracks:
         return rows
 
@@ -502,7 +523,7 @@ def groove_pocket_lock(score):
 
     total_beats = max(n['t'] + n.get('d', 1.0) for n in all_notes)
     if total_beats < num * 4:
-        return [('PASS', 'groove_pocket_lock', 'Rhythmic duration under 4 bars; groove pocket check skipped')]
+        return [('INFO', 'groove_pocket_lock', 'Rhythmic duration under 4 bars: not measured, not passed')]
 
     grid_len = int(np.ceil(total_beats * steps_per_beat)) + total_bar_steps * 2 + 16
     grid = np.zeros(grid_len, dtype=float)
@@ -545,7 +566,7 @@ def kinematic_effort_feel(score):
     """
     rows = []
     for t in score.get('tracks', []):
-        if t.get('role') not in ('melody', 'counter', 'lead'):
+        if not _is_melodic(t):
             continue
         inst = str(t.get('instrument', '')).lower()
         is_physical = (inst in ACOUSTIC_PHYSICAL_INSTS or any(k in inst for k in ('flute', 'whistle', 'string', 'violin', 'cello', 'bow', 'voice', 'choir', 'brass', 'horn', 'sax', 'reed', 'pipe')))
@@ -601,54 +622,54 @@ def kinematic_effort_feel(score):
 # Module 1: Symbolic Neuro-Cognitive Gates
 # ================================================================================================
 
+def _helix_point(pc_cont, tonic_pc):
+    """A pitch (continuous pitch class) on Chew's spiral array, relative to the tonic: the line of fifths wound on a helix."""
+    rel_pc = (float(pc_cont) - float(tonic_pc)) % 12.0
+    k = ((7.0 * rel_pc + 5.0) % 12.0) - 5.0
+    return np.array([np.sin(k * np.pi / 2.0), np.cos(k * np.pi / 2.0), k * np.sqrt(2.0 / 15.0)])
+
+
+def _spiral_series(score):
+    """Chew's cloud per window of two bars: (centres of effect, cloud diameters, key centre, windows, window beats), or None
+    for a score with no pitched notes. The one place the windowed tension is computed (the arc row and `expr.tension_ic`)."""
+    import soul_check
+    num = _beats_per_bar(score)
+    w_len = 2 * num
+    all_notes = [n for t in score.get('tracks', []) if _role(t) not in ('drum', 'environment')
+                 for n in t.get('notes', []) if isinstance(n.get('p'), (int, float))]
+    if not all_notes:
+        return None
+    N = max(1, int(np.ceil(max(n['t'] + n.get('d', 1.0) for n in all_notes) / w_len)))
+    tonic_pc = soul_check._tonic_pc(score)
+    CE_key = _helix_point(float(tonic_pc), tonic_pc)
+    CEs, T_cds = [], []
+    for w in range(N):
+        t0 = w * w_len
+        t1 = t0 + w_len
+        active = [n for n in all_notes if max(t0, n['t']) < min(t1, n['t'] + n.get('d', 1.0))]
+        if active:
+            vecs = [_helix_point(_pitch_cont(n), tonic_pc) for n in active]
+            weights = [float(n.get('d', 1.0)) * _vel(n) for n in active]
+            ce = sum(v * w for v, w in zip(vecs, weights)) / (sum(weights) + 1e-9)
+            cd = max(np.linalg.norm(a - b) for a in vecs for b in vecs)
+        else:
+            ce = CEs[-1] if CEs else CE_key
+            cd = 0.0
+        CEs.append(ce)
+        T_cds.append(cd)
+    return CEs, T_cds, CE_key, N, w_len
+
+
 def spiral_tension_arc(score):
     """1.1 Chew's 3D Spiral Array Tonal Tension & Arc Alignment (Chew 2000, Herremans & Chew 2016).
     Evaluates tonal tension trajectory, cloud momentum, and outro resolution in 3D helical space.
     """
     rows = []
     intent = get_intent_profile(score)
-    ts = score.get('ts', [4, 4])
-    num, _ = ts if (isinstance(ts, (list, tuple)) and len(ts) >= 2) else (4, 4)
-    w_len = 2 * num
-
-    all_notes = [n for t in score.get('tracks', []) if t.get('role') not in ('drum', 'environment')
-                 for n in t.get('notes', []) if isinstance(n.get('p'), (int, float))]
-    if not all_notes:
+    series = _spiral_series(score)
+    if series is None:
         return rows
-
-    total_beats = max(n['t'] + n.get('d', 1.0) for n in all_notes)
-    N = max(1, int(np.ceil(total_beats / w_len)))
-
-    # Resolve tonic
-    import soul_check
-    tonic_pc = soul_check._tonic_pc(score)
-
-    def P_helical(pc_cont):
-        rel_pc = (float(pc_cont) - float(tonic_pc)) % 12.0
-        k = ((7.0 * rel_pc + 5.0) % 12.0) - 5.0
-        return np.array([np.sin(k * np.pi / 2.0), np.cos(k * np.pi / 2.0), k * np.sqrt(2.0 / 15.0)])
-
-    CE_key = P_helical(float(tonic_pc))
-
-    CEs = []
-    T_cds = []
-
-    for w in range(N):
-        t0 = w * w_len
-        t1 = t0 + w_len
-        active = [n for n in all_notes if max(t0, n['t']) < min(t1, n['t'] + n.get('d', 1.0))]
-        if active:
-            vecs = [P_helical(_pitch_cont(n)) for n in active]
-            weights = [float(n.get('d', 1.0)) * _vel(n) for n in active]
-            tot_w = sum(weights) + 1e-9
-            ce = sum(v * w for v, w in zip(vecs, weights)) / tot_w
-            dists = [np.linalg.norm(a - b) for a in vecs for b in vecs]
-            cd = max(dists) if dists else 0.0
-        else:
-            ce = CEs[-1] if CEs else CE_key
-            cd = 0.0
-        CEs.append(ce)
-        T_cds.append(cd)
+    CEs, T_cds, CE_key, N, w_len = series
 
     T_cms = [float(np.linalg.norm(CEs[i] - CEs[i - 1])) for i in range(1, len(CEs))]
     T_tss = [float(np.linalg.norm(ce - CE_key)) for ce in CEs]
@@ -696,36 +717,30 @@ def spiral_tension_arc(score):
     return rows
 
 
-def witek_groove_curve(score):
-    """1.2 Witek-Vuust Inverted-U Groove & Syncopation Pleasure Curve (Witek 2014, Vuust 2018).
-    Measures Bar Syncopation Index (BSI) across the metric tree of any time signature.
+def bar_syncopation(score):
+    """Witek's Bar Syncopation Index of the drum/bass/arp cell, or None when the piece has no rhythm part to score.
+
+    The one place the index is computed: the `feel.witek` row and the chem model's motor pool both read it, so a
+    change to the metric tree moves both. Weighted by the 16th-note metric hierarchy of the score's own time signature.
     """
-    rows = []
-    intent = get_intent_profile(score)
     ts = score.get('ts', [4, 4])
     weights, steps_per_beat, total_bar_steps = build_metric_tree(ts)
     num, _ = ts if (isinstance(ts, (list, tuple)) and len(ts) >= 2) else (4, 4)
-
-    rhythm_tracks = [t for t in score.get('tracks', []) if t.get('role') in ('drum', 'bass', 'arp')]
+    rhythm_tracks = [t for t in score.get('tracks', []) if _role(t) in ('drum', 'bass', 'arp')]
     if not rhythm_tracks:
-        return rows
-
+        return None
     rhythm_notes = [n for t in rhythm_tracks for n in t.get('notes', []) if 't' in n]
     if not rhythm_notes:
-        return rows
-
+        return None
     vels = [_vel(n) for n in rhythm_notes]
     med_v = float(np.median(vels)) if vels else 0.5
-
     step_hits = set()
     for n in rhythm_notes:
         if _vel(n) >= med_v * 0.85:
             step_hits.add(int(round(n['t'] * steps_per_beat)))
-
     total_beats = max(n['t'] + n.get('d', 1.0) for n in rhythm_notes)
     total_bars = max(1.0, total_beats / num)
     total_steps_piece = int(np.ceil(total_beats * steps_per_beat))
-
     syncopation = 0.0
     for s in range(total_steps_piece - 1):
         if s in step_hits:
@@ -735,8 +750,18 @@ def witek_groove_curve(score):
             w_s = weights[pos_s]
             if w_s > w_w and (s + 1) not in step_hits:
                 syncopation += (w_s - w_w)
+    return float(syncopation / total_bars)
 
-    bsi = float(syncopation / total_bars)
+
+def witek_groove_curve(score):
+    """1.2 Witek-Vuust Inverted-U Groove & Syncopation Pleasure Curve (Witek 2014, Vuust 2018).
+    Measures Bar Syncopation Index (BSI) across the metric tree of any time signature.
+    """
+    rows = []
+    intent = get_intent_profile(score)
+    bsi = bar_syncopation(score)
+    if bsi is None:
+        return rows
 
     if intent['is_ambient']:
         rows.append(('PASS', 'witek_groove_curve', f"Ambient/free-pulse mode: BSI {bsi:.2f}/bar conforms to meditative profile"))
@@ -754,59 +779,109 @@ def witek_groove_curve(score):
     return rows
 
 
+def _melody_lines(score):
+    """[(track name, expectation analysis)] for every melodic track with at least 8 pitched notes (scripts/expectation.py:
+    prediction by partial matching, each note predicted before it is learned)."""
+    import expectation
+    import soul_check
+    model = expectation.Expectation()
+    tonic = soul_check._tonic_pc(score)
+    out = []
+    for t in score.get('tracks', []):
+        if not _is_melodic(t):
+            continue
+        notes = [n for n in t.get('notes', []) if isinstance(n.get('p'), (int, float))]
+        if len(notes) >= 8:
+            out.append((t.get('name', 'melody'), model.analyse(notes, tonic)))
+    return out
+
+
+def _distinct_intervals(line):
+    iv = line['viewpoints']['cpint']['ic']
+    return len({int(round(b - a)) for a, b in zip(line['pitches'], line['pitches'][1:])}) if len(iv) > 1 else 0
+
+
 def melodic_information_entropy(score):
-    """1.3 Information-Theoretic Melodic Surprise & IDyOM Entropy (Pearce 2005, Huron 2006).
-    Evaluates Shannon conditional entropy H and ungrounded high-surprise leaps across melodic lines.
-    """
+    """1.3 Information-theoretic melodic surprise (Pearce & Wiggins 2004, Huron 2006): the mean information content of a
+    line, from the PPM model in scripts/expectation.py. Too low is a mechanical loop; too high is indistinguishable
+    from a random walk. (The grounding of high-surprise notes is the `expr.surprise_grounded` row.)
+
+    The estimator predicts each note before learning it. The first-order Markov estimate this row used before counted the
+    note it was predicting, so it read 1.0-2.9 bits lower on the same melodies (24 generated melodies: 1.22-2.49 then,
+    3.12-4.27 now), and the upper limit moved with it: see the `feel.entropy` parameters in gate_profiles.ROWS."""
     rows = []
     intent = get_intent_profile(score)
-    mel_tracks = [t for t in score.get('tracks', []) if t.get('role') in ('melody', 'counter', 'lead')]
-    if not mel_tracks:
-        return rows
-
-    for t in mel_tracks:
-        notes = [n for n in sorted(t.get('notes', []), key=lambda n: n['t']) if isinstance(n.get('p'), (int, float))]
-        if len(notes) < 8:
-            continue
-        name = t.get('name', 'melody')
-        pitches = np.array([_pitch_cont(n) for n in notes])
-        dp = np.clip(np.round(np.diff(pitches)).astype(int), -12, 12)
-        obs = sorted(set(dp))
-        K = len(obs)
-        if K < 2:
+    gp = _gp(score)
+    lo, hi = float(gp.param('feel.entropy', 'min_bits')), float(gp.param('feel.entropy', 'max_bits'))
+    for name, line in _melody_lines(score):
+        if _distinct_intervals(line) < 2:
             if not intent['is_ambient']:
                 rows.append(('FAIL', 'melodic_information_entropy', f"Track '{name}': Melodic entropy is zero; pitch is completely static."))
             continue
-
-        idx = {val: i for i, val in enumerate(obs)}
-        counts = np.full((K, K), 0.2)
-        for i in range(len(dp) - 1):
-            counts[idx[dp[i]], idx[dp[i + 1]]] += 1.0
-
-        P = counts / counts.sum(axis=1, keepdims=True)
-        ics = [-np.log2(P[idx[dp[i]], idx[dp[i + 1]]]) for i in range(len(dp) - 1)]
-        H = float(np.mean(ics)) if ics else 2.0
-
-        ungrounded = 0
-        for i in range(len(ics)):
-            if ics[i] > 4.2:
-                resolved = (i + 1 < len(ics) and ics[i + 1] <= 2.2)
-                if not resolved:
-                    ungrounded += 1
-        ungrounded_frac = ungrounded / max(1, len(ics))
-
-        if H < 1.15 and not intent['is_ambient']:
+        ic = line['ic'][~np.isnan(line['ic'])]
+        H = float(np.mean(ic)) if len(ic) else 2.0
+        if H < lo and not intent['is_ambient']:
             rows.append(('FAIL', 'melodic_information_entropy',
-                         f"Track '{name}': Melodic entropy is too low ({H:.2f} bits < 1.15); motif is mechanically predictable."))
-        elif H > 3.35 or ungrounded_frac > 0.30:
-            rows.append(('FAIL', 'melodic_information_entropy',
-                         f"Track '{name}': Melodic surprise is ungrounded (entropy {H:.2f} bits, {ungrounded_frac:.0%} ungrounded leaps > 4.2 bits); "
-                         "high-surprise leaps must be followed by predictable stepwise resolution."))
+                         f"Track '{name}': Melodic entropy is too low ({H:.2f} bits < {lo:g}); motif is mechanically predictable."))
+        elif H > hi:
+            rows.append(('WARN', 'melodic_information_entropy',
+                         f"Track '{name}': Melodic information content {H:.2f} bits > {hi:g}: as unpredictable as a random walk; "
+                         "repeat or vary a motif so the listener can learn it."))
         else:
             rows.append(('PASS', 'melodic_information_entropy',
                          f"Track '{name}' melodic information entropy in optimal human cognition corridor ({H:.2f} bits)"))
-
     return rows
+
+
+def expectation_checks(score):
+    """expr.ic_profile and expr.surprise_grounded: what the PPM model says about each melodic line (INFO / WARN only)."""
+    import expectation
+    rows = []
+    gp = _gp(score)
+    num = _beats_per_bar(score)
+    limit = float(gp.param('expr.surprise_grounded', 'max_share'))
+    if gp.on('expr.tension_ic'):
+        rows += tension_ic_row(score)
+    for name, line in _melody_lines(score):
+        ic, h = line['ic'], line['h']
+        if gp.on('expr.ic_profile'):
+            per_bar = expectation.by_bar(line['onsets'], ic, num)
+            ok = per_bar[~np.isnan(per_bar)]
+            rows.append(('INFO', 'expr.ic_profile',
+                         f"Track '{name}': information content mean {np.nanmean(ic):.2f} bits, uncertainty mean {np.nanmean(h):.2f} bits; "
+                         f"per bar {ok.min():.1f}-{ok.max():.1f} bits over {len(ok)} bars; rhythm {np.nanmean(line['ic_rhythm']):.2f} bits"
+                         if len(ok) else f"Track '{name}': too few notes for a per-bar profile"))
+        if gp.on('expr.surprise_grounded'):
+            share = expectation.ungrounded_share(ic)
+            rows.append(('WARN' if share > limit else 'PASS', 'expr.surprise_grounded',
+                         f"Track '{name}': {share:.0%} of notes are surprising (> 4.2 bits) and not followed by a predictable one "
+                         f"(<= 2.2 bits); limit {limit:.0%}" + ("; resolve high-surprise leaps stepwise or repeat the figure after them" if share > limit else '')))
+    return rows
+
+
+def tension_ic_row(score):
+    """expr.tension_ic (INFO): how closely the harmonic tension of each two-bar window follows the surprise of the melody in it."""
+    import expectation
+    series = _spiral_series(score)
+    lines = _melody_lines(score)
+    if series is None or not lines:
+        return []
+    CEs, T_cds, CE_key, N, w_len = series
+    T = np.array([float(np.linalg.norm(ce - CE_key)) + cd for ce, cd in zip(CEs, T_cds)])
+    name, line = lines[0]
+    ic = expectation.by_bar(line['onsets'], line['ic'], w_len)
+    m = min(len(ic), len(T))
+    ok = ~np.isnan(ic[:m])
+    if ok.sum() < 4 or np.std(T[:m][ok]) < 1e-6 or np.std(ic[:m][ok]) < 1e-6:
+        return [('INFO', 'expr.tension_ic', f"Track '{name}': too few windows, or no change in tension or surprise, to correlate them")]
+    r = float(np.corrcoef(T[:m][ok], ic[:m][ok])[0, 1])
+    return [('INFO', 'expr.tension_ic',
+             f"Track '{name}': harmonic tension (Chew) and melodic information content per two bars correlate {r:+.2f} over {int(ok.sum())} windows")]
+
+
+def _beats_per_bar(score):
+    ts = score.get('ts', [4, 4])
+    return float(ts[0]) if isinstance(ts, (list, tuple)) and len(ts) >= 2 else 4.0
 
 
 def cognitive_feel_checks(score):
@@ -822,10 +897,10 @@ def cognitive_feel_checks(score):
     gp = _gp(score)
     checks = (('feel.contour', melodic_contour_feel), ('feel.resolution', harmonic_resolution_feel), ('feel.groove', groove_pocket_lock),
               ('feel.effort', kinematic_effort_feel), ('feel.spiral', spiral_tension_arc), ('feel.witek', witek_groove_curve),
-              ('feel.entropy', melodic_information_entropy))
+              ('feel.entropy', melodic_information_entropy), (None, expectation_checks))
     rows = []
     for rid, fn in checks:
-        if gp.on(rid):                      # a skipped row is listed once by the profile notes, with its reason
+        if rid is None or gp.on(rid):       # a skipped row is listed once by the profile notes, with its reason; None gates itself
             rows += fn(score)
     return rows
 
@@ -833,11 +908,12 @@ def cognitive_feel_checks(score):
 def cognitive_metrics(score):
     """Computes exact numerical metrics for Stage 7 release packaging."""
     out = dict(witek_bsi=0.0, melodic_entropy_bits=2.0, spiral_strain_end=0.0)
+    errors = {}                 # a metric that could not be computed keeps its default value AND is named here
     try:
         ts = score.get('ts', [4, 4])
         weights, steps_per_beat, total_bar_steps = build_metric_tree(ts)
         num, _ = ts if (isinstance(ts, (list, tuple)) and len(ts) >= 2) else (4, 4)
-        rhythm_tracks = [t for t in score.get('tracks', []) if t.get('role') in ('drum', 'bass', 'arp')]
+        rhythm_tracks = [t for t in score.get('tracks', []) if _role(t) in ('drum', 'bass', 'arp')]
         rhythm_notes = [n for t in rhythm_tracks for n in t.get('notes', []) if 't' in n]
         if rhythm_notes:
             vels = [_vel(n) for n in rhythm_notes]
@@ -850,54 +926,39 @@ def cognitive_metrics(score):
                        for s in range(total_steps_piece - 1)
                        if s in step_hits and weights[(s + 1) % total_bar_steps] > weights[s % total_bar_steps] and (s + 1) not in step_hits)
             out['witek_bsi'] = round(float(sync / total_bars), 2)
-    except Exception:
-        pass
+    except Exception as e:
+        errors['witek_bsi'] = repr(e)
 
     try:
-        mel_tracks = [t for t in score.get('tracks', []) if t.get('role') in ('melody', 'lead', 'counter')]
-        for t in mel_tracks:
-            notes = [n for n in sorted(t.get('notes', []), key=lambda n: n['t']) if isinstance(n.get('p'), (int, float))]
-            if len(notes) >= 8:
-                dp = np.clip(np.round(np.diff([_pitch_cont(n) for n in notes])).astype(int), -12, 12)
-                obs = sorted(set(dp))
-                K = len(obs)
-                if K >= 2:
-                    idx = {val: i for i, val in enumerate(obs)}
-                    counts = np.full((K, K), 0.2)
-                    for i in range(len(dp) - 1):
-                        counts[idx[dp[i]], idx[dp[i + 1]]] += 1.0
-                    P = counts / counts.sum(axis=1, keepdims=True)
-                    ics = [-np.log2(P[idx[dp[i]], idx[dp[i + 1]]]) for i in range(len(dp) - 1)]
-                    out['melodic_entropy_bits'] = round(float(np.mean(ics)), 2)
-                    break
-    except Exception:
-        pass
+        for _name, line in _melody_lines(score):
+            if _distinct_intervals(line) >= 2:
+                out['melodic_entropy_bits'] = round(float(np.nanmean(line['ic'])), 2)
+                break
+    except Exception as e:
+        errors['melodic_entropy_bits'] = repr(e)
 
     try:
         import soul_check
         tonic_pc = soul_check._tonic_pc(score)
 
-        def P_helical_c(pc_cont):
-            rel_pc = (float(pc_cont) - float(tonic_pc)) % 12.0
-            k = ((7.0 * rel_pc + 5.0) % 12.0) - 5.0
-            return np.array([np.sin(k * np.pi / 2.0), np.cos(k * np.pi / 2.0), k * np.sqrt(2.0 / 15.0)])
-
-        CE_key = P_helical_c(float(tonic_pc))
+        CE_key = _helix_point(float(tonic_pc), tonic_pc)
         num, _ = score.get('ts', [4, 4])
-        all_notes = [n for t in score.get('tracks', []) if t.get('role') not in ('drum', 'environment')
+        all_notes = [n for t in score.get('tracks', []) if _role(t) not in ('drum', 'environment')
                      for n in t.get('notes', []) if isinstance(n.get('p'), (int, float))]
         if all_notes:
             total_beats = max(n['t'] + n.get('d', 1.0) for n in all_notes)
             t0 = max(0.0, total_beats - 2 * num)
             active = [n for n in all_notes if max(t0, n['t']) < min(total_beats, n['t'] + n.get('d', 1.0))]
             if active:
-                vecs = [P_helical_c(_pitch_cont(n)) for n in active]
+                vecs = [_helix_point(_pitch_cont(n), tonic_pc) for n in active]
                 weights = [float(n.get('d', 1.0)) * _vel(n) for n in active]
                 ce = sum(v * w for v, w in zip(vecs, weights)) / (sum(weights) + 1e-9)
                 out['spiral_strain_end'] = round(float(np.linalg.norm(ce - CE_key)), 2)
-    except Exception:
-        pass
+    except Exception as e:
+        errors['spiral_strain_end'] = repr(e)
 
+    if errors:
+        out['_errors'] = errors
     return out
 
 
@@ -906,8 +967,11 @@ def note_collision(score):
     attacks either phase-cancel or spike; one note per pitch per beat is the only safe way to write it. Drums
     count too: a drum key is its pitch."""
     rows = []
-    spb = 60.0 / float(score.get('bpm', 120) or 120)
+    import gate_clock
+    _sec = gate_clock.seconds_fn(score)
     for t in score.get('tracks', []):
+        if str(t.get('instrument', '')).startswith(('sfx:', 'env:')):
+            continue                 # a one-shot or a place has no pitch to re-attack; its event length is judged by preflight.sfx_length
         by_pitch = {}
         for n in t.get('notes', []):
             by_pitch.setdefault(n.get('p'), []).append(n)
@@ -917,7 +981,7 @@ def note_collision(score):
                 if abs(b['t'] - a['t']) < 1e-6:
                     rows.append(('FAIL', 'note_collision',
                                  f"Track '{t.get('name', '?')}': pitch {p} is attacked twice on beat {b['t']:g} "
-                                 f"({b['t'] * spb:.2f} s). Two identical attacks phase-cancel or spike: delete one."))
+                                 f"({float(_sec(b['t'])):.2f} s). Two identical attacks phase-cancel or spike: delete one."))
                 elif b['t'] < a['t'] + float(a.get('d', 1.0)) - 0.25:
                     rows.append(('WARN', 'note_collision',
                                  f"Track '{t.get('name', '?')}': pitch {p} is re-attacked on beat {b['t']:g} while the "
@@ -942,12 +1006,12 @@ def audit(score):
     bb = score['ts'][0]
     flags, info = [], []
     for t in score['tracks']:
-        if t.get('role') == 'environment' or 'notes' not in t or str(t.get('instrument', '')).startswith('env:'):
+        if _role(t) == 'environment' or 'notes' not in t or str(t.get('instrument', '')).startswith('env:'):
             continue
         notes = t['notes']
         if len(notes) < 8:
             continue
-        name, role = t['name'], t.get('role', '')
+        name, role = t['name'], _role(t)
         sigs = [s for s in bar_sigs(notes, bb)]
         filled = [s for s in sigs if s]
         n_bars = len(sigs)
@@ -957,14 +1021,14 @@ def audit(score):
         on_beat = np.mean([abs(n['t'] - round(n['t'])) < 1e-6 for n in notes])
         info.append(f'{name:10s} {role:7s} bars {n_bars:3d}  distinct {distinct:3d}  loop-period {period or "-"}  '
                     f'velocity sd {vel.std():.2f}  on-beat {on_beat:.0%}')
-        if t.get('allow_ostinato') or t.get('is_drone') or t.get('is_ostinato') or t.get('role') in ('drone', 'pad'):
+        if t.get('allow_ostinato') or t.get('is_drone') or t.get('is_ostinato') or role in ('drone', 'pad'):
             continue
         if gp.on('pattern.drums_few') and role == 'drum' and n_bars >= 8 and distinct <= max(2, n_bars // P('pattern.drums_few', 'distinct_div')):
             flags.append(f'{name}: the drums play {distinct} different bar(s) in {n_bars}. Add fills, dropouts, a different groove in the chorus, ghost notes')
         if (gp.on('pattern.loop_short') and role in ('chord', 'pad', 'arp', 'bass') and n_bars >= P('pattern.loop_short', 'min_bars')
                 and period and period <= P('pattern.loop_short', 'max_period_bars') and distinct <= P('pattern.loop_short', 'max_distinct')):
             flags.append(f'{name}: loops every {period} bar(s) for the whole piece. Change the figure between sections, add a pickup, a variation every 4th bar')
-        if gp.on('pattern.melody_notes') and role in ('melody', 'counter') and len(notes) >= 12:
+        if gp.on('pattern.melody_notes') and _is_melodic(t) and len(notes) >= 12:
             durs = {round(n['d'], 2) for n in notes}
             if len(durs) < P('pattern.melody_notes', 'min_lengths'):
                 flags.append(f'{name}: only {len(durs)} note length(s). Mix long and short notes, add a rest, a held note, a pickup')
@@ -984,7 +1048,7 @@ def audit(score):
     dyn = [d[1] for d in score.get('dynamics', [])]
     if gp.on('pattern.flat_dynamics') and dyn and max(dyn) - min(dyn) < P('pattern.flat_dynamics', 'min_range_frac') * max(float(np.mean(dyn)), 1e-6):
         flags.append(f'dynamics: the whole piece stays between {min(dyn):.2f} and {max(dyn):.2f}. Build and release: a quiet intro, a peak, a breath before it')
-    drums = [t for t in score['tracks'] if t.get('role') == 'drum']
+    drums = [t for t in score['tracks'] if _role(t) == 'drum']
     if drums and gp.on('pattern.four_on_floor'):
         kicks = [n for n in drums[0]['notes'] if n['p'] == 'kick']
         on = np.mean([abs(n['t'] - round(n['t'])) < 1e-6 for n in kicks]) if kicks else 0
@@ -998,7 +1062,8 @@ def main():
     ap.add_argument('score')
     ap.add_argument('--strict', action='store_true')
     a = ap.parse_args()
-    score = json.load(open(a.score, encoding='utf-8'))
+    with open(a.score, encoding='utf-8') as fh:
+        score = json.load(fh)
     info, flags = audit(score)
     acoustic = acoustic_checks(score)
     print('\n'.join(info))

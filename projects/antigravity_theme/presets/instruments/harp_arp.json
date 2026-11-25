@@ -1,0 +1,122 @@
+{
+  "name": "harp_arp",
+  "description": "A harp doubling the arpeggio an octave up, adding sparkle to the orbit section.",
+  "character": "A harp doubling the arpeggio an octave up, adding sparkle to the orbit section.",
+  "gm": "harp",
+  "role": "arp",
+  "humanize": {
+    "preset": "tight",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": 100.0,
+    "elevation": 28.0,
+    "distance": 2.8,
+    "kind": "spot",
+    "binaural": true,
+    "trajectory": {
+      "spatial_role": "mover",
+      "doppler_strength": 0.0,
+      "keyframes": [
+        {
+          "bar": 9,
+          "azimuth": 100,
+          "elevation": 28,
+          "distance": 2.8
+        },
+        {
+          "bar": 10.5,
+          "azimuth": -20,
+          "elevation": 28,
+          "distance": 2.8
+        },
+        {
+          "bar": 12,
+          "azimuth": -140,
+          "elevation": 28,
+          "distance": 2.8
+        },
+        {
+          "bar": 13.5,
+          "azimuth": 100,
+          "elevation": 28,
+          "distance": 2.8
+        },
+        {
+          "bar": 16,
+          "azimuth": -20,
+          "elevation": 28,
+          "distance": 2.8
+        },
+        {
+          "bar": 21,
+          "azimuth": -20,
+          "elevation": 28,
+          "distance": 2.8
+        },
+        {
+          "bar": 24,
+          "azimuth": -140,
+          "elevation": 28,
+          "distance": 2.8
+        },
+        {
+          "bar": 27,
+          "azimuth": 100,
+          "elevation": 28,
+          "distance": 2.8
+        },
+        {
+          "bar": 30,
+          "azimuth": -20,
+          "elevation": 28,
+          "distance": 2.8
+        },
+        {
+          "bar": 32,
+          "azimuth": -20,
+          "elevation": 28,
+          "distance": 2.8
+        }
+      ]
+    }
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 200
+    }
+  ],
+  "gain_db": -6,
+  "reverb": 0.28,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 1.0,
+    "release_ms": 300.0
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring (a sustained organ or low-string bed, a pulse that keeps going, low brass at the turning points: per its section 2) | the part's job in the cue",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements",
+    "STARTING VALUE: velocity_timbre points from KB soundfont-velocity-and-realism section 4 (soft is darker; not calibrated)"
+  ],
+  "mechanics_class": "plucked",
+  "velocity_timbre": {
+    "points": [
+      [
+        25,
+        2500
+      ],
+      [
+        60,
+        4500
+      ],
+      [
+        127,
+        9500
+      ]
+    ],
+    "bands": 4
+  }
+}

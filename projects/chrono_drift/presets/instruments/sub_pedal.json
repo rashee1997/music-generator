@@ -1,0 +1,66 @@
+{
+  "name": "sub_pedal",
+  "character": "One low, slowly bending pedal under everything, the weight of the hole rather than a bass line: it never stops and never hurries.",
+  "description": "The floor: a synth bass pedal on the chord root two octaves under the low strings, changing every two bars, held through every section and left alone at the final D.",
+  "gm": "synth_bass",
+  "role": "drone",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 10.0,
+    "drift_ms": 14.0,
+    "vel_sigma": 3.0
+  },
+  "spatial": {
+    "azimuth": -8.0,
+    "elevation": 0.0,
+    "distance": 4.0,
+    "kind": "spot",
+    "binaural": true
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 36.0
+    },
+    {
+      "type": "peak",
+      "f": 120.0,
+      "gain": 1.5,
+      "q": 0.8
+    },
+    {
+      "type": "lp",
+      "f": 180.0
+    }
+  ],
+  "gain_db": -6.0,
+  "reverb": 0.14,
+  "articulation": {
+    "overlap_ms": 120.0,
+    "gate": 1.0,
+    "release_ms": 600.0
+  },
+  "mechanics_class": "bowed",
+  "velocity_timbre": {
+    "points": [
+      [
+        20,
+        140
+      ],
+      [
+        60,
+        260
+      ],
+      [
+        127,
+        600
+      ]
+    ],
+    "bands": 3
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring section 1 | a held pedal point keeps even dissonant chords coherent and carries the pressure without a groove",
+    "KB soundfont-velocity-and-realism section 4 | velocity_timbre bands keep the soft pedal from sounding brighter than the loud one; starting values",
+    "ESTIMATE: azimuth -8 deg, 4.0 m, gain -6 dB, HP 36 Hz (the 26 Hz pedal sat in the sub-sonic band and beat against the master) and LP 420 Hz are starting values for a sub pedal in a very large field"
+  ]
+}

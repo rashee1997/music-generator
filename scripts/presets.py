@@ -28,6 +28,7 @@ Kinds (each file is one named preset; the file's "name" or its filename is the k
   instruments  any instrument: gm (the General MIDI name it plays with), expression, vibrato, sustained, bowed, plucked
   sfx          one-hit effect: character, model (voices; sound_model.py) or generator + params or spec, seconds, sources
   gate         piece type for the quality gate: character, extends, flags, detect, rows {row: mode/reason/params}
+  chem         the inferred-chemistry gate presets (read from gate/chem/, not chem/)
 
     python3 scripts/presets.py list                      # every preset and where it comes from
     python3 scripts/presets.py show cultures tamil       # the merged values
@@ -46,6 +47,7 @@ import deep_merge
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SKILL_PRESETS = os.path.abspath(os.path.join(HERE, '..', 'references', 'data', 'presets'))
+KIND_DIRS = {'chem': os.path.join('gate', 'chem')}   # the chem presets are gate presets: presets/gate/chem/
 PROJECT_ROOTS = []                       # the latest project added wins, over the skill
 
 KINDS = {
@@ -66,7 +68,10 @@ KINDS = {
     'sfzlib': dict(required=['character', 'licence', 'type']),   # a downloadable SFZ library or engine (scripts/sfz_libs.py)
     'video': dict(required=['character', 'probe', 'direction_map', 'staging', 'mix_preset', 'mix', 'master', 'mux']),   # scoring to picture (scripts/video_score.py)
     'film': dict(required=['character']),      # one concern of film scoring: analysis, mapping, hits, dialogue, delivery
+    'ear': dict(required=['character', 'rate_hz', 'channels']),     # parameters of the peripheral auditory model (scripts/ear_model)
+    'humanize': dict(required=['character']),      # one groove pocket: per-instrument timing and velocity offsets (scripts/humanize_engine/pocket.py)
     'intent': dict(required=['character']),    # the vocabulary a brief is resolved in: emotions, registers, scenes, tensions, synonyms
+    'chem': dict(required=['character']),      # the inferred-neurochemistry model, its mood targets and its genre families (scripts/chem_model)
 }
 
 
@@ -91,7 +96,7 @@ def _files(kind):
     """(name, path, root) for every preset file of a kind, skill first, then projects."""
     out = []
     for root in [SKILL_PRESETS] + PROJECT_ROOTS:
-        d = os.path.join(root, kind)
+        d = os.path.join(root, KIND_DIRS.get(kind, kind))
         if os.path.isdir(d):
             for fn in sorted(os.listdir(d)):
                 if fn.endswith('.json'):
@@ -180,13 +185,97 @@ def validate():
             if kind == 'vocals':                      # numbers out of range, unknown style / register / expression / vowel
                 from vocal_engine import config as vcfg
                 problems += [f'vocals/{name}: {w} ({p.get("_source")})' for w in vcfg.validate(p)]
+            if kind == 'instruments':                 # which SoundFont plays it, and where in a non-GM bank
+                problems += [f'instruments/{name}: {w} ({p.get("_source")})' for w in soundfont_problems(p)]
             if kind == 'mix':                         # unknown key, bad range, malformed EQ band, unknown profile
                 import mix_schema
                 problems += [f'mix/{name}: {w} ({p.get("_source")})' for w in mix_schema.validate(p)]
+            if kind == 'humanize':                    # a groove pocket: unknown limb, bad offset, bad tempo power
+                problems += [f'humanize/{name}: {w} ({p.get("_source")})' for w in humanize_problems(p)]
         if kind == 'outputs':                         # a target names a real layout, renderer, ceiling; files are unique
             import render_targets
             problems += [f'outputs: {w}' for w in render_targets.manifest_problems()]
+    try:                                              # the chem presets: kinetics, mood targets, genre families
+        import chem_model.config as chem_config
+        problems += [f'chem: {w}' for w in chem_config.problems()]
+    except Exception as exc:                           # a missing preset is reported, never silently skipped
+        problems.append(f'chem: the presets could not be validated ({type(exc).__name__}: {exc})')
     return problems
+
+
+HUMANIZE_LIMBS = ('kick', 'snare', 'clap', 'hat', 'ride', 'crash', 'stick', 'tom_low', 'tom_mid', 'tom_high')
+
+
+def humanize_problems(p):
+    """Problems with a groove pocket: unknown limb, out-of-range offset or level, bad tempo power."""
+    out = []
+    if 'families' in p:                       # the ensemble asynchrony preset, not a pocket
+        families = p.get('families')
+        if not isinstance(families, dict) or not families:
+            return ['"families" must be a non-empty object']
+        for fam, weight in families.items():
+            try:
+                val = float(weight)
+            except (TypeError, ValueError):
+                out.append(f'families.{fam}: not a number')
+                continue
+            if not -1.0 <= val <= 1.0:
+                out.append(f'families.{fam}: {val} outside -1..1')
+        return out
+    if not isinstance(p.get('instruments'), dict) or not p.get('instruments'):
+        return ['missing "instruments" (the per-limb table)']
+    for limb, spec in p['instruments'].items():
+        if limb not in HUMANIZE_LIMBS:
+            out.append(f'unknown limb "{limb}" (known: {", ".join(HUMANIZE_LIMBS)})')
+            continue
+        if not isinstance(spec, dict):
+            out.append(f'{limb}: expected an object with ms and vel')
+            continue
+        unknown = sorted(set(spec) - {'ms', 'vel'})
+        if unknown:
+            out.append(f'{limb}: unknown key(s) {", ".join(unknown)}')
+        for key, lo, hi in (('ms', -60.0, 60.0), ('vel', -20.0, 20.0)):
+            if key in spec:
+                try:
+                    val = float(spec[key])
+                except (TypeError, ValueError):
+                    out.append(f'{limb}.{key}: not a number')
+                    continue
+                if not lo <= val <= hi:
+                    out.append(f'{limb}.{key}: {val} outside {lo}..{hi}')
+    if 'tempo_power' in p:
+        try:
+            tp = float(p['tempo_power'])
+        except (TypeError, ValueError):
+            out.append('tempo_power: not a number')
+        else:
+            if not 0.0 <= tp <= 1.0:
+                out.append(f'tempo_power: {tp} outside 0..1')
+    return out
+
+
+def soundfont_problems(p):
+    """Problems with an instrument preset's optional `soundfont` and `program_map` (assets/soundfonts/MANIFEST.json).
+    `soundfont` names a bank of the manifest; `program_map` is {bank key: {"bank": int, "program": int[, "drums": bool]}}
+    for banks whose preset order is not General MIDI. Neither key is required: a preset without them plays the default bank."""
+    out = []
+    if 'soundfont' not in p and 'program_map' not in p:
+        return out
+    import soundbank
+    known = soundbank.catalog()
+    if 'soundfont' in p and p['soundfont'] not in known:
+        out.append(f'soundfont "{p["soundfont"]}" is not a bank of assets/soundfonts/MANIFEST.json ({", ".join(known)})')
+    pm = p.get('program_map')
+    if pm is not None and not isinstance(pm, dict):
+        out.append('program_map must be an object {bank key: {"bank": n, "program": n}}')
+    for key, e in (pm or {}).items() if isinstance(pm, dict) else []:
+        if key not in known:
+            out.append(f'program_map names "{key}", which is not a bank of the manifest ({", ".join(known)})')
+        if not (isinstance(e, dict) and all(isinstance(e.get(k), int) and not isinstance(e.get(k), bool) for k in ('bank', 'program'))):
+            out.append(f'program_map.{key} needs integer "bank" and "program"')
+        elif not (0 <= e['bank'] <= 16383 and 0 <= e['program'] <= 127):
+            out.append(f'program_map.{key}: bank must be 0..16383 and program 0..127')
+    return out
 
 
 def scaffold(kind, name, project_dir, from_name=None):
@@ -220,6 +309,9 @@ def scaffold(kind, name, project_dir, from_name=None):
                                   multiband=None, dynamic_eq=None, transient=None),   # engine='dsp' reaches scripts/dsp.py
                     spectral=dict(max_auto_cut_db=0.0, preserve_spectrum_roles=['environment']),   # 0 = no clamp on carve_db
                     space=dict(auto_env_blend=dict(enabled=True),                                  # lift instrument sends when ambience is present
+                               # the room send each role starts with (starting values: a dry bass, a wet pad). Delete a role to give it `default`
+                               send_by_role=dict(default=0.18, bass=0.0, drum=0.08, percussion=0.08, pad=0.30, texture=0.30,
+                                                 drone=0.26, melody=0.22, lead=0.22, vocal=0.22, environment=0.20),
                                drr=dict(enabled=False, target_db=0.0), tail_guard_db=-62.0),
                     sidechain=dict(mode='legacy', band_hz=[250.0, 3800.0], residual=0.3, env_plateau=True),  # legacy|explicit|off
                     automation=dict(curve='linear'),                                                   # linear|cosine|exponential

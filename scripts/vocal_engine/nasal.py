@@ -42,8 +42,8 @@ def junction(h, wv):
 
     Measured for the configured geometry: first nasal pole ~204 Hz, first null ~822 Hz against c/(4*0.099) = 870 Hz.
     """
-    key = json.dumps([wv['nasal'], float(wv['tract_length_m']), int(wv['sections']), len(h['nasal_poles'])],
-                     sort_keys=True)
+    key = json.dumps([wv['nasal'], float(wv['tract_length_m']), int(wv['sections']), wv['losses'], wv['radiation'],
+                      h['nasal_poles'], h.get('antiformant_hz')], sort_keys=True, default=str)
     hit = _JUNCTION.get(key)
     if hit is not None:
         return hit

@@ -1,0 +1,81 @@
+{
+  "name": "howler_roar",
+  "character": "A howler monkey: a short bark, then a long rough roar that rises and sags, then barks.",
+  "elements": {
+    "bark": {
+      "f0_hz": [
+        [
+          0,
+          420
+        ],
+        [
+          1,
+          360
+        ]
+      ],
+      "ms": [
+        150,
+        260
+      ],
+      "harmonics": 25,
+      "rolloff": 0.9,
+      "noise": 0.5,
+      "attack": 0.05,
+      "release": 0.2
+    },
+    "roar": {
+      "f0_hz": [
+        [
+          0,
+          380
+        ],
+        [
+          0.35,
+          450
+        ],
+        [
+          1,
+          330
+        ]
+      ],
+      "ms": [
+        1800,
+        3200
+      ],
+      "harmonics": 30,
+      "rolloff": 0.9,
+      "noise": 0.6,
+      "subharmonic": 0.35,
+      "attack": 0.25,
+      "release": 0.4
+    }
+  },
+  "sequence": [
+    "bark",
+    [
+      "roar",
+      1,
+      2
+    ],
+    [
+      "bark",
+      1,
+      3
+    ]
+  ],
+  "gap_ms": [
+    200,
+    420
+  ],
+  "tract_cm": 22.0,
+  "formant_q": 4.0,
+  "formant_mix": 0.7,
+  "bouts_per_min": 6.0,
+  "individuals": 3,
+  "individual_spread": 0.08,
+  "sources": [
+    "Howler call fundamental 300-500 Hz (Alouatta palliata), genus range to about 1000 Hz, carried over 1 km: https://www.uv.mx/personal/pdias/files/2025/10/Rangel-Negrinetal.2025.pdf , https://rom.on.ca/en/node/24159",
+    "ESTIMATE: contour, element lengths, pulse rate and tract length are typical values written from the ranges above, not read from a recording and not auditioned",
+    "Fitch (1997), JASA 102: a longer vocal tract puts the resonances lower and closer together"
+  ]
+}

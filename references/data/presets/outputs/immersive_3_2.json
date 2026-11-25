@@ -1,0 +1,62 @@
+{
+  "name": "immersive_3_2",
+  "character": "Discrete 3.2 (project layout): left, right and centre at ear level with two low-frequency channels, LFE1 and LFE2. Not a broadcast standard layout.",
+  "label": "3.2 (project layout: L C R + LFE1 LFE2)",
+  "order": 9.5,
+  "aliases": [
+    "3.2",
+    "3_2"
+  ],
+  "channels": 5,
+  "channel_order": [
+    "L",
+    "R",
+    "C",
+    "LFE1",
+    "LFE2"
+  ],
+  "file": "master_3_2.wav",
+  "renderer": "spatial",
+  "true_peak_dbtp": -3.0,
+  "layout": "lrc_lfe2",
+  "lfe": {
+    "channel": [
+      4,
+      5
+    ],
+    "send_db": -10.0,
+    "lowpass_hz": 80.0,
+    "stopband_hz": 120.0,
+    "stopband_db": -45.0,
+    "roles": [
+      "bass",
+      "sub_bass",
+      "sub_brass",
+      "drone",
+      "kick"
+    ]
+  },
+  "loudness": {
+    "method": "bs1770_layout"
+  },
+  "limiter": {
+    "enabled": true,
+    "lookahead_ms": 5.0,
+    "release_ms": 120.0,
+    "oversample": 4,
+    "max_reduction_db": 6.0,
+    "max_iterations": 4,
+    "tolerance_lu": 0.2,
+    "margin_db": 0.1
+  },
+  "gate": {
+    "stereo_correlation_min": 0.15,
+    "fold_band_max_db": 6.0,
+    "fold_floor_db": 30.0
+  },
+  "sources": [
+    "Project-defined layout: ITU-R BS.2051 has no three-front layout with two low-frequency channels (knowledgebase/sound-design/layout-3-2.md, not verified against the Recommendation), so no format conformance is claimed",
+    "ITU-R BS.1770: loudness is measured on the delivered channels with the layout's channel weights, both low-frequency channels excluded (`loudness.method`: bs1770_layout)",
+    "The linked limiter, the fold-down band limit and the -3.0 dBTP ceiling are copied from the 5.1 target and are starting values, not measured on a three-front room"
+  ]
+}

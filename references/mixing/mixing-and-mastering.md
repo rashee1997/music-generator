@@ -44,15 +44,20 @@ Per instrument starting points (cut / boost): piano cut 300-400 / boost 3-5 k ai
 
 ## 3. Loudness and delivery
 
-| Target | Integrated LUFS | True peak |
-|---|---|---|
-| YouTube / YouTube Shorts | -14 | -1.5 dBTP |
-| TikTok / Reels | -14 | -1 dBTP (check on a phone speaker; push 2-4 kHz) |
-| Spotify / streaming | -14 | -2 dBTP |
-| Podcasts (Apple) | -16 | -1 dBTP |
-| Film / cinematic underscore | -18 to -16 (leave dynamics) | -1.5 dBTP |
-| Broadcast (EBU R128) | -23 | -1 dBTP |
-| Music bed under speech (deliver stem) | about -20 to -18 | -2 dBTP |
+| Target | Integrated LUFS | True peak | Source |
+|---|---|---|---|
+| Broadcast, EBU R 128 | -23 | -1 dBTP | EBU R 128 v5 (2023), +-0.2 LU in QC |
+| Television, ATSC A/85 | -24 LKFS | -2 dBTP | ATSC A/85:2026-07, +-2 dB |
+| Streaming music, AES TD1008 | -16 | -1 dBTP | AES TD1008 (2021); -14 for an album's loudest track |
+| Spotify (platform policy, not a standard) | -14, normalised both ways | -1 dBTP; -2 dBTP when hotter than -14 LUFS | Spotify loudness documentation |
+| Film / cinematic underscore | -18 to -16 (leave dynamics) | -1.5 dBTP | starting values |
+| Music bed under speech (deliver stem) | about -20 to -18 | -2 dBTP | starting values |
+| Podcast | -16 | -1 dBTP | starting values |
+
+Apple Music and YouTube publish no music loudness target. The figures commonly quoted for them (-16 and -14) are
+third-party measurements, not specifications, so they are not listed as rules. A mix preset can declare which
+document it implements with `mastering.standard`; the gate then checks the declared numbers against it. Figures,
+tolerances, versions and URLs are in [`delivery-standards.md`](delivery-standards.md).
 
 Never exceed 0 dBFS; measure true peak with oversampling (mixer does). Keep the noise floor below -60 dB. Delivery
 sample rate 44.1 kHz (music) or 48 kHz (video, matches picture), 24-bit WAV; export MP3 192-320 kbps only for sharing.
@@ -90,6 +95,10 @@ For pure-Python algorithmic reverb synthesis models and topologies, see [`knowle
 
 Send levels: lead 0.2, pads 0.3, piano 0.18, drums 0.08, bass 0 (bass and kick stay dry). Longer reverb = slower tempo and
 fewer notes, or it smears.
+
+A send pre-delay keeps a part clear of its own tail. `space.predelay_ms_by_role` delays only the send, never the dry
+path; 20-80 ms is the practitioner range for a vocal (iZotope, guidance rather than a measured optimum), and the
+~30 ms precedence/Haas boundary is the perceptual reason it is audible (AES Convention Paper 10264, 2019).
 
 **Space is a brief decision, not an afterthought.** `room` sets the impulse response; `mix.reverb_return` sets how
 much wet signal returns (1.0 is neutral, 1.5 for a "reverb mix", 0.6 dry). `compose.py` sets both from the brief:
@@ -152,13 +161,13 @@ number out of range, a malformed EQ band, an unknown spectral profile or a bad m
 reported with its path.
 
 `scripts/mix_context.py` resolves a piece's configuration once (`mix_context.resolve(score)`), so mixing
-two pieces in one process cannot leak one into the other. The engine is single-threaded by design; it was
-already, and still is.
+two pieces in one process cannot leak one into the other. The context is per thread, and `render.mix_workers`
+processes several stems at once with the same samples as one after another.
 
 | Section | Keys | Default |
 |---|---|---|
 | `gain_staging` | `strategy` (`legacy`/`adaptive`), `ref_lufs`, `ref_by_role`, `max_boost_db`, `max_cut_db`, `block_s`, `active_db`, `peak_headroom_db`, `crest_preserve_db`, `sparse_active_frac` | `legacy`: the old `min(ref - active_lufs, max_boost_db)`. `adaptive` adds a per-role reference, a cut limit, a peak-headroom cap and a crest guard, so a delicate layer, a percussion stem and a field recording keep their own dynamics |
-| `dynamics` | `engine` (`pedalboard`/`dsp`), `knee_db`, `detector`, `stereo_link`, `lookahead_ms`, `makeup_db`, `parallel`, `multiband`, `dynamic_eq`, `transient`, `sidechain_hp_hz`, `sidechain_lp_hz` | `pedalboard`: the four-knob compressor. `dsp` reaches `scripts/dsp.py`: soft knee, RMS or peak detector, filtered sidechain, lookahead, parallel (NY) compression, multiband and dynamic EQ |
+| `dynamics` | `engine` (`pedalboard`/`dsp`), `knee_db`, `detector`, `stereo_link`, `lookahead_ms`, `makeup_db`, `parallel`, `multiband`, `dynamic_eq`, `transient`, `sidechain_hp_hz`, `sidechain_lp_hz` | `pedalboard`: the four-knob compressor (thr, ratio, attack, release). Every other key here is **inert** under it: the mixer prints a `[WARN] mix.dynamics.<key> ... has no effect` line when a preset sets one (`mix_schema.inert_dynamics`), so set `engine` to `dsp` or drop the key. `dsp` reaches `scripts/dsp.py`: soft knee, RMS or peak detector, filtered sidechain, lookahead, parallel (NY) compression, multiband and dynamic EQ |
 | `spectral` | `profiles`, `preserve_spectrum_roles`, `mid_bands`, `side_bands`, `max_auto_cut_db` | The role chain. A track with `"spectral_profile": "rain"` (or `wind`, `water`, `foliage`, `insect`, `voice`, `strings`, `flute`, `bed`) no longer shares the one universal environment chain. `"preserve_spectrum": true` bypasses the automatic chain for a physically modelled source |
 | `space` | `auto_env_blend`, `drr`, `er`, `cache_ir`, `tail_guard_db` | The shared-room blend when ambience is present (`auto_env_blend.enabled`), the old early-reflection construction, and a cached IR |
 | `sidechain` | `mode` (`legacy`/`explicit`/`off`), `band_hz`, `residual`, `threshold`, `attack_ms`, `release_ms`, `env_plateau` | `legacy`: a bed is ducked under the first drum track, band-limited, with the plateau lock. `explicit` ducks only what a track's `duck_by` asks for; `off` ducks nothing |
@@ -206,6 +215,26 @@ it; an SFZ stem gets it when the block is present, for a library with a single v
 `{"low_hz": 1500, "span_hz": 2600, "floor": 0.55, "curve": 1.2}`. The corner is `low_hz` plus `span_hz` times the mean
 velocity; `floor` is how much of the full band a silent moment keeps. An unknown key is an error.
 
+**The theatrical stage** (`theatrical`, off by default) is the programme-side realism decision: a dynamic dip in
+180-420 Hz while that band is loud (`low_mid`), a capped 9 kHz lift that scales with the mastered programme level
+(`air`), and a shared-send dip that lasts only through an attack (`detail`). It is stereo-only; a discrete
+multichannel master keeps its own stage. It is not a substitute for the piece's own dynamics: the coupling of
+timbre to loudness, section scatter and bar-scale breathing are decided on the track and in the score. Rules:
+`references/mixing/theatrical-realism.md`; facts: `knowledgebase/sound-design/theatrical-realism.md`.
+
+**Numbers that live in the mix preset, not in the mixer.**
+
+| Section | Keys | What they are |
+|---|---|---|
+| `mastering` | `highpass_hz`, `tones` (name -> EQ bands), `glue` (`threshold_db`, `ratio`, `attack_ms`, `release_ms`), `converge` (`max_iterations`, `tolerance_lu`, `step`, `report_miss_lu`), `fallback_limiter`, `min_crest_db` | the master chain itself. A master block or a profile picks a tone by name; a project adds its own tone by listing its bands. A tone that is not listed masters neutral and says so on stderr |
+| `space` | `send_by_role`, `ir` (`bands`, `length_factor`, `length_pad_s`, `onset_s`), `er` (`taps`, `first_gain`, `tap_decay`, `window_s`), `return` (`highpass_hz`, `lowpass_hz`), `auto_env_blend.floors` | the room send each role starts with, the synthesised tail and its early reflections, the band the reverb returns in. `send_by_role.default` is every role; a role listed beside it gets its own send, and a track's `reverb` still wins |
+| `sidechain` | `band_roles`, `default_duck_db`, `legacy_env_duck_db`, `lookahead_ms`, `timing` (`default`, `environment`), `plateau_percentile`, `plateau_fade_max_s`, `plateau_fade_frac` | which roles duck only in the lead's band, and the follower times when neither the track nor the per-role maps name one |
+| `lead_carve` | `from_intent` | with `enabled`, take the source from the score's `mix_intent.hero` and the band from `mix_intent.leave_free_hz`; `mixer.STATE['mix_intent_used']` records what was taken |
+| `render` | `compute` (`device`, `workers`), `mix_workers`, `mix_worker_mb_per_second` | where the array work runs and how many stems are processed at once. `mix_workers: "auto"` is one per core, then **capped by free memory**: `mix_worker_mb_per_second` (starting value 2.0) is the measured working set of one stem per second of audio, so a 16 GB machine fits about a dozen 3-minute stems at once rather than one per core. The cap only lowers the count and prints when it does; `docs/mix_memory_profile.md` has the measurements (`references/spatial/immersive-spatial.md`, section 2e) |
+
+A project scaffolded with `presets.py scaffold mix` lists a starting `send_by_role` (a dry bass, a wet pad). The schema
+default lists only `default`, so a piece with no such table sends every role alike.
+
 **Export validation.** `mix_and_master` re-reads the file it wrote and checks sample rate, channels,
 length, sample peak, oversampled true peak and full-scale samples, in `mixer.STATE['export']`. A problem
 is printed; the render is not silently accepted.
@@ -214,6 +243,23 @@ is printed; the render is not silently accepted.
 `python scripts/mix_bench.py --compare` prints the same stems mixed legacy and adaptive, with loudness,
 crest, mono fold and correlation side by side. That is a measurement. It is not a listening test, and no
 row in that table by itself proves the mix sounds better.
+
+**The processed-stem cache.** `<project>/.cache/mix/` keeps each stem's chain output — gain staging, EQ, dynamics,
+level, automation, fades — keyed on that stem's bytes, its resolved spec, the whole mix preset, the sample rate,
+the compute device and the engine's own code hash (every module of `mix_engine/` is hashed). Two things follow from one split in the engine: a retry
+after a one-note fix re-processes only the stems that changed, and a second output format reuses the first one's
+chain, because `process_chain` is independent of the bus while `_place` (width, pan, the head filter, the bus
+hand-over) is not. Placement therefore always runs per mix. Delete the folder to force a rebuild;
+`mixer.use_mix_cache(None)` turns it off, and the run's hit count is in `reports/ci_report.json` under
+`gate.cache`. A cached stem is the same float32 samples a fresh one would be — that is what
+`tests/test_mix_cache.py` asserts, including across two different buses.
+
+**The 3-D mix.** `python scripts/helpers/bench_mix.py` times `HoaBus.field()` — the ambisonic mix a piece on
+`immersive.engine: "hoa_bus"` runs — and prints the reflections, the encoder and the late field as shares of it,
+from a space preset's own room (`--space`, `--seconds`, `--sources`, `--profile`). `docs/mix_profile_palace.md` is
+the same measurement on a real 180 s render: 64 % of the run was the mix, and 715 s of that was the reflection
+loop. Change that loop only with this bench before and after, and with `tests/test_immersive_v2.py` green: it
+pins every tap's delay, level and spectrum against the per-tap loop the faster path replaced.
 
 ## 9. Spotify Pedalboard DSP Architecture & Broadcast Mastering
 
@@ -228,3 +274,10 @@ The mixing engine ([`scripts/mixer.py`](../../scripts/mixer.py)) uses Spotify's 
    - Combines dry stem transients with heavily compressed/saturated wet paths (New York drum compression: `pb.Compressor(threshold_db=-30, ratio=8.0, attack_ms=5)`) for punchy drums and fat bass without destroying dynamic range.
 4. **Data Contract**:
    - Pedalboard processes NumPy float32 arrays in `(channels, samples)` shape (`[2, N]`). Scripts automatically handle transposition between Scipy/Soundfile format (`[N, 2]`) and Pedalboard format.
+
+
+### 8c. Where the EQ comes from, and how many times it runs (traced in `mix_engine/chains.py`)
+- A stem gets **one** spectral chain: its `spectral_profile` if it names one, else its role chain (`mixer.spectral_chain`). They never run together.
+- An environment preset's own `blending` (high-pass and the vocal-pocket notch, applied in `environment.py`) runs **before** that, inside the environment render. So an ambience stem can hold two notches near 2.2-2.4 kHz: keep the blending notch or the chain's, or move one by a third of an octave.
+- A `spectral_profile` belongs to the **stem**, and an environment preset's layers are summed into one stem. A bright layer (insects above 7.2 kHz) therefore shares the stem's chain; give the preset a profile that keeps that band, or set `preserve_spectrum` on the track.
+- A project mix preset lists only what differs from the schema. `mix_schema.redundant_chains(mix)` names role chains and profiles that repeat the shipped values; such copies stop following later tuning of the defaults. The scaffold writes every key on purpose (so each is visible); trim the ones you did not change before you rely on a default.

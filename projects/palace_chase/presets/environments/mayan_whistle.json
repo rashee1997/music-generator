@@ -1,0 +1,47 @@
+{
+  "name": "mayan_whistle",
+  "description": "A clay skull whistle blown somewhere in the dark: one rough, scream-like wail.",
+  "character": "A clay skull whistle blown somewhere in the dark: one rough, scream-like wail.",
+  "layers": [
+    {
+      "name": "room_tone",
+      "primitive": "noise_bed",
+      "kind": "bed",
+      "gain_db": -52.0,
+      "low_hz": 140,
+      "high_hz": 1400,
+      "mod_rate_hz": 0.05,
+      "mod_depth": 0.1,
+      "spatial": {
+        "azimuth": 0,
+        "elevation": 10,
+        "distance": 6
+      }
+    },
+    {
+      "name": "death_whistle",
+      "primitive": "animal_call",
+      "kind": "spot",
+      "gain_db": -6.0,
+      "call": "death_whistle",
+      "individuals": 1,
+      "bouts_per_min": 6.0,
+      "first_s": 0.0,
+      "spatial": {
+        "azimuth": -110,
+        "elevation": 5,
+        "distance": 18.0
+      }
+    }
+  ],
+  "blending": {
+    "high_pass_hz": 140,
+    "vocal_pocket_notch_hz": 2200,
+    "vocal_pocket_notch_db": -3.0,
+    "overall_gain_db": -8.0
+  },
+  "sources": [
+    "skull_whistle_scream"
+  ],
+  "note": "One call per window: the score places a note where the call should start (first_s 0). A very quiet room-tone bed keeps the stem audible across its whole window, as the stem gate measures it. Levels, contours and rates are ESTIMATES."
+}

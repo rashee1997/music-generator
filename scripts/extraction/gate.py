@@ -66,9 +66,25 @@ def free_mask(times, ignored, pad=0.1):
     return m
 
 
-def stft_mag(y, n_fft=2048, hop=1024):
+N_FFT, HOP = 2048, 1024                                  # the gate's analysis frame, shared by every row below
+
+
+def stft_complex(y, n_fft=N_FFT, hop=HOP):
     import librosa
-    return np.abs(librosa.stft(y, n_fft=n_fft, hop_length=hop))
+    return librosa.stft(y, n_fft=n_fft, hop_length=hop)
+
+
+def stft_mag(y, n_fft=N_FFT, hop=HOP):
+    return np.abs(stft_complex(y, n_fft, hop))
+
+
+def nearest_gap(sorted_ref, times):
+    """|t - nearest reference| for each t; `sorted_ref` ascending (two neighbours of each t via searchsorted)."""
+    times = np.asarray(times, dtype=float)
+    i = np.searchsorted(sorted_ref, times)
+    left = sorted_ref[np.maximum(i - 1, 0)]
+    right = sorted_ref[np.minimum(i, len(sorted_ref) - 1)]
+    return np.minimum(np.abs(times - left), np.abs(right - times))
 
 
 def magnitude_match(ctx, rows):
@@ -77,10 +93,10 @@ def magnitude_match(ctx, rows):
     sr, scale = d['sr'], d['resynth']['scale']
     M = stft_mag((d['mix'] * scale).mean(axis=0))
     S = stft_mag(d['resynth']['mix'].mean(axis=0))
-    t = np.arange(M.shape[1]) * 1024 / sr
+    t = np.arange(M.shape[1]) * HOP / sr
     ignored = ctx['priors'].get('ignored') or []
     free = free_mask(t, ignored)
-    f = np.arange(M.shape[0]) * sr / 2048
+    f = np.arange(M.shape[0]) * sr / N_FFT
 
     def err(mask, fm=None):
         a, b = M[:, mask], S[:, mask]
@@ -104,7 +120,7 @@ def magnitude_match(ctx, rows):
 
 def logmel(y, sr, cfg):
     import librosa
-    return np.log10(librosa.feature.melspectrogram(y=y, sr=sr, n_fft=2048, hop_length=1024, n_mels=cfg['gate']['mel_bands']) + 1e-10)
+    return np.log10(librosa.feature.melspectrogram(y=y, sr=sr, n_fft=N_FFT, hop_length=HOP, n_mels=cfg['gate']['mel_bands']) + 1e-10)
 
 
 def fidelity(raw, syn, sr, cfg):
@@ -268,7 +284,7 @@ def onset_coverage(ctx, rows):
     known += [t for a, b in ctx['priors'].get('ignored') or [] for t in np.arange(a, b, 0.05)]      # onsets inside sung parts are not ours to explain
     known = np.sort(np.array(known)) if known else np.array([1e9])
     tol = cfg['analysis']['onset_match_tol_s']
-    miss = [t for t in on if np.min(np.abs(known - t)) > tol]
+    miss = on[nearest_gap(known, on) > tol]
     pct = 100 * (1 - len(miss) / len(on))
     rows.append(row('onset_coverage', lvl(pct, g['onset_warn_pct'], g['onset_fail_pct'], higher_is_worse=False), round(float(pct), 1),
                     f'>{g["onset_warn_pct"]}%', f'{len(miss)} of {len(on)} mix onsets have no note, hit or effect'))
@@ -336,7 +352,7 @@ def evaluate(ctx):
         try:
             fn(ctx, rows)
         except Exception as e:                                 # a broken check must show up in the report, never vanish
-            rows.append(row(fn.__name__, 'WARN', '', '', f'check crashed: {type(e).__name__}: {e}'))
+            rows.append(row(fn.__name__, 'FAIL', '', '', f'check crashed: {type(e).__name__}: {e}'))
     score = sum(LEVEL_WEIGHT.get(str(r.get('level', '')).upper(), LEVEL_WEIGHT['FAIL']) for r in rows)
     return rows, score
 

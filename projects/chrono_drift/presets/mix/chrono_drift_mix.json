@@ -1,0 +1,949 @@
+{
+  "name": "chrono_drift_mix",
+  "character": "Orchestral pressure in a field far larger than a stage: the low end carries the mass, the bowed sixteenths carry the pull, and the room is allowed to be the loudest thing in the piece.",
+  "lead_band_hz": 2000,
+  "carve_db": -4.0,
+  "max_boost_db": 12.0,
+  "active_db": -55.0,
+  "lead_db_margin": 3.0,
+  "inst_eq": {},
+  "seating": {},
+  "level_by_role": {
+    "melody": 0.0,
+    "ostinato": -4.0,
+    "counter": -6.0,
+    "chord": -5.0,
+    "drum": -6.0,
+    "pad": -7.0,
+    "drone": -9.0,
+    "texture": -12.0,
+    "arp": -12.0
+  },
+  "sympathetic_resonance": {
+    "enabled": false,
+    "sources": [],
+    "tuning": "score_scale",
+    "low_hz": 110.0,
+    "strings": 7,
+    "partials": 3,
+    "q": 300.0,
+    "level_db": -26.0,
+    "width": 0.5,
+    "spatial": {}
+  },
+  "note": "every key is written out, including role_chains and spectral.profiles: change the ones this piece needs. An unlisted key comes from references/data/presets/mix/default.json",
+  "gain_staging": {
+    "strategy": "legacy",
+    "ref_lufs": -24.0,
+    "block_s": 0.4,
+    "max_cut_db": 24.0,
+    "peak_headroom_db": -1.0,
+    "crest_preserve_db": 0.0,
+    "sparse_active_frac": 0.0,
+    "ref_by_role": {}
+  },
+  "dynamics": {
+    "engine": "pedalboard",
+    "knee_db": 0.0,
+    "detector": "peak",
+    "stereo_link": true,
+    "lookahead_ms": 0.0,
+    "parallel": 1.0,
+    "sidechain_hp_hz": 0.0,
+    "sidechain_lp_hz": 0.0,
+    "multiband": null,
+    "dynamic_eq": null,
+    "transient": null
+  },
+  "spectral": {
+    "max_auto_cut_db": 0.0,
+    "preserve_spectrum_roles": [
+      "environment"
+    ],
+    "profiles": {
+      "rain": {
+        "eq": [
+          {
+            "type": "hp",
+            "f": 300
+          },
+          {
+            "type": "peak",
+            "f": 450,
+            "gain": -2.0,
+            "q": 1.0
+          },
+          {
+            "type": "peak",
+            "f": 4200,
+            "gain": 1.0,
+            "q": 1.0
+          },
+          {
+            "type": "lp",
+            "f": 7500
+          }
+        ],
+        "comp": null
+      },
+      "water": {
+        "eq": [
+          {
+            "type": "hp",
+            "f": 280
+          },
+          {
+            "type": "peak",
+            "f": 520,
+            "gain": -2.0,
+            "q": 1.0
+          },
+          {
+            "type": "lp",
+            "f": 7000
+          }
+        ],
+        "comp": null
+      },
+      "wind": {
+        "eq": [
+          {
+            "type": "hp",
+            "f": 120
+          },
+          {
+            "type": "peak",
+            "f": 300,
+            "gain": -2.0,
+            "q": 1.0
+          },
+          {
+            "type": "peak",
+            "f": 2500,
+            "gain": -2.0,
+            "q": 0.9
+          },
+          {
+            "type": "lp",
+            "f": 6000
+          }
+        ],
+        "comp": null
+      },
+      "foliage": {
+        "eq": [
+          {
+            "type": "hp",
+            "f": 200
+          },
+          {
+            "type": "peak",
+            "f": 400,
+            "gain": -1.5,
+            "q": 1.0
+          },
+          {
+            "type": "peak",
+            "f": 3000,
+            "gain": -2.0,
+            "q": 1.0
+          },
+          {
+            "type": "lp",
+            "f": 8500
+          }
+        ],
+        "comp": null
+      },
+      "insect": {
+        "eq": [
+          {
+            "type": "hp",
+            "f": 900
+          },
+          {
+            "type": "peak",
+            "f": 5000,
+            "gain": 1.0,
+            "q": 1.0
+          },
+          {
+            "type": "lp",
+            "f": 15000
+          }
+        ],
+        "comp": null
+      },
+      "voice": {
+        "eq": [
+          {
+            "type": "hp",
+            "f": 80
+          },
+          {
+            "type": "peak",
+            "f": 500,
+            "gain": -1.5,
+            "q": 1.0
+          },
+          {
+            "type": "peak",
+            "f": 3000,
+            "gain": 1.0,
+            "q": 0.9
+          },
+          {
+            "type": "peak",
+            "f": 7000,
+            "gain": -1.5,
+            "q": 1.2
+          }
+        ],
+        "comp": {
+          "thr": -22,
+          "ratio": 2.0,
+          "attack": 10,
+          "release": 120
+        }
+      },
+      "strings": {
+        "eq": [
+          {
+            "type": "hp",
+            "f": 70
+          },
+          {
+            "type": "peak",
+            "f": 330,
+            "gain": -1.5,
+            "q": 1.0
+          },
+          {
+            "type": "peak",
+            "f": 4500,
+            "gain": 1.0,
+            "q": 1.0
+          }
+        ],
+        "comp": null
+      },
+      "flute": {
+        "eq": [
+          {
+            "type": "hp",
+            "f": 220
+          },
+          {
+            "type": "peak",
+            "f": 3200,
+            "gain": -2.0,
+            "q": 1.0
+          }
+        ],
+        "comp": null
+      },
+      "bed": {
+        "eq": [
+          {
+            "type": "hp",
+            "f": 280
+          },
+          {
+            "type": "peak",
+            "f": 450,
+            "gain": -2.5,
+            "q": 1.0
+          },
+          {
+            "type": "peak",
+            "f": 2400,
+            "gain": -3.5,
+            "q": 0.9
+          },
+          {
+            "type": "lp",
+            "f": 7200
+          }
+        ],
+        "comp": {
+          "thr": -24,
+          "ratio": 2.0,
+          "attack": 30,
+          "release": 250
+        }
+      }
+    }
+  },
+  "space": {
+    "auto_env_blend": {
+      "enabled": true
+    },
+    "send_by_role": {
+      "default": 0.128,
+      "bass": 0.0,
+      "drum": 0.08,
+      "percussion": 0.08,
+      "pad": 0.208,
+      "texture": 0.24,
+      "drone": 0.16,
+      "melody": 0.144,
+      "lead": 0.144,
+      "vocal": 0.176,
+      "environment": 0.16,
+      "ostinato": 0.096,
+      "arp": 0.224,
+      "counter": 0.192
+    },
+    "drr": {
+      "enabled": false,
+      "target_db": 0.0
+    },
+    "tail_guard_db": -62.0
+  },
+  "sidechain": {
+    "mode": "legacy",
+    "band_hz": [
+      250.0,
+      3800.0
+    ],
+    "residual": 0.3,
+    "env_plateau": true
+  },
+  "automation": {
+    "curve": "linear"
+  },
+  "mastering": {
+    "profile": "default",
+    "highpass_hz": 40.0,
+    "highpass_order": 2
+  },
+  "immersive": {
+    "enabled": true,
+    "height_by_role": {
+      "melody": 8,
+      "counter": 24,
+      "pad": 28,
+      "texture": 22,
+      "chord": 6,
+      "bass": 0,
+      "drum": 0,
+      "drone": 0,
+      "ostinato": 0,
+      "arp": 12
+    },
+    "max_elevation": 60,
+    "min_height_tracks": 3,
+    "pair": {
+      "width_deg_bed": 40.0,
+      "width_deg_stereo": 12.0
+    },
+    "hrtf": {
+      "dataset": ""
+    },
+    "gate": {
+      "max_late_iacc": 0.4
+    },
+    "engine": "hoa_bus",
+    "order": 3,
+    "anchor_max_span_deg": 6.0,
+    "max_deg_per_sec": {
+      "anchor": 10.0,
+      "mover": 120.0
+    }
+  },
+  "render": {
+    "oversample": 2,
+    "compute": {
+      "device": "auto",
+      "workers": "auto"
+    },
+    "mix_workers": "auto",
+    "mix_worker_mb_per_second": 2.0,
+    "mechanics": {
+      "enabled": true,
+      "default_class": "keys",
+      "level_db": 0.0,
+      "class_by_instrument": {
+        "violin": "bowed",
+        "viola": "bowed",
+        "cello": "bowed",
+        "double_bass": "bowed",
+        "contrabass": "bowed",
+        "strings": "bowed",
+        "string_ensemble": "bowed",
+        "slow_strings": "bowed",
+        "erhu": "bowed",
+        "sarangi": "bowed",
+        "flute": "wind",
+        "piccolo": "wind",
+        "oboe": "wind",
+        "clarinet": "wind",
+        "bassoon": "wind",
+        "sax": "wind",
+        "trumpet": "wind",
+        "trombone": "wind",
+        "horn": "wind",
+        "tuba": "wind",
+        "bansuri": "wind",
+        "ney": "wind",
+        "shakuhachi": "wind",
+        "pan_flute": "wind",
+        "recorder": "wind",
+        "guitar": "plucked",
+        "harp": "plucked",
+        "banjo": "plucked",
+        "mandolin": "plucked",
+        "lute": "plucked",
+        "sitar": "plucked",
+        "koto": "plucked",
+        "oud": "plucked",
+        "ukulele": "plucked",
+        "pizzicato": "plucked",
+        "piano": "keys",
+        "organ": "keys",
+        "harpsichord": "keys",
+        "accordion": "keys",
+        "vibraphone": "keys",
+        "drum": "drum",
+        "kick": "drum",
+        "snare": "drum",
+        "hat": "drum",
+        "perc": "drum",
+        "tabla": "drum"
+      },
+      "classes": {
+        "bowed": {
+          "onset": {
+            "gain_db": -44.0,
+            "lo_hz": 1800.0,
+            "hi_hz": 7000.0,
+            "ms": 26.0
+          },
+          "offset": {
+            "gain_db": -48.0,
+            "lo_hz": 900.0,
+            "hi_hz": 4000.0,
+            "ms": 60.0
+          }
+        },
+        "wind": {
+          "onset": {
+            "gain_db": -42.0,
+            "lo_hz": 1200.0,
+            "hi_hz": 6000.0,
+            "ms": 55.0
+          },
+          "offset": {
+            "gain_db": -50.0,
+            "lo_hz": 600.0,
+            "hi_hz": 3000.0,
+            "ms": 70.0
+          }
+        },
+        "plucked": {
+          "onset": {
+            "gain_db": -46.0,
+            "lo_hz": 1500.0,
+            "hi_hz": 8000.0,
+            "ms": 12.0
+          },
+          "offset": {
+            "gain_db": -60.0,
+            "lo_hz": 400.0,
+            "hi_hz": 2500.0,
+            "ms": 40.0
+          }
+        },
+        "keys": {
+          "onset": {
+            "gain_db": -44.0,
+            "lo_hz": 120.0,
+            "hi_hz": 2600.0,
+            "ms": 22.0
+          },
+          "offset": {
+            "gain_db": -52.0,
+            "lo_hz": 100.0,
+            "hi_hz": 1800.0,
+            "ms": 45.0
+          }
+        },
+        "drum": {
+          "onset": {
+            "gain_db": -60.0,
+            "lo_hz": 200.0,
+            "hi_hz": 5000.0,
+            "ms": 8.0
+          },
+          "offset": {
+            "gain_db": -96.0,
+            "lo_hz": 200.0,
+            "hi_hz": 2000.0,
+            "ms": 0.0
+          }
+        }
+      }
+    }
+  },
+  "role_chains": {
+    "melody": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 90
+        },
+        {
+          "type": "peak",
+          "f": 280,
+          "gain": -2.0,
+          "q": 1.0
+        },
+        {
+          "type": "peak",
+          "f": 3500,
+          "gain": 1.5,
+          "q": 0.8
+        },
+        {
+          "type": "highshelf",
+          "f": 10000,
+          "gain": 1.5,
+          "q": 0.7
+        }
+      ],
+      "comp": {
+        "thr": -22,
+        "ratio": 2.2,
+        "attack": 18,
+        "release": 160
+      }
+    },
+    "counter": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 110
+        },
+        {
+          "type": "peak",
+          "f": 300,
+          "gain": -2.0,
+          "q": 1.0
+        },
+        {
+          "type": "peak",
+          "f": 2800,
+          "gain": 0.8,
+          "q": 0.9
+        }
+      ],
+      "comp": {
+        "thr": -24,
+        "ratio": 2.0,
+        "attack": 20,
+        "release": 160
+      }
+    },
+    "chord": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 90
+        },
+        {
+          "type": "peak",
+          "f": 350,
+          "gain": -2.5,
+          "q": 1.0
+        },
+        {
+          "type": "peak",
+          "f": 2600,
+          "gain": -2.0,
+          "q": 1.0
+        }
+      ],
+      "comp": {
+        "thr": -24,
+        "ratio": 2.0,
+        "attack": 25,
+        "release": 180
+      }
+    },
+    "pad": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 160
+        },
+        {
+          "type": "peak",
+          "f": 300,
+          "gain": -3.0,
+          "q": 0.9
+        },
+        {
+          "type": "peak",
+          "f": 3000,
+          "gain": -3.0,
+          "q": 0.9
+        },
+        {
+          "type": "lp",
+          "f": 9500
+        }
+      ],
+      "comp": {
+        "thr": -26,
+        "ratio": 1.8,
+        "attack": 40,
+        "release": 300
+      }
+    },
+    "bass": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 32
+        },
+        {
+          "type": "lowshelf",
+          "f": 90,
+          "gain": 1.5,
+          "q": 0.7
+        },
+        {
+          "type": "peak",
+          "f": 250,
+          "gain": -3.0,
+          "q": 1.0
+        },
+        {
+          "type": "peak",
+          "f": 900,
+          "gain": 1.5,
+          "q": 0.9
+        },
+        {
+          "type": "lp",
+          "f": 5000
+        }
+      ],
+      "comp": {
+        "thr": -24,
+        "ratio": 3.0,
+        "attack": 22,
+        "release": 130
+      }
+    },
+    "arp": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 200
+        },
+        {
+          "type": "peak",
+          "f": 3000,
+          "gain": -2.0,
+          "q": 1.0
+        },
+        {
+          "type": "lp",
+          "f": 12000
+        }
+      ],
+      "comp": {
+        "thr": -24,
+        "ratio": 2.0,
+        "attack": 15,
+        "release": 120
+      }
+    },
+    "drum": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 30
+        },
+        {
+          "type": "lowshelf",
+          "f": 80,
+          "gain": 1.2,
+          "q": 0.7
+        },
+        {
+          "type": "peak",
+          "f": 380,
+          "gain": -2.0,
+          "q": 1.1
+        },
+        {
+          "type": "peak",
+          "f": 5000,
+          "gain": 1.5,
+          "q": 0.9
+        }
+      ],
+      "comp": {
+        "thr": -18,
+        "ratio": 2.8,
+        "attack": 28,
+        "release": 90
+      }
+    },
+    "environment": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 280
+        },
+        {
+          "type": "peak",
+          "f": 450,
+          "gain": -2.5,
+          "q": 1.0
+        },
+        {
+          "type": "peak",
+          "f": 2400,
+          "gain": -3.5,
+          "q": 0.9
+        },
+        {
+          "type": "lp",
+          "f": 7200
+        }
+      ],
+      "comp": {
+        "thr": -24,
+        "ratio": 2.0,
+        "attack": 30,
+        "release": 250
+      }
+    },
+    "fx": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 100
+        }
+      ],
+      "comp": null
+    },
+    "lead": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 90
+        },
+        {
+          "type": "peak",
+          "f": 280,
+          "gain": -2.0,
+          "q": 1.0
+        },
+        {
+          "type": "peak",
+          "f": 3500,
+          "gain": 1.5,
+          "q": 0.8
+        },
+        {
+          "type": "highshelf",
+          "f": 10000,
+          "gain": 1.5,
+          "q": 0.7
+        }
+      ],
+      "comp": {
+        "thr": -22,
+        "ratio": 2.2,
+        "attack": 18,
+        "release": 160
+      }
+    },
+    "texture": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 160
+        },
+        {
+          "type": "peak",
+          "f": 300,
+          "gain": -3.0,
+          "q": 0.9
+        },
+        {
+          "type": "peak",
+          "f": 3000,
+          "gain": -3.0,
+          "q": 0.9
+        },
+        {
+          "type": "lp",
+          "f": 9500
+        }
+      ],
+      "comp": {
+        "thr": -26,
+        "ratio": 1.8,
+        "attack": 40,
+        "release": 300
+      }
+    },
+    "ostinato": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 200
+        },
+        {
+          "type": "peak",
+          "f": 3000,
+          "gain": -2.0,
+          "q": 1.0
+        },
+        {
+          "type": "lp",
+          "f": 12000
+        }
+      ],
+      "comp": {
+        "thr": -24,
+        "ratio": 2.0,
+        "attack": 15,
+        "release": 120
+      }
+    },
+    "percussion": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 30
+        },
+        {
+          "type": "lowshelf",
+          "f": 80,
+          "gain": 1.2,
+          "q": 0.7
+        },
+        {
+          "type": "peak",
+          "f": 380,
+          "gain": -2.0,
+          "q": 1.1
+        },
+        {
+          "type": "peak",
+          "f": 5000,
+          "gain": 1.5,
+          "q": 0.9
+        }
+      ],
+      "comp": {
+        "thr": -18,
+        "ratio": 2.8,
+        "attack": 28,
+        "release": 90
+      }
+    },
+    "drone": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 28
+        },
+        {
+          "type": "peak",
+          "f": 220,
+          "gain": -1.5,
+          "q": 0.8
+        },
+        {
+          "type": "peak",
+          "f": 2600,
+          "gain": -2.0,
+          "q": 0.9
+        },
+        {
+          "type": "lp",
+          "f": 7000
+        }
+      ],
+      "comp": {
+        "thr": -30,
+        "ratio": 1.4,
+        "attack": 60,
+        "release": 400
+      }
+    },
+    "vocal": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 75
+        },
+        {
+          "type": "peak",
+          "f": 500,
+          "gain": -1.5,
+          "q": 1.0
+        },
+        {
+          "type": "peak",
+          "f": 3000,
+          "gain": 1.0,
+          "q": 0.9
+        },
+        {
+          "type": "peak",
+          "f": 7000,
+          "gain": -1.5,
+          "q": 1.2
+        }
+      ],
+      "comp": {
+        "thr": -22,
+        "ratio": 2.0,
+        "attack": 12,
+        "release": 140
+      }
+    },
+    "default": {
+      "eq": [
+        {
+          "type": "hp",
+          "f": 90
+        },
+        {
+          "type": "peak",
+          "f": 350,
+          "gain": -2.5,
+          "q": 1.0
+        },
+        {
+          "type": "peak",
+          "f": 2600,
+          "gain": -2.0,
+          "q": 1.0
+        }
+      ],
+      "comp": {
+        "thr": -24,
+        "ratio": 2.0,
+        "attack": 25,
+        "release": 180
+      }
+    }
+  },
+  "lead_carve": {
+    "enabled": true,
+    "from_intent": true,
+    "ratio": 2.5,
+    "threshold_db": -24.0,
+    "attack_ms": 12.0,
+    "release_ms": 180.0
+  }
+}

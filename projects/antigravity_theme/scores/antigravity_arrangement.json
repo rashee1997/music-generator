@@ -1,0 +1,3075 @@
+{
+ "title": "Antigravity",
+ "bpm": 64,
+ "ts": [
+  4,
+  4
+ ],
+ "key": "D",
+ "mode": "minor",
+ "seed": 21,
+ "score": {
+  "space": "antigravity_room",
+  "mix_preset": "antigravity_mix",
+  "piece_type": "cinematic",
+  "focus": "melody",
+  "intent": {
+   "emotions": [
+    "wonder",
+    "hopeful"
+   ],
+   "registers": [
+    "cinematic"
+   ],
+   "scenes": [
+    "reveal"
+   ],
+   "tensions": [
+    "rising_line",
+    "ostinato"
+   ],
+   "avoid": [
+    "four_on_floor"
+   ]
+  },
+  "mix_intent": {
+   "hero": "horn_theme",
+   "support": [
+    "piano_theme",
+    "strings_theme",
+    "organ_chords",
+    "brass_low"
+   ],
+   "sits_under": [
+    "organ_pedal",
+    "piano_arp",
+    "harp_arp",
+    "strings_bed",
+    "cello_pulse",
+    "timpani_hits",
+    "clock_tick",
+    "choir_oohs"
+   ]
+  },
+  "rubato": 0.0,
+  "ritard": 0.0,
+  "wander": 0.0,
+  "master": {
+   "profile": "cue"
+  },
+  "output_targets": [
+   "stereo",
+   "immersive_7_1",
+   "adm_bw64"
+  ],
+  "dynamics": [
+   [
+    0.0,
+    0.3
+   ],
+   [
+    16.0,
+    0.4
+   ],
+   [
+    32.0,
+    0.65
+   ],
+   [
+    48.0,
+    0.9
+   ],
+   [
+    60.0,
+    1.0
+   ],
+   [
+    60.5,
+    0.35
+   ],
+   [
+    64.0,
+    0.3
+   ],
+   [
+    80.0,
+    0.4
+   ],
+   [
+    96.0,
+    0.8
+   ],
+   [
+    108.0,
+    0.95
+   ],
+   [
+    112.0,
+    0.5
+   ],
+   [
+    128.0,
+    0.25
+   ]
+  ]
+ },
+ "scale": {
+  "pcs": [
+   2,
+   4,
+   5,
+   7,
+   9,
+   10,
+   0
+  ]
+ },
+ "shapes": {
+  "up": [
+   1,
+   1,
+   2,
+   1,
+   1,
+   2,
+   1,
+   1,
+   2,
+   1,
+   1,
+   2,
+   1,
+   1,
+   2,
+   1
+  ],
+  "arch": [
+   1,
+   2,
+   1,
+   2,
+   1,
+   -1,
+   -2,
+   -1,
+   -1,
+   -2,
+   1,
+   -1,
+   -1,
+   1,
+   2,
+   1
+  ],
+  "down": [
+   -1,
+   -1,
+   -2,
+   -1,
+   -1,
+   -2,
+   -1,
+   -1,
+   -2,
+   -1,
+   -1,
+   -2,
+   -1,
+   -1,
+   -2,
+   -1
+  ],
+  "wide": [
+   2,
+   1,
+   2,
+   2,
+   1,
+   1,
+   2,
+   1,
+   2,
+   1,
+   1,
+   2,
+   1,
+   2,
+   1,
+   1
+  ]
+ },
+ "voicings": {
+  "low": {
+   "Dm": [
+    38,
+    45
+   ],
+   "Bb": [
+    38,
+    45
+   ],
+   "Gm": [
+    38,
+    45
+   ],
+   "Am": [
+    38,
+    45
+   ]
+  },
+  "arp": {
+   "Dm": [
+    50,
+    57,
+    62,
+    69,
+    74
+   ],
+   "Bb": [
+    50,
+    53,
+    58,
+    74,
+    82
+   ],
+   "Gm": [
+    50,
+    55,
+    58,
+    62,
+    74
+   ],
+   "Am": [
+    52,
+    57,
+    60,
+    72,
+    84
+   ]
+  },
+  "pad": {
+   "Dm": [
+    57,
+    62,
+    69,
+    74,
+    81
+   ],
+   "Bb": [
+    58,
+    62,
+    65,
+    70,
+    74
+   ],
+   "Gm": [
+    55,
+    58,
+    62,
+    67,
+    70
+   ],
+   "Am": [
+    57,
+    60,
+    64,
+    69,
+    72
+   ]
+  },
+  "brass": {
+   "Dm": [
+    50
+   ],
+   "Bb": [
+    58
+   ],
+   "Gm": [
+    55
+   ],
+   "Am": [
+    57
+   ]
+  },
+  "timp": {
+   "Dm": [
+    50
+   ],
+   "Bb": [
+    50
+   ],
+   "Gm": [
+    50
+   ],
+   "Am": [
+    50
+   ]
+  },
+  "bed": {
+   "Dm": [
+    50,
+    53,
+    57,
+    65,
+    77
+   ],
+   "Bb": [
+    50,
+    53,
+    58,
+    74,
+    82
+   ],
+   "Gm": [
+    50,
+    55,
+    58,
+    62,
+    74
+   ],
+   "Am": [
+    52,
+    57,
+    60,
+    72,
+    84
+   ]
+  },
+  "bedlong": {
+   "Dm": [
+    50,
+    57,
+    62,
+    69,
+    74
+   ]
+  }
+ },
+ "lines": {
+  "theme": [
+   [
+    0,
+    2,
+    74,
+    72
+   ],
+   [
+    2,
+    2,
+    81,
+    76
+   ],
+   [
+    4,
+    2,
+    77,
+    70
+   ],
+   [
+    6,
+    2,
+    74,
+    68
+   ],
+   [
+    8,
+    2,
+    79,
+    74
+   ],
+   [
+    10,
+    2,
+    86,
+    78
+   ],
+   [
+    12,
+    2,
+    81,
+    74
+   ],
+   [
+    14,
+    2,
+    76,
+    70
+   ]
+  ],
+  "theme_piano": [
+   [
+    0,
+    1.5,
+    74,
+    72
+   ],
+   [
+    1.5,
+    0.5,
+    76,
+    60
+   ],
+   [
+    2,
+    2,
+    81,
+    76
+   ],
+   [
+    4,
+    1.5,
+    77,
+    70
+   ],
+   [
+    5.5,
+    0.5,
+    79,
+    62
+   ],
+   [
+    6,
+    2,
+    74,
+    68
+   ],
+   [
+    8,
+    1.5,
+    79,
+    74
+   ],
+   [
+    9.5,
+    0.5,
+    81,
+    64
+   ],
+   [
+    10,
+    2,
+    86,
+    78
+   ],
+   [
+    12,
+    2,
+    81,
+    74
+   ],
+   [
+    14,
+    2,
+    76,
+    70
+   ]
+  ],
+  "ascent": [
+   [
+    0,
+    1,
+    74,
+    80
+   ],
+   [
+    1,
+    1,
+    77,
+    84
+   ],
+   [
+    2,
+    1,
+    81,
+    88
+   ],
+   [
+    3,
+    1,
+    84,
+    92
+   ],
+   [
+    4,
+    2,
+    86,
+    94
+   ],
+   [
+    6,
+    2,
+    81,
+    92
+   ],
+   [
+    8,
+    4,
+    86,
+    100
+   ]
+  ]
+ },
+ "patterns": {
+  "pedal": {
+   "variants": [
+    [
+     {
+      "t": 0,
+      "d": 3.9,
+      "p": "@low[0]",
+      "v": 84
+     }
+    ]
+   ]
+  },
+  "pedal_ring": {
+   "variants": [
+    [
+     {
+      "t": 0,
+      "d": 3.4,
+      "p": "@low[0]",
+      "v": 76
+     }
+    ]
+   ]
+  },
+  "tick": {
+   "variants": [
+    [
+     {
+      "t": 0,
+      "d": 0.3,
+      "p": 96,
+      "v": 70
+     },
+     {
+      "t": 1,
+      "d": 0.3,
+      "p": 91,
+      "v": 58
+     },
+     {
+      "t": 2,
+      "d": 0.3,
+      "p": 96,
+      "v": 64
+     },
+     {
+      "t": 3,
+      "d": 0.3,
+      "p": 91,
+      "v": 56
+     }
+    ]
+   ]
+  },
+  "arp16": {
+   "variants": [
+    [
+     {
+      "t": 0.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 0.25,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     },
+     {
+      "t": 0.5,
+      "d": 0.45,
+      "p": "@arp[4]",
+      "v": 48
+     },
+     {
+      "t": 0.75,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     },
+     {
+      "t": 1.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 1.25,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     },
+     {
+      "t": 1.5,
+      "d": 0.45,
+      "p": "@arp[4]",
+      "v": 48
+     },
+     {
+      "t": 1.75,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     },
+     {
+      "t": 2.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 2.25,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     },
+     {
+      "t": 2.5,
+      "d": 0.45,
+      "p": "@arp[4]",
+      "v": 48
+     },
+     {
+      "t": 2.75,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     },
+     {
+      "t": 3.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 3.25,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     },
+     {
+      "t": 3.5,
+      "d": 0.45,
+      "p": "@arp[4]",
+      "v": 48
+     },
+     {
+      "t": 3.75,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     }
+    ],
+    [
+     {
+      "t": 0.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 0.25,
+      "d": 0.45,
+      "p": "@arp[1]",
+      "v": 48
+     },
+     {
+      "t": 0.5,
+      "d": 0.45,
+      "p": "@arp[3]",
+      "v": 48
+     },
+     {
+      "t": 0.75,
+      "d": 0.45,
+      "p": "@arp[4]",
+      "v": 48
+     },
+     {
+      "t": 1.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 1.25,
+      "d": 0.45,
+      "p": "@arp[1]",
+      "v": 48
+     },
+     {
+      "t": 1.5,
+      "d": 0.45,
+      "p": "@arp[3]",
+      "v": 48
+     },
+     {
+      "t": 1.75,
+      "d": 0.45,
+      "p": "@arp[4]",
+      "v": 48
+     },
+     {
+      "t": 2.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 2.25,
+      "d": 0.45,
+      "p": "@arp[1]",
+      "v": 48
+     },
+     {
+      "t": 2.5,
+      "d": 0.45,
+      "p": "@arp[3]",
+      "v": 48
+     },
+     {
+      "t": 2.75,
+      "d": 0.45,
+      "p": "@arp[4]",
+      "v": 48
+     },
+     {
+      "t": 3.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 3.25,
+      "d": 0.45,
+      "p": "@arp[1]",
+      "v": 48
+     },
+     {
+      "t": 3.5,
+      "d": 0.45,
+      "p": "@arp[3]",
+      "v": 48
+     },
+     {
+      "t": 3.75,
+      "d": 0.45,
+      "p": "@arp[4]",
+      "v": 48
+     }
+    ],
+    [
+     {
+      "t": 0.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 0.25,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     },
+     {
+      "t": 0.5,
+      "d": 0.45,
+      "p": "@arp[3]",
+      "v": 48
+     },
+     {
+      "t": 0.75,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     },
+     {
+      "t": 1.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 1.25,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     },
+     {
+      "t": 1.5,
+      "d": 0.45,
+      "p": "@arp[3]",
+      "v": 48
+     },
+     {
+      "t": 1.75,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     },
+     {
+      "t": 2.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 2.25,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     },
+     {
+      "t": 2.5,
+      "d": 0.45,
+      "p": "@arp[3]",
+      "v": 48
+     },
+     {
+      "t": 2.75,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     },
+     {
+      "t": 3.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 3.25,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     },
+     {
+      "t": 3.5,
+      "d": 0.45,
+      "p": "@arp[3]",
+      "v": 48
+     },
+     {
+      "t": 3.75,
+      "d": 0.45,
+      "p": "@arp[2]",
+      "v": 48
+     }
+    ]
+   ]
+  },
+  "bed": {
+   "variants": [
+    [
+     {
+      "t": 0.0,
+      "d": 3.8,
+      "p": "@bed[0]",
+      "v": 54
+     },
+     {
+      "t": 0.02,
+      "d": 3.78,
+      "p": "@bed[1]",
+      "v": 51
+     },
+     {
+      "t": 0.04,
+      "d": 3.76,
+      "p": "@bed[2]",
+      "v": 48
+     },
+     {
+      "t": 0.06,
+      "d": 3.74,
+      "p": "@bed[3]",
+      "v": 45
+     },
+     {
+      "t": 0.08,
+      "d": 3.72,
+      "p": "@bed[4]",
+      "v": 42
+     }
+    ],
+    [
+     {
+      "t": 0.0,
+      "d": 3.8,
+      "p": "@bed[1]",
+      "v": 52
+     },
+     {
+      "t": 0.07,
+      "d": 3.73,
+      "p": "@bed[0]",
+      "v": 50
+     },
+     {
+      "t": 0.14,
+      "d": 3.66,
+      "p": "@bed[2]",
+      "v": 48
+     },
+     {
+      "t": 0.21,
+      "d": 3.59,
+      "p": "@bed[4]",
+      "v": 46
+     },
+     {
+      "t": 0.28,
+      "d": 3.52,
+      "p": "@bed[3]",
+      "v": 44
+     }
+    ],
+    [
+     {
+      "t": 0.03,
+      "d": 3.77,
+      "p": "@bed[0]",
+      "v": 50
+     },
+     {
+      "t": 0.07,
+      "d": 3.73,
+      "p": "@bed[2]",
+      "v": 48
+     },
+     {
+      "t": 0.11,
+      "d": 3.69,
+      "p": "@bed[1]",
+      "v": 46
+     },
+     {
+      "t": 0.15,
+      "d": 3.65,
+      "p": "@bed[3]",
+      "v": 44
+     },
+     {
+      "t": 0.19,
+      "d": 3.61,
+      "p": "@bed[4]",
+      "v": 42
+     }
+    ]
+   ],
+   "jitter": {
+    "v": 2
+   }
+  },
+  "organ_chord": {
+   "variants": [
+    [
+     {
+      "t": 0.0,
+      "d": 3.6,
+      "p": "@pad[0]",
+      "v": 62
+     },
+     {
+      "t": 0.02,
+      "d": 3.6,
+      "p": "@pad[1]",
+      "v": 60
+     },
+     {
+      "t": 0.04,
+      "d": 3.6,
+      "p": "@pad[2]",
+      "v": 58
+     },
+     {
+      "t": 0.06,
+      "d": 3.6,
+      "p": "@pad[3]",
+      "v": 56
+     }
+    ]
+   ],
+   "jitter": {
+    "v": 2
+   }
+  },
+  "choir": {
+   "variants": [
+    [
+     {
+      "t": 0.0,
+      "d": 3.75,
+      "p": "@pad[3]",
+      "v": 56
+     },
+     {
+      "t": 0.02,
+      "d": 3.75,
+      "p": "@pad[4]",
+      "v": 53
+     }
+    ]
+   ],
+   "jitter": {
+    "v": 2
+   }
+  },
+  "cello": {
+   "variants": [
+    [
+     {
+      "t": 0.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 0.5,
+      "d": 0.45,
+      "p": "@arp[1]",
+      "v": 52
+     },
+     {
+      "t": 1.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 1.5,
+      "d": 0.45,
+      "p": "@arp[1]",
+      "v": 52
+     },
+     {
+      "t": 2.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 2.5,
+      "d": 0.45,
+      "p": "@arp[1]",
+      "v": 52
+     },
+     {
+      "t": 3.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 3.5,
+      "d": 0.45,
+      "p": "@arp[1]",
+      "v": 52
+     }
+    ]
+   ]
+  },
+  "brass": {
+   "variants": [
+    [
+     {
+      "t": 0,
+      "d": 3.3,
+      "p": "@brass[0]",
+      "v": 74
+     }
+    ]
+   ]
+  },
+  "timp_hit": {
+   "variants": [
+    [
+     {
+      "t": 0,
+      "d": 1.5,
+      "p": "@timp[0]",
+      "v": 92
+     }
+    ]
+   ]
+  },
+  "timp_roll": {
+   "variants": [
+    [
+     {
+      "t": 2.0,
+      "d": 0.25,
+      "p": "@timp[0]",
+      "v": 49
+     },
+     {
+      "t": 2.25,
+      "d": 0.25,
+      "p": "@timp[0]",
+      "v": 46
+     },
+     {
+      "t": 2.5,
+      "d": 0.25,
+      "p": "@timp[0]",
+      "v": 59
+     },
+     {
+      "t": 2.75,
+      "d": 0.25,
+      "p": "@timp[0]",
+      "v": 62
+     },
+     {
+      "t": 3.0,
+      "d": 0.25,
+      "p": "@timp[0]",
+      "v": 79
+     },
+     {
+      "t": 3.25,
+      "d": 0.25,
+      "p": "@timp[0]",
+      "v": 86
+     },
+     {
+      "t": 3.5,
+      "d": 0.25,
+      "p": "@timp[0]",
+      "v": 107
+     },
+     {
+      "t": 3.75,
+      "d": 0.25,
+      "p": "@timp[0]",
+      "v": 117
+     }
+    ]
+   ]
+  },
+  "timp_cliff": {
+   "variants": [
+    [
+     {
+      "t": 0,
+      "d": 2.5,
+      "p": 50,
+      "v": 124
+     }
+    ]
+   ]
+  },
+  "final_note": {
+   "variants": [
+    [
+     {
+      "t": 0,
+      "d": 3.5,
+      "p": 74,
+      "v": 84
+     }
+    ]
+   ]
+  },
+  "bed_long": {
+   "variants": [
+    [
+     {
+      "t": 0.0,
+      "d": 11.4,
+      "p": "@bedlong[0]",
+      "v": 54
+     },
+     {
+      "t": 0.05,
+      "d": 11.4,
+      "p": "@bedlong[1]",
+      "v": 51
+     },
+     {
+      "t": 0.1,
+      "d": 11.4,
+      "p": "@bedlong[2]",
+      "v": 48
+     },
+     {
+      "t": 0.15,
+      "d": 11.4,
+      "p": "@bedlong[3]",
+      "v": 45
+     },
+     {
+      "t": 0.2,
+      "d": 11.4,
+      "p": "@bedlong[4]",
+      "v": 42
+     }
+    ]
+   ]
+  },
+  "taiko_hit": {
+   "variants": [
+    [
+     {
+      "t": 0,
+      "d": 0.8,
+      "p": 45,
+      "v": 120
+     }
+    ]
+   ]
+  },
+  "taiko_beat": {
+   "variants": [
+    [
+     {
+      "t": 0,
+      "d": 0.5,
+      "p": 45,
+      "v": 90
+     },
+     {
+      "t": 2,
+      "d": 0.5,
+      "p": 45,
+      "v": 80
+     }
+    ]
+   ]
+  },
+  "timp_beat": {
+   "variants": [
+    [
+     {
+      "t": 0,
+      "d": 0.6,
+      "p": "@timp[0]",
+      "v": 80
+     },
+     {
+      "t": 1,
+      "d": 0.6,
+      "p": "@timp[0]",
+      "v": 66
+     },
+     {
+      "t": 2,
+      "d": 0.6,
+      "p": "@timp[0]",
+      "v": 80
+     },
+     {
+      "t": 3,
+      "d": 0.6,
+      "p": "@timp[0]",
+      "v": 66
+     }
+    ]
+   ]
+  },
+  "debris_a": {
+   "variants": [
+    [
+     {
+      "t": 0.0,
+      "d": 0.6,
+      "p": 98,
+      "v": 70
+     },
+     {
+      "t": 0.75,
+      "d": 0.6,
+      "p": 93,
+      "v": 56
+     },
+     {
+      "t": 1.5,
+      "d": 0.6,
+      "p": 89,
+      "v": 64
+     },
+     {
+      "t": 2.75,
+      "d": 0.6,
+      "p": 86,
+      "v": 50
+     }
+    ],
+    [
+     {
+      "t": 0.5,
+      "d": 0.6,
+      "p": 93,
+      "v": 62
+     },
+     {
+      "t": 1.25,
+      "d": 0.6,
+      "p": 98,
+      "v": 70
+     },
+     {
+      "t": 2.0,
+      "d": 0.6,
+      "p": 86,
+      "v": 54
+     },
+     {
+      "t": 3.25,
+      "d": 0.6,
+      "p": 89,
+      "v": 48
+     }
+    ],
+    [
+     {
+      "t": 0.25,
+      "d": 0.6,
+      "p": 89,
+      "v": 58
+     },
+     {
+      "t": 1.0,
+      "d": 0.6,
+      "p": 98,
+      "v": 66
+     },
+     {
+      "t": 2.5,
+      "d": 0.6,
+      "p": 93,
+      "v": 60
+     },
+     {
+      "t": 3.5,
+      "d": 0.6,
+      "p": 86,
+      "v": 44
+     }
+    ]
+   ]
+  },
+  "debris_h": {
+   "variants": [
+    [
+     {
+      "t": 0.25,
+      "d": 0.8,
+      "p": 86,
+      "v": 62
+     },
+     {
+      "t": 1.0,
+      "d": 0.8,
+      "p": 89,
+      "v": 58
+     },
+     {
+      "t": 2.25,
+      "d": 0.8,
+      "p": 93,
+      "v": 54
+     }
+    ],
+    [
+     {
+      "t": 0.75,
+      "d": 0.8,
+      "p": 93,
+      "v": 60
+     },
+     {
+      "t": 1.75,
+      "d": 0.8,
+      "p": 86,
+      "v": 56
+     },
+     {
+      "t": 3.0,
+      "d": 0.8,
+      "p": 89,
+      "v": 50
+     }
+    ]
+   ]
+  },
+  "piano_frag": {
+   "variants": [
+    [
+     {
+      "t": 0,
+      "d": 1.5,
+      "p": 74,
+      "v": 70
+     },
+     {
+      "t": 2,
+      "d": 1.5,
+      "p": 81,
+      "v": 64
+     }
+    ]
+   ]
+  },
+  "bed_long8": {
+   "variants": [
+    [
+     {
+      "t": 0.0,
+      "d": 7.4,
+      "p": "@bedlong[0]",
+      "v": 54
+     },
+     {
+      "t": 0.05,
+      "d": 7.4,
+      "p": "@bedlong[1]",
+      "v": 51
+     },
+     {
+      "t": 0.1,
+      "d": 7.4,
+      "p": "@bedlong[2]",
+      "v": 48
+     },
+     {
+      "t": 0.15,
+      "d": 7.4,
+      "p": "@bedlong[3]",
+      "v": 45
+     },
+     {
+      "t": 0.2,
+      "d": 7.4,
+      "p": "@bedlong[4]",
+      "v": 42
+     }
+    ]
+   ]
+  },
+  "organ_chord8": {
+   "variants": [
+    [
+     {
+      "t": 0.0,
+      "d": 7.4,
+      "p": "@pad[0]",
+      "v": 62
+     },
+     {
+      "t": 0.02,
+      "d": 7.4,
+      "p": "@pad[1]",
+      "v": 60
+     },
+     {
+      "t": 0.04,
+      "d": 7.4,
+      "p": "@pad[2]",
+      "v": 58
+     },
+     {
+      "t": 0.06,
+      "d": 7.4,
+      "p": "@pad[3]",
+      "v": 56
+     }
+    ]
+   ]
+  },
+  "choir8": {
+   "variants": [
+    [
+     {
+      "t": 0.0,
+      "d": 7.4,
+      "p": "@pad[3]",
+      "v": 56
+     },
+     {
+      "t": 0.02,
+      "d": 7.4,
+      "p": "@pad[4]",
+      "v": 53
+     }
+    ]
+   ]
+  },
+  "bed_long16": {
+   "variants": [
+    [
+     {
+      "t": 0.0,
+      "d": 15.4,
+      "p": "@bedlong[0]",
+      "v": 54
+     },
+     {
+      "t": 0.05,
+      "d": 15.4,
+      "p": "@bedlong[1]",
+      "v": 51
+     },
+     {
+      "t": 0.1,
+      "d": 15.4,
+      "p": "@bedlong[2]",
+      "v": 48
+     },
+     {
+      "t": 0.15,
+      "d": 15.4,
+      "p": "@bedlong[3]",
+      "v": 45
+     },
+     {
+      "t": 0.2,
+      "d": 15.4,
+      "p": "@bedlong[4]",
+      "v": 42
+     }
+    ]
+   ]
+  },
+  "bed_shift": {
+   "variants": [
+    [
+     {
+      "t": 0.0,
+      "d": 3.75,
+      "p": "@bed[0]",
+      "v": 54
+     },
+     {
+      "t": 0.02,
+      "d": 3.75,
+      "p": "@bed[1]",
+      "v": 51
+     },
+     {
+      "t": 0.04,
+      "d": 3.75,
+      "p": "@bed[2]",
+      "v": 48
+     },
+     {
+      "t": 0.06,
+      "d": 3.75,
+      "p": "@bed[3]",
+      "v": 45
+     },
+     {
+      "t": 0.08,
+      "d": 3.75,
+      "p": "@bed[4]",
+      "v": 42
+     }
+    ],
+    [
+     {
+      "t": 0.5,
+      "d": 3.25,
+      "p": "@bed[1]",
+      "v": 52
+     },
+     {
+      "t": 0.54,
+      "d": 3.25,
+      "p": "@bed[0]",
+      "v": 50
+     },
+     {
+      "t": 0.58,
+      "d": 3.25,
+      "p": "@bed[2]",
+      "v": 48
+     },
+     {
+      "t": 0.62,
+      "d": 3.25,
+      "p": "@bed[4]",
+      "v": 46
+     },
+     {
+      "t": 0.66,
+      "d": 3.25,
+      "p": "@bed[3]",
+      "v": 44
+     }
+    ],
+    [
+     {
+      "t": 1.0,
+      "d": 2.75,
+      "p": "@bed[0]",
+      "v": 50
+     },
+     {
+      "t": 1.03,
+      "d": 2.75,
+      "p": "@bed[2]",
+      "v": 48
+     },
+     {
+      "t": 1.06,
+      "d": 2.75,
+      "p": "@bed[1]",
+      "v": 46
+     },
+     {
+      "t": 1.09,
+      "d": 2.75,
+      "p": "@bed[3]",
+      "v": 44
+     },
+     {
+      "t": 1.12,
+      "d": 2.75,
+      "p": "@bed[4]",
+      "v": 42
+     }
+    ]
+   ]
+  },
+  "cello_tail": {
+   "variants": [
+    [
+     {
+      "t": 0,
+      "d": 3.0,
+      "p": "@bed[0]",
+      "v": 58
+     }
+    ]
+   ]
+  },
+  "cello_late": {
+   "variants": [
+    [
+     {
+      "t": 0.5,
+      "d": 0.45,
+      "p": "@arp[1]",
+      "v": 52
+     },
+     {
+      "t": 1.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 1.5,
+      "d": 0.45,
+      "p": "@arp[1]",
+      "v": 52
+     },
+     {
+      "t": 2.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 2.5,
+      "d": 0.45,
+      "p": "@arp[1]",
+      "v": 52
+     },
+     {
+      "t": 3.0,
+      "d": 0.45,
+      "p": "@arp[0]",
+      "v": 64
+     },
+     {
+      "t": 3.5,
+      "d": 0.45,
+      "p": "@arp[1]",
+      "v": 52
+     }
+    ]
+   ]
+  },
+  "brass8": {
+   "variants": [
+    [
+     {
+      "t": 0,
+      "d": 6.2,
+      "p": "@brass[0]",
+      "v": 80
+     }
+    ]
+   ]
+  }
+ },
+ "runs": {
+  "zip": {
+   "n": 12,
+   "step": 0.1875,
+   "v0": 56,
+   "v1": 96,
+   "tail": 1.0,
+   "first": 62,
+   "shape": "up",
+   "ceiling": 95,
+   "d": 1.6
+  }
+ },
+ "tracks": {
+  "organ_pedal": {
+   "role": "drone",
+   "lean": 0.0
+  },
+  "organ_chords": {
+   "role": "pad",
+   "lean": 0.0
+  },
+  "piano_theme": {
+   "role": "counter",
+   "lean": 0.0
+  },
+  "piano_arp": {
+   "role": "arp",
+   "lean": 0.02
+  },
+  "harp_arp": {
+   "role": "arp",
+   "lean": 0.03
+  },
+  "horn_theme": {
+   "role": "lead",
+   "lean": 0.05
+  },
+  "strings_theme": {
+   "role": "lead",
+   "lean": 0.03
+  },
+  "strings_bed": {
+   "role": "chord",
+   "lean": 0.0
+  },
+  "cello_pulse": {
+   "role": "ostinato",
+   "lean": -0.02
+  },
+  "brass_low": {
+   "role": "bass",
+   "lean": 0.0
+  },
+  "timpani_hits": {
+   "role": "drum",
+   "lean": 0.0
+  },
+  "clock_tick": {
+   "role": "arp",
+   "lean": -0.01
+  },
+  "choir_oohs": {
+   "role": "pad",
+   "lean": 0.04
+  },
+  "violin_runs": {
+   "role": "counter",
+   "lean": 0.0
+  },
+  "taiko_hits": {
+   "role": "drum",
+   "lean": 0.0
+  },
+  "debris_celesta": {
+   "role": "arp",
+   "lean": 0.0
+  },
+  "debris_harp": {
+   "role": "arp",
+   "lean": 0.02
+  }
+ },
+ "sections": [
+  {
+   "name": "Weightless",
+   "bars": [
+    1,
+    4
+   ],
+   "energy": 0.25,
+   "chords": [
+    "Dm",
+    "Bb",
+    "Gm",
+    "Am"
+   ]
+  },
+  {
+   "name": "Ascent",
+   "bars": [
+    5,
+    8
+   ],
+   "energy": 0.5,
+   "chords": [
+    "Dm",
+    "Bb",
+    "Gm",
+    "Am"
+   ]
+  },
+  {
+   "name": "Orbit",
+   "bars": [
+    9,
+    12
+   ],
+   "energy": 0.8,
+   "chords": [
+    "Dm",
+    "Bb",
+    "Gm",
+    "Am"
+   ]
+  },
+  {
+   "name": "Singularity",
+   "bars": [
+    13,
+    15
+   ],
+   "energy": 1.0,
+   "chords": [
+    "Dm",
+    "Dm",
+    "Dm"
+   ]
+  },
+  {
+   "name": "Horizon",
+   "bars": [
+    16,
+    16
+   ],
+   "energy": 0.3,
+   "chords": [
+    "Dm"
+   ]
+  },
+  {
+   "name": "Debris",
+   "bars": [
+    17,
+    20
+   ],
+   "energy": 0.3,
+   "chords": [
+    "Dm",
+    "Dm",
+    "Dm",
+    "Dm"
+   ]
+  },
+  {
+   "name": "Escape",
+   "bars": [
+    21,
+    28
+   ],
+   "energy": 0.85,
+   "chords": [
+    "Dm",
+    "Bb",
+    "Gm",
+    "Am",
+    "Dm",
+    "Dm",
+    "Dm",
+    "Dm"
+   ]
+  },
+  {
+   "name": "Drift",
+   "bars": [
+    29,
+    32
+   ],
+   "energy": 0.25,
+   "chords": [
+    "Dm",
+    "Dm",
+    "Dm",
+    "Dm"
+   ]
+  }
+ ],
+ "events": [
+  {
+   "track": "organ_pedal",
+   "do": "pattern",
+   "bars": [
+    1,
+    31
+   ],
+   "scale": {
+    "Weightless": 0.7,
+    "Ascent": 0.8,
+    "Orbit": 0.95,
+    "Singularity": 1.1,
+    "Horizon": 1.0,
+    "Debris": 0.8,
+    "Escape": 1.0,
+    "Drift": 0.8
+   },
+   "ref": "pedal",
+   "skip": [
+    16
+   ]
+  },
+  {
+   "track": "organ_pedal",
+   "do": "pattern",
+   "bar": 16,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 1.0,
+    "Debris": 0,
+    "Escape": 0,
+    "Drift": 0
+   },
+   "ref": "pedal_ring"
+  },
+  {
+   "track": "clock_tick",
+   "do": "pattern",
+   "bars": [
+    1,
+    15
+   ],
+   "scale": {
+    "Weightless": 0.7,
+    "Ascent": 0.8,
+    "Orbit": 0.9,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "tick"
+  },
+  {
+   "track": "piano_theme",
+   "do": "line",
+   "bar": 1,
+   "vel": 0.85,
+   "ref": "theme_piano"
+  },
+  {
+   "track": "piano_theme",
+   "do": "note",
+   "bar": 16,
+   "beat": 0,
+   "d": 3.5,
+   "p": 98,
+   "v": 84,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 1.0
+   }
+  },
+  {
+   "track": "horn_theme",
+   "do": "line",
+   "bar": 5,
+   "octave": -12,
+   "vel": 1.1,
+   "ref": "theme"
+  },
+  {
+   "track": "horn_theme",
+   "do": "line",
+   "bar": 9,
+   "octave": -12,
+   "vel": 1.1,
+   "ref": "theme"
+  },
+  {
+   "track": "strings_theme",
+   "do": "line",
+   "bar": 9,
+   "vel": 0.95,
+   "ref": "theme"
+  },
+  {
+   "track": "horn_theme",
+   "do": "line",
+   "bar": 13,
+   "octave": -12,
+   "vel": 1.0,
+   "ref": "ascent"
+  },
+  {
+   "track": "strings_theme",
+   "do": "line",
+   "bar": 13,
+   "vel": 1.0,
+   "ref": "ascent"
+  },
+  {
+   "track": "piano_arp",
+   "do": "pattern",
+   "bars": [
+    5,
+    15
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0.65,
+    "Orbit": 0.85,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "arp16"
+  },
+  {
+   "track": "harp_arp",
+   "do": "pattern",
+   "bars": [
+    9,
+    15
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0.8,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "arp16"
+  },
+  {
+   "track": "strings_bed",
+   "do": "pattern",
+   "bars": [
+    5,
+    12
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0.6,
+    "Orbit": 0.9,
+    "Singularity": 1.1,
+    "Horizon": 0
+   },
+   "ref": "bed"
+  },
+  {
+   "track": "organ_chords",
+   "do": "pattern",
+   "bars": [
+    9,
+    15
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0.85,
+    "Singularity": 1.15,
+    "Horizon": 0
+   },
+   "ref": "organ_chord"
+  },
+  {
+   "track": "choir_oohs",
+   "do": "pattern",
+   "bars": [
+    9,
+    15
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0.8,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "choir"
+  },
+  {
+   "track": "cello_pulse",
+   "do": "pattern",
+   "bars": [
+    7,
+    15
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0.95,
+    "Orbit": 0.9,
+    "Singularity": 1.05,
+    "Horizon": 0
+   },
+   "ref": "cello"
+  },
+  {
+   "track": "brass_low",
+   "do": "pattern",
+   "bars": [
+    9,
+    15
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0.85,
+    "Singularity": 1.1,
+    "Horizon": 0
+   },
+   "ref": "brass"
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bar": 5,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 1.0,
+    "Orbit": 1.0,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "timp_hit"
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bar": 7,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 1.0,
+    "Orbit": 1.0,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "timp_hit"
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bar": 9,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 1.0,
+    "Orbit": 1.0,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "timp_hit"
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bar": 10,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 1.0,
+    "Orbit": 1.0,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "timp_hit"
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bar": 11,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 1.0,
+    "Orbit": 1.0,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "timp_hit"
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bar": 12,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 1.0,
+    "Orbit": 1.0,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "timp_hit"
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bar": 13,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 1.0,
+    "Orbit": 1.0,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "timp_hit"
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bar": 14,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 1.0,
+    "Orbit": 1.0,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "timp_hit"
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bar": 15,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 1.0,
+    "Orbit": 1.0,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "timp_hit"
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bar": 8,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 1.0,
+    "Orbit": 1.0,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "timp_roll"
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bar": 12,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 1.0,
+    "Orbit": 1.0,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "timp_roll"
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bar": 14,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 1.0,
+    "Orbit": 1.0,
+    "Singularity": 1.0,
+    "Horizon": 0
+   },
+   "ref": "timp_roll"
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bar": 16,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 1.0
+   },
+   "ref": "timp_cliff"
+  },
+  {
+   "track": "strings_bed",
+   "do": "pattern",
+   "ref": "bed_long",
+   "bar": 13,
+   "scale": {
+    "Singularity": 1.1
+   }
+  },
+  {
+   "track": "organ_pedal",
+   "do": "pattern",
+   "bar": 32,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 0,
+    "Drift": 1.0
+   },
+   "ref": "pedal_ring"
+  },
+  {
+   "track": "clock_tick",
+   "do": "pattern",
+   "bars": [
+    21,
+    28
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1.0,
+    "Drift": 0
+   },
+   "ref": "tick"
+  },
+  {
+   "track": "violin_runs",
+   "do": "run",
+   "bar": 8,
+   "beat": 2.0,
+   "n": 8,
+   "step": 0.25,
+   "v0": 48,
+   "v1": 70,
+   "pitch": 62,
+   "shape": "up",
+   "scale": {
+    "Weightless": 1,
+    "Ascent": 1,
+    "Orbit": 1,
+    "Singularity": 1,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1,
+    "Drift": 0
+   },
+   "ref": "zip"
+  },
+  {
+   "track": "violin_runs",
+   "do": "run",
+   "bar": 10,
+   "beat": 2.0,
+   "n": 10,
+   "step": 0.1875,
+   "v0": 54,
+   "v1": 80,
+   "pitch": 62,
+   "shape": "arch",
+   "scale": {
+    "Weightless": 1,
+    "Ascent": 1,
+    "Orbit": 1,
+    "Singularity": 1,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1,
+    "Drift": 0
+   },
+   "ref": "zip"
+  },
+  {
+   "track": "violin_runs",
+   "do": "run",
+   "bar": 12,
+   "beat": 1.0,
+   "n": 12,
+   "step": 0.15,
+   "v0": 60,
+   "v1": 90,
+   "pitch": 62,
+   "shape": "up",
+   "scale": {
+    "Weightless": 1,
+    "Ascent": 1,
+    "Orbit": 1,
+    "Singularity": 1,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1,
+    "Drift": 0
+   },
+   "ref": "zip"
+  },
+  {
+   "track": "violin_runs",
+   "do": "run",
+   "bar": 13,
+   "beat": 2.0,
+   "n": 12,
+   "step": 0.15,
+   "v0": 64,
+   "v1": 92,
+   "pitch": 62,
+   "shape": "wide",
+   "scale": {
+    "Weightless": 1,
+    "Ascent": 1,
+    "Orbit": 1,
+    "Singularity": 1,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1,
+    "Drift": 0
+   },
+   "ref": "zip"
+  },
+  {
+   "track": "violin_runs",
+   "do": "run",
+   "bar": 14,
+   "beat": 1.0,
+   "n": 12,
+   "step": 0.125,
+   "v0": 66,
+   "v1": 96,
+   "pitch": 62,
+   "shape": "up",
+   "scale": {
+    "Weightless": 1,
+    "Ascent": 1,
+    "Orbit": 1,
+    "Singularity": 1,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1,
+    "Drift": 0
+   },
+   "ref": "zip"
+  },
+  {
+   "track": "violin_runs",
+   "do": "run",
+   "bar": 15,
+   "beat": 0.5,
+   "n": 16,
+   "step": 0.1,
+   "v0": 72,
+   "v1": 100,
+   "pitch": 60,
+   "shape": "wide",
+   "scale": {
+    "Weightless": 1,
+    "Ascent": 1,
+    "Orbit": 1,
+    "Singularity": 1,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1,
+    "Drift": 0
+   },
+   "ref": "zip"
+  },
+  {
+   "track": "violin_runs",
+   "do": "run",
+   "bar": 21,
+   "beat": 1.0,
+   "n": 12,
+   "step": 0.15,
+   "v0": 70,
+   "v1": 96,
+   "pitch": 88,
+   "shape": "down",
+   "scale": {
+    "Weightless": 1,
+    "Ascent": 1,
+    "Orbit": 1,
+    "Singularity": 1,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1,
+    "Drift": 0
+   },
+   "ref": "zip"
+  },
+  {
+   "track": "violin_runs",
+   "do": "run",
+   "bar": 23,
+   "beat": 1.0,
+   "n": 12,
+   "step": 0.15,
+   "v0": 70,
+   "v1": 96,
+   "pitch": 88,
+   "shape": "wide",
+   "scale": {
+    "Weightless": 1,
+    "Ascent": 1,
+    "Orbit": 1,
+    "Singularity": 1,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1,
+    "Drift": 0
+   },
+   "ref": "zip"
+  },
+  {
+   "track": "violin_runs",
+   "do": "run",
+   "bar": 25,
+   "beat": 1.0,
+   "n": 12,
+   "step": 0.15,
+   "v0": 70,
+   "v1": 96,
+   "pitch": 88,
+   "shape": "down",
+   "scale": {
+    "Weightless": 1,
+    "Ascent": 1,
+    "Orbit": 1,
+    "Singularity": 1,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1,
+    "Drift": 0
+   },
+   "ref": "zip"
+  },
+  {
+   "track": "violin_runs",
+   "do": "run",
+   "bar": 27,
+   "beat": 1.0,
+   "n": 12,
+   "step": 0.15,
+   "v0": 70,
+   "v1": 96,
+   "pitch": 88,
+   "shape": "arch",
+   "scale": {
+    "Weightless": 1,
+    "Ascent": 1,
+    "Orbit": 1,
+    "Singularity": 1,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1,
+    "Drift": 0
+   },
+   "ref": "zip"
+  },
+  {
+   "track": "taiko_hits",
+   "do": "pattern",
+   "bar": 16,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 1.0,
+    "Debris": 0,
+    "Escape": 0,
+    "Drift": 0
+   },
+   "ref": "taiko_hit"
+  },
+  {
+   "track": "taiko_hits",
+   "do": "pattern",
+   "bars": [
+    21,
+    28
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 0.9,
+    "Drift": 0
+   },
+   "ref": "taiko_beat"
+  },
+  {
+   "track": "debris_celesta",
+   "do": "pattern",
+   "bars": [
+    17,
+    24
+   ],
+   "vary": "bar",
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 1.0,
+    "Escape": 1.0,
+    "Drift": 0
+   },
+   "ref": "debris_a"
+  },
+  {
+   "track": "debris_harp",
+   "do": "pattern",
+   "bars": [
+    18,
+    24
+   ],
+   "vary": "bar",
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 1.0,
+    "Escape": 1.0,
+    "Drift": 0
+   },
+   "ref": "debris_h"
+  },
+  {
+   "track": "piano_theme",
+   "do": "pattern",
+   "bar": 19,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0.7,
+    "Escape": 0,
+    "Drift": 0
+   },
+   "ref": "piano_frag"
+  },
+  {
+   "track": "strings_bed",
+   "do": "pattern",
+   "bars": [
+    17,
+    19
+   ],
+   "every": [
+    2,
+    1
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0.8,
+    "Escape": 0,
+    "Drift": 0
+   },
+   "ref": "bed_long8"
+  },
+  {
+   "track": "horn_theme",
+   "do": "line",
+   "bar": 21,
+   "octave": -12,
+   "vel": 1.0,
+   "ref": "theme"
+  },
+  {
+   "track": "strings_theme",
+   "do": "line",
+   "bar": 21,
+   "octave": 12,
+   "vel": 1.0,
+   "ref": "theme"
+  },
+  {
+   "track": "strings_theme",
+   "do": "line",
+   "bar": 25,
+   "octave": 0,
+   "vel": 1.0,
+   "ref": "ascent"
+  },
+  {
+   "track": "horn_theme",
+   "do": "line",
+   "bar": 25,
+   "octave": -12,
+   "vel": 1.0,
+   "ref": "ascent"
+  },
+  {
+   "track": "piano_theme",
+   "do": "line",
+   "bar": 25,
+   "octave": 0,
+   "vel": 0.8,
+   "ref": "ascent"
+  },
+  {
+   "track": "piano_arp",
+   "do": "pattern",
+   "bars": [
+    21,
+    28
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1.0,
+    "Drift": 0
+   },
+   "ref": "arp16"
+  },
+  {
+   "track": "harp_arp",
+   "do": "pattern",
+   "bars": [
+    21,
+    28
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 0.85,
+    "Drift": 0
+   },
+   "ref": "arp16"
+  },
+  {
+   "track": "cello_pulse",
+   "do": "pattern",
+   "bars": [
+    22,
+    28
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1.0,
+    "Drift": 0
+   },
+   "ref": "cello"
+  },
+  {
+   "track": "cello_pulse",
+   "do": "pattern",
+   "ref": "cello_late",
+   "bar": 21,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1.0,
+    "Drift": 0
+   }
+  },
+  {
+   "track": "strings_bed",
+   "do": "pattern",
+   "bars": [
+    21,
+    28
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 0.9,
+    "Drift": 0
+   },
+   "ref": "bed_shift"
+  },
+  {
+   "track": "organ_chords",
+   "do": "pattern",
+   "bars": [
+    21,
+    28
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1.0,
+    "Drift": 0
+   },
+   "ref": "organ_chord"
+  },
+  {
+   "track": "choir_oohs",
+   "do": "pattern",
+   "bars": [
+    23,
+    28
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 0.9,
+    "Drift": 0
+   },
+   "ref": "choir"
+  },
+  {
+   "track": "brass_low",
+   "do": "pattern",
+   "bars": [
+    21,
+    28
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1.0,
+    "Drift": 0
+   },
+   "ref": "brass"
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bars": [
+    21,
+    28
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 0.9,
+    "Drift": 0
+   },
+   "ref": "timp_beat",
+   "skip": [
+    24,
+    28
+   ]
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bar": 24,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1.0,
+    "Drift": 0
+   },
+   "ref": "timp_roll"
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "bar": 28,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 1.0,
+    "Drift": 0
+   },
+   "ref": "timp_roll"
+  },
+  {
+   "track": "strings_bed",
+   "do": "pattern",
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 0,
+    "Drift": 0.85
+   },
+   "ref": "bed_long8",
+   "bars": [
+    29,
+    31
+   ],
+   "every": [
+    2,
+    1
+   ]
+  },
+  {
+   "track": "organ_chords",
+   "do": "pattern",
+   "bars": [
+    29,
+    31
+   ],
+   "every": [
+    2,
+    1
+   ],
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 0,
+    "Drift": 0.85
+   },
+   "ref": "organ_chord8"
+  },
+  {
+   "track": "choir_oohs",
+   "do": "pattern",
+   "bar": 29,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 0,
+    "Drift": 0.85
+   },
+   "ref": "choir8"
+  },
+  {
+   "track": "piano_theme",
+   "do": "pattern",
+   "bar": 29,
+   "ref": "piano_frag",
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 0,
+    "Drift": 0.7
+   }
+  },
+  {
+   "track": "piano_theme",
+   "do": "note",
+   "bar": 32,
+   "beat": 0,
+   "d": 3.5,
+   "p": 98,
+   "v": 80,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 0,
+    "Drift": 1.0
+   }
+  },
+  {
+   "track": "timpani_hits",
+   "do": "pattern",
+   "ref": "timp_beat",
+   "bars": [
+    24,
+    28
+   ],
+   "every": [
+    4,
+    0
+   ],
+   "until": 2.0,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 0.9,
+    "Drift": 0
+   }
+  },
+  {
+   "track": "brass_low",
+   "do": "pattern",
+   "ref": "brass8",
+   "bar": 31,
+   "scale": {
+    "Weightless": 0,
+    "Ascent": 0,
+    "Orbit": 0,
+    "Singularity": 0,
+    "Horizon": 0,
+    "Debris": 0,
+    "Escape": 0,
+    "Drift": 0.7
+   }
+  }
+ ]
+}

@@ -47,7 +47,11 @@ def seconds(anchor, score=None, tm=None):
             raise ValueError(f'no section "{anchor["section"]}" in the score plan; known: '
                              f'{[s.get("name") for s in plan]}')
         if hit.get('start_s') is not None:
-            return float(hit['start_s']) + float(tm.sec((float(anchor.get('bar', 1)) - 1.0) * bb))
+            # start_s is the section's own time: the offset into it is measured on the tempo map FROM the section's
+            # start bar, not from the piece origin (rubato / ritardando before the section would shift every key)
+            sb = float(hit.get('start_bar', 0)) * bb
+            off = (float(anchor.get('bar', 1)) - 1.0) * bb
+            return float(hit['start_s']) + float(tm.sec(sb + off)) - float(tm.sec(sb))
         start = float(hit.get('start_bar', 0)) * bb
     elif 'bar' not in anchor:
         raise ValueError(f'a key needs "t_s", "bar" or "section", got {sorted(anchor)}')

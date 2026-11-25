@@ -1,0 +1,11 @@
+{
+  "name": "theatrical",
+  "character": "calibration only: low-mid lean, peak-relative air and attack-led depth on",
+  "theatrical": {
+    "enabled": true,
+    "low_mid": {"enabled": true, "low_hz": 180, "high_hz": 420, "max_dip_db": 2.0,
+                "range_db": 10, "ratio": 2.0, "attack_ms": 20, "release_ms": 180},
+    "air": {"enabled": true, "hz": 9000, "max_lift_db": 1.5, "window_db": 6},
+    "detail": {"enabled": true, "duck_db": 2.5, "attack_ms": 4, "release_ms": 40, "ref_db": 18}
+  }
+}

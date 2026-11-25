@@ -1,0 +1,66 @@
+{
+  "name": "harp_figures",
+  "character": "A harp far to the right playing broken chords at a lopsided pace, as if the light from it arrives late: the only part that is allowed to sound beautiful while everything else presses.",
+  "description": "The shimmer: a syncopated harp figure over the sounding chord, uneven gaps and a changing order, so it glints instead of ticking.",
+  "gm": "harp",
+  "role": "arp",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 9.0,
+    "drift_ms": 9.0,
+    "vel_sigma": 7.0
+  },
+  "spatial": {
+    "azimuth": 48.0,
+    "elevation": 12.0,
+    "distance": 2.6,
+    "kind": "spot",
+    "binaural": true
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 120.0
+    },
+    {
+      "type": "peak",
+      "f": 3200.0,
+      "gain": -2.0,
+      "q": 1.0
+    },
+    {
+      "type": "lp",
+      "f": 13000.0
+    }
+  ],
+  "gain_db": -8.0,
+  "reverb": 0.36,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 1.0,
+    "release_ms": 500.0
+  },
+  "mechanics_class": "plucked",
+  "velocity_timbre": {
+    "points": [
+      [
+        30,
+        1800
+      ],
+      [
+        70,
+        4200
+      ],
+      [
+        127,
+        9500
+      ]
+    ],
+    "bands": 3
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring section 2 | a high plucked figuration keeps the top of the spectrum alive without competing with the figure",
+    "KB soundfont-velocity-and-realism section 4 | quiet arpeggio notes are duller; velocity_timbre keeps the accompaniment behind the theme; starting values",
+    "ESTIMATE: azimuth 48 deg, 12 deg up, 2.6 m, gain -6 dB and 36 percent send are starting values for a harp placed right and near"
+  ]
+}

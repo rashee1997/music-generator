@@ -39,7 +39,7 @@ import json
 import numpy as np
 
 from . import breath, consonant, data, tract, voice
-from .utils import smooth_noise
+from .utils import cents_to_hz, smooth_noise
 
 _CAL = {}
 
@@ -209,6 +209,17 @@ def _formants(ev, cfg, style):
     return _cover(F, ev, cfg, m, K)
 
 
+def _neutral_formants(ev, cfg, FH, onset):
+    """The schwa-like formants an onset glides from (and a long note drifts toward), seated in the same tract as
+    `_formants`: the note's `formant_scale`, the tract's `formant_scale` and `length_scale`, then the pharynx split.
+    Formants beyond the configured neutral list are the note's own `onset` formants, which are already scaled."""
+    tr = cfg['tract']
+    m = float(ev.get('formant_scale', 1.0)) * float(tr['formant_scale']) * float(tr.get('length_scale', 1.0))
+    nv = np.array(list(FH.get('neutral', [500.0, 1500.0, 2500.0]))[:len(onset)], dtype=float) * m
+    nv = _pharynx(nv, tr.get('pharynx_scale', 1.0))
+    return np.concatenate([nv, np.asarray(onset, dtype=float)[len(nv):]])
+
+
 def _diph_target(ev, cfg, style, onset):
     """The vowel a note glides to (a diphthong), or the onset formants when there is none."""
     name = _vowel_name(ev)[1] or ev.get('vowel_to')
@@ -299,7 +310,8 @@ def _calibration(sr, cfg, hum, F, BW, style, register, nasality, hz=220.0, bw_ar
     tube, exactly as the real render will), so a calibration can never be taken through a different tract.
     """
     key = json.dumps([sr, hum, round(float(hz), 1), [round(float(f), 1) for f in F], [float(b) for b in BW], sorted(style.items()), register,
-                      round(float(nasality), 3), cfg['humming'], cfg['source'], cfg['dynamics']['ref_rms']],
+                      round(float(nasality), 3), cfg['humming'], cfg['source'], cfg['dynamics']['ref_rms'],
+                      cfg['waveguide'], cfg['tract']['gains'], cfg['tract']['block_ms']],
                      sort_keys=True, default=str)
     if key not in _CAL:
         n = int(0.5 * sr)
@@ -592,7 +604,7 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
                                  * smooth_noise(rng, n, sr, 0.35))
     vib_curve = depth_t * env * depth_mod * wave
     cents += vib_curve
-    f0 = 440.0 * 2.0 ** ((cents - 6900.0) / 1200.0)
+    f0 = cents_to_hz(cents)
     # vibrato is not F0-only: subglottal pressure oscillates with the rate, so level and formants move too
     vib_depth = depth_t * env * depth_mod
     vib_max = max(float(np.max(np.abs(vib_depth))), 1e-9)
@@ -691,11 +703,11 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
     TE = cfg.get('technique') or {}
     # calibrate on the tract the synthesis will use, not the untuned one: `formant_tuning` moves F1 toward a high f0,
     # so measuring the gain at F1 430 Hz and then singing through F1 766 Hz makes the level depend on pitch
-    TFn = [_tuned_formants(F, 440.0 * 2 ** ((b / 100.0 - 69) / 12), cfg) if not hum else np.asarray(F, dtype=float)
+    TFn = [_tuned_formants(F, cents_to_hz(b), cfg) if not hum else np.asarray(F, dtype=float)
            for F, b in zip(Fn, base)]
     c220 = [_calibration(sr, cfg, hum, F, bw, style, reg, nasality, bw_arg=BW) for F, bw in zip(Fn, BWn)]
     cals = c220 if comp <= 0 else [
-        _calibration(sr, cfg, hum, F, bw, style, reg, nasality, hz=440.0 * 2 ** ((b / 100.0 - 69) / 12),
+        _calibration(sr, cfg, hum, F, bw, style, reg, nasality, hz=cents_to_hz(b),
                      bw_arg=BW) ** comp * c0 ** (1 - comp)
         for F, bw, b, c0 in zip(TFn, BWn, base, c220)]
     wv = int(P['vowel_blend_ms'] * 1e-3 * sr)
@@ -729,9 +741,7 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
             m = min(settle, n - a0)
             if m <= 4:
                 continue
-            scale_i = float(notes[i].get('formant_scale', 1.0)) * float(cfg['tract']['formant_scale'])
-            nv = list(FH.get('neutral', [500.0, 1500.0, 2500.0]))
-            neutral = np.array((nv + list(Fn[i]))[:len(Fn[i])], dtype=float) * scale_i
+            neutral = _neutral_formants(notes[i], cfg, FH, Fn[i])
             ref = Fn[i - 1] if i > 0 else neutral
             ramp = np.exp(-np.arange(m) / (0.35 * m))
             F_track[:, a0:a0 + m] += amt * float(FH['onset_glide']) * (ref - Fn[i])[:, None] * ramp[None, :]
@@ -774,7 +784,7 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
         acc_norm = np.clip(acc_db - acc_db.min(), 0, None)
         acc_norm /= (acc_norm.max() + 1e-9)
         cents = cents + amt * float((PH.get('pitch') or {}).get('stress_cents', 0.0)) * acc_norm
-        f0 = 440.0 * 2.0 ** ((cents - 6900.0) / 1200.0)
+        f0 = cents_to_hz(cents)
     creak = float(TE.get('creak', 0.0))
     creak_env = 0.0
     if creak > 0:                                         # vocal fry: phrase ends and the bottom of the range
@@ -808,7 +818,8 @@ def render_phrase(notes, sr, rng, cfg, hum=False, style=None, register=None, nas
             note_v.append(float(e.get('v', 80)))
             dev.append(float(np.mean(cents_nov[a:b]) - base[i]))
     sig = sig * cal * level * arc * flutter * (10 ** (acc_db / 20.0)) * gate * press
-    cons_report = _place_consonants(sig, codes, CN, sr, rng, f0, s, e_, Fn, lv, n, notes, reg)
+    cons_report = _place_consonants(sig, codes, CN, sr, rng, f0, s, e_, Fn, lv, n, notes, _register_params(cfg, reg),
+                                 model=str(cfg['source'].get('model', 'pulse')))
     tech = _technique_report(sig, sr, f0, F_track, s, e_, k, reg, cfg, vib_am, src_stats=vstats)
     p0 = t0 - pad / sr                                   # the consonant sits before the scored onset
     return dict(signal=sig, t0=p0, t1=p0 + n / sr, f0=f0, gate=gate, level=level, connected=connected, s=s, e=e_,
@@ -862,7 +873,15 @@ def _local_jitter(sig, f0, sr):
     return float(np.mean(np.abs(np.diff(T))) / (np.mean(T) + 1e-12) * 100.0)
 
 
-def _place_consonants(sig, codes, cn, sr, rng, f0, s, e_, Fn, lv, n, notes, reg=None):
+def _register_params(cfg, reg):
+    """The glottal parameters a voiced consonant buzzes with. A style names its register ("chest"); the consonant
+    renderer wants the parameter dict, so the name goes through the singer's own register table."""
+    if isinstance(reg, dict):
+        return reg
+    return voice.resolve_register(cfg, reg)
+
+
+def _place_consonants(sig, codes, cn, sr, rng, f0, s, e_, Fn, lv, n, notes, reg=None, model='pulse'):
     """Add the consonant segments into the phrase buffer. A consonant is part of the word, not of the breath, so it
     goes into the voice signal (before the voiced onset by its own VOT), never into the breath stem."""
     out = []
@@ -875,7 +894,7 @@ def _place_consonants(sig, codes, cn, sr, rng, f0, s, e_, Fn, lv, n, notes, reg=
         a, b = s[i], max(s[i] + 8, e_[i])
         f0i = float(np.mean(f0[a:b]))
         lvl = float(lv[min(i, len(lv) - 1)])
-        y, meta = consonant.render(code, cn, sr, rng, f0=f0i, vowel=list(Fn[i]), reg=reg)
+        y, meta = consonant.render(code, cn, sr, rng, f0=f0i, vowel=list(Fn[i]), reg=reg, model=model)
         if len(y):
             at = a - len(y)
             if at < 0:
@@ -889,7 +908,7 @@ def _place_consonants(sig, codes, cn, sr, rng, f0, s, e_, Fn, lv, n, notes, reg=
                                 vot_ms=meta.get('vot_ms'), centroid_hz=meas['centroid_hz'], dur_ms=meas['dur_ms']))
         c = notes[i].get('consonant')
         if cn.get('codas') and isinstance(c, (list, tuple)) and len(c) > 1:
-            y2, meta2 = consonant.render(c[0], cn, sr, rng, f0=f0i, vowel=list(Fn[i]), reg=reg)
+            y2, meta2 = consonant.render(c[0], cn, sr, rng, f0=f0i, vowel=list(Fn[i]), reg=reg, model=model)
             if len(y2):
                 at = max(0, e_[i] - len(y2))
                 m = min(len(y2), n - at)

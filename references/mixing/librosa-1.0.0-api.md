@@ -1,8 +1,17 @@
+---
+title: librosa 1.0.0 API note
+summary: The librosa calls the gate uses, their installed signatures, and which behaviours are read from source.
+tags: [librosa, api, gate, spectral, onset, signatures]
+load_when:
+  - changing a librosa call in the gate
+  - a spectral or onset row needs the installed signature
+---
+
 # librosa 1.0.0 API note (read 2026-11-04)
 
 Environment measured in this repo: `librosa 1.0.0`, `numpy 2.5.3`, `scipy 1.18.1`, Python from `.venv`.
 
-Version verified on the web on 2026-11-04: the PyPI project page (https://pypi.org/project/librosa/) shows
+Version checked on the web on 2026-11-04: the PyPI project page shows
 **librosa 1.0.0, released Aug 11, 2026** as the latest release (wheel `librosa-1.0.0-py3-none-any.whl`, sdist
 `librosa-1.0.0.tar.gz`; Requires-Python `>=3.12`). `importlib.metadata.version('librosa')` and `librosa.__version__`
 both report `1.0.0` in `.venv`, so the installed package is the current upstream release, not a local build or a 0.x
@@ -11,7 +20,7 @@ backport. The flat-namespace finding below is therefore a real 1.0.0 change, not
 Read status:
 
 - **[S]** installed source and docstring read with `inspect.signature` + `inspect.getdoc` on 2026-11-04.
-- **[D]** the canonical web page for that function was **not** fetched in this session; the behaviour below is from the
+- **[D]** the canonical web page for that function was **not** opened; the behaviour below is from the
   installed source/docstring. Treat the prose as unverified against the web page until someone opens it.
 - **[M]** not yet measured: the range check will run with `tests/test_gate_checks.py`; this note does not claim output
   ranges as measured until that output is printed.
@@ -95,7 +104,7 @@ mandatory: white and band-limited noise hold 0 of 65 tonal frames and are report
 | Function | Measures / output | Key parameters | Limits | Read |
 |---|---|---|---|---|
 | `librosa.segment.recurrence_matrix` | self-similarity / recurrence, `(n, n)` | `k=None, width=1, metric='euclidean', sym=False, sparse=False, mode='connectivity', bandwidth=None, self=False, axis=-1` | O(n^2) memory; a short loop and a long loop look alike | [S] |
-| `segment.agglomerative` | `k` contiguous segment boundaries | `clusterer=None`, `axis=-1` | needs scikit-learn's `AgglomerativeClustering`; **not verified installed** in this venv ([U]) | [S] |
+| `segment.agglomerative` | `k` contiguous segment boundaries | `clusterer=None`, `axis=-1` | needs scikit-learn's `AgglomerativeClustering`; **not installed here** ([U]) | [S] |
 | `segment.subsegment` | sub-boundaries inside given frames | `n_segments=4, axis=-1` | each interval shorter than `n_segments` becomes one frame per segment | [S] |
 | `segment.cross_similarity` | cross-similarity `(n, m)` | `k=None, metric='euclidean', sparse=False, mode='connectivity', bandwidth=None` | same O(n*m) cost | [S] |
 | `sequence.dtw` | cost matrix + warping path | `metric='euclidean', step_sizes_sigma=None, subseq=False, backtrack=True, band_rad=0.25` | O(N*M); needs comparable features, not raw audio | [S] |
@@ -142,7 +151,7 @@ mandatory: white and band-limited noise hold 0 of 65 tonal frames and are report
 - `librosa.core.pyin` - vocal f0 for intonation rows (monophonic only).
 - `librosa.core.perceptual_weighting` - A-weighted band balance, not a loudness replacement.
 
-## Not read / not verified
+## Not read / unconfirmed
 
 - The PyPI release page and the 1.0.0 documentation landing page were read for the version and release facts. The
   **per-function** canonical documentation pages were **not** fetched ([D]); the signatures and prose here are from the

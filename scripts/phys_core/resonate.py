@@ -79,7 +79,8 @@ def porous_absorption(freq_hz, sigma, thickness_m=0.001):
     f = np.maximum(np.asarray(freq_hz, dtype=float), 1e-6)
     sigma = max(float(sigma), 1.0)
     x = f / sigma
-    c = 343.0
+    from . import medium
+    c = medium.speed_of_sound()
     im_k = (2 * np.pi * f / c) * (1.0 + 7.81 * np.power(x, -0.618))
     return np.exp(-im_k * max(float(thickness_m), 1e-9))
 
@@ -103,11 +104,6 @@ def bubble(f_hz, t60_s=0.03, dur_s=0.06, sr=44100, rise=0.1, pitch=1.0):
     t = np.arange(n) / sr
     d = 6.907755 / max(t60_s, 1e-4)
     return np.exp(-d * t) * np.sin(2 * np.pi * f0 * (t + 0.5 * rise * d * t * t))
-
-
-def bubble_radius(f_hz):
-    """Minnaert radius in metres for a resonance frequency: r = 3.26 / f."""
-    return 3.26 / max(float(f_hz), 1.0)
 
 
 def bubble_frequency(radius_m):

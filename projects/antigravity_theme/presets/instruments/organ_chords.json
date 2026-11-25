@@ -1,0 +1,40 @@
+{
+  "name": "organ_chords",
+  "description": "The organ's manuals",
+  "character": "The organ's manuals: an open chord that swells with the cue and is the loudest voice at the peak.",
+  "gm": "church_organ",
+  "role": "pad",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": 75.0,
+    "elevation": 12.0,
+    "distance": 4.0,
+    "kind": "spot",
+    "binaural": true
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 110
+    }
+  ],
+  "gain_db": -5.5,
+  "reverb": 0.3,
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 1.0,
+    "release_ms": 300.0
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring (a sustained organ or low-string bed, a pulse that keeps going, low brass at the turning points: per its section 2) | the part's job in the cue",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measurements",
+    "MEASURED: stem.tick read the chord entries (12 strong onsets, 4.9 dB rise, one per bar) as a pulse on a 93 ms grid, the same false positive as the string bed; STARTING VALUE: onset_fade_ms 300, a slow swell into each chord",
+    "MEASURED: imm.surround_ratio read the 7.1 surround energy at -1.6 dB against the front stage twice (window -9.0 to -2.0), unchanged by moving the timpani and lowering the late field; this part sits at the sides or behind. STARTING VALUE: gain_db -4 -> -5.5, a bed that sits a little further under the front-stage parts"
+  ],
+  "onset_fade_ms": 300.0
+}

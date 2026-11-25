@@ -44,14 +44,28 @@ detail but needs a GPU and training - see references/instruments-and-vocals/inst
 import argparse
 import json
 import os
-import sys
 from fractions import Fraction
 
 import numpy as np
 import soundfile as sf
-from scipy import signal
+from scipy import ndimage, signal
 
 SR = 44100
+
+
+def _read_json(path):
+    with open(path, encoding='utf-8') as f:
+        return json.load(f)
+
+
+def _write_json(path, obj):
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(obj, f, indent=1)
+
+
+def _moving_mean(x, h):
+    """Centred moving average over `h` samples, zero outside the signal: np.convolve(x, ones(h)/h, 'same') in O(n)."""
+    return ndimage.uniform_filter1d(np.asarray(x, dtype=float), int(h), mode='constant', cval=0.0)
 
 
 # ------------------------------------------------------------------------------------------------
@@ -122,15 +136,12 @@ def yin(x, sr, fmin=55.0, fmax=2200.0, frame=2048, hop=512, thr=0.15):
         d[0] = 0
         cm = np.ones_like(d)
         cm[1:] = d[1:] * np.arange(1, tmax) / (np.cumsum(d[1:]) + 1e-12)
-        t = None
-        for tau in range(tmin, tmax - 1):
-            if cm[tau] < thr:
-                while tau + 1 < tmax - 1 and cm[tau + 1] < cm[tau]:
-                    tau += 1
-                t = tau
-                break
-        if t is None:
+        below = np.flatnonzero(cm[tmin:tmax - 1] < thr)       # the first dip under the threshold, then down its slope
+        if below.size == 0:
             continue
+        t = tmin + int(below[0])
+        while t + 1 < tmax - 1 and cm[t + 1] < cm[t]:
+            t += 1
         # parabolic interpolation
         a_, b_, c_ = cm[t - 1], cm[t], cm[t + 1]
         den = a_ - 2 * b_ + c_
@@ -138,6 +149,22 @@ def yin(x, sr, fmin=55.0, fmax=2200.0, frame=2048, hop=512, thr=0.15):
         f0[i] = sr / tau_f
         conf[i] = float(np.clip(1 - cm[t], 0, 1))
     return f0, conf, rmsdb
+
+
+def _partial_peaks(spec, fr, f0, K):
+    """Peak (frequency, magnitude) of each of the first K partials: the loudest bin within +-3.5 % of k*f0, and the
+    bin nearest k*f0 when that band holds no bin (a 40 Hz note on a 5.4 Hz FFT grid), so a sub-bass note still has
+    a first partial. Stops only when k*f0 is past the spectrum."""
+    pk_f, pk_a = [], []
+    for k in range(1, K + 1):
+        lo, hi = k * f0 * 0.965, k * f0 * 1.035
+        if lo > fr[-1]:
+            break
+        m = (fr >= lo) & (fr <= hi)
+        j = int(np.argmax(spec * m)) if m.any() else int(np.argmin(np.abs(fr - k * f0)))
+        pk_f.append(fr[j])
+        pk_a.append(spec[j])
+    return np.array(pk_f), np.array(pk_a)
 
 
 def hz2midi(f):
@@ -155,6 +182,8 @@ def midi2hz(m):
 def segment_notes(x, sr, hop=512, min_len=0.15):
     f0, conf, rdb = yin(x, sr, hop=hop)
     midi = np.where(f0 > 0, hz2midi(f0), 0)
+    if len(rdb) == 0:
+        raise ValueError('segment_notes: the recording is too short to analyse (shorter than one pitch frame)')
     voiced = (conf > 0.75) & (rdb > rdb.max() - 45) & (f0 > 0)
     segs, cur = [], None
     for i in range(len(f0)):
@@ -208,7 +237,6 @@ def build_sampler(path, name, out_dir, min_len=0.15, max_notes=60):
     xm = _to_mono(x)
     if sr != SR:
         xm = signal.resample_poly(xm, SR, sr)
-        x = signal.resample_poly(x, SR, sr, axis=0)
         sr = SR
     xm = xm / (np.abs(xm).max() + 1e-9) * 0.9
     notes = segment_notes(xm, sr, min_len=min_len)
@@ -234,7 +262,7 @@ def build_sampler(path, name, out_dir, min_len=0.15, max_notes=60):
         zones.append(dict(file=f'samples/{fn}', midi=round(n['midi'], 3), vel=round(vel, 3), rms_db=round(n['rms_db'], 1),
                           centroid=round(cen), dur=round(len(seg) / sr, 3)))
     meta = dict(type='sampler', name=name, sr=sr, zones=zones, source=os.path.basename(path))
-    json.dump(meta, open(os.path.join(d, 'instrument.json'), 'w', encoding='utf-8'), indent=1)
+    _write_json(os.path.join(d, 'instrument.json'), meta)
     return d, meta
 
 
@@ -282,7 +310,7 @@ def extend_note(x, target, sr, f0):
 class SamplerInstrument:
     def __init__(self, d):
         self.dir = d
-        self.meta = json.load(open(os.path.join(d, 'instrument.json'), encoding='utf-8'))
+        self.meta = _read_json(os.path.join(d, 'instrument.json'))
         self.sr = self.meta['sr']
         self.zones = self.meta['zones']
         self.cache = {}
@@ -343,7 +371,7 @@ def build_harmonic(path, name, out_dir):
     a, b = idx[0], idx[-1]
     # amplitude envelope (10 ms rms)
     h = int(0.01 * sr)
-    env = np.sqrt(np.convolve(xm ** 2, np.ones(h) / h, mode='same'))[::h]
+    env = np.sqrt(_moving_mean(xm ** 2, h))[::h]
     pk = int(np.argmax(env))
     pkv = env[pk]
     att = np.argmax(env >= 0.9 * pkv) * 0.01
@@ -359,16 +387,7 @@ def build_harmonic(path, name, out_dir):
     spec = np.abs(np.fft.rfft(seg))
     fr = np.fft.rfftfreq(8192, 1 / sr)
     K = int(min(60, 0.45 * sr / f0))
-    pk_f, pk_a = [], []
-    for k in range(1, K + 1):
-        lo, hi = k * f0 * 0.965, k * f0 * 1.035
-        m = (fr >= lo) & (fr <= hi)
-        if not m.any():
-            break
-        j = np.argmax(spec * m)
-        pk_f.append(fr[j])
-        pk_a.append(spec[j])
-    pk_f, pk_a = np.array(pk_f), np.array(pk_a)
+    pk_f, pk_a = _partial_peaks(spec, fr, f0, K)
     ratio2 = (pk_f / (np.arange(1, len(pk_f) + 1) * f0)) ** 2 - 1
     kk = np.arange(1, len(pk_f) + 1)[:12]
     B = float(np.clip(np.sum(ratio2[:12] * kk ** 2) / np.sum(kk ** 4), 0, 0.01)) if len(kk) > 3 else 0.0
@@ -381,7 +400,7 @@ def build_harmonic(path, name, out_dir):
     mask = np.ones_like(fr, bool)
     for f in pk_f:
         mask &= np.abs(fr - f) > 0.35 * f0
-    noise_lin = np.sqrt(np.convolve(spec ** 2 * mask, np.ones(41) / 41, mode='same'))
+    noise_lin = np.sqrt(_moving_mean(spec ** 2 * mask, 41))
     noise_db = 20 * np.log10(np.interp(grid, fr, noise_lin) / (pk_a.max() + 1e-12) + 1e-6)
     # vibrato from the f0 track
     f0c = 1200 * np.log2(f0t[a:b + 1] / f0)
@@ -404,13 +423,13 @@ def build_harmonic(path, name, out_dir):
                 vib_cents=round(vd, 1), source=os.path.basename(path))
     d = os.path.join(out_dir, name)
     os.makedirs(d, exist_ok=True)
-    json.dump(meta, open(os.path.join(d, 'instrument.json'), 'w', encoding='utf-8'), indent=1)
+    _write_json(os.path.join(d, 'instrument.json'), meta)
     return d, meta
 
 
 class HarmonicInstrument:
     def __init__(self, d):
-        self.meta = json.load(open(os.path.join(d, 'instrument.json'), encoding='utf-8'))
+        self.meta = _read_json(os.path.join(d, 'instrument.json'))
         self.rng = np.random.default_rng(1)
 
     def play(self, midi, vel=0.7, dur=1.0, sr=SR, release=0.15):
@@ -461,7 +480,7 @@ class HarmonicInstrument:
 # ------------------------------------------------------------------------------------------------
 
 def load_instrument(d):
-    meta = json.load(open(os.path.join(d, 'instrument.json'), encoding='utf-8'))
+    meta = _read_json(os.path.join(d, 'instrument.json'))
     return SamplerInstrument(d) if meta['type'] == 'sampler' else HarmonicInstrument(d)
 
 
@@ -481,7 +500,7 @@ def render_events(inst, events, sr=SR, tail=3.0):
 
 
 def export_sfz(d):
-    meta = json.load(open(os.path.join(d, 'instrument.json'), encoding='utf-8'))
+    meta = _read_json(os.path.join(d, 'instrument.json'))
     if meta['type'] != 'sampler':
         raise SystemExit('sfz export needs a sampler instrument')
     zs = sorted(meta['zones'], key=lambda z: z['midi'])
@@ -493,7 +512,8 @@ def export_sfz(d):
         cents = int(round((z['midi'] - root) * -100))
         lines.append(f'<region> sample={z["file"]} lokey={lo} hikey={hi} pitch_keycenter={root} tune={cents}')
     p = os.path.join(d, meta['name'] + '.sfz')
-    open(p, 'w', encoding='utf-8').write('\n'.join(lines) + '\n')
+    with open(p, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(lines) + '\n')
     return p
 
 

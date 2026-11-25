@@ -1,0 +1,77 @@
+{
+  "name": "model",
+  "character": "Peripheral auditory model used by the QA gate: middle-ear weighting, an ERB-spaced cascade of asymmetric resonators, a block-rate compressive gain with spread across neighbouring channels, hair-cell rectification and low-pass, and two-time-constant divisive adaptation. CARFAC-inspired; not a physiological simulation.",
+  "rate_hz": 22400,
+  "block": 64,
+  "decimate": 10,
+  "channels": 48,
+  "f_lo_hz": 60.0,
+  "f_hi_hz": 9000.0,
+  "chunk_s": 5.0,
+  "middle_ear": {
+    "taps": 161,
+    "min_db": -30.0,
+    "max_db": 12.0
+  },
+  "car": {
+    "zeta": 0.25,
+    "zero_ratio": 1.4,
+    "zero_zeta_ratio": 1.0
+  },
+  "agc": {
+    "tau_ms": 12.0,
+    "spread": [
+      0.25,
+      0.5,
+      0.25
+    ],
+    "knee_dbfs": -60.0,
+    "slope": 0.3,
+    "min_gain_db": -40.0
+  },
+  "ihc": {
+    "sat": 0.05,
+    "lowpass_hz": 1200.0,
+    "order": 2,
+    "threshold": 0.003
+  },
+  "adapt": {
+    "tau_fast_ms": 10.0,
+    "tau_slow_ms": 60.0,
+    "c": 0.1
+  },
+  "nap": {
+    "antialias_hz": 880.0,
+    "antialias_order": 4
+  },
+  "summary": {
+    "frame_s": 1.0,
+    "mod_band_hz": [
+      30.0,
+      150.0
+    ],
+    "pitch_hz": [
+      50.0,
+      700.0
+    ],
+    "resolved_harmonics": 8,
+    "iacc_max_lag_ms": 1.0,
+    "iacc_band_hz": [
+      500.0,
+      880.0
+    ],
+    "rough_min_hz": 200.0,
+    "active_floor": 0.05
+  },
+  "sources": [
+    "Glasberg & Moore 1990: ERB scale for channel spacing (scripts/auditory.py)",
+    "Lyon et al., CARFAC v2 (arXiv 2404.17490): cascade of asymmetric resonators with a fast-acting compressive gain; here the serial cascade is kept but the gain control is feed-forward at block rate (knowledgebase/sound-design/virtual-ears.md)",
+    "Terhardt absolute threshold (scripts/auditory.py) inverted for the middle-ear weighting, clipped to min_db..max_db; the clip is a starting value",
+    "car.zeta, zero_ratio, agc.*, ihc.*, adapt.*, nap.*: starting values chosen so a tone's channel response is about one ERB wide (tests/test_ear_model.py measures it); none is fitted to physiological data",
+    "adapt.tau_fast_ms 10 and tau_slow_ms 60 are starting values; the depletion index is a fatigue proxy, not a measured neural quantity",
+    "summary.mod_band_hz 30-150 Hz: roughness modulation range around its 70 Hz maximum (knowledgebase/sound-design/roughness.md); pitch_hz 50-700 because the NAP is decimated to 2240 Hz",
+    "summary.iacc_band_hz 500-880 Hz: the 880 Hz NAP anti-alias limit leaves this part of the 500-2000 Hz band the room measures use (imm.iacc_early); a starting value",
+    "summary.rough_min_hz 200: below it a quarter critical band is beating, not roughness (docs/roughness_model.md, the existing band start); active_floor 0.05: channels under 5 % of the strongest excitation are ignored so a near-silent channel cannot produce a large modulation depth (starting value)",
+    "ihc.threshold 0.003 (about -50 dBFS at the channel output): below it a hair cell does not respond. Without it the first-order low-frequency tail of every basal stage, multiplied by the adaptation gain, drove all 48 channels for a 250 Hz tone; with it 5 channels stay above half the peak (measured in this session on 250 Hz, 1 kHz and 3 kHz tones). A starting value"
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "name": "off",
+  "character": "calibration only: the same mix with the theatrical stage switched off",
+  "theatrical": {"enabled": false}
+}
