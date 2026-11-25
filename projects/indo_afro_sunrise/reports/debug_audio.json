@@ -1,5 +1,5 @@
 {
- "stamp": "20261125T053934",
+ "stamp": "20261125T054942",
  "project": "indo_afro_sunrise",
  "level": "FAIL",
  "sources": {
@@ -16,18 +16,18 @@
   ],
   "stems": "12 processed stems from .cache/mix",
   "master": "out/_draft_master.wav",
-  "verdict": "2026-11-25T05:31:15Z"
+  "verdict": "2026-11-25T05:39:34Z"
  },
  "binding": [
   {
    "row": "clicks",
    "stem": null,
    "level": "FAIL",
-   "value": 23.0,
+   "value": 3.0,
    "threshold": 0.0,
    "unit": "events",
-   "safety": -23.0,
-   "detail": "23 clustered impulse event(s) (MAD), 23 LPC frame(s); 1398 event(s) rejected as a dense burst, 250 as a steep attack; max cluster span 1.497 ms"
+   "safety": -3.0,
+   "detail": "3 clustered impulse event(s) (MAD), 3 LPC frame(s); 1356 event(s) rejected as a dense burst, 249 as a steep attack; max cluster span 1.497 ms"
   }
  ],
  "advisory": [
@@ -194,14 +194,15 @@
  ],
  "domains": {
   "run": [
-   "master",
-   "stems"
+   "master"
   ],
-  "skipped": {}
+  "skipped": {
+   "stems": 32
+  }
  },
  "model": {
   "first_order": true,
-  "rows": 21,
+  "rows": 5,
   "levers": [
    {
     "id": "render.oversample",
@@ -216,40 +217,64 @@
     "text": "master oversampling before the limiter"
    },
    {
-    "id": "onset.kit.ms",
-    "domain": "stems",
-    "kind": "onset",
-    "stem": "kit",
-    "current": 0.3,
-    "lo": 0.0,
-    "hi": 3.0,
-    "step": 0.1,
-    "unit": "ms",
-    "text": "kit onset ramp"
+    "id": "gain.shekere",
+    "domain": "master",
+    "kind": "gain",
+    "stem": "shekere",
+    "current": -6.0,
+    "lo": -12.0,
+    "hi": 0.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "shekere instrument trim"
    },
    {
-    "id": "onset.kit.all",
-    "domain": "stems",
-    "kind": "onset",
-    "stem": "kit",
-    "current": 1.0,
-    "lo": 0.0,
-    "hi": 1.0,
-    "step": 1.0,
-    "unit": "flag",
-    "text": "kit ramp every onset"
+    "id": "inst_eq.shekere.0",
+    "domain": "master",
+    "kind": "eq",
+    "stem": "shekere",
+    "current": 6.0,
+    "lo": -6.0,
+    "hi": 12.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "shekere peak 900 Hz q0.5"
    },
    {
-    "id": "note.kit.d",
-    "domain": "stems",
+    "id": "inst_eq.shekere.1",
+    "domain": "master",
+    "kind": "eq",
+    "stem": "shekere",
+    "current": -13.0,
+    "lo": -25.0,
+    "hi": -1.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "shekere peak 4000 Hz q0.6"
+   },
+   {
+    "id": "inst_eq.shekere.2",
+    "domain": "master",
+    "kind": "eq",
+    "stem": "shekere",
+    "current": 0.0,
+    "lo": -12.0,
+    "hi": 12.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "shekere lp 7000 Hz q1"
+   },
+   {
+    "id": "note.shekere.d",
+    "domain": "master",
     "kind": "note_len",
-    "stem": "kit",
-    "current": 0.3047,
-    "lo": 0.24470000000000003,
-    "hi": 0.3647,
+    "stem": "shekere",
+    "current": 0.5,
+    "lo": 0.44,
+    "hi": 0.56,
     "step": 0.010416666666666666,
     "unit": "beats",
-    "text": "kit written note length (mean 0.3047 beats)"
+    "text": "shekere written note length (mean 0.5 beats)"
    }
   ]
  },
@@ -260,8 +285,8 @@
   "clearing": {},
   "predicted": {
    "clicks::-": [
-    -23.0,
-    -23.0
+    -3.0,
+    -3.0
    ],
    "loudness::-": [
     0.02,
@@ -276,52 +301,18 @@
     0.0
    ],
    "master.dc::-": [
-    0.09912850088581357,
-    0.09912850088581357
-   ],
-   "stem.dc::kit": [
-    0.09960128055672933,
-    0.09960128055672933
-   ],
-   "stem.clipping::kit": [
-    0.0,
-    0.0
-   ],
-   "stem.clicks::kit": [
-    0.0,
-    0.0
-   ],
-   "stem.dead::kit": [
-    0.02,
-    0.02
+    0.09914746627266814,
+    0.09914746627266814
    ]
   },
   "conflicts": [],
   "closed": [
    "clicks"
   ],
-  "burned": [
-   {
-    "lever": "onset.kit.ms",
-    "text": "kit onset ramp",
-    "rows": [
-     "clicks"
-    ]
-   },
-   {
-    "lever": "onset.kit.all",
-    "text": "kit ramp every onset",
-    "rows": [
-     "clicks"
-    ]
-   }
-  ],
+  "burned": [],
   "notes": []
  },
  "notes": [
-  "clicks has 8 event(s) at 11.778s, 12.346s, 13.908s, 14.454s; the transient is kit 61%, djembe 12%, shekere 11%",
-  "kit: the tightest gap in the score is 16 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
-  "kit: the tightest gap in the score is 16 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
-  "risk closure: the levers that move this row belong to kit, so every row of those stems was loaded as a constraint before the plan was solved"
+  "clicks has 3 event(s) at 12.346s, 22.276s, 55.240s; the transient is shekere 33%, kit 22%, guitar 22%"
  ]
 }

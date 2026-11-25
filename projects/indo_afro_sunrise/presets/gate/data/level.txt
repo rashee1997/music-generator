@@ -1,5 +1,5 @@
-frames: 2784
-min_db: -118.8
+frames: 2788
+min_db: -126.6
 max_db: -11.6
 median_db: -20.1
 p05_db: -36.8

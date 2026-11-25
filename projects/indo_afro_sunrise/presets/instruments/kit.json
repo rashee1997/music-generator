@@ -21,7 +21,7 @@
   "46": 0.3,
   "49": 0.3
  },
- "onset_fade_all": false,
+ "onset_fade_all": true,
  "sources": [
   "KB african (the Afrobeat kit: kick and snare carry the cycle, the hats subdivide it in 16ths, the crash marks the turn; one drummer, one stroke per limb)",
   "MEASURED: the mastered file's one click event sat at 46.646 s, the bar where kick (p36), snare (p38) and closed hat (p42) land within 1.5 ms of each other; the autopsy attributed the transient to the kit stem at 86%, so the step was the summed full-level sample starts of simultaneous hits, not one sample",
