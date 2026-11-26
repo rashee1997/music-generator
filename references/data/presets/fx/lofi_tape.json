@@ -1,0 +1,17 @@
+{
+  "name": "lofi_tape",
+  "character": "An old cassette: wow and flutter, a little transient softening.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "tape_wobble",
+      "wow_cents": 10.0,
+      "flutter_cents": 4.0
+    },
+    {
+      "type": "transient",
+      "attack_db": -2.0,
+      "sustain_db": 1.0
+    }
+  ]
+}

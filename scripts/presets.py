@@ -71,6 +71,7 @@ KINDS = {
     'ear': dict(required=['character', 'rate_hz', 'channels']),     # parameters of the peripheral auditory model (scripts/ear_model)
     'humanize': dict(required=['character']),      # one groove pocket: per-instrument timing and velocity offsets (scripts/humanize_engine/pocket.py)
     'intent': dict(required=['character']),    # the vocabulary a brief is resolved in: emotions, registers, scenes, tensions, synonyms
+    'fx': dict(required=['character']),        # the effect library and the named effect chains (scripts/fx_engine)
     'chem': dict(required=['character']),      # the inferred-neurochemistry model, its mood targets and its genre families (scripts/chem_model)
 }
 
@@ -192,6 +193,14 @@ def validate():
                 problems += [f'mix/{name}: {w} ({p.get("_source")})' for w in mix_schema.validate(p)]
             if kind == 'humanize':                    # a groove pocket: unknown limb, bad offset, bad tempo power
                 problems += [f'humanize/{name}: {w} ({p.get("_source")})' for w in humanize_problems(p)]
+            if kind == 'fx':                          # the library is self-consistent; a chain names real effects and in-range values
+                import fx_engine
+                if name == 'effects':
+                    problems += [f'fx/effects: {w}' for w in fx_engine.library_problems()]
+                elif 'chain' in p:
+                    problems += [f'fx/{name}: {w} ({p.get("_source")})' for w in fx_engine.problems(name)]   # by name: a chain inside a chain is refused
+                else:
+                    problems.append(f'fx/{name}: a chain preset needs a "chain" list ({p.get("_source")})')
         if kind == 'outputs':                         # a target names a real layout, renderer, ceiling; files are unique
             import render_targets
             problems += [f'outputs: {w}' for w in render_targets.manifest_problems()]

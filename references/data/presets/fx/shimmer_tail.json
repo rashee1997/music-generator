@@ -1,0 +1,15 @@
+{
+  "name": "shimmer_tail",
+  "character": "A shimmering octave-up tail behind the part, for an ethereal bloom.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "shimmer",
+      "room_size": 0.9,
+      "shift_semitones": 12.0,
+      "feedback": 0.4,
+      "iterations": 3,
+      "wet_db": -7.0
+    }
+  ]
+}

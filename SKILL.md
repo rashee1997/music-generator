@@ -215,6 +215,7 @@ exists so the agent can decide values, not so it can be quoted.
 | Vocals/choirs/hums | [`references/instruments-and-vocals/vocals-and-choirs.md`](references/instruments-and-vocals/vocals-and-choirs.md), [`references/instruments-and-vocals/vocal-engine.md`](references/instruments-and-vocals/vocal-engine.md) |
 | Cultural styles/fusion | [`knowledgebase/README.md`](knowledgebase/README.md), [`references/scoring/cultural-soul.md`](references/scoring/cultural-soul.md), [`references/scoring/genre-fusion.md`](references/scoring/genre-fusion.md) |
 | A place by its physics (biome) | [`references/spatial/biomes.md`](references/spatial/biomes.md) |
+| Effects on a part (riser, downlifter, tape stop, reverse swell, freeze, pass-by, Pedalboard plugins, a VST3) | [`references/sound-design/fx-engine.md`](references/sound-design/fx-engine.md), `scripts/fx_engine/` |
 | SFX/ambience/foley | [`references/sound-design/sound-effects.md`](references/sound-design/sound-effects.md), [`references/spatial/physical-scene.md`](references/spatial/physical-scene.md), [`references/spatial/environments-as-presets.md`](references/spatial/environments-as-presets.md) |
 | SFZ orchestra | [`references/instruments-and-vocals/sfz-libraries.md`](references/instruments-and-vocals/sfz-libraries.md), `scripts/sfz_libs.py` |
 | Instrument cloning/extraction | [`references/instruments-and-vocals/instrument-cloning.md`](references/instruments-and-vocals/instrument-cloning.md), [`references/workflow/extraction.md`](references/workflow/extraction.md) |

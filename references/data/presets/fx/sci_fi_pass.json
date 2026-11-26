@@ -1,0 +1,19 @@
+{
+  "name": "sci_fi_pass",
+  "character": "A craft passing close: Doppler with a short ring-modulated edge.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "doppler",
+      "closest_m": 4.0,
+      "speed_m_s": 60.0,
+      "start_s": 0.0,
+      "end_s": 6.0
+    },
+    {
+      "type": "ring_mod",
+      "freq_hz": 90.0,
+      "mix": 0.2
+    }
+  ]
+}

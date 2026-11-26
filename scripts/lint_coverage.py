@@ -128,7 +128,7 @@ for _name in ('imm.decode_uniformity', 'masking.excess', 'master.micro_dynamics'
 COVERAGE['imm.kinematics'] = ('score', 'the trajectories are in the presets and the score; checked by the immersive config')
 
 PREFLIGHT_ROWS = (
-    'preflight.range', 'preflight.sfx_length', 'preflight.section_edge', 'preflight.unison', 'preflight.figure_level', 'preflight.placement',
+    'preflight.range', 'preflight.sfx_length', 'preflight.fx', 'preflight.section_edge', 'preflight.unison', 'preflight.figure_level', 'preflight.placement',
     'preflight.stem_level', 'preflight.arc', 'preflight.tempo', 'preflight.roughness', 'preflight.roughness_partials',
     'probe.silent', 'probe.clip', 'probe.start', 'probe.tail', 'probe.dc',
 )

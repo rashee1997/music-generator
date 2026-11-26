@@ -74,6 +74,8 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **5.1** Scaffold instruments/vocals: `python scripts/presets.py scaffold instruments|vocals <exact_name> --project <dir>`. Each needs unique `spatial.azimuth/distance`. Fill real `character` sentence (placeholder blocked).
 - [ ] **5.2** Scaffold space preset if needed: `python scripts/presets.py scaffold spaces <name> --project <dir>`. Set `space`/`room` in score.
 - [ ] **5.3** Scaffold mix preset: `python scripts/presets.py scaffold mix --project <dir>`. **MUST customize it** - defaults are no-ops. Configure per piece needs (ducking, sidechain, mastering.crest_floor_db, inst_eq, etc.). Read `references/mixing/mixing-and-mastering.md` section 8b.
+      A treatment of one part (a riser, a downlifter, a tape stop, a reverse swell, a Pedalboard plugin or a VST3) is an `fx` chain in
+      that part's instrument preset, never in the score: `references/sound-design/fx-engine.md`. Stage 2 checks it (`preflight.fx`).
       The master tone curves, the glue compressor, the room send per role (`space.send_by_role`) and the duck timing are
       preset keys: change the number there, never in `mixer.py`. To make the sheet's `mix_intent` act on the mix, carry it
       on the score and set `lead_carve: {"enabled": true, "from_intent": true}`.
@@ -171,6 +173,7 @@ Before Phase 4, open every file in the row that matches the request; union sever
 | **Flutes/wind** | `knowledgebase/cultures/flutes.md`, `references/instruments-and-vocals/natural-instruments.md` |
 | **Fusion (2 traditions/genres)** | `references/scoring/genre-fusion.md`, both culture rows, `references/scoring/style-rahman.md` |
 | **Vocals/hums/choirs** | `references/instruments-and-vocals/vocals-and-choirs.md`, `references/instruments-and-vocals/vocal-engine.md`, `knowledgebase/cultures/world-other.md`, culture row, `presets/vocals/` preset |
+| **A treatment of a part: riser, downlifter, tape stop, reverse swell, freeze, pass-by, any Pedalboard plugin or a VST3** | `references/sound-design/fx-engine.md`, `references/data/presets/fx/effects.json` |
 | **Ambience/weather/nature/SFX (if requested)** | `references/spatial/environments-as-presets.md`, `references/sound-design/sound-effects.md`, `references/spatial/physical-scene.md`, `knowledgebase/sound-design/sfx-ambience.md` |
 | **A real or invented place by its physics (rainforest, alien atmosphere, animals that share time, a bed that follows the score)** | `references/spatial/biomes.md`, `knowledgebase/sound-design/biome-acoustics.md`, `references/spatial/environments-as-presets.md`, `scripts/biome/`, `scripts/phys_core/medium.py` |
 | **Physical sound (breaks/footsteps/rain/knock/creak/scatter)** | `references/spatial/physical-scene.md`, `references/sound-design/sound-effects.md` §2d, `knowledgebase/sound-design/sfx-formulas.md`, `scripts/physical.py laws` |

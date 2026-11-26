@@ -283,6 +283,9 @@ def track_problems(score, project):
                 out += [f'sfx/{eff}.json: {p}' for p in sfx.preset_problems(cfg)]
                 if _owned(cfg) and _placeholder(cfg.get('character')):
                     out.append(f'sfx/{eff}.json: "character" is empty or still the placeholder; write one sentence on the sound')
+        if tr.get('fx'):
+            out.append(f'track "{tr.get("name", i)}": an effects chain ("fx") is sound design and lives in the instrument preset '
+                       f'(presets/instruments/{_norm(raw) or "<name>"}.json), not in the score')
         if raw.startswith('env:') and presets.find_environment(raw[4:]) is None:
             out.append(f'track "{tr.get("name", i)}": environment "{raw[4:]}" has no preset (it would render as silence); '
                        f'create: presets.py scaffold environments {_norm(raw[4:])} --project <dir>')

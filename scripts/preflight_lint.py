@@ -158,6 +158,26 @@ def range_rows(score, lookup, patch_range, project_dir):
     return out
 
 
+def fx_rows(score, lookup):
+    """An `fx` chain (on the track or in its preset) with an unknown effect, a key it does not have or a number out of range, found
+    before the render that would otherwise raise it at the mix, after every stem was drawn."""
+    import fx_engine
+    out = []
+    for t in score.get('tracks') or []:
+        kind, name = _kind_name(t)
+        preset = _preset(lookup, kind, name) or {}
+        chain = t.get('fx') or preset.get('fx')
+        if not chain:
+            continue
+        found = fx_engine.problems(chain)
+        label = t.get('name', name)
+        if found:
+            out.append(('FAIL', 'preflight.fx', f'"{label}": ' + ' | '.join(found)))
+        else:
+            out.append(('PASS', 'preflight.fx', f'"{label}": the fx chain is valid ({len(fx_engine.resolve(chain))} effect(s))'))
+    return out
+
+
 def sfx_length_rows(score, lookup):
     sec = _clock(score)
     out = []
@@ -352,6 +372,7 @@ def checks(score, project_dir=None, lookup=None, patch_range=None, probe=True, r
     rows = []
     rows += range_rows(score, lookup, patch_range, project_dir)
     rows += sfx_length_rows(score, lookup)
+    rows += fx_rows(score, lookup)
     rows += section_edge_rows(score)
     rows += unison_rows(score)
     rows += figure_level_rows(score)

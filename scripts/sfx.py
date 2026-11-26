@@ -411,7 +411,7 @@ def acceptable(x, sr, seconds):
 # rate, surface and distance. These seven names stay only so older scores render; sfx:<name> in a project is an error.
 AMBIENCE = ('rain', 'wind', 'ocean', 'fire', 'crickets', 'birdsong', 'electric_hum')
 MIX_KEYS = {'role', 'gain_db', 'pan', 'spatial', 'reverb', 'width', 'eq', 'comp', 'hp', 'lp', 'chain', 'saturation', 'mono_below',
-            'duck_by', 'duck_db', 'widen', 'fade_in_s', 'fade_out_s', 'target_lufs'}      # where it sits in the mix; the mixer reads them from the preset
+            'duck_by', 'duck_db', 'widen', 'fade_in_s', 'fade_out_s', 'target_lufs', 'fx'}      # where it sits in the mix; the mixer reads them from the preset
 PRESET_KEYS = {'name', 'kind', 'character', 'description', 'note', 'generator', 'params', 'spec', 'model', 'scene',
                'seconds', 'sources'} | MIX_KEYS
 

@@ -564,7 +564,7 @@ class MusicPipeline:
         preset_owns = ('spatial', 'synthesis', 'vocal', 'environment', 'formants', 'bandwidths', 'source',
                        'vibrato', 'articulation', 'performance', 'breathing', 'ensemble', 'humming', 'hum',
                        'atmosphere', 'layers', 'blending', 'character', 'vowel', 'expression', 'register_range',
-                       'category', 'phonetic_sound', 'program', 'bank', 'gm')
+                       'category', 'phonetic_sound', 'program', 'bank', 'gm', 'fx')
         bookkeeping = ('name', 'kind', 'note', 'notes', 'sources')      # identity and prose stay in the preset file
 
         adopted = []

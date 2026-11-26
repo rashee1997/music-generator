@@ -66,7 +66,7 @@ def default_spec(tr):
                    'intro_outro_boost_db', 'target_lufs', 'crossfade_start_s', 'crossfade_end_s',
                    'outro_start_s', 'outro_end_s', 'spectral_profile', 'preserve_spectrum', 'ref_lufs',
                    'dynamics', 'sidechain', 'pan_law', 'release_ms', 'attack_ms', 'smooth_s',
-                   'duck_full_band', 'duck_band_hz')
+                   'duck_full_band', 'duck_band_hz', 'fx')
     inst_cfg = None
     try:
         if inst.startswith('sfx:'):
@@ -106,6 +106,11 @@ def default_spec(tr):
     if 'reverb' not in (inst_cfg if isinstance(inst_cfg, dict) else {}) and role in sends:
         d['reverb'] = float(sends[role])
     d.update({k: tr[k] for k in ('role',) + passthrough if k in tr and tr[k] is not None})
+    if d.get('fx'):
+        # the chain, written out with every parameter: a named chain preset or a library default that changes then changes the
+        # spec, and with it the processed-stem cache key. An invalid chain raises here, naming each problem.
+        import fx_engine
+        d['fx'] = [dict(e['params'], type=e['type']) for e in fx_engine.resolve(d['fx'])]
     return d
 
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import compute
 import dsp
+import fx_engine
 import json
 import mix_context
 import mix_schema
@@ -12,6 +13,7 @@ import pedalboard as pb
 import presets
 import roles as rolelib
 import stem_cache
+import zlib
 from .core import REF_LUFS, SR, STATE, _active_db, _gs, _install, _max_boost_db, _mix
 from .dsp_utils import _band, _curve, _dsp_dynamics, _run, active_lufs, dynamics_cfg, eq_object, mono_below, to_stereo
 
@@ -205,6 +207,11 @@ def process_chain(name, x, spec, sr=SR, ctx=None):
         x = _dsp_dynamics(x, dyn, sr, comp_done=isinstance(comp, dict)
                           and str(dyn.get('engine', 'pedalboard')) == 'pedalboard')
 
+    # 3b effects chain (`fx` in the preset): after the EQ and the dynamics, before the low-end hygiene and the level.
+    # The seed is the stem's own name, so a render is repeatable and two stems never share a random stream.
+    if spec.get('fx'):
+        x = fx_engine.apply(x, sr, spec['fx'], seed=zlib.crc32(str(name).encode('utf-8')))
+
     # 4 low-end hygiene
     if role == 'bass' or spec.get('mono_below'):
         x = mono_below(x, spec.get('mono_below', 120), sr)
@@ -256,7 +263,7 @@ def _code_tag():
         _CODE_TAG = stem_cache.code_hash(here, files=('mixer.py', 'dsp.py', 'mix_schema.py', 'mix_context.py',
                                                       'presets.py', 'spatial.py', 'airabs.py', 'spatial_hrtf/room.py',
                                                       'spatial_hrtf/binaural.py'),
-                                         packages=('spatial_engine', 'mix_engine'))
+                                         packages=('spatial_engine', 'mix_engine', 'fx_engine'))
     return _CODE_TAG
 
 
