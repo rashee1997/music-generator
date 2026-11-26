@@ -157,7 +157,7 @@ class LayoutBus:
         self.roles = set(self.lfe.get('roles') or [])
         self.reverb = layout.get('reverb') or {}
         self.decorrelation = layout.get('decorrelation') or {}
-        self.parts = {name: [] for name in self.names}
+        self.acc = {name: None for name in self.names}      # one running float64 sum per channel (a list of every track's share held ~4 GB on a 194 s 7.1.2 cue)
         self.low_sends = []
         self.low_pans = []
         self.room = None
@@ -170,8 +170,17 @@ class LayoutBus:
 
     def _add(self, channel, signal):
         signal = np.asarray(signal, dtype=np.float64)
-        if signal.size:
-            self.parts[channel].append(signal)
+        if not signal.size:
+            return
+        buf = self.acc[channel]
+        if buf is None:
+            self.acc[channel] = signal.copy()
+        elif len(buf) >= len(signal):
+            buf[:len(signal)] += signal
+        else:
+            grown = signal.copy()
+            grown[:len(buf)] += buf
+            self.acc[channel] = grown
 
     def add(self, name, y, spec):
         """Place one finished track: mains by VBAP, low-frequency roles through the low-frequency channel."""
@@ -254,11 +263,11 @@ class LayoutBus:
 
     def result(self):
         """(N, channels) float64 in the layout's channel order, with the low-frequency send applied."""
-        n = max((len(s) for parts in self.parts.values() for s in parts), default=0)
+        n = max((len(b) for b in self.acc.values() if b is not None), default=0)
         mix = {name: np.zeros(n, dtype=np.float64) for name in self.names}
-        for name, parts in self.parts.items():
-            for signal in parts:
-                mix[name][:len(signal)] += signal
+        for name, buf in self.acc.items():
+            if buf is not None:
+                mix[name][:len(buf)] += buf
         if self.room is not None and n:
             room = self.room.result()
             for i, speaker in enumerate(self.speakers):

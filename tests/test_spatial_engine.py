@@ -268,5 +268,35 @@ class Deliverables(unittest.TestCase):
         self.assertTrue(any(level == 'FAIL' and name == 'delivery.format' for level, name, _ in rows), rows)
 
 
+class TestLayoutBusMemory(unittest.TestCase):
+    """The summing bus keeps one running sum per channel, not every track's share (a 194 s 7.1.2 cue held about 4 GB in a list)."""
+
+    def test_the_sum_is_the_same_and_only_one_array_per_channel_is_kept(self):
+        import numpy as np
+        from spatial_engine import render
+        rng = np.random.default_rng(3)
+        bus = render.LayoutBus('lrc_lfe2', None, 44100)
+        ch = bus.names[0]
+        sigs = [rng.standard_normal(n) * 0.1 for n in (4000, 9000, 6000, 9000)]
+        for x in sigs:
+            bus._add(ch, x)
+        expect = np.zeros(9000)
+        for x in sigs:
+            expect[:len(x)] += x
+        self.assertTrue(np.array_equal(bus.acc[ch], expect))
+        self.assertEqual(bus.acc[ch].nbytes, 9000 * 8)
+        self.assertTrue(np.array_equal(bus.result()[:, 0] if bus.names[0] == ch else bus.acc[ch], bus.result()[:, 0]))
+
+    def test_a_signal_the_caller_keeps_is_not_changed(self):
+        import numpy as np
+        from spatial_engine import render
+        bus = render.LayoutBus('lrc_lfe2', None, 44100)
+        ch = bus.names[0]
+        a = np.ones(100)
+        bus._add(ch, a)
+        bus._add(ch, np.ones(100))
+        self.assertTrue(np.array_equal(a, np.ones(100)))
+
+
 if __name__ == '__main__':
     unittest.main()
