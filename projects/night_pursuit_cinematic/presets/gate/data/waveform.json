@@ -1,5 +1,5 @@
 {
-  "duration_s": 193.38403628117914,
+  "duration_s": 193.29274376417234,
   "sections": [
     {
       "name": "the_race",
@@ -35,13 +35,13 @@
       "name": "the_bumps",
       "start_s": 117.636,
       "end_s": 139.888,
-      "dyn": 0.95
+      "dyn": 1.0
     },
     {
       "name": "the_flyover",
       "start_s": 139.888,
       "end_s": 165.785,
-      "dyn": 1.0
+      "dyn": 0.8
     },
     {
       "name": "the_escape",
@@ -76,15 +76,15 @@
       "PASS"
     ],
     [
-      0.1393,
-      "stem.tick",
-      "piano",
-      "PASS"
-    ],
-    [
       0.7082,
       "stem.tick",
       "piano_low",
+      "PASS"
+    ],
+    [
+      0.9288,
+      "stem.tick",
+      "piano",
       "PASS"
     ],
     [
@@ -112,7 +112,13 @@
       "PASS"
     ],
     [
-      192.325,
+      192.21,
+      "dropout",
+      "master",
+      "FAIL"
+    ],
+    [
+      192.255,
       "dropout",
       "master",
       "FAIL"

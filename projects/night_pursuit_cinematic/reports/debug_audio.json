@@ -1,5 +1,5 @@
 {
- "stamp": "20261126T112036",
+ "stamp": "20261126T115034",
  "project": "night_pursuit_cinematic",
  "level": "FAIL",
  "sources": {
@@ -16,38 +16,18 @@
   ],
   "stems": "30 processed stems from .cache/mix",
   "master": "out/_draft_master.wav",
-  "verdict": "2026-11-26T11:20:13Z"
+  "verdict": "2026-11-26T11:50:25Z"
  },
  "binding": [
   {
    "row": "dropout",
    "stem": null,
    "level": "FAIL",
-   "value": 30.000000000001137,
+   "value": 104.99999999998977,
    "threshold": 20.0,
    "unit": "ms",
-   "safety": -0.5,
-   "detail": "longest hole 30 ms (limit 20-1000 ms), floor -65.6 dBFS; 1 hole(s)"
-  },
-  {
-   "row": "tempo.audio",
-   "stem": null,
-   "level": "FAIL",
-   "value": 58.35398486181295,
-   "threshold": 2.64,
-   "unit": "BPM",
-   "safety": -55.714,
-   "detail": "measured 73.6 BPM vs 132.0 (tolerance 2.6) from the onset-envelope autocorrelation (peak 4.3x the median); beat tracker said 73.8; four-quarter drift 23.7 BPM reported, not decisive"
-  },
-  {
-   "row": "section.energy",
-   "stem": null,
-   "level": "FAIL",
-   "value": 0.34731161595484505,
-   "threshold": 0.5,
-   "unit": "rho",
-   "safety": 0.7634,
-   "detail": "Spearman rho 0.35 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)"
+   "safety": -4.25,
+   "detail": "longest hole 105 ms (limit 20-1000 ms), floor -65.3 dBFS; 2 hole(s)"
   }
  ],
  "advisory": [
@@ -657,8 +637,8 @@
   "clearing": {},
   "predicted": {
    "dropout::-": [
-    -0.5000000000000568,
-    -0.5000000000000568
+    -4.249999999999488,
+    -4.249999999999488
    ],
    "clicks::-": [
     0.0,
@@ -685,8 +665,8 @@
     0.0
    ],
    "master.dc::-": [
-    0.09883310493734433,
-    0.09883310493734433
+    0.09876463083621154,
+    0.09876463083621154
    ]
   },
   "conflicts": [],
@@ -699,8 +679,6 @@
  },
  "forensics": [],
  "notes": [
-  "dropout has 1 event(s) at 192.325s; the transient is city_far 46%, basses 35%, bumps 11%",
-  "tempo.audio: no domain module examines this row yet",
-  "section.energy: no domain module examines this row yet"
+  "dropout has 2 event(s) at 192.210s, 192.255s; the transient is city_far 51%, basses 23%, bumps 15%"
  ]
 }

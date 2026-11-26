@@ -123,7 +123,7 @@ inst('pursuit_choir', 'choir_aahs', 'pad',
      extra=dict(ensemble=dict(players=8, spread_cents=12, spread_ms=16, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
 inst('pursuit_solo_violin', 'violin', 'counter',
      'The cry over the flyover: one high violin carrying the hook an octave above the horns, close and a little exposed.',
-     -40, 2.4, -6.0, 0.12, [HP(250), PK(3000, 1.5, 1.0), LP(10000)], sources=[KB['hybrid'], KB['orch']])
+     -40, 2.4, -6.0, 0.12, [HP(250), PK(3500, -4.0, 1.0), LP(8000)], sources=[KB['hybrid'], KB['orch']])
 inst('pursuit_sub_pulse', 'synth_bass_1', 'texture',
      'The floor of the chase: a sub-bass pulse on the eighths under the strings, felt more than heard.',
      0, 1.0, -8.0, 0.0, [HP(30), LP(500)], extra=dict(mechanics_class='sub'), sources=[KB['hybrid']])
@@ -195,13 +195,13 @@ mix['space'] = dict(auto_env_blend=dict(enabled=True),
                     send_by_role=dict(default=0.12, bass=0.0, drum=0.08, percussion=0.08, pad=0.16, texture=0.12, melody=0.12, lead=0.12, counter=0.1, chord=0.1,
                                       ostinato=0.08, arp=0.12, drone=0.1, fx=0.06, environment=0.08),
                     drr=dict(enabled=False, target_db=0.0))
-mix['mastering'] = dict(profile='cinema', crest_floor_db=7.0, profiles=dict(cinema=dict(lufs=-16.0, true_peak=-1.5, tone='neutral', glue=True)),
+mix['mastering'] = dict(profile='cinema', crest_floor_db=7.0, profiles=dict(cinema=dict(lufs=-16.0, true_peak=-1.5, tone='neutral', glue=True, fade_out=3.0)),
                         highpass_hz=105.0, highpass_order=4)
 mix['immersive'] = dict(enabled=True, engine='hoa_bus', order=5, anchor_max_span_deg=6.0, max_deg_per_sec=dict(anchor=10.0, mover=120.0),
                         height_by_role=dict(melody=0.0, lead=0.0, vocal=0.0, pad=0.0, texture=0.0, environment=0.0, chord=0.0, bass=0.0, drum=0.0,
                                             percussion=0.0, drone=0.0, ostinato=0.0, arp=0.0, counter=0.0, fx=0.0),
                         max_elevation=70.0, min_height_tracks=2, stereo_decode='speakers')
-mix['inst_eq'] = dict(solo_violin=[dict(type='peak', f=3536, gain=-4.0, q=1.0)], snare=[dict(type='peak', f=3536, gain=-1.5, q=1.0)])      # the gate's own advice, 11.4 dB and 6.8 dB over the mids at 2.5-5 kHz
+mix['inst_eq'] = dict(snare=[dict(type='peak', f=3536, gain=-1.5, q=1.0)])      # the gate's own advice, 11.4 dB and 6.8 dB over the mids at 2.5-5 kHz
 mix['lead_carve'] = dict(enabled=True, from_intent=True, roles=['pad', 'texture', 'chord', 'arp', 'counter', 'environment'], ratio=1.6, threshold_db=-34.0, attack_ms=100.0, release_ms=1500.0)
 mix['sidechain'] = dict(mode='legacy', band_hz=[250.0, 3800.0], residual=0.3, env_plateau=True)
 mix['dynamics'] = dict(engine='pedalboard', knee_db=0.0, detector='peak', stereo_link=True, lookahead_ms=0.0, parallel=1.0)

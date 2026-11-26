@@ -1,4 +1,4 @@
-stem gate: 1 FAIL, 0 WARN, 250 rows, profile night_pursuit_cinematic, 27180 ms
+stem gate: 0 FAIL, 0 WARN, 250 rows, profile night_pursuit_cinematic, 4429 ms
 [PASS] stem.dc: stem "bass_clarinet": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "bass_clarinet": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "bass_clarinet": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -99,12 +99,12 @@ stem gate: 1 FAIL, 0 WARN, 250 rows, profile night_pursuit_cinematic, 27180 ms
 [PASS] stem.flatness: stem "horns": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [INFO] stem.dc: stem "lamborghini": not applied: a one-shot effect stem has no sustained baseline to drift
 [PASS] stem.clipping: stem "lamborghini": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
-[PASS] stem.clicks: stem "lamborghini": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 4882 event(s) rejected as a dense burst, 574 as a steep attack; max cluster span 1.497 ms
-[FAIL] stem.dropout: stem "lamborghini": longest hole 55 ms (limit 20-1000 ms), floor -59.4 dBFS; 1 hole(s)
+[PASS] stem.clicks: stem "lamborghini": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6607 event(s) rejected as a dense burst, 664 as a steep attack; max cluster span 1.497 ms
+[PASS] stem.dropout: stem "lamborghini": longest hole 0 ms (limit 20-1000 ms), floor -58.7 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "lamborghini": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
 [INFO] stem.edge: stem "lamborghini": not applied: a one-shot effect note length is a trigger, not a sound length
 [INFO] stem.tick: stem "lamborghini": not applied: a one-shot effect stem is a sequence of triggers, not a pulse to hold still
-[PASS] stem.dead: stem "lamborghini": own median -21.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve
+[PASS] stem.dead: stem "lamborghini": own median -20.9 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve
 [INFO] stem.dc: stem "landing": not applied: a one-shot effect stem has no sustained baseline to drift
 [PASS] stem.clipping: stem "landing": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "landing": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
