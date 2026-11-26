@@ -112,7 +112,7 @@ for bar in range(1, T.END_BAR):
     if collapse:
         basses.add(bar, 0, 4.25, p(C + r, 1) if bar != int(T.SNAP_JUMP) - 1 else p(Gb + r, 1), 0.55)
     elif escape:
-        basses.add(bar, 0, 4.25 if bar < T.END_BAR - 1 else 6.0, p(C, 1), vel(0.66 - 0.02 * (bar - s0('the_escape')), 0.03))      # the last note rings on into the end as one smooth decay
+        basses.add(bar, 0, 4.25 if bar < T.END_BAR - 1 else 6.0, p(C, 2), vel(0.66 - 0.02 * (bar - s0('the_escape')), 0.03))      # the last note rings on into the end as one smooth decay
     elif k == 3:
         basses.add(bar, 0, 2.14, p((C + r + walk[k]) % 12, 1), vel(top, 0.05))
         basses.add(bar, 2.0, 1.64, p(G + r, 1), vel(top - 0.06, 0.05))
