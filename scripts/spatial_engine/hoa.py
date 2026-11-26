@@ -172,7 +172,14 @@ def _absorption_response(coeffs, size, sr):
             _ABS_CACHE.move_to_end(key)
             return got
     from spatial_hrtf import room
-    got = np.fft.rfft(room.absorption_fir(np.asarray(coeffs, float), sr=sr).astype(np.float32), int(size))   # complex64: the taps are float32 in the end
+    fir = np.asarray(room.absorption_fir(np.asarray(coeffs, float), sr=sr), np.float32)
+    # The room's filter is linear phase, i.e. centred: as a causal response its spectrum carries e^(-j w 64), which
+    # would put every tap 64 samples (1.45 ms) past the path length `room.taps` computed for it. Rolled to the front
+    # the spectrum is exactly zero phase, and the tap's own sample offset (`tap_signals`) is then its whole delay.
+    # The roll is of the *padded* response: that is what makes it a circular shift, i.e. exactly e^(+j w g) H.
+    pad = np.zeros(int(size), np.float32)
+    pad[:len(fir)] = fir
+    got = np.fft.rfft(np.roll(pad, -room.group_delay(len(fir))))   # complex64: the taps are float32 in the end
     if got.nbytes <= _ABS_CACHE_BYTES:
         with _ABS_LOCK:
             _ABS_CACHE[key] = got
@@ -238,9 +245,7 @@ def tap_signals(raw, taps, sr, temp_c, rh, physics=True, budget=SIGNAL_BUDGET):
                 use = resp
                 if dist > 1.0:
                     if air is None:
-                        freqs = np.fft.rfftfreq(size, 1.0 / float(sr))
-                        air = (airabs.alpha_db_per_m(freqs, temp_c, rh) * (-np.log(10.0) / 20.0)).astype(np.float32)
-                        del freqs
+                        air = (airabs.alpha_spectrum(size, sr, temp_c, rh) * (-np.log(10.0) / 20.0)).astype(np.float32)
                     if gainspec is None:
                         gainspec = np.empty_like(spec)
                     np.multiply(air, np.float32(dist - 1.0), out=gainspec)
@@ -705,8 +710,7 @@ class HoaBus:
                 d_s = trajectory.at_samples(p, 2, 0, n)
                 lead = dop * (d_s - d_s.min()) / medium.speed_of_sound() * sr                     # the path the sound still has to travel
                 direct = (read(raw, t - lead) if dop else raw) / np.maximum(d_s, 1.0)
-                f = np.fft.rfftfreq(H.DVF_BLOCK, 1.0 / sr)
-                alpha = airabs.alpha_db_per_m(f, temp_c, rh)
+                alpha = airabs.alpha_spectrum(H.DVF_BLOCK, sr, temp_c, rh)                        # cached: same grid every source
                 direct = H.stft_gain(direct, lambda k: 10.0 ** (-alpha * max(d_s[k] - 1.0, 0.0) / 20.0))
                 g = H.gains(self.order, p[:, 0], p[:, 1])
             if not self.room_only:
@@ -774,11 +778,15 @@ class HoaBus:
             for im in images:
                 delay = np.interp(t, grid, (lead + (im['path_m'] - direct) / c_m) * sr)
                 s = read(raw, t - delay)
+                path_t = np.interp(t, grid, im['path_m'])
                 if physics:
-                    s = s / np.interp(t, grid, im['path_m'])
-                s = signal.lfilter(room.absorption_fir(im['coeffs'], sr=sr), 1.0, s)
-                # shortcut: one air filter per image, for its mean path. Exact per-frame air is what the direct
-                # sound gets; do the same here if a reflection's brightness is ever heard to lag a long move.
+                    s = s / path_t
+                # centred: the wall's linear-phase filter must not add its 64 samples to the image's own path
+                s = room.apply_absorption(s, im['coeffs'], sr=sr)
+                # Shortcut: one air filter per image, for its mean path, while the direct sound gets the exact air
+                # of its own path. Air per sample (the `_air_moving` blend) was measured here at +10% on a five
+                # second move (2.79 s -> 3.06 s, two cores) and is not audited yet; a reflection's brightness is a
+                # second-order cue next to its delay, so it waits for a render that says it lags a long move.
                 encode(bus, air(s, float(np.mean(im['path_m']))), H.gains(self.order, im['azimuth'], im['elevation']))
         else:
             a_mean = az if p is None else float(np.mean(p[:, 0]))

@@ -15,14 +15,21 @@ What is not modelled: diffusion from surface roughness (a specular image cannot 
 listener's own body, and coupling through open doors. `scattering` in the preset is recorded and used by the late
 field's direction spread, not by the taps.
 """
+import collections
 import os
 import sys
+import threading
 
 import numpy as np
 from scipy import signal
 
 BANDS_HZ = (125.0, 250.0, 500.0, 1000.0, 2000.0, 4000.0, 8000.0)
 SR = 44100
+FIR_TAPS = 129                           # the surface filter's own length: 64 samples of linear-phase delay
+_FIR_CACHE = collections.OrderedDict()   # (coefficients, bands, rate, taps) -> the response, read-only
+_FIR_CACHE_BYTES = 8 * 1024 * 1024       # 1 kB a response: every surface combination a room can make
+_TABLE_CACHE = {}                        # materials-file signature -> the loaded library
+_LOCK = threading.Lock()                 # a hoa render places sources on worker threads
 
 
 def _c():
@@ -35,13 +42,24 @@ def _c():
 
 
 def material_table(name=None):
-    """The material library: presets/materials/<name>.json (skill, then project). Raises on an unknown set."""
+    """The material library: presets/materials/<name>.json (skill, then project). Raises on an unknown set.
+
+    The library is read from disk once per signature of its files, not once per `taps()` call: a room with a dozen
+    sources read and parsed the same JSONs a dozen times per scene. Treat the returned table as read-only.
+    """
     here = os.path.dirname(os.path.abspath(__file__))
     scripts = os.path.dirname(here)
     if scripts not in sys.path:
         sys.path.insert(0, scripts)
     import presets
-    table = presets.load('materials')
+    sig = presets.signature('materials')
+    with _LOCK:
+        table = _TABLE_CACHE.get(sig)
+    if table is None:
+        table = presets.load('materials')
+        with _LOCK:
+            _TABLE_CACHE.clear()                 # one library at a time: a preset edit must not leave the old one
+            _TABLE_CACHE[sig] = table
     key = str(name or 'room_materials').lower().strip().replace(' ', '_')
     if key not in table:
         raise KeyError(f'no materials preset "{key}". Known: {sorted(table)}. '
@@ -61,16 +79,59 @@ def coefficients(materials_doc, surface):
     return np.array(coeff, float)
 
 
-def absorption_fir(coeffs, bands=BANDS_HZ, sr=SR, taps=129):
+def absorption_fir(coeffs, bands=BANDS_HZ, sr=SR, taps=FIR_TAPS):
     """A linear-phase FIR whose magnitude is the *amplitude* reflection coefficient sqrt(1 - absorption) at each
     octave centre, interpolated in log frequency. Applied once per bounce, so two bounces give (1-a) power, which is
-    what Sabine's absorption area means."""
+    what Sabine's absorption area means.
+
+    Linear phase means the response is centred: convolving with it *causally* delays everything by
+    `group_delay(taps)` samples (64, i.e. 1.45 ms at 44.1 kHz). Use `apply_absorption` for a signal that must stay
+    where its path length puts it. The taps are kept per surface combination and read-only.
+    """
+    key = (tuple(round(float(c), 9) for c in coeffs), tuple(float(b) for b in bands), int(sr), int(taps))
+    with _LOCK:
+        got = _FIR_CACHE.get(key)
+        if got is not None:
+            _FIR_CACHE.move_to_end(key)
+            return got
     refl = np.sqrt(np.clip(1.0 - np.asarray(coeffs, float), 0.0, 1.0))
     nyq = sr / 2.0
     freqs = np.concatenate([[0.0], np.asarray(bands, float) / nyq, [1.0]])
     gains = np.concatenate([[refl[0]], refl, [refl[-1]]])
     freqs = np.clip(freqs, 0.0, 1.0)
-    return signal.firwin2(taps, freqs, gains, window='hann')
+    got = signal.firwin2(taps, freqs, gains, window='hann')
+    got.flags.writeable = False
+    with _LOCK:
+        _FIR_CACHE[key] = got
+        while sum(v.nbytes for v in _FIR_CACHE.values()) > _FIR_CACHE_BYTES and len(_FIR_CACHE) > 1:
+            _FIR_CACHE.popitem(last=False)
+    return got
+
+
+def group_delay(taps=FIR_TAPS):
+    """Samples a causal convolution with `absorption_fir` adds: 64 with the 129-tap default, 1.45 ms at 44.1 kHz."""
+    return (int(taps) - 1) // 2
+
+
+def apply_absorption(sig, coeffs, bands=BANDS_HZ, sr=SR, taps=FIR_TAPS):
+    """`sig` through its surface's `absorption_fir`, read out centred so the filter adds no delay of its own.
+
+    A reflection's delay is its path length and nothing else. Applied causally, every early reflection of a shoebox
+    arrived `group_delay(taps)` samples late: 1.45 ms of extra path on every bounce, which is the window where a
+    reflection is most audible as comb filtering against the direct sound (Brunner, Maempel & Weinzierl, AES 2007,
+    put the audibility minimum of added reflections at 1-2 ms).
+    """
+    x = np.asarray(sig, np.float64)
+    if len(x) == 0:
+        return x
+    ir = absorption_fir(coeffs, bands=bands, sr=sr, taps=taps)
+    hh = ir if x.ndim == 1 else ir[:, None]
+    # Overlap-add, not one big transform: the kernel is 129 taps against a five second signal, and oaconvolve was
+    # measured at 5.0 ms against fftconvolve's 9.2 ms for exactly that pair (two cores). A tap's absorption runs once
+    # per reflection per source, which is most of what a moving reflection's loop does.
+    out = signal.oaconvolve(x, hh, mode='full', axes=0)
+    g = group_delay(taps)
+    return out[g:g + len(x)]
 
 
 def _images(n, size, source):
@@ -110,6 +171,7 @@ def taps(geom, azimuth_deg=0.0, elevation_deg=0.0, distance_m=2.0, sr=SR):
 
     order = max(0, int(geom.get('max_order', 2)))
     direct = np.sqrt((sx - lx) ** 2 + (sy - ly) ** 2 + (sz - lz) ** 2)
+    c_m = _c()                    # once per room, not once per image: a tapped import ran in every grid cell
     out = []
     for i in range(-order, order + 1):
         ix, nx = _images(i, w, sx)
@@ -128,7 +190,7 @@ def taps(geom, azimuth_deg=0.0, elevation_deg=0.0, distance_m=2.0, sr=SR):
                 coeff *= np.power(np.sqrt(np.clip(1 - a_wall, 0, 1)), ny)
                 coeff *= np.power(np.sqrt(np.clip(1 - (a_ceil if k > 0 else a_floor), 0, 1)), nz)
                 level = float(np.sqrt(np.mean(coeff ** 2))) * direct / path
-                out.append(dict(delay_ms=(path - direct) / _c() * 1000.0, distance_m=float(path), direct_m=float(direct),
+                out.append(dict(delay_ms=(path - direct) / c_m * 1000.0, distance_m=float(path), direct_m=float(direct),
                                 azimuth=float(np.degrees(np.arctan2(ix - lx, iy - ly))),
                                 elevation=float(np.degrees(np.arcsin(np.clip((iz - lz) / path, -1, 1)))),
                                 coeffs=coeff, level=level, image=(i, j, k)))
