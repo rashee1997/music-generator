@@ -26,6 +26,5 @@ STAGE = {
     'pursuit_cymbals':         (-160.0, 30.0, 3.6),
     # the sounds
     'np_engine':               (180.0, 0.0, 1.0),
-    'np_wipers':               (-60.0, 45.0, 0.7),
     'np_crash':                (120.0, 0.0, 12.0),
 }

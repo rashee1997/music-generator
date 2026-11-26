@@ -51,7 +51,7 @@ HITS = [
 ]
 
 SECTION_TEXT = {
-    'the_stakeout': ('The courier idles at a red light on a wet avenue at two in the morning; wipers, rain on the roof, a far siren.',
+    'the_stakeout': ('The courier idles at a red light on a wet avenue at two in the morning; rain on the roof, a far siren.',
                      'one low C every bar and a heartbeat on the bass drum; a bass clarinet whispers the semitone; nothing else'),
     'spotted': ('A patrol car crosses ahead and its lights come on; the siren starts to the left; the courier does not move.',
                 'the celli begin a quiet figure of eighths; the siren answers the clarinet; the heartbeat quickens'),
@@ -100,7 +100,7 @@ sheet = dict(
           'absorb and reflect), cinematic drops and slow-motion drifts; full immersive, 8 channel; two minutes, three if two is not enough',
     audience='a listener on an 8-channel (7.1) system or headphones, inside the courier\'s car, who came for the chase',
     purpose=f'a {DUR:.0f}-second cue that tells a whole chase: a stakeout, a spotting, a launch, a slow-motion drift, an underpass, a roadblock, a bridge and a cut into silence',
-    point_of_view='the courier, in the driver\'s seat: the engine, the wipers, the rain on the roof and the tyres are the nearest sounds; the sirens and the city are outside and they pass by',
+    point_of_view='the courier, in the driver\'s seat: the engine, the rain on the roof and the tyres are the nearest sounds; the sirens and the city are outside and they pass by',
     job=['keep the listener on the edge from the first bar to the last: pressure, never relief',
          'tell the chase in sound: where the cars are, what the road is doing and who is gaining',
          'make the street physical: wet road, façades, parked trucks, an underpass and a bridge change what is heard',
@@ -135,7 +135,7 @@ sheet = dict(
     hits=HITS,
     mix_intent=dict(hero='pursuit_horns', support=['pursuit_celli', 'pursuit_trombones', 'pursuit_timpani', 'pursuit_piano'],
                     sits_under=['np_rain_street', 'np_city_far'],
-                    must_hear=[f'the engine and the wipers in the first 3 s', f'a siren in the left by {T_SPOT:.1f} s',
+                    must_hear=[f'the engine and the rain in the first 3 s', f'a siren in the left by {T_SPOT:.1f} s',
                                f'the first shift at {at(T.start("the_avenue"), 8):.1f} s', f'the drop at {T_SNAP:.1f} s',
                                f'the room closing at {T_UNDER:.1f} s', f'the crash at {T_CRASH:.1f} s', f'the cut at {T_CUT:.1f} s'],
                     leave_free_hz=[]),
@@ -149,10 +149,10 @@ sheet = dict(
 
     immersive=dict(
         enabled=True,
-        why='the listener sits inside the courier\'s car: the engine and the wipers are in front, the road and the spray are behind and at the sides, and the sirens '
+        why='the listener sits inside the courier\'s car: the engine is in front, the road and the spray are behind and at the sides, and the sirens '
             'are outside and pass; the street between the buildings, the underpass and the bridge change the room around the car',
         engine='hoa_bus',
-        anchors=['pursuit_piano_low', 'pursuit_basses', 'pursuit_tuba', 'pursuit_bass_drum', 'pursuit_timpani', 'np_engine', 'np_wipers'],
+        anchors=['pursuit_piano_low', 'pursuit_basses', 'pursuit_tuba', 'pursuit_bass_drum', 'pursuit_timpani', 'np_engine'],
         movers=[dict(part='np_siren_wail', why='the first cruiser is behind and to the left, then draws alongside and falls back',
                      path='starts far to the front left, comes round to the left at the turn, passes behind in the underpass and falls away behind at the bridge'),
                 dict(part='np_siren_yelp', why='the second cruiser joins from the right and tries to cut in',
@@ -173,7 +173,7 @@ sheet = dict(
         notes='the sheet records intent; the presets execute it. The bus is fifth order (36 channels) and is decoded once to the eight speakers of 7.1, which has no '
               'height speakers, so every part is on the horizontal plane. Keyframes, room geometry and materials are in presets/spaces and presets/sfx.'),
     expression=dict(
-        sonic_picture='The first ten seconds: a big engine idling low and a little rough in front and below, wipers at the windscreen, rain on the roof all round and a '
+        sonic_picture='The first ten seconds: a big engine idling low and a little rough in front and below, rain on the roof all round and a '
                       'far siren that never gets closer; the middle: the engine screaming through its gears with the road hissing behind, a siren moving past on the left, '
                       'a piano pulse of sixteenths and low brass; the last note: nothing sustained, an engine ticking as it cools, rain, one far siren and a single high '
                       'harmonic with a tritone under it.',
@@ -202,7 +202,7 @@ sheet = dict(
     video=dict(enabled=False, source=None, fps=None, cuts=[], cut_source=None, cut_sync=dict(early_ms=45, late_ms=125),
                dialogue=dict(present=False, duck_db=-9.0, snr_min_db=15.0), master_profile=None, deliverable=None, preset='default',
                notes='music-only piece: leave enabled false.'),
-    notes='Sound effects and ambience were asked for in the brief: the car, the tyres, the sirens, the wipers, the crash and the rain are presets from physical models. '
+    notes='Sound effects and ambience were asked for in the brief: the car, the tyres, the sirens, the crash and the rain are presets from physical models. '
           'They are synthesised, not recordings; the research note says which numbers are sourced and which are starting values.',
 )
 

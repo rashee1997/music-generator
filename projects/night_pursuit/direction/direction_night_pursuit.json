@@ -6,7 +6,7 @@
   "brief": "A realistic car chase scene with real car sounds, shifts and drifts in a rainy New York night, police sirens and a full story; tense, the listener should sit on the edge; instruments, music and the place by physics (rainy roads, street objects that absorb and reflect), cinematic drops and slow-motion drifts; full immersive, 8 channel; two minutes, three if two is not enough",
   "audience": "a listener on an 8-channel (7.1) system or headphones, inside the courier's car, who came for the chase",
   "purpose": "a 171-second cue that tells a whole chase: a stakeout, a spotting, a launch, a slow-motion drift, an underpass, a roadblock, a bridge and a cut into silence",
-  "point_of_view": "the courier, in the driver's seat: the engine, the wipers, the rain on the roof and the tyres are the nearest sounds; the sirens and the city are outside and they pass by",
+  "point_of_view": "the courier, in the driver's seat: the engine, the rain on the roof and the tyres are the nearest sounds; the sirens and the city are outside and they pass by",
   "job": [
     "keep the listener on the edge from the first bar to the last: pressure, never relief",
     "tell the chase in sound: where the cars are, what the road is doing and who is gaining",
@@ -36,7 +36,7 @@
       "end_s": 11.25,
       "energy": 0.3,
       "role": "place",
-      "action": "The courier idles at a red light on a wet avenue at two in the morning; wipers, rain on the roof, a far siren.",
+      "action": "The courier idles at a red light on a wet avenue at two in the morning; rain on the roof, a far siren.",
       "music": "one low C every bar and a heartbeat on the bass drum; a bass clarinet whispers the semitone; nothing else"
     },
     {
@@ -232,7 +232,7 @@
       "np_city_far"
     ],
     "must_hear": [
-      "the engine and the wipers in the first 3 s",
+      "the engine and the rain in the first 3 s",
       "a siren in the left by 14.1 s",
       "the first shift at 25.9 s",
       "the drop at 69.2 s",
@@ -353,7 +353,7 @@
   },
   "immersive": {
     "enabled": true,
-    "why": "the listener sits inside the courier's car: the engine and the wipers are in front, the road and the spray are behind and at the sides, and the sirens are outside and pass; the street between the buildings, the underpass and the bridge change the room around the car",
+    "why": "the listener sits inside the courier's car: the engine is in front, the road and the spray are behind and at the sides, and the sirens are outside and pass; the street between the buildings, the underpass and the bridge change the room around the car",
     "engine": "hoa_bus",
     "anchors": [
       "pursuit_piano_low",
@@ -361,8 +361,7 @@
       "pursuit_tuba",
       "pursuit_bass_drum",
       "pursuit_timpani",
-      "np_engine",
-      "np_wipers"
+      "np_engine"
     ],
     "movers": [
       {
@@ -422,7 +421,7 @@
     "notes": "the sheet records intent; the presets execute it. The bus is fifth order (36 channels) and is decoded once to the eight speakers of 7.1, which has no height speakers, so every part is on the horizontal plane. Keyframes, room geometry and materials are in presets/spaces and presets/sfx."
   },
   "expression": {
-    "sonic_picture": "The first ten seconds: a big engine idling low and a little rough in front and below, wipers at the windscreen, rain on the roof all round and a far siren that never gets closer; the middle: the engine screaming through its gears with the road hissing behind, a siren moving past on the left, a piano pulse of sixteenths and low brass; the last note: nothing sustained, an engine ticking as it cools, rain, one far siren and a single high harmonic with a tritone under it.",
+    "sonic_picture": "The first ten seconds: a big engine idling low and a little rough in front and below, rain on the roof all round and a far siren that never gets closer; the middle: the engine screaming through its gears with the road hissing behind, a siren moving past on the left, a piano pulse of sixteenths and low brass; the last note: nothing sustained, an engine ticking as it cools, rain, one far siren and a single high harmonic with a tritone under it.",
     "performer": "The piano plays the pulse hard and a little ahead of the beat; the celli dig into the first beat of every bar with a short drag and push into the next; the horns enter late on each statement and lean on the leap; the timpani heartbeat is soft and slightly behind; the snare roll tightens into the crash; the drummer of the 3+3+2 plays the cell with accents that move a little each bar; the strings are sections of six and the brass sections of four.",
     "producer_moves": "The tempo climbs from 128 to 156 BPM and dips twice into slow motion that snaps back; a bar of near silence before the drop and before the crash; the sub drop and one impact at each snap; the room closes in the underpass and opens on the bridge; the rain is thinned, not pitched, in slow motion; the final hard cut leaves the rain and one siren.",
     "anti_generic": "The generic version is a drone, a riser, a drum loop and a car sound laid on top; this one is a pulse that goes up a semitone at each turning point, engine, tyres and sirens that obey the road and the geometry, and a cut that leaves the question open.",
@@ -561,5 +560,5 @@
     "preset": "default",
     "notes": "music-only piece: leave enabled false."
   },
-  "notes": "Sound effects and ambience were asked for in the brief: the car, the tyres, the sirens, the wipers, the crash and the rain are presets from physical models. They are synthesised, not recordings; the research note says which numbers are sourced and which are starting values."
+  "notes": "Sound effects and ambience were asked for in the brief: the car, the tyres, the sirens, the crash and the rain are presets from physical models. They are synthesised, not recordings; the research note says which numbers are sourced and which are starting values."
 }

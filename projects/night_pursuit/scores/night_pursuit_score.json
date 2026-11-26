@@ -19532,19 +19532,6 @@
    ]
   },
   {
-   "name": "wipers",
-   "instrument": "sfx:np_wipers",
-   "role": "fx",
-   "notes": [
-    {
-     "t": 2.56,
-     "d": 373.44,
-     "p": 60,
-     "v": 1.0
-    }
-   ]
-  },
-  {
    "name": "siren_first",
    "instrument": "sfx:np_siren_wail",
    "role": "fx",

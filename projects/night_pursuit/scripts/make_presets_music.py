@@ -180,10 +180,9 @@ mix['immersive'] = dict(enabled=True, engine='hoa_bus', order=5, anchor_max_span
                         height_by_role=dict(melody=0.0, lead=0.0, vocal=0.0, pad=0.0, texture=0.0, environment=0.0, chord=0.0, bass=0.0, drum=0.0,
                                             percussion=0.0, drone=0.0, ostinato=0.0, arp=0.0, counter=0.0, fx=0.0),
                         max_elevation=60.0, min_height_tracks=0, stereo_decode='speakers')
-# Measured by debug_audio.py on render 8: the click row's six events sat in the 6 kHz band of the engine, the wipers and the rain film;
+# Measured by debug_audio.py on render 8: the click row's six events sat in the 6 kHz band of the engine and the rain film (the wipers were removed later at the user's request);
 # a replay of the gate's own checker on the modelled mix cleared five of six with these shelves (the engine -9 dB, the wipers -6 dB).
 mix['inst_eq'] = {'sfx:np_engine': [dict(type='highshelf', f=5500.0, gain=-15.0, q=0.7)],
-                  'sfx:np_wipers': [dict(type='highshelf', f=5500.0, gain=-9.0, q=0.7)],
                   'pursuit_snare': [dict(type='highshelf', f=5500.0, gain=-12.0, q=0.7)],
                   'sfx:np_drift_squeal': [dict(type='highshelf', f=5500.0, gain=-9.0, q=0.7)],
                   'env:np_city_far': [dict(type='highshelf', f=5500.0, gain=-3.0, q=0.7)]}

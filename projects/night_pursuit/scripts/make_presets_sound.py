@@ -273,38 +273,6 @@ write('sfx', 'np_drift_squeal', dict(
     fx=slowmo_fx(2500.0, 0.0),
     sources=['tyre_squeal_wet', 'ESTIMATE: the tone, its harmonics and the cavity formants are starting values; wet friction 20 % under dry is from the research note']))
 
-# ================================================================================================ the wipers
-def wiper_times():
-    """One cycle is a sweep up and a sweep back; 70 cycles a minute (the research: highest speed about 70 double strokes). Slow motion stretches
-    the interval, so the wipers fall behind with the music and catch up at the snap."""
-    base = 60.0 / 70.0 / 2.0
-    out, t = [], 1.35
-    while t < T_CUT:
-        out.append(round(t, 3))
-        t += base * (1.0 + 1.0 * slowness(t))
-    return out
-
-
-WT = wiper_times()
-begin('wipers')
-write('sfx', 'np_wipers', dict(
-    kind='sfx',
-    character='Windscreen wipers on a wet screen: a swish of rubber on glass every half cycle and a soft thump at each turn, 70 cycles a minute, slowing in the slow motion.',
-    seconds=SECONDS,
-    note='One sweep every 0.43 s (70 double strokes a minute); the interval grows up to four times in the slow motion.',
-    model=dict(seconds=SECONDS, voices=[
-        dict(name='swish', gain_db=0.0, excite=dict(kind='noise', color='pink', attack=0.07, tau=0.14), resonator=dict(kind='bandpass', band=[900, 4500], order=2),
-             events=dict(kind='sequence', times=[round(t - OFF, 3) for t in WT], levels=[1.0] * len(WT))),
-        dict(name='turn_thump', gain_db=-9.0, excite=dict(kind='impact', tau=0.006), resonator=dict(kind='modal', law='bar', f1=95.0, n=3, t60=0.08),
-             events=dict(kind='sequence', times=[round(t + 0.2 - OFF, 3) for t in WT], levels=[1.0] * len(WT))),
-        dict(name='wet_glass', gain_db=-22.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[1500, 6000], order=2),
-             events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: (-90.0 + 78.0 * smooth((t - OFF) / 0.15)) if t < T_CUT else -90.0, 0.0, END, 0.25))])),
-    ]),
-    role='fx', gain_db=-8.0, reverb=0.0,
-    spatial=dict(azimuth=STAGE['np_wipers'][0], elevation=STAGE['np_wipers'][1], distance=STAGE['np_wipers'][2], space=SPACE, binaural=True, kind='spot'),
-    eq=[dict(type='hp', f=250.0), dict(type='lp', f=7000.0)],
-    sources=['wiper_blades', 'ESTIMATE: the swish band, the thump and the levels are starting values; the rate is from FMVSS 104 and service data in the research note']))
-
 # ================================================================================================ the sirens
 def wail(t, lo=600.0, hi=1400.0, cpm=20.0):
     """The wail: a slow sweep between lo and hi at cpm cycles a minute (the NIJ example is 20); the pitch multiplier on `lo`."""
@@ -498,5 +466,5 @@ write('environments', 'np_city_far', dict(
     sources=['city_traffic_far', 'ESTIMATE: no New York night spectrum was found; the bands and levels are starting values (the research note gives daytime street levels only)']))
 
 if __name__ == '__main__':
-    print(f'wrote np_engine ({len(SHIFT_TIMES)} shifts), np_drift_squeal ({len(SQUEALS)} squeals), np_wipers ({len(WT)} sweeps), two sirens, np_crash, three environments; {SECONDS} s')
+    print(f'wrote np_engine ({len(SHIFT_TIMES)} shifts), np_drift_squeal ({len(SQUEALS)} squeals), two sirens, np_crash, three environments; {SECONDS} s')
     print(f'  launch {A:.1f}  drift {T_DRIFT:.1f}-{T_SNAP:.1f}  underpass {T_UNDER:.1f}  spin {T_SPIN:.1f}  crash {T_CRASH:.1f}  bridge {T_BRIDGE:.1f}  cut {T_CUT:.1f}')

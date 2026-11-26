@@ -302,7 +302,6 @@ def whole(name, sound, role, **extra):
 sounds = [
     whole('engine', 'sfx:np_engine', 'fx', dc_hp_hz=20.0),
     whole('tyres', 'sfx:np_drift_squeal', 'fx'),
-    whole('wipers', 'sfx:np_wipers', 'fx'),
     whole('siren_first', 'sfx:np_siren_wail', 'fx'),
     whole('siren_second', 'sfx:np_siren_second', 'fx'),
     whole('crash', 'sfx:np_crash', 'fx'),
