@@ -987,6 +987,9 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
                 calls.setdefault(p, []).append((e['t'] - 0.013, 'off', p, 0))
                 rels.setdefault(p, []).append(e['t'] - 0.013)
             calls.setdefault(p, []).append((e['t'], 'on', p, int(np.clip(round(v), 1, 127))))
+            # The synth is told to release the hit at `rel` as well as the stem being faded there: without a note-off every hit keeps its voice,
+            # and a part of a few hundred hits (a kick in a long cue) runs out of voices and goes silent from some point on, with no error.
+            calls.setdefault(p, []).append((rel[i], 'off', p, 0))
             rels.setdefault(p, []).append(rel[i])
         # One buffer per pitch, each ramped and released on its own, then summed. A drum sample starts at full level,
         # so its first sample is a step; the ramp removes it. On a shared buffer that ramp cannot work: it multiplies
