@@ -1,5 +1,5 @@
 file: /home/user/music-generator/projects/night_pursuit/out/_draft_master.wav
-duration_s: 171.286
+duration_s: 171.285
 sample_rate: 44100
 sections:
   the_stakeout: 0.00-11.25 s, dyn 0.30
@@ -18,14 +18,14 @@ flagged times: 18
   3.773s stem.tick [PASS] piano_low
   11.262s stem.tick [PASS] celli
   22.338s stem.tick [PASS] piano
-  24.627s clicks [FAIL] master
-  24.752s clicks [FAIL] master
   25.971s stem.tick [PASS] tuba
+  46.571s clicks [FAIL] master
+  47.591s clicks [FAIL] master
+  60.796s clicks [FAIL] master
+  65.998s clicks [FAIL] master
   70.774s stem.tick [PASS] trombones
   83.592s stem.tick [PASS] violins_tremolo
-  107.454s clicks [FAIL] master
   121.556s stem.tick [PASS] violins_staccato
-  136.402s clicks [FAIL] master
-  147.492s clicks [FAIL] master
+  149.629s clicks [FAIL] master
   152.110s clicks [FAIL] master
   170.485s dropout [FAIL] master

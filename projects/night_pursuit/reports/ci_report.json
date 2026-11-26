@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-11-26T07:24:34Z",
+  "timestamp": "2026-11-26T07:43:28Z",
   "status": "FAILED",
   "deliverables": {
     "master_wav": "/home/user/music-generator/projects/night_pursuit/out/_draft_master.wav",
     "midi": "/home/user/music-generator/projects/night_pursuit/midi/night_pursuit_score.mid",
-    "duration_s": 171.28562358276645,
+    "duration_s": 171.28539682539682,
     "sample_rate": 44100,
     "outputs": [
       "stereo",
@@ -33,22 +33,22 @@
     "stem_count": 24
   },
   "measurements": {
-    "integrated_lufs": -16.003324314781587,
-    "true_peak_dbtp": -1.5004522852112143,
-    "crest_factor_db": 18.05178570478596,
-    "mono_loss_db": -0.5467800245062824,
-    "mono_phone_loss_db": -1.0671716819917105,
+    "integrated_lufs": -16.025567351490466,
+    "true_peak_dbtp": -1.5007470393470053,
+    "crest_factor_db": 17.964988994496775,
+    "mono_loss_db": -0.5298766741567061,
+    "mono_phone_loss_db": -1.0702258972916312,
     "clipped_samples": 0,
-    "mean_roughness": 0.0,
-    "max_roughness": 0.0,
+    "mean_roughness": 0.0482,
+    "max_roughness": 0.0482,
     "witek_bsi": 0.4,
     "melodic_entropy_bits": 2.84,
     "spiral_strain_end": 0.03
   },
   "ci_summary": {
     "pass": 232,
-    "warn": 40,
-    "fail": 5
+    "warn": 38,
+    "fail": 6
   },
   "ci_checks": [
     {
@@ -554,12 +554,12 @@
     {
       "level": "PASS",
       "check": "stem.clicks",
-      "detail": "stem \"rain_street\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 148 event(s) rejected as a dense burst, 164 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"rain_street\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 146 event(s) rejected as a dense burst, 151 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
       "check": "stem.dropout",
-      "detail": "stem \"rain_street\": longest hole 0 ms (limit 20-1000 ms), floor -98.2 dBFS; 0 hole(s)"
+      "detail": "stem \"rain_street\": longest hole 0 ms (limit 20-1000 ms), floor -101.2 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -574,12 +574,12 @@
     {
       "level": "PASS",
       "check": "stem.tick",
-      "detail": "stem \"rain_street\": onset autocorrelation 0.06 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 140 strong onset(s) of 1541, 58 on the grid, IOI CV 1.017; peak rise 13.49 dB at those onsets over 140 onset(s) (min 3); tempogram peak ratio 0.72, PLP peak ratio 1.00"
+      "detail": "stem \"rain_street\": onset autocorrelation 0.05 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 305 strong onset(s) of 1677, 120 on the grid, IOI CV 0.926; peak rise 13.28 dB at those onsets over 305 onset(s) (min 3); tempogram peak ratio 0.72, PLP peak ratio 1.00"
     },
     {
       "level": "PASS",
       "check": "stem.dead",
-      "detail": "stem \"rain_street\": own median -52.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve"
+      "detail": "stem \"rain_street\": own median -55.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve"
     },
     {
       "level": "INFO",
@@ -1084,7 +1084,7 @@
     {
       "level": "PASS",
       "check": "mix_preset",
-      "detail": "\"night_pursuit_mix\" customises 11 mix value(s): automation, dynamics, gain_staging, immersive, lead_carve, mastering"
+      "detail": "\"night_pursuit_mix\" customises 12 mix value(s): automation, dynamics, gain_staging, immersive, inst_eq, lead_carve"
     },
     {
       "level": "WARN",
@@ -1294,7 +1294,7 @@
     {
       "level": "PASS",
       "check": "spatial_staging",
-      "detail": "11 of 11 staged track(s) use the binaural route; L/R correlation 0.77"
+      "detail": "10 of 10 staged track(s) use the binaural route; L/R correlation 0.78"
     },
     {
       "level": "PASS",
@@ -1309,7 +1309,7 @@
     {
       "level": "PASS",
       "check": "audio",
-      "detail": "dynamics move (short-term loudness std 4.5 dB, range 13.2 LU)"
+      "detail": "dynamics move (short-term loudness std 4.6 dB, range 13.4 LU)"
     },
     {
       "level": "WARN",
@@ -1317,14 +1317,9 @@
       "detail": "mud: 250-500 Hz dominates the bass and mid regions - cut 2-4 dB around 300 Hz on chords/pads"
     },
     {
-      "level": "WARN",
-      "check": "audio",
-      "detail": "low end is wide (-11 dB side/mid below 120 Hz) - mono the bass (mono_below)"
-    },
-    {
       "level": "INFO",
       "check": "master.micro_dynamics",
-      "detail": "PLR 14.5 LU, PSR 12.1 LU, LRA 13.0 LU, true peak -1.50 dBTP (4x -1.50, 8x -1.50): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
+      "detail": "PLR 14.5 LU, PSR 12.1 LU, LRA 13.2 LU, true peak -1.50 dBTP (4x -1.50, 8x -1.50): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
     },
     {
       "level": "PASS",
@@ -1334,17 +1329,17 @@
     {
       "level": "FAIL",
       "check": "clicks",
-      "detail": "6 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 6 and LPC 6. Check the sample start or add a 2-5 ms fade-in at that note"
+      "detail": "6 click event(s): 1 single-sample jump(s) above 0.5 FS, first at 53.879s; high-pass MAD found 6 and LPC 6. Check the sample start or add a 2-5 ms fade-in at that note"
     },
     {
       "level": "PASS",
       "check": "natural_aliasing",
-      "detail": "15-22 kHz holds -56.1 dB of the 200 Hz-16 kHz band (limit -45); above that it is sampler interpolation images, not instrument (fix: render.oversample in the mix preset)"
+      "detail": "15-22 kHz holds -63.4 dB of the 200 Hz-16 kHz band (limit -45); above that it is sampler interpolation images, not instrument (fix: render.oversample in the mix preset)"
     },
     {
       "level": "INFO",
       "check": "cochlear_roughness",
-      "detail": "0 of 341 frames hold resolved partials (the rest are broad-band, i.e. drums, noise or silence): too few to judge cochlear roughness, so the row is not applied"
+      "detail": "1 of 341 frames hold resolved partials (the rest are broad-band, i.e. drums, noise or silence): too few to judge cochlear roughness, so the row is not applied"
     },
     {
       "level": "PASS",
@@ -1354,7 +1349,7 @@
     {
       "level": "PASS",
       "check": "delivery.true_peak",
-      "detail": "stereo: worst channel true peak -1.5 dBTP (ceiling -1.5 dBTP; per channel -1.5, -3.0)"
+      "detail": "stereo: worst channel true peak -1.5 dBTP (ceiling -1.5 dBTP; per channel -1.5, -2.8)"
     },
     {
       "level": "PASS",
@@ -1369,12 +1364,12 @@
     {
       "level": "PASS",
       "check": "stereo.correlation",
-      "detail": "stereo: inter-channel correlation +0.77 (floor +0.15: below it the centre is cancelling)"
+      "detail": "stereo: inter-channel correlation +0.78 (floor +0.15: below it the centre is cancelling)"
     },
     {
       "level": "FAIL",
       "check": "dropout",
-      "detail": "longest hole 35 ms (limit 20-1000 ms), floor -65.1 dBFS; 1 hole(s)"
+      "detail": "longest hole 35 ms (limit 20-1000 ms), floor -65.0 dBFS; 1 hole(s)"
     },
     {
       "level": "PASS",
@@ -1384,7 +1379,7 @@
     {
       "level": "PASS",
       "check": "end.abrupt",
-      "detail": "end level -142.9 dBFS (limit -45), decay over final 300 ms 69.9 dB (limit 12); natural release"
+      "detail": "end level -142.8 dBFS (limit -45), decay over final 300 ms 69.8 dB (limit 12); natural release"
     },
     {
       "level": "PASS",
@@ -1449,7 +1444,7 @@
     {
       "level": "PASS",
       "check": "imm_width",
-      "detail": "L/R correlation 0.77 (limit 0.95)"
+      "detail": "L/R correlation 0.78 (limit 0.95)"
     },
     {
       "level": "PASS",
@@ -1484,7 +1479,12 @@
     {
       "level": "FAIL",
       "check": "ambient_bed",
-      "detail": "rapid gain pumping on \"rain_street\" (5.2 dB jump at 36.0s, limit 4.1). Smooth ducker release or use sigmoid crossfade"
+      "detail": "ambient stem \"rain_street\" drops out to silence at 65.0s"
+    },
+    {
+      "level": "FAIL",
+      "check": "ambient_bed",
+      "detail": "rapid gain pumping on \"rain_street\" (6.4 dB jump at 36.0s, limit 4.1). Smooth ducker release or use sigmoid crossfade"
     },
     {
       "level": "FAIL",
@@ -1539,7 +1539,7 @@
     {
       "level": "PASS",
       "check": "sfx_eval",
-      "detail": "track \"rain_street\": no tonal excess, no cycle, transients vary, centroid 5187 Hz, crest 70.4"
+      "detail": "track \"rain_street\": no tonal excess, no cycle, transients vary, centroid 5632 Hz, crest 83.3"
     },
     {
       "level": "PASS",
@@ -1574,7 +1574,7 @@
     {
       "level": "FAIL",
       "check": "spatial.z_separation",
-      "detail": "\"horns\" and \"timpani\", \"piano\" and \"wipers\", \"celli\" and \"timpani\" both hold the 500-4000 Hz band in the climax (envelope overlap 0.61) and sit 20 deg apart (azimuth 20, elevation 0); the limit is 25 deg apart or 15 deg of height. Give one part an elevated arc (for a strings-versus-low-brass collision: strings out at about +-50 deg azimuth, +25..35 deg elevation; low brass and timpani anchored at about +-20 deg, -10..0 deg) or move one 25 deg or more in azimuth"
+      "detail": "\"basses\" and \"timpani\", \"bass_drum\" and \"basses\", \"tuba\" and \"violins_tremolo\" both hold the 500-4000 Hz band in the climax (envelope overlap 0.63) and sit 0 deg apart (azimuth 0, elevation 0); the limit is 25 deg apart or 15 deg of height. Give one part an elevated arc (for a strings-versus-low-brass collision: strings out at about +-50 deg azimuth, +25..35 deg elevation; low brass and timpani anchored at about +-20 deg, -10..0 deg) or move one 25 deg or more in azimuth"
     },
     {
       "level": "WARN",
@@ -1639,7 +1639,7 @@
     {
       "level": "INFO",
       "check": "ear.iacc",
-      "detail": "interaural correlation of the neural patterns, 500-880 Hz: mean 0.68 (window 0.1..0.98)"
+      "detail": "interaural correlation of the neural patterns, 500-880 Hz: mean 0.69 (window 0.1..0.98)"
     },
     {
       "level": "INFO",
@@ -1649,17 +1649,17 @@
     {
       "level": "INFO",
       "check": "chem.reward_build",
-      "detail": "the build earns the strongest measured change at 127.2 s (the sheet declares no hits_at): 13.8 s of lead, rank correlation +0.93, peak 0.57. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
+      "detail": "the build earns the strongest measured change at 104.8 s (the sheet declares no hits_at): 18.8 s of lead, rank correlation +0.77, peak 0.52. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
     },
     {
       "level": "WARN",
       "check": "chem.reward_arrival",
-      "detail": "the hit changes the level by +1.2 dB (want 3). Lever: put a real change at the hit (timbre, low end, a voice, a register change) instead of a level nudge. Tier B (Salimpoor 2011 measured ventral-striatal release at the peak; the model only infers it); inputs: arrival, surprise, low_end, vocal, fatigue. the sheet declares no hit, so only the peak was judged"
+      "detail": "the hit changes the level by +0.2 dB (want 3). Lever: put a real change at the hit (timbre, low end, a voice, a register change) instead of a level nudge. Tier B (Salimpoor 2011 measured ventral-striatal release at the peak; the model only infers it); inputs: arrival, surprise, low_end, vocal, fatigue. the sheet declares no hit, so only the peak was judged"
     },
     {
-      "level": "WARN",
+      "level": "INFO",
       "check": "chem.stress_load",
-      "detail": "only 50% of its peaks resolve (want 60%). Lever: resolve the dominant, thin the cluster, or add a breath where the roughness runs. Tier C (stress is a proxy: de Witte 2019 found d = 0.35 hormonal across 104 trials, and context dominates); inputs: tension, roughness, surprise, consonance"
+      "detail": "tension is carried and released: load averages 0.19, 1.5 s unresolved, 67% of peaks resolve. Tier C (stress is a proxy: de Witte 2019 found d = 0.35 hormonal across 104 trials, and context dominates); inputs: tension, roughness, surprise, consonance"
     },
     {
       "level": "WARN",
@@ -1669,12 +1669,12 @@
     {
       "level": "WARN",
       "check": "chem.motor_drive",
-      "detail": "the drive pool averages 0.19 (want 0.4); bar syncopation 0.40 is outside the 0.4-4.8 window (Witek 2014 inverted U); measured pulse clarity 0.18 (want 0.4). Lever: syncopate the cell into the 0.4-4.8 BSI window, or give the kick and bass one owner. Tier C (effort and entrainment read from a pain-threshold proxy: Tarr 2015, Pearce 2016); inputs: pulse, low_end, density, slow_tempo"
+      "detail": "the drive pool averages 0.19 (want 0.4); bar syncopation 0.40 is outside the 0.4-4.8 window (Witek 2014 inverted U); measured pulse clarity 0.17 (want 0.4). Lever: syncopate the cell into the 0.4-4.8 BSI window, or give the kick and bass one owner. Tier C (effort and entrainment read from a pain-threshold proxy: Tarr 2015, Pearce 2016); inputs: pulse, low_end, density, slow_tempo"
     },
     {
       "level": "INFO",
       "check": "chem.recovery",
-      "detail": "the piece comes down: 41% below its peak, load ends at 0.03, arousal at 0.37. Tier C (recovery from listening alone is weak: g = 0.15, CI -0.21..0.52, n.s., 2022 meta-analysis); inputs: recovery, consonance, legato, tension"
+      "detail": "the piece comes down: 40% below its peak, load ends at 0.03, arousal at 0.38. Tier C (recovery from listening alone is weak: g = 0.15, CI -0.21..0.52, n.s., 2022 meta-analysis); inputs: recovery, consonance, legato, tension"
     },
     {
       "level": "INFO",
@@ -1704,7 +1704,7 @@
     {
       "level": "WARN",
       "check": "mix:phase",
-      "detail": "\"rain_street\" is -0.25 correlated between channels: it cancels in mono (fold costs -4.3 dB). Check the width/pan and any delay in its chain"
+      "detail": "\"rain_street\" is -0.32 correlated between channels: it cancels in mono (fold costs -4.7 dB). Check the width/pan and any delay in its chain"
     },
     {
       "level": "WARN",
@@ -1714,7 +1714,7 @@
     {
       "level": "WARN",
       "check": "mix:mud",
-      "detail": "energy below 400 Hz is +5.5 dB over 400 Hz-4 kHz; \"engine\" contributes most. A cut near 250-350 Hz or a higher high-pass is the usual fix"
+      "detail": "energy below 400 Hz is +5.6 dB over 400 Hz-4 kHz; \"engine\" contributes most. A cut near 250-350 Hz or a higher high-pass is the usual fix"
     },
     {
       "level": "WARN",
@@ -1744,7 +1744,7 @@
     {
       "level": "WARN",
       "check": "mix:intelligibility",
-      "detail": "the lead sits -17.9 dB against the beds in 1-4 kHz: words and articulation will be covered. Carve the beds there or lift the lead"
+      "detail": "the lead sits -17.7 dB against the beds in 1-4 kHz: words and articulation will be covered. Carve the beds there or lift the lead"
     },
     {
       "level": "INFO",
@@ -1754,7 +1754,7 @@
     {
       "level": "INFO",
       "check": "music21_tonality",
-      "detail": "modal center analyzed as A- major (correlation 0.45)"
+      "detail": "modal center analyzed as A- major (correlation 0.46)"
     },
     {
       "level": "INFO",
@@ -1769,7 +1769,7 @@
     {
       "level": "PASS",
       "check": "music21_harmonic_rhythm",
-      "detail": "1476 vertical harmonic slices analyzed across multi-track arrangement"
+      "detail": "1521 vertical harmonic slices analyzed across multi-track arrangement"
     }
   ],
   "mode": "project",
@@ -1778,7 +1778,7 @@
     "stopped": null,
     "cache": {
       "dir": "/home/user/music-generator/projects/night_pursuit/.cache/mix",
-      "hits": 2,
+      "hits": 0,
       "stems": 24
     },
     "stages": {
@@ -1789,25 +1789,25 @@
         "warns": 0,
         "rows": 202,
         "profile": "night_pursuit",
-        "total_ms": 4699.557914999787,
+        "total_ms": 4160.265358999823,
         "timings": {
           "bass_clarinet": 0.0,
           "bass_drum": 0.0,
-          "basses": 3078.380317000665,
+          "basses": 0.0,
           "celli": 0.0,
           "city_far": 0.0,
           "crash": 0.0,
           "cymbals": 0.0,
           "engine": 0.0,
           "horns": 0.0,
-          "piano": 2679.2846359994655,
+          "piano": 0.0,
           "piano_low": 0.0,
           "rain_awnings": 0.0,
-          "rain_street": 0.0,
+          "rain_street": 2589.617524999994,
           "siren_first": 0.0,
           "siren_second": 0.0,
           "snare": 0.0,
-          "sub_drop": 2703.2329060002667,
+          "sub_drop": 0.0,
           "timpani": 0.0,
           "trombones": 0.0,
           "tuba": 0.0,
@@ -3916,18 +3916,18 @@
             "stage": "stem",
             "stem": "rain_street",
             "level": "PASS",
-            "value": 1.4536950614387005e-07,
+            "value": 1.207383976680784e-07,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.0009998546304938562,
+            "margin": -0.000999879261602332,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "stem \"rain_street\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
             "channel_means": [
-              9.61579456820869e-10,
-              1.4123143012044744e-09
+              9.973338827975013e-10,
+              1.0355754191232044e-09
             ],
-            "drift": 1.4536950614387005e-07
+            "drift": 1.207383976680784e-07
           },
           {
             "row": "stem.clipping",
@@ -3954,11 +3954,11 @@
             "margin": 0.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"rain_street\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 148 event(s) rejected as a dense burst, 164 as a steep attack; max cluster span 1.497 ms",
+            "detail": "stem \"rain_street\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 146 event(s) rejected as a dense burst, 151 as a steep attack; max cluster span 1.497 ms",
             "mad_count": 0,
             "lpc_count": 0,
-            "rejected": 148,
-            "attacks_ignored": 164,
+            "rejected": 146,
+            "attacks_ignored": 151,
             "max_cluster_span_ms": 1.4965986394557824
           },
           {
@@ -3972,7 +3972,7 @@
             "margin": -20.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"rain_street\": longest hole 0 ms (limit 20-1000 ms), floor -98.2 dBFS; 0 hole(s)",
+            "detail": "stem \"rain_street\": longest hole 0 ms (limit 20-1000 ms), floor -101.2 dBFS; 0 hole(s)",
             "holes": []
           },
           {
@@ -3988,14 +3988,14 @@
             "calibrated": false,
             "detail": "stem \"rain_street\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
             "drops": [
-              18.3,
-              17.0,
-              13.8,
-              14.3,
-              20.4,
-              18.9,
-              18.0,
-              18.1
+              21.4,
+              12.9,
+              19.8,
+              13.5,
+              14.7,
+              16.9,
+              23.5,
+              20.6
             ],
             "exempted": []
           },
@@ -4020,24 +4020,24 @@
             "stage": "stem",
             "stem": "rain_street",
             "level": "PASS",
-            "value": 0.0550352724009394,
+            "value": 0.05073647799723828,
             "unit": "rho",
             "threshold": 0.35,
-            "margin": -0.29496472759906056,
+            "margin": -0.2992635220027617,
             "worst_times_s": [
               0.0348
             ],
             "calibrated": false,
-            "detail": "stem \"rain_street\": onset autocorrelation 0.06 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 140 strong onset(s) of 1541, 58 on the grid, IOI CV 1.017; peak rise 13.49 dB at those onsets over 140 onset(s) (min 3); tempogram peak ratio 0.72, PLP peak ratio 1.00",
+            "detail": "stem \"rain_street\": onset autocorrelation 0.05 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 305 strong onset(s) of 1677, 120 on the grid, IOI CV 0.926; peak rise 13.28 dB at those onsets over 305 onset(s) (min 3); tempogram peak ratio 0.72, PLP peak ratio 1.00",
             "periodic": false,
             "period_ms": 92.87981859410431,
-            "events": 140,
-            "cv": 1.0166382242086067,
-            "grid_matched": 58,
-            "tempogram_ratio": 0.7194089745355616,
-            "plp_ratio": 0.9999999999958737,
-            "rise_db": 13.494,
-            "rise_onsets": 140
+            "events": 305,
+            "cv": 0.9258666713853205,
+            "grid_matched": 120,
+            "tempogram_ratio": 0.7203962421202069,
+            "plp_ratio": 0.9999999999963217,
+            "rise_db": 13.275,
+            "rise_onsets": 305
           },
           {
             "row": "stem.dead",
@@ -4050,63 +4050,63 @@
             "margin": -12.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"rain_street\": own median -52.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve",
+            "detail": "stem \"rain_street\": own median -55.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve",
             "fail": false,
             "table": [
               {
                 "section": "the_stakeout",
                 "start_s": 0.0,
-                "measured_db": -52.99,
-                "expected_db": -60.95,
+                "measured_db": -55.63,
+                "expected_db": -63.7,
                 "dyn": 0.3
               },
               {
                 "section": "spotted",
                 "start_s": 11.25,
-                "measured_db": -52.17,
-                "expected_db": -57.42,
+                "measured_db": -54.47,
+                "expected_db": -60.18,
                 "dyn": 0.45
               },
               {
                 "section": "the_avenue",
                 "start_s": 22.328,
-                "measured_db": -52.31,
-                "expected_db": -53.59,
+                "measured_db": -55.25,
+                "expected_db": -56.34,
                 "dyn": 0.7
               },
               {
                 "section": "the_turn",
                 "start_s": 46.865,
-                "measured_db": -54.73,
-                "expected_db": -51.9,
+                "measured_db": -57.64,
+                "expected_db": -54.65,
                 "dyn": 0.85
               },
               {
                 "section": "under_the_bridge",
                 "start_s": 73.961,
-                "measured_db": -52.98,
-                "expected_db": -51.4,
+                "measured_db": -55.93,
+                "expected_db": -54.16,
                 "dyn": 0.9
               },
               {
                 "section": "the_roadblock",
                 "start_s": 96.361,
-                "measured_db": -52.42,
-                "expected_db": -50.49,
+                "measured_db": -55.28,
+                "expected_db": -53.24,
                 "dyn": 1.0
               },
               {
                 "section": "the_bridge",
                 "start_s": 127.859,
-                "measured_db": -51.55,
-                "expected_db": -50.93,
+                "measured_db": -54.33,
+                "expected_db": -53.69,
                 "dyn": 0.95
               },
               {
                 "section": "the_cliff",
                 "start_s": 149.686,
-                "measured_db": -53.9,
-                "expected_db": -64.47,
+                "measured_db": -56.68,
+                "expected_db": -67.22,
                 "dyn": 0.2
               }
             ],
@@ -5894,13 +5894,13 @@
           }
         ],
         "duration_s": 172.76480725623583,
-        "cached_stems": 21,
-        "measured_stems": 3
+        "cached_stems": 23,
+        "measured_stems": 1
       },
       "mix": {
         "stage": "mix",
-        "fails": 5,
-        "warns": 40,
+        "fails": 6,
+        "warns": 38,
         "metrics": [
           {
             "row": "clicks",
@@ -5912,25 +5912,25 @@
             "threshold": 0.0,
             "margin": 6.0,
             "worst_times_s": [
-              24.6267,
-              24.7519,
-              107.454,
-              136.4017,
-              147.4915,
-              152.11
+              46.5707,
+              47.5913,
+              60.7964,
+              65.998,
+              149.6294,
+              152.1098
             ],
             "calibrated": true,
-            "detail": "6 clustered impulse event(s) (MAD), 6 LPC frame(s); 1883 event(s) rejected as a dense burst, 709 as a steep attack; max cluster span 1.497 ms"
+            "detail": "6 clustered impulse event(s) (MAD), 6 LPC frame(s); 1550 event(s) rejected as a dense burst, 643 as a steep attack; max cluster span 1.497 ms"
           },
           {
             "row": "loudness",
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -16.003324314781587,
+            "value": -16.025567351490466,
             "unit": "LUFS",
             "threshold": -16.0,
-            "margin": -2.4966756852184133,
+            "margin": -2.4744326485095343,
             "worst_times_s": [],
             "calibrated": true,
             "detail": "-16.0 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -5940,10 +5940,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -1.5004522852112143,
+            "value": -1.5007470393470053,
             "unit": "dBTP",
             "threshold": -1.5,
-            "margin": -0.0004522852112143205,
+            "margin": -0.0007470393470052628,
             "worst_times_s": [],
             "calibrated": true,
             "detail": "-1.50 dBTP vs ceiling -1.5"
@@ -5961,7 +5961,7 @@
               170.485
             ],
             "calibrated": false,
-            "detail": "longest hole 35 ms (limit 20-1000 ms), floor -65.1 dBFS; 1 hole(s)"
+            "detail": "longest hole 35 ms (limit 20-1000 ms), floor -65.0 dBFS; 1 hole(s)"
           },
           {
             "row": "cut.hard",
@@ -5981,13 +5981,13 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 69.91292444154314,
+            "value": 69.81241991208854,
             "unit": "dB",
             "threshold": 12.0,
-            "margin": -57.91292444154314,
+            "margin": -57.812419912088544,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "end level -142.9 dBFS (limit -45), decay over final 300 ms 69.9 dB (limit 12); natural release"
+            "detail": "end level -142.8 dBFS (limit -45), decay over final 300 ms 69.8 dB (limit 12); natural release"
           },
           {
             "row": "clipping",
@@ -6007,10 +6007,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 3.985464512718196e-05,
+            "value": 4.057170674607588e-05,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.000960145354872818,
+            "margin": -0.0009594282932539241,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00004 (limit 0.001)"
@@ -6033,56 +6033,56 @@
                 "start_s": 0.0,
                 "end_s": 11.25,
                 "energy": 0.3,
-                "level_db": -27.229597249102767
+                "level_db": -27.175276808257426
               },
               {
                 "name": "spotted",
                 "start_s": 11.25,
                 "end_s": 22.328,
                 "energy": 0.45,
-                "level_db": -26.047670717432265
+                "level_db": -25.982356819280938
               },
               {
                 "name": "the_avenue",
                 "start_s": 22.328,
                 "end_s": 46.865,
                 "energy": 0.7,
-                "level_db": -19.344352501495468
+                "level_db": -19.214980853790863
               },
               {
                 "name": "the_turn",
                 "start_s": 46.865,
                 "end_s": 73.961,
                 "energy": 0.85,
-                "level_db": -20.248789969567596
+                "level_db": -20.125205573034815
               },
               {
                 "name": "under_the_bridge",
                 "start_s": 73.961,
                 "end_s": 96.361,
                 "energy": 0.9,
-                "level_db": -18.92175398310963
+                "level_db": -18.80729728459195
               },
               {
                 "name": "the_roadblock",
                 "start_s": 96.361,
                 "end_s": 127.859,
                 "energy": 1.0,
-                "level_db": -19.27140252265635
+                "level_db": -19.133212472471524
               },
               {
                 "name": "the_bridge",
                 "start_s": 127.859,
                 "end_s": 149.686,
                 "energy": 0.95,
-                "level_db": -19.90065522364686
+                "level_db": -19.804816099071388
               },
               {
                 "name": "the_cliff",
                 "start_s": 149.686,
                 "end_s": 171.05,
                 "energy": 0.2,
-                "level_db": -37.08895872423891
+                "level_db": -37.06440081863197
               }
             ]
           }
@@ -6189,6 +6189,19 @@
         "ambient_bed: rapid gain pumping on \"rain_street\" (5.2 dB jump at 36.0s, limit 4.1). Smooth ducker release or use sigmoid crossfade",
         "ambient_bed: rapid gain pumping on \"rain_awnings\" (7.4 dB jump at 104.0s, limit 4.1). Smooth ducker release or use sigmoid crossfade",
         "spatial.z_separation: \"horns\" and \"timpani\", \"piano\" and \"wipers\", \"celli\" and \"timpani\" both hold the 500-4000 Hz band in the climax (envelope overlap 0.61) and sit 20 deg apart (azimuth 20, elevation 0); the limit is 25 deg apart or 15 deg of height. Give one part an elevated arc (for a strings-versus-low-brass collision: strings out at about +-50 deg azimuth, +25..35 deg elevation; low brass and timpani anchored at about +-20 deg, -10..0 deg) or move one 25 deg or more in azimuth"
+      ]
+    },
+    {
+      "attempt": 9,
+      "time": "2026-11-26T07:43:28Z",
+      "fails": 6,
+      "failing": [
+        "clicks: 6 click event(s): 1 single-sample jump(s) above 0.5 FS, first at 53.879s; high-pass MAD found 6 and LPC 6. Check the sample start or add a 2-5 ms fade-in at that note",
+        "dropout: longest hole 35 ms (limit 20-1000 ms), floor -65.0 dBFS; 1 hole(s)",
+        "ambient_bed: ambient stem \"rain_street\" drops out to silence at 65.0s",
+        "ambient_bed: rapid gain pumping on \"rain_street\" (6.4 dB jump at 36.0s, limit 4.1). Smooth ducker release or use sigmoid crossfade",
+        "ambient_bed: rapid gain pumping on \"rain_awnings\" (7.4 dB jump at 104.0s, limit 4.1). Smooth ducker release or use sigmoid crossfade",
+        "spatial.z_separation: \"basses\" and \"timpani\", \"bass_drum\" and \"basses\", \"tuba\" and \"violins_tremolo\" both hold the 500-4000 Hz band in the climax (envelope overlap 0.63) and sit 0 deg apart (azimuth 0, elevation 0); the limit is 25 deg apart or 15 deg of height. Give one part an elevated arc (for a strings-versus-low-brass collision: strings out at about +-50 deg azimuth, +25..35 deg elevation; low brass and timpani anchored at about +-20 deg, -10..0 deg) or move one 25 deg or more in azimuth"
       ]
     }
   ]

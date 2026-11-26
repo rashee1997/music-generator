@@ -6,6 +6,7 @@ A preset is data: this script only writes the JSON files, so a number can be cha
 number that is not sourced is a starting value and says so in the preset's `sources`.
 """
 import json
+from staging import STAGE
 import os
 
 import timeline as T
@@ -38,7 +39,7 @@ def place(az, dist, el=0.0):
 def inst(name, gm, role, character, az, dist, gain, reverb, eq, humanize=None, extra=None, sources=()):
     body = dict(character=character, description=character, instrument=gm, role=role,
                 humanize=humanize or dict(preset='natural', timing_ms=6.0, drift_ms=6.0, vel_sigma=4.0),
-                spatial=place(az, dist), eq=eq, gain_db=float(gain), reverb=float(reverb),
+                spatial=place(*(STAGE[name][0], STAGE[name][2], STAGE[name][1]) if name in STAGE else (az, dist)), eq=eq, gain_db=float(gain), reverb=float(reverb),
                 sources=list(sources) + [EST])
     body.update(extra or {})
     write('instruments', name, body)
@@ -183,7 +184,7 @@ mix['immersive'] = dict(enabled=True, engine='hoa_bus', order=5, anchor_max_span
 # a replay of the gate's own checker on the modelled mix cleared five of six with these shelves (the engine -9 dB, the wipers -6 dB).
 mix['inst_eq'] = {'sfx:np_engine': [dict(type='highshelf', f=5500.0, gain=-9.0, q=0.7)],
                   'sfx:np_wipers': [dict(type='highshelf', f=5500.0, gain=-6.0, q=0.7)]}
-mix['lead_carve'] = dict(enabled=True, from_intent=True, roles=['pad', 'texture', 'chord', 'arp', 'counter', 'environment'], ratio=2.0, threshold_db=-34.0)
+mix['lead_carve'] = dict(enabled=True, from_intent=True, roles=['pad', 'texture', 'chord', 'arp', 'counter', 'environment'], ratio=1.6, threshold_db=-34.0, attack_ms=100.0, release_ms=1500.0)
 mix['sidechain'] = dict(mode='legacy', band_hz=[250.0, 3800.0], residual=0.3, env_plateau=True)
 mix['dynamics'] = dict(engine='pedalboard', knee_db=0.0, detector='peak', stereo_link=True, lookahead_ms=0.0, parallel=1.0)
 write('mix', 'night_pursuit_mix', {k: v for k, v in mix.items() if k != 'name'})

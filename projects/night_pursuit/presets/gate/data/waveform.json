@@ -1,5 +1,5 @@
 {
-  "duration_s": 171.28562358276645,
+  "duration_s": 171.28539682539682,
   "sections": [
     {
       "name": "the_stakeout",
@@ -94,22 +94,34 @@
       "PASS"
     ],
     [
-      24.6267,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      24.7519,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
       25.9715,
       "stem.tick",
       "tuba",
       "PASS"
+    ],
+    [
+      46.5707,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      47.5913,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      60.7964,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      65.998,
+      "clicks",
+      "master",
+      "FAIL"
     ],
     [
       70.7744,
@@ -124,31 +136,19 @@
       "PASS"
     ],
     [
-      107.454,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
       121.5565,
       "stem.tick",
       "violins_staccato",
       "PASS"
     ],
     [
-      136.4017,
+      149.6294,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      147.4915,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      152.11,
+      152.1098,
       "clicks",
       "master",
       "FAIL"

@@ -8,6 +8,7 @@ import json
 import os
 
 import timeline as T
+from staging import STAGE
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, '..', 'direction', 'direction_night_pursuit.json')
@@ -144,23 +145,8 @@ sheet = dict(
                   played_on='an 8-channel 7.1 theatre or home system (the fifth-order field decoded to eight speakers), and headphones through the stereo master'),
     references=['a relentless low-string and piano pulse over a wet, close, loud street, with low brass at the turning points and a hard cut into silence',
                 'the car as the listener\'s room: the engine in front and below, the road behind, the sirens passing outside'],
-    spatial_staging={
-        'pursuit_piano_low': dict(azimuth=0.0, elevation=0.0, distance=1.2, space='np_street_canyon'),
-        'pursuit_basses': dict(azimuth=0.0, elevation=0.0, distance=1.5, space='np_street_canyon'),
-        'pursuit_tuba': dict(azimuth=150.0, elevation=0.0, distance=1.8, space='np_street_canyon'),
-        'pursuit_bass_drum': dict(azimuth=0.0, elevation=0.0, distance=2.2, space='np_street_canyon'),
-        'pursuit_timpani': dict(azimuth=0.0, elevation=0.0, distance=3.0, space='np_street_canyon'),
-        'pursuit_sub_drop': dict(azimuth=0.0, elevation=0.0, distance=1.0, space='np_street_canyon'),
-        'pursuit_snare': dict(azimuth=-28.0, elevation=0.0, distance=2.6, space='np_street_canyon'),
-        'pursuit_horns': dict(azimuth=35.0, elevation=0.0, distance=2.6, space='np_street_canyon'),
-        'pursuit_trombones': dict(azimuth=-40.0, elevation=0.0, distance=2.8, space='np_street_canyon'),
-        'pursuit_piano': dict(azimuth=-75.0, elevation=0.0, distance=2.0, space='np_street_canyon'),
-        'pursuit_celli': dict(azimuth=75.0, elevation=0.0, distance=2.2, space='np_street_canyon'),
-        'pursuit_bass_clarinet': dict(azimuth=105.0, elevation=0.0, distance=2.4, space='np_street_canyon'),
-        'pursuit_violins_staccato': dict(azimuth=-110.0, elevation=0.0, distance=3.0, space='np_street_canyon'),
-        'pursuit_violins_tremolo': dict(azimuth=140.0, elevation=0.0, distance=4.0, space='np_street_canyon'),
-        'pursuit_cymbals': dict(azimuth=-150.0, elevation=0.0, distance=3.6, space='np_street_canyon'),
-    },
+    spatial_staging={n: dict(azimuth=a, elevation=e, distance=r, space='np_street_canyon') for n, (a, e, r) in STAGE.items() if n.startswith('pursuit_')},
+
     immersive=dict(
         enabled=True,
         why='the listener sits inside the courier\'s car: the engine and the wipers are in front, the road and the spray are behind and at the sides, and the sirens '

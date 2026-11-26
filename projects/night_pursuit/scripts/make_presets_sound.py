@@ -13,6 +13,7 @@ import math
 import os
 
 import timeline as T
+from staging import STAGE
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 P = os.path.join(HERE, '..', 'presets')
@@ -215,7 +216,7 @@ write('sfx', 'np_engine', dict(
              events=dict(kind='poisson', rate=0.8, start=round(T_CUT + 1.2 - OFF, 2))),
     ]),
     role='fx', gain_db=-3.0, reverb=0.02,
-    spatial=dict(azimuth=180.0, elevation=0.0, distance=1.0, space=SPACE, binaural=True, kind='spot'),
+    spatial=dict(azimuth=STAGE['np_engine'][0], elevation=STAGE['np_engine'][1], distance=STAGE['np_engine'][2], space=SPACE, binaural=True, kind='spot'),
     eq=[dict(type='hp', f=30.0), dict(type='lp', f=9000.0)],
     fx=slowmo_fx(900.0, -2.0),
     sources=['car_engine_v8',
@@ -300,7 +301,7 @@ write('sfx', 'np_wipers', dict(
              events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: (-90.0 + 78.0 * smooth((t - OFF) / 0.15)) if t < T_CUT else -90.0, 0.0, END, 0.25))])),
     ]),
     role='fx', gain_db=-8.0, reverb=0.0,
-    spatial=dict(azimuth=-60.0, elevation=20.0, distance=0.7, space=SPACE, binaural=True, kind='spot'),
+    spatial=dict(azimuth=STAGE['np_wipers'][0], elevation=STAGE['np_wipers'][1], distance=STAGE['np_wipers'][2], space=SPACE, binaural=True, kind='spot'),
     eq=[dict(type='hp', f=250.0), dict(type='lp', f=7000.0)],
     sources=['wiper_blades', 'ESTIMATE: the swish band, the thump and the levels are starting values; the rate is from FMVSS 104 and service data in the research note']))
 
@@ -452,7 +453,7 @@ write('sfx', 'np_crash', dict(
              events=dict(kind='poisson', rate=26.0, start=round(T_CRASH + 0.08 - OFF, 3), end=round(T_CRASH + 2.4 - OFF, 3))),
     ]),
     role='fx', gain_db=-4.0, reverb=0.12,
-    spatial=dict(azimuth=40.0, elevation=0.0, distance=12.0, space=SPACE, binaural=True, kind='spot'),
+    spatial=dict(azimuth=STAGE['np_crash'][0], elevation=STAGE['np_crash'][1], distance=STAGE['np_crash'][2], space=SPACE, binaural=True, kind='spot'),
     eq=[dict(type='hp', f=40.0), dict(type='lp', f=12000.0)],
     sources=['car_crash_impact', 'ESTIMATE: no collision recording was measured; the plate modes, the tear and the glass rate are starting values']))
 
