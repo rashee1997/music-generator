@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-26T13:14:09Z",
+  "timestamp": "2026-11-26T13:16:38Z",
   "status": "FAILED",
   "mode": "project",
   "deliverables": {
@@ -1275,38 +1275,38 @@
         "warns": 0,
         "rows": 250,
         "profile": "night_pursuit_cinematic",
-        "total_ms": 33919.234981000045,
+        "total_ms": 1462.5911799994356,
         "timings": {
-          "bass_clarinet": 783.0646270012949,
-          "bass_drum": 2371.0412020009244,
-          "basses": 4764.161768998747,
-          "bumps": 2004.8379390027549,
-          "celli": 2152.3762659999193,
-          "choir": 9409.773159000906,
-          "city_far": 2258.6979400002747,
-          "crash": 1031.8224650000047,
-          "cymbals": 1091.662169998017,
-          "ferrari": 1274.5208619999175,
-          "helicopter": 1049.1752870002529,
-          "horns": 2035.7579839983373,
-          "lamborghini": 1546.3707829985651,
-          "landing": 1462.2372749981878,
-          "mustang": 1233.2847010002297,
-          "piano": 2854.9044229985157,
-          "piano_low": 3301.2701150000794,
-          "porsche": 1416.1971509965952,
-          "siren_first": 1192.7186530010658,
-          "siren_second": 1139.9503649990947,
-          "snare": 911.4908939991437,
-          "solo_violin": 2838.834027003031,
-          "sub_drop": 1937.506886999472,
-          "sub_pulse": 1487.2717879989068,
-          "taiko": 2018.4064589993795,
-          "timpani": 803.4259009982634,
-          "trombones": 4050.9771819997695,
-          "tuba": 2921.664992998558,
-          "violins_staccato": 3856.146660000377,
-          "violins_tremolo": 5063.003166000271
+          "bass_clarinet": 0.0,
+          "bass_drum": 0.0,
+          "basses": 0.0,
+          "bumps": 0.0,
+          "celli": 0.0,
+          "choir": 0.0,
+          "city_far": 0.0,
+          "crash": 0.0,
+          "cymbals": 0.0,
+          "ferrari": 0.0,
+          "helicopter": 0.0,
+          "horns": 0.0,
+          "lamborghini": 0.0,
+          "landing": 0.0,
+          "mustang": 0.0,
+          "piano": 0.0,
+          "piano_low": 0.0,
+          "porsche": 0.0,
+          "siren_first": 0.0,
+          "siren_second": 0.0,
+          "snare": 0.0,
+          "solo_violin": 0.0,
+          "sub_drop": 0.0,
+          "sub_pulse": 0.0,
+          "taiko": 0.0,
+          "timpani": 0.0,
+          "trombones": 0.0,
+          "tuba": 0.0,
+          "violins_staccato": 0.0,
+          "violins_tremolo": 0.0
         },
         "workers": 3,
         "metrics": [
@@ -6213,8 +6213,8 @@
           }
         ],
         "duration_s": 196.46895691609978,
-        "cached_stems": 0,
-        "measured_stems": 30
+        "cached_stems": 30,
+        "measured_stems": 0
       },
       "mix": null
     }
@@ -6300,6 +6300,16 @@
     {
       "attempt": 9,
       "time": "2026-11-26T13:14:09Z",
+      "fails": 3,
+      "failing": [
+        "stem.dropout: stem \"basses\": longest hole 150 ms (limit 20-1000 ms), floor -84.1 dBFS; 4 hole(s)",
+        "stem.edge: stem \"basses\": audible span 0.000-193.860 s against score notes 0.000-193.952 s: leading silence 0 ms, trailing silence 92 ms (limit 25 ms)",
+        "stem.dead: stem \"basses\": own median -36.1 dBFS, worst section shortfall 12.4 dB (limit 12 dB), active sections 8; dropped in a section"
+      ]
+    },
+    {
+      "attempt": 10,
+      "time": "2026-11-26T13:16:38Z",
       "fails": 3,
       "failing": [
         "stem.dropout: stem \"basses\": longest hole 150 ms (limit 20-1000 ms), floor -84.1 dBFS; 4 hole(s)",
