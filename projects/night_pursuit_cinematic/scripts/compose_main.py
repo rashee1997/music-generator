@@ -74,7 +74,7 @@ def key_shift(bar):
 COLLAPSE = range(int(T.SLOMO_JUMP['bar']), int(T.SNAP_JUMP))
 TUNNEL_THIN = range(s0('the_tunnel'), s0('the_tunnel') + 6)         # six bars of pulse and low brass only
 
-basses = Track('basses', 'pursuit_basses', 'bass', fade_out_s=2.5)
+basses = Track('basses', 'pursuit_basses', 'bass')
 piano_low = Track('piano_low', 'pursuit_piano_low', 'bass')
 tuba = Track('tuba', 'pursuit_tuba', 'bass')
 bass_drum = Track('bass_drum', 'pursuit_bass_drum', 'drum')
