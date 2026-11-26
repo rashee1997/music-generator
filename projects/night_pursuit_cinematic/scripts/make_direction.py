@@ -108,7 +108,7 @@ sheet = dict(
     duration_s=DUR,
     in_point_s=0.0,
     out_point_s=DUR,
-    ending='fade',
+    ending='tail_out',
     feel=['tense', 'relentless', 'cold'],
     avoid_feel=['playful', 'calm', 'triumphant'],
     sections=[dict(name=s['name'], start_s=s['start_s'], end_s=s['end_s'], energy=s['energy'], role=s['role'],

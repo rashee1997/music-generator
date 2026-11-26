@@ -14,7 +14,7 @@ STAGE = {
     'pursuit_taiko':            (-130.0, 0.0, 3.2),
     'pursuit_tuba':             (150.0, 0.0, 1.8),
     'pursuit_sub_drop':         (0.0, 20.0, 1.0),
-    'pursuit_sub_pulse':        (0.0, 40.0, 1.0),
+    'pursuit_sub_pulse':        (0.0, 40.0, 1.6),
     'pursuit_horns':            (60.0, 15.0, 2.6),
     'pursuit_trombones':        (-60.0, 15.0, 2.8),
     'pursuit_piano':            (-110.0, 15.0, 2.0),
