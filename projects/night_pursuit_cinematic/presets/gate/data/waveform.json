@@ -1,5 +1,5 @@
 {
-  "duration_s": 193.29274376417234,
+  "duration_s": 193.2927664399093,
   "sections": [
     {
       "name": "the_race",
@@ -112,19 +112,13 @@
       "PASS"
     ],
     [
-      134.7877,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      192.21,
+      191.94,
       "dropout",
       "master",
       "FAIL"
     ],
     [
-      192.255,
+      192.03,
       "dropout",
       "master",
       "FAIL"

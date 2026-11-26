@@ -74,7 +74,7 @@ def key_shift(bar):
 COLLAPSE = range(int(T.SLOMO_JUMP['bar']), int(T.SNAP_JUMP))
 TUNNEL_THIN = range(s0('the_tunnel'), s0('the_tunnel') + 6)         # six bars of pulse and low brass only
 
-basses = Track('basses', 'pursuit_basses', 'bass')
+basses = Track('basses', 'pursuit_basses', 'bass', fade_out_s=2.5)
 piano_low = Track('piano_low', 'pursuit_piano_low', 'bass')
 tuba = Track('tuba', 'pursuit_tuba', 'bass')
 bass_drum = Track('bass_drum', 'pursuit_bass_drum', 'drum')
@@ -112,7 +112,7 @@ for bar in range(1, T.END_BAR):
     if collapse:
         basses.add(bar, 0, 4.25, p(C + r, 1) if bar != int(T.SNAP_JUMP) - 1 else p(Gb + r, 1), 0.55)
     elif escape:
-        basses.add(bar, 0, 4.02, p(C, 1), vel(0.66 - 0.02 * (bar - s0('the_escape')), 0.03))
+        basses.add(bar, 0, 4.02 if bar < T.END_BAR - 1 else 6.0, p(C, 1), vel(0.66 - 0.02 * (bar - s0('the_escape')), 0.03))      # the last note rings on into the end as one smooth decay
     elif k == 3:
         basses.add(bar, 0, 2.14, p((C + r + walk[k]) % 12, 1), vel(top, 0.05))
         basses.add(bar, 2.0, 1.64, p(G + r, 1), vel(top - 0.06, 0.05))

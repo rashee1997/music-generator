@@ -6,7 +6,7 @@
     "warns": 0,
     "rows": 250,
     "profile": "night_pursuit_cinematic",
-    "total_ms": 8961.48783800163,
+    "total_ms": 5662.410500997794,
     "timings": {
       "bass_clarinet": 0.0,
       "bass_drum": 0.0,
@@ -17,19 +17,19 @@
       "city_far": 0.0,
       "crash": 0.0,
       "cymbals": 0.0,
-      "ferrari": 1152.291274000163,
+      "ferrari": 1791.5315980026207,
       "helicopter": 0.0,
       "horns": 0.0,
-      "lamborghini": 1317.5464030027797,
+      "lamborghini": 1725.8598339976743,
       "landing": 0.0,
-      "mustang": 1161.7121979979856,
+      "mustang": 1793.372186999477,
       "piano": 0.0,
       "piano_low": 0.0,
       "porsche": 0.0,
       "siren_first": 0.0,
       "siren_second": 0.0,
       "snare": 0.0,
-      "solo_violin": 2913.2823839972843,
+      "solo_violin": 0.0,
       "sub_drop": 0.0,
       "sub_pulse": 0.0,
       "taiko": 0.0,
@@ -1594,11 +1594,11 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"ferrari\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2231 event(s) rejected as a dense burst, 735 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"ferrari\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 4826 event(s) rejected as a dense burst, 742 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 2231,
-        "attacks_ignored": 735,
+        "rejected": 4826,
+        "attacks_ignored": 742,
         "max_cluster_span_ms": 1.4965986394557824
       },
       {
@@ -1612,7 +1612,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -57.9 dBFS; 0 hole(s)",
+        "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -56.9 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -1672,14 +1672,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"ferrari\": own median -20.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"ferrari\": own median -19.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -20.19,
-            "expected_db": -20.19,
+            "measured_db": -19.2,
+            "expected_db": -19.2,
             "dyn": 0.75
           }
         ],
@@ -2046,11 +2046,11 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6926 event(s) rejected as a dense burst, 668 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2257 event(s) rejected as a dense burst, 500 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 6926,
-        "attacks_ignored": 668,
+        "rejected": 2257,
+        "attacks_ignored": 500,
         "max_cluster_span_ms": 1.4965986394557824
       },
       {
@@ -2064,7 +2064,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -58.6 dBFS; 0 hole(s)",
+        "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -60.4 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -2125,14 +2125,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"lamborghini\": own median -20.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"lamborghini\": own median -22.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -20.74,
-            "expected_db": -20.74,
+            "measured_db": -22.57,
+            "expected_db": -22.57,
             "dyn": 0.75
           }
         ],
@@ -4915,8 +4915,8 @@
       }
     ],
     "duration_s": 195.42412698412699,
-    "cached_stems": 26,
-    "measured_stems": 4
+    "cached_stems": 27,
+    "measured_stems": 3
   },
   "rows": [
     {
@@ -5302,12 +5302,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"ferrari\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2231 event(s) rejected as a dense burst, 735 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"ferrari\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 4826 event(s) rejected as a dense burst, 742 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -57.9 dBFS; 0 hole(s)"
+      "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -56.9 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5327,7 +5327,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"ferrari\": own median -20.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"ferrari\": own median -19.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -5422,12 +5422,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6926 event(s) rejected as a dense burst, 668 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2257 event(s) rejected as a dense burst, 500 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -58.6 dBFS; 0 hole(s)"
+      "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -60.4 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5447,7 +5447,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"lamborghini\": own median -20.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"lamborghini\": own median -22.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",

@@ -1556,11 +1556,11 @@
     "margin": 0.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"ferrari\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2231 event(s) rejected as a dense burst, 735 as a steep attack; max cluster span 1.497 ms",
+    "detail": "stem \"ferrari\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 4826 event(s) rejected as a dense burst, 742 as a steep attack; max cluster span 1.497 ms",
     "mad_count": 0,
     "lpc_count": 0,
-    "rejected": 2231,
-    "attacks_ignored": 735,
+    "rejected": 4826,
+    "attacks_ignored": 742,
     "max_cluster_span_ms": 1.4965986394557824
    },
    {
@@ -1574,7 +1574,7 @@
     "margin": -20.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -57.9 dBFS; 0 hole(s)",
+    "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -56.9 dBFS; 0 hole(s)",
     "holes": []
    },
    {
@@ -1634,14 +1634,14 @@
     "margin": -12.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"ferrari\": own median -20.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+    "detail": "stem \"ferrari\": own median -19.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
     "fail": false,
     "table": [
      {
       "section": "the_race",
       "start_s": 0.0,
-      "measured_db": -20.19,
-      "expected_db": -20.19,
+      "measured_db": -19.2,
+      "expected_db": -19.2,
       "dyn": 0.75
      }
     ],
@@ -2008,11 +2008,11 @@
     "margin": 0.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6926 event(s) rejected as a dense burst, 668 as a steep attack; max cluster span 1.497 ms",
+    "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2257 event(s) rejected as a dense burst, 500 as a steep attack; max cluster span 1.497 ms",
     "mad_count": 0,
     "lpc_count": 0,
-    "rejected": 6926,
-    "attacks_ignored": 668,
+    "rejected": 2257,
+    "attacks_ignored": 500,
     "max_cluster_span_ms": 1.4965986394557824
    },
    {
@@ -2026,7 +2026,7 @@
     "margin": -20.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -58.6 dBFS; 0 hole(s)",
+    "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -60.4 dBFS; 0 hole(s)",
     "holes": []
    },
    {
@@ -2087,14 +2087,14 @@
     "margin": -12.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"lamborghini\": own median -20.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+    "detail": "stem \"lamborghini\": own median -22.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
     "fail": false,
     "table": [
      {
       "section": "the_race",
       "start_s": 0.0,
-      "measured_db": -20.74,
-      "expected_db": -20.74,
+      "measured_db": -22.57,
+      "expected_db": -22.57,
       "dyn": 0.75
      }
     ],
@@ -4829,26 +4829,24 @@
     "row": "clicks",
     "stage": "mix",
     "stem": null,
-    "level": "FAIL",
-    "value": 1.0,
+    "level": "PASS",
+    "value": 0.0,
     "unit": "events",
     "threshold": 0.0,
-    "margin": 1.0,
-    "worst_times_s": [
-     134.7877
-    ],
+    "margin": 0.0,
+    "worst_times_s": [],
     "calibrated": true,
-    "detail": "1 clustered impulse event(s) (MAD), 1 LPC frame(s); 114 event(s) rejected as a dense burst, 34 as a steep attack; max cluster span 1.497 ms"
+    "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 76 event(s) rejected as a dense burst, 19 as a steep attack; max cluster span 1.497 ms"
    },
    {
     "row": "loudness",
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -16.05867028079349,
+    "value": -16.058728383300373,
     "unit": "LUFS",
     "threshold": -16.0,
-    "margin": -2.441329719206511,
+    "margin": -2.441271616699627,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-16.1 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -4871,16 +4869,16 @@
     "stage": "mix",
     "stem": null,
     "level": "FAIL",
-    "value": 104.99999999998977,
+    "value": 60.000000000002274,
     "unit": "ms",
     "threshold": 20.0,
-    "margin": 84.99999999998977,
+    "margin": 40.000000000002274,
     "worst_times_s": [
-     192.21,
-     192.255
+     191.94,
+     192.03
     ],
     "calibrated": false,
-    "detail": "longest hole 105 ms (limit 20-1000 ms), floor -65.2 dBFS; 2 hole(s)"
+    "detail": "longest hole 60 ms (limit 20-1000 ms), floor -65.2 dBFS; 2 hole(s)"
    },
    {
     "row": "cut.hard",
@@ -4900,13 +4898,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 64.26399284589934,
+    "value": 59.58422509665502,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -52.26399284589934,
+    "margin": -47.58422509665502,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "end level -143.1 dBFS (limit -45), decay over final 300 ms 64.3 dB (limit 12); natural release"
+    "detail": "end level -143.1 dBFS (limit -45), decay over final 300 ms 59.6 dB (limit 12); natural release"
    },
    {
     "row": "clipping",
@@ -4926,10 +4924,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 1.242925477507749e-05,
+    "value": 1.2425499318391288e-05,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009875707452249225,
+    "margin": -0.0009875745006816088,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
@@ -4952,56 +4950,56 @@
       "start_s": 0.0,
       "end_s": 25.077,
       "energy": 0.75,
-      "level_db": -19.97840591448788
+      "level_db": -19.974540902995912
      },
      {
       "name": "spotted",
       "start_s": 25.077,
       "end_s": 38.892,
       "energy": 0.85,
-      "level_db": -19.844752623884514
+      "level_db": -19.841529876019095
      },
      {
       "name": "the_chase",
       "start_s": 38.892,
       "end_s": 72.228,
       "energy": 0.9,
-      "level_db": -19.564670761898277
+      "level_db": -19.56128102649479
      },
      {
       "name": "the_tunnel",
       "start_s": 72.228,
       "end_s": 95.085,
       "energy": 0.8,
-      "level_db": -20.62639088952918
+      "level_db": -20.622611957389037
      },
      {
       "name": "the_helicopter",
       "start_s": 95.085,
       "end_s": 117.636,
       "energy": 0.8,
-      "level_db": -19.272430012935096
+      "level_db": -19.268708243206923
      },
      {
       "name": "the_bumps",
       "start_s": 117.636,
       "end_s": 139.888,
       "energy": 1.0,
-      "level_db": -17.39482528543258
+      "level_db": -17.390897499073745
      },
      {
       "name": "the_flyover",
       "start_s": 139.888,
       "end_s": 165.785,
       "energy": 0.8,
-      "level_db": -24.467989685487787
+      "level_db": -24.464490954157423
      },
      {
       "name": "the_escape",
       "start_s": 165.785,
       "end_s": 192.648,
       "energy": 0.5,
-      "level_db": -34.58622635616418
+      "level_db": -34.5807361799646
      }
     ]
    }
