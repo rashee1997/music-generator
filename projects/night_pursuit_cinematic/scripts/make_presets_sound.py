@@ -261,9 +261,9 @@ write('sfx', 'np_siren_wail', dict(
                           gain_db=[dict(kind='curve', points=sample(lambda t: gate_db(t, S1_ON, S1_OFF, OCC1) - 3.0 * slowness(t), 0.0, S1_OFF, 0.1))]))]),
     role='fx', gain_db=CAR_LEVEL_DB - 2.0, reverb=0.14,
     spatial=dict(azimuth=-30.0, elevation=0.0, distance=90.0, space=SPACE, binaural=True, kind='spot', trajectory=dict(spatial_role='mover', doppler_strength=1.0, keyframes=keyframes(
-        [(EV['spot'], -30.0, 90.0, 0.0), (EV['spot'] + 8.0, -20.0, 40.0, 0.0), (S('the_chase') + 2.0, 170.0, 20.0, 0.0), (S('the_tunnel'), 175.0, 12.0, 0.0),
-         (S('the_helicopter') + 2.0, 160.0, 30.0, 0.0), (S('the_bumps') + 2.0, 170.0, 24.0, 0.0), (S('the_flyover') + 4.0, 175.0, 18.0, 0.0),
-         (EV['evade'], 180.0, 30.0, 0.0), (S1_OFF, 150.0, 120.0, 0.0)]))),
+        [(EV['spot'], -30.0, 90.0, 0.0), (EV['spot'] + 8.0, -20.0, 40.0, 0.0), (S('the_chase') + 2.0, 140.0, 20.0, 0.0), (S('the_tunnel'), 145.0, 12.0, 0.0),
+         (S('the_helicopter') + 2.0, 135.0, 30.0, 0.0), (S('the_bumps') + 2.0, 140.0, 24.0, 0.0), (S('the_flyover') + 4.0, 145.0, 18.0, 0.0),
+         (EV['evade'], 150.0, 30.0, 0.0), (S1_OFF, 150.0, 120.0, 0.0)]))),
     eq=[dict(type='hp', f=300.0), dict(type='lp', f=8000.0)], fx=occlusion_fx(OCC1, 900.0) + slowmo_fx(2500.0, 0.0),
     sources=['police_siren', 'ESTIMATE: sweep limits, six harmonics and levels are starting values']))
 
