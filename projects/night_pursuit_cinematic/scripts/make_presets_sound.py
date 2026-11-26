@@ -384,7 +384,7 @@ write('sfx', 'np_crash', dict(
         dict(name='glass', gain_db=-6.0, excite=dict(kind='impact', tau=0.0006), resonator=dict(kind='modal', law='bar', f1=3300.0, n=10, t60=0.25),
              events=dict(kind='poisson', rate=26.0, start=0.13, end=2.45))]),
     role='fx', gain_db=CAR_LEVEL_DB + 4.0, reverb=0.12,
-    spatial=dict(azimuth=115.0, elevation=0.0, distance=22.0, space=SPACE, binaural=True, kind='spot'),
+    spatial=dict(azimuth=115.0, elevation=20.0, distance=22.0, space=SPACE, binaural=True, kind='spot'),
     eq=[dict(type='hp', f=40.0), dict(type='lp', f=12000.0)],
     sources=['car_crash_impact', 'ESTIMATE: no collision recording was measured; the plate modes, the tear and the glass rate are starting values']))
 

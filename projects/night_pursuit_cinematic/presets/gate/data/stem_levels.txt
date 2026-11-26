@@ -28,8 +28,8 @@ celli,the_tunnel,-34.4,-33.12,0.8
 celli,the_helicopter,-35.8,-33.12,0.8
 celli,the_bumps,-31.71,-31.18,1.0
 celli,the_flyover,-40.46,-33.12,0.8
-choir,the_helicopter,-34.17,-41.79,0.8
-choir,the_escape,-53.03,-45.88,0.5
+choir,the_helicopter,-34.36,-43.91,0.8
+choir,the_escape,-57.07,-47.99,0.5
 city_far,the_race,-43.44,-43.23,0.9
 city_far,spotted,-44.62,-44.25,0.8
 city_far,the_chase,-43.26,-43.23,0.9
@@ -47,7 +47,7 @@ cymbals,the_helicopter,-38.71,-38.84,0.8
 cymbals,the_bumps,-37.51,-36.9,1.0
 cymbals,the_flyover,-37.61,-38.84,0.8
 cymbals,the_escape,-41.46,-42.92,0.5
-ferrari,the_race,-15.47,-15.47,0.9
+ferrari,the_race,-15.45,-15.45,0.9
 helicopter,the_tunnel,-16.22,-16.22,0.8
 horns,the_race,-21.59,-21.44,0.9
 horns,spotted,-24.02,-22.46,0.8
@@ -62,7 +62,7 @@ landing,the_flyover,-16.26,-16.26,0.8
 low_swell,the_chase,-29.43,-34.43,0.9
 low_swell,the_helicopter,-35.78,-35.46,0.8
 low_swell,the_flyover,-35.46,-35.46,0.8
-mustang,the_race,-24.15,-24.15,0.9
+mustang,the_race,-22.91,-22.91,0.9
 porsche,the_race,-16.16,-16.16,0.9
 siren_first,spotted,-16.47,-16.47,0.8
 snare,the_race,-26.93,-25.54,0.9

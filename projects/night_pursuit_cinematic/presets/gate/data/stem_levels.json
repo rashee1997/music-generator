@@ -234,15 +234,15 @@
         {
           "section": "the_helicopter",
           "start_s": 95.085,
-          "measured_db": -34.17,
-          "expected_db": -41.79,
+          "measured_db": -34.36,
+          "expected_db": -43.91,
           "dyn": 0.8
         },
         {
           "section": "the_escape",
           "start_s": 165.785,
-          "measured_db": -53.03,
-          "expected_db": -45.88,
+          "measured_db": -57.07,
+          "expected_db": -47.99,
           "dyn": 0.5
         }
       ]
@@ -387,8 +387,8 @@
         {
           "section": "the_race",
           "start_s": 0.0,
-          "measured_db": -15.47,
-          "expected_db": -15.47,
+          "measured_db": -15.45,
+          "expected_db": -15.45,
           "dyn": 0.9
         }
       ]
@@ -522,8 +522,8 @@
         {
           "section": "the_race",
           "start_s": 0.0,
-          "measured_db": -24.15,
-          "expected_db": -24.15,
+          "measured_db": -22.91,
+          "expected_db": -22.91,
           "dyn": 0.9
         }
       ]
