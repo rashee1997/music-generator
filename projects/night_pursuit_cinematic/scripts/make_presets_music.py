@@ -121,9 +121,9 @@ inst('pursuit_taiko', 'taiko_drum', 'drum',
      -80, 3.2, -4.0, 0.14, [HP(40), LP(6000)], humanize=dict(preset='natural', timing_ms=6.0, drift_ms=6.0, vel_sigma=5.0),
      extra=dict(mechanics_class='drum', onset_fade_ms=1.5, onset_fade_all=True), sources=[KB['hybrid'], KB['sf']])
 inst('pursuit_choir', 'choir_aahs', 'pad',
-     'The reveal: a wordless choir that opens over the helicopter, high and wide, from above.',
+     'The reveal: a wordless choir that opens over the helicopter, high and wide, from above (three voices a note: a chord of three notes with the hook on top needs 4 x 3 channels, and the renderer has 15).',
      0, 5.0, -8.0, 0.30, [HP(200), LP(8000)],
-     extra=dict(soundfont='muse_general', ensemble=dict(players=8, spread_cents=12, spread_ms=16, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
+     extra=dict(soundfont='muse_general', ensemble=dict(players=3, spread_cents=12, spread_ms=16, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
 inst('pursuit_solo_violin', 'violin', 'counter',
      'The cry over the flyover: one high violin carrying the hook an octave above the horns, close and a little exposed.',
      -40, 2.4, -6.0, 0.12, [HP(250), PK(3500, -4.0, 1.0), LP(8000)],

@@ -109,9 +109,9 @@ def car_keys(car):
                  (EV['end'], 0.0, 150.0)]
     elif car == 'lamborghini':
         # the rear right, 25 deg or more from the other mid-band parts that stand at 0 deg height (spatial.z_separation read the bass drum 15 deg apart)
-        keys += [(0.0, 128.0, 7.0), (sp - 1.0, 128.0, 9.0)] + passby(sp + 5.4, side=-1) + [(S('the_chase') + 3.0, 125.0, 15.0), (S('the_tunnel') + 6.0, 125.0, 14.0),
-                 (S('the_helicopter') + 2.0, 125.0, 80.0), (E_('the_helicopter') - 2.0, 125.0, 80.0), (S('the_bumps') + 2.0, 128.0, 8.0),
-                 (S('the_flyover') + 2.0, 125.0, 14.0), (EV['lost'], 125.0, 14.0), (EV['lost'] + 3.0, 150.0, 40.0)]
+        keys += [(0.0, 125.0, 7.0), (sp - 1.0, 125.0, 9.0)] + passby(sp + 5.4, side=-1) + [(S('the_chase') + 3.0, 125.0, 15.0), (S('the_tunnel') + 6.0, 125.0, 14.0),
+                 (S('the_helicopter') + 2.0, 125.0, 80.0), (E_('the_helicopter') - 2.0, 125.0, 80.0), (S('the_bumps') + 2.0, 125.0, 8.0),
+                 (S('the_flyover') + 2.0, 125.0, 14.0), (EV['lost'], 125.0, 14.0), (EV['lost'] + 3.0, 125.0, 40.0)]
     elif car == 'mustang':
         keys += [(0.0, 100.0, 9.0), (sp - 1.0, 98.0, 11.0)] + passby(sp + 5.0, side=-1) + [(S('the_chase') + 3.0, 96.0, 18.0), (EV['crash'] - 1.0, 96.0, 18.0),
                  (EV['crash'] + 1.6, 98.0, 30.0)]      # the right side, 60 deg off the plucked basses at 40 deg (spatial.z_separation read them 5 deg apart in the climax)

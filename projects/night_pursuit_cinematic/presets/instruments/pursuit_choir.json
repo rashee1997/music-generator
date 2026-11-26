@@ -1,7 +1,7 @@
 {
   "name": "pursuit_choir",
-  "character": "The reveal: a wordless choir that opens over the helicopter, high and wide, from above.",
-  "description": "The reveal: a wordless choir that opens over the helicopter, high and wide, from above.",
+  "character": "The reveal: a wordless choir that opens over the helicopter, high and wide, from above (three voices a note: a chord of three notes with the hook on top needs 4 x 3 channels, and the renderer has 15).",
+  "description": "The reveal: a wordless choir that opens over the helicopter, high and wide, from above (three voices a note: a chord of three notes with the hook on top needs 4 x 3 channels, and the renderer has 15).",
   "instrument": "choir_aahs",
   "role": "pad",
   "humanize": {
@@ -38,7 +38,7 @@
   ],
   "soundfont": "muse_general",
   "ensemble": {
-    "players": 8,
+    "players": 3,
     "spread_cents": 12,
     "spread_ms": 16,
     "vel_spread": 3
