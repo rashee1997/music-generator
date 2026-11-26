@@ -802,7 +802,15 @@
       {
         "type": "highshelf",
         "f": 5500.0,
-        "gain": -6.0,
+        "gain": -9.0,
+        "q": 0.7
+      }
+    ],
+    "pursuit_snare": [
+      {
+        "type": "highshelf",
+        "f": 5500.0,
+        "gain": -3.0,
         "q": 0.7
       }
     ],

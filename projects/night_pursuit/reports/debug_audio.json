@@ -1,5 +1,5 @@
 {
- "stamp": "20261126T085313",
+ "stamp": "20261126T085634",
  "project": "night_pursuit",
  "level": "FAIL",
  "sources": {
@@ -16,7 +16,7 @@
   ],
   "stems": "24 processed stems from .cache/mix",
   "master": "out/_draft_master.wav",
-  "verdict": "2026-11-26T08:37:04Z"
+  "verdict": "2026-11-26T08:53:13Z"
  },
  "binding": [
   {

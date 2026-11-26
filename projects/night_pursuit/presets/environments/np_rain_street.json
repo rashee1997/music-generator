@@ -31,7 +31,7 @@
    "high_hz": 7000,
    "mod_rate_hz": 0.08,
    "mod_depth": 0.1,
-   "gain_db": -20.0,
+   "gain_db": -26.0,
    "decorrelate": 1.0,
    "spatial": {
     "azimuth": 0,
