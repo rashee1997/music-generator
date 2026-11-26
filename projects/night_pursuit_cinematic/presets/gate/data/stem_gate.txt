@@ -1,4 +1,4 @@
-stem gate: 1 FAIL, 0 WARN, 242 rows, profile night_pursuit_cinematic, 20749 ms
+stem gate: 0 FAIL, 0 WARN, 242 rows, profile night_pursuit_cinematic, 6602 ms
 [PASS] stem.dc: stem "bass_clarinet": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "bass_clarinet": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "bass_clarinet": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -225,8 +225,8 @@ stem gate: 1 FAIL, 0 WARN, 242 rows, profile night_pursuit_cinematic, 20749 ms
 [PASS] stem.dropout: stem "violins_long": longest hole 0 ms (limit 20-1000 ms), floor -285.0 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "violins_long": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
 [PASS] stem.edge: stem "violins_long": audible span 82.035-182.470 s against score notes 82.062-180.468 s: leading silence -27 ms, trailing silence -2002 ms (limit 25 ms)
-[FAIL] stem.tick: stem "violins_long": onset autocorrelation 0.60 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 8 strong onset(s) of 229, 6 on the grid, IOI CV 1.963; peak rise 3.21 dB at those onsets over 8 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
-[PASS] stem.dead: stem "violins_long": own median -53.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve
+[PASS] stem.tick: stem "violins_long": onset autocorrelation 0.61 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 7 strong onset(s) of 227, 5 on the grid, IOI CV 1.909; peak rise 2.99 dB at those onsets over 7 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
+[PASS] stem.dead: stem "violins_long": own median -53.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve
 [PASS] stem.flatness: stem "violins_long": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [PASS] stem.dc: stem "violins_staccato": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "violins_staccato": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)

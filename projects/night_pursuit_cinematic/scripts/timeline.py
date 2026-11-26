@@ -24,8 +24,8 @@ BB = 4
 
 # (name, first bar, bars, energy, role, camera)
 SECTIONS = [
-    ('the_race',        1, 14, 0.75, 'place',     'inside'),
-    ('spotted',        15,  8, 0.85, 'establish', 'roadside'),
+    ('the_race',        1, 14, 0.90, 'place',     'inside'),
+    ('spotted',        15,  8, 0.80, 'establish', 'roadside'),
     ('the_chase',      23, 20, 0.90, 'build',     'chase'),
     ('the_tunnel',     43, 14, 0.80, 'peak',      'tunnel'),
     ('the_helicopter', 57, 14, 0.80, 'peak',      'aerial'),

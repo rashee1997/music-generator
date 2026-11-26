@@ -112,8 +112,8 @@ def car_keys(car):
                  (S('the_helicopter') + 2.0, -25.0, 80.0), (E_('the_helicopter') - 2.0, -25.0, 80.0), (S('the_bumps') + 2.0, -45.0, 8.0),
                  (S('the_flyover') + 2.0, -30.0, 14.0), (EV['lost'], -30.0, 14.0), (EV['lost'] + 3.0, -100.0, 40.0)]
     elif car == 'mustang':
-        keys += [(0.0, 45.0, 9.0), (sp - 1.0, 40.0, 11.0)] + passby(sp + 5.0, side=-1) + [(S('the_chase') + 3.0, 28.0, 18.0), (EV['crash'] - 1.0, 28.0, 18.0),
-                 (EV['crash'] + 1.6, 40.0, 30.0)]
+        keys += [(0.0, 100.0, 9.0), (sp - 1.0, 98.0, 11.0)] + passby(sp + 5.0, side=-1) + [(S('the_chase') + 3.0, 96.0, 18.0), (EV['crash'] - 1.0, 96.0, 18.0),
+                 (EV['crash'] + 1.6, 98.0, 30.0)]      # the right side, 60 deg off the plucked basses at 40 deg (spatial.z_separation read them 5 deg apart in the climax)
     else:
         keys += [(0.0, 150.0, 12.0), (sp - 1.0, 160.0, 18.0)] + passby(sp + 6.5) + [(S('the_chase') + 3.0, 165.0, 30.0), (S('the_tunnel') + 6.0, 170.0, 22.0),
                  (S('the_helicopter') + 2.0, 150.0, 110.0), (E_('the_helicopter') - 2.0, 150.0, 110.0), (S('the_bumps') + 2.0, 150.0, 14.0),

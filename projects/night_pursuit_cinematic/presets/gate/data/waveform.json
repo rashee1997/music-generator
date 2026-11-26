@@ -1,5 +1,5 @@
 {
-  "duration_s": 193.85739229024944,
+  "duration_s": 194.0925396825397,
   "sections": [
     {
       "name": "the_race",
@@ -60,6 +60,12 @@
     [
       0.0348,
       "stem.tick",
+      "basses_pizz",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
       "celli",
       "PASS"
     ],
@@ -76,21 +82,21 @@
       "PASS"
     ],
     [
-      0.1393,
+      0.0348,
       "stem.tick",
-      "piano",
+      "violas",
       "PASS"
     ],
     [
-      0.7082,
-      "stem.tick",
-      "piano_low",
-      "PASS"
-    ],
-    [
-      65.6428,
+      66.6761,
       "stem.tick",
       "violins_staccato",
+      "PASS"
+    ],
+    [
+      71.4246,
+      "stem.tick",
+      "low_swell",
       "PASS"
     ],
     [
@@ -102,7 +108,7 @@
     [
       82.0709,
       "stem.tick",
-      "violins_tremolo",
+      "violins_long",
       "PASS"
     ],
     [
@@ -110,6 +116,12 @@
       "stem.tick",
       "choir",
       "PASS"
+    ],
+    [
+      193.26,
+      "dropout",
+      "master",
+      "FAIL"
     ]
   ]
 }

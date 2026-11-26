@@ -1,7 +1,7 @@
 {
- "stamp": "20261126T163518",
+ "stamp": "20261126T171817",
  "project": "night_pursuit_cinematic",
- "level": "WARN",
+ "level": "FAIL",
  "sources": {
   "score": "/home/user/music-generator/projects/night_pursuit_cinematic/scores/night_pursuit_cinematic_score.json",
   "gate_data": [
@@ -14,20 +14,30 @@
    "stereo.json",
    "waveform.json"
   ],
-  "stems": "30 processed stems from .cache/mix",
+  "stems": "34 processed stems from .cache/mix",
   "master": "out/_draft_master.wav",
-  "verdict": "2026-11-26T14:33:52Z"
+  "verdict": "2026-11-26T17:17:42Z"
  },
  "binding": [
   {
+   "row": "dropout",
+   "stem": null,
+   "level": "FAIL",
+   "value": 20.000000000010232,
+   "threshold": 20.0,
+   "unit": "ms",
+   "safety": -0.0,
+   "detail": "longest hole 20 ms (limit 20-1000 ms), floor -64.9 dBFS; 1 hole(s)"
+  },
+  {
    "row": "section.energy",
    "stem": null,
-   "level": "WARN",
-   "value": 0.6587325492402599,
+   "level": "FAIL",
+   "value": 0.43915503282683993,
    "threshold": 0.5,
    "unit": "rho",
-   "safety": -0.7937,
-   "detail": "Spearman rho 0.66 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)"
+   "safety": 0.3042,
+   "detail": "Spearman rho 0.44 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)"
   }
  ],
  "advisory": [
@@ -242,36 +252,6 @@
    "unit": ""
   },
   {
-   "row": "stem.dc",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
-   "row": "stem.edge",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
-   "row": "stem.tick",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
-   "row": "stem.dc",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
-   "row": "stem.edge",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
-   "row": "stem.tick",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
    "row": "stem.dropout",
    "value": 0.0,
    "unit": ""
@@ -458,56 +438,6 @@
   },
   {
    "row": "stem.dc",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
-   "row": "stem.edge",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
-   "row": "stem.tick",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
-   "row": "stem.dc",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
-   "row": "stem.edge",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
-   "row": "stem.tick",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
-   "row": "stem.dc",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
-   "row": "stem.edge",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
-   "row": "stem.tick",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
-   "row": "stem.dropout",
-   "value": 0.0,
-   "unit": ""
-  },
-  {
-   "row": "stem.cut",
    "value": 0.0,
    "unit": ""
   },
@@ -590,33 +520,116 @@
    "row": "stem.tick",
    "value": 0.0,
    "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
   }
  ],
  "domains": {
-  "run": [],
+  "run": [
+   "master"
+  ],
   "skipped": {
-   "stems": 112
+   "stems": 100
   }
  },
  "model": {
   "first_order": true,
-  "rows": 0,
-  "levers": []
+  "rows": 8,
+  "levers": [
+   {
+    "id": "render.oversample",
+    "domain": "master",
+    "kind": "oversample",
+    "stem": null,
+    "current": 1.0,
+    "lo": 1.0,
+    "hi": 8.0,
+    "step": 1.0,
+    "unit": "x",
+    "text": "master oversampling before the limiter"
+   },
+   {
+    "id": "note.basses.d",
+    "domain": "master",
+    "kind": "note_len",
+    "stem": "basses",
+    "current": 3.0192,
+    "lo": 2.9592,
+    "hi": 3.0792,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "basses written note length (mean 3.0192 beats)"
+   }
+  ]
  },
  "plan": {
-  "status": "no rows",
+  "status": "nothing to move",
   "worst_safety": null,
   "deltas": {},
   "clearing": {},
-  "predicted": {},
+  "predicted": {
+   "dropout::-": [
+    -5.115907697472721e-13,
+    -5.115907697472721e-13
+   ],
+   "clicks::-": [
+    0.0,
+    0.0
+   ],
+   "loudness::-": [
+    0.02,
+    0.02
+   ],
+   "true peak::-": [
+    0.00022029629274526266,
+    0.00022029629274526266
+   ],
+   "cut.hard::-": [
+    2.0,
+    2.0
+   ],
+   "end.abrupt::-": [
+    0.02,
+    0.02
+   ],
+   "clipping::-": [
+    0.0,
+    0.0
+   ],
+   "master.dc::-": [
+    0.0988131238341975,
+    0.0988131238341975
+   ]
+  },
   "conflicts": [],
-  "closed": [],
+  "closed": [
+   "dropout"
+  ],
   "burned": [],
   "notes": [],
   "experiments": []
  },
  "forensics": [],
  "notes": [
+  "dropout has 1 event(s) at 193.260s; the transient is basses 98%, bass_drum 2%, city_far 0%",
   "section.energy: no domain module examines this row yet"
  ]
 }

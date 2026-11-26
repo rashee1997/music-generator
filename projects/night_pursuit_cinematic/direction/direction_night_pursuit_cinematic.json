@@ -33,7 +33,7 @@
       "name": "the_race",
       "start_s": 0.0,
       "end_s": 25.077,
-      "energy": 0.75,
+      "energy": 0.9,
       "role": "place",
       "action": "Inside the Ferrari at speed on a wet avenue at night: a street race, four cars, the Porsche holding one steady speed at the side.",
       "music": "it starts at once: the pulse and the horns state the hook over a low pulse, the taiko on the first beat; no slow opening"
@@ -42,7 +42,7 @@
       "name": "spotted",
       "start_s": 25.077,
       "end_s": 38.892,
-      "energy": 0.85,
+      "energy": 0.8,
       "role": "establish",
       "action": "The camera on the kerb: the cars pass at different speeds with the Doppler swing; a cruiser sees the speeding and its siren starts.",
       "music": "the pulse rolls on; the hook is answered by the clarinet; the music widens and brightens for the outside camera"
