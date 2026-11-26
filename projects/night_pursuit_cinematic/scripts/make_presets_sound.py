@@ -108,9 +108,10 @@ def car_keys(car):
                  (S('the_bumps') + 2.0, 180.0, 1.2), (S('the_flyover') - 1.0, 180.0, 1.2), (S('the_flyover') + 2.0, 0.0, 12.0), (EV['evade'] + 1.0, 0.0, 14.0),
                  (EV['end'], 0.0, 150.0)]
     elif car == 'lamborghini':
-        keys += [(0.0, -55.0, 7.0), (sp - 1.0, -50.0, 9.0)] + passby(sp + 2.4) + [(S('the_chase') + 3.0, -25.0, 15.0), (S('the_tunnel') + 6.0, -20.0, 14.0),
-                 (S('the_helicopter') + 2.0, -25.0, 80.0), (E_('the_helicopter') - 2.0, -25.0, 80.0), (S('the_bumps') + 2.0, -45.0, 8.0),
-                 (S('the_flyover') + 2.0, -30.0, 14.0), (EV['lost'], -30.0, 14.0), (EV['lost'] + 3.0, -100.0, 40.0)]
+        # the rear right, 25 deg or more from the other mid-band parts that stand at 0 deg height (spatial.z_separation read the bass drum 15 deg apart)
+        keys += [(0.0, 128.0, 7.0), (sp - 1.0, 128.0, 9.0)] + passby(sp + 2.4) + [(S('the_chase') + 3.0, 125.0, 15.0), (S('the_tunnel') + 6.0, 125.0, 14.0),
+                 (S('the_helicopter') + 2.0, 125.0, 80.0), (E_('the_helicopter') - 2.0, 125.0, 80.0), (S('the_bumps') + 2.0, 128.0, 8.0),
+                 (S('the_flyover') + 2.0, 125.0, 14.0), (EV['lost'], 125.0, 14.0), (EV['lost'] + 3.0, 150.0, 40.0)]
     elif car == 'mustang':
         keys += [(0.0, 100.0, 9.0), (sp - 1.0, 98.0, 11.0)] + passby(sp + 5.0, side=-1) + [(S('the_chase') + 3.0, 96.0, 18.0), (EV['crash'] - 1.0, 96.0, 18.0),
                  (EV['crash'] + 1.6, 98.0, 30.0)]      # the right side, 60 deg off the plucked basses at 40 deg (spatial.z_separation read them 5 deg apart in the climax)
@@ -144,7 +145,7 @@ for car in ('ferrari', 'lamborghini', 'mustang', 'porsche'):
     v_of = lambda t: cars.interp(list(zip(T_, d['v'])), t)                   # noqa: E731
     load = lambda t: cars.interp(list(zip(T_, d['load'])), t)                # noqa: E731
     f_idle = cars.firing_hz(car, c['idle'])
-    END_FADE = 2.5 if t_end >= EV['end'] - 0.5 else 0.8          # the cars that run to the end of the cue fade slowly; one that leaves the scene is gone in under a second
+    END_FADE = 2.5 if car in ('ferrari', 'porsche') else 0.8          # the cars that run to the end of the cue fade slowly; one that leaves the scene is gone in under a second
     ending = lambda t, L=END_FADE: (-90.0 * smooth((t - (t_end - L)) / L)) if t > t_end - L else 0.0     # noqa: E731  the engine dies or the car leaves
     fade_in = lambda t: -90.0 * (1.0 - smooth((t - OFF) / 0.4)) if t - OFF < 0.4 else 0.0           # noqa: E731
 

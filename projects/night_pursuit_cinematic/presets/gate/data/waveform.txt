@@ -1,16 +1,16 @@
 file: /home/user/music-generator/projects/night_pursuit_cinematic/out/_draft_master.wav
-duration_s: 194.093
+duration_s: 194.215
 sample_rate: 44100
 sections:
-  the_race: 0.00-25.08 s, dyn 0.75
-  spotted: 25.08-38.89 s, dyn 0.85
+  the_race: 0.00-25.08 s, dyn 0.90
+  spotted: 25.08-38.89 s, dyn 0.80
   the_chase: 38.89-72.23 s, dyn 0.90
   the_tunnel: 72.23-95.08 s, dyn 0.80
   the_helicopter: 95.08-117.64 s, dyn 0.80
   the_bumps: 117.64-139.89 s, dyn 1.00
   the_flyover: 139.89-165.78 s, dyn 0.80
   the_escape: 165.78-192.65 s, dyn 0.50
-flagged times: 12
+flagged times: 11
   0.035s stem.tick [PASS] basses
   0.035s stem.tick [PASS] basses_pizz
   0.035s stem.tick [PASS] celli
@@ -22,4 +22,3 @@ flagged times: 12
   72.249s stem.tick [PASS] trombones
   82.071s stem.tick [PASS] violins_long
   95.097s stem.tick [PASS] choir
-  193.260s dropout [FAIL] master

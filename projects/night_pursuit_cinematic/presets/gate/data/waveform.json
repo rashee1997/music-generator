@@ -1,17 +1,17 @@
 {
-  "duration_s": 194.0925396825397,
+  "duration_s": 194.2154195011338,
   "sections": [
     {
       "name": "the_race",
       "start_s": 0.0,
       "end_s": 25.077,
-      "dyn": 0.75
+      "dyn": 0.9
     },
     {
       "name": "spotted",
       "start_s": 25.077,
       "end_s": 38.892,
-      "dyn": 0.85
+      "dyn": 0.8
     },
     {
       "name": "the_chase",
@@ -116,12 +116,6 @@
       "stem.tick",
       "choir",
       "PASS"
-    ],
-    [
-      193.26,
-      "dropout",
-      "master",
-      "FAIL"
     ]
   ]
 }

@@ -1,4 +1,4 @@
-stem gate: 2 FAIL, 0 WARN, 242 rows, profile night_pursuit_cinematic, 29328 ms
+stem gate: 0 FAIL, 0 WARN, 242 rows, profile night_pursuit_cinematic, 4411 ms
 [PASS] stem.dc: stem "bass_clarinet": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "bass_clarinet": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "bass_clarinet": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -27,11 +27,11 @@ stem gate: 2 FAIL, 0 WARN, 242 rows, profile night_pursuit_cinematic, 29328 ms
 [PASS] stem.dc: stem "basses_pizz": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "basses_pizz": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "basses_pizz": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
-[FAIL] stem.dropout: stem "basses_pizz": longest hole 25 ms (limit 20-1000 ms), floor -99.0 dBFS; 1 hole(s)
+[PASS] stem.dropout: stem "basses_pizz": longest hole 0 ms (limit 20-1000 ms), floor -98.5 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "basses_pizz": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
-[PASS] stem.edge: stem "basses_pizz": audible span 0.000-165.430 s against score notes 0.000-164.830 s: leading silence 0 ms, trailing silence -600 ms (limit 25 ms)
-[PASS] stem.tick: stem "basses_pizz": onset autocorrelation 0.11 at a 801 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 215 strong onset(s) of 1929, 24 on the grid, IOI CV 1.069; peak rise 29.22 dB at those onsets over 215 onset(s) (min 3); tempogram peak ratio 0.92, PLP peak ratio 1.00
-[PASS] stem.dead: stem "basses_pizz": own median -31.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve
+[PASS] stem.edge: stem "basses_pizz": audible span 0.000-165.420 s against score notes 0.000-164.736 s: leading silence 0 ms, trailing silence -684 ms (limit 25 ms)
+[PASS] stem.tick: stem "basses_pizz": onset autocorrelation 0.11 at a 801 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 217 strong onset(s) of 2009, 25 on the grid, IOI CV 1.084; peak rise 29.15 dB at those onsets over 217 onset(s) (min 3); tempogram peak ratio 0.92, PLP peak ratio 1.00
+[PASS] stem.dead: stem "basses_pizz": own median -29.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve
 [PASS] stem.flatness: stem "basses_pizz": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [INFO] stem.dc: stem "bumps": not applied: a one-shot effect stem has no sustained baseline to drift
 [PASS] stem.clipping: stem "bumps": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
@@ -101,10 +101,10 @@ stem gate: 2 FAIL, 0 WARN, 242 rows, profile night_pursuit_cinematic, 29328 ms
 [PASS] stem.dc: stem "horns": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)
 [PASS] stem.clipping: stem "horns": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "horns": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
-[PASS] stem.dropout: stem "horns": longest hole 0 ms (limit 20-1000 ms), floor -100.1 dBFS; 0 hole(s)
+[PASS] stem.dropout: stem "horns": longest hole 0 ms (limit 20-1000 ms), floor -102.4 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "horns": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
-[PASS] stem.edge: stem "horns": audible span 0.000-185.200 s against score notes 0.000-184.845 s: leading silence 0 ms, trailing silence -355 ms (limit 25 ms)
-[FAIL] stem.dead: stem "horns": own median -22.3 dBFS, worst section shortfall 13.1 dB (limit 12 dB), active sections 8; dropped in a section
+[PASS] stem.edge: stem "horns": audible span 0.000-185.115 s against score notes 0.000-184.845 s: leading silence 0 ms, trailing silence -270 ms (limit 25 ms)
+[PASS] stem.dead: stem "horns": own median -22.9 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve
 [PASS] stem.flatness: stem "horns": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [INFO] stem.dc: stem "lamborghini": not applied: a one-shot effect stem has no sustained baseline to drift
 [PASS] stem.clipping: stem "lamborghini": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)

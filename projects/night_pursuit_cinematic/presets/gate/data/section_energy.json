@@ -2,70 +2,70 @@
   "row": "section.energy",
   "stage": "mix",
   "stem": null,
-  "level": "FAIL",
-  "value": 0.43915503282683993,
+  "level": "PASS",
+  "value": 0.8556058190999849,
   "unit": "rho",
   "threshold": 0.5,
-  "margin": -0.06084496717316007,
+  "margin": 0.3556058190999849,
   "worst_times_s": [],
   "calibrated": false,
-  "detail": "Spearman rho 0.44 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
+  "detail": "Spearman rho 0.86 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
   "table": [
     {
       "name": "the_race",
       "start_s": 0.0,
       "end_s": 25.077,
-      "energy": 0.75,
-      "level_db": -18.330502617702752
+      "energy": 0.9,
+      "level_db": -17.718155346362213
     },
     {
       "name": "spotted",
       "start_s": 25.077,
       "end_s": 38.892,
-      "energy": 0.85,
-      "level_db": -20.570485117567745
+      "energy": 0.8,
+      "level_db": -21.195303096006768
     },
     {
       "name": "the_chase",
       "start_s": 38.892,
       "end_s": 72.228,
       "energy": 0.9,
-      "level_db": -19.699682530017764
+      "level_db": -19.639369531493937
     },
     {
       "name": "the_tunnel",
       "start_s": 72.228,
       "end_s": 95.085,
       "energy": 0.8,
-      "level_db": -20.180354006096035
+      "level_db": -20.274037646491923
     },
     {
       "name": "the_helicopter",
       "start_s": 95.085,
       "end_s": 117.636,
       "energy": 0.8,
-      "level_db": -19.522535795540634
+      "level_db": -19.366057421972727
     },
     {
       "name": "the_bumps",
       "start_s": 117.636,
       "end_s": 139.888,
       "energy": 1.0,
-      "level_db": -16.460760869048407
+      "level_db": -16.509519029540712
     },
     {
       "name": "the_flyover",
       "start_s": 139.888,
       "end_s": 165.785,
       "energy": 0.8,
-      "level_db": -24.196761322435798
+      "level_db": -24.34361343176669
     },
     {
       "name": "the_escape",
       "start_s": 165.785,
       "end_s": 192.648,
       "energy": 0.5,
-      "level_db": -30.666249044629357
+      "level_db": -30.711100755004328
     }
   ]
 }

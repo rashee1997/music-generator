@@ -79,7 +79,9 @@ def corner_factor(car, t):
 
 def end_of(car, ev):
     """The second a car's sound ends (it left the scene), or the end of the cue."""
-    return dict(mustang=ev['crash'] + 1.6, lamborghini=ev['lost'] + 3.0).get(car, ev['end'])
+    # the two that run on drive out of the scene 3.5 s before the cue ends: the Porsche's constant partials and the Ferrari's are not in the key, and the
+    # last seconds are judged as the cadence (cochlear_roughness read 0.055 against 0.044 with both still sounding)
+    return dict(mustang=ev['crash'] + 1.6, lamborghini=ev['lost'] + 3.0, ferrari=ev['end'] - 3.5, porsche=ev['end'] - 3.5).get(car, ev['end'])
 
 
 def interp(points, t):
