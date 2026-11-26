@@ -150,8 +150,8 @@ write('spaces', SPACE, dict(
                      late=dict(enabled=True, rt60_s=1.1, hf_decay=0.5, level_db=-21.0, count=8, spread_deg=90.0, rise_s=0.02, seed=2611),
                      ),
     scenes=[
-        dict(anchor=dict(section='under_the_bridge'), transition_s=6.0,
-             space_overrides=dict(geometry=UNDERPASS, late=dict(rt60_s=2.5, level_db=-12.0, hf_decay=0.45))),
+        dict(anchor=dict(section='under_the_bridge'), transition_s=10.0,
+             space_overrides=dict(geometry=UNDERPASS, late=dict(rt60_s=2.5, level_db=-16.0, hf_decay=0.45))),
         dict(anchor=dict(section='the_bridge'), transition_s=6.0,
              space_overrides=dict(geometry=BRIDGE, late=dict(rt60_s=0.6, level_db=-28.0, hf_decay=0.6))),
         dict(anchor=dict(section='the_cliff'), transition_s=2.0,
@@ -182,7 +182,7 @@ mix['immersive'] = dict(enabled=True, engine='hoa_bus', order=5, anchor_max_span
                         max_elevation=60.0, min_height_tracks=0, stereo_decode='speakers')
 # Measured by debug_audio.py on render 8: the click row's six events sat in the 6 kHz band of the engine, the wipers and the rain film;
 # a replay of the gate's own checker on the modelled mix cleared five of six with these shelves (the engine -9 dB, the wipers -6 dB).
-mix['inst_eq'] = {'sfx:np_engine': [dict(type='highshelf', f=5500.0, gain=-9.0, q=0.7)],
+mix['inst_eq'] = {'sfx:np_engine': [dict(type='highshelf', f=5500.0, gain=-15.0, q=0.7)],
                   'sfx:np_wipers': [dict(type='highshelf', f=5500.0, gain=-9.0, q=0.7)],
                   'pursuit_snare': [dict(type='highshelf', f=5500.0, gain=-3.0, q=0.7)],
                   'sfx:np_drift_squeal': [dict(type='highshelf', f=5500.0, gain=-9.0, q=0.7)],

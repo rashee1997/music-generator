@@ -56,7 +56,7 @@
       "anchor": {
         "section": "under_the_bridge"
       },
-      "transition_s": 6.0,
+      "transition_s": 10.0,
       "space_overrides": {
         "geometry": {
           "width_m": 16.0,
@@ -70,7 +70,7 @@
         },
         "late": {
           "rt60_s": 2.5,
-          "level_db": -12.0,
+          "level_db": -16.0,
           "hf_decay": 0.45
         }
       }

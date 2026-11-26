@@ -464,7 +464,7 @@ write('environments', 'np_rain_street', dict(
     description='Heavy rain at 30 mm/h on a wet asphalt street at night: the patter of drops on the road, a film of water hissing, all round.',
     character='Heavy rain at 30 mm/h falling on a wet street and a film of water on the asphalt, all round the car; in the slow motion it thins and darkens rather than pitching down.',
     atmosphere=dict(temp_c=10.0, rh=95.0),
-    layers=[dict(name='drops', primitive='rain_physical', kind='bed', rate_mm_h=30.0, surface='solid', bubble_prob=0.02, gain_db=-30.0, decorrelate=1.0,
+    layers=[dict(name='drops', primitive='rain_physical', kind='bed', rate_mm_h=30.0, surface='solid', bubble_prob=0.02, gain_db=-36.0, decorrelate=1.0,
                  spatial=dict(azimuth=0, elevation=0, distance=6)),
             dict(name='water_film', primitive='noise_bed', kind='bed', color='pink', low_hz=1800, high_hz=7000, mod_rate_hz=0.08, mod_depth=0.1, gain_db=-26.0,
                  decorrelate=1.0, spatial=dict(azimuth=0, elevation=0, distance=6))],

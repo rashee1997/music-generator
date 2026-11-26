@@ -1,7 +1,7 @@
 # Debug autopsy - night_pursuit
 
-20261126T091325  ·  level FAIL  ·  plan best admissible set (row not cleared)
-sources: score=/home/user/music-generator/projects/night_pursuit/scores/night_pursuit_score.json, gate_data=['level.json', 'rows.json', 'section_energy.json', 'spectrogram.json', 'stem_gate.json', 'stem_levels.json', 'stereo.json', 'waveform.json'], stems=24 processed stems from .cache/mix, master=out/_draft_master.wav, verdict=2026-11-26T08:53:13Z
+20261126T091802  ·  level FAIL  ·  plan best admissible set (row not cleared)
+sources: score=/home/user/music-generator/projects/night_pursuit/scores/night_pursuit_score.json, gate_data=['level.json', 'rows.json', 'section_energy.json', 'spectrogram.json', 'stem_gate.json', 'stem_levels.json', 'stereo.json', 'waveform.json'], stems=24 processed stems from .cache/mix, master=out/_draft_master.wav, verdict=2026-11-26T09:13:25Z
 
 ## In question (1)
 - **clicks**: 6.0 events against 0.0 -> FAILS by 6.00 tolerance units
