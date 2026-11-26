@@ -120,7 +120,7 @@ for bar in range(s0('the_avenue'), sN('the_bridge')):
         basses.add(bar, 2.0, 2.02, p(r, 1), vel(0.6 + 0.2 * energy, 0.03))
     else:
         basses.add(bar, 0, 4.02, p(r, 1), vel(0.6 + 0.2 * energy, 0.03))
-    piano_low.add(bar, 0, 1.0, p(r, 2), vel(0.6 + 0.15 * energy, 0.03))
+    piano_low.add(bar, 2.0 if bar % 4 == 3 else 0.0, 1.0, p(r, 2), vel(0.6 + 0.15 * energy, 0.03))      # the downbeat is skipped once a phrase
     piano_low.add(bar, 1.5, 0.5, p(r, 2), vel(0.5, 0.03))
     for b in THREE_THREE_TWO:
         tuba.add(bar, b, 1.0, p(r, 2), vel(0.5 + 0.2 * energy, 0.03)) if bar >= s0('the_avenue') + 2 else None

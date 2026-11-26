@@ -156,6 +156,10 @@ def engine_pitch(t):
 
 
 def engine_gain_db(t):
+    return _engine_gain_db(t) + (-90.0 + 90.0 * smooth((t - OFF) / 0.4) if t - OFF < 0.4 else 0.0)
+
+
+def _engine_gain_db(t):
     if t >= T_CUT:
         return -90.0 if t > T_CUT + 0.04 else -90.0 * (t - T_CUT) / 0.04
     load = min(1.0, max(0.0, (rpm_at(t) - IDLE_RPM) / 5800.0))
@@ -202,7 +206,7 @@ write('sfx', 'np_engine', dict(
         dict(name='shift_clunk', gain_db=-18.0, excite=dict(kind='impact', tau=0.004),
              resonator=dict(kind='modal', law='bar', f1=140.0, n=4, t60=0.18),
              events=dict(kind='sequence', times=[round(t - OFF, 3) for t in SHIFT_TIMES], levels=[1.0] * len(SHIFT_TIMES))),
-        dict(name='cabin_tone', gain_db=-38.0, excite=dict(kind='noise', color='brown'), resonator=dict(kind='bandpass', band=[60, 400], order=2),
+        dict(name='cabin_tone', gain_db=-26.0, excite=dict(kind='noise', color='brown'), resonator=dict(kind='bandpass', band=[60, 400], order=2),
              events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -50.0 if t < T_CUT else -16.0 - 4.0 * smooth((t - T_CUT) / 20.0), 0.0, END, 0.25))])),
         dict(name='cooling_tick', gain_db=-20.0, excite=dict(kind='impact', tau=0.0008),
              resonator=dict(kind='modal', law='bar', f1=1800.0, n=6, t60=0.12),
@@ -344,7 +348,7 @@ def occlusion_fx(windows, cutoff=900.0):
 
 S1_ON, S1_OFF = 4.0, T_CUT
 S1_FAR_ON, S1_FAR_OFF = T_CUT + 2.5, SECONDS - 0.5          # the one far siren left at the cliff
-S2_ON, S2_OFF = T_TURN, T_CUT
+S2_ON, S2_OFF = T_TURN + 0.1, T_CUT
 
 
 def siren1_pitch(t):

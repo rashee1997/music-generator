@@ -105,7 +105,7 @@ def sfx_start():
     its onset, so a sound that is silent for its first half second would read as a part that never played."""
     tm = tempo_map()
     return dict(engine=0.0, wipers=1.2, siren_first=4.0, tyres=seconds(start('the_avenue'), 0, tm) + 0.1,
-                siren_second=seconds(start('the_turn'), 0, tm), crash=seconds(SLOMO_SPIN['bar'] + SLOMO_SPIN['ramp_bars'] + SLOMO_SPIN['hold_bars'] - 2, 0, tm))
+                siren_second=seconds(start('the_turn'), 0, tm) + 0.1, crash=seconds(SLOMO_SPIN['bar'] + SLOMO_SPIN['ramp_bars'] + SLOMO_SPIN['hold_bars'] - 2, 0, tm))
 
 
 if __name__ == '__main__':
