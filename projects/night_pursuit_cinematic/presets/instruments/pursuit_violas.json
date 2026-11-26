@@ -5,10 +5,10 @@
   "instrument": "viola",
   "role": "ostinato",
   "humanize": {
-    "preset": "tight",
-    "timing_ms": 4.0,
-    "drift_ms": 4.0,
-    "vel_sigma": 4.0
+    "preset": "natural",
+    "timing_ms": 9.0,
+    "drift_ms": 9.0,
+    "vel_sigma": 6.0
   },
   "spatial": {
     "azimuth": -110.0,

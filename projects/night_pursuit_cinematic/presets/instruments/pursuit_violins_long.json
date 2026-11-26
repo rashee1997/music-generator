@@ -1,8 +1,8 @@
 {
-  "name": "pursuit_violins_tremolo",
-  "character": "The tension bed: high tremolo strings that grow by adding players, wide behind the listener on the right.",
-  "description": "The tension bed: high tremolo strings that grow by adding players, wide behind the listener on the right.",
-  "instrument": "tremolo_strings",
+  "name": "pursuit_violins_long",
+  "character": "The tension bed: high sustained violins that grow by adding players and swell on the bow, wide behind the listener on the right (the General MIDI tremolo patch has its own 10 Hz tremolo, which the stem gate reads as a tick).",
+  "description": "The tension bed: high sustained violins that grow by adding players and swell on the bow, wide behind the listener on the right (the General MIDI tremolo patch has its own 10 Hz tremolo, which the stem gate reads as a tick).",
+  "instrument": "string_ensemble",
   "role": "pad",
   "humanize": {
     "preset": "natural",

@@ -53,7 +53,7 @@ PK = lambda f, g, q=1.0: dict(type='peak', f=float(f), gain=float(g), q=float(q)
 inst('pursuit_violas', 'viola', 'ostinato',
      'The pulse: a viola section playing short bowed sixteenths in the lower middle, a little ahead of the beat, swelling and thinning with the phrase.',
      -75, 2.0, -3.0, 0.14, [HP(110), PK(2200, 1.0, 1.0), LP(9000)],
-     humanize=dict(preset='tight', timing_ms=4.0, drift_ms=4.0, vel_sigma=4.0),
+     humanize=dict(preset='natural', timing_ms=9.0, drift_ms=9.0, vel_sigma=6.0),
      extra=dict(ensemble=dict(players=4, spread_cents=8, spread_ms=10, vel_spread=4), soundfont='muse_general',
                 velocity_timbre=dict(points=[[25, 2200], [60, 4200], [127, 9000]], bands=4)),
      sources=[KB['hybrid'], KB['orch'], KB['theat']])
@@ -73,8 +73,8 @@ inst('pursuit_violins_staccato', 'violin', 'arp',
      'The bridge runs: fast staccato violin figures that pass round the left side, high and dry.',
      -110, 3.0, -6.0, 0.14, [HP(300), PK(3200, 1.0, 1.0), LP(10000)],
      extra=dict(soundfont='muse_general', ensemble=dict(players=4, spread_cents=9, spread_ms=11, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
-inst('pursuit_violins_tremolo', 'tremolo_strings', 'pad',
-     'The tension bed: high tremolo strings that grow by adding players, wide behind the listener on the right.',
+inst('pursuit_violins_long', 'string_ensemble', 'pad',
+     'The tension bed: high sustained violins that grow by adding players and swell on the bow, wide behind the listener on the right (the General MIDI tremolo patch has its own 10 Hz tremolo, which the stem gate reads as a tick).',
      140, 4.0, -9.0, 0.22, [HP(280), LP(9000)],
      extra=dict(ensemble=dict(players=6, spread_cents=10, spread_ms=14, vel_spread=3), soundfont='muse_general', per_note_channels=True, expression='bow'), sources=[KB['hybrid'], KB['orch'], KB['theat']])
 inst('pursuit_bass_clarinet', 'clarinet', 'counter',

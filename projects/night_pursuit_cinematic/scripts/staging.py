@@ -20,7 +20,7 @@ STAGE = {
     'pursuit_celli':            (110.0, 15.0, 2.2),
     'pursuit_bass_clarinet':    (130.0, 30.0, 2.4),
     'pursuit_violins_staccato': (-130.0, 30.0, 3.0),
-    'pursuit_violins_tremolo':  (180.0, 30.0, 4.0),
+    'pursuit_violins_long':  (180.0, 30.0, 4.0),
     'pursuit_cymbals':          (-160.0, 50.0, 3.6),
     'pursuit_choir':            (0.0, 60.0, 5.0),
     'pursuit_solo_violin':      (-35.0, 45.0, 2.4),
