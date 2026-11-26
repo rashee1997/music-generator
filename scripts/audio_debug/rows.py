@@ -9,7 +9,7 @@ from __future__ import annotations
 # Ordered longest-prefix-first at lookup time; a row belongs to the first domain whose prefix it starts with.
 DOMAINS = {
     'master': ('loudness', 'true peak', 'clipping', 'silence', 'clicks', 'master.', 'dc', 'crest',
-               'natural_aliasing', 'delivery.standard', 'audio'),
+               'natural_aliasing', 'delivery.standard', 'audio', 'dropout', 'cut.', 'end.'),
     'stems': ('stem.',),
     'spectral': ('spectral.', 'masking.', 'erb_binaural_masking', 'cochlear_roughness', 'phase.', 'timbre.'),
     'spatial': ('spatial.', 'imm.', 'mix.', 'ambient_glue', 'modulation_flutter', 'depth.', 'width.'),
@@ -17,7 +17,7 @@ DOMAINS = {
     'hrtf': ('hrtf.', 'binaural.', 'imm_cues'),
     'chem': ('chem.',),
     'ears': ('ear.',),
-    'direction': ('focus', 'intent.', 'balance.', 'expression.', 'direction.'),
+    'direction': ('focus', 'intent.', 'balance.', 'expression.', 'direction.', 'orch.'),
 }
 
 # Rows that report a prediction and cannot fail. They are read for the report and never become a lever problem.

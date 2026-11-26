@@ -394,6 +394,39 @@ def fade_out_at(x, sr=44100, times=(), ms=4.0):
     return y
 
 
+def hard_cut(x, sr=44100, cuts=(), resume=(), ramp_ms=15.0):
+    """Stop a sustained voice dead at each cut time without a step in the waveform.
+
+    The voice is ramped to zero over `ramp_ms` (a raised cosine, ending exactly at the cut) and is silent from the cut
+    until the next time it plays (`resume`, in seconds; no later entry means silent to the end). It returns through the
+    mirror ramp in the `ramp_ms` just before that time, so a held note whose remainder is still in the stem does not
+    jump back in, and the attack of the next note is never touched. A cut is a stop in the music, not a click: 15 ms is
+    slower than any step the click detectors read and faster than an audible decay, so the cut still lands on the frame.
+    A new note that starts at the cut itself is not silenced (nothing lies between the cut and its onset), and gets no
+    fade-in. Cuts at or beyond either end of the stem are ignored.
+    """
+    y = to_2d(x).astype(np.float32)
+    n = len(y)
+    if n == 0 or not len(cuts):
+        return y
+    later = sorted(float(r) for r in resume)
+    ramp = max(2, int(round(float(ramp_ms) * sr / 1000.0)))
+    for t in sorted(float(c) for c in cuts):
+        i1 = int(round(t * sr))
+        if not 0 < i1 < n:
+            continue
+        y = fade_out_at(y, sr, times=[t], ms=ramp_ms)
+        nxt = next((r for r in later if r >= t - 0.001), None)
+        j = n if nxt is None else min(n, max(i1, int(round(nxt * sr))))
+        if j <= i1:
+            continue
+        k = min(ramp, j - i1) if j < n else 0                  # the fade-in sits in the gap, never past the next onset
+        y[i1:j - k] = 0.0
+        if k >= 2:
+            y[j - k:j] *= (0.5 - 0.5 * np.cos(np.pi * np.linspace(0.0, 1.0, k))).astype(np.float32)[:, None]
+    return y
+
+
 def repair_clicks(x, sr=44100, mad_z=8.0, floor_frac=0.02, cluster_ms=1.5, isolate_ms=10.0,   # floor_frac is FS
                   second_ratio=0.5, smooth_ms=0.35, half_ms=0.8, _passes=0):
     """Remove the isolated sample steps an edited bank sample carries.

@@ -182,16 +182,32 @@ class Chains(unittest.TestCase):
         mixer.use_mix(None)
         self.assertEqual(mixer._level_by_role()['environment'], -14.0)
         self.assertEqual(presets.mix()['level_by_role']['environment'], -14.0)
+
     def test_onset_ramp_skips_a_ringing_bed_unless_the_track_asks(self):
         """A drum hit is a fresh sample even when the previous one is still ringing: `onset_fade_all` is how a
-        percussion preset says so, and the default still protects a sustained instrument's legato."""
+        percussion preset says so, and the default still protects a sustained instrument's legato. The ramp of a hit
+        over a ring starts at the level already there (a ramp from zero would be a step of its own) and ends at the
+        hit's full level."""
         x = np.full((4410, 2), 0.3, dtype=np.float32)
         x[1000:] = 0.5                     # a fresh onset inside a ringing bed
         t = [1000.0 / SR]
         guarded = dsp.soften_onsets(x, SR, times=t, ms=2.0)
         forced = dsp.soften_onsets(x, SR, times=t, ms=2.0, skip_sounding=False)
         self.assertAlmostEqual(float(guarded[1000, 0]), 0.5, places=5)   # left alone on a sustained part
-        self.assertLess(float(forced[1000, 0]), 0.05)                    # ramped for a percussion hit
+        self.assertAlmostEqual(float(forced[1000, 0]), 0.3, places=4)    # starts where the ring was: no step
+        n = int(round(0.002 * SR))
+        seam = float(np.max(np.abs(np.diff(forced[995:1000 + n + 5, 0]))))
+        self.assertLess(seam, 0.01)                                      # no sample-to-sample jump anywhere in the seam
+        self.assertAlmostEqual(float(forced[1000 + n + 2, 0]), 0.5, places=5)   # the attack is stretched, not lost
+        self.assertTrue(np.all(np.diff(forced[1000:1000 + n, 0]) >= -1e-7))     # and it rises
+
+    def test_onset_ramp_from_silence_starts_at_zero(self):
+        x = np.zeros((4410, 2), dtype=np.float32)
+        x[1000:] = 0.5
+        for skip in (True, False):
+            y = dsp.soften_onsets(x, SR, times=[1000.0 / SR], ms=2.0, skip_sounding=skip)
+            self.assertLess(float(y[1000, 0]), 0.01, skip)
+
     def test_mix_preset_inst_eq_reaches_the_processed_stem(self):
         """An `inst_eq` entry names an instrument, so it has to reach that instrument's chain: `role_board()` read
         it and `process_chain` never called it, so a cut the gate asked a preset for did nothing to the stem."""

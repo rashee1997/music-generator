@@ -65,7 +65,10 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **4.8** Fill `expression` after reading `references/workflow/music-direction.md` section 2.11, before any note: the `sonic_picture` (what the listener hears in the first ten seconds, the middle and the last note), the `performer` (what a human player does), the `producer_moves`, the `anti_generic` sentence, per-section `cues` (arousal, mode and register, tempo, dynamics, articulation, timbre) and, for a melody piece, the `theme` as a shape with a `variation_plan`. A sheet without it is a WARN (`direction.expression`); a half-written one is a FAIL.
 - [ ] **4.9** Craft pass, after 4.8 and before any note: write the six answers of `references/workflow/director-craft.md` section 1 (the hook, the arc, the density map, the lanes, the contrast, the ending) in `STATUS.md` and in the sheet's existing fields. For a blend of traditions, write the shared core (one tonic, one scale, one pulse) and each tradition's job. A piece whose six answers cannot be written is not decided: do not start the score.
 - [ ] **4.4** If scoring to video, run `scripts/video_score.py` - it fills video block but YOU still write music intent
-- [ ] **4.5** Ensure sections don't overlap, hits align with hits_at. Gate rejects otherwise.
+- [ ] **4.5** Ensure sections don't overlap, hits align with hits_at. Gate rejects otherwise. A hit with `sync: hard` opens a
+      ±150 ms intentional cut window in which `stem.cut` / `cut.hard` skip the level drop (nothing else is skipped); with
+      `kind: cut` it also ramps the sustained voices to silence over 15 ms. Write a hit as `musical`, not `cut`, when the strings
+      must keep sounding. `references/mixing/quality-gate-rows.md` section 8.
 
 ### PHASE 5: PRESETS
 - [ ] **5.1** Scaffold instruments/vocals: `python scripts/presets.py scaffold instruments|vocals <exact_name> --project <dir>`. Each needs unique `spatial.azimuth/distance`. Fill real `character` sentence (placeholder blocked).
@@ -99,6 +102,10 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 ### PHASE 8: RENDER & ITERATE
 - [ ] **8.1** Render: `python scripts/pipeline.py <dir>/scores/<title>_score.json --project <dir> --max-attempts 3` (background for long runs)
 - [ ] **8.1b** Before a long render run `python scripts/preflight_lint.py <dir>/scores/<title>_score.json <dir>` (stage 2 runs it too): fix every FAIL (note outside the patch range, one-shot cut short) and read every WARN, since each one cost a full render when it was found by the audio rows. `preflight.roughness_partials` names the overtones that will beat; after a failing render run `python scripts/roughness_forecast.py diagnose <draft_master> --stems <dir>/stems --score <score>` before changing a note (`references/mixing/quality-gate-rows.md`, end of the file). `references/mixing/quality-gate.md` section 3g.
+      For an orchestral part stage 2 also runs `python scripts/orch_rows.py <score> --project <dir>` (`orch.range`,
+      `orch.voice_leading`, `orch.playable`, `orch.legato`: a note outside the instrument's range, parallel fifths, more
+      notes than a player has, a breathless phrase, a gap in a legato line). Fix the notes; a deliberate extreme is
+      declared on the track (`extended_range`, `section`), never by loosening a row. `quality-gate-rows.md` section 7.
 - [ ] **8.2** Read scoreboard, not early logs. Fix ONE thing at a time based on gate failures. Max 5 attempts.
 - [ ] **8.3** For immersive pieces, fix imm_* rows in presets/score, never loosen. `imm_kinematics`: spread the
       keyframes. `imm_low_fold` / `mix.band_fold`: narrow the stem the row names. `imm_clarity`: lower the space's

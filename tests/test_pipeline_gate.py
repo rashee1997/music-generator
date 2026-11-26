@@ -48,8 +48,14 @@ def project_presets(proj):
 def make_project(td, research=True, direction=True, preset=True, ambience=False):
     proj = Path(td) / 'p'
     setup_project.scaffold_project(str(proj), title='T', ambience=ambience)
-    for f in list((proj / 'reports').glob('research_*.md')) + list((proj / 'presets').rglob('*.json')):
+    # the scaffold's gate profile is the project's own and stays: a project cannot render on a shipped profile, so a
+    # fixture without one fails the gate for a reason these tests are not about
+    for f in list((proj / 'reports').glob('research_*.md')) + [p for p in (proj / 'presets').rglob('*.json') if p.parent.name != 'gate']:
         f.unlink()
+    for f in (proj / 'presets' / 'gate').glob('*.json'):          # the profile's `character` is a placeholder until a person writes it
+        body = json.loads(f.read_text(encoding='utf-8'))
+        body['character'] = 'a test piece judged like melodic'
+        f.write_text(json.dumps(body), encoding='utf-8')
     project_presets(proj)
     if research:
         (proj / 'reports' / 'research_t.md').write_text(f'## Knowledge base\n- id: {KB_ID}\n## Web research\nhttps://example.org\n', encoding='utf-8')
@@ -70,6 +76,21 @@ class ProjectGate(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             proj = make_project(td)
             self.assertEqual(project_gate.problems(score_with('oud', 'cello', 'standard'), proj), [])
+
+    def test_the_scaffold_declares_the_gate_profile_it_owns(self):
+        """A scaffolded project owns presets/gate/<slug>.json; its sheet used to declare the shipped `melodic`, which the
+        project gate then blocked: the scaffold contradicted its own rule."""
+        with tempfile.TemporaryDirectory() as td:
+            proj = Path(td) / 'p'
+            setup_project.scaffold_project(str(proj), title='My Piece')
+            sheet = json.loads((proj / 'direction' / 'direction_sheet.json').read_text(encoding='utf-8'))
+            owned = sorted(p.stem for p in (proj / 'presets' / 'gate').glob('*.json'))
+            self.assertEqual(owned, ['my_piece'])
+            self.assertEqual(sheet['piece_type'], 'my_piece')
+            self.assertEqual(json.loads((proj / 'presets' / 'gate' / 'my_piece.json').read_text(encoding='utf-8'))['extends'], 'melodic')
+            import gate_profiles
+            self.assertEqual(gate_profiles.project_profile_problems(dict(piece_type=sheet['piece_type']), str(proj)), [])
+            self.assertTrue(gate_profiles.project_profile_problems(dict(piece_type='melodic'), str(proj)))   # a shipped name is still blocked
 
     def test_each_missing_piece_blocks(self):
         with tempfile.TemporaryDirectory() as td:

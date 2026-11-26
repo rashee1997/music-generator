@@ -68,8 +68,8 @@ With a picture, watch it once end to end and mark four things. The notes are the
 | hit | `hits_at` + `hits` | a moment the music must land; hard (a cut, an explosion) or soft (a head turn, a line ending) |
 | descriptive | `sections[].action`, `notes` | a line of dialogue, a look, a shape in the frame - a reminder, not a sync point |
 
-A **hard sync point** must land on a specific frame (an explosion, a punch, a cut); a **soft** one may drift. The same
-split is `hits[].sync`, and the cut-sync window versus motion hits in the picture path.
+A **hard sync point** must land on a specific frame (an explosion, a punch, a cut); a **soft** one may drift. The same split is `hits[].sync`, and the cut-sync window versus motion hits in the picture path.
+A `sync: hard` hit also opens a +-150 ms gate window where the level drop is not a defect; as `kind: cut` it stops the sustained voices on a 15 ms ramp (`quality-gate-rows.md` section 8); a hard accent over held strings is `kind: musical`.
 
 Endings: a **hard out** ends on an accent and hands the frame to the sound effects; a **tail out** fades on a long
 note so the music leaves unnoticed, which is what most cues do; a **combination** accents then fades, so an editor

@@ -1,3 +1,12 @@
+---
+title: The debug engine (audio_debug)
+summary: What the autopsy of a failing gate row is made of, which declared lever moves it, and when no value of one lever can clear two rows.
+tags: [debug, autopsy, gate, forensics, solver, clicks, conflict]
+load_when:
+  - a gate row fails and the fix of one row has broken another
+  - changing scripts/audio_debug or debug_audio.py
+---
+
 # The debug engine (audio_debug)
 
 `scripts/debug_audio.py` and the pipeline's `[AUTOPSY]` line answer a different question from the gate. The gate says
@@ -55,15 +64,15 @@ attribution.
 
 | Domain | Rows | Levers |
 |---|---|---|
-| master | loudness, true peak, clipping, dc, silence, clicks, crest | oversampling, ceiling, loudness target, trim |
-| stems | `stem.*` (dead, dropout, cut, edge, clipping, dc, flatness) | that stem's trim, bands, note length, onset ramp |
+| master | loudness, true peak, clipping, dc, silence, clicks, crest, `dropout`, `cut.hard`, `end.abrupt` | oversampling, ceiling, loudness target, trim |
+| stems | `stem.*` (dead, dropout, cut, edge, clipping, dc, flatness); a failing `stem.cut` is read against the direction sheet's hard cuts (`cut_windows.py`) and says whether the drop is outside every window and how far from the nearest | that stem's trim, bands, note length, onset ramp |
 | spectral | `spectral.*`, `masking.*`, ERB masking, roughness | EQ bands that overlap the row's band (a trim cannot move a ratio) |
 | spatial | `spatial.*`, `imm.*` (clarity, low_fold, kinematics, route parity), `mix.*` | azimuth, elevation, distance, reverb send |
 | channels | per-channel `delivery.true_peak`, `fold.*`, `layout.*`, `objects.*`, `adm.*` | master trim/ceiling, send |
 | hrtf | `hrtf.*`, `binaural.*`, `imm_cues` | elevation and distance only; the filter itself is a dataset |
 | chem | `chem.*` | none: advisory, cannot fail |
 | ears | `ear.*` | none: advisory |
-| direction | `focus`, `intent.*`, `balance.*`, `expression.*` | none: the lever is the declaration |
+| direction | `focus`, `intent.*`, `balance.*`, `expression.*`, `orch.*` | none: the lever is the declaration or the notes |
 
 A row with no lever is reported as **closed**, not as a failure to fix.
 
@@ -128,8 +137,4 @@ wrong in four ways, each of which made a fix come back. Each is now a module beh
 anchors (bass, drums) fixed, keeps a unique spot per part, and says when no placement can (the overlap itself must fall).
 
 ### Sources
-- Essentia ClickDetector (robust noise-power threshold): https://essentia.upf.edu/reference/std_ClickDetector.html
-- MAD-based local-noise click detection (threshold = MAD x 1.4826 x k): https://pub.dev/packages/audio_defect_detector
-- High-pass residual detection fails on HF-rich material: https://lirias.kuleuven.be/retrieve/731585
-- AR prediction-error detection (the family of the gate's LPC check): Godsill & Rayner, *Digital Audio Restoration*, https://sigproc.eng.cam.ac.uk/Main/SJGSpringer
-- Sham intervention before trusting a replay probe: https://arxiv.org/pdf/2608.15685
+The click-detection methods this engine and the gate rest on (noise-power and MAD thresholds, high-pass residual, autoregressive prediction error, sham intervention) are listed with their status in `knowledgebase/sound-design/click-detection.md`.

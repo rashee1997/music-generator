@@ -78,8 +78,9 @@ class TestLeadCarve(unittest.TestCase):
         self.assertAlmostEqual(f * (1.0 + 1.0 / (2.0 * q)), 4500.0, places=3)
 
     def test_schema_accepts_the_section_and_its_ranges(self):
-        self.assertEqual([p for p in mixer.mix_schema.validate({'lead_carve': {'enabled': True}})], [])
-        bad = mixer.mix_schema.validate({'lead_carve': {'ratio': 40.0}})
+        import mix_schema                      # the mixer facade re-exports names, not the modules it imports
+        self.assertEqual([p for p in mix_schema.validate({'lead_carve': {'enabled': True}})], [])
+        bad = mix_schema.validate({'lead_carve': {'ratio': 40.0}})
         self.assertTrue(any('lead_carve.ratio' in p for p in bad))
 
 

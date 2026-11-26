@@ -26,13 +26,29 @@ import humanize as hz                    # noqa: E402
 from humanize_engine import config as engine_config   # noqa: E402
 from humanize_engine import timemap as engine_timemap  # noqa: E402
 
+# Hashes of the events with every float rounded to PARITY_DECIMALS. The first freeze hashed the raw floats, and those
+# differ in the last bits between platforms (libm and SIMD paths): it never matched on Linux, even at the commit that
+# froze it. Re-frozen on 26 November 2026 after checking that the split commit (1e6546a) and the tip give identical
+# values for all five cases, so the rounding hides platform noise and not a change of behaviour.
+PARITY_DECIMALS = 6
 PARITY = {
-    'natural-melody': 'edee05c05422ee7402b657f60ad61195ce602c8885dc4f703a83656dd9dfb0b3',
-    'natural-chord': '65fb54995a49f95b1322558fe191b704e8c00ba830d4168982f35712bce9ae76',
-    'loose-bass': '1f3e3c39781505a8662cbded7f647024c2ebe7f234e1cbcf2a1a08300fa4f62f',
-    'tight-drums': '9c9f87bf268ce6a47f5f25e374fbc1e919da30560759f8ea8234388cf197fbb9',
-    'rubato-pad': '2e8c23d8071d13a6507244936d2cb21fc7a80ba50623d946a6a2990888f655c0',
+    'natural-melody': '392aadca5505050eb83c8c26629bf80c08d175ae0ab85f085e0712d9357b45ee',
+    'natural-chord': 'c3ad27e7388e37b5131aab76dec32bc0b9e98a7e9b09b1db9f53172c5f149607',
+    'loose-bass': '034c25b342a753c045c3ee834f26c9a56901bb1ce33397bcaaf73a0522484cb0',
+    'tight-drums': '502f1e9f3481d27c4520141fa65aaa7817b865f875d5f5f612f92f95626521bf',
+    'rubato-pad': 'cb2ba815157484dbd5ab206dad8e627fa3ef687ff5d6e245912b2855d9e04c15',
 }
+
+
+def _canonical(obj):
+    """The events with every float rounded: a value that differs only below the 6th decimal is the same performance."""
+    if isinstance(obj, float):
+        return round(obj, PARITY_DECIMALS)
+    if isinstance(obj, dict):
+        return {k: _canonical(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_canonical(v) for v in obj]
+    return obj
 
 FLAT = dict(timing_ms=4, drum_ms=0, lead_ms=0, drift_ms=0, vel_sigma=0, rubato=0.0, wander=0.0,
             strum_ms=0, ritard=0.0, accent=0.0, note_lag1=0.0, vel_dur=0.0, tune_drift_cents=0.0,
@@ -64,7 +80,7 @@ class ParityTests(unittest.TestCase):
             if role == 'drum':
                 notes = [dict(t=i * 0.25, d=0.2, p=[36, 38, 42, 42][i % 4], v=0.8) for i in range(32)]
             ev = hz.humanize_track(notes, tm, cfg, role=role, seed=seed, key='D')
-            got = hashlib.sha256(json.dumps(ev, sort_keys=True).encode()).hexdigest()
+            got = hashlib.sha256(json.dumps(_canonical(ev), sort_keys=True).encode()).hexdigest()
             self.assertEqual(got, PARITY[name], f'{name}: the engine output changed')
 
 

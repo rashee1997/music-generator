@@ -51,6 +51,7 @@ jobs:
             tests.test_gate_no_loosening \
             tests.test_gate_profiles \
             tests.test_gate_ambient \
+            tests.test_audio_debug \
             tests.test_vocal_gate \
             tests.test_metadata_and_direction
       - name: Timings

@@ -1,13 +1,14 @@
 ---
-title: Gate rows for deliverables, immersion and extraction
-summary: The rows that judge a delivered format, the immersive probes, the z-axis and mono checks, and the extraction gate.
-tags: [gate, deliverables, fold, immersive, extraction, roughness]
+title: Gate rows for deliverables, immersion, extraction, orchestral writing and hard cuts
+summary: The rows that judge a delivered format, the immersive probes, the z-axis and mono checks, the extraction gate, the orchestral-writing rows and the intentional-cut windows.
+tags: [gate, deliverables, fold, immersive, extraction, roughness, orchestra, voice-leading, hard-cut, cut-window]
 load_when:
   - a delivery, fold, immersive or extraction row fails
   - choosing what a delivered format is judged on
+  - an orch.* row fires, or a hard cut in the direction sheet is flagged by stem.cut or cut.hard
 ---
 
-# Gate rows for deliverables, immersion and extraction
+# Gate rows for deliverables, immersion, extraction, orchestral writing and hard cuts
 
 Companion to [`quality-gate.md`](quality-gate.md), which holds the rows that judge the score and the mix.
 ## 5b. Deliverable-format rows (only for the formats the score asked for)
@@ -157,7 +158,7 @@ Every stem row is a gate-profile row too. `stem_gate.run_stem_gate` resolves the
 `stem.present` and `stem.duplicate` apply, uses the profile's parameter values for each, and a `skip`/`relax` needs the
 profile's written reason. A skipped row is printed (`[INFO] stem.<row>: SKIPPED by profile <label>: <reason>`), never
 silently dropped, and an unknown `piece_type` is a FAIL in both stages. The chosen profile label is in
-`presets/gate/stem_gate.json` and `ci_report.json`. `quality_gate.py <score> --timings` prints the per-group wall time of
+`stem_gate.json` in the project's gate data folder and in `ci_report.json`. `quality_gate.py <score> --timings` prints the per-group wall time of
 a local mix-gate run.
 
 There is one implementation of the row list: `quality_gate.run_gate`. `quality_gate.py <score> --wav <master>` calls it
@@ -202,3 +203,51 @@ at notes first:
 How far to trust the forecast: on one piece (Antigravity) its frame ranking correlated with the measured frames at about 0.17
 with default overtone profiles and 0.24 with profiles measured from the stems (Spearman, 82 frames), and it ranked the single
 worst measured frame first. It is a screen that points at where to look; `diagnose` is the measurement.
+
+## 7. Orchestral writing rows (`orch.*`, score only)
+
+`scripts/orch_rows.py` judges the notes of an orchestral part before any render, so a line no player could play is found in
+stage 2 and not after a 4-minute render. It reads the score and `references/data/presets/orchestra/ranges.json` (a project
+overrides it in `<project>/presets/orchestra/ranges.json`) and never edits either. Facts and their status:
+`knowledgebase/genre-and-feel/orchestral-writing.md`. A track is identified from its instrument preset (`gm` or
+`instrument`), then its instrument name, then its track name; a name that cannot be identified is skipped, never guessed
+(`bass_clarinet` is not a clarinet).
+
+| Row | Judges | Levels | Parameters (`gate_profiles.py rows`) |
+|---|---|---|---|
+| `orch.range` | notes outside the sounding playing range of the instrument | WARN; FAIL when a note is `fail_over_semitones` or more beyond it | `fail_over_semitones` (12) |
+| `orch.voice_leading` | parallel perfect fifths between two single lines (octaves only when `include_octaves` is on, and never a line that doubles the other) | WARN | `max_parallel_share` (0.2), `min_events` (3), `include_octaves` (off) |
+| `orch.playable` | more simultaneous notes than the player or section has; a run of 6 or more repeated notes faster than the instrument's rate; a wind or brass phrase with no 0.15 s breath for longer than its limit | WARN | `rate_scale` (1.0), `phrase_scale` (1.0) |
+| `orch.legato` | notes marked `art: legato` that start more than `max_gap_beats` after the previous one ends (a sampler plays that as two detached notes) | WARN | `max_gap_beats` (0.1) |
+
+Rules for using them:
+
+- Every number in the ranges file is a **starting value**: no cited source backs the range table yet. Calibration on the shipped example projects changed three of them (a low-C double bass, faster
+  string rates) because a first draft flagged ordinary writing. Adjust a number in the project's ranges file, with a reason,
+  after measuring; never relax a row in advance.
+- A deliberate extreme is declared on the track: `"extended_range": true` (range), `"section": true` or an `ensemble`
+  block with `players` (voices and breath). A section is a name like `strings`, `horns`, `trombones` or an `ensemble` of two
+  or more players.
+- A tremolo (`art` containing `trem`) is not counted in the note rate; a part with no pitched notes, a drum, an
+  environment and an `sfx:` / `env:` / `sfz:` instrument are not judged.
+- The rows say a part is hard to play. They do not say it sounds good, and a clean report is not an audition.
+
+## 8. Intentional cuts (the direction sheet's hard hits)
+
+A cinematic cue may stop dead on a frame. The sheet says so with a hit in `hits` whose `sync` is `hard`; one source,
+`scripts/cut_windows.py`, turns it into two lists that the pipeline puts on the score in memory before the render
+(`MusicPipeline.with_cut_windows`; a list the score already carries is kept):
+
+| List | Built from | Read by | Effect |
+|---|---|---|---|
+| `intentional_cut_windows` `[[start_s, end_s], ...]` | every `sync: hard` hit, `t` +- 150 ms | `gate_checks.check_cut`, so `stem.cut` (every stem) and `cut.hard` (the master) | a level drop whose time lies inside a window is not counted; the detail says how many were skipped |
+| `hard_cuts` `[t_s, ...]` | every hit that is `sync: hard` **and** `kind: cut` | `render_natural.build_stems` | sustained voices ramp to zero over 15 ms ending on `t`, stay silent until their next written note and fade in over the 15 ms before it |
+
+What the exemption does **not** touch: `clicks`, `stem.clicks`, `dropout`, `stem.dropout`, `end.abrupt`, `stem.end`, `clipping`,
+DC and every other row are judged inside a window exactly as outside it. That is why the renderer ramps rather than cuts:
+the drop is allowed, a step in the waveform is not (a plain cut on a tone's crest is a click the detector hears; the
+ramped one is not, `tests/test_hard_cut.py`). A window is at most 1 s wide and a malformed one is dropped, so a bad list can
+only exempt less. The window is part of the stem gate's cache key. Only sustained voices are cut (bowed, blown and sung
+instruments, pads, drones, textures); a drum, a plucked or struck part and a `sfx:` / `env:` track keep their own decay.
+The render report records `hard_cuts` and `hard_cut_ramp_ms` per cut track. Constants: `cut_windows.HALF_S` (0.150) and
+`RAMP_MS` (15.0), starting values chosen against the 20 ms frame of the drop measure.

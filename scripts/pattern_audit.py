@@ -629,29 +629,45 @@ def _helix_point(pc_cont, tonic_pc):
     return np.array([np.sin(k * np.pi / 2.0), np.cos(k * np.pi / 2.0), k * np.sqrt(2.0 / 15.0)])
 
 
+def _helix_points(pc_cont, tonic_pc):
+    """`_helix_point` for an array of pitches at once: an (n, 3) array, row for row the same numbers."""
+    rel_pc = (np.asarray(pc_cont, dtype=float) - float(tonic_pc)) % 12.0
+    k = ((7.0 * rel_pc + 5.0) % 12.0) - 5.0
+    return np.stack([np.sin(k * np.pi / 2.0), np.cos(k * np.pi / 2.0), k * np.sqrt(2.0 / 15.0)], axis=1)
+
+
 def _spiral_series(score):
     """Chew's cloud per window of two bars: (centres of effect, cloud diameters, key centre, windows, window beats), or None
-    for a score with no pitched notes. The one place the windowed tension is computed (the arc row and `expr.tension_ic`)."""
+    for a score with no pitched notes. The one place the windowed tension is computed (the arc row and `expr.tension_ic`).
+
+    Array maths, not a loop over notes: the note arrays are built once, a window is a mask over them, and the diameter of
+    a cloud is taken over its distinct pitches (two notes of one pitch are the same point, so they cannot change the
+    largest distance). The all-pairs Python loop it replaced was ~2.8 s on a 4-minute orchestral score."""
     import soul_check
+    from scipy.spatial.distance import pdist
     num = _beats_per_bar(score)
     w_len = 2 * num
     all_notes = [n for t in score.get('tracks', []) if _role(t) not in ('drum', 'environment')
                  for n in t.get('notes', []) if isinstance(n.get('p'), (int, float))]
     if not all_notes:
         return None
-    N = max(1, int(np.ceil(max(n['t'] + n.get('d', 1.0) for n in all_notes) / w_len)))
+    starts = np.array([n['t'] for n in all_notes], dtype=float)
+    ends = starts + np.array([n.get('d', 1.0) for n in all_notes], dtype=float)
+    N = max(1, int(np.ceil(float(ends.max()) / w_len)))
     tonic_pc = soul_check._tonic_pc(score)
     CE_key = _helix_point(float(tonic_pc), tonic_pc)
+    pcs = np.array([_pitch_cont(n) for n in all_notes], dtype=float)
+    pts = _helix_points(pcs, tonic_pc)
+    wts = np.array([float(n.get('d', 1.0)) * _vel(n) for n in all_notes], dtype=float)
     CEs, T_cds = [], []
     for w in range(N):
         t0 = w * w_len
         t1 = t0 + w_len
-        active = [n for n in all_notes if max(t0, n['t']) < min(t1, n['t'] + n.get('d', 1.0))]
-        if active:
-            vecs = [_helix_point(_pitch_cont(n), tonic_pc) for n in active]
-            weights = [float(n.get('d', 1.0)) * _vel(n) for n in active]
-            ce = sum(v * w for v, w in zip(vecs, weights)) / (sum(weights) + 1e-9)
-            cd = max(np.linalg.norm(a - b) for a in vecs for b in vecs)
+        idx = np.flatnonzero(np.maximum(t0, starts) < np.minimum(t1, ends))
+        if idx.size:
+            ce = (pts[idx] * wts[idx, None]).sum(axis=0) / (float(wts[idx].sum()) + 1e-9)
+            distinct = np.unique(pcs[idx])
+            cd = float(pdist(_helix_points(distinct, tonic_pc)).max()) if distinct.size > 1 else 0.0
         else:
             ce = CEs[-1] if CEs else CE_key
             cd = 0.0
@@ -950,9 +966,9 @@ def cognitive_metrics(score):
             t0 = max(0.0, total_beats - 2 * num)
             active = [n for n in all_notes if max(t0, n['t']) < min(total_beats, n['t'] + n.get('d', 1.0))]
             if active:
-                vecs = [_helix_point(_pitch_cont(n), tonic_pc) for n in active]
-                weights = [float(n.get('d', 1.0)) * _vel(n) for n in active]
-                ce = sum(v * w for v, w in zip(vecs, weights)) / (sum(weights) + 1e-9)
+                vecs = _helix_points([_pitch_cont(n) for n in active], tonic_pc)
+                weights = np.array([float(n.get('d', 1.0)) * _vel(n) for n in active], dtype=float)
+                ce = (vecs * weights[:, None]).sum(axis=0) / (float(weights.sum()) + 1e-9)
                 out['spiral_strain_end'] = round(float(np.linalg.norm(ce - CE_key)), 2)
     except Exception as e:
         errors['spiral_strain_end'] = repr(e)
@@ -993,9 +1009,10 @@ def note_collision(score):
 
 def acoustic_checks(score):
     """Every rule in one list of (level, name, detail) rows; used by quality_gate.score_checks and the CLI."""
+    import orch_rows                    # imported here: orch_rows needs gate_profiles, which needs presets
     return (note_collision(score) + chord_voicing_and_strum(score) + choked_resonance(score)
             + machine_gun_percussion(score) + percussion_flam(score) + low_interval_mud(score)
-            + spatial_glue(score) + cognitive_feel_checks(score))
+            + spatial_glue(score) + cognitive_feel_checks(score) + orch_rows.checks(score))
 
 
 def audit(score):

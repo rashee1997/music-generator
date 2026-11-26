@@ -76,6 +76,16 @@ Velocity decides how a note begins; the CC11 (expression) curve decides how it e
 `dynamics` as CC11, so a crescendo exists in the score's `dynamics` and in written velocities, not in the mix. A held
 note that must swell needs `per_note_channels` and an `expression` shape (`bow` or `breath`).
 
+## 4b. Write what an orchestra could play
+
+A SoundFont plays any note, so a line no player could play still renders and reads as a mock-up. Run
+`python scripts/orch_rows.py <score> --project <dir>` before a render (stage 2 runs it too): it flags a note outside the
+instrument's range (`orch.range`), parallel fifths between two lines (`orch.voice_leading`), more simultaneous notes,
+a faster repeated-note run or a longer breathless phrase than a player or section has (`orch.playable`), and a gap between
+notes marked legato (`orch.legato`). A section is a track named for one (`strings`, `horns`) or an `ensemble` block;
+mark a deliberate extreme with `"extended_range": true`. Rows and limits: `quality-gate-rows.md` section 7; facts and their
+status: `knowledgebase/genre-and-feel/orchestral-writing.md`.
+
 ## 5. Report
 
 Say which SoundFont played, which parts used `velocity_timbre` and with what points, which attacks were layered, and

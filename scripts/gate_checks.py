@@ -15,6 +15,8 @@ No synthesis, EQ, mixing or preset values: this module only reads samples.
 import numpy as np
 from scipy.signal import butter, sosfiltfilt, lfilter, find_peaks
 
+import cut_windows as _cut_windows
+
 try:
     import librosa
 except Exception:                                     # the gate must run and say what it could not measure
@@ -240,18 +242,24 @@ def check_dropout(sig, min_ms=20.0, max_ms=1000.0, floor_below_db=45.0, edge_ms=
 
 
 def check_cut(sig, boundaries_s, drop_db=12.0, window_ms=20.0, hop_ms=5.0,
-              recovery_db=3.0, location_ms=75.0, end_ms=200.0, silence_below_db=25.0):
+              recovery_db=3.0, location_ms=75.0, end_ms=200.0, silence_below_db=25.0,
+              intentional_cut_windows=()):
     """A one/two-frame RMS collapse with no release, near a section boundary or at the end.
 
     A 15.7 dB drop at a section boundary on a clean render is an arrangement change, not a cut: the remaining layers are
     still audible. Only a step that lands near silence (below the file median by `silence_below_db`) is a hard edit.
+
+    `intentional_cut_windows` is a list of (start_s, end_s) the direction sheet declared as hard cuts (`cut_windows.py`):
+    a drop that lands inside one is the cut the piece asked for and is not counted. It exempts this one measure only; the
+    detail says how many drops it skipped, so an exemption is never silent. Nothing outside a window changes.
     """
     db, times = frame_db(sig, window_ms, hop_ms)
     if db.size < 24:
         return _result(0.0, drop_db, 'dB', [], 'too short to judge')
     d = db[:-2] - db[2:]
     floor_ref = float(np.median(db))
-    best, hits = 0.0, []
+    best, hits, exempt = 0.0, [], []
+    windows = _cut_windows.windows_of(list(intentional_cut_windows or ()))
     for i in np.flatnonzero(d > drop_db):
         low = db[i + 2]
         if low > floor_ref - silence_below_db:
@@ -265,12 +273,18 @@ def check_cut(sig, boundaries_s, drop_db=12.0, window_ms=20.0, hop_ms=5.0,
         near = any(abs(t - b) <= location_ms / 1000.0 for b in boundaries_s)
         if not near:
             continue
+        if any(a <= t <= z for a, z in windows):
+            exempt.append(t)                            # the sheet asked for this cut: not a defect
+            continue
         if float(d[i]) > best:
             best = float(d[i])
         hits.append(t)
     detail = (f'largest un-recovered step {best:.1f} dB over ~10 ms (limit {drop_db:g} dB), '
               f'{len(hits)} location(s) near a boundary/end')
-    return _result(best, drop_db, 'dB', hits, detail, drops=[round(float(x), 1) for x in d[np.flatnonzero(d > drop_db)][:8]])
+    if exempt:
+        detail += f'; {len(exempt)} drop(s) skipped inside {len(windows)} intentional cut window(s) (first at {exempt[0]:.3f} s)'
+    return _result(best, drop_db, 'dB', hits, detail, drops=[round(float(x), 1) for x in d[np.flatnonzero(d > drop_db)][:8]],
+                   exempted=[round(float(x), 4) for x in exempt[:8]])
 
 
 def check_abrupt_end(sig, floor_db=-45.0, min_decay_db=12.0, tail_ms=50.0, body_ms=(300.0, 800.0),

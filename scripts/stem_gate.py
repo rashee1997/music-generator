@@ -29,6 +29,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 
+import cut_windows
 import gate_checks as gc
 import gate_clock
 import gate_profiles
@@ -158,7 +159,10 @@ def _note_window_level(sig, a, b):
     return _level_in(sig, a, min(b, a + 0.5))
 
 
-def check_dead(sig, track, score, secs, under_db=12.0, floor_db=-70.0):
+def check_dead(sig, track, score, secs, under_db=12.0, floor_db=-70.0, trigger=False):
+    """`trigger`: the track's notes are triggers for one-shot sounds (an effect), so a note belongs to the section it
+    starts in and is judged from its onset. Its written length runs on past the sound, and the silent remainder that
+    spills into the next section is not a part that dropped out."""
     bpm = _clock(score, [])           # run_stem_gate reports a tempo map that cannot be built, once
     iv = _note_intervals(track, bpm)
     if not iv:
@@ -167,6 +171,8 @@ def check_dead(sig, track, score, secs, under_db=12.0, floor_db=-70.0):
     for s in secs:
         levels = []
         for a, b in iv:
+            if trigger and not s['start_s'] <= a < s['end_s']:
+                continue
             aa, bb = max(a, s['start_s']), min(b, s['end_s'])
             if bb <= aa:
                 continue
@@ -310,7 +316,8 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
         if gp.on('stem.cut'):
             boundaries = [s['start_s'] for s in secs if s['start_s'] > 0.05]
             res = gc.check_cut(sig, boundaries, drop_db=gp.param('stem.cut', 'drop_db'),
-                               location_ms=gp.param('stem.cut', 'location_ms'))
+                               location_ms=gp.param('stem.cut', 'location_ms'),
+                               intentional_cut_windows=cut_windows.windows_of(score))
             _emit(rows, metrics, 'stem.cut', 'FAIL' if res['value'] > res['threshold'] else 'PASS', res, name)
         else:
             _skip(rows, metrics, 'stem.cut', name, gp)
@@ -361,7 +368,7 @@ def _stem_rows(name, audio, track, score, secs, dur, gp):
 
     if track is not None:
         res = check_dead(sig, track, score, secs, under_db=gp.param('stem.dead', 'under_db'),
-                         floor_db=gp.param('stem.dead', 'floor_db'))
+                         floor_db=gp.param('stem.dead', 'floor_db'), trigger=is_fx)
         if res is not None:
             if gp.on('stem.dead'):
                 _emit(rows, metrics, 'stem.dead', 'FAIL' if res.get('fail') else 'PASS', res, name)
@@ -415,6 +422,7 @@ def _gate_key(name, audio_hash, track, score, secs, dur, gp):
         #   every score-level input of humanize.tempo_map_for; its note-dependent inputs (total length, the figure's
         #   phrase spans) are in `dur` and `audio` - a map that moves the notes re-renders them
  dur=round(float(dur), 4), profile=gp.label,
+        cuts=cut_windows.windows_of(score),                # a window changes what `stem.cut` reports, so it changes the identity
         sections=[(s.get('name'), round(float(s['start_s']), 4), round(float(s['end_s']), 4), s.get('dyn'))
                   for s in secs],
         rows=gp.rows), size=16)

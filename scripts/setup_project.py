@@ -208,8 +208,10 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
         "focus": "melody",
         "intent": {"emotions": ["hopeful"], "registers": ["cinematic"], "scenes": ["establish"],
                    "tensions": [], "avoid": ["tense"]},
-        "piece_type": "melodic",
-        "gate_reason": "TODO: one line on why this gate profile fits this piece; the gate runs it",
+        "piece_type": slug,
+        "gate_reason": "TODO: one line on why this gate profile fits this piece; the gate runs it. "
+                       f"`{slug}` is this project's own profile (presets/gate/{slug}.json, cloned from melodic); "
+                       "a shipped name is blocked by the project gate",
         "video": {"enabled": False, "source": None, "fps": None, "cuts": [], "cut_source": None,
                   "cut_sync": {"early_ms": 45, "late_ms": 125},
                   "dialogue": {"present": False, "duck_db": -9.0, "snr_min_db": 15.0},

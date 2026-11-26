@@ -66,6 +66,7 @@ import numpy as np
 import soundfile as sf
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import cut_windows
 import dsp
 import humanize as hz
 import soundbank as sb
@@ -1522,6 +1523,34 @@ def _align_onset(name, stem, tr, tm, bpm=None, limit_ms=25.0, max_ms=200.0):
     return out
 
 
+def _is_sustained(tr):
+    """A voice that holds a note until told to stop: a bowed, blown or sung instrument or a pad. A struck, plucked or
+    one-shot sound has its own decay and is not cut (its release is the sound)."""
+    raw = str((tr or {}).get('instrument', ''))
+    if raw.startswith(('sfx:', 'env:', 'clone:')) or (tr or {}).get('role') in ('environment', 'fx', 'drum'):
+        return False
+    try:
+        if rolelib.canonical((tr or {}).get('role'), default='') in ('pad', 'drone', 'texture'):
+            return True
+    except rolelib.UnknownRole:
+        pass
+    cfg = (presets.find_instrument(raw) if raw else None) or {}
+    names = {_name(raw)} | {_name(cfg[k]) for k in ('gm', 'instrument') if isinstance(cfg.get(k), str)}
+    return bool(names & (SUSTAINED | BOWED))
+
+
+def _apply_hard_cuts(name, stem, tr, tm, cuts):
+    """The stem with a 15 ms micro-ramp and then silence at every hard cut, for a sustained voice only. The ramp is the
+    only edit: nothing before it moves, and the voice comes back at its next written note (less a 30 ms guard for the
+    humanizer's early starts). Recorded in the render report, so a cut is never silent."""
+    if not cuts or not _is_sustained(tr):
+        return stem
+    onsets = [float(tm.sec(n['t'])) - 0.03 for n in (tr or {}).get('notes') or [] if 't' in n]
+    out = dsp.hard_cut(stem, SR, cuts=cuts, resume=onsets, ramp_ms=cut_windows.RAMP_MS)
+    _record(name, hard_cuts=[round(float(c), 3) for c in cuts if 0 < c * SR < len(stem)], hard_cut_ramp_ms=cut_windows.RAMP_MS)
+    return out
+
+
 def build_stems(score, sfpath=None, seed=None, verbose=True):
     """Humanize + render every track. Returns (stems dict name->(N,2) float32, meta, tempo map)."""
     _PIECE['score'] = score                            # an environment track's ecology reads the piece it sits in
@@ -1646,13 +1675,16 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
     # with `dc_hp_hz` on its track; everything else keeps the shared 5 Hz block.
     hp_by_name = {tr.get('name'): float(tr.get('dc_hp_hz') or 0.0) for tr in score.get('tracks', [])}
     tr_by_name = {tr.get('name'): tr for tr in score.get('tracks', [])}
+    hard_cuts = cut_windows.cuts_of(score)        # the direction sheet's hard cuts, attached by the pipeline; none = no change
 
     def _finish(name):
         stem = stems.pop(name)                 # dropped as soon as it is processed: the post-pass used to hold a second
         tr = tr_by_name.get(name) or {}        # full copy of the piece while it rebuilt every stem from the first
-        return name, dsp.trim_digital_lead(dsp.repair_clicks(
+        out = dsp.trim_digital_lead(dsp.repair_clicks(
             _dc_block(_align_onset(name, stem, tr, tm, score.get('bpm')),
                       cutoff_hz=(hp_by_name.get(name) or 5.0), order=(4 if hp_by_name.get(name) else 2))))
+        # last, on the final timeline: the lead trim and the onset alignment above move the stem, and a cut is a time
+        return name, _apply_hard_cuts(name, out, tr, tm, hard_cuts)
 
     names = list(stems)
     post_workers = _stem_workers(len(names)) if names else 1

@@ -207,7 +207,8 @@ numbers, come from a **gate profile**: a preset of kind `gate` (`references/data
   `harmonic_concordance` → `chroma.concordance`, `spiral_tension_arc` → `feel.spiral`, …). A relax/skip line names both, so a
   relaxed row can be found in the report under either name. `Profile.on/mode/param` accept either id.
 - Every row the gate prints has a profile row: the score's acoustic rules (`note_collision`, `chord_voicing_and_strum`,
-  `choked_resonance`, `machine_gun_percussion`, `percussion_flam`, `low_interval_mud`), `ambient_bed` and `modulation_flutter`
+  `choked_resonance`, `machine_gun_percussion`, `percussion_flam`, `low_interval_mud`, and the orchestral-writing rows
+  `orch.range`, `orch.voice_leading`, `orch.playable`, `orch.legato`, `quality-gate-rows.md` section 7), `ambient_bed` and `modulation_flutter`
   included. A row with no profile entry could never be adapted, which meant a type of music the gate could not describe.
 - A project profile may not reuse a shipped profile's name (that would retune every piece of that type in the project at once,
   the quiet way to switch the gate off). Give it its own name and `extends` the closest shipped one; the report then says
@@ -232,6 +233,12 @@ director, not a faulty render. Report them beside the gate, never instead of it.
 actually threatens are `cochlear_roughness` (added harmonics), `masking` and `balance` (a lifted air band), `master.dc`
 and `fold.mono` (a low-mid stage), and `loudness` / `true_peak` (the air lift). Fix the part or the preset; never
 loosen a row to make the realism report look better.
+
+## 3i. Orchestral writing and intentional cuts
+
+Rows judged from the score alone before any render (`orch.range`, `orch.voice_leading`, `orch.playable`, `orch.legato`) and the
+direction sheet's hard cuts (`sync: hard` opens a +-150 ms window in which `stem.cut` and `cut.hard` skip the level drop) are in
+[`quality-gate-rows.md`](quality-gate-rows.md) sections 7 and 8.
 
 ## 4. What the gate cannot judge
 

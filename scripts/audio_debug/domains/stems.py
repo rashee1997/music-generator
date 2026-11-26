@@ -6,6 +6,8 @@ gaps between that stem's notes, which is what makes the length/spacing conflict 
 """
 from __future__ import annotations
 
+import cut_windows
+
 from .. import catalog, margins
 from . import base
 
@@ -23,6 +25,29 @@ def _note_gaps(case, stem):
         gap = (b['t'] - a['t']) * spb - float(a.get('d') or 0.0) * spb
         out.append((max(0.0, gap), (b['t'] - a['t']) * spb, spb))
     return out
+
+
+def cut_note(case, row):
+    """What a failing `stem.cut` is made of, against the hard cuts the direction sheet declared: whether the drop lies in an
+    intentional cut window (then the row would not have fired), how far it is from the nearest one, and the two honest
+    ways out. Returns None when the row carries no time to place."""
+    raw = row.get('raw') or {}
+    times = [float(t) for t in (raw.get('worst_times_s') or row.get('worst_times_s') or []) if isinstance(t, (int, float))][:3]
+    if not times:
+        return None
+    windows = cut_windows.windows_of(case.score)
+    where = ', '.join(f'{t:.2f} s' for t in times)
+    stem = row.get('stem') or 'the stem'
+    if not windows:
+        return (f'{stem}: an un-recovered drop at {where} and no hard cut is declared in the direction sheet. If the stop is intended, '
+                f'add a hit {{"t": <seconds>, "kind": "cut", "sync": "hard"}}: the renderer then ramps the sustained voices over '
+                f'{cut_windows.RAMP_MS:g} ms and the gate skips the drop within +-{cut_windows.HALF_S * 1000:.0f} ms. If it is not, '
+                f'lengthen the release or the fade of the part that ends there')
+    gaps = [min(abs(t - a) if t < a else abs(t - b) if t > b else 0.0 for a, b in windows) for t in times]
+    near = min(gaps)
+    return (f'{stem}: an un-recovered drop at {where}; {len(windows)} intentional cut window(s) are declared and the nearest is '
+            f'{near * 1000:.0f} ms away, so this stop is not one the sheet asked for. Move the hit in the sheet onto it (a window is '
+            f'+-{cut_windows.HALF_S * 1000:.0f} ms), or lengthen the release of the part that ends there')
 
 
 def analyse(case, rows, history=()):
@@ -52,6 +77,10 @@ def analyse(case, rows, history=()):
                 share = catalog.band_share_for(case, lv, r)
                 if share:
                     coef[(key, lv.id)] = share
+        if r['row'] == 'stem.cut' and r.get('level') == 'FAIL':
+            note = cut_note(case, r)
+            if note:
+                notes.append(note)
         gaps = _note_gaps(case, stem) if r['row'] == 'stem.dropout' else []
         gaps = [g for g in gaps if g[0] > 0]        # a simultaneous hit is not a gap to be opened
         if gaps:

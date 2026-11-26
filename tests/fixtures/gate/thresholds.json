@@ -319,6 +319,21 @@
       "max_hf_share_db": -45.0
     },
     "note_collision": {},
+    "orch.legato": {
+      "max_gap_beats": 0.1
+    },
+    "orch.playable": {
+      "phrase_scale": 1.0,
+      "rate_scale": 1.0
+    },
+    "orch.range": {
+      "fail_over_semitones": 12
+    },
+    "orch.voice_leading": {
+      "include_octaves": false,
+      "max_parallel_share": 0.2,
+      "min_events": 3
+    },
     "pattern.bass_pitches": {
       "max_classes": 3
     },

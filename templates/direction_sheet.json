@@ -66,7 +66,7 @@
   "hits_at": [24.0, 38.0, 52.0],
   "hits": [
     {"t": 24.0, "kind": "motion", "sync": "soft", "sound": "a single bird crossing frame", "why": "a movement inside the shot, not an edit: a soft sync, so a few frames either way do not matter"},
-    {"t": 38.0, "kind": "cut", "sync": "hard", "sound": "cello low C under the strings", "why": "hard cut to the valley floor; a hard sync point, on the frame"},
+    {"t": 38.0, "kind": "cut", "sync": "hard", "sound": "everything sustained stops on the frame; one cello low C enters", "why": "hard cut to the valley floor; a hard sync point, on the frame. kind cut + sync hard: the sustained voices stop on t with a 15 ms ramp, and the gate skips the level drop within 150 ms of t"},
     {"t": 52.0, "kind": "musical", "sync": "soft", "sound": "strings reach their widest spread", "why": "the cue's own crest, one beat after the cut so the cut lands first"}
   ],
 

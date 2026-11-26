@@ -37,6 +37,7 @@ except Exception:
     median_filter = None
 
 import auditory
+import cut_windows
 import gate_checks as gc
 import gate_audio
 import gate_clock
@@ -887,7 +888,9 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
             threshold=res['threshold'], margin=res['margin'], worst_times_s=res['times'][:8], calibrated=False,
             detail=res['detail'])
 
-    res = gc.check_cut(program_sig, boundaries)
+    # the sheet's hard cuts, and any list the score already carries (the pipeline attached them before rendering)
+    windows = sorted(set(cut_windows.windows_of(score)) | set(cut_windows.windows_of(cut_windows.from_sheet(sheet)['windows'])))
+    res = gc.check_cut(program_sig, boundaries, intentional_cut_windows=windows)
     level = 'FAIL' if res['value'] > res['threshold'] else 'PASS'
     _row(out, level, 'cut.hard', res['detail'])
     _metric(metrics, row='cut.hard', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
@@ -1743,21 +1746,7 @@ SUBTYPE_BITS = {'PCM_U8': 8, 'PCM_16': 16, 'PCM_24': 24, 'PCM_32': 32, 'FLOAT': 
 
 def _direction_sheet(project_dir):
     """The project's direction sheet (first parseable direction/*.json), or {}."""
-    if not project_dir:
-        return {}
-    folder = os.path.join(project_dir, 'direction')
-    if not os.path.isdir(folder):
-        return {}
-    for name in sorted(os.listdir(folder)):
-        if not name.endswith('.json'):
-            continue
-        try:
-            data = json.load(open(os.path.join(folder, name), encoding='utf-8'))
-        except Exception:
-            continue
-        if isinstance(data, dict):
-            return data
-    return {}
+    return cut_windows.read_sheet(project_dir)
 
 
 def _expression_rows(score, sheet, out):

@@ -120,5 +120,68 @@ class LazyDomains(unittest.TestCase):
         self.assertEqual(rep.run_domains, [])
 
 
+class NewRows(unittest.TestCase):
+    """The rows added after the first engine: the orchestral-writing rows and the master's cut, dropout and end rows."""
+
+    def test_every_row_has_an_owner(self):
+        from audio_debug import rows as ad_rows
+        for name, domain in (('orch.range', 'direction'), ('orch.voice_leading', 'direction'), ('orch.playable', 'direction'),
+                             ('orch.legato', 'direction'), ('cut.hard', 'master'), ('dropout', 'master'), ('end.abrupt', 'master'),
+                             ('stem.cut', 'stems')):
+            self.assertEqual(ad_rows.domain_of(name), domain, name)
+
+    def test_a_failing_orch_row_is_closed_to_the_presets_and_points_at_the_score(self):
+        rows = [row('orch.range', 14, 12, unit='semitones', level='FAIL')]
+        rep = audio_debug.autopsy(case(rows, project=tempfile.mkdtemp()), write=False)
+        self.assertEqual(rep.run_domains, ['direction'])
+        self.assertEqual([r['row'] for r in rep.binding], ['orch.range'])
+
+    def test_a_failing_master_cut_row_runs_the_master_domain(self):
+        rows = [row('cut.hard', 15.0, 12.0, unit='dB', level='FAIL')]
+        rep = audio_debug.autopsy(case(rows, project=tempfile.mkdtemp()), write=False)
+        self.assertEqual(rep.run_domains, ['master'])
+
+    def test_a_stem_cut_with_no_declared_hard_cut_says_how_to_declare_one(self):
+        from audio_debug.domains import stems
+        r = row('stem.cut', 15.0, 12.0, stem='pad', worst_times_s=[4.01])
+        note = stems.cut_note(case([r]), r)
+        self.assertIn('no hard cut is declared', note)
+        self.assertIn('"sync": "hard"', note)
+        self.assertIn('4.01 s', note)
+
+    def test_a_stem_cut_outside_every_window_says_how_far_the_nearest_is(self):
+        from audio_debug.domains import stems
+        r = row('stem.cut', 15.0, 12.0, stem='pad', worst_times_s=[6.0])
+        note = stems.cut_note(case([r], score=dict(intentional_cut_windows=[[3.85, 4.15]])), r)
+        self.assertIn('1 intentional cut window', note)
+        self.assertIn('1850 ms away', note)
+
+    def test_a_row_with_no_time_gets_no_note(self):
+        from audio_debug.domains import stems
+        r = row('stem.cut', 15.0, 12.0, stem='pad')
+        self.assertIsNone(stems.cut_note(case([r]), r))
+
+    def test_the_analysis_carries_the_cut_note(self):
+        from audio_debug.domains import stems
+        r = row('stem.cut', 15.0, 12.0, stem='pad', worst_times_s=[6.0])
+        notes = stems.analyse(case([r]), [r]).notes
+        self.assertTrue(any('un-recovered drop at 6.00 s' in n for n in notes), notes)
+
+    def test_the_case_reads_the_hard_cuts_back_from_the_direction_sheet(self):
+        import json
+        tmp = tempfile.mkdtemp()
+        try:
+            os.makedirs(os.path.join(tmp, 'direction'))
+            with open(os.path.join(tmp, 'direction', 'direction_x.json'), 'w', encoding='utf-8') as fh:
+                json.dump({'hits': [{'t': 4.0, 'kind': 'cut', 'sync': 'hard'}]}, fh)
+            loaded = audio_debug.Case.load(tmp)
+            self.assertEqual(loaded.score.get('intentional_cut_windows'), [[3.85, 4.15]])
+            self.assertEqual(loaded.score.get('hard_cuts'), [4.0])
+            empty = audio_debug.Case.load(tempfile.mkdtemp())
+            self.assertNotIn('intentional_cut_windows', empty.score)
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -67,11 +67,12 @@ class StemGateTest(unittest.TestCase):
             seg = t[:m]
             sig[i:i + m] = (0.4 * np.sin(2 * np.pi * 48.0 * seg) * np.exp(-seg * 4.0)).astype(np.float32)
         score = fx.score()
+        beat = fx.BPM / 60.0              # notes are in beats and the gate reads them on the score's tempo; the audio above is in seconds
         score['tracks'] = list(score['tracks']) + [
             {'name': 'whoosh', 'instrument': 'sfx:whoosh_warp', 'role': 'fx',
-             'notes': [{'t': 2.0, 'd': 2.0, 'p': 60, 'v': 80},
-                       {'t': 4.5, 'd': 2.0, 'p': 60, 'v': 80},
-                       {'t': 7.0, 'd': 1.0, 'p': 60, 'v': 80}]}]
+             'notes': [{'t': 2.0 * beat, 'd': 2.0 * beat, 'p': 60, 'v': 80},
+                       {'t': 4.5 * beat, 'd': 2.0 * beat, 'p': 60, 'v': 80},
+                       {'t': 7.0 * beat, 'd': 1.0 * beat, 'p': 60, 'v': 80}]}]
         stems = fx.build_stems()
         stems['whoosh'] = sig
         rows, _meta = stem_gate.run_stem_gate(score, stems, sr=sr, workers=1)
@@ -80,6 +81,33 @@ class StemGateTest(unittest.TestCase):
         self.assertIn('stem.dc', infos, mine)
         self.assertIn('stem.tick', infos, mine)
         self.assertEqual([r for r in mine if r[0] == 'FAIL'], [], mine)
+
+    def test_a_one_shot_fx_stem_that_is_really_silent_still_fails_stem_dead(self):
+        """The control for the test above: judging an effect by its triggers must not make it undetectable when it dies."""
+        beat = fx.BPM / 60.0
+        score = fx.score()
+        score['tracks'] = list(score['tracks']) + [
+            {'name': 'whoosh', 'instrument': 'sfx:whoosh_warp', 'role': 'fx',
+             'notes': [{'t': 2.0 * beat, 'd': 2.0 * beat, 'p': 60, 'v': 80}, {'t': 4.5 * beat, 'd': 2.0 * beat, 'p': 60, 'v': 80}]}]
+        stems = fx.build_stems()
+        stems['whoosh'] = np.zeros(int(fx.SR * 8.0), np.float32)
+        rows, _meta = stem_gate.run_stem_gate(score, stems, sr=fx.SR, workers=1)
+        self.assertIn('stem.dead', [rid for lvl, rid, det in rows if lvl == 'FAIL' and 'whoosh' in det], rows)
+
+    def test_a_trigger_is_judged_where_it_starts_not_where_its_written_length_ends(self):
+        beat = fx.BPM / 60.0
+        notes = [{'t': 4.5 * beat, 'd': 2.0 * beat, 'p': 60, 'v': 80}]            # starts at 4.5 s, written to 6.5 s
+        track = {'name': 'w', 'role': 'fx', 'instrument': 'sfx:whoosh_warp', 'notes': notes}
+        sig = np.zeros(int(fx.SR * 8.0), np.float32)
+        sig[int(4.5 * fx.SR):int(4.9 * fx.SR)] = 0.3                                # the hit is 0.4 s long
+        import gate_audio
+        secs = [dict(name=n, start_s=2.0 * i, end_s=2.0 * i + 2.0, dyn=0.5) for i, n in enumerate('abcd')]
+        signal = gate_audio.Signal(sig, fx.SR)
+        spilled = stem_gate.check_dead(signal, track, fx.score(), secs)                       # the old reading: also section d
+        judged = stem_gate.check_dead(signal, track, fx.score(), secs, trigger=True)          # one section, the one it starts in
+        self.assertEqual([t['section'] for t in judged['table']], ['c'])
+        self.assertTrue(any(t['section'] == 'd' for t in spilled['table']))
+        self.assertFalse(judged['fail'])
 
     def test_stem_edge_fires_when_a_stem_starts_late(self):
         rows, meta, fails = _stem_case('pad', lambda x: fx.trim_head(x, 0.3))

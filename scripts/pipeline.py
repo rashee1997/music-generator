@@ -57,6 +57,7 @@ if SCRIPTS_DIR not in sys.path:
 
 import cli_util
 import compose
+import cut_windows
 import envcheck
 import gate_profiles
 import gate_report
@@ -507,6 +508,19 @@ class MusicPipeline:
     # -----------------------------------------------------------------------------------------
     # Preset & Stem Discovery for Pre-Existing Music
     # -----------------------------------------------------------------------------------------
+    def with_cut_windows(self, score, project_dir):
+        """The score with the direction sheet's hard cuts on it (`cut_windows.py`): the renderer ramps the sustained
+        voices there and the gate skips the drop check inside the window. A project with no sheet, or a sheet with no
+        hard hit, returns the score unchanged; a list the score already carries is kept."""
+        if not project_dir:
+            return score
+        sheet = qg._direction_sheet(project_dir)
+        out = cut_windows.attach(score, sheet)
+        if self.verbose and out.get('intentional_cut_windows') and out is not score and 'intentional_cut_windows' not in score:
+            print(f"  hard cuts from the direction sheet: {len(out.get('hard_cuts', []))} voice cut(s), "
+                  f"{len(out['intentional_cut_windows'])} intentional cut window(s) (+-{cut_windows.HALF_S * 1000:.0f} ms)")
+        return out
+
     def adopt_presets(self, score, presets_dir=None, project_dir=None):
         """Auto-discover and adopt presets from project presets/ directory into score tracks.
         Preserves all existing musical notes while attaching spatial, EQ, humanization, and role definitions."""
@@ -711,6 +725,7 @@ class MusicPipeline:
 
             if adopt_presets and resolved_presets_dir:
                 score = self.adopt_presets(score, presets_dir=resolved_presets_dir, project_dir=discovered.get('project_dir'))
+            score = self.with_cut_windows(score, discovered.get('project_dir'))
 
             # Stage 2: Preflight Lint on symbolic score if tracks exist
             if score.get('tracks'):
@@ -821,6 +836,7 @@ class MusicPipeline:
 
         if adopt_presets:
             score = self.adopt_presets(score, presets_dir=presets_dir, project_dir=project_dir)
+        score = self.with_cut_windows(score, project_dir)
 
         prev_attempts = []
         if project_dir and json_report and os.path.isfile(json_report):
