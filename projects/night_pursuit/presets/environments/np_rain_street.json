@@ -1,7 +1,7 @@
 {
  "name": "np_rain_street",
- "description": "Rain at 12 mm/h on a wet asphalt street at night: the patter of drops on the road, a film of water hissing, all round.",
- "character": "Rain at 12 mm/h falling on a wet street and a film of water on the asphalt, all round the car; in the slow motion it thins and darkens rather than pitching down.",
+ "description": "Heavy rain at 30 mm/h on a wet asphalt street at night: the patter of drops on the road, a film of water hissing, all round.",
+ "character": "Heavy rain at 30 mm/h falling on a wet street and a film of water on the asphalt, all round the car; in the slow motion it thins and darkens rather than pitching down.",
  "atmosphere": {
   "temp_c": 10.0,
   "rh": 95.0
@@ -11,9 +11,9 @@
    "name": "drops",
    "primitive": "rain_physical",
    "kind": "bed",
-   "rate_mm_h": 12.0,
+   "rate_mm_h": 30.0,
    "surface": "solid",
-   "bubble_prob": 0.15,
+   "bubble_prob": 0.02,
    "gain_db": -22.0,
    "decorrelate": 1.0,
    "spatial": {
@@ -112,5 +112,5 @@
  "sources": [
   "rain_wet_asphalt"
  ],
- "note": "ESTIMATE: 12 mm/h and the film band are starting values; no street-rain recording was measured"
+ "note": "ESTIMATE: 30 mm/h and the film band are starting values; no street-rain recording was measured"
 }

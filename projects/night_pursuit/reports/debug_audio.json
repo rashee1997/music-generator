@@ -1,5 +1,5 @@
 {
- "stamp": "20261126T074328",
+ "stamp": "20261126T080020",
  "project": "night_pursuit",
  "level": "FAIL",
  "sources": {
@@ -16,7 +16,7 @@
   ],
   "stems": "24 processed stems from .cache/mix",
   "master": "out/_draft_master.wav",
-  "verdict": "2026-11-26T07:24:34Z"
+  "verdict": "2026-11-26T07:43:28Z"
  },
  "binding": [
   {
@@ -27,7 +27,7 @@
    "threshold": 0.0,
    "unit": "events",
    "safety": -6.0,
-   "detail": "6 clustered impulse event(s) (MAD), 6 LPC frame(s); 1550 event(s) rejected as a dense burst, 643 as a steep attack; max cluster span 1.497 ms"
+   "detail": "6 clustered impulse event(s) (MAD), 6 LPC frame(s); 1530 event(s) rejected as a dense burst, 640 as a steep attack; max cluster span 1.497 ms"
   },
   {
    "row": "dropout",
@@ -414,15 +414,14 @@
  ],
  "domains": {
   "run": [
-   "master"
+   "master",
+   "stems"
   ],
-  "skipped": {
-   "stems": 74
-  }
+  "skipped": {}
  },
  "model": {
   "first_order": true,
-  "rows": 8,
+  "rows": 24,
   "levers": [
    {
     "id": "render.oversample",
@@ -495,12 +494,24 @@
     "step": 0.010416666666666666,
     "unit": "beats",
     "text": "rain_street written note length (mean 376 beats)"
+   },
+   {
+    "id": "note.tyres.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "tyres",
+    "current": 327.78,
+    "lo": 327.71999999999997,
+    "hi": 327.84,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "tyres written note length (mean 327.78 beats)"
    }
   ]
  },
  "plan": {
-  "status": "nothing to move",
-  "worst_safety": null,
+  "status": "linear",
+  "worst_safety": -6.0,
   "deltas": {},
   "clearing": {},
   "predicted": {
@@ -517,8 +528,8 @@
     0.02
    ],
    "true peak::-": [
-    0.00024901311566842094,
-    0.00024901311566842094
+    0.00024962847927671267,
+    0.00024962847927671267
    ],
    "cut.hard::-": [
     2.0,
@@ -533,16 +544,60 @@
     0.0
    ],
    "master.dc::-": [
-    0.0959428293253924,
-    0.0959428293253924
+    0.0959960056992019,
+    0.0959960056992019
+   ],
+   "stem.clipping::tyres": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::tyres": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::tyres": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::tyres": [
+    2.0,
+    2.0
+   ],
+   "stem.dead::tyres": [
+    0.02,
+    0.02
    ]
   },
-  "conflicts": [],
+  "conflicts": [
+   {
+    "lever": "hf.tyres",
+    "text": "tyres high shelf at 5500 Hz: inst_eq[\"sfx:np_drift_squeal\"]",
+    "unit": "dB",
+    "feasible": [
+     54.0,
+     0.0
+    ],
+    "bounds": [
+     -12.0,
+     0.0
+    ],
+    "rows": [
+     {
+      "row": "clicks",
+      "needs": 54.0,
+      "safety": -6.0
+     }
+    ],
+    "why": "tyres high shelf at 5500 Hz: inst_eq[\"sfx:np_drift_squeal\"] cannot satisfy clicks at once: the moves that pass one row fail the other, and the bounds leave no value between"
+   }
+  ],
   "closed": [
    "dropout"
   ],
   "burned": [],
-  "notes": [],
+  "notes": [
+   "no admissible move improves the binding rows: every lever is burned, closed or already optimal"
+  ],
   "experiments": [
    {
     "row": "clicks",
@@ -552,15 +607,15 @@
     "baseline": 6,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 0.63,
+    "resolution_db": 0.61,
     "moves": {
-     "hf.tyres": -3.0
+     "hf.tyres": -6.0
     },
     "times": [
-     46.571,
      47.591,
      60.796,
      65.998,
+     95.033,
      152.11
     ],
     "verdict": "better",
@@ -575,16 +630,38 @@
     "baseline": 6,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 0.63,
+    "resolution_db": 0.61,
     "moves": {
-     "hf.tyres": -3.0,
+     "hf.tyres": -9.0
+    },
+    "times": [
+     47.591,
+     60.796,
+     65.998,
+     95.033,
+     152.11
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 5,
+    "baseline": 6,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 0.61,
+    "moves": {
+     "hf.tyres": -6.0,
      "hf.city_far": -3.0
     },
     "times": [
-     46.571,
      47.591,
      60.796,
      65.998,
+     95.033,
      152.11
     ],
     "verdict": "better",
@@ -598,38 +675,15 @@
     "baseline": 6,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 0.63,
-    "moves": {
-     "hf.tyres": -3.0,
-     "hf.city_far": -6.0
-    },
-    "times": [
-     46.571,
-     47.591,
-     60.796,
-     65.998,
-     152.11
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 0.63,
+    "resolution_db": 0.61,
     "moves": {
      "hf.tyres": -12.0
     },
     "times": [
-     46.571,
      47.591,
+     60.796,
      65.998,
-     151.022,
+     95.033,
      152.11
     ],
     "verdict": "better",
@@ -643,16 +697,108 @@
     "baseline": 6,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 0.63,
+    "resolution_db": 0.61,
     "moves": {
-     "hf.tyres": -3.0,
-     "hf.city_far": -9.0
+     "hf.tyres": -6.0,
+     "hf.city_far": -6.0
     },
     "times": [
-     46.571,
      47.591,
      60.796,
      65.998,
+     95.033,
+     152.11
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 5,
+    "baseline": 6,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 0.61,
+    "moves": {
+     "hf.tyres": -9.0,
+     "hf.city_far": -3.0
+    },
+    "times": [
+     47.591,
+     60.796,
+     65.998,
+     95.033,
+     152.11
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 5,
+    "baseline": 6,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 0.61,
+    "moves": {
+     "hf.tyres": -6.0,
+     "hf.city_far": -9.0
+    },
+    "times": [
+     47.591,
+     60.796,
+     65.998,
+     95.033,
+     152.11
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 5,
+    "baseline": 6,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 0.61,
+    "moves": {
+     "hf.tyres": -9.0,
+     "hf.city_far": -6.0
+    },
+    "times": [
+     47.591,
+     60.796,
+     65.998,
+     95.033,
+     152.11
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 5,
+    "baseline": 6,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 0.61,
+    "moves": {
+     "hf.tyres": -9.0,
+     "hf.city_far": -9.0
+    },
+    "times": [
+     47.591,
+     60.796,
+     65.998,
+     95.033,
      152.11
     ],
     "verdict": "better",
@@ -662,57 +808,27 @@
  },
  "forensics": [
   {
-   "t": 46.571,
-   "step": 0.02159,
-   "threshold": 0.02079,
-   "over_threshold_db": 0.33,
-   "z": 8.3,
-   "kind": "single source",
-   "trusted": false,
-   "fit_ratio": 0.08,
-   "owners": [
-    {
-     "stem": "wipers",
-     "share": 0.771,
-     "signed": -0.00195
-    }
-   ],
-   "raw_step_fs": 0.0324,
-   "notes": [
-    {
-     "track": "wipers",
-     "pitch": null,
-     "velocity": null,
-     "onset_s": null,
-     "after_onset_ms": 0.0,
-     "written_len": null,
-     "continuous": true,
-     "layers": []
-    }
-   ]
-  },
-  {
    "t": 47.5912,
-   "step": 0.04066,
-   "threshold": 0.02079,
-   "over_threshold_db": 5.83,
-   "z": 15.6,
+   "step": 0.04067,
+   "threshold": 0.02098,
+   "over_threshold_db": 5.75,
+   "z": 15.5,
    "kind": "coincident transients",
    "trusted": false,
    "fit_ratio": 0.02,
    "owners": [
     {
      "stem": "wipers",
-     "share": 0.495,
-     "signed": -0.0007
+     "share": 0.503,
+     "signed": -0.00073
     },
     {
      "stem": "engine",
-     "share": 0.264,
+     "share": 0.257,
      "signed": -0.00037
     }
    ],
-   "raw_step_fs": 0.0468,
+   "raw_step_fs": 0.0473,
    "notes": [
     {
      "track": "engine",
@@ -738,26 +854,26 @@
   },
   {
    "t": 60.7964,
-   "step": 0.03696,
-   "threshold": 0.02079,
-   "over_threshold_db": 5.0,
-   "z": 14.2,
+   "step": 0.03706,
+   "threshold": 0.02098,
+   "over_threshold_db": 4.94,
+   "z": 14.1,
    "kind": "coincident transients",
    "trusted": false,
    "fit_ratio": 0.29,
    "owners": [
     {
      "stem": "tyres",
-     "share": 0.581,
+     "share": 0.58,
      "signed": 0.00633
     },
     {
      "stem": "engine",
-     "share": 0.36,
-     "signed": 0.00392
+     "share": 0.359,
+     "signed": 0.00391
     }
    ],
-   "raw_step_fs": 0.0674,
+   "raw_step_fs": 0.0667,
    "notes": [
     {
      "track": "engine",
@@ -783,17 +899,17 @@
   },
   {
    "t": 65.998,
-   "step": 0.03031,
-   "threshold": 0.02079,
-   "over_threshold_db": 3.27,
-   "z": 11.7,
+   "step": 0.03028,
+   "threshold": 0.02098,
+   "over_threshold_db": 3.19,
+   "z": 11.5,
    "kind": "mixed",
    "trusted": false,
    "fit_ratio": 0.0,
    "owners": [
     {
      "stem": "tyres",
-     "share": 0.605,
+     "share": 0.602,
      "signed": -0.00016
     },
     {
@@ -827,10 +943,40 @@
    ]
   },
   {
+   "t": 95.0331,
+   "step": 0.02695,
+   "threshold": 0.02098,
+   "over_threshold_db": 2.17,
+   "z": 10.3,
+   "kind": "single source",
+   "trusted": false,
+   "fit_ratio": 0.2,
+   "owners": [
+    {
+     "stem": "engine",
+     "share": 0.835,
+     "signed": 0.00506
+    }
+   ],
+   "raw_step_fs": 0.0842,
+   "notes": [
+    {
+     "track": "engine",
+     "pitch": null,
+     "velocity": null,
+     "onset_s": null,
+     "after_onset_ms": 0.0,
+     "written_len": null,
+     "continuous": true,
+     "layers": []
+    }
+   ]
+  },
+  {
    "t": 149.6293,
-   "step": 0.03711,
-   "threshold": 0.02079,
-   "over_threshold_db": 5.03,
+   "step": 0.03739,
+   "threshold": 0.02098,
+   "over_threshold_db": 5.02,
    "z": 14.3,
    "kind": "single source",
    "trusted": false,
@@ -838,16 +984,16 @@
    "owners": [
     {
      "stem": "engine",
-     "share": 0.742,
+     "share": 0.735,
      "signed": -0.00202
     },
     {
      "stem": "wipers",
-     "share": 0.217,
-     "signed": -0.00059
+     "share": 0.224,
+     "signed": -0.00062
     }
    ],
-   "raw_step_fs": 0.0451,
+   "raw_step_fs": 0.0467,
    "notes": [
     {
      "track": "engine",
@@ -873,10 +1019,10 @@
   },
   {
    "t": 152.1099,
-   "step": 0.0444,
-   "threshold": 0.02079,
-   "over_threshold_db": 6.59,
-   "z": 17.1,
+   "step": 0.04435,
+   "threshold": 0.02098,
+   "over_threshold_db": 6.5,
+   "z": 16.9,
    "kind": "single source",
    "trusted": false,
    "fit_ratio": 0.0,
@@ -903,18 +1049,18 @@
   }
  ],
  "notes": [
-  "clicks: sham replay (no change) reproduces the gate's 6 event(s) exactly (decomposition R^2 0.968); counterfactuals below are priced on a model that passes its own test",
+  "clicks: sham replay (no change) reproduces the gate's 6 event(s) exactly (decomposition R^2 0.969); counterfactuals below are priced on a model that passes its own test",
   "clicks: model resolution 0.6 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
-  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.97); gains bass_clarinet 1.42, bass_drum 1.20, basses 1.81, celli 1.05, city_far 4.09, crash 0.18, cymbals 0.70, engine 2.65, horns 0.85, piano 1.06, piano_low 2.10, rain_awnings 0.49, rain_street 4.19, snare 0.89, sub_drop 1.95, timpani 0.89, trombones 0.76, tuba 1.39, tyres 1.39, violins_staccato 0.80, violins_tremolo 0.68, wipers 2.16",
-  "event 46.571s [single source] wipers 77%; step 0.0216 vs threshold 0.0208 (+0.3 dB over); nearest onset wipers pNone vNone +0 ms  (fit unreliable)",
-  "event 47.591s [coincident transients] wipers 50%, engine 26%; step 0.0407 vs threshold 0.0208 (+5.8 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
-  "event 60.796s [coincident transients] tyres 58%, engine 36%; step 0.0370 vs threshold 0.0208 (+5.0 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
-  "event 65.998s [mixed] tyres 60%, city_far 23%; step 0.0303 vs threshold 0.0208 (+3.3 dB over); nearest onset tyres pNone vNone +0 ms  (fit unreliable)",
-  "event 149.629s [single source] engine 74%, wipers 22%; step 0.0371 vs threshold 0.0208 (+5.0 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
-  "event 152.110s [single source] city_far 83%; step 0.0444 vs threshold 0.0208 (+6.6 dB over); nearest onset city_far pNone vNone +0 ms  (fit unreliable)",
-  "clicks: cutting the band of engine is NOT monotone (replay: -3 dB -> 8 event(s), -6 dB -> 8 event(s), -12 dB -> 8 event(s), -9 dB -> 10 event(s) against 6 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
-  "clicks: cutting the band of tyres is NOT monotone (replay: -3 dB -> 5 event(s), -12 dB -> 5 event(s), -6 dB -> 6 event(s), -9 dB -> 6 event(s) against 6 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
-  "clicks: cutting the band of wipers is NOT monotone (replay: -3 dB -> 7 event(s), -6 dB -> 7 event(s), -9 dB -> 8 event(s), -12 dB -> 8 event(s) against 6 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
-  "dropout has 1 event(s) at 170.485s; the transient is rain_street 76%, rain_awnings 10%, city_far 9%"
+  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.97); gains bass_clarinet 1.40, bass_drum 0.97, basses 1.79, celli 1.12, city_far 4.10, crash 0.19, cymbals 0.72, engine 2.65, horns 0.82, piano 1.13, piano_low 1.73, rain_awnings 0.40, rain_street 4.19, snare 0.90, sub_drop 2.18, timpani 0.78, trombones 0.76, tuba 1.42, tyres 1.38, violins_staccato 0.84, violins_tremolo 0.67, wipers 2.25",
+  "event 47.591s [coincident transients] wipers 50%, engine 26%; step 0.0407 vs threshold 0.0210 (+5.8 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
+  "event 60.796s [coincident transients] tyres 58%, engine 36%; step 0.0371 vs threshold 0.0210 (+4.9 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
+  "event 65.998s [mixed] tyres 60%, city_far 23%; step 0.0303 vs threshold 0.0210 (+3.2 dB over); nearest onset tyres pNone vNone +0 ms  (fit unreliable)",
+  "event 95.033s [single source] engine 84%; step 0.0270 vs threshold 0.0210 (+2.2 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
+  "event 149.629s [single source] engine 74%, wipers 22%; step 0.0374 vs threshold 0.0210 (+5.0 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
+  "event 152.110s [single source] city_far 83%; step 0.0444 vs threshold 0.0210 (+6.5 dB over); nearest onset city_far pNone vNone +0 ms  (fit unreliable)",
+  "clicks: cutting the band of engine is NOT monotone (replay: -6 dB -> 6 event(s), -3 dB -> 7 event(s), -9 dB -> 7 event(s), -12 dB -> 7 event(s) against 6 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
+  "clicks: cutting the band of wipers is NOT monotone (replay: -3 dB -> 9 event(s), -6 dB -> 9 event(s), -9 dB -> 10 event(s), -12 dB -> 11 event(s) against 6 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
+  "dropout has 1 event(s) at 170.485s; the transient is rain_street 76%, rain_awnings 10%, city_far 9%",
+  "risk closure: the levers that move this row belong to tyres, so every row of those stems was loaded as a constraint before the plan was solved"
  ]
 }

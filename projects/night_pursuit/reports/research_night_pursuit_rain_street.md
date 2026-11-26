@@ -231,7 +231,7 @@ Sound (all as sound-model or scene presets, none as a script)
 - The hero engine is a periodic pulse train whose f0 follows rpm x 8 / 120 through the gears (idle 800 rpm = 53 Hz, redline about 7000 rpm = 467 Hz) with body formants; a shift is a pitch step by the gear ratio and a short throttle lift.
 - The drift squeal is friction with a falling friction-velocity law, fundamental 900-1400 Hz with harmonics, level and slip following the steering; wet grip is 20 % below dry.
 - Two sirens: wail 600-1400 Hz at 20 cycles per minute, yelp 700-1500 Hz at 240, six harmonics; a hi-lo of 435/580 Hz for the second car so the two never share a pitch.
-- Wipers at 70 cycles per minute; rain at 12 mm/h on asphalt and on metal awnings; a far traffic bed; the crash is an impact on a damped plate plus the glass_break model.
+- Wipers at 70 cycles per minute; rain at 30 mm/h on asphalt (raised from 12 after a render: at 12 mm/h the drops were sparse enough that the bed varied by up to 10 dB between half-second blocks, which the ambient_bed row reads as pumping; 30 mm/h is still under the ISO 10140 heavy-rain figure of about 40) and on metal awnings; a far traffic bed; the crash is an impact on a damped plate plus the glass_break model.
 - Slow motion at the drift: the stems that carry it (engine, squeal, music pulse) get `pitch_glide` down, `tape_stop` into a `freeze`, the rain is thinned (a lower rate and longer drops, not pitched), then `reverse_swell` and a sub drop snap it back. Water does not pitch down well, so it is not pitched.
 
 Place and street objects (as spaces, scenes and propagation, none as a script)

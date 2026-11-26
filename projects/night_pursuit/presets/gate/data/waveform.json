@@ -100,12 +100,6 @@
       "PASS"
     ],
     [
-      46.5707,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
       47.5913,
       "clicks",
       "master",
@@ -134,6 +128,12 @@
       "stem.tick",
       "violins_tremolo",
       "PASS"
+    ],
+    [
+      95.0331,
+      "clicks",
+      "master",
+      "FAIL"
     ],
     [
       121.5565,

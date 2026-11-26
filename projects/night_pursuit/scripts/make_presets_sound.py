@@ -461,27 +461,27 @@ write('sfx', 'np_crash', dict(
 RAIN_FX = slowmo_fx(4500.0, 0.0)
 begin('engine')
 write('environments', 'np_rain_street', dict(
-    description='Rain at 12 mm/h on a wet asphalt street at night: the patter of drops on the road, a film of water hissing, all round.',
-    character='Rain at 12 mm/h falling on a wet street and a film of water on the asphalt, all round the car; in the slow motion it thins and darkens rather than pitching down.',
+    description='Heavy rain at 30 mm/h on a wet asphalt street at night: the patter of drops on the road, a film of water hissing, all round.',
+    character='Heavy rain at 30 mm/h falling on a wet street and a film of water on the asphalt, all round the car; in the slow motion it thins and darkens rather than pitching down.',
     atmosphere=dict(temp_c=10.0, rh=95.0),
-    layers=[dict(name='drops', primitive='rain_physical', kind='bed', rate_mm_h=12.0, surface='solid', bubble_prob=0.15, gain_db=-22.0, decorrelate=1.0,
+    layers=[dict(name='drops', primitive='rain_physical', kind='bed', rate_mm_h=30.0, surface='solid', bubble_prob=0.02, gain_db=-22.0, decorrelate=1.0,
                  spatial=dict(azimuth=0, elevation=0, distance=6)),
             dict(name='water_film', primitive='noise_bed', kind='bed', color='pink', low_hz=1800, high_hz=7000, mod_rate_hz=0.08, mod_depth=0.2, gain_db=-27.0,
                  decorrelate=1.0, spatial=dict(azimuth=0, elevation=0, distance=6))],
     blending=dict(),
     fx=RAIN_FX,
-    sources=['rain_wet_asphalt', 'ESTIMATE: 12 mm/h and the film band are starting values; no street-rain recording was measured']))
+    sources=['rain_wet_asphalt', 'ESTIMATE: 30 mm/h and the film band are starting values; no street-rain recording was measured']))
 
 write('environments', 'np_rain_awnings', dict(
     description='Rain on metal awnings and a dumpster either side of the street.',
     character='Rain ringing on thin metal awnings and a dumpster lid on both sides of the street: a sparse, tonal patter that is louder than the road.',
     atmosphere=dict(temp_c=10.0, rh=95.0),
-    layers=[dict(name='awning_left', primitive='model_layer', kind='spot', gain_db=-14.0, spatial=dict(azimuth=-80, elevation=0, distance=7),
+    layers=[dict(name='awning_left', primitive='model_layer', kind='spot', gain_db=-27.0, spatial=dict(azimuth=-80, elevation=0, distance=7),
                  voices=[dict(name='drops', excite=dict(kind='impact', tau=0.0015), resonator=dict(kind='modal', law='free', f1=420.0, ratios=[1.0, 2.3, 3.9, 5.6, 7.7, 10.1], t60=0.28),
-                              events=dict(kind='poisson', rate=45.0), vary=dict(size=dict(dist='marshall_palmer', rate_mm_h=12.0, min=0.4, max=2.5), pitch_exp=0.3, amp_exp=2.0))]),
-            dict(name='awning_right', primitive='model_layer', kind='spot', gain_db=-16.0, spatial=dict(azimuth=85, elevation=0, distance=8),
+                              events=dict(kind='poisson', rate=120.0), vary=dict(size=dict(dist='marshall_palmer', rate_mm_h=12.0, min=0.4, max=2.5), pitch_exp=0.3, amp_exp=2.0))]),
+            dict(name='awning_right', primitive='model_layer', kind='spot', gain_db=-23.0, spatial=dict(azimuth=85, elevation=0, distance=8),
                  voices=[dict(name='drops', excite=dict(kind='impact', tau=0.0015), resonator=dict(kind='modal', law='free', f1=360.0, ratios=[1.0, 2.1, 3.6, 5.2, 7.3, 9.6], t60=0.32),
-                              events=dict(kind='poisson', rate=40.0), vary=dict(size=dict(dist='marshall_palmer', rate_mm_h=12.0, min=0.4, max=2.5), pitch_exp=0.3, amp_exp=2.0))])],
+                              events=dict(kind='poisson', rate=110.0), vary=dict(size=dict(dist='marshall_palmer', rate_mm_h=12.0, min=0.4, max=2.5), pitch_exp=0.3, amp_exp=2.0))])],
     blending=dict(),
     fx=RAIN_FX,
     sources=['rain_metal_awning', 'ESTIMATE: the modes of an awning and a dumpster lid are starting values; the louder-than-asphalt ordering is from the research note']))

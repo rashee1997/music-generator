@@ -11,7 +11,7 @@
    "name": "awning_left",
    "primitive": "model_layer",
    "kind": "spot",
-   "gain_db": -14.0,
+   "gain_db": -27.0,
    "spatial": {
     "azimuth": -80,
     "elevation": 0,
@@ -40,7 +40,7 @@
      },
      "events": {
       "kind": "poisson",
-      "rate": 45.0
+      "rate": 120.0
      },
      "vary": {
       "size": {
@@ -59,7 +59,7 @@
    "name": "awning_right",
    "primitive": "model_layer",
    "kind": "spot",
-   "gain_db": -16.0,
+   "gain_db": -23.0,
    "spatial": {
     "azimuth": 85,
     "elevation": 0,
@@ -88,7 +88,7 @@
      },
      "events": {
       "kind": "poisson",
-      "rate": 40.0
+      "rate": 110.0
      },
      "vary": {
       "size": {
