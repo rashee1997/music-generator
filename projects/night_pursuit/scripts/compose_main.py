@@ -47,6 +47,10 @@ class Track:
             k = (n['t'], n['p'])
             if k not in seen or n['v'] > seen[k]['v']:
                 seen[k] = n
+        cut = T.B(T.CUT_BAR)
+        for n in seen.values():                          # a note that started before the hard cut ends on it, so the cut is the end of the sound
+            if n['t'] < cut < n['t'] + n['d']:
+                n['d'] = round(cut - n['t'], 4)
         self.d['notes'] = list(seen.values())
         self.d['notes'].sort(key=lambda n: (n['t'], n['p']))
         return self.d
@@ -94,7 +98,7 @@ for bar in range(s0('the_stakeout'), sN('the_stakeout')):
 # spotted: the cruiser; the pedal breathes, the heart quickens
 for bar in range(s0('spotted'), sN('spotted')):
     basses.add(bar, 0, 4.02, p(C, 1), vel(0.74, 0.02))
-    piano_low.add(bar, 0, 3.8, p(C, 1), vel(0.5, 0.02))
+    piano_low.add(bar, 2.0 if bar % 2 else 0.0, 1.8, p(C, 1), vel(0.5, 0.02))
     for b in (0, 1.5, 3.0):
         bass_drum.add(bar, b, 0.5, 36, vel(0.5, 0.03))
     if bar == sN('spotted') - 1:
@@ -126,9 +130,9 @@ for bar in range(s0('the_avenue'), sN('the_bridge')):
     step = walk[k]
     top = 0.64 + 0.2 * energy
     if k == 3:                                                                       # a phrase turns: the dominant, then back
-        basses.add(bar, 0, 2.0, p((r + step) % 12, 1), vel(top, 0.05))
-        basses.add(bar, 2.0, 1.5, p(G, 1), vel(top - 0.06, 0.05))
-        basses.add(bar, 3.5, 0.52, p((r + 1) % 12 if ph % 2 else (r + 10) % 12, 1), vel(top - 0.1, 0.05))     # a passing note into the next bar
+        basses.add(bar, 0, 2.06, p((r + step) % 12, 1), vel(top, 0.05))
+        basses.add(bar, 2.0, 1.56, p(G, 1), vel(top - 0.06, 0.05))
+        basses.add(bar, 3.5, 0.58, p((r + 1) % 12 if ph % 2 else (r + 10) % 12, 1), vel(top - 0.1, 0.05))     # a passing note into the next bar
     else:
         basses.add(bar, 0, 4.02, p((r + step) % 12, 1), vel(top + (0.08 if k == 0 else 0.0), 0.05))
     piano_low.add(bar, 2.0 if k == 3 else 0.0, 1.0, p(r, 2), vel(top - 0.04, 0.05))
@@ -142,7 +146,7 @@ for bar in range(s0('the_avenue'), sN('the_bridge')):
     if not under:
         if ph % 2 == 1 and k == 3:                                                  # the fill: sixteenths, rising
             for i in range(8):
-                snare.add(bar, 2.0 + i * 0.25, 0.25, 38, 0.38 + 0.04 * i + 0.1 * energy * 0.5)
+                snare.add(bar, 2.0 + i * 0.25, 0.25, 38, 0.3 + 0.35 * ((i + 1) / 8.0) ** 1.6 + (0.04 if i % 2 == 0 else -0.02) + 0.05 * energy)
         else:
             snare.add(bar, 1.0, 0.25, 38, vel(0.44 + 0.15 * energy, 0.05))
             snare.add(bar, 3.0, 0.25, 38, vel(0.5 + 0.15 * energy, 0.05))
@@ -271,7 +275,7 @@ for bar in list(range(int(T.SNAP_SPIN), sN('the_roadblock'))) + list(range(s0('t
             break
         if bar % 5 == 4 and i in (4, 5, 6, 7):
             continue                                                           # a gap in the run every fifth bar
-        violins_st.add(bar, i * 0.25, 0.2, p(pc, octv), vel(0.45 + 0.012 * i + 0.08 * (bar % 3), 0.05))
+        violins_st.add(bar, i * 0.25, 0.2, p(pc, octv), vel(0.5 + 0.006 * i + 0.05 * (bar % 3), 0.03))
 
 # the cliff: the cut, then one long Gb and its high harmonic
 violins_tr.add(s0('the_cliff') + 1, 0, 24.0, p(Gb, 4), 0.4)

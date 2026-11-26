@@ -14,7 +14,7 @@
    "rate_mm_h": 12.0,
    "surface": "solid",
    "bubble_prob": 0.15,
-   "gain_db": -12.0,
+   "gain_db": -18.0,
    "decorrelate": 1.0,
    "spatial": {
     "azimuth": 0,
