@@ -1,6 +1,6 @@
 {
  "name": "night_pursuit_cinematic",
- "character": "ONE SENTENCE: why this piece is judged by these rows and where it departs from `melodic` (fill before the first render; the project gate blocks a placeholder)",
+ "character": "A film chase cue judged as a build-hit-release piece: a motif on the horns that changes at every camera, a pulse that never stops and one slow-motion jump; it starts as `cinematic` and changes nothing until a render measures a reason.",
  "flags": [],
  "focus": {
   "roles": [
@@ -12,5 +12,5 @@
   "reason": "this type is defined by a figure, so a piece that declares it must carry one; the same list means a lead or a vocal is checked exactly like a melody"
  },
  "rows": {},
- "extends": "melodic"
+ "extends": "cinematic"
 }

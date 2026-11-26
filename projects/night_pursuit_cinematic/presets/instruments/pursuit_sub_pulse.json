@@ -1,0 +1,38 @@
+{
+  "name": "pursuit_sub_pulse",
+  "character": "The floor of the chase: a sub-bass pulse on the eighths under the strings, felt more than heard.",
+  "description": "The floor of the chase: a sub-bass pulse on the eighths under the strings, felt more than heard.",
+  "instrument": "synth_bass_1",
+  "role": "texture",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 4.0
+  },
+  "spatial": {
+    "azimuth": 0.0,
+    "elevation": 40.0,
+    "distance": 1.0,
+    "space": "np_street_canyon",
+    "binaural": true,
+    "kind": "spot"
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 30.0
+    },
+    {
+      "type": "lp",
+      "f": 500.0
+    }
+  ],
+  "gain_db": -8.0,
+  "reverb": 0.0,
+  "sources": [
+    "KB cinematic-hybrid-scoring (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising device)",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
+  ],
+  "mechanics_class": "sub"
+}

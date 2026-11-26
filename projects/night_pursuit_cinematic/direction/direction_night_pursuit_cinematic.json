@@ -1,0 +1,649 @@
+{
+  "title": "Night Pursuit Cinematic",
+  "project": "A cinematic street race and car chase through a wet New York night after the rain: four cars, the police, a tunnel, a flyover and an escape, written as a listening piece for a ten-channel 7.1.2 system",
+  "version": 1,
+  "medium": "film",
+  "brief": "A street race that the police see; four cars (a Mustang, a Ferrari, a Lamborghini and a Porsche) at different speeds up to 150 km/h, one of them at one speed all the way; streets, a tunnel, cuts, bumps and a flyover edge; evaded at the end. The road is wet after the rain, nothing is falling, no wipers. The camera changes: inside the car, at the kerb, beside the cars and from a helicopter. Music in front, effects and fx behind it; a film mix; ten channels.",
+  "audience": "a listener on a 7.1.2 system or headphones who came for the chase",
+  "purpose": "a 193-second cue that tells a whole chase: a street race, a spotting, a chase, a tunnel, a helicopter, a flyover, a jump and an escape",
+  "point_of_view": "the camera: inside the Ferrari in the race and on the deck, on the kerb at the pass, behind the pack in the chase, in the air over the city for the helicopter",
+  "job": [
+    "start in motion with no slow opening and keep the listener in the car from the first bar",
+    "tell the chase in sound: where each car is, who is faster, who drops out and who gets away",
+    "change the camera and let the room, the music and the sound level change with it",
+    "keep the music in front and the effects a supporting layer that comes forward only at a hit"
+  ],
+  "story": "Four cars race on a wet avenue (Ferrari flat-plane V8, Lamborghini V10, Mustang cross-plane V8, Porsche flat-six); a cruiser at the kerb sees the speeding and the chase begins. The Mustang runs out of road at the tunnel mouth. A helicopter joins. On the flyover the Ferrari jumps the edge in slow motion and lands; the Lamborghini loses the road. The cruisers stop and the Ferrari is evaded.",
+  "duration_s": 192.6,
+  "in_point_s": 0.0,
+  "out_point_s": 192.6,
+  "ending": "fade",
+  "feel": [
+    "tense",
+    "relentless",
+    "cold"
+  ],
+  "avoid_feel": [
+    "playful",
+    "calm",
+    "triumphant"
+  ],
+  "sections": [
+    {
+      "name": "the_race",
+      "start_s": 0.0,
+      "end_s": 25.077,
+      "energy": 0.75,
+      "role": "place",
+      "action": "Inside the Ferrari at speed on a wet avenue at night: a street race, four cars, the Porsche holding one steady speed at the side.",
+      "music": "it starts at once: the pulse and the horns state the hook over a low pulse, the taiko on the first beat; no slow opening"
+    },
+    {
+      "name": "spotted",
+      "start_s": 25.077,
+      "end_s": 38.892,
+      "energy": 0.85,
+      "role": "establish",
+      "action": "The camera on the kerb: the cars pass at different speeds with the Doppler swing; a cruiser sees the speeding and its siren starts.",
+      "music": "the pulse rolls on; the hook is answered by the clarinet; the music widens and brightens for the outside camera"
+    },
+    {
+      "name": "the_chase",
+      "start_s": 38.892,
+      "end_s": 72.228,
+      "energy": 0.9,
+      "role": "build",
+      "action": "Beside and behind the pack: corners, squeals, shifts and pops on the lift; the cruisers close in; the Mustang runs out of road at the tunnel mouth.",
+      "music": "full strings and brass, the snare backbeat and a fill each phrase, the sub pulse; the hook climbs a semitone; the crash is a hit on the last bar"
+    },
+    {
+      "name": "the_tunnel",
+      "start_s": 72.228,
+      "end_s": 95.085,
+      "energy": 0.8,
+      "role": "peak",
+      "action": "A tunnel: the engines and the sirens echo in concrete; the Mustang is gone.",
+      "music": "the pulse and the low brass only for six bars, then tremolo strings and a rising line; the room does the rest"
+    },
+    {
+      "name": "the_helicopter",
+      "start_s": 95.085,
+      "end_s": 117.636,
+      "energy": 0.8,
+      "role": "peak",
+      "action": "A police helicopter joins from above; the cars are small and far below.",
+      "music": "the choir opens, the music goes distant and filtered with a pulse; the height speakers carry the choir and the rotor"
+    },
+    {
+      "name": "the_bumps",
+      "start_s": 117.636,
+      "end_s": 139.888,
+      "energy": 0.95,
+      "role": "peak",
+      "action": "Inside the Ferrari on a flyover deck: a thump at every joint at 150 km per hour.",
+      "music": "the pulse locks to the joints; the horns and trombones play the hook together"
+    },
+    {
+      "name": "the_flyover",
+      "start_s": 139.888,
+      "end_s": 165.785,
+      "energy": 1.0,
+      "role": "peak",
+      "action": "The edge: the Ferrari jumps in slow motion and lands; the Lamborghini loses the road.",
+      "music": "a collapse to a heartbeat and a pedal in the slow motion; a drop on the landing; the solo violin carries the hook an octave up"
+    },
+    {
+      "name": "the_escape",
+      "start_s": 165.785,
+      "end_s": 192.648,
+      "energy": 0.5,
+      "role": "release",
+      "action": "Evaded: the cruisers stop, the Ferrari runs on into the dark and the engine falls away; drips from the fronts.",
+      "music": "the pulse thins and slows, the hook is left on a single note and the cue ends open"
+    }
+  ],
+  "motifs": [
+    {
+      "name": "the_tick",
+      "first_at_s": 0.0,
+      "shape": "C, Db, C, then a leap up a tritone to Gb and a step down to F, Eb, Db: long, short, short, long, long",
+      "returns": "stated at once by the horns; whispered by the clarinet at the kerb; a semitone up and doubled after the crash; played by the choir above the helicopter; by horns and trombones together on the deck; an octave up on the solo violin over the flyover; left on a single note at the end"
+    },
+    {
+      "name": "the_siren_figure",
+      "first_at_s": 28.59,
+      "shape": "a rising and falling sweep between 600 and 1400 Hz, a minor ninth from the key",
+      "returns": "the second cruiser has a different, faster sweep so the two never share a pitch; both stop when the chase is lost"
+    }
+  ],
+  "instruments": [
+    "pursuit_basses",
+    "pursuit_bass_drum",
+    "pursuit_piano_low",
+    "pursuit_snare",
+    "pursuit_timpani",
+    "pursuit_taiko",
+    "pursuit_tuba",
+    "pursuit_sub_drop",
+    "pursuit_sub_pulse",
+    "pursuit_horns",
+    "pursuit_trombones",
+    "pursuit_piano",
+    "pursuit_celli",
+    "pursuit_bass_clarinet",
+    "pursuit_violins_staccato",
+    "pursuit_violins_tremolo",
+    "pursuit_cymbals",
+    "pursuit_choir",
+    "pursuit_solo_violin"
+  ],
+  "avoid_sounds": [
+    "bell",
+    "harp",
+    "flute",
+    "guitar",
+    "rain",
+    "wipers"
+  ],
+  "pulse": "steady",
+  "tempo_bpm": [
+    72,
+    156
+  ],
+  "key": "C",
+  "mode": "minor",
+  "energy": 0.9,
+  "space": "np_street_canyon",
+  "hits_at": [
+    28.58676847924824,
+    38.89,
+    71.41,
+    72.23,
+    95.09,
+    117.64,
+    149.36,
+    157.18,
+    160.39,
+    165.79
+  ],
+  "hits": [
+    {
+      "t": 28.58676847924824,
+      "kind": "motion",
+      "sync": "soft",
+      "sound": "a cruiser at the kerb sees the speeding: its lights come on and its siren starts",
+      "why": "the moment the race becomes a chase; a soft sync, so a beat either way does not matter"
+    },
+    {
+      "t": 38.89,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the chase proper: the second cruiser joins and the camera swings in behind the cars",
+      "why": "a camera cut and a taiko hit; the hook changes its answer"
+    },
+    {
+      "t": 71.41,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the Mustang hits the barrier at the tunnel mouth: one impact, metal and glass",
+      "why": "the first car is out; weight and one real hit; the strings keep sounding, so it is a hard accent and not a cut"
+    },
+    {
+      "t": 72.23,
+      "kind": "motion",
+      "sync": "soft",
+      "sound": "the cars enter the tunnel: the room closes and the engines and sirens echo",
+      "why": "the place changes; the field, not the music, says it"
+    },
+    {
+      "t": 95.09,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the helicopter arrives overhead: the choir opens and the music goes distant",
+      "why": "a camera cut to the air; the height pair carries it"
+    },
+    {
+      "t": 117.64,
+      "kind": "motion",
+      "sync": "soft",
+      "sound": "the flyover deck: a thump at every expansion joint at speed",
+      "why": "a camera cut inside the car; the joints are a rhythm of their own"
+    },
+    {
+      "t": 149.36,
+      "kind": "motion",
+      "sync": "soft",
+      "sound": "the Ferrari leaves the edge of the flyover: time slows",
+      "why": "the one slow-motion moment; the tempo falls and the engine and tyres go down in pitch"
+    },
+    {
+      "t": 157.18,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the landing: a deep thump, a metal knock, a sub drop and the tempo snaps back",
+      "why": "the release of the slow motion; the strings keep sounding, so it is a hard accent and not a cut"
+    },
+    {
+      "t": 160.39,
+      "kind": "motion",
+      "sync": "soft",
+      "sound": "the Lamborghini loses the road after the landing and spins off",
+      "why": "the second car is out"
+    },
+    {
+      "t": 165.79,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the cruisers stop: the Ferrari is clear and the sirens fall behind",
+      "why": "the chase is over: the cue releases and does not resolve fully"
+    }
+  ],
+  "mix_intent": {
+    "hero": "pursuit_horns",
+    "support": [
+      "pursuit_celli",
+      "pursuit_trombones",
+      "pursuit_timpani",
+      "pursuit_piano",
+      "pursuit_choir"
+    ],
+    "sits_under": [
+      "np_car_ferrari",
+      "np_car_lamborghini",
+      "np_car_mustang",
+      "np_car_porsche",
+      "np_siren_wail",
+      "np_siren_second",
+      "np_helicopter",
+      "np_city_far"
+    ],
+    "must_hear": [
+      "the hook on the horns in the first 3 s",
+      "a pass at the kerb at 29 s",
+      "a siren by 29 s",
+      "the crash at 71 s",
+      "the helicopter at 95 s",
+      "the landing at 157 s"
+    ],
+    "leave_free_hz": []
+  },
+  "loudness_lufs": -16.0,
+  "true_peak_max": -1.5,
+  "delivery": {
+    "format": "wav",
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "stage": "cinema",
+    "output_targets": [
+      "stereo",
+      "immersive_7_1_2"
+    ],
+    "played_on": "a 7.1.2 system of ten speakers (the fifth-order field decoded once), and headphones through the stereo master"
+  },
+  "references": [
+    "a relentless low-string and piano pulse with taiko at the camera cuts, the engines and sirens a layer under it, and a hard-edged flyover at the end",
+    "the camera as the listener: the room changes at every cut, the music stays in front"
+  ],
+  "spatial_staging": {
+    "pursuit_basses": {
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "distance": 1.5,
+      "space": "np_street_canyon"
+    },
+    "pursuit_bass_drum": {
+      "azimuth": -40.0,
+      "elevation": 0.0,
+      "distance": 2.2,
+      "space": "np_street_canyon"
+    },
+    "pursuit_piano_low": {
+      "azimuth": 40.0,
+      "elevation": 0.0,
+      "distance": 1.2,
+      "space": "np_street_canyon"
+    },
+    "pursuit_snare": {
+      "azimuth": -80.0,
+      "elevation": 0.0,
+      "distance": 2.6,
+      "space": "np_street_canyon"
+    },
+    "pursuit_timpani": {
+      "azimuth": 80.0,
+      "elevation": 0.0,
+      "distance": 3.0,
+      "space": "np_street_canyon"
+    },
+    "pursuit_taiko": {
+      "azimuth": -130.0,
+      "elevation": 0.0,
+      "distance": 3.2,
+      "space": "np_street_canyon"
+    },
+    "pursuit_tuba": {
+      "azimuth": 150.0,
+      "elevation": 0.0,
+      "distance": 1.8,
+      "space": "np_street_canyon"
+    },
+    "pursuit_sub_drop": {
+      "azimuth": 0.0,
+      "elevation": 20.0,
+      "distance": 1.0,
+      "space": "np_street_canyon"
+    },
+    "pursuit_sub_pulse": {
+      "azimuth": 0.0,
+      "elevation": 40.0,
+      "distance": 1.0,
+      "space": "np_street_canyon"
+    },
+    "pursuit_horns": {
+      "azimuth": 60.0,
+      "elevation": 15.0,
+      "distance": 2.6,
+      "space": "np_street_canyon"
+    },
+    "pursuit_trombones": {
+      "azimuth": -60.0,
+      "elevation": 15.0,
+      "distance": 2.8,
+      "space": "np_street_canyon"
+    },
+    "pursuit_piano": {
+      "azimuth": -110.0,
+      "elevation": 15.0,
+      "distance": 2.0,
+      "space": "np_street_canyon"
+    },
+    "pursuit_celli": {
+      "azimuth": 110.0,
+      "elevation": 15.0,
+      "distance": 2.2,
+      "space": "np_street_canyon"
+    },
+    "pursuit_bass_clarinet": {
+      "azimuth": 130.0,
+      "elevation": 30.0,
+      "distance": 2.4,
+      "space": "np_street_canyon"
+    },
+    "pursuit_violins_staccato": {
+      "azimuth": -130.0,
+      "elevation": 30.0,
+      "distance": 3.0,
+      "space": "np_street_canyon"
+    },
+    "pursuit_violins_tremolo": {
+      "azimuth": 180.0,
+      "elevation": 30.0,
+      "distance": 4.0,
+      "space": "np_street_canyon"
+    },
+    "pursuit_cymbals": {
+      "azimuth": -160.0,
+      "elevation": 30.0,
+      "distance": 3.6,
+      "space": "np_street_canyon"
+    },
+    "pursuit_choir": {
+      "azimuth": 0.0,
+      "elevation": 60.0,
+      "distance": 5.0,
+      "space": "np_street_canyon"
+    },
+    "pursuit_solo_violin": {
+      "azimuth": -35.0,
+      "elevation": 45.0,
+      "distance": 2.4,
+      "space": "np_street_canyon"
+    }
+  },
+  "immersive": {
+    "enabled": true,
+    "why": "the camera changes: the field carries where the listener is. Inside the Ferrari the engine is behind and the road below; at the kerb the cars pass left to right; in the tunnel the room closes; the helicopter, the choir and the high strings are on the height pair",
+    "engine": "hoa_bus",
+    "anchors": [
+      "pursuit_piano_low",
+      "pursuit_basses",
+      "pursuit_tuba",
+      "pursuit_bass_drum",
+      "pursuit_timpani",
+      "pursuit_taiko",
+      "np_bumps"
+    ],
+    "movers": [
+      {
+        "part": "np_car_ferrari",
+        "why": "the hero car: inside, then passing the kerb, then ahead",
+        "path": "behind the listener inside, a pass at the kerb, ahead in the chase, far in the air shot"
+      },
+      {
+        "part": "np_car_lamborghini",
+        "why": "the second car pulls ahead and to the left",
+        "path": "left of the Ferrari in the race and the chase, spins off after the landing"
+      },
+      {
+        "part": "np_car_mustang",
+        "why": "the third car runs on the right and is the first to go",
+        "path": "right of the pack, ends at the tunnel mouth with the crash"
+      },
+      {
+        "part": "np_car_porsche",
+        "why": "the car at one speed: it is left behind as the others pull away",
+        "path": "behind the listener, falling further behind through the cue"
+      },
+      {
+        "part": "np_siren_wail",
+        "why": "the first cruiser closes in behind",
+        "path": "far at the kerb, behind the pack from the chase, stops at the escape"
+      },
+      {
+        "part": "np_siren_second",
+        "why": "the second cruiser joins on the right",
+        "path": "enters in the chase and crosses behind in the tunnel"
+      },
+      {
+        "part": "np_helicopter",
+        "why": "the helicopter is overhead and crosses the room",
+        "path": "far and high, over the listener in the air shot, still above on the flyover"
+      }
+    ],
+    "height": {
+      "np_helicopter": 55,
+      "pursuit_choir": 60,
+      "pursuit_solo_violin": 45,
+      "pursuit_violins_tremolo": 30,
+      "pursuit_bass_clarinet": 30
+    },
+    "room_changes": [
+      {
+        "at_section": "the_race",
+        "why": "inside the car: a very small, dry cabin",
+        "transition_s": 0.5
+      },
+      {
+        "at_section": "spotted",
+        "why": "the kerb: the street canyon between two fa\u00e7ades, wet asphalt, open sky",
+        "transition_s": 1.0
+      },
+      {
+        "at_section": "the_tunnel",
+        "why": "a tunnel: concrete above and on both sides, a long close tail",
+        "transition_s": 6.0
+      },
+      {
+        "at_section": "the_helicopter",
+        "why": "open air high over the city: a very large room, little reflection, air absorption",
+        "transition_s": 4.0
+      },
+      {
+        "at_section": "the_bumps",
+        "why": "back inside the car on the deck",
+        "transition_s": 3.0
+      },
+      {
+        "at_section": "the_flyover",
+        "why": "the steel deck outside, open sky",
+        "transition_s": 3.0
+      },
+      {
+        "at_section": "the_escape",
+        "why": "the street again, empty and wet",
+        "transition_s": 4.0
+      }
+    ],
+    "must_hear": [
+      "the pass at the kerb near 29 s",
+      "the helicopter on the height pair from 95 s",
+      "the room closing at 72 s",
+      "the landing at 157 s"
+    ],
+    "deliverables": [
+      "stereo",
+      "immersive_7_1_2"
+    ],
+    "notes": "the sheet records intent; the presets execute it. The bus is fifth order (36 channels) decoded once to the ten speakers of 7.1.2. Keyframes, room geometry and materials are in presets/spaces and presets/sfx; bass and drums are on the horizontal plane (no pinna cue at low frequency)."
+  },
+  "expression": {
+    "sonic_picture": "The first ten seconds: the hook on the horns over a driving low pulse, a big V8 engine behind and the road hissing under the car, a Mustang alongside on the right; the middle: cars passing the kerb with the Doppler swing, a helicopter overhead with the choir above it; the last note: a single high harmonic over a Gb, the engine falling away, drips.",
+    "performer": "The piano plays the pulse hard and a little ahead of the beat; the celli dig into the first beat of every bar; the horns enter late on each statement and lean on the leap; the taiko is struck on the camera cuts; the snare fill tightens at each phrase end; the strings are sections of six and the brass sections of four; the solo violin is a little exposed.",
+    "producer_moves": "The tempo climbs from 132 to 156 BPM with one slow-motion jump that snaps back; a drop and a sub hit on the landing; the room changes at every cut; the effects sit a layer under the music and come forward on the crash and the landing; a risers-free cut at each camera.",
+    "anti_generic": "The generic version is a drone, a riser and a drum loop with a car sound laid on top; this one has four cars with their own engines and speeds, a camera that changes the room, and a hook that answers differently at every cut.",
+    "cues": [
+      {
+        "section": "the_race",
+        "arousal": "high",
+        "mode_register": "C minor, the pulse low and the horns mid",
+        "tempo_trend": "steady, 132 BPM",
+        "dynamics": "f from the first bar",
+        "articulation": "staccato sixteens in the piano, marcato horns",
+        "timbre": "close and dry, the cabin"
+      },
+      {
+        "section": "spotted",
+        "arousal": "high",
+        "mode_register": "C minor with a Db neighbour",
+        "tempo_trend": "136 BPM",
+        "dynamics": "f, widening",
+        "articulation": "staccato eighths, the clarinet answers",
+        "timbre": "wider and brighter, the street"
+      },
+      {
+        "section": "the_chase",
+        "arousal": "high",
+        "mode_register": "C minor, then Db minor after the crash",
+        "tempo_trend": "142 BPM, accelerating",
+        "dynamics": "ff, accents on the 3+3+2 cell",
+        "articulation": "sixteenths, staccato, marcato, fills each phrase",
+        "timbre": "brighter as it gets louder"
+      },
+      {
+        "section": "the_tunnel",
+        "arousal": "high",
+        "mode_register": "Db minor, tritones against the bass",
+        "tempo_trend": "146 BPM",
+        "dynamics": "f, thinning then breaking open",
+        "articulation": "tremolo strings, long low brass",
+        "timbre": "dense, a long tail from the room"
+      },
+      {
+        "section": "the_helicopter",
+        "arousal": "high",
+        "mode_register": "D minor, a choir above",
+        "tempo_trend": "148 BPM",
+        "dynamics": "ff, distant and filtered",
+        "articulation": "a pulse and long choir notes",
+        "timbre": "open air, the top rolled off by distance"
+      },
+      {
+        "section": "the_bumps",
+        "arousal": "high",
+        "mode_register": "Eb minor, rising line",
+        "tempo_trend": "150 BPM",
+        "dynamics": "ff held",
+        "articulation": "the hook in horns and trombones together",
+        "timbre": "open and hard, the air up"
+      },
+      {
+        "section": "the_flyover",
+        "arousal": "high",
+        "mode_register": "E minor, solo violin high",
+        "tempo_trend": "152 BPM, a fall to 72 and a snap to 156",
+        "dynamics": "ff, a collapse to pp in the slow motion, then a drop",
+        "articulation": "the pulse thins to single notes, then returns",
+        "timbre": "muffled in the slow motion, bright at the landing"
+      },
+      {
+        "section": "the_escape",
+        "arousal": "mid",
+        "mode_register": "C with a Gb above it, unresolved",
+        "tempo_trend": "124 BPM falling to 92",
+        "dynamics": "mp falling to pp",
+        "articulation": "a heartbeat and a held harmonic",
+        "timbre": "thin, cold, wet"
+      }
+    ],
+    "theme": {
+      "contour": "a semitone step and back, then a leap up a tritone and a step down by steps",
+      "interval_character": "mostly a minor second, with one leap of a tritone",
+      "rhythm_cell": "long, short, short, long, long",
+      "why_memorable": "the leap of a tritone lands on the weak beat every time and is answered by a different tail",
+      "variation_plan": "stated by the horns, whispered by the clarinet, a semitone up and doubled after the crash, on the choir over the helicopter, horns and trombones together on the deck, an octave up on the solo violin over the flyover, a single note at the end"
+    }
+  },
+  "focus": "melody",
+  "intent": {
+    "emotions": [
+      "tense",
+      "dark_epic"
+    ],
+    "registers": [
+      "cinematic",
+      "hybrid"
+    ],
+    "scenes": [
+      "establish",
+      "build",
+      "chase",
+      "dread"
+    ],
+    "tensions": [
+      "ostinato",
+      "pedal",
+      "tritone",
+      "cluster",
+      "rising_line",
+      "silence_before",
+      "unresolved_dominant"
+    ],
+    "avoid": [
+      "joyful",
+      "playful"
+    ]
+  },
+  "piece_type": "night_pursuit_cinematic",
+  "gate_reason": "a build-hit-release cue with a short motif, a pulse that never stops and one slow-motion jump: the cinematic profile, started strict, with a project profile of its own",
+  "video": {
+    "enabled": false,
+    "source": null,
+    "fps": null,
+    "cuts": [],
+    "cut_source": null,
+    "cut_sync": {
+      "early_ms": 45,
+      "late_ms": 125
+    },
+    "dialogue": {
+      "present": false,
+      "duck_db": -9.0,
+      "snr_min_db": 15.0
+    },
+    "master_profile": null,
+    "deliverable": null,
+    "preset": "default",
+    "notes": "music-only piece: leave enabled false."
+  },
+  "notes": "Sound effects and ambience were asked for in the brief: four cars, two sirens, a helicopter, expansion joints, a landing, a crash, the city and drips are presets from physical models. They are synthesised, not recordings; the research note says which numbers are sourced and which are starting values."
+}

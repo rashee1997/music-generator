@@ -1,0 +1,39 @@
+{
+  "name": "pursuit_sub_drop",
+  "character": "The cinematic drop: a single low note that dives an octave and rings, struck only at the snap of the slow motion and at the crash.",
+  "description": "The cinematic drop: a single low note that dives an octave and rings, struck only at the snap of the slow motion and at the crash.",
+  "instrument": "synth_bass_2",
+  "role": "texture",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 4.0
+  },
+  "spatial": {
+    "azimuth": 0.0,
+    "elevation": 20.0,
+    "distance": 1.0,
+    "space": "np_street_canyon",
+    "binaural": true,
+    "kind": "spot"
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 28.0
+    },
+    {
+      "type": "lp",
+      "f": 900.0
+    }
+  ],
+  "gain_db": -4.0,
+  "reverb": 0.0,
+  "sources": [
+    "KB cinematic-hybrid-scoring (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising device)",
+    "web research: slow-motion sound design pairs a pitched-down low end with a stretched tail (see the research note)",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
+  ],
+  "mechanics_class": "sub"
+}

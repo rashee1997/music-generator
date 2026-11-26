@@ -1,12 +1,12 @@
 {
   "name": "night_pursuit_cinematic_mix",
-  "character": "ONE SENTENCE: what this music is (genre, mood, density) and why the mix below suits it",
+  "character": "A film mix: the music is the foreground, the engines, sirens and the road are a supporting layer under it and come forward only at a hit; the 7.1.2 field is a fifth-order ambisonic bus decoded once to ten speakers, with the helicopter, the choir and the high strings on the height pair.",
   "carve_db": -4.0,
   "max_boost_db": 12.0,
-  "note": "only list what differs: everything else comes from references/data/presets/mix/default.json",
+  "note": "Written for Night Pursuit Cinematic; the scaffold copy of the default was replaced.",
   "gain_staging": {
     "strategy": "legacy",
-    "ref_lufs": -24.0,
+    "ref_lufs": -22.0,
     "block_s": 0.4,
     "max_cut_db": 24.0,
     "peak_headroom_db": -1.0
@@ -243,17 +243,21 @@
       "enabled": true
     },
     "send_by_role": {
-      "default": 0.18,
+      "default": 0.12,
       "bass": 0.0,
       "drum": 0.08,
       "percussion": 0.08,
-      "pad": 0.3,
-      "texture": 0.3,
-      "drone": 0.26,
-      "melody": 0.22,
-      "lead": 0.22,
-      "vocal": 0.22,
-      "environment": 0.2
+      "pad": 0.16,
+      "texture": 0.12,
+      "melody": 0.12,
+      "lead": 0.12,
+      "counter": 0.1,
+      "chord": 0.1,
+      "ostinato": 0.08,
+      "arp": 0.12,
+      "drone": 0.1,
+      "fx": 0.06,
+      "environment": 0.08
     },
     "drr": {
       "enabled": false,
@@ -273,7 +277,18 @@
     "curve": "linear"
   },
   "mastering": {
-    "profile": "default"
+    "profile": "cinema",
+    "crest_floor_db": 7.0,
+    "profiles": {
+      "cinema": {
+        "lufs": -16.0,
+        "true_peak": -1.5,
+        "tone": "neutral",
+        "glue": true
+      }
+    },
+    "highpass_hz": 105.0,
+    "highpass_order": 4
   },
   "role_chains": {
     "melody": {
@@ -727,5 +742,55 @@
         "release": 180
       }
     }
+  },
+  "level_by_role": {
+    "fx": -14.0,
+    "environment": -18.0
+  },
+  "immersive": {
+    "enabled": true,
+    "engine": "hoa_bus",
+    "order": 5,
+    "anchor_max_span_deg": 6.0,
+    "max_deg_per_sec": {
+      "anchor": 10.0,
+      "mover": 120.0
+    },
+    "height_by_role": {
+      "melody": 0.0,
+      "lead": 0.0,
+      "vocal": 0.0,
+      "pad": 0.0,
+      "texture": 0.0,
+      "environment": 0.0,
+      "chord": 0.0,
+      "bass": 0.0,
+      "drum": 0.0,
+      "percussion": 0.0,
+      "drone": 0.0,
+      "ostinato": 0.0,
+      "arp": 0.0,
+      "counter": 0.0,
+      "fx": 0.0
+    },
+    "max_elevation": 70.0,
+    "min_height_tracks": 2,
+    "stereo_decode": "speakers"
+  },
+  "lead_carve": {
+    "enabled": true,
+    "from_intent": true,
+    "roles": [
+      "pad",
+      "texture",
+      "chord",
+      "arp",
+      "counter",
+      "environment"
+    ],
+    "ratio": 1.6,
+    "threshold_db": -34.0,
+    "attack_ms": 100.0,
+    "release_ms": 1500.0
   }
 }
