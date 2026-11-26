@@ -805,6 +805,22 @@
         "gain": -6.0,
         "q": 0.7
       }
+    ],
+    "sfx:np_drift_squeal": [
+      {
+        "type": "highshelf",
+        "f": 5500.0,
+        "gain": -9.0,
+        "q": 0.7
+      }
+    ],
+    "env:np_city_far": [
+      {
+        "type": "highshelf",
+        "f": 5500.0,
+        "gain": -3.0,
+        "q": 0.7
+      }
     ]
   }
 }

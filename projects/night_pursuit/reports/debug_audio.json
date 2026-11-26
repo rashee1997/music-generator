@@ -1,5 +1,5 @@
 {
- "stamp": "20261126T080020",
+ "stamp": "20261126T080253",
  "project": "night_pursuit",
  "level": "FAIL",
  "sources": {
@@ -16,7 +16,7 @@
   ],
   "stems": "24 processed stems from .cache/mix",
   "master": "out/_draft_master.wav",
-  "verdict": "2026-11-26T07:43:28Z"
+  "verdict": "2026-11-26T08:00:20Z"
  },
  "binding": [
   {
@@ -484,6 +484,18 @@
     "text": "city_far high shelf at 5500 Hz: inst_eq[\"env:np_city_far\"]"
    },
    {
+    "id": "layer.rain_street.water_film",
+    "domain": "master",
+    "kind": "layer_gain",
+    "stem": "rain_street",
+    "current": -27.0,
+    "lo": -39.0,
+    "hi": -27.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "water_film layer gain_db in presets/environments/np_rain_street.json"
+   },
+   {
     "id": "note.rain_street.d",
     "domain": "master",
     "kind": "note_len",
@@ -909,12 +921,12 @@
    "owners": [
     {
      "stem": "tyres",
-     "share": 0.602,
+     "share": 0.645,
      "signed": -0.00016
     },
     {
      "stem": "city_far",
-     "share": 0.234,
+     "share": 0.251,
      "signed": 6e-05
     }
    ],
@@ -954,7 +966,7 @@
    "owners": [
     {
      "stem": "engine",
-     "share": 0.835,
+     "share": 0.836,
      "signed": 0.00506
     }
    ],
@@ -984,7 +996,7 @@
    "owners": [
     {
      "stem": "engine",
-     "share": 0.735,
+     "share": 0.736,
      "signed": -0.00202
     },
     {
@@ -1023,18 +1035,33 @@
    "threshold": 0.02098,
    "over_threshold_db": 6.5,
    "z": 16.9,
-   "kind": "single source",
+   "kind": "mixed",
    "trusted": false,
    "fit_ratio": 0.0,
    "owners": [
     {
      "stem": "city_far",
-     "share": 0.834,
+     "share": 0.633,
      "signed": -1e-05
+    },
+    {
+     "stem": "rain_street/water_film",
+     "share": 0.246,
+     "signed": 0.0
     }
    ],
    "raw_step_fs": 0.0458,
    "notes": [
+    {
+     "track": "rain_street",
+     "pitch": null,
+     "velocity": null,
+     "onset_s": null,
+     "after_onset_ms": 0.0,
+     "written_len": null,
+     "continuous": true,
+     "layers": []
+    },
     {
      "track": "city_far",
      "pitch": null,
@@ -1054,10 +1081,10 @@
   "decomposition: master ~ sum of gain x stem in the click band (R^2 0.97); gains bass_clarinet 1.40, bass_drum 0.97, basses 1.79, celli 1.12, city_far 4.10, crash 0.19, cymbals 0.72, engine 2.65, horns 0.82, piano 1.13, piano_low 1.73, rain_awnings 0.40, rain_street 4.19, snare 0.90, sub_drop 2.18, timpani 0.78, trombones 0.76, tuba 1.42, tyres 1.38, violins_staccato 0.84, violins_tremolo 0.67, wipers 2.25",
   "event 47.591s [coincident transients] wipers 50%, engine 26%; step 0.0407 vs threshold 0.0210 (+5.8 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
   "event 60.796s [coincident transients] tyres 58%, engine 36%; step 0.0371 vs threshold 0.0210 (+4.9 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
-  "event 65.998s [mixed] tyres 60%, city_far 23%; step 0.0303 vs threshold 0.0210 (+3.2 dB over); nearest onset tyres pNone vNone +0 ms  (fit unreliable)",
+  "event 65.998s [mixed] tyres 64%, city_far 25%; step 0.0303 vs threshold 0.0210 (+3.2 dB over); nearest onset tyres pNone vNone +0 ms  (fit unreliable)",
   "event 95.033s [single source] engine 84%; step 0.0270 vs threshold 0.0210 (+2.2 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
   "event 149.629s [single source] engine 74%, wipers 22%; step 0.0374 vs threshold 0.0210 (+5.0 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
-  "event 152.110s [single source] city_far 83%; step 0.0444 vs threshold 0.0210 (+6.5 dB over); nearest onset city_far pNone vNone +0 ms  (fit unreliable)",
+  "event 152.110s [mixed] city_far 63%, rain_street/water_film 25%; step 0.0444 vs threshold 0.0210 (+6.5 dB over); nearest onset rain_street pNone vNone +0 ms  (fit unreliable)",
   "clicks: cutting the band of engine is NOT monotone (replay: -6 dB -> 6 event(s), -3 dB -> 7 event(s), -9 dB -> 7 event(s), -12 dB -> 7 event(s) against 6 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
   "clicks: cutting the band of wipers is NOT monotone (replay: -3 dB -> 9 event(s), -6 dB -> 9 event(s), -9 dB -> 10 event(s), -12 dB -> 11 event(s) against 6 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
   "dropout has 1 event(s) at 170.485s; the transient is rain_street 76%, rain_awnings 10%, city_far 9%",

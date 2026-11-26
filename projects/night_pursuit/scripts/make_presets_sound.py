@@ -101,11 +101,11 @@ def slowmo_fx(cutoff_hz, gain_db=0.0):
     chain = []
     for a, b in SLOMO:
         chain.append(dict(type='filter_sweep', kind='lowpass', f_start_hz=14000.0, f_end_hz=float(cutoff_hz), q=0.8, start_s=round(a, 3),
-                          end_s=round(a + 2.5, 3), after='bypass', edge_ms=10.0))
+                          end_s=round(a + 2.5, 3), after='bypass', edge_ms=40.0))
         chain.append(dict(type='filter_sweep', kind='lowpass', f_start_hz=float(cutoff_hz), f_end_hz=float(cutoff_hz), q=0.8,
-                          start_s=round(a + 2.5, 3), end_s=round(b - 0.6, 3), after='bypass', edge_ms=10.0))
+                          start_s=round(a + 2.5, 3), end_s=round(b - 0.6, 3), after='bypass', edge_ms=40.0))
         chain.append(dict(type='filter_sweep', kind='lowpass', f_start_hz=float(cutoff_hz), f_end_hz=14000.0, q=0.8, start_s=round(b - 0.6, 3),
-                          end_s=round(b, 3), after='bypass', edge_ms=10.0))
+                          end_s=round(b, 3), after='bypass', edge_ms=40.0))
         if gain_db:
             chain.append(dict(type='pedalboard', plugin='Gain', params=dict(gain_db=float(gain_db)), start_s=round(a, 3), end_s=round(b, 3), edge_ms=400.0))
     return chain
@@ -293,7 +293,7 @@ write('sfx', 'np_wipers', dict(
     seconds=SECONDS,
     note='One sweep every 0.43 s (70 double strokes a minute); the interval grows up to four times in the slow motion.',
     model=dict(seconds=SECONDS, voices=[
-        dict(name='swish', gain_db=0.0, excite=dict(kind='burst', tau=0.16, color='pink'), resonator=dict(kind='bandpass', band=[900, 4500], order=2),
+        dict(name='swish', gain_db=0.0, excite=dict(kind='noise', color='pink', attack=0.07, tau=0.14), resonator=dict(kind='bandpass', band=[900, 4500], order=2),
              events=dict(kind='sequence', times=[round(t - OFF, 3) for t in WT], levels=[1.0] * len(WT))),
         dict(name='turn_thump', gain_db=-9.0, excite=dict(kind='impact', tau=0.006), resonator=dict(kind='modal', law='bar', f1=95.0, n=3, t60=0.08),
              events=dict(kind='sequence', times=[round(t + 0.2 - OFF, 3) for t in WT], levels=[1.0] * len(WT))),
@@ -343,9 +343,9 @@ OCC2 = [(T_UNDER + 4.0, T_UNDER + 7.0), (T_ROAD + 18.0, T_ROAD + 20.0)]       # 
 def occlusion_fx(windows, cutoff=900.0):
     chain = []
     for a, b in windows:
-        chain += [dict(type='filter_sweep', kind='lowpass', f_start_hz=12000.0, f_end_hz=cutoff, q=0.7, start_s=round(a, 3), end_s=round(a + 0.5, 3), after='bypass', edge_ms=10.0),
-                  dict(type='filter_sweep', kind='lowpass', f_start_hz=cutoff, f_end_hz=cutoff, q=0.7, start_s=round(a + 0.5, 3), end_s=round(b - 0.5, 3), after='bypass', edge_ms=10.0),
-                  dict(type='filter_sweep', kind='lowpass', f_start_hz=cutoff, f_end_hz=12000.0, q=0.7, start_s=round(b - 0.5, 3), end_s=round(b, 3), after='bypass', edge_ms=10.0)]
+        chain += [dict(type='filter_sweep', kind='lowpass', f_start_hz=12000.0, f_end_hz=cutoff, q=0.7, start_s=round(a, 3), end_s=round(a + 0.5, 3), after='bypass', edge_ms=40.0),
+                  dict(type='filter_sweep', kind='lowpass', f_start_hz=cutoff, f_end_hz=cutoff, q=0.7, start_s=round(a + 0.5, 3), end_s=round(b - 0.5, 3), after='bypass', edge_ms=40.0),
+                  dict(type='filter_sweep', kind='lowpass', f_start_hz=cutoff, f_end_hz=12000.0, q=0.7, start_s=round(b - 0.5, 3), end_s=round(b, 3), after='bypass', edge_ms=40.0)]
     return chain
 
 

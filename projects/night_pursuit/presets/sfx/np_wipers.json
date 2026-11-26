@@ -11,9 +11,10 @@
     "name": "swish",
     "gain_db": 0.0,
     "excite": {
-     "kind": "burst",
-     "tau": 0.16,
-     "color": "pink"
+     "kind": "noise",
+     "color": "pink",
+     "attack": 0.07,
+     "tau": 0.14
     },
     "resonator": {
      "kind": "bandpass",

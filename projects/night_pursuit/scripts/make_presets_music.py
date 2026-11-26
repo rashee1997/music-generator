@@ -183,7 +183,9 @@ mix['immersive'] = dict(enabled=True, engine='hoa_bus', order=5, anchor_max_span
 # Measured by debug_audio.py on render 8: the click row's six events sat in the 6 kHz band of the engine, the wipers and the rain film;
 # a replay of the gate's own checker on the modelled mix cleared five of six with these shelves (the engine -9 dB, the wipers -6 dB).
 mix['inst_eq'] = {'sfx:np_engine': [dict(type='highshelf', f=5500.0, gain=-9.0, q=0.7)],
-                  'sfx:np_wipers': [dict(type='highshelf', f=5500.0, gain=-6.0, q=0.7)]}
+                  'sfx:np_wipers': [dict(type='highshelf', f=5500.0, gain=-6.0, q=0.7)],
+                  'sfx:np_drift_squeal': [dict(type='highshelf', f=5500.0, gain=-9.0, q=0.7)],
+                  'env:np_city_far': [dict(type='highshelf', f=5500.0, gain=-3.0, q=0.7)]}
 mix['lead_carve'] = dict(enabled=True, from_intent=True, roles=['pad', 'texture', 'chord', 'arp', 'counter', 'environment'], ratio=1.6, threshold_db=-34.0, attack_ms=100.0, release_ms=1500.0)
 mix['sidechain'] = dict(mode='legacy', band_hz=[250.0, 3800.0], residual=0.3, env_plateau=True)
 mix['dynamics'] = dict(engine='pedalboard', knee_db=0.0, detector='peak', stereo_link=True, lookahead_ms=0.0, parallel=1.0)
