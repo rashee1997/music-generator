@@ -134,6 +134,12 @@ Pages were read as search results only (title, URL, snippet); none was opened in
 - https://www.ojp.gov/pdffiles1/nij/181622.pdf  siren wail and yelp cycle rates, an example at 20 and 240 cycles per minute (carried over)
 - https://bast.opus.hbz-nrw.de/files/366/B80.pdf  tunnel reverberation, long enclosures (carried over)
 - https://publications.lib.chalmers.se/records/fulltext/69867/local_69867.pdf  street-canyon reflections and the facade reflection coefficient (carried over)
+- https://www.carthrottle.com/news/which-sounds-better-cross-plane-or-flat-plane-v8  flat-plane V8 (Ferrari) alternates pulses between banks at regular intervals; cross-plane V8 (Mustang GT) has the burble; the Ferrari 458 makes its peak power at 9,000 rpm (a power peak, not a stated redline)
+- https://www.evo.co.uk/lamborghini/huracan/engine-and-gearbox  the Huracan 5.2 V10: a rev ceiling of about 8,500 rpm cited for the STO with the same engine; other sources say nearly 9,000
+- https://autos.yahoo.com/ranked-highest-revving-car-engines-082305676.html  highest-revving production engines, including the Porsche 911 GT3 (8,800-9,000 rpm in the sources)
+- https://www.revzilla.com/common-tread/decel-pop-vs-backfires-whats-the-difference-and-does-it-matter  decel pops are unburnt fuel igniting in a hot exhaust when the throttle closes; an open exhaust makes them louder
+- https://depts.washington.edu/trac/bulkdisk/pdf/920.1.pdf  bridge expansion-joint noise: air resonance in the gap and tyre vibration (a tyre dropping into each gap compresses the air in it)
+- https://jcaa.caa-aca.ca/index.php/jcaa/article/download/3003/2704/3944  joint noise above the deck is dominated by 500-800 Hz and below it by components up to 200 Hz (modular joints, a Polish study); the croak frequency depends mainly on tyre width
 
 ## Real-world references: car_engine_v8
 
@@ -209,6 +215,50 @@ Licence: analysed only: a statement read from a search result; the page was not 
 Taken: far traffic is a low hum in a street canyon; no night-time New York spectrum was found.
 Measured: No measurement found: ESTIMATE the band and the level are starting values
 
+## Real-world references: car_ferrari_v8
+
+- URL: https://www.carthrottle.com/news/which-sounds-better-cross-plane-or-flat-plane-v8  (flat-plane versus cross-plane V8)
+Licence: analysed only: statements read from a search result; the page was not opened in this session
+Taken: a flat-plane V8 fires alternately from each bank at regular intervals, so its note is even and high; the Ferrari 458 makes peak power at 9,000 rpm, so a redline near 9,000 rpm is used as a starting value. Firing frequency f = rpm x 8 / 120 is 1200 Hz at 9,000 rpm.
+Measured: No measurement found: ESTIMATE the harmonic content and the body formants are starting values; no firing order was read
+
+## Real-world references: car_mustang_v8
+
+- URL: https://www.carthrottle.com/news/which-sounds-better-cross-plane-or-flat-plane-v8  (cross-plane V8 character)
+Licence: analysed only: statements read from a search result; the page was not opened in this session
+Taken: a cross-plane V8 (the Mustang GT's 5.0 litre) has the uneven burble of its firing order; no redline for the standard GT was found, so about 7,000 rpm is a starting value. 7,000 rpm gives 467 Hz.
+Measured: No measurement found: ESTIMATE the burble's unevenness and the body formants are starting values
+
+## Real-world references: car_lamborghini_v10
+
+- URL: https://www.evo.co.uk/lamborghini/huracan/engine-and-gearbox  (Huracan engine)
+Licence: analysed only: statements read from a search result; the page was not opened in this session
+Taken: a 5.2 litre V10 with a rev ceiling of about 8,500 rpm (sources differ, up to nearly 9,000); firing frequency f = rpm x 10 / 120 is 708 Hz at 8,500 rpm (my calculation).
+Measured: No measurement found: ESTIMATE the harmonic content is a starting value
+
+## Real-world references: car_porsche_flat6
+
+- URL: https://autos.yahoo.com/ranked-highest-revving-car-engines-082305676.html  (high-revving engines)
+Licence: analysed only: statements read from a search result; the page was not opened in this session
+Taken: the 911 GT3's flat-six revs to about 8,800-9,000 rpm in the sources; f = rpm x 6 / 120 is 440 Hz at 8,800 rpm (my calculation); "a howl" is a reviewer's word, used as a character note.
+Measured: No measurement found: ESTIMATE the harmonic content is a starting value
+
+## Real-world references: exhaust_overrun_pops
+
+- URL: https://www.revzilla.com/common-tread/decel-pop-vs-backfires-whats-the-difference-and-does-it-matter  (decel pops)
+Licence: analysed only: statements read from a search result; the page was not opened in this session
+Taken: when the throttle closes, unburnt fuel ignites in the hot exhaust as short pops; an open exhaust makes them louder. Most sources are forum posts, not engineering sources.
+Measured: No measurement found: ESTIMATE pop rate, level and spectrum are starting values
+
+## Real-world references: bridge_expansion_joint
+
+- URL: https://depts.washington.edu/trac/bulkdisk/pdf/920.1.pdf  (joint noise: gap air resonance and tyre vibration)
+- URL: https://jcaa.caa-aca.ca/index.php/jcaa/article/download/3003/2704/3944  (500-800 Hz above the deck, up to 200 Hz below; frequency set mainly by tyre width)
+Licence: analysed only: figures read from search results; the pages were not opened in this session
+Taken: each expansion gap is a short thump: a low part up to about 200 Hz and a part at 500-800 Hz; the louder the faster the car goes; a tyre dropping into the gap compresses the air in it.
+Measured: No measurement found: ESTIMATE the gap spacing and levels are starting values
+
+
 ## Decisions taken from this research
 
 Weather and wipers (the user's change)
@@ -220,6 +270,11 @@ Camera and the room (as scenes, none as a script)
 
 Mix (a film mix, not a sound-effects mix)
 - The music is the foreground; the effects are a supporting layer under it and come forward only at a hit (the crash, the snap back). The sources agree that the balance follows the scene's purpose and give no figure; the starting values are in the mix preset and are measured after the first render. Loudness stays at -16 LUFS with a true peak at or below -1.5 dBTP.
+
+The cars and the story (the user's brief)
+- Four cars with their own engine models: a Ferrari flat-plane V8 (8 cyl, about 9,000 rpm), a Lamborghini V10 (10 cyl, about 8,500 rpm), a Mustang cross-plane V8 (8 cyl, about 7,000 rpm, uneven burble) and a Porsche flat-six (6 cyl, about 8,800 rpm). The firing frequency of each is rpm x cylinders / 120. Their speeds differ (about 150, 140, 125 km/h) and the Porsche holds one constant speed the whole piece.
+- The cue opens as a street race, the police see the speeding, the chase runs through streets, a tunnel, bumps and a flyover (expansion-joint thumps, one jump off the edge), and the Ferrari evades at the end.
+- Overrun pops on every lift of the throttle for the V8s and the V10.
 
 Music
 - Key C minor, 4/4, a tempo map from 132 to 156 BPM with no slow opening (the cue starts in motion); the pulse is a low-string and piano figure of sixteenths with a heartbeat of timpani and bass drum under it. Added parts: a sub pulse, taiko hits, a choir "oohs" on the helicopter reveal, a high solo violin over the bridge, brass swells at the camera cuts, risers and reverse cymbals through the fx engine. The hook changes its answer at every shot.
