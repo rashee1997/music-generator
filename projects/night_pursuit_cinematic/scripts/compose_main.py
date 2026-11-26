@@ -119,9 +119,9 @@ for bar in range(1, T.END_BAR):
     else:
         basses.add(bar, 0, 4.2, p((C + r + walk[k]) % 12, 1), vel(top + (0.08 if k == 0 else 0.0), 0.05))
     if not collapse and not escape:
-        basses_pizz.add(bar, 2.0 if k == 3 else 0.0, 1.0, p(C + r, 2), vel(top - 0.04, 0.05))
+        basses_pizz.add(bar, 2.0 if k == 3 else 0.0, 0.35, p(C + r, 2), vel(top - 0.04, 0.05))
         if (bar + ph) % 3 != 0:
-            basses_pizz.add(bar, 1.5 + 0.5 * (ph % 2), 0.5, p((C + r + (7 if k == 2 else 0)) % 12, 2), vel(0.5 + 0.1 * (ph % 3), 0.05))
+            basses_pizz.add(bar, 1.5 + 0.5 * (ph % 2), 0.3, p((C + r + (7 if k == 2 else 0)) % 12, 2), vel(0.5 + 0.1 * (ph % 3), 0.05))
         if bar >= s0('the_chase') or bar < s0('spotted'):
             for b in TUBA_RHYTHMS[(ph * 2 + k) % len(TUBA_RHYTHMS)]:
                 tuba.add(bar, b, 0.4, p((C + r + (walk[k] if k < 3 else 0)) % 12, 2), vel(0.40 + 0.35 * energy * (0.6 + 0.4 * (k == 0)), 0.07))
@@ -274,7 +274,7 @@ for bar in list(range(int(T.CRASH_BAR) - 3, int(T.CRASH_BAR) - 1)) + list(range(
         violins_st.add(bar, i * 0.5, 0.45, p((SCALE[kk % 7] + r) % 12, 5 + kk // 7), vel(0.5 + 0.02 * i + 0.05 * (bar % 3), 0.03))
 # the escape: the hook left on a single note, a held harmonic, the strings thin out
 for n, bar in enumerate(range(s0('the_escape'), sN('the_escape') - 3, 4)):
-    horns.add(bar, 0, 3.5, p(G, 3), 0.62 - 0.07 * n)      # home, not the tritone: the evaded ending cadences (cochlear_roughness read the held Gb against the C as unresolved)
+    horns.add(bar, 0, 3.5, p(G, 3), 0.76 - 0.08 * n)      # home, not the tritone: the evaded ending cadences (cochlear_roughness read the held Gb against the C as unresolved)
 solo.add(s0('the_escape') + 1, 0, 14.0, p(C, 5), 0.4)      # home: the Gb4 held here beat against the Porsche's constant 342 Hz partial (cochlear roughness at 169.5 s)
 violins_tr.add(s0('the_escape') + 2, 0, 20.0, p(G, 5), 0.3)
 choir.add(s0('the_escape'), 0, 10.0, p(G, 4), 0.3)

@@ -2,41 +2,41 @@
   "meta": {
     "stage": "stem",
     "mode": "full",
-    "fails": 0,
+    "fails": 2,
     "warns": 0,
     "rows": 242,
     "profile": "night_pursuit_cinematic",
-    "total_ms": 6601.642540001194,
+    "total_ms": 29327.594256996235,
     "timings": {
-      "bass_clarinet": 0.0,
-      "bass_drum": 0.0,
-      "basses": 0.0,
-      "basses_pizz": 0.0,
-      "bumps": 0.0,
-      "celli": 0.0,
-      "choir": 0.0,
-      "city_far": 0.0,
-      "crash": 0.0,
-      "cymbals": 0.0,
-      "ferrari": 0.0,
-      "helicopter": 0.0,
-      "horns": 0.0,
-      "lamborghini": 0.0,
-      "landing": 0.0,
-      "low_swell": 0.0,
-      "mustang": 0.0,
-      "porsche": 0.0,
-      "siren_first": 0.0,
-      "siren_second": 0.0,
-      "snare": 0.0,
-      "solo_violin": 0.0,
-      "taiko": 0.0,
-      "timpani": 0.0,
-      "trombones": 0.0,
-      "tuba": 0.0,
-      "violas": 0.0,
-      "violins_long": 5262.720765000267,
-      "violins_staccato": 0.0
+      "bass_clarinet": 814.954964997014,
+      "bass_drum": 2481.676734998473,
+      "basses": 4745.558217000507,
+      "basses_pizz": 3944.0001860057237,
+      "bumps": 1211.6503639990697,
+      "celli": 2543.751892997534,
+      "choir": 6915.38781899726,
+      "city_far": 2730.0711130010313,
+      "crash": 1284.036527002172,
+      "cymbals": 1264.7701159949065,
+      "ferrari": 1173.9551849968848,
+      "helicopter": 1173.9913839992369,
+      "horns": 2415.8519949996844,
+      "lamborghini": 1462.4959360007779,
+      "landing": 1434.4719969958533,
+      "low_swell": 4248.003325999889,
+      "mustang": 1053.2425029959995,
+      "porsche": 1012.9407009953866,
+      "siren_first": 1233.229069999652,
+      "siren_second": 1393.0436669979827,
+      "snare": 1395.3907219984103,
+      "solo_violin": 2710.714041000756,
+      "taiko": 1876.978186002816,
+      "timpani": 1291.5240110014565,
+      "trombones": 4084.781687000941,
+      "tuba": 3241.818226997566,
+      "violas": 2627.315516001545,
+      "violins_long": 4493.360420005047,
+      "violins_staccato": 4094.416355001158
     },
     "workers": 3,
     "metrics": [
@@ -45,18 +45,18 @@
         "stage": "stem",
         "stem": "bass_clarinet",
         "level": "PASS",
-        "value": 5.2362936360198276e-08,
+        "value": 4.061359474792677e-08,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009999476370636399,
+        "margin": -0.0009999593864052521,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"bass_clarinet\": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"bass_clarinet\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          1.9425059510471825e-13,
-          -1.4092657210592685e-13
+          -1.8114849725264302e-13,
+          3.7585900543616104e-14
         ],
-        "drift": 5.2362936360198276e-08
+        "drift": 4.061359474792677e-08
       },
       {
         "row": "stem.clipping",
@@ -117,8 +117,8 @@
         "calibrated": false,
         "detail": "stem \"bass_clarinet\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          30.3,
-          21.7,
+          30.7,
+          22.0,
           37.3,
           36.9
         ],
@@ -135,9 +135,9 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"bass_clarinet\": audible span 28.560-39.085 s against score notes 28.587-38.892 s: leading silence -27 ms, trailing silence -193 ms (limit 25 ms)",
+        "detail": "stem \"bass_clarinet\": audible span 28.560-39.090 s against score notes 28.587-38.892 s: leading silence -27 ms, trailing silence -198 ms (limit 25 ms)",
         "head_ms": -26.8,
-        "tail_ms": -193.1,
+        "tail_ms": -198.1,
         "fail": false
       },
       {
@@ -151,15 +151,15 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"bass_clarinet\": own median -35.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"bass_clarinet\": own median -36.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "spotted",
             "start_s": 25.077,
-            "measured_db": -35.25,
-            "expected_db": -35.25,
-            "dyn": 0.85
+            "measured_db": -36.0,
+            "expected_db": -36.0,
+            "dyn": 0.8
           }
         ],
         "dead": false
@@ -183,18 +183,18 @@
         "stage": "stem",
         "stem": "bass_drum",
         "level": "PASS",
-        "value": 1.3975059228966998e-05,
+        "value": 1.8992233696415085e-05,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.000986024940771033,
+        "margin": -0.000981007766303585,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"bass_drum\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)",
+        "detail": "stem \"bass_drum\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00002 (limit 0.001)",
         "channel_means": [
-          -4.1624009478780014e-07,
-          -1.9951986876566344e-07
+          -4.72667252603169e-07,
+          -1.9137949963433897e-07
         ],
-        "drift": 1.3975059228966998e-05
+        "drift": 1.8992233696415085e-05
       },
       {
         "row": "stem.clipping",
@@ -301,43 +301,43 @@
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -18.47,
-            "expected_db": -19.15,
-            "dyn": 0.75
+            "measured_db": -18.28,
+            "expected_db": -17.82,
+            "dyn": 0.9
           },
           {
             "section": "spotted",
             "start_s": 25.077,
-            "measured_db": -18.17,
-            "expected_db": -18.06,
-            "dyn": 0.85
+            "measured_db": -18.35,
+            "expected_db": -18.84,
+            "dyn": 0.8
           },
           {
             "section": "the_chase",
             "start_s": 38.892,
-            "measured_db": -17.98,
-            "expected_db": -17.57,
+            "measured_db": -18.16,
+            "expected_db": -17.82,
             "dyn": 0.9
           },
           {
             "section": "the_bumps",
             "start_s": 117.636,
-            "measured_db": -17.71,
-            "expected_db": -16.65,
+            "measured_db": -17.81,
+            "expected_db": -16.91,
             "dyn": 1.0
           },
           {
             "section": "the_flyover",
             "start_s": 139.888,
-            "measured_db": -22.0,
-            "expected_db": -18.59,
+            "measured_db": -22.9,
+            "expected_db": -18.84,
             "dyn": 0.8
           },
           {
             "section": "the_escape",
             "start_s": 165.785,
-            "measured_db": -24.69,
-            "expected_db": -22.67,
+            "measured_db": -25.15,
+            "expected_db": -22.93,
             "dyn": 0.5
           }
         ],
@@ -348,18 +348,18 @@
         "stage": "stem",
         "stem": "basses",
         "level": "PASS",
-        "value": 7.599708538453709e-07,
+        "value": 5.50229096778102e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009992400291461547,
+        "margin": -0.0009994497709032218,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"basses\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.587950631710273e-08,
-          -1.588559947459328e-08
+          -2.805159441896551e-08,
+          -2.736737724571909e-08
         ],
-        "drift": 7.599708538453709e-07
+        "drift": 5.50229096778102e-07
       },
       {
         "row": "stem.clipping",
@@ -404,7 +404,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"basses\": longest hole 0 ms (limit 20-1000 ms), floor -77.1 dBFS; 0 hole(s)",
+        "detail": "stem \"basses\": longest hole 0 ms (limit 20-1000 ms), floor -76.4 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -420,9 +420,8 @@
         "calibrated": false,
         "detail": "stem \"basses\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          17.2,
-          25.0,
-          14.3
+          47.1,
+          42.2
         ],
         "exempted": []
       },
@@ -437,9 +436,9 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"basses\": audible span 0.000-193.830 s against score notes 0.000-193.691 s: leading silence 0 ms, trailing silence -139 ms (limit 25 ms)",
+        "detail": "stem \"basses\": audible span 0.000-193.970 s against score notes 0.000-193.691 s: leading silence 0 ms, trailing silence -279 ms (limit 25 ms)",
         "head_ms": 0.0,
-        "tail_ms": -138.5,
+        "tail_ms": -278.5,
         "fail": false
       },
       {
@@ -447,24 +446,24 @@
         "stage": "stem",
         "stem": "basses",
         "level": "PASS",
-        "value": 0.3311776761785968,
+        "value": 0.36754270559425223,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": -0.018822323821403197,
+        "margin": 0.01754270559425225,
         "worst_times_s": [
           0.0348
         ],
         "calibrated": false,
-        "detail": "stem \"basses\": onset autocorrelation 0.33 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 380 strong onset(s) of 4009, 152 on the grid, IOI CV 1.243; peak rise 0.37 dB at those onsets over 380 onset(s) (min 3); tempogram peak ratio 0.79, PLP peak ratio 1.00",
+        "detail": "stem \"basses\": onset autocorrelation 0.37 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 206 strong onset(s) of 3986, 88 on the grid, IOI CV 0.842; peak rise -0.34 dB at those onsets over 206 onset(s) (min 3); tempogram peak ratio 0.79, PLP peak ratio 1.00",
         "periodic": false,
         "period_ms": 92.87981859410431,
-        "events": 380,
-        "cv": 1.2429736563296012,
-        "grid_matched": 152,
-        "tempogram_ratio": 0.7859061820706441,
-        "plp_ratio": 0.999999999998549,
-        "rise_db": 0.368,
-        "rise_onsets": 380
+        "events": 206,
+        "cv": 0.8418722296834185,
+        "grid_matched": 88,
+        "tempogram_ratio": 0.7931337925266734,
+        "plp_ratio": 0.999999999998548,
+        "rise_db": -0.34,
+        "rise_onsets": 206
       },
       {
         "row": "stem.dead",
@@ -477,63 +476,63 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"basses\": own median -31.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve",
+        "detail": "stem \"basses\": own median -31.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -32.67,
-            "expected_db": -32.25,
-            "dyn": 0.75
+            "measured_db": -30.97,
+            "expected_db": -30.02,
+            "dyn": 0.9
           },
           {
             "section": "spotted",
             "start_s": 25.077,
-            "measured_db": -30.73,
-            "expected_db": -31.17,
-            "dyn": 0.85
+            "measured_db": -31.11,
+            "expected_db": -31.04,
+            "dyn": 0.8
           },
           {
             "section": "the_chase",
             "start_s": 38.892,
-            "measured_db": -31.04,
-            "expected_db": -30.67,
+            "measured_db": -30.43,
+            "expected_db": -30.02,
             "dyn": 0.9
           },
           {
             "section": "the_tunnel",
             "start_s": 72.228,
-            "measured_db": -32.35,
-            "expected_db": -31.69,
+            "measured_db": -32.15,
+            "expected_db": -31.04,
             "dyn": 0.8
           },
           {
             "section": "the_helicopter",
             "start_s": 95.085,
-            "measured_db": -30.8,
-            "expected_db": -31.69,
+            "measured_db": -30.93,
+            "expected_db": -31.04,
             "dyn": 0.8
           },
           {
             "section": "the_bumps",
             "start_s": 117.636,
-            "measured_db": -29.53,
-            "expected_db": -29.75,
+            "measured_db": -29.84,
+            "expected_db": -29.1,
             "dyn": 1.0
           },
           {
             "section": "the_flyover",
             "start_s": 139.888,
-            "measured_db": -37.41,
-            "expected_db": -31.69,
+            "measured_db": -37.61,
+            "expected_db": -31.04,
             "dyn": 0.8
           },
           {
             "section": "the_escape",
             "start_s": 165.785,
-            "measured_db": -43.84,
-            "expected_db": -35.78,
+            "measured_db": -44.26,
+            "expected_db": -35.12,
             "dyn": 0.5
           }
         ],
@@ -558,18 +557,18 @@
         "stage": "stem",
         "stem": "basses_pizz",
         "level": "PASS",
-        "value": 9.68718820249863e-07,
+        "value": 1.1258720259084697e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.00099903128117975,
+        "margin": -0.0009988741279740915,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"basses_pizz\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.2531235274333426e-08,
-          -2.0098668604819022e-08
+          -1.88777124147419e-08,
+          -3.153438393013785e-08
         ],
-        "drift": 9.68718820249863e-07
+        "drift": 1.1258720259084697e-06
       },
       {
         "row": "stem.clipping",
@@ -607,15 +606,22 @@
         "row": "stem.dropout",
         "stage": "stem",
         "stem": "basses_pizz",
-        "level": "PASS",
-        "value": 0.0,
+        "level": "FAIL",
+        "value": 24.999999999991473,
         "unit": "ms",
         "threshold": 20.0,
-        "margin": -20.0,
-        "worst_times_s": [],
+        "margin": 4.9999999999914735,
+        "worst_times_s": [
+          126.18
+        ],
         "calibrated": false,
-        "detail": "stem \"basses_pizz\": longest hole 0 ms (limit 20-1000 ms), floor -99.2 dBFS; 0 hole(s)",
-        "holes": []
+        "detail": "stem \"basses_pizz\": longest hole 25 ms (limit 20-1000 ms), floor -99.0 dBFS; 1 hole(s)",
+        "holes": [
+          {
+            "start_s": 126.18,
+            "length_ms": 25.0
+          }
+        ]
       },
       {
         "row": "stem.cut",
@@ -630,14 +636,14 @@
         "calibrated": false,
         "detail": "stem \"basses_pizz\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          14.9,
-          14.2,
-          15.1,
-          13.8,
           14.7,
-          13.2,
+          14.3,
+          13.1,
+          15.8,
+          14.2,
           12.8,
-          14.2
+          15.1,
+          14.4
         ],
         "exempted": []
       },
@@ -652,9 +658,9 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"basses_pizz\": audible span 0.000-165.410 s against score notes 0.000-164.830 s: leading silence 0 ms, trailing silence -580 ms (limit 25 ms)",
+        "detail": "stem \"basses_pizz\": audible span 0.000-165.430 s against score notes 0.000-164.830 s: leading silence 0 ms, trailing silence -600 ms (limit 25 ms)",
         "head_ms": 0.0,
-        "tail_ms": -579.9,
+        "tail_ms": -599.9,
         "fail": false
       },
       {
@@ -662,24 +668,24 @@
         "stage": "stem",
         "stem": "basses_pizz",
         "level": "PASS",
-        "value": 0.1172859327063781,
+        "value": 0.11334870866637793,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": -0.23271406729362187,
+        "margin": -0.23665129133362206,
         "worst_times_s": [
           0.0348
         ],
         "calibrated": false,
-        "detail": "stem \"basses_pizz\": onset autocorrelation 0.12 at a 801 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 213 strong onset(s) of 1940, 24 on the grid, IOI CV 1.065; peak rise 29.56 dB at those onsets over 213 onset(s) (min 3); tempogram peak ratio 0.92, PLP peak ratio 1.00",
+        "detail": "stem \"basses_pizz\": onset autocorrelation 0.11 at a 801 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 215 strong onset(s) of 1929, 24 on the grid, IOI CV 1.069; peak rise 29.22 dB at those onsets over 215 onset(s) (min 3); tempogram peak ratio 0.92, PLP peak ratio 1.00",
         "periodic": false,
         "period_ms": 801.0884353741496,
-        "events": 213,
-        "cv": 1.065054519917991,
+        "events": 215,
+        "cv": 1.069133224767023,
         "grid_matched": 24,
-        "tempogram_ratio": 0.918407579833291,
-        "plp_ratio": 0.9999999999988582,
-        "rise_db": 29.558,
-        "rise_onsets": 213
+        "tempogram_ratio": 0.9175198437883215,
+        "plp_ratio": 0.9999999999988395,
+        "rise_db": 29.225,
+        "rise_onsets": 215
       },
       {
         "row": "stem.dead",
@@ -692,56 +698,56 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"basses_pizz\": own median -31.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve",
+        "detail": "stem \"basses_pizz\": own median -31.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -33.04,
-            "expected_db": -31.75,
-            "dyn": 0.75
+            "measured_db": -32.03,
+            "expected_db": -30.35,
+            "dyn": 0.9
           },
           {
             "section": "spotted",
             "start_s": 25.077,
-            "measured_db": -30.39,
-            "expected_db": -30.66,
-            "dyn": 0.85
+            "measured_db": -30.98,
+            "expected_db": -31.37,
+            "dyn": 0.8
           },
           {
             "section": "the_chase",
             "start_s": 38.892,
-            "measured_db": -31.19,
-            "expected_db": -30.17,
+            "measured_db": -31.2,
+            "expected_db": -30.35,
             "dyn": 0.9
           },
           {
             "section": "the_tunnel",
             "start_s": 72.228,
-            "measured_db": -32.28,
-            "expected_db": -31.19,
+            "measured_db": -32.48,
+            "expected_db": -31.37,
             "dyn": 0.8
           },
           {
             "section": "the_helicopter",
             "start_s": 95.085,
-            "measured_db": -31.08,
-            "expected_db": -31.19,
+            "measured_db": -31.37,
+            "expected_db": -31.37,
             "dyn": 0.8
           },
           {
             "section": "the_bumps",
             "start_s": 117.636,
-            "measured_db": -30.8,
-            "expected_db": -29.25,
+            "measured_db": -30.91,
+            "expected_db": -29.43,
             "dyn": 1.0
           },
           {
             "section": "the_flyover",
             "start_s": 139.888,
-            "measured_db": -37.35,
-            "expected_db": -31.19,
+            "measured_db": -37.1,
+            "expected_db": -31.37,
             "dyn": 0.8
           }
         ],
@@ -871,18 +877,18 @@
         "stage": "stem",
         "stem": "celli",
         "level": "PASS",
-        "value": 8.25707553739541e-07,
+        "value": 7.415704162050054e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009991742924462604,
+        "margin": -0.000999258429583795,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"celli\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.3911021416960402e-08,
-          -1.228837376393285e-08
+          -1.2404787810219229e-08,
+          -1.2828178481468563e-08
         ],
-        "drift": 8.25707553739541e-07
+        "drift": 7.415704162050054e-07
       },
       {
         "row": "stem.clipping",
@@ -927,7 +933,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"celli\": longest hole 0 ms (limit 20-1000 ms), floor -82.1 dBFS; 0 hole(s)",
+        "detail": "stem \"celli\": longest hole 0 ms (limit 20-1000 ms), floor -81.2 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -943,11 +949,10 @@
         "calibrated": false,
         "detail": "stem \"celli\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          13.5,
-          38.3,
-          28.9,
-          42.1,
-          37.7
+          35.0,
+          32.4,
+          34.0,
+          30.2
         ],
         "exempted": []
       },
@@ -962,9 +967,9 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"celli\": audible span 0.000-166.135 s against score notes 0.000-165.761 s: leading silence 0 ms, trailing silence -374 ms (limit 25 ms)",
+        "detail": "stem \"celli\": audible span 0.000-166.155 s against score notes 0.000-165.761 s: leading silence 0 ms, trailing silence -394 ms (limit 25 ms)",
         "head_ms": 0.0,
-        "tail_ms": -373.8,
+        "tail_ms": -393.8,
         "fail": false
       },
       {
@@ -972,24 +977,24 @@
         "stage": "stem",
         "stem": "celli",
         "level": "PASS",
-        "value": 0.52569540944255,
+        "value": 0.5160998812862663,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": 0.17569540944255002,
+        "margin": 0.1660998812862663,
         "worst_times_s": [
           0.0348
         ],
         "calibrated": false,
-        "detail": "stem \"celli\": onset autocorrelation 0.53 at a 406 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 295 strong onset(s) of 1791, 47 on the grid, IOI CV 1.624; peak rise 2.67 dB at those onsets over 295 onset(s) (min 3); tempogram peak ratio 0.83, PLP peak ratio 1.00",
+        "detail": "stem \"celli\": onset autocorrelation 0.52 at a 406 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 77 strong onset(s) of 1798, 19 on the grid, IOI CV 2.396; peak rise -6.98 dB at those onsets over 77 onset(s) (min 3); tempogram peak ratio 0.83, PLP peak ratio 1.00",
         "periodic": false,
         "period_ms": 406.3492063492063,
-        "events": 295,
-        "cv": 1.6244602088917597,
-        "grid_matched": 47,
-        "tempogram_ratio": 0.8264174027328302,
-        "plp_ratio": 0.9999999999989085,
-        "rise_db": 2.667,
-        "rise_onsets": 295
+        "events": 77,
+        "cv": 2.3960341822056788,
+        "grid_matched": 19,
+        "tempogram_ratio": 0.8279843953733135,
+        "plp_ratio": 0.9987833470011355,
+        "rise_db": -6.981,
+        "rise_onsets": 77
       },
       {
         "row": "stem.dead",
@@ -1002,56 +1007,56 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"celli\": own median -34.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve",
+        "detail": "stem \"celli\": own median -34.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -38.4,
-            "expected_db": -35.28,
-            "dyn": 0.75
+            "measured_db": -33.28,
+            "expected_db": -33.73,
+            "dyn": 0.9
           },
           {
             "section": "spotted",
             "start_s": 25.077,
-            "measured_db": -33.77,
-            "expected_db": -34.19,
-            "dyn": 0.85
+            "measured_db": -35.08,
+            "expected_db": -34.76,
+            "dyn": 0.8
           },
           {
             "section": "the_chase",
             "start_s": 38.892,
-            "measured_db": -33.52,
-            "expected_db": -33.7,
+            "measured_db": -33.67,
+            "expected_db": -33.73,
             "dyn": 0.9
           },
           {
             "section": "the_tunnel",
             "start_s": 72.228,
-            "measured_db": -36.59,
-            "expected_db": -34.72,
+            "measured_db": -35.78,
+            "expected_db": -34.76,
             "dyn": 0.8
           },
           {
             "section": "the_helicopter",
             "start_s": 95.085,
-            "measured_db": -34.72,
-            "expected_db": -34.72,
+            "measured_db": -34.76,
+            "expected_db": -34.76,
             "dyn": 0.8
           },
           {
             "section": "the_bumps",
             "start_s": 117.636,
-            "measured_db": -32.44,
-            "expected_db": -32.78,
+            "measured_db": -32.6,
+            "expected_db": -32.82,
             "dyn": 1.0
           },
           {
             "section": "the_flyover",
             "start_s": 139.888,
-            "measured_db": -41.39,
-            "expected_db": -34.72,
+            "measured_db": -39.8,
+            "expected_db": -34.76,
             "dyn": 0.8
           }
         ],
@@ -1062,18 +1067,18 @@
         "stage": "stem",
         "stem": "choir",
         "level": "PASS",
-        "value": 3.769827377442631e-07,
+        "value": 2.0681275667827955e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009996230172622557,
+        "margin": -0.0009997931872433217,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"choir\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"choir\": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.2467118097697604e-13,
-          -1.938457949265344e-14
+          4.843162606787125e-14,
+          -2.863394735277298e-14
         ],
-        "drift": 3.769827377442631e-07
+        "drift": 2.0681275667827955e-07
       },
       {
         "row": "stem.clipping",
@@ -1134,10 +1139,11 @@
         "calibrated": false,
         "detail": "stem \"choir\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          46.2,
-          43.2,
-          41.9,
-          36.3
+          18.9,
+          48.5,
+          32.8,
+          39.7,
+          36.1
         ],
         "exempted": []
       },
@@ -1152,9 +1158,9 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"choir\": audible span 95.060-171.405 s against score notes 95.085-170.759 s: leading silence -25 ms, trailing silence -646 ms (limit 25 ms)",
+        "detail": "stem \"choir\": audible span 95.060-171.545 s against score notes 95.085-170.759 s: leading silence -25 ms, trailing silence -786 ms (limit 25 ms)",
         "head_ms": -25.1,
-        "tail_ms": -646.3,
+        "tail_ms": -786.3,
         "fail": false
       },
       {
@@ -1162,24 +1168,24 @@
         "stage": "stem",
         "stem": "choir",
         "level": "PASS",
-        "value": 0.7339443148540393,
+        "value": 0.7139438347572643,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": 0.38394431485403935,
+        "margin": 0.36394383475726433,
         "worst_times_s": [
           95.0973
         ],
         "calibrated": false,
-        "detail": "stem \"choir\": onset autocorrelation 0.73 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 13 strong onset(s) of 231, 6 on the grid, IOI CV 2.164; peak rise 2.82 dB at those onsets over 13 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00",
+        "detail": "stem \"choir\": onset autocorrelation 0.71 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 8 strong onset(s) of 218, 4 on the grid, IOI CV 1.812; peak rise 4.63 dB at those onsets over 8 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00",
         "periodic": false,
         "period_ms": 92.87981859410431,
-        "events": 13,
-        "cv": 2.163799618743471,
-        "grid_matched": 6,
-        "tempogram_ratio": 0.9999999999988546,
-        "plp_ratio": 0.9999999999976663,
-        "rise_db": 2.82,
-        "rise_onsets": 13
+        "events": 8,
+        "cv": 1.8115111718746906,
+        "grid_matched": 4,
+        "tempogram_ratio": 0.999999999998856,
+        "plp_ratio": 0.9999999999978509,
+        "rise_db": 4.632,
+        "rise_onsets": 8
       },
       {
         "row": "stem.dead",
@@ -1192,21 +1198,21 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"choir\": own median -46.9 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve",
+        "detail": "stem \"choir\": own median -44.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_helicopter",
             "start_s": 95.085,
-            "measured_db": -34.15,
-            "expected_db": -45.09,
+            "measured_db": -34.03,
+            "expected_db": -42.93,
             "dyn": 0.8
           },
           {
             "section": "the_escape",
             "start_s": 165.785,
-            "measured_db": -59.64,
-            "expected_db": -49.18,
+            "measured_db": -55.45,
+            "expected_db": -47.02,
             "dyn": 0.5
           }
         ],
@@ -1379,15 +1385,15 @@
             "section": "the_race",
             "start_s": 0.0,
             "measured_db": -43.44,
-            "expected_db": -44.81,
-            "dyn": 0.75
+            "expected_db": -43.23,
+            "dyn": 0.9
           },
           {
             "section": "spotted",
             "start_s": 25.077,
             "measured_db": -44.62,
-            "expected_db": -43.73,
-            "dyn": 0.85
+            "expected_db": -44.25,
+            "dyn": 0.8
           },
           {
             "section": "the_chase",
@@ -1575,18 +1581,18 @@
         "stage": "stem",
         "stem": "cymbals",
         "level": "PASS",
-        "value": 1.9733692807237126e-06,
+        "value": 6.595831884018515e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009980266307192762,
+        "margin": -0.000999340416811598,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"cymbals\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -3.752578158540601e-08,
-          -1.9929451679657494e-08
+          -3.679059973064413e-08,
+          -1.9538884796286578e-08
         ],
-        "drift": 1.9733692807237126e-06
+        "drift": 6.595831884018515e-07
       },
       {
         "row": "stem.clipping",
@@ -1687,56 +1693,56 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"cymbals\": own median -38.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve",
+        "detail": "stem \"cymbals\": own median -38.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -39.69,
-            "expected_db": -39.03,
-            "dyn": 0.75
+            "measured_db": -38.81,
+            "expected_db": -37.1,
+            "dyn": 0.9
           },
           {
             "section": "spotted",
             "start_s": 25.077,
-            "measured_db": -38.47,
-            "expected_db": -37.94,
-            "dyn": 0.85
+            "measured_db": -38.14,
+            "expected_db": -38.13,
+            "dyn": 0.8
           },
           {
             "section": "the_chase",
             "start_s": 38.892,
-            "measured_db": -38.78,
-            "expected_db": -37.44,
+            "measured_db": -38.13,
+            "expected_db": -37.1,
             "dyn": 0.9
           },
           {
             "section": "the_tunnel",
             "start_s": 72.228,
-            "measured_db": -35.57,
-            "expected_db": -38.47,
+            "measured_db": -36.49,
+            "expected_db": -38.13,
             "dyn": 0.8
           },
           {
             "section": "the_helicopter",
             "start_s": 95.085,
-            "measured_db": -38.5,
-            "expected_db": -38.47,
+            "measured_db": -39.22,
+            "expected_db": -38.13,
             "dyn": 0.8
           },
           {
             "section": "the_bumps",
             "start_s": 117.636,
-            "measured_db": -37.74,
-            "expected_db": -36.53,
+            "measured_db": -37.44,
+            "expected_db": -36.19,
             "dyn": 1.0
           },
           {
             "section": "the_flyover",
             "start_s": 139.888,
-            "measured_db": -37.07,
-            "expected_db": -38.47,
+            "measured_db": -37.57,
+            "expected_db": -38.13,
             "dyn": 0.8
           }
         ],
@@ -1867,7 +1873,7 @@
             "start_s": 0.0,
             "measured_db": -15.44,
             "expected_db": -15.44,
-            "dyn": 0.75
+            "dyn": 0.9
           }
         ],
         "dead": false
@@ -2008,18 +2014,18 @@
         "stage": "stem",
         "stem": "horns",
         "level": "PASS",
-        "value": 1.2268006067800493e-05,
+        "value": 1.2202981535163944e-05,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009877319939321995,
+        "margin": -0.000987797018464836,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"horns\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)",
         "channel_means": [
-          -5.7463575290596766e-08,
-          -5.7215918287797286e-08
+          -8.922123696015478e-08,
+          -8.997218011054001e-08
         ],
-        "drift": 1.2268006067800493e-05
+        "drift": 1.2202981535163944e-05
       },
       {
         "row": "stem.clipping",
@@ -2064,7 +2070,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"horns\": longest hole 0 ms (limit 20-1000 ms), floor -104.2 dBFS; 0 hole(s)",
+        "detail": "stem \"horns\": longest hole 0 ms (limit 20-1000 ms), floor -100.1 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -2080,14 +2086,14 @@
         "calibrated": false,
         "detail": "stem \"horns\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          40.6,
-          38.0,
-          31.6,
-          59.4,
-          28.8,
-          35.7,
-          29.3,
-          42.9
+          21.2,
+          42.7,
+          26.9,
+          48.7,
+          45.8,
+          36.7,
+          31.1,
+          39.1
         ],
         "exempted": []
       },
@@ -2102,79 +2108,81 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"horns\": audible span 0.000-185.095 s against score notes 0.000-184.845 s: leading silence 0 ms, trailing silence -250 ms (limit 25 ms)",
+        "detail": "stem \"horns\": audible span 0.000-185.200 s against score notes 0.000-184.845 s: leading silence 0 ms, trailing silence -355 ms (limit 25 ms)",
         "head_ms": 0.0,
-        "tail_ms": -250.3,
+        "tail_ms": -355.3,
         "fail": false
       },
       {
         "row": "stem.dead",
         "stage": "stem",
         "stem": "horns",
-        "level": "PASS",
-        "value": 0.0,
+        "level": "FAIL",
+        "value": 13.07181749139174,
         "unit": "dB",
         "threshold": 12.0,
-        "margin": -12.0,
-        "worst_times_s": [],
+        "margin": 1.0718174913917409,
+        "worst_times_s": [
+          165.785
+        ],
         "calibrated": false,
-        "detail": "stem \"horns\": own median -22.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve",
-        "fail": false,
+        "detail": "stem \"horns\": own median -22.3 dBFS, worst section shortfall 13.1 dB (limit 12 dB), active sections 8; dropped in a section",
+        "fail": true,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -22.49,
-            "expected_db": -22.8,
-            "dyn": 0.75
+            "measured_db": -21.01,
+            "expected_db": -21.28,
+            "dyn": 0.9
           },
           {
             "section": "spotted",
             "start_s": 25.077,
-            "measured_db": -22.04,
-            "expected_db": -21.71,
-            "dyn": 0.85
+            "measured_db": -23.93,
+            "expected_db": -22.3,
+            "dyn": 0.8
           },
           {
             "section": "the_chase",
             "start_s": 38.892,
-            "measured_db": -21.62,
-            "expected_db": -21.22,
+            "measured_db": -21.95,
+            "expected_db": -21.28,
             "dyn": 0.9
           },
           {
             "section": "the_tunnel",
             "start_s": 72.228,
-            "measured_db": -22.44,
-            "expected_db": -22.24,
+            "measured_db": -22.65,
+            "expected_db": -22.3,
             "dyn": 0.8
           },
           {
             "section": "the_helicopter",
             "start_s": 95.085,
-            "measured_db": -19.73,
-            "expected_db": -22.24,
+            "measured_db": -20.09,
+            "expected_db": -22.3,
             "dyn": 0.8
           },
           {
             "section": "the_bumps",
             "start_s": 117.636,
-            "measured_db": -18.59,
-            "expected_db": -20.3,
+            "measured_db": -18.35,
+            "expected_db": -20.36,
             "dyn": 1.0
           },
           {
             "section": "the_flyover",
             "start_s": 139.888,
-            "measured_db": -25.57,
-            "expected_db": -22.24,
+            "measured_db": -25.88,
+            "expected_db": -22.3,
             "dyn": 0.8
           },
           {
             "section": "the_escape",
             "start_s": 165.785,
-            "measured_db": -36.35,
-            "expected_db": -26.32,
+            "measured_db": -39.46,
+            "expected_db": -26.38,
             "dyn": 0.5
           }
         ],
@@ -2233,11 +2241,11 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 4899 event(s) rejected as a dense burst, 556 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 3808 event(s) rejected as a dense burst, 513 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 4899,
-        "attacks_ignored": 556,
+        "rejected": 3808,
+        "attacks_ignored": 513,
         "max_cluster_span_ms": 1.4965986394557824
       },
       {
@@ -2251,7 +2259,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -59.2 dBFS; 0 hole(s)",
+        "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -59.6 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -2311,15 +2319,15 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"lamborghini\": own median -18.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"lamborghini\": own median -18.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -18.08,
-            "expected_db": -18.08,
-            "dyn": 0.75
+            "measured_db": -18.51,
+            "expected_db": -18.51,
+            "dyn": 0.9
           }
         ],
         "dead": false
@@ -2659,11 +2667,11 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"mustang\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 6 as a steep attack; max cluster span 0.000 ms",
+        "detail": "stem \"mustang\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 4 as a steep attack; max cluster span 0.000 ms",
         "mad_count": 0,
         "lpc_count": 0,
         "rejected": 0,
-        "attacks_ignored": 6,
+        "attacks_ignored": 4,
         "max_cluster_span_ms": 0.0
       },
       {
@@ -2677,7 +2685,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.3 dBFS; 0 hole(s)",
+        "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.5 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -2738,15 +2746,15 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"mustang\": own median -22.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"mustang\": own median -22.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -22.23,
-            "expected_db": -22.23,
-            "dyn": 0.75
+            "measured_db": -22.4,
+            "expected_db": -22.4,
+            "dyn": 0.9
           }
         ],
         "dead": false
@@ -2877,7 +2885,7 @@
             "start_s": 0.0,
             "measured_db": -16.16,
             "expected_db": -16.16,
-            "dyn": 0.75
+            "dyn": 0.9
           }
         ],
         "dead": false
@@ -3007,7 +3015,7 @@
             "start_s": 25.077,
             "measured_db": -16.47,
             "expected_db": -16.47,
-            "dyn": 0.85
+            "dyn": 0.8
           }
         ],
         "dead": false
@@ -3123,18 +3131,18 @@
         "stage": "stem",
         "stem": "snare",
         "level": "PASS",
-        "value": 1.383914468220865e-06,
+        "value": 1.1600456324903298e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.000998616085531779,
+        "margin": -0.0009988399543675098,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"snare\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.284105348878178e-12,
-          -5.759599514090376e-13
+          -1.2707961813736679e-08,
+          -1.2707522296197362e-08
         ],
-        "drift": 1.383914468220865e-06
+        "drift": 1.1600456324903298e-06
       },
       {
         "row": "stem.clipping",
@@ -3161,11 +3169,11 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"snare\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1381 event(s) rejected as a dense burst, 194 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"snare\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1377 event(s) rejected as a dense burst, 207 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 1381,
-        "attacks_ignored": 194,
+        "rejected": 1377,
+        "attacks_ignored": 207,
         "max_cluster_span_ms": 1.4965986394557824
       },
       {
@@ -3235,56 +3243,56 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"snare\": own median -26.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve",
+        "detail": "stem \"snare\": own median -26.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -27.33,
-            "expected_db": -26.81,
-            "dyn": 0.75
+            "measured_db": -26.82,
+            "expected_db": -25.32,
+            "dyn": 0.9
           },
           {
             "section": "spotted",
             "start_s": 25.077,
-            "measured_db": -26.25,
-            "expected_db": -25.72,
-            "dyn": 0.85
+            "measured_db": -26.34,
+            "expected_db": -26.34,
+            "dyn": 0.8
           },
           {
             "section": "the_chase",
             "start_s": 38.892,
-            "measured_db": -25.88,
-            "expected_db": -25.22,
+            "measured_db": -26.38,
+            "expected_db": -25.32,
             "dyn": 0.9
           },
           {
             "section": "the_tunnel",
             "start_s": 72.228,
-            "measured_db": -26.68,
-            "expected_db": -26.25,
+            "measured_db": -26.0,
+            "expected_db": -26.34,
             "dyn": 0.8
           },
           {
             "section": "the_helicopter",
             "start_s": 95.085,
-            "measured_db": -25.69,
-            "expected_db": -26.25,
+            "measured_db": -26.32,
+            "expected_db": -26.34,
             "dyn": 0.8
           },
           {
             "section": "the_bumps",
             "start_s": 117.636,
-            "measured_db": -25.75,
-            "expected_db": -24.31,
+            "measured_db": -26.11,
+            "expected_db": -24.41,
             "dyn": 1.0
           },
           {
             "section": "the_flyover",
             "start_s": 139.888,
-            "measured_db": -27.36,
-            "expected_db": -26.25,
+            "measured_db": -27.28,
+            "expected_db": -26.34,
             "dyn": 0.8
           }
         ],
@@ -3444,18 +3452,18 @@
         "stage": "stem",
         "stem": "taiko",
         "level": "PASS",
-        "value": 1.6453292710145674e-06,
+        "value": 2.3678057752116874e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009983546707289855,
+        "margin": -0.0009976321942247884,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"taiko\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          6.811120024631652e-08,
-          6.823460623550048e-08
+          9.624547762855617e-08,
+          9.636891487280493e-08
         ],
-        "drift": 1.6453292710145674e-06
+        "drift": 2.3678057752116874e-06
       },
       {
         "row": "stem.clipping",
@@ -3556,63 +3564,63 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"taiko\": own median -27.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve",
+        "detail": "stem \"taiko\": own median -25.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -29.05,
-            "expected_db": -27.95,
-            "dyn": 0.75
+            "measured_db": -25.14,
+            "expected_db": -24.41,
+            "dyn": 0.9
           },
           {
             "section": "spotted",
             "start_s": 25.077,
-            "measured_db": -23.8,
-            "expected_db": -26.87,
-            "dyn": 0.85
+            "measured_db": -25.09,
+            "expected_db": -25.44,
+            "dyn": 0.8
           },
           {
             "section": "the_chase",
             "start_s": 38.892,
             "measured_db": -23.48,
-            "expected_db": -26.37,
+            "expected_db": -24.41,
             "dyn": 0.9
           },
           {
             "section": "the_tunnel",
             "start_s": 72.228,
             "measured_db": -25.74,
-            "expected_db": -27.39,
+            "expected_db": -25.44,
             "dyn": 0.8
           },
           {
             "section": "the_helicopter",
             "start_s": 95.085,
             "measured_db": -29.64,
-            "expected_db": -27.39,
+            "expected_db": -25.44,
             "dyn": 0.8
           },
           {
             "section": "the_bumps",
             "start_s": 117.636,
             "measured_db": -21.96,
-            "expected_db": -25.46,
+            "expected_db": -23.5,
             "dyn": 1.0
           },
           {
             "section": "the_flyover",
             "start_s": 139.888,
             "measured_db": -30.18,
-            "expected_db": -27.39,
+            "expected_db": -25.44,
             "dyn": 0.8
           },
           {
             "section": "the_escape",
             "start_s": 165.785,
             "measured_db": -36.8,
-            "expected_db": -31.48,
+            "expected_db": -29.52,
             "dyn": 0.5
           }
         ],
@@ -3623,18 +3631,18 @@
         "stage": "stem",
         "stem": "timpani",
         "level": "PASS",
-        "value": 1.6896995499736992e-06,
+        "value": 1.3804231254866233e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009983103004500263,
+        "margin": -0.0009986195768745135,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"timpani\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"timpani\": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.9269831845219096e-13,
-          9.772791422319524e-14
+          9.82753748319475e-15,
+          -2.0944412292298437e-14
         ],
-        "drift": 1.6896995499736992e-06
+        "drift": 1.3804231254866233e-06
       },
       {
         "row": "stem.clipping",
@@ -3735,56 +3743,56 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"timpani\": own median -27.9 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve",
+        "detail": "stem \"timpani\": own median -27.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -28.2,
-            "expected_db": -28.43,
-            "dyn": 0.75
+            "measured_db": -27.32,
+            "expected_db": -26.34,
+            "dyn": 0.9
           },
           {
             "section": "spotted",
             "start_s": 25.077,
-            "measured_db": -26.97,
-            "expected_db": -27.35,
-            "dyn": 0.85
+            "measured_db": -28.13,
+            "expected_db": -27.36,
+            "dyn": 0.8
           },
           {
             "section": "the_chase",
             "start_s": 38.892,
-            "measured_db": -27.87,
-            "expected_db": -26.85,
+            "measured_db": -27.36,
+            "expected_db": -26.34,
             "dyn": 0.9
           },
           {
             "section": "the_tunnel",
             "start_s": 72.228,
-            "measured_db": -29.38,
-            "expected_db": -27.87,
+            "measured_db": -29.05,
+            "expected_db": -27.36,
             "dyn": 0.8
           },
           {
             "section": "the_helicopter",
             "start_s": 95.085,
-            "measured_db": -26.21,
-            "expected_db": -27.87,
+            "measured_db": -25.72,
+            "expected_db": -27.36,
             "dyn": 0.8
           },
           {
             "section": "the_bumps",
             "start_s": 117.636,
-            "measured_db": -27.01,
-            "expected_db": -25.94,
+            "measured_db": -26.98,
+            "expected_db": -25.42,
             "dyn": 1.0
           },
           {
             "section": "the_flyover",
             "start_s": 139.888,
-            "measured_db": -32.75,
-            "expected_db": -27.87,
+            "measured_db": -33.5,
+            "expected_db": -27.36,
             "dyn": 0.8
           }
         ],
@@ -3982,18 +3990,18 @@
         "stage": "stem",
         "stem": "tuba",
         "level": "PASS",
-        "value": 3.7745528290843485e-06,
+        "value": 5.095478045156862e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009962254471709156,
+        "margin": -0.000994904521954843,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"tuba\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"tuba\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00001 (limit 0.001)",
         "channel_means": [
-          3.158100078819966e-08,
-          3.205962122209018e-08
+          5.0594849574705613e-08,
+          5.074161076772454e-08
         ],
-        "drift": 3.7745528290843485e-06
+        "drift": 5.095478045156862e-06
       },
       {
         "row": "stem.clipping",
@@ -4038,7 +4046,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"tuba\": longest hole 0 ms (limit 20-1000 ms), floor -104.1 dBFS; 0 hole(s)",
+        "detail": "stem \"tuba\": longest hole 0 ms (limit 20-1000 ms), floor -103.8 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -4054,14 +4062,14 @@
         "calibrated": false,
         "detail": "stem \"tuba\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          12.8,
+          14.8,
           33.9,
-          20.6,
-          27.3,
-          17.3,
-          28.7,
+          23.6,
+          27.6,
+          20.4,
           29.2,
-          20.8
+          29.8,
+          42.4
         ],
         "exempted": []
       },
@@ -4086,24 +4094,24 @@
         "stage": "stem",
         "stem": "tuba",
         "level": "PASS",
-        "value": 0.14807659126084435,
+        "value": 0.13556858625953613,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": -0.20192340873915562,
+        "margin": -0.21443141374046384,
         "worst_times_s": [
           0.0348
         ],
         "calibrated": false,
-        "detail": "stem \"tuba\": onset autocorrelation 0.15 at a 604 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 309 strong onset(s) of 970, 27 on the grid, IOI CV 1.709; peak rise 45.75 dB at those onsets over 309 onset(s) (min 3); tempogram peak ratio 0.96, PLP peak ratio 1.00",
+        "detail": "stem \"tuba\": onset autocorrelation 0.14 at a 604 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 305 strong onset(s) of 936, 27 on the grid, IOI CV 1.699; peak rise 46.25 dB at those onsets over 305 onset(s) (min 3); tempogram peak ratio 0.96, PLP peak ratio 1.00",
         "periodic": false,
         "period_ms": 603.7188208616781,
-        "events": 309,
-        "cv": 1.708612133625581,
+        "events": 305,
+        "cv": 1.6988983128421362,
         "grid_matched": 27,
-        "tempogram_ratio": 0.9619593935360204,
-        "plp_ratio": 0.9999999999986702,
-        "rise_db": 45.752,
-        "rise_onsets": 309
+        "tempogram_ratio": 0.9628259624011087,
+        "plp_ratio": 0.9999999999985398,
+        "rise_db": 46.245,
+        "rise_onsets": 305
       },
       {
         "row": "stem.dead",
@@ -4116,49 +4124,49 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"tuba\": own median -25.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 6; follows the curve",
+        "detail": "stem \"tuba\": own median -24.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 6; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -26.05,
-            "expected_db": -25.98,
-            "dyn": 0.75
+            "measured_db": -24.54,
+            "expected_db": -24.08,
+            "dyn": 0.9
           },
           {
             "section": "the_chase",
             "start_s": 38.892,
-            "measured_db": -24.78,
-            "expected_db": -24.39,
+            "measured_db": -24.61,
+            "expected_db": -24.08,
             "dyn": 0.9
           },
           {
             "section": "the_tunnel",
             "start_s": 72.228,
-            "measured_db": -26.37,
-            "expected_db": -25.42,
+            "measured_db": -26.06,
+            "expected_db": -25.1,
             "dyn": 0.8
           },
           {
             "section": "the_helicopter",
             "start_s": 95.085,
-            "measured_db": -23.15,
-            "expected_db": -25.42,
+            "measured_db": -23.33,
+            "expected_db": -25.1,
             "dyn": 0.8
           },
           {
             "section": "the_bumps",
             "start_s": 117.636,
-            "measured_db": -23.17,
-            "expected_db": -23.48,
+            "measured_db": -22.95,
+            "expected_db": -23.17,
             "dyn": 1.0
           },
           {
             "section": "the_flyover",
             "start_s": 139.888,
-            "measured_db": -30.43,
-            "expected_db": -25.42,
+            "measured_db": -30.5,
+            "expected_db": -25.1,
             "dyn": 0.8
           }
         ],
@@ -4183,18 +4191,18 @@
         "stage": "stem",
         "stem": "violas",
         "level": "PASS",
-        "value": 1.915426664530302e-06,
+        "value": 1.945712066640302e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009980845733354698,
+        "margin": -0.0009980542879333596,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"violas\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.1009569489486613e-08,
-          -1.1274600882078457e-08
+          -1.967475734751973e-08,
+          -2.0912561191491656e-08
         ],
-        "drift": 1.915426664530302e-06
+        "drift": 1.945712066640302e-06
       },
       {
         "row": "stem.clipping",
@@ -4239,7 +4247,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"violas\": longest hole 0 ms (limit 20-1000 ms), floor -86.8 dBFS; 0 hole(s)",
+        "detail": "stem \"violas\": longest hole 0 ms (limit 20-1000 ms), floor -86.9 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -4255,14 +4263,14 @@
         "calibrated": false,
         "detail": "stem \"violas\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          14.7,
-          61.5,
-          50.9,
-          40.2,
-          35.7,
-          44.9,
-          40.5,
-          44.4
+          63.6,
+          60.3,
+          49.3,
+          44.4,
+          42.0,
+          38.6,
+          54.3,
+          49.9
         ],
         "exempted": []
       },
@@ -4277,9 +4285,9 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"violas\": audible span 0.000-166.030 s against score notes 0.000-165.771 s: leading silence 0 ms, trailing silence -259 ms (limit 25 ms)",
+        "detail": "stem \"violas\": audible span 0.000-166.015 s against score notes 0.000-165.771 s: leading silence 0 ms, trailing silence -244 ms (limit 25 ms)",
         "head_ms": 0.0,
-        "tail_ms": -259.1,
+        "tail_ms": -244.1,
         "fail": false
       },
       {
@@ -4287,24 +4295,24 @@
         "stage": "stem",
         "stem": "violas",
         "level": "PASS",
-        "value": 0.32434504427934896,
+        "value": 0.332678735100294,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": -0.025654955720651018,
+        "margin": -0.01732126489970598,
         "worst_times_s": [
           0.0348
         ],
         "calibrated": false,
-        "detail": "stem \"violas\": onset autocorrelation 0.32 at a 209 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 198 strong onset(s) of 1108, 52 on the grid, IOI CV 1.490; peak rise 3.16 dB at those onsets over 198 onset(s) (min 3); tempogram peak ratio 0.95, PLP peak ratio 1.00",
+        "detail": "stem \"violas\": onset autocorrelation 0.33 at a 209 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 187 strong onset(s) of 1092, 54 on the grid, IOI CV 1.467; peak rise 2.81 dB at those onsets over 187 onset(s) (min 3); tempogram peak ratio 0.94, PLP peak ratio 1.00",
         "periodic": false,
         "period_ms": 208.9795918367347,
-        "events": 198,
-        "cv": 1.4902957517394853,
-        "grid_matched": 52,
-        "tempogram_ratio": 0.9450692178816915,
-        "plp_ratio": 0.9999999999986736,
-        "rise_db": 3.155,
-        "rise_onsets": 198
+        "events": 187,
+        "cv": 1.466680279873112,
+        "grid_matched": 54,
+        "tempogram_ratio": 0.9448288459794144,
+        "plp_ratio": 0.9999999999988359,
+        "rise_db": 2.807,
+        "rise_onsets": 187
       },
       {
         "row": "stem.dead",
@@ -4317,56 +4325,56 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"violas\": own median -38.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve",
+        "detail": "stem \"violas\": own median -37.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -38.33,
-            "expected_db": -38.57,
-            "dyn": 0.75
+            "measured_db": -36.78,
+            "expected_db": -36.55,
+            "dyn": 0.9
           },
           {
             "section": "spotted",
             "start_s": 25.077,
-            "measured_db": -36.55,
-            "expected_db": -37.48,
-            "dyn": 0.85
+            "measured_db": -37.57,
+            "expected_db": -37.57,
+            "dyn": 0.8
           },
           {
             "section": "the_chase",
             "start_s": 38.892,
-            "measured_db": -36.72,
-            "expected_db": -36.99,
+            "measured_db": -36.65,
+            "expected_db": -36.55,
             "dyn": 0.9
           },
           {
             "section": "the_tunnel",
             "start_s": 72.228,
-            "measured_db": -38.01,
-            "expected_db": -38.01,
+            "measured_db": -38.47,
+            "expected_db": -37.57,
             "dyn": 0.8
           },
           {
             "section": "the_helicopter",
             "start_s": 95.085,
-            "measured_db": -39.94,
-            "expected_db": -38.01,
+            "measured_db": -39.88,
+            "expected_db": -37.57,
             "dyn": 0.8
           },
           {
             "section": "the_bumps",
             "start_s": 117.636,
-            "measured_db": -35.2,
-            "expected_db": -36.07,
+            "measured_db": -35.7,
+            "expected_db": -35.63,
             "dyn": 1.0
           },
           {
             "section": "the_flyover",
             "start_s": 139.888,
-            "measured_db": -41.1,
-            "expected_db": -38.01,
+            "measured_db": -42.38,
+            "expected_db": -37.57,
             "dyn": 0.8
           }
         ],
@@ -4377,18 +4385,18 @@
         "stage": "stem",
         "stem": "violins_long",
         "level": "PASS",
-        "value": 1.008705602079637e-07,
+        "value": 1.5339142536655402e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.000999899129439792,
+        "margin": -0.0009998466085746334,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"violins_long\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"violins_long\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.019525844214961e-14,
-          -4.880577802412625e-14
+          5.20926035190759e-15,
+          2.3820495495314657e-14
         ],
-        "drift": 1.008705602079637e-07
+        "drift": 1.5339142536655402e-07
       },
       {
         "row": "stem.clipping",
@@ -4449,14 +4457,14 @@
         "calibrated": false,
         "detail": "stem \"violins_long\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          17.2,
-          55.8,
-          42.1,
-          14.1,
-          19.3,
-          22.8,
-          25.6,
-          46.5
+          47.9,
+          42.3,
+          14.3,
+          21.1,
+          12.7,
+          14.0,
+          19.7,
+          15.8
         ],
         "exempted": []
       },
@@ -4471,9 +4479,9 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"violins_long\": audible span 82.035-182.470 s against score notes 82.062-180.468 s: leading silence -27 ms, trailing silence -2002 ms (limit 25 ms)",
+        "detail": "stem \"violins_long\": audible span 82.035-180.900 s against score notes 82.062-180.468 s: leading silence -27 ms, trailing silence -432 ms (limit 25 ms)",
         "head_ms": -26.7,
-        "tail_ms": -2001.9,
+        "tail_ms": -431.9,
         "fail": false
       },
       {
@@ -4481,24 +4489,24 @@
         "stage": "stem",
         "stem": "violins_long",
         "level": "PASS",
-        "value": 0.6065502666136369,
+        "value": 0.635207401056484,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": 0.2565502666136369,
+        "margin": 0.285207401056484,
         "worst_times_s": [
           82.0709
         ],
         "calibrated": false,
-        "detail": "stem \"violins_long\": onset autocorrelation 0.61 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 7 strong onset(s) of 227, 5 on the grid, IOI CV 1.909; peak rise 2.99 dB at those onsets over 7 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00",
+        "detail": "stem \"violins_long\": onset autocorrelation 0.64 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 12 strong onset(s) of 185, 8 on the grid, IOI CV 2.322; peak rise 2.16 dB at those onsets over 12 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00",
         "periodic": false,
         "period_ms": 92.87981859410431,
-        "events": 7,
-        "cv": 1.9092452998112666,
-        "grid_matched": 5,
-        "tempogram_ratio": 0.9999999999988283,
-        "plp_ratio": 0.9999999999979491,
-        "rise_db": 2.995,
-        "rise_onsets": 7
+        "events": 12,
+        "cv": 2.3223324834597356,
+        "grid_matched": 8,
+        "tempogram_ratio": 0.9999999999988154,
+        "plp_ratio": 0.9999999999975616,
+        "rise_db": 2.163,
+        "rise_onsets": 12
       },
       {
         "row": "stem.dead",
@@ -4511,21 +4519,21 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"violins_long\": own median -53.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve",
+        "detail": "stem \"violins_long\": own median -53.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_tunnel",
             "start_s": 72.228,
-            "measured_db": -40.98,
-            "expected_db": -51.16,
+            "measured_db": -41.37,
+            "expected_db": -51.33,
             "dyn": 0.8
           },
           {
             "section": "the_escape",
             "start_s": 165.785,
-            "measured_db": -64.94,
-            "expected_db": -55.24,
+            "measured_db": -64.91,
+            "expected_db": -55.42,
             "dyn": 0.5
           }
         ],
@@ -4730,13 +4738,13 @@
         "name": "the_race",
         "start_s": 0.0,
         "end_s": 25.077,
-        "dyn": 0.75
+        "dyn": 0.9
       },
       {
         "name": "spotted",
         "start_s": 25.077,
         "end_s": 38.892,
-        "dyn": 0.85
+        "dyn": 0.8
       },
       {
         "name": "the_chase",
@@ -4775,15 +4783,15 @@
         "dyn": 0.5
       }
     ],
-    "duration_s": 196.5263038548753,
-    "cached_stems": 28,
-    "measured_stems": 1
+    "duration_s": 196.67732426303854,
+    "cached_stems": 0,
+    "measured_stems": 29
   },
   "rows": [
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"bass_clarinet\": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"bass_clarinet\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -4808,12 +4816,12 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"bass_clarinet\": audible span 28.560-39.085 s against score notes 28.587-38.892 s: leading silence -27 ms, trailing silence -193 ms (limit 25 ms)"
+      "detail": "stem \"bass_clarinet\": audible span 28.560-39.090 s against score notes 28.587-38.892 s: leading silence -27 ms, trailing silence -198 ms (limit 25 ms)"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"bass_clarinet\": own median -35.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"bass_clarinet\": own median -36.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "PASS",
@@ -4823,7 +4831,7 @@
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"bass_drum\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
+      "detail": "stem \"bass_drum\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00002 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -4878,7 +4886,7 @@
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"basses\": longest hole 0 ms (limit 20-1000 ms), floor -77.1 dBFS; 0 hole(s)"
+      "detail": "stem \"basses\": longest hole 0 ms (limit 20-1000 ms), floor -76.4 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -4888,17 +4896,17 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"basses\": audible span 0.000-193.830 s against score notes 0.000-193.691 s: leading silence 0 ms, trailing silence -139 ms (limit 25 ms)"
+      "detail": "stem \"basses\": audible span 0.000-193.970 s against score notes 0.000-193.691 s: leading silence 0 ms, trailing silence -279 ms (limit 25 ms)"
     },
     {
       "level": "PASS",
       "row": "stem.tick",
-      "detail": "stem \"basses\": onset autocorrelation 0.33 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 380 strong onset(s) of 4009, 152 on the grid, IOI CV 1.243; peak rise 0.37 dB at those onsets over 380 onset(s) (min 3); tempogram peak ratio 0.79, PLP peak ratio 1.00"
+      "detail": "stem \"basses\": onset autocorrelation 0.37 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 206 strong onset(s) of 3986, 88 on the grid, IOI CV 0.842; peak rise -0.34 dB at those onsets over 206 onset(s) (min 3); tempogram peak ratio 0.79, PLP peak ratio 1.00"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"basses\": own median -31.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve"
+      "detail": "stem \"basses\": own median -31.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve"
     },
     {
       "level": "PASS",
@@ -4921,9 +4929,9 @@
       "detail": "stem \"basses_pizz\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms"
     },
     {
-      "level": "PASS",
+      "level": "FAIL",
       "row": "stem.dropout",
-      "detail": "stem \"basses_pizz\": longest hole 0 ms (limit 20-1000 ms), floor -99.2 dBFS; 0 hole(s)"
+      "detail": "stem \"basses_pizz\": longest hole 25 ms (limit 20-1000 ms), floor -99.0 dBFS; 1 hole(s)"
     },
     {
       "level": "PASS",
@@ -4933,17 +4941,17 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"basses_pizz\": audible span 0.000-165.410 s against score notes 0.000-164.830 s: leading silence 0 ms, trailing silence -580 ms (limit 25 ms)"
+      "detail": "stem \"basses_pizz\": audible span 0.000-165.430 s against score notes 0.000-164.830 s: leading silence 0 ms, trailing silence -600 ms (limit 25 ms)"
     },
     {
       "level": "PASS",
       "row": "stem.tick",
-      "detail": "stem \"basses_pizz\": onset autocorrelation 0.12 at a 801 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 213 strong onset(s) of 1940, 24 on the grid, IOI CV 1.065; peak rise 29.56 dB at those onsets over 213 onset(s) (min 3); tempogram peak ratio 0.92, PLP peak ratio 1.00"
+      "detail": "stem \"basses_pizz\": onset autocorrelation 0.11 at a 801 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 215 strong onset(s) of 1929, 24 on the grid, IOI CV 1.069; peak rise 29.22 dB at those onsets over 215 onset(s) (min 3); tempogram peak ratio 0.92, PLP peak ratio 1.00"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"basses_pizz\": own median -31.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve"
+      "detail": "stem \"basses_pizz\": own median -31.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve"
     },
     {
       "level": "PASS",
@@ -5003,7 +5011,7 @@
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"celli\": longest hole 0 ms (limit 20-1000 ms), floor -82.1 dBFS; 0 hole(s)"
+      "detail": "stem \"celli\": longest hole 0 ms (limit 20-1000 ms), floor -81.2 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5013,22 +5021,22 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"celli\": audible span 0.000-166.135 s against score notes 0.000-165.761 s: leading silence 0 ms, trailing silence -374 ms (limit 25 ms)"
+      "detail": "stem \"celli\": audible span 0.000-166.155 s against score notes 0.000-165.761 s: leading silence 0 ms, trailing silence -394 ms (limit 25 ms)"
     },
     {
       "level": "PASS",
       "row": "stem.tick",
-      "detail": "stem \"celli\": onset autocorrelation 0.53 at a 406 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 295 strong onset(s) of 1791, 47 on the grid, IOI CV 1.624; peak rise 2.67 dB at those onsets over 295 onset(s) (min 3); tempogram peak ratio 0.83, PLP peak ratio 1.00"
+      "detail": "stem \"celli\": onset autocorrelation 0.52 at a 406 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 77 strong onset(s) of 1798, 19 on the grid, IOI CV 2.396; peak rise -6.98 dB at those onsets over 77 onset(s) (min 3); tempogram peak ratio 0.83, PLP peak ratio 1.00"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"celli\": own median -34.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve"
+      "detail": "stem \"celli\": own median -34.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve"
     },
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"choir\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"choir\": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -5053,17 +5061,17 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"choir\": audible span 95.060-171.405 s against score notes 95.085-170.759 s: leading silence -25 ms, trailing silence -646 ms (limit 25 ms)"
+      "detail": "stem \"choir\": audible span 95.060-171.545 s against score notes 95.085-170.759 s: leading silence -25 ms, trailing silence -786 ms (limit 25 ms)"
     },
     {
       "level": "PASS",
       "row": "stem.tick",
-      "detail": "stem \"choir\": onset autocorrelation 0.73 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 13 strong onset(s) of 231, 6 on the grid, IOI CV 2.164; peak rise 2.82 dB at those onsets over 13 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00"
+      "detail": "stem \"choir\": onset autocorrelation 0.71 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 8 strong onset(s) of 218, 4 on the grid, IOI CV 1.812; peak rise 4.63 dB at those onsets over 8 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"choir\": own median -46.9 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve"
+      "detail": "stem \"choir\": own median -44.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve"
     },
     {
       "level": "PASS",
@@ -5193,7 +5201,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"cymbals\": own median -38.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve"
+      "detail": "stem \"cymbals\": own median -38.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve"
     },
     {
       "level": "INFO",
@@ -5293,7 +5301,7 @@
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"horns\": longest hole 0 ms (limit 20-1000 ms), floor -104.2 dBFS; 0 hole(s)"
+      "detail": "stem \"horns\": longest hole 0 ms (limit 20-1000 ms), floor -100.1 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5303,12 +5311,12 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"horns\": audible span 0.000-185.095 s against score notes 0.000-184.845 s: leading silence 0 ms, trailing silence -250 ms (limit 25 ms)"
+      "detail": "stem \"horns\": audible span 0.000-185.200 s against score notes 0.000-184.845 s: leading silence 0 ms, trailing silence -355 ms (limit 25 ms)"
     },
     {
-      "level": "PASS",
+      "level": "FAIL",
       "row": "stem.dead",
-      "detail": "stem \"horns\": own median -22.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve"
+      "detail": "stem \"horns\": own median -22.3 dBFS, worst section shortfall 13.1 dB (limit 12 dB), active sections 8; dropped in a section"
     },
     {
       "level": "PASS",
@@ -5328,12 +5336,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 4899 event(s) rejected as a dense burst, 556 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 3808 event(s) rejected as a dense burst, 513 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -59.2 dBFS; 0 hole(s)"
+      "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -59.6 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5353,7 +5361,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"lamborghini\": own median -18.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"lamborghini\": own median -18.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -5448,12 +5456,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"mustang\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 6 as a steep attack; max cluster span 0.000 ms"
+      "detail": "stem \"mustang\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 4 as a steep attack; max cluster span 0.000 ms"
     },
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.3 dBFS; 0 hole(s)"
+      "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.5 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5473,7 +5481,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"mustang\": own median -22.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"mustang\": own median -22.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -5603,7 +5611,7 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"snare\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1381 event(s) rejected as a dense burst, 194 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"snare\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1377 event(s) rejected as a dense burst, 207 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "INFO",
@@ -5628,7 +5636,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"snare\": own median -26.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve"
+      "detail": "stem \"snare\": own median -26.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve"
     },
     {
       "level": "PASS",
@@ -5708,12 +5716,12 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"taiko\": own median -27.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve"
+      "detail": "stem \"taiko\": own median -25.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve"
     },
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"timpani\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"timpani\": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -5748,7 +5756,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"timpani\": own median -27.9 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve"
+      "detail": "stem \"timpani\": own median -27.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve"
     },
     {
       "level": "PASS",
@@ -5798,7 +5806,7 @@
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"tuba\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"tuba\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -5813,7 +5821,7 @@
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"tuba\": longest hole 0 ms (limit 20-1000 ms), floor -104.1 dBFS; 0 hole(s)"
+      "detail": "stem \"tuba\": longest hole 0 ms (limit 20-1000 ms), floor -103.8 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5828,12 +5836,12 @@
     {
       "level": "PASS",
       "row": "stem.tick",
-      "detail": "stem \"tuba\": onset autocorrelation 0.15 at a 604 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 309 strong onset(s) of 970, 27 on the grid, IOI CV 1.709; peak rise 45.75 dB at those onsets over 309 onset(s) (min 3); tempogram peak ratio 0.96, PLP peak ratio 1.00"
+      "detail": "stem \"tuba\": onset autocorrelation 0.14 at a 604 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 305 strong onset(s) of 936, 27 on the grid, IOI CV 1.699; peak rise 46.25 dB at those onsets over 305 onset(s) (min 3); tempogram peak ratio 0.96, PLP peak ratio 1.00"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"tuba\": own median -25.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 6; follows the curve"
+      "detail": "stem \"tuba\": own median -24.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 6; follows the curve"
     },
     {
       "level": "PASS",
@@ -5858,7 +5866,7 @@
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"violas\": longest hole 0 ms (limit 20-1000 ms), floor -86.8 dBFS; 0 hole(s)"
+      "detail": "stem \"violas\": longest hole 0 ms (limit 20-1000 ms), floor -86.9 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5868,22 +5876,22 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"violas\": audible span 0.000-166.030 s against score notes 0.000-165.771 s: leading silence 0 ms, trailing silence -259 ms (limit 25 ms)"
+      "detail": "stem \"violas\": audible span 0.000-166.015 s against score notes 0.000-165.771 s: leading silence 0 ms, trailing silence -244 ms (limit 25 ms)"
     },
     {
       "level": "PASS",
       "row": "stem.tick",
-      "detail": "stem \"violas\": onset autocorrelation 0.32 at a 209 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 198 strong onset(s) of 1108, 52 on the grid, IOI CV 1.490; peak rise 3.16 dB at those onsets over 198 onset(s) (min 3); tempogram peak ratio 0.95, PLP peak ratio 1.00"
+      "detail": "stem \"violas\": onset autocorrelation 0.33 at a 209 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 187 strong onset(s) of 1092, 54 on the grid, IOI CV 1.467; peak rise 2.81 dB at those onsets over 187 onset(s) (min 3); tempogram peak ratio 0.94, PLP peak ratio 1.00"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"violas\": own median -38.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve"
+      "detail": "stem \"violas\": own median -37.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve"
     },
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"violins_long\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"violins_long\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -5908,17 +5916,17 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"violins_long\": audible span 82.035-182.470 s against score notes 82.062-180.468 s: leading silence -27 ms, trailing silence -2002 ms (limit 25 ms)"
+      "detail": "stem \"violins_long\": audible span 82.035-180.900 s against score notes 82.062-180.468 s: leading silence -27 ms, trailing silence -432 ms (limit 25 ms)"
     },
     {
       "level": "PASS",
       "row": "stem.tick",
-      "detail": "stem \"violins_long\": onset autocorrelation 0.61 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 7 strong onset(s) of 227, 5 on the grid, IOI CV 1.909; peak rise 2.99 dB at those onsets over 7 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00"
+      "detail": "stem \"violins_long\": onset autocorrelation 0.64 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 12 strong onset(s) of 185, 8 on the grid, IOI CV 2.322; peak rise 2.16 dB at those onsets over 12 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"violins_long\": own median -53.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve"
+      "detail": "stem \"violins_long\": own median -53.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve"
     },
     {
       "level": "PASS",
