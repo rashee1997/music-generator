@@ -122,7 +122,7 @@ for bar in range(s0('the_avenue'), sN('the_bridge')):
             (sect[0] == 'the_roadblock' and bar in (T.SLOMO_SPIN['bar'], T.SLOMO_SPIN['bar'] + 1))
     under = sect[0] == 'under_the_bridge' and bar < s0('under_the_bridge') + 6          # six bars of pulse and low brass only
     if quiet:
-        basses.add(bar, 0, 4.02, p(C, 1), 0.55)
+        basses.add(bar, 0, 4.25, p(C, 1), 0.55)
         bass_drum.add(bar, 0, 0.5, 36, 0.62)
         bass_drum.add(bar, 2.0, 0.5, 36, 0.5)
         continue
