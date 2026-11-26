@@ -112,13 +112,7 @@
       "PASS"
     ],
     [
-      192.495,
-      "dropout",
-      "master",
-      "FAIL"
-    ],
-    [
-      192.57,
+      192.595,
       "dropout",
       "master",
       "FAIL"
