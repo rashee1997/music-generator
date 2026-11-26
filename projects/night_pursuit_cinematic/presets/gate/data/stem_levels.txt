@@ -46,7 +46,7 @@ cymbals,the_tunnel,-36.49,-38.13,0.8
 cymbals,the_helicopter,-39.22,-38.13,0.8
 cymbals,the_bumps,-37.44,-36.19,1.0
 cymbals,the_flyover,-37.57,-38.13,0.8
-ferrari,the_race,-15.44,-15.44,0.9
+ferrari,the_race,-15.45,-15.45,0.9
 helicopter,the_tunnel,-16.22,-16.22,0.8
 horns,the_race,-20.61,-21.89,0.9
 horns,spotted,-23.82,-22.91,0.8
@@ -56,12 +56,12 @@ horns,the_helicopter,-20.39,-22.91,0.8
 horns,the_bumps,-18.23,-20.97,1.0
 horns,the_flyover,-25.66,-22.91,0.8
 horns,the_escape,-33.38,-27.0,0.5
-lamborghini,the_race,-18.51,-18.51,0.9
+lamborghini,the_race,-18.08,-18.08,0.9
 landing,the_flyover,-16.26,-16.26,0.8
 low_swell,the_chase,-29.43,-34.43,0.9
 low_swell,the_helicopter,-35.78,-35.46,0.8
 low_swell,the_flyover,-35.46,-35.46,0.8
-mustang,the_race,-22.4,-22.4,0.9
+mustang,the_race,-22.99,-22.99,0.9
 porsche,the_race,-16.16,-16.16,0.9
 siren_first,spotted,-16.47,-16.47,0.8
 snare,the_race,-26.82,-25.32,0.9

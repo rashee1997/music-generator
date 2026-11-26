@@ -109,7 +109,7 @@ def car_keys(car):
                  (EV['end'], 0.0, 150.0)]
     elif car == 'lamborghini':
         # the rear right, 25 deg or more from the other mid-band parts that stand at 0 deg height (spatial.z_separation read the bass drum 15 deg apart)
-        keys += [(0.0, 128.0, 7.0), (sp - 1.0, 128.0, 9.0)] + passby(sp + 2.4) + [(S('the_chase') + 3.0, 125.0, 15.0), (S('the_tunnel') + 6.0, 125.0, 14.0),
+        keys += [(0.0, 128.0, 7.0), (sp - 1.0, 128.0, 9.0)] + passby(sp + 5.4, side=-1) + [(S('the_chase') + 3.0, 125.0, 15.0), (S('the_tunnel') + 6.0, 125.0, 14.0),
                  (S('the_helicopter') + 2.0, 125.0, 80.0), (E_('the_helicopter') - 2.0, 125.0, 80.0), (S('the_bumps') + 2.0, 128.0, 8.0),
                  (S('the_flyover') + 2.0, 125.0, 14.0), (EV['lost'], 125.0, 14.0), (EV['lost'] + 3.0, 150.0, 40.0)]
     elif car == 'mustang':

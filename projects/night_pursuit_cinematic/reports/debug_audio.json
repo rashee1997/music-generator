@@ -1,5 +1,5 @@
 {
- "stamp": "20261126T174702",
+ "stamp": "20261126T181022",
  "project": "night_pursuit_cinematic",
  "level": "WARN",
  "sources": {
@@ -15,9 +15,8 @@
    "waveform.json"
   ],
   "stems": "29 processed stems from .cache/mix",
-  "master": "out/master.wav",
-  "verdict": "2026-11-26T17:24:45Z",
-  "drift": "the presets or score changed after this master was rendered: presets/environments/np_city_far.json, presets/environments/np_drips.json, presets/instruments/pursuit_bass_clarinet.json, presets/instruments/pursuit_bass_drum.json - the autopsy describes the previous mix until you re-render"
+  "master": "out/_draft_master.wav",
+  "verdict": "2026-11-26T17:47:02Z"
  },
  "binding": [],
  "advisory": [

@@ -126,7 +126,7 @@ for bar in range(1, T.END_BAR):
             for b in TUBA_RHYTHMS[(ph * 2 + k) % len(TUBA_RHYTHMS)]:
                 tuba.add(bar, b, 0.4, p((C + r + (walk[k] if k < 3 else 0)) % 12, 2), vel(0.40 + 0.35 * energy * (0.6 + 0.4 * (k == 0)), 0.07))
     # drums
-    if collapse or escape:
+    if collapse or (escape and bar < T.END_BAR - 4):      # the last four bars have no kick: its 43 Hz and 87 Hz partials beat against the C2 pedal (cochlear_roughness, final 3 s)
         bass_drum.add(bar, 0, 0.5, 36, 0.62 if collapse else 0.5)
         bass_drum.add(bar, 2.0, 0.5, 36, 0.5 if collapse else 0.4)
     else:

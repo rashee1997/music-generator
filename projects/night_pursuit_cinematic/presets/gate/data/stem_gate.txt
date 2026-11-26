@@ -1,4 +1,4 @@
-stem gate: 0 FAIL, 0 WARN, 242 rows, profile night_pursuit_cinematic, 4411 ms
+stem gate: 0 FAIL, 0 WARN, 242 rows, profile night_pursuit_cinematic, 6330 ms
 [PASS] stem.dc: stem "bass_clarinet": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "bass_clarinet": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "bass_clarinet": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -84,7 +84,7 @@ stem gate: 0 FAIL, 0 WARN, 242 rows, profile night_pursuit_cinematic, 4411 ms
 [PASS] stem.dead: stem "cymbals": own median -38.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve
 [INFO] stem.dc: stem "ferrari": not applied: a one-shot effect stem has no sustained baseline to drift
 [PASS] stem.clipping: stem "ferrari": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
-[PASS] stem.clicks: stem "ferrari": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 5242 event(s) rejected as a dense burst, 719 as a steep attack; max cluster span 1.497 ms
+[PASS] stem.clicks: stem "ferrari": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 5240 event(s) rejected as a dense burst, 721 as a steep attack; max cluster span 1.497 ms
 [PASS] stem.dropout: stem "ferrari": longest hole 0 ms (limit 20-1000 ms), floor -56.4 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "ferrari": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
 [INFO] stem.edge: stem "ferrari": not applied: a one-shot effect note length is a trigger, not a sound length
@@ -108,12 +108,12 @@ stem gate: 0 FAIL, 0 WARN, 242 rows, profile night_pursuit_cinematic, 4411 ms
 [PASS] stem.flatness: stem "horns": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [INFO] stem.dc: stem "lamborghini": not applied: a one-shot effect stem has no sustained baseline to drift
 [PASS] stem.clipping: stem "lamborghini": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
-[PASS] stem.clicks: stem "lamborghini": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 3808 event(s) rejected as a dense burst, 513 as a steep attack; max cluster span 1.497 ms
-[PASS] stem.dropout: stem "lamborghini": longest hole 0 ms (limit 20-1000 ms), floor -59.6 dBFS; 0 hole(s)
+[PASS] stem.clicks: stem "lamborghini": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 4899 event(s) rejected as a dense burst, 556 as a steep attack; max cluster span 1.497 ms
+[PASS] stem.dropout: stem "lamborghini": longest hole 0 ms (limit 20-1000 ms), floor -59.2 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "lamborghini": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
 [INFO] stem.edge: stem "lamborghini": not applied: a one-shot effect note length is a trigger, not a sound length
 [INFO] stem.tick: stem "lamborghini": not applied: a one-shot effect stem is a sequence of triggers, not a pulse to hold still
-[PASS] stem.dead: stem "lamborghini": own median -18.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve
+[PASS] stem.dead: stem "lamborghini": own median -18.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve
 [INFO] stem.dc: stem "landing": not applied: a one-shot effect stem has no sustained baseline to drift
 [PASS] stem.clipping: stem "landing": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "landing": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -132,12 +132,12 @@ stem gate: 0 FAIL, 0 WARN, 242 rows, profile night_pursuit_cinematic, 4411 ms
 [PASS] stem.dead: stem "low_swell": own median -35.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve
 [INFO] stem.dc: stem "mustang": not applied: a one-shot effect stem has no sustained baseline to drift
 [PASS] stem.clipping: stem "mustang": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
-[PASS] stem.clicks: stem "mustang": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 4 as a steep attack; max cluster span 0.000 ms
-[PASS] stem.dropout: stem "mustang": longest hole 0 ms (limit 20-1000 ms), floor -149.5 dBFS; 0 hole(s)
+[PASS] stem.clicks: stem "mustang": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 2 as a steep attack; max cluster span 0.000 ms
+[PASS] stem.dropout: stem "mustang": longest hole 0 ms (limit 20-1000 ms), floor -150.1 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "mustang": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
 [INFO] stem.edge: stem "mustang": not applied: a one-shot effect note length is a trigger, not a sound length
 [INFO] stem.tick: stem "mustang": not applied: a one-shot effect stem is a sequence of triggers, not a pulse to hold still
-[PASS] stem.dead: stem "mustang": own median -22.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve
+[PASS] stem.dead: stem "mustang": own median -23.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve
 [INFO] stem.dc: stem "porsche": not applied: a one-shot effect stem has no sustained baseline to drift
 [PASS] stem.clipping: stem "porsche": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "porsche": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
