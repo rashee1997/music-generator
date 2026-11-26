@@ -74,9 +74,9 @@ inst('pursuit_violins_staccato', 'violin', 'arp',
      -110, 3.0, -6.0, 0.14, [HP(300), PK(3200, 1.0, 1.0), LP(10000)],
      extra=dict(soundfont='muse_general', ensemble=dict(players=4, spread_cents=9, spread_ms=11, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
 inst('pursuit_violins_long', 'string_ensemble', 'pad',
-     'The tension bed: high sustained violins that grow by adding players and swell on the bow, wide behind the listener on the right (the General MIDI tremolo patch has its own 10 Hz tremolo, which the stem gate reads as a tick).',
+     'The tension bed: high sustained violins that grow by adding players and swell on the bow, wide behind the listener on the right (its players are detuned by 3 cents only: at 10 cents the six beat against each other near 10 Hz and the stem gate read a tick, measured on the first two renders).',
      140, 4.0, -9.0, 0.22, [HP(280), LP(9000)],
-     extra=dict(ensemble=dict(players=6, spread_cents=10, spread_ms=14, vel_spread=3), soundfont='muse_general', per_note_channels=True, expression='bow'), sources=[KB['hybrid'], KB['orch'], KB['theat']])
+     extra=dict(ensemble=dict(players=6, spread_cents=3, spread_ms=14, vel_spread=3), soundfont='muse_general', per_note_channels=True, expression='bow'), sources=[KB['hybrid'], KB['orch'], KB['theat']])
 inst('pursuit_bass_clarinet', 'clarinet', 'counter',
      'The whisper: a clarinet in its low register playing the semitone, the first voice of the motif; close to the right ear.',
      105, 2.4, -6.0, 0.12, [HP(120), PK(900, 1.5, 1.0), LP(7000)],
