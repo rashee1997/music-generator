@@ -6,7 +6,7 @@
     "warns": 0,
     "rows": 202,
     "profile": "night_pursuit",
-    "total_ms": 4160.265358999823,
+    "total_ms": 787.5086750000264,
     "timings": {
       "bass_clarinet": 0.0,
       "bass_drum": 0.0,
@@ -20,7 +20,7 @@
       "piano": 0.0,
       "piano_low": 0.0,
       "rain_awnings": 0.0,
-      "rain_street": 2589.617524999994,
+      "rain_street": 0.0,
       "siren_first": 0.0,
       "siren_second": 0.0,
       "snare": 0.0,
@@ -4111,8 +4111,8 @@
       }
     ],
     "duration_s": 172.76480725623583,
-    "cached_stems": 23,
-    "measured_stems": 1
+    "cached_stems": 24,
+    "measured_stems": 0
   },
   "rows": [
     {
