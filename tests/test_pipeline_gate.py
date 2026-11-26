@@ -68,7 +68,7 @@ def make_project(td, research=True, direction=True, preset=True, ambience=False)
 
 
 def score_with(*instruments):
-    return dict(title='t', bpm=90, space='t_room', tracks=[dict(name=f't{i}', instrument=n, notes=[]) for i, n in enumerate(instruments)])
+    return dict(title='t', bpm=90, piece_type='t', space='t_room', tracks=[dict(name=f't{i}', instrument=n, notes=[]) for i, n in enumerate(instruments)])
 
 
 class ProjectGate(unittest.TestCase):

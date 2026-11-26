@@ -540,6 +540,10 @@ class TestRelaxCommand(unittest.TestCase):
         self.assertEqual(gpf.cmd_relax('stem.dead', self.d, ['under_db=99'], 'the escape is a release by design and fades on purpose'), 1)
         self.assertEqual(self.profile()['rows'], {})
 
+    def test_a_project_score_without_piece_type_is_refused_not_inferred(self):
+        self.assertTrue(any('no "piece_type"' in m for m in gpf.project_profile_problems(dict(tracks=[]), self.d)))
+        self.assertEqual(gpf.project_profile_problems(dict(piece_type='mine', tracks=[]), self.d), [])
+
     def test_a_one_word_reason_is_refused(self):
         self.assertEqual(gpf.cmd_relax('stem.dead', self.d, ['under_db=16'], 'quiet'), 1)
 

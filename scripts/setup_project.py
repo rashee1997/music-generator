@@ -348,6 +348,7 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
         "mode": "dorian",
         "space": f"{slug}_room",
         "mix_preset": f"{slug}_mix",
+        "piece_type": slug,          # the project's own gate profile (presets/gate/<slug>.json): a project is judged by it, never by a shipped one
         "dynamics": [[0.0, 0.4], [8.0, 0.5], [16.0, 0.7], [24.0, 0.9], [28.0, 0.75], [32.0, 0.4]],
         "ritard": 0.35,
         "ritard_beats": 6,

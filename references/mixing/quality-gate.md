@@ -197,6 +197,12 @@ numbers, come from a **gate profile**: a preset of kind `gate` (`references/data
 - Pick the type: `"piece_type": "tense"` in the score (a list merges in order, later wins; `compose.py` carries it from the brief; the
   direction sheet has the key). Not declared: each profile's `detect` (keywords, pulse words, drone ratio) is matched and the gate prints
   `piece_type: tense (inferred: ...)`. Nothing matches: `melodic`, today's gate. Declare it; keyword inference is a guess.
+- **A project uses only its own profile.** Inference and the `melodic` fallback exist for a loose score outside a project. A project
+  render is blocked unless the score's `piece_type` names the project's own `presets/gate/<name>.json` (the scaffold writes it into
+  the score and the direction sheet): no shipped profile, no inferred one, no default. That profile `extends` the closest shipped
+  starter for its numbers and then holds **only the rows this piece needs relaxed, each with a numeric change inside the row's range
+  and a written reason that names the measurement** (`gate_profiles.py relax` writes it). An empty `rows` is correct until a render has
+  measured a mismatch; a row that is relaxed without a measurement, or only to get past a fault in the notes, is not allowed.
 - A profile sets each row to `apply`, `relax` (new numbers) or `skip`, always with a `reason`. `extends` inherits. `flags` (`ambient`,
   `tense`, `dance`) keep the old switches of the feel checks. `fallback: balance.layers` hands a row over when it has nothing to measure
   against (no lead): each layer against the median layer, WARN / FAIL at `warn_db` / `fail_db`.

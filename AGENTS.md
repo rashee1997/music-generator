@@ -94,7 +94,7 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 
 ### PHASE 6: GATE PROFILE
 - [ ] **6.1** A custom gate profile is **mandatory** for a project: `python scripts/gate_profiles.py new <name> --from <closest> --project <dir>` writes `presets/gate/<name>.json`, and the score's `piece_type` must name it. The table above says which shipped profile to start from, not which one to declare; `project_gate.py` blocks a render whose `piece_type` is a shipped name. Check with `python scripts/gate_profiles.py list` and `rows`.
-- [ ] **6.2** Put `piece_type` in score and direction sheet
+- [ ] **6.2** Put `piece_type` in score and direction sheet (the name of the project's own profile). A score with no `piece_type` is blocked in a project: the gate never infers a type or falls back to `melodic` there.
 - [ ] **6.3** Only relax/skip after measurement with explicit reason. Never relax in advance. The route is `python scripts/gate_profiles.py relax <row> --project <dir> --set PARAM=VALUE --reason "..."`: it checks the last render measured the row failing, keeps the number inside its range, refuses protected rows and writes the measurement into the reason (`references/mixing/quality-gate.md` section 3c).
 
 ### PHASE 7: SCORE

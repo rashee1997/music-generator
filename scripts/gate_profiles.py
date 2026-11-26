@@ -790,6 +790,9 @@ def project_profile_problems(score, project):
     decl = score.get('piece_type')
     want = decl if isinstance(decl, list) else ([decl] if decl else [])
     want = [_presets._norm(w) for w in want if w]
+    if not want:
+        return [f'the score declares no "piece_type": a project is judged by its own gate profile ({own}) and by nothing inferred or default. '
+                f'Declare it, and put in that profile only the rows this piece needs relaxed, each with a reason (gate_profiles.py relax)']
     missing = [w for w in want if w not in own]
     if missing:
         return [f'piece_type names {missing}, which is a shipped profile; this project owns {own}. '
