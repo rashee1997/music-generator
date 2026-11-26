@@ -283,7 +283,7 @@ write('sfx', 'np_siren_second', dict(
     sources=['police_siren', 'ESTIMATE: the two patterns and their levels are starting values']))
 
 # ================================================================================================ the helicopter
-H_ON = S('the_helicopter') - 2.0
+H_ON = START['helicopter']                       # the trigger note and the model's own start are one second
 H_OFF = S('the_flyover') + 12.0
 BLADE_PASS_HZ = 4 * 400.0 / 60.0               # 4 blades at 400 rpm: general knowledge (the research note), a starting value
 
