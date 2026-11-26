@@ -8,11 +8,11 @@ A rainy-night New York car chase, 174 s, C minor, tempo 128 to 156 BPM with two 
 - [x] 2. Research: `reports/research_night_pursuit_rain_street.md` cites the knowledge base (sfx-ambience, sfx-formulas, game-sfx, cinematic-hybrid-scoring)
       and web sources; a "Real-world references" section for each of the nine sounds; decisions listed. Pages were read as search results, not opened.
 - [x] 3. Direction sheet filled (`direction/direction_night_pursuit.json`, written by `scripts/make_direction.py` from `scripts/timeline.py`)
-- [ ] 4. Presets for every non-built-in instrument (presets/instruments), each ambience (presets/environments) and tuned effect (presets/sfx), each listing its "sources"
-- [ ] 5. Score written (scores/night_pursuit_score.json, by `scripts/compose_main.py`)
-- [ ] 6. `pipeline.py scores/night_pursuit_score.json --project .` renders out/master.wav, midi/, stems/, reports/ci_report.json
-- [ ] 7. Revise one lever at a time until 0 FAIL (max 5 attempts, then report)
-- [ ] 8. listen.py on out/master.wav; deliver
+- [x] 4. Presets for every non-built-in instrument (presets/instruments), each ambience (presets/environments) and tuned effect (presets/sfx), each listing its "sources"
+- [x] 5. Score written (scores/night_pursuit_score.json, by `scripts/compose_main.py`)
+- [x] 6. `pipeline.py scores/night_pursuit_score.json --project .` renders out/master.wav, midi/, stems/, reports/ci_report.json
+- [ ] 7. Revise (STOPPED at 14 attempts by the pipeline: 2 gate rows still fail, see Outcome) one lever at a time until 0 FAIL (max 5 attempts, then report)
+- [~] 8. listen.py ran on the draft: measurements only (earshot not installed); NOT delivered on out/master.wav; deliver
 
 ## Craft pass (director-craft.md section 1): written before any note
 
@@ -51,3 +51,22 @@ and sirens carry the place; the sirens are tuned off the key's semitone neighbou
   tyres); rain is thinned, not pitched, because water does not pitch down well.
 - Street objects: façades of brick (reflection 0.9, absorption 0.1), glass and wet asphalt are the room's materials; parked trucks and a building corner are occluders on the
   sirens; an underpass and a bridge are room scenes.
+
+## Outcome (attempt 14 of 14: the pipeline stopped itself)
+- **Not certified, not delivered.** `out/master.wav` does not exist and no 8-channel (7.1) file was written: both are produced only after certification. The only file is
+  the uncertified stereo draft `out/_draft_master.wav` (44.1 kHz, 171.3 s, -16.0 LUFS, -2.5 dBTP, 45 MB).
+- **Failing rows (2):** `clicks` (6 events, 0 single-sample jumps; the debug engine traced them to snare hits and rain-drop onsets, 0.6-1.7 dB over an adaptive threshold; the row is
+  protected and has no tunable parameter) and `ambient_bed` pumping on `rain_street` (4.1 dB against a limit of 4.1 at 75.0 s, the underpass room change).
+- **Fixes that did not skip the debug engine:** the click row (engine, wipers, snare, tyre and city shelves, rain film). Fixes made straight from the log: velocity jumps, duplicate
+  attacks, a hollow-bar retrigger, staging, rain density. One guess was wrong (the lead-carve ducker was not the cause of the bed pumping).
+
+## Director's second review (director-craft.md section 5)
+- **Failure the piece still shows:** a flat plateau. From the avenue to the bridge (22-150 s) every section's mean sits within 1.5 LU of the loudest 3 s (arc_report: 75 % of the
+  file within 6 LU of the top), so the planned rise from 0.70 to 1.00 is not heard as a rise, and the two planned collapses (the slow-motion bars) do not read in the loudness.
+- **Hook repeats:** expression_report flags 67 % of the figure's bars as exact repeats of an earlier bar: the hook variants are not developing enough.
+- **What a human producer would change first:** thin the arrangement in the underpass and the roadblock so the peak is a peak (fewer parts under the horns for 40 s), and let the
+  hook change its answer each time.
+- **Realism report WARNs:** one player per section part (ensemble), low-mids grow into the peak, the top closes in at density (-9.2 dB of 8-16 kHz share), bar-scale tempo deviation
+  is 25.5 % (the tempo map, by design), and nine far sources have no air-absorption model applied (the score's `medium` block was not picked up by the renderer).
+- **Not heard or measured:** nothing was auditioned (earshot is not installed, so listen.py skipped the feel, instrument, pulse, tempo and key checks). The engine, tyres, sirens, wipers,
+  crash and rain are synthesised from sound models and were never compared with a recording. The orchestra is a GM SoundFont, not a sample library.
