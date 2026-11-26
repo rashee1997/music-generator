@@ -1,4 +1,4 @@
-stem gate: 1 FAIL, 0 WARN, 202 rows, profile night_pursuit, 3856 ms
+stem gate: 0 FAIL, 0 WARN, 202 rows, profile night_pursuit, 4700 ms
 [PASS] stem.dc: stem "bass_clarinet": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "bass_clarinet": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "bass_clarinet": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -15,14 +15,14 @@ stem gate: 1 FAIL, 0 WARN, 202 rows, profile night_pursuit, 3856 ms
 [INFO] stem.edge: stem "bass_drum": not applied: a percussive note length is a trigger, not a sound length
 [INFO] stem.tick: stem "bass_drum": not applied: a percussive stem is allowed a pulse
 [PASS] stem.dead: stem "bass_drum": own median -18.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve
-[PASS] stem.dc: stem "basses": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+[PASS] stem.dc: stem "basses": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "basses": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "basses": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
-[FAIL] stem.dropout: stem "basses": longest hole 65 ms (limit 20-1000 ms), floor -84.9 dBFS; 1 hole(s)
-[PASS] stem.cut: stem "basses": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end; 4 drop(s) skipped inside 3 intentional cut window(s) (first at 149.675 s)
-[PASS] stem.edge: stem "basses": audible span 0.000-149.685 s against score notes 0.000-149.686 s: leading silence 0 ms, trailing silence 1 ms (limit 25 ms)
-[PASS] stem.tick: stem "basses": onset autocorrelation 0.19 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 126 strong onset(s) of 3318, 51 on the grid, IOI CV 0.741; peak rise -0.67 dB at those onsets over 126 onset(s) (min 3); tempogram peak ratio 0.79, PLP peak ratio 1.00
-[PASS] stem.dead: stem "basses": own median -39.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve
+[PASS] stem.dropout: stem "basses": longest hole 0 ms (limit 20-1000 ms), floor -84.8 dBFS; 0 hole(s)
+[PASS] stem.cut: stem "basses": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end; 5 drop(s) skipped inside 3 intentional cut window(s) (first at 149.670 s)
+[PASS] stem.edge: stem "basses": audible span 0.000-149.690 s against score notes 0.000-149.686 s: leading silence 0 ms, trailing silence -4 ms (limit 25 ms)
+[PASS] stem.tick: stem "basses": onset autocorrelation 0.17 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 156 strong onset(s) of 3268, 69 on the grid, IOI CV 0.814; peak rise -1.40 dB at those onsets over 156 onset(s) (min 3); tempogram peak ratio 0.79, PLP peak ratio 1.00
+[PASS] stem.dead: stem "basses": own median -38.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve
 [PASS] stem.flatness: stem "basses": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [PASS] stem.dc: stem "celli": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "celli": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
@@ -72,13 +72,13 @@ stem gate: 1 FAIL, 0 WARN, 202 rows, profile night_pursuit, 3856 ms
 [PASS] stem.edge: stem "horns": audible span 25.885-154.325 s against score notes 25.945-154.122 s: leading silence -60 ms, trailing silence -203 ms (limit 25 ms)
 [PASS] stem.dead: stem "horns": own median -39.9 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 6; follows the curve
 [PASS] stem.flatness: stem "horns": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
-[PASS] stem.dc: stem "piano": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+[PASS] stem.dc: stem "piano": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "piano": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "piano": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
 [PASS] stem.dropout: stem "piano": longest hole 0 ms (limit 20-1000 ms), floor -83.1 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "piano": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
-[PASS] stem.edge: stem "piano": audible span 0.000-150.100 s against score notes 22.328-149.670 s: leading silence -22328 ms, trailing silence -430 ms (limit 25 ms)
-[PASS] stem.tick: stem "piano": onset autocorrelation 0.64 at a 104 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 9 strong onset(s) of 1478, 6 on the grid, IOI CV 0.746; peak rise 2.86 dB at those onsets over 9 onset(s) (min 3); tempogram peak ratio 0.98, PLP peak ratio 1.00
+[PASS] stem.edge: stem "piano": audible span 22.305-150.100 s against score notes 22.328-149.670 s: leading silence -23 ms, trailing silence -430 ms (limit 25 ms)
+[PASS] stem.tick: stem "piano": onset autocorrelation 0.64 at a 104 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 9 strong onset(s) of 1476, 6 on the grid, IOI CV 0.746; peak rise 2.86 dB at those onsets over 9 onset(s) (min 3); tempogram peak ratio 0.98, PLP peak ratio 1.00
 [PASS] stem.dead: stem "piano": own median -34.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 5; follows the curve
 [PASS] stem.dc: stem "piano_low": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "piano_low": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)

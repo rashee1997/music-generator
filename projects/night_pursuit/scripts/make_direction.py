@@ -149,7 +149,7 @@ sheet = dict(
         'pursuit_basses': dict(azimuth=0.0, elevation=0.0, distance=1.5, space='np_street_canyon'),
         'pursuit_tuba': dict(azimuth=150.0, elevation=0.0, distance=1.8, space='np_street_canyon'),
         'pursuit_bass_drum': dict(azimuth=0.0, elevation=0.0, distance=2.2, space='np_street_canyon'),
-        'pursuit_timpani': dict(azimuth=55.0, elevation=0.0, distance=3.0, space='np_street_canyon'),
+        'pursuit_timpani': dict(azimuth=0.0, elevation=0.0, distance=3.0, space='np_street_canyon'),
         'pursuit_sub_drop': dict(azimuth=0.0, elevation=0.0, distance=1.0, space='np_street_canyon'),
         'pursuit_snare': dict(azimuth=-28.0, elevation=0.0, distance=2.6, space='np_street_canyon'),
         'pursuit_horns': dict(azimuth=35.0, elevation=0.0, distance=2.6, space='np_street_canyon'),

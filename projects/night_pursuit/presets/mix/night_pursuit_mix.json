@@ -786,5 +786,23 @@
     ],
     "ratio": 2.0,
     "threshold_db": -34.0
+  },
+  "inst_eq": {
+    "sfx:np_engine": [
+      {
+        "type": "highshelf",
+        "f": 5500.0,
+        "gain": -9.0,
+        "q": 0.7
+      }
+    ],
+    "sfx:np_wipers": [
+      {
+        "type": "highshelf",
+        "f": 5500.0,
+        "gain": -6.0,
+        "q": 0.7
+      }
+    ]
   }
 }

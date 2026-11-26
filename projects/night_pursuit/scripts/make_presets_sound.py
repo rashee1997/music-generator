@@ -300,7 +300,7 @@ write('sfx', 'np_wipers', dict(
              events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: (-90.0 + 78.0 * smooth((t - OFF) / 0.15)) if t < T_CUT else -90.0, 0.0, END, 0.25))])),
     ]),
     role='fx', gain_db=-8.0, reverb=0.0,
-    spatial=dict(azimuth=-60.0, elevation=0.0, distance=0.7, space=SPACE, binaural=True, kind='spot'),
+    spatial=dict(azimuth=-60.0, elevation=20.0, distance=0.7, space=SPACE, binaural=True, kind='spot'),
     eq=[dict(type='hp', f=250.0), dict(type='lp', f=7000.0)],
     sources=['wiper_blades', 'ESTIMATE: the swish band, the thump and the levels are starting values; the rate is from FMVSS 104 and service data in the research note']))
 
@@ -465,7 +465,7 @@ write('environments', 'np_rain_street', dict(
     atmosphere=dict(temp_c=10.0, rh=95.0),
     layers=[dict(name='drops', primitive='rain_physical', kind='bed', rate_mm_h=12.0, surface='solid', bubble_prob=0.15, gain_db=-22.0, decorrelate=1.0,
                  spatial=dict(azimuth=0, elevation=0, distance=6)),
-            dict(name='water_film', primitive='noise_bed', kind='bed', color='pink', low_hz=1800, high_hz=7000, mod_rate_hz=0.08, mod_depth=0.2, gain_db=-24.0,
+            dict(name='water_film', primitive='noise_bed', kind='bed', color='pink', low_hz=1800, high_hz=7000, mod_rate_hz=0.08, mod_depth=0.2, gain_db=-27.0,
                  decorrelate=1.0, spatial=dict(azimuth=0, elevation=0, distance=6))],
     blending=dict(),
     fx=RAIN_FX,

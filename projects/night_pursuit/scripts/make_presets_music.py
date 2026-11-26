@@ -97,7 +97,7 @@ inst('pursuit_sub_drop', 'synth_bass_2', 'texture',
      extra=dict(mechanics_class='sub'), sources=[KB['hybrid'], 'web research: slow-motion sound design pairs a pitched-down low end with a stretched tail (see the research note)'])
 inst('pursuit_timpani', 'timpani', 'drum',
      'The heartbeat and the collapse: two soft strokes a bar in the quiet, a roll into each hit, one big stroke on the turning points.',
-     55, 3.0, -4.0, 0.14, [HP(40), LP(5000)], humanize=dict(preset='natural', timing_ms=6.0, drift_ms=6.0, vel_sigma=5.0),
+     0, 3.0, -4.0, 0.14, [HP(40), LP(5000)], humanize=dict(preset='natural', timing_ms=6.0, drift_ms=6.0, vel_sigma=5.0),
      sources=[KB['hybrid'], KB['sf']])
 inst('pursuit_bass_drum', 'standard', 'drum',
      'The heartbeat of the stakeout and the downbeats of the chase: a concert bass drum, felt and low.',
@@ -179,6 +179,10 @@ mix['immersive'] = dict(enabled=True, engine='hoa_bus', order=5, anchor_max_span
                         height_by_role=dict(melody=0.0, lead=0.0, vocal=0.0, pad=0.0, texture=0.0, environment=0.0, chord=0.0, bass=0.0, drum=0.0,
                                             percussion=0.0, drone=0.0, ostinato=0.0, arp=0.0, counter=0.0, fx=0.0),
                         max_elevation=60.0, min_height_tracks=0, stereo_decode='speakers')
+# Measured by debug_audio.py on render 8: the click row's six events sat in the 6 kHz band of the engine, the wipers and the rain film;
+# a replay of the gate's own checker on the modelled mix cleared five of six with these shelves (the engine -9 dB, the wipers -6 dB).
+mix['inst_eq'] = {'sfx:np_engine': [dict(type='highshelf', f=5500.0, gain=-9.0, q=0.7)],
+                  'sfx:np_wipers': [dict(type='highshelf', f=5500.0, gain=-6.0, q=0.7)]}
 mix['lead_carve'] = dict(enabled=True, from_intent=True, roles=['pad', 'texture', 'chord', 'arp', 'counter', 'environment'], ratio=2.0, threshold_db=-34.0)
 mix['sidechain'] = dict(mode='legacy', band_hz=[250.0, 3800.0], residual=0.3, env_plateau=True)
 mix['dynamics'] = dict(engine='pedalboard', knee_db=0.0, detector='peak', stereo_link=True, lookahead_ms=0.0, parallel=1.0)
