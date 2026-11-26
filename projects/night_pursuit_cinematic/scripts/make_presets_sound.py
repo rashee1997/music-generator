@@ -289,7 +289,7 @@ BLADE_PASS_HZ = 4 * 400.0 / 60.0               # 4 blades at 400 rpm: general kn
 
 
 def heli_gain(t):
-    up = smooth((t - H_ON) / 5.0)
+    up = smooth((t - H_ON) / 0.3)          # in at once (the distance, not a fade, makes it far): the stem gate judges an effect from its onset
     down = 1.0 - smooth((t - (H_OFF - 6.0)) / 6.0)
     near = 0.0 if t < E_('the_helicopter') else -9.0                      # after its shot it is heard from the chase at a lower level
     return -90.0 + 90.0 * min(up, down) + near
@@ -311,7 +311,7 @@ write('sfx', 'np_helicopter', dict(
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: heli_gain(t) - 4.0, H_ON, H_OFF, 0.2))]))]),
     role='fx', gain_db=CAR_LEVEL_DB, reverb=0.08,
     spatial=dict(azimuth=-100.0, elevation=50.0, distance=150.0, space=SPACE, binaural=True, kind='spot', trajectory=dict(spatial_role='mover', doppler_strength=1.0, keyframes=keyframes(
-        [(H_ON, -100.0, 150.0, 50.0), (S('the_helicopter') + 4.0, -40.0, 50.0, 50.0), (S('the_helicopter') + 10.0, 0.0, 18.0, 62.0), (E_('the_helicopter') - 2.0, 70.0, 60.0, 48.0),
+        [(H_ON, -100.0, 90.0, 50.0), (S('the_helicopter') + 4.0, -40.0, 50.0, 50.0), (S('the_helicopter') + 10.0, 0.0, 18.0, 62.0), (E_('the_helicopter') - 2.0, 70.0, 60.0, 48.0),
          (S('the_bumps') + 4.0, 120.0, 100.0, 40.0), (S('the_flyover') + 2.0, 40.0, 45.0, 45.0), (H_OFF, 90.0, 140.0, 40.0)]))),
     eq=[dict(type='hp', f=30.0), dict(type='lp', f=9000.0)], fx=slowmo_fx(2000.0, 0.0),
     sources=['helicopter_rotor', 'doppler_passby', 'ESTIMATE: blade count, rotor speed, tail-rotor frequency and levels are starting values']))

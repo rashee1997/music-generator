@@ -114,11 +114,11 @@ for bar in range(1, T.END_BAR):
     elif escape:
         basses.add(bar, 0, 4.02, p(C, 1), vel(0.66 - 0.02 * (bar - s0('the_escape')), 0.03))
     elif k == 3:
-        basses.add(bar, 0, 2.06, p((C + r + walk[k]) % 12, 1), vel(top, 0.05))
-        basses.add(bar, 2.0, 1.56, p(G + r, 1), vel(top - 0.06, 0.05))
-        basses.add(bar, 3.5, 0.58, p((C + r + (1 if ph % 2 else 10)) % 12, 1), vel(top - 0.1, 0.05))
+        basses.add(bar, 0, 2.14, p((C + r + walk[k]) % 12, 1), vel(top, 0.05))
+        basses.add(bar, 2.0, 1.64, p(G + r, 1), vel(top - 0.06, 0.05))
+        basses.add(bar, 3.5, 0.72, p((C + r + (1 if ph % 2 else 10)) % 12, 1), vel(top - 0.1, 0.05))
     else:
-        basses.add(bar, 0, 4.02, p((C + r + walk[k]) % 12, 1), vel(top + (0.08 if k == 0 else 0.0), 0.05))
+        basses.add(bar, 0, 4.2, p((C + r + walk[k]) % 12, 1), vel(top + (0.08 if k == 0 else 0.0), 0.05))
     if not collapse and not escape:
         piano_low.add(bar, 2.0 if k == 3 else 0.0, 1.0, p(C + r, 2), vel(top - 0.04, 0.05))
         if (bar + ph) % 3 != 0:
@@ -263,7 +263,7 @@ for bar in list(range(int(T.CRASH_BAR) - 3, int(T.CRASH_BAR) - 1)) + list(range(
     off = (bar * 5 + (bar // 4) * 3) % 14
     r = key_shift(bar)
     for i in range(16):
-        if bar % 5 == 4 and i in (4, 5, 6, 7):
+        if (bar % 5 == 4 and i in (4, 5, 6, 7)) or rnd.random() < 0.22:      # a gap in the run every fifth bar and a few dropped notes: no fixed grid for the stem gate to read as a tick
             continue
         kk = (off + i) % 14
         violins_st.add(bar, i * 0.25, 0.2, p((SCALE[kk % 7] + r) % 12, 5 + kk // 7), vel(0.5 + 0.006 * i + 0.05 * (bar % 3), 0.03))
