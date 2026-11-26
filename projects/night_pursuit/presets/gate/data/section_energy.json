@@ -16,56 +16,56 @@
       "start_s": 0.0,
       "end_s": 11.25,
       "energy": 0.3,
-      "level_db": -27.44839384229519
+      "level_db": -27.45278777598836
     },
     {
       "name": "spotted",
       "start_s": 11.25,
       "end_s": 22.328,
       "energy": 0.45,
-      "level_db": -26.25148788729109
+      "level_db": -26.25588180882219
     },
     {
       "name": "the_avenue",
       "start_s": 22.328,
       "end_s": 46.865,
       "energy": 0.7,
-      "level_db": -19.254564101463572
+      "level_db": -19.25893491004067
     },
     {
       "name": "the_turn",
       "start_s": 46.865,
       "end_s": 73.961,
       "energy": 0.85,
-      "level_db": -20.18464755284393
+      "level_db": -20.188599450633752
     },
     {
       "name": "under_the_bridge",
       "start_s": 73.961,
       "end_s": 96.361,
       "energy": 0.9,
-      "level_db": -18.79603113601254
+      "level_db": -18.800468033475227
     },
     {
       "name": "the_roadblock",
       "start_s": 96.361,
       "end_s": 127.859,
       "energy": 1.0,
-      "level_db": -19.144729614509462
+      "level_db": -19.149407843206628
     },
     {
       "name": "the_bridge",
       "start_s": 127.859,
       "end_s": 149.686,
       "energy": 0.95,
-      "level_db": -19.800649844954535
+      "level_db": -19.805043768530695
     },
     {
       "name": "the_cliff",
       "start_s": 149.686,
       "end_s": 171.05,
       "energy": 0.2,
-      "level_db": -41.07843212702991
+      "level_db": -41.00605418113823
     }
   ]
 }

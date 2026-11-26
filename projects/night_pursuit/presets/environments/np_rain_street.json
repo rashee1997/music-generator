@@ -14,7 +14,7 @@
    "rate_mm_h": 30.0,
    "surface": "solid",
    "bubble_prob": 0.02,
-   "gain_db": -22.0,
+   "gain_db": -30.0,
    "decorrelate": 1.0,
    "spatial": {
     "azimuth": 0,
@@ -30,8 +30,8 @@
    "low_hz": 1800,
    "high_hz": 7000,
    "mod_rate_hz": 0.08,
-   "mod_depth": 0.2,
-   "gain_db": -27.0,
+   "mod_depth": 0.1,
+   "gain_db": -20.0,
    "decorrelate": 1.0,
    "spatial": {
     "azimuth": 0,

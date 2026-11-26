@@ -50,7 +50,7 @@
        "max": 2.5
       },
       "pitch_exp": 0.3,
-      "amp_exp": 2.0
+      "amp_exp": 1.0
      }
     }
    ]
@@ -98,7 +98,7 @@
        "max": 2.5
       },
       "pitch_exp": 0.3,
-      "amp_exp": 2.0
+      "amp_exp": 1.0
      }
     }
    ]
