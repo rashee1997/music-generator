@@ -5,7 +5,7 @@
   "medium": "film",
   "brief": "A realistic car chase scene with real car sounds, shifts and drifts in a rainy New York night, police sirens and a full story; tense, the listener should sit on the edge; instruments, music and the place by physics (rainy roads, street objects that absorb and reflect), cinematic drops and slow-motion drifts; full immersive, 8 channel; two minutes, three if two is not enough",
   "audience": "a listener on an 8-channel (7.1) system or headphones, inside the courier's car, who came for the chase",
-  "purpose": "a 174-second cue that tells a whole chase: a stakeout, a spotting, a launch, a slow-motion drift, an underpass, a roadblock, a bridge and a cut into silence",
+  "purpose": "a 171-second cue that tells a whole chase: a stakeout, a spotting, a launch, a slow-motion drift, an underpass, a roadblock, a bridge and a cut into silence",
   "point_of_view": "the courier, in the driver's seat: the engine, the wipers, the rain on the roof and the tyres are the nearest sounds; the sirens and the city are outside and they pass by",
   "job": [
     "keep the listener on the edge from the first bar to the last: pressure, never relief",
@@ -14,9 +14,9 @@
     "give two moments of slow motion and two real hits, and end on a hard cut"
   ],
   "story": "A courier with a drive of evidence is seen at a red light at two in the morning; the light changes and the chase begins; a drift into a side street goes into slow motion and snaps back; an underpass, a roadblock and a handbrake turn through the gap; a cruiser spins out; the bridge; and a hard cut into rain, a ticking engine and one far siren.",
-  "duration_s": 174.4,
+  "duration_s": 171.1,
   "in_point_s": 0.0,
-  "out_point_s": 174.4,
+  "out_point_s": 171.1,
   "ending": "hard_out",
   "feel": [
     "tense",
@@ -42,7 +42,7 @@
     {
       "name": "spotted",
       "start_s": 11.25,
-      "end_s": 22.394,
+      "end_s": 22.328,
       "energy": 0.45,
       "role": "establish",
       "action": "A patrol car crosses ahead and its lights come on; the siren starts to the left; the courier does not move.",
@@ -50,8 +50,8 @@
     },
     {
       "name": "the_avenue",
-      "start_s": 22.394,
-      "end_s": 48.342,
+      "start_s": 22.328,
+      "end_s": 46.865,
       "energy": 0.7,
       "role": "build",
       "action": "The light changes. Launch on the wet avenue: wheelspin, four shifts, the cruisers behind.",
@@ -59,8 +59,8 @@
     },
     {
       "name": "the_turn",
-      "start_s": 48.342,
-      "end_s": 74.289,
+      "start_s": 46.865,
+      "end_s": 73.961,
       "energy": 0.85,
       "role": "build",
       "action": "A drift into a side street; at its crest time slows, and snaps back.",
@@ -68,8 +68,8 @@
     },
     {
       "name": "under_the_bridge",
-      "start_s": 74.289,
-      "end_s": 100.236,
+      "start_s": 73.961,
+      "end_s": 96.361,
       "energy": 0.9,
       "role": "peak",
       "action": "An underpass: the sirens echo, a second car joins, the engine is loud in the concrete.",
@@ -77,8 +77,8 @@
     },
     {
       "name": "the_roadblock",
-      "start_s": 100.236,
-      "end_s": 133.597,
+      "start_s": 96.361,
+      "end_s": 127.859,
       "energy": 1.0,
       "role": "peak",
       "action": "Lights across the road; a handbrake turn through the gap; a cruiser spins out.",
@@ -86,8 +86,8 @@
     },
     {
       "name": "the_bridge",
-      "start_s": 133.597,
-      "end_s": 159.545,
+      "start_s": 127.859,
+      "end_s": 149.686,
       "energy": 0.95,
       "role": "peak",
       "action": "Out onto the bridge, the whole city below; the road ahead is empty and that is worse.",
@@ -95,8 +95,8 @@
     },
     {
       "name": "the_cliff",
-      "start_s": 159.545,
-      "end_s": 174.372,
+      "start_s": 149.686,
+      "end_s": 171.05,
       "energy": 0.2,
       "role": "button",
       "action": "A hard cut. Rain, an engine ticking as it cools, a siren far away that does not come closer.",
@@ -153,13 +153,13 @@
   "space": "np_street_canyon",
   "hits_at": [
     14.05,
-    22.39,
-    63.17,
-    68.73,
-    74.29,
-    122.48,
-    126.18,
-    159.54
+    22.33,
+    60.2,
+    69.16,
+    73.96,
+    115.43,
+    121.54,
+    149.69
   ],
   "hits": [
     {
@@ -170,49 +170,49 @@
       "why": "the moment the courier is seen; a soft sync, so a beat either way does not matter"
     },
     {
-      "t": 22.39,
+      "t": 22.33,
       "kind": "musical",
       "sync": "soft",
       "sound": "the engine wakes: wheelspin on the wet road, first gear, the pulse begins",
       "why": "the chase starts; the pulse that never stops enters here"
     },
     {
-      "t": 63.17,
+      "t": 60.2,
       "kind": "motion",
       "sync": "soft",
       "sound": "the rear steps out: the drift begins and time starts to slow",
       "why": "the slow-motion drift needs its lead-in: the tempo falls and the engine and tyres go down in pitch"
     },
     {
-      "t": 68.73,
+      "t": 69.16,
       "kind": "musical",
       "sync": "hard",
       "sound": "the tyres bite: a cinematic drop, a sub drop and one impact, and the tempo snaps back",
       "why": "the release of the slow-motion drift; the strings keep sounding, so it is a hard accent and not a cut"
     },
     {
-      "t": 74.29,
+      "t": 73.96,
       "kind": "motion",
       "sync": "soft",
       "sound": "the car enters the underpass: the room closes and the sirens echo",
       "why": "the place changes; the field, not the music, says it"
     },
     {
-      "t": 122.48,
+      "t": 115.43,
       "kind": "motion",
       "sync": "soft",
       "sound": "a cruiser loses the road at the roadblock: a second slow-motion passage",
       "why": "the pursuer is seen to fail, in slow motion"
     },
     {
-      "t": 126.18,
+      "t": 121.54,
       "kind": "musical",
       "sync": "hard",
       "sound": "the cruiser hits the barrier: one impact, metal, glass, and the tempo snaps back",
       "why": "the turning point of the chase; weight and one real hit, with the quietest bar before it"
     },
     {
-      "t": 159.54,
+      "t": 149.69,
       "kind": "cut",
       "sync": "hard",
       "sound": "everything sustained stops on the frame; then rain, a ticking engine and one far siren",
@@ -234,11 +234,11 @@
     "must_hear": [
       "the engine and the wipers in the first 3 s",
       "a siren in the left by 14.1 s",
-      "the first shift at 26.1 s",
-      "the drop at 68.7 s",
-      "the room closing at 74.3 s",
-      "the crash at 126.2 s",
-      "the cut at 159.5 s"
+      "the first shift at 25.9 s",
+      "the drop at 69.2 s",
+      "the room closing at 74.0 s",
+      "the crash at 121.5 s",
+      "the cut at 149.7 s"
     ],
     "leave_free_hz": []
   },
@@ -410,10 +410,10 @@
       }
     ],
     "must_hear": [
-      "the siren moving from the front left to the left between 14 s and 63 s",
-      "the tyres swinging round behind at 63 s",
+      "the siren moving from the front left to the left between 14 s and 60 s",
+      "the tyres swinging round behind at 60 s",
       "the room closing at 74 s",
-      "the second siren crossing in front at 108 s"
+      "the second siren crossing in front at 103 s"
     ],
     "deliverables": [
       "stereo",

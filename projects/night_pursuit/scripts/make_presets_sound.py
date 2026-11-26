@@ -17,8 +17,10 @@ import timeline as T
 HERE = os.path.dirname(os.path.abspath(__file__))
 P = os.path.join(HERE, '..', 'presets')
 TM = T.tempo_map()
+START = T.sfx_start()
 DUR = float(T.seconds(T.END_BAR, 0, TM))
-SECONDS = round(DUR + 1.0, 1)
+END = round(DUR + 1.0, 1)
+SECONDS = END
 SPACE = 'np_street_canyon'
 
 
@@ -61,9 +63,24 @@ def slowness(t):
     return 1.0 - dive(t, 0.0)                        # 0 outside, up to 1 deep in the slow motion
 
 
+OFF = 0.0                                            # the piece second the current effect's own clock starts at (its trigger note)
+
+
 def sample(fn, t0, t1, dt):
+    t0, t1 = max(t0, OFF), min(t1, END)
     n = int(round((t1 - t0) / dt))
-    return [[round(t0 + i * dt, 3), round(float(fn(t0 + i * dt)), 4)] for i in range(n + 1)]
+    return [[round(t0 - OFF + i * dt, 3), round(float(fn(t0 + i * dt)), 4)] for i in range(n + 1)]
+
+
+def rel(points):
+    return [[round(t - OFF, 3), v] for t, v in points]
+
+
+def begin(name):
+    global OFF, SECONDS
+    OFF = START[name]
+    SECONDS = round(DUR + 1.0 - OFF, 1)
+    return OFF
 
 
 def write(kind, name, body):
@@ -158,6 +175,7 @@ def spray_db(t):
 SHIFT_TIMES = [round(a, 3) for (a, _, g0), (b, _, g1) in zip(W, W[1:]) if g0 != g1 and g0 and g1 and 0 < b - a < 0.3]
 f_idle = IDLE_RPM * CYL / 120.0
 
+begin('engine')
 write('sfx', 'np_engine', dict(
     kind='sfx',
     character='A V8 in a car the listener sits in: a firing-frequency pulse train through the body, its pitch following the rpm through four gears, with the road and the spray behind it and the clunk of each shift; it dives in the slow motion and stops dead at the cut.',
@@ -169,24 +187,26 @@ write('sfx', 'np_engine', dict(
              excite=dict(kind='periodic', f0=round(f_idle, 2), harmonics=40, jitter=0.02),
              resonator=dict(kind='formant', formants=[[110, 70, 1.0], [240, 90, 0.9], [680, 240, 0.5], [1500, 500, 0.2]]),
              events=dict(kind='continuous'),
-             control=dict(pitch=[dict(kind='curve', points=sample(engine_pitch, 0.0, SECONDS, 0.1))],
-                          gain_db=[dict(kind='curve', points=sample(engine_gain_db, 0.0, SECONDS, 0.1))])),
+             control=dict(pitch=[dict(kind='curve', points=sample(engine_pitch, 0.0, END, 0.1))],
+                          gain_db=[dict(kind='curve', points=sample(engine_gain_db, 0.0, END, 0.1))])),
         dict(name='exhaust_noise', gain_db=-12.0, excite=dict(kind='noise', color='brown'), resonator=dict(kind='bandpass', band=[50, 900], order=2),
              events=dict(kind='continuous'),
-             control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: engine_gain_db(t) - 4.0, 0.0, SECONDS, 0.2))])),
+             control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: engine_gain_db(t) - 4.0, 0.0, END, 0.2))])),
         dict(name='intake', gain_db=-22.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[900, 2800], order=2),
              events=dict(kind='continuous'),
-             control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -40.0 + 36.0 * min(1.0, max(0.0, (rpm_at(t) - 2500.0) / 4000.0)) if t < T_CUT else -90.0, 0.0, SECONDS, 0.2))])),
+             control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -40.0 + 36.0 * min(1.0, max(0.0, (rpm_at(t) - 2500.0) / 4000.0)) if t < T_CUT else -90.0, 0.0, END, 0.2))])),
         dict(name='road', gain_db=-14.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[300, 3500], order=2),
-             events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(road_db, 0.0, SECONDS, 0.2))])),
+             events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(road_db, 0.0, END, 0.2))])),
         dict(name='spray', gain_db=-20.0, excite=dict(kind='noise', color='white'), resonator=dict(kind='bandpass', band=[2500, 9000], order=2),
-             events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(spray_db, 0.0, SECONDS, 0.2))])),
+             events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(spray_db, 0.0, END, 0.2))])),
         dict(name='shift_clunk', gain_db=-18.0, excite=dict(kind='impact', tau=0.004),
              resonator=dict(kind='modal', law='bar', f1=140.0, n=4, t60=0.18),
-             events=dict(kind='sequence', times=SHIFT_TIMES, levels=[1.0] * len(SHIFT_TIMES))),
+             events=dict(kind='sequence', times=[round(t - OFF, 3) for t in SHIFT_TIMES], levels=[1.0] * len(SHIFT_TIMES))),
+        dict(name='cabin_tone', gain_db=-38.0, excite=dict(kind='noise', color='brown'), resonator=dict(kind='bandpass', band=[60, 400], order=2),
+             events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -90.0 if t < T_CUT else -12.0 * smooth((t - T_CUT) / 0.5) - 4.0 * smooth((t - T_CUT) / 20.0), 0.0, END, 0.25))])),
         dict(name='cooling_tick', gain_db=-20.0, excite=dict(kind='impact', tau=0.0008),
              resonator=dict(kind='modal', law='bar', f1=1800.0, n=6, t60=0.12),
-             events=dict(kind='poisson', rate=0.8, start=round(T_CUT + 1.2, 2))),
+             events=dict(kind='poisson', rate=0.8, start=round(T_CUT + 1.2 - OFF, 2))),
     ]),
     role='fx', gain_db=-3.0, reverb=0.02,
     spatial=dict(azimuth=180.0, elevation=0.0, distance=1.0, space=SPACE, binaural=True, kind='spot'),
@@ -220,6 +240,7 @@ def squeal_pitch(t):
     return 1.0
 
 
+begin('tyres')
 write('sfx', 'np_drift_squeal', dict(
     kind='sfx',
     character='Tyres losing grip on a wet road: a stick-slip tone near 1 kHz with its harmonics and a scrub of noise, rising and falling with the slip, diving in the slow motion and cutting off when the tyres bite.',
@@ -228,10 +249,10 @@ write('sfx', 'np_drift_squeal', dict(
     model=dict(seconds=SECONDS, voices=[
         dict(name='squeal', gain_db=0.0, excite=dict(kind='periodic', f0=1100.0, harmonics=8, jitter=0.03, noise_mix=0.12),
              resonator=dict(kind='formant', formants=[[900, 300, 1.0], [2400, 600, 0.5]]), events=dict(kind='continuous'),
-             control=dict(pitch=[dict(kind='curve', points=sample(squeal_pitch, 0.0, SECONDS, 0.05))],
-                          gain_db=[dict(kind='curve', points=sample(squeal_env_db, 0.0, SECONDS, 0.05))])),
+             control=dict(pitch=[dict(kind='curve', points=sample(squeal_pitch, 0.0, END, 0.05))],
+                          gain_db=[dict(kind='curve', points=sample(squeal_env_db, 0.0, END, 0.05))])),
         dict(name='scrub', gain_db=-10.0, excite=dict(kind='noise', color='white'), resonator=dict(kind='bandpass', band=[1500, 6500], order=2),
-             events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: squeal_env_db(t) - 4.0, 0.0, SECONDS, 0.05))])),
+             events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: squeal_env_db(t) - 4.0, 0.0, END, 0.05))])),
     ]),
     role='fx', gain_db=-4.0, reverb=0.05,
     spatial=dict(azimuth=-150.0, elevation=0.0, distance=1.7, space=SPACE, binaural=True, kind='spot', trajectory=dict(
@@ -250,14 +271,15 @@ def wiper_times():
     """One cycle is a sweep up and a sweep back; 70 cycles a minute (the research: highest speed about 70 double strokes). Slow motion stretches
     the interval, so the wipers fall behind with the music and catch up at the snap."""
     base = 60.0 / 70.0 / 2.0
-    out, t = [], 0.5
+    out, t = [], 1.2
     while t < T_CUT:
         out.append(round(t, 3))
-        t += base * (1.0 + 3.0 * slowness(t))
+        t += base * (1.0 + 1.0 * slowness(t))
     return out
 
 
 WT = wiper_times()
+begin('wipers')
 write('sfx', 'np_wipers', dict(
     kind='sfx',
     character='Windscreen wipers on a wet screen: a swish of rubber on glass every half cycle and a soft thump at each turn, 70 cycles a minute, slowing in the slow motion.',
@@ -265,9 +287,11 @@ write('sfx', 'np_wipers', dict(
     note='One sweep every 0.43 s (70 double strokes a minute); the interval grows up to four times in the slow motion.',
     model=dict(seconds=SECONDS, voices=[
         dict(name='swish', gain_db=0.0, excite=dict(kind='burst', tau=0.16, color='pink'), resonator=dict(kind='bandpass', band=[900, 4500], order=2),
-             events=dict(kind='sequence', times=WT, levels=[1.0] * len(WT))),
+             events=dict(kind='sequence', times=[round(t - OFF, 3) for t in WT], levels=[1.0] * len(WT))),
         dict(name='turn_thump', gain_db=-9.0, excite=dict(kind='impact', tau=0.006), resonator=dict(kind='modal', law='bar', f1=95.0, n=3, t60=0.08),
-             events=dict(kind='sequence', times=[round(t + 0.2, 3) for t in WT], levels=[1.0] * len(WT))),
+             events=dict(kind='sequence', times=[round(t + 0.2 - OFF, 3) for t in WT], levels=[1.0] * len(WT))),
+        dict(name='wet_glass', gain_db=-22.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[1500, 6000], order=2),
+             events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: (-90.0 + 78.0 * smooth((t - OFF) / 1.0)) if t < T_CUT else -90.0, 0.0, END, 0.25))])),
     ]),
     role='fx', gain_db=-8.0, reverb=0.0,
     spatial=dict(azimuth=-60.0, elevation=0.0, distance=0.7, space=SPACE, binaural=True, kind='spot'),
@@ -330,6 +354,7 @@ def siren1_gain(t):
     return max(gate_db(t, S1_ON, S1_OFF, OCC1), gate_db(t, S1_FAR_ON, S1_FAR_OFF, [], fade=1.5) - 6.0) - 3.0 * slowness(t)
 
 
+begin('siren_first')
 write('sfx', 'np_siren_wail', dict(
     kind='sfx',
     character='A police siren in wail: a slow sweep between 600 and 1400 Hz at 20 cycles a minute, harmonics to six, the first cruiser; it moves round the car (Doppler from its path) and is muffled behind the corner building.',
@@ -338,8 +363,8 @@ write('sfx', 'np_siren_wail', dict(
     model=dict(seconds=SECONDS, voices=[
         dict(name='wail', gain_db=0.0, excite=dict(kind='periodic', f0=600.0, harmonics=6, jitter=0.002),
              resonator=dict(kind='none'), events=dict(kind='continuous'),
-             control=dict(pitch=[dict(kind='curve', points=sample(siren1_pitch, S1_ON, SECONDS, 0.1))],
-                          gain_db=[dict(kind='curve', points=sample(siren1_gain, 0.0, SECONDS, 0.1))])),
+             control=dict(pitch=[dict(kind='curve', points=sample(siren1_pitch, S1_ON, END, 0.1))],
+                          gain_db=[dict(kind='curve', points=sample(siren1_gain, 0.0, END, 0.1))])),
     ]),
     role='fx', gain_db=-9.0, reverb=0.10,
     spatial=dict(azimuth=-30.0, elevation=0.0, distance=90.0, space=SPACE, binaural=True, kind='spot', trajectory=dict(
@@ -364,6 +389,7 @@ def siren2_gain(t):
     return gate_db(t, S2_ON, S2_OFF, OCC2) - 3.0 * slowness(t)
 
 
+begin('siren_second')
 write('sfx', 'np_siren_second', dict(
     kind='sfx',
     character='The second cruiser: a two-tone 435/580 Hz hi-lo at 55 cycles a minute while it joins, then a fast yelp from 700 to 1500 Hz at 240 cycles a minute once the roadblock is close; it never shares a pitch with the first.',
@@ -373,7 +399,7 @@ write('sfx', 'np_siren_second', dict(
         dict(name='second', gain_db=0.0, excite=dict(kind='periodic', f0=600.0, harmonics=6, jitter=0.002),
              resonator=dict(kind='none'), events=dict(kind='continuous'),
              control=dict(pitch=[dict(kind='curve', points=sample(lambda t: (hilo(t) * 435.0 / 600.0) if t < T_ROAD else yelp(t) * 700.0 / 600.0, S2_ON, S2_OFF + 0.2, 0.02))],
-                          gain_db=[dict(kind='curve', points=sample(siren2_gain, 0.0, SECONDS, 0.1))])),
+                          gain_db=[dict(kind='curve', points=sample(siren2_gain, 0.0, END, 0.1))])),
     ]),
     role='fx', gain_db=-10.0, reverb=0.10,
     spatial=dict(azimuth=60.0, elevation=0.0, distance=70.0, space=SPACE, binaural=True, kind='spot', trajectory=dict(
@@ -397,6 +423,7 @@ def cruiser_squeal_gain(t):
     return -90.0
 
 
+begin('crash')
 write('sfx', 'np_crash', dict(
     kind='sfx',
     character='A cruiser losing the road and hitting the barrier: its tyres squealing down in the slow motion, then one impact on a damped panel, a tear of metal and the tinkle of glass.',
@@ -406,16 +433,16 @@ write('sfx', 'np_crash', dict(
         dict(name='cruiser_squeal', gain_db=0.0, excite=dict(kind='periodic', f0=950.0, harmonics=8, jitter=0.03, noise_mix=0.15),
              resonator=dict(kind='formant', formants=[[800, 300, 1.0], [2200, 600, 0.5]]), events=dict(kind='continuous'),
              control=dict(pitch=[dict(kind='curve', points=sample(cruiser_squeal_pitch, T_SPIN - 0.5, T_CRASH + 0.2, 0.05))],
-                          gain_db=[dict(kind='curve', points=sample(cruiser_squeal_gain, 0.0, SECONDS, 0.05))])),
+                          gain_db=[dict(kind='curve', points=sample(cruiser_squeal_gain, 0.0, END, 0.05))])),
         dict(name='panel_hit', gain_db=0.0, excite=dict(kind='impact', tau=0.003), resonator=dict(kind='modal', law='free', f1=210.0, ratios=[1.0, 2.3, 3.9, 5.6, 7.7, 10.1, 12.8], t60=1.1),
-             events=dict(kind='single', at=round(T_CRASH, 3))),
+             events=dict(kind='single', at=round(T_CRASH - OFF, 3))),
         dict(name='sub_thud', gain_db=-3.0, excite=dict(kind='impact', tau=0.008), resonator=dict(kind='modal', law='bar', f1=55.0, n=3, t60=0.5),
-             events=dict(kind='single', at=round(T_CRASH, 3))),
+             events=dict(kind='single', at=round(T_CRASH - OFF, 3))),
         dict(name='tear', gain_db=-8.0, excite=dict(kind='friction', beta=-1.5, speed=1.0, amp_exp=1.0), resonator=dict(kind='bandpass', band=[500, 5000], order=2),
              events=dict(kind='continuous'),
-             control=dict(gain_db=[dict(kind='curve', points=[[0.0, -90.0], [round(T_CRASH, 3), -90.0], [round(T_CRASH + 0.05, 3), 0.0], [round(T_CRASH + 1.2, 3), -30.0], [round(T_CRASH + 1.8, 3), -90.0], [SECONDS, -90.0]])])),
+             control=dict(gain_db=[dict(kind='curve', points=rel([[OFF, -90.0], [T_CRASH, -90.0], [T_CRASH + 0.05, 0.0], [T_CRASH + 1.2, -30.0], [T_CRASH + 1.8, -90.0], [OFF + SECONDS, -90.0]]))])),
         dict(name='glass', gain_db=-6.0, excite=dict(kind='impact', tau=0.0006), resonator=dict(kind='modal', law='bar', f1=3300.0, n=10, t60=0.25),
-             events=dict(kind='poisson', rate=26.0, start=round(T_CRASH + 0.08, 3), end=round(T_CRASH + 2.4, 3))),
+             events=dict(kind='poisson', rate=26.0, start=round(T_CRASH + 0.08 - OFF, 3), end=round(T_CRASH + 2.4 - OFF, 3))),
     ]),
     role='fx', gain_db=-4.0, reverb=0.12,
     spatial=dict(azimuth=40.0, elevation=0.0, distance=12.0, space=SPACE, binaural=True, kind='spot'),
@@ -424,6 +451,7 @@ write('sfx', 'np_crash', dict(
 
 # ================================================================================================ rain and the city
 RAIN_FX = slowmo_fx(1800.0, -4.0)
+begin('engine')
 write('environments', 'np_rain_street', dict(
     description='Rain at 12 mm/h on a wet asphalt street at night: the patter of drops on the road, a film of water hissing, all round.',
     character='Rain at 12 mm/h falling on a wet street and a film of water on the asphalt, all round the car; in the slow motion it thins and darkens rather than pitching down.',
@@ -442,10 +470,10 @@ write('environments', 'np_rain_awnings', dict(
     atmosphere=dict(temp_c=10.0, rh=95.0),
     layers=[dict(name='awning_left', primitive='model_layer', kind='spot', gain_db=-26.0, spatial=dict(azimuth=-80, elevation=0, distance=7),
                  voices=[dict(name='drops', excite=dict(kind='impact', tau=0.0015), resonator=dict(kind='modal', law='free', f1=420.0, ratios=[1.0, 2.3, 3.9, 5.6, 7.7, 10.1], t60=0.28),
-                              events=dict(kind='poisson', rate=22.0), vary=dict(size=dict(dist='marshall_palmer', rate_mm_h=12.0, min=0.4, max=2.5), pitch_exp=0.3, amp_exp=2.0))]),
+                              events=dict(kind='poisson', rate=45.0), vary=dict(size=dict(dist='marshall_palmer', rate_mm_h=12.0, min=0.4, max=2.5), pitch_exp=0.3, amp_exp=2.0))]),
             dict(name='awning_right', primitive='model_layer', kind='spot', gain_db=-28.0, spatial=dict(azimuth=85, elevation=0, distance=8),
                  voices=[dict(name='drops', excite=dict(kind='impact', tau=0.0015), resonator=dict(kind='modal', law='free', f1=360.0, ratios=[1.0, 2.1, 3.6, 5.2, 7.3, 9.6], t60=0.32),
-                              events=dict(kind='poisson', rate=18.0), vary=dict(size=dict(dist='marshall_palmer', rate_mm_h=12.0, min=0.4, max=2.5), pitch_exp=0.3, amp_exp=2.0))])],
+                              events=dict(kind='poisson', rate=40.0), vary=dict(size=dict(dist='marshall_palmer', rate_mm_h=12.0, min=0.4, max=2.5), pitch_exp=0.3, amp_exp=2.0))])],
     blending=dict(),
     fx=RAIN_FX,
     sources=['rain_metal_awning', 'ESTIMATE: the modes of an awning and a dumpster lid are starting values; the louder-than-asphalt ordering is from the research note']))

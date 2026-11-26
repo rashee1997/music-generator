@@ -40,7 +40,7 @@
      },
      "events": {
       "kind": "poisson",
-      "rate": 22.0
+      "rate": 45.0
      },
      "vary": {
       "size": {
@@ -88,7 +88,7 @@
      },
      "events": {
       "kind": "poisson",
-      "rate": 18.0
+      "rate": 40.0
      },
      "vary": {
       "size": {
@@ -112,8 +112,8 @@
    "f_start_hz": 14000.0,
    "f_end_hz": 1800.0,
    "q": 0.8,
-   "start_s": 63.169,
-   "end_s": 65.669,
+   "start_s": 60.199,
+   "end_s": 62.699,
    "after": "bypass",
    "edge_ms": 10.0
   },
@@ -123,8 +123,8 @@
    "f_start_hz": 1800.0,
    "f_end_hz": 1800.0,
    "q": 0.8,
-   "start_s": 65.669,
-   "end_s": 68.729,
+   "start_s": 62.699,
+   "end_s": 69.161,
    "after": "bypass",
    "edge_ms": 10.0
   },
@@ -134,8 +134,8 @@
    "params": {
     "gain_db": -4.0
    },
-   "start_s": 63.169,
-   "end_s": 68.729,
+   "start_s": 60.199,
+   "end_s": 69.161,
    "edge_ms": 400.0
   },
   {
@@ -144,8 +144,8 @@
    "f_start_hz": 14000.0,
    "f_end_hz": 1800.0,
    "q": 0.8,
-   "start_s": 122.477,
-   "end_s": 124.977,
+   "start_s": 115.435,
+   "end_s": 117.935,
    "after": "bypass",
    "edge_ms": 10.0
   },
@@ -155,8 +155,8 @@
    "f_start_hz": 1800.0,
    "f_end_hz": 1800.0,
    "q": 0.8,
-   "start_s": 124.977,
-   "end_s": 126.184,
+   "start_s": 117.935,
+   "end_s": 121.544,
    "after": "bypass",
    "edge_ms": 10.0
   },
@@ -166,8 +166,8 @@
    "params": {
     "gain_db": -4.0
    },
-   "start_s": 122.477,
-   "end_s": 126.184,
+   "start_s": 115.435,
+   "end_s": 121.544,
    "edge_ms": 400.0
   }
  ],

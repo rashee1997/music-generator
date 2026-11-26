@@ -78,7 +78,7 @@ def bar_chord_root(bar):
 
 # the stakeout: a heartbeat of bass drum, one low C every bar
 for bar in range(s0('the_stakeout'), sN('the_stakeout')):
-    basses.add(bar, 0, 3.8, p(C, 1), vel(0.72, 0.02))
+    basses.add(bar, 0, 4.02, p(C, 1), vel(0.74, 0.02))
     piano_low.add(bar, 0, 3.8, p(C, 1), vel(0.45, 0.02)) if bar >= s0('the_stakeout') + 2 else None
     bass_drum.add(bar, 0, 0.5, 36, vel(0.50, 0.03))
     bass_drum.add(bar, 1.0, 0.5, 36, vel(0.38, 0.03))
@@ -87,10 +87,10 @@ for bar in range(s0('the_stakeout'), sN('the_stakeout')):
 
 # spotted: the cruiser; the pedal breathes, the heart quickens
 for bar in range(s0('spotted'), sN('spotted')):
-    basses.add(bar, 0, 3.8, p(C, 1), vel(0.55, 0.02))
+    basses.add(bar, 0, 4.02, p(C, 1), vel(0.74, 0.02))
     piano_low.add(bar, 0, 3.8, p(C, 1), vel(0.5, 0.02))
-    for b in (0, 1.0, 2.0, 3.0):
-        bass_drum.add(bar, b, 0.5, 36, vel(0.40 if b % 2 else 0.5, 0.03))
+    for b in (0, 1.5, 3.0):
+        bass_drum.add(bar, b, 0.5, 36, vel(0.5, 0.03))
     if bar == sN('spotted') - 1:
         timpani.add(bar, 2.0, 1.0, p(C, 2), 0.6)              # a swell into the launch
         timpani.add(bar, 3.0, 1.0, p(C, 2), 0.75)
@@ -105,11 +105,15 @@ for bar in range(s0('the_avenue'), sN('the_bridge')):
             (sect[0] == 'the_roadblock' and bar in (T.SLOMO_SPIN['bar'], T.SLOMO_SPIN['bar'] + 1))
     under = sect[0] == 'under_the_bridge' and bar < s0('under_the_bridge') + 6          # six bars of pulse and low brass only
     if quiet:
-        basses.add(bar, 0, 3.9, p(C, 1), 0.38)
-        bass_drum.add(bar, 0, 0.5, 36, 0.45)
-        bass_drum.add(bar, 2.0, 0.5, 36, 0.35)
+        basses.add(bar, 0, 4.02, p(C, 1), 0.55)
+        bass_drum.add(bar, 0, 0.5, 36, 0.62)
+        bass_drum.add(bar, 2.0, 0.5, 36, 0.5)
         continue
-    basses.add(bar, 0, 3.85, p(r, 1) + (0 if r == C else 0), vel(0.6 + 0.2 * energy, 0.03))
+    if bar % 4 == 3:
+        basses.add(bar, 0, 2.0, p(r, 1), vel(0.6 + 0.2 * energy, 0.03))
+        basses.add(bar, 2.0, 2.02, p(G, 1), vel(0.58 + 0.2 * energy, 0.03))       # the dominant, never resolved
+    else:
+        basses.add(bar, 0, 4.02, p(r, 1), vel(0.6 + 0.2 * energy, 0.03))
     piano_low.add(bar, 0, 1.0, p(r, 2), vel(0.6 + 0.15 * energy, 0.03))
     piano_low.add(bar, 1.5, 0.5, p(r, 2), vel(0.5, 0.03))
     for b in THREE_THREE_TWO:
@@ -117,7 +121,7 @@ for bar in range(s0('the_avenue'), sN('the_bridge')):
     for b in (0.0, 1.5, 3.0):
         bass_drum.add(bar, b, 0.5, 36, vel(0.62 + 0.2 * energy, 0.03))
     if not under:
-        bass_drum.add(bar, 2.25, 0.25, 36, vel(0.42, 0.04)) if bar % 2 else None
+        bass_drum.add(bar, 2.25, 0.25, 36, vel(0.58, 0.03)) if bar % 2 else None
         snare.add(bar, 1.0, 0.25, 38, vel(0.5 + 0.25 * energy, 0.04))
         snare.add(bar, 3.0, 0.25, 38, vel(0.55 + 0.25 * energy, 0.04))
         if bar % 4 == 3:
@@ -180,9 +184,9 @@ for bar in range(s0('the_avenue'), sN('the_bridge')):
 
 # the hook. Rhythm (beats from the bar start): C 1.5, Db 0.5, C 1.0, | Gb on the weak beat (beat 3.5 of the second bar... leap), F long.
 def hook(track, bar, octave, shift=0, v=0.7, width=1.0):
-    pcs = [C, Db, C, Gb, F]
-    times = [0.0, 1.5, 2.0, 3.0, 5.5]
-    durs = [1.5, 0.5, 1.0, 2.5, 2.4]
+    pcs = [C, Db, C, Gb, F, Eb, Db]
+    times = [0.0, 1.5, 2.0, 3.0, 5.5, 6.5, 7.0]
+    durs = [1.5, 0.5, 1.0, 2.5, 1.0, 0.5, 1.0]
     for pc, t, d in zip(pcs, times, durs):
         track.add(bar + int(t // 4), t % 4, d * width, p((pc + shift) % 12, octave), vel(v + (0.08 if pc == Gb else 0.0), 0.03))
 
@@ -197,7 +201,7 @@ for bar in range(int(T.SNAP_DRIFT) + 1, int(sN('the_roadblock')) - 2, 4):
     if T.SLOMO_SPIN['bar'] - 1 <= bar <= T.SNAP_SPIN:
         continue
     hook(horns, bar, 4, shift=1, v=0.78)
-    hook(horns, bar, 3, shift=1, v=0.66)
+    hook(trombones, bar, 3, shift=1, v=0.66)
 # on the bridge: horns and trombones together, the leap on the weak beat, then the fast violins join
 for bar in range(s0('the_bridge'), sN('the_bridge') - 2, 3):
     hook(horns, bar, 4, v=0.85)
@@ -209,11 +213,11 @@ for bar in range(s0('the_roadblock'), sN('the_roadblock')):
         continue
     if bar % 2 == 0:
         for b, d in ((0.0, 0.5), (1.5, 0.5)):
-            for pc in (C, Gb, Db):
-                trombones.add(bar, b, d, p(pc, 3), vel(0.8, 0.03))
+            for pc, o in ((C, 3), (Gb, 3), (Db, 4)):
+                trombones.add(bar, b, d, p(pc, o), vel(0.8, 0.03))
 # the held bar before the crash: a bare fifth-less cluster, whispered, so the crash has somewhere to land
-for pc in (C, Db, Gb):
-    trombones.add(int(T.SLOMO_SPIN['bar']) + 2, 0, 3.9, p(pc, 3), 0.35)
+for pc, o in ((C, 3), (Gb, 3), (Db, 4)):
+    trombones.add(int(T.SLOMO_SPIN['bar']) + 2, 0, 3.9, p(pc, o), 0.5)
 
 # the underpass: tremolo strings and a rising line over the second half
 rising = [C, Db, Eb, F, Gb, G, Ab, Bb]
@@ -239,18 +243,24 @@ for bar in list(range(int(T.SNAP_SPIN), sN('the_roadblock'))) + list(range(s0('t
         violins_st.add(bar, i * 0.25, 0.2, p(pc, octv), vel(0.45 + 0.01 * i, 0.04))
 
 # the cliff: the cut, then one long Gb and its high harmonic
-violins_tr.add(s0('the_cliff') + 1, 0, 6.5, p(Gb, 4), 0.28)
-violins_tr.add(s0('the_cliff') + 1, 2.0, 5.0, p(Gb, 6), 0.16)
-horns.add(s0('the_cliff') + 1, 1.0, 2.0, p(Gb, 3), 0.3)
+violins_tr.add(s0('the_cliff') + 1, 0, 24.0, p(Gb, 4), 0.4)
+violins_tr.add(s0('the_cliff') + 2, 0, 20.0, p(Gb, 6), 0.3)
+horns.add(s0('the_cliff') + 1, 1.0, 2.0, p(Gb, 3), 0.4)
 
 music = [basses, piano_low, tuba, bass_drum, timpani, snare, cymbals, sub_drop, piano, celli, bass_clarinet, horns, trombones, violins_st, violins_tr]
 
 # ---------------------------------------------------------------------------------------------------------------- sounds and places
 TOTAL_BEATS = T.B(T.END_BAR)
+tm = T.tempo_map()
+
+
+START = T.sfx_start()
 
 
 def whole(name, sound, role, **extra):
-    d = dict(name=name, instrument=sound, role=role, notes=[dict(t=0.0, d=round(TOTAL_BEATS, 3), p=60, v=1.0)], **extra)
+    """One trigger note: an effect's own clock starts at its note, which sits where the sound first speaks (timeline.sfx_start)."""
+    t0 = float(tm.beat(START[name])) if name in START else 0.0
+    d = dict(name=name, instrument=sound, role=role, notes=[dict(t=round(t0, 4), d=round(TOTAL_BEATS - t0, 3), p=60, v=1.0)], **extra)
     return d
 
 
@@ -267,7 +277,6 @@ sounds = [
 ]
 
 # ---------------------------------------------------------------------------------------------------------------- the score
-tm = T.tempo_map()
 sections = T.sections_with_seconds(tm)
 dyn = []
 for name, first, bars, energy, role in T.SECTIONS:

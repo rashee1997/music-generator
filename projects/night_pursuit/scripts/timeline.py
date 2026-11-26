@@ -80,7 +80,11 @@ def score_tempo():
 
 def tempo_map():
     import humanize as hz
-    return hz.tempo_map_for(score_tempo(), seed=SEED)
+    # The renderer builds its map from the whole score, and the map's length comes from the last note: a map sized for the default
+    # 64 beats extrapolates at its last tempo and reads seconds that are wrong by ten. One stub note as long as the cue gives the same map.
+    sc = score_tempo()
+    sc['tracks'] = [dict(notes=[dict(t=0.0, d=float(B(END_BAR)))])]
+    return hz.tempo_map_for(sc, seed=SEED)
 
 
 def seconds(bar, beat=0.0, tm=None):
@@ -94,6 +98,14 @@ def sections_with_seconds(tm=None):
         out.append(dict(name=name, role=role, energy=energy, start_bar=first, end_bar=first + bars - 1,
                         start_s=round(seconds(first, 0, tm), 3), end_s=round(seconds(first + bars, 0, tm), 3)))
     return out
+
+
+def sfx_start():
+    """Piece second at which each effect's trigger note sits. The effect's own clock starts there, and the stem gate judges an effect from
+    its onset, so a sound that is silent for its first half second would read as a part that never played."""
+    tm = tempo_map()
+    return dict(engine=0.0, wipers=0.5, siren_first=4.0, tyres=seconds(start('the_avenue'), 0, tm) + 0.1,
+                siren_second=seconds(start('the_turn'), 0, tm), crash=seconds(SLOMO_SPIN['bar'] + SLOMO_SPIN['ramp_bars'] + SLOMO_SPIN['hold_bars'] - 2, 0, tm))
 
 
 if __name__ == '__main__':
