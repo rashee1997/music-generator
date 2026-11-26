@@ -306,9 +306,9 @@ sounds = [
     whole('siren_first', 'sfx:np_siren_wail', 'fx'),
     whole('siren_second', 'sfx:np_siren_second', 'fx'),
     whole('crash', 'sfx:np_crash', 'fx'),
-    whole('rain_street', 'env:np_rain_street', 'environment', fade_in_s=2.5, fade_out_s=4.0),
-    whole('rain_awnings', 'env:np_rain_awnings', 'environment', fade_in_s=2.5, fade_out_s=4.0),
-    whole('city_far', 'env:np_city_far', 'environment', fade_in_s=3.0, fade_out_s=4.0),
+    whole('rain_street', 'env:np_rain_street', 'environment', fade_in_s=2.5, fade_out_s=0.3),
+    whole('rain_awnings', 'env:np_rain_awnings', 'environment', fade_in_s=2.5, fade_out_s=0.3),
+    whole('city_far', 'env:np_city_far', 'environment', fade_in_s=3.0, fade_out_s=0.3),
 ]
 
 # ---------------------------------------------------------------------------------------------------------------- the score
@@ -325,7 +325,7 @@ score = dict(
     space='np_street_canyon',
     mix_preset='night_pursuit_mix',
     output_targets=['stereo', 'immersive_7_1'],
-    master=dict(lufs=-16.0, true_peak=-1.5, tone='neutral', fade_out=2.5),
+    master=dict(lufs=-16.0, true_peak=-1.5, tone='neutral', fade_out=0.3),
     piece_type='night_pursuit',
     focus='melody',
     intent={'emotions': ['tense', 'dark_epic'], 'registers': ['cinematic', 'hybrid'], 'scenes': ['establish', 'build', 'chase', 'dread'],

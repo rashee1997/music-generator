@@ -1,5 +1,5 @@
 {
-  "duration_s": 171.28539682539682,
+  "duration_s": 171.28102040816327,
   "sections": [
     {
       "name": "the_stakeout",
@@ -66,13 +66,13 @@
     [
       0.0348,
       "stem.tick",
-      "rain_street",
+      "rain_awnings",
       "PASS"
     ],
     [
-      0.0464,
+      0.0348,
       "stem.tick",
-      "rain_awnings",
+      "rain_street",
       "PASS"
     ],
     [
@@ -80,6 +80,18 @@
       "stem.tick",
       "piano_low",
       "PASS"
+    ],
+    [
+      5.0598,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      9.7722,
+      "clicks",
+      "master",
+      "FAIL"
     ],
     [
       11.2617,
@@ -100,19 +112,13 @@
       "PASS"
     ],
     [
-      47.5913,
+      48.8573,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      60.7964,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      65.998,
+      51.3841,
       "clicks",
       "master",
       "FAIL"
@@ -130,7 +136,13 @@
       "PASS"
     ],
     [
-      95.0331,
+      90.1633,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      104.8231,
       "clicks",
       "master",
       "FAIL"
@@ -142,19 +154,19 @@
       "PASS"
     ],
     [
-      149.6294,
+      156.8164,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      152.1098,
+      156.9017,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      170.485,
+      170.31,
       "dropout",
       "master",
       "FAIL"

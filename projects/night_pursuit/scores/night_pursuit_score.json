@@ -134,7 +134,7 @@
   "lufs": -16.0,
   "true_peak": -1.5,
   "tone": "neutral",
-  "fade_out": 2.5
+  "fade_out": 0.3
  },
  "piece_type": "night_pursuit",
  "focus": "melody",
@@ -19596,7 +19596,7 @@
     }
    ],
    "fade_in_s": 2.5,
-   "fade_out_s": 4.0
+   "fade_out_s": 0.3
   },
   {
    "name": "rain_awnings",
@@ -19611,7 +19611,7 @@
     }
    ],
    "fade_in_s": 2.5,
-   "fade_out_s": 4.0
+   "fade_out_s": 0.3
   },
   {
    "name": "city_far",
@@ -19626,7 +19626,7 @@
     }
    ],
    "fade_in_s": 3.0,
-   "fade_out_s": 4.0
+   "fade_out_s": 0.3
   }
  ],
  "mix": {

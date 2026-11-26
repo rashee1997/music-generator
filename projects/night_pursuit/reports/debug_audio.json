@@ -1,5 +1,5 @@
 {
- "stamp": "20261126T080253",
+ "stamp": "20261126T082021",
  "project": "night_pursuit",
  "level": "FAIL",
  "sources": {
@@ -23,21 +23,21 @@
    "row": "clicks",
    "stem": null,
    "level": "FAIL",
-   "value": 6.0,
+   "value": 12.0,
    "threshold": 0.0,
    "unit": "events",
-   "safety": -6.0,
-   "detail": "6 clustered impulse event(s) (MAD), 6 LPC frame(s); 1530 event(s) rejected as a dense burst, 640 as a steep attack; max cluster span 1.497 ms"
+   "safety": -12.0,
+   "detail": "12 clustered impulse event(s) (MAD), 12 LPC frame(s); 2091 event(s) rejected as a dense burst, 1089 as a steep attack; max cluster span 1.497 ms"
   },
   {
    "row": "dropout",
    "stem": null,
    "level": "FAIL",
-   "value": 34.99999999996817,
+   "value": 69.99999999999318,
    "threshold": 20.0,
    "unit": "ms",
-   "safety": -0.75,
-   "detail": "longest hole 35 ms (limit 20-1000 ms), floor -65.0 dBFS; 1 hole(s)"
+   "safety": -2.5,
+   "detail": "longest hole 70 ms (limit 20-1000 ms), floor -65.0 dBFS; 1 hole(s)"
   }
  ],
  "advisory": [
@@ -414,14 +414,15 @@
  ],
  "domains": {
   "run": [
-   "master",
-   "stems"
+   "master"
   ],
-  "skipped": {}
+  "skipped": {
+   "stems": 74
+  }
  },
  "model": {
   "first_order": true,
-  "rows": 24,
+  "rows": 8,
   "levers": [
    {
     "id": "render.oversample",
@@ -436,6 +437,18 @@
     "text": "master oversampling before the limiter"
    },
    {
+    "id": "hf.violins_tremolo",
+    "domain": "master",
+    "kind": "hf_shelf",
+    "stem": "violins_tremolo",
+    "current": 0.0,
+    "lo": -12.0,
+    "hi": 0.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "violins_tremolo high shelf at 5500 Hz: inst_eq[\"pursuit_violins_tremolo\"]"
+   },
+   {
     "id": "hf.engine",
     "domain": "master",
     "kind": "hf_shelf",
@@ -446,18 +459,6 @@
     "step": 0.5,
     "unit": "dB",
     "text": "engine high shelf at 5500 Hz: inst_eq[\"sfx:np_engine\"]"
-   },
-   {
-    "id": "hf.tyres",
-    "domain": "master",
-    "kind": "hf_shelf",
-    "stem": "tyres",
-    "current": 0.0,
-    "lo": -12.0,
-    "hi": 0.0,
-    "step": 0.5,
-    "unit": "dB",
-    "text": "tyres high shelf at 5500 Hz: inst_eq[\"sfx:np_drift_squeal\"]"
    },
    {
     "id": "hf.wipers",
@@ -472,12 +473,24 @@
     "text": "wipers high shelf at 5500 Hz: inst_eq[\"sfx:np_wipers\"]"
    },
    {
+    "id": "hf.siren_first",
+    "domain": "master",
+    "kind": "hf_shelf",
+    "stem": "siren_first",
+    "current": 0.0,
+    "lo": -12.0,
+    "hi": 0.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "siren_first high shelf at 5500 Hz: inst_eq[\"sfx:np_siren_wail\"]"
+   },
+   {
     "id": "hf.city_far",
     "domain": "master",
     "kind": "hf_shelf",
     "stem": "city_far",
-    "current": 0.0,
-    "lo": -12.0,
+    "current": -3.0,
+    "lo": -15.0,
     "hi": 0.0,
     "step": 0.5,
     "unit": "dB",
@@ -506,42 +519,30 @@
     "step": 0.010416666666666666,
     "unit": "beats",
     "text": "rain_street written note length (mean 376 beats)"
-   },
-   {
-    "id": "note.tyres.d",
-    "domain": "stems",
-    "kind": "note_len",
-    "stem": "tyres",
-    "current": 327.78,
-    "lo": 327.71999999999997,
-    "hi": 327.84,
-    "step": 0.010416666666666666,
-    "unit": "beats",
-    "text": "tyres written note length (mean 327.78 beats)"
    }
   ]
  },
  "plan": {
-  "status": "linear",
-  "worst_safety": -6.0,
+  "status": "nothing to move",
+  "worst_safety": null,
   "deltas": {},
   "clearing": {},
   "predicted": {
    "clicks::-": [
-    -6.0,
-    -6.0
+    -12.0,
+    -12.0
    ],
    "dropout::-": [
-    -0.7499999999984084,
-    -0.7499999999984084
+    -2.499999999999659,
+    -2.499999999999659
    ],
    "loudness::-": [
     0.02,
     0.02
    ],
    "true peak::-": [
-    0.00024962847927671267,
-    0.00024962847927671267
+    0.02,
+    0.02
    ],
    "cut.hard::-": [
     2.0,
@@ -556,291 +557,102 @@
     0.0
    ],
    "master.dc::-": [
-    0.0959960056992019,
-    0.0959960056992019
-   ],
-   "stem.clipping::tyres": [
-    0.0,
-    0.0
-   ],
-   "stem.clicks::tyres": [
-    0.0,
-    0.0
-   ],
-   "stem.dropout::tyres": [
-    1.0,
-    1.0
-   ],
-   "stem.cut::tyres": [
-    2.0,
-    2.0
-   ],
-   "stem.dead::tyres": [
-    0.02,
-    0.02
+    0.09599113055143767,
+    0.09599113055143767
    ]
   },
-  "conflicts": [
-   {
-    "lever": "hf.tyres",
-    "text": "tyres high shelf at 5500 Hz: inst_eq[\"sfx:np_drift_squeal\"]",
-    "unit": "dB",
-    "feasible": [
-     54.0,
-     0.0
-    ],
-    "bounds": [
-     -12.0,
-     0.0
-    ],
-    "rows": [
-     {
-      "row": "clicks",
-      "needs": 54.0,
-      "safety": -6.0
-     }
-    ],
-    "why": "tyres high shelf at 5500 Hz: inst_eq[\"sfx:np_drift_squeal\"] cannot satisfy clicks at once: the moves that pass one row fail the other, and the bounds leave no value between"
-   }
-  ],
+  "conflicts": [],
   "closed": [
+   "clicks",
    "dropout"
   ],
   "burned": [],
-  "notes": [
-   "no admissible move improves the binding rows: every lever is burned, closed or already optimal"
-  ],
-  "experiments": [
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 0.61,
-    "moves": {
-     "hf.tyres": -6.0
-    },
-    "times": [
-     47.591,
-     60.796,
-     65.998,
-     95.033,
-     152.11
-    ],
-    "verdict": "better",
-    "robust": 0.0,
-    "proved": false
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 0.61,
-    "moves": {
-     "hf.tyres": -9.0
-    },
-    "times": [
-     47.591,
-     60.796,
-     65.998,
-     95.033,
-     152.11
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 0.61,
-    "moves": {
-     "hf.tyres": -6.0,
-     "hf.city_far": -3.0
-    },
-    "times": [
-     47.591,
-     60.796,
-     65.998,
-     95.033,
-     152.11
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 0.61,
-    "moves": {
-     "hf.tyres": -12.0
-    },
-    "times": [
-     47.591,
-     60.796,
-     65.998,
-     95.033,
-     152.11
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 0.61,
-    "moves": {
-     "hf.tyres": -6.0,
-     "hf.city_far": -6.0
-    },
-    "times": [
-     47.591,
-     60.796,
-     65.998,
-     95.033,
-     152.11
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 0.61,
-    "moves": {
-     "hf.tyres": -9.0,
-     "hf.city_far": -3.0
-    },
-    "times": [
-     47.591,
-     60.796,
-     65.998,
-     95.033,
-     152.11
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 0.61,
-    "moves": {
-     "hf.tyres": -6.0,
-     "hf.city_far": -9.0
-    },
-    "times": [
-     47.591,
-     60.796,
-     65.998,
-     95.033,
-     152.11
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 0.61,
-    "moves": {
-     "hf.tyres": -9.0,
-     "hf.city_far": -6.0
-    },
-    "times": [
-     47.591,
-     60.796,
-     65.998,
-     95.033,
-     152.11
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 0.61,
-    "moves": {
-     "hf.tyres": -9.0,
-     "hf.city_far": -9.0
-    },
-    "times": [
-     47.591,
-     60.796,
-     65.998,
-     95.033,
-     152.11
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   }
-  ]
+  "notes": [],
+  "experiments": []
  },
  "forensics": [
   {
-   "t": 47.5912,
-   "step": 0.04067,
-   "threshold": 0.02098,
-   "over_threshold_db": 5.75,
-   "z": 15.5,
-   "kind": "coincident transients",
+   "t": 5.0597,
+   "step": 0.03432,
+   "threshold": 0.02003,
+   "over_threshold_db": 4.68,
+   "z": 13.7,
+   "kind": "single source",
    "trusted": false,
-   "fit_ratio": 0.02,
+   "fit_ratio": 0.03,
    "owners": [
     {
      "stem": "wipers",
-     "share": 0.503,
-     "signed": -0.00073
+     "share": 0.933,
+     "signed": -0.0009
+    }
+   ],
+   "raw_step_fs": 0.0433,
+   "notes": [
+    {
+     "track": "wipers",
+     "pitch": null,
+     "velocity": null,
+     "onset_s": null,
+     "after_onset_ms": 0.0,
+     "written_len": null,
+     "continuous": true,
+     "layers": []
+    }
+   ]
+  },
+  {
+   "t": 9.7693,
+   "step": 0.03143,
+   "threshold": 0.02003,
+   "over_threshold_db": 3.91,
+   "z": 12.6,
+   "kind": "single source",
+   "trusted": false,
+   "fit_ratio": 0.03,
+   "owners": [
+    {
+     "stem": "wipers",
+     "share": 0.939,
+     "signed": -0.00091
+    }
+   ],
+   "raw_step_fs": 0.0439,
+   "notes": [
+    {
+     "track": "wipers",
+     "pitch": null,
+     "velocity": null,
+     "onset_s": null,
+     "after_onset_ms": 0.0,
+     "written_len": null,
+     "continuous": true,
+     "layers": []
+    }
+   ]
+  },
+  {
+   "t": 48.8573,
+   "step": 0.0245,
+   "threshold": 0.02003,
+   "over_threshold_db": 1.75,
+   "z": 9.8,
+   "kind": "coincident transients",
+   "trusted": false,
+   "fit_ratio": 0.08,
+   "owners": [
+    {
+     "stem": "wipers",
+     "share": 0.524,
+     "signed": 0.00116
     },
     {
      "stem": "engine",
-     "share": 0.257,
-     "signed": -0.00037
+     "share": 0.419,
+     "signed": 0.00093
     }
    ],
-   "raw_step_fs": 0.0473,
+   "raw_step_fs": 0.0352,
    "notes": [
     {
      "track": "engine",
@@ -865,112 +677,22 @@
    ]
   },
   {
-   "t": 60.7964,
-   "step": 0.03706,
-   "threshold": 0.02098,
-   "over_threshold_db": 4.94,
-   "z": 14.1,
-   "kind": "coincident transients",
-   "trusted": false,
-   "fit_ratio": 0.29,
-   "owners": [
-    {
-     "stem": "tyres",
-     "share": 0.58,
-     "signed": 0.00633
-    },
-    {
-     "stem": "engine",
-     "share": 0.359,
-     "signed": 0.00391
-    }
-   ],
-   "raw_step_fs": 0.0667,
-   "notes": [
-    {
-     "track": "engine",
-     "pitch": null,
-     "velocity": null,
-     "onset_s": null,
-     "after_onset_ms": 0.0,
-     "written_len": null,
-     "continuous": true,
-     "layers": []
-    },
-    {
-     "track": "tyres",
-     "pitch": null,
-     "velocity": null,
-     "onset_s": null,
-     "after_onset_ms": 0.0,
-     "written_len": null,
-     "continuous": true,
-     "layers": []
-    }
-   ]
-  },
-  {
-   "t": 65.998,
-   "step": 0.03028,
-   "threshold": 0.02098,
-   "over_threshold_db": 3.19,
-   "z": 11.5,
-   "kind": "mixed",
-   "trusted": false,
-   "fit_ratio": 0.0,
-   "owners": [
-    {
-     "stem": "tyres",
-     "share": 0.645,
-     "signed": -0.00016
-    },
-    {
-     "stem": "city_far",
-     "share": 0.251,
-     "signed": 6e-05
-    }
-   ],
-   "raw_step_fs": 0.0348,
-   "notes": [
-    {
-     "track": "tyres",
-     "pitch": null,
-     "velocity": null,
-     "onset_s": null,
-     "after_onset_ms": 0.0,
-     "written_len": null,
-     "continuous": true,
-     "layers": []
-    },
-    {
-     "track": "city_far",
-     "pitch": null,
-     "velocity": null,
-     "onset_s": null,
-     "after_onset_ms": 0.0,
-     "written_len": null,
-     "continuous": true,
-     "layers": []
-    }
-   ]
-  },
-  {
-   "t": 95.0331,
-   "step": 0.02695,
-   "threshold": 0.02098,
-   "over_threshold_db": 2.17,
-   "z": 10.3,
+   "t": 51.384,
+   "step": 0.02723,
+   "threshold": 0.02003,
+   "over_threshold_db": 2.67,
+   "z": 10.9,
    "kind": "single source",
    "trusted": false,
-   "fit_ratio": 0.2,
+   "fit_ratio": 0.05,
    "owners": [
     {
      "stem": "engine",
-     "share": 0.836,
-     "signed": 0.00506
+     "share": 0.809,
+     "signed": -0.00115
     }
    ],
-   "raw_step_fs": 0.0842,
+   "raw_step_fs": 0.0547,
    "notes": [
     {
      "track": "engine",
@@ -985,38 +707,23 @@
    ]
   },
   {
-   "t": 149.6293,
-   "step": 0.03739,
-   "threshold": 0.02098,
-   "over_threshold_db": 5.02,
-   "z": 14.3,
+   "t": 90.1632,
+   "step": 0.02326,
+   "threshold": 0.02003,
+   "over_threshold_db": 1.3,
+   "z": 9.3,
    "kind": "single source",
    "trusted": false,
-   "fit_ratio": 0.07,
+   "fit_ratio": 0.16,
    "owners": [
-    {
-     "stem": "engine",
-     "share": 0.736,
-     "signed": -0.00202
-    },
     {
      "stem": "wipers",
-     "share": 0.224,
-     "signed": -0.00062
+     "share": 0.768,
+     "signed": -0.00316
     }
    ],
-   "raw_step_fs": 0.0467,
+   "raw_step_fs": 0.045,
    "notes": [
-    {
-     "track": "engine",
-     "pitch": null,
-     "velocity": null,
-     "onset_s": null,
-     "after_onset_ms": 0.0,
-     "written_len": null,
-     "continuous": true,
-     "layers": []
-    },
     {
      "track": "wipers",
      "pitch": null,
@@ -1030,27 +737,57 @@
    ]
   },
   {
-   "t": 152.1099,
-   "step": 0.04435,
-   "threshold": 0.02098,
-   "over_threshold_db": 6.5,
-   "z": 16.9,
+   "t": 104.823,
+   "step": 0.02212,
+   "threshold": 0.02003,
+   "over_threshold_db": 0.86,
+   "z": 8.8,
+   "kind": "single source",
+   "trusted": false,
+   "fit_ratio": 0.03,
+   "owners": [
+    {
+     "stem": "wipers",
+     "share": 0.743,
+     "signed": -0.00104
+    }
+   ],
+   "raw_step_fs": 0.0638,
+   "notes": [
+    {
+     "track": "wipers",
+     "pitch": null,
+     "velocity": null,
+     "onset_s": null,
+     "after_onset_ms": 0.0,
+     "written_len": null,
+     "continuous": true,
+     "layers": []
+    }
+   ]
+  },
+  {
+   "t": 156.8164,
+   "step": 0.02059,
+   "threshold": 0.02003,
+   "over_threshold_db": 0.24,
+   "z": 8.2,
    "kind": "mixed",
    "trusted": false,
    "fit_ratio": 0.0,
    "owners": [
     {
      "stem": "city_far",
-     "share": 0.633,
-     "signed": -1e-05
+     "share": 0.543,
+     "signed": 4e-05
     },
     {
      "stem": "rain_street/water_film",
-     "share": 0.246,
-     "signed": 0.0
+     "share": 0.265,
+     "signed": -2e-05
     }
    ],
-   "raw_step_fs": 0.0458,
+   "raw_step_fs": 0.0217,
    "notes": [
     {
      "track": "rain_street",
@@ -1073,21 +810,73 @@
      "layers": []
     }
    ]
+  },
+  {
+   "t": 156.9017,
+   "step": 0.04174,
+   "threshold": 0.02003,
+   "over_threshold_db": 6.38,
+   "z": 16.7,
+   "kind": "coincident transients",
+   "trusted": false,
+   "fit_ratio": 0.0,
+   "owners": [
+    {
+     "stem": "siren_first",
+     "share": 0.36,
+     "signed": -1e-05
+    },
+    {
+     "stem": "violins_tremolo",
+     "share": 0.264,
+     "signed": 1e-05
+    },
+    {
+     "stem": "rain_street/water_film",
+     "share": 0.224,
+     "signed": 1e-05
+    }
+   ],
+   "raw_step_fs": 0.0428,
+   "notes": [
+    {
+     "track": "siren_first",
+     "pitch": null,
+     "velocity": null,
+     "onset_s": null,
+     "after_onset_ms": 0.0,
+     "written_len": null,
+     "continuous": true,
+     "layers": []
+    },
+    {
+     "track": "rain_street",
+     "pitch": null,
+     "velocity": null,
+     "onset_s": null,
+     "after_onset_ms": 0.0,
+     "written_len": null,
+     "continuous": true,
+     "layers": []
+    }
+   ]
   }
  ],
  "notes": [
-  "clicks: sham replay (no change) reproduces the gate's 6 event(s) exactly (decomposition R^2 0.969); counterfactuals below are priced on a model that passes its own test",
-  "clicks: model resolution 0.6 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
-  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.97); gains bass_clarinet 1.40, bass_drum 0.97, basses 1.79, celli 1.12, city_far 4.10, crash 0.19, cymbals 0.72, engine 2.65, horns 0.82, piano 1.13, piano_low 1.73, rain_awnings 0.40, rain_street 4.19, snare 0.90, sub_drop 2.18, timpani 0.78, trombones 0.76, tuba 1.42, tyres 1.38, violins_staccato 0.84, violins_tremolo 0.67, wipers 2.25",
-  "event 47.591s [coincident transients] wipers 50%, engine 26%; step 0.0407 vs threshold 0.0210 (+5.8 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
-  "event 60.796s [coincident transients] tyres 58%, engine 36%; step 0.0371 vs threshold 0.0210 (+4.9 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
-  "event 65.998s [mixed] tyres 64%, city_far 25%; step 0.0303 vs threshold 0.0210 (+3.2 dB over); nearest onset tyres pNone vNone +0 ms  (fit unreliable)",
-  "event 95.033s [single source] engine 84%; step 0.0270 vs threshold 0.0210 (+2.2 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
-  "event 149.629s [single source] engine 74%, wipers 22%; step 0.0374 vs threshold 0.0210 (+5.0 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
-  "event 152.110s [mixed] city_far 63%, rain_street/water_film 25%; step 0.0444 vs threshold 0.0210 (+6.5 dB over); nearest onset rain_street pNone vNone +0 ms  (fit unreliable)",
-  "clicks: cutting the band of engine is NOT monotone (replay: -6 dB -> 6 event(s), -3 dB -> 7 event(s), -9 dB -> 7 event(s), -12 dB -> 7 event(s) against 6 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
-  "clicks: cutting the band of wipers is NOT monotone (replay: -3 dB -> 9 event(s), -6 dB -> 9 event(s), -9 dB -> 10 event(s), -12 dB -> 11 event(s) against 6 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
-  "dropout has 1 event(s) at 170.485s; the transient is rain_street 76%, rain_awnings 10%, city_far 9%",
-  "risk closure: the levers that move this row belong to tyres, so every row of those stems was loaded as a constraint before the plan was solved"
+  "clicks: the sham replay does NOT reproduce the gate (model 12 vs gate 8; missing at [], extra at [160.877, 164.582, 164.983]): every candidate below is UNVERIFIED and is shown for direction only",
+  "clicks: model resolution 0.5 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
+  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.98); gains bass_clarinet 1.28, bass_drum 0.98, basses 1.82, celli 1.12, city_far 4.15, crash 0.19, cymbals 0.67, engine 2.66, horns 0.83, piano 1.10, piano_low 1.71, rain_street 4.23, snare 0.91, sub_drop 2.03, timpani 0.76, trombones 0.77, tuba 1.37, tyres 1.39, violins_staccato 0.84, violins_tremolo 0.67, wipers 2.26",
+  "event 5.060s [single source] wipers 93%; step 0.0343 vs threshold 0.0200 (+4.7 dB over); nearest onset wipers pNone vNone +0 ms  (fit unreliable)",
+  "event 9.769s [single source] wipers 94%; step 0.0314 vs threshold 0.0200 (+3.9 dB over); nearest onset wipers pNone vNone +0 ms  (fit unreliable)",
+  "event 48.857s [coincident transients] wipers 52%, engine 42%; step 0.0245 vs threshold 0.0200 (+1.8 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
+  "event 51.384s [single source] engine 81%; step 0.0272 vs threshold 0.0200 (+2.7 dB over); nearest onset engine pNone vNone +0 ms  (fit unreliable)",
+  "event 90.163s [single source] wipers 77%; step 0.0233 vs threshold 0.0200 (+1.3 dB over); nearest onset wipers pNone vNone +0 ms  (fit unreliable)",
+  "event 104.823s [single source] wipers 74%; step 0.0221 vs threshold 0.0200 (+0.9 dB over); nearest onset wipers pNone vNone +0 ms  (fit unreliable)",
+  "event 156.816s [mixed] city_far 54%, rain_street/water_film 26%; step 0.0206 vs threshold 0.0200 (+0.2 dB over); nearest onset rain_street pNone vNone +0 ms  (fit unreliable)",
+  "event 156.902s [coincident transients] siren_first 36%, violins_tremolo 26%, rain_street/water_film 22%; step 0.0417 vs threshold 0.0200 (+6.4 dB over); nearest onset siren_first pNone vNone +0 ms  (fit unreliable)",
+  "clicks: cutting the band of engine is NOT monotone (replay: -3 dB -> 14 event(s), -6 dB -> 14 event(s), -9 dB -> 14 event(s), -12 dB -> 15 event(s) against 12 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
+  "clicks: cutting the band of wipers is NOT monotone (replay: -6 dB -> 12 event(s), -9 dB -> 12 event(s), -3 dB -> 13 event(s), -12 dB -> 14 event(s) against 12 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
+  "clicks: cutting the band of rain_street/water_film is NOT monotone (replay: -3 dB -> 12 event(s), -6 dB -> 12 event(s), -9 dB -> 13 event(s), -12 dB -> 13 event(s) against 12 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
+  "dropout has 1 event(s) at 170.310s; the transient is rain_street 64%, city_far 13%, engine 11%"
  ]
 }

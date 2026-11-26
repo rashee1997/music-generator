@@ -36087,7 +36087,7 @@
    "start_s": 60.199,
    "end_s": 62.699,
    "after": "bypass",
-   "edge_ms": 40.0
+   "edge_ms": 10.0
   },
   {
    "type": "filter_sweep",
@@ -36098,7 +36098,7 @@
    "start_s": 62.699,
    "end_s": 68.561,
    "after": "bypass",
-   "edge_ms": 40.0
+   "edge_ms": 10.0
   },
   {
    "type": "filter_sweep",
@@ -36109,7 +36109,7 @@
    "start_s": 68.561,
    "end_s": 69.161,
    "after": "bypass",
-   "edge_ms": 40.0
+   "edge_ms": 10.0
   },
   {
    "type": "filter_sweep",
@@ -36120,7 +36120,7 @@
    "start_s": 115.435,
    "end_s": 117.935,
    "after": "bypass",
-   "edge_ms": 40.0
+   "edge_ms": 10.0
   },
   {
    "type": "filter_sweep",
@@ -36131,7 +36131,7 @@
    "start_s": 117.935,
    "end_s": 120.944,
    "after": "bypass",
-   "edge_ms": 40.0
+   "edge_ms": 10.0
   },
   {
    "type": "filter_sweep",
@@ -36142,7 +36142,7 @@
    "start_s": 120.944,
    "end_s": 121.544,
    "after": "bypass",
-   "edge_ms": 40.0
+   "edge_ms": 10.0
   }
  ],
  "sources": [

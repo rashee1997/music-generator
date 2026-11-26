@@ -101,11 +101,11 @@ def slowmo_fx(cutoff_hz, gain_db=0.0):
     chain = []
     for a, b in SLOMO:
         chain.append(dict(type='filter_sweep', kind='lowpass', f_start_hz=14000.0, f_end_hz=float(cutoff_hz), q=0.8, start_s=round(a, 3),
-                          end_s=round(a + 2.5, 3), after='bypass', edge_ms=40.0))
+                          end_s=round(a + 2.5, 3), after='bypass', edge_ms=10.0))
         chain.append(dict(type='filter_sweep', kind='lowpass', f_start_hz=float(cutoff_hz), f_end_hz=float(cutoff_hz), q=0.8,
-                          start_s=round(a + 2.5, 3), end_s=round(b - 0.6, 3), after='bypass', edge_ms=40.0))
+                          start_s=round(a + 2.5, 3), end_s=round(b - 0.6, 3), after='bypass', edge_ms=10.0))
         chain.append(dict(type='filter_sweep', kind='lowpass', f_start_hz=float(cutoff_hz), f_end_hz=14000.0, q=0.8, start_s=round(b - 0.6, 3),
-                          end_s=round(b, 3), after='bypass', edge_ms=40.0))
+                          end_s=round(b, 3), after='bypass', edge_ms=10.0))
         if gain_db:
             chain.append(dict(type='pedalboard', plugin='Gain', params=dict(gain_db=float(gain_db)), start_s=round(a, 3), end_s=round(b, 3), edge_ms=400.0))
     return chain
@@ -343,9 +343,9 @@ OCC2 = [(T_UNDER + 4.0, T_UNDER + 7.0), (T_ROAD + 18.0, T_ROAD + 20.0)]       # 
 def occlusion_fx(windows, cutoff=900.0):
     chain = []
     for a, b in windows:
-        chain += [dict(type='filter_sweep', kind='lowpass', f_start_hz=12000.0, f_end_hz=cutoff, q=0.7, start_s=round(a, 3), end_s=round(a + 0.5, 3), after='bypass', edge_ms=40.0),
-                  dict(type='filter_sweep', kind='lowpass', f_start_hz=cutoff, f_end_hz=cutoff, q=0.7, start_s=round(a + 0.5, 3), end_s=round(b - 0.5, 3), after='bypass', edge_ms=40.0),
-                  dict(type='filter_sweep', kind='lowpass', f_start_hz=cutoff, f_end_hz=12000.0, q=0.7, start_s=round(b - 0.5, 3), end_s=round(b, 3), after='bypass', edge_ms=40.0)]
+        chain += [dict(type='filter_sweep', kind='lowpass', f_start_hz=12000.0, f_end_hz=cutoff, q=0.7, start_s=round(a, 3), end_s=round(a + 0.5, 3), after='bypass', edge_ms=10.0),
+                  dict(type='filter_sweep', kind='lowpass', f_start_hz=cutoff, f_end_hz=cutoff, q=0.7, start_s=round(a + 0.5, 3), end_s=round(b - 0.5, 3), after='bypass', edge_ms=10.0),
+                  dict(type='filter_sweep', kind='lowpass', f_start_hz=cutoff, f_end_hz=12000.0, q=0.7, start_s=round(b - 0.5, 3), end_s=round(b, 3), after='bypass', edge_ms=10.0)]
     return chain
 
 
@@ -458,7 +458,7 @@ write('sfx', 'np_crash', dict(
     sources=['car_crash_impact', 'ESTIMATE: no collision recording was measured; the plate modes, the tear and the glass rate are starting values']))
 
 # ================================================================================================ rain and the city
-RAIN_FX = slowmo_fx(4500.0, 0.0)
+RAIN_FX = []                                        # water does not pitch or filter down convincingly: the rain stays, the music and the car slow
 begin('engine')
 write('environments', 'np_rain_street', dict(
     description='Heavy rain at 30 mm/h on a wet asphalt street at night: the patter of drops on the road, a film of water hissing, all round.',

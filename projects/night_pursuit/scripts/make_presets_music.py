@@ -150,9 +150,9 @@ write('spaces', SPACE, dict(
                      late=dict(enabled=True, rt60_s=1.1, hf_decay=0.5, level_db=-21.0, count=8, spread_deg=90.0, rise_s=0.02, seed=2611),
                      ),
     scenes=[
-        dict(anchor=dict(section='under_the_bridge'), transition_s=3.0,
+        dict(anchor=dict(section='under_the_bridge'), transition_s=6.0,
              space_overrides=dict(geometry=UNDERPASS, late=dict(rt60_s=2.5, level_db=-12.0, hf_decay=0.45))),
-        dict(anchor=dict(section='the_bridge'), transition_s=3.0,
+        dict(anchor=dict(section='the_bridge'), transition_s=6.0,
              space_overrides=dict(geometry=BRIDGE, late=dict(rt60_s=0.6, level_db=-28.0, hf_decay=0.6))),
         dict(anchor=dict(section='the_cliff'), transition_s=2.0,
              space_overrides=dict(geometry=dict(STREET, listener=dict(x=9.0, y=60.0, z=1.2)), late=dict(rt60_s=1.1, level_db=-21.0, hf_decay=0.5))),
