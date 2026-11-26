@@ -1,0 +1,6 @@
+=== MUSIC21 SYMBOLIC MUSICOLOGY REPORT ===
+[INFO] music21_tonality           modal center analyzed as F major (correlation 0.48)
+[PASS] music21_bass_register      bass anchored naturally at MIDI 24 - 35
+[PASS] music21_voice_separation   clean vertical register separation between bass and lead
+[PASS] music21_melodic_contour    12 unique pitch classes, ambitus 11 semitones (34% rising motion)
+[PASS] music21_harmonic_rhythm    3932 vertical harmonic slices analyzed across multi-track arrangement

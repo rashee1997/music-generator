@@ -78,7 +78,7 @@
       "name": "the_bumps",
       "start_s": 117.636,
       "end_s": 139.888,
-      "energy": 0.95,
+      "energy": 1.0,
       "role": "peak",
       "action": "Inside the Ferrari on a flyover deck: a thump at every joint at 150 km per hour.",
       "music": "the pulse locks to the joints; the horns and trombones play the hook together"
@@ -87,7 +87,7 @@
       "name": "the_flyover",
       "start_s": 139.888,
       "end_s": 165.785,
-      "energy": 1.0,
+      "energy": 0.8,
       "role": "peak",
       "action": "The edge: the Ferrari jumps in slow motion and lands; the Lamborghini loses the road.",
       "music": "a collapse to a heartbeat and a pedal in the slow motion; a drop on the landing; the solo violin carries the hook an octave up"

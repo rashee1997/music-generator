@@ -201,6 +201,7 @@ mix['immersive'] = dict(enabled=True, engine='hoa_bus', order=5, anchor_max_span
                         height_by_role=dict(melody=0.0, lead=0.0, vocal=0.0, pad=0.0, texture=0.0, environment=0.0, chord=0.0, bass=0.0, drum=0.0,
                                             percussion=0.0, drone=0.0, ostinato=0.0, arp=0.0, counter=0.0, fx=0.0),
                         max_elevation=70.0, min_height_tracks=2, stereo_decode='speakers')
+mix['inst_eq'] = dict(solo_violin=[dict(type='peak', f=3536, gain=-4.0, q=1.0)], snare=[dict(type='peak', f=3536, gain=-1.5, q=1.0)])      # the gate's own advice, 11.4 dB and 6.8 dB over the mids at 2.5-5 kHz
 mix['lead_carve'] = dict(enabled=True, from_intent=True, roles=['pad', 'texture', 'chord', 'arp', 'counter', 'environment'], ratio=1.6, threshold_db=-34.0, attack_ms=100.0, release_ms=1500.0)
 mix['sidechain'] = dict(mode='legacy', band_hz=[250.0, 3800.0], residual=0.3, env_plateau=True)
 mix['dynamics'] = dict(engine='pedalboard', knee_db=0.0, detector='peak', stereo_link=True, lookahead_ms=0.0, parallel=1.0)

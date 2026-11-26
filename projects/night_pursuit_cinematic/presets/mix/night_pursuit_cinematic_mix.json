@@ -792,5 +792,23 @@
     "threshold_db": -34.0,
     "attack_ms": 100.0,
     "release_ms": 1500.0
+  },
+  "inst_eq": {
+    "solo_violin": [
+      {
+        "type": "peak",
+        "f": 3536,
+        "gain": -4.0,
+        "q": 1.0
+      }
+    ],
+    "snare": [
+      {
+        "type": "peak",
+        "f": 3536,
+        "gain": -1.5,
+        "q": 1.0
+      }
+    ]
   }
 }

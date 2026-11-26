@@ -29,8 +29,8 @@ SECTIONS = [
     ('the_chase',      23, 20, 0.90, 'build',     'chase'),
     ('the_tunnel',     43, 14, 0.80, 'peak',      'tunnel'),
     ('the_helicopter', 57, 14, 0.80, 'peak',      'aerial'),
-    ('the_bumps',      71, 14, 0.95, 'peak',      'flyover'),
-    ('the_flyover',    85, 14, 1.00, 'peak',      'flyover'),
+    ('the_bumps',      71, 14, 1.00, 'peak',      'flyover'),
+    ('the_flyover',    85, 14, 0.80, 'peak',      'flyover'),
     ('the_escape',     99, 12, 0.50, 'release',   'street'),
 ]
 END_BAR = SECTIONS[-1][1] + SECTIONS[-1][2]

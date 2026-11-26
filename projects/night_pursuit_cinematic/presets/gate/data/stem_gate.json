@@ -2,42 +2,42 @@
   "meta": {
     "stage": "stem",
     "mode": "full",
-    "fails": 1,
+    "fails": 0,
     "warns": 0,
     "rows": 249,
     "profile": "night_pursuit_cinematic",
-    "total_ms": 27569.907040000544,
+    "total_ms": 3541.5924490007455,
     "timings": {
-      "bass_clarinet": 642.4737960005587,
-      "bass_drum": 1346.4556049984822,
-      "basses": 3547.9059399986,
-      "bumps": 1337.5511379999807,
-      "celli": 1958.0076220008777,
-      "choir": 8266.660361001414,
-      "city_far": 2011.6634289988724,
-      "crash": 1045.6003940016672,
-      "cymbals": 941.3882049993845,
-      "ferrari": 867.5676399980148,
-      "helicopter": 1149.703450002562,
-      "horns": 1921.3613329993677,
-      "lamborghini": 1059.3389109999407,
-      "landing": 1306.534373001341,
-      "mustang": 914.8820670015994,
-      "piano": 2348.384830998839,
-      "piano_low": 2530.781907000346,
-      "porsche": 1041.454739002802,
-      "siren_first": 1097.304423998139,
-      "siren_second": 868.8603369992052,
-      "snare": 1093.1622349999088,
-      "solo_violin": 2922.20601200097,
-      "sub_drop": 2990.1319230011723,
-      "sub_pulse": 1459.289420999994,
-      "taiko": 1884.6162089976133,
-      "timpani": 973.5708609987341,
-      "trombones": 3707.0913649986323,
-      "tuba": 2752.0368699988467,
-      "violins_staccato": 3499.357857999712,
-      "violins_tremolo": 4488.821255999937
+      "bass_clarinet": 0.0,
+      "bass_drum": 0.0,
+      "basses": 0.0,
+      "bumps": 0.0,
+      "celli": 0.0,
+      "choir": 0.0,
+      "city_far": 0.0,
+      "crash": 0.0,
+      "cymbals": 0.0,
+      "ferrari": 1119.3463579984382,
+      "helicopter": 1255.11954600006,
+      "horns": 0.0,
+      "lamborghini": 1254.8652040022716,
+      "landing": 0.0,
+      "mustang": 913.4138710032857,
+      "piano": 0.0,
+      "piano_low": 0.0,
+      "porsche": 0.0,
+      "siren_first": 0.0,
+      "siren_second": 0.0,
+      "snare": 0.0,
+      "solo_violin": 0.0,
+      "sub_drop": 0.0,
+      "sub_pulse": 0.0,
+      "taiko": 0.0,
+      "timpani": 0.0,
+      "trombones": 0.0,
+      "tuba": 0.0,
+      "violins_staccato": 0.0,
+      "violins_tremolo": 0.0
     },
     "workers": 3,
     "metrics": [
@@ -1794,27 +1794,25 @@
         "row": "stem.dead",
         "stage": "stem",
         "stem": "helicopter",
-        "level": "FAIL",
-        "value": 30.91843689073194,
+        "level": "PASS",
+        "value": 0.0,
         "unit": "dB",
         "threshold": 12.0,
-        "margin": 18.91843689073194,
-        "worst_times_s": [
-          72.228
-        ],
+        "margin": -12.0,
+        "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"helicopter\": own median -100.9 dBFS, worst section shortfall 30.9 dB (limit 12 dB), active sections 1; all sections silent",
-        "fail": true,
+        "detail": "stem \"helicopter\": own median -16.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "fail": false,
         "table": [
           {
             "section": "the_tunnel",
             "start_s": 72.228,
-            "measured_db": -100.92,
-            "expected_db": -100.92,
+            "measured_db": -16.27,
+            "expected_db": -16.27,
             "dyn": 0.8
           }
         ],
-        "dead": true
+        "dead": false
       },
       {
         "row": "stem.dc",
@@ -2046,11 +2044,11 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6518 event(s) rejected as a dense burst, 649 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6926 event(s) rejected as a dense burst, 668 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 6518,
-        "attacks_ignored": 649,
+        "rejected": 6926,
+        "attacks_ignored": 668,
         "max_cluster_span_ms": 1.4965986394557824
       },
       {
@@ -2064,7 +2062,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -58.7 dBFS; 0 hole(s)",
+        "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -58.6 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -2125,14 +2123,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"lamborghini\": own median -20.9 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"lamborghini\": own median -20.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -20.89,
-            "expected_db": -20.89,
+            "measured_db": -20.74,
+            "expected_db": -20.74,
             "dyn": 0.75
           }
         ],
@@ -2325,7 +2323,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.4 dBFS; 0 hole(s)",
+        "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -150.4 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -2385,14 +2383,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"mustang\": own median -18.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"mustang\": own median -19.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -18.69,
-            "expected_db": -18.69,
+            "measured_db": -19.66,
+            "expected_db": -19.66,
             "dyn": 0.75
           }
         ],
@@ -4911,8 +4909,8 @@
       }
     ],
     "duration_s": 195.62045351473924,
-    "cached_stems": 0,
-    "measured_stems": 30
+    "cached_stems": 26,
+    "measured_stems": 4
   },
   "rows": [
     {
@@ -5361,9 +5359,9 @@
       "detail": "stem \"helicopter\": not applied: a one-shot effect stem is a sequence of triggers, not a pulse to hold still"
     },
     {
-      "level": "FAIL",
+      "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"helicopter\": own median -100.9 dBFS, worst section shortfall 30.9 dB (limit 12 dB), active sections 1; all sections silent"
+      "detail": "stem \"helicopter\": own median -16.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "PASS",
@@ -5418,12 +5416,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6518 event(s) rejected as a dense burst, 649 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6926 event(s) rejected as a dense burst, 668 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -58.7 dBFS; 0 hole(s)"
+      "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -58.6 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5443,7 +5441,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"lamborghini\": own median -20.9 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"lamborghini\": own median -20.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -5503,7 +5501,7 @@
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.4 dBFS; 0 hole(s)"
+      "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -150.4 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5523,7 +5521,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"mustang\": own median -18.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"mustang\": own median -19.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "PASS",

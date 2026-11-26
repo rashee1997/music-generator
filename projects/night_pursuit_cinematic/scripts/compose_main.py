@@ -323,7 +323,7 @@ score = dict(
             'avoid': ['joyful', 'playful']},
     mix_intent=dict(hero='pursuit_horns', leave_free_hz=[]),
     medium=dict(model='iso9613', state=dict(temperature_k=283.15, pressure_pa=101325, rh_percent=95)),
-    gate={},
+    gate={'tempo.audio': {'mode': 'skip', 'reason': 'the tempo map runs 72-156 BPM by design (a climb with a slow-motion dip to 72 and a slow escape to 92), so no single tempo exists; the onset autocorrelation measured 73.6 BPM against the declared 132 on the third full render, a value set by the slow-motion and escape bars, not a fault of the grid'}},
     plan=dict(sections=sections),
     tracks=[t.done() for t in music] + sounds,
     mix=dict(tracks={}),

@@ -1,0 +1,706 @@
+{
+ "stamp": "20261126T112036",
+ "project": "night_pursuit_cinematic",
+ "level": "FAIL",
+ "sources": {
+  "score": "/home/user/music-generator/projects/night_pursuit_cinematic/scores/night_pursuit_cinematic_score.json",
+  "gate_data": [
+   "level.json",
+   "rows.json",
+   "section_energy.json",
+   "spectrogram.json",
+   "stem_gate.json",
+   "stem_levels.json",
+   "stereo.json",
+   "waveform.json"
+  ],
+  "stems": "30 processed stems from .cache/mix",
+  "master": "out/_draft_master.wav",
+  "verdict": "2026-11-26T11:20:13Z"
+ },
+ "binding": [
+  {
+   "row": "dropout",
+   "stem": null,
+   "level": "FAIL",
+   "value": 30.000000000001137,
+   "threshold": 20.0,
+   "unit": "ms",
+   "safety": -0.5,
+   "detail": "longest hole 30 ms (limit 20-1000 ms), floor -65.6 dBFS; 1 hole(s)"
+  },
+  {
+   "row": "tempo.audio",
+   "stem": null,
+   "level": "FAIL",
+   "value": 58.35398486181295,
+   "threshold": 2.64,
+   "unit": "BPM",
+   "safety": -55.714,
+   "detail": "measured 73.6 BPM vs 132.0 (tolerance 2.6) from the onset-envelope autocorrelation (peak 4.3x the median); beat tracker said 73.8; four-quarter drift 23.7 BPM reported, not decisive"
+  },
+  {
+   "row": "section.energy",
+   "stem": null,
+   "level": "FAIL",
+   "value": 0.34731161595484505,
+   "threshold": 0.5,
+   "unit": "rho",
+   "safety": 0.7634,
+   "detail": "Spearman rho 0.35 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)"
+  }
+ ],
+ "advisory": [
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  }
+ ],
+ "domains": {
+  "run": [
+   "master"
+  ],
+  "skipped": {
+   "stems": 112
+  }
+ },
+ "model": {
+  "first_order": true,
+  "rows": 8,
+  "levers": [
+   {
+    "id": "render.oversample",
+    "domain": "master",
+    "kind": "oversample",
+    "stem": null,
+    "current": 1.0,
+    "lo": 1.0,
+    "hi": 8.0,
+    "step": 1.0,
+    "unit": "x",
+    "text": "master oversampling before the limiter"
+   },
+   {
+    "id": "note.city_far.d",
+    "domain": "master",
+    "kind": "note_len",
+    "stem": "city_far",
+    "current": 440.0,
+    "lo": 439.94,
+    "hi": 440.06,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "city_far written note length (mean 440 beats)"
+   }
+  ]
+ },
+ "plan": {
+  "status": "nothing to move",
+  "worst_safety": null,
+  "deltas": {},
+  "clearing": {},
+  "predicted": {
+   "dropout::-": [
+    -0.5000000000000568,
+    -0.5000000000000568
+   ],
+   "clicks::-": [
+    0.0,
+    0.0
+   ],
+   "loudness::-": [
+    0.02,
+    0.02
+   ],
+   "true peak::-": [
+    0.0002494233580594418,
+    0.0002494233580594418
+   ],
+   "cut.hard::-": [
+    2.0,
+    2.0
+   ],
+   "end.abrupt::-": [
+    0.02,
+    0.02
+   ],
+   "clipping::-": [
+    0.0,
+    0.0
+   ],
+   "master.dc::-": [
+    0.09883310493734433,
+    0.09883310493734433
+   ]
+  },
+  "conflicts": [],
+  "closed": [
+   "dropout"
+  ],
+  "burned": [],
+  "notes": [],
+  "experiments": []
+ },
+ "forensics": [],
+ "notes": [
+  "dropout has 1 event(s) at 192.325s; the transient is city_far 46%, basses 35%, bumps 11%",
+  "tempo.audio: no domain module examines this row yet",
+  "section.energy: no domain module examines this row yet"
+ ]
+}

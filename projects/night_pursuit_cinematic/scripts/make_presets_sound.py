@@ -103,7 +103,7 @@ def car_keys(car):
     sp = S('spotted')
     keys = []
     if car == 'ferrari':
-        keys += [(0.0, 180.0, 1.2), (sp - 1.0, 180.0, 1.2)] + passby(sp + 3.5) + [(S('the_chase') + 3.0, 0.0, 12.0), (S('the_tunnel') - 1.0, 0.0, 12.0),
+        keys += [(0.0, 180.0, 1.2), (sp - 1.0, 180.0, 1.2)] + passby(sp + 5.2) + [(S('the_chase') + 3.0, 0.0, 12.0), (S('the_tunnel') - 1.0, 0.0, 12.0),
                  (S('the_tunnel') + 6.0, 0.0, 10.0), (S('the_helicopter') + 2.0, 12.0, 70.0), (E_('the_helicopter') - 2.0, 12.0, 70.0),
                  (S('the_bumps') + 2.0, 180.0, 1.2), (S('the_flyover') - 1.0, 180.0, 1.2), (S('the_flyover') + 2.0, 0.0, 12.0), (EV['evade'] + 1.0, 0.0, 14.0),
                  (EV['end'], 0.0, 150.0)]
@@ -144,7 +144,7 @@ for car in ('ferrari', 'lamborghini', 'mustang', 'porsche'):
     v_of = lambda t: cars.interp(list(zip(T_, d['v'])), t)                   # noqa: E731
     load = lambda t: cars.interp(list(zip(T_, d['load'])), t)                # noqa: E731
     f_idle = cars.firing_hz(car, c['idle'])
-    ending = lambda t: (-90.0 * smooth((t - (t_end - 0.8)) / 0.8)) if t > t_end - 0.8 else 0.0     # noqa: E731  the engine dies or the car leaves
+    ending = lambda t: (-90.0 * smooth((t - (t_end - 2.5)) / 2.5)) if t > t_end - 2.5 else 0.0     # noqa: E731  the engine dies or the car leaves
     fade_in = lambda t: -90.0 * (1.0 - smooth((t - OFF) / 0.4)) if t - OFF < 0.4 else 0.0           # noqa: E731
 
     def pitch(t, rpm=rpm, c=c, f=None):
@@ -347,7 +347,7 @@ write('sfx', 'np_bumps', dict(
         dict(name='deck_hum', gain_db=-26.0, excite=dict(kind='noise', color='brown'), resonator=dict(kind='bandpass', band=[40, 300], order=2), events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -6.0 * (1.0 - smooth((t - t_a) / 2.0)) * 0.0 - 4.0, t_a, t_b, 0.5))]))]),
     role='fx', gain_db=CAR_LEVEL_DB + 2.0, reverb=0.04,
-    spatial=dict(azimuth=180.0, elevation=0.0, distance=1.3, space=SPACE, binaural=True, kind='spot'),
+    spatial=dict(azimuth=180.0, elevation=25.0, distance=1.3, space=SPACE, binaural=True, kind='spot'),
     eq=[dict(type='hp', f=30.0), dict(type='lp', f=6000.0)],
     sources=['bridge_expansion_joint', 'ESTIMATE: joint spacing, the two modes and the levels are starting values']))
 
