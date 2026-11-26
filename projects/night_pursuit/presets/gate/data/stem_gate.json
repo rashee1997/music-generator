@@ -6,25 +6,25 @@
     "warns": 0,
     "rows": 202,
     "profile": "night_pursuit",
-    "total_ms": 4699.557914999787,
+    "total_ms": 4160.265358999823,
     "timings": {
       "bass_clarinet": 0.0,
       "bass_drum": 0.0,
-      "basses": 3078.380317000665,
+      "basses": 0.0,
       "celli": 0.0,
       "city_far": 0.0,
       "crash": 0.0,
       "cymbals": 0.0,
       "engine": 0.0,
       "horns": 0.0,
-      "piano": 2679.2846359994655,
+      "piano": 0.0,
       "piano_low": 0.0,
       "rain_awnings": 0.0,
-      "rain_street": 0.0,
+      "rain_street": 2589.617524999994,
       "siren_first": 0.0,
       "siren_second": 0.0,
       "snare": 0.0,
-      "sub_drop": 2703.2329060002667,
+      "sub_drop": 0.0,
       "timpani": 0.0,
       "trombones": 0.0,
       "tuba": 0.0,
@@ -2133,18 +2133,18 @@
         "stage": "stem",
         "stem": "rain_street",
         "level": "PASS",
-        "value": 1.4536950614387005e-07,
+        "value": 1.207383976680784e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009998546304938562,
+        "margin": -0.000999879261602332,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"rain_street\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          9.61579456820869e-10,
-          1.4123143012044744e-09
+          9.973338827975013e-10,
+          1.0355754191232044e-09
         ],
-        "drift": 1.4536950614387005e-07
+        "drift": 1.207383976680784e-07
       },
       {
         "row": "stem.clipping",
@@ -2171,11 +2171,11 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"rain_street\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 148 event(s) rejected as a dense burst, 164 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"rain_street\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 146 event(s) rejected as a dense burst, 151 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 148,
-        "attacks_ignored": 164,
+        "rejected": 146,
+        "attacks_ignored": 151,
         "max_cluster_span_ms": 1.4965986394557824
       },
       {
@@ -2189,7 +2189,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"rain_street\": longest hole 0 ms (limit 20-1000 ms), floor -98.2 dBFS; 0 hole(s)",
+        "detail": "stem \"rain_street\": longest hole 0 ms (limit 20-1000 ms), floor -101.2 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -2205,14 +2205,14 @@
         "calibrated": false,
         "detail": "stem \"rain_street\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          18.3,
-          17.0,
-          13.8,
-          14.3,
-          20.4,
-          18.9,
-          18.0,
-          18.1
+          21.4,
+          12.9,
+          19.8,
+          13.5,
+          14.7,
+          16.9,
+          23.5,
+          20.6
         ],
         "exempted": []
       },
@@ -2237,24 +2237,24 @@
         "stage": "stem",
         "stem": "rain_street",
         "level": "PASS",
-        "value": 0.0550352724009394,
+        "value": 0.05073647799723828,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": -0.29496472759906056,
+        "margin": -0.2992635220027617,
         "worst_times_s": [
           0.0348
         ],
         "calibrated": false,
-        "detail": "stem \"rain_street\": onset autocorrelation 0.06 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 140 strong onset(s) of 1541, 58 on the grid, IOI CV 1.017; peak rise 13.49 dB at those onsets over 140 onset(s) (min 3); tempogram peak ratio 0.72, PLP peak ratio 1.00",
+        "detail": "stem \"rain_street\": onset autocorrelation 0.05 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 305 strong onset(s) of 1677, 120 on the grid, IOI CV 0.926; peak rise 13.28 dB at those onsets over 305 onset(s) (min 3); tempogram peak ratio 0.72, PLP peak ratio 1.00",
         "periodic": false,
         "period_ms": 92.87981859410431,
-        "events": 140,
-        "cv": 1.0166382242086067,
-        "grid_matched": 58,
-        "tempogram_ratio": 0.7194089745355616,
-        "plp_ratio": 0.9999999999958737,
-        "rise_db": 13.494,
-        "rise_onsets": 140
+        "events": 305,
+        "cv": 0.9258666713853205,
+        "grid_matched": 120,
+        "tempogram_ratio": 0.7203962421202069,
+        "plp_ratio": 0.9999999999963217,
+        "rise_db": 13.275,
+        "rise_onsets": 305
       },
       {
         "row": "stem.dead",
@@ -2267,63 +2267,63 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"rain_street\": own median -52.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve",
+        "detail": "stem \"rain_street\": own median -55.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_stakeout",
             "start_s": 0.0,
-            "measured_db": -52.99,
-            "expected_db": -60.95,
+            "measured_db": -55.63,
+            "expected_db": -63.7,
             "dyn": 0.3
           },
           {
             "section": "spotted",
             "start_s": 11.25,
-            "measured_db": -52.17,
-            "expected_db": -57.42,
+            "measured_db": -54.47,
+            "expected_db": -60.18,
             "dyn": 0.45
           },
           {
             "section": "the_avenue",
             "start_s": 22.328,
-            "measured_db": -52.31,
-            "expected_db": -53.59,
+            "measured_db": -55.25,
+            "expected_db": -56.34,
             "dyn": 0.7
           },
           {
             "section": "the_turn",
             "start_s": 46.865,
-            "measured_db": -54.73,
-            "expected_db": -51.9,
+            "measured_db": -57.64,
+            "expected_db": -54.65,
             "dyn": 0.85
           },
           {
             "section": "under_the_bridge",
             "start_s": 73.961,
-            "measured_db": -52.98,
-            "expected_db": -51.4,
+            "measured_db": -55.93,
+            "expected_db": -54.16,
             "dyn": 0.9
           },
           {
             "section": "the_roadblock",
             "start_s": 96.361,
-            "measured_db": -52.42,
-            "expected_db": -50.49,
+            "measured_db": -55.28,
+            "expected_db": -53.24,
             "dyn": 1.0
           },
           {
             "section": "the_bridge",
             "start_s": 127.859,
-            "measured_db": -51.55,
-            "expected_db": -50.93,
+            "measured_db": -54.33,
+            "expected_db": -53.69,
             "dyn": 0.95
           },
           {
             "section": "the_cliff",
             "start_s": 149.686,
-            "measured_db": -53.9,
-            "expected_db": -64.47,
+            "measured_db": -56.68,
+            "expected_db": -67.22,
             "dyn": 0.2
           }
         ],
@@ -4111,8 +4111,8 @@
       }
     ],
     "duration_s": 172.76480725623583,
-    "cached_stems": 21,
-    "measured_stems": 3
+    "cached_stems": 23,
+    "measured_stems": 1
   },
   "rows": [
     {
@@ -4618,12 +4618,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"rain_street\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 148 event(s) rejected as a dense burst, 164 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"rain_street\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 146 event(s) rejected as a dense burst, 151 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"rain_street\": longest hole 0 ms (limit 20-1000 ms), floor -98.2 dBFS; 0 hole(s)"
+      "detail": "stem \"rain_street\": longest hole 0 ms (limit 20-1000 ms), floor -101.2 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -4638,12 +4638,12 @@
     {
       "level": "PASS",
       "row": "stem.tick",
-      "detail": "stem \"rain_street\": onset autocorrelation 0.06 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 140 strong onset(s) of 1541, 58 on the grid, IOI CV 1.017; peak rise 13.49 dB at those onsets over 140 onset(s) (min 3); tempogram peak ratio 0.72, PLP peak ratio 1.00"
+      "detail": "stem \"rain_street\": onset autocorrelation 0.05 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 305 strong onset(s) of 1677, 120 on the grid, IOI CV 0.926; peak rise 13.28 dB at those onsets over 305 onset(s) (min 3); tempogram peak ratio 0.72, PLP peak ratio 1.00"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"rain_street\": own median -52.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve"
+      "detail": "stem \"rain_street\": own median -55.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve"
     },
     {
       "level": "INFO",
