@@ -16,7 +16,7 @@
    "high_hz": 450,
    "mod_rate_hz": 0.04,
    "mod_depth": 0.25,
-   "gain_db": -30.0,
+   "gain_db": -20.0,
    "decorrelate": 1.0,
    "spatial": {
     "azimuth": 0,
@@ -33,7 +33,7 @@
    "high_hz": 2500,
    "mod_rate_hz": 0.06,
    "mod_depth": 0.2,
-   "gain_db": -40.0,
+   "gain_db": -30.0,
    "decorrelate": 1.0,
    "spatial": {
     "azimuth": 0,

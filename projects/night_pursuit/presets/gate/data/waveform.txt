@@ -1,0 +1,32 @@
+file: /home/user/music-generator/projects/night_pursuit/out/_draft_master.wav
+duration_s: 171.263
+sample_rate: 44100
+sections:
+  the_stakeout: 0.00-11.25 s, dyn 0.30
+  spotted: 11.25-22.33 s, dyn 0.45
+  the_avenue: 22.33-46.87 s, dyn 0.70
+  the_turn: 46.87-73.96 s, dyn 0.85
+  under_the_bridge: 73.96-96.36 s, dyn 0.90
+  the_roadblock: 96.36-127.86 s, dyn 1.00
+  the_bridge: 127.86-149.69 s, dyn 0.95
+  the_cliff: 149.69-171.05 s, dyn 0.20
+flagged times: 19
+  0.035s stem.tick [PASS] basses
+  0.035s stem.tick [PASS] city_far
+  0.035s stem.tick [PASS] rain_street
+  0.046s stem.tick [PASS] rain_awnings
+  3.773s stem.tick [PASS] piano_low
+  8.143s clicks [FAIL] master
+  11.262s stem.tick [PASS] celli
+  22.349s stem.tick [PASS] piano
+  25.971s stem.tick [PASS] tuba
+  70.774s stem.tick [PASS] trombones
+  83.592s stem.tick [PASS] violins_tremolo
+  152.766s clicks [FAIL] master
+  155.604s clicks [FAIL] master
+  160.327s clicks [FAIL] master
+  160.575s clicks [FAIL] master
+  160.875s clicks [FAIL] master
+  169.920s dropout [FAIL] master
+  169.975s dropout [FAIL] master
+  170.045s dropout [FAIL] master

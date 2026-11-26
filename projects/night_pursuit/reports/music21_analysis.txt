@@ -1,0 +1,5 @@
+=== MUSIC21 SYMBOLIC MUSICOLOGY REPORT ===
+[INFO] music21_tonality           modal center analyzed as F major (correlation 0.46)
+[PASS] music21_bass_register      bass anchored naturally at MIDI 24 - 31
+[WARN] music21_melody_monotony    single pitch repeated in 59% of melody notes
+[PASS] music21_harmonic_rhythm    2701 vertical harmonic slices analyzed across multi-track arrangement

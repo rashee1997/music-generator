@@ -30605,6 +30605,17 @@
    "f_end_hz": 900.0,
    "q": 0.8,
    "start_s": 62.699,
+   "end_s": 68.561,
+   "after": "bypass",
+   "edge_ms": 10.0
+  },
+  {
+   "type": "filter_sweep",
+   "kind": "lowpass",
+   "f_start_hz": 900.0,
+   "f_end_hz": 14000.0,
+   "q": 0.8,
+   "start_s": 68.561,
    "end_s": 69.161,
    "after": "bypass",
    "edge_ms": 10.0
@@ -30637,6 +30648,17 @@
    "f_end_hz": 900.0,
    "q": 0.8,
    "start_s": 117.935,
+   "end_s": 120.944,
+   "after": "bypass",
+   "edge_ms": 10.0
+  },
+  {
+   "type": "filter_sweep",
+   "kind": "lowpass",
+   "f_start_hz": 900.0,
+   "f_end_hz": 14000.0,
+   "q": 0.8,
+   "start_s": 120.944,
    "end_s": 121.544,
    "after": "bypass",
    "edge_ms": 10.0

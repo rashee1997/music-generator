@@ -273,7 +273,7 @@
       "space": "np_street_canyon"
     },
     "pursuit_tuba": {
-      "azimuth": 0.0,
+      "azimuth": 150.0,
       "elevation": 0.0,
       "distance": 1.8,
       "space": "np_street_canyon"
@@ -285,7 +285,7 @@
       "space": "np_street_canyon"
     },
     "pursuit_timpani": {
-      "azimuth": 0.0,
+      "azimuth": 55.0,
       "elevation": 0.0,
       "distance": 3.0,
       "space": "np_street_canyon"
@@ -297,7 +297,7 @@
       "space": "np_street_canyon"
     },
     "pursuit_snare": {
-      "azimuth": -12.0,
+      "azimuth": -28.0,
       "elevation": 0.0,
       "distance": 2.6,
       "space": "np_street_canyon"

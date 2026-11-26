@@ -101,12 +101,19 @@ for bar in range(s0('spotted'), sN('spotted')):
         timpani.add(bar, 2.0, 1.0, p(C, 2), 0.6)              # a swell into the launch
         timpani.add(bar, 3.0, 1.0, p(C, 2), 0.75)
 
-# the avenue and on: a 3+3+2 drum pulse, basses on the root, tuba doubling, snare on the backbeat
-THREE_THREE_TWO = (0.0, 1.5, 3.0)
+# the avenue and on. The low end is written by phrase (four bars), not by bar, so no two phrases are the same:
+#   bass line  : the root, then a walk (a passing note on the last beat, a dominant, a flat seventh) chosen per phrase
+#   bass drum  : six patterns on the 3+3+2 grid, moved by the phrase; ghost kicks and a pickup on the last bar
+#   snare      : backbeat, ghosts, and a sixteenth fill on the last bar of every second phrase
+#   timpani    : the dominant on the off-beats, a roll on the phrase ends; tuba doubles the bass with its own rhythm
+BASS_WALKS = [(0, 0, 0, 7), (0, 0, 3, 0), (0, 0, 10, 7), (0, 0, 0, 1), (0, 7, 0, 5), (0, 0, 8, 7)]     # semitones over the root, bar 1 to 4 of a phrase
+KICKS = [(0.0, 1.5, 3.0), (0.0, 1.5, 2.5), (0.0, 0.75, 1.5, 3.0), (0.0, 1.5, 2.0, 3.0), (0.0, 1.0, 1.5, 3.0), (0.0, 1.5, 3.0, 3.5)]
+TUBA_RHYTHMS = [(0.0, 1.5, 3.0), (0.0, 2.0), (0.0, 1.5, 2.5, 3.5), (1.5, 3.0), (0.0, 0.75, 1.5, 3.0)]
 for bar in range(s0('the_avenue'), sN('the_bridge')):
     r = bar_chord_root(bar)
     sect = next(s for s in T.SECTIONS if s[1] <= bar < s[1] + s[2])
     energy = sect[3]
+    ph, k = (bar - s0('the_avenue')) // 4, (bar - s0('the_avenue')) % 4          # phrase number and bar inside it
     quiet = (sect[0] == 'the_turn' and bar in (T.SLOMO_DRIFT['bar'], T.SLOMO_DRIFT['bar'] + 1, T.SLOMO_DRIFT['bar'] + 2)) or \
             (sect[0] == 'the_roadblock' and bar in (T.SLOMO_SPIN['bar'], T.SLOMO_SPIN['bar'] + 1))
     under = sect[0] == 'under_the_bridge' and bar < s0('under_the_bridge') + 6          # six bars of pulse and low brass only
@@ -115,31 +122,44 @@ for bar in range(s0('the_avenue'), sN('the_bridge')):
         bass_drum.add(bar, 0, 0.5, 36, 0.62)
         bass_drum.add(bar, 2.0, 0.5, 36, 0.5)
         continue
-    if bar % 4 == 3:
-        basses.add(bar, 0, 2.0, p(G, 1), vel(0.58 + 0.2 * energy, 0.03))          # the dominant, never resolved
-        basses.add(bar, 2.0, 2.02, p(r, 1), vel(0.6 + 0.2 * energy, 0.03))
+    walk = BASS_WALKS[(ph + k) % len(BASS_WALKS)]
+    step = walk[k]
+    top = 0.64 + 0.2 * energy
+    if k == 3:                                                                       # a phrase turns: the dominant, then back
+        basses.add(bar, 0, 2.0, p((r + step) % 12, 1), vel(top, 0.05))
+        basses.add(bar, 2.0, 1.5, p(G, 1), vel(top - 0.06, 0.05))
+        basses.add(bar, 3.5, 0.52, p((r + 1) % 12 if ph % 2 else (r + 10) % 12, 1), vel(top - 0.1, 0.05))     # a passing note into the next bar
     else:
-        basses.add(bar, 0, 4.02, p(r, 1), vel(0.6 + 0.2 * energy, 0.03))
-    piano_low.add(bar, 2.0 if bar % 4 == 3 else 0.0, 1.0, p(r, 2), vel(0.6 + 0.15 * energy, 0.03))      # the downbeat is skipped once a phrase
-    piano_low.add(bar, 1.5, 0.5, p(r, 2), vel(0.5, 0.03))
-    for b in THREE_THREE_TWO:
-        tuba.add(bar, b, 1.0, p(r, 2), vel(0.5 + 0.2 * energy, 0.03)) if bar >= s0('the_avenue') + 2 else None
-    for b in (0.0, 1.5, 3.0):
-        bass_drum.add(bar, b, 0.5, 36, vel(0.62 + 0.2 * energy, 0.03))
+        basses.add(bar, 0, 4.02, p((r + step) % 12, 1), vel(top + (0.08 if k == 0 else 0.0), 0.05))
+    piano_low.add(bar, 2.0 if k == 3 else 0.0, 1.0, p(r, 2), vel(top - 0.04, 0.05))
+    if (bar + ph) % 3 != 0:
+        piano_low.add(bar, 1.5 + 0.5 * (ph % 2), 0.5, p((r + (7 if k == 2 else 0)) % 12, 2), vel(0.5 + 0.1 * (ph % 3), 0.05))
+    if bar >= s0('the_avenue') + 2:
+        for b in TUBA_RHYTHMS[(ph * 2 + k) % len(TUBA_RHYTHMS)]:
+            tuba.add(bar, b, 0.9, p((r + (step if k < 3 else 0)) % 12, 2), vel(0.40 + 0.35 * energy * (0.6 + 0.4 * (k == 0)), 0.07))
+    for b in KICKS[(ph + k) % len(KICKS)]:
+        bass_drum.add(bar, b, 0.5, 36, vel(0.6 + 0.2 * energy + (0.08 if b == 0.0 else 0.0), 0.05))
     if not under:
-        bass_drum.add(bar, 2.25, 0.25, 36, vel(0.58, 0.03)) if bar % 2 else None
-        snare.add(bar, 1.0, 0.25, 38, vel(0.46 + 0.15 * energy, 0.03))
-        snare.add(bar, 3.0, 0.25, 38, vel(0.5 + 0.15 * energy, 0.03))
-        if bar % 4 == 3:
-            snare.add(bar, 3.5, 0.25, 38, vel(0.42, 0.03))                       # a ghost note so no two four-bar blocks are the same
-            snare.add(bar, 3.75, 0.25, 38, vel(0.38, 0.03))
-    if bar % 4 == 0 and not under:
-        cymbals.add(bar, 0, 3.0, 49, vel(0.4 + 0.2 * energy, 0.03))             # an accent at each phrase start
+        if ph % 2 == 1 and k == 3:                                                  # the fill: sixteenths, rising
+            for i in range(8):
+                snare.add(bar, 2.0 + i * 0.25, 0.25, 38, 0.38 + 0.04 * i + 0.1 * energy * 0.5)
+        else:
+            snare.add(bar, 1.0, 0.25, 38, vel(0.44 + 0.15 * energy, 0.05))
+            snare.add(bar, 3.0, 0.25, 38, vel(0.5 + 0.15 * energy, 0.05))
+            if (bar + ph) % 3 == 1:
+                snare.add(bar, 3.5, 0.25, 38, vel(0.42, 0.04))
+            if (bar + 2 * ph) % 4 == 2:
+                snare.add(bar, 2.5, 0.25, 38, vel(0.38, 0.04))
+        if k == 0:
+            cymbals.add(bar, 0, 3.0, 49, vel(0.4 + 0.2 * energy, 0.04))               # an accent at each phrase start
+        if k == 2:
+            timpani.add(bar, 2.0, 0.5, p(G, 2), vel(0.45 + 0.25 * energy, 0.05))
+        if k == 3:
+            for i in range(4):
+                timpani.add(bar, 2.0 + i * 0.5, 0.45, p(G if i % 2 == 0 else C, 2), 0.40 + 0.08 * i + 0.1 * energy)           # the roll into the next phrase
     if bar in (s0('the_avenue'), s0('the_turn'), s0('under_the_bridge') + 6, s0('the_roadblock'), s0('the_bridge')):
         cymbals.add(bar, 0, 3.5, 49, 0.8)
         timpani.add(bar, 0, 1.5, p(r, 2), 0.85)
-    if bar % 2 == 0 and not under:
-        timpani.add(bar, 3.0, 0.5, p(G, 2), vel(0.5 + 0.2 * energy, 0.04))      # the dominant under the pulse, never resolved
 
 # the bar before the crash is hollow: no snare roll, only a timpani swell
 # the held bar before the crash: only a timpani swell, then the hit
@@ -242,14 +262,16 @@ for bar in range(int(T.SNAP_SPIN) + 1, sN('the_roadblock'), 2):
 # fast violins (staccato runs of sixteenths up the C minor scale), the roadblock's last bars and the whole bridge
 SCALE = [C, Db, Eb, F, G, Ab, Bb]
 for bar in list(range(int(T.SNAP_SPIN), sN('the_roadblock'))) + list(range(s0('the_bridge'), sN('the_bridge'))):
-    off = (bar % 3) * 2
+    off = (bar * 5 + (bar // 4) * 3) % 14
     for i in range(16):
         k = (off + i) % 14
         octv = 5 + k // 7
         pc = SCALE[k % 7]
         if bar == sN('the_bridge') - 1 and i >= 8:
             break
-        violins_st.add(bar, i * 0.25, 0.2, p(pc, octv), vel(0.45 + 0.01 * i, 0.04))
+        if bar % 5 == 4 and i in (4, 5, 6, 7):
+            continue                                                           # a gap in the run every fifth bar
+        violins_st.add(bar, i * 0.25, 0.2, p(pc, octv), vel(0.45 + 0.012 * i + 0.08 * (bar % 3), 0.05))
 
 # the cliff: the cut, then one long Gb and its high harmonic
 violins_tr.add(s0('the_cliff') + 1, 0, 24.0, p(Gb, 4), 0.4)
@@ -307,6 +329,8 @@ score = dict(
             'avoid': ['joyful', 'playful', 'hopeful']},
     mix_intent=dict(hero='pursuit_horns', leave_free_hz=[]),
     medium=dict(model='iso9613', state=dict(temperature_k=283.15, pressure_pa=101325, rh_percent=95)),
+    gate={'tempo.audio': {'mode': 'skip', 'reason': 'the tempo map runs 60-156 BPM by design (a climb with two slow-motion dips to 60 and 64 BPM), so no single tempo exists; '
+                          'the beat tracker measured 139.9 BPM against the declared 128 on the third full render (attempt 4), a value between the avenue and the bridge, not a fault of the grid'}},
     plan=dict(sections=sections),
     tracks=[t.done() for t in music] + sounds,
     mix=dict(tracks={}),

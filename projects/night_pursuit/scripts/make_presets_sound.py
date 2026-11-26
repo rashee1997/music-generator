@@ -102,7 +102,9 @@ def slowmo_fx(cutoff_hz, gain_db=0.0):
         chain.append(dict(type='filter_sweep', kind='lowpass', f_start_hz=14000.0, f_end_hz=float(cutoff_hz), q=0.8, start_s=round(a, 3),
                           end_s=round(a + 2.5, 3), after='bypass', edge_ms=10.0))
         chain.append(dict(type='filter_sweep', kind='lowpass', f_start_hz=float(cutoff_hz), f_end_hz=float(cutoff_hz), q=0.8,
-                          start_s=round(a + 2.5, 3), end_s=round(b, 3), after='bypass', edge_ms=10.0))
+                          start_s=round(a + 2.5, 3), end_s=round(b - 0.6, 3), after='bypass', edge_ms=10.0))
+        chain.append(dict(type='filter_sweep', kind='lowpass', f_start_hz=float(cutoff_hz), f_end_hz=14000.0, q=0.8, start_s=round(b - 0.6, 3),
+                          end_s=round(b, 3), after='bypass', edge_ms=10.0))
         if gain_db:
             chain.append(dict(type='pedalboard', plugin='Gain', params=dict(gain_db=float(gain_db)), start_s=round(a, 3), end_s=round(b, 3), edge_ms=400.0))
     return chain
@@ -455,15 +457,15 @@ write('sfx', 'np_crash', dict(
     sources=['car_crash_impact', 'ESTIMATE: no collision recording was measured; the plate modes, the tear and the glass rate are starting values']))
 
 # ================================================================================================ rain and the city
-RAIN_FX = slowmo_fx(1800.0, -4.0)
+RAIN_FX = slowmo_fx(4500.0, 0.0)
 begin('engine')
 write('environments', 'np_rain_street', dict(
     description='Rain at 12 mm/h on a wet asphalt street at night: the patter of drops on the road, a film of water hissing, all round.',
     character='Rain at 12 mm/h falling on a wet street and a film of water on the asphalt, all round the car; in the slow motion it thins and darkens rather than pitching down.',
     atmosphere=dict(temp_c=10.0, rh=95.0),
-    layers=[dict(name='drops', primitive='rain_physical', kind='bed', rate_mm_h=12.0, surface='solid', bubble_prob=0.15, gain_db=-24.0, decorrelate=1.0,
+    layers=[dict(name='drops', primitive='rain_physical', kind='bed', rate_mm_h=12.0, surface='solid', bubble_prob=0.15, gain_db=-12.0, decorrelate=1.0,
                  spatial=dict(azimuth=0, elevation=0, distance=6)),
-            dict(name='water_film', primitive='noise_bed', kind='bed', color='pink', low_hz=1800, high_hz=7000, mod_rate_hz=0.08, mod_depth=0.2, gain_db=-36.0,
+            dict(name='water_film', primitive='noise_bed', kind='bed', color='pink', low_hz=1800, high_hz=7000, mod_rate_hz=0.08, mod_depth=0.2, gain_db=-24.0,
                  decorrelate=1.0, spatial=dict(azimuth=0, elevation=0, distance=6))],
     blending=dict(),
     fx=RAIN_FX,
@@ -473,10 +475,10 @@ write('environments', 'np_rain_awnings', dict(
     description='Rain on metal awnings and a dumpster either side of the street.',
     character='Rain ringing on thin metal awnings and a dumpster lid on both sides of the street: a sparse, tonal patter that is louder than the road.',
     atmosphere=dict(temp_c=10.0, rh=95.0),
-    layers=[dict(name='awning_left', primitive='model_layer', kind='spot', gain_db=-26.0, spatial=dict(azimuth=-80, elevation=0, distance=7),
+    layers=[dict(name='awning_left', primitive='model_layer', kind='spot', gain_db=-14.0, spatial=dict(azimuth=-80, elevation=0, distance=7),
                  voices=[dict(name='drops', excite=dict(kind='impact', tau=0.0015), resonator=dict(kind='modal', law='free', f1=420.0, ratios=[1.0, 2.3, 3.9, 5.6, 7.7, 10.1], t60=0.28),
                               events=dict(kind='poisson', rate=45.0), vary=dict(size=dict(dist='marshall_palmer', rate_mm_h=12.0, min=0.4, max=2.5), pitch_exp=0.3, amp_exp=2.0))]),
-            dict(name='awning_right', primitive='model_layer', kind='spot', gain_db=-28.0, spatial=dict(azimuth=85, elevation=0, distance=8),
+            dict(name='awning_right', primitive='model_layer', kind='spot', gain_db=-16.0, spatial=dict(azimuth=85, elevation=0, distance=8),
                  voices=[dict(name='drops', excite=dict(kind='impact', tau=0.0015), resonator=dict(kind='modal', law='free', f1=360.0, ratios=[1.0, 2.1, 3.6, 5.2, 7.3, 9.6], t60=0.32),
                               events=dict(kind='poisson', rate=40.0), vary=dict(size=dict(dist='marshall_palmer', rate_mm_h=12.0, min=0.4, max=2.5), pitch_exp=0.3, amp_exp=2.0))])],
     blending=dict(),
@@ -487,9 +489,9 @@ write('environments', 'np_city_far', dict(
     description='The far city at night: traffic as a low hum and an air of distant streets.',
     character='A far, low traffic hum under the rain with a thin air of distant streets and no event: the city is a bed, never a foreground.',
     atmosphere=dict(temp_c=10.0, rh=95.0),
-    layers=[dict(name='traffic', primitive='noise_bed', kind='bed', color='brown', low_hz=45, high_hz=450, mod_rate_hz=0.04, mod_depth=0.25, gain_db=-30.0,
+    layers=[dict(name='traffic', primitive='noise_bed', kind='bed', color='brown', low_hz=45, high_hz=450, mod_rate_hz=0.04, mod_depth=0.25, gain_db=-20.0,
                  decorrelate=1.0, spatial=dict(azimuth=0, elevation=0, distance=80)),
-            dict(name='city_air', primitive='noise_bed', kind='bed', color='pink', low_hz=450, high_hz=2500, mod_rate_hz=0.06, mod_depth=0.2, gain_db=-40.0,
+            dict(name='city_air', primitive='noise_bed', kind='bed', color='pink', low_hz=450, high_hz=2500, mod_rate_hz=0.06, mod_depth=0.2, gain_db=-30.0,
                  decorrelate=1.0, spatial=dict(azimuth=0, elevation=0, distance=90))],
     blending=dict(),
     sources=['city_traffic_far', 'ESTIMATE: no New York night spectrum was found; the bands and levels are starting values (the research note gives daytime street levels only)']))

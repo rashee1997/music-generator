@@ -90,14 +90,14 @@ inst('pursuit_trombones', 'trombone', 'chord',
      extra=dict(ensemble=dict(players=3, spread_cents=7, spread_ms=9, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
 inst('pursuit_tuba', 'tuba', 'chord',
      'The floor under the stabs: a tuba doubling the basses on the turning points, never a sustained part.',
-     0, 1.8, -5.0, 0.06, [HP(34), LP(2500)], sources=[KB['hybrid'], KB['orch']])
+     150, 1.8, -5.0, 0.06, [HP(34), LP(2500)], sources=[KB['hybrid'], KB['orch']])
 inst('pursuit_sub_drop', 'synth_bass_2', 'texture',
      'The cinematic drop: a single low note that dives an octave and rings, struck only at the snap of the slow motion and at the crash.',
      0, 1.0, -4.0, 0.0, [HP(28), LP(900)],
      extra=dict(mechanics_class='sub'), sources=[KB['hybrid'], 'web research: slow-motion sound design pairs a pitched-down low end with a stretched tail (see the research note)'])
 inst('pursuit_timpani', 'timpani', 'drum',
      'The heartbeat and the collapse: two soft strokes a bar in the quiet, a roll into each hit, one big stroke on the turning points.',
-     0, 3.0, -4.0, 0.14, [HP(40), LP(5000)], humanize=dict(preset='natural', timing_ms=6.0, drift_ms=6.0, vel_sigma=5.0),
+     55, 3.0, -4.0, 0.14, [HP(40), LP(5000)], humanize=dict(preset='natural', timing_ms=6.0, drift_ms=6.0, vel_sigma=5.0),
      sources=[KB['hybrid'], KB['sf']])
 inst('pursuit_bass_drum', 'standard', 'drum',
      'The heartbeat of the stakeout and the downbeats of the chase: a concert bass drum, felt and low.',
@@ -105,7 +105,7 @@ inst('pursuit_bass_drum', 'standard', 'drum',
      extra=dict(gm='orchestral', mechanics_class='drum', onset_fade_ms=1.5, onset_fade_all=True), sources=[KB['hybrid'], KB['sf']])
 inst('pursuit_snare', 'standard', 'drum',
      'The 3+3+2 cell and the roll into the crash: a concert snare, dry and sharp.',
-     -12, 2.6, -6.0, 0.10, [HP(120), PK(4000, 1.5, 1.0), LP(12000)], humanize=dict(preset='tight', timing_ms=4.0, drift_ms=4.0, vel_sigma=5.0),
+     -28, 2.6, -6.0, 0.10, [HP(120), PK(4000, 1.5, 1.0), LP(12000)], humanize=dict(preset='tight', timing_ms=4.0, drift_ms=4.0, vel_sigma=5.0),
      extra=dict(gm='orchestral', mechanics_class='drum', onset_fade_ms=1.5, onset_fade_all=True), sources=[KB['hybrid'], KB['sf']])
 inst('pursuit_cymbals', 'standard', 'texture',
      'The air: crashes on the turning points and a long swell into the crash, behind the listener on the left.',

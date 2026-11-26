@@ -14,7 +14,7 @@
    "rate_mm_h": 12.0,
    "surface": "solid",
    "bubble_prob": 0.15,
-   "gain_db": -24.0,
+   "gain_db": -12.0,
    "decorrelate": 1.0,
    "spatial": {
     "azimuth": 0,
@@ -31,7 +31,7 @@
    "high_hz": 7000,
    "mod_rate_hz": 0.08,
    "mod_depth": 0.2,
-   "gain_db": -36.0,
+   "gain_db": -24.0,
    "decorrelate": 1.0,
    "spatial": {
     "azimuth": 0,
@@ -46,7 +46,7 @@
    "type": "filter_sweep",
    "kind": "lowpass",
    "f_start_hz": 14000.0,
-   "f_end_hz": 1800.0,
+   "f_end_hz": 4500.0,
    "q": 0.8,
    "start_s": 60.199,
    "end_s": 62.699,
@@ -56,29 +56,30 @@
   {
    "type": "filter_sweep",
    "kind": "lowpass",
-   "f_start_hz": 1800.0,
-   "f_end_hz": 1800.0,
+   "f_start_hz": 4500.0,
+   "f_end_hz": 4500.0,
    "q": 0.8,
    "start_s": 62.699,
+   "end_s": 68.561,
+   "after": "bypass",
+   "edge_ms": 10.0
+  },
+  {
+   "type": "filter_sweep",
+   "kind": "lowpass",
+   "f_start_hz": 4500.0,
+   "f_end_hz": 14000.0,
+   "q": 0.8,
+   "start_s": 68.561,
    "end_s": 69.161,
    "after": "bypass",
    "edge_ms": 10.0
   },
   {
-   "type": "pedalboard",
-   "plugin": "Gain",
-   "params": {
-    "gain_db": -4.0
-   },
-   "start_s": 60.199,
-   "end_s": 69.161,
-   "edge_ms": 400.0
-  },
-  {
    "type": "filter_sweep",
    "kind": "lowpass",
    "f_start_hz": 14000.0,
-   "f_end_hz": 1800.0,
+   "f_end_hz": 4500.0,
    "q": 0.8,
    "start_s": 115.435,
    "end_s": 117.935,
@@ -88,23 +89,24 @@
   {
    "type": "filter_sweep",
    "kind": "lowpass",
-   "f_start_hz": 1800.0,
-   "f_end_hz": 1800.0,
+   "f_start_hz": 4500.0,
+   "f_end_hz": 4500.0,
    "q": 0.8,
    "start_s": 117.935,
-   "end_s": 121.544,
+   "end_s": 120.944,
    "after": "bypass",
    "edge_ms": 10.0
   },
   {
-   "type": "pedalboard",
-   "plugin": "Gain",
-   "params": {
-    "gain_db": -4.0
-   },
-   "start_s": 115.435,
+   "type": "filter_sweep",
+   "kind": "lowpass",
+   "f_start_hz": 4500.0,
+   "f_end_hz": 14000.0,
+   "q": 0.8,
+   "start_s": 120.944,
    "end_s": 121.544,
-   "edge_ms": 400.0
+   "after": "bypass",
+   "edge_ms": 10.0
   }
  ],
  "sources": [
