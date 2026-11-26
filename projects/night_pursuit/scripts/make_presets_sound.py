@@ -183,7 +183,7 @@ write('sfx', 'np_engine', dict(
     note=f'f0 is the firing frequency rpm x {CYL} / 120 ({f_idle:.1f} Hz at {IDLE_RPM:.0f} rpm idle); the pitch curve is rpm / idle rpm through the gears of the waypoints in make_presets_sound.py, '
          'the road speed is 2 pi r rpm / (60 G) with G the box ratio times a 3.7 final drive and r = 0.33 m, and the slow motion drops the pitch an octave until the snap.',
     model=dict(seconds=SECONDS, voices=[
-        dict(name='firing', gain_db=0.0,
+        dict(name='firing', gain_db=-6.0,
              excite=dict(kind='periodic', f0=round(f_idle, 2), harmonics=40, jitter=0.02),
              resonator=dict(kind='formant', formants=[[110, 70, 1.0], [240, 90, 0.9], [680, 240, 0.5], [1500, 500, 0.2]]),
              events=dict(kind='continuous'),
@@ -203,7 +203,7 @@ write('sfx', 'np_engine', dict(
              resonator=dict(kind='modal', law='bar', f1=140.0, n=4, t60=0.18),
              events=dict(kind='sequence', times=[round(t - OFF, 3) for t in SHIFT_TIMES], levels=[1.0] * len(SHIFT_TIMES))),
         dict(name='cabin_tone', gain_db=-38.0, excite=dict(kind='noise', color='brown'), resonator=dict(kind='bandpass', band=[60, 400], order=2),
-             events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -90.0 if t < T_CUT else -12.0 * smooth((t - T_CUT) / 0.5) - 4.0 * smooth((t - T_CUT) / 20.0), 0.0, END, 0.25))])),
+             events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -50.0 if t < T_CUT else -16.0 - 4.0 * smooth((t - T_CUT) / 20.0), 0.0, END, 0.25))])),
         dict(name='cooling_tick', gain_db=-20.0, excite=dict(kind='impact', tau=0.0008),
              resonator=dict(kind='modal', law='bar', f1=1800.0, n=6, t60=0.12),
              events=dict(kind='poisson', rate=0.8, start=round(T_CUT + 1.2 - OFF, 2))),
@@ -271,7 +271,7 @@ def wiper_times():
     """One cycle is a sweep up and a sweep back; 70 cycles a minute (the research: highest speed about 70 double strokes). Slow motion stretches
     the interval, so the wipers fall behind with the music and catch up at the snap."""
     base = 60.0 / 70.0 / 2.0
-    out, t = [], 1.2
+    out, t = [], 1.35
     while t < T_CUT:
         out.append(round(t, 3))
         t += base * (1.0 + 1.0 * slowness(t))
@@ -291,7 +291,7 @@ write('sfx', 'np_wipers', dict(
         dict(name='turn_thump', gain_db=-9.0, excite=dict(kind='impact', tau=0.006), resonator=dict(kind='modal', law='bar', f1=95.0, n=3, t60=0.08),
              events=dict(kind='sequence', times=[round(t + 0.2 - OFF, 3) for t in WT], levels=[1.0] * len(WT))),
         dict(name='wet_glass', gain_db=-22.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[1500, 6000], order=2),
-             events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: (-90.0 + 78.0 * smooth((t - OFF) / 1.0)) if t < T_CUT else -90.0, 0.0, END, 0.25))])),
+             events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: (-90.0 + 78.0 * smooth((t - OFF) / 0.15)) if t < T_CUT else -90.0, 0.0, END, 0.25))])),
     ]),
     role='fx', gain_db=-8.0, reverb=0.0,
     spatial=dict(azimuth=-60.0, elevation=0.0, distance=0.7, space=SPACE, binaural=True, kind='spot'),
@@ -317,6 +317,7 @@ def hilo(t, low=435.0, high=580.0, cpm=55.0):
 
 
 def gate_db(t, t_on, t_off, occl, fade=0.5):
+    # fade: seconds the siren takes to come in and go out
     """0 dB while the siren is present, -90 outside; `occl` windows are behind an obstacle: -9 dB and a muffled tone (the lowpass is in the fx chain)."""
     if t < t_on or t > t_off:
         return -90.0
@@ -386,7 +387,7 @@ def siren2_pitch(t):
 
 
 def siren2_gain(t):
-    return gate_db(t, S2_ON, S2_OFF, OCC2) - 3.0 * slowness(t)
+    return gate_db(t, S2_ON, S2_OFF, OCC2, fade=0.12) - 3.0 * slowness(t)
 
 
 begin('siren_second')

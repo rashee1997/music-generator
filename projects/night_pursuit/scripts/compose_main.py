@@ -42,6 +42,12 @@ class Track:
         self.d['notes'].append(dict(t=round(t, 4), d=round(dur, 4), p=int(pitch), v=round(max(0.05, min(1.0, vel)), 3)))
 
     def done(self):
+        seen = {}
+        for n in self.d['notes']:                        # two attacks of one pitch on one beat phase-cancel: keep the louder
+            k = (n['t'], n['p'])
+            if k not in seen or n['v'] > seen[k]['v']:
+                seen[k] = n
+        self.d['notes'] = list(seen.values())
         self.d['notes'].sort(key=lambda n: (n['t'], n['p']))
         return self.d
 
@@ -110,8 +116,8 @@ for bar in range(s0('the_avenue'), sN('the_bridge')):
         bass_drum.add(bar, 2.0, 0.5, 36, 0.5)
         continue
     if bar % 4 == 3:
-        basses.add(bar, 0, 2.0, p(r, 1), vel(0.6 + 0.2 * energy, 0.03))
-        basses.add(bar, 2.0, 2.02, p(G, 1), vel(0.58 + 0.2 * energy, 0.03))       # the dominant, never resolved
+        basses.add(bar, 0, 2.0, p(G, 1), vel(0.58 + 0.2 * energy, 0.03))          # the dominant, never resolved
+        basses.add(bar, 2.0, 2.02, p(r, 1), vel(0.6 + 0.2 * energy, 0.03))
     else:
         basses.add(bar, 0, 4.02, p(r, 1), vel(0.6 + 0.2 * energy, 0.03))
     piano_low.add(bar, 0, 1.0, p(r, 2), vel(0.6 + 0.15 * energy, 0.03))
@@ -122,11 +128,11 @@ for bar in range(s0('the_avenue'), sN('the_bridge')):
         bass_drum.add(bar, b, 0.5, 36, vel(0.62 + 0.2 * energy, 0.03))
     if not under:
         bass_drum.add(bar, 2.25, 0.25, 36, vel(0.58, 0.03)) if bar % 2 else None
-        snare.add(bar, 1.0, 0.25, 38, vel(0.5 + 0.25 * energy, 0.04))
-        snare.add(bar, 3.0, 0.25, 38, vel(0.55 + 0.25 * energy, 0.04))
+        snare.add(bar, 1.0, 0.25, 38, vel(0.46 + 0.15 * energy, 0.03))
+        snare.add(bar, 3.0, 0.25, 38, vel(0.5 + 0.15 * energy, 0.03))
         if bar % 4 == 3:
-            snare.add(bar, 3.5, 0.25, 38, vel(0.4, 0.05))                       # a ghost note so no two four-bar blocks are the same
-            snare.add(bar, 3.75, 0.25, 38, vel(0.35, 0.05))
+            snare.add(bar, 3.5, 0.25, 38, vel(0.42, 0.03))                       # a ghost note so no two four-bar blocks are the same
+            snare.add(bar, 3.75, 0.25, 38, vel(0.38, 0.03))
     if bar % 4 == 0 and not under:
         cymbals.add(bar, 0, 3.0, 49, vel(0.4 + 0.2 * energy, 0.03))             # an accent at each phrase start
     if bar in (s0('the_avenue'), s0('the_turn'), s0('under_the_bridge') + 6, s0('the_roadblock'), s0('the_bridge')):
@@ -183,10 +189,13 @@ for bar in range(s0('the_avenue'), sN('the_bridge')):
         piano.add(bar, i * 0.25, 0.22, p((pc + shift) % 12, 4), vel(0.38 + 0.25 * sect[3] + accent, 0.03))
 
 # the hook. Rhythm (beats from the bar start): C 1.5, Db 0.5, C 1.0, | Gb on the weak beat (beat 3.5 of the second bar... leap), F long.
-def hook(track, bar, octave, shift=0, v=0.7, width=1.0):
-    pcs = [C, Db, C, Gb, F, Eb, Db]
-    times = [0.0, 1.5, 2.0, 3.0, 5.5, 6.5, 7.0]
-    durs = [1.5, 0.5, 1.0, 2.5, 1.0, 0.5, 1.0]
+def hook(track, bar, octave, shift=0, v=0.7, width=1.0, variant=0):
+    if variant % 3 == 0:
+        pcs, times, durs = [C, Db, C, Gb, F, Eb, Db], [0.0, 1.5, 2.0, 3.0, 5.5, 6.5, 7.0], [1.5, 0.5, 1.0, 2.5, 1.0, 0.5, 1.0]
+    elif variant % 3 == 1:                                   # the tail climbs once before it falls: the leap is the same, the answer is not
+        pcs, times, durs = [C, Db, C, Gb, Ab, F, Eb, Db], [0.0, 1.5, 2.0, 3.0, 5.0, 5.75, 6.5, 7.0], [1.5, 0.5, 1.0, 2.0, 0.75, 0.75, 0.5, 1.0]
+    else:                                                    # a long first note, so the leap lands later
+        pcs, times, durs = [C, Db, C, Db, Gb, F, Eb, Db], [0.0, 2.0, 2.5, 3.0, 3.5, 6.0, 6.75, 7.25], [2.0, 0.5, 0.5, 0.5, 2.0, 0.75, 0.5, 0.75]
     for pc, t, d in zip(pcs, times, durs):
         track.add(bar + int(t // 4), t % 4, d * width, p((pc + shift) % 12, octave), vel(v + (0.08 if pc == Gb else 0.0), 0.03))
 
@@ -196,15 +205,15 @@ for bar in (s0('spotted') + 2, s0('spotted') + 4):
     hook(bass_clarinet, bar, 3, v=0.38)
 # horns state it at the launch (every 4 bars, answered by the cello pedal), then climb a semitone and double in octaves after the drift snap
 for bar in range(s0('the_avenue') + 2, int(T.SLOMO_DRIFT['bar']), 4):
-    hook(horns, bar, 4, v=0.72)
+    hook(horns, bar, 4, v=0.72, variant=bar // 4)
 for bar in range(int(T.SNAP_DRIFT) + 1, int(sN('the_roadblock')) - 2, 4):
     if T.SLOMO_SPIN['bar'] - 1 <= bar <= T.SNAP_SPIN:
         continue
-    hook(horns, bar, 4, shift=1, v=0.78)
+    hook(horns, bar, 4, shift=1, v=0.78, variant=bar // 4)
     hook(trombones, bar, 3, shift=1, v=0.66)
 # on the bridge: horns and trombones together, the leap on the weak beat, then the fast violins join
 for bar in range(s0('the_bridge'), sN('the_bridge') - 2, 3):
-    hook(horns, bar, 4, v=0.85)
+    hook(horns, bar, 4, v=0.85, variant=bar // 4)
     hook(trombones, bar, 3, v=0.80)
 
 # trombone stabs (roadblock): a tritone cluster on the first and third beat every other bar

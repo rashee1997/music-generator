@@ -71,7 +71,7 @@ inst('pursuit_violins_staccato', 'violin', 'arp',
      'The bridge runs: fast staccato violin figures that pass round the left side, high and dry.',
      -110, 3.0, -6.0, 0.14, [HP(300), PK(3200, 1.0, 1.0), LP(10000)],
      extra=dict(ensemble=dict(players=4, spread_cents=9, spread_ms=11, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
-inst('pursuit_violins_tremolo', 'tremolo_strings', 'pad',
+inst('pursuit_violins_tremolo', 'synth_strings', 'pad',
      'The tension bed: high tremolo strings that grow by adding players, wide behind the listener on the right.',
      140, 4.0, -9.0, 0.22, [HP(280), LP(9000)],
      extra=dict(ensemble=dict(players=6, spread_cents=10, spread_ms=14, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])

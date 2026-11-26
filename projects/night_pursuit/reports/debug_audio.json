@@ -1,0 +1,1225 @@
+{
+ "stamp": "20261126T063022",
+ "project": "night_pursuit",
+ "level": "FAIL",
+ "sources": {
+  "score": "/home/user/music-generator/projects/night_pursuit/scores/night_pursuit_score.json",
+  "gate_data": [
+   "stem_gate.json"
+  ]
+ },
+ "binding": [
+  {
+   "row": "stem.clipping",
+   "stem": "engine",
+   "level": "FAIL",
+   "value": 62.0,
+   "threshold": 0.0,
+   "unit": "samples",
+   "safety": -62.0,
+   "detail": "stem \"engine\": 62 sample(s) at/above 0.999 FS, 2 flat-top run(s)"
+  },
+  {
+   "row": "stem.dropout",
+   "stem": "engine",
+   "level": "FAIL",
+   "value": 20.000000000010232,
+   "threshold": 20.0,
+   "unit": "ms",
+   "safety": -0.0,
+   "detail": "stem \"engine\": longest hole 20 ms (limit 20-1000 ms), floor -61.1 dBFS; 1 hole(s)"
+  },
+  {
+   "row": "stem.dead",
+   "stem": "siren_second",
+   "level": "FAIL",
+   "value": 25.54027901871507,
+   "threshold": 12.0,
+   "unit": "dB",
+   "safety": 2.2567,
+   "detail": "stem \"siren_second\": own median -95.5 dBFS, worst section shortfall 25.5 dB (limit 12 dB), active sections 1; all sections silent"
+  },
+  {
+   "row": "stem.tick",
+   "stem": "violins_tremolo",
+   "level": "FAIL",
+   "value": 0.633972086306416,
+   "threshold": 0.35,
+   "unit": "rho",
+   "safety": -1.4199,
+   "detail": "stem \"violins_tremolo\": onset autocorrelation 0.63 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 16 strong onset(s) of 452, 10 on the grid, IOI CV 1.883; peak rise 7.43 dB at those onsets over 15 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00"
+  },
+  {
+   "row": "stem.dead",
+   "stem": "wipers",
+   "level": "FAIL",
+   "value": 27.563631353224935,
+   "threshold": 12.0,
+   "unit": "dB",
+   "safety": 2.5939,
+   "detail": "stem \"wipers\": own median -97.6 dBFS, worst section shortfall 27.6 dB (limit 12 dB), active sections 1; all sections silent"
+  }
+ ],
+ "advisory": [
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dc",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  }
+ ],
+ "domains": {
+  "run": [
+   "stems"
+  ],
+  "skipped": {}
+ },
+ "model": {
+  "first_order": true,
+  "rows": 160,
+  "levers": [
+   {
+    "id": "note.basses.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "basses",
+    "current": 3.3894,
+    "lo": 3.3294,
+    "hi": 3.4494000000000002,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "basses written note length (mean 3.3894 beats)"
+   },
+   {
+    "id": "note.piano_low.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "piano_low",
+    "current": 0.9561,
+    "lo": 0.8960999999999999,
+    "hi": 1.0161,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "piano_low written note length (mean 0.9561 beats)"
+   },
+   {
+    "id": "note.tuba.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "tuba",
+    "current": 1.0,
+    "lo": 0.94,
+    "hi": 1.06,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "tuba written note length (mean 1 beats)"
+   },
+   {
+    "id": "note.bass_drum.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "bass_drum",
+    "current": 0.4724,
+    "lo": 0.4124,
+    "hi": 0.5324,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "bass_drum written note length (mean 0.4724 beats)"
+   },
+   {
+    "id": "note.timpani.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "timpani",
+    "current": 0.8429,
+    "lo": 0.7828999999999999,
+    "hi": 0.9029,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "timpani written note length (mean 0.8429 beats)"
+   },
+   {
+    "id": "note.snare.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "snare",
+    "current": 0.25,
+    "lo": 0.19,
+    "hi": 0.31,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "snare written note length (mean 0.25 beats)"
+   },
+   {
+    "id": "note.cymbals.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "cymbals",
+    "current": 3.2045,
+    "lo": 3.1445,
+    "hi": 3.2645,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "cymbals written note length (mean 3.2045 beats)"
+   },
+   {
+    "id": "note.sub_drop.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "sub_drop",
+    "current": 3.6667,
+    "lo": 3.6067,
+    "hi": 3.7267,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "sub_drop written note length (mean 3.6667 beats)"
+   },
+   {
+    "id": "note.piano.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "piano",
+    "current": 0.22,
+    "lo": 0.16,
+    "hi": 0.28,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "piano written note length (mean 0.22 beats)"
+   },
+   {
+    "id": "note.celli.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "celli",
+    "current": 0.45,
+    "lo": 0.39,
+    "hi": 0.51,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "celli written note length (mean 0.45 beats)"
+   },
+   {
+    "id": "note.bass_clarinet.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "bass_clarinet",
+    "current": 1.1429,
+    "lo": 1.0829,
+    "hi": 1.2029,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "bass_clarinet written note length (mean 1.1429 beats)"
+   },
+   {
+    "id": "note.horns.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "horns",
+    "current": 1.1504,
+    "lo": 1.0904,
+    "hi": 1.2104000000000001,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "horns written note length (mean 1.1504 beats)"
+   },
+   {
+    "id": "note.trombones.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "trombones",
+    "current": 0.9664,
+    "lo": 0.9064000000000001,
+    "hi": 1.0264,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "trombones written note length (mean 0.9664 beats)"
+   },
+   {
+    "id": "note.violins_staccato.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "violins_staccato",
+    "current": 0.2,
+    "lo": 0.14,
+    "hi": 0.26,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "violins_staccato written note length (mean 0.2 beats)"
+   },
+   {
+    "id": "note.violins_tremolo.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "violins_tremolo",
+    "current": 6.2727,
+    "lo": 6.212700000000001,
+    "hi": 6.3327,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "violins_tremolo written note length (mean 6.2727 beats)"
+   },
+   {
+    "id": "note.engine.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "engine",
+    "current": 376.0,
+    "lo": 375.94,
+    "hi": 376.06,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "engine written note length (mean 376 beats)"
+   },
+   {
+    "id": "note.tyres.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "tyres",
+    "current": 327.78,
+    "lo": 327.71999999999997,
+    "hi": 327.84,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "tyres written note length (mean 327.78 beats)"
+   },
+   {
+    "id": "note.wipers.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "wipers",
+    "current": 374.933,
+    "lo": 374.873,
+    "hi": 374.993,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "wipers written note length (mean 374.933 beats)"
+   },
+   {
+    "id": "note.siren_first.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "siren_first",
+    "current": 367.467,
+    "lo": 367.407,
+    "hi": 367.527,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "siren_first written note length (mean 367.467 beats)"
+   },
+   {
+    "id": "note.siren_second.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "siren_second",
+    "current": 272.0,
+    "lo": 271.94,
+    "hi": 272.06,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "siren_second written note length (mean 272 beats)"
+   },
+   {
+    "id": "note.crash.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "crash",
+    "current": 112.0,
+    "lo": 111.94,
+    "hi": 112.06,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "crash written note length (mean 112 beats)"
+   },
+   {
+    "id": "note.rain_street.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "rain_street",
+    "current": 376.0,
+    "lo": 375.94,
+    "hi": 376.06,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "rain_street written note length (mean 376 beats)"
+   },
+   {
+    "id": "note.rain_awnings.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "rain_awnings",
+    "current": 376.0,
+    "lo": 375.94,
+    "hi": 376.06,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "rain_awnings written note length (mean 376 beats)"
+   },
+   {
+    "id": "note.city_far.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "city_far",
+    "current": 376.0,
+    "lo": 375.94,
+    "hi": 376.06,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "city_far written note length (mean 376 beats)"
+   }
+  ]
+ },
+ "plan": {
+  "status": "partial",
+  "worst_safety": -62.0,
+  "deltas": {
+   "note.engine.d": -0.0625
+  },
+  "clearing": {},
+  "predicted": {
+   "stem.clipping::engine": [
+    -62.0,
+    -62.0
+   ],
+   "stem.dropout::engine": [
+    -5.115907697472721e-13,
+    -1.4648437500005116
+   ],
+   "stem.dead::siren_second": [
+    2.256713169785845,
+    2.256713169785845
+   ],
+   "stem.tick::violins_tremolo": [
+    -1.41986043153208,
+    -1.41986043153208
+   ],
+   "stem.dead::wipers": [
+    2.5939385588708226,
+    2.5939385588708226
+   ],
+   "stem.dc::bass_clarinet": [
+    0.09999780146032447,
+    0.09999780146032447
+   ],
+   "stem.clipping::bass_clarinet": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::bass_clarinet": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::bass_clarinet": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::bass_clarinet": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::bass_clarinet": [
+    1.0,
+    1.0
+   ],
+   "stem.dead::bass_clarinet": [
+    0.02,
+    0.02
+   ],
+   "stem.flatness::bass_clarinet": [
+    2.0,
+    2.0
+   ],
+   "stem.dc::bass_drum": [
+    0.0994069249666072,
+    0.0994069249666072
+   ],
+   "stem.clipping::bass_drum": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::bass_drum": [
+    0.0,
+    0.0
+   ],
+   "stem.dead::bass_drum": [
+    0.02,
+    0.02
+   ],
+   "stem.dc::basses": [
+    0.09995900735154947,
+    0.09995900735154947
+   ],
+   "stem.clipping::basses": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::basses": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::basses": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::basses": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::basses": [
+    0.6507029338397388,
+    0.6507029338397388
+   ],
+   "stem.tick::basses": [
+    0.6883575501747796,
+    0.6883575501747796
+   ],
+   "stem.dead::basses": [
+    0.02,
+    0.02
+   ],
+   "stem.flatness::basses": [
+    2.0,
+    2.0
+   ],
+   "stem.dc::celli": [
+    0.09998497169404921,
+    0.09998497169404921
+   ],
+   "stem.clipping::celli": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::celli": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::celli": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::celli": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::celli": [
+    1.0,
+    1.0
+   ],
+   "stem.tick::celli": [
+    0.02,
+    0.02
+   ],
+   "stem.dead::celli": [
+    0.02,
+    0.02
+   ],
+   "stem.dc::city_far": [
+    0.0999523064170971,
+    0.0999523064170971
+   ],
+   "stem.clipping::city_far": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::city_far": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::city_far": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::city_far": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::city_far": [
+    1.0,
+    1.0
+   ],
+   "stem.tick::city_far": [
+    1.4455770453916479,
+    1.4455770453916479
+   ],
+   "stem.dead::city_far": [
+    0.02,
+    0.02
+   ],
+   "stem.clipping::crash": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::crash": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::crash": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::crash": [
+    2.0,
+    2.0
+   ],
+   "stem.dead::crash": [
+    0.02,
+    0.02
+   ],
+   "stem.dc::cymbals": [
+    0.09990766823420982,
+    0.09990766823420982
+   ],
+   "stem.clipping::cymbals": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::cymbals": [
+    0.0,
+    0.0
+   ],
+   "stem.dead::cymbals": [
+    0.02,
+    0.02
+   ],
+   "stem.clicks::engine": [
+    0.0,
+    0.0
+   ],
+   "stem.cut::engine": [
+    2.0,
+    2.0
+   ],
+   "stem.dead::engine": [
+    0.02,
+    0.02
+   ],
+   "stem.dc::horns": [
+    0.09993128578022405,
+    0.09993128578022405
+   ],
+   "stem.clipping::horns": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::horns": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::horns": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::horns": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::horns": [
+    1.0,
+    1.0
+   ],
+   "stem.dead::horns": [
+    0.02,
+    0.02
+   ],
+   "stem.flatness::horns": [
+    2.0,
+    2.0
+   ],
+   "stem.dc::piano": [
+    0.09990054284024989,
+    0.09990054284024989
+   ],
+   "stem.clipping::piano": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::piano": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::piano": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::piano": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::piano": [
+    1.0,
+    1.0
+   ],
+   "stem.tick::piano": [
+    0.02,
+    0.02
+   ],
+   "stem.dead::piano": [
+    0.02,
+    0.02
+   ],
+   "stem.dc::piano_low": [
+    0.09998357156692368,
+    0.09998357156692368
+   ],
+   "stem.clipping::piano_low": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::piano_low": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::piano_low": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::piano_low": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::piano_low": [
+    1.0,
+    1.0
+   ],
+   "stem.tick::piano_low": [
+    0.9872344829075062,
+    0.9872344829075062
+   ],
+   "stem.dead::piano_low": [
+    0.02,
+    0.02
+   ],
+   "stem.flatness::piano_low": [
+    2.0,
+    2.0
+   ],
+   "stem.dc::rain_awnings": [
+    0.09994997498691426,
+    0.09994997498691426
+   ],
+   "stem.clipping::rain_awnings": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::rain_awnings": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::rain_awnings": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::rain_awnings": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::rain_awnings": [
+    1.0,
+    1.0
+   ],
+   "stem.tick::rain_awnings": [
+    1.5952347880085165,
+    1.5952347880085165
+   ],
+   "stem.dead::rain_awnings": [
+    0.02,
+    0.02
+   ],
+   "stem.dc::rain_street": [
+    0.09998986293648555,
+    0.09998986293648555
+   ],
+   "stem.clipping::rain_street": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::rain_street": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::rain_street": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::rain_street": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::rain_street": [
+    1.0,
+    1.0
+   ],
+   "stem.tick::rain_street": [
+    1.5388900148764073,
+    1.5388900148764073
+   ],
+   "stem.dead::rain_street": [
+    0.02,
+    0.02
+   ],
+   "stem.clipping::siren_first": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::siren_first": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::siren_first": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::siren_first": [
+    2.0,
+    2.0
+   ],
+   "stem.dead::siren_first": [
+    0.02,
+    0.02
+   ],
+   "stem.clipping::siren_second": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::siren_second": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::siren_second": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::siren_second": [
+    2.0,
+    2.0
+   ],
+   "stem.dc::snare": [
+    0.09988794565384809,
+    0.09988794565384809
+   ],
+   "stem.clipping::snare": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::snare": [
+    0.0,
+    0.0
+   ],
+   "stem.dead::snare": [
+    0.02,
+    0.02
+   ],
+   "stem.clipping::sub_drop": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::sub_drop": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::sub_drop": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::sub_drop": [
+    2.0,
+    2.0
+   ],
+   "stem.dead::sub_drop": [
+    0.02,
+    0.02
+   ],
+   "stem.dc::timpani": [
+    0.09983006346612436,
+    0.09983006346612436
+   ],
+   "stem.clipping::timpani": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::timpani": [
+    0.0,
+    0.0
+   ],
+   "stem.dead::timpani": [
+    0.02,
+    0.02
+   ],
+   "stem.dc::trombones": [
+    0.09995081783669209,
+    0.09995081783669209
+   ],
+   "stem.clipping::trombones": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::trombones": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::trombones": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::trombones": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::trombones": [
+    1.0,
+    1.0
+   ],
+   "stem.tick::trombones": [
+    0.4746915292068399,
+    0.4746915292068399
+   ],
+   "stem.dead::trombones": [
+    0.02,
+    0.02
+   ],
+   "stem.flatness::trombones": [
+    2.0,
+    2.0
+   ],
+   "stem.dc::tuba": [
+    0.09976604413257563,
+    0.09976604413257563
+   ],
+   "stem.clipping::tuba": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::tuba": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::tuba": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::tuba": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::tuba": [
+    0.9507029338406028,
+    0.9507029338406028
+   ],
+   "stem.tick::tuba": [
+    0.2051309437330831,
+    0.2051309437330831
+   ],
+   "stem.dead::tuba": [
+    0.02,
+    0.02
+   ],
+   "stem.flatness::tuba": [
+    2.0,
+    2.0
+   ],
+   "stem.clipping::tyres": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::tyres": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::tyres": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::tyres": [
+    2.0,
+    2.0
+   ],
+   "stem.dead::tyres": [
+    0.02,
+    0.02
+   ],
+   "stem.dc::violins_staccato": [
+    0.0995103933099991,
+    0.0995103933099991
+   ],
+   "stem.clipping::violins_staccato": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::violins_staccato": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::violins_staccato": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::violins_staccato": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::violins_staccato": [
+    1.0,
+    1.0
+   ],
+   "stem.dead::violins_staccato": [
+    0.02,
+    0.02
+   ],
+   "stem.flatness::violins_staccato": [
+    2.0,
+    2.0
+   ],
+   "stem.dc::violins_tremolo": [
+    0.09998283611829861,
+    0.09998283611829861
+   ],
+   "stem.clipping::violins_tremolo": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::violins_tremolo": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::violins_tremolo": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::violins_tremolo": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::violins_tremolo": [
+    1.0,
+    1.0
+   ],
+   "stem.dead::violins_tremolo": [
+    0.02,
+    0.02
+   ],
+   "stem.flatness::violins_tremolo": [
+    2.0,
+    2.0
+   ],
+   "stem.clipping::wipers": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::wipers": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::wipers": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::wipers": [
+    2.0,
+    2.0
+   ]
+  },
+  "conflicts": [],
+  "closed": [
+   "stem.clipping",
+   "stem.dead",
+   "stem.tick",
+   "stem.dead"
+  ],
+  "burned": [],
+  "notes": [
+   "no admissible combination clears stem.clipping, stem.dropout, stem.tick; the best set leaves it at safety -62.00. The rows that limit it have no lever here - fix those first, or change the piece rather than the knob"
+  ],
+  "experiments": []
+ },
+ "forensics": [],
+ "notes": [
+  "celli: the tightest gap in the score is 23 ms at beat spacing 0.469 s (128 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "horns: the tightest gap in the score is 1875 ms at beat spacing 0.469 s (128 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "piano: the tightest gap in the score is 14 ms at beat spacing 0.469 s (128 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "piano_low: the tightest gap in the score is 94 ms at beat spacing 0.469 s (128 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "sub_drop: the tightest gap in the score is 5625 ms at beat spacing 0.469 s (128 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "trombones: the tightest gap in the score is 47 ms at beat spacing 0.469 s (128 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "tuba: the tightest gap in the score is 234 ms at beat spacing 0.469 s (128 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "violins_staccato: the tightest gap in the score is 23 ms at beat spacing 0.469 s (128 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "violins_tremolo: the tightest gap in the score is 47 ms at beat spacing 0.469 s (128 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "risk closure: the levers that move this row belong to bass_clarinet, basses, celli, city_far, crash, engine, horns, piano, piano_low, rain_awnings, rain_street, siren_first, siren_second, sub_drop, trombones, tuba, tyres, violins_staccato, violins_tremolo, wipers, so every row of those stems was loaded as a constraint before the plan was solved"
+ ]
+}
