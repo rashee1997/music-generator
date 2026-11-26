@@ -6,7 +6,7 @@
     "warns": 0,
     "rows": 250,
     "profile": "night_pursuit_cinematic",
-    "total_ms": 3224.5627390002483,
+    "total_ms": 8961.48783800163,
     "timings": {
       "bass_clarinet": 0.0,
       "bass_drum": 0.0,
@@ -17,19 +17,19 @@
       "city_far": 0.0,
       "crash": 0.0,
       "cymbals": 0.0,
-      "ferrari": 1124.3481050005357,
+      "ferrari": 1152.291274000163,
       "helicopter": 0.0,
       "horns": 0.0,
-      "lamborghini": 1049.0213009979925,
+      "lamborghini": 1317.5464030027797,
       "landing": 0.0,
-      "mustang": 1078.9621629992325,
+      "mustang": 1161.7121979979856,
       "piano": 0.0,
       "piano_low": 0.0,
       "porsche": 0.0,
       "siren_first": 0.0,
       "siren_second": 0.0,
       "snare": 0.0,
-      "solo_violin": 0.0,
+      "solo_violin": 2913.2823839972843,
       "sub_drop": 0.0,
       "sub_pulse": 0.0,
       "taiko": 0.0,
@@ -1594,11 +1594,11 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"ferrari\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 4826 event(s) rejected as a dense burst, 742 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"ferrari\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2231 event(s) rejected as a dense burst, 735 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 4826,
-        "attacks_ignored": 742,
+        "rejected": 2231,
+        "attacks_ignored": 735,
         "max_cluster_span_ms": 1.4965986394557824
       },
       {
@@ -1612,7 +1612,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -56.9 dBFS; 0 hole(s)",
+        "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -57.9 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -1672,14 +1672,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"ferrari\": own median -19.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"ferrari\": own median -20.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -19.2,
-            "expected_db": -19.2,
+            "measured_db": -20.19,
+            "expected_db": -20.19,
             "dyn": 0.75
           }
         ],
@@ -2325,7 +2325,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -150.0 dBFS; 0 hole(s)",
+        "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.4 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -2385,14 +2385,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"mustang\": own median -19.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"mustang\": own median -18.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -19.3,
-            "expected_db": -19.3,
+            "measured_db": -18.69,
+            "expected_db": -18.69,
             "dyn": 0.75
           }
         ],
@@ -3341,18 +3341,18 @@
         "stage": "stem",
         "stem": "solo_violin",
         "level": "PASS",
-        "value": 6.705330984411375e-07,
+        "value": 6.769073742151592e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009993294669015588,
+        "margin": -0.000999323092625785,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"solo_violin\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"solo_violin\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          1.576279839667728e-14,
-          4.025095542377936e-14
+          -1.3724955742486313e-14,
+          4.0372176840520574e-14
         ],
-        "drift": 6.705330984411375e-07
+        "drift": 6.769073742151592e-07
       },
       {
         "row": "stem.clipping",
@@ -3413,14 +3413,14 @@
         "calibrated": false,
         "detail": "stem \"solo_violin\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          28.5,
-          27.6,
-          27.7,
-          23.6,
-          27.4,
-          23.4,
+          14.3,
+          27.3,
+          19.1,
+          27.8,
+          26.2,
           28.1,
-          42.9
+          28.3,
+          13.1
         ],
         "exempted": []
       },
@@ -3435,9 +3435,9 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"solo_violin\": audible span 139.855-175.830 s against score notes 139.888-174.945 s: leading silence -33 ms, trailing silence -885 ms (limit 25 ms)",
-        "head_ms": -32.8,
-        "tail_ms": -884.7,
+        "detail": "stem \"solo_violin\": audible span 139.860-175.490 s against score notes 139.888-174.945 s: leading silence -28 ms, trailing silence -545 ms (limit 25 ms)",
+        "head_ms": -27.8,
+        "tail_ms": -544.7,
         "fail": false
       },
       {
@@ -3451,21 +3451,21 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"solo_violin\": own median -40.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve",
+        "detail": "stem \"solo_violin\": own median -39.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_flyover",
             "start_s": 139.888,
-            "measured_db": -38.11,
-            "expected_db": -38.72,
+            "measured_db": -38.09,
+            "expected_db": -38.03,
             "dyn": 0.8
           },
           {
             "section": "the_escape",
             "start_s": 165.785,
-            "measured_db": -42.93,
-            "expected_db": -42.8,
+            "measured_db": -41.58,
+            "expected_db": -42.11,
             "dyn": 0.5
           }
         ],
@@ -4915,8 +4915,8 @@
       }
     ],
     "duration_s": 195.42412698412699,
-    "cached_stems": 27,
-    "measured_stems": 3
+    "cached_stems": 26,
+    "measured_stems": 4
   },
   "rows": [
     {
@@ -5302,12 +5302,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"ferrari\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 4826 event(s) rejected as a dense burst, 742 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"ferrari\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2231 event(s) rejected as a dense burst, 735 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -56.9 dBFS; 0 hole(s)"
+      "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -57.9 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5327,7 +5327,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"ferrari\": own median -19.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"ferrari\": own median -20.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -5507,7 +5507,7 @@
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -150.0 dBFS; 0 hole(s)"
+      "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.4 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5527,7 +5527,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"mustang\": own median -19.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"mustang\": own median -18.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "PASS",
@@ -5772,7 +5772,7 @@
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"solo_violin\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"solo_violin\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -5797,12 +5797,12 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"solo_violin\": audible span 139.855-175.830 s against score notes 139.888-174.945 s: leading silence -33 ms, trailing silence -885 ms (limit 25 ms)"
+      "detail": "stem \"solo_violin\": audible span 139.860-175.490 s against score notes 139.888-174.945 s: leading silence -28 ms, trailing silence -545 ms (limit 25 ms)"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"solo_violin\": own median -40.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve"
+      "detail": "stem \"solo_violin\": own median -39.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve"
     },
     {
       "level": "PASS",

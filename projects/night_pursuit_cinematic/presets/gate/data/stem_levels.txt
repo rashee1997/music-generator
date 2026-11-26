@@ -41,7 +41,7 @@ cymbals,the_tunnel,-37.27,-37.64,0.8
 cymbals,the_helicopter,-37.5,-37.64,0.8
 cymbals,the_bumps,-37.64,-35.7,1.0
 cymbals,the_flyover,-36.72,-37.64,0.8
-ferrari,the_race,-19.2,-19.2,0.75
+ferrari,the_race,-20.19,-20.19,0.75
 helicopter,the_tunnel,-16.27,-16.27,0.8
 horns,the_race,-40.49,-39.55,0.75
 horns,spotted,-38.72,-38.47,0.85
@@ -53,7 +53,7 @@ horns,the_flyover,-41.02,-38.99,0.8
 horns,the_escape,-54.16,-43.08,0.5
 lamborghini,the_race,-20.74,-20.74,0.75
 landing,the_flyover,-16.29,-16.29,0.8
-mustang,the_race,-19.3,-19.3,0.75
+mustang,the_race,-18.69,-18.69,0.75
 piano,the_race,-36.95,-35.57,0.75
 piano,spotted,-34.85,-34.48,0.85
 piano,the_chase,-35.01,-33.98,0.9
@@ -77,8 +77,8 @@ snare,the_tunnel,-26.49,-26.3,0.8
 snare,the_helicopter,-25.32,-26.3,0.8
 snare,the_bumps,-25.07,-24.36,1.0
 snare,the_flyover,-27.09,-26.3,0.8
-solo_violin,the_flyover,-38.11,-38.72,0.8
-solo_violin,the_escape,-42.93,-42.8,0.5
+solo_violin,the_flyover,-38.09,-38.03,0.8
+solo_violin,the_escape,-41.58,-42.11,0.5
 sub_drop,the_chase,-31.11,-31.9,0.9
 sub_drop,the_helicopter,-32.93,-32.93,0.8
 sub_drop,the_flyover,-36.71,-32.93,0.8

@@ -1556,11 +1556,11 @@
     "margin": 0.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"ferrari\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 4826 event(s) rejected as a dense burst, 742 as a steep attack; max cluster span 1.497 ms",
+    "detail": "stem \"ferrari\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2231 event(s) rejected as a dense burst, 735 as a steep attack; max cluster span 1.497 ms",
     "mad_count": 0,
     "lpc_count": 0,
-    "rejected": 4826,
-    "attacks_ignored": 742,
+    "rejected": 2231,
+    "attacks_ignored": 735,
     "max_cluster_span_ms": 1.4965986394557824
    },
    {
@@ -1574,7 +1574,7 @@
     "margin": -20.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -56.9 dBFS; 0 hole(s)",
+    "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -57.9 dBFS; 0 hole(s)",
     "holes": []
    },
    {
@@ -1634,14 +1634,14 @@
     "margin": -12.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"ferrari\": own median -19.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+    "detail": "stem \"ferrari\": own median -20.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
     "fail": false,
     "table": [
      {
       "section": "the_race",
       "start_s": 0.0,
-      "measured_db": -19.2,
-      "expected_db": -19.2,
+      "measured_db": -20.19,
+      "expected_db": -20.19,
       "dyn": 0.75
      }
     ],
@@ -2287,7 +2287,7 @@
     "margin": -20.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -150.0 dBFS; 0 hole(s)",
+    "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.4 dBFS; 0 hole(s)",
     "holes": []
    },
    {
@@ -2347,14 +2347,14 @@
     "margin": -12.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"mustang\": own median -19.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+    "detail": "stem \"mustang\": own median -18.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
     "fail": false,
     "table": [
      {
       "section": "the_race",
       "start_s": 0.0,
-      "measured_db": -19.3,
-      "expected_db": -19.3,
+      "measured_db": -18.69,
+      "expected_db": -18.69,
       "dyn": 0.75
      }
     ],
@@ -3303,18 +3303,18 @@
     "stage": "stem",
     "stem": "solo_violin",
     "level": "PASS",
-    "value": 6.705330984411375e-07,
+    "value": 6.769073742151592e-07,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009993294669015588,
+    "margin": -0.000999323092625785,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"solo_violin\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+    "detail": "stem \"solo_violin\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
     "channel_means": [
-     1.576279839667728e-14,
-     4.025095542377936e-14
+     -1.3724955742486313e-14,
+     4.0372176840520574e-14
     ],
-    "drift": 6.705330984411375e-07
+    "drift": 6.769073742151592e-07
    },
    {
     "row": "stem.clipping",
@@ -3375,14 +3375,14 @@
     "calibrated": false,
     "detail": "stem \"solo_violin\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
     "drops": [
-     28.5,
-     27.6,
-     27.7,
-     23.6,
-     27.4,
-     23.4,
+     14.3,
+     27.3,
+     19.1,
+     27.8,
+     26.2,
      28.1,
-     42.9
+     28.3,
+     13.1
     ],
     "exempted": []
    },
@@ -3397,9 +3397,9 @@
     "margin": -25.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"solo_violin\": audible span 139.855-175.830 s against score notes 139.888-174.945 s: leading silence -33 ms, trailing silence -885 ms (limit 25 ms)",
-    "head_ms": -32.8,
-    "tail_ms": -884.7,
+    "detail": "stem \"solo_violin\": audible span 139.860-175.490 s against score notes 139.888-174.945 s: leading silence -28 ms, trailing silence -545 ms (limit 25 ms)",
+    "head_ms": -27.8,
+    "tail_ms": -544.7,
     "fail": false
    },
    {
@@ -3413,21 +3413,21 @@
     "margin": -12.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"solo_violin\": own median -40.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve",
+    "detail": "stem \"solo_violin\": own median -39.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve",
     "fail": false,
     "table": [
      {
       "section": "the_flyover",
       "start_s": 139.888,
-      "measured_db": -38.11,
-      "expected_db": -38.72,
+      "measured_db": -38.09,
+      "expected_db": -38.03,
       "dyn": 0.8
      },
      {
       "section": "the_escape",
       "start_s": 165.785,
-      "measured_db": -42.93,
-      "expected_db": -42.8,
+      "measured_db": -41.58,
+      "expected_db": -42.11,
       "dyn": 0.5
      }
     ],
@@ -4835,20 +4835,20 @@
     "threshold": 0.0,
     "margin": 1.0,
     "worst_times_s": [
-     162.0025
+     134.7877
     ],
     "calibrated": true,
-    "detail": "1 clustered impulse event(s) (MAD), 1 LPC frame(s); 2170 event(s) rejected as a dense burst, 225 as a steep attack; max cluster span 1.497 ms"
+    "detail": "1 clustered impulse event(s) (MAD), 1 LPC frame(s); 114 event(s) rejected as a dense burst, 34 as a steep attack; max cluster span 1.497 ms"
    },
    {
     "row": "loudness",
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -16.058343887532534,
+    "value": -16.05867028079349,
     "unit": "LUFS",
     "threshold": -16.0,
-    "margin": -2.4416561124674665,
+    "margin": -2.441329719206511,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-16.1 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -4880,7 +4880,7 @@
      192.255
     ],
     "calibrated": false,
-    "detail": "longest hole 105 ms (limit 20-1000 ms), floor -65.3 dBFS; 2 hole(s)"
+    "detail": "longest hole 105 ms (limit 20-1000 ms), floor -65.2 dBFS; 2 hole(s)"
    },
    {
     "row": "cut.hard",
@@ -4900,13 +4900,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 64.21156441297143,
+    "value": 64.26399284589934,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -52.21156441297143,
+    "margin": -52.26399284589934,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "end level -143.1 dBFS (limit -45), decay over final 300 ms 64.2 dB (limit 12); natural release"
+    "detail": "end level -143.1 dBFS (limit -45), decay over final 300 ms 64.3 dB (limit 12); natural release"
    },
    {
     "row": "clipping",
@@ -4926,10 +4926,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 1.2391902290589296e-05,
+    "value": 1.242925477507749e-05,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009876080977094107,
+    "margin": -0.0009875707452249225,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
@@ -4952,56 +4952,56 @@
       "start_s": 0.0,
       "end_s": 25.077,
       "energy": 0.75,
-      "level_db": -20.026664500490295
+      "level_db": -19.97840591448788
      },
      {
       "name": "spotted",
       "start_s": 25.077,
       "end_s": 38.892,
       "energy": 0.85,
-      "level_db": -19.89212616597468
+      "level_db": -19.844752623884514
      },
      {
       "name": "the_chase",
       "start_s": 38.892,
       "end_s": 72.228,
       "energy": 0.9,
-      "level_db": -19.612932382826898
+      "level_db": -19.564670761898277
      },
      {
       "name": "the_tunnel",
       "start_s": 72.228,
       "end_s": 95.085,
       "energy": 0.8,
-      "level_db": -20.676937472878134
+      "level_db": -20.62639088952918
      },
      {
       "name": "the_helicopter",
       "start_s": 95.085,
       "end_s": 117.636,
       "energy": 0.8,
-      "level_db": -19.321084662682633
+      "level_db": -19.272430012935096
      },
      {
       "name": "the_bumps",
       "start_s": 117.636,
       "end_s": 139.888,
       "energy": 1.0,
-      "level_db": -17.44292171339677
+      "level_db": -17.39482528543258
      },
      {
       "name": "the_flyover",
       "start_s": 139.888,
       "end_s": 165.785,
       "energy": 0.8,
-      "level_db": -24.511220202881432
+      "level_db": -24.467989685487787
      },
      {
       "name": "the_escape",
       "start_s": 165.785,
       "end_s": 192.648,
       "energy": 0.5,
-      "level_db": -34.723398821623924
+      "level_db": -34.58622635616418
      }
     ]
    }

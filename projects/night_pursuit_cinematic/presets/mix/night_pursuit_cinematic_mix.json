@@ -285,7 +285,7 @@
         "true_peak": -1.5,
         "tone": "neutral",
         "glue": true,
-        "fade_out": 1.0
+        "fade_out": 0.6
       }
     },
     "highpass_hz": 105.0,
@@ -805,7 +805,7 @@
       {
         "type": "highshelf",
         "f": 5500,
-        "gain": -9.0,
+        "gain": -12.0,
         "q": 0.7
       }
     ]

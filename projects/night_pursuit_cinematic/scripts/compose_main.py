@@ -300,7 +300,7 @@ sounds = [
     trigger('bumps', 'sfx:np_bumps', 'fx', dc_hp_hz=20.0),
     trigger('landing', 'sfx:np_landing', 'fx', dc_hp_hz=20.0),
     trigger('crash', 'sfx:np_crash', 'fx', dc_hp_hz=20.0),
-    dict(name='city_far', instrument='env:np_city_far', role='environment', notes=[dict(t=0.0, d=round(TOTAL_BEATS, 3), p=60, v=1.0)], fade_in_s=1.0, fade_out_s=1.0),
+    dict(name='city_far', instrument='env:np_city_far', role='environment', notes=[dict(t=0.0, d=round(TOTAL_BEATS, 3), p=60, v=1.0)], fade_in_s=1.0, fade_out_s=3.5),
 ]
 
 # ---------------------------------------------------------------------------------------------------------------- the score

@@ -340,8 +340,8 @@
         {
           "section": "the_race",
           "start_s": 0.0,
-          "measured_db": -19.2,
-          "expected_db": -19.2,
+          "measured_db": -20.19,
+          "expected_db": -20.19,
           "dyn": 0.75
         }
       ]
@@ -449,8 +449,8 @@
         {
           "section": "the_race",
           "start_s": 0.0,
-          "measured_db": -19.3,
-          "expected_db": -19.3,
+          "measured_db": -18.69,
+          "expected_db": -18.69,
           "dyn": 0.75
         }
       ]
@@ -647,15 +647,15 @@
         {
           "section": "the_flyover",
           "start_s": 139.888,
-          "measured_db": -38.11,
-          "expected_db": -38.72,
+          "measured_db": -38.09,
+          "expected_db": -38.03,
           "dyn": 0.8
         },
         {
           "section": "the_escape",
           "start_s": 165.785,
-          "measured_db": -42.93,
-          "expected_db": -42.8,
+          "measured_db": -41.58,
+          "expected_db": -42.11,
           "dyn": 0.5
         }
       ]

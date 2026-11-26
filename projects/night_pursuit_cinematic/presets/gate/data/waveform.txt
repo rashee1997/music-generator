@@ -21,6 +21,6 @@ flagged times: 13
   72.249s stem.tick [PASS] trombones
   82.082s stem.tick [PASS] violins_tremolo
   95.097s stem.tick [PASS] choir
-  162.002s clicks [FAIL] master
+  134.788s clicks [FAIL] master
   192.210s dropout [FAIL] master
   192.255s dropout [FAIL] master

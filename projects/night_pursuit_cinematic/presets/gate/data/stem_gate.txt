@@ -1,4 +1,4 @@
-stem gate: 0 FAIL, 0 WARN, 250 rows, profile night_pursuit_cinematic, 3225 ms
+stem gate: 0 FAIL, 0 WARN, 250 rows, profile night_pursuit_cinematic, 8961 ms
 [PASS] stem.dc: stem "bass_clarinet": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "bass_clarinet": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "bass_clarinet": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -75,12 +75,12 @@ stem gate: 0 FAIL, 0 WARN, 250 rows, profile night_pursuit_cinematic, 3225 ms
 [PASS] stem.dead: stem "cymbals": own median -37.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve
 [INFO] stem.dc: stem "ferrari": not applied: a one-shot effect stem has no sustained baseline to drift
 [PASS] stem.clipping: stem "ferrari": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
-[PASS] stem.clicks: stem "ferrari": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 4826 event(s) rejected as a dense burst, 742 as a steep attack; max cluster span 1.497 ms
-[PASS] stem.dropout: stem "ferrari": longest hole 0 ms (limit 20-1000 ms), floor -56.9 dBFS; 0 hole(s)
+[PASS] stem.clicks: stem "ferrari": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2231 event(s) rejected as a dense burst, 735 as a steep attack; max cluster span 1.497 ms
+[PASS] stem.dropout: stem "ferrari": longest hole 0 ms (limit 20-1000 ms), floor -57.9 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "ferrari": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
 [INFO] stem.edge: stem "ferrari": not applied: a one-shot effect note length is a trigger, not a sound length
 [INFO] stem.tick: stem "ferrari": not applied: a one-shot effect stem is a sequence of triggers, not a pulse to hold still
-[PASS] stem.dead: stem "ferrari": own median -19.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve
+[PASS] stem.dead: stem "ferrari": own median -20.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve
 [INFO] stem.dc: stem "helicopter": not applied: a one-shot effect stem has no sustained baseline to drift
 [PASS] stem.clipping: stem "helicopter": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "helicopter": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 1 as a steep attack; max cluster span 0.000 ms
@@ -116,11 +116,11 @@ stem gate: 0 FAIL, 0 WARN, 250 rows, profile night_pursuit_cinematic, 3225 ms
 [INFO] stem.dc: stem "mustang": not applied: a one-shot effect stem has no sustained baseline to drift
 [PASS] stem.clipping: stem "mustang": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "mustang": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
-[PASS] stem.dropout: stem "mustang": longest hole 0 ms (limit 20-1000 ms), floor -150.0 dBFS; 0 hole(s)
+[PASS] stem.dropout: stem "mustang": longest hole 0 ms (limit 20-1000 ms), floor -149.4 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "mustang": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
 [INFO] stem.edge: stem "mustang": not applied: a one-shot effect note length is a trigger, not a sound length
 [INFO] stem.tick: stem "mustang": not applied: a one-shot effect stem is a sequence of triggers, not a pulse to hold still
-[PASS] stem.dead: stem "mustang": own median -19.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve
+[PASS] stem.dead: stem "mustang": own median -18.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve
 [PASS] stem.dc: stem "piano": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "piano": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "piano": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -169,13 +169,13 @@ stem gate: 0 FAIL, 0 WARN, 250 rows, profile night_pursuit_cinematic, 3225 ms
 [INFO] stem.edge: stem "snare": not applied: a percussive note length is a trigger, not a sound length
 [INFO] stem.tick: stem "snare": not applied: a percussive stem is allowed a pulse
 [PASS] stem.dead: stem "snare": own median -26.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve
-[PASS] stem.dc: stem "solo_violin": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+[PASS] stem.dc: stem "solo_violin": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "solo_violin": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "solo_violin": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
 [PASS] stem.dropout: stem "solo_violin": longest hole 0 ms (limit 20-1000 ms), floor -285.0 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "solo_violin": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
-[PASS] stem.edge: stem "solo_violin": audible span 139.855-175.830 s against score notes 139.888-174.945 s: leading silence -33 ms, trailing silence -885 ms (limit 25 ms)
-[PASS] stem.dead: stem "solo_violin": own median -40.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve
+[PASS] stem.edge: stem "solo_violin": audible span 139.860-175.490 s against score notes 139.888-174.945 s: leading silence -28 ms, trailing silence -545 ms (limit 25 ms)
+[PASS] stem.dead: stem "solo_violin": own median -39.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve
 [PASS] stem.flatness: stem "solo_violin": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [INFO] stem.dc: stem "sub_drop": not applied: a one-shot effect stem has no sustained baseline to drift
 [PASS] stem.clipping: stem "sub_drop": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
