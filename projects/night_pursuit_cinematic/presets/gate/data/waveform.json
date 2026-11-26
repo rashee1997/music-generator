@@ -110,12 +110,6 @@
       "stem.tick",
       "choir",
       "PASS"
-    ],
-    [
-      192.595,
-      "dropout",
-      "master",
-      "FAIL"
     ]
   ]
 }
