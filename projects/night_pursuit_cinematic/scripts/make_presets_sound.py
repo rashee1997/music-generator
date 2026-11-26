@@ -113,8 +113,8 @@ def car_keys(car):
                  (S('the_helicopter') + 2.0, 125.0, 80.0), (E_('the_helicopter') - 2.0, 125.0, 80.0), (S('the_bumps') + 2.0, 125.0, 8.0),
                  (S('the_flyover') + 2.0, 125.0, 14.0), (EV['lost'], 125.0, 14.0), (EV['lost'] + 3.0, 125.0, 40.0)]
     elif car == 'mustang':
-        keys += [(0.0, 100.0, 9.0), (sp - 1.0, 98.0, 11.0)] + passby(sp + 5.0, side=-1) + [(S('the_chase') + 3.0, 96.0, 18.0), (EV['crash'] - 1.0, 96.0, 18.0),
-                 (EV['crash'] + 1.6, 98.0, 30.0)]      # the right side, 60 deg off the plucked basses at 40 deg (spatial.z_separation read them 5 deg apart in the climax)
+        keys += [(0.0, 105.0, 9.0), (sp - 1.0, 105.0, 11.0)] + passby(sp + 5.0, side=-1) + [(S('the_chase') + 3.0, 105.0, 18.0), (EV['crash'] - 1.0, 105.0, 18.0),
+                 (EV['crash'] + 1.6, 105.0, 30.0)]      # the right side, 60 deg off the plucked basses at 40 deg (spatial.z_separation read them 5 deg apart in the climax)
     else:
         keys += [(0.0, 150.0, 12.0), (sp - 1.0, 160.0, 18.0)] + passby(sp + 6.5) + [(S('the_chase') + 3.0, 165.0, 30.0), (S('the_tunnel') + 6.0, 170.0, 22.0),
                  (S('the_helicopter') + 2.0, 150.0, 110.0), (E_('the_helicopter') - 2.0, 150.0, 110.0), (S('the_bumps') + 2.0, 150.0, 14.0),
@@ -278,8 +278,8 @@ write('sfx', 'np_siren_second', dict(
              control=dict(pitch=[dict(kind='curve', points=sample(lambda t: (hilo(t) * 435.0 / 600.0 if t < S('the_helicopter') else yelp(t) * 700.0 / 600.0) * dive(t, 0.7), S2_ON, S2_OFF + 0.2, 0.02))],
                           gain_db=[dict(kind='curve', points=sample(lambda t: gate_db(t, S2_ON, S2_OFF, [(S('the_tunnel') + 2.0, S('the_tunnel') + 6.0)], fade=0.12) - 3.0 * slowness(t), 0.0, S2_OFF, 0.1))]))]),
     role='fx', gain_db=CAR_LEVEL_DB - 3.0, reverb=0.14,
-    spatial=dict(azimuth=60.0, elevation=0.0, distance=70.0, space=SPACE, binaural=True, kind='spot', trajectory=dict(spatial_role='mover', doppler_strength=1.0, keyframes=keyframes(
-        [(S2_ON, 60.0, 70.0, 0.0), (S('the_chase') + 8.0, 140.0, 24.0, 0.0), (S('the_tunnel') + 2.0, 100.0, 14.0, 0.0), (S('the_helicopter') + 2.0, 60.0, 40.0, 0.0),
+    spatial=dict(azimuth=30.0, elevation=0.0, distance=70.0, space=SPACE, binaural=True, kind='spot', trajectory=dict(spatial_role='mover', doppler_strength=1.0, keyframes=keyframes(
+        [(S2_ON, 30.0, 70.0, 0.0), (S('the_chase') + 8.0, 140.0, 24.0, 0.0), (S('the_tunnel') + 2.0, 100.0, 14.0, 0.0), (S('the_helicopter') + 2.0, 30.0, 40.0, 0.0),
          (S('the_bumps') + 2.0, 100.0, 20.0, 0.0), (S('the_flyover') + 6.0, 120.0, 16.0, 0.0), (EV['evade'], 150.0, 40.0, 0.0), (S2_OFF, 150.0, 90.0, 0.0)]))),
     eq=[dict(type='hp', f=300.0), dict(type='lp', f=8000.0)], fx=occlusion_fx([(S('the_tunnel') + 2.0, S('the_tunnel') + 6.0)], 700.0) + slowmo_fx(2500.0, 0.0),
     sources=['police_siren', 'ESTIMATE: the two patterns and their levels are starting values']))
