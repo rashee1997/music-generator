@@ -333,25 +333,25 @@
       "space": "np_street_canyon"
     },
     "pursuit_horns": {
-      "azimuth": 60.0,
+      "azimuth": 20.0,
       "elevation": 15.0,
       "distance": 2.6,
       "space": "np_street_canyon"
     },
     "pursuit_trombones": {
-      "azimuth": -60.0,
+      "azimuth": -90.0,
       "elevation": 15.0,
       "distance": 2.8,
       "space": "np_street_canyon"
     },
     "pursuit_violas": {
-      "azimuth": -110.0,
+      "azimuth": -55.0,
       "elevation": 15.0,
       "distance": 2.0,
       "space": "np_street_canyon"
     },
     "pursuit_celli": {
-      "azimuth": 110.0,
+      "azimuth": 55.0,
       "elevation": 15.0,
       "distance": 2.2,
       "space": "np_street_canyon"

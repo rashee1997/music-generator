@@ -1,5 +1,5 @@
 {
- "stamp": "20261126T185831",
+ "stamp": "20261126T194533",
  "project": "night_pursuit_cinematic",
  "level": "WARN",
  "sources": {
@@ -15,8 +15,9 @@
    "waveform.json"
   ],
   "stems": "29 processed stems from .cache/mix",
-  "master": "out/_draft_master.wav",
-  "verdict": "2026-11-26T18:35:30Z"
+  "master": "out/master.wav",
+  "verdict": "2026-11-26T19:45:16Z",
+  "warning": "the audio is newer than the verdict: the pending render has not been judged"
  },
  "binding": [],
  "advisory": [
