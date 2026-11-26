@@ -2100,18 +2100,18 @@
     "stage": "stem",
     "stem": "rain_street",
     "level": "PASS",
-    "value": 1.131881585178337e-07,
+    "value": 1.1670937300700096e-07,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009998868118414822,
+    "margin": -0.000999883290626993,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"rain_street\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+    "detail": "stem \"rain_street\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
     "channel_means": [
-     -3.2105890950195246e-10,
-     5.710616374899457e-10
+     -1.1549248752589874e-10,
+     -3.2793841174339027e-10
     ],
-    "drift": 1.131881585178337e-07
+    "drift": 1.1670937300700096e-07
    },
    {
     "row": "stem.clipping",
@@ -2138,11 +2138,11 @@
     "margin": 0.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"rain_street\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 41 event(s) rejected as a dense burst, 117 as a steep attack; max cluster span 1.497 ms",
+    "detail": "stem \"rain_street\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 40 event(s) rejected as a dense burst, 110 as a steep attack; max cluster span 1.497 ms",
     "mad_count": 0,
     "lpc_count": 0,
-    "rejected": 41,
-    "attacks_ignored": 117,
+    "rejected": 40,
+    "attacks_ignored": 110,
     "max_cluster_span_ms": 1.4965986394557824
    },
    {
@@ -2156,7 +2156,7 @@
     "margin": -20.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"rain_street\": longest hole 0 ms (limit 20-1000 ms), floor -93.1 dBFS; 0 hole(s)",
+    "detail": "stem \"rain_street\": longest hole 0 ms (limit 20-1000 ms), floor -99.1 dBFS; 0 hole(s)",
     "holes": []
    },
    {
@@ -2173,8 +2173,8 @@
     "detail": "stem \"rain_street\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
     "drops": [
      22.3,
-     74.6,
-     59.4
+     76.2,
+     61.1
     ],
     "exempted": []
    },
@@ -2199,24 +2199,24 @@
     "stage": "stem",
     "stem": "rain_street",
     "level": "PASS",
-    "value": 0.059674058283418756,
+    "value": 0.04697430758091219,
     "unit": "rho",
     "threshold": 0.35,
-    "margin": -0.2903259417165812,
+    "margin": -0.3030256924190878,
     "worst_times_s": [
      0.0348
     ],
     "calibrated": false,
-    "detail": "stem \"rain_street\": onset autocorrelation 0.06 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 3 strong onset(s) of 1398, 1 on the grid, IOI CV 0.512; peak rise 10.19 dB at those onsets over 3 onset(s) (min 3); tempogram peak ratio 0.72, PLP peak ratio 1.00",
+    "detail": "stem \"rain_street\": onset autocorrelation 0.05 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 83 strong onset(s) of 1691, 38 on the grid, IOI CV 0.986; peak rise 13.78 dB at those onsets over 83 onset(s) (min 3); tempogram peak ratio 0.72, PLP peak ratio 1.00",
     "periodic": false,
     "period_ms": 92.87981859410431,
-    "events": 3,
-    "cv": 0.5116279069767219,
-    "grid_matched": 1,
-    "tempogram_ratio": 0.718855951643695,
-    "plp_ratio": 0.9999999999958715,
-    "rise_db": 10.193,
-    "rise_onsets": 3
+    "events": 83,
+    "cv": 0.9862882822260073,
+    "grid_matched": 38,
+    "tempogram_ratio": 0.7195189026430014,
+    "plp_ratio": 0.999999999996664,
+    "rise_db": 13.776,
+    "rise_onsets": 83
    },
    {
     "row": "stem.dead",
@@ -2229,63 +2229,63 @@
     "margin": -12.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"rain_street\": own median -48.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve",
+    "detail": "stem \"rain_street\": own median -54.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve",
     "fail": false,
     "table": [
      {
       "section": "the_stakeout",
       "start_s": 0.0,
-      "measured_db": -47.44,
-      "expected_db": -56.48,
+      "measured_db": -53.43,
+      "expected_db": -62.47,
       "dyn": 0.3
      },
      {
       "section": "spotted",
       "start_s": 11.25,
-      "measured_db": -48.35,
-      "expected_db": -52.96,
+      "measured_db": -54.34,
+      "expected_db": -58.95,
       "dyn": 0.45
      },
      {
       "section": "the_avenue",
       "start_s": 22.328,
-      "measured_db": -48.52,
-      "expected_db": -49.12,
+      "measured_db": -54.44,
+      "expected_db": -55.11,
       "dyn": 0.7
      },
      {
       "section": "the_turn",
       "start_s": 46.865,
-      "measured_db": -48.12,
-      "expected_db": -47.43,
+      "measured_db": -54.12,
+      "expected_db": -53.43,
       "dyn": 0.85
      },
      {
       "section": "under_the_bridge",
       "start_s": 73.961,
-      "measured_db": -48.94,
-      "expected_db": -46.94,
+      "measured_db": -54.87,
+      "expected_db": -52.93,
       "dyn": 0.9
      },
      {
       "section": "the_roadblock",
       "start_s": 96.361,
-      "measured_db": -48.67,
-      "expected_db": -46.02,
+      "measured_db": -54.66,
+      "expected_db": -52.02,
       "dyn": 1.0
      },
      {
       "section": "the_bridge",
       "start_s": 127.859,
-      "measured_db": -47.83,
-      "expected_db": -46.47,
+      "measured_db": -53.8,
+      "expected_db": -52.46,
       "dyn": 0.95
      },
      {
       "section": "the_cliff",
       "start_s": 149.686,
-      "measured_db": -48.11,
-      "expected_db": -60.0,
+      "measured_db": -54.1,
+      "expected_db": -66.0,
       "dyn": 0.2
      }
     ],
@@ -4026,29 +4026,30 @@
     "stage": "mix",
     "stem": null,
     "level": "FAIL",
-    "value": 5.0,
+    "value": 6.0,
     "unit": "events",
     "threshold": 0.0,
-    "margin": 5.0,
+    "margin": 6.0,
     "worst_times_s": [
-     6.3236,
-     28.2193,
-     37.0398,
-     67.2521,
-     84.0017
+     104.18,
+     146.7875,
+     155.7048,
+     156.9042,
+     157.8323,
+     164.4267
     ],
     "calibrated": true,
-    "detail": "5 clustered impulse event(s) (MAD), 5 LPC frame(s); 305 event(s) rejected as a dense burst, 362 as a steep attack; max cluster span 1.497 ms"
+    "detail": "6 clustered impulse event(s) (MAD), 6 LPC frame(s); 722 event(s) rejected as a dense burst, 630 as a steep attack; max cluster span 1.497 ms"
    },
    {
     "row": "loudness",
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -16.000000183197802,
+    "value": -16.000000364389418,
     "unit": "LUFS",
     "threshold": -16.0,
-    "margin": -2.499999816802198,
+    "margin": -2.499999635610582,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-16.0 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -4058,13 +4059,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -2.5270592197362864,
+    "value": -2.520997420186613,
     "unit": "dBTP",
     "threshold": -1.5,
-    "margin": -1.0270592197362864,
+    "margin": -1.020997420186613,
     "worst_times_s": [],
     "calibrated": true,
-    "detail": "-2.53 dBTP vs ceiling -1.5"
+    "detail": "-2.52 dBTP vs ceiling -1.5"
    },
    {
     "row": "dropout",
@@ -4077,7 +4078,7 @@
     "margin": -20.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "longest hole 0 ms (limit 20-1000 ms), floor -65.0 dBFS; 0 hole(s)"
+    "detail": "longest hole 0 ms (limit 20-1000 ms), floor -64.9 dBFS; 0 hole(s)"
    },
    {
     "row": "cut.hard",
@@ -4097,13 +4098,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 71.7440761778073,
+    "value": 70.71895612024116,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -59.7440761778073,
+    "margin": -58.71895612024116,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "end level -110.9 dBFS (limit -45), decay over final 300 ms 71.7 dB (limit 12); natural release"
+    "detail": "end level -111.7 dBFS (limit -45), decay over final 300 ms 70.7 dB (limit 12); natural release"
    },
    {
     "row": "clipping",
@@ -4123,10 +4124,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 4.008012346843349e-05,
+    "value": 4.044852362411418e-05,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009599198765315666,
+    "margin": -0.0009595514763758859,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00004 (limit 0.001)"
@@ -4149,56 +4150,56 @@
       "start_s": 0.0,
       "end_s": 11.25,
       "energy": 0.3,
-      "level_db": -27.38113217231105
+      "level_db": -27.389725460041827
      },
      {
       "name": "spotted",
       "start_s": 11.25,
       "end_s": 22.328,
       "energy": 0.45,
-      "level_db": -26.1962702424867
+      "level_db": -26.196054449393316
      },
      {
       "name": "the_avenue",
       "start_s": 22.328,
       "end_s": 46.865,
       "energy": 0.7,
-      "level_db": -19.23289414279224
+      "level_db": -19.170198974903904
      },
      {
       "name": "the_turn",
       "start_s": 46.865,
       "end_s": 73.961,
       "energy": 0.85,
-      "level_db": -20.163282947071895
+      "level_db": -20.101207841345506
      },
      {
       "name": "under_the_bridge",
       "start_s": 73.961,
       "end_s": 96.361,
       "energy": 0.9,
-      "level_db": -18.77924970605045
+      "level_db": -18.714226895011514
      },
      {
       "name": "the_roadblock",
       "start_s": 96.361,
       "end_s": 127.859,
       "energy": 1.0,
-      "level_db": -19.126567228940658
+      "level_db": -19.06214336658784
      },
      {
       "name": "the_bridge",
       "start_s": 127.859,
       "end_s": 149.686,
       "energy": 0.95,
-      "level_db": -19.782170744958908
+      "level_db": -19.722054066675916
      },
      {
       "name": "the_cliff",
       "start_s": 149.686,
       "end_s": 171.05,
       "energy": 0.2,
-      "level_db": -39.7059024695641
+      "level_db": -40.66413614919273
      }
     ]
    }

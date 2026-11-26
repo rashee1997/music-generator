@@ -82,12 +82,6 @@
       "PASS"
     ],
     [
-      6.3236,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
       11.2617,
       "stem.tick",
       "celli",
@@ -106,24 +100,6 @@
       "PASS"
     ],
     [
-      28.2193,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      37.0398,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      67.2521,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
       70.7744,
       "stem.tick",
       "trombones",
@@ -136,7 +112,7 @@
       "PASS"
     ],
     [
-      84.0017,
+      104.18,
       "clicks",
       "master",
       "FAIL"
@@ -146,6 +122,36 @@
       "stem.tick",
       "violins_staccato",
       "PASS"
+    ],
+    [
+      146.7875,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      155.7048,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      156.9042,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      157.8323,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      164.4267,
+      "clicks",
+      "master",
+      "FAIL"
     ]
   ]
 }
