@@ -1,0 +1,565 @@
+{
+  "title": "Night Pursuit",
+  "project": "A cinematic car-chase cue through a rainy New York night, written as a listening piece for an 8-channel system",
+  "version": 1,
+  "medium": "film",
+  "brief": "A realistic car chase scene with real car sounds, shifts and drifts in a rainy New York night, police sirens and a full story; tense, the listener should sit on the edge; instruments, music and the place by physics (rainy roads, street objects that absorb and reflect), cinematic drops and slow-motion drifts; full immersive, 8 channel; two minutes, three if two is not enough",
+  "audience": "a listener on an 8-channel (7.1) system or headphones, inside the courier's car, who came for the chase",
+  "purpose": "a 174-second cue that tells a whole chase: a stakeout, a spotting, a launch, a slow-motion drift, an underpass, a roadblock, a bridge and a cut into silence",
+  "point_of_view": "the courier, in the driver's seat: the engine, the wipers, the rain on the roof and the tyres are the nearest sounds; the sirens and the city are outside and they pass by",
+  "job": [
+    "keep the listener on the edge from the first bar to the last: pressure, never relief",
+    "tell the chase in sound: where the cars are, what the road is doing and who is gaining",
+    "make the street physical: wet road, fa\u00e7ades, parked trucks, an underpass and a bridge change what is heard",
+    "give two moments of slow motion and two real hits, and end on a hard cut"
+  ],
+  "story": "A courier with a drive of evidence is seen at a red light at two in the morning; the light changes and the chase begins; a drift into a side street goes into slow motion and snaps back; an underpass, a roadblock and a handbrake turn through the gap; a cruiser spins out; the bridge; and a hard cut into rain, a ticking engine and one far siren.",
+  "duration_s": 174.4,
+  "in_point_s": 0.0,
+  "out_point_s": 174.4,
+  "ending": "hard_out",
+  "feel": [
+    "tense",
+    "relentless",
+    "cold"
+  ],
+  "avoid_feel": [
+    "hopeful",
+    "playful",
+    "calm",
+    "triumphant"
+  ],
+  "sections": [
+    {
+      "name": "the_stakeout",
+      "start_s": 0.0,
+      "end_s": 11.25,
+      "energy": 0.3,
+      "role": "place",
+      "action": "The courier idles at a red light on a wet avenue at two in the morning; wipers, rain on the roof, a far siren.",
+      "music": "one low C every bar and a heartbeat on the bass drum; a bass clarinet whispers the semitone; nothing else"
+    },
+    {
+      "name": "spotted",
+      "start_s": 11.25,
+      "end_s": 22.394,
+      "energy": 0.45,
+      "role": "establish",
+      "action": "A patrol car crosses ahead and its lights come on; the siren starts to the left; the courier does not move.",
+      "music": "the celli begin a quiet figure of eighths; the siren answers the clarinet; the heartbeat quickens"
+    },
+    {
+      "name": "the_avenue",
+      "start_s": 22.394,
+      "end_s": 48.342,
+      "energy": 0.7,
+      "role": "build",
+      "action": "The light changes. Launch on the wet avenue: wheelspin, four shifts, the cruisers behind.",
+      "music": "the pulse enters and does not stop: piano sixteenths, staccato celli, a 3+3+2 drum figure; the horns state the motif"
+    },
+    {
+      "name": "the_turn",
+      "start_s": 48.342,
+      "end_s": 74.289,
+      "energy": 0.85,
+      "role": "build",
+      "action": "A drift into a side street; at its crest time slows, and snaps back.",
+      "music": "the music thins to the heartbeat and a low pedal as the tempo falls; a sub drop and one impact snap it back; the pulse returns a semitone up"
+    },
+    {
+      "name": "under_the_bridge",
+      "start_s": 74.289,
+      "end_s": 100.236,
+      "energy": 0.9,
+      "role": "peak",
+      "action": "An underpass: the sirens echo, a second car joins, the engine is loud in the concrete.",
+      "music": "the pulse thins to pulse and low brass, then breaks open into tremolo strings and a rising line, a semitone up again"
+    },
+    {
+      "name": "the_roadblock",
+      "start_s": 100.236,
+      "end_s": 133.597,
+      "energy": 1.0,
+      "role": "peak",
+      "action": "Lights across the road; a handbrake turn through the gap; a cruiser spins out.",
+      "music": "the loudest music: trombone stabs, tritone clusters, the snare roll; a second slow passage and the crash hit; a semitone up again"
+    },
+    {
+      "name": "the_bridge",
+      "start_s": 133.597,
+      "end_s": 159.545,
+      "energy": 0.95,
+      "role": "peak",
+      "action": "Out onto the bridge, the whole city below; the road ahead is empty and that is worse.",
+      "music": "the pulse at its fastest, violins in staccato runs, the horns state the motif larger; it climbs and does not resolve"
+    },
+    {
+      "name": "the_cliff",
+      "start_s": 159.545,
+      "end_s": 174.372,
+      "energy": 0.2,
+      "role": "button",
+      "action": "A hard cut. Rain, an engine ticking as it cools, a siren far away that does not come closer.",
+      "music": "nothing is sustained at the first beat; a heartbeat returns, a high string harmonic, one unresolved tritone"
+    }
+  ],
+  "motifs": [
+    {
+      "name": "the_tick",
+      "first_at_s": 14.98,
+      "shape": "C, Db, C, then a leap up a tritone to Gb and a step down to F: long, short, short, long, long",
+      "returns": "bass clarinet whispers it; the horns state it at the launch; after the drift snap it climbs a semitone and the horns play it in octaves; on the bridge it is played by horns and trombones together with the leap on the weak beat; at the cliff only the Gb is left"
+    },
+    {
+      "name": "the_siren_figure",
+      "first_at_s": 7.5,
+      "shape": "a rising and falling sweep between 600 and 1400 Hz, a minor ninth from the key",
+      "returns": "the second cruiser has a different, faster sweep so the two never share a pitch; both fall away at the cut"
+    }
+  ],
+  "instruments": [
+    "pursuit_piano",
+    "pursuit_celli",
+    "pursuit_basses",
+    "pursuit_horns",
+    "pursuit_trombones",
+    "pursuit_violins_staccato",
+    "pursuit_violins_tremolo",
+    "pursuit_bass_clarinet",
+    "pursuit_tuba",
+    "pursuit_timpani",
+    "pursuit_bass_drum",
+    "pursuit_snare",
+    "pursuit_cymbals",
+    "pursuit_piano_low",
+    "pursuit_sub_drop"
+  ],
+  "avoid_sounds": [
+    "choir",
+    "bell",
+    "harp",
+    "flute",
+    "guitar",
+    "synth pad"
+  ],
+  "pulse": "steady",
+  "tempo_bpm": [
+    60,
+    156
+  ],
+  "key": "C",
+  "mode": "minor",
+  "energy": 0.9,
+  "space": "np_street_canyon",
+  "hits_at": [
+    14.05,
+    22.39,
+    63.17,
+    68.73,
+    74.29,
+    122.48,
+    126.18,
+    159.54
+  ],
+  "hits": [
+    {
+      "t": 14.05,
+      "kind": "motion",
+      "sync": "soft",
+      "sound": "a cruiser crosses the junction ahead; its lights come on and a siren starts far to the left",
+      "why": "the moment the courier is seen; a soft sync, so a beat either way does not matter"
+    },
+    {
+      "t": 22.39,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the engine wakes: wheelspin on the wet road, first gear, the pulse begins",
+      "why": "the chase starts; the pulse that never stops enters here"
+    },
+    {
+      "t": 63.17,
+      "kind": "motion",
+      "sync": "soft",
+      "sound": "the rear steps out: the drift begins and time starts to slow",
+      "why": "the slow-motion drift needs its lead-in: the tempo falls and the engine and tyres go down in pitch"
+    },
+    {
+      "t": 68.73,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the tyres bite: a cinematic drop, a sub drop and one impact, and the tempo snaps back",
+      "why": "the release of the slow-motion drift; the strings keep sounding, so it is a hard accent and not a cut"
+    },
+    {
+      "t": 74.29,
+      "kind": "motion",
+      "sync": "soft",
+      "sound": "the car enters the underpass: the room closes and the sirens echo",
+      "why": "the place changes; the field, not the music, says it"
+    },
+    {
+      "t": 122.48,
+      "kind": "motion",
+      "sync": "soft",
+      "sound": "a cruiser loses the road at the roadblock: a second slow-motion passage",
+      "why": "the pursuer is seen to fail, in slow motion"
+    },
+    {
+      "t": 126.18,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the cruiser hits the barrier: one impact, metal, glass, and the tempo snaps back",
+      "why": "the turning point of the chase; weight and one real hit, with the quietest bar before it"
+    },
+    {
+      "t": 159.54,
+      "kind": "cut",
+      "sync": "hard",
+      "sound": "everything sustained stops on the frame; then rain, a ticking engine and one far siren",
+      "why": "the cliff: a hard cut into near silence, so the listener is left on the edge and not given relief"
+    }
+  ],
+  "mix_intent": {
+    "hero": "pursuit_horns",
+    "support": [
+      "pursuit_celli",
+      "pursuit_trombones",
+      "pursuit_timpani",
+      "pursuit_piano"
+    ],
+    "sits_under": [
+      "np_rain_street",
+      "np_city_far"
+    ],
+    "must_hear": [
+      "the engine and the wipers in the first 3 s",
+      "a siren in the left by 14.1 s",
+      "the first shift at 26.1 s",
+      "the drop at 68.7 s",
+      "the room closing at 74.3 s",
+      "the crash at 126.2 s",
+      "the cut at 159.5 s"
+    ],
+    "leave_free_hz": []
+  },
+  "loudness_lufs": -16.0,
+  "true_peak_max": -1.5,
+  "delivery": {
+    "format": "wav",
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "stage": "cinema",
+    "output_targets": [
+      "stereo",
+      "immersive_7_1"
+    ],
+    "played_on": "an 8-channel 7.1 theatre or home system (the fifth-order field decoded to eight speakers), and headphones through the stereo master"
+  },
+  "references": [
+    "a relentless low-string and piano pulse over a wet, close, loud street, with low brass at the turning points and a hard cut into silence",
+    "the car as the listener's room: the engine in front and below, the road behind, the sirens passing outside"
+  ],
+  "spatial_staging": {
+    "pursuit_piano_low": {
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "distance": 1.2,
+      "space": "np_street_canyon"
+    },
+    "pursuit_basses": {
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "distance": 1.5,
+      "space": "np_street_canyon"
+    },
+    "pursuit_tuba": {
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "distance": 1.8,
+      "space": "np_street_canyon"
+    },
+    "pursuit_bass_drum": {
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "distance": 2.2,
+      "space": "np_street_canyon"
+    },
+    "pursuit_timpani": {
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "distance": 3.0,
+      "space": "np_street_canyon"
+    },
+    "pursuit_sub_drop": {
+      "azimuth": 0.0,
+      "elevation": 0.0,
+      "distance": 1.0,
+      "space": "np_street_canyon"
+    },
+    "pursuit_snare": {
+      "azimuth": -12.0,
+      "elevation": 0.0,
+      "distance": 2.6,
+      "space": "np_street_canyon"
+    },
+    "pursuit_horns": {
+      "azimuth": 35.0,
+      "elevation": 0.0,
+      "distance": 2.6,
+      "space": "np_street_canyon"
+    },
+    "pursuit_trombones": {
+      "azimuth": -40.0,
+      "elevation": 0.0,
+      "distance": 2.8,
+      "space": "np_street_canyon"
+    },
+    "pursuit_piano": {
+      "azimuth": -75.0,
+      "elevation": 0.0,
+      "distance": 2.0,
+      "space": "np_street_canyon"
+    },
+    "pursuit_celli": {
+      "azimuth": 75.0,
+      "elevation": 0.0,
+      "distance": 2.2,
+      "space": "np_street_canyon"
+    },
+    "pursuit_bass_clarinet": {
+      "azimuth": 105.0,
+      "elevation": 0.0,
+      "distance": 2.4,
+      "space": "np_street_canyon"
+    },
+    "pursuit_violins_staccato": {
+      "azimuth": -110.0,
+      "elevation": 0.0,
+      "distance": 3.0,
+      "space": "np_street_canyon"
+    },
+    "pursuit_violins_tremolo": {
+      "azimuth": 140.0,
+      "elevation": 0.0,
+      "distance": 4.0,
+      "space": "np_street_canyon"
+    },
+    "pursuit_cymbals": {
+      "azimuth": -150.0,
+      "elevation": 0.0,
+      "distance": 3.6,
+      "space": "np_street_canyon"
+    }
+  },
+  "immersive": {
+    "enabled": true,
+    "why": "the listener sits inside the courier's car: the engine and the wipers are in front, the road and the spray are behind and at the sides, and the sirens are outside and pass; the street between the buildings, the underpass and the bridge change the room around the car",
+    "engine": "hoa_bus",
+    "anchors": [
+      "pursuit_piano_low",
+      "pursuit_basses",
+      "pursuit_tuba",
+      "pursuit_bass_drum",
+      "pursuit_timpani",
+      "np_engine",
+      "np_wipers"
+    ],
+    "movers": [
+      {
+        "part": "np_siren_wail",
+        "why": "the first cruiser is behind and to the left, then draws alongside and falls back",
+        "path": "starts far to the front left, comes round to the left at the turn, passes behind in the underpass and falls away behind at the bridge"
+      },
+      {
+        "part": "np_siren_yelp",
+        "why": "the second cruiser joins from the right and tries to cut in",
+        "path": "enters far to the front right, crosses in front at the roadblock, ends close at the right rear"
+      },
+      {
+        "part": "np_drift_squeal",
+        "why": "the tyres are at the back of the car: the drift swings the rear out",
+        "path": "left rear to right rear through the turn, and again at the roadblock"
+      },
+      {
+        "part": "np_crash",
+        "why": "the cruiser spins out ahead and to the right",
+        "path": "fixed ahead and to the right at 12 m; the barrier is the occluder"
+      }
+    ],
+    "height": {},
+    "room_changes": [
+      {
+        "at_section": "the_stakeout",
+        "why": "the street canyon: two fa\u00e7ades, a wet road, open sky",
+        "transition_s": 0.5
+      },
+      {
+        "at_section": "under_the_bridge",
+        "why": "the underpass: concrete above and on both sides, a long close tail",
+        "transition_s": 3.0
+      },
+      {
+        "at_section": "the_bridge",
+        "why": "the bridge: open sky again, steel girders, a flutter between rails",
+        "transition_s": 3.0
+      },
+      {
+        "at_section": "the_cliff",
+        "why": "the street again, empty, cold and wet",
+        "transition_s": 2.0
+      }
+    ],
+    "must_hear": [
+      "the siren moving from the front left to the left between 14 s and 63 s",
+      "the tyres swinging round behind at 63 s",
+      "the room closing at 74 s",
+      "the second siren crossing in front at 108 s"
+    ],
+    "deliverables": [
+      "stereo",
+      "immersive_7_1"
+    ],
+    "notes": "the sheet records intent; the presets execute it. The bus is fifth order (36 channels) and is decoded once to the eight speakers of 7.1, which has no height speakers, so every part is on the horizontal plane. Keyframes, room geometry and materials are in presets/spaces and presets/sfx."
+  },
+  "expression": {
+    "sonic_picture": "The first ten seconds: a big engine idling low and a little rough in front and below, wipers at the windscreen, rain on the roof all round and a far siren that never gets closer; the middle: the engine screaming through its gears with the road hissing behind, a siren moving past on the left, a piano pulse of sixteenths and low brass; the last note: nothing sustained, an engine ticking as it cools, rain, one far siren and a single high harmonic with a tritone under it.",
+    "performer": "The piano plays the pulse hard and a little ahead of the beat; the celli dig into the first beat of every bar with a short drag and push into the next; the horns enter late on each statement and lean on the leap; the timpani heartbeat is soft and slightly behind; the snare roll tightens into the crash; the drummer of the 3+3+2 plays the cell with accents that move a little each bar; the strings are sections of six and the brass sections of four.",
+    "producer_moves": "The tempo climbs from 128 to 156 BPM and dips twice into slow motion that snaps back; a bar of near silence before the drop and before the crash; the sub drop and one impact at each snap; the room closes in the underpass and opens on the bridge; the rain is thinned, not pitched, in slow motion; the final hard cut leaves the rain and one siren.",
+    "anti_generic": "The generic version is a drone, a riser, a drum loop and a car sound laid on top; this one is a pulse that goes up a semitone at each turning point, engine, tyres and sirens that obey the road and the geometry, and a cut that leaves the question open.",
+    "cues": [
+      {
+        "section": "the_stakeout",
+        "arousal": "low",
+        "mode_register": "C minor, low and dark",
+        "tempo_trend": "steady, 128 BPM",
+        "dynamics": "pp, a heartbeat at mp",
+        "articulation": "held, then single struck notes",
+        "timbre": "dark, close, little air"
+      },
+      {
+        "section": "spotted",
+        "arousal": "mid",
+        "mode_register": "C minor with a Db neighbour, mid-low",
+        "tempo_trend": "steady, a little faster",
+        "dynamics": "pp rising to mp",
+        "articulation": "staccato eighths in the celli",
+        "timbre": "dark, a clarinet reed edge"
+      },
+      {
+        "section": "the_avenue",
+        "arousal": "high",
+        "mode_register": "C minor, a pedal on C and the figure around it",
+        "tempo_trend": "accelerating 132 BPM and up",
+        "dynamics": "mf to f, accents on the 3+3+2 cell",
+        "articulation": "sixteenths, staccato, marcato accents",
+        "timbre": "brighter as it gets louder: the piano hammers and the brass bite"
+      },
+      {
+        "section": "the_turn",
+        "arousal": "high",
+        "mode_register": "C minor, then a semitone up after the snap",
+        "tempo_trend": "142 to 146, then a fall to 60 and a snap to 150",
+        "dynamics": "ff, a collapse to pp in the slow motion, then a drop",
+        "articulation": "the pulse thins to single notes, then returns",
+        "timbre": "muffled and low in the slow motion, open and bright at the snap"
+      },
+      {
+        "section": "under_the_bridge",
+        "arousal": "high",
+        "mode_register": "Db minor, tritones against the bass",
+        "tempo_trend": "steady 150",
+        "dynamics": "f, thinning then breaking open",
+        "articulation": "tremolo strings, long low brass",
+        "timbre": "dense, a tail from the room"
+      },
+      {
+        "section": "the_roadblock",
+        "arousal": "high",
+        "mode_register": "D minor, clusters",
+        "tempo_trend": "150 to 152, a slow-motion dip and a snap",
+        "dynamics": "ff, the loudest bar at the crash",
+        "articulation": "stabs, snare roll, full tutti hit",
+        "timbre": "the brightest: brass, snare, cymbal, glass"
+      },
+      {
+        "section": "the_bridge",
+        "arousal": "high",
+        "mode_register": "Eb minor, rising line",
+        "tempo_trend": "152 to 156, still accelerating",
+        "dynamics": "ff held, no relief",
+        "articulation": "fast staccato runs and the horn motif",
+        "timbre": "open and hard, the air up"
+      },
+      {
+        "section": "the_cliff",
+        "arousal": "mid",
+        "mode_register": "C with a Gb above it, unresolved",
+        "tempo_trend": "a cut to 96, then 84",
+        "dynamics": "ppp, one swell",
+        "articulation": "a single harmonic and a heartbeat",
+        "timbre": "thin, cold, rain-wet"
+      }
+    ],
+    "theme": {
+      "contour": "a semitone step and back, then a leap up a tritone and a step down",
+      "interval_character": "mostly a minor second, with one leap of a tritone",
+      "rhythm_cell": "long, short, short, long, long",
+      "why_memorable": "the leap of a tritone lands on the weak beat every time and never resolves",
+      "variation_plan": "whispered in the bass clarinet, stated by the horns, raised a semitone and doubled in octaves after the snap, played by horns and trombones together on the bridge, and at the cliff only the Gb is left"
+    }
+  },
+  "focus": "melody",
+  "intent": {
+    "emotions": [
+      "tense",
+      "dark_epic"
+    ],
+    "registers": [
+      "cinematic",
+      "hybrid"
+    ],
+    "scenes": [
+      "establish",
+      "build",
+      "chase",
+      "dread"
+    ],
+    "tensions": [
+      "ostinato",
+      "pedal",
+      "tritone",
+      "cluster",
+      "rising_line",
+      "silence_before",
+      "unresolved_dominant"
+    ],
+    "avoid": [
+      "joyful",
+      "playful",
+      "hopeful"
+    ]
+  },
+  "piece_type": "night_pursuit",
+  "gate_reason": "a build-hit-release cue with a short motif, a pulse that never stops and two slow-motion passages: the cinematic profile, started strict, with a project profile of its own",
+  "video": {
+    "enabled": false,
+    "source": null,
+    "fps": null,
+    "cuts": [],
+    "cut_source": null,
+    "cut_sync": {
+      "early_ms": 45,
+      "late_ms": 125
+    },
+    "dialogue": {
+      "present": false,
+      "duck_db": -9.0,
+      "snr_min_db": 15.0
+    },
+    "master_profile": null,
+    "deliverable": null,
+    "preset": "default",
+    "notes": "music-only piece: leave enabled false."
+  },
+  "notes": "Sound effects and ambience were asked for in the brief: the car, the tyres, the sirens, the wipers, the crash and the rain are presets from physical models. They are synthesised, not recordings; the research note says which numbers are sourced and which are starting values."
+}

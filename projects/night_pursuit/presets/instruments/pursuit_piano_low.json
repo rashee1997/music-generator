@@ -1,0 +1,38 @@
+{
+  "name": "pursuit_piano_low",
+  "character": "The weight: a low piano octave that doubles the basses on the downbeats and the hits.",
+  "description": "The weight: a low piano octave that doubles the basses on the downbeats and the hits.",
+  "instrument": "piano",
+  "role": "ostinato",
+  "humanize": {
+    "preset": "tight",
+    "timing_ms": 3.0,
+    "drift_ms": 3.0,
+    "vel_sigma": 3.0
+  },
+  "spatial": {
+    "azimuth": 0.0,
+    "elevation": 0.0,
+    "distance": 1.2,
+    "space": "np_street_canyon",
+    "binaural": true,
+    "kind": "spot"
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 32.0
+    },
+    {
+      "type": "lp",
+      "f": 4500.0
+    }
+  ],
+  "gain_db": -4.0,
+  "reverb": 0.06,
+  "sources": [
+    "KB cinematic-hybrid-scoring (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising device)",
+    "KB soundfont-velocity-and-realism (a General MIDI SoundFont has one sample per key: velocity moves level, so the colour is added by velocity_timbre and the section by ensemble)",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
+  ]
+}
