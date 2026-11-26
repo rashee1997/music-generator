@@ -10,7 +10,7 @@ sections:
   the_bumps: 117.64-139.89 s, dyn 1.00
   the_flyover: 139.89-165.78 s, dyn 0.80
   the_escape: 165.78-192.65 s, dyn 0.50
-flagged times: 12
+flagged times: 13
   0.035s stem.tick [PASS] basses
   0.035s stem.tick [PASS] celli
   0.035s stem.tick [PASS] city_far
@@ -21,5 +21,6 @@ flagged times: 12
   72.249s stem.tick [PASS] trombones
   82.082s stem.tick [PASS] violins_tremolo
   95.097s stem.tick [PASS] choir
+  162.002s clicks [FAIL] master
   192.210s dropout [FAIL] master
   192.255s dropout [FAIL] master

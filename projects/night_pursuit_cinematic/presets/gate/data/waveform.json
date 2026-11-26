@@ -112,6 +112,12 @@
       "PASS"
     ],
     [
+      162.0025,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
       192.21,
       "dropout",
       "master",

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-26T11:50:25Z",
+  "timestamp": "2026-11-26T12:13:59Z",
   "status": "FAILED",
   "deliverables": {
     "master_wav": "/home/user/music-generator/projects/night_pursuit_cinematic/out/_draft_master.wav",
@@ -33,21 +33,21 @@
     "stem_count": 30
   },
   "measurements": {
-    "integrated_lufs": -16.05833673080825,
+    "integrated_lufs": -16.058343887532534,
     "true_peak_dbtp": -1.5007482700741783,
-    "crest_factor_db": 17.6615612009251,
-    "mono_loss_db": -0.7819484673054737,
-    "mono_phone_loss_db": -0.9275863197940025,
+    "crest_factor_db": 17.656478185677283,
+    "mono_loss_db": -0.7811950789506915,
+    "mono_phone_loss_db": -0.9241424080575948,
     "clipped_samples": 0,
-    "mean_roughness": 0.0441,
+    "mean_roughness": 0.0447,
     "max_roughness": 0.1112,
     "witek_bsi": 0.38,
     "melodic_entropy_bits": 3.61,
     "spiral_strain_end": 0.0
   },
   "ci_summary": {
-    "pass": 270,
-    "warn": 38,
+    "pass": 269,
+    "warn": 39,
     "fail": 3
   },
   "ci_checks": [
@@ -554,12 +554,12 @@
     {
       "level": "PASS",
       "check": "stem.clicks",
-      "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6607 event(s) rejected as a dense burst, 664 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6926 event(s) rejected as a dense burst, 668 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
       "check": "stem.dropout",
-      "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -58.7 dBFS; 0 hole(s)"
+      "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -58.6 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -579,7 +579,7 @@
     {
       "level": "PASS",
       "check": "stem.dead",
-      "detail": "stem \"lamborghini\": own median -20.9 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"lamborghini\": own median -20.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -639,7 +639,7 @@
     {
       "level": "PASS",
       "check": "stem.dropout",
-      "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.4 dBFS; 0 hole(s)"
+      "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -150.0 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -659,7 +659,7 @@
     {
       "level": "PASS",
       "check": "stem.dead",
-      "detail": "stem \"mustang\": own median -18.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"mustang\": own median -19.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "PASS",
@@ -1579,7 +1579,7 @@
     {
       "level": "PASS",
       "check": "audio",
-      "detail": "dynamics move (short-term loudness std 5.7 dB, range 15.0 LU)"
+      "detail": "dynamics move (short-term loudness std 5.7 dB, range 15.2 LU)"
     },
     {
       "level": "WARN",
@@ -1594,7 +1594,7 @@
     {
       "level": "INFO",
       "check": "master.micro_dynamics",
-      "detail": "PLR 14.6 LU, PSR 11.2 LU, LRA 14.8 LU, true peak -1.50 dBTP (4x -1.50, 8x -1.50): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
+      "detail": "PLR 14.6 LU, PSR 11.2 LU, LRA 15.0 LU, true peak -1.50 dBTP (4x -1.50, 8x -1.50): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
     },
     {
       "level": "PASS",
@@ -1602,19 +1602,19 @@
       "detail": "no silent gap in the middle of the piece"
     },
     {
-      "level": "PASS",
+      "level": "FAIL",
       "check": "clicks",
-      "detail": "no click: no single-sample jump above 0.5 FS and no high-pass/LPC impulse event"
+      "detail": "1 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 1 and LPC 1. Check the sample start or add a 2-5 ms fade-in at that note"
     },
     {
       "level": "PASS",
       "check": "natural_aliasing",
-      "detail": "15-22 kHz holds -64.6 dB of the 200 Hz-16 kHz band (limit -45); above that it is sampler interpolation images, not instrument (fix: render.oversample in the mix preset)"
+      "detail": "15-22 kHz holds -64.9 dB of the 200 Hz-16 kHz band (limit -45); above that it is sampler interpolation images, not instrument (fix: render.oversample in the mix preset)"
     },
     {
-      "level": "WARN",
+      "level": "FAIL",
       "check": "cochlear_roughness",
-      "detail": "one-frame roughness at 169.5s (0.101 > 0.071), 7 frame(s) of 60 (a FAIL needs 8): reads as a transient or a drum hit, not a sustained clash"
+      "detail": "Cochlear critical-band roughness at 169.5s (0.101 > 0.072) and in 8 frames: two instruments clash within 1/4 critical bandwidth for a sustained stretch. Separate them by a minor 3rd, by register or by level."
     },
     {
       "level": "PASS",
@@ -1762,14 +1762,14 @@
       "detail": "track \"ferrari\": no tonal excess, no cycle, transients vary, centroid 434 Hz, crest 3.6"
     },
     {
-      "level": "PASS",
+      "level": "WARN",
       "check": "sfx_eval",
-      "detail": "track \"lamborghini\": no tonal excess, no cycle, transients vary, centroid 501 Hz, crest 4.2"
+      "detail": "track \"lamborghini\": peak sits at 0.9 with crest 4.2: looks peak-normalized, which flattens intensity (use calibration.normalize \"energy\")"
     },
     {
       "level": "PASS",
       "check": "sfx_eval",
-      "detail": "track \"mustang\": no tonal excess, no cycle, transients vary, centroid 232 Hz, crest 9.6"
+      "detail": "track \"mustang\": no tonal excess, no cycle, transients vary, centroid 231 Hz, crest 9.8"
     },
     {
       "level": "WARN",
@@ -1837,9 +1837,9 @@
       "detail": "every accompaniment stem sits within its role allowance of the lead"
     },
     {
-      "level": "FAIL",
+      "level": "PASS",
       "check": "spatial.z_separation",
-      "detail": "\"cymbals\" and \"violins_tremolo\" both hold the 500-4000 Hz band in the climax (envelope overlap 0.51) and sit 20 deg apart (azimuth 20, elevation 0); the limit is 25 deg apart or 15 deg of height. Give one part an elevated arc (for a strings-versus-low-brass collision: strings out at about +-50 deg azimuth, +25..35 deg elevation; low brass and timpani anchored at about +-20 deg, -10..0 deg) or move one 25 deg or more in azimuth"
+      "detail": "closest competing pair \"siren_first\"/\"siren_second\": band envelope overlap 0.85 (limit 0.50), 90 deg apart (azimuth 90, elevation 0); every pair that shares the midrange in the climax is separated"
     },
     {
       "level": "WARN",
@@ -1847,9 +1847,9 @@
       "detail": "\"snare\" (drum) puts 6.8 dB more ear-weighted level in 2500-5000 Hz than its 500-2500 Hz mids (warn 6, fail 10). Trim about 1.0 dB at 3536 Hz in the mix preset: \"inst_eq\": {\"snare\": [{\"type\": \"peak\", \"f\": 3536, \"gain\": -1.0, \"q\": 1.0}]}"
     },
     {
-      "level": "FAIL",
+      "level": "WARN",
       "check": "spectral.equal_loudness",
-      "detail": "\"solo_violin\" (counter) puts 11.0 dB more ear-weighted level in 2500-5000 Hz than its 500-2500 Hz mids (warn 6, fail 10). Trim about 3.0 dB at 3536 Hz in the mix preset: \"inst_eq\": {\"solo_violin\": [{\"type\": \"peak\", \"f\": 3536, \"gain\": -3.0, \"q\": 1.0}]}"
+      "detail": "\"solo_violin\" (counter) puts 7.6 dB more ear-weighted level in 2500-5000 Hz than its 500-2500 Hz mids (warn 6, fail 10). Trim about 1.6 dB at 3536 Hz in the mix preset: \"inst_eq\": {\"solo_violin\": [{\"type\": \"peak\", \"f\": 3536, \"gain\": -1.6, \"q\": 1.0}]}"
     },
     {
       "level": "WARN",
@@ -1874,7 +1874,7 @@
     {
       "level": "INFO",
       "check": "masking.excess",
-      "detail": "the beds sit above the figure in 5600-8000 Hz +26.1 dB, 4000-5600 Hz +25.6 dB, 2800-4000 Hz +23.9 dB (band-level masking proxy; a report, not a threshold)"
+      "detail": "the beds sit above the figure in 5600-8000 Hz +25.9 dB, 4000-5600 Hz +24.8 dB, 8000-11000 Hz +22.0 dB (band-level masking proxy; a report, not a threshold)"
     },
     {
       "level": "INFO",
@@ -1909,7 +1909,7 @@
     {
       "level": "INFO",
       "check": "chem.reward_build",
-      "detail": "the build earns the strongest measured change at 28.0 s (the sheet declares no hits_at): 18.2 s of lead, rank correlation +0.73, peak 0.53. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
+      "detail": "the build earns the strongest measured change at 28.0 s (the sheet declares no hits_at): 18.5 s of lead, rank correlation +0.73, peak 0.53. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
     },
     {
       "level": "WARN",
@@ -1954,12 +1954,12 @@
     {
       "level": "WARN",
       "check": "modulation_flutter",
-      "detail": "\"violins_tremolo\" (pad) swings 0.26 of its level at 6-25 Hz (around 177.0s into the stem): rapid flutter, heard as chopped or stepped notes. Check vibrato depth, expression steps, or chord voices beating on separate channels."
+      "detail": "\"choir\" (pad) swings 0.23 of its level at 6-25 Hz (around 103.0s into the stem): rapid flutter, heard as chopped or stepped notes. Check vibrato depth, expression steps, or chord voices beating on separate channels."
     },
     {
       "level": "WARN",
       "check": "modulation_flutter",
-      "detail": "\"choir\" (pad) swings 0.23 of its level at 6-25 Hz (around 103.0s into the stem): rapid flutter, heard as chopped or stepped notes. Check vibrato depth, expression steps, or chord voices beating on separate channels."
+      "detail": "\"violins_tremolo\" (pad) swings 0.26 of its level at 6-25 Hz (around 177.0s into the stem): rapid flutter, heard as chopped or stepped notes. Check vibrato depth, expression steps, or chord voices beating on separate channels."
     },
     {
       "level": "INFO",
@@ -1979,22 +1979,22 @@
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"bass_drum\" and \"basses\" overlap within 4 dB in low-mid, presence, brilliance; separate them with level, pan or a complementary EQ rather than more compression"
+      "detail": "\"basses\" and \"bass_drum\" overlap within 4 dB in low-mid, presence, brilliance; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"bass_drum\" and \"horns\" overlap within 4 dB in low-mid, brilliance, air; separate them with level, pan or a complementary EQ rather than more compression"
+      "detail": "\"basses\" and \"celli\" overlap within 4 dB in low-mid, mid, presence; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"bass_drum\" and \"trombones\" overlap within 4 dB in mid, presence, air; separate them with level, pan or a complementary EQ rather than more compression"
+      "detail": "\"basses\" and \"horns\" overlap within 4 dB in low-mid, mid, brilliance; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "WARN",
       "check": "mix:low-end congestion",
-      "detail": "5 stems carry their weight below 120 Hz (bass_drum, basses, timpani, sub_pulse, bumps): one owner for the sub, the rest high-passed, is clearer and uses less headroom"
+      "detail": "5 stems carry their weight below 120 Hz (basses, bass_drum, timpani, sub_pulse, bumps): one owner for the sub, the rest high-passed, is clearer and uses less headroom"
     },
     {
       "level": "INFO",
@@ -2049,7 +2049,7 @@
         "warns": 0,
         "rows": 250,
         "profile": "night_pursuit_cinematic",
-        "total_ms": 4428.984107998986,
+        "total_ms": 3224.5627390002483,
         "timings": {
           "bass_clarinet": 0.0,
           "bass_drum": 0.0,
@@ -2060,12 +2060,12 @@
           "city_far": 0.0,
           "crash": 0.0,
           "cymbals": 0.0,
-          "ferrari": 1206.1135250005464,
+          "ferrari": 1124.3481050005357,
           "helicopter": 0.0,
           "horns": 0.0,
-          "lamborghini": 1251.4327259996207,
+          "lamborghini": 1049.0213009979925,
           "landing": 0.0,
-          "mustang": 1271.8435230017349,
+          "mustang": 1078.9621629992325,
           "piano": 0.0,
           "piano_low": 0.0,
           "porsche": 0.0,
@@ -4089,11 +4089,11 @@
             "margin": 0.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6607 event(s) rejected as a dense burst, 664 as a steep attack; max cluster span 1.497 ms",
+            "detail": "stem \"lamborghini\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6926 event(s) rejected as a dense burst, 668 as a steep attack; max cluster span 1.497 ms",
             "mad_count": 0,
             "lpc_count": 0,
-            "rejected": 6607,
-            "attacks_ignored": 664,
+            "rejected": 6926,
+            "attacks_ignored": 668,
             "max_cluster_span_ms": 1.4965986394557824
           },
           {
@@ -4107,7 +4107,7 @@
             "margin": -20.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -58.7 dBFS; 0 hole(s)",
+            "detail": "stem \"lamborghini\": longest hole 0 ms (limit 20-1000 ms), floor -58.6 dBFS; 0 hole(s)",
             "holes": []
           },
           {
@@ -4168,14 +4168,14 @@
             "margin": -12.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"lamborghini\": own median -20.9 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+            "detail": "stem \"lamborghini\": own median -20.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
             "fail": false,
             "table": [
               {
                 "section": "the_race",
                 "start_s": 0.0,
-                "measured_db": -20.85,
-                "expected_db": -20.85,
+                "measured_db": -20.74,
+                "expected_db": -20.74,
                 "dyn": 0.75
               }
             ],
@@ -4368,7 +4368,7 @@
             "margin": -20.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.4 dBFS; 0 hole(s)",
+            "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -150.0 dBFS; 0 hole(s)",
             "holes": []
           },
           {
@@ -4428,14 +4428,14 @@
             "margin": -12.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"mustang\": own median -18.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+            "detail": "stem \"mustang\": own median -19.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
             "fail": false,
             "table": [
               {
                 "section": "the_race",
                 "start_s": 0.0,
-                "measured_db": -18.69,
-                "expected_db": -18.69,
+                "measured_db": -19.3,
+                "expected_db": -19.3,
                 "dyn": 0.75
               }
             ],
@@ -6964,30 +6964,32 @@
       "mix": {
         "stage": "mix",
         "fails": 3,
-        "warns": 38,
+        "warns": 39,
         "metrics": [
           {
             "row": "clicks",
             "stage": "mix",
             "stem": null,
-            "level": "PASS",
-            "value": 0.0,
+            "level": "FAIL",
+            "value": 1.0,
             "unit": "events",
             "threshold": 0.0,
-            "margin": 0.0,
-            "worst_times_s": [],
+            "margin": 1.0,
+            "worst_times_s": [
+              162.0025
+            ],
             "calibrated": true,
-            "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2163 event(s) rejected as a dense burst, 233 as a steep attack; max cluster span 1.497 ms"
+            "detail": "1 clustered impulse event(s) (MAD), 1 LPC frame(s); 2170 event(s) rejected as a dense burst, 225 as a steep attack; max cluster span 1.497 ms"
           },
           {
             "row": "loudness",
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -16.05833673080825,
+            "value": -16.058343887532534,
             "unit": "LUFS",
             "threshold": -16.0,
-            "margin": -2.44166326919175,
+            "margin": -2.4416561124674665,
             "worst_times_s": [],
             "calibrated": true,
             "detail": "-16.1 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -7039,10 +7041,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 64.19124666081753,
+            "value": 64.21156441297143,
             "unit": "dB",
             "threshold": 12.0,
-            "margin": -52.19124666081753,
+            "margin": -52.21156441297143,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "end level -143.1 dBFS (limit -45), decay over final 300 ms 64.2 dB (limit 12); natural release"
@@ -7065,10 +7067,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 1.2353691637884673e-05,
+            "value": 1.2391902290589296e-05,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.0009876463083621154,
+            "margin": -0.0009876080977094107,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
@@ -7091,56 +7093,56 @@
                 "start_s": 0.0,
                 "end_s": 25.077,
                 "energy": 0.75,
-                "level_db": -20.047410293630925
+                "level_db": -20.026664500490295
               },
               {
                 "name": "spotted",
                 "start_s": 25.077,
                 "end_s": 38.892,
                 "energy": 0.85,
-                "level_db": -19.912543302569002
+                "level_db": -19.89212616597468
               },
               {
                 "name": "the_chase",
                 "start_s": 38.892,
                 "end_s": 72.228,
                 "energy": 0.9,
-                "level_db": -19.632583762484106
+                "level_db": -19.612932382826898
               },
               {
                 "name": "the_tunnel",
                 "start_s": 72.228,
                 "end_s": 95.085,
                 "energy": 0.8,
-                "level_db": -20.697333847325293
+                "level_db": -20.676937472878134
               },
               {
                 "name": "the_helicopter",
                 "start_s": 95.085,
                 "end_s": 117.636,
                 "energy": 0.8,
-                "level_db": -19.34072325928392
+                "level_db": -19.321084662682633
               },
               {
                 "name": "the_bumps",
                 "start_s": 117.636,
                 "end_s": 139.888,
                 "energy": 1.0,
-                "level_db": -17.463062363020853
+                "level_db": -17.44292171339677
               },
               {
                 "name": "the_flyover",
                 "start_s": 139.888,
                 "end_s": 165.785,
                 "energy": 0.8,
-                "level_db": -24.450223637739946
+                "level_db": -24.511220202881432
               },
               {
                 "name": "the_escape",
                 "start_s": 165.785,
                 "end_s": 192.648,
                 "energy": 0.5,
-                "level_db": -34.62461072070657
+                "level_db": -34.723398821623924
               }
             ]
           }
@@ -7198,6 +7200,16 @@
         "dropout: longest hole 105 ms (limit 20-1000 ms), floor -65.3 dBFS; 2 hole(s)",
         "spatial.z_separation: \"cymbals\" and \"violins_tremolo\" both hold the 500-4000 Hz band in the climax (envelope overlap 0.51) and sit 20 deg apart (azimuth 20, elevation 0); the limit is 25 deg apart or 15 deg of height. Give one part an elevated arc (for a strings-versus-low-brass collision: strings out at about +-50 deg azimuth, +25..35 deg elevation; low brass and timpani anchored at about +-20 deg, -10..0 deg) or move one 25 deg or more in azimuth",
         "spectral.equal_loudness: \"solo_violin\" (counter) puts 11.0 dB more ear-weighted level in 2500-5000 Hz than its 500-2500 Hz mids (warn 6, fail 10). Trim about 3.0 dB at 3536 Hz in the mix preset: \"inst_eq\": {\"solo_violin\": [{\"type\": \"peak\", \"f\": 3536, \"gain\": -3.0, \"q\": 1.0}]}"
+      ]
+    },
+    {
+      "attempt": 6,
+      "time": "2026-11-26T12:13:59Z",
+      "fails": 3,
+      "failing": [
+        "clicks: 1 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 1 and LPC 1. Check the sample start or add a 2-5 ms fade-in at that note",
+        "cochlear_roughness: Cochlear critical-band roughness at 169.5s (0.101 > 0.072) and in 8 frames: two instruments clash within 1/4 critical bandwidth for a sustained stretch. Separate them by a minor 3rd, by register or by level.",
+        "dropout: longest hole 105 ms (limit 20-1000 ms), floor -65.3 dBFS; 2 hole(s)"
       ]
     }
   ]

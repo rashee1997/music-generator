@@ -285,7 +285,7 @@
         "true_peak": -1.5,
         "tone": "neutral",
         "glue": true,
-        "fade_out": 3.0
+        "fade_out": 1.0
       }
     },
     "highpass_hz": 105.0,
@@ -795,12 +795,18 @@
     "release_ms": 1500.0
   },
   "inst_eq": {
-    "snare": [
+    "pursuit_snare": [
       {
         "type": "peak",
         "f": 3536,
         "gain": -1.5,
         "q": 1.0
+      },
+      {
+        "type": "highshelf",
+        "f": 5500,
+        "gain": -9.0,
+        "q": 0.7
       }
     ]
   }

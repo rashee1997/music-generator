@@ -270,7 +270,7 @@ for bar in list(range(int(T.CRASH_BAR) - 3, int(T.CRASH_BAR) - 1)) + list(range(
 # the escape: the hook left on a single note, a held harmonic, the strings thin out
 for n, bar in enumerate(range(s0('the_escape'), sN('the_escape') - 3, 4)):
     horns.add(bar, 0, 3.5, p(Gb, 3), 0.5 - 0.1 * n)
-solo.add(s0('the_escape') + 1, 0, 14.0, p(Gb, 4), 0.4)
+solo.add(s0('the_escape') + 1, 0, 14.0, p(C, 5), 0.4)      # home: the Gb4 held here beat against the Porsche's constant 342 Hz partial (cochlear roughness at 169.5 s)
 violins_tr.add(s0('the_escape') + 2, 0, 20.0, p(Gb, 5), 0.3)
 choir.add(s0('the_escape'), 0, 10.0, p(Gb, 4), 0.3)
 
