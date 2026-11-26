@@ -112,46 +112,10 @@
       "PASS"
     ],
     [
-      104.18,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
       121.5565,
       "stem.tick",
       "violins_staccato",
       "PASS"
-    ],
-    [
-      146.7875,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      155.7048,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      156.9042,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      157.8323,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      164.4267,
-      "clicks",
-      "master",
-      "FAIL"
     ]
   ]
 }

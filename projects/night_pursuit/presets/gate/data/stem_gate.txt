@@ -1,4 +1,4 @@
-stem gate: 0 FAIL, 0 WARN, 202 rows, profile night_pursuit, 3699 ms
+stem gate: 0 FAIL, 0 WARN, 202 rows, profile night_pursuit, 3923 ms
 [PASS] stem.dc: stem "bass_clarinet": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "bass_clarinet": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "bass_clarinet": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -99,11 +99,11 @@ stem gate: 0 FAIL, 0 WARN, 202 rows, profile night_pursuit, 3699 ms
 [PASS] stem.dead: stem "rain_awnings": own median -48.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve
 [PASS] stem.dc: stem "rain_street": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "rain_street": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
-[PASS] stem.clicks: stem "rain_street": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 40 event(s) rejected as a dense burst, 110 as a steep attack; max cluster span 1.497 ms
+[PASS] stem.clicks: stem "rain_street": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 3 event(s) rejected as a dense burst, 34 as a steep attack; max cluster span 1.497 ms
 [PASS] stem.dropout: stem "rain_street": longest hole 0 ms (limit 20-1000 ms), floor -99.1 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "rain_street": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
 [PASS] stem.edge: stem "rain_street": audible span 0.000-171.150 s against score notes 0.000-171.050 s: leading silence 0 ms, trailing silence -100 ms (limit 25 ms)
-[PASS] stem.tick: stem "rain_street": onset autocorrelation 0.05 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 83 strong onset(s) of 1691, 38 on the grid, IOI CV 0.986; peak rise 13.78 dB at those onsets over 83 onset(s) (min 3); tempogram peak ratio 0.72, PLP peak ratio 1.00
+[PASS] stem.tick: stem "rain_street": onset autocorrelation 0.06 at a 104 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 5 strong onset(s) of 1401, 3 on the grid, IOI CV 0.497; peak rise 10.43 dB at those onsets over 5 onset(s) (min 3); tempogram peak ratio 0.72, PLP peak ratio 1.00
 [PASS] stem.dead: stem "rain_street": own median -54.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve
 [INFO] stem.dc: stem "siren_first": not applied: a one-shot effect stem has no sustained baseline to drift
 [PASS] stem.clipping: stem "siren_first": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)

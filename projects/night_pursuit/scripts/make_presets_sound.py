@@ -466,7 +466,7 @@ write('environments', 'np_rain_street', dict(
     atmosphere=dict(temp_c=10.0, rh=95.0),
     layers=[dict(name='drops', primitive='rain_physical', kind='bed', rate_mm_h=30.0, surface='solid', bubble_prob=0.02, gain_db=-36.0, decorrelate=1.0,
                  spatial=dict(azimuth=0, elevation=0, distance=6)),
-            dict(name='water_film', primitive='noise_bed', kind='bed', color='pink', low_hz=1800, high_hz=7000, mod_rate_hz=0.08, mod_depth=0.1, gain_db=-26.0,
+            dict(name='water_film', primitive='noise_bed', kind='bed', color='pink', low_hz=1800, high_hz=7000, mod_rate_hz=0.08, mod_depth=0.1, gain_db=-23.0,
                  decorrelate=1.0, spatial=dict(azimuth=0, elevation=0, distance=6))],
     blending=dict(),
     fx=RAIN_FX,

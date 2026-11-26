@@ -500,22 +500,22 @@
         {
           "section": "the_stakeout",
           "start_s": 0.0,
-          "measured_db": -53.43,
-          "expected_db": -62.47,
+          "measured_db": -53.44,
+          "expected_db": -62.48,
           "dyn": 0.3
         },
         {
           "section": "spotted",
           "start_s": 11.25,
-          "measured_db": -54.34,
-          "expected_db": -58.95,
+          "measured_db": -54.35,
+          "expected_db": -58.96,
           "dyn": 0.45
         },
         {
           "section": "the_avenue",
           "start_s": 22.328,
-          "measured_db": -54.44,
-          "expected_db": -55.11,
+          "measured_db": -54.52,
+          "expected_db": -55.12,
           "dyn": 0.7
         },
         {
@@ -528,28 +528,28 @@
         {
           "section": "under_the_bridge",
           "start_s": 73.961,
-          "measured_db": -54.87,
-          "expected_db": -52.93,
+          "measured_db": -54.94,
+          "expected_db": -52.94,
           "dyn": 0.9
         },
         {
           "section": "the_roadblock",
           "start_s": 96.361,
-          "measured_db": -54.66,
+          "measured_db": -54.67,
           "expected_db": -52.02,
           "dyn": 1.0
         },
         {
           "section": "the_bridge",
           "start_s": 127.859,
-          "measured_db": -53.8,
-          "expected_db": -52.46,
+          "measured_db": -53.83,
+          "expected_db": -52.47,
           "dyn": 0.95
         },
         {
           "section": "the_cliff",
           "start_s": 149.686,
-          "measured_db": -54.1,
+          "measured_db": -54.11,
           "expected_db": -66.0,
           "dyn": 0.2
         }
