@@ -189,7 +189,7 @@ mix = json.load(open(mix_src, encoding='utf-8'))
 mix['character'] = ('A film mix: the music is the foreground, the engines, sirens and the road are a supporting layer under it and come forward only at a hit; the 7.1.2 field is a '
                     'fifth-order ambisonic bus decoded once to ten speakers, with the helicopter, the choir and the high strings on the height pair.')
 mix['note'] = 'Written for Night Pursuit Cinematic; the scaffold copy of the default was replaced.'
-mix['level_by_role'] = dict(fx=-14.0, environment=-18.0)       # effects and beds under the music (starting values, measured after the first render)
+mix['level_by_role'] = dict(fx=-14.0, environment=-12.0)       # effects and beds under the music (starting values, measured after the first render)
 mix['gain_staging']['ref_lufs'] = -22.0
 mix['space'] = dict(auto_env_blend=dict(enabled=True),
                     send_by_role=dict(default=0.12, bass=0.0, drum=0.08, percussion=0.08, pad=0.16, texture=0.12, melody=0.12, lead=0.12, counter=0.1, chord=0.1,

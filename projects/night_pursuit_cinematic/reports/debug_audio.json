@@ -1,5 +1,5 @@
 {
- "stamp": "20261126T130906",
+ "stamp": "20261126T140554",
  "project": "night_pursuit_cinematic",
  "level": "FAIL",
  "sources": {
@@ -16,18 +16,18 @@
   ],
   "stems": "30 processed stems from .cache/mix",
   "master": "out/_draft_master.wav",
-  "verdict": "2026-11-26T13:08:59Z"
+  "verdict": "2026-11-26T13:42:22Z"
  },
  "binding": [
   {
    "row": "dropout",
    "stem": null,
    "level": "FAIL",
-   "value": 60.000000000002274,
+   "value": 134.9999999999909,
    "threshold": 20.0,
    "unit": "ms",
-   "safety": -2.0,
-   "detail": "longest hole 60 ms (limit 20-1000 ms), floor -65.2 dBFS; 2 hole(s)"
+   "safety": -5.75,
+   "detail": "longest hole 135 ms (limit 20-1000 ms), floor -65.2 dBFS; 2 hole(s)"
   }
  ],
  "advisory": [
@@ -621,12 +621,12 @@
     "domain": "master",
     "kind": "note_len",
     "stem": "basses",
-    "current": 2.9929,
-    "lo": 2.9329,
-    "hi": 3.0529,
+    "current": 3.0192,
+    "lo": 2.9592,
+    "hi": 3.0792,
     "step": 0.010416666666666666,
     "unit": "beats",
-    "text": "basses written note length (mean 2.9929 beats)"
+    "text": "basses written note length (mean 3.0192 beats)"
    }
   ]
  },
@@ -637,8 +637,8 @@
   "clearing": {},
   "predicted": {
    "dropout::-": [
-    -2.0000000000001137,
-    -2.0000000000001137
+    -5.749999999999545,
+    -5.749999999999545
    ],
    "clicks::-": [
     0.0,
@@ -649,8 +649,8 @@
     0.02
    ],
    "true peak::-": [
-    0.0002494233580594418,
-    0.0002494233580594418
+    0.00025024384301586267,
+    0.00025024384301586267
    ],
    "cut.hard::-": [
     2.0,
@@ -665,8 +665,8 @@
     0.0
    ],
    "master.dc::-": [
-    0.09875745006816088,
-    0.09875745006816088
+    0.09950533807956342,
+    0.09950533807956342
    ]
   },
   "conflicts": [],
@@ -679,6 +679,6 @@
  },
  "forensics": [],
  "notes": [
-  "dropout has 2 event(s) at 191.940s, 192.030s; the transient is basses 39%, bumps 23%, city_far 19%"
+  "dropout has 2 event(s) at 192.495s, 192.570s; the transient is basses 43%, bumps 27%, city_far 23%"
  ]
 }
