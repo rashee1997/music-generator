@@ -131,7 +131,7 @@ def keyframes(keys):
 
 
 # ================================================================================================ the cars
-CAR_LEVEL_DB = -12.0          # every effect sits under the music (a film mix): the mix preset trims these again after measurement
+CAR_LEVEL_DB = -8.0           # the effects sit in the scene with the music, not under a glass: the first cut measured them 6-8 dB under every music part and read as a side dish
 SQUEAL_F0 = dict(ferrari=1150.0, lamborghini=1050.0, mustang=950.0, porsche=1000.0)
 
 for car in ('ferrari', 'lamborghini', 'mustang', 'porsche'):
@@ -204,7 +204,7 @@ for car in ('ferrari', 'lamborghini', 'mustang', 'porsche'):
                   f'a squeal at each corner{", an uneven burble" if c["burble"] else ""} and pops when the throttle lifts; it dives in the slow motion.',
         note=f'f0 is the firing frequency rpm x {c["cyl"]} / 120 ({f_idle:.1f} Hz at {c["idle"]:.0f} rpm idle, {cars.firing_hz(car, c["redline"]):.0f} Hz at the {c["redline"]:.0f} rpm redline); '
              f'the speed profile (km/h) and the gear choice are in cars.py; road speed is 2 pi r rpm / (60 G).',
-        model=dict(seconds=SECONDS, voices=voices), role='fx', gain_db=CAR_LEVEL_DB, reverb=0.04,
+        model=dict(seconds=SECONDS, voices=voices), role='fx', gain_db=CAR_LEVEL_DB, reverb=0.12,
         spatial=dict(azimuth=car_keys(car)[0][1], elevation=0.0, distance=car_keys(car)[0][2], space=SPACE, binaural=True, kind='spot',
                      trajectory=dict(spatial_role='mover', doppler_strength=1.0, keyframes=keyframes(car_keys(car)))),
         eq=[dict(type='hp', f=30.0), dict(type='lp', f=11000.0)], fx=slowmo_fx(900.0, -2.0),
@@ -258,7 +258,7 @@ write('sfx', 'np_siren_wail', dict(
         dict(name='wail', gain_db=0.0, excite=dict(kind='periodic', f0=600.0, harmonics=6, jitter=0.002), resonator=dict(kind='none'), events=dict(kind='continuous'),
              control=dict(pitch=[dict(kind='curve', points=sample(lambda t: wail(t) * dive(t, 0.7), S1_ON, S1_OFF, 0.1))],
                           gain_db=[dict(kind='curve', points=sample(lambda t: gate_db(t, S1_ON, S1_OFF, OCC1) - 3.0 * slowness(t), 0.0, S1_OFF, 0.1))]))]),
-    role='fx', gain_db=CAR_LEVEL_DB - 2.0, reverb=0.10,
+    role='fx', gain_db=CAR_LEVEL_DB - 2.0, reverb=0.14,
     spatial=dict(azimuth=-30.0, elevation=0.0, distance=90.0, space=SPACE, binaural=True, kind='spot', trajectory=dict(spatial_role='mover', doppler_strength=1.0, keyframes=keyframes(
         [(EV['spot'], -30.0, 90.0, 0.0), (EV['spot'] + 8.0, -20.0, 40.0, 0.0), (S('the_chase') + 2.0, 170.0, 20.0, 0.0), (S('the_tunnel'), 175.0, 12.0, 0.0),
          (S('the_helicopter') + 2.0, 160.0, 30.0, 0.0), (S('the_bumps') + 2.0, 170.0, 24.0, 0.0), (S('the_flyover') + 4.0, 175.0, 18.0, 0.0),
@@ -276,7 +276,7 @@ write('sfx', 'np_siren_second', dict(
         dict(name='second', gain_db=0.0, excite=dict(kind='periodic', f0=600.0, harmonics=6, jitter=0.002), resonator=dict(kind='none'), events=dict(kind='continuous'),
              control=dict(pitch=[dict(kind='curve', points=sample(lambda t: (hilo(t) * 435.0 / 600.0 if t < S('the_helicopter') else yelp(t) * 700.0 / 600.0) * dive(t, 0.7), S2_ON, S2_OFF + 0.2, 0.02))],
                           gain_db=[dict(kind='curve', points=sample(lambda t: gate_db(t, S2_ON, S2_OFF, [(S('the_tunnel') + 2.0, S('the_tunnel') + 6.0)], fade=0.12) - 3.0 * slowness(t), 0.0, S2_OFF, 0.1))]))]),
-    role='fx', gain_db=CAR_LEVEL_DB - 3.0, reverb=0.10,
+    role='fx', gain_db=CAR_LEVEL_DB - 3.0, reverb=0.14,
     spatial=dict(azimuth=60.0, elevation=0.0, distance=70.0, space=SPACE, binaural=True, kind='spot', trajectory=dict(spatial_role='mover', doppler_strength=1.0, keyframes=keyframes(
         [(S2_ON, 60.0, 70.0, 0.0), (S('the_chase') + 8.0, 140.0, 24.0, 0.0), (S('the_tunnel') + 2.0, 100.0, 14.0, 0.0), (S('the_helicopter') + 2.0, 60.0, 40.0, 0.0),
          (S('the_bumps') + 2.0, 100.0, 20.0, 0.0), (S('the_flyover') + 6.0, 120.0, 16.0, 0.0), (EV['evade'], 150.0, 40.0, 0.0), (S2_OFF, 150.0, 90.0, 0.0)]))),
@@ -310,7 +310,7 @@ write('sfx', 'np_helicopter', dict(
              control=dict(gain_db=[dict(kind='curve', points=sample(heli_gain, H_ON, H_OFF, 0.2))])),
         dict(name='turbine', gain_db=-20.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[1500, 6000], order=2), events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: heli_gain(t) - 4.0, H_ON, H_OFF, 0.2))]))]),
-    role='fx', gain_db=CAR_LEVEL_DB, reverb=0.08,
+    role='fx', gain_db=CAR_LEVEL_DB, reverb=0.12,
     spatial=dict(azimuth=-100.0, elevation=50.0, distance=150.0, space=SPACE, binaural=True, kind='spot', trajectory=dict(spatial_role='mover', doppler_strength=1.0, keyframes=keyframes(
         [(H_ON, -100.0, 90.0, 50.0), (S('the_helicopter') + 4.0, -40.0, 50.0, 50.0), (S('the_helicopter') + 10.0, 0.0, 18.0, 62.0), (E_('the_helicopter') - 2.0, 70.0, 60.0, 48.0),
          (S('the_bumps') + 4.0, 120.0, 100.0, 40.0), (S('the_flyover') + 2.0, 40.0, 45.0, 45.0), (H_OFF, 90.0, 140.0, 40.0)]))),
@@ -347,7 +347,7 @@ write('sfx', 'np_bumps', dict(
              events=dict(kind='sequence', times=[round(t - OFF, 3) for t, v in joint_times], levels=[round(min(1.0, v / 42.0) ** 1.5, 3) for t, v in joint_times])),
         dict(name='deck_hum', gain_db=-26.0, excite=dict(kind='noise', color='brown'), resonator=dict(kind='bandpass', band=[40, 300], order=2), events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -6.0 * (1.0 - smooth((t - t_a) / 2.0)) * 0.0 - 4.0, t_a, t_b, 0.5))]))]),
-    role='fx', gain_db=CAR_LEVEL_DB + 2.0, reverb=0.04,
+    role='fx', gain_db=CAR_LEVEL_DB + 2.0, reverb=0.08,
     spatial=dict(azimuth=180.0, elevation=25.0, distance=1.3, space=SPACE, binaural=True, kind='spot'),
     eq=[dict(type='hp', f=30.0), dict(type='lp', f=6000.0)],
     sources=['bridge_expansion_joint', 'ESTIMATE: joint spacing, the two modes and the levels are starting values']))
@@ -363,7 +363,7 @@ write('sfx', 'np_landing', dict(
         dict(name='body_knock', gain_db=-4.0, excite=dict(kind='impact', tau=0.004), resonator=dict(kind='modal', law='bar', f1=190.0, n=6, t60=0.3), events=dict(kind='single', at=0.02)),
         dict(name='scrape', gain_db=-12.0, excite=dict(kind='friction', beta=-1.5, speed=1.0, amp_exp=1.0), resonator=dict(kind='bandpass', band=[600, 5000], order=2), events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=[[0.0, -90.0], [0.04, 0.0], [0.5, -20.0], [0.9, -90.0], [SECONDS, -90.0]])]))]),
-    role='fx', gain_db=CAR_LEVEL_DB + 6.0, reverb=0.10,
+    role='fx', gain_db=CAR_LEVEL_DB + 6.0, reverb=0.14,
     spatial=dict(azimuth=180.0, elevation=0.0, distance=6.0, space=SPACE, binaural=True, kind='spot'),
     eq=[dict(type='hp', f=28.0), dict(type='lp', f=9000.0)],
     sources=['car_crash_impact', 'ESTIMATE: no recording was measured; the modes and the scrape are starting values']))

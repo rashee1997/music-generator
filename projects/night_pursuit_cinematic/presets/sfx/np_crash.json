@@ -131,7 +131,7 @@
   ]
  },
  "role": "fx",
- "gain_db": -8.0,
+ "gain_db": -4.0,
  "reverb": 0.12,
  "spatial": {
   "azimuth": 115.0,

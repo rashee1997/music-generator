@@ -69,7 +69,7 @@ SECTION_TEXT = {
 
 ROLE_CUES = {
     'the_race': dict(arousal='high', mode_register='C minor, the pulse low and the horns mid', tempo_trend='steady, 132 BPM', dynamics='f from the first bar',
-                     articulation='staccato sixteens in the piano, marcato horns', timbre='close and dry, the cabin'),
+                     articulation='short bowed sixteenths in the violas, marcato horns', timbre='close and dry, the cabin'),
     'spotted': dict(arousal='high', mode_register='C minor with a Db neighbour', tempo_trend='136 BPM', dynamics='f, widening',
                     articulation='staccato eighths, the clarinet answers', timbre='wider and brighter, the street'),
     'the_chase': dict(arousal='high', mode_register='C minor, then Db minor after the crash', tempo_trend='142 BPM, accelerating', dynamics='ff, accents on the 3+3+2 cell',
@@ -128,7 +128,7 @@ sheet = dict(
     space=SPACE,
     hits_at=[h['t'] for h in HITS],
     hits=HITS,
-    mix_intent=dict(hero='pursuit_horns', support=['pursuit_celli', 'pursuit_trombones', 'pursuit_timpani', 'pursuit_piano', 'pursuit_choir'],
+    mix_intent=dict(hero='pursuit_horns', support=['pursuit_celli', 'pursuit_trombones', 'pursuit_timpani', 'pursuit_violas', 'pursuit_choir'],
                     sits_under=['np_car_ferrari', 'np_car_lamborghini', 'np_car_mustang', 'np_car_porsche', 'np_siren_wail', 'np_siren_second', 'np_helicopter', 'np_city_far'],
                     must_hear=[f'the hook on the horns in the first 3 s', f'a pass at the kerb at {S("spotted", 8):.0f} s',
                                f'a siren by {EV["spot"]:.0f} s', f'the crash at {EV["crash"]:.0f} s', f'the helicopter at {S("the_helicopter"):.0f} s',
@@ -138,7 +138,7 @@ sheet = dict(
     true_peak_max=-1.5,
     delivery=dict(format='wav', sample_rate=48000, bit_depth=24, stage='cinema', output_targets=['stereo', 'immersive_7_1_2'],
                   played_on='a 7.1.2 system of ten speakers (the fifth-order field decoded once), and headphones through the stereo master'),
-    references=['a relentless low-string and piano pulse with taiko at the camera cuts, the engines and sirens a layer under it, and a hard-edged flyover at the end',
+    references=['a relentless low-string and viola pulse with taiko at the camera cuts, the engines and sirens a layer under it, and a hard-edged flyover at the end',
                 'the camera as the listener: the room changes at every cut, the music stays in front'],
     spatial_staging={n: dict(azimuth=a, elevation=e, distance=r, space=SPACE) for n, (a, e, r) in STAGE.items()},
     immersive=dict(
@@ -146,7 +146,7 @@ sheet = dict(
         why='the camera changes: the field carries where the listener is. Inside the Ferrari the engine is behind and the road below; at the kerb the cars pass left to right; '
             'in the tunnel the room closes; the helicopter, the choir and the high strings are on the height pair',
         engine='hoa_bus',
-        anchors=['pursuit_piano_low', 'pursuit_basses', 'pursuit_tuba', 'pursuit_bass_drum', 'pursuit_timpani', 'pursuit_taiko', 'np_bumps'],
+        anchors=['pursuit_basses_pizz', 'pursuit_basses', 'pursuit_tuba', 'pursuit_bass_drum', 'pursuit_timpani', 'pursuit_taiko', 'np_bumps'],
         movers=[dict(part='np_car_ferrari', why='the hero car: inside, then passing the kerb, then ahead', path='behind the listener inside, a pass at the kerb, ahead in the chase, far in the air shot'),
                 dict(part='np_car_lamborghini', why='the second car pulls ahead and to the left', path='left of the Ferrari in the race and the chase, spins off after the landing'),
                 dict(part='np_car_mustang', why='the third car runs on the right and is the first to go', path='right of the pack, ends at the tunnel mouth with the crash'),
@@ -170,7 +170,7 @@ sheet = dict(
     expression=dict(
         sonic_picture='The first ten seconds: the hook on the horns over a driving low pulse, a big V8 engine behind and the road hissing under the car, a Mustang alongside on the right; '
                       'the middle: cars passing the kerb with the Doppler swing, a helicopter overhead with the choir above it; the last note: a single high harmonic over a Gb, the engine falling away, drips.',
-        performer='The piano plays the pulse hard and a little ahead of the beat; the celli dig into the first beat of every bar; the horns enter late on each statement and lean on the leap; '
+        performer='The violas play the pulse in four-bar phrases that swell and thin, a little ahead of the beat; the celli dig into the first beat of every bar; the horns enter late on each statement and lean on the leap; '
                   'the taiko is struck on the camera cuts; the snare fill tightens at each phrase end; the strings are sections of six and the brass sections of four; the solo violin is a little exposed.',
         producer_moves='The tempo climbs from 132 to 156 BPM with one slow-motion jump that snaps back; a drop and a sub hit on the landing; the room changes at every cut; '
                        'the effects sit a layer under the music and come forward on the crash and the landing; a risers-free cut at each camera.',

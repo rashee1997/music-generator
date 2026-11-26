@@ -42,6 +42,7 @@
     "KB theatrical-realism (a section is several players; colour follows loudness)",
     "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
   ],
+  "soundfont": "muse_general",
   "ensemble": {
     "players": 4,
     "spread_cents": 7,

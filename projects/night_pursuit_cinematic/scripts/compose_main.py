@@ -75,16 +75,15 @@ COLLAPSE = range(int(T.SLOMO_JUMP['bar']), int(T.SNAP_JUMP))
 TUNNEL_THIN = range(s0('the_tunnel'), s0('the_tunnel') + 6)         # six bars of pulse and low brass only
 
 basses = Track('basses', 'pursuit_basses', 'bass')
-piano_low = Track('piano_low', 'pursuit_piano_low', 'bass')
+basses_pizz = Track('basses_pizz', 'pursuit_basses_pizz', 'bass')
 tuba = Track('tuba', 'pursuit_tuba', 'bass')
 bass_drum = Track('bass_drum', 'pursuit_bass_drum', 'drum')
 timpani = Track('timpani', 'pursuit_timpani', 'drum')
 taiko = Track('taiko', 'pursuit_taiko', 'drum')
 snare = Track('snare', 'pursuit_snare', 'drum')
 cymbals = Track('cymbals', 'pursuit_cymbals', 'texture')
-sub_drop = Track('sub_drop', 'pursuit_sub_drop', 'fx')
-sub_pulse = Track('sub_pulse', 'pursuit_sub_pulse', 'fx')
-piano = Track('piano', 'pursuit_piano', 'ostinato')
+low_swell = Track('low_swell', 'pursuit_low_swell', 'texture')
+violas = Track('violas', 'pursuit_violas', 'ostinato')
 celli = Track('celli', 'pursuit_celli', 'ostinato')
 bass_clarinet = Track('bass_clarinet', 'pursuit_bass_clarinet', 'counter')
 horns = Track('horns', 'pursuit_horns', 'melody')
@@ -120,9 +119,9 @@ for bar in range(1, T.END_BAR):
     else:
         basses.add(bar, 0, 4.2, p((C + r + walk[k]) % 12, 1), vel(top + (0.08 if k == 0 else 0.0), 0.05))
     if not collapse and not escape:
-        piano_low.add(bar, 2.0 if k == 3 else 0.0, 1.0, p(C + r, 2), vel(top - 0.04, 0.05))
+        basses_pizz.add(bar, 2.0 if k == 3 else 0.0, 1.0, p(C + r, 2), vel(top - 0.04, 0.05))
         if (bar + ph) % 3 != 0:
-            piano_low.add(bar, 1.5 + 0.5 * (ph % 2), 0.5, p((C + r + (7 if k == 2 else 0)) % 12, 2), vel(0.5 + 0.1 * (ph % 3), 0.05))
+            basses_pizz.add(bar, 1.5 + 0.5 * (ph % 2), 0.5, p((C + r + (7 if k == 2 else 0)) % 12, 2), vel(0.5 + 0.1 * (ph % 3), 0.05))
         if bar >= s0('the_chase') or bar < s0('spotted'):
             for b in TUBA_RHYTHMS[(ph * 2 + k) % len(TUBA_RHYTHMS)]:
                 tuba.add(bar, b, 0.4, p((C + r + (walk[k] if k < 3 else 0)) % 12, 2), vel(0.40 + 0.35 * energy * (0.6 + 0.4 * (k == 0)), 0.07))
@@ -131,7 +130,8 @@ for bar in range(1, T.END_BAR):
         bass_drum.add(bar, 0, 0.5, 36, 0.62 if collapse else 0.5)
         bass_drum.add(bar, 2.0, 0.5, 36, 0.5 if collapse else 0.4)
     else:
-        for b in KICKS[(ph + k) % len(KICKS)]:
+        # a film score does not drive every bar with a kick: the drum sounds in the race, the roadside, the chase and the deck; the tunnel, the air and the edge live on timpani and low strings
+        for b in (KICKS[(ph + k) % len(KICKS)] if name in ('the_race', 'spotted', 'the_chase', 'the_bumps') and k != 3 else ()):
             bass_drum.add(bar, b, 0.5, 36, vel(0.6 + 0.2 * energy + (0.08 if b == 0.0 else 0.0), 0.05))
         if not thin:
             if ph % 2 == 1 and k == 3:                                            # a fill: sixteenths on an exponential curve with alternating accents
@@ -151,10 +151,6 @@ for bar in range(1, T.END_BAR):
             if k == 3:
                 for i in range(4):
                     timpani.add(bar, 2.0 + i * 0.5, 0.45, p(G + r if i % 2 == 0 else C + r, 2), 0.40 + 0.08 * i + 0.1 * energy)
-    # the sub pulse: eighths under the strings in the chase, the bumps and the flyover
-    if name in ('the_chase', 'the_bumps', 'the_flyover') and not collapse:
-        for i in range(8):
-            sub_pulse.add(bar, i * 0.5, 0.4, p(C + r, 1), vel(0.30 + 0.12 * (i % 2 == 0) + 0.1 * energy, 0.03))
 
 # the first bar: a taiko on the downbeat (no slow opening), and a hit at each camera cut
 taiko.add(1, 0, 1.5, p(C, 2), 0.9)
@@ -168,15 +164,15 @@ taiko.add(s0('the_escape'), 0, 2.0, p(C, 2), 0.55)
 timpani.add(int(T.CRASH_BAR) - 1, 0, 3.9, p(C, 2), 0.55)
 timpani.add(int(T.CRASH_BAR), 2.0, 3.0, p(C, 2), 1.0)
 cymbals.add(int(T.CRASH_BAR), 2.0, 4.0, 49, 1.0)
-sub_drop.add(int(T.CRASH_BAR), 2.0, 1.9, p(C, 1), 1.0)
+low_swell.add(int(T.CRASH_BAR), 2.0, 1.9, p(C, 1), 1.0)
 taiko.add(int(T.CRASH_BAR), 2.0, 2.0, p(C, 2), 1.0)
 # the landing: a drop, a sub, a taiko, a cymbal
-sub_drop.add(int(T.SNAP_JUMP), 0, 4.0, p(C + 4, 1), 1.0)
+low_swell.add(int(T.SNAP_JUMP), 0, 4.0, p(C + 4, 1), 1.0)
 cymbals.add(int(T.SNAP_JUMP), 0, 4.0, 49, 0.9)
 timpani.add(int(T.SNAP_JUMP), 0, 3.0, p(C + 4, 2), 1.0)
 taiko.add(int(T.SNAP_JUMP), 0, 2.0, p(C + 4, 2), 1.0)
-sub_drop.add(s0('the_helicopter'), 0, 3.0, p(C + 2, 1), 0.8)
-sub_drop.add(s0('the_flyover'), 0, 3.0, p(C + 4, 1), 0.8)
+low_swell.add(s0('the_helicopter'), 0, 3.0, p(C + 2, 1), 0.8)
+low_swell.add(s0('the_flyover'), 0, 3.0, p(C + 4, 1), 0.8)
 
 # ---------------------------------------------------------------------------------------------------------------- the middle
 for bar in range(1, s0('the_escape')):
@@ -189,14 +185,21 @@ for bar in range(1, s0('the_escape')):
     for i in range(8):                                   # celli: eighths, a semitone pressure at the end of each pair of bars
         pc = [Db, G, Eb, Db][(bar - 1) % 4] if i == 7 else (G if (i == 4 and k == 2) else C)         # the figure walks a little each bar, so no pitch repeats at even spacing
         if name not in ('the_helicopter',) or i % 2 == 0:
-            celli.add(bar, i * 0.5, 0.45, p((pc + r) % 12, 2), vel(0.4 + 0.3 * energy, 0.04))
+            celli.add(bar, i * 0.5, 0.45, p((pc + r) % 12, 2), vel((0.4 + 0.3 * energy) * (0.82 + 0.1 * k), 0.04))      # the phrase swells over its four bars
     if bar in TUNNEL_THIN:
         continue
     FIG = [C, Eb, G, Eb, C, Eb, G, Eb, C, Eb, G, Eb, C, Eb, Gb, G] if (bar // 2) % 2 == 0 else [C, Eb, G, Ab, G, Eb, C, Eb, G, Eb, C, Db, C, Eb, G, Gb]
     vol = 0.7 if name == 'the_helicopter' else 1.0
+    # the violas play a phrase, not a grid: four bars that swell, the third bar thinned to eighths, the fourth left to the low strings
+    pb = (bar - 1) % 4
+    if pb == 3 and name not in ('the_bumps',):
+        continue
+    swell = 0.80 + 0.12 * pb
     for i, pc in enumerate(FIG):
+        if pb == 2 and i % 2:
+            continue
         accent = 0.1 if i in (0, 3, 6, 8, 11, 14) else 0.0
-        piano.add(bar, i * 0.25, 0.22, p((pc + r) % 12, 4), vel((0.38 + 0.25 * energy + accent) * vol, 0.03))
+        violas.add(bar, i * 0.25, 0.22, p((pc + r) % 12, 3), vel((0.34 + 0.25 * energy + accent) * vol * swell, 0.04))
 
 # ---------------------------------------------------------------------------------------------------------------- the hook
 
@@ -262,11 +265,11 @@ for bar in list(range(int(T.CRASH_BAR) - 3, int(T.CRASH_BAR) - 1)) + list(range(
         continue
     off = (bar * 5 + (bar // 4) * 3) % 14
     r = key_shift(bar)
-    for i in range(16):
-        if (bar % 5 == 4 and i in (4, 5, 6, 7)) or rnd.random() < 0.22:      # a gap in the run every fifth bar and a few dropped notes: no fixed grid for the stem gate to read as a tick
+    for i in range(8):                                   # eighths, bowed: a cinema run, not a game arpeggio
+        if (bar % 5 == 4 and i in (2, 3)) or rnd.random() < 0.22:      # a gap in the run every fifth bar and a few dropped notes: no fixed grid for the stem gate to read as a tick
             continue
         kk = (off + i) % 14
-        violins_st.add(bar, i * 0.25, 0.2, p((SCALE[kk % 7] + r) % 12, 5 + kk // 7), vel(0.5 + 0.006 * i + 0.05 * (bar % 3), 0.03))
+        violins_st.add(bar, i * 0.5, 0.45, p((SCALE[kk % 7] + r) % 12, 5 + kk // 7), vel(0.5 + 0.02 * i + 0.05 * (bar % 3), 0.03))
 # the escape: the hook left on a single note, a held harmonic, the strings thin out
 for n, bar in enumerate(range(s0('the_escape'), sN('the_escape') - 3, 4)):
     horns.add(bar, 0, 3.5, p(Gb, 3), 0.62 - 0.07 * n)
@@ -274,7 +277,7 @@ solo.add(s0('the_escape') + 1, 0, 14.0, p(C, 5), 0.4)      # home: the Gb4 held 
 violins_tr.add(s0('the_escape') + 2, 0, 20.0, p(Gb, 5), 0.3)
 choir.add(s0('the_escape'), 0, 10.0, p(Gb, 4), 0.3)
 
-music = [basses, piano_low, tuba, bass_drum, timpani, taiko, snare, cymbals, sub_drop, sub_pulse, piano, celli, bass_clarinet, horns, trombones,
+music = [basses, basses_pizz, tuba, bass_drum, timpani, taiko, snare, cymbals, low_swell, violas, celli, bass_clarinet, horns, trombones,
          violins_st, violins_tr, choir, solo]
 
 # ---------------------------------------------------------------------------------------------------------------- the sounds and the places
@@ -305,7 +308,29 @@ sounds = [
 
 # ---------------------------------------------------------------------------------------------------------------- the score
 sections = T.sections_with_seconds(tm)
-dyn = [[round(T.B(first), 3), energy] for name, first, bars, energy, role, cam in T.SECTIONS]
+# the global dynamics breathe by the bar: each four-bar phrase swells and eases, and the music steps back where a sound has to be heard (the siren
+# sees the cars, the crash, the helicopter arriving, the landing), then comes back; a flat curve is what makes a cue read as a loop
+import math
+_pts = [(T.B(first), energy) for name, first, bars, energy, role, cam in T.SECTIONS] + [(TOTAL_BEATS, 0.15)]
+
+
+def _base(beat):
+    for (b0, e0), (b1, e1) in zip(_pts, _pts[1:]):
+        if b0 <= beat <= b1:
+            return e0 + (e1 - e0) * (beat - b0) / max(1e-9, b1 - b0)
+    return _pts[-1][1]
+
+
+DIPS = [(T.SPOT_BAR, 1.5, 0.22), (int(T.CRASH_BAR) - 1, 1.0, 0.25), (s0('the_helicopter'), 2.0, 0.18), (int(T.SNAP_JUMP), 1.5, 0.15)]
+dyn = []
+for bar in range(1, T.END_BAR + 1):
+    for q in (0.0, 2.0):
+        beat = T.B(bar, q)
+        v = _base(beat) + 0.07 * math.sin(2.0 * math.pi * ((bar - 1) % 4 + q / 4.0) / 4.0 - 1.2)
+        for d_bar, d_len, d_amt in DIPS:
+            if d_bar <= bar + q / 4.0 < d_bar + d_len:
+                v -= d_amt * math.sin(math.pi * (bar + q / 4.0 - d_bar) / d_len)
+        dyn.append([round(beat, 3), round(min(1.0, max(0.12, v)), 3)])
 dyn.append([round(TOTAL_BEATS, 3), 0.15])
 
 score = dict(

@@ -119,16 +119,15 @@
   "instruments": [
     "pursuit_basses",
     "pursuit_bass_drum",
-    "pursuit_piano_low",
+    "pursuit_basses_pizz",
     "pursuit_snare",
     "pursuit_timpani",
     "pursuit_taiko",
     "pursuit_tuba",
-    "pursuit_sub_drop",
-    "pursuit_sub_pulse",
+    "pursuit_low_swell",
     "pursuit_horns",
     "pursuit_trombones",
-    "pursuit_piano",
+    "pursuit_violas",
     "pursuit_celli",
     "pursuit_bass_clarinet",
     "pursuit_violins_staccato",
@@ -244,7 +243,7 @@
       "pursuit_celli",
       "pursuit_trombones",
       "pursuit_timpani",
-      "pursuit_piano",
+      "pursuit_violas",
       "pursuit_choir"
     ],
     "sits_under": [
@@ -281,7 +280,7 @@
     "played_on": "a 7.1.2 system of ten speakers (the fifth-order field decoded once), and headphones through the stereo master"
   },
   "references": [
-    "a relentless low-string and piano pulse with taiko at the camera cuts, the engines and sirens a layer under it, and a hard-edged flyover at the end",
+    "a relentless low-string and viola pulse with taiko at the camera cuts, the engines and sirens a layer under it, and a hard-edged flyover at the end",
     "the camera as the listener: the room changes at every cut, the music stays in front"
   ],
   "spatial_staging": {
@@ -297,7 +296,7 @@
       "distance": 2.2,
       "space": "np_street_canyon"
     },
-    "pursuit_piano_low": {
+    "pursuit_basses_pizz": {
       "azimuth": 40.0,
       "elevation": 0.0,
       "distance": 1.2,
@@ -327,16 +326,10 @@
       "distance": 1.8,
       "space": "np_street_canyon"
     },
-    "pursuit_sub_drop": {
+    "pursuit_low_swell": {
       "azimuth": 0.0,
       "elevation": 20.0,
       "distance": 1.0,
-      "space": "np_street_canyon"
-    },
-    "pursuit_sub_pulse": {
-      "azimuth": 0.0,
-      "elevation": 40.0,
-      "distance": 1.6,
       "space": "np_street_canyon"
     },
     "pursuit_horns": {
@@ -351,7 +344,7 @@
       "distance": 2.8,
       "space": "np_street_canyon"
     },
-    "pursuit_piano": {
+    "pursuit_violas": {
       "azimuth": -110.0,
       "elevation": 15.0,
       "distance": 2.0,
@@ -405,7 +398,7 @@
     "why": "the camera changes: the field carries where the listener is. Inside the Ferrari the engine is behind and the road below; at the kerb the cars pass left to right; in the tunnel the room closes; the helicopter, the choir and the high strings are on the height pair",
     "engine": "hoa_bus",
     "anchors": [
-      "pursuit_piano_low",
+      "pursuit_basses_pizz",
       "pursuit_basses",
       "pursuit_tuba",
       "pursuit_bass_drum",
@@ -508,7 +501,7 @@
   },
   "expression": {
     "sonic_picture": "The first ten seconds: the hook on the horns over a driving low pulse, a big V8 engine behind and the road hissing under the car, a Mustang alongside on the right; the middle: cars passing the kerb with the Doppler swing, a helicopter overhead with the choir above it; the last note: a single high harmonic over a Gb, the engine falling away, drips.",
-    "performer": "The piano plays the pulse hard and a little ahead of the beat; the celli dig into the first beat of every bar; the horns enter late on each statement and lean on the leap; the taiko is struck on the camera cuts; the snare fill tightens at each phrase end; the strings are sections of six and the brass sections of four; the solo violin is a little exposed.",
+    "performer": "The violas play the pulse in four-bar phrases that swell and thin, a little ahead of the beat; the celli dig into the first beat of every bar; the horns enter late on each statement and lean on the leap; the taiko is struck on the camera cuts; the snare fill tightens at each phrase end; the strings are sections of six and the brass sections of four; the solo violin is a little exposed.",
     "producer_moves": "The tempo climbs from 132 to 156 BPM with one slow-motion jump that snaps back; a drop and a sub hit on the landing; the room changes at every cut; the effects sit a layer under the music and come forward on the crash and the landing; a risers-free cut at each camera.",
     "anti_generic": "The generic version is a drone, a riser and a drum loop with a car sound laid on top; this one has four cars with their own engines and speeds, a camera that changes the room, and a hook that answers differently at every cut.",
     "cues": [
@@ -518,7 +511,7 @@
         "mode_register": "C minor, the pulse low and the horns mid",
         "tempo_trend": "steady, 132 BPM",
         "dynamics": "f from the first bar",
-        "articulation": "staccato sixteens in the piano, marcato horns",
+        "articulation": "short bowed sixteenths in the violas, marcato horns",
         "timbre": "close and dry, the cabin"
       },
       {

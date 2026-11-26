@@ -11426,8 +11426,8 @@
   ]
  },
  "role": "fx",
- "gain_db": -14.0,
- "reverb": 0.1,
+ "gain_db": -10.0,
+ "reverb": 0.14,
  "spatial": {
   "azimuth": -30.0,
   "elevation": 0.0,

@@ -50,52 +50,55 @@ LP = lambda f: dict(type='lp', f=float(f))                                  # no
 PK = lambda f, g, q=1.0: dict(type='peak', f=float(f), gain=float(g), q=float(q))      # noqa: E731
 
 # ----------------------------------------------------------------------------------------------- instruments
-inst('pursuit_piano', 'piano', 'ostinato',
-     'The pulse: a hard piano playing sixteenths in the lower middle, a little ahead of the beat, the one constant in the 1-3 kHz middle.',
-     -75, 2.0, -3.0, 0.10, [HP(90), PK(2200, 1.5, 1.0), LP(11000)],
-     humanize=dict(preset='tight', timing_ms=3.0, drift_ms=3.0, vel_sigma=3.0),
-     extra=dict(velocity_timbre=dict(points=[[25, 2500], [60, 4500], [127, 9500]], bands=4)),
-     sources=[KB['hybrid'], KB['sf']])
-inst('pursuit_piano_low', 'piano', 'ostinato',
-     'The weight: a low piano octave that doubles the basses on the downbeats and the hits.',
-     0, 1.2, -4.0, 0.06, [HP(32), LP(4500)], humanize=dict(preset='tight', timing_ms=3.0, drift_ms=3.0, vel_sigma=3.0),
-     sources=[KB['hybrid'], KB['sf']])
+inst('pursuit_violas', 'viola', 'ostinato',
+     'The pulse: a viola section playing short bowed sixteenths in the lower middle, a little ahead of the beat, swelling and thinning with the phrase.',
+     -75, 2.0, -3.0, 0.14, [HP(110), PK(2200, 1.0, 1.0), LP(9000)],
+     humanize=dict(preset='tight', timing_ms=4.0, drift_ms=4.0, vel_sigma=4.0),
+     extra=dict(ensemble=dict(players=4, spread_cents=8, spread_ms=10, vel_spread=4), soundfont='muse_general',
+                velocity_timbre=dict(points=[[25, 2200], [60, 4200], [127, 9000]], bands=4)),
+     sources=[KB['hybrid'], KB['orch'], KB['theat']])
+inst('pursuit_basses_pizz', 'pizzicato_strings', 'bass',
+     'The weight: plucked double basses that double the bass line on the downbeats and the hits.',
+     0, 1.2, -4.0, 0.08, [HP(40), LP(4500)], humanize=dict(preset='tight', timing_ms=3.0, drift_ms=3.0, vel_sigma=3.0),
+     extra=dict(soundfont='muse_general'), sources=[KB['hybrid'], KB['orch']])
 inst('pursuit_basses', 'double_bass', 'bass',
      'The low-end owner: double basses on the root and the pedal, long and dark, the one part that holds the lowest octave.',
      0, 1.5, -3.0, 0.04, [HP(36), PK(90, 1.5, 0.9), LP(3000)],
-     extra=dict(ensemble=dict(players=3, spread_cents=6, spread_ms=9, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
+     extra=dict(soundfont='muse_general', ensemble=dict(players=3, spread_cents=6, spread_ms=9, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
 inst('pursuit_celli', 'cello', 'ostinato',
      'The engine of the pulse: staccato celli on eighths and sixteenths, digging into the first beat of each bar.',
      75, 2.2, -4.0, 0.10, [HP(60), PK(1800, 1.5, 1.0), LP(8500)],
-     extra=dict(ensemble=dict(players=4, spread_cents=8, spread_ms=10, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
+     extra=dict(soundfont='muse_general', ensemble=dict(players=4, spread_cents=8, spread_ms=10, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
 inst('pursuit_violins_staccato', 'violin', 'arp',
      'The bridge runs: fast staccato violin figures that pass round the left side, high and dry.',
      -110, 3.0, -6.0, 0.14, [HP(300), PK(3200, 1.0, 1.0), LP(10000)],
-     extra=dict(ensemble=dict(players=4, spread_cents=9, spread_ms=11, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
-inst('pursuit_violins_tremolo', 'synth_strings', 'pad',
+     extra=dict(soundfont='muse_general', ensemble=dict(players=4, spread_cents=9, spread_ms=11, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
+inst('pursuit_violins_tremolo', 'tremolo_strings', 'pad',
      'The tension bed: high tremolo strings that grow by adding players, wide behind the listener on the right.',
      140, 4.0, -9.0, 0.22, [HP(280), LP(9000)],
-     extra=dict(ensemble=dict(players=6, spread_cents=10, spread_ms=14, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
+     extra=dict(ensemble=dict(players=6, spread_cents=10, spread_ms=14, vel_spread=3), soundfont='muse_general', per_note_channels=True, expression='bow'), sources=[KB['hybrid'], KB['orch'], KB['theat']])
 inst('pursuit_bass_clarinet', 'clarinet', 'counter',
      'The whisper: a clarinet in its low register playing the semitone, the first voice of the motif; close to the right ear.',
-     105, 2.4, -6.0, 0.12, [HP(120), PK(900, 1.5, 1.0), LP(7000)], sources=[KB['hybrid'], KB['orch']])
+     105, 2.4, -6.0, 0.12, [HP(120), PK(900, 1.5, 1.0), LP(7000)],
+     extra=dict(soundfont='muse_general'), sources=[KB['hybrid'], KB['orch']])
 inst('pursuit_horns', 'french_horn', 'melody',
      'The figure: four horns that state the tick, late on each entry and leaning on the leap; the hero of the cue.',
      35, 2.6, -2.0, 0.14, [HP(110), PK(1600, 1.5, 1.0), LP(7500)],
-     extra=dict(ensemble=dict(players=4, spread_cents=7, spread_ms=9, vel_spread=3),
+     extra=dict(soundfont='muse_general', ensemble=dict(players=4, spread_cents=7, spread_ms=9, vel_spread=3),
                 timbre_dynamics=dict(drive=0.45, tilt_db=2.0, tilt_hz=2600, band_hz=[140, 6500], amount=0.5, smooth_s=0.35)),
      sources=[KB['hybrid'], KB['orch'], KB['theat']])
 inst('pursuit_trombones', 'trombone', 'chord',
      'The stabs: three trombones on the hits and the clusters, low and hard, in the left half of the stage.',
      -40, 2.8, -4.0, 0.12, [HP(70), PK(1200, 1.5, 1.0), LP(6500)],
-     extra=dict(ensemble=dict(players=3, spread_cents=7, spread_ms=9, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
+     extra=dict(soundfont='muse_general', ensemble=dict(players=3, spread_cents=7, spread_ms=9, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
 inst('pursuit_tuba', 'tuba', 'chord',
      'The floor under the stabs: a tuba doubling the basses on the turning points, never a sustained part.',
-     150, 1.8, -5.0, 0.06, [HP(34), LP(2500)], sources=[KB['hybrid'], KB['orch']])
-inst('pursuit_sub_drop', 'synth_bass_2', 'texture',
-     'The cinematic drop: a single low note that dives an octave and rings, struck only at the snap of the slow motion and at the crash.',
-     0, 1.0, -4.0, 0.0, [HP(28), LP(900)],
-     extra=dict(mechanics_class='sub'), sources=[KB['hybrid'], 'web research: slow-motion sound design pairs a pitched-down low end with a stretched tail (see the research note)'])
+     150, 1.8, -5.0, 0.06, [HP(34), LP(2500)],
+     extra=dict(soundfont='muse_general'), sources=[KB['hybrid'], KB['orch']])
+inst('pursuit_low_swell', 'double_bass', 'texture',
+     'The cinematic drop: a single low double-bass note that swells and rings, struck only at the snap of the slow motion and at the crash.',
+     0, 1.0, -4.0, 0.06, [HP(34), LP(1200)],
+     extra=dict(soundfont='muse_general', per_note_channels=True, expression='bow'), sources=[KB['hybrid'], KB['orch'], 'web research: slow-motion sound design pairs a pitched-down low end with a stretched tail (see the research note)'])
 inst('pursuit_timpani', 'timpani', 'drum',
      'The heartbeat and the collapse: two soft strokes a bar in the quiet, a roll into each hit, one big stroke on the turning points.',
      0, 3.0, -4.0, 0.14, [HP(40), LP(5000)], humanize=dict(preset='natural', timing_ms=6.0, drift_ms=6.0, vel_sigma=5.0),
@@ -120,14 +123,11 @@ inst('pursuit_taiko', 'taiko_drum', 'drum',
 inst('pursuit_choir', 'choir_aahs', 'pad',
      'The reveal: a wordless choir that opens over the helicopter, high and wide, from above.',
      0, 5.0, -8.0, 0.30, [HP(200), LP(8000)],
-     extra=dict(ensemble=dict(players=8, spread_cents=12, spread_ms=16, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
+     extra=dict(soundfont='muse_general', ensemble=dict(players=8, spread_cents=12, spread_ms=16, vel_spread=3)), sources=[KB['hybrid'], KB['orch'], KB['theat']])
 inst('pursuit_solo_violin', 'violin', 'counter',
      'The cry over the flyover: one high violin carrying the hook an octave above the horns, close and a little exposed.',
-     -40, 2.4, -6.0, 0.12, [HP(250), PK(3500, -4.0, 1.0), LP(8000)], sources=[KB['hybrid'], KB['orch']])
-inst('pursuit_sub_pulse', 'synth_bass_1', 'texture',
-     'The floor of the chase: a sub-bass pulse on the eighths under the strings, felt more than heard.',
-     0, 1.0, -8.0, 0.0, [HP(30), LP(500)], extra=dict(mechanics_class='sub'), sources=[KB['hybrid']])
-
+     -40, 2.4, -6.0, 0.12, [HP(250), PK(3500, -4.0, 1.0), LP(8000)],
+     extra=dict(soundfont='muse_general'), sources=[KB['hybrid'], KB['orch']])
 # the GM drum kit presets carry `gm`, not `instrument`
 for n in ('pursuit_bass_drum', 'pursuit_snare', 'pursuit_cymbals', 'pursuit_taiko'):
     path = os.path.join(P, 'instruments', n + '.json')

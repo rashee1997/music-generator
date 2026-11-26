@@ -1,9 +1,9 @@
 {
-  "name": "pursuit_piano_low",
-  "character": "The weight: a low piano octave that doubles the basses on the downbeats and the hits.",
-  "description": "The weight: a low piano octave that doubles the basses on the downbeats and the hits.",
-  "instrument": "piano",
-  "role": "ostinato",
+  "name": "pursuit_basses_pizz",
+  "character": "The weight: plucked double basses that double the bass line on the downbeats and the hits.",
+  "description": "The weight: plucked double basses that double the bass line on the downbeats and the hits.",
+  "instrument": "pizzicato_strings",
+  "role": "bass",
   "humanize": {
     "preset": "tight",
     "timing_ms": 3.0,
@@ -21,7 +21,7 @@
   "eq": [
     {
       "type": "hp",
-      "f": 32.0
+      "f": 40.0
     },
     {
       "type": "lp",
@@ -29,10 +29,11 @@
     }
   ],
   "gain_db": -4.0,
-  "reverb": 0.06,
+  "reverb": 0.08,
   "sources": [
     "KB cinematic-hybrid-scoring (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising device)",
-    "KB soundfont-velocity-and-realism (a General MIDI SoundFont has one sample per key: velocity moves level, so the colour is added by velocity_timbre and the section by ensemble)",
+    "KB orchestral-writing (playable ranges, section sizes and note rates of the instrument)",
     "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
-  ]
+  ],
+  "soundfont": "muse_general"
 }

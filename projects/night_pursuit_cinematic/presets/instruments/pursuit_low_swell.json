@@ -1,8 +1,8 @@
 {
-  "name": "pursuit_sub_drop",
-  "character": "The cinematic drop: a single low note that dives an octave and rings, struck only at the snap of the slow motion and at the crash.",
-  "description": "The cinematic drop: a single low note that dives an octave and rings, struck only at the snap of the slow motion and at the crash.",
-  "instrument": "synth_bass_2",
+  "name": "pursuit_low_swell",
+  "character": "The cinematic drop: a single low double-bass note that swells and rings, struck only at the snap of the slow motion and at the crash.",
+  "description": "The cinematic drop: a single low double-bass note that swells and rings, struck only at the snap of the slow motion and at the crash.",
+  "instrument": "double_bass",
   "role": "texture",
   "humanize": {
     "preset": "natural",
@@ -21,19 +21,22 @@
   "eq": [
     {
       "type": "hp",
-      "f": 28.0
+      "f": 34.0
     },
     {
       "type": "lp",
-      "f": 900.0
+      "f": 1200.0
     }
   ],
   "gain_db": -4.0,
-  "reverb": 0.0,
+  "reverb": 0.06,
   "sources": [
     "KB cinematic-hybrid-scoring (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising device)",
+    "KB orchestral-writing (playable ranges, section sizes and note rates of the instrument)",
     "web research: slow-motion sound design pairs a pitched-down low end with a stretched tail (see the research note)",
     "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
   ],
-  "mechanics_class": "sub"
+  "soundfont": "muse_general",
+  "per_note_channels": true,
+  "expression": "bow"
 }

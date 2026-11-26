@@ -2,7 +2,7 @@
   "name": "pursuit_violins_tremolo",
   "character": "The tension bed: high tremolo strings that grow by adding players, wide behind the listener on the right.",
   "description": "The tension bed: high tremolo strings that grow by adding players, wide behind the listener on the right.",
-  "instrument": "synth_strings",
+  "instrument": "tremolo_strings",
   "role": "pad",
   "humanize": {
     "preset": "natural",
@@ -41,5 +41,8 @@
     "spread_cents": 10,
     "spread_ms": 14,
     "vel_spread": 3
-  }
+  },
+  "soundfont": "muse_general",
+  "per_note_channels": true,
+  "expression": "bow"
 }

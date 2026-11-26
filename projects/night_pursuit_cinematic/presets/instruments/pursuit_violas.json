@@ -1,14 +1,14 @@
 {
-  "name": "pursuit_piano",
-  "character": "The pulse: a hard piano playing sixteenths in the lower middle, a little ahead of the beat, the one constant in the 1-3 kHz middle.",
-  "description": "The pulse: a hard piano playing sixteenths in the lower middle, a little ahead of the beat, the one constant in the 1-3 kHz middle.",
-  "instrument": "piano",
+  "name": "pursuit_violas",
+  "character": "The pulse: a viola section playing short bowed sixteenths in the lower middle, a little ahead of the beat, swelling and thinning with the phrase.",
+  "description": "The pulse: a viola section playing short bowed sixteenths in the lower middle, a little ahead of the beat, swelling and thinning with the phrase.",
+  "instrument": "viola",
   "role": "ostinato",
   "humanize": {
     "preset": "tight",
-    "timing_ms": 3.0,
-    "drift_ms": 3.0,
-    "vel_sigma": 3.0
+    "timing_ms": 4.0,
+    "drift_ms": 4.0,
+    "vel_sigma": 4.0
   },
   "spatial": {
     "azimuth": -110.0,
@@ -21,39 +21,47 @@
   "eq": [
     {
       "type": "hp",
-      "f": 90.0
+      "f": 110.0
     },
     {
       "type": "peak",
       "f": 2200.0,
-      "gain": 1.5,
+      "gain": 1.0,
       "q": 1.0
     },
     {
       "type": "lp",
-      "f": 11000.0
+      "f": 9000.0
     }
   ],
   "gain_db": -3.0,
-  "reverb": 0.1,
+  "reverb": 0.14,
   "sources": [
     "KB cinematic-hybrid-scoring (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising device)",
-    "KB soundfont-velocity-and-realism (a General MIDI SoundFont has one sample per key: velocity moves level, so the colour is added by velocity_timbre and the section by ensemble)",
+    "KB orchestral-writing (playable ranges, section sizes and note rates of the instrument)",
+    "KB theatrical-realism (a section is several players; colour follows loudness)",
     "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
   ],
+  "ensemble": {
+    "players": 4,
+    "spread_cents": 8,
+    "spread_ms": 10,
+    "vel_spread": 4
+  },
+  "soundfont": "muse_general",
   "velocity_timbre": {
     "points": [
       [
         25,
-        2500
+        2200
       ],
       [
         60,
-        4500
+        4200
       ],
       [
         127,
-        9500
+        9000
       ]
     ],
     "bands": 4

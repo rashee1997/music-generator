@@ -34,5 +34,6 @@
     "KB cinematic-hybrid-scoring (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising device)",
     "KB orchestral-writing (playable ranges, section sizes and note rates of the instrument)",
     "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
-  ]
+  ],
+  "soundfont": "muse_general"
 }
