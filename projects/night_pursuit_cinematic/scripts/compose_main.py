@@ -110,7 +110,7 @@ for bar in range(1, T.END_BAR):
     # basses: the root with a walk; the dominant turns each phrase; a bar before the crash leans on the tritone
     walk = BASS_WALKS[(ph + k) % len(BASS_WALKS)]
     if collapse:
-        basses.add(bar, 0, 4.25, p(C + r, 1) if bar != int(T.SNAP_JUMP) - 1 else p(Gb + r, 1), 0.55)
+        basses.add(bar, 0, 4.25, p(C + r, 1) if bar != int(T.SNAP_JUMP) - 1 else p(Gb + r, 2), 0.55)      # the tritone before the landing an octave up: at F#1 the bass is below what the stem gate hears, and the bar reads as a hole
     elif escape:
         basses.add(bar, 0, 4.25 if bar < T.END_BAR - 1 else 5.6, p([C, G, C, C, Eb, C, G, C, Eb, C, C, C][(bar - s0('the_escape')) % 12], 2 if bar < T.END_BAR - 1 else 1), vel(0.86 - 0.02 * (bar - s0('the_escape')), 0.03))      # the last note rings on into the end as one smooth decay
     elif k == 3:
