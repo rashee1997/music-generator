@@ -504,5 +504,45 @@ class ProjectGate(Base):
         self.assertFalse(any('no "piece_type"' in w for w in project_gate.warnings(Path(d), dict(piece_type='tense', tracks=[]))))
 
 
+class TestRelaxCommand(unittest.TestCase):
+    """`gate_profiles.py relax` writes a bounded, evidenced relaxation into the project's own profile, and refuses everything else."""
+
+    def setUp(self):
+        self.d = tempfile.mkdtemp()
+        os.makedirs(os.path.join(self.d, 'presets', 'gate', 'data'))
+        json.dump(dict(name='mine', character='a test piece', extends='cinematic', flags=[], rows={}),
+                  open(os.path.join(self.d, 'presets', 'gate', 'mine.json'), 'w'))
+        json.dump(dict(rows=[dict(row='stem.dead', stem='horns', level='FAIL', value=13.2, unit='dB', detail='shortfall 13.2 dB')]),
+                  open(os.path.join(self.d, 'presets', 'gate', 'data', 'stem_gate.json'), 'w'))
+
+    def tearDown(self):
+        shutil.rmtree(self.d, ignore_errors=True)
+
+    def profile(self):
+        return json.load(open(os.path.join(self.d, 'presets', 'gate', 'mine.json')))
+
+    def test_a_measured_failure_is_relaxed_with_its_measurement_in_the_reason(self):
+        rc = gpf.cmd_relax('stem.dead', self.d, ['under_db=16'], 'the escape is a release by design and fades on purpose')
+        self.assertEqual(rc, 0)
+        row = self.profile()['rows']['stem.dead']
+        self.assertEqual((row['mode'], row['under_db']), ('relax', 16.0))
+        self.assertIn('horns 13.2 dB', row['reason'])
+        self.assertEqual(gpf.row_problems(self.profile()['rows'], 'mine'), [])
+
+    def test_a_row_that_did_not_fail_is_refused(self):
+        self.assertEqual(gpf.cmd_relax('stem.edge', self.d, ['max_silence_ms=60'], 'the tail is soft by design here'), 1)
+        self.assertEqual(self.profile()['rows'], {})
+
+    def test_a_protected_row_is_refused(self):
+        self.assertEqual(gpf.cmd_relax('clicks', self.d, ['mad_z=9'], 'a click that the piece does not need to avoid'), 1)
+
+    def test_a_number_outside_the_range_is_refused(self):
+        self.assertEqual(gpf.cmd_relax('stem.dead', self.d, ['under_db=99'], 'the escape is a release by design and fades on purpose'), 1)
+        self.assertEqual(self.profile()['rows'], {})
+
+    def test_a_one_word_reason_is_refused(self):
+        self.assertEqual(gpf.cmd_relax('stem.dead', self.d, ['under_db=16'], 'quiet'), 1)
+
+
 if __name__ == '__main__':
     unittest.main()

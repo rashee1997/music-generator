@@ -878,12 +878,88 @@ def cmd_explain(score_path):
         print(_row_line(rid, cfg))
 
 
+def _failing_measurements(project, rid):
+    """Every FAIL/WARN line the last render wrote for `rid` (or its alias), from presets/gate/data/*.json: [(stem|None, value, unit, detail)]."""
+    names = {rid} | {a for a, c in ALIASES.items() if c == rid}
+    found = []
+
+    def walk(o):
+        if isinstance(o, dict):
+            if o.get('row') in names and o.get('level') in ('FAIL', 'WARN'):
+                found.append((o.get('stem'), o.get('value'), o.get('unit'), str(o.get('detail', ''))[:160]))
+            for v in o.values():
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+    d = data_dir(project)
+    for f in sorted(os.listdir(d)) if os.path.isdir(d) else []:
+        if f.endswith('.json'):
+            try:
+                walk(json.load(open(os.path.join(d, f), encoding='utf-8')))
+            except (OSError, ValueError):
+                pass
+    return found
+
+
+def cmd_relax(row, project, sets, reason, profile=None):
+    """Write a bounded relaxation into the project's own gate profile, only for a row the last render measured as failing.
+
+    This is the route the profile exists for (AGENTS 6.3): a number inside the row's range, a reason, and the measurement that
+    justifies it, recorded in the profile so the report lists it as `gate_relax`. It refuses a protected row, a value outside the
+    range, a row that did not fail in the last render, and a reason of fewer than six words. It never skips a row."""
+    if not (row and project and sets):
+        print('usage: gate_profiles.py relax <row> --project <dir> --set PARAM=VALUE [--set ...] --reason "<why>"')
+        return 2
+    rid = canonical(row)
+    if rid not in ROWS:
+        print(f'unknown row "{row}". Rows: {", ".join(sorted(ROWS))}')
+        return 2
+    if ROWS[rid].get('protected'):
+        print(f'"{rid}" is a protected row: no profile can relax it. Fix the audio.')
+        return 1
+    params = {}
+    for item in sets:
+        k, _, v = item.partition('=')
+        spec = _pspec(rid, k)
+        params[k] = (v.lower() == 'true') if spec is not None and isinstance(spec[0], bool) else (float(v) if v.replace('.', '', 1).replace('-', '', 1).isdigit() else v)
+    if len(str(reason).split()) < 6:
+        print('give a reason in a full sentence: what in this piece makes the default number wrong for it')
+        return 1
+    measured = _failing_measurements(project, rid)
+    if not measured:
+        print(f'"{rid}" did not fail in the last render recorded under {data_dir(project)}: relax a row only after a render measured it')
+        return 1
+    own = profile_files(project)
+    name = profile or (own[0] if len(own) == 1 else None)
+    if name is None or name not in own:
+        print(f'name the profile with --profile; this project owns {own}')
+        return 2
+    path = os.path.join(artifacts_dir(project), name + '.json')
+    doc = json.load(open(path, encoding='utf-8'))
+    worst = ', '.join(f'{m[0] or "master"} {m[1]:.3g} {m[2] or ""}'.strip() if isinstance(m[1], (int, float)) else f'{m[0] or "master"}' for m in measured[:4])
+    entry = dict(mode='relax', reason=f'{str(reason).strip()} Measured in the last render: {worst}.', **params)
+    bad = row_problems({rid: entry}, name)
+    if bad:
+        print('\n'.join(bad))
+        return 1
+    doc.setdefault('rows', {})[rid] = entry
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(doc, f, indent=1, ensure_ascii=False)
+        f.write('\n')
+    print(f'{name}: {rid} relaxed to {params} ({worst}); the report will list it as gate_relax')
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('cmd', choices=['list', 'explain', 'new', 'check', 'rows'])
+    ap.add_argument('cmd', choices=['list', 'explain', 'new', 'check', 'rows', 'relax'])
     ap.add_argument('arg', nargs='?')
     ap.add_argument('--project', default=None)
     ap.add_argument('--from', dest='from_name', default=None)
+    ap.add_argument('--set', dest='sets', action='append', default=[], metavar='PARAM=VALUE', help='relax: a parameter of the row (repeatable)')
+    ap.add_argument('--reason', default='', help='relax: why this piece needs it (the measurement is added from the last render)')
+    ap.add_argument('--profile', default=None, help='relax: the project profile to edit (default: the only one)')
     a = ap.parse_args()
     if a.project:
         presets.add_project(a.project)
@@ -895,6 +971,8 @@ def main():
         cmd_explain(a.arg)
     elif a.cmd == 'new':
         print('wrote', presets.scaffold('gate', a.arg, a.project or '.', a.from_name))
+    elif a.cmd == 'relax':
+        sys.exit(cmd_relax(a.arg, a.project, a.sets, a.reason, a.profile))
     elif a.cmd == 'check':
         bad = problems()
         print('\n'.join(bad) if bad else 'all gate profiles are valid')

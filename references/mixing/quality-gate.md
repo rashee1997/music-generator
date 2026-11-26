@@ -219,6 +219,15 @@ numbers, come from a **gate profile**: a preset of kind `gate` (`references/data
   still flagged in a dance profile.
 - The report always lists the chosen type, and every relaxed row (`gate_relax`) and skipped row (`gate_skip`) with its reason.
 - Per-score one-off: `"gate": {"pattern.flags_max": {"mode": "relax", "max": 9, "reason": "single-take improvisation"}}`.
+- **Relaxing is the project profile's job, and it has a command.** After a render has measured a row as failing, and the fix would
+  take out what the brief asked for (a release section that is quiet by design, a tail that decays on purpose), write the
+  relaxation into the project's own profile:
+  `gate_profiles.py relax <row> --project D --set PARAM=VALUE --reason "<why this piece needs it>"`. It refuses a protected row, a
+  value outside the row's range (`gate_profiles.py rows` lists the ranges), a row that did not fail in the last render, and a
+  one-word reason; it records the measurement in the reason so the report's `gate_relax` line carries it. It is the route for a
+  *mismatch between the row's rule and the brief*. It is not the route for a fault: a click, a hole from a note below the
+  mastering high-pass, a part that is not there. Those are fixed in the notes or the presets. A number a row does not allow
+  (for example a stem that stops 170 ms early, when `stem.edge` allows at most 100 ms) is a fault by definition.
 - Commands: `gate_profiles.py list | rows | explain score.json | new <name> --from tense --project D | check`. The project gate runs
   `check`, rejects an unknown `piece_type`, and warns when the type was inferred.
 
