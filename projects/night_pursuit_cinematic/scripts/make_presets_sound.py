@@ -144,7 +144,8 @@ for car in ('ferrari', 'lamborghini', 'mustang', 'porsche'):
     v_of = lambda t: cars.interp(list(zip(T_, d['v'])), t)                   # noqa: E731
     load = lambda t: cars.interp(list(zip(T_, d['load'])), t)                # noqa: E731
     f_idle = cars.firing_hz(car, c['idle'])
-    ending = lambda t: (-90.0 * smooth((t - (t_end - 2.5)) / 2.5)) if t > t_end - 2.5 else 0.0     # noqa: E731  the engine dies or the car leaves
+    END_FADE = 2.5 if t_end >= EV['end'] - 0.5 else 0.8          # the cars that run to the end of the cue fade slowly; one that leaves the scene is gone in under a second
+    ending = lambda t, L=END_FADE: (-90.0 * smooth((t - (t_end - L)) / L)) if t > t_end - L else 0.0     # noqa: E731  the engine dies or the car leaves
     fade_in = lambda t: -90.0 * (1.0 - smooth((t - OFF) / 0.4)) if t - OFF < 0.4 else 0.0           # noqa: E731
 
     def pitch(t, rpm=rpm, c=c, f=None):
