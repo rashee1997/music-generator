@@ -303,7 +303,7 @@ class MonoBus:
     def __init__(self, sr=44100, cfg=None):
         self.sr = int(sr)
         self.cfg = dict(cfg or {})
-        self.parts = []
+        self.acc = None                      # one running float64 sum (a list of every track held its whole length each)
         self.compensation = {}
 
     def _one(self, name, y):
@@ -322,20 +322,27 @@ class MonoBus:
         self.compensation[name] = gain_db
         return mid * 10.0 ** (gain_db / 20.0)
 
+    def _sum(self, x):
+        if not x.size:
+            return
+        if self.acc is None:
+            self.acc = np.array(x, dtype=np.float64, copy=True)
+        elif len(self.acc) >= len(x):
+            self.acc[:len(x)] += x
+        else:
+            grown = np.array(x, dtype=np.float64, copy=True)
+            grown[:len(self.acc)] += self.acc
+            self.acc = grown
+
     def add(self, name, y, spec):
-        x = self._one(name, y)
-        if x.size:
-            self.parts.append(x)
+        self._sum(self._one(name, y))
 
     def add_reverb(self, ret):
         if ret is not None and len(ret):
-            self.parts.append(self._one('reverb_return', ret))
+            self._sum(self._one('reverb_return', ret))
 
     def result(self):
-        n = max((len(p) for p in self.parts), default=0)
-        out = np.zeros(n, dtype=np.float64)
-        for p in self.parts:
-            out[:len(p)] += p
+        out = self.acc if self.acc is not None else np.zeros(0, dtype=np.float64)
         return out.astype(np.float32)[:, None]
 
 

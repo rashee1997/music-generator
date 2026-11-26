@@ -287,6 +287,21 @@ class TestLayoutBusMemory(unittest.TestCase):
         self.assertEqual(bus.acc[ch].nbytes, 9000 * 8)
         self.assertTrue(np.array_equal(bus.result()[:, 0] if bus.names[0] == ch else bus.acc[ch], bus.result()[:, 0]))
 
+    def test_the_mono_bus_sums_the_same_and_keeps_one_array(self):
+        import numpy as np
+        from spatial_engine import render
+        rng = np.random.default_rng(5)
+        bus = render.MonoBus(44100, {})
+        sigs = [rng.standard_normal(n) * 0.1 for n in (3000, 8000, 5000)]
+        for i, x in enumerate(sigs):
+            bus.add('t%d' % i, x, {})
+        expect = np.zeros(8000)
+        for x in sigs:
+            expect[:len(x)] += x
+        self.assertTrue(np.array_equal(bus.result()[:, 0], expect.astype(np.float32)))
+        self.assertEqual(bus.acc.nbytes, 8000 * 8)
+        self.assertEqual(render.MonoBus(44100, {}).result().shape, (0, 1))
+
     def test_a_signal_the_caller_keeps_is_not_changed(self):
         import numpy as np
         from spatial_engine import render
