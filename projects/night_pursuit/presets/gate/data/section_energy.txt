@@ -1,10 +1,10 @@
 rho: 0.833
 section,start_s,end_s,promised,level_db
-the_stakeout,0.00,11.25,0.300,-27.36
+the_stakeout,0.00,11.25,0.300,-27.35
 spotted,11.25,22.33,0.450,-26.16
-the_avenue,22.33,46.87,0.700,-19.14
+the_avenue,22.33,46.87,0.700,-19.15
 the_turn,46.87,73.96,0.850,-20.08
-under_the_bridge,73.96,96.36,0.900,-18.70
-the_roadblock,96.36,127.86,1.000,-19.03
+under_the_bridge,73.96,96.36,0.900,-18.71
+the_roadblock,96.36,127.86,1.000,-19.04
 the_bridge,127.86,149.69,0.950,-19.72
-the_cliff,149.69,171.05,0.200,-40.64
+the_cliff,149.69,171.05,0.200,-40.27

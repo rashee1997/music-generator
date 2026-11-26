@@ -116,6 +116,12 @@
       "stem.tick",
       "violins_staccato",
       "PASS"
+    ],
+    [
+      138.511,
+      "clicks",
+      "master",
+      "FAIL"
     ]
   ]
 }
