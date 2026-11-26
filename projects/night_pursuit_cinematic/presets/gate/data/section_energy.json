@@ -3,69 +3,69 @@
   "stage": "mix",
   "stem": null,
   "level": "PASS",
-  "value": 0.9322272357358045,
+  "value": 0.8556058190999849,
   "unit": "rho",
   "threshold": 0.5,
-  "margin": 0.43222723573580446,
+  "margin": 0.3556058190999849,
   "worst_times_s": [],
   "calibrated": false,
-  "detail": "Spearman rho 0.93 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
+  "detail": "Spearman rho 0.86 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
   "table": [
     {
       "name": "the_race",
       "start_s": 0.0,
       "end_s": 25.077,
       "energy": 0.9,
-      "level_db": -17.710585192496065
+      "level_db": -17.89940613974699
     },
     {
       "name": "spotted",
       "start_s": 25.077,
       "end_s": 38.892,
       "energy": 0.8,
-      "level_db": -21.04532511038322
+      "level_db": -21.37083644494409
     },
     {
       "name": "the_chase",
       "start_s": 38.892,
       "end_s": 72.228,
       "energy": 0.9,
-      "level_db": -19.594816065325176
+      "level_db": -19.884190778027858
     },
     {
       "name": "the_tunnel",
       "start_s": 72.228,
       "end_s": 95.085,
       "energy": 0.8,
-      "level_db": -20.159573254574923
+      "level_db": -20.24536486431317
     },
     {
       "name": "the_helicopter",
       "start_s": 95.085,
       "end_s": 117.636,
       "energy": 0.8,
-      "level_db": -19.68462118027721
+      "level_db": -19.795975709148625
     },
     {
       "name": "the_bumps",
       "start_s": 117.636,
       "end_s": 139.888,
       "energy": 1.0,
-      "level_db": -16.563518332180486
+      "level_db": -16.624042655073886
     },
     {
       "name": "the_flyover",
       "start_s": 139.888,
       "end_s": 165.785,
       "energy": 0.8,
-      "level_db": -24.372872442503628
+      "level_db": -24.438509315435947
     },
     {
       "name": "the_escape",
       "start_s": 165.785,
       "end_s": 192.648,
       "energy": 0.5,
-      "level_db": -31.587986902059875
+      "level_db": -31.61212337902939
     }
   ]
 }
