@@ -1,5 +1,5 @@
 {
-  "duration_s": 171.2959410430839,
+  "duration_s": 171.295873015873,
   "sections": [
     {
       "name": "the_stakeout",
@@ -82,13 +82,7 @@
       "PASS"
     ],
     [
-      5.0598,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      9.7722,
+      6.3236,
       "clicks",
       "master",
       "FAIL"
@@ -112,31 +106,19 @@
       "PASS"
     ],
     [
-      48.8573,
+      28.2193,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      51.3841,
+      37.0398,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      58.9065,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      60.9768,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      65.2379,
+      67.2521,
       "clicks",
       "master",
       "FAIL"
@@ -154,7 +136,7 @@
       "PASS"
     ],
     [
-      90.1633,
+      84.0017,
       "clicks",
       "master",
       "FAIL"

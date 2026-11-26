@@ -364,6 +364,42 @@ def _shared_seconds(sa, sb):
     return total
 
 
+def clock_rows(score):
+    """The plan's section times against the tempo map the renderer will play. A plan (and every preset curve and trigger that was
+    written from it) built on another clock is wrong by seconds, and the audio rows find it only after a render: one project's plan
+    was ten seconds off because its map was sized for the default 64 beats, not for its notes."""
+    secs = (score.get('plan') or {}).get('sections') or []
+    if not secs or not score.get('tempo_points'):
+        return []
+    sec = _clock(score)
+    ts = score.get('ts') or [4, 4]
+    bpb = float(ts[0]) * 4.0 / float(ts[1])
+    worst, where = 0.0, None
+    for s in secs:
+        if 'start_bar' in s and 'start_s' in s:
+            d = abs(float(sec((float(s['start_bar']) - 1) * bpb)) - float(s['start_s']))
+            if d > worst:
+                worst, where = d, s.get('name')
+    if worst > 0.25:
+        return [('FAIL', 'preflight.clock', f'section "{where}" starts {worst:.2f} s away from where the renderer\'s tempo map puts its bar: the plan, '
+                 f'the direction sheet and every time written from it use another clock. Build the plan from hz.tempo_map_for(score) on the full score')]
+    return [('PASS', 'preflight.clock', f'every section starts within {worst:.2f} s of the renderer\'s tempo map')]
+
+
+def full_checks(score, project_dir=None, **kw):
+    """The rows the pipeline's stage 2 runs, in one call: the acoustic and cognitive laws, the score-against-presets rows, the focus and
+    the intent rows. The pipeline and the command line both use it, so a score cannot pass here and fail the same rows at render time."""
+    import pattern_audit
+    import quality_gate as qg
+    rows = list(pattern_audit.acoustic_checks(score))
+    rows += [r for r in checks(score, project_dir, **kw) if r[0] in ('FAIL', 'WARN')]
+    extra = []
+    qg.focus_rows(score, extra)
+    qg.intent_rows(score, extra)
+    rows += [r for r in extra if r[0] in ('FAIL', 'WARN')]
+    return rows
+
+
 def checks(score, project_dir=None, lookup=None, patch_range=None, probe=True, render=None):
     """Every preflight row for this score. `lookup(kind, name)`, `patch_range(block, project)` and `render(name, seconds, sr, seed)`
     are injectable for tests; `probe=False` skips the one-shot renders of preset_probe."""
@@ -377,6 +413,7 @@ def checks(score, project_dir=None, lookup=None, patch_range=None, probe=True, r
     rows += unison_rows(score)
     rows += figure_level_rows(score)
     rows += placement_rows(score, lookup)
+    rows += clock_rows(score)
     import preflight_levels
     rows += preflight_levels.checks(score)
     import roughness_forecast
@@ -396,6 +433,6 @@ if __name__ == '__main__':
     if proj:
         import presets
         presets.add_project(proj)
-    for lvl, name, detail in checks(json.load(open(path, encoding='utf-8')), proj):
+    for lvl, name, detail in full_checks(json.load(open(path, encoding='utf-8')), proj):
         if lvl != 'PASS':
             print(f'[{lvl}] {name}: {detail}')

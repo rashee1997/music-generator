@@ -27,6 +27,13 @@ class Margins(unittest.TestCase):
         self.assertEqual(sense, 'max')
         self.assertAlmostEqual(s, -1.0)                 # one event over a limit of zero fails by one whole unit
 
+    def test_a_dead_stem_shortfall_over_its_limit_fails(self):
+        # stem.dead reports the worst section's shortfall in dB against a limit: 25.5 dB against 12 dB is a failure, not "room"
+        s, sense, _ = margins.safety(row('stem.dead', 25.5, 12.0, unit='dB', level='FAIL'))
+        self.assertEqual(sense, 'max')
+        self.assertLess(s, 0)
+        self.assertIn('FAILS', margins.describe(s))
+
     def test_a_duration_is_judged_against_its_own_limit(self):
         s, _, scale = margins.safety(row('stem.dropout', 12.0, 20.0, unit='ms'))
         self.assertAlmostEqual(scale, 20.0)
