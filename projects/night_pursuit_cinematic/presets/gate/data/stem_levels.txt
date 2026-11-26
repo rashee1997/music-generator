@@ -62,7 +62,7 @@ landing,the_flyover,-16.26,-16.26,0.8
 low_swell,the_chase,-29.43,-34.43,0.9
 low_swell,the_helicopter,-35.78,-35.46,0.8
 low_swell,the_flyover,-35.46,-35.46,0.8
-mustang,the_race,-22.91,-22.91,0.9
+mustang,the_race,-22.23,-22.23,0.9
 porsche,the_race,-16.16,-16.16,0.9
 siren_first,spotted,-16.47,-16.47,0.8
 snare,the_race,-26.93,-25.54,0.9

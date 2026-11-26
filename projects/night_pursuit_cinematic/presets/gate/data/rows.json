@@ -2626,11 +2626,11 @@
     "margin": 0.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"mustang\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 2 as a steep attack; max cluster span 0.000 ms",
+    "detail": "stem \"mustang\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 6 as a steep attack; max cluster span 0.000 ms",
     "mad_count": 0,
     "lpc_count": 0,
     "rejected": 0,
-    "attacks_ignored": 2,
+    "attacks_ignored": 6,
     "max_cluster_span_ms": 0.0
    },
    {
@@ -2644,7 +2644,7 @@
     "margin": -20.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -150.0 dBFS; 0 hole(s)",
+    "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.3 dBFS; 0 hole(s)",
     "holes": []
    },
    {
@@ -2705,14 +2705,14 @@
     "margin": -12.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"mustang\": own median -22.9 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+    "detail": "stem \"mustang\": own median -22.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
     "fail": false,
     "table": [
      {
       "section": "the_race",
       "start_s": 0.0,
-      "measured_db": -22.91,
-      "expected_db": -22.91,
+      "measured_db": -22.23,
+      "expected_db": -22.23,
       "dyn": 0.9
      }
     ],
@@ -4721,10 +4721,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -16.01960159186224,
+    "value": -16.019605238765724,
     "unit": "LUFS",
     "threshold": -16.0,
-    "margin": -2.4803984081377592,
+    "margin": -2.480394761234276,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-16.0 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -4734,10 +4734,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -1.5022695821870866,
+    "value": -1.50227142860154,
     "unit": "dBTP",
     "threshold": -1.5,
-    "margin": -0.002269582187086616,
+    "margin": -0.0022714286015399487,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-1.50 dBTP vs ceiling -1.5"
@@ -4773,10 +4773,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 66.98942262892494,
+    "value": 66.98900828372422,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -54.98942262892494,
+    "margin": -54.98900828372422,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "end level -142.8 dBFS (limit -45), decay over final 300 ms 67.0 dB (limit 12); natural release"
@@ -4799,10 +4799,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 1.2437039487315098e-05,
+    "value": 1.2439454489924086e-05,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.000987562960512685,
+    "margin": -0.0009875605455100759,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
@@ -4825,56 +4825,56 @@
       "start_s": 0.0,
       "end_s": 25.077,
       "energy": 0.9,
-      "level_db": -17.71028544395842
+      "level_db": -17.710585192496065
      },
      {
       "name": "spotted",
       "start_s": 25.077,
       "end_s": 38.892,
       "energy": 0.8,
-      "level_db": -21.04506721363351
+      "level_db": -21.04532511038322
      },
      {
       "name": "the_chase",
       "start_s": 38.892,
       "end_s": 72.228,
       "energy": 0.9,
-      "level_db": -19.59421295648179
+      "level_db": -19.594816065325176
      },
      {
       "name": "the_tunnel",
       "start_s": 72.228,
       "end_s": 95.085,
       "energy": 0.8,
-      "level_db": -20.159162193564924
+      "level_db": -20.159573254574923
      },
      {
       "name": "the_helicopter",
       "start_s": 95.085,
       "end_s": 117.636,
       "energy": 0.8,
-      "level_db": -19.683836195281366
+      "level_db": -19.68462118027721
      },
      {
       "name": "the_bumps",
       "start_s": 117.636,
       "end_s": 139.888,
       "energy": 1.0,
-      "level_db": -16.563409401392338
+      "level_db": -16.563518332180486
      },
      {
       "name": "the_flyover",
       "start_s": 139.888,
       "end_s": 165.785,
       "energy": 0.8,
-      "level_db": -24.37330622156246
+      "level_db": -24.372872442503628
      },
      {
       "name": "the_escape",
       "start_s": 165.785,
       "end_s": 192.648,
       "energy": 0.5,
-      "level_db": -31.587564327238088
+      "level_db": -31.587986902059875
      }
     ]
    }
