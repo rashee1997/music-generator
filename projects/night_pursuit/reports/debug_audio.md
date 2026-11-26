@@ -1,7 +1,7 @@
 # Debug autopsy - night_pursuit
 
-20261126T094800  ·  level FAIL  ·  plan replay-proved
-sources: score=/home/user/music-generator/projects/night_pursuit/scores/night_pursuit_score.json, gate_data=['level.json', 'rows.json', 'section_energy.json', 'spectrogram.json', 'stem_gate.json', 'stem_levels.json', 'stereo.json', 'waveform.json'], stems=24 processed stems from .cache/mix, master=out/_draft_master.wav, verdict=2026-11-26T09:33:09Z
+20261126T094853  ·  level FAIL  ·  plan replay-proved
+sources: score=/home/user/music-generator/projects/night_pursuit/scores/night_pursuit_score.json, gate_data=['level.json', 'rows.json', 'section_energy.json', 'spectrogram.json', 'stem_gate.json', 'stem_levels.json', 'stereo.json', 'waveform.json'], stems=24 processed stems from .cache/mix, master=out/_draft_master.wav, verdict=2026-11-26T09:48:00Z
 
 ## In question (1)
 - **clicks**: 1.0 events against 0.0 -> FAILS by 1.00 tolerance units

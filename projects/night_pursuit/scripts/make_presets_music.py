@@ -184,7 +184,7 @@ mix['immersive'] = dict(enabled=True, engine='hoa_bus', order=5, anchor_max_span
 # a replay of the gate's own checker on the modelled mix cleared five of six with these shelves (the engine -9 dB, the wipers -6 dB).
 mix['inst_eq'] = {'sfx:np_engine': [dict(type='highshelf', f=5500.0, gain=-15.0, q=0.7)],
                   'sfx:np_wipers': [dict(type='highshelf', f=5500.0, gain=-9.0, q=0.7)],
-                  'pursuit_snare': [dict(type='highshelf', f=5500.0, gain=-3.0, q=0.7)],
+                  'pursuit_snare': [dict(type='highshelf', f=5500.0, gain=-12.0, q=0.7)],
                   'sfx:np_drift_squeal': [dict(type='highshelf', f=5500.0, gain=-9.0, q=0.7)],
                   'env:np_city_far': [dict(type='highshelf', f=5500.0, gain=-3.0, q=0.7)]}
 mix['lead_carve'] = dict(enabled=True, from_intent=True, roles=['pad', 'texture', 'chord', 'arp', 'counter', 'environment'], ratio=1.6, threshold_db=-34.0, attack_ms=100.0, release_ms=1500.0)
