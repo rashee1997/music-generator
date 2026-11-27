@@ -38,6 +38,12 @@ TARGETS = {
     'repetition': 'under 40 % of a part\'s same-pitch attacks are the same sample twice (spectral similarity 0.995, starting value)',
     'velocity_response': 'brightness follows written velocity, correlation 0.30 or more once pitch is removed (starting value; the literature reads 0.62 for loudness)',
     'coherence': 'inter-channel coherence 2-8 kHz at most 0.85 (starting value)',
+    'sub_weight': 'the 20-60 Hz share the stems carry reaches the master (loss at most 6 dB while the master is thin), starting value',
+    'air': '8-16 kHz share of the master at least -40 dB; parts with no air in their samples are named (starting value)',
+    'dynamic_scale': 'loudest section mean at least 10 dB above the quietest (starting value)',
+    'impact_attack': 'a struck part rises in 30 ms or less or carries a click above -18 dB (starting value)',
+    'foreground': 'a voice the score declares in `foreground` is within 12 dB of the loudest part while it plays (starting value)',
+    'harmonic_motion': 'a section over 20 s moves the bass or declares a `pedal` (starting value)',
 }
 
 SECTION_WORDS = ('string', 'violin', 'viola', 'cello', 'celli', 'bass', 'brass', 'horn', 'trumpet', 'trombone', 'tuba',
@@ -600,13 +606,23 @@ def analyse(master, sr, stems=None, score=None, project=None):
     out['10_repetition'] = repetition(stems, sc)
     out['11_velocity_response'] = velocity_response(stems, sc)
     out['12_coherence'] = coherence(master, sr)
+    import realism_cinema as rc
+    sd = stems if isinstance(stems, dict) else {}
+    out['13_sub_weight'] = rc.sub_weight(master, sd, sr)
+    out['14_air'] = rc.air(master, sd, sr)
+    out['15_dynamic_scale'] = rc.dynamic_scale(master, sr, score)
+    out['16_impact_attack'] = rc.impact_attack(sd, sr, score)
+    out['17_foreground'] = rc.foreground(sd, sr, score)
+    out['18_harmonic_motion'] = rc.harmonic_motion(score)
     return out
 
 
 DIMENSION = {'1_timbre_loudness': 'timbre', '2_ensemble': 'ensemble', '3_transient': 'transient',
              '4_depth': 'depth', '5_low_mid': 'low_mid', '6_distance': 'distance',
              '7_openness': 'openness', '8_phrasing': 'phrasing', '9_vibrato': 'vibrato', '10_repetition': 'repetition',
-             '11_velocity_response': 'velocity_response', '12_coherence': 'coherence'}
+             '11_velocity_response': 'velocity_response', '12_coherence': 'coherence',
+             '13_sub_weight': 'sub_weight', '14_air': 'air', '15_dynamic_scale': 'dynamic_scale',
+             '16_impact_attack': 'impact_attack', '17_foreground': 'foreground', '18_harmonic_motion': 'harmonic_motion'}
 
 
 def format_report(r):

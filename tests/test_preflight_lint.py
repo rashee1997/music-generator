@@ -199,3 +199,29 @@ class InstEq(unittest.TestCase):
             self.assertEqual(pl.inst_eq_rows(score)[0][0], 'PASS')
         with mock.patch('presets.load', return_value={'m': {}}):
             self.assertEqual(pl.inst_eq_rows(score), [])
+
+
+class ChoirLayers(unittest.TestCase):
+    """preflight.choir_layers: one block of identical singers is the same choir at every dynamic."""
+    def rows(self, tracks, presets_map):
+        import preflight_lint as pl
+
+        def lookup(kind, name):
+            return presets_map.get(name)
+        return pl.choir_layer_rows({'tracks': tracks}, lookup)
+
+    def test_a_flat_synthesised_choir_alone_warns(self):
+        r = self.rows([dict(name='choir', instrument='x_choir', role='pad', notes=[{'t': 0, 'd': 1, 'p': 60}], vocal={'ensemble': {'voices': 8}})], {})
+        self.assertEqual(r[0][:2], ('WARN', 'preflight.choir_layers'))
+
+    def test_layers_or_a_second_voice_part_pass(self):
+        r = self.rows([dict(name='choir', instrument='x_choir', role='pad', notes=[{'t': 0, 'd': 1, 'p': 60}], vocal={'ensemble': {'voices': 8, 'layers': [{'name': 'a'}]}})], {})
+        self.assertEqual(r[0][0], 'PASS')
+        r = self.rows([dict(name='a', instrument='x', role='pad', notes=[{'t': 0, 'd': 1, 'p': 60}], vocal={'ensemble': {'voices': 6}}),
+                       dict(name='b', instrument='y', role='pad', notes=[{'t': 0, 'd': 1, 'p': 60}], vocal={'ensemble': {'voices': 6}})], {})
+        self.assertEqual(r[0][0], 'PASS')
+
+    def test_one_sampled_choir_warns_and_no_voice_is_silent(self):
+        r = self.rows([dict(name='c', instrument='choir', role='pad', notes=[{'t': 0, 'd': 1, 'p': 60}])], {'choir': {'instrument': 'choir'}})
+        self.assertEqual(r[0][0], 'WARN')
+        self.assertEqual(self.rows([dict(name='v', instrument='violin', role='melody', notes=[{'t': 0, 'd': 1, 'p': 60}])], {'violin': {'instrument': 'violin'}}), [])

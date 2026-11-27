@@ -385,6 +385,42 @@ def inst_eq_rows(score):
              f'will never be applied: {", ".join(dead[:5])}. Key it by the instrument (e.g. the preset name), not by the track name')]
 
 
+def choir_layer_rows(score, lookup=None):
+    """`preflight.choir_layers`: a choir that is one block of identical singers sings the same choir at every dynamic, which a listener
+    hears as "always the same choir". A synthesised vocal part of three or more voices needs `ensemble.layers` (sections that enter with
+    the dynamics) or a second voice part; a sampled choir (family voice) needs at least two parts."""
+    try:
+        import families
+        import presets
+        lookup = lookup or default_lookup
+        vocal, sampled = [], []
+        for t in _tracks(score):
+            inst = str(t.get('instrument', ''))
+            cfg = presets.find_vocal(inst) or lookup('inst', inst) or {}
+            ens = dict(cfg.get('ensemble') or {})
+            ens.update((t.get('vocal') or {}).get('ensemble') or {})
+            if t.get('role') == 'environment':
+                continue
+            if cfg.get('synthesis') == 'formant' or presets.find_vocal(inst) or t.get('vocal'):
+                vocal.append((t.get('name'), int(ens.get('voices', t.get('voices', 5))), bool(ens.get('layers'))))
+            elif families.family_of(cfg, t) == 'voice':
+                sampled.append(t.get('name'))
+    except Exception:
+        return []
+    rows = []
+    flat = [n for n, v, layered in vocal if v >= 3 and not layered]
+    if flat and len(vocal) + len(sampled) < 2:
+        rows.append(('WARN', 'preflight.choir_layers', f'{", ".join(flat)}: a block of identical singers with no `ensemble.layers` and no other voice part. '
+                     'Give the preset sections (high air, women, men, tutti) with `vel` bands so the choir changes make-up as it swells '
+                     '(references/data/presets/vocals/vocal_choir_cinematic.json)'))
+    if len(sampled) == 1 and not vocal:
+        rows.append(('WARN', 'preflight.choir_layers', f'{sampled[0]}: one sampled choir part. Write two or more voice parts (different programs or '
+                     'registers, different velocity bands) so the choir is not one block'))
+    if not rows and (vocal or sampled):
+        rows.append(('PASS', 'preflight.choir_layers', f'{len(vocal) + len(sampled)} voice part(s), layered or more than one'))
+    return rows
+
+
 def clock_rows(score):
     """The plan's section times against the tempo map the renderer will play. A plan (and every preset curve and trigger that was
     written from it) built on another clock is wrong by seconds, and the audio rows find it only after a render: one project's plan
@@ -436,6 +472,7 @@ def checks(score, project_dir=None, lookup=None, patch_range=None, probe=True, r
     rows += placement_rows(score, lookup)
     rows += clock_rows(score)
     rows += inst_eq_rows(score)
+    rows += choir_layer_rows(score, lookup)
     import preflight_levels
     rows += preflight_levels.checks(score)
     import roughness_forecast
