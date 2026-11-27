@@ -6,26 +6,26 @@
     "warns": 0,
     "rows": 161,
     "profile": "highway_pursuit",
-    "total_ms": 10030.617517999985,
+    "total_ms": 3217.933756999997,
     "timings": {
-      "bass_clarinet": 1080.292557000007,
-      "bass_drum": 312.9074500000115,
-      "basses": 2019.2060770000353,
-      "basses_pizz": 1742.1669850000399,
-      "celli": 1038.7733960000105,
-      "choir": 2034.2059669999344,
-      "cymbals": 510.6482200000073,
-      "horns": 784.7012920000225,
-      "low_swell": 1146.1287100000845,
-      "piano_theme": 954.2323929999839,
-      "snare": 517.0517060000748,
-      "taiko": 355.93397200000254,
-      "timpani": 727.4976989999686,
-      "trombones": 1277.173466000022,
-      "tuba": 1530.047771999989,
-      "violas": 1056.271172000038,
-      "violins_long": 1417.029241000023,
-      "violins_staccato": 1156.5252409999403
+      "bass_clarinet": 0.0,
+      "bass_drum": 0.0,
+      "basses": 0.0,
+      "basses_pizz": 0.0,
+      "celli": 0.0,
+      "choir": 0.0,
+      "cymbals": 0.0,
+      "horns": 0.0,
+      "low_swell": 0.0,
+      "piano_theme": 0.0,
+      "snare": 0.0,
+      "taiko": 0.0,
+      "timpani": 0.0,
+      "trombones": 0.0,
+      "tuba": 0.0,
+      "violas": 0.0,
+      "violins_long": 0.0,
+      "violins_staccato": 0.0
     },
     "workers": 3,
     "metrics": [
@@ -3285,8 +3285,8 @@
       }
     ],
     "duration_s": 63.10507936507936,
-    "cached_stems": 0,
-    "measured_stems": 18
+    "cached_stems": 18,
+    "measured_stems": 0
   },
   "rows": [
     {

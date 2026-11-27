@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-11-27T22:10:55Z",
-  "status": "FAILED",
+  "timestamp": "2026-11-27T23:43:21Z",
+  "status": "PASSED",
   "deliverables": {
-    "master_wav": "/home/user/music-generator/projects/highway_pursuit/out/_draft_highway_pursuit.wav",
+    "master_wav": "/home/user/music-generator/projects/highway_pursuit/out/highway_pursuit.wav",
     "midi": "/home/user/music-generator/projects/highway_pursuit/midi/highway_pursuit_score.mid",
     "duration_s": 60.69893424036281,
     "sample_rate": 44100,
@@ -11,7 +11,9 @@
       "ambix"
     ],
     "outputs_skipped": [],
-    "output_files": [],
+    "output_files": [
+      "/home/user/music-generator/projects/highway_pursuit/out/highway_pursuit_ambix.wav"
+    ],
     "delivered": [
       {
         "name": "stereo",
@@ -28,27 +30,43 @@
         "file": "highway_pursuit_ambix.wav"
       }
     ],
-    "certified": [],
+    "certified": [
+      "stereo",
+      "ambix"
+    ],
     "stems_dir": "/home/user/music-generator/projects/highway_pursuit/stems",
-    "stem_count": 18
+    "stem_count": 18,
+    "metadata": "/home/user/music-generator/projects/highway_pursuit/out/highway_pursuit.json",
+    "version": 1,
+    "versioned_master": "highway_pursuit_v01.wav",
+    "metadata_tagged": [
+      "title",
+      "artist",
+      "genre",
+      "copyright",
+      "comment",
+      "license",
+      "description"
+    ],
+    "versioned_metadata": "/home/user/music-generator/projects/highway_pursuit/out/highway_pursuit_v01.json"
   },
   "measurements": {
-    "integrated_lufs": -16.022598538481983,
-    "true_peak_dbtp": -1.5002922975927824,
-    "crest_factor_db": 17.040928471402648,
-    "mono_loss_db": -0.7764231285240923,
-    "mono_phone_loss_db": -0.9243854775377781,
+    "integrated_lufs": -16.022597842311438,
+    "true_peak_dbtp": -1.5002898362678232,
+    "crest_factor_db": 17.040929007409517,
+    "mono_loss_db": -0.776423128502821,
+    "mono_phone_loss_db": -0.9243854841422873,
     "clipped_samples": 0,
-    "mean_roughness": 0.0687,
-    "max_roughness": 0.1232,
+    "mean_roughness": 0.0641,
+    "max_roughness": 0.1081,
     "witek_bsi": 0.21,
     "melodic_entropy_bits": 3.38,
     "spiral_strain_end": 0.6
   },
   "ci_summary": {
     "pass": 213,
-    "warn": 29,
-    "fail": 1
+    "warn": 30,
+    "fail": 0
   },
   "ci_tiers": {
     "1": {
@@ -65,8 +83,8 @@
       "blocks": "certification",
       "rows": 74,
       "pass": 54,
-      "warn": 16,
-      "fail": 1,
+      "warn": 17,
+      "fail": 0,
       "info": 3
     },
     "3": {
@@ -1232,9 +1250,9 @@
       "detail": "15-22 kHz holds -69.8 dB of the 200 Hz-16 kHz band (limit -45); above that it is sampler interpolation images, not instrument (fix: render.oversample in the mix preset)"
     },
     {
-      "level": "FAIL",
+      "level": "WARN",
       "check": "cochlear_roughness",
-      "detail": "Cochlear critical-band roughness at 18.0s (0.123 > 0.105) and in 3 frames: two instruments clash within 1/4 critical bandwidth for a sustained stretch. Separate them by a minor 3rd, by register or by level."
+      "detail": "one-frame roughness at 41.5s (0.108 > 0.103), 1 frame(s) of 20 (a FAIL needs 3): reads as a transient or a drum hit, not a sustained clash"
     },
     {
       "level": "PASS",
@@ -1554,22 +1572,22 @@
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"bass_drum\" and \"taiko\" overlap within 4 dB in sub, low-mid, presence, brilliance; separate them with level, pan or a complementary EQ rather than more compression"
+      "detail": "\"taiko\" and \"bass_drum\" overlap within 4 dB in sub, low-mid, presence, brilliance; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"bass_drum\" and \"celli\" overlap within 4 dB in low-mid, mid, presence, brilliance, air; separate them with level, pan or a complementary EQ rather than more compression"
+      "detail": "\"taiko\" and \"violins_long\" overlap within 4 dB in mid, presence, air; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"cymbals\" and \"piano_theme\" overlap within 4 dB in mid, brilliance, air; separate them with level, pan or a complementary EQ rather than more compression"
+      "detail": "\"timpani\" and \"tuba\" overlap within 4 dB in sub, low-mid, air; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "WARN",
       "check": "mix:low-end congestion",
-      "detail": "7 stems carry their weight below 120 Hz (bass_drum, taiko, timpani, low_swell, basses, tuba, basses_pizz): one owner for the sub, the rest high-passed, is clearer and uses less headroom"
+      "detail": "7 stems carry their weight below 120 Hz (taiko, timpani, bass_drum, tuba, basses, basses_pizz, low_swell): one owner for the sub, the rest high-passed, is clearer and uses less headroom"
     },
     {
       "level": "INFO",
@@ -1599,7 +1617,7 @@
     {
       "level": "PASS",
       "check": "music21_harmonic_rhythm",
-      "detail": "597 vertical harmonic slices analyzed across multi-track arrangement"
+      "detail": "600 vertical harmonic slices analyzed across multi-track arrangement"
     }
   ],
   "mode": "project",
@@ -1608,7 +1626,7 @@
     "stopped": null,
     "cache": {
       "dir": "/home/user/music-generator/projects/highway_pursuit/.cache/mix",
-      "hits": 0,
+      "hits": 1,
       "stems": 18
     },
     "stages": {
@@ -1619,26 +1637,26 @@
         "warns": 0,
         "rows": 161,
         "profile": "highway_pursuit",
-        "total_ms": 10030.617517999985,
+        "total_ms": 3217.933756999997,
         "timings": {
-          "bass_clarinet": 1080.292557000007,
-          "bass_drum": 312.9074500000115,
-          "basses": 2019.2060770000353,
-          "basses_pizz": 1742.1669850000399,
-          "celli": 1038.7733960000105,
-          "choir": 2034.2059669999344,
-          "cymbals": 510.6482200000073,
-          "horns": 784.7012920000225,
-          "low_swell": 1146.1287100000845,
-          "piano_theme": 954.2323929999839,
-          "snare": 517.0517060000748,
-          "taiko": 355.93397200000254,
-          "timpani": 727.4976989999686,
-          "trombones": 1277.173466000022,
-          "tuba": 1530.047771999989,
-          "violas": 1056.271172000038,
-          "violins_long": 1417.029241000023,
-          "violins_staccato": 1156.5252409999403
+          "bass_clarinet": 0.0,
+          "bass_drum": 0.0,
+          "basses": 0.0,
+          "basses_pizz": 0.0,
+          "celli": 0.0,
+          "choir": 0.0,
+          "cymbals": 0.0,
+          "horns": 0.0,
+          "low_swell": 0.0,
+          "piano_theme": 0.0,
+          "snare": 0.0,
+          "taiko": 0.0,
+          "timpani": 0.0,
+          "trombones": 0.0,
+          "tuba": 0.0,
+          "violas": 0.0,
+          "violins_long": 0.0,
+          "violins_staccato": 0.0
         },
         "workers": 3,
         "metrics": [
@@ -4898,13 +4916,13 @@
           }
         ],
         "duration_s": 63.10507936507936,
-        "cached_stems": 0,
-        "measured_stems": 18
+        "cached_stems": 18,
+        "measured_stems": 0
       },
       "mix": {
         "stage": "mix",
-        "fails": 1,
-        "warns": 29,
+        "fails": 0,
+        "warns": 30,
         "metrics": [
           {
             "row": "clicks",
@@ -4924,10 +4942,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -16.022598538481983,
+            "value": -16.022597842311438,
             "unit": "LUFS",
             "threshold": -16.0,
-            "margin": -2.477401461518017,
+            "margin": -2.4774021576885623,
             "worst_times_s": [],
             "calibrated": true,
             "detail": "-16.0 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -4937,10 +4955,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -1.5002922975927824,
+            "value": -1.5002898362678232,
             "unit": "dBTP",
             "threshold": -1.5,
-            "margin": -0.00029229759278237566,
+            "margin": -0.0002898362678231958,
             "worst_times_s": [],
             "calibrated": true,
             "detail": "-1.50 dBTP vs ceiling -1.5"
@@ -4976,10 +4994,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 87.33293488182673,
+            "value": 87.33293542596991,
             "unit": "dB",
             "threshold": 12.0,
-            "margin": -75.33293488182673,
+            "margin": -75.33293542596991,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "end level -122.3 dBFS (limit -45), decay over final 300 ms 87.3 dB (limit 12); natural release"
@@ -5002,10 +5020,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 8.578683251663341e-06,
+            "value": 8.578682223197163e-06,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.0009914213167483367,
+            "margin": -0.0009914213177768028,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
@@ -5015,10 +5033,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 0.7767694355278252,
+            "value": 0.7767707662573287,
             "unit": "BPM",
             "threshold": 2.8,
-            "margin": -2.0232305644721746,
+            "margin": -2.023229233742671,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "measured 139.2 BPM vs 140.0 (tolerance 2.8) from the onset-envelope autocorrelation (peak 3.8x the median); beat tracker said 139.7; four-quarter drift 1.1 BPM reported, not decisive"
@@ -5041,56 +5059,56 @@
                 "start_s": 0.0,
                 "end_s": 6.8433,
                 "energy": 0.72,
-                "level_db": -22.42018993134982
+                "level_db": -22.4201892512674
               },
               {
                 "name": "the_twist",
                 "start_s": 6.8433,
                 "end_s": 17.1355,
                 "energy": 0.82,
-                "level_db": -21.291736229169487
+                "level_db": -21.291735543332017
               },
               {
                 "name": "the_drift",
                 "start_s": 17.1355,
                 "end_s": 22.2882,
                 "energy": 0.55,
-                "level_db": -23.32071247340747
+                "level_db": -23.320711777878927
               },
               {
                 "name": "the_chase",
                 "start_s": 22.2882,
                 "end_s": 32.5552,
                 "energy": 0.95,
-                "level_db": -18.17723332471999
+                "level_db": -18.177232636266293
               },
               {
                 "name": "the_slow_motion",
                 "start_s": 32.5552,
                 "end_s": 42.1625,
                 "energy": 0.5,
-                "level_db": -20.321942011507133
+                "level_db": -20.321941330615306
               },
               {
                 "name": "the_swerve",
                 "start_s": 42.1625,
                 "end_s": 52.9717,
                 "energy": 1.0,
-                "level_db": -16.9485301097097
+                "level_db": -16.94852937602732
               },
               {
                 "name": "the_near_miss",
                 "start_s": 52.9717,
                 "end_s": 56.3815,
                 "energy": 0.65,
-                "level_db": -32.791627409161734
+                "level_db": -32.791626697373005
               },
               {
                 "name": "the_escape",
                 "start_s": 56.3815,
                 "end_s": 60.0954,
                 "energy": 0.3,
-                "level_db": -23.51991445505322
+                "level_db": -23.519913822934463
               }
             ]
           }
@@ -5327,6 +5345,12 @@
       "failing": [
         "cochlear_roughness: Cochlear critical-band roughness at 18.0s (0.123 > 0.105) and in 3 frames: two instruments clash within 1/4 critical bandwidth for a sustained stretch. Separate them by a minor 3rd, by register or by level."
       ]
+    },
+    {
+      "attempt": 18,
+      "time": "2026-11-27T23:43:21Z",
+      "fails": 0,
+      "failing": []
     }
   ]
 }

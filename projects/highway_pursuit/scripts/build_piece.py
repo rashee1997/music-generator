@@ -686,7 +686,12 @@ def gate_profile():
             'roles': {
                 'establish': {'bsi_mode': 'pocket'},
                 'build': {'huron_resolution_gravity': 'RELAX', 'strain_slope_min': 0.0, 'bsi_mode': 'pocket'},
-                'transition': {'arousal_max': 0.65, 'bsi_mode': 'stillness'},
+                # the drift is declared as a chromatic slide (harmony_plan Dm -> Db -> C, tensions 'cluster'). Measured on the render
+                # after the violas were put on chord tones: roughness 0.123 at 18.0 s and 0.106 at 18.5 s against 0.103, from
+                # partials of the decaying tails of the build (no horn or bass-clarinet note is written between beats 38 and 46)
+                # meeting the sliding bass. The frames inside this section are not judged against the whole-piece ceiling; the
+                # ceiling still judges every other frame of the piece. Waiver approved by the user, not a note fix.
+                'transition': {'arousal_max': 0.65, 'bsi_mode': 'stillness', 'waive_ceiling': ['roughness']},
                 'peak': {'arousal_min': 0.6, 'surprise_min_z': 1.0, 'min_hits': 1, 'roughness_min_frac': 0.5,
                          'waive_ceiling': ['roughness', 'feel.contour', 'feel.resolution'],
                          'bsi_mode': 'pocket', 'huron_resolution_gravity': 'RELAX'},

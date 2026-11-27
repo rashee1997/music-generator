@@ -27,7 +27,10 @@
       },
       "transition": {
         "arousal_max": 0.65,
-        "bsi_mode": "stillness"
+        "bsi_mode": "stillness",
+        "waive_ceiling": [
+          "roughness"
+        ]
       },
       "peak": {
         "arousal_min": 0.6,
