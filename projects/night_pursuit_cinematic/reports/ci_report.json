@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-27T01:39:43Z",
+  "timestamp": "2026-11-27T02:18:39Z",
   "status": "PASSED",
   "deliverables": {
     "master_wav": "/home/user/music-generator/projects/night_pursuit_cinematic/out/night_pursuit_cinematic.wav",
@@ -11,7 +11,9 @@
       "immersive_7_1"
     ],
     "outputs_skipped": [],
-    "output_files": [],
+    "output_files": [
+      "/home/user/music-generator/projects/night_pursuit_cinematic/out/night_pursuit_cinematic_immersive_7_1.wav"
+    ],
     "delivered": [
       {
         "name": "stereo",
@@ -29,13 +31,14 @@
       }
     ],
     "certified": [
-      "stereo"
+      "stereo",
+      "immersive_7_1"
     ],
     "stems_dir": "/home/user/music-generator/projects/night_pursuit_cinematic/stems",
     "stem_count": 29,
     "metadata": "/home/user/music-generator/projects/night_pursuit_cinematic/out/night_pursuit_cinematic.json",
-    "version": 6,
-    "versioned_master": "night_pursuit_cinematic_v06.wav",
+    "version": 7,
+    "versioned_master": "night_pursuit_cinematic_v07.wav",
     "metadata_tagged": [
       "title",
       "artist",
@@ -45,14 +48,14 @@
       "license",
       "description"
     ],
-    "versioned_metadata": "/home/user/music-generator/projects/night_pursuit_cinematic/out/night_pursuit_cinematic_v06.json"
+    "versioned_metadata": "/home/user/music-generator/projects/night_pursuit_cinematic/out/night_pursuit_cinematic_v07.json"
   },
   "measurements": {
-    "integrated_lufs": -16.018577671513025,
+    "integrated_lufs": -16.01857767141087,
     "true_peak_dbtp": -1.5038718020562478,
-    "crest_factor_db": 17.29299371056026,
-    "mono_loss_db": -0.7317561648173186,
-    "mono_phone_loss_db": -0.9319015538093522,
+    "crest_factor_db": 17.29299371031236,
+    "mono_loss_db": -0.7317561671244648,
+    "mono_phone_loss_db": -0.9319015588388345,
     "clipped_samples": 0,
     "mean_roughness": 0.0457,
     "max_roughness": 0.1051,
@@ -62,7 +65,7 @@
   },
   "ci_summary": {
     "pass": 277,
-    "warn": 40,
+    "warn": 39,
     "fail": 0
   },
   "ci_checks": [
@@ -1999,27 +2002,22 @@
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"taiko\" and \"porsche\" overlap within 4 dB in presence, brilliance, air; separate them with level, pan or a complementary EQ rather than more compression"
+      "detail": "\"taiko\" and \"mustang\" overlap within 4 dB in low-mid, mid, presence; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"taiko\" and \"siren_first\" overlap within 4 dB in presence, brilliance, air; separate them with level, pan or a complementary EQ rather than more compression"
+      "detail": "\"taiko\" and \"porsche\" overlap within 4 dB in presence, brilliance, air; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "WARN",
       "check": "mix:low-end congestion",
-      "detail": "5 stems carry their weight below 120 Hz (timpani, bass_drum, bumps, basses_pizz, basses): one owner for the sub, the rest high-passed, is clearer and uses less headroom"
+      "detail": "5 stems carry their weight below 120 Hz (bass_drum, timpani, bumps, basses_pizz, basses): one owner for the sub, the rest high-passed, is clearer and uses less headroom"
     },
     {
       "level": "INFO",
       "check": "mix:reverb buildup",
       "detail": "22 stems route to the shared room; if the mix reads as washy, lower the return (mix.reverb_return) before shortening the room"
-    },
-    {
-      "level": "WARN",
-      "check": "mix:intelligibility",
-      "detail": "the lead sits -7.9 dB against the beds in 1-4 kHz: words and articulation will be covered. Carve the beds there or lift the lead"
     },
     {
       "level": "INFO",
@@ -2064,7 +2062,7 @@
         "warns": 0,
         "rows": 242,
         "profile": "night_pursuit_cinematic",
-        "total_ms": 11629.815992999966,
+        "total_ms": 2998.464385999796,
         "timings": {
           "bass_clarinet": 0.0,
           "bass_drum": 0.0,
@@ -2075,14 +2073,14 @@
           "choir": 0.0,
           "city_far": 0.0,
           "crash": 0.0,
-          "cymbals": 1356.4251230000082,
-          "ferrari": 1043.2659310001782,
+          "cymbals": 0.0,
+          "ferrari": 0.0,
           "helicopter": 0.0,
           "horns": 0.0,
-          "lamborghini": 942.2369289998187,
+          "lamborghini": 0.0,
           "landing": 0.0,
           "low_swell": 0.0,
-          "mustang": 836.2284360000558,
+          "mustang": 0.0,
           "porsche": 0.0,
           "siren_first": 0.0,
           "siren_second": 0.0,
@@ -6850,13 +6848,13 @@
           }
         ],
         "duration_s": 196.4940589569161,
-        "cached_stems": 25,
-        "measured_stems": 4
+        "cached_stems": 29,
+        "measured_stems": 0
       },
       "mix": {
         "stage": "mix",
         "fails": 0,
-        "warns": 40,
+        "warns": 39,
         "metrics": [
           {
             "row": "clicks",
@@ -6876,10 +6874,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -16.018577671513025,
+            "value": -16.01857767141087,
             "unit": "LUFS",
             "threshold": -16.0,
-            "margin": -2.4814223284869747,
+            "margin": -2.4814223285891295,
             "worst_times_s": [],
             "calibrated": true,
             "detail": "-16.0 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -6928,10 +6926,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 66.97471706216378,
+            "value": 66.97471800705043,
             "unit": "dB",
             "threshold": 12.0,
-            "margin": -54.974717062163776,
+            "margin": -54.97471800705043,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "end level -142.8 dBFS (limit -45), decay over final 300 ms 67.0 dB (limit 12); natural release"
@@ -6954,10 +6952,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 1.1180532050186517e-05,
+            "value": 1.118087588475318e-05,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.0009888194679498136,
+            "margin": -0.0009888191241152469,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
@@ -6980,56 +6978,56 @@
                 "start_s": 0.0,
                 "end_s": 25.077,
                 "energy": 0.9,
-                "level_db": -17.899580624437824
+                "level_db": -17.899580623344036
               },
               {
                 "name": "spotted",
                 "start_s": 25.077,
                 "end_s": 38.892,
                 "energy": 0.8,
-                "level_db": -21.37121322964852
+                "level_db": -21.37121320952291
               },
               {
                 "name": "the_chase",
                 "start_s": 38.892,
                 "end_s": 72.228,
                 "energy": 0.9,
-                "level_db": -19.883560347296015
+                "level_db": -19.88356034977589
               },
               {
                 "name": "the_tunnel",
                 "start_s": 72.228,
                 "end_s": 95.085,
                 "energy": 0.8,
-                "level_db": -20.24452165848702
+                "level_db": -20.244521665852453
               },
               {
                 "name": "the_helicopter",
                 "start_s": 95.085,
                 "end_s": 117.636,
                 "energy": 0.8,
-                "level_db": -19.795714615982796
+                "level_db": -19.79571461460209
               },
               {
                 "name": "the_bumps",
                 "start_s": 117.636,
                 "end_s": 139.888,
                 "energy": 1.0,
-                "level_db": -16.624871446894996
+                "level_db": -16.624871460530237
               },
               {
                 "name": "the_flyover",
                 "start_s": 139.888,
                 "end_s": 165.785,
                 "energy": 0.8,
-                "level_db": -24.441081535959277
+                "level_db": -24.44108153853588
               },
               {
                 "name": "the_escape",
                 "start_s": 165.785,
                 "end_s": 192.648,
                 "energy": 0.5,
-                "level_db": -31.61073000989813
+                "level_db": -31.610730025013407
               }
             ]
           }
@@ -7305,6 +7303,12 @@
     {
       "attempt": 31,
       "time": "2026-11-27T01:39:43Z",
+      "fails": 0,
+      "failing": []
+    },
+    {
+      "attempt": 32,
+      "time": "2026-11-27T02:18:39Z",
       "fails": 0,
       "failing": []
     }

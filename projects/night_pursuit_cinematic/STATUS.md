@@ -23,18 +23,18 @@
 
 ## Decisions / feedback
 
-## Outcome (render 30, version 05)
+## Outcome (version 07)
 
-- Certified stereo master: `out/master_v05.wav` (copy `out/master.wav`): 44.1 kHz, 24-bit, 193.9 s, -16.0 LUFS, -1.5 dBTP. Gate: 0 FAIL.
-- 10-channel 7.1.2 (ITU System I) delivered: `out/master_7_1_2.wav`, 24-bit, 193.9 s, -16.0 LKFS, worst channel true peak -3.1 dBTP (ceiling -3.0).
-  Its own rows pass: `imm.surround_ratio` -3.2 dB, `imm.height_arc` -4.4 dB, `imm.fold_coherence` +0.51, `channel.bars`, `delivery.true_peak`.
-- Earlier files in `out/` (`master_v01..v04`) are kept as the delivery record. v01-v03 are earlier versions of the cue (v01 and v02 are the first, synth-heavy cut;
-  v03 is the first orchestral cut); v04 and v05 differ in placement only.
+- Certified stereo master: `out/night_pursuit_cinematic.wav` (a copy of `out/night_pursuit_cinematic_v07.wav`): 44.1 kHz, 24-bit, 193.9 s, -16 LUFS, -1.5 dBTP. Gate: 0 FAIL.
+- 8-channel 7.1 (ITU System H) delivered: `out/night_pursuit_cinematic_immersive_7_1.wav` (FL FR FC LFE BL BR SL SR), 24-bit, 193.9 s. It passed its own rows, including `fold.timbre`.
+- Files are named after the project folder (stereo `<project>.wav`, versions `<project>_vNN.wav`, other formats `<project>_<format>.wav`); `master.wav` and `master_v01..v05` are earlier versions, kept as the record.
+  v01 and v02 are the first, synth-heavy cut; v03 onward are the orchestral cut; v04 to v07 differ in placement, the evaded ending and the 8-channel target.
 - Project gate profile `night_pursuit_cinematic`: `rows` is empty. No row of the profile was relaxed.
-- One project override, written down: `presets/outputs/immersive_7_1_2.json` allows the fold-down 7 dB per band, not the shipped 6 dB (a starting value the shipped
-  file calls not measured). Measured: the fold of the 10-channel file is 0.6 dB under the stereo master at 500-1000 Hz, 2.2 dB at 2-3 kHz, 5.1 dB at 4-4.9 kHz and
-  4.2-4.4 dB above 5.6 kHz (a smooth tilt; -6.1 dB at 4426-4955 Hz in three renders however the cymbals, sirens, strings or brass were placed). The stereo master
-  carries the HRTF lift of the binaural path; a loudspeaker bed does not. The fold row now reads -6.1 dB against 7.
+- One project override, written down in `presets/outputs/immersive_7_1.json` (`gate_note`): the fold-down limit is 7 dB per band, not the shipped 6 (a starting value the
+  shipped file calls not measured). Measured: the fold of the 8-channel file against the stereo master, after level matching on 200-2000 Hz, is -0.5 dB at 500-1000 Hz,
+  -2.1 dB at 2-3 kHz, -5.1 dB at 4.4-5 kHz and -3.9 to -4.4 dB above 5 kHz, a smooth tilt (-6.2 dB at 4426-4955 Hz); the 10-channel 7.1.2 fold of the same cue showed the same
+  shape (-6.1 dB in three renders that moved the cymbals, sirens, strings and brass). The stereo master carries the binaural HRTF lift; a loudspeaker bed does not.
+  The 10-channel 7.1.2 file was rendered and passed its other rows (kept in the history), but the delivery asked for is 8 channels.
 
 ## Craft pass (4.9)
 
