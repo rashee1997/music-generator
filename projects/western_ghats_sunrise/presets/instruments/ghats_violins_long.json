@@ -45,7 +45,7 @@
   ],
   "soundfont": "muse_general",
   "ensemble": {
-    "players": 6,
+    "players": 4,
     "spread_cents": 10,
     "spread_ms": 14,
     "vel_spread": 5

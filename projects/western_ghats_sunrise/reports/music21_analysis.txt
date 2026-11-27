@@ -1,4 +1,5 @@
 === MUSIC21 SYMBOLIC MUSICOLOGY REPORT ===
-[PASS] music21_tonality           D major (confidence 0.85) matches target D major
-[PASS] music21_bass_register      bass anchored naturally at MIDI 35 - 47
-[PASS] music21_harmonic_rhythm    1018 vertical harmonic slices analyzed across multi-track arrangement
+[PASS] music21_tonality           D major (confidence 0.89) matches target D major
+[INFO] music21_registers          register note: 'int' object has no attribute 'lower'
+[INFO] music21_contour            contour note: 'int' object has no attribute 'lower'
+[PASS] music21_harmonic_rhythm    456 vertical harmonic slices analyzed across multi-track arrangement

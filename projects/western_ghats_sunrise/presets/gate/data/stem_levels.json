@@ -6,43 +6,43 @@
         {
           "section": "mist",
           "start_s": 0.0,
-          "measured_db": -57.55,
-          "expected_db": -54.88,
+          "measured_db": -57.22,
+          "expected_db": -54.89,
           "dyn": 0.3
         },
         {
           "section": "groove",
           "start_s": 4.615,
-          "measured_db": -55.08,
-          "expected_db": -49.61,
+          "measured_db": -54.92,
+          "expected_db": -49.62,
           "dyn": 0.55
         },
         {
           "section": "sunrise",
           "start_s": 20.769,
-          "measured_db": -51.2,
-          "expected_db": -46.36,
+          "measured_db": -51.15,
+          "expected_db": -46.37,
           "dyn": 0.8
         },
         {
           "section": "piper",
           "start_s": 30.0,
-          "measured_db": -45.13,
-          "expected_db": -46.92,
+          "measured_db": -45.19,
+          "expected_db": -46.93,
           "dyn": 0.75
         },
         {
           "section": "crest",
           "start_s": 39.231,
           "measured_db": -41.74,
-          "expected_db": -44.42,
+          "expected_db": -44.43,
           "dyn": 1.0
         },
         {
           "section": "morning",
           "start_s": 48.462,
-          "measured_db": -43.69,
-          "expected_db": -52.38,
+          "measured_db": -43.77,
+          "expected_db": -52.39,
           "dyn": 0.4
         }
       ]
@@ -272,36 +272,36 @@
         {
           "section": "groove",
           "start_s": 4.615,
-          "measured_db": -22.22,
-          "expected_db": -21.67,
+          "measured_db": -22.23,
+          "expected_db": -21.65,
           "dyn": 0.55
         },
         {
           "section": "sunrise",
           "start_s": 20.769,
-          "measured_db": -18.98,
-          "expected_db": -18.42,
+          "measured_db": -18.95,
+          "expected_db": -18.39,
           "dyn": 0.8
         },
         {
           "section": "piper",
           "start_s": 30.0,
-          "measured_db": -18.11,
-          "expected_db": -18.98,
+          "measured_db": -18.07,
+          "expected_db": -18.95,
           "dyn": 0.75
         },
         {
           "section": "crest",
           "start_s": 39.231,
-          "measured_db": -17.98,
-          "expected_db": -16.48,
+          "measured_db": -17.97,
+          "expected_db": -16.45,
           "dyn": 1.0
         },
         {
           "section": "morning",
           "start_s": 48.462,
-          "measured_db": -22.03,
-          "expected_db": -24.44,
+          "measured_db": -22.1,
+          "expected_db": -24.41,
           "dyn": 0.4
         }
       ]

@@ -140,7 +140,7 @@ INSTRUMENTS = [
     inst('violins_long', 'strings', 'chord', 'bowed',
          'The lush bed: a violin and viola section sustaining the add9, sus2 and minor chords built from the five raga notes, with a slow swell into each chord.',
          -7.0, 0.3, [HP(180), PK(350, -2.0, 0.9), LP(7000)],
-         extra=dict(ensemble=dict(players=6, spread_cents=10, spread_ms=14, vel_spread=5),
+         extra=dict(ensemble=dict(players=4, spread_cents=10, spread_ms=14, vel_spread=5),
                     velocity_timbre=dict(points=vel_points(2200), zones=8))),   # no onset ramp: a ramp on a held bed opened a 50 ms hole (stem.dropout, measured)
     inst('tanpura', 'sitar', 'drone', 'plucked',
          'The tanpura drone: the four-string cycle Pa, Sa, Sa, low Sa, plucked softly and left to ring under everything, the anchor of the one key centre.',
@@ -213,6 +213,7 @@ def environment():
     stream = gens['stream']
     stream['spatial'].update(azimuth=-75.0, distance=16.0)
     stream['population']['rate_mm_h'] = {'control': 'stream_rate'}      # quiet in the first 20 s (the user heard too much ambience there), at full level after the sun                # ESTIMATE: a brook at 16 m is the steady bed under the birds (measured against the 1 s level steps of the render)
+    stream['stationary'] = False                              # its rate follows the sunrise control curve: a bed that rises is not a tiled loop, so the stationarity row (a loop test) does not apply
     stream['surface']['area_m2'] = 6.0
     stream['gain_db'] = 20.0                                  # the brook is steady but 24 dB under the wind at these rates (measured), so it is lifted here
     drip['gain_db'] = 0.0

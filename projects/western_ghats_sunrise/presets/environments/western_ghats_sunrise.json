@@ -223,7 +223,7 @@
       "name": "stream",
       "kind": "particulate_impacts",
       "salience": "bed",
-      "stationary": true,
+      "stationary": false,
       "population": {
         "kind": "rain",
         "rate_mm_h": {
