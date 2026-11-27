@@ -112,6 +112,19 @@ def write_reports(wav_path, score, out_dir, stem_meta=None, mix_meta=None, image
     _write(out_dir, 'waveform', fig, '\n'.join(text), dict(duration_s=dur, sections=secs, flags=flags[:200]))
     written['waveform'] = os.path.join(out_dir, 'waveform.png')
 
+    # what each failing row asks for, beside the figures: the same table rca.py and debug_audio.py read, so the report
+    # and the autopsy cannot recommend different things.
+    fails = sorted({(row, level) for _t, row, _stem, level in flags if level == 'FAIL'})
+    if fails:
+        try:
+            import gate_feedback
+            ask = gate_feedback.text([(lvl, row, '') for row, lvl in fails])
+        except Exception as exc:                                 # a missing table must not cost the figures
+            ask = f'  no feedback table available ({type(exc).__name__}: {exc})'
+        _write(out_dir, 'feedback', None, 'failing rows -> the next change\n' + ask,
+               dict(rows=[row for row, _ in fails]))
+        written['feedback'] = os.path.join(out_dir, 'feedback.txt')
+
     # log spectrogram
     db = 20 * np.log10(sig.stft + 1e-9)
     fig = None

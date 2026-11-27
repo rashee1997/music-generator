@@ -55,6 +55,46 @@ def _row(out, level, name, detail):
     out.append((level, name, detail))
 
 
+def _a(tl, key, default=None):
+    """One analysis mechanic from the scene contract (references/data/presets/gate/data/scene_roles.json).
+
+    Nothing here is a door: a profile cannot move these, so they are plain values in the JSON rather than row parameters.
+    The codes that read them name the JSON key, never the role string or the hit class, so the vocabulary stays in data.
+    """
+    return (getattr(tl, 'doc', {}) or {}).get('analysis', {}).get(key, default)
+
+
+def _kind(tl, role):
+    """A section role's kind, from the contract's `roles` block ('setup', 'approach', 'peak', ...)."""
+    return ((tl.doc.get('roles') or {}).get(role) or {}).get('kind')
+
+
+def _spans_of_kind(tl, key):
+    """The sheet's sections whose role has the kind the contract names under `analysis.<key>`."""
+    want = _a(tl, key)
+    return [s for s in tl.spans if want is not None and _kind(tl, s['role']) == want]
+
+
+def _role_allows(tl, role, key):
+    """Whether the role's own contract mentions a key: the sheet, not this module, says which roles carry evidence."""
+    spec = (tl.doc.get('roles') or {}).get(role) or {}
+    return key in (spec.get('required') or []) + (spec.get('allowed') or [])
+
+
+def _accent_kinds(tl):
+    """The hit kinds that count as an accent, from the film hits preset's own classes (analysis.accent_classes)."""
+    try:
+        import presets
+        doc = presets.load('film').get('hits') or {}
+    except Exception:
+        return set()
+    classes = doc.get('classes') or {}
+    out = set()
+    for name in (_a(tl, 'accent_classes', []) or []):
+        out |= set((classes.get(name) or {}).get('kinds') or [])
+    return out
+
+
 def _audio(path):
     if not path or not os.path.isfile(path):
         return None, None
@@ -105,30 +145,39 @@ def _mean_between(values, centres, a, b):
 def _melody_surprise(score, tl):
     """[(track, onsets_s, z of information content)] for every figure line long enough to standardise."""
     lines = []
+    min_notes = int(_a(tl, 'min_line_notes', 8))
+    clip = float(_a(tl, 'z_clip', 3.0))
     for name, line in pattern_audit._melody_lines(score):
         ic = np.asarray(line.get('ic'), dtype=float)
         ok = ~np.isnan(ic)
-        if ok.sum() < 8:
+        if ok.sum() < min_notes:
             continue
         vals = ic[ok]
         sd = float(np.std(vals))
         if sd <= 1e-9:
             continue
-        z = np.clip((vals - float(np.mean(vals))) / sd, -3.0, 3.0)
+        z = np.clip((vals - float(np.mean(vals))) / sd, -clip, clip)
         onsets = [tl.beat_to_s(t) for t in np.asarray(line.get('onsets'))[ok]]
         lines.append((name, np.asarray(onsets), z))
     return lines
 
 
 def _peak_hits(tl, row_cfg):
-    """[(t, window_s, role)]: the hard hits the sheet places inside a peak or a rupture."""
+    """[(t, window_s, role)]: the accents the sheet places inside a role that asks for a surprise.
+
+    A hit is an accent when the contract's `analysis.accent_sync` says so, or when its kind is one of the film hits
+    preset's own accent classes: the two vocabularies are data, and neither is named here.
+    """
     out = []
-    default_ms = float(row_cfg.get('hit_window_ms', 250))
+    default_ms = float(row_cfg.get('hit_window_ms') or tl.doc.get('default_hit_window_ms', 250))
+    surprise_key = _a(tl, 'surprise_key', 'surprise_min_z')
+    accent_sync = _a(tl, 'accent_sync', 'hard')
+    accent_kinds = _accent_kinds(tl)
     for h in tl.hits:
         role = tl.role_at(h['t'])
-        if role not in ('peak', 'rupture'):
+        if role is None or not _role_allows(tl, role, surprise_key):
             continue
-        if h.get('sync') != 'hard' and h.get('kind') not in ('cut', 'impact'):
+        if h.get('sync') != accent_sync and h.get('kind') not in accent_kinds:
             continue
         w_ms = float((tl.role_cfg(role) or {}).get('hit_window_ms', default_ms))
         out.append((h['t'], w_ms / 1000.0, role))
@@ -159,8 +208,8 @@ def rows(score, path=None, stems=None, out=None, gp=None, project_dir=None):
     behalf = res
 
     # ---- scene.arc_step ----------------------------------------------------
-    peaks = [s for s in tl.spans if s['role'] == 'peak']
-    builds = [s for s in tl.spans if s['role'] == 'build']
+    peaks = _spans_of_kind(tl, 'peak_kind')
+    builds = _spans_of_kind(tl, 'build_kind')
     if not peaks or not builds:
         _row(behalf, 'INFO', 'scene.arc_step', 'not measured: the sheet has no build followed by a peak')
     else:
@@ -212,7 +261,8 @@ def rows(score, path=None, stems=None, out=None, gp=None, project_dir=None):
                         best = (name, v)
             delta = None
             if x is not None:
-                a0, a1 = t_hit - 1.0, t_hit
+                lookback = float(_a(tl, 'delta_lookback_s', 1.0))
+                a0, a1 = t_hit - lookback, t_hit
                 b0, b1 = t_hit, t_hit + win
                 l0, l1 = _lufs(x, max(0.0, a0), a1, sr), _lufs(x, b0, b1, sr)
                 if l0 is not None and l1 is not None:
@@ -236,7 +286,7 @@ def rows(score, path=None, stems=None, out=None, gp=None, project_dir=None):
             _row(behalf, 'PASS', 'scene.hit_surprise', '; '.join(found))
 
     # ---- scene.release_delta ----------------------------------------------
-    releases = [s for s in tl.spans if s['role'] == 'release']
+    releases = _spans_of_kind(tl, 'release_kind')
     if not releases or not peaks:
         _row(behalf, 'INFO', 'scene.release_delta', 'not measured: the sheet has no peak followed by a release')
     else:
@@ -291,7 +341,7 @@ def rows(score, path=None, stems=None, out=None, gp=None, project_dir=None):
             rough = []
             for s in tl.spans:
                 sl = x[int(s['start_s'] * sr):int(s['end_s'] * sr)]
-                if len(sl) < int(1.5 * sr):
+                if len(sl) < int(float(_a(tl, 'min_slice_s', 1.5)) * sr):
                     continue
                 try:
                     _r, meta = nc.cochlear_roughness_check(sl, sr=sr)
@@ -349,7 +399,8 @@ def rows(score, path=None, stems=None, out=None, gp=None, project_dir=None):
             bed_max = float(gp.param('scene.bed_stability', 'max_dbfs'))
             sits = []
             for name, sig in env.items():
-                v = max((_rms_dbfs(sig, a, b, sr) or -120.0) for a, b in windows)
+                floor = float(_a(tl, 'silence_floor_dbfs', -120.0))
+                v = max((_rms_dbfs(sig, a, b, sr) or floor) for a, b in windows)
                 sits.append((name, v))
             worst = max(sits, key=lambda p: p[1])
             if worst[1] > bed_max:

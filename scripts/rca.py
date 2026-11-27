@@ -224,6 +224,14 @@ class Ctx:
 
 def finding(row, stem, verdict, cause, evidence, where, extra=None):
     f = dict(row=row, stem=stem, verdict=verdict, cause=cause, evidence=list(evidence), where=list(where), tolerance=tolerance_note(row))
+    # what the row asks for, from the one table every reader shares (scripts/gate_feedback.py)
+    try:
+        import gate_feedback
+        e = gate_feedback.entry(row)
+        f['do_next'] = e.get('do_next')
+        f['cost'] = e.get('cost')
+    except Exception:
+        pass
     f.update(extra or {})
     return f
 
@@ -549,6 +557,8 @@ def format_text(findings):
         lines += ['    fix here: ' + w for w in f['where']]
         if f.get('tolerance'):
             lines.append('    tolerance: ' + f['tolerance'])
+        if f.get('do_next'):
+            lines.append(f"    do next ({f.get('cost') or 'render'}): {f['do_next']}")
         lines.append('')
     return '\n'.join(lines) if lines else 'no failing row to analyse'
 

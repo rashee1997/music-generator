@@ -1,6 +1,22 @@
 {
  "_source": "The scene contract: which rule types a section role must state, and the range of every figure. Read by scripts/gate_profiles.py::scene_problems and by scripts/scene_timeline.py; the roles are the ones the direction sheet already writes (templates/direction_sheet.json: place, establish, build, peak, transition, button), plus resolve (the direction sheets already write it; same contract as release), release and rupture for a cue that resolves or breaks. A role may state a ceiling (place, button), a floor or a delta (peak, release, rupture) or a mode (build); none is required to state a numeric floor it cannot have. A role not listed here is an error, never a default - a typo in a sheet's role must not silently become 'place'.",
  "default_hit_window_ms": 250,
+ "analysis": {
+  "_note": "How the rows read the sheet and the measurement. These are analysis mechanics, not doors: a profile cannot move them, so they are plain numbers here rather than row parameters.",
+  "peak_kind": "peak",
+  "build_kind": "approach",
+  "release_kind": "release",
+  "surprise_key": "surprise_min_z",
+  "accent_sync": "hard",
+  "accent_classes": [
+   "dead_on"
+  ],
+  "min_line_notes": 8,
+  "z_clip": 3.0,
+  "min_slice_s": 1.5,
+  "silence_floor_dbfs": -120.0,
+  "delta_lookback_s": 1.0
+ },
  "keys": {
   "arousal_min": {
    "type": "number",
