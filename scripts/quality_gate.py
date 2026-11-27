@@ -655,10 +655,11 @@ def resolved_master(score):
     a profile's loudness and ceiling were applied by the mixer and ignored by the judge."""
     import mixer
     raw = dict(score.get('master') or {})
+    raw['_registers'] = list(((score.get('intent') or {}).get('registers')) or [])
     ctx = mixer._context_for(score)
     cfg = mixer._master_cfg(raw, ctx.mix)
     out = {k: cfg[k] for k in ('lufs', 'true_peak', 'tone', 'glue') if k in cfg}
-    out.update(raw)
+    out.update({k: v for k, v in raw.items() if not k.startswith('_')})
     return out
 
 
@@ -668,8 +669,9 @@ def audio_checks(path, score, out, metrics=None, analysis=None):
     `analysis`, when given, receives this run's measurement of the file (`r`, the roughness metrics and the path)
     so the packaging stage can report them instead of measuring the same audio a second time.
     """
+    import mix_schema
     master = resolved_master(score)
-    target = master.get('lufs', -14.0)
+    target = master.get('lufs', mix_schema.master_targets()['default']['lufs'])
     lufs_tol = master.get('lufs_tolerance', master.get('tolerance_lu', 2.5))
     tp_target = master.get('true_peak', -1.5)
     # A speaker-layout master is analysed through its layout's fold-down, never a channel mean or the first two

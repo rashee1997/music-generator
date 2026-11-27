@@ -32,6 +32,30 @@ changed.
 import copy
 
 import deep_merge
+import json
+import os
+
+
+MASTER_TARGETS_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'references', 'data',
+                                   'master_targets.json')
+
+
+def master_targets():
+    """The mastering profiles and the one default, from references/data/master_targets.json.
+
+    Returns {'default': {...}, 'profiles': {name: {...}}} with each entry's keys `lufs`, `true_peak`, `tone`, `glue`
+    (the `source` note stays in the file). The numbers used to be compiled here and in three other modules.
+    """
+    with open(MASTER_TARGETS_PATH, encoding='utf-8') as f:
+        doc = json.load(f)
+    keep = ('lufs', 'true_peak', 'tone', 'glue')
+    clean = lambda e: {k: v for k, v in e.items() if k in keep}
+    return {'default': clean(doc['default']), 'profiles': {n: clean(e) for n, e in (doc.get('profiles') or {}).items()}}
+
+
+def _master_profiles():
+    t = master_targets()
+    return dict({'default': t['default']}, **t['profiles'])
 
 EPS = 1e-9
 
@@ -255,13 +279,7 @@ DEFAULTS = {
     'mastering': {
         'profile': 'default',          # a name in "profiles"; the score's master block still wins
         'standard': None,              # ebu_r128 | atsc_a85 | aes_td1008 | spotify: the document this profile implements
-        'profiles': {
-            'default': {'lufs': -14.0, 'true_peak': -1.5, 'tone': 'neutral', 'glue': True},
-            'streaming': {'lufs': -14.0, 'true_peak': -2.0, 'tone': 'neutral', 'glue': True},
-            'podcast': {'lufs': -16.0, 'true_peak': -1.0, 'tone': 'warm', 'glue': True},
-            'broadcast': {'lufs': -23.0, 'true_peak': -1.0, 'tone': 'neutral', 'glue': True},
-            'cinema': {'lufs': -18.0, 'true_peak': -1.5, 'tone': 'neutral', 'glue': True},
-        },
+        'profiles': _master_profiles(),   # references/data/master_targets.json: no loudness is compiled here
         # the chain itself. `tones` maps a tone name to EQ bands (the same band objects as everywhere else);
         # a master block or a profile picks one by name, and a project adds its own by listing it here.
         'highpass_hz': 24.0,           # 0 = none

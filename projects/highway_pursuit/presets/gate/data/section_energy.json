@@ -3,69 +3,69 @@
   "stage": "mix",
   "stem": null,
   "level": "WARN",
-  "value": 0.6190476190476191,
+  "value": 0.6666666666666669,
   "unit": "rho",
   "threshold": 0.5,
-  "margin": 0.11904761904761907,
+  "margin": 0.16666666666666685,
   "worst_times_s": [],
   "calibrated": false,
-  "detail": "Spearman rho 0.62 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
+  "detail": "Spearman rho 0.67 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
   "table": [
     {
       "name": "the_evasion",
       "start_s": 0.0,
       "end_s": 6.8433,
       "energy": 0.72,
-      "level_db": -20.408761737793704
+      "level_db": -22.42018993134982
     },
     {
       "name": "the_twist",
       "start_s": 6.8433,
       "end_s": 17.1355,
       "energy": 0.82,
-      "level_db": -19.216492135356468
+      "level_db": -21.291736229169487
     },
     {
       "name": "the_drift",
       "start_s": 17.1355,
       "end_s": 22.2882,
       "energy": 0.55,
-      "level_db": -21.518293434039613
+      "level_db": -23.32071247340747
     },
     {
       "name": "the_chase",
       "start_s": 22.2882,
       "end_s": 32.5552,
       "energy": 0.95,
-      "level_db": -16.349879380561244
+      "level_db": -18.17723332471999
     },
     {
       "name": "the_slow_motion",
       "start_s": 32.5552,
       "end_s": 42.1625,
       "energy": 0.5,
-      "level_db": -18.65751425787531
+      "level_db": -20.321942011507133
     },
     {
       "name": "the_swerve",
       "start_s": 42.1625,
       "end_s": 52.9717,
       "energy": 1.0,
-      "level_db": -15.192411804659606
+      "level_db": -16.9485301097097
     },
     {
       "name": "the_near_miss",
       "start_s": 52.9717,
       "end_s": 56.3815,
       "energy": 0.65,
-      "level_db": -60.71870865281968
+      "level_db": -32.791627409161734
     },
     {
       "name": "the_escape",
       "start_s": 56.3815,
       "end_s": 60.0954,
       "energy": 0.3,
-      "level_db": -20.88689338015984
+      "level_db": -23.51991445505322
     }
   ]
 }

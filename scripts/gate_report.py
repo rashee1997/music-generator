@@ -148,7 +148,8 @@ def write_reports(wav_path, score, out_dir, stem_meta=None, mix_meta=None, image
 
     # short-term level
     level_db, times = sig.frame_db(frame_ms=50, hop_ms=25)
-    target = float(((score.get('master') or {}).get('lufs', -14.0)))
+    import quality_gate
+    target = float(quality_gate.resolved_master(score).get('lufs'))
     fig = None
     if plt is not None:
         fig, ax = plt.subplots(figsize=(12, 2.8))

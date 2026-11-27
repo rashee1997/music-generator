@@ -19,6 +19,18 @@ def _master_cfg(m, mx):
     name = m.get('profile') or mm.get('profile') or 'default'
     base = dict(profiles.get(name) or profiles.get('default') or {})
     out = dict(base)
+    # A piece that declared registers and chose no profile and no loudness is levelled to its register's range
+    # (references/data/presets/intent/registers.json), not to the shipped default: the register says what the music is for.
+    reg = (m or {}).get('_registers')
+    if reg and 'lufs' not in (m or {}) and name == 'default':
+        try:
+            import intent
+            tgt = intent.register_loudness(reg)
+        except Exception:
+            tgt = None
+        if tgt is not None:
+            out['lufs'] = tgt
+            out['_lufs_source'] = 'register ' + '+'.join(reg)
     out.update({k: v for k, v in (m or {}).items() if k in ('lufs', 'true_peak', 'tone', 'glue', 'width',
                                                             'mono_below', 'fade_out', 'loop')})
     out['_profile'] = name
@@ -69,7 +81,7 @@ def master_chain(x, m, sr=SR, ctx=None):
         g = section_gain(len(x), sr, sections, float(sl['range_db']), float(sl.get('ramp_s', 1.5)))
         if g is not None:
             x = x * (g[:, None] if getattr(x, 'ndim', 1) == 2 else g).astype(np.float32)
-    target = float(cfg.get('lufs', -14.0))
+    target = float(cfg.get('lufs', mix_schema.master_targets()['default']['lufs']))
     ceiling = float(cfg.get('true_peak', -1.5))
     tone = cfg.get('tone', 'neutral')
     mm = cfg['_cfg']
@@ -135,8 +147,13 @@ def master_chain(x, m, sr=SR, ctx=None):
     return y
 
 
-def suggest_master_target(x, sr=SR, lufs_target=-14.0, ceiling=-1.5):
-    """Can this material reach the target without destroying it? Returns (feasible, why)."""
+def suggest_master_target(x, sr=SR, lufs_target=None, ceiling=None):
+    """Can this material reach the target without destroying it? Returns (feasible, why).
+
+    A target or ceiling left out is the shipped default of references/data/master_targets.json."""
+    d = mix_schema.master_targets()['default']
+    lufs_target = d['lufs'] if lufs_target is None else lufs_target
+    ceiling = d['true_peak'] if ceiling is None else ceiling
     min_crest = float(mix_schema.section(_mix(), 'mastering')['min_crest_db'])
     m = master_measures(x, sr)
     crest = m['crest']

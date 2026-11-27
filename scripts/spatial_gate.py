@@ -554,8 +554,10 @@ def output_rows(score, wav_path, out):
             import mix_schema
             import mixer
             got = loudness.layout_lufs(sig.audio, lay_name, sig.sr)
-            mcfg = mixer._master_cfg(dict((score or {}).get('master') or {}), mixer._mix())
-            want = float((tgt.get('loudness') or {}).get('target_lufs', mcfg.get('lufs', -14.0)))
+            mraw = dict((score or {}).get('master') or {})
+            mraw['_registers'] = list((((score or {}).get('intent') or {}).get('registers')) or [])
+            mcfg = mixer._master_cfg(mraw, mixer._mix())
+            want = float((tgt.get('loudness') or {}).get('target_lufs', mcfg.get('lufs', mix_schema.master_targets()['default']['lufs'])))
             miss = float(mix_schema.section(mixer._mix(), 'mastering')['converge']['report_miss_lu'])
             off = abs(got - want) > miss
             _row(out, 'WARN' if off else 'PASS', 'imm.loudness',

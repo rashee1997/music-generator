@@ -368,3 +368,12 @@ is a derivation from the corpus range already cited in `shape.contrast`, not a f
 
 `python scripts/threshold_audit.py` lists the numbers still compiled into the gate modules; `tests/test_gate_literals.py`
 fails when a new one appears. A new threshold goes in `rows.json` with a default, a range and a source.
+
+### 3k.1 Loudness is data and follows the register
+
+The master's loudness used to fall back to -14.0 in `mix_schema.py`, `mastering.py`, `quality_gate.py`, `spatial_gate.py` and
+`gate_report.py`: Spotify's normalisation level (`standards.py`), not a mastering default, and not what AGENTS.md says (-16).
+It is now `references/data/master_targets.json` (the default and the named profiles, each with its source). Order of
+authority: the score's `master.lufs`, a mastering profile the piece's mix preset chose, then the middle of the intersection of
+the declared registers' `lufs` bands (`intent.register_loudness`; `cinematic` with `hybrid` is -16.0, `natural` -14.5), then the
+shipped default. Registers whose bands do not overlap give no target and the default stands. The band edges are starting values.

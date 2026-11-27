@@ -314,6 +314,7 @@ def mix_and_master(score, stems, out_path, master=True, sr=SR, report=True, ctx=
     else:
         mix = trim_tail(mix, sr)
     m = dict(score.get('master', {}))
+    m['_registers'] = list(((score.get('intent') or {}).get('registers')) or [])      # _master_cfg levels an unprofiled master to its register
     m['_sections'] = (score.get('plan') or {}).get('sections')       # master_chain reads it for section_levels and drops it
     out = master_chain(mix, m, sr, ctx) if master else mix
     if not loop:

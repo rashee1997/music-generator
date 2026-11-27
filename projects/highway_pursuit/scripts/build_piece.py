@@ -30,6 +30,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__))))), 'scripts'))
+import intent
 import gate_clock                      # the renderer's own tempo map: sheet seconds and note seconds cannot drift
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -38,6 +39,8 @@ ROOT = os.path.dirname(os.path.dirname(PROJ))
 
 BPM, TS = 140, [4, 4]
 BARS = 33
+# the cue is cinematic and hybrid: its loudness is the middle of what those registers overlap on, not a figure from a blog
+LOUDNESS = intent.register_loudness(['cinematic', 'hybrid'])
 BEATS_PER_BAR = TS[0]
 
 # (beat, bpm) - a step map: the slow motion is a tempo drop, and everything downstream (section seconds, hit times) is
@@ -258,6 +261,12 @@ def violas():
         base = tone(bar, 0, 47, 58)
         v = vel(bar)
         shape = [0, 3, 7, 3, 5, 3, 7, 10, 7, 3, 5, 3, 2, 3, 5, 7]
+        if r == 'transition':
+            # the drift: the bass slides a semitone per bar under the 16ths, so the figure keeps to chord tones (root,
+            # third, fifth). The 4th and 7th of the full shape sit a semitone from the 5th harmonic of the sliding bass
+            # (measured: 368 Hz against 390 Hz at 18.5 s, roughness 0.134 over the 0.104 limit), and the drift is a slide,
+            # not a cluster.
+            shape = [0, 3, 7, 3, 7, 3, 7, 3, 0, 3, 7, 3, 7, 3, 0, 3]
         accent = (0.95, 0.62, 0.72, 0.95, 0.58, 0.80, 0.66, 0.95, 0.60, 0.74, 0.95, 0.64, 0.70, 0.58, 0.86, 0.66)
         for i, off in enumerate(shape):
             if i in (6, 13):                    # a sixteenth rests: the run is phrasing, not a machine
@@ -501,6 +510,10 @@ def low_swell():
     out = []
     for bar in (13, 23, 29):
         out.append(note(beat_of(bar, 2), 2.0, root_pitch(bar, 36, 47) - 12, 0.8))
+    # the near miss: the sheet declares one second of nothing (hit at the section start, silence_after_s 1.0), then the
+    # room. The notes used to leave about 2.9 s of nothing, so the master read a 165 ms hole at 54.4 s (rca: "no stem in the
+    # score sounds there"). A low swell enters when the declared rest ends and runs into the escape.
+    out.append(note(beat_of(30, 2.5), beat_of(32) - beat_of(30, 2.5), root_pitch(31, 36, 47) - 12, 0.5))
     return out
 
 
@@ -590,7 +603,7 @@ def sheet():
                          'any Indian classical instrument or scale', 'ambience', 'rain', 'sound effects'],
         'space': 'highway_canyon',
         'mix_intent': {'hero': 'horns', 'leave_free_hz': []},
-        'loudness': -14.0, 'true_peak_max': -1.5,
+        'loudness': LOUDNESS, 'true_peak_max': -1.5,
         'delivery': {'format': 'wav', 'sample_rate': 48000, 'bit_depth': 24, 'stage': 'master'},
         'references': ['night_pursuit_cinematic: the same chase grammar, rewritten for a highway, a colder colour and '
                        'a real slow-motion beat'],
@@ -664,7 +677,7 @@ def gate_profile():
                      'starts, a tritone twist, a chromatic drift and a real tempo drop carry the picture, and the two '
                      'chases are allowed to be the roughest, loudest and most syncopated part of the piece while the '
                      'slow motion and the near-miss silence are allowed to be the quietest.',
-        'extends': 'cinematic',
+        'extends': 'orchestral',
         'flags': [],
         'focus': {'roles': ['melody', 'lead', 'vocal'], 'label': 'the cell on the horns',
                   'reason': 'the cue is defined by a figure: four horns state it at every camera'},
@@ -684,7 +697,17 @@ def gate_profile():
             },
             'dialogue': {},
         },
-        'rows': {'scene.macro_contrast': {'min_sections': 2}},
+        'rows': {
+            'scene.macro_contrast': {'min_sections': 2},
+            # measured on the first render on the orchestral profile: cymbals in the final section, 13.6 dB under the sheet's
+            # energy ratio against 12 dB (the other six sections follow the curve); `gate_profiles.py relax` wrote it
+            'stem.dead': {'mode': 'relax', 'under_db': 15.0,
+                          'reason': "cymbals in the final 'the_escape' section (sheet energy 0.3) are a fading roll of low-velocity "
+                                    'strokes (0.36-0.6) on a one-layer GM sample: the stem sits 13.6 dB under the sheet\'s energy '
+                                    'ratio against the 12 dB limit, in the last section only; the other six sections follow the '
+                                    'curve within 3 dB. The notes cannot be louder (velocity 0.4 is already the roll), so the '
+                                    "row's expectation does not fit a decaying tail. Measured in the last render: cymbals 13.6 dB, master."},
+        },
     }
 
 
@@ -775,7 +798,8 @@ def main():
         'tempo_points': [[b, v] for b, v in TEMPO],
         'key': 'D', 'mode': 'minor', 'space': 'highway_canyon', 'mix_preset': 'highway_pursuit_mix',
         'output_targets': ['stereo', 'ambix'],
-        'master': {'lufs': -14.0, 'true_peak': -1.5, 'tone': 'neutral', 'fade_out': 0.8},
+        # no 'lufs': the piece declares registers, so the master is levelled to the register's range (intent.register_loudness)
+        'master': {'true_peak': -1.5, 'tone': 'neutral', 'fade_out': 0.8},
         'piece_type': 'highway_pursuit', 'focus': 'melody',
         'intent': {'emotions': ['tense', 'dark_epic'], 'registers': ['cinematic', 'hybrid'],
                    'scenes': ['establish', 'build', 'chase', 'dread'],

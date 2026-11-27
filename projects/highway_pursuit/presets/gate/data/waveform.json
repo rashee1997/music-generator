@@ -1,5 +1,5 @@
 {
-  "duration_s": 60.70541950113379,
+  "duration_s": 60.69893424036281,
   "sections": [
     {
       "name": "the_evasion",
@@ -70,7 +70,7 @@
       "PASS"
     ],
     [
-      0.0348,
+      0.0464,
       "stem.tick",
       "violas",
       "PASS"
@@ -116,18 +116,6 @@
       "stem.tick",
       "violins_staccato",
       "PASS"
-    ],
-    [
-      54.39,
-      "dropout",
-      "master",
-      "FAIL"
-    ],
-    [
-      54.44,
-      "dropout",
-      "master",
-      "FAIL"
     ]
   ]
 }

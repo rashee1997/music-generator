@@ -257,7 +257,7 @@ levers. Using GM habits on an SFZ track is what leaves it sounding like a sample
 3. **Clear arc** - Intro/build/drop/break/outro. Energy from arrangement, not just volume.
 4. **Lane discipline** - Lead 1-3kHz, pads below/wider, arps lower.
 5. **Humanize differently** - Tight grid for kick/hats/bass. Tiny velocity variation, rare ghost notes. No rubato. Never repeat identical 2/4 bars.
-6. **Mix/master** - Target -14 to -9 LUFS for club/stream (default -16 LUFS, true peak -1.5 dBTP). State and justify.
+6. **Mix/master** - Target -14 to -9 LUFS for club/stream (default -16 LUFS, true peak -1.5 dBTP). State and justify. The shipped default and the named profiles are data (`references/data/master_targets.json`); a piece that declares `intent.registers` and states no loudness and chooses no mastering profile is levelled to the middle of its registers' `lufs` bands (`intent.register_loudness`, `references/data/presets/intent/registers.json`). No module carries a literal loudness fallback (`tests/test_master_loudness.py`).
 7. **Fusion** - Keep one pulse, one key center. Traditional = lead, electronic = bed.
 8. **Honest limits** - Synthesis from SoundFont/simple synthesis. Don't claim hardware synth sound.
 

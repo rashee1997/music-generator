@@ -1,77 +1,77 @@
 {
- "name": "highway_pursuit",
- "character": "a 60 s highway chase cue judged against its own camera cuts: the Hero is already evading when it starts, a tritone twist, a chromatic drift and a real tempo drop carry the picture, and the two chases are allowed to be the roughest, loudest and most syncopated part of the piece while the slow motion and the near-miss silence are allowed to be the quietest.",
- "extends": "orchestral",
- "flags": [],
- "focus": {
-  "roles": [
-   "melody",
-   "lead",
-   "vocal"
-  ],
-  "label": "the cell on the horns",
-  "reason": "the cue is defined by a figure: four horns state it at every camera"
- },
- "scene": {
-  "timeline": {
-   "tolerance_s": 0.5
-  },
-  "roles": {
-   "establish": {
-    "bsi_mode": "pocket"
-   },
-   "build": {
-    "huron_resolution_gravity": "RELAX",
-    "strain_slope_min": 0.0,
-    "bsi_mode": "pocket"
-   },
-   "transition": {
-    "arousal_max": 0.65,
-    "bsi_mode": "stillness"
-   },
-   "peak": {
-    "arousal_min": 0.6,
-    "surprise_min_z": 1.0,
-    "min_hits": 1,
-    "roughness_min_frac": 0.5,
-    "waive_ceiling": [
-     "roughness",
-     "feel.contour",
-     "feel.resolution"
+  "name": "highway_pursuit",
+  "character": "a 60 s highway chase cue judged against its own camera cuts: the Hero is already evading when it starts, a tritone twist, a chromatic drift and a real tempo drop carry the picture, and the two chases are allowed to be the roughest, loudest and most syncopated part of the piece while the slow motion and the near-miss silence are allowed to be the quietest.",
+  "extends": "orchestral",
+  "flags": [],
+  "focus": {
+    "roles": [
+      "melody",
+      "lead",
+      "vocal"
     ],
-    "bsi_mode": "pocket",
-    "huron_resolution_gravity": "RELAX"
-   },
-   "release": {
-    "strain_drop_min": 0.15,
-    "arousal_max": 0.55,
-    "huron_resolution_gravity": "ENFORCE"
-   },
-   "rupture": {
-    "bsi_mode": "rupture",
-    "bsi_min": 1.5,
-    "surprise_min_z": 1.0,
-    "allow_intentional_silence": true,
-    "waive_ceiling": [
-     "roughness",
-     "feel.witek"
-    ]
-   },
-   "button": {
-    "arousal_max": 0.45,
-    "huron_resolution_gravity": "ENFORCE"
-   }
+    "label": "the cell on the horns",
+    "reason": "the cue is defined by a figure: four horns state it at every camera"
   },
-  "dialogue": {}
- },
- "rows": {
-  "scene.macro_contrast": {
-   "min_sections": 2
+  "scene": {
+    "timeline": {
+      "tolerance_s": 0.5
+    },
+    "roles": {
+      "establish": {
+        "bsi_mode": "pocket"
+      },
+      "build": {
+        "huron_resolution_gravity": "RELAX",
+        "strain_slope_min": 0.0,
+        "bsi_mode": "pocket"
+      },
+      "transition": {
+        "arousal_max": 0.65,
+        "bsi_mode": "stillness"
+      },
+      "peak": {
+        "arousal_min": 0.6,
+        "surprise_min_z": 1.0,
+        "min_hits": 1,
+        "roughness_min_frac": 0.5,
+        "waive_ceiling": [
+          "roughness",
+          "feel.contour",
+          "feel.resolution"
+        ],
+        "bsi_mode": "pocket",
+        "huron_resolution_gravity": "RELAX"
+      },
+      "release": {
+        "strain_drop_min": 0.15,
+        "arousal_max": 0.55,
+        "huron_resolution_gravity": "ENFORCE"
+      },
+      "rupture": {
+        "bsi_mode": "rupture",
+        "bsi_min": 1.5,
+        "surprise_min_z": 1.0,
+        "allow_intentional_silence": true,
+        "waive_ceiling": [
+          "roughness",
+          "feel.witek"
+        ]
+      },
+      "button": {
+        "arousal_max": 0.45,
+        "huron_resolution_gravity": "ENFORCE"
+      }
+    },
+    "dialogue": {}
   },
-  "stem.dead": {
-   "mode": "relax",
-   "reason": "cymbals in the final 'the_escape' section (sheet energy 0.3) are a fading roll of low-velocity strokes (0.36-0.6) on a one-layer GM sample: the stem sits 13.6 dB under the sheet's energy ratio against the 12 dB limit, in the last section only; the other six sections follow the curve within 3 dB. The notes cannot be louder (velocity 0.4 is already the roll), so the row's expectation does not fit a decaying tail Measured in the last render: cymbals 13.6 dB, master.",
-   "under_db": 15.0
+  "rows": {
+    "scene.macro_contrast": {
+      "min_sections": 2
+    },
+    "stem.dead": {
+      "mode": "relax",
+      "under_db": 15.0,
+      "reason": "cymbals in the final 'the_escape' section (sheet energy 0.3) are a fading roll of low-velocity strokes (0.36-0.6) on a one-layer GM sample: the stem sits 13.6 dB under the sheet's energy ratio against the 12 dB limit, in the last section only; the other six sections follow the curve within 3 dB. The notes cannot be louder (velocity 0.4 is already the roll), so the row's expectation does not fit a decaying tail. Measured in the last render: cymbals 13.6 dB, master."
+    }
   }
- }
 }

@@ -361,23 +361,30 @@
         {
           "section": "the_drift",
           "start_s": 17.1355,
-          "measured_db": -28.38,
-          "expected_db": -28.38,
+          "measured_db": -28.43,
+          "expected_db": -31.25,
           "dyn": 0.55
         },
         {
           "section": "the_slow_motion",
           "start_s": 32.5552,
-          "measured_db": -28.38,
-          "expected_db": -29.21,
+          "measured_db": -28.45,
+          "expected_db": -32.08,
           "dyn": 0.5
         },
         {
           "section": "the_swerve",
           "start_s": 42.1625,
-          "measured_db": -29.3,
-          "expected_db": -23.19,
+          "measured_db": -34.87,
+          "expected_db": -26.06,
           "dyn": 1.0
+        },
+        {
+          "section": "the_escape",
+          "start_s": 56.3815,
+          "measured_db": -36.0,
+          "expected_db": -36.52,
+          "dyn": 0.3
         }
       ]
     },
@@ -599,50 +606,50 @@
         {
           "section": "the_evasion",
           "start_s": 0.0,
-          "measured_db": -32.74,
-          "expected_db": -31.76,
+          "measured_db": -33.08,
+          "expected_db": -30.8,
           "dyn": 0.72
         },
         {
           "section": "the_twist",
           "start_s": 6.8433,
-          "measured_db": -31.76,
-          "expected_db": -30.63,
+          "measured_db": -32.24,
+          "expected_db": -29.67,
           "dyn": 0.82
         },
         {
           "section": "the_drift",
           "start_s": 17.1355,
-          "measured_db": -35.58,
-          "expected_db": -34.1,
+          "measured_db": -35.7,
+          "expected_db": -33.14,
           "dyn": 0.55
         },
         {
           "section": "the_chase",
           "start_s": 22.2882,
-          "measured_db": -31.11,
-          "expected_db": -29.35,
+          "measured_db": -30.8,
+          "expected_db": -28.39,
           "dyn": 0.95
         },
         {
           "section": "the_slow_motion",
           "start_s": 32.5552,
-          "measured_db": -31.8,
-          "expected_db": -34.93,
+          "measured_db": -30.13,
+          "expected_db": -33.97,
           "dyn": 0.5
         },
         {
           "section": "the_swerve",
           "start_s": 42.1625,
-          "measured_db": -30.33,
-          "expected_db": -28.91,
+          "measured_db": -29.56,
+          "expected_db": -27.95,
           "dyn": 1.0
         },
         {
           "section": "the_escape",
           "start_s": 56.3815,
-          "measured_db": -20.56,
-          "expected_db": -39.37,
+          "measured_db": -20.41,
+          "expected_db": -38.4,
           "dyn": 0.3
         }
       ]

@@ -1,7 +1,7 @@
 {
- "stamp": "20261127T165628",
+ "stamp": "20261127T221054",
  "project": "highway_pursuit",
- "level": "FAIL",
+ "level": "WARN",
  "sources": {
   "score": "/home/user/music-generator/projects/highway_pursuit/scores/highway_pursuit_score.json",
   "gate_data": [
@@ -18,18 +18,18 @@
   ],
   "stems": "18 processed stems from .cache/mix",
   "master": "out/_draft_highway_pursuit.wav",
-  "verdict": "2026-11-27T16:51:23Z"
+  "verdict": "2026-11-27T16:56:28Z"
  },
  "binding": [
   {
-   "row": "dropout",
+   "row": "section.energy",
    "stem": null,
-   "level": "FAIL",
-   "value": 165.00000000000625,
-   "threshold": 20.0,
-   "unit": "ms",
-   "safety": -7.25,
-   "detail": "longest hole 165 ms (limit 20-1000 ms), floor -63.2 dBFS; 2 hole(s)"
+   "level": "WARN",
+   "value": 0.6666666666666669,
+   "threshold": 0.5,
+   "unit": "rho",
+   "safety": -0.8333,
+   "detail": "Spearman rho 0.67 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)"
   }
  ],
  "advisory": [
@@ -235,92 +235,30 @@
   }
  ],
  "domains": {
-  "run": [
-   "master"
-  ],
+  "run": [],
   "skipped": {
    "stems": 40
   }
  },
  "model": {
   "first_order": true,
-  "rows": 8,
-  "levers": [
-   {
-    "id": "render.oversample",
-    "domain": "master",
-    "kind": "oversample",
-    "stem": null,
-    "current": 1.0,
-    "lo": 1.0,
-    "hi": 8.0,
-    "step": 1.0,
-    "unit": "x",
-    "text": "master oversampling before the limiter"
-   },
-   {
-    "id": "note.taiko.d",
-    "domain": "master",
-    "kind": "note_len",
-    "stem": "taiko",
-    "current": 0.2006,
-    "lo": 0.1406,
-    "hi": 0.2606,
-    "step": 0.010416666666666666,
-    "unit": "beats",
-    "text": "taiko written note length (mean 0.2006 beats)"
-   }
-  ]
+  "rows": 0,
+  "levers": []
  },
  "plan": {
-  "status": "nothing to move",
+  "status": "no rows",
   "worst_safety": null,
   "deltas": {},
   "clearing": {},
-  "predicted": {
-   "dropout::-": [
-    -7.250000000000313,
-    -7.250000000000313
-   ],
-   "clicks::-": [
-    0.0,
-    0.0
-   ],
-   "loudness::-": [
-    0.02,
-    0.02
-   ],
-   "true peak::-": [
-    0.0002494233580594418,
-    0.0002494233580594418
-   ],
-   "cut.hard::-": [
-    2.0,
-    2.0
-   ],
-   "end.abrupt::-": [
-    0.02,
-    0.02
-   ],
-   "clipping::-": [
-    0.0,
-    0.0
-   ],
-   "master.dc::-": [
-    0.09908531800796228,
-    0.09908531800796228
-   ]
-  },
+  "predicted": {},
   "conflicts": [],
-  "closed": [
-   "dropout"
-  ],
+  "closed": [],
   "burned": [],
   "notes": [],
   "experiments": []
  },
  "forensics": [],
  "notes": [
-  "dropout has 2 event(s) at 54.390s, 54.440s; the transient is taiko 85%, bass_drum 15%, timpani 0%"
+  "section.energy: no domain module examines this row yet"
  ]
 }
