@@ -1,11 +1,11 @@
-stem gate: 0 FAIL, 0 WARN, 156 rows, profile highway_pursuit, 235 ms
-[PASS] stem.dc: stem "bass_clarinet": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+stem gate: 0 FAIL, 0 WARN, 161 rows, profile highway_pursuit, 6807 ms
+[PASS] stem.dc: stem "bass_clarinet": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "bass_clarinet": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "bass_clarinet": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
 [PASS] stem.dropout: stem "bass_clarinet": longest hole 0 ms (limit 20-1000 ms), floor -285.0 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "bass_clarinet": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
-[PASS] stem.edge: stem "bass_clarinet": audible span 6.380-56.545 s against score notes 6.413-56.332 s: leading silence -33 ms, trailing silence -213 ms (limit 25 ms)
-[PASS] stem.dead: stem "bass_clarinet": own median -31.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 6; follows the curve
+[PASS] stem.edge: stem "bass_clarinet": audible span 6.400-56.510 s against score notes 6.414-56.331 s: leading silence -14 ms, trailing silence -179 ms (limit 25 ms)
+[PASS] stem.dead: stem "bass_clarinet": own median -31.6 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 5; follows the curve
 [PASS] stem.flatness: stem "bass_clarinet": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [PASS] stem.dc: stem "bass_drum": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)
 [PASS] stem.clipping: stem "bass_drum": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
@@ -14,41 +14,41 @@ stem gate: 0 FAIL, 0 WARN, 156 rows, profile highway_pursuit, 235 ms
 [INFO] stem.cut: stem "bass_drum": not applied: a percussive stem has no sustained level to cut at a section boundary
 [INFO] stem.edge: stem "bass_drum": not applied: a percussive note length is a trigger, not a sound length
 [INFO] stem.tick: stem "bass_drum": not applied: a percussive stem is allowed a pulse
-[PASS] stem.dead: stem "bass_drum": own median -16.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 5; follows the curve
-[PASS] stem.dc: stem "basses": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00001 (limit 0.001)
+[PASS] stem.dead: stem "bass_drum": own median -16.8 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 5; follows the curve
+[PASS] stem.dc: stem "basses": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)
 [PASS] stem.clipping: stem "basses": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "basses": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
-[PASS] stem.dropout: stem "basses": longest hole 0 ms (limit 20-1000 ms), floor -72.2 dBFS; 0 hole(s)
-[PASS] stem.cut: stem "basses": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end; 4 drop(s) skipped inside 5 intentional cut window(s) (first at 52.955 s)
-[PASS] stem.edge: stem "basses": audible span 0.000-60.285 s against score notes 0.000-59.936 s: leading silence 0 ms, trailing silence -349 ms (limit 25 ms)
-[PASS] stem.tick: stem "basses": onset autocorrelation 0.23 at a 163 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 34 strong onset(s) of 1168, 9 on the grid, IOI CV 0.586; peak rise -0.89 dB at those onsets over 33 onset(s) (min 3); tempogram peak ratio 0.85, PLP peak ratio 1.00
-[PASS] stem.dead: stem "basses": own median -27.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve
+[PASS] stem.dropout: stem "basses": longest hole 0 ms (limit 20-1000 ms), floor -72.9 dBFS; 0 hole(s)
+[PASS] stem.cut: stem "basses": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end; 5 drop(s) skipped inside 5 intentional cut window(s) (first at 52.950 s)
+[PASS] stem.edge: stem "basses": audible span 0.000-60.245 s against score notes 0.000-59.960 s: leading silence 0 ms, trailing silence -285 ms (limit 25 ms)
+[PASS] stem.tick: stem "basses": onset autocorrelation 0.20 at a 163 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 42 strong onset(s) of 1129, 12 on the grid, IOI CV 0.622; peak rise 0.48 dB at those onsets over 41 onset(s) (min 3); tempogram peak ratio 0.84, PLP peak ratio 1.00
+[PASS] stem.dead: stem "basses": own median -27.2 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 7; follows the curve
 [PASS] stem.flatness: stem "basses": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [PASS] stem.dc: stem "basses_pizz": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "basses_pizz": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "basses_pizz": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
 [PASS] stem.dropout: stem "basses_pizz": longest hole 0 ms (limit 20-1000 ms), floor -75.9 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "basses_pizz": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
-[PASS] stem.edge: stem "basses_pizz": audible span 0.000-53.895 s against score notes 0.000-52.941 s: leading silence 0 ms, trailing silence -954 ms (limit 25 ms)
-[PASS] stem.tick: stem "basses_pizz": onset autocorrelation 0.66 at a 430 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 112 strong onset(s) of 478, 27 on the grid, IOI CV 2.257; peak rise 5.80 dB at those onsets over 112 onset(s) (min 3); tempogram peak ratio 0.96, PLP peak ratio 1.00
-[PASS] stem.dead: stem "basses_pizz": own median -26.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 5; follows the curve
+[PASS] stem.edge: stem "basses_pizz": audible span 0.000-53.955 s against score notes 0.000-52.943 s: leading silence 0 ms, trailing silence -1012 ms (limit 25 ms)
+[PASS] stem.tick: stem "basses_pizz": onset autocorrelation 0.67 at a 430 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 145 strong onset(s) of 468, 37 on the grid, IOI CV 2.565; peak rise 5.83 dB at those onsets over 145 onset(s) (min 3); tempogram peak ratio 0.96, PLP peak ratio 1.00
+[PASS] stem.dead: stem "basses_pizz": own median -26.2 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 5; follows the curve
 [PASS] stem.flatness: stem "basses_pizz": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
-[PASS] stem.dc: stem "celli": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+[PASS] stem.dc: stem "celli": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "celli": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "celli": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
-[PASS] stem.dropout: stem "celli": longest hole 0 ms (limit 20-1000 ms), floor -75.4 dBFS; 0 hole(s)
+[PASS] stem.dropout: stem "celli": longest hole 0 ms (limit 20-1000 ms), floor -75.2 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "celli": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end; 3 drop(s) skipped inside 5 intentional cut window(s) (first at 52.960 s)
-[PASS] stem.edge: stem "celli": audible span 0.000-56.410 s against score notes 0.000-55.992 s: leading silence 0 ms, trailing silence -418 ms (limit 25 ms)
-[PASS] stem.tick: stem "celli": onset autocorrelation 0.33 at a 534 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 45 strong onset(s) of 550, 7 on the grid, IOI CV 0.974; peak rise 3.13 dB at those onsets over 44 onset(s) (min 3); tempogram peak ratio 0.89, PLP peak ratio 0.98
-[PASS] stem.dead: stem "celli": own median -28.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve
-[PASS] stem.dc: stem "choir": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+[PASS] stem.edge: stem "celli": audible span 0.000-57.330 s against score notes 0.000-56.885 s: leading silence 0 ms, trailing silence -445 ms (limit 25 ms)
+[PASS] stem.tick: stem "celli": onset autocorrelation 0.34 at a 534 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 39 strong onset(s) of 560, 7 on the grid, IOI CV 1.381; peak rise 2.36 dB at those onsets over 38 onset(s) (min 3); tempogram peak ratio 0.90, PLP peak ratio 0.97
+[PASS] stem.dead: stem "celli": own median -28.6 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 7; follows the curve
+[PASS] stem.dc: stem "choir": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "choir": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "choir": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
 [PASS] stem.dropout: stem "choir": longest hole 0 ms (limit 20-1000 ms), floor -285.0 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "choir": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
-[PASS] stem.edge: stem "choir": audible span 32.570-57.330 s against score notes 32.580-56.078 s: leading silence -10 ms, trailing silence -1252 ms (limit 25 ms)
-[PASS] stem.tick: stem "choir": onset autocorrelation 0.55 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 19 strong onset(s) of 214, 10 on the grid, IOI CV 0.940; peak rise 2.72 dB at those onsets over 18 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
-[PASS] stem.dead: stem "choir": own median -31.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve
+[PASS] stem.edge: stem "choir": audible span 32.570-58.040 s against score notes 32.580-56.969 s: leading silence -10 ms, trailing silence -1071 ms (limit 25 ms)
+[PASS] stem.tick: stem "choir": onset autocorrelation 0.53 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 17 strong onset(s) of 210, 8 on the grid, IOI CV 0.871; peak rise 2.17 dB at those onsets over 15 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
+[PASS] stem.dead: stem "choir": own median -30.4 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 3; follows the curve
 [PASS] stem.flatness: stem "choir": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [PASS] stem.vocal: vocal stem: DC 0.00000, 0 click event(s)
 [PASS] stem.dc: stem "cymbals": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
@@ -58,100 +58,105 @@ stem gate: 0 FAIL, 0 WARN, 156 rows, profile highway_pursuit, 235 ms
 [INFO] stem.cut: stem "cymbals": not applied: a percussive stem has no sustained level to cut at a section boundary
 [INFO] stem.edge: stem "cymbals": not applied: a percussive note length is a trigger, not a sound length
 [INFO] stem.tick: stem "cymbals": not applied: a percussive stem is allowed a pulse
-[PASS] stem.dead: stem "cymbals": own median -36.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve
-[PASS] stem.dc: stem "horns": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00003 (limit 0.001)
+[PASS] stem.dead: stem "cymbals": own median -36.5 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 7; follows the curve
+[PASS] stem.dc: stem "horns": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00004 (limit 0.001)
 [PASS] stem.clipping: stem "horns": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "horns": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
-[PASS] stem.dropout: stem "horns": longest hole 0 ms (limit 20-1000 ms), floor -85.9 dBFS; 0 hole(s)
-[PASS] stem.cut: stem "horns": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end; 3 drop(s) skipped inside 5 intentional cut window(s) (first at 52.960 s)
-[PASS] stem.edge: stem "horns": audible span 6.775-59.205 s against score notes 6.843-58.819 s: leading silence -68 ms, trailing silence -386 ms (limit 25 ms)
-[PASS] stem.dead: stem "horns": own median -18.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 7; follows the curve
+[PASS] stem.dropout: stem "horns": longest hole 0 ms (limit 20-1000 ms), floor -108.4 dBFS; 0 hole(s)
+[PASS] stem.cut: stem "horns": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end; 2 drop(s) skipped inside 5 intentional cut window(s) (first at 52.965 s)
+[PASS] stem.edge: stem "horns": audible span 6.775-59.285 s against score notes 6.845-58.828 s: leading silence -70 ms, trailing silence -457 ms (limit 25 ms)
+[PASS] stem.dead: stem "horns": own median -18.4 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 6; follows the curve
 [PASS] stem.flatness: stem "horns": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
-[PASS] stem.dc: stem "low_swell": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00002 (limit 0.001)
+[PASS] stem.dc: stem "low_swell": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00001 (limit 0.001)
 [PASS] stem.clipping: stem "low_swell": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "low_swell": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
 [PASS] stem.dropout: stem "low_swell": longest hole 0 ms (limit 20-1000 ms), floor -285.0 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "low_swell": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
-[PASS] stem.edge: stem "low_swell": audible span 21.405-52.975 s against score notes 21.404-52.975 s: leading silence 1 ms, trailing silence -0 ms (limit 25 ms)
-[PASS] stem.tick: stem "low_swell": onset autocorrelation 0.45 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 6 strong onset(s) of 109, 3 on the grid, IOI CV 1.281; peak rise 80.27 dB at those onsets over 6 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
-[PASS] stem.dead: stem "low_swell": own median -28.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve
+[PASS] stem.edge: stem "low_swell": audible span 21.410-52.975 s against score notes 21.405-52.977 s: leading silence 5 ms, trailing silence 2 ms (limit 25 ms)
+[PASS] stem.tick: stem "low_swell": onset autocorrelation 0.45 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 6 strong onset(s) of 105, 3 on the grid, IOI CV 1.280; peak rise 79.04 dB at those onsets over 6 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
+[PASS] stem.dead: stem "low_swell": own median -28.4 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 3; follows the curve
 [PASS] stem.dc: stem "piano_theme": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "piano_theme": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "piano_theme": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
-[PASS] stem.dropout: stem "piano_theme": longest hole 0 ms (limit 20-1000 ms), floor -123.7 dBFS; 0 hole(s)
+[PASS] stem.dropout: stem "piano_theme": longest hole 0 ms (limit 20-1000 ms), floor -123.9 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "piano_theme": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
-[PASS] stem.edge: stem "piano_theme": audible span 0.000-53.310 s against score notes 0.000-52.954 s: leading silence 0 ms, trailing silence -356 ms (limit 25 ms)
-[PASS] stem.tick: stem "piano_theme": onset autocorrelation 0.47 at a 859 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 81 strong onset(s) of 255, 21 on the grid, IOI CV 1.825; peak rise 32.01 dB at those onsets over 81 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
-[PASS] stem.dead: stem "piano_theme": own median -45.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 5; follows the curve
+[PASS] stem.edge: stem "piano_theme": audible span 0.000-53.270 s against score notes 0.000-52.956 s: leading silence 0 ms, trailing silence -314 ms (limit 25 ms)
+[PASS] stem.tick: stem "piano_theme": onset autocorrelation 0.47 at a 859 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 89 strong onset(s) of 258, 18 on the grid, IOI CV 1.924; peak rise 31.43 dB at those onsets over 89 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
+[PASS] stem.dead: stem "piano_theme": own median -44.3 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 5; follows the curve
 [PASS] stem.flatness: stem "piano_theme": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
-[PASS] stem.dc: stem "snare": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+[PASS] stem.dc: stem "snare": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "snare": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
-[PASS] stem.clicks: stem "snare": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 341 event(s) rejected as a dense burst, 48 as a steep attack; max cluster span 1.497 ms
+[PASS] stem.clicks: stem "snare": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 356 event(s) rejected as a dense burst, 50 as a steep attack; max cluster span 1.497 ms
 [INFO] stem.dropout: stem "snare": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit
 [INFO] stem.cut: stem "snare": not applied: a percussive stem has no sustained level to cut at a section boundary
 [INFO] stem.edge: stem "snare": not applied: a percussive note length is a trigger, not a sound length
 [INFO] stem.tick: stem "snare": not applied: a percussive stem is allowed a pulse
-[PASS] stem.dead: stem "snare": own median -23.9 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve
-[PASS] stem.dc: stem "taiko": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+[PASS] stem.dead: stem "snare": own median -24.0 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 4; follows the curve
+[PASS] stem.dc: stem "taiko": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00001 (limit 0.001)
 [PASS] stem.clipping: stem "taiko": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "taiko": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
 [INFO] stem.dropout: stem "taiko": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit
 [INFO] stem.cut: stem "taiko": not applied: a percussive stem has no sustained level to cut at a section boundary
 [INFO] stem.edge: stem "taiko": not applied: a percussive note length is a trigger, not a sound length
 [INFO] stem.tick: stem "taiko": not applied: a percussive stem is allowed a pulse
-[PASS] stem.dead: stem "taiko": own median -20.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 6; follows the curve
-[PASS] stem.dc: stem "timpani": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+[PASS] stem.dead: stem "taiko": own median -19.8 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 5; follows the curve
+[PASS] stem.dc: stem "timpani": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "timpani": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "timpani": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
 [INFO] stem.dropout: stem "timpani": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit
 [INFO] stem.cut: stem "timpani": not applied: a percussive stem has no sustained level to cut at a section boundary
 [INFO] stem.edge: stem "timpani": not applied: a percussive note length is a trigger, not a sound length
 [INFO] stem.tick: stem "timpani": not applied: a percussive stem is allowed a pulse
-[PASS] stem.dead: stem "timpani": own median -22.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 6; follows the curve
+[PASS] stem.dead: stem "timpani": own median -21.9 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 5; follows the curve
 [PASS] stem.dc: stem "trombones": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "trombones": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "trombones": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
-[PASS] stem.dropout: stem "trombones": longest hole 0 ms (limit 20-1000 ms), floor -240.7 dBFS; 0 hole(s)
+[PASS] stem.dropout: stem "trombones": longest hole 0 ms (limit 20-1000 ms), floor -241.5 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "trombones": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
-[PASS] stem.edge: stem "trombones": audible span 22.360-51.825 s against score notes 22.386-51.534 s: leading silence -26 ms, trailing silence -291 ms (limit 25 ms)
-[PASS] stem.tick: stem "trombones": onset autocorrelation 0.22 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 17 strong onset(s) of 179, 7 on the grid, IOI CV 1.179; peak rise 98.82 dB at those onsets over 17 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
-[PASS] stem.dead: stem "trombones": own median -14.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve
+[PASS] stem.edge: stem "trombones": audible span 22.365-51.810 s against score notes 22.387-51.535 s: leading silence -22 ms, trailing silence -275 ms (limit 25 ms)
+[PASS] stem.tick: stem "trombones": onset autocorrelation 0.21 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 15 strong onset(s) of 174, 7 on the grid, IOI CV 1.056; peak rise 98.22 dB at those onsets over 15 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
+[PASS] stem.dead: stem "trombones": own median -13.2 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 3; follows the curve
 [PASS] stem.flatness: stem "trombones": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [PASS] stem.dc: stem "tuba": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00001 (limit 0.001)
 [PASS] stem.clipping: stem "tuba": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "tuba": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
-[PASS] stem.dropout: stem "tuba": longest hole 0 ms (limit 20-1000 ms), floor -134.9 dBFS; 0 hole(s)
-[PASS] stem.cut: stem "tuba": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end; 3 drop(s) skipped inside 5 intentional cut window(s) (first at 52.960 s)
-[PASS] stem.edge: stem "tuba": audible span 22.380-60.060 s against score notes 22.386-59.936 s: leading silence -6 ms, trailing silence -124 ms (limit 25 ms)
-[PASS] stem.tick: stem "tuba": onset autocorrelation 0.25 at a 639 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 34 strong onset(s) of 370, 6 on the grid, IOI CV 0.783; peak rise 60.46 dB at those onsets over 33 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
-[PASS] stem.dead: stem "tuba": own median -18.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve
+[PASS] stem.dropout: stem "tuba": longest hole 0 ms (limit 20-1000 ms), floor -137.1 dBFS; 0 hole(s)
+[PASS] stem.cut: stem "tuba": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end; 2 drop(s) skipped inside 5 intentional cut window(s) (first at 52.965 s)
+[PASS] stem.edge: stem "tuba": audible span 22.375-59.985 s against score notes 22.387-59.960 s: leading silence -12 ms, trailing silence -25 ms (limit 25 ms)
+[PASS] stem.tick: stem "tuba": onset autocorrelation 0.24 at a 639 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 32 strong onset(s) of 367, 6 on the grid, IOI CV 0.720; peak rise 59.96 dB at those onsets over 31 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
+[PASS] stem.dead: stem "tuba": own median -18.4 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 4; follows the curve
 [PASS] stem.flatness: stem "tuba": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [PASS] stem.dc: stem "violas": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "violas": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "violas": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
-[PASS] stem.dropout: stem "violas": longest hole 0 ms (limit 20-1000 ms), floor -77.6 dBFS; 0 hole(s)
+[PASS] stem.dropout: stem "violas": longest hole 0 ms (limit 20-1000 ms), floor -77.5 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "violas": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end; 3 drop(s) skipped inside 5 intentional cut window(s) (first at 52.960 s)
-[PASS] stem.edge: stem "violas": audible span 0.000-60.320 s against score notes 0.000-60.112 s: leading silence 0 ms, trailing silence -208 ms (limit 25 ms)
-[PASS] stem.tick: stem "violas": onset autocorrelation 0.31 at a 743 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 151 strong onset(s) of 590, 13 on the grid, IOI CV 1.076; peak rise 2.41 dB at those onsets over 149 onset(s) (min 3); tempogram peak ratio 0.83, PLP peak ratio 0.99
-[PASS] stem.dead: stem "violas": own median -31.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 8; follows the curve
-[PASS] stem.dc: stem "violins_long": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+[PASS] stem.edge: stem "violas": audible span 0.000-60.250 s against score notes 0.000-60.016 s: leading silence 0 ms, trailing silence -234 ms (limit 25 ms)
+[PASS] stem.tick: stem "violas": onset autocorrelation 0.32 at a 755 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 97 strong onset(s) of 586, 10 on the grid, IOI CV 0.949; peak rise 2.17 dB at those onsets over 95 onset(s) (min 3); tempogram peak ratio 0.84, PLP peak ratio 1.00
+[PASS] stem.dead: stem "violas": own median -31.8 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 7; follows the curve
+[PASS] stem.dc: stem "violins_long": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "violins_long": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "violins_long": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
-[PASS] stem.dropout: stem "violins_long": longest hole 0 ms (limit 20-1000 ms), floor -155.7 dBFS; 0 hole(s)
+[PASS] stem.dropout: stem "violins_long": longest hole 0 ms (limit 20-1000 ms), floor -154.7 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "violins_long": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
-[PASS] stem.edge: stem "violins_long": audible span 6.820-60.695 s against score notes 6.843-59.936 s: leading silence -23 ms, trailing silence -759 ms (limit 25 ms)
-[PASS] stem.tick: stem "violins_long": onset autocorrelation 0.66 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 16 strong onset(s) of 261, 10 on the grid, IOI CV 1.314; peak rise -1.76 dB at those onsets over 15 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
-[PASS] stem.dead: stem "violins_long": own median -40.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve
+[PASS] stem.edge: stem "violins_long": audible span 6.820-60.710 s against score notes 6.845-59.960 s: leading silence -25 ms, trailing silence -750 ms (limit 25 ms)
+[PASS] stem.tick: stem "violins_long": onset autocorrelation 0.64 at a 104 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 9 strong onset(s) of 258, 5 on the grid, IOI CV 0.901; peak rise 1.81 dB at those onsets over 8 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
+[PASS] stem.dead: stem "violins_long": own median -39.6 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 4; follows the curve
 [PASS] stem.flatness: stem "violins_long": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [PASS] stem.dc: stem "violins_staccato": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "violins_staccato": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
-[PASS] stem.clicks: stem "violins_staccato": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 1 as a steep attack; max cluster span 0.000 ms
+[PASS] stem.clicks: stem "violins_staccato": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
 [PASS] stem.dropout: stem "violins_staccato": longest hole 0 ms (limit 20-1000 ms), floor -285.0 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "violins_staccato": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
-[PASS] stem.edge: stem "violins_staccato": audible span 42.125-52.970 s against score notes 42.191-52.954 s: leading silence -66 ms, trailing silence -16 ms (limit 25 ms)
-[PASS] stem.tick: stem "violins_staccato": onset autocorrelation 0.52 at a 209 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 8 strong onset(s) of 111, 2 on the grid, IOI CV 0.773; peak rise 4.42 dB at those onsets over 8 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
-[PASS] stem.dead: stem "violins_staccato": own median -32.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve
+[PASS] stem.edge: stem "violins_staccato": audible span 42.120-52.975 s against score notes 42.189-52.956 s: leading silence -69 ms, trailing silence -19 ms (limit 25 ms)
+[PASS] stem.tick: stem "violins_staccato": onset autocorrelation 0.53 at a 116 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 8 strong onset(s) of 108, 5 on the grid, IOI CV 0.769; peak rise 4.29 dB at those onsets over 8 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
+[PASS] stem.dead: stem "violins_staccato": own median -32.4 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 1; follows the curve
 [INFO] piece_type: highway_pursuit (declared)
 [INFO] focus: judged around the cell on the horns
 [INFO] focus: the cue is defined by a figure: four horns state it at every camera
+[INFO] gate_relax: masking.vs_melody (reported as erb_binaural_masking): max_collisions=24, max_share=0.35 (an orchestra layers beds under the line by design; a FAIL needs both the count and a third of the compared cells, so section length and bed count do not decide it)
+[INFO] gate_relax: pattern.drums_few: distinct_div=16 (a locked taiko or timpani pattern under a chase is the pulse, as in a dance groove)
 [INFO] gate_relax: pattern.loop_short: min_distinct_frac=0.06 (a cue holds a pad, a drone or an ostinato for a whole section on purpose; 6 % of the bars differing is the floor, so a part that never changes is still flagged while a section-level bed is not)
+[INFO] gate_relax: pattern.track_flags_max: max=3 (one locked percussion part may carry two flags without being a loop; a third still fails)
+[INFO] gate_relax: pattern.velocity_flat: sd_frac=0.1 (a part written near ff has no headroom for a 15 % spread; sd_abs_max caps what any part is asked for, and 10 % of the mean keeps the relative rule for the quiet parts)
+[INFO] gate_relax: stem.dead: under_db=15.0 (cymbals in the final 'the_escape' section (sheet energy 0.3) are a fading roll of low-velocity strokes (0.36-0.6) on a one-layer GM sample: the stem sits 13.6 dB under the sheet's energy ratio against the 12 dB limit, in the last section only; the other six sections follow the curve within 3 dB. The notes cannot be louder (velocity 0.4 is already the roll), so the row's expectation does not fit a decaying tail Measured in the last render: cymbals 13.6 dB, master.)

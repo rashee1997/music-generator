@@ -1,12 +1,12 @@
 # Debug autopsy - highway_pursuit
 
-20261127T151822  ·  level FAIL  ·  plan nothing to move
-sources: score=/workspace/chats/0ae6b42243a7a3f4cbccb523/projects/highway_pursuit/scores/highway_pursuit_score.json, gate_data=['feedback.json', 'level.json', 'rca.json', 'rows.json', 'section_energy.json', 'spectrogram.json', 'stem_gate.json', 'stem_levels.json', 'stereo.json', 'waveform.json'], stems=18 processed stems from .cache/mix, master=out/_draft_highway_pursuit.wav, verdict=2026-11-27T14:53:49Z
+20261127T165628  ·  level FAIL  ·  plan nothing to move
+sources: score=/home/user/music-generator/projects/highway_pursuit/scores/highway_pursuit_score.json, gate_data=['feedback.json', 'level.json', 'rca.json', 'rows.json', 'section_energy.json', 'spectrogram.json', 'stem_gate.json', 'stem_levels.json', 'stereo.json', 'waveform.json'], stems=18 processed stems from .cache/mix, master=out/_draft_highway_pursuit.wav, verdict=2026-11-27T16:51:23Z
 
 ## In question (1)
-- **dropout**: 425.00000000000426 ms against 20.0 -> FAILS by 20.25 tolerance units
-  - longest hole 425 ms (limit 20-1000 ms), floor -63.0 dBFS; 5 hole(s)
-  - transient attributed to taiko 65%, bass_drum 34%, basses_pizz 1%
+- **dropout**: 165.00000000000625 ms against 20.0 -> FAILS by 7.25 tolerance units
+  - longest hole 165 ms (limit 20-1000 ms), floor -63.2 dBFS; 2 hole(s)
+  - transient attributed to taiko 85%, bass_drum 15%, timpani 0%
 
 ## Domains
 ran: master
@@ -16,7 +16,7 @@ advisory, never binding: 40 row(s) - stem.cut, stem.dropout, stem.edge, stem.tic
 ## Proposed (first-order prediction)
 no admissible move improves the binding rows
 
-  dropout::-: -20.25    -20.25
+  dropout::-: -7.25    -7.25
   clicks::-: +0.00    +0.00
   clipping::-: +0.00    +0.00
   true peak::-: +0.00    +0.00
@@ -30,5 +30,5 @@ none found in the levers this project declares
 dropout - no declared lever moves these; they need a score, preset or dataset change rather than a knob
 
 ## Measurements behind this
-- 'dropout has 5 event(s) at 54.235s, 54.295s, 54.380s, 54.420s; the transient is taiko 65%, bass_drum 34%, basses_pizz 1%'
+- 'dropout has 2 event(s) at 54.390s, 54.440s; the transient is taiko 85%, bass_drum 15%, timpani 0%'
 

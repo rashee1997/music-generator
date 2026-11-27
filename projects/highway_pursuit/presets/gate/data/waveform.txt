@@ -1,5 +1,5 @@
-file: /workspace/chats/0ae6b42243a7a3f4cbccb523/projects/highway_pursuit/out/_draft_highway_pursuit.wav
-duration_s: 60.714
+file: /home/user/music-generator/projects/highway_pursuit/out/_draft_highway_pursuit.wav
+duration_s: 60.705
 sample_rate: 44100
 sections:
   the_evasion: 0.00-6.84 s, dyn 0.72
@@ -10,20 +10,17 @@ sections:
   the_swerve: 42.16-52.97 s, dyn 1.00
   the_near_miss: 52.97-56.38 s, dyn 0.65
   the_escape: 56.38-60.10 s, dyn 0.30
-flagged times: 16
+flagged times: 13
   0.035s stem.tick [PASS] basses
   0.035s stem.tick [PASS] basses_pizz
   0.035s stem.tick [PASS] celli
   0.035s stem.tick [PASS] violas
-  0.662s stem.tick [PASS] piano_theme
+  0.650s stem.tick [PASS] piano_theme
   6.862s stem.tick [PASS] violins_long
   21.444s stem.tick [PASS] low_swell
-  22.396s stem.tick [PASS] trombones
-  22.419s stem.tick [PASS] tuba
+  22.407s stem.tick [PASS] trombones
+  22.407s stem.tick [PASS] tuba
   32.612s stem.tick [PASS] choir
-  42.202s stem.tick [PASS] violins_staccato
-  54.235s dropout [FAIL] master
-  54.295s dropout [FAIL] master
-  54.380s dropout [FAIL] master
-  54.420s dropout [FAIL] master
-  54.510s dropout [FAIL] master
+  42.179s stem.tick [PASS] violins_staccato
+  54.390s dropout [FAIL] master
+  54.440s dropout [FAIL] master
