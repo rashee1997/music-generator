@@ -6,29 +6,29 @@
         {
           "section": "dawn",
           "start_s": 0.0,
-          "measured_db": -39.21,
-          "expected_db": -35.65,
+          "measured_db": -40.19,
+          "expected_db": -35.62,
           "dyn": 0.32
         },
         {
           "section": "grove",
           "start_s": 17.1429,
-          "measured_db": -31.41,
-          "expected_db": -28.85,
+          "measured_db": -30.88,
+          "expected_db": -28.82,
           "dyn": 0.7
         },
         {
           "section": "high_sun",
           "start_s": 34.2857,
-          "measured_db": -20.7,
-          "expected_db": -26.2,
+          "measured_db": -18.99,
+          "expected_db": -26.16,
           "dyn": 0.95
         },
         {
           "section": "golden_hour",
           "start_s": 51.4286,
-          "measured_db": -27.58,
-          "expected_db": -30.19,
+          "measured_db": -28.04,
+          "expected_db": -30.16,
           "dyn": 0.6
         }
       ]
@@ -39,29 +39,29 @@
         {
           "section": "dawn",
           "start_s": 0.0,
-          "measured_db": -38.32,
-          "expected_db": -38.75,
+          "measured_db": -42.72,
+          "expected_db": -41.02,
           "dyn": 0.32
         },
         {
           "section": "grove",
           "start_s": 17.1429,
-          "measured_db": -33.07,
-          "expected_db": -31.95,
+          "measured_db": -35.24,
+          "expected_db": -34.22,
           "dyn": 0.7
         },
         {
           "section": "high_sun",
           "start_s": 34.2857,
-          "measured_db": -27.44,
-          "expected_db": -29.3,
+          "measured_db": -28.06,
+          "expected_db": -31.57,
           "dyn": 0.95
         },
         {
           "section": "golden_hour",
           "start_s": 51.4286,
-          "measured_db": -32.12,
-          "expected_db": -33.29,
+          "measured_db": -34.5,
+          "expected_db": -35.56,
           "dyn": 0.6
         }
       ]
@@ -72,22 +72,22 @@
         {
           "section": "dawn",
           "start_s": 0.0,
-          "measured_db": -46.5,
-          "expected_db": -53.4,
+          "measured_db": -46.91,
+          "expected_db": -53.03,
           "dyn": 0.32
         },
         {
           "section": "grove",
           "start_s": 17.1429,
-          "measured_db": -48.29,
-          "expected_db": -46.61,
+          "measured_db": -46.19,
+          "expected_db": -46.23,
           "dyn": 0.7
         },
         {
           "section": "high_sun",
           "start_s": 34.2857,
-          "measured_db": -46.61,
-          "expected_db": -43.95,
+          "measured_db": -46.23,
+          "expected_db": -43.58,
           "dyn": 0.95
         }
       ]
@@ -98,29 +98,29 @@
         {
           "section": "dawn",
           "start_s": 0.0,
-          "measured_db": -27.61,
-          "expected_db": -32.8,
+          "measured_db": -34.94,
+          "expected_db": -40.3,
           "dyn": 0.32
         },
         {
           "section": "grove",
           "start_s": 17.1429,
-          "measured_db": -26.97,
-          "expected_db": -26.0,
+          "measured_db": -34.06,
+          "expected_db": -33.5,
           "dyn": 0.7
         },
         {
           "section": "high_sun",
           "start_s": 34.2857,
-          "measured_db": -25.75,
-          "expected_db": -23.35,
+          "measured_db": -31.45,
+          "expected_db": -30.85,
           "dyn": 0.95
         },
         {
           "section": "golden_hour",
           "start_s": 51.4286,
-          "measured_db": -26.33,
-          "expected_db": -27.34,
+          "measured_db": -34.22,
+          "expected_db": -34.84,
           "dyn": 0.6
         }
       ]
@@ -131,29 +131,29 @@
         {
           "section": "dawn",
           "start_s": 0.0,
-          "measured_db": -42.05,
-          "expected_db": -40.21,
+          "measured_db": -42.48,
+          "expected_db": -41.51,
           "dyn": 0.32
         },
         {
           "section": "grove",
           "start_s": 17.1429,
-          "measured_db": -34.31,
-          "expected_db": -33.42,
+          "measured_db": -35.95,
+          "expected_db": -34.71,
           "dyn": 0.7
         },
         {
           "section": "high_sun",
           "start_s": 34.2857,
-          "measured_db": -28.69,
-          "expected_db": -30.76,
+          "measured_db": -31.02,
+          "expected_db": -32.06,
           "dyn": 0.95
         },
         {
           "section": "golden_hour",
           "start_s": 51.4286,
-          "measured_db": -33.81,
-          "expected_db": -34.75,
+          "measured_db": -34.77,
+          "expected_db": -36.05,
           "dyn": 0.6
         }
       ]
@@ -164,8 +164,8 @@
         {
           "section": "high_sun",
           "start_s": 34.2857,
-          "measured_db": -28.64,
-          "expected_db": -28.64,
+          "measured_db": -28.75,
+          "expected_db": -28.75,
           "dyn": 0.95
         }
       ]
@@ -176,29 +176,29 @@
         {
           "section": "dawn",
           "start_s": 0.0,
-          "measured_db": -24.54,
-          "expected_db": -29.81,
+          "measured_db": -28.41,
+          "expected_db": -29.84,
           "dyn": 0.32
         },
         {
           "section": "grove",
           "start_s": 17.1429,
-          "measured_db": -24.78,
-          "expected_db": -23.01,
+          "measured_db": -23.59,
+          "expected_db": -23.04,
           "dyn": 0.7
         },
         {
           "section": "high_sun",
           "start_s": 34.2857,
-          "measured_db": -22.77,
-          "expected_db": -20.36,
+          "measured_db": -21.96,
+          "expected_db": -20.39,
           "dyn": 0.95
         },
         {
           "section": "golden_hour",
           "start_s": 51.4286,
-          "measured_db": -21.68,
-          "expected_db": -24.35,
+          "measured_db": -23.78,
+          "expected_db": -24.38,
           "dyn": 0.6
         }
       ]
@@ -209,15 +209,15 @@
         {
           "section": "grove",
           "start_s": 17.1429,
-          "measured_db": -45.55,
-          "expected_db": -44.12,
+          "measured_db": -43.93,
+          "expected_db": -42.68,
           "dyn": 0.7
         },
         {
           "section": "high_sun",
           "start_s": 34.2857,
-          "measured_db": -39.83,
-          "expected_db": -41.46,
+          "measured_db": -38.58,
+          "expected_db": -40.03,
           "dyn": 0.95
         }
       ]
@@ -228,29 +228,29 @@
         {
           "section": "dawn",
           "start_s": 0.0,
-          "measured_db": -57.15,
-          "expected_db": -62.62,
+          "measured_db": -64.06,
+          "expected_db": -64.37,
           "dyn": 0.32
         },
         {
           "section": "grove",
           "start_s": 17.1429,
-          "measured_db": -56.52,
-          "expected_db": -55.83,
+          "measured_db": -58.22,
+          "expected_db": -57.57,
           "dyn": 0.7
         },
         {
           "section": "high_sun",
           "start_s": 34.2857,
-          "measured_db": -56.41,
-          "expected_db": -53.17,
+          "measured_db": -55.04,
+          "expected_db": -54.92,
           "dyn": 0.95
         },
         {
           "section": "golden_hour",
           "start_s": 51.4286,
-          "measured_db": -56.41,
-          "expected_db": -57.16,
+          "measured_db": -58.21,
+          "expected_db": -58.91,
           "dyn": 0.6
         }
       ]
@@ -261,15 +261,15 @@
         {
           "section": "high_sun",
           "start_s": 34.2857,
-          "measured_db": -33.77,
-          "expected_db": -35.87,
+          "measured_db": -31.97,
+          "expected_db": -34.79,
           "dyn": 0.95
         },
         {
           "section": "golden_hour",
           "start_s": 51.4286,
-          "measured_db": -41.5,
-          "expected_db": -39.86,
+          "measured_db": -41.16,
+          "expected_db": -38.78,
           "dyn": 0.6
         }
       ]
@@ -280,22 +280,22 @@
         {
           "section": "grove",
           "start_s": 17.1429,
-          "measured_db": -37.09,
-          "expected_db": -36.35,
+          "measured_db": -38.97,
+          "expected_db": -37.82,
           "dyn": 0.7
         },
         {
           "section": "high_sun",
           "start_s": 34.2857,
-          "measured_db": -35.54,
-          "expected_db": -33.7,
+          "measured_db": -33.6,
+          "expected_db": -35.17,
           "dyn": 0.95
         },
         {
           "section": "golden_hour",
           "start_s": 51.4286,
-          "measured_db": -36.35,
-          "expected_db": -37.69,
+          "measured_db": -37.82,
+          "expected_db": -39.16,
           "dyn": 0.6
         }
       ]
@@ -306,29 +306,29 @@
         {
           "section": "dawn",
           "start_s": 0.0,
-          "measured_db": -56.86,
-          "expected_db": -54.89,
+          "measured_db": -59.81,
+          "expected_db": -53.77,
           "dyn": 0.32
         },
         {
           "section": "grove",
           "start_s": 17.1429,
-          "measured_db": -53.68,
-          "expected_db": -48.09,
+          "measured_db": -52.49,
+          "expected_db": -46.97,
           "dyn": 0.7
         },
         {
           "section": "high_sun",
           "start_s": 34.2857,
-          "measured_db": -43.78,
-          "expected_db": -45.44,
+          "measured_db": -42.73,
+          "expected_db": -44.31,
           "dyn": 0.95
         },
         {
           "section": "golden_hour",
           "start_s": 51.4286,
-          "measured_db": -39.49,
-          "expected_db": -49.43,
+          "measured_db": -42.34,
+          "expected_db": -48.31,
           "dyn": 0.6
         }
       ]

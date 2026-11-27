@@ -4,9 +4,9 @@
     "mode": "full",
     "fails": 0,
     "warns": 0,
-    "rows": 102,
+    "rows": 103,
     "profile": "indo_afro_sunrise",
-    "total_ms": 138.44789299992044,
+    "total_ms": 758.0393660000198,
     "timings": {
       "bansuri": 0.0,
       "bass": 0.0,
@@ -14,7 +14,7 @@
       "djembe": 0.0,
       "guitar": 0.0,
       "horns": 0.0,
-      "kit": 0.0,
+      "kit": 516.682994000007,
       "marimba": 0.0,
       "shekere": 0.0,
       "sitar": 0.0,
@@ -28,18 +28,18 @@
         "stage": "stem",
         "stem": "bansuri",
         "level": "PASS",
-        "value": 3.2052796051914505e-07,
+        "value": 3.3235268517779294e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.000999679472039481,
+        "margin": -0.0009996676473148223,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"bansuri\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"bansuri\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.2110033983914369e-13,
-          9.014213896514184e-13
+          -5.323342315731744e-10,
+          -5.305542127225267e-10
         ],
-        "drift": 3.2052796051914505e-07
+        "drift": 3.3235268517779294e-07
       },
       {
         "row": "stem.clipping",
@@ -84,7 +84,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"bansuri\": longest hole 0 ms (limit 20-1000 ms), floor -85.5 dBFS; 0 hole(s)",
+        "detail": "stem \"bansuri\": longest hole 0 ms (limit 20-1000 ms), floor -85.6 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -100,15 +100,16 @@
         "calibrated": false,
         "detail": "stem \"bansuri\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          14.2,
-          27.0,
-          13.7,
-          32.6,
-          25.5,
-          27.9,
-          19.6,
-          29.8
-        ]
+          14.7,
+          26.8,
+          13.3,
+          28.3,
+          19.7,
+          32.1,
+          25.6,
+          18.2
+        ],
+        "exempted": []
       },
       {
         "row": "stem.edge",
@@ -121,9 +122,9 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"bansuri\": audible span 1.045-67.055 s against score notes 1.071-66.429 s: leading silence -26 ms, trailing silence -626 ms (limit 25 ms)",
+        "detail": "stem \"bansuri\": audible span 1.045-66.725 s against score notes 1.071-66.429 s: leading silence -26 ms, trailing silence -296 ms (limit 25 ms)",
         "head_ms": -26.4,
-        "tail_ms": -626.4,
+        "tail_ms": -296.4,
         "fail": false
       },
       {
@@ -143,29 +144,29 @@
           {
             "section": "dawn",
             "start_s": 0.0,
-            "measured_db": -39.21,
-            "expected_db": -35.65,
+            "measured_db": -40.19,
+            "expected_db": -35.62,
             "dyn": 0.32
           },
           {
             "section": "grove",
             "start_s": 17.1429,
-            "measured_db": -31.41,
-            "expected_db": -28.85,
+            "measured_db": -30.88,
+            "expected_db": -28.82,
             "dyn": 0.7
           },
           {
             "section": "high_sun",
             "start_s": 34.2857,
-            "measured_db": -20.7,
-            "expected_db": -26.2,
+            "measured_db": -18.99,
+            "expected_db": -26.16,
             "dyn": 0.95
           },
           {
             "section": "golden_hour",
             "start_s": 51.4286,
-            "measured_db": -27.58,
-            "expected_db": -30.19,
+            "measured_db": -28.04,
+            "expected_db": -30.16,
             "dyn": 0.6
           }
         ],
@@ -175,33 +176,33 @@
         "row": "stem.flatness",
         "stage": "stem",
         "stem": "bansuri",
-        "level": "PASS",
+        "level": "INFO",
         "value": 0.0,
         "unit": "flatness",
         "threshold": 0.1,
         "margin": -0.1,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"bansuri\": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms",
-        "windows": 0
+        "detail": "stem \"bansuri\": librosa missing: flatness row not measured",
+        "skipped": true
       },
       {
         "row": "stem.dc",
         "stage": "stem",
         "stem": "bass",
         "level": "PASS",
-        "value": 2.892090429748194e-07,
+        "value": 2.106380406796778e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009997107909570251,
+        "margin": -0.0009997893619593204,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"bass\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -4.3491484644765305e-13,
-          -1.2279210248613922e-13
+          -5.64289298025323e-13,
+          -3.6482756841660207e-13
         ],
-        "drift": 2.892090429748194e-07
+        "drift": 2.106380406796778e-07
       },
       {
         "row": "stem.clipping",
@@ -246,7 +247,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"bass\": longest hole 0 ms (limit 20-1000 ms), floor -79.2 dBFS; 0 hole(s)",
+        "detail": "stem \"bass\": longest hole 0 ms (limit 20-1000 ms), floor -81.7 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -262,9 +263,16 @@
         "calibrated": false,
         "detail": "stem \"bass\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          33.4,
-          29.6
-        ]
+          48.6,
+          36.9,
+          44.2,
+          39.3,
+          17.5,
+          16.7,
+          35.5,
+          30.3
+        ],
+        "exempted": []
       },
       {
         "row": "stem.edge",
@@ -277,34 +285,24 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"bass\": audible span 8.525-68.970 s against score notes 8.571-68.571 s: leading silence -46 ms, trailing silence -399 ms (limit 25 ms)",
-        "head_ms": -46.4,
-        "tail_ms": -398.6,
+        "detail": "stem \"bass\": audible span 8.520-68.955 s against score notes 8.571-68.571 s: leading silence -51 ms, trailing silence -384 ms (limit 25 ms)",
+        "head_ms": -51.4,
+        "tail_ms": -383.6,
         "fail": false
       },
       {
         "row": "stem.tick",
         "stage": "stem",
         "stem": "bass",
-        "level": "PASS",
-        "value": 0.2533831180146479,
+        "level": "INFO",
+        "value": 0.0,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": -0.09661688198535207,
-        "worst_times_s": [
-          8.5566
-        ],
+        "margin": -0.35,
+        "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"bass\": onset autocorrelation 0.25 at a 534 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 162 strong onset(s) of 857, 21 on the grid, IOI CV 0.356; peak rise 0.02 dB at those onsets over 162 onset(s) (min 3); tempogram peak ratio 0.95, PLP peak ratio 1.00",
-        "periodic": false,
-        "period_ms": 534.0589569160998,
-        "events": 162,
-        "cv": 0.35553888053633004,
-        "grid_matched": 21,
-        "tempogram_ratio": 0.9460854467762642,
-        "plp_ratio": 0.9999999999989098,
-        "rise_db": 0.016,
-        "rise_onsets": 162
+        "detail": "stem \"bass\": librosa missing: tick row not measured",
+        "skipped": true
       },
       {
         "row": "stem.dead",
@@ -317,35 +315,35 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"bass\": own median -32.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve",
+        "detail": "stem \"bass\": own median -34.9 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "dawn",
             "start_s": 0.0,
-            "measured_db": -38.32,
-            "expected_db": -38.75,
+            "measured_db": -42.72,
+            "expected_db": -41.02,
             "dyn": 0.32
           },
           {
             "section": "grove",
             "start_s": 17.1429,
-            "measured_db": -33.07,
-            "expected_db": -31.95,
+            "measured_db": -35.24,
+            "expected_db": -34.22,
             "dyn": 0.7
           },
           {
             "section": "high_sun",
             "start_s": 34.2857,
-            "measured_db": -27.44,
-            "expected_db": -29.3,
+            "measured_db": -28.06,
+            "expected_db": -31.57,
             "dyn": 0.95
           },
           {
             "section": "golden_hour",
             "start_s": 51.4286,
-            "measured_db": -32.12,
-            "expected_db": -33.29,
+            "measured_db": -34.5,
+            "expected_db": -35.56,
             "dyn": 0.6
           }
         ],
@@ -355,33 +353,33 @@
         "row": "stem.flatness",
         "stage": "stem",
         "stem": "bass",
-        "level": "PASS",
+        "level": "INFO",
         "value": 0.0,
         "unit": "flatness",
         "threshold": 0.1,
         "margin": -0.1,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"bass\": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms",
-        "windows": 0
+        "detail": "stem \"bass\": librosa missing: flatness row not measured",
+        "skipped": true
       },
       {
         "row": "stem.dc",
         "stage": "stem",
         "stem": "canopy",
         "level": "PASS",
-        "value": 2.9789609116564354e-07,
+        "value": 3.0040815292839284e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009997021039088343,
+        "margin": -0.0009996995918470717,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"canopy\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -3.56998571700211e-10,
-          -3.5569916584971195e-10
+          -6.072746532731558e-10,
+          -8.749699846735113e-10
         ],
-        "drift": 2.9789609116564354e-07
+        "drift": 3.0040815292839284e-07
       },
       {
         "row": "stem.clipping",
@@ -408,11 +406,11 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"canopy\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 1 as a steep attack; max cluster span 0.000 ms",
+        "detail": "stem \"canopy\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms",
         "mad_count": 0,
         "lpc_count": 0,
         "rejected": 0,
-        "attacks_ignored": 1,
+        "attacks_ignored": 0,
         "max_cluster_span_ms": 0.0
       },
       {
@@ -426,7 +424,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"canopy\": longest hole 0 ms (limit 20-1000 ms), floor -93.1 dBFS; 0 hole(s)",
+        "detail": "stem \"canopy\": longest hole 0 ms (limit 20-1000 ms), floor -93.2 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -442,10 +440,12 @@
         "calibrated": false,
         "detail": "stem \"canopy\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          27.4,
-          66.7,
-          46.1
-        ]
+          13.5,
+          27.9,
+          59.8,
+          43.6
+        ],
+        "exempted": []
       },
       {
         "row": "stem.edge",
@@ -467,25 +467,15 @@
         "row": "stem.tick",
         "stage": "stem",
         "stem": "canopy",
-        "level": "PASS",
-        "value": 0.8172780265579681,
+        "level": "INFO",
+        "value": 0.0,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": 0.46727802655796813,
-        "worst_times_s": [
-          0.0348
-        ],
+        "margin": -0.35,
+        "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"canopy\": onset autocorrelation 0.82 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 430 strong onset(s) of 439, 182 on the grid, IOI CV 0.150; peak rise 1.58 dB at those onsets over 430 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00",
-        "periodic": false,
-        "period_ms": 92.87981859410431,
-        "events": 430,
-        "cv": 0.1499049377178755,
-        "grid_matched": 182,
-        "tempogram_ratio": 0.9999830759069568,
-        "plp_ratio": 0.9999999999983707,
-        "rise_db": 1.584,
-        "rise_onsets": 430
+        "detail": "stem \"canopy\": librosa missing: tick row not measured",
+        "skipped": true
       },
       {
         "row": "stem.dead",
@@ -498,28 +488,28 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"canopy\": own median -46.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve",
+        "detail": "stem \"canopy\": own median -46.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "dawn",
             "start_s": 0.0,
-            "measured_db": -46.5,
-            "expected_db": -53.4,
+            "measured_db": -46.91,
+            "expected_db": -53.03,
             "dyn": 0.32
           },
           {
             "section": "grove",
             "start_s": 17.1429,
-            "measured_db": -48.29,
-            "expected_db": -46.61,
+            "measured_db": -46.19,
+            "expected_db": -46.23,
             "dyn": 0.7
           },
           {
             "section": "high_sun",
             "start_s": 34.2857,
-            "measured_db": -46.61,
-            "expected_db": -43.95,
+            "measured_db": -46.23,
+            "expected_db": -43.58,
             "dyn": 0.95
           }
         ],
@@ -530,18 +520,18 @@
         "stage": "stem",
         "stem": "djembe",
         "level": "PASS",
-        "value": 4.878383407107275e-06,
+        "value": 2.0995650846886862e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009951216165928927,
+        "margin": -0.0009979004349153114,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"djembe\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"djembe\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -8.723838329714282e-07,
-          -4.3803116810333253e-07
+          -1.7719651952383726e-08,
+          9.053188840101045e-09
         ],
-        "drift": 4.878383407107275e-06
+        "drift": 2.0995650846886862e-06
       },
       {
         "row": "stem.clipping",
@@ -568,12 +558,12 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"djembe\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 163 as a steep attack; max cluster span 1.156 ms",
+        "detail": "stem \"djembe\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 12 as a steep attack; max cluster span 0.068 ms",
         "mad_count": 0,
         "lpc_count": 0,
         "rejected": 0,
-        "attacks_ignored": 163,
-        "max_cluster_span_ms": 1.1564625850340136
+        "attacks_ignored": 12,
+        "max_cluster_span_ms": 0.06802721088435373
       },
       {
         "row": "stem.dropout",
@@ -642,35 +632,35 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"djembe\": own median -26.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve",
+        "detail": "stem \"djembe\": own median -34.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "dawn",
             "start_s": 0.0,
-            "measured_db": -27.61,
-            "expected_db": -32.8,
+            "measured_db": -34.94,
+            "expected_db": -40.3,
             "dyn": 0.32
           },
           {
             "section": "grove",
             "start_s": 17.1429,
-            "measured_db": -26.97,
-            "expected_db": -26.0,
+            "measured_db": -34.06,
+            "expected_db": -33.5,
             "dyn": 0.7
           },
           {
             "section": "high_sun",
             "start_s": 34.2857,
-            "measured_db": -25.75,
-            "expected_db": -23.35,
+            "measured_db": -31.45,
+            "expected_db": -30.85,
             "dyn": 0.95
           },
           {
             "section": "golden_hour",
             "start_s": 51.4286,
-            "measured_db": -26.33,
-            "expected_db": -27.34,
+            "measured_db": -34.22,
+            "expected_db": -34.84,
             "dyn": 0.6
           }
         ],
@@ -681,18 +671,18 @@
         "stage": "stem",
         "stem": "guitar",
         "level": "PASS",
-        "value": 1.646050253354258e-06,
+        "value": 1.9132957969531937e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009983539497466457,
+        "margin": -0.0009980867042030468,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"guitar\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.1193969640677799e-08,
-          -1.0866465134530647e-08
+          -1.3437389567299623e-08,
+          -1.3436546540816568e-08
         ],
-        "drift": 1.646050253354258e-06
+        "drift": 1.9132957969531937e-06
       },
       {
         "row": "stem.clipping",
@@ -719,10 +709,10 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"guitar\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 738 event(s) rejected as a dense burst, 30 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"guitar\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 634 event(s) rejected as a dense burst, 30 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 738,
+        "rejected": 634,
         "attacks_ignored": 30,
         "max_cluster_span_ms": 1.4965986394557824
       },
@@ -737,7 +727,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"guitar\": longest hole 0 ms (limit 20-1000 ms), floor -118.5 dBFS; 0 hole(s)",
+        "detail": "stem \"guitar\": longest hole 0 ms (limit 20-1000 ms), floor -128.9 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -753,9 +743,16 @@
         "calibrated": false,
         "detail": "stem \"guitar\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          23.2,
-          17.0
-        ]
+          22.5,
+          17.9,
+          12.8,
+          20.5,
+          20.4,
+          27.7,
+          22.0,
+          29.4
+        ],
+        "exempted": []
       },
       {
         "row": "stem.edge",
@@ -768,34 +765,24 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"guitar\": audible span 4.515-68.870 s against score notes 4.554-68.443 s: leading silence -39 ms, trailing silence -427 ms (limit 25 ms)",
-        "head_ms": -38.6,
-        "tail_ms": -427.1,
+        "detail": "stem \"guitar\": audible span 4.505-68.820 s against score notes 4.554-68.443 s: leading silence -49 ms, trailing silence -377 ms (limit 25 ms)",
+        "head_ms": -48.6,
+        "tail_ms": -377.1,
         "fail": false
       },
       {
         "row": "stem.tick",
         "stage": "stem",
         "stem": "guitar",
-        "level": "PASS",
-        "value": 0.6428504994588191,
+        "level": "INFO",
+        "value": 0.0,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": 0.29285049945881914,
-        "worst_times_s": [
-          4.5743
-        ],
+        "margin": -0.35,
+        "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"guitar\": onset autocorrelation 0.64 at a 534 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 120 strong onset(s) of 728, 18 on the grid, IOI CV 0.029; peak rise 54.76 dB at those onsets over 120 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00",
-        "periodic": false,
-        "period_ms": 534.0589569160998,
-        "events": 120,
-        "cv": 0.029230164452670016,
-        "grid_matched": 18,
-        "tempogram_ratio": 0.9982257875130667,
-        "plp_ratio": 0.9999999999989273,
-        "rise_db": 54.756,
-        "rise_onsets": 120
+        "detail": "stem \"guitar\": librosa missing: tick row not measured",
+        "skipped": true
       },
       {
         "row": "stem.dead",
@@ -808,35 +795,35 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"guitar\": own median -34.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve",
+        "detail": "stem \"guitar\": own median -35.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "dawn",
             "start_s": 0.0,
-            "measured_db": -42.05,
-            "expected_db": -40.21,
+            "measured_db": -42.48,
+            "expected_db": -41.51,
             "dyn": 0.32
           },
           {
             "section": "grove",
             "start_s": 17.1429,
-            "measured_db": -34.31,
-            "expected_db": -33.42,
+            "measured_db": -35.95,
+            "expected_db": -34.71,
             "dyn": 0.7
           },
           {
             "section": "high_sun",
             "start_s": 34.2857,
-            "measured_db": -28.69,
-            "expected_db": -30.76,
+            "measured_db": -31.02,
+            "expected_db": -32.06,
             "dyn": 0.95
           },
           {
             "section": "golden_hour",
             "start_s": 51.4286,
-            "measured_db": -33.81,
-            "expected_db": -34.75,
+            "measured_db": -34.77,
+            "expected_db": -36.05,
             "dyn": 0.6
           }
         ],
@@ -846,33 +833,33 @@
         "row": "stem.flatness",
         "stage": "stem",
         "stem": "guitar",
-        "level": "PASS",
+        "level": "INFO",
         "value": 0.0,
         "unit": "flatness",
         "threshold": 0.1,
         "margin": -0.1,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"guitar\": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms",
-        "windows": 0
+        "detail": "stem \"guitar\": librosa missing: flatness row not measured",
+        "skipped": true
       },
       {
         "row": "stem.dc",
         "stage": "stem",
         "stem": "horns",
         "level": "PASS",
-        "value": 2.058990457466492e-07,
+        "value": 1.909511817485498e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009997941009542535,
+        "margin": -0.0009998090488182515,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"horns\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"horns\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.1323340223304166e-09,
-          -3.848892449260299e-09
+          -2.3578740853792095e-13,
+          3.0114591435499357e-13
         ],
-        "drift": 2.058990457466492e-07
+        "drift": 1.909511817485498e-07
       },
       {
         "row": "stem.clipping",
@@ -899,11 +886,11 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"horns\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 180 event(s) rejected as a dense burst, 9 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"horns\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 318 event(s) rejected as a dense burst, 11 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 180,
-        "attacks_ignored": 9,
+        "rejected": 318,
+        "attacks_ignored": 11,
         "max_cluster_span_ms": 1.4965986394557824
       },
       {
@@ -933,15 +920,16 @@
         "calibrated": false,
         "detail": "stem \"horns\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          39.0,
-          35.7,
-          37.9,
-          34.1,
-          41.3,
-          37.8,
-          43.2,
-          42.4
-        ]
+          40.8,
+          36.9,
+          12.1,
+          36.5,
+          28.3,
+          52.9,
+          50.5,
+          49.8
+        ],
+        "exempted": []
       },
       {
         "row": "stem.edge",
@@ -954,9 +942,9 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"horns\": audible span 34.275-49.080 s against score notes 34.286-48.686 s: leading silence -11 ms, trailing silence -394 ms (limit 25 ms)",
+        "detail": "stem \"horns\": audible span 34.275-49.240 s against score notes 34.286-48.766 s: leading silence -11 ms, trailing silence -474 ms (limit 25 ms)",
         "head_ms": -10.7,
-        "tail_ms": -394.3,
+        "tail_ms": -473.9,
         "fail": false
       },
       {
@@ -970,14 +958,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"horns\": own median -28.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"horns\": own median -28.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "high_sun",
             "start_s": 34.2857,
-            "measured_db": -28.64,
-            "expected_db": -28.64,
+            "measured_db": -28.75,
+            "expected_db": -28.75,
             "dyn": 0.95
           }
         ],
@@ -987,33 +975,33 @@
         "row": "stem.flatness",
         "stage": "stem",
         "stem": "horns",
-        "level": "PASS",
+        "level": "INFO",
         "value": 0.0,
         "unit": "flatness",
         "threshold": 0.1,
         "margin": -0.1,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"horns\": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms",
-        "windows": 0
+        "detail": "stem \"horns\": librosa missing: flatness row not measured",
+        "skipped": true
       },
       {
         "row": "stem.dc",
         "stage": "stem",
         "stem": "kit",
         "level": "PASS",
-        "value": 2.6997280107895596e-06,
+        "value": 4.332204655917741e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009973002719892105,
+        "margin": -0.0009956677953440823,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"kit\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -3.924256300325764e-08,
-          -3.4327662032493044e-08
+          -6.756130627120966e-08,
+          -6.389184290270673e-08
         ],
-        "drift": 2.6997280107895596e-06
+        "drift": 4.332204655917741e-06
       },
       {
         "row": "stem.clipping",
@@ -1040,12 +1028,12 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1410 event(s) rejected as a dense burst, 100 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1965 event(s) rejected as a dense burst, 143 as a steep attack; max cluster span 1.474 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 1410,
-        "attacks_ignored": 100,
-        "max_cluster_span_ms": 1.4965986394557824
+        "rejected": 1965,
+        "attacks_ignored": 143,
+        "max_cluster_span_ms": 1.4739229024943312
       },
       {
         "row": "stem.dropout",
@@ -1120,29 +1108,29 @@
           {
             "section": "dawn",
             "start_s": 0.0,
-            "measured_db": -24.54,
-            "expected_db": -29.81,
+            "measured_db": -28.41,
+            "expected_db": -29.84,
             "dyn": 0.32
           },
           {
             "section": "grove",
             "start_s": 17.1429,
-            "measured_db": -24.78,
-            "expected_db": -23.01,
+            "measured_db": -23.59,
+            "expected_db": -23.04,
             "dyn": 0.7
           },
           {
             "section": "high_sun",
             "start_s": 34.2857,
-            "measured_db": -22.77,
-            "expected_db": -20.36,
+            "measured_db": -21.96,
+            "expected_db": -20.39,
             "dyn": 0.95
           },
           {
             "section": "golden_hour",
             "start_s": 51.4286,
-            "measured_db": -21.68,
-            "expected_db": -24.35,
+            "measured_db": -23.78,
+            "expected_db": -24.38,
             "dyn": 0.6
           }
         ],
@@ -1153,18 +1141,18 @@
         "stage": "stem",
         "stem": "marimba",
         "level": "PASS",
-        "value": 5.806815906741262e-08,
+        "value": 1.1624860386311388e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009999419318409326,
+        "margin": -0.000999883751396137,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"marimba\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"marimba\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -2.7820608673294653e-14,
-          1.5048990265504258e-13
+          -3.680814555150611e-12,
+          -3.711311804821511e-12
         ],
-        "drift": 5.806815906741262e-08
+        "drift": 1.1624860386311388e-07
       },
       {
         "row": "stem.clipping",
@@ -1209,7 +1197,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"marimba\": longest hole 0 ms (limit 20-1000 ms), floor -101.8 dBFS; 0 hole(s)",
+        "detail": "stem \"marimba\": longest hole 0 ms (limit 20-1000 ms), floor -97.9 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -1224,10 +1212,8 @@
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"marimba\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
-        "drops": [
-          31.0,
-          27.0
-        ]
+        "drops": [],
+        "exempted": []
       },
       {
         "row": "stem.edge",
@@ -1240,10 +1226,24 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"marimba\": audible span 17.120-52.200 s against score notes 17.143-51.321 s: leading silence -23 ms, trailing silence -879 ms (limit 25 ms)",
+        "detail": "stem \"marimba\": audible span 17.120-53.040 s against score notes 17.143-51.054 s: leading silence -23 ms, trailing silence -1986 ms (limit 25 ms)",
         "head_ms": -22.9,
-        "tail_ms": -878.6,
+        "tail_ms": -1986.4,
         "fail": false
+      },
+      {
+        "row": "stem.tick",
+        "stage": "stem",
+        "stem": "marimba",
+        "level": "INFO",
+        "value": 0.0,
+        "unit": "rho",
+        "threshold": 0.35,
+        "margin": -0.35,
+        "worst_times_s": [],
+        "calibrated": false,
+        "detail": "stem \"marimba\": librosa missing: tick row not measured",
+        "skipped": true
       },
       {
         "row": "stem.dead",
@@ -1256,21 +1256,21 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"marimba\": own median -42.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve",
+        "detail": "stem \"marimba\": own median -41.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "grove",
             "start_s": 17.1429,
-            "measured_db": -45.55,
-            "expected_db": -44.12,
+            "measured_db": -43.93,
+            "expected_db": -42.68,
             "dyn": 0.7
           },
           {
             "section": "high_sun",
             "start_s": 34.2857,
-            "measured_db": -39.83,
-            "expected_db": -41.46,
+            "measured_db": -38.58,
+            "expected_db": -40.03,
             "dyn": 0.95
           }
         ],
@@ -1280,33 +1280,33 @@
         "row": "stem.flatness",
         "stage": "stem",
         "stem": "marimba",
-        "level": "PASS",
+        "level": "INFO",
         "value": 0.0,
         "unit": "flatness",
         "threshold": 0.1,
         "margin": -0.1,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"marimba\": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms",
-        "windows": 0
+        "detail": "stem \"marimba\": librosa missing: flatness row not measured",
+        "skipped": true
       },
       {
         "row": "stem.dc",
         "stage": "stem",
         "stem": "shekere",
         "level": "PASS",
-        "value": 6.573688540622314e-07,
+        "value": 1.5466885124025177e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009993426311459379,
+        "margin": -0.0009984533114875975,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"shekere\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.2357601804671755e-07,
-          -2.5028419081059035e-07
+          -1.205070455764566e-07,
+          -2.440688473725439e-07
         ],
-        "drift": 6.573688540622314e-07
+        "drift": 1.5466885124025177e-06
       },
       {
         "row": "stem.clipping",
@@ -1333,12 +1333,12 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"shekere\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 596 event(s) rejected as a dense burst, 30 as a steep attack; max cluster span 0.091 ms",
+        "detail": "stem \"shekere\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 399 event(s) rejected as a dense burst, 16 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 596,
-        "attacks_ignored": 30,
-        "max_cluster_span_ms": 0.09070294784580499
+        "rejected": 399,
+        "attacks_ignored": 16,
+        "max_cluster_span_ms": 1.4965986394557824
       },
       {
         "row": "stem.dropout",
@@ -1407,35 +1407,35 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"shekere\": own median -56.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve",
+        "detail": "stem \"shekere\": own median -58.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "dawn",
             "start_s": 0.0,
-            "measured_db": -57.15,
-            "expected_db": -62.62,
+            "measured_db": -64.06,
+            "expected_db": -64.37,
             "dyn": 0.32
           },
           {
             "section": "grove",
             "start_s": 17.1429,
-            "measured_db": -56.52,
-            "expected_db": -55.83,
+            "measured_db": -58.22,
+            "expected_db": -57.57,
             "dyn": 0.7
           },
           {
             "section": "high_sun",
             "start_s": 34.2857,
-            "measured_db": -56.41,
-            "expected_db": -53.17,
+            "measured_db": -55.04,
+            "expected_db": -54.92,
             "dyn": 0.95
           },
           {
             "section": "golden_hour",
             "start_s": 51.4286,
-            "measured_db": -56.41,
-            "expected_db": -57.16,
+            "measured_db": -58.21,
+            "expected_db": -58.91,
             "dyn": 0.6
           }
         ],
@@ -1446,18 +1446,18 @@
         "stage": "stem",
         "stem": "sitar",
         "level": "PASS",
-        "value": 3.075884402883509e-07,
+        "value": 3.8705640673931604e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009996924115597116,
+        "margin": -0.0009996129435932608,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sitar\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"sitar\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -6.292324943540497e-14,
-          2.955824671333417e-13
+          -2.332776063789981e-09,
+          -2.337258729489457e-09
         ],
-        "drift": 3.075884402883509e-07
+        "drift": 3.8705640673931604e-07
       },
       {
         "row": "stem.clipping",
@@ -1484,12 +1484,12 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sitar\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 42 event(s) rejected as a dense burst, 2 as a steep attack; max cluster span 0.930 ms",
+        "detail": "stem \"sitar\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 74 event(s) rejected as a dense burst, 6 as a steep attack; max cluster span 1.270 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 42,
-        "attacks_ignored": 2,
-        "max_cluster_span_ms": 0.9297052154195011
+        "rejected": 74,
+        "attacks_ignored": 6,
+        "max_cluster_span_ms": 1.2698412698412698
       },
       {
         "row": "stem.dropout",
@@ -1517,7 +1517,8 @@
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"sitar\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
-        "drops": []
+        "drops": [],
+        "exempted": []
       },
       {
         "row": "stem.edge",
@@ -1530,9 +1531,9 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sitar\": audible span 34.280-69.370 s against score notes 34.286-68.555 s: leading silence -6 ms, trailing silence -815 ms (limit 25 ms)",
+        "detail": "stem \"sitar\": audible span 34.280-69.395 s against score notes 34.286-68.839 s: leading silence -6 ms, trailing silence -556 ms (limit 25 ms)",
         "head_ms": -5.7,
-        "tail_ms": -814.6,
+        "tail_ms": -555.7,
         "fail": false
       },
       {
@@ -1546,21 +1547,21 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sitar\": own median -37.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve",
+        "detail": "stem \"sitar\": own median -36.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "high_sun",
             "start_s": 34.2857,
-            "measured_db": -33.77,
-            "expected_db": -35.87,
+            "measured_db": -31.97,
+            "expected_db": -34.79,
             "dyn": 0.95
           },
           {
             "section": "golden_hour",
             "start_s": 51.4286,
-            "measured_db": -41.5,
-            "expected_db": -39.86,
+            "measured_db": -41.16,
+            "expected_db": -38.78,
             "dyn": 0.6
           }
         ],
@@ -1570,33 +1571,33 @@
         "row": "stem.flatness",
         "stage": "stem",
         "stem": "sitar",
-        "level": "PASS",
+        "level": "INFO",
         "value": 0.0,
         "unit": "flatness",
         "threshold": 0.1,
         "margin": -0.1,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sitar\": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms",
-        "windows": 0
+        "detail": "stem \"sitar\": librosa missing: flatness row not measured",
+        "skipped": true
       },
       {
         "row": "stem.dc",
         "stage": "stem",
         "stem": "tabla",
         "level": "PASS",
-        "value": 1.4580398657396715e-06,
+        "value": 1.401299085429505e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009985419601342604,
+        "margin": -0.0009985987009145706,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"tabla\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          4.657396973919789e-08,
-          6.727302196415622e-08
+          3.018913311864511e-08,
+          4.611479197977153e-08
         ],
-        "drift": 1.4580398657396715e-06
+        "drift": 1.401299085429505e-06
       },
       {
         "row": "stem.clipping",
@@ -1623,12 +1624,12 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"tabla\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 47 event(s) rejected as a dense burst, 58 as a steep attack; max cluster span 0.612 ms",
+        "detail": "stem \"tabla\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 22 event(s) rejected as a dense burst, 46 as a steep attack; max cluster span 0.499 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 47,
-        "attacks_ignored": 58,
-        "max_cluster_span_ms": 0.6122448979591837
+        "rejected": 22,
+        "attacks_ignored": 46,
+        "max_cluster_span_ms": 0.4988662131519275
       },
       {
         "row": "stem.dropout",
@@ -1697,28 +1698,28 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"tabla\": own median -36.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve",
+        "detail": "stem \"tabla\": own median -37.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "grove",
             "start_s": 17.1429,
-            "measured_db": -37.09,
-            "expected_db": -36.35,
+            "measured_db": -38.97,
+            "expected_db": -37.82,
             "dyn": 0.7
           },
           {
             "section": "high_sun",
             "start_s": 34.2857,
-            "measured_db": -35.54,
-            "expected_db": -33.7,
+            "measured_db": -33.6,
+            "expected_db": -35.17,
             "dyn": 0.95
           },
           {
             "section": "golden_hour",
             "start_s": 51.4286,
-            "measured_db": -36.35,
-            "expected_db": -37.69,
+            "measured_db": -37.82,
+            "expected_db": -39.16,
             "dyn": 0.6
           }
         ],
@@ -1729,18 +1730,18 @@
         "stage": "stem",
         "stem": "tanpura",
         "level": "PASS",
-        "value": 1.1958792442508712e-07,
+        "value": 1.9002475314770636e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.000999880412075575,
+        "margin": -0.0009998099752468524,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"tanpura\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.0349167573081387e-08,
-          -1.0698693524822388e-08
+          -7.3434915157417974e-09,
+          -7.17132772790296e-09
         ],
-        "drift": 1.1958792442508712e-07
+        "drift": 1.9002475314770636e-07
       },
       {
         "row": "stem.clipping",
@@ -1785,7 +1786,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"tanpura\": longest hole 0 ms (limit 20-1000 ms), floor -112.7 dBFS; 0 hole(s)",
+        "detail": "stem \"tanpura\": longest hole 0 ms (limit 20-1000 ms), floor -113.3 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -1801,11 +1802,14 @@
         "calibrated": false,
         "detail": "stem \"tanpura\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          19.5,
-          17.3,
-          43.3,
-          39.8
-        ]
+          15.2,
+          13.9,
+          22.2,
+          13.5,
+          31.5,
+          26.3
+        ],
+        "exempted": []
       },
       {
         "row": "stem.edge",
@@ -1818,34 +1822,24 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"tanpura\": audible span 0.000-69.435 s against score notes 0.000-68.571 s: leading silence 0 ms, trailing silence -864 ms (limit 25 ms)",
+        "detail": "stem \"tanpura\": audible span 0.000-68.595 s against score notes 0.000-68.571 s: leading silence 0 ms, trailing silence -24 ms (limit 25 ms)",
         "head_ms": 0.0,
-        "tail_ms": -863.6,
+        "tail_ms": -23.6,
         "fail": false
       },
       {
         "row": "stem.tick",
         "stage": "stem",
         "stem": "tanpura",
-        "level": "PASS",
-        "value": 0.1713420753164356,
+        "level": "INFO",
+        "value": 0.0,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": -0.17865792468356437,
-        "worst_times_s": [
-          0.0348
-        ],
+        "margin": -0.35,
+        "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"tanpura\": onset autocorrelation 0.17 at a 279 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 21 strong onset(s) of 932, 5 on the grid, IOI CV 1.102; peak rise 18.15 dB at those onsets over 21 onset(s) (min 3); tempogram peak ratio 0.95, PLP peak ratio 1.00",
-        "periodic": false,
-        "period_ms": 278.6394557823129,
-        "events": 21,
-        "cv": 1.1022910588165373,
-        "grid_matched": 5,
-        "tempogram_ratio": 0.9455152154820434,
-        "plp_ratio": 0.9967106503403476,
-        "rise_db": 18.151,
-        "rise_onsets": 21
+        "detail": "stem \"tanpura\": librosa missing: tick row not measured",
+        "skipped": true
       },
       {
         "row": "stem.dead",
@@ -1858,35 +1852,35 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"tanpura\": own median -48.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve",
+        "detail": "stem \"tanpura\": own median -47.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "dawn",
             "start_s": 0.0,
-            "measured_db": -56.86,
-            "expected_db": -54.89,
+            "measured_db": -59.81,
+            "expected_db": -53.77,
             "dyn": 0.32
           },
           {
             "section": "grove",
             "start_s": 17.1429,
-            "measured_db": -53.68,
-            "expected_db": -48.09,
+            "measured_db": -52.49,
+            "expected_db": -46.97,
             "dyn": 0.7
           },
           {
             "section": "high_sun",
             "start_s": 34.2857,
-            "measured_db": -43.78,
-            "expected_db": -45.44,
+            "measured_db": -42.73,
+            "expected_db": -44.31,
             "dyn": 0.95
           },
           {
             "section": "golden_hour",
             "start_s": 51.4286,
-            "measured_db": -39.49,
-            "expected_db": -49.43,
+            "measured_db": -42.34,
+            "expected_db": -48.31,
             "dyn": 0.6
           }
         ],
@@ -1896,15 +1890,15 @@
         "row": "stem.flatness",
         "stage": "stem",
         "stem": "tanpura",
-        "level": "PASS",
+        "level": "INFO",
         "value": 0.0,
         "unit": "flatness",
         "threshold": 0.1,
         "margin": -0.1,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"tanpura\": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms",
-        "windows": 0
+        "detail": "stem \"tanpura\": librosa missing: flatness row not measured",
+        "skipped": true
       }
     ],
     "sections": [
@@ -1933,15 +1927,15 @@
         "dyn": 0.6
       }
     ],
-    "duration_s": 72.39578231292516,
-    "cached_stems": 12,
-    "measured_stems": 0
+    "duration_s": 72.28460317460318,
+    "cached_stems": 11,
+    "measured_stems": 1
   },
   "rows": [
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"bansuri\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"bansuri\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -1956,7 +1950,7 @@
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"bansuri\": longest hole 0 ms (limit 20-1000 ms), floor -85.5 dBFS; 0 hole(s)"
+      "detail": "stem \"bansuri\": longest hole 0 ms (limit 20-1000 ms), floor -85.6 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -1966,7 +1960,7 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"bansuri\": audible span 1.045-67.055 s against score notes 1.071-66.429 s: leading silence -26 ms, trailing silence -626 ms (limit 25 ms)"
+      "detail": "stem \"bansuri\": audible span 1.045-66.725 s against score notes 1.071-66.429 s: leading silence -26 ms, trailing silence -296 ms (limit 25 ms)"
     },
     {
       "level": "PASS",
@@ -1974,9 +1968,9 @@
       "detail": "stem \"bansuri\": own median -29.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve"
     },
     {
-      "level": "PASS",
+      "level": "INFO",
       "row": "stem.flatness",
-      "detail": "stem \"bansuri\": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms"
+      "detail": "stem \"bansuri\": librosa missing: flatness row not measured"
     },
     {
       "level": "PASS",
@@ -1996,7 +1990,7 @@
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"bass\": longest hole 0 ms (limit 20-1000 ms), floor -79.2 dBFS; 0 hole(s)"
+      "detail": "stem \"bass\": longest hole 0 ms (limit 20-1000 ms), floor -81.7 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -2006,22 +2000,22 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"bass\": audible span 8.525-68.970 s against score notes 8.571-68.571 s: leading silence -46 ms, trailing silence -399 ms (limit 25 ms)"
+      "detail": "stem \"bass\": audible span 8.520-68.955 s against score notes 8.571-68.571 s: leading silence -51 ms, trailing silence -384 ms (limit 25 ms)"
     },
     {
-      "level": "PASS",
+      "level": "INFO",
       "row": "stem.tick",
-      "detail": "stem \"bass\": onset autocorrelation 0.25 at a 534 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 162 strong onset(s) of 857, 21 on the grid, IOI CV 0.356; peak rise 0.02 dB at those onsets over 162 onset(s) (min 3); tempogram peak ratio 0.95, PLP peak ratio 1.00"
+      "detail": "stem \"bass\": librosa missing: tick row not measured"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"bass\": own median -32.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve"
+      "detail": "stem \"bass\": own median -34.9 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve"
     },
     {
-      "level": "PASS",
+      "level": "INFO",
       "row": "stem.flatness",
-      "detail": "stem \"bass\": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms"
+      "detail": "stem \"bass\": librosa missing: flatness row not measured"
     },
     {
       "level": "PASS",
@@ -2036,12 +2030,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"canopy\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 1 as a steep attack; max cluster span 0.000 ms"
+      "detail": "stem \"canopy\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms"
     },
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"canopy\": longest hole 0 ms (limit 20-1000 ms), floor -93.1 dBFS; 0 hole(s)"
+      "detail": "stem \"canopy\": longest hole 0 ms (limit 20-1000 ms), floor -93.2 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -2054,19 +2048,19 @@
       "detail": "stem \"canopy\": audible span 0.000-37.630 s against score notes 0.000-37.500 s: leading silence 0 ms, trailing silence -130 ms (limit 25 ms)"
     },
     {
-      "level": "PASS",
+      "level": "INFO",
       "row": "stem.tick",
-      "detail": "stem \"canopy\": onset autocorrelation 0.82 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 430 strong onset(s) of 439, 182 on the grid, IOI CV 0.150; peak rise 1.58 dB at those onsets over 430 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00"
+      "detail": "stem \"canopy\": librosa missing: tick row not measured"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"canopy\": own median -46.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve"
+      "detail": "stem \"canopy\": own median -46.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve"
     },
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"djembe\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"djembe\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -2076,7 +2070,7 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"djembe\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 163 as a steep attack; max cluster span 1.156 ms"
+      "detail": "stem \"djembe\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 12 as a steep attack; max cluster span 0.068 ms"
     },
     {
       "level": "INFO",
@@ -2101,7 +2095,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"djembe\": own median -26.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve"
+      "detail": "stem \"djembe\": own median -34.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve"
     },
     {
       "level": "PASS",
@@ -2116,12 +2110,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"guitar\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 738 event(s) rejected as a dense burst, 30 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"guitar\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 634 event(s) rejected as a dense burst, 30 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"guitar\": longest hole 0 ms (limit 20-1000 ms), floor -118.5 dBFS; 0 hole(s)"
+      "detail": "stem \"guitar\": longest hole 0 ms (limit 20-1000 ms), floor -128.9 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -2131,27 +2125,27 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"guitar\": audible span 4.515-68.870 s against score notes 4.554-68.443 s: leading silence -39 ms, trailing silence -427 ms (limit 25 ms)"
+      "detail": "stem \"guitar\": audible span 4.505-68.820 s against score notes 4.554-68.443 s: leading silence -49 ms, trailing silence -377 ms (limit 25 ms)"
     },
     {
-      "level": "PASS",
+      "level": "INFO",
       "row": "stem.tick",
-      "detail": "stem \"guitar\": onset autocorrelation 0.64 at a 534 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 120 strong onset(s) of 728, 18 on the grid, IOI CV 0.029; peak rise 54.76 dB at those onsets over 120 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00"
+      "detail": "stem \"guitar\": librosa missing: tick row not measured"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"guitar\": own median -34.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve"
+      "detail": "stem \"guitar\": own median -35.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve"
     },
     {
-      "level": "PASS",
+      "level": "INFO",
       "row": "stem.flatness",
-      "detail": "stem \"guitar\": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms"
+      "detail": "stem \"guitar\": librosa missing: flatness row not measured"
     },
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"horns\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"horns\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -2161,7 +2155,7 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"horns\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 180 event(s) rejected as a dense burst, 9 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"horns\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 318 event(s) rejected as a dense burst, 11 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
@@ -2176,17 +2170,17 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"horns\": audible span 34.275-49.080 s against score notes 34.286-48.686 s: leading silence -11 ms, trailing silence -394 ms (limit 25 ms)"
+      "detail": "stem \"horns\": audible span 34.275-49.240 s against score notes 34.286-48.766 s: leading silence -11 ms, trailing silence -474 ms (limit 25 ms)"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"horns\": own median -28.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"horns\": own median -28.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
-      "level": "PASS",
+      "level": "INFO",
       "row": "stem.flatness",
-      "detail": "stem \"horns\": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms"
+      "detail": "stem \"horns\": librosa missing: flatness row not measured"
     },
     {
       "level": "PASS",
@@ -2201,7 +2195,7 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1410 event(s) rejected as a dense burst, 100 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"kit\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1965 event(s) rejected as a dense burst, 143 as a steep attack; max cluster span 1.474 ms"
     },
     {
       "level": "INFO",
@@ -2231,7 +2225,7 @@
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"marimba\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"marimba\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -2246,7 +2240,7 @@
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"marimba\": longest hole 0 ms (limit 20-1000 ms), floor -101.8 dBFS; 0 hole(s)"
+      "detail": "stem \"marimba\": longest hole 0 ms (limit 20-1000 ms), floor -97.9 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -2256,17 +2250,22 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"marimba\": audible span 17.120-52.200 s against score notes 17.143-51.321 s: leading silence -23 ms, trailing silence -879 ms (limit 25 ms)"
+      "detail": "stem \"marimba\": audible span 17.120-53.040 s against score notes 17.143-51.054 s: leading silence -23 ms, trailing silence -1986 ms (limit 25 ms)"
+    },
+    {
+      "level": "INFO",
+      "row": "stem.tick",
+      "detail": "stem \"marimba\": librosa missing: tick row not measured"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"marimba\": own median -42.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve"
+      "detail": "stem \"marimba\": own median -41.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve"
     },
     {
-      "level": "PASS",
+      "level": "INFO",
       "row": "stem.flatness",
-      "detail": "stem \"marimba\": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms"
+      "detail": "stem \"marimba\": librosa missing: flatness row not measured"
     },
     {
       "level": "PASS",
@@ -2281,7 +2280,7 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"shekere\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 596 event(s) rejected as a dense burst, 30 as a steep attack; max cluster span 0.091 ms"
+      "detail": "stem \"shekere\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 399 event(s) rejected as a dense burst, 16 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "INFO",
@@ -2306,12 +2305,12 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"shekere\": own median -56.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve"
+      "detail": "stem \"shekere\": own median -58.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve"
     },
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"sitar\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"sitar\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -2321,7 +2320,7 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"sitar\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 42 event(s) rejected as a dense burst, 2 as a steep attack; max cluster span 0.930 ms"
+      "detail": "stem \"sitar\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 74 event(s) rejected as a dense burst, 6 as a steep attack; max cluster span 1.270 ms"
     },
     {
       "level": "PASS",
@@ -2336,17 +2335,17 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"sitar\": audible span 34.280-69.370 s against score notes 34.286-68.555 s: leading silence -6 ms, trailing silence -815 ms (limit 25 ms)"
+      "detail": "stem \"sitar\": audible span 34.280-69.395 s against score notes 34.286-68.839 s: leading silence -6 ms, trailing silence -556 ms (limit 25 ms)"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"sitar\": own median -37.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve"
+      "detail": "stem \"sitar\": own median -36.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve"
     },
     {
-      "level": "PASS",
+      "level": "INFO",
       "row": "stem.flatness",
-      "detail": "stem \"sitar\": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms"
+      "detail": "stem \"sitar\": librosa missing: flatness row not measured"
     },
     {
       "level": "PASS",
@@ -2361,7 +2360,7 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"tabla\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 47 event(s) rejected as a dense burst, 58 as a steep attack; max cluster span 0.612 ms"
+      "detail": "stem \"tabla\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 22 event(s) rejected as a dense burst, 46 as a steep attack; max cluster span 0.499 ms"
     },
     {
       "level": "INFO",
@@ -2386,7 +2385,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"tabla\": own median -36.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve"
+      "detail": "stem \"tabla\": own median -37.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve"
     },
     {
       "level": "PASS",
@@ -2406,7 +2405,7 @@
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"tanpura\": longest hole 0 ms (limit 20-1000 ms), floor -112.7 dBFS; 0 hole(s)"
+      "detail": "stem \"tanpura\": longest hole 0 ms (limit 20-1000 ms), floor -113.3 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -2416,22 +2415,22 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"tanpura\": audible span 0.000-69.435 s against score notes 0.000-68.571 s: leading silence 0 ms, trailing silence -864 ms (limit 25 ms)"
+      "detail": "stem \"tanpura\": audible span 0.000-68.595 s against score notes 0.000-68.571 s: leading silence 0 ms, trailing silence -24 ms (limit 25 ms)"
     },
     {
-      "level": "PASS",
+      "level": "INFO",
       "row": "stem.tick",
-      "detail": "stem \"tanpura\": onset autocorrelation 0.17 at a 279 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 21 strong onset(s) of 932, 5 on the grid, IOI CV 1.102; peak rise 18.15 dB at those onsets over 21 onset(s) (min 3); tempogram peak ratio 0.95, PLP peak ratio 1.00"
+      "detail": "stem \"tanpura\": librosa missing: tick row not measured"
     },
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"tanpura\": own median -48.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve"
+      "detail": "stem \"tanpura\": own median -47.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve"
     },
     {
-      "level": "PASS",
+      "level": "INFO",
       "row": "stem.flatness",
-      "detail": "stem \"tanpura\": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms"
+      "detail": "stem \"tanpura\": librosa missing: flatness row not measured"
     },
     {
       "level": "INFO",
