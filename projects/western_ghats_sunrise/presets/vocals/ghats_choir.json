@@ -31,7 +31,7 @@
           1,
           75
         ],
-        "level_db": -4.0,
+        "level_db": -6.0,
         "pan_width": 0.8,
         "distance_m": 4.0,
         "overrides": {
@@ -57,7 +57,7 @@
           1,
           127
         ],
-        "level_db": 0.0,
+        "level_db": -2.0,
         "pan_width": 0.6,
         "distance_m": 3.0,
         "overrides": {
@@ -79,7 +79,7 @@
           40,
           127
         ],
-        "level_db": -1.5,
+        "level_db": -3.5,
         "pan_width": 0.5,
         "distance_m": 3.2,
         "overrides": {
@@ -101,7 +101,7 @@
           40,
           127
         ],
-        "level_db": -0.5,
+        "level_db": -2.5,
         "pan_width": 0.6,
         "distance_m": 3.4,
         "overrides": {
@@ -125,7 +125,7 @@
           95,
           127
         ],
-        "level_db": 1.0,
+        "level_db": -1.0,
         "pan_width": 0.9,
         "distance_m": 2.6,
         "overrides": {
@@ -156,5 +156,6 @@
     "space": "western_ghats_sunrise_room",
     "binaural": true,
     "kind": "spot"
-  }
+  },
+  "peak_trim": 0.85
 }

@@ -98,3 +98,13 @@ class Rendering(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class Limit(unittest.TestCase):
+    def test_the_sum_of_sections_never_exceeds_full_scale_and_peak_trim_caps_it(self):
+        cfg = load()
+        loud = [dict(t=0.0, dur=1.5, p=p, v=125) for p in (57, 64, 69, 76)]
+        out = vocals.render_choir(loud, sr=SR, config=cfg)
+        self.assertLessEqual(float(np.abs(out).max()), 1.0)
+        capped = vocals.render_choir(loud, sr=SR, config=dict(cfg, peak_trim=0.5))
+        self.assertLess(float(np.abs(capped).max()), float(np.abs(out).max()) + 1e-6)

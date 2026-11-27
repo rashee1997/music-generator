@@ -151,6 +151,9 @@ def vocal_choir():
              spatial=dict(azimuth=-125, elevation=24, distance=4.5, space=f'{SLUG}_room', binaural=True, kind='spot'),
              vowel='u', expression='hopeful')
     d['ensemble']['voices'] = 12
+    d['peak_trim'] = 0.85                  # the sum of five sections clipped (275 samples at full scale, measured): cap it before the soft limit
+    for L in d['ensemble']['layers']:
+        L['level_db'] = round(L.get('level_db', 0.0) - 2.0, 2)
     return d
 
 
@@ -412,12 +415,17 @@ def chords():
     return out
 
 
-def bar_notes(first, last, pitch, vel, tail_bar=BARS):
+def bar_notes(first, last, pitch, vel, tail_bar=BARS, voice=0):
     """A held chord tone as one note per bar, each overlapping the next by half a beat: a sampled sustain that is held for six seconds ends
-    before the written note does (measured: stem.dropout at the chord changes), and a re-attack that overlaps never opens a hole."""
+    before the written note does (measured: stem.dropout at the chord changes), and a re-attack that overlaps never opens a hole.
+    The restrikes inside a chord are offset by `voice` x 0.4 beat, so the voices of one section do not all attack on the bar line (a
+    periodic onset every bar is what stem.tick reads as a machine; measured 0.62 against the 0.35 limit)."""
+    cuts = [beat(first)] + [beat(bar) + 0.4 * voice for bar in range(first + 1, last + 1)] + [beat(last) + 4.0]
     out = []
-    for bar in range(first, last + 1):
-        out.append(n(bar, 0.0, 4.0 if bar == tail_bar else 4.5, pitch, vel))
+    for i in range(len(cuts) - 1):
+        last_piece = i == len(cuts) - 2
+        end = cuts[i + 1] + (0.0 if last_piece and last >= tail_bar else 0.5)
+        out.append(dict(t=round(cuts[i], 4), d=round(end - cuts[i], 4), p=int(pitch), v=round(vel, 3)))
     return out
 
 
@@ -427,8 +435,8 @@ def strings_bed():
         s += bar_notes(3, 5, p, v)                                                               # open fifth under the end of the mist
     for bars, idxs, sa in chords():
         v = 0.52 if bars[0] < 12 else (0.84 if bars[0] < 19 else 0.48)
-        for i in idxs:
-            s += bar_notes(bars[0], bars[-1], pit(i, sa), v - 0.04 * (i % 2))
+        for j, i in enumerate(idxs):
+            s += bar_notes(bars[0], bars[-1], pit(i, sa), v - 0.04 * (i % 2), voice=j)
     return s
 
 

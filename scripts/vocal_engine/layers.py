@@ -118,6 +118,13 @@ def render(events, sr, cfg, seed, hum, default_vowel, render_one):
         breaths += [np.pad(x, (0, n - len(x))) for x in info.get('breath_stems', [])]
         for v in info['voices']:
             voices.append(dict(v, group=s['name']))
+    ceil = float((cfg or {}).get('peak_trim', 0.0) or 0.0)         # the same opt-in ceiling as a single ensemble, applied to the sum of the sections
+    if ceil > 0:
+        pk = float(np.max(np.abs(total))) if total.size else 0.0
+        if pk > ceil:
+            total = total * (ceil / pk)
+    from . import ensemble as _ens                                   # the sections sum above one: a transparent soft limit, as the single-ensemble mix has
+    total = _ens.soft_limit(total)
     lead = max(live, key=lambda p: p[2]['report']['phrases'] * 1000 + p[2]['report']['voices'])[2]
     rep = dict(lead['report'])
     rep['voices'] = sum(p[2]['report']['voices'] for p in live)
