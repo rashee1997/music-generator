@@ -3,10 +3,10 @@ ambience,mist,-41.4,-51.43,0.12
 ambience,first_light,-39.05,-41.42,0.38
 ambience,sunrise,-42.13,-34.42,0.85
 ambience,morning,-43.0,-42.13,0.35
-bansuri,mist,-33.62,-40.78,0.12
-bansuri,first_light,-30.03,-30.77,0.38
-bansuri,sunrise,-22.68,-23.78,0.85
-bansuri,morning,-32.22,-31.49,0.35
+bansuri,mist,-33.58,-40.53,0.12
+bansuri,first_light,-30.05,-30.51,0.38
+bansuri,sunrise,-23.38,-23.52,0.85
+bansuri,morning,-31.68,-31.23,0.35
 celli,mist,-30.39,-37.24,0.12
 celli,first_light,-28.27,-27.23,0.38
 celli,sunrise,-21.56,-20.24,0.85

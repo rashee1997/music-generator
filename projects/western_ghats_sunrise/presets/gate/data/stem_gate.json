@@ -4,22 +4,22 @@
     "mode": "full",
     "fails": 0,
     "warns": 0,
-    "rows": 104,
+    "rows": 105,
     "profile": "western_ghats_sunrise",
-    "total_ms": 109.90822999974625,
+    "total_ms": 3543.846462000147,
     "timings": {
-      "ambience": 0.0,
-      "bansuri": 0.0,
-      "celli": 0.0,
-      "choir": 0.0,
-      "pipes": 0.0,
-      "santoor": 0.0,
-      "sitar": 0.0,
-      "tabla": 0.0,
-      "tanpura": 0.0,
-      "violas": 0.0,
-      "violins_counter": 0.0,
-      "violins_long": 0.0
+      "ambience": 1019.255642000644,
+      "bansuri": 572.4038870002914,
+      "celli": 581.7628179993335,
+      "choir": 1179.8976909994963,
+      "pipes": 777.0196139999825,
+      "santoor": 383.01074799983326,
+      "sitar": 872.0928200000344,
+      "tabla": 372.9838870003732,
+      "tanpura": 1007.2802919994501,
+      "violas": 979.1522989999066,
+      "violins_counter": 551.6086090001409,
+      "violins_long": 656.8305689997942
     },
     "workers": 3,
     "metrics": [
@@ -1979,8 +1979,8 @@
       }
     ],
     "duration_s": 64.3112925170068,
-    "cached_stems": 12,
-    "measured_stems": 0
+    "cached_stems": 0,
+    "measured_stems": 12
   },
   "rows": [
     {
@@ -2497,6 +2497,11 @@
       "level": "INFO",
       "row": "focus",
       "detail": "this type is defined by a figure, so a piece that declares it must carry one; the same list means a lead or a vocal is checked exactly like a melody"
+    },
+    {
+      "level": "INFO",
+      "row": "gate_relax",
+      "detail": "channel.bars: jump_db=12.0 (Measured on the 8-channel render (immersive_7_1, bars 14-20): the front centre channel reads -13.4, -16.2, -27.0, -15.7, -21.8 dB by bar and the row flagged bar 17 (jump -11.0 dB against neighbours at -16.0 dB). Bar 17 is where the bansuri, the figure that lives in the centre, rests for six beats and the Highland pipes answer alone from the far ridge at 172 degrees: a written call-and-response (direction sheet motifs, returns at 41 s). Holding the flute softly under it (velocity 0.4) did not close the dip (-11.0 dB, measured) and only added roughness. The limit is 12 dB, inside the row's range of 3-30; the dropout, balance and polarity tests keep their defaults.)"
     },
     {
       "level": "INFO",

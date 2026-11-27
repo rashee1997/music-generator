@@ -1,4 +1,4 @@
-stem gate: 0 FAIL, 0 WARN, 104 rows, profile western_ghats_sunrise, 110 ms
+stem gate: 0 FAIL, 0 WARN, 105 rows, profile western_ghats_sunrise, 3544 ms
 [PASS] stem.dc: stem "ambience": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "ambience": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "ambience": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -102,4 +102,5 @@ stem gate: 0 FAIL, 0 WARN, 104 rows, profile western_ghats_sunrise, 110 ms
 [INFO] piece_type: western_ghats_sunrise (declared)
 [INFO] focus: judged around a line the ear can follow
 [INFO] focus: this type is defined by a figure, so a piece that declares it must carry one; the same list means a lead or a vocal is checked exactly like a melody
+[INFO] gate_relax: channel.bars: jump_db=12.0 (Measured on the 8-channel render (immersive_7_1, bars 14-20): the front centre channel reads -13.4, -16.2, -27.0, -15.7, -21.8 dB by bar and the row flagged bar 17 (jump -11.0 dB against neighbours at -16.0 dB). Bar 17 is where the bansuri, the figure that lives in the centre, rests for six beats and the Highland pipes answer alone from the far ridge at 172 degrees: a written call-and-response (direction sheet motifs, returns at 41 s). Holding the flute softly under it (velocity 0.4) did not close the dip (-11.0 dB, measured) and only added roughness. The limit is 12 dB, inside the row's range of 3-30; the dropout, balance and polarity tests keep their defaults.)
 [INFO] gate_relax: tempo.audio: octave_ok=1.0 (Measured on the first full render: tempo.audio read 176.2 BPM against the written 88 (2.002x; the beat tracker said 172.3). The piece carries steady eighth-note pulses (tabla, shaker, violas in 3+3+2 and the veena figure from bar 6) that the onset autocorrelation locks to; the grid itself is the written 88 BPM tempo map with no rubato. A metrical octave of the written pulse is accepted; any other tempo still fails. Measured in the last render: master 88.2 BPM.)

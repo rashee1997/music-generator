@@ -16,28 +16,28 @@
       "start_s": 0.0,
       "end_s": 13.636,
       "energy": 0.12,
-      "level_db": -31.189637470639358
+      "level_db": -31.14518940657384
     },
     {
       "name": "first_light",
       "start_s": 13.636,
       "end_s": 30.0,
       "energy": 0.38,
-      "level_db": -25.636596548454865
+      "level_db": -25.595012685105395
     },
     {
       "name": "sunrise",
       "start_s": 30.0,
       "end_s": 49.091,
       "energy": 0.85,
-      "level_db": -17.027830413265626
+      "level_db": -16.982647714656423
     },
     {
       "name": "morning",
       "start_s": 49.091,
       "end_s": 60.0,
       "energy": 0.35,
-      "level_db": -28.214416146424576
+      "level_db": -28.24126887720523
     }
   ]
 }
