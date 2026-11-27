@@ -1,37 +1,37 @@
-Realism report  193.98 s, 44100 Hz, 35 dry stem(s)
-[WARN] timbre loudness value 1.79  (hf_shift_db=-0.32, centroid_quiet_hz=411.9, centroid_loud_hz=506.1)
+Realism report  193.98 s, 44100 Hz, 30 dry stem(s)
+[WARN] timbre loudness value 2.15  (hf_shift_db=-0.63, centroid_quiet_hz=386.4, centroid_loud_hz=494.9)
          loud and quiet differ mainly in volume
          target: loud passages at least 0.8 dB brighter (centroid) and 0.5 dB more 2-8 kHz energy than quiet ones
 [PASS] ensemble       value 36  (tracks=13)
          36 player(s) across 13 section part(s)
          target: a section part declares 2+ players; a solo declares none
-[PASS] transient      value 0.9827  (onsets=243)
+[PASS] transient      value 0.9821  (onsets=274)
          attacks vary
          target: repeated attacks are not sample-identical: 60 ms spectral similarity <= 0.995
-[PASS] depth          value -0.09  (wet_share=0.5054)
+[PASS] depth          value -0.1  (wet_share=0.5058)
          detail sits in front of the room
          target: direct-to-reverberant ratio -6..+18 dB: detail in front of a hall, not inside it
-[WARN] low mid        value 1.94  (low_mid_over_sub_db=14.65, low_mid_growth_db=3.32, sub_growth_db=3.54)
+[WARN] low mid        value 2.26  (low_mid_over_sub_db=14.56, low_mid_growth_db=3.09, sub_growth_db=3.43)
          low-mids thicken or grow into the peak
          target: 180-450 Hz stays below the 500-2000 Hz band and does not grow faster than the sub at a peak
 [PASS] distance       value 33  (far=13, missing_model=0, predicted_4k_loss_db=4.42)
          every far source has an air model (the score's medium, ISO 9613-1)
          target: a source beyond 4 m uses the ISO 9613-1 air model or says why not
-[PASS] openness       value 5.39
+[PASS] openness       value 7.05
          air survives the peak
          target: the 8-16 kHz share does not fall by more than 1 dB at the loudest 10 % of the piece
 [WARN] phrasing       value 14.74  (peak_pct=101.45)
          unstable at the bar
          target: bar-scale tempo deviation 1-8 % over the body, excluding the final ritardando
-[WARN] vibrato        value 1.0  (parts={'basses': 0.18, 'choir': 1.0, 'violins_long': 1.0})
+[WARN] vibrato        value 0.59  (parts={'basses': 0.18, 'choir': 1.0, 'violins_long': 0.59})
          1 sustained part(s) hold a flat pitch (no 3-9 Hz movement of 10 cents or more): basses
          target: a sustained part moves 3-9 Hz by 10 cents or more in 30 % of its stable held windows (starting value)
-[PASS] repetition     value 0.19  (parts={'bass_clarinet': 0.0, 'bass_drum': 0.01, 'basses': 0.0, 'basses_pizz': 0.01, 'bumps': 0.0, 'celli': 0.0, 'choir': 0.0, 'city_far': 0.0, 'crash': 0.03, 'cymbals': 0.01, 'ferrari': 0.0, 'helicopter': 0.0, 'horns': 0.0, 'lamborghini': 0.0, 'landing': 0.0, 'low_swell': 0.0, 'mustang': 0.0, 'piano': 0.0, 'piano_low': 0.0, 'piano_theme': 0.0, 'porsche': 0.0, 'snare': 0.19, 'solo_violin': 0.03, 'sub_drop': 0.0, 'sub_pulse': 0.0, 'taiko': 0.0, 'timpani': 0.0, 'trombones': 0.0, 'tuba': 0.01, 'violas': 0.0, 'violins_long': 0.0, 'violins_staccato': 0.0, 'violins_tremolo': 0.0})
+[PASS] repetition     value 0.19  (parts={'bass_clarinet': 0.0, 'bass_drum': 0.01, 'basses': 0.0, 'basses_pizz': 0.0, 'bumps': 0.0, 'celli': 0.0, 'choir': 0.0, 'city_far': 0.0, 'crash': 0.03, 'cymbals': 0.01, 'ferrari': 0.0, 'helicopter': 0.0, 'horns': 0.0, 'lamborghini': 0.0, 'landing': 0.0, 'low_swell': 0.0, 'mustang': 0.0, 'piano_theme': 0.0, 'porsche': 0.0, 'snare': 0.19, 'solo_violin': 0.0, 'taiko': 0.0, 'timpani': 0.0, 'trombones': 0.0, 'tuba': 0.0, 'violas': 0.0, 'violins_long': 0.0, 'violins_staccato': 0.0})
          repeated attacks differ
          target: under 40 % of a part's same-pitch attacks are the same sample twice (spectral similarity 0.995, starting value)
-[WARN] velocity response value 0.0  (parts={'basses_pizz': -0.09, 'celli': -0.03, 'cymbals': 0.88, 'horns': 0.1, 'piano_theme': -0.56, 'solo_violin': 0.19, 'trombones': -0.09, 'tuba': 0.03, 'violas': -0.06, 'violins_staccato': 0.09})
-         9 part(s) get louder but not brighter with velocity (a one-sample layer): basses_pizz, celli, horns, piano_theme, solo_violin, trombones
+[WARN] velocity response value 0.24  (parts={'basses_pizz': 0.68, 'celli': 0.21, 'cymbals': 0.87, 'horns': 0.12, 'piano_theme': -0.42, 'solo_violin': 0.55, 'trombones': 0.09, 'tuba': 0.06, 'violas': 0.73, 'violins_staccato': 0.28}, centroid_spread_octaves={'basses_pizz': 0.043, 'celli': 0.12, 'cymbals': 0.308, 'horns': 0.194, 'piano_theme': 0.243, 'solo_violin': 0.197, 'trombones': 0.212, 'tuba': 0.265, 'violas': 0.315, 'violins_staccato': 0.274})
+         6 part(s) get louder but not brighter with velocity (a one-sample layer): celli, horns, piano_theme, trombones, tuba, violins_staccato
          target: brightness follows written velocity, correlation 0.30 or more once pitch is removed (starting value; the literature reads 0.62 for loudness)
-[PASS] coherence      value 0.52  (mid=0.45)
+[PASS] coherence      value 0.55  (mid=0.5)
          the top of the mix is decorrelated between the channels
          target: inter-channel coherence 2-8 kHz at most 0.85 (starting value)

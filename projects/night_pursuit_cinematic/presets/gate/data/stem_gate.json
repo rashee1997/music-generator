@@ -6,38 +6,38 @@
     "warns": 0,
     "rows": 251,
     "profile": "night_pursuit_cinematic",
-    "total_ms": 30963.581130999955,
+    "total_ms": 3911.3687500002925,
     "timings": {
-      "bass_clarinet": 808.2091590003984,
-      "bass_drum": 2144.523758000105,
-      "basses": 3411.842241999693,
-      "basses_pizz": 2743.975185000636,
-      "bumps": 1230.8868280006209,
-      "celli": 2477.5697659997604,
-      "choir": 6387.3751239998455,
-      "city_far": 2489.5273460006138,
-      "crash": 1141.6090889997577,
-      "cymbals": 1388.829947000886,
-      "ferrari": 961.1963259994809,
-      "helicopter": 1006.4905420003925,
-      "horns": 1905.6544790000771,
-      "lamborghini": 1087.7506180004275,
-      "landing": 1235.2018889996543,
-      "low_swell": 2897.860445999868,
-      "mustang": 902.2421180006859,
-      "piano_theme": 3853.666926999722,
-      "porsche": 868.8127030000032,
-      "siren_first": 1182.1128660003524,
-      "siren_second": 926.5765460004332,
-      "snare": 1406.8489349992888,
-      "solo_violin": 2937.735694999901,
-      "taiko": 2049.0678309997747,
-      "timpani": 1332.1481200000562,
-      "trombones": 3940.01438199939,
-      "tuba": 2933.866618999673,
-      "violas": 2618.4955210001135,
-      "violins_long": 4880.626025000311,
-      "violins_staccato": 3897.9608580002605
+      "bass_clarinet": 0.0,
+      "bass_drum": 0.0,
+      "basses": 0.0,
+      "basses_pizz": 0.0,
+      "bumps": 0.0,
+      "celli": 0.0,
+      "choir": 0.0,
+      "city_far": 0.0,
+      "crash": 0.0,
+      "cymbals": 0.0,
+      "ferrari": 1549.465457000224,
+      "helicopter": 0.0,
+      "horns": 0.0,
+      "lamborghini": 1363.0046079997555,
+      "landing": 0.0,
+      "low_swell": 0.0,
+      "mustang": 1349.5861920000607,
+      "piano_theme": 0.0,
+      "porsche": 0.0,
+      "siren_first": 0.0,
+      "siren_second": 0.0,
+      "snare": 0.0,
+      "solo_violin": 0.0,
+      "taiko": 0.0,
+      "timpani": 0.0,
+      "trombones": 0.0,
+      "tuba": 0.0,
+      "violas": 0.0,
+      "violins_long": 0.0,
+      "violins_staccato": 0.0
     },
     "workers": 3,
     "metrics": [
@@ -1812,7 +1812,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -56.4 dBFS; 0 hole(s)",
+        "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -56.8 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -1828,7 +1828,7 @@
         "calibrated": false,
         "detail": "stem \"ferrari\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          29.7,
+          29.8,
           29.2
         ],
         "exempted": []
@@ -1872,14 +1872,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"ferrari\": own median -15.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"ferrari\": own median -15.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -15.45,
-            "expected_db": -15.45,
+            "measured_db": -15.84,
+            "expected_db": -15.84,
             "dyn": 0.9
           }
         ],
@@ -2672,11 +2672,11 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"mustang\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 2 as a steep attack; max cluster span 0.000 ms",
+        "detail": "stem \"mustang\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms",
         "mad_count": 0,
         "lpc_count": 0,
         "rejected": 0,
-        "attacks_ignored": 2,
+        "attacks_ignored": 0,
         "max_cluster_span_ms": 0.0
       },
       {
@@ -2690,7 +2690,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.7 dBFS; 0 hole(s)",
+        "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -150.9 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -2751,14 +2751,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"mustang\": own median -22.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"mustang\": own median -23.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -22.67,
-            "expected_db": -22.67,
+            "measured_db": -23.78,
+            "expected_db": -23.78,
             "dyn": 0.9
           }
         ],
@@ -4948,8 +4948,8 @@
       }
     ],
     "duration_s": 196.4940589569161,
-    "cached_stems": 0,
-    "measured_stems": 30
+    "cached_stems": 27,
+    "measured_stems": 3
   },
   "rows": [
     {
@@ -5385,7 +5385,7 @@
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -56.4 dBFS; 0 hole(s)"
+      "detail": "stem \"ferrari\": longest hole 0 ms (limit 20-1000 ms), floor -56.8 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5405,7 +5405,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"ferrari\": own median -15.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"ferrari\": own median -15.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -5620,12 +5620,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"mustang\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 2 as a steep attack; max cluster span 0.000 ms"
+      "detail": "stem \"mustang\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms"
     },
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.7 dBFS; 0 hole(s)"
+      "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -150.9 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5645,7 +5645,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"mustang\": own median -22.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"mustang\": own median -23.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "PASS",

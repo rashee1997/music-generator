@@ -387,8 +387,8 @@
         {
           "section": "the_race",
           "start_s": 0.0,
-          "measured_db": -15.45,
-          "expected_db": -15.45,
+          "measured_db": -15.84,
+          "expected_db": -15.84,
           "dyn": 0.9
         }
       ]
@@ -522,8 +522,8 @@
         {
           "section": "the_race",
           "start_s": 0.0,
-          "measured_db": -22.67,
-          "expected_db": -22.67,
+          "measured_db": -23.78,
+          "expected_db": -23.78,
           "dyn": 0.9
         }
       ]
