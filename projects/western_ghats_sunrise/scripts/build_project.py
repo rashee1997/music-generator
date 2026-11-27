@@ -61,7 +61,7 @@ def write(path, doc):
 
 # ------------------------------------------------------------------ instrument presets
 STAGE = dict(bansuri=(0, 6, 1.5), sitar=(-28, 0, 1.9), violins_counter=(28, 12, 2.4), violas=(-56, 0, 2.6), celli=(56, 0, 2.8),
-             violins_long=(122, 22, 4.0), tanpura=(-88, -2, 2.6), santoor=(86, 30, 2.8), tabla=(0, -22, 2.2))
+             violins_long=(122, 22, 4.0), tanpura=(-88, -2, 2.6), santoor=(86, 30, 2.8), tabla=(0, -22, 2.2), pipes=(172, 5, 7.5))
 
 
 def vel_points(ref, soft=(0.25, 0.50), loud=(4.0, 8.0)):
@@ -83,6 +83,11 @@ PK = lambda f, g, q=1.0: dict(type='peak', f=float(f), gain=float(g), q=float(q)
 LP = lambda f: dict(type='lp', f=float(f))
 
 INSTRUMENTS = [
+    inst('pipes', 'bagpipes', 'counter', 'blown_reed',
+         'A Scottish Highland piper on the far ridge: a steady drone on A, the Pa of the tanpura, and a chanter that plays the same five notes as the bansuri with a snap and a neighbour gracenote; no swell, no vibrato (a pipe has no dynamics), heard across the valley.',
+         -7.0, 0.34, [HP(220), PK(2800, -1.0, 1.0), LP(7000)],
+         hum=dict(preset='tight', timing_ms=4.0, lead_ms=6.0),
+         extra=dict(bloom=None, noise=None, vibrato=dict(depth_cents=0), expression='flat')),
     inst('bansuri', 'flute', 'melody', 'blown_reed',
          'The lead: a bansuri (bamboo flute) breathing through the Mohanam phrase, pure at the start of each long note and warming as it holds, with a slide into the notes the gamaka asks for.',
          -2.0, 0.22, [HP(220), PK(2600, 1.4, 1.1), LP(11000)],
@@ -123,6 +128,13 @@ INSTRUMENTS = [
          'Dew on the leaves: sparse high santoor notes from the five-note scale, soft and bright, scattered over the first light and the morning.',
          -12.0, 0.34, [HP(400), PK(4200, 1.0, 1.0)]),
 ]
+
+for _i in INSTRUMENTS:
+    if _i['name'] == 'ghats_bansuri':       # the one mover: it enters left in the mist, crosses the centre as the sun clears the ridge, settles right for the last breath
+        _i['spatial']['trajectory'] = dict(spatial_role='mover', doppler_strength=0.0, keyframes=[
+            dict(t_s=0.0, azimuth=-30.0, distance=1.7, elevation=6.0), dict(t_s=13.6, azimuth=-14.0, distance=1.6, elevation=8.0),
+            dict(t_s=30.0, azimuth=0.0, distance=1.5, elevation=12.0), dict(t_s=49.1, azimuth=14.0, distance=1.6, elevation=8.0),
+            dict(t_s=60.0, azimuth=22.0, distance=1.8, elevation=6.0)])
 
 TABLA = dict(name='ghats_tabla', description='Tabla and daf', instrument='standard', role='drum', family='struck_membrane',
              character='Tabla strokes (ge, na, tin) with a shaker underneath in the 3+3+2 pattern, and one low daf stroke where the sun clears the ridge: light hands, never a kit.',
@@ -168,34 +180,79 @@ def environment():
     wind['flow']['u_m_s'] = 2.6
     wind['flow']['intensity'] = 0.5
     e['generators'] = [drip, stream, wind]
-    thrush = copy.deepcopy(e['fauna'][0])
     frogs = copy.deepcopy(e['fauna'][1])
-    thrush.update(name='malabar_thrush', bouts_per_min=4, individuals=2, first_s=9.0, power_w=1.5e-05)
-    thrush['niche']['active'] = {'control': 'light'}
-    thrush['sources'] = ['https://en.wikipedia.org/wiki/Malabar_whistling_thrush (dawn whistle, longer phrases in the morning)',
-                         'https://www.birds.cornell.edu/home/birds-sing-more-at-dawn (Western Ghats dawn singing)',
-                         'ESTIMATE: the phrase band and lengths; no frequency range was found']
-    bulbul = copy.deepcopy(thrush)
-    bulbul.update(name='flame_throated_bulbul', bouts_per_min=7, individuals=3, first_s=15.0)
-    bulbul['niche'] = dict(band_hz=[3000, 5200], active={'control': 'light'})
-    bulbul['position'] = dict(azimuth=-48.0, elevation=26.0, distance=11.0)
-    bulbul['sources'] = ['https://sanctuarynaturefoundation.org/public/article/shhh-can-you-hear-me%3F (endemic dawn species of the Valparai rainforest)', 'ESTIMATE: band, rate and position']
-    drongo = copy.deepcopy(thrush)
-    drongo.update(name='racket_tailed_drongo', bouts_per_min=5, individuals=2, first_s=22.0)
-    drongo['niche'] = dict(band_hz=[2200, 3800], active={'control': 'light'})
-    drongo['position'] = dict(azimuth=62.0, elevation=34.0, distance=17.0)
-    drongo['sources'] = ['https://www.birds.cornell.edu/home/birds-sing-more-at-dawn (greater racket-tailed drongo is one of the species singing more at dawn)', 'ESTIMATE: band, rate and position']
     frogs.update(first_s=0.5)
     frogs['niche']['active'] = {'control': 'night_fade'}
     frogs['sources'] = ['https://bioone.org/journals/herpetologica/volume-69/issue-1/HERPETOLOGICA-D-11-00042/Vocal-Behavior-of-the-Ponmudi-Bush-Frog-Raorchestes-graminirupes/10.1655/HERPETOLOGICA-D-11-00042.full (dominant frequency steady within a frog)',
                         'https://en.wikipedia.org/wiki/Raorchestes_sanjappai (2.4 kHz dominant frequency)', 'ESTIMATE: pulse structure; a stridulation stand-in']
-    e['fauna'] = [frogs, thrush, bulbul, drongo]
+
+    def bird(name, call, power, bouts, first_s, band, pos, tube_cm, individuals=2, salience='foreground', sources=()):
+        return dict(name=name, call=call, salience=salience, power_w=power, bouts_per_min=bouts, individuals=individuals, first_s=first_s,
+                    resonator=dict(kind='tube', length_cm=tube_cm), niche=dict(band_hz=list(band), active={'control': 'light'}),
+                    position=dict(azimuth=pos[0], elevation=pos[1], distance=pos[2]), sources=list(sources) + ['ESTIMATE: element contours, lengths and rates (qualitative descriptions only); replace from a measured spectrogram'])
+    birds = [
+        bird('malabar_whistling_thrush', 'ghats_whistling_thrush', 1.5e-05, 3.0, 4.0, (1300, 3000), (25.0, 20.0, 14.0), 4.5,
+             sources=['https://en.wikipedia.org/wiki/Malabar_whistling_thrush (a human-like whistle; longer, melodious phrases in the morning, short sharp whistles later)']),
+        bird('malabar_grey_hornbill', 'ghats_hornbill', 4.0e-05, 2.0, 16.0, (700, 2600), (-100.0, 30.0, 40.0), 12.0, individuals=2,
+             sources=['https://iucnhornbills.org/malabar-grey-hornbill/ (an assortment of loud, harsh chuckles and squawks with raucous cackling like mock laughter)',
+                      'https://app.birdweather.com/species/malabar-gray-hornbill (loud cackling and laughing call; endemic to the Western Ghats)']),
+        bird('malabar_barbet', 'ghats_barbet', 1.0e-05, 1.5, 21.0, (800, 1400), (110.0, 38.0, 30.0), 6.0, individuals=1,
+             sources=['https://macaulaylibrary.org/asset/646733603 (Kerala recording: a sharp single-note call like a coppersmith barbet, repeated)',
+                      'https://en.wikipedia.org/wiki/Malabar_barbet (similar to the coppersmith barbet, a more rapid call)']),
+        bird('racket_tailed_drongo', 'ghats_drongo', 1.2e-05, 4.0, 11.0, (1800, 4000), (62.0, 34.0, 17.0), 3.5,
+             sources=['https://en.wikipedia.org/wiki/Greater_racket-tailed_drongo (a wide range of loud calls including near-perfect imitations of other birds)',
+                      'https://pmc.ncbi.nlm.nih.gov/articles/PMC3945749/ (mimicked notes sit in its repertoire)']),
+        bird('flame_throated_bulbul', 'ghats_bulbul', 1.0e-05, 6.0, 14.0, (2800, 4200), (-48.0, 26.0, 11.0), 3.0, individuals=3,
+             sources=['https://sanctuarynaturefoundation.org/public/article/shhh-can-you-hear-me%3F (an endemic dawn voice of the Valparai rainforest)'])]
+    e['fauna'] = [frogs] + birds
     e['ecology'] = {'density_budget': {'events_per_s_max': 1.2}, 'niches': {'auto': True, 'min_separation': 'D<=0.4'}, 'rules': [],
                     'score': {'occupancy': 'from_score', 'protect_roles': ['melody', 'lead', 'vocal'], 'margin_db': 3, 'pocket_threshold': 0.7}}
-    e['spatial_coupling'] = {'field': {'kind': 'diffuse', 'emitters': 12, 'order': 5, 'correlation_target': 0.2}, 'room': {'space': f'{SLUG}_room'}, 'decode_hint': ['stereo']}
+    e['spatial_coupling'] = {'field': {'kind': 'diffuse', 'emitters': 12, 'order': 5, 'correlation_target': 0.2}, 'room': {'space': f'{SLUG}_room'}, 'decode_hint': ['stereo', 'immersive_7_1']}
     e['reference'] = {'full_scale_pa': 0.1}                  # ESTIMATE: calibrates the physical levels to a stem that sits near -40 dBFS rms (the shipped 2.0 renders at -65)
     e['sources'] = ['malabar_thrush', 'tree_frogs']      # the sound slugs of research/research_*.md (Real-world references); the other layers carry ESTIMATE in their own blocks
     return e
+
+
+
+# ------------------------------------------------------------------ native bird calls (the `calls` presets of this project)
+def calls():
+    """Species calls built from qualitative descriptions (every number is an ESTIMATE until a spectrogram is measured): a call is a
+    sequence of different elements, not a chirp: slides, held whistles with vibrato, pulsed trills, a cackle with noise and a
+    register break, a metronomic repeated note, a metallic note beside a rasp."""
+    est = ['ESTIMATE: pitch contours, element lengths and pulse rates are written from the qualitative descriptions cited in the fauna block, not measured; replace from xeno-canto spectrograms (analysed only, not kept)']
+    def el(f0, ms, **kw):
+        d = dict(f0_hz=f0, ms=ms)
+        d.update(kw)
+        return d
+    return {
+        'ghats_whistling_thrush': dict(
+            name='ghats_whistling_thrush', character='A mellow, meandering human-like whistle: a rising slide, a long held note with a slow vibrato, a falling slide and a quick flutter, answered by the same line.',
+            elements=dict(up=el([[0, 1500], [0.45, 2350], [1, 2050]], [500, 700], harmonics=3, rolloff=2.4, vibrato_hz=5.5, vibrato_cents=35, attack=0.15, release=0.3),
+                          hold=el([[0, 2000], [0.5, 2060], [1, 1950]], [700, 1000], harmonics=2, rolloff=2.8, vibrato_hz=6.0, vibrato_cents=55, attack=0.2, release=0.35),
+                          down=el([[0, 2900], [0.6, 1900], [1, 1350]], [380, 520], harmonics=3, rolloff=2.4, attack=0.1, release=0.3),
+                          flutter=el([[0, 2300], [1, 2500]], [260, 380], harmonics=3, rolloff=2.2, pulse_hz=16, pulse_duty=0.6)),
+            sequence=['up', 'hold', 'down', ['flutter', 1, 2], 'up', 'hold', 'down'], gap_ms=[90, 220], sources=est),
+        'ghats_hornbill': dict(
+            name='ghats_hornbill', character='A loud cackle like mock laughter: a run of harsh chuckles, a squawk with a register break, and more chuckles.',
+            elements=dict(chuckle=el([[0, 950], [1, 720]], [90, 140], harmonics=14, rolloff=1.0, noise=0.28, subharmonic=0.25, attack=0.04, release=0.3),
+                          squawk=el([[0, 1250], [0.4, 1800], [1, 1100]], [380, 520], harmonics=14, rolloff=1.1, noise=0.35, subharmonic=0.3, jump=[0.55, 1.12], attack=0.05, release=0.3)),
+            sequence=[['chuckle', 5, 9], 'squawk', ['chuckle', 3, 6]], gap_ms=[60, 120], sources=est),
+        'ghats_barbet': dict(
+            name='ghats_barbet', character='A sharp, metronomic single note repeated for a long time, a little faster than a coppersmith barbet.',
+            elements=dict(tuk=el([[0, 1050], [1, 980]], [55, 80], harmonics=5, rolloff=1.8, attack=0.02, release=0.5)),
+            sequence=[['tuk', 14, 30]], gap_ms=[190, 230], sources=est),
+        'ghats_drongo': dict(
+            name='ghats_drongo', character='A mixed repertoire: a clear metallic note, a held whistle, a harsh pulsed creak and an imitated call with a register break.',
+            elements=dict(tink=el([[0, 3300], [0.3, 3000], [1, 2700]], [110, 160], harmonics=6, rolloff=1.4, attack=0.03, release=0.4),
+                          whistle=el([[0, 2300], [0.5, 2800], [1, 2400]], [260, 380], harmonics=3, rolloff=2.0, vibrato_hz=7.0, vibrato_cents=40),
+                          creak=el([[0, 1900], [1, 1700]], [180, 260], harmonics=10, rolloff=1.2, noise=0.5, pulse_hz=60, pulse_duty=0.5),
+                          mimic=el([[0, 3800], [0.5, 2200], [1, 3600]], [200, 320], harmonics=4, rolloff=1.8, jump=[0.5, 0.8])),
+            sequence=['tink', 'whistle', ['creak', 1, 2], 'tink', 'mimic', 'whistle'], gap_ms=[80, 240], sources=est),
+        'ghats_bulbul': dict(
+            name='ghats_bulbul', character='A bright three-to-four note phrase, up, down and a falling last note, repeated.',
+            elements=dict(p1=el([[0, 3000], [1, 3300]], [110, 150], harmonics=2, rolloff=2.0), p2=el([[0, 3400], [1, 3000]], [120, 160], harmonics=2, rolloff=2.0),
+                          p3=el([[0, 3600], [0.6, 2800], [1, 2500]], [180, 260], harmonics=2, rolloff=2.0, attack=0.1)),
+            sequence=['p1', 'p2', 'p1', 'p3'], gap_ms=[70, 120], sources=est)}
 
 
 # ------------------------------------------------------------------ space and mix: edit the scaffolds
@@ -223,6 +280,9 @@ def mix():
     m['lead_carve'] = dict(enabled=True, from_intent=True)
     m['level_by_role'] = {'environment': -9.0, 'texture': -2.0}
     m['render'] = {'mix_workers': 2}
+    m['immersive'] = dict(enabled=True, engine='hoa_bus', order=5, anchor_max_span_deg=6.0, max_deg_per_sec={'anchor': 10.0, 'mover': 120.0},
+                          height_by_role={r: 0.0 for r in ('melody', 'lead', 'vocal', 'pad', 'texture', 'environment', 'chord', 'bass', 'drum', 'percussion', 'drone', 'ostinato', 'arp', 'counter', 'fx')},
+                          max_elevation=70.0, min_height_tracks=2, stereo_decode='speakers')       # a fifth-order ambisonic bus decoded once to the 7.1 layout and to stereo
     return path, m
 
 
@@ -282,11 +342,48 @@ def flute():
     s += hook(12, 0, 0.82, sa)
     s += [n(14, 0, 1.0, pit(3, sa), 0.84), n(14, 1, 0.5, pit(4, sa), 0.85), n(14, 1.5, 0.5, pit(5, sa), 0.86), n(14, 2, 1.5, pit(6, sa), 0.9, gl=-120),
           n(14, 3.5, 0.5, pit(5, sa), 0.84), n(15, 0, 1.0, pit(4, sa), 0.84), n(15, 1, 0.5, pit(5, sa), 0.86), n(15, 1.5, 0.5, pit(6, sa), 0.88),
-          n(15, 2, 2.0, pit(7, sa), 0.92, gl=-160), n(16, 0, 2.0, pit(6, sa), 0.9), n(16, 2, 1.0, pit(5, sa), 0.86), n(16, 3, 1.0, pit(4, sa), 0.84),
-          n(17, 0, 3.0, pit(3, sa), 0.84), n(17, 3, 1.0, pit(4, sa), 0.8), n(18, 0, 4.0, pit(3, sa), 0.74)]
+          n(15, 2, 2.0, pit(7, sa), 0.92, gl=-160), n(16, 0, 1.75, pit(6, sa), 0.9),                                # the flute rests for six beats: the pipes take bars 16-17
+          n(18, 0, 4.0, pit(4, sa), 0.8, gl=-100)]
     # morning (bars 19-22): back in D: the hook once, softly, then Sa alone
     s += hook(19, 0, 0.5, S0) + [n(21, 0, 2.0, pit(2, S0), 0.42), n(21, 2, 2.0, pit(0, S0), 0.4), n(22, 0, 4.0, pit(0, S0), 0.32, gl=-100)]
     return breaths(s)
+
+
+def up_step(p, sa):
+    """The next pitch above `p` that belongs to the raga's five notes (Sa = sa): the neighbour a gracenote leans on."""
+    ok = {(sa + x) % 12 for x in PENT}
+    q = p + 1
+    while q % 12 not in ok:
+        q += 1
+    return q
+
+
+def with_grace(notes, sa, lead=0.1):
+    """A piper's cut: a very short neighbour note just before each main note of 0.5 beat or more (Scottish ornament, ESTIMATE timing)."""
+    out = []
+    for x in sorted(notes, key=lambda y: y['t']):
+        if x['d'] >= 0.5:
+            out.append(dict(t=round(x['t'] - lead, 4), d=round(lead, 4), p=up_step(x['p'], sa), v=round(x['v'] * 0.8, 3)))
+        out.append(x)
+    return [x for x in out if x['t'] >= 0]
+
+
+def pipes():
+    s = []
+    # the drone swells in under the tanpura (A = Pa and D = Sa, the highland drones' own A): bars 9-11 and again at the end, bars 19-20
+    for first, last, v in ((9, 11, 0.42), (19, 20, 0.36)):
+        s += bar_notes(first, last, pit(3, SA - 24), v)                                          # A2: a bass drone, clear of the strings' notes above
+    # the chanter doubles the hook an octave below the flute in the new key (heterophony), cut by gracenotes: bars 12-13
+    sa = SA + 2
+    s += with_grace([x for x in hook(12, 0, 0.6, sa)], sa)
+    # the call: a dotted figure of snaps with a gracenote, in the flute's six rests, bars 16-17 (key E: the pipes' B mixolydian is the same E major notes)
+    call = [(2.0, 0.75, 3), (2.75, 0.25, 4), (3.0, 0.75, 5), (3.75, 0.25, 4)]
+    call2 = [(0.0, 0.75, 3), (0.75, 0.25, 2), (1.0, 1.0, 3), (2.0, 0.75, 1), (2.75, 0.25, 2), (3.0, 1.0, 0)]
+    notes = [n(16, b, d, pit(i, sa), 0.62) for b, d, i in call] + [n(17, b, d, pit(i, sa), 0.62) for b, d, i in call2]
+    s += with_grace(notes, sa)
+    s += bar_notes(16, 17, pit(3, sa - 12), 0.4)[:0]
+    return s
+
 
 
 def counter():
@@ -434,6 +531,7 @@ def score(plan_times=None):
         dict(name='tanpura', instrument='ghats_tanpura', role='drone', notes=tanpura()),
         dict(name='bansuri', instrument='ghats_bansuri', role='melody', notes=flute()),
         dict(name='violins_counter', instrument='ghats_violins_counter', role='counter', notes=counter()),
+        dict(name='pipes', instrument='ghats_pipes', role='counter', notes=pipes()),
         dict(name='violins_long', instrument='ghats_violins_long', role='chord', notes=strings_bed()),
         dict(name='violas', instrument='ghats_violas', role='ostinato', notes=violas()),
         dict(name='celli', instrument='ghats_celli', role='bass', notes=celli()),
@@ -455,7 +553,7 @@ def score(plan_times=None):
         'title': TITLE, 'bpm': BPM, 'ts': [4, 4], 'seed': 2611, 'humanize': 'natural', 'key': 'D', 'mode': 'major',
         'rubato': 0.0, 'wander': 0.0, 'ritard': 0.0,
         'dynamics': [[0.0, 0.78], [20.0, 0.8], [44.0, 0.86], [64.0, 0.97], [72.0, 1.0], [76.0, 0.92], [84.0, 0.8], [88.0, 0.76]],
-        'space': f'{SLUG}_room', 'mix_preset': f'{SLUG}_mix', 'output_targets': ['stereo'],
+        'space': f'{SLUG}_room', 'mix_preset': f'{SLUG}_mix', 'output_targets': ['stereo', 'immersive_7_1'],
         'master': {'lufs': -16.0, 'true_peak': -1.5, 'tone': 'neutral', 'fade_out': 0.8},
         'piece_type': SLUG, 'focus': 'melody',
         'intent': {'emotions': ['hopeful', 'wonder'], 'registers': ['natural', 'cinematic'], 'scenes': ['establish', 'arrival'],
@@ -485,23 +583,27 @@ def direction():
             dict(name='mist', start_s=0.0, end_s=13.6, energy=0.12, action='mist over the valley, a stream below, the first bird', role='place',
                  music='bansuri alone over the tanpura; the first strings arrive as a bare fifth at the end; no pulse'),
             dict(name='first_light', start_s=13.6, end_s=30.0, energy=0.38, action='the light finds the ridge', role='establish',
-                 music='the hook on the bansuri, answered by the violins a third below; light tabla; veena plucks; pp choir enters at the end'),
+                 music='the hook on the bansuri, answered by the violins a third below; light tabla; veena plucks; the pipes\' drone swells in under the tanpura at 25 s; pp choir enters at the end'),
             dict(name='sunrise', start_s=30.0, end_s=49.1, energy=0.85, action='the sun clears the ridge', role='peak',
-                 music='a whole-tone key raise; the hook an octave up; violas in 3+3+2; tabla and daf; the choir builds from pp to ff'),
+                 music='a whole-tone key raise; the hook an octave up with a distant Highland piper doubling it an octave below; violas in 3+3+2; tabla and daf; the pipes answer alone in the flute\'s rests at 41 s; the choir builds from pp to ff'),
             dict(name='morning', start_s=49.1, end_s=60.0, energy=0.35, action='full daylight, birds everywhere', role='release',
                  music='back in the home key: the hook once, softly, then Sa alone; the choir returns to pp; the birds remain')],
-        motifs=[dict(name='the hook', first_at_s=13.6, shape='D E F# then a leap of a fifth to A and a step back (Sa Re Ga, leap to Pa), then an answer E D E D', returns='a third below on the violins at 19 s, an octave higher at 27 s and in the new key at 30 s, once softly in D at 49 s, then Sa alone at 55 s')],
-        instruments=['bansuri', 'strings', 'celli', 'sitar', 'santoor', 'tanpura', 'tabla', 'choir', 'environment'],
+        motifs=[dict(name='the hook', first_at_s=13.6, shape='D E F# then a leap of a fifth to A and a step back (Sa Re Ga, leap to Pa), then an answer E D E D', returns='a third below on the violins at 19 s, an octave higher at 27 s and in the new key at 30 s doubled an octave below by a Highland piper on the far ridge, a dotted answer on the pipes alone at 41 s, once softly in D at 49 s, then Sa alone at 55 s')],
+        instruments=['bansuri', 'strings', 'celli', 'sitar', 'santoor', 'tanpura', 'tabla', 'choir', 'bagpipes', 'environment'],
         avoid_sounds=['synth pad', 'drum kit', 'electric guitar', 'reverb wash'],
         pulse='none for 14 s, then a light tabla, then a 3+3+2 eighth-note pulse from 30 s', tempo_bpm=[88, 88], key='D', mode='major',
         energy=0.5, space=f'{SLUG}_room',
         hits_at=[30.0], hits=[dict(t=30.0, kind='musical', sync='soft', sound='a low daf stroke and the first chord of the new key as the sun clears the ridge', why='the harmonic turn of the piece; the strings keep sounding, so it is a musical hit, not a cut')],
         mix_intent=dict(hero='bansuri', support=['violins_counter', 'violins_long', 'celli'], sits_under=[], must_hear=['the bansuri in the first 2 s', 'the choir growing from 30 s', 'the thrush and the stream from the start'], leave_free_hz=[500.0, 3000.0]),
         loudness_lufs=-16.0, true_peak_max=-1.5,
-        delivery=dict(format='wav', sample_rate=44100, bit_depth=24, stage='streaming', output_targets=['stereo'], played_on='headphones and speakers (stereo only; an 8-channel version was not asked for)'),
+        delivery=dict(format='wav', sample_rate=44100, bit_depth=24, stage='streaming', output_targets=['stereo', 'immersive_7_1'], played_on='headphones and speakers (stereo), and an 8-channel 7.1 bed (a fifth-order ambisonic mix decoded once)'),
         references=['in words, not a track: a solo bansuri over strings and a drone, the layered warmth of an Indian film fusion cue, with a living forest under it'],
         spatial_staging={k: dict(azimuth=float(v[0]), elevation=float(v[1]), distance=float(v[2]), space=f'{SLUG}_room') for k, v in STAGE.items()},
-        immersive=dict(enabled=False, why='stereo delivery only'),
+        immersive=dict(enabled=True, why='the valley is a field: the birds sit high and far around the listener, the stream is below left, the piper stands far behind on the ridge, and the bansuri is the one part that moves',
+                       engine='hoa_bus', anchors=['tanpura', 'celli', 'tabla', 'pipes', 'ambience'],
+                       movers=[dict(part='bansuri', why='it walks into the valley', path='enters 30 degrees left in the mist, crosses the centre as the sun clears the ridge, settles 22 degrees right for the last breath')],
+                       height=dict(violins_long=22, choir=24, santoor=30), room_changes=[], must_hear=['the bansuri crossing the centre at 30 s', 'the piper far behind at 25 s and 41 s'],
+                       deliverables=['stereo', 'immersive_7_1'], notes='Heights, trajectory keyframes and the room live in the presets; this block records the intent.'),
         focus='melody',
         intent=dict(emotions=['hopeful', 'wonder'], registers=['natural', 'cinematic'], scenes=['establish', 'arrival'], tensions=['rising_line'], avoid=['four_on_the_floor']),
         piece_type=SLUG,
@@ -533,6 +635,8 @@ def main():
     write(os.path.join(P, 'presets', 'instruments', 'ghats_tabla.json'), TABLA)
     write(os.path.join(P, 'presets', 'vocals', 'ghats_choir.json'), vocal_choir())
     write(os.path.join(P, 'presets', 'environments', SLUG + '.json'), environment())
+    for cname, cdoc in calls().items():
+        write(os.path.join(P, 'presets', 'calls', cname + '.json'), cdoc)
     for fn in (space, mix, gate):
         path, doc = fn()
         write(path, doc)

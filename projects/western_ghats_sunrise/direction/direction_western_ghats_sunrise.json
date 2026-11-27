@@ -48,7 +48,7 @@
       "energy": 0.38,
       "action": "the light finds the ridge",
       "role": "establish",
-      "music": "the hook on the bansuri, answered by the violins a third below; light tabla; veena plucks; pp choir enters at the end"
+      "music": "the hook on the bansuri, answered by the violins a third below; light tabla; veena plucks; the pipes' drone swells in under the tanpura at 25 s; pp choir enters at the end"
     },
     {
       "name": "sunrise",
@@ -57,7 +57,7 @@
       "energy": 0.85,
       "action": "the sun clears the ridge",
       "role": "peak",
-      "music": "a whole-tone key raise; the hook an octave up; violas in 3+3+2; tabla and daf; the choir builds from pp to ff"
+      "music": "a whole-tone key raise; the hook an octave up with a distant Highland piper doubling it an octave below; violas in 3+3+2; tabla and daf; the pipes answer alone in the flute's rests at 41 s; the choir builds from pp to ff"
     },
     {
       "name": "morning",
@@ -74,7 +74,7 @@
       "name": "the hook",
       "first_at_s": 13.6,
       "shape": "D E F# then a leap of a fifth to A and a step back (Sa Re Ga, leap to Pa), then an answer E D E D",
-      "returns": "a third below on the violins at 19 s, an octave higher at 27 s and in the new key at 30 s, once softly in D at 49 s, then Sa alone at 55 s"
+      "returns": "a third below on the violins at 19 s, an octave higher at 27 s and in the new key at 30 s doubled an octave below by a Highland piper on the far ridge, a dotted answer on the pipes alone at 41 s, once softly in D at 49 s, then Sa alone at 55 s"
     }
   ],
   "instruments": [
@@ -86,6 +86,7 @@
     "tanpura",
     "tabla",
     "choir",
+    "bagpipes",
     "environment"
   ],
   "avoid_sounds": [
@@ -141,9 +142,10 @@
     "bit_depth": 24,
     "stage": "streaming",
     "output_targets": [
-      "stereo"
+      "stereo",
+      "immersive_7_1"
     ],
-    "played_on": "headphones and speakers (stereo only; an 8-channel version was not asked for)"
+    "played_on": "headphones and speakers (stereo), and an 8-channel 7.1 bed (a fifth-order ambisonic mix decoded once)"
   },
   "references": [
     "in words, not a track: a solo bansuri over strings and a drone, the layered warmth of an Indian film fusion cue, with a living forest under it"
@@ -202,11 +204,47 @@
       "elevation": -22.0,
       "distance": 2.2,
       "space": "western_ghats_sunrise_room"
+    },
+    "pipes": {
+      "azimuth": 172.0,
+      "elevation": 5.0,
+      "distance": 7.5,
+      "space": "western_ghats_sunrise_room"
     }
   },
   "immersive": {
-    "enabled": false,
-    "why": "stereo delivery only"
+    "enabled": true,
+    "why": "the valley is a field: the birds sit high and far around the listener, the stream is below left, the piper stands far behind on the ridge, and the bansuri is the one part that moves",
+    "engine": "hoa_bus",
+    "anchors": [
+      "tanpura",
+      "celli",
+      "tabla",
+      "pipes",
+      "ambience"
+    ],
+    "movers": [
+      {
+        "part": "bansuri",
+        "why": "it walks into the valley",
+        "path": "enters 30 degrees left in the mist, crosses the centre as the sun clears the ridge, settles 22 degrees right for the last breath"
+      }
+    ],
+    "height": {
+      "violins_long": 22,
+      "choir": 24,
+      "santoor": 30
+    },
+    "room_changes": [],
+    "must_hear": [
+      "the bansuri crossing the centre at 30 s",
+      "the piper far behind at 25 s and 41 s"
+    ],
+    "deliverables": [
+      "stereo",
+      "immersive_7_1"
+    ],
+    "notes": "Heights, trajectory keyframes and the room live in the presets; this block records the intent."
   },
   "expression": {
     "sonic_picture": "The first ten seconds are a bansuri alone in a wide-open valley over a soft tanpura, a stream and one bird; by the middle the strings sing the hook back to it and a light tabla enters; the last note is Sa alone with the morning birds.",

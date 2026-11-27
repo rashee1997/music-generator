@@ -305,67 +305,21 @@
       ]
     },
     {
-      "name": "malabar_thrush",
-      "call": "songbird_phrase",
+      "name": "malabar_whistling_thrush",
+      "call": "ghats_whistling_thrush",
       "salience": "foreground",
       "power_w": 1.5e-05,
-      "bouts_per_min": 4,
+      "bouts_per_min": 3.0,
       "individuals": 2,
-      "first_s": 9.0,
-      "source": {
-        "kind": "dual_syrinx",
-        "fm_hz": 18,
-        "fm_depth": 0.04,
-        "saturation": 1.4,
-        "harmonics": 4
-      },
-      "elements": {
-        "phrase": {
-          "f_left": [
-            [
-              0,
-              2400
-            ],
-            [
-              1,
-              3100
-            ]
-          ],
-          "f_right": [
-            [
-              0,
-              2300
-            ],
-            [
-              1,
-              2900
-            ]
-          ],
-          "ms": [
-            900,
-            1300
-          ]
-        }
-      },
-      "sequence": [
-        [
-          "phrase",
-          2,
-          4
-        ]
-      ],
-      "gap_ms": [
-        120,
-        260
-      ],
+      "first_s": 4.0,
       "resonator": {
         "kind": "tube",
         "length_cm": 4.5
       },
       "niche": {
         "band_hz": [
-          1800,
-          4200
+          1300,
+          3000
         ],
         "active": {
           "control": "light"
@@ -377,150 +331,90 @@
         "distance": 14.0
       },
       "sources": [
-        "https://en.wikipedia.org/wiki/Malabar_whistling_thrush (dawn whistle, longer phrases in the morning)",
-        "https://www.birds.cornell.edu/home/birds-sing-more-at-dawn (Western Ghats dawn singing)",
-        "ESTIMATE: the phrase band and lengths; no frequency range was found"
+        "https://en.wikipedia.org/wiki/Malabar_whistling_thrush (a human-like whistle; longer, melodious phrases in the morning, short sharp whistles later)",
+        "ESTIMATE: element contours, lengths and rates (qualitative descriptions only); replace from a measured spectrogram"
       ]
     },
     {
-      "name": "flame_throated_bulbul",
-      "call": "songbird_phrase",
+      "name": "malabar_grey_hornbill",
+      "call": "ghats_hornbill",
       "salience": "foreground",
-      "power_w": 1.5e-05,
-      "bouts_per_min": 7,
-      "individuals": 3,
-      "first_s": 15.0,
-      "source": {
-        "kind": "dual_syrinx",
-        "fm_hz": 18,
-        "fm_depth": 0.04,
-        "saturation": 1.4,
-        "harmonics": 4
-      },
-      "elements": {
-        "phrase": {
-          "f_left": [
-            [
-              0,
-              2400
-            ],
-            [
-              1,
-              3100
-            ]
-          ],
-          "f_right": [
-            [
-              0,
-              2300
-            ],
-            [
-              1,
-              2900
-            ]
-          ],
-          "ms": [
-            900,
-            1300
-          ]
-        }
-      },
-      "sequence": [
-        [
-          "phrase",
-          2,
-          4
-        ]
-      ],
-      "gap_ms": [
-        120,
-        260
-      ],
+      "power_w": 4e-05,
+      "bouts_per_min": 2.0,
+      "individuals": 2,
+      "first_s": 16.0,
       "resonator": {
         "kind": "tube",
-        "length_cm": 4.5
+        "length_cm": 12.0
       },
       "niche": {
         "band_hz": [
-          3000,
-          5200
+          700,
+          2600
         ],
         "active": {
           "control": "light"
         }
       },
       "position": {
-        "azimuth": -48.0,
-        "elevation": 26.0,
-        "distance": 11.0
+        "azimuth": -100.0,
+        "elevation": 30.0,
+        "distance": 40.0
       },
       "sources": [
-        "https://sanctuarynaturefoundation.org/public/article/shhh-can-you-hear-me%3F (endemic dawn species of the Valparai rainforest)",
-        "ESTIMATE: band, rate and position"
+        "https://iucnhornbills.org/malabar-grey-hornbill/ (an assortment of loud, harsh chuckles and squawks with raucous cackling like mock laughter)",
+        "https://app.birdweather.com/species/malabar-gray-hornbill (loud cackling and laughing call; endemic to the Western Ghats)",
+        "ESTIMATE: element contours, lengths and rates (qualitative descriptions only); replace from a measured spectrogram"
+      ]
+    },
+    {
+      "name": "malabar_barbet",
+      "call": "ghats_barbet",
+      "salience": "foreground",
+      "power_w": 1e-05,
+      "bouts_per_min": 1.5,
+      "individuals": 1,
+      "first_s": 21.0,
+      "resonator": {
+        "kind": "tube",
+        "length_cm": 6.0
+      },
+      "niche": {
+        "band_hz": [
+          800,
+          1400
+        ],
+        "active": {
+          "control": "light"
+        }
+      },
+      "position": {
+        "azimuth": 110.0,
+        "elevation": 38.0,
+        "distance": 30.0
+      },
+      "sources": [
+        "https://macaulaylibrary.org/asset/646733603 (Kerala recording: a sharp single-note call like a coppersmith barbet, repeated)",
+        "https://en.wikipedia.org/wiki/Malabar_barbet (similar to the coppersmith barbet, a more rapid call)",
+        "ESTIMATE: element contours, lengths and rates (qualitative descriptions only); replace from a measured spectrogram"
       ]
     },
     {
       "name": "racket_tailed_drongo",
-      "call": "songbird_phrase",
+      "call": "ghats_drongo",
       "salience": "foreground",
-      "power_w": 1.5e-05,
-      "bouts_per_min": 5,
+      "power_w": 1.2e-05,
+      "bouts_per_min": 4.0,
       "individuals": 2,
-      "first_s": 22.0,
-      "source": {
-        "kind": "dual_syrinx",
-        "fm_hz": 18,
-        "fm_depth": 0.04,
-        "saturation": 1.4,
-        "harmonics": 4
-      },
-      "elements": {
-        "phrase": {
-          "f_left": [
-            [
-              0,
-              2400
-            ],
-            [
-              1,
-              3100
-            ]
-          ],
-          "f_right": [
-            [
-              0,
-              2300
-            ],
-            [
-              1,
-              2900
-            ]
-          ],
-          "ms": [
-            900,
-            1300
-          ]
-        }
-      },
-      "sequence": [
-        [
-          "phrase",
-          2,
-          4
-        ]
-      ],
-      "gap_ms": [
-        120,
-        260
-      ],
+      "first_s": 11.0,
       "resonator": {
         "kind": "tube",
-        "length_cm": 4.5
+        "length_cm": 3.5
       },
       "niche": {
         "band_hz": [
-          2200,
-          3800
+          1800,
+          4000
         ],
         "active": {
           "control": "light"
@@ -532,8 +426,40 @@
         "distance": 17.0
       },
       "sources": [
-        "https://www.birds.cornell.edu/home/birds-sing-more-at-dawn (greater racket-tailed drongo is one of the species singing more at dawn)",
-        "ESTIMATE: band, rate and position"
+        "https://en.wikipedia.org/wiki/Greater_racket-tailed_drongo (a wide range of loud calls including near-perfect imitations of other birds)",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC3945749/ (mimicked notes sit in its repertoire)",
+        "ESTIMATE: element contours, lengths and rates (qualitative descriptions only); replace from a measured spectrogram"
+      ]
+    },
+    {
+      "name": "flame_throated_bulbul",
+      "call": "ghats_bulbul",
+      "salience": "foreground",
+      "power_w": 1e-05,
+      "bouts_per_min": 6.0,
+      "individuals": 3,
+      "first_s": 14.0,
+      "resonator": {
+        "kind": "tube",
+        "length_cm": 3.0
+      },
+      "niche": {
+        "band_hz": [
+          2800,
+          4200
+        ],
+        "active": {
+          "control": "light"
+        }
+      },
+      "position": {
+        "azimuth": -48.0,
+        "elevation": 26.0,
+        "distance": 11.0
+      },
+      "sources": [
+        "https://sanctuarynaturefoundation.org/public/article/shhh-can-you-hear-me%3F (an endemic dawn voice of the Valparai rainforest)",
+        "ESTIMATE: element contours, lengths and rates (qualitative descriptions only); replace from a measured spectrogram"
       ]
     }
   ],
@@ -568,7 +494,8 @@
       "space": "western_ghats_sunrise_room"
     },
     "decode_hint": [
-      "stereo"
+      "stereo",
+      "immersive_7_1"
     ]
   },
   "reference": {
