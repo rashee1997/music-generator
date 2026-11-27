@@ -61,7 +61,7 @@ def write(path, doc):
 
 # ------------------------------------------------------------------ instrument presets
 STAGE = dict(bansuri=(0, 6, 1.5), sitar=(-28, 0, 1.9), violins_counter=(28, 12, 2.4), violas=(-56, 0, 2.6), celli=(56, 0, 2.8),
-             violins_long=(122, 22, 4.0), tanpura=(-88, -2, 2.6), santoor=(86, 30, 2.8), tabla=(0, -22, 2.2), pipes=(172, 5, 7.5))
+             violins_long=(122, 22, 4.0), tanpura=(-88, -2, 2.6), santoor=(86, 30, 2.8), tabla=(-150, 0, 2.4), pipes=(172, 5, 7.5))
 
 
 def vel_points(ref, soft=(0.25, 0.50), loud=(4.0, 8.0)):
@@ -139,7 +139,7 @@ for _i in INSTRUMENTS:
 TABLA = dict(name='ghats_tabla', description='Tabla and daf', instrument='standard', role='drum', family='struck_membrane',
              character='Tabla strokes (ge, na, tin) with a shaker underneath in the 3+3+2 pattern, and one low daf stroke where the sun clears the ridge: light hands, never a kit.',
              humanize=dict(preset='tight', timing_ms=4.0, drum_ms=3.0), gain_db=-4.0, reverb=0.14,
-             spatial=dict(azimuth=0, elevation=-22, distance=2.2, space=f'{SLUG}_room', binaural=True, kind='spot'),
+             spatial=dict(azimuth=-150, elevation=0, distance=2.4, space=f'{SLUG}_room', binaural=True, kind='spot'),
              eq=[HP(70), PK(250, -2.0, 0.9), PK(3800, 1.2, 1.0), LP(12000)], sources=list(SRC))
 
 
