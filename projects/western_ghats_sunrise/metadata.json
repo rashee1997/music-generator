@@ -1,9 +1,16 @@
 {
-  "overrides": {},
+  "overrides": {
+    "album": "Western Ghats Sunrise",
+    "year": "2026",
+    "composer": "Music Generator (procedural, directed)",
+    "publisher": "",
+    "isrc": "",
+    "comment": "A 60 s cultural fusion cue: bansuri, rock kit, electric guitars, Highland pipes, sectioned choir, a Western Ghats dawn. Delivered in stereo and 8-channel 7.1."
+  },
   "derive_from_score": {
     "title": true,
     "genre": true,
-    "comment": true,
-    "year": true
+    "comment": false,
+    "year": false
   }
 }
