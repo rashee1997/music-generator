@@ -436,6 +436,7 @@
     "stem.vocal": {},
     "tempo.audio": {
       "drift_bpm": 2.0,
+      "octave_ok": 0.0,
       "tol_bpm": 2.0,
       "tol_pct": 2.0
     },
