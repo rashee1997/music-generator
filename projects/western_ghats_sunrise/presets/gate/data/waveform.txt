@@ -8,7 +8,7 @@ sections:
   piper: 30.00-39.23 s, dyn 0.75
   crest: 39.23-48.46 s, dyn 1.00
   morning: 48.46-60.00 s, dyn 0.40
-flagged times: 14
+flagged times: 11
   0.035s stem.tick [PASS] ambience
   0.035s stem.tick [PASS] choir
   0.035s stem.tick [PASS] tanpura
@@ -19,7 +19,4 @@ flagged times: 14
   13.874s stem.tick [PASS] guitar_clean
   16.463s stem.tick [PASS] santoor
   20.794s stem.tick [PASS] guitar_drive
-  45.562s clicks [FAIL] master
-  60.910s clicks [FAIL] master
-  60.981s clicks [FAIL] master
-  61.063s clicks [FAIL] master
+  60.844s clicks [FAIL] master

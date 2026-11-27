@@ -1,10 +1,10 @@
 stem,section,measured_db,expected_db,dyn
-ambience,mist,-56.47,-55.01,0.3
+ambience,mist,-56.47,-55.0,0.3
 ambience,groove,-56.46,-49.74,0.55
-ambience,sunrise,-51.79,-46.49,0.8
-ambience,piper,-44.79,-47.05,0.75
-ambience,crest,-42.03,-44.55,1.0
-ambience,morning,-44.59,-52.51,0.4
+ambience,sunrise,-51.79,-46.48,0.8
+ambience,piper,-44.79,-47.04,0.75
+ambience,crest,-42.06,-44.55,1.0
+ambience,morning,-44.55,-52.5,0.4
 bansuri,mist,-34.27,-34.66,0.3
 bansuri,groove,-29.4,-29.4,0.55
 bansuri,sunrise,-25.68,-26.14,0.8
