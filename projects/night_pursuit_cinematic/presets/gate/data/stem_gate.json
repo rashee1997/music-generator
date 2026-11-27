@@ -6,7 +6,7 @@
     "warns": 0,
     "rows": 251,
     "profile": "night_pursuit_cinematic",
-    "total_ms": 3911.3687500002925,
+    "total_ms": 1785.2068780011905,
     "timings": {
       "bass_clarinet": 0.0,
       "bass_drum": 0.0,
@@ -18,13 +18,13 @@
       "city_far": 0.0,
       "crash": 0.0,
       "cymbals": 0.0,
-      "ferrari": 1549.465457000224,
+      "ferrari": 0.0,
       "helicopter": 0.0,
       "horns": 0.0,
-      "lamborghini": 1363.0046079997555,
+      "lamborghini": 0.0,
       "landing": 0.0,
       "low_swell": 0.0,
-      "mustang": 1349.5861920000607,
+      "mustang": 0.0,
       "piano_theme": 0.0,
       "porsche": 0.0,
       "siren_first": 0.0,
@@ -4948,8 +4948,8 @@
       }
     ],
     "duration_s": 196.4940589569161,
-    "cached_stems": 27,
-    "measured_stems": 3
+    "cached_stems": 30,
+    "measured_stems": 0
   },
   "rows": [
     {
