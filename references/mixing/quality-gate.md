@@ -239,7 +239,7 @@ numbers, come from a **gate profile**: a preset of kind `gate` (`references/data
 
 ## 3h. Realism measurements are advisory, not rows
 
-`python scripts/realism_report.py out/master.wav --score ... --stems out/stems --project .` measures the eight
+`python scripts/realism_report.py out/master.wav --score ... --stems out/stems --project .` measures the twelve (eight of the mix, and four of the parts: vibrato, repeated attacks, velocity response and high-band coherence; `knowledgebase/sound-design/theatrical-realism.md`)
 qualities in `knowledgebase/sound-design/theatrical-realism.md`: timbre against loudness, section scatter,
 transient variety, direct-to-reverberant depth, low-mid against sub, air absorption at distance, air at density and
 bar-scale phrasing. It prints `PASS` / `WARN` / `N/A` per dimension. They are **not** gate rows on purpose: the

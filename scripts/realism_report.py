@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""realism_report.py - measure the eight qualities that separate a produced cue from a generated one.
+"""realism_report.py - measure the twelve qualities that separate a produced cue from a generated one (eight of the mix, four of the parts).
 
 The gate says a render is not faulty. It does not say the timbre changes with loudness, that a section is a room
 of players rather than one player multiplied, that the attack is in front of the hall, that the low-mids stay lean
@@ -34,6 +34,10 @@ TARGETS = {
     'distance': 'a source beyond 4 m uses the ISO 9613-1 air model or says why not',
     'openness': 'the 8-16 kHz share does not fall by more than 1 dB at the loudest 10 % of the piece',
     'phrasing': 'bar-scale tempo deviation 1-8 % over the body, excluding the final ritardando',
+    'vibrato': 'a sustained part moves 3-9 Hz by 10 cents or more in 30 % of its stable held windows (starting value)',
+    'repetition': 'under 40 % of a part\'s same-pitch attacks are the same sample twice (spectral similarity 0.995, starting value)',
+    'velocity_response': 'brightness follows written velocity, correlation 0.30 or more once pitch is removed (starting value; the literature reads 0.62 for loudness)',
+    'coherence': 'inter-channel coherence 2-8 kHz at most 0.85 (starting value)',
 }
 
 SECTION_WORDS = ('string', 'violin', 'viola', 'cello', 'celli', 'bass', 'brass', 'horn', 'trumpet', 'trombone', 'tuba',
@@ -41,6 +45,10 @@ SECTION_WORDS = ('string', 'violin', 'viola', 'cello', 'celli', 'bass', 'brass',
 BANDS = ((20.0, 80.0, 'sub'), (180.0, 450.0, 'low_mid'), (500.0, 2000.0, 'mid'),
          (2000.0, 8000.0, 'high'), (8000.0, 16000.0, 'air'))
 ATTACK_BANDS = (50.0, 150.0, 300.0, 600.0, 1200.0, 2400.0, 4800.0, 9600.0, 16000.0)
+
+
+def _order(key):
+    return int(key.split('_', 1)[0])
 
 
 def _db(power):
@@ -332,34 +340,269 @@ def distance(project, score=None):
                      else f'{len(missing)} far source(s) have no temperature/humidity air model')
 
 
+# ------------------------------------------------------------------ the four per-stem and stereo dimensions (9-12)
+# Starting values, not measured on a reference cue. Direction and reference figures (search-result text only): a typical string vibrato is about
+# 6 per second and about 30 cents, varying 10-60 cents (Fletcher and Sanders, cited in the vibrato literature); a detector counts a pitch
+# half-cycle as vibrato at 2-10 Hz and more than 0.1 semitone; the spectral centroid correlates 0.62 with dynamic level across five
+# nonpercussive instruments (Timbre 2018 study); spaced pickup lowers inter-channel coherence and with it the sense of envelopment.
+VIBRATO_MIN_CENTS = 10.0           # the detector's 0.1 semitone
+VIBRATO_BAND_HZ = (3.0, 9.0)       # inside the 2-10 Hz window, away from the slow drift of a note and from tremolo
+SUSTAIN_MIN_S = 0.9                # a part whose median note is shorter than this is not a sustained part
+VIBRATO_SHARE_MIN = 0.30
+REPEAT_SIM = 0.995                 # the same value the master-level transient dimension uses
+REPEAT_SHARE_MAX = 0.40
+VELOCITY_R_MIN = 0.30              # a velocity layer response: brightness follows the written velocity (the literature reads 0.62 for loudness)
+COHERENCE_MAX = 0.85
+
+
+def _stem_dict(stems):
+    """Stems as {name: array}. A list (the older call) has no names, so the per-stem dimensions skip it."""
+    if isinstance(stems, dict):
+        return stems
+    return {}
+
+
+def _track_map(score):
+    return {t.get('name'): t for t in ((score or {}).get('tracks') or []) if t.get('name')}
+
+
+def _tempo(score):
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import humanize as hz
+    return hz.tempo_map_for(score, seed=score.get('seed', 1))
+
+
+def _is_sustained(track, tm):
+    notes = [n for n in (track.get('notes') or []) if isinstance(n.get('p'), (int, float))]
+    if len(notes) < 3:
+        return False
+    secs = [float(tm.sec(float(n['t']) + float(n.get('d', 0.0)))) - float(tm.sec(float(n['t']))) for n in notes]
+    return float(np.median(secs)) >= SUSTAIN_MIN_S
+
+
+def _peak_track(x, sr, lo=100.0, hi=2000.0):
+    """Frequency of the strongest partial per 10 ms frame, from a 58 ms window zero-padded to 4096 points on a signal brought down to 8.8 kHz."""
+    from scipy.signal import resample_poly
+    q = max(1, int(round(sr / 8820.0)))
+    y = resample_poly(np.asarray(x, np.float64), 1, q) if q > 1 else np.asarray(x, np.float64)
+    fs = sr / float(q)
+    nper, nfft, hop = 512, 4096, int(round(fs * 0.01))
+    f, t, Z = signal.stft(y, fs=fs, nperseg=nper, noverlap=nper - hop, nfft=nfft, boundary=None, padded=False)
+    mag = np.abs(Z)
+    band = (f >= lo) & (f <= hi)
+    sub = mag[band]
+    k = np.argmax(sub, axis=0)
+    peak = sub[k, np.arange(sub.shape[1])]
+    med = np.median(sub, axis=0) + 1e-12
+    idx = np.where(band)[0][k]
+    a = mag[np.clip(idx - 1, 0, len(f) - 1), np.arange(mag.shape[1])]
+    c = mag[np.clip(idx + 1, 0, len(f) - 1), np.arange(mag.shape[1])]
+    b = mag[idx, np.arange(mag.shape[1])]
+    denom = a - 2.0 * b + c
+    shift = np.where(np.abs(denom) > 1e-12, 0.5 * (a - c) / denom, 0.0)
+    freq = f[idx] + np.clip(shift, -1.0, 1.0) * (f[1] - f[0])
+    freq = np.where(peak / med > 12.0, freq, np.nan)
+    return freq, 1.0 / (hop / fs)
+
+
+def vibrato_share(x, sr):
+    """Share of stable one-second windows of a sustained part whose pitch moves 3-9 Hz by at least 10 cents; (share, windows)."""
+    freq, frame_rate = _peak_track(_mono(x), sr)
+    win = int(frame_rate)
+    if len(freq) < win * 2:
+        return 0.0, 0
+    cents = np.full(len(freq), np.nan)
+    ok = np.isfinite(freq)
+    cents[ok] = 1200.0 * np.log2(freq[ok])
+    hits = total = 0
+    for a in range(0, len(cents) - win, win // 2):
+        w = cents[a:a + win]
+        if np.mean(np.isfinite(w)) < 0.9:
+            continue
+        idx = np.arange(win)
+        good = np.isfinite(w)
+        w = np.interp(idx, idx[good], w[good])
+        trend = np.polyval(np.polyfit(idx, w, 2), idx)           # the note's own slow drift and any slide
+        dev = w - trend
+        if np.max(np.abs(np.diff(trend))) > 8.0:                 # a slide or a note change inside the window: not a held note
+            continue
+        spec = np.abs(np.fft.rfft(dev * np.hanning(win))) * 2.0 / (np.sum(np.hanning(win)) + 1e-12)
+        fr = np.fft.rfftfreq(win, 1.0 / frame_rate)
+        m = (fr >= VIBRATO_BAND_HZ[0]) & (fr <= VIBRATO_BAND_HZ[1])
+        total += 1
+        if m.any() and float(spec[m].max()) >= VIBRATO_MIN_CENTS:
+            hits += 1
+    return (hits / total if total else 0.0), total
+
+
+def vibrato(stems, score=None):
+    stems = _stem_dict(stems)
+    if not stems or not score:
+        return dict(value=None, verdict='N/A', note='needs the dry stems by name and the score')
+    tm = _tempo(score)
+    tracks = _track_map(score)
+    rows = {}
+    for name, x in stems.items():
+        tr = tracks.get(name)
+        if not tr or not _is_sustained(tr, tm) or str(tr.get('role')) in ('drum', 'fx', 'environment', 'texture'):
+            continue
+        share, n = vibrato_share(x, int(score.get('_sr', SR_DEFAULT)))
+        if n >= 4:
+            rows[name] = round(share, 2)
+    if not rows:
+        return dict(value=None, verdict='N/A', note='no sustained part with enough stable held notes to measure')
+    flat = sorted(n for n, v in rows.items() if v < VIBRATO_SHARE_MIN)
+    med = float(np.median(list(rows.values())))
+    return dict(value=round(med, 2), parts=rows, verdict='PASS' if not flat else 'WARN',
+                note=('every sustained part moves in pitch' if not flat
+                      else f'{len(flat)} sustained part(s) hold a flat pitch (no 3-9 Hz movement of 10 cents or more): {", ".join(flat[:6])}'))
+
+
+def _attack_vector(x, start, sr, win_s=0.08):
+    n = int(win_s * sr)
+    seg = np.asarray(x[start:start + n], np.float64)
+    if len(seg) < n // 2:
+        return None, None
+    seg = np.pad(seg, (0, n - len(seg))) * np.hanning(n)
+    mag = np.abs(np.fft.rfft(seg, 4096))
+    return np.log10(mag + 1e-9), int(np.argmax(mag))
+
+
+def repetition(stems, score=None):
+    """Per stem: of the attacks on the same pitch, the share that are the same sample twice (the machine-gun tell)."""
+    stems = _stem_dict(stems)
+    if not stems:
+        return dict(value=None, verdict='N/A', note='needs the dry stems by name')
+    rows = {}
+    for name, x in stems.items():
+        mono = _mono(x)
+        sr = int(SR_DEFAULT)
+        on = detect_onsets(mono, sr)
+        if len(on) < 8:
+            continue
+        groups = {}
+        for o in on:
+            v, peak = _attack_vector(mono, int(o), sr)
+            if v is None or float(np.max(v)) < -2.0:
+                continue
+            groups.setdefault(peak // 3, []).append(v - v.mean())
+        pairs = same = 0
+        for vs in groups.values():
+            for a, b in zip(vs, vs[1:]):
+                pairs += 1
+                c = float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b) + 1e-12))
+                same += c >= REPEAT_SIM
+        if pairs >= 8:
+            rows[name] = round(same / pairs, 2)
+    if not rows:
+        return dict(value=None, verdict='N/A', note='no part repeats a pitch often enough to compare its attacks')
+    bad = sorted(n for n, v in rows.items() if v >= REPEAT_SHARE_MAX)
+    return dict(value=round(max(rows.values()), 2), parts=rows, verdict='PASS' if not bad else 'WARN',
+                note=('repeated attacks differ' if not bad
+                      else f'{len(bad)} part(s) repeat a pitch with the same attack: {", ".join(bad[:6])}'))
+
+
+def velocity_response(stems, score=None):
+    """Per monophonic stem: does the brightness of a note's first 250 ms follow its written velocity once the pitch is taken out?"""
+    stems = _stem_dict(stems)
+    if not stems or not score:
+        return dict(value=None, verdict='N/A', note='needs the dry stems by name and the score')
+    tm = _tempo(score)
+    tracks = _track_map(score)
+    sr = int(SR_DEFAULT)
+    rows = {}
+    for name, x in stems.items():
+        tr = tracks.get(name)
+        if not tr or str(tr.get('role')) in ('drum', 'fx', 'environment'):
+            continue
+        notes = [n for n in (tr.get('notes') or []) if isinstance(n.get('p'), (int, float)) and isinstance(n.get('v'), (int, float))]
+        if len(notes) < 12:
+            continue
+        starts = np.array([float(tm.sec(float(n['t']))) for n in notes])
+        ends = np.array([float(tm.sec(float(n['t']) + float(n.get('d', 0.5)))) for n in notes])
+        order = np.argsort(starts)
+        if np.mean(starts[order][1:] < ends[order][:-1] - 0.05) > 0.25:        # chords and overlaps: one window holds several notes
+            continue
+        vel = np.array([float(n['v']) for n in notes])
+        if np.ptp(vel) < (0.15 if vel.max() <= 1.0 else 20.0):
+            continue
+        mono = _mono(x).astype(np.float64)
+        cents, pitch, v_used = [], [], []
+        for n, t0, v in zip(notes, starts, vel):
+            a = int(t0 * sr)
+            seg = mono[a:a + int(0.25 * sr)]
+            if len(seg) < int(0.2 * sr) or float(np.sqrt(np.mean(seg ** 2))) < 1e-4:
+                continue
+            spec = np.abs(np.fft.rfft(seg * np.hanning(len(seg)), 8192)) ** 2
+            f = np.fft.rfftfreq(8192, 1.0 / sr)
+            cents.append(float(np.log2(np.sum(f * spec) / np.sum(spec) + 1.0)))
+            pitch.append(float(n['p']))
+            v_used.append(v)
+        if len(cents) < 12:
+            continue
+        c, p, v = np.array(cents), np.array(pitch), np.array(v_used)
+        resid = c - np.polyval(np.polyfit(p, c, 1), p) if np.ptp(p) > 0 else c - c.mean()
+        if np.std(resid) < 1e-6 or np.std(v) < 1e-9:
+            continue
+        rows[name] = round(float(np.corrcoef(resid, v)[0, 1]), 2)
+    if not rows:
+        return dict(value=None, verdict='N/A', note='no single-line part with a spread of written velocities to compare')
+    flat = sorted(n for n, r in rows.items() if r < VELOCITY_R_MIN)
+    return dict(value=round(float(np.median(list(rows.values()))), 2), parts=rows, verdict='PASS' if not flat else 'WARN',
+                note=('brightness follows velocity in every measured part' if not flat
+                      else f'{len(flat)} part(s) get louder but not brighter with velocity (a one-sample layer): {", ".join(flat[:6])}'))
+
+
+def coherence(master, sr):
+    """Inter-channel coherence of the master from 2 to 8 kHz: a mix that is near mono at the top has no spaced-pickup envelopment."""
+    x = np.asarray(master, np.float64)
+    if x.ndim != 2 or x.shape[1] < 2:
+        return dict(value=None, verdict='N/A', note='needs a two-channel master')
+    f, c = signal.coherence(x[:, 0], x[:, 1], fs=sr, nperseg=4096)
+    band = (f >= 2000.0) & (f <= 8000.0)
+    mid = (f >= 500.0) & (f < 2000.0)
+    v = float(np.mean(c[band]))
+    return dict(value=round(v, 2), mid=round(float(np.mean(c[mid])), 2), verdict='PASS' if v <= COHERENCE_MAX else 'WARN',
+                note='the top of the mix is decorrelated between the channels' if v <= COHERENCE_MAX else 'the top of the mix is nearly the same in both channels')
+
+
+
 def analyse(master, sr, stems=None, score=None, project=None):
+    """`stems` is {name: array} (the per-stem dimensions 9-11 need the names) or a list (dimensions 1-8 only)."""
     f = _frame_features(master, sr)
+    plain = list(stems.values()) if isinstance(stems, dict) else stems
     out = {
         'source': dict(sr=sr, seconds=round(len(master) / float(sr), 2), stems=len(stems or [])),
         '1_timbre_loudness': timbre_loudness(f),
         '2_ensemble': ensemble(score),
         '3_transient': transient_similarity(master, sr),
-        '4_depth': depth(master, stems, sr),
+        '4_depth': depth(master, plain, sr),
         '6_distance': distance(project, score),
         '7_openness': openness(f),
         '8_phrasing': phrasing(score),
     }
     # the low-mid dimension needs the time-domain band pass, not the frame summary
     out['5_low_mid'] = low_mid_bands(master, sr)
+    sc = dict(score or {}, _sr=sr)
+    out['9_vibrato'] = vibrato(stems, sc)
+    out['10_repetition'] = repetition(stems, sc)
+    out['11_velocity_response'] = velocity_response(stems, sc)
+    out['12_coherence'] = coherence(master, sr)
     return out
 
 
 DIMENSION = {'1_timbre_loudness': 'timbre', '2_ensemble': 'ensemble', '3_transient': 'transient',
              '4_depth': 'depth', '5_low_mid': 'low_mid', '6_distance': 'distance',
-             '7_openness': 'openness', '8_phrasing': 'phrasing'}
+             '7_openness': 'openness', '8_phrasing': 'phrasing', '9_vibrato': 'vibrato', '10_repetition': 'repetition',
+             '11_velocity_response': 'velocity_response', '12_coherence': 'coherence'}
 
 
 def format_report(r):
     lines = [f"Realism report  {r['source']['seconds']} s, {r['source']['sr']} Hz, "
              f"{r['source']['stems']} dry stem(s)"]
-    for key in sorted(k for k in r if k[0].isdigit()):
+    for key in sorted((k for k in r if k[0].isdigit()), key=_order):
         d = r[key]
-        name = key[2:].replace('_', ' ')
+        name = key.split('_', 1)[1].replace('_', ' ')
         value = d.get('value')
         head = f"[{d['verdict']:<4}] {name:<14}"
         detail = f"value {value}" if value is not None else 'not measured'
@@ -375,14 +618,26 @@ def compare_report(reports):
     """Side-by-side verdicts for the calibration renders (off / couplings / all stages)."""
     names = [r['source']['name'] for r in reports]
     lines = ['Realism calibration  ' + '  |  '.join(names)]
-    for key in sorted(k for k in reports[0] if k[0].isdigit()):
+    for key in sorted((k for k in reports[0] if k[0].isdigit()), key=_order):
         cells = []
         for r in reports:
             d = r[key]
             value = d.get('value')
             cells.append(f"{d['verdict']:<4}" + (f' {value}' if value is not None else ''))
-        lines.append(f"{key[2:].replace('_', ' '):<14} " + '  |  '.join(cells))
+        lines.append(f"{key.split('_', 1)[1].replace('_', ' '):<14} " + '  |  '.join(cells))
     return '\n'.join(lines)
+
+
+def _align(y, stems_dir, path, sr):
+    """A stem file starts where its part first sounds (stems.json `start_s`); pad it back to the cue's clock so a score time is a sample index."""
+    try:
+        with open(os.path.join(stems_dir, 'stems.json'), encoding='utf-8') as fh:
+            man = json.load(fh)
+        start = float((man.get(os.path.splitext(os.path.basename(path))[0]) or {}).get('start_s', 0.0))
+    except (OSError, ValueError):
+        start = 0.0
+    n = int(round(start * sr))
+    return np.pad(y, ((n, 0), (0, 0))) if n > 0 and y.ndim == 2 else (np.pad(y, (n, 0)) if n > 0 else y)
 
 
 REALISM_REGISTERS = ('cinematic', 'orchestral', 'hybrid', 'theatrical', 'epic', 'trailer')
@@ -403,9 +658,9 @@ def wanted(score):
 def rows_from(report):
     """The report as pipeline rows: [(level, row name, detail)], WARN or PASS, never FAIL (the report measures, it does not judge a render)."""
     out = []
-    for key in sorted(k for k in report if k[0].isdigit()):
+    for key in sorted((k for k in report if k[0].isdigit()), key=_order):
         d = report[key]
-        name = 'realism.' + key[2:]
+        name = 'realism.' + key.split('_', 1)[1]
         value = d.get('value')
         out.append(('WARN' if d.get('verdict') == 'WARN' else 'PASS', name,
                     (f"value {value}: " if value is not None else '') + str(d.get('note', ''))
@@ -417,11 +672,11 @@ def run_after_certification(project_dir, score, master_wav, stems_dir=None):
     """Measure the certified master and write the result next to the other gate artefacts: presets/gate/data/realism.json and realism.txt
     (never reports/, which holds research, the CI report and the debug autopsy). Returns (rows, path of the json)."""
     master, sr = load_audio(master_wav)
-    stems = []
+    stems = {}
     if stems_dir and os.path.isdir(stems_dir):
         for p in sorted(glob.glob(os.path.join(stems_dir, '*.wav'))):
             y, _ = load_audio(p)
-            stems.append(y)
+            stems[os.path.splitext(os.path.basename(p))[0]] = _align(y, stems_dir, p, sr)
     r = analyse(master, sr, stems=stems, score=score, project=project_dir)
     import gate_profiles
     d = gate_profiles.data_dir(project_dir)
@@ -456,11 +711,11 @@ def main(argv=None):
     if not a.master:
         ap.error('give a master wav, or --compare with two or more')
     master, sr = load_audio(a.master)
-    stems = []
+    stems = {}
     if a.stems:
         for p in sorted(glob.glob(os.path.join(a.stems, '*.wav'))):
             y, _ = load_audio(p)
-            stems.append(y)
+            stems[os.path.splitext(os.path.basename(p))[0]] = _align(y, a.stems, p, sr)
     score = None
     if a.score:
         with open(a.score, encoding='utf-8') as fh:
