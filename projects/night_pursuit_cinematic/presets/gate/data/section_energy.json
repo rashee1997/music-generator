@@ -16,56 +16,56 @@
       "start_s": 0.0,
       "end_s": 25.077,
       "energy": 0.9,
-      "level_db": -17.899580623344036
+      "level_db": -17.748603326434534
     },
     {
       "name": "spotted",
       "start_s": 25.077,
       "end_s": 38.892,
       "energy": 0.8,
-      "level_db": -21.37121320952291
+      "level_db": -21.656919007947653
     },
     {
       "name": "the_chase",
       "start_s": 38.892,
       "end_s": 72.228,
       "energy": 0.9,
-      "level_db": -19.88356034977589
+      "level_db": -19.937815307710277
     },
     {
       "name": "the_tunnel",
       "start_s": 72.228,
       "end_s": 95.085,
       "energy": 0.8,
-      "level_db": -20.244521665852453
+      "level_db": -20.534225348583288
     },
     {
       "name": "the_helicopter",
       "start_s": 95.085,
       "end_s": 117.636,
       "energy": 0.8,
-      "level_db": -19.79571461460209
+      "level_db": -19.400541045122726
     },
     {
       "name": "the_bumps",
       "start_s": 117.636,
       "end_s": 139.888,
       "energy": 1.0,
-      "level_db": -16.624871460530237
+      "level_db": -16.364620115031304
     },
     {
       "name": "the_flyover",
       "start_s": 139.888,
       "end_s": 165.785,
       "energy": 0.8,
-      "level_db": -24.44108153853588
+      "level_db": -24.185761720810675
     },
     {
       "name": "the_escape",
       "start_s": 165.785,
       "end_s": 192.648,
       "energy": 0.5,
-      "level_db": -31.610730025013407
+      "level_db": -31.00352338611403
     }
   ]
 }
