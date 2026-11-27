@@ -1,0 +1,69 @@
+{
+  "name": "ghats_sitar",
+  "description": "A plucked veena-sitar figure that answers the flute in running eighths, soft in the first light and brighter at the sunrise.",
+  "character": "A plucked veena-sitar figure that answers the flute in running eighths, soft in the first light and brighter at the sunrise.",
+  "instrument": "veena",
+  "role": "arp",
+  "family": "plucked",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 8.0,
+    "drift_ms": 8.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": -55,
+    "elevation": 0,
+    "distance": 1.9,
+    "space": "western_ghats_sunrise_room",
+    "binaural": true,
+    "kind": "spot"
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 180.0
+    },
+    {
+      "type": "peak",
+      "f": 3500.0,
+      "gain": -4.0,
+      "q": 2.0
+    },
+    {
+      "type": "lp",
+      "f": 8000.0
+    }
+  ],
+  "gain_db": -6.0,
+  "reverb": 0.16,
+  "sources": [
+    "KB indian-film-fusion (Mohanam pentatonic, raga-safe voicings, gamaka, 3+3+2 tala grids)",
+    "KB pan-indian and flutes (bansuri range and breath)",
+    "research_western_ghats_sunrise_rahman_fusion.md (web sources, search-result text only)",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
+  ],
+  "soundfont": "muse_general",
+  "snap": null,
+  "velocity_timbre": {
+    "points": [
+      [
+        25,
+        270
+      ],
+      [
+        55,
+        540
+      ],
+      [
+        100,
+        3150
+      ],
+      [
+        127,
+        6300
+      ]
+    ],
+    "zones": 8
+  }
+}

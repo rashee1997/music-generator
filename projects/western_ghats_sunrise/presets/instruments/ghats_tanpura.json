@@ -1,0 +1,49 @@
+{
+  "name": "ghats_tanpura",
+  "description": "The tanpura drone: the four-string cycle Pa, Sa, Sa, low Sa, plucked softly and left to ring under everything, the anchor of the one key centre.",
+  "character": "The tanpura drone: the four-string cycle Pa, Sa, Sa, low Sa, plucked softly and left to ring under everything, the anchor of the one key centre.",
+  "instrument": "sitar",
+  "role": "drone",
+  "family": "plucked",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 10.0,
+    "drift_ms": 12.0,
+    "vel_sigma": 4.0
+  },
+  "spatial": {
+    "azimuth": -108,
+    "elevation": -2,
+    "distance": 2.6,
+    "space": "western_ghats_sunrise_room",
+    "binaural": true,
+    "kind": "spot"
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 70.0
+    },
+    {
+      "type": "peak",
+      "f": 300.0,
+      "gain": -2.0,
+      "q": 0.9
+    },
+    {
+      "type": "lp",
+      "f": 4000.0
+    }
+  ],
+  "gain_db": -11.0,
+  "reverb": 0.3,
+  "sources": [
+    "KB indian-film-fusion (Mohanam pentatonic, raga-safe voicings, gamaka, 3+3+2 tala grids)",
+    "KB pan-indian and flutes (bansuri range and breath)",
+    "research_western_ghats_sunrise_rahman_fusion.md (web sources, search-result text only)",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
+  ],
+  "soundfont": "muse_general",
+  "snap": null,
+  "onset_fade_ms": 3.0
+}

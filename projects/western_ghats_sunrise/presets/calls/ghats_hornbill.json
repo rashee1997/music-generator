@@ -1,0 +1,78 @@
+{
+  "name": "ghats_hornbill",
+  "character": "A loud cackle like mock laughter: a run of harsh chuckles, a squawk with a register break, and more chuckles.",
+  "elements": {
+    "chuckle": {
+      "f0_hz": [
+        [
+          0,
+          950
+        ],
+        [
+          1,
+          720
+        ]
+      ],
+      "ms": [
+        90,
+        140
+      ],
+      "harmonics": 14,
+      "rolloff": 1.0,
+      "noise": 0.28,
+      "subharmonic": 0.25,
+      "attack": 0.04,
+      "release": 0.3
+    },
+    "squawk": {
+      "f0_hz": [
+        [
+          0,
+          1250
+        ],
+        [
+          0.4,
+          1800
+        ],
+        [
+          1,
+          1100
+        ]
+      ],
+      "ms": [
+        380,
+        520
+      ],
+      "harmonics": 14,
+      "rolloff": 1.1,
+      "noise": 0.35,
+      "subharmonic": 0.3,
+      "jump": [
+        0.55,
+        1.12
+      ],
+      "attack": 0.05,
+      "release": 0.3
+    }
+  },
+  "sequence": [
+    [
+      "chuckle",
+      5,
+      9
+    ],
+    "squawk",
+    [
+      "chuckle",
+      3,
+      6
+    ]
+  ],
+  "gap_ms": [
+    60,
+    120
+  ],
+  "sources": [
+    "ESTIMATE: pitch contours, element lengths and pulse rates are written from the qualitative descriptions cited in the fauna block, not measured; replace from xeno-canto spectrograms (analysed only, not kept)"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "name": "ghats_barbet",
+  "character": "A sharp, metronomic single note repeated for a long time, a little faster than a coppersmith barbet.",
+  "elements": {
+    "tuk": {
+      "f0_hz": [
+        [
+          0,
+          1050
+        ],
+        [
+          1,
+          980
+        ]
+      ],
+      "ms": [
+        55,
+        80
+      ],
+      "harmonics": 5,
+      "rolloff": 1.8,
+      "attack": 0.02,
+      "release": 0.5
+    }
+  },
+  "sequence": [
+    [
+      "tuk",
+      14,
+      30
+    ]
+  ],
+  "gap_ms": [
+    190,
+    230
+  ],
+  "sources": [
+    "ESTIMATE: pitch contours, element lengths and pulse rates are written from the qualitative descriptions cited in the fauna block, not measured; replace from xeno-canto spectrograms (analysed only, not kept)"
+  ]
+}

@@ -1,9 +1,9 @@
 {
   "name": "western_ghats_sunrise_mix",
-  "character": "ONE SENTENCE: what this music is (genre, mood, density) and why the mix below suits it",
+  "character": "A warm acoustic mix: the bansuri is the hero and the beds yield to it in the middle, the strings and choir swell around it, the tabla stays under the hands of the strings, and the dawn ambience sits under it all and opens out as the light rises.",
   "carve_db": -4.0,
   "max_boost_db": 12.0,
-  "note": "only list what differs: everything else comes from references/data/presets/mix/default.json",
+  "note": "Written for Western Ghats Sunrise; the scaffold copy was replaced.",
   "gain_staging": {
     "strategy": "legacy",
     "ref_lufs": -24.0,
@@ -273,7 +273,23 @@
     "curve": "linear"
   },
   "mastering": {
-    "profile": "default"
+    "profile": "cinema",
+    "crest_floor_db": 7.0,
+    "highpass_hz": 60.0,
+    "highpass_order": 2,
+    "profiles": {
+      "cinema": {
+        "lufs": -16.0,
+        "true_peak": -1.5,
+        "tone": "neutral",
+        "glue": true,
+        "fade_out": 0.8
+      }
+    },
+    "section_levels": {
+      "range_db": 9.0,
+      "ramp_s": 1.8
+    }
   },
   "role_chains": {
     "melody": {
@@ -727,5 +743,56 @@
         "release": 180
       }
     }
+  },
+  "lead_carve": {
+    "enabled": true,
+    "from_intent": true
+  },
+  "level_by_role": {
+    "environment": -8.0,
+    "texture": -2.0
+  },
+  "render": {
+    "mix_workers": 2
+  },
+  "inst_eq": {
+    "ghats_tabla": [
+      {
+        "type": "highshelf",
+        "f": 6000,
+        "gain": -15.0,
+        "q": 0.7
+      }
+    ]
+  },
+  "immersive": {
+    "enabled": true,
+    "engine": "hoa_bus",
+    "order": 5,
+    "anchor_max_span_deg": 6.0,
+    "max_deg_per_sec": {
+      "anchor": 10.0,
+      "mover": 120.0
+    },
+    "height_by_role": {
+      "melody": 0.0,
+      "lead": 0.0,
+      "vocal": 0.0,
+      "pad": 0.0,
+      "texture": 0.0,
+      "environment": 0.0,
+      "chord": 0.0,
+      "bass": 0.0,
+      "drum": 0.0,
+      "percussion": 0.0,
+      "drone": 0.0,
+      "ostinato": 0.0,
+      "arp": 0.0,
+      "counter": 0.0,
+      "fx": 0.0
+    },
+    "max_elevation": 70.0,
+    "min_height_tracks": 2,
+    "stereo_decode": "speakers"
   }
 }

@@ -1,24 +1,24 @@
 {
   "name": "western_ghats_sunrise_room",
-  "character": "ONE SENTENCE: the place and why its tail, walls and distance law suit this piece",
+  "character": "An open hillside at sunrise with a ridge across the valley: little early reflection, a soft tail from the slope and the far trees, no walls close by.",
   "room": {
-    "rt60": 2.3,
-    "pre_delay_ms": 24,
-    "hf_decay": 0.55,
-    "early_level": 0.4
+    "rt60": 1.5,
+    "pre_delay_ms": 34,
+    "hf_decay": 0.45,
+    "early_level": 0.22
   },
   "reflections": {
     "ground_delay_ms": 6.5,
-    "ground_gain": 0.5,
+    "ground_gain": 0.45,
     "ground_cutoff_hz": 4500,
     "lateral_delay_ms": 14.0,
-    "lateral_gain": 0.48,
+    "lateral_gain": 0.22,
     "lateral_cutoff_hz": 3600,
-    "reverb_decay_s": 2.2,
+    "reverb_decay_s": 1.4,
     "ceiling_delay_ms": 15.0,
-    "ceiling_gain": 0.45,
+    "ceiling_gain": 0.0,
     "rear_delay_ms": 24.0,
-    "rear_gain": 0.4
+    "rear_gain": 0.3
   },
   "distance": {
     "ref_m": 1.5,
@@ -35,5 +35,8 @@
   "binaural": {
     "bed": false,
     "spot": true
-  }
+  },
+  "sources": [
+    "ESTIMATE: an open slope has a short tail (about 1.5 s from a facing ridge); starting value, tune against the measured DRR"
+  ]
 }

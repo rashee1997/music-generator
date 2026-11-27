@@ -1,0 +1,558 @@
+{
+  "schema": "biome/1",
+  "name": "western_ghats_sunrise",
+  "character": "A shola forest edge in the Western Ghats about 1000 m up as the sun clears the ridge: a stream below, a little mist drip and a light canopy wind under a dawn chorus that arrives bird by bird as the light rises, while the tree frogs of the night fall silent.",
+  "world": {
+    "g_m_s2": 9.81,
+    "listener": {
+      "medium": "air",
+      "height_m": 1.6
+    }
+  },
+  "medium": {
+    "model": "iso9613",
+    "gas": {
+      "molar_mass_kg_mol": 0.02897,
+      "gamma": 1.4,
+      "viscosity_pa_s": 1.81e-05,
+      "prandtl": 0.71
+    },
+    "state": {
+      "temperature_k": 289.15,
+      "pressure_pa": 89900,
+      "rh_percent": 92
+    },
+    "boundary": {
+      "canopy": {
+        "excess_db_per_m": [
+          [
+            500,
+            0.03
+          ],
+          [
+            2000,
+            0.12
+          ],
+          [
+            4000,
+            0.25
+          ],
+          [
+            8000,
+            0.5
+          ]
+        ],
+        "sources": [
+          "ESTIMATE: the shape and size of a foliage excess-attenuation table (it rises with frequency; a few tenths of a dB per metre at a few kHz); replace with the values in the research note"
+        ]
+      },
+      "ground": {
+        "material": "soil",
+        "height_m": 0.0
+      }
+    },
+    "level_ref": {
+      "basis": "power",
+      "p_ref_pa": 2e-05
+    },
+    "sources": [
+      "ISO 9613-1 for the absorption",
+      "89.9 kPa is the standard atmosphere at 1000 m (starting value)",
+      "16 C and 92 % RH: a clear misty dawn (ESTIMATE)"
+    ]
+  },
+  "materials": {
+    "leaf_wet": {
+      "family": "membrane",
+      "density": 900,
+      "young_modulus_gpa": 0.05,
+      "loss_factor": 0.14,
+      "thickness_m": 0.0003,
+      "flow_resistivity": 9000,
+      "restitution": 0.2
+    }
+  },
+  "controls": {
+    "light": {
+      "curve": [
+        [
+          0,
+          0.04
+        ],
+        [
+          8,
+          0.1
+        ],
+        [
+          20,
+          0.35
+        ],
+        [
+          30,
+          0.85
+        ],
+        [
+          48,
+          1.0
+        ],
+        [
+          60,
+          0.9
+        ]
+      ]
+    },
+    "wind_u": {
+      "curve": [
+        [
+          0,
+          1.6
+        ],
+        [
+          18,
+          1.8
+        ],
+        [
+          30,
+          2.7
+        ],
+        [
+          60,
+          3.0
+        ]
+      ]
+    },
+    "stream_rate": {
+      "curve": [
+        [
+          0,
+          10
+        ],
+        [
+          18,
+          14
+        ],
+        [
+          30,
+          55
+        ],
+        [
+          60,
+          80
+        ]
+      ]
+    },
+    "night_fade": {
+      "curve": [
+        [
+          0,
+          1.0
+        ],
+        [
+          12,
+          0.8
+        ],
+        [
+          26,
+          0.25
+        ],
+        [
+          40,
+          0.05
+        ],
+        [
+          60,
+          0.0
+        ]
+      ]
+    },
+    "mist_drip": {
+      "curve": [
+        [
+          0,
+          3
+        ],
+        [
+          30,
+          1.5
+        ],
+        [
+          60,
+          0.5
+        ]
+      ]
+    }
+  },
+  "generators": [
+    {
+      "name": "mist_drip",
+      "kind": "particulate_impacts",
+      "salience": "bed",
+      "stationary": false,
+      "population": {
+        "kind": "rain",
+        "rate_mm_h": {
+          "control": "mist_drip"
+        },
+        "cd": 1.1,
+        "d_mm": [
+          0.5,
+          2.5
+        ]
+      },
+      "surface": {
+        "kind": "solid",
+        "material": "leaf_wet",
+        "area_m2": 40.0,
+        "patches": 4
+      },
+      "spatial": {
+        "field": true,
+        "distance": 4.0,
+        "elevations": [
+          30.0,
+          50.0
+        ]
+      },
+      "sources": [
+        "Marshall-Palmer drop sizes (scripts/biome/physics.py)",
+        "ESTIMATE: a light drip from wet leaves after the night, 0.5-3 mm/h; replace once a recording is measured"
+      ],
+      "gain_db": 0.0
+    },
+    {
+      "name": "stream",
+      "kind": "particulate_impacts",
+      "salience": "bed",
+      "stationary": true,
+      "population": {
+        "kind": "rain",
+        "rate_mm_h": {
+          "control": "stream_rate"
+        },
+        "cd": 1.1,
+        "d_mm": [
+          0.5,
+          2.0
+        ]
+      },
+      "surface": {
+        "kind": "liquid",
+        "area_m2": 6.0
+      },
+      "bubbles": {
+        "p_by_size": [
+          [
+            0.4,
+            0.6
+          ],
+          [
+            1.0,
+            0.25
+          ]
+        ]
+      },
+      "spatial": {
+        "azimuth": -75.0,
+        "distance": 16.0,
+        "elevation": -5.0
+      },
+      "sources": [
+        "Minnaert bubble pitch from the medium (scripts/biome/physics.py)",
+        "ESTIMATE: splash rate, sizes and bubble probabilities; measure a stream recording with scripts/ambience_reference.py"
+      ],
+      "gain_db": 20.0
+    },
+    {
+      "name": "canopy_wind",
+      "kind": "turbulence",
+      "salience": "bed",
+      "obstacles": {
+        "d_m": {
+          "dist": "lognormal",
+          "median": 0.004,
+          "sigma": 0.5
+        },
+        "frontal_area_m2": 40.0,
+        "oscillators": 8
+      },
+      "flow": {
+        "u_m_s": {
+          "control": "wind_u"
+        },
+        "gust_corner_hz": 0.08,
+        "intensity": 0.08
+      },
+      "k_dipole": 0.001,
+      "strouhal": {
+        "law": "auto"
+      },
+      "broadband": {
+        "share": 0.4,
+        "band_hz": [
+          100,
+          5000
+        ]
+      },
+      "spatial": {
+        "field": true,
+        "distance": 3.0,
+        "elevations": [
+          40.0
+        ]
+      },
+      "sources": [
+        "Strouhal number by Reynolds number (scripts/biome/physics.py)",
+        "ESTIMATE: leaf-stalk sizes, frontal area and wind speed; k_dipole is a starting value"
+      ]
+    }
+  ],
+  "fauna": [
+    {
+      "name": "tree_frogs",
+      "salience": "bed",
+      "power_w": 5e-06,
+      "bouts_per_min": 10,
+      "individuals": 3,
+      "first_s": 0.5,
+      "rate_per_k": 0.04,
+      "temp_ref_k": 292.15,
+      "source": {
+        "kind": "stridulation",
+        "tooth_hz": 90,
+        "plate_hz": 2800,
+        "plate_q": 12,
+        "train": {
+          "chirp_ms": 120,
+          "period_ms": 450
+        }
+      },
+      "elements": {
+        "chorus": {
+          "ms": [
+            2500,
+            3500
+          ]
+        }
+      },
+      "niche": {
+        "band_hz": [
+          2400,
+          3400
+        ],
+        "active": {
+          "control": "night_fade"
+        }
+      },
+      "position": {
+        "azimuth": -40.0,
+        "elevation": 0.0,
+        "distance": 9.0
+      },
+      "sources": [
+        "https://bioone.org/journals/herpetologica/volume-69/issue-1/HERPETOLOGICA-D-11-00042/Vocal-Behavior-of-the-Ponmudi-Bush-Frog-Raorchestes-graminirupes/10.1655/HERPETOLOGICA-D-11-00042.full (dominant frequency steady within a frog)",
+        "https://en.wikipedia.org/wiki/Raorchestes_sanjappai (2.4 kHz dominant frequency)",
+        "ESTIMATE: pulse structure; a stridulation stand-in"
+      ]
+    },
+    {
+      "name": "malabar_whistling_thrush",
+      "call": "ghats_whistling_thrush",
+      "salience": "foreground",
+      "power_w": 1.5e-05,
+      "bouts_per_min": 3.0,
+      "individuals": 2,
+      "first_s": 14.0,
+      "resonator": {
+        "kind": "tube",
+        "length_cm": 4.5
+      },
+      "niche": {
+        "band_hz": [
+          1300,
+          3000
+        ],
+        "active": {
+          "control": "light"
+        }
+      },
+      "position": {
+        "azimuth": 25.0,
+        "elevation": 20.0,
+        "distance": 14.0
+      },
+      "sources": [
+        "https://en.wikipedia.org/wiki/Malabar_whistling_thrush (a human-like whistle; longer, melodious phrases in the morning, short sharp whistles later)",
+        "ESTIMATE: element contours, lengths and rates (qualitative descriptions only); replace from a measured spectrogram"
+      ]
+    },
+    {
+      "name": "malabar_grey_hornbill",
+      "call": "ghats_hornbill",
+      "salience": "bed",
+      "power_w": 4e-05,
+      "bouts_per_min": 2.0,
+      "individuals": 2,
+      "first_s": 22.0,
+      "resonator": {
+        "kind": "tube",
+        "length_cm": 12.0
+      },
+      "niche": {
+        "band_hz": [
+          700,
+          2600
+        ],
+        "active": {
+          "control": "light"
+        }
+      },
+      "position": {
+        "azimuth": -100.0,
+        "elevation": 30.0,
+        "distance": 40.0
+      },
+      "sources": [
+        "https://iucnhornbills.org/malabar-grey-hornbill/ (an assortment of loud, harsh chuckles and squawks with raucous cackling like mock laughter)",
+        "https://app.birdweather.com/species/malabar-gray-hornbill (loud cackling and laughing call; endemic to the Western Ghats)",
+        "ESTIMATE: element contours, lengths and rates (qualitative descriptions only); replace from a measured spectrogram"
+      ]
+    },
+    {
+      "name": "malabar_barbet",
+      "call": "ghats_barbet",
+      "salience": "bed",
+      "power_w": 1e-05,
+      "bouts_per_min": 1.5,
+      "individuals": 1,
+      "first_s": 34.0,
+      "resonator": {
+        "kind": "tube",
+        "length_cm": 6.0
+      },
+      "niche": {
+        "band_hz": [
+          800,
+          1400
+        ],
+        "active": {
+          "control": "light"
+        }
+      },
+      "position": {
+        "azimuth": 110.0,
+        "elevation": 38.0,
+        "distance": 30.0
+      },
+      "sources": [
+        "https://macaulaylibrary.org/asset/646733603 (Kerala recording: a sharp single-note call like a coppersmith barbet, repeated)",
+        "https://en.wikipedia.org/wiki/Malabar_barbet (similar to the coppersmith barbet, a more rapid call)",
+        "ESTIMATE: element contours, lengths and rates (qualitative descriptions only); replace from a measured spectrogram"
+      ]
+    },
+    {
+      "name": "racket_tailed_drongo",
+      "call": "ghats_drongo",
+      "salience": "foreground",
+      "power_w": 1.2e-05,
+      "bouts_per_min": 4.0,
+      "individuals": 2,
+      "first_s": 18.0,
+      "resonator": {
+        "kind": "tube",
+        "length_cm": 3.5
+      },
+      "niche": {
+        "band_hz": [
+          4000,
+          7500
+        ],
+        "active": {
+          "control": "light"
+        }
+      },
+      "position": {
+        "azimuth": 62.0,
+        "elevation": 34.0,
+        "distance": 17.0
+      },
+      "sources": [
+        "https://en.wikipedia.org/wiki/Greater_racket-tailed_drongo (a wide range of loud calls including near-perfect imitations of other birds)",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC3945749/ (mimicked notes sit in its repertoire)",
+        "ESTIMATE: element contours, lengths and rates (qualitative descriptions only); replace from a measured spectrogram"
+      ]
+    },
+    {
+      "name": "flame_throated_bulbul",
+      "call": "ghats_bulbul",
+      "salience": "foreground",
+      "power_w": 1e-05,
+      "bouts_per_min": 6.0,
+      "individuals": 3,
+      "first_s": 28.0,
+      "resonator": {
+        "kind": "tube",
+        "length_cm": 3.0
+      },
+      "niche": {
+        "band_hz": [
+          4500,
+          8000
+        ],
+        "active": {
+          "control": "light"
+        }
+      },
+      "position": {
+        "azimuth": -48.0,
+        "elevation": 26.0,
+        "distance": 11.0
+      },
+      "sources": [
+        "https://sanctuarynaturefoundation.org/public/article/shhh-can-you-hear-me%3F (an endemic dawn voice of the Valparai rainforest)",
+        "ESTIMATE: element contours, lengths and rates (qualitative descriptions only); replace from a measured spectrogram"
+      ]
+    }
+  ],
+  "ecology": {
+    "density_budget": {
+      "events_per_s_max": 1.2
+    },
+    "niches": {
+      "auto": true,
+      "min_separation": "D<=0.4"
+    },
+    "rules": [],
+    "score": {
+      "occupancy": "from_score",
+      "protect_roles": [
+        "melody",
+        "lead",
+        "vocal"
+      ],
+      "margin_db": 3,
+      "pocket_threshold": 0.7
+    }
+  },
+  "spatial_coupling": {
+    "field": {
+      "kind": "diffuse",
+      "emitters": 12,
+      "order": 5,
+      "correlation_target": 0.2
+    },
+    "room": {
+      "space": "western_ghats_sunrise_room"
+    },
+    "decode_hint": [
+      "stereo",
+      "immersive_7_1"
+    ]
+  },
+  "reference": {
+    "full_scale_pa": 0.1
+  },
+  "sources": [
+    "malabar_thrush",
+    "tree_frogs"
+  ]
+}
