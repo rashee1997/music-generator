@@ -6,7 +6,7 @@
     "warns": 0,
     "rows": 242,
     "profile": "night_pursuit_cinematic",
-    "total_ms": 3990.327977000561,
+    "total_ms": 11629.815992999966,
     "timings": {
       "bass_clarinet": 0.0,
       "bass_drum": 0.0,
@@ -17,14 +17,14 @@
       "choir": 0.0,
       "city_far": 0.0,
       "crash": 0.0,
-      "cymbals": 0.0,
-      "ferrari": 1745.3343140005018,
+      "cymbals": 1356.4251230000082,
+      "ferrari": 1043.2659310001782,
       "helicopter": 0.0,
       "horns": 0.0,
-      "lamborghini": 1533.4153040021192,
+      "lamborghini": 942.2369289998187,
       "landing": 0.0,
       "low_swell": 0.0,
-      "mustang": 1464.5160529980785,
+      "mustang": 836.2284360000558,
       "porsche": 0.0,
       "siren_first": 0.0,
       "siren_second": 0.0,
@@ -1572,18 +1572,18 @@
         "stage": "stem",
         "stem": "cymbals",
         "level": "PASS",
-        "value": 1.6732447876176559e-06,
+        "value": 1.672989047810357e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009983267552123823,
+        "margin": -0.0009983270109521897,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"cymbals\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -3.0933696554362616e-08,
-          -1.642838716247938e-08
+          -3.10191305453545e-08,
+          -1.6513818459111375e-08
         ],
-        "drift": 1.6732447876176559e-06
+        "drift": 1.672989047810357e-06
       },
       {
         "row": "stem.clipping",
@@ -2681,7 +2681,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -150.1 dBFS; 0 hole(s)",
+        "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.9 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -2742,14 +2742,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"mustang\": own median -23.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"mustang\": own median -22.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_race",
             "start_s": 0.0,
-            "measured_db": -23.04,
-            "expected_db": -23.04,
+            "measured_db": -22.81,
+            "expected_db": -22.81,
             "dyn": 0.9
           }
         ],
@@ -4792,8 +4792,8 @@
       }
     ],
     "duration_s": 196.4940589569161,
-    "cached_stems": 26,
-    "measured_stems": 3
+    "cached_stems": 25,
+    "measured_stems": 4
   },
   "rows": [
     {
@@ -5469,7 +5469,7 @@
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -150.1 dBFS; 0 hole(s)"
+      "detail": "stem \"mustang\": longest hole 0 ms (limit 20-1000 ms), floor -149.9 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5489,7 +5489,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"mustang\": own median -23.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"mustang\": own median -22.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
