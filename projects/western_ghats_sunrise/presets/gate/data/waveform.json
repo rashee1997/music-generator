@@ -1,0 +1,151 @@
+{
+  "duration_s": 61.36965986394558,
+  "sections": [
+    {
+      "name": "mist",
+      "start_s": 0.0,
+      "end_s": 4.615,
+      "dyn": 0.3
+    },
+    {
+      "name": "groove",
+      "start_s": 4.615,
+      "end_s": 20.769,
+      "dyn": 0.55
+    },
+    {
+      "name": "sunrise",
+      "start_s": 20.769,
+      "end_s": 30.0,
+      "dyn": 0.8
+    },
+    {
+      "name": "piper",
+      "start_s": 30.0,
+      "end_s": 39.231,
+      "dyn": 0.75
+    },
+    {
+      "name": "crest",
+      "start_s": 39.231,
+      "end_s": 48.462,
+      "dyn": 1.0
+    },
+    {
+      "name": "morning",
+      "start_s": 48.462,
+      "end_s": 60.0,
+      "dyn": 0.4
+    }
+  ],
+  "flags": [
+    [
+      0.0348,
+      "stem.tick",
+      "ambience",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "choir",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "tanpura",
+      "PASS"
+    ],
+    [
+      2.322,
+      "stem.tick",
+      "violins_long",
+      "PASS"
+    ],
+    [
+      4.6324,
+      "stem.tick",
+      "sitar",
+      "PASS"
+    ],
+    [
+      4.644,
+      "stem.tick",
+      "bass",
+      "PASS"
+    ],
+    [
+      11.5287,
+      "stem.tick",
+      "violas",
+      "PASS"
+    ],
+    [
+      13.8623,
+      "stem.tick",
+      "guitar_clean",
+      "PASS"
+    ],
+    [
+      16.4513,
+      "stem.tick",
+      "santoor",
+      "PASS"
+    ],
+    [
+      20.7935,
+      "stem.tick",
+      "guitar_drive",
+      "PASS"
+    ],
+    [
+      32.7278,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      35.8427,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      40.0626,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      47.718,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      58.8671,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      59.6319,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      59.6481,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      59.6645,
+      "clicks",
+      "master",
+      "FAIL"
+    ]
+  ]
+}

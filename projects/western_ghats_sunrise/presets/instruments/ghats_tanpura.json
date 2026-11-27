@@ -12,8 +12,8 @@
     "vel_sigma": 4.0
   },
   "spatial": {
-    "azimuth": -108,
-    "elevation": -2,
+    "azimuth": -95,
+    "elevation": 20,
     "distance": 2.6,
     "space": "western_ghats_sunrise_room",
     "binaural": true,

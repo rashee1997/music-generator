@@ -1,0 +1,10 @@
+[UNKNOWN] clicks  -  no analyzer for this row yet
+    10 clustered impulse event(s) (MAD), 2 LPC frame(s); 365 event(s) rejected as a dense burst, 178 as a steep attack; max cluster span 1.497 ms
+    fix here: measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause
+    tolerance: protected: no profile or score can change it, so the audio is the only fix
+
+[UNKNOWN] tempo.audio  -  no analyzer for this row yet
+    measured 207.7 BPM vs 104.0 (tolerance 2.1) from the onset-envelope autocorrelation (peak 3.9x the median); beat tracker said 103.4; four-quarter drift 8.1 BPM reported, not decisive
+    fix here: measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause
+    tolerance: bounded relaxation exists: tol_bpm 2.0 (range 1.0..5.0), tol_pct 2.0 (range 1.0..5.0), drift_bpm 2.0 (range 1.0..5.0), octave_ok 0.0 (range 0.0..1.0)
+

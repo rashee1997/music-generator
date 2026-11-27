@@ -12,7 +12,7 @@
   },
   "gain_db": -5.0,
   "reverb": 0.16,
-  "onset_fade_ms": 2.0,
+  "onset_fade_ms": 5.0,
   "snap": null,
   "spatial": {
     "azimuth": 40,

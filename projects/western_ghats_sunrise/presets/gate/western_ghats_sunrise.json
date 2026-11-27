@@ -11,6 +11,12 @@
     "label": "a line the ear can follow",
     "reason": "this type is defined by a figure, so a piece that declares it must carry one; the same list means a lead or a vocal is checked exactly like a melody"
   },
-  "rows": {},
+  "rows": {
+    "tempo.audio": {
+      "mode": "relax",
+      "reason": "Measured 207.7 BPM from the onset-envelope autocorrelation against a written 104.0 (an exact 2.0x octave); the beat tracker reports 103.4 BPM. The kit plays continuous eighth-note hats, so the envelope's strongest periodicity is the eighth, not the beat. The tempo is as written; the row's rule counts the eighth as the pulse. Measured in the last render: master 104 BPM.",
+      "octave_ok": 1.0
+    }
+  },
   "extends": "melodic"
 }

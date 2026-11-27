@@ -64,7 +64,7 @@ def write(path, doc):
 
 # ------------------------------------------------------------------ instrument presets
 STAGE = dict(bansuri=(0, 6, 1.5), sitar=(-55, 0, 1.9), violins_counter=(70, 14, 2.4), violas=(-80, 0, 2.6), celli=(100, 0, 2.8),
-             violins_long=(150, 22, 4.0), tanpura=(-108, -2, 2.6), santoor=(118, 30, 2.8), tabla=(-150, 0, 2.4), pipes=(172, 5, 7.5),
+             violins_long=(150, 22, 4.0), tanpura=(-95, 20, 2.6), santoor=(118, 30, 2.8), tabla=(-150, 0, 2.4), pipes=(172, 5, 7.5),
              pipes_drone=(180, 22, 7.5), kit=(40, 0, 2.6), bass=(-125, 0, 2.2), guitar_drive=(130, 4, 2.4), guitar_clean=(-60, 18, 2.4))
 # the sections sit on the sides and behind (measured: imm.surround_ratio read -9.9 and then -10.1 dB against a -9.0 window with the strings at +-56 deg)
 
@@ -160,7 +160,7 @@ for _i in INSTRUMENTS:
 
 KIT = dict(name='ghats_kit', description='Rock drum kit', instrument='power', role='drum', family='struck_membrane',
            character='A Western rock kit playing the groove owner\'s part: kick on the 3+3+2 accents, snare on two and four, eighth-note hats, a crash at each turn and tom fills; the tabla keeps only the accents between its strokes.',
-           humanize=dict(preset='tight', timing_ms=3.0, drum_ms=2.5), gain_db=-5.0, reverb=0.16, onset_fade_ms=2.0, snap=None,
+           humanize=dict(preset='tight', timing_ms=3.0, drum_ms=2.5), gain_db=-5.0, reverb=0.16, onset_fade_ms=5.0, snap=None,
            spatial=dict(azimuth=40, elevation=0, distance=2.6, space=f'{SLUG}_room', binaural=True, kind='spot'),
            eq=[HP(45), PK(300, -2.0, 0.9), PK(4000, 0.0, 1.0), LP(9000)], sources=list(SRC) + ['references/scoring/genre-fusion.md (one kit, one bass: the other tradition\'s percussion is a fill or an accent); the pattern is an ESTIMATE'])
 
@@ -201,7 +201,7 @@ def environment():
     e['medium']['sources'] = ['ISO 9613-1 for the absorption', '89.9 kPa is the standard atmosphere at 1000 m (starting value)', '16 C and 92 % RH: a clear misty dawn (ESTIMATE)']
     e['controls'] = {'light': {'curve': [[0, 0.04], [8, 0.1], [20, 0.35], [30, 0.85], [48, 1.0], [60, 0.9]]},
                      'wind_u': {'curve': [[0, 1.6], [18, 1.8], [30, 2.7], [60, 3.0]]},
-                     'stream_rate': {'curve': [[0, 10], [18, 14], [30, 55], [60, 80]]},
+                     'stream_rate': {'curve': [[0, 18], [18, 22], [30, 40], [60, 52]]},
                      'night_fade': {'curve': [[0, 1.0], [12, 0.8], [26, 0.25], [40, 0.05], [60, 0.0]]},
                      'mist_drip': {'curve': [[0, 3], [30, 1.5], [60, 0.5]]}}
     gens = {g['name']: g for g in e['generators']}
