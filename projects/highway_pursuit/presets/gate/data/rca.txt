@@ -1,0 +1,24 @@
+[UNKNOWN] stem.dead on celli  -  no processed stem to measure
+    stem "celli": own median -29.8 dBFS, worst section shortfall 89.3 dB (limit 12 dB), active sections 7; dropped in a section
+    fix here: re-render
+    tolerance: bounded relaxation exists: under_db 12.0 (range 6.0..24.0), floor_db -70.0 (range -80.0..-50.0)
+    do next (code): a stem carries no signal: the track has notes the renderer dropped (an unknown instrument, a mute, a zero velocity) - fix the track, not the mix
+
+[UNKNOWN] stem.dead on trombones  -  no processed stem to measure
+    stem "trombones": own median -17.4 dBFS, worst section shortfall 20.2 dB (limit 12 dB), active sections 4; dropped in a section
+    fix here: re-render
+    tolerance: bounded relaxation exists: under_db 12.0 (range 6.0..24.0), floor_db -70.0 (range -80.0..-50.0)
+    do next (code): a stem carries no signal: the track has notes the renderer dropped (an unknown instrument, a mute, a zero velocity) - fix the track, not the mix
+
+[UNKNOWN] stem.dead on tuba  -  no processed stem to measure
+    stem "tuba": own median -20.0 dBFS, worst section shortfall 13.3 dB (limit 12 dB), active sections 5; dropped in a section
+    fix here: re-render
+    tolerance: bounded relaxation exists: under_db 12.0 (range 6.0..24.0), floor_db -70.0 (range -80.0..-50.0)
+    do next (code): a stem carries no signal: the track has notes the renderer dropped (an unknown instrument, a mute, a zero velocity) - fix the track, not the mix
+
+[UNKNOWN] stem.dead on violas  -  no processed stem to measure
+    stem "violas": own median -32.5 dBFS, worst section shortfall 87.1 dB (limit 12 dB), active sections 8; dropped in a section
+    fix here: re-render
+    tolerance: bounded relaxation exists: under_db 12.0 (range 6.0..24.0), floor_db -70.0 (range -80.0..-50.0)
+    do next (code): a stem carries no signal: the track has notes the renderer dropped (an unknown instrument, a mute, a zero velocity) - fix the track, not the mix
+

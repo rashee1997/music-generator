@@ -1,0 +1,510 @@
+{
+  "title": "Highway Pursuit",
+  "project": "A cinematic street race and car chase through a wet New York night after the rain: four cars, the police, a tunnel, a flyover and an escape, written as a listening piece for an eight-channel 7.1 system",
+  "version": 1,
+  "medium": "film",
+  "brief": "A street race that the police see; four cars (a Mustang, a Ferrari, a Lamborghini and a Porsche) at different speeds up to 150 km/h, one of them at one speed all the way; streets, a tunnel, cuts, bumps and a flyover edge; evaded at the end. The road is wet after the rain, nothing is falling, no wipers. The camera changes: inside the car, at the kerb, beside the cars and from a helicopter. Music in front, effects and fx behind it; a film mix; ten channels.",
+  "audience": "a listener on a 7.1 system or headphones who came for the chase",
+  "purpose": "keep the viewer leaning forward for a minute and land on a cut to black",
+  "point_of_view": "the Hero's, over the bars: the music is what the rider hears, not a narrator's comment",
+  "job": "a 60 s title-sequence cue for a motorcycle chase on an Indian national highway: the Hero is already evading when the cue starts, the villain closes, and every twist, drift and slow-motion beat is played by the music - no sound effects",
+  "story": "Four cars race on a wet avenue (Ferrari flat-plane V8, Lamborghini V10, Mustang cross-plane V8, Porsche flat-six); a cruiser at the kerb sees the speeding and the chase begins. The Mustang runs out of road at the tunnel mouth. A helicopter joins. On the flyover the Ferrari jumps the edge in slow motion and lands; the Lamborghini loses the road. The cruisers stop and the Ferrari is evaded.",
+  "duration_s": 192.6,
+  "in_point_s": 0.0,
+  "out_point_s": 192.6,
+  "ending": "combination",
+  "feel": [
+    "relentless",
+    "dangerous",
+    "fast"
+  ],
+  "avoid_feel": [
+    "triumphant",
+    "playful",
+    "exotic"
+  ],
+  "sections": [
+    {
+      "name": "the_evasion",
+      "role": "establish",
+      "start_bar": 1,
+      "end_bar": 4,
+      "start_s": 0.0,
+      "end_s": 6.8433,
+      "energy": 0.72,
+      "camera": "already moving: low tracking shot, the Hero ahead, the villain closing"
+    },
+    {
+      "name": "the_twist",
+      "role": "build",
+      "start_bar": 5,
+      "end_bar": 10,
+      "start_s": 6.8433,
+      "end_s": 17.1355,
+      "energy": 0.82,
+      "camera": "a tritone cut to the villain, then back: the road switches direction"
+    },
+    {
+      "name": "the_drift",
+      "role": "transition",
+      "start_bar": 11,
+      "end_bar": 13,
+      "start_s": 17.1355,
+      "end_s": 22.2882,
+      "energy": 0.55,
+      "camera": "the rear wheel steps out: a low side-tracking shot, no cuts"
+    },
+    {
+      "name": "the_chase",
+      "role": "peak",
+      "start_bar": 14,
+      "end_bar": 19,
+      "start_s": 22.2882,
+      "end_s": 32.5552,
+      "energy": 0.95,
+      "camera": "handheld, cuts on the bar lines: the two bikes swap the lead"
+    },
+    {
+      "name": "the_slow_motion",
+      "role": "release",
+      "start_bar": 20,
+      "end_bar": 23,
+      "start_s": 32.5552,
+      "end_s": 42.1625,
+      "energy": 0.5,
+      "camera": "bullet time: the near-collision from three angles, everything pulled back"
+    },
+    {
+      "name": "the_swerve",
+      "role": "peak",
+      "start_bar": 24,
+      "end_bar": 29,
+      "start_s": 42.1625,
+      "end_s": 52.9717,
+      "energy": 1.0,
+      "camera": "high angle over the flyover, the widest shot, tempo back to full"
+    },
+    {
+      "name": "the_near_miss",
+      "role": "rupture",
+      "start_bar": 30,
+      "end_bar": 31,
+      "start_s": 52.9717,
+      "end_s": 56.3815,
+      "energy": 0.65,
+      "camera": "the villain clips a truck: one second of nothing"
+    },
+    {
+      "name": "the_escape",
+      "role": "button",
+      "start_bar": 32,
+      "end_bar": 33,
+      "start_s": 56.3815,
+      "end_s": 60.0954,
+      "energy": 0.3,
+      "camera": "the Hero rides out, cut to black"
+    }
+  ],
+  "motifs": [
+    {
+      "name": "the_cell",
+      "instrument": "horns",
+      "shape": "root, minor 3rd, fourth falling to the third, fifth: two bars; fragmented at the twist, stretched in slow motion, inverted over the flyover",
+      "why": "four notes survive engine noise, a cut and a tempo change"
+    }
+  ],
+  "instruments": [
+    "pursuit_basses",
+    "pursuit_bass_drum",
+    "pursuit_basses_pizz",
+    "pursuit_snare",
+    "pursuit_timpani",
+    "pursuit_taiko",
+    "pursuit_tuba",
+    "pursuit_low_swell",
+    "pursuit_horns",
+    "pursuit_trombones",
+    "pursuit_violas",
+    "pursuit_celli",
+    "pursuit_bass_clarinet",
+    "pursuit_violins_staccato",
+    "pursuit_violins_long",
+    "pursuit_cymbals",
+    "pursuit_piano_theme",
+    "pursuit_choir",
+    "pursuit_solo_violin"
+  ],
+  "avoid_sounds": [
+    "bansuri",
+    "veena",
+    "tambura",
+    "sitar",
+    "tabla",
+    "police siren",
+    "any Indian classical instrument or scale",
+    "ambience",
+    "rain",
+    "sound effects"
+  ],
+  "pulse": "steady",
+  "tempo_bpm": [
+    72,
+    156
+  ],
+  "key": "D minor",
+  "mode": "minor",
+  "energy": 0.9,
+  "space": "highway_canyon",
+  "hits_at": [
+    6.8433,
+    17.1355,
+    22.2882,
+    32.5552,
+    42.1625,
+    52.9717,
+    56.3815
+  ],
+  "hits": [
+    {
+      "t": 6.8433,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the tritone twist: trombones and crash on the cut",
+      "why": "the road turns; the harmony turns with it (Dm -> Ab), and the strings run through the cut"
+    },
+    {
+      "t": 17.1355,
+      "kind": "cut",
+      "sync": "soft",
+      "sound": "the drift: drums out, strings slide",
+      "why": "no edit, a camera move: a soft sync"
+    },
+    {
+      "t": 22.2882,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "full orchestra on the wide shot",
+      "why": "chase 1 lands on the cut"
+    },
+    {
+      "t": 32.5552,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the pad opens and the tempo drops: bullet time",
+      "why": "the slow-motion beat starts on this frame; the tempo drops under it and the held notes carry over"
+    },
+    {
+      "t": 42.1625,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the tempo snaps back, cluster and taiko",
+      "why": "the flyover: the widest shot and the loudest bar"
+    },
+    {
+      "t": 52.9717,
+      "kind": "cut",
+      "sync": "hard",
+      "sound": "the truck horn is picture: the music stops for a second",
+      "silence_after_s": 1.0,
+      "why": "the near miss: silence is the effect, and the room is what sounds"
+    },
+    {
+      "t": 56.3815,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "one low D and a taiko, then the tail",
+      "why": "the escape, under the cut to black"
+    }
+  ],
+  "mix_intent": {
+    "hero": "horns",
+    "leave_free_hz": []
+  },
+  "loudness_lufs": -16.0,
+  "true_peak_max": -1.5,
+  "delivery": {
+    "format": "wav",
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "stage": "master"
+  },
+  "references": [
+    "night_pursuit_cinematic: the same chase grammar, rewritten for a highway, a colder colour and a real slow-motion beat"
+  ],
+  "spatial_staging": {
+    "front": [
+      "horns",
+      "violins_staccato"
+    ],
+    "mid": [
+      "violas",
+      "celli",
+      "trombones",
+      "piano_theme",
+      "bass_clarinet"
+    ],
+    "low_front": [
+      "basses",
+      "basses_pizz",
+      "tuba",
+      "bass_drum"
+    ],
+    "overhead": [
+      "cymbals",
+      "choir"
+    ],
+    "rear": [
+      "taiko",
+      "timpani"
+    ],
+    "why": "the bikes are in front of the viewer and the percussion is behind: that is what makes the seat feel uncomfortable rather than loud"
+  },
+  "immersive": {
+    "why": "the chase surrounds the listener: the bikes swap the lead across the front, the tunnel closes the field, the flyover opens it and lifts the percussion overhead",
+    "anchors": [
+      {
+        "part": "basses",
+        "why": "the road is fixed under the viewer"
+      },
+      {
+        "part": "horns",
+        "why": "the Hero is in front of the camera for the whole cue"
+      }
+    ],
+    "movers": [
+      {
+        "part": "bass_clarinet",
+        "why": "the villain crosses the frame",
+        "path": "hard left rear to hard right front over the twist"
+      },
+      {
+        "part": "cymbals",
+        "why": "camera shake and wind",
+        "path": "overhead, sweeping with each cut"
+      }
+    ],
+    "height_plan": {
+      "overhead": [
+        "cymbals",
+        "choir"
+      ],
+      "low": [
+        "basses",
+        "bass_drum"
+      ],
+      "why": "height is used for the shot, not for decoration"
+    },
+    "room_changes": [
+      {
+        "at_section": "the_drift",
+        "why": "the camera drops to the tarmac: a close, dry field"
+      },
+      {
+        "at_section": "the_slow_motion",
+        "why": "bullet time: the room lengthens and the near field empties"
+      },
+      {
+        "at_section": "the_swerve",
+        "why": "the flyover: the tail opens and the percussion lifts"
+      },
+      {
+        "at_section": "the_escape",
+        "why": "back to the open road, dry and close"
+      }
+    ],
+    "deliverables": [
+      "stereo",
+      "ambix"
+    ]
+  },
+  "expression": {
+    "sonic_picture": {
+      "first_10s": "already at speed: pedal D, 16th ostinato, a taiko behind the listener",
+      "middle": "the twist to Ab, the drift down a semitone at a time, then the full chase",
+      "last_note": "one low D, struck, left to ring"
+    },
+    "performer": "a session orchestra playing to picture, conductor taking the cuts from a click and the slow motion from the tempo map",
+    "producer_moves": [
+      "ride the ostinato up 3 dB into the chase, not the whole mix",
+      "in bullet time, open the room and pull the 16ths out: the tempo drop does the rest",
+      "keep the sub under the trucks, not under the strings"
+    ],
+    "anti_generic": "no riser-and-impact drop and no trailer braam: the twist is a tritone, the drift is a slide played by the strings, the slow motion is a tempo, and the silence is written",
+    "theme": {
+      "name": "the_cell",
+      "shape": "up a third, a fourth that falls to the third, leap a fifth, settle on the third",
+      "variation_plan": "fragmented at the twist, stretched 3x in slow motion, inverted over the flyover, two notes and a low D at the escape"
+    },
+    "cues": [
+      {
+        "section": "the_evasion",
+        "arousal": 0.72,
+        "mode": "D minor / Ab tritone / Eb Neapolitan",
+        "tempo": "140",
+        "dynamics": "mean velocity 0.77",
+        "articulation": "spiccato strings, marcato brass, rolled timpani in bullet time",
+        "timbre": "cold, close, no reverb on the low end"
+      },
+      {
+        "section": "the_twist",
+        "arousal": 0.82,
+        "mode": "D minor / Ab tritone / Eb Neapolitan",
+        "tempo": "140",
+        "dynamics": "mean velocity 0.85",
+        "articulation": "spiccato strings, marcato brass, rolled timpani in bullet time",
+        "timbre": "cold, close, no reverb on the low end"
+      },
+      {
+        "section": "the_drift",
+        "arousal": 0.55,
+        "mode": "D minor / Ab tritone / Eb Neapolitan",
+        "tempo": "140",
+        "dynamics": "mean velocity 0.63",
+        "articulation": "spiccato strings, marcato brass, rolled timpani in bullet time",
+        "timbre": "cold, close, no reverb on the low end"
+      },
+      {
+        "section": "the_chase",
+        "arousal": 0.95,
+        "mode": "D minor / Ab tritone / Eb Neapolitan",
+        "tempo": "140",
+        "dynamics": "mean velocity 0.96",
+        "articulation": "spiccato strings, marcato brass, rolled timpani in bullet time",
+        "timbre": "cold, close, no reverb on the low end"
+      },
+      {
+        "section": "the_slow_motion",
+        "arousal": 0.5,
+        "mode": "D minor / Ab tritone / Eb Neapolitan",
+        "tempo": "84 (slow motion)",
+        "dynamics": "mean velocity 0.59",
+        "articulation": "spiccato strings, marcato brass, rolled timpani in bullet time",
+        "timbre": "cold, close, no reverb on the low end"
+      },
+      {
+        "section": "the_swerve",
+        "arousal": 1.0,
+        "mode": "D minor / Ab tritone / Eb Neapolitan",
+        "tempo": "140",
+        "dynamics": "mean velocity 1.00",
+        "articulation": "spiccato strings, marcato brass, rolled timpani in bullet time",
+        "timbre": "cold, close, no reverb on the low end"
+      },
+      {
+        "section": "the_near_miss",
+        "arousal": 0.65,
+        "mode": "D minor / Ab tritone / Eb Neapolitan",
+        "tempo": "140",
+        "dynamics": "mean velocity 0.71",
+        "articulation": "spiccato strings, marcato brass, rolled timpani in bullet time",
+        "timbre": "cold, close, no reverb on the low end"
+      },
+      {
+        "section": "the_escape",
+        "arousal": 0.3,
+        "mode": "D minor / Ab tritone / Eb Neapolitan",
+        "tempo": "140",
+        "dynamics": "mean velocity 0.43",
+        "articulation": "spiccato strings, marcato brass, rolled timpani in bullet time",
+        "timbre": "cold, close, no reverb on the low end"
+      }
+    ]
+  },
+  "focus": "melody",
+  "intent": {
+    "emotions": [
+      "tense",
+      "dark_epic"
+    ],
+    "registers": [
+      "cinematic",
+      "hybrid"
+    ],
+    "scenes": [
+      "establish",
+      "build",
+      "chase",
+      "dread"
+    ],
+    "tensions": [
+      "ostinato",
+      "pedal",
+      "tritone",
+      "cluster",
+      "silence_before",
+      "unresolved_dominant"
+    ],
+    "avoid": [
+      "joyful",
+      "playful"
+    ]
+  },
+  "piece_type": "highway_pursuit",
+  "gate_reason": "a build-hit-release cue with a short motif, a pulse that never stops and one slow-motion jump: the cinematic profile, started strict, with a project profile of its own",
+  "notes": "Sound effects and ambience were asked for in the brief: four cars, two sirens, a helicopter, expansion joints, a landing, a crash, the city and drips are presets from physical models. They are synthesised, not recordings; the research note says which numbers are sourced and which are starting values.",
+  "tempo": {
+    "bpm": 140,
+    "note": "140 BPM, at the top of the cited 120-140 chase band (Karanyi Sounds); the slow-motion beat drops the tempo map to 84 and back, so the bullet-time is played, not filtered"
+  },
+  "ending_note": "cut to black on the low D, then a short tail: no fade of a fake climax",
+  "avoid_feel_note": "no victory cadence, no comedy, no tourist colour: the cue stays cold and forward",
+  "palette": [
+    "strings: 16th ostinato, chromatic slides, staccato",
+    "brass: horns, trombones, tuba",
+    "percussion: bass drum, timpani, taiko, snare, crash",
+    "piano: low octave pulse",
+    "bass clarinet: chromatic approach and a long fall",
+    "choir: open fifth in slow motion"
+  ],
+  "loudness": -14.0,
+  "harmony_plan": [
+    {
+      "section": "the_evasion",
+      "root": "Dm",
+      "move": "pedal D",
+      "why": "each harmonic event is a picture event, not a key change for its own sake"
+    },
+    {
+      "section": "the_twist",
+      "root": "Ddim",
+      "move": "tritone to Ab and back",
+      "why": "each harmonic event is a picture event, not a key change for its own sake"
+    },
+    {
+      "section": "the_drift",
+      "root": "Dm",
+      "move": "chromatic slide D -> Db -> C",
+      "why": "each harmonic event is a picture event, not a key change for its own sake"
+    },
+    {
+      "section": "the_chase",
+      "root": "Dm",
+      "move": "Neapolitan Eb over a D pedal",
+      "why": "each harmonic event is a picture event, not a key change for its own sake"
+    },
+    {
+      "section": "the_slow_motion",
+      "root": "Bb",
+      "move": "wide triads, no dissonance: the ear is allowed to breathe",
+      "why": "each harmonic event is a picture event, not a key change for its own sake"
+    },
+    {
+      "section": "the_swerve",
+      "root": "Dm",
+      "move": "the same progression a fourth up, cluster in the choir",
+      "why": "each harmonic event is a picture event, not a key change for its own sake"
+    },
+    {
+      "section": "the_near_miss",
+      "root": "Dcl",
+      "move": "a semitone cluster, unresolved",
+      "why": "each harmonic event is a picture event, not a key change for its own sake"
+    },
+    {
+      "section": "the_escape",
+      "root": "Dm",
+      "move": "a bare D and A",
+      "why": "each harmonic event is a picture event, not a key change for its own sake"
+    }
+  ]
+}
