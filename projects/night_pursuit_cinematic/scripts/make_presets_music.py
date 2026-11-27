@@ -149,11 +149,11 @@ for n in ('pursuit_bass_drum', 'pursuit_snare', 'pursuit_cymbals', 'pursuit_taik
 BOWED = [[25, 1800], [60, 3400], [100, 6500], [127, 9500]]
 BLOWN = [[25, 1500], [60, 3000], [100, 6000], [127, 9500]]
 STRUCK = [[25, 2500], [60, 4500], [127, 9500]]
-VEL = {'pursuit_violas': (BOWED, 12, [[25, 22], [127, 5]]), 'pursuit_basses': (BOWED, 8, [[25, 30], [127, 8]]),
+VEL = {'pursuit_violas': (BOWED, 12, [[25, 22], [127, 5]]), 'pursuit_basses': (BOWED, 8, None),
        'pursuit_celli': (BOWED, 12, [[25, 26], [127, 5]]), 'pursuit_violins_staccato': (BOWED, 10, [[25, 14], [127, 4]]),
-       'pursuit_violins_long': (BOWED, 8, [[25, 45], [127, 12]]), 'pursuit_solo_violin': (BOWED, 12, [[25, 40], [127, 8]]),
+       'pursuit_violins_long': (BOWED, 8, None), 'pursuit_solo_violin': (BOWED, 12, [[25, 40], [127, 8]]),
        'pursuit_bass_clarinet': (BLOWN, 8, [[25, 30], [127, 8]]), 'pursuit_horns': (BLOWN, 12, [[25, 35], [127, 7]]),
-       'pursuit_trombones': (BLOWN, 10, [[25, 30], [127, 6]]), 'pursuit_tuba': (BLOWN, 8, [[25, 30], [127, 8]]),
+       'pursuit_trombones': (BLOWN, 10, None), 'pursuit_tuba': (BLOWN, 8, [[25, 30], [127, 8]]),
        'pursuit_choir': (BOWED, 8, [[25, 70], [127, 25]]), 'pursuit_low_swell': (BOWED, 6, [[25, 60], [127, 20]]),
        'pursuit_basses_pizz': (STRUCK, 8, None), 'pursuit_timpani': (STRUCK, 8, None), 'pursuit_piano_theme': (STRUCK, 12, None)}
 for n, (pts, zones, att) in VEL.items():
