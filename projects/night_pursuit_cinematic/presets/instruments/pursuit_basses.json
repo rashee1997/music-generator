@@ -48,26 +48,5 @@
     "spread_cents": 6,
     "spread_ms": 9,
     "vel_spread": 3
-  },
-  "velocity_timbre": {
-    "points": [
-      [
-        25,
-        1800
-      ],
-      [
-        60,
-        3400
-      ],
-      [
-        100,
-        6500
-      ],
-      [
-        127,
-        9500
-      ]
-    ],
-    "zones": 8
   }
 }
