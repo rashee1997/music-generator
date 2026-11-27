@@ -47,9 +47,10 @@ class Manifest(unittest.TestCase):
         with open(os.path.join(SCRIPTS, '..', 'assets', 'soundfonts', 'MANIFEST.json'), encoding='utf-8') as fh:
             self.man = json.load(fh)
 
-    def test_the_five_banks_and_their_required_fields(self):
+    def test_the_banks_and_their_required_fields(self):
         banks = self.man['banks']
-        self.assertEqual(list(banks), ['generaluser_gs', 'timgm6mb', 'muse_general', 'fluid_r3_gm', 'sonatina_sf2'])
+        self.assertEqual(list(banks), ['generaluser_gs', 'timgm6mb', 'muse_general', 'fluid_r3_gm', 'sonatina_sf2',
+                                       'cinematic_default', 'cc0_orchestra', 'neo_orchestra_hq'])
         self.assertEqual(self.man['default'], 'generaluser_gs')
         for key, b in banks.items():
             for field in ('file', 'label', 'type', 'size_mb', 'urls', 'sha256', 'license', 'gm_order', 'pin'):
@@ -69,9 +70,9 @@ class Manifest(unittest.TestCase):
                 self.assertIn('not taken', b['sha256_status'], key)
         self.assertEqual(self.man['banks']['timgm6mb']['sha256'], sha(tim()))       # the one measured against the real file
 
-    def test_only_the_orchestral_bank_is_outside_general_midi_order(self):
+    def test_only_the_non_gm_orchestral_banks_are_outside_general_midi_order(self):
         order = {k: b['gm_order'] for k, b in self.man['banks'].items()}
-        self.assertEqual([k for k, v in order.items() if not v], ['sonatina_sf2'])
+        self.assertEqual([k for k, v in order.items() if not v], ['sonatina_sf2', 'cc0_orchestra', 'neo_orchestra_hq'])
         self.assertEqual(self.man['banks']['sonatina_sf2']['type'], 'orchestral')
 
     def test_the_default_bank_is_what_the_engine_already_used(self):

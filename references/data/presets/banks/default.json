@@ -1,0 +1,23 @@
+{
+  "name": "default_banks",
+  "character": "Which SoundFont bank a track plays when neither the track nor its instrument preset names one. One ordered list per instrument family: the first bank that is installed and whose audit meets that family's thresholds plays; if none does, the fallback plays, so a machine with only the shipped banks renders exactly as before.",
+  "provenance": "Thresholds are starting values. The shipped banks measure 0 velocity layers for every orchestral family (docs/REALISM-ENHANCEMENT-PLAN.md section 1b), so a bank only becomes the default by beating that on its own audit file (assets/soundfonts/audit/<bank>.json).",
+  "fallback": "generaluser_gs",
+  "thresholds": {
+    "min_layers": 2,
+    "min_centroid_ratio": 1.15,
+    "min_air_db": -90.0,
+    "note": "min_layers: velocity zones behind the family's audit programs (median). min_centroid_ratio: spectral centroid at velocity 120 over velocity 40 for the same note. min_air_db: share of 8-16 kHz power; a floor only, since band-limited samples are a fact about the bank."
+  },
+  "order": {
+    "bowed":           ["cinematic_default", "cc0_orchestra", "muse_general", "generaluser_gs"],
+    "blown_reed":      ["cinematic_default", "cc0_orchestra", "muse_general", "generaluser_gs"],
+    "blown_brass":     ["cinematic_default", "cc0_orchestra", "muse_general", "generaluser_gs"],
+    "struck_membrane": ["cinematic_default", "generaluser_gs"],
+    "struck_pitched":  ["cinematic_default", "muse_general", "generaluser_gs"],
+    "plucked":         ["cinematic_default", "muse_general", "generaluser_gs"],
+    "voice":           ["cinematic_default", "muse_general", "generaluser_gs"],
+    "keys":            ["cinematic_default", "muse_general", "generaluser_gs"],
+    "synth":           ["generaluser_gs"]
+  }
+}

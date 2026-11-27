@@ -1625,6 +1625,14 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
     keys = {name: sb.bank_key(tr, presets.find_instrument(str(tr.get('instrument', 'piano')))
                               or presets.find_instrument(_name(str(tr.get('instrument', 'piano')))))
             for i, name, tr in other_jobs}
+    if verbose and keys:                       # which bank each part plays, so "it is a one-layer GM bank" is never hidden
+        import families as _fam
+        by_bank = {}
+        for i, name, tr in other_jobs:
+            inst = presets.find_instrument(str(tr.get('instrument', 'piano'))) or presets.find_instrument(_name(str(tr.get('instrument', 'piano'))))
+            by_bank.setdefault(keys[name], []).append(f"{name}({_fam.family_of(inst, tr) or '-'})")
+        for bank_name, parts in by_bank.items():
+            print(f'  [bank] {bank_name}: {", ".join(parts)}', flush=True)
     extra = sb.bank_paths([k for k in keys.values() if k != sb.DEFAULT_BANK])
     paths = dict(extra, **{sb.DEFAULT_BANK: sfpath})
     order = list(dict.fromkeys([sb.DEFAULT_BANK] + [keys[name] for i, name, tr in other_jobs]))

@@ -1,0 +1,421 @@
+{
+  "bank": "MuseScore_General.sf2",
+  "families": {
+    "bowed": {
+      "programs": [
+        {
+          "program": 40,
+          "centroid_ratio": 1.0,
+          "air_db": -34.0,
+          "sustain_ok": true,
+          "name": "Violin",
+          "layers": 0
+        },
+        {
+          "program": 41,
+          "centroid_ratio": 1.0,
+          "air_db": -47.4,
+          "sustain_ok": true,
+          "name": "Viola",
+          "layers": 0
+        },
+        {
+          "program": 42,
+          "centroid_ratio": 0.988,
+          "air_db": -38.0,
+          "sustain_ok": true,
+          "name": "Cello",
+          "layers": 0
+        },
+        {
+          "program": 43,
+          "centroid_ratio": 1.0,
+          "air_db": -38.5,
+          "sustain_ok": true,
+          "name": "Contrabass",
+          "layers": 0
+        },
+        {
+          "program": 48,
+          "centroid_ratio": 1.0,
+          "air_db": -54.1,
+          "sustain_ok": true,
+          "name": "Strings Fast",
+          "layers": 0
+        },
+        {
+          "program": 49,
+          "centroid_ratio": 1.0,
+          "air_db": -54.0,
+          "sustain_ok": true,
+          "name": "Strings Slow",
+          "layers": 0
+        }
+      ],
+      "layers": 0.0,
+      "centroid_ratio": 1.0,
+      "air_db": -42.95,
+      "sustained": 1.0
+    },
+    "blown_reed": {
+      "programs": [
+        {
+          "program": 68,
+          "centroid_ratio": 1.0,
+          "air_db": -55.7,
+          "sustain_ok": true,
+          "name": "Oboe",
+          "layers": 0
+        },
+        {
+          "program": 69,
+          "centroid_ratio": 1.0,
+          "air_db": -73.0,
+          "sustain_ok": true,
+          "name": "English Horn",
+          "layers": 0
+        },
+        {
+          "program": 70,
+          "centroid_ratio": 1.0,
+          "air_db": -62.9,
+          "sustain_ok": true,
+          "name": "Bassoon",
+          "layers": 0
+        },
+        {
+          "program": 71,
+          "centroid_ratio": 1.0,
+          "air_db": -60.3,
+          "sustain_ok": true,
+          "name": "Clarinet",
+          "layers": 0
+        },
+        {
+          "program": 73,
+          "centroid_ratio": 1.0,
+          "air_db": -45.0,
+          "sustain_ok": true,
+          "name": "Flute",
+          "layers": 0
+        }
+      ],
+      "layers": 0.0,
+      "centroid_ratio": 1.0,
+      "air_db": -60.3,
+      "sustained": 1.0
+    },
+    "blown_brass": {
+      "programs": [
+        {
+          "program": 56,
+          "centroid_ratio": 1.0,
+          "air_db": -39.1,
+          "sustain_ok": true,
+          "name": "Trumpet",
+          "layers": 0
+        },
+        {
+          "program": 57,
+          "centroid_ratio": 1.0,
+          "air_db": -72.0,
+          "sustain_ok": true,
+          "name": "Trombone",
+          "layers": 0
+        },
+        {
+          "program": 58,
+          "centroid_ratio": 1.0,
+          "air_db": -87.2,
+          "sustain_ok": true,
+          "name": "Tuba",
+          "layers": 0
+        },
+        {
+          "program": 60,
+          "centroid_ratio": 1.0,
+          "air_db": -55.1,
+          "sustain_ok": true,
+          "name": "French Horns",
+          "layers": 0
+        },
+        {
+          "program": 61,
+          "centroid_ratio": 1.0,
+          "air_db": -30.9,
+          "sustain_ok": true,
+          "name": "Brass Section",
+          "layers": 0
+        }
+      ],
+      "layers": 0.0,
+      "centroid_ratio": 1.0,
+      "air_db": -55.1,
+      "sustained": 1.0
+    },
+    "struck_membrane": {
+      "programs": [
+        {
+          "program": 47,
+          "centroid_ratio": 1.215,
+          "air_db": -58.4,
+          "sustain_ok": false,
+          "name": "Timpani",
+          "layers": 0
+        },
+        {
+          "program": 116,
+          "centroid_ratio": 1.0,
+          "air_db": -78.6,
+          "sustain_ok": false,
+          "name": "Taiko Drum",
+          "layers": 0
+        },
+        {
+          "program": 117,
+          "centroid_ratio": 1.0,
+          "air_db": -49.1,
+          "sustain_ok": false,
+          "name": "Melodic Tom",
+          "layers": 0
+        }
+      ],
+      "layers": 0.0,
+      "centroid_ratio": 1.0,
+      "air_db": -58.4,
+      "sustained": 0.0
+    },
+    "struck_pitched": {
+      "programs": [
+        {
+          "program": 0,
+          "centroid_ratio": 1.357,
+          "air_db": -112.7,
+          "sustain_ok": true,
+          "name": "Grand Piano",
+          "layers": 0
+        },
+        {
+          "program": 8,
+          "centroid_ratio": 1.0,
+          "air_db": -72.6,
+          "sustain_ok": true,
+          "name": "Celesta",
+          "layers": 0
+        },
+        {
+          "program": 9,
+          "centroid_ratio": 0.997,
+          "air_db": -29.2,
+          "sustain_ok": false,
+          "name": "Glockenspiel",
+          "layers": 0
+        },
+        {
+          "program": 11,
+          "centroid_ratio": 1.024,
+          "air_db": -69.4,
+          "sustain_ok": true,
+          "name": "Vibraphone",
+          "layers": 0
+        },
+        {
+          "program": 12,
+          "centroid_ratio": 1.0,
+          "air_db": -75.5,
+          "sustain_ok": false,
+          "name": "Marimba",
+          "layers": 0
+        },
+        {
+          "program": 14,
+          "centroid_ratio": 1.0,
+          "air_db": -37.1,
+          "sustain_ok": true,
+          "name": "Tubular Bells",
+          "layers": 0
+        }
+      ],
+      "layers": 0.0,
+      "centroid_ratio": 1.0,
+      "air_db": -71.0,
+      "sustained": 0.6666666666666666
+    },
+    "plucked": {
+      "programs": [
+        {
+          "program": 24,
+          "centroid_ratio": 1.0,
+          "air_db": -70.7,
+          "sustain_ok": true,
+          "name": "Nylon String Guitar",
+          "layers": 0
+        },
+        {
+          "program": 25,
+          "centroid_ratio": 1.0,
+          "air_db": -29.9,
+          "sustain_ok": true,
+          "name": "Steel String Guitar",
+          "layers": 0
+        },
+        {
+          "program": 45,
+          "centroid_ratio": 1.0,
+          "air_db": -67.7,
+          "sustain_ok": false,
+          "name": "Strings Pizzicato",
+          "layers": 0
+        },
+        {
+          "program": 46,
+          "centroid_ratio": 1.0,
+          "air_db": -80.2,
+          "sustain_ok": true,
+          "name": "Harp",
+          "layers": 0
+        },
+        {
+          "program": 104,
+          "centroid_ratio": 1.202,
+          "air_db": -41.4,
+          "sustain_ok": true,
+          "name": "Sitar",
+          "layers": 0
+        }
+      ],
+      "layers": 0.0,
+      "centroid_ratio": 1.0,
+      "air_db": -67.7,
+      "sustained": 0.8
+    },
+    "voice": {
+      "programs": [
+        {
+          "program": 52,
+          "centroid_ratio": 1.0,
+          "air_db": -46.1,
+          "sustain_ok": true,
+          "name": "Choir Aahs",
+          "layers": 0
+        },
+        {
+          "program": 53,
+          "centroid_ratio": 1.0,
+          "air_db": -47.5,
+          "sustain_ok": true,
+          "name": "Voice Oohs",
+          "layers": 0
+        },
+        {
+          "program": 54,
+          "centroid_ratio": 1.0,
+          "air_db": -31.9,
+          "sustain_ok": true,
+          "name": "Synth Voice",
+          "layers": 0
+        },
+        {
+          "program": 85,
+          "centroid_ratio": 1.0,
+          "air_db": -49.6,
+          "sustain_ok": true,
+          "name": "Solo Vox",
+          "layers": 0
+        }
+      ],
+      "layers": 0.0,
+      "centroid_ratio": 1.0,
+      "air_db": -46.8,
+      "sustained": 1.0
+    },
+    "keys": {
+      "programs": [
+        {
+          "program": 16,
+          "centroid_ratio": 1.0,
+          "air_db": -60.2,
+          "sustain_ok": true,
+          "name": "Drawbar Organ",
+          "layers": 9
+        },
+        {
+          "program": 19,
+          "centroid_ratio": 1.0,
+          "air_db": -37.5,
+          "sustain_ok": true,
+          "name": "Church Organ",
+          "layers": 0
+        },
+        {
+          "program": 20,
+          "centroid_ratio": 1.0,
+          "air_db": -54.0,
+          "sustain_ok": true,
+          "name": "Reed Organ",
+          "layers": 0
+        },
+        {
+          "program": 21,
+          "centroid_ratio": 1.0,
+          "air_db": -33.2,
+          "sustain_ok": true,
+          "name": "Accordion",
+          "layers": 0
+        }
+      ],
+      "layers": 0.0,
+      "centroid_ratio": 1.0,
+      "air_db": -45.75,
+      "sustained": 1.0
+    },
+    "synth": {
+      "programs": [
+        {
+          "program": 80,
+          "centroid_ratio": 1.0,
+          "air_db": -66.5,
+          "sustain_ok": true,
+          "name": "Square Lead",
+          "layers": 0
+        },
+        {
+          "program": 81,
+          "centroid_ratio": 1.0,
+          "air_db": -52.3,
+          "sustain_ok": true,
+          "name": "Saw Lead",
+          "layers": 0
+        },
+        {
+          "program": 88,
+          "centroid_ratio": 1.035,
+          "air_db": -54.0,
+          "sustain_ok": true,
+          "name": "Fantasia",
+          "layers": 0
+        },
+        {
+          "program": 89,
+          "centroid_ratio": 1.0,
+          "air_db": -75.4,
+          "sustain_ok": true,
+          "name": "Warm Pad",
+          "layers": 0
+        },
+        {
+          "program": 90,
+          "centroid_ratio": 0.997,
+          "air_db": -90.5,
+          "sustain_ok": true,
+          "name": "Polysynth",
+          "layers": 0
+        }
+      ],
+      "layers": 0.0,
+      "centroid_ratio": 1.0,
+      "air_db": -66.5,
+      "sustained": 1.0
+    }
+  }
+}
