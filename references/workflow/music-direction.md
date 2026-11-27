@@ -282,7 +282,9 @@ in `knowledgebase/sound-design/theatrical-realism.md`; the rules and the blocks 
    long-short-short-long, the leap on the weak beat, inverted at the return" is one. A melody an agent writes without a shape
    is the average of every melody it has seen.
 2. **Every return of a motif changes one thing** (interval, rhythm, register, harmony, instrument) and keeps another. The
-   plan says which, in `theme.variation_plan` and in `motifs[].returns`.
+   plan says which, in `theme.variation_plan` and in `motifs[].returns`. Name it as one of the three returns the engine can
+   play: `transpose` (the same contour, moved), `invert` (the contour mirrored around the phrase's first degree) or
+   `displace` (the phrase moved across the barline the first statement sat on) - `theory.vary_phrase(transform=...)`.
 3. **Name the human act.** "Violins sustain" is a patch. "The violins enter late, swell with the bow and drop off before the
    change" is a performance, and it becomes `dynamics` in the score and `articulation` on the notes.
 4. **The generic version is named so it can be refused.** If the score's first idea is the sentence in `anti_generic`, rewrite it.

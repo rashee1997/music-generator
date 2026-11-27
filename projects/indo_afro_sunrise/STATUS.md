@@ -55,3 +55,24 @@
   not a proof it will hold on another seed.
 - Not checked: `listen.py`, `arc_report.py`, `expression_report.py`; the HF cuts were not auditioned. `spectral.equal_loudness`
   on `kit` is still a WARN (9.0 dB, fail at 10).
+
+## State at the 2026-11-27 pattern-gate pass
+
+- The score was rebuilt (`scripts/build_score.py`) against the tightened pattern audit: every part now has bar-phase
+  variants, a fill or turnaround, a rest at each section seam and a level that follows its section (`gain()` from the
+  plan's energy). Pattern row: **16 flags -> 0**, no part carries a flag on its own (`pattern.track_flags_max`), and
+  `shape.contrast` PASSes (dawn 44 against high_sun 63: spread 18 of 12 MIDI units, density 3.3x).
+- Composition fixes made for the gate, in the notes and not in the mixer: a bass turnaround on the fourth bar of each
+  phrase and a legato hold that reaches the next onset (the humanizer's 0.9 gate left a 107 ms hole, `stem.dropout`);
+  the tambourine flammed 12 ms after the snare (`percussion_flam`); the open hat lifted to 0.62 so no note jumps 0.4 of
+  the scale inside a beat (`intent.avoid`); sitar and horns given two note lengths; each shekere hand a different set of
+  played steps.
+- Render (attempt 3, stereo + immersive_7_1): 136 PASS, 26 WARN, **2 FAIL - not certified**.
+  - `clicks`: 15 high-pass-MAD events, 0 single-sample jumps. The mix preset's 5.5 kHz shelves (shekere -9, tabla -3,
+    djembe -3, kit -3, canopy -3) were tuned for the quieter percussion of the previous score; the raised shaker and
+    tambourine levels bring the row back. Not re-tuned in this pass.
+  - `ambient_bed`: canopy gains 4.3 dB at 33.5 s (limit 4.0/delta) when the bed is ducked at the high_sun crash. Needs a
+    slower ducker release or a sigmoid crossfade in the mix preset.
+- `scripts/debug_audio.py` was started for these two rows and produced nothing inside 200 s (killed), so the leaves
+  below the two rows are named from the row text and the previous diagnosis, not re-measured.
+- Not checked: `listen.py` (nothing was heard), `arc_report.py`, `expression_report.py`.

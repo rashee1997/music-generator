@@ -43,14 +43,14 @@ stops this piece being it. If the score's first idea is that sentence, rewrite t
 | Failure | What the listener hears | Counter | What can measure it |
 |---|---|---|---|
 | Every part plays all the time | a wall with no focus | the density map: every section drops a part; `focus` and `mix_intent.hero` say who leads | `scripts/helpers/short_form_report.py` density spread, the balance rows |
-| Bars copied | a loop machine | change one thing at every return (interval, rhythm, register, harmony, instrument) | the `pattern` row, `melody.variety` |
+| Bars copied | a loop machine | change one thing at every return (interval, rhythm, register, harmony, instrument); `theory.vary_phrase` plays the return as `transpose`, `invert` or `displace` | the `pattern` row, `pattern.track_flags_max`, `melody.variety` |
 | No phrase shape | a stream of notes with no breath | phrases of two, four or eight bars; a rest or a long note at each phrase end; a longer note on the cadence | the breath-gap rows |
 | Two parts compete for the lead | mud in the midrange | one carrier per section; the others answer in its rests | `balance`, `spatial.z_separation` |
 | Different scales in one piece | wrong notes between traditions | one tonic and one scale for every part; ornaments stay inside the scale | the harmony rows, `intent.avoid` |
 | Pastiche | an instrument playing another tradition's part | each instrument keeps its own gesture and plays the role it is best at (section 4) | `expression.performer` |
 | Reverb as glue | a wash, soft attacks, lost rhythm | the send per role (`space.send_by_role`), a shorter tail on a fast part | the mix rows |
 | A pulse nobody chose | a groove that is an accident | one pulse declared; the groove cell written down | the groove rows |
-| No contrast | one level from start to end | an arc with a floor and a peak | `scripts/helpers/arc_report.py` |
+| No contrast | one level from start to end | an arc with a floor and a peak, carried by the notes (each part's velocity follows its section), not only by the master | `scripts/helpers/arc_report.py`, `shape.contrast` |
 | The piece stops instead of ending | a cut | an ending plan, a harmony that lands, a tail that dies in the room | the end rows |
 | Machine timing | everything on the grid | a humanize preset per role; a tight grid only for the parts that need it | `scripts/helpers/expression_report.py` |
 | One timbre at every level | a synth patch or a sample player: soft and loud are the same colour | `timbre_dynamics` on a part whose written dynamics really move, or `velocity_timbre` bands | realism report dimension 1 |
