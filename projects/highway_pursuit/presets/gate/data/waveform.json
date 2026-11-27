@@ -1,5 +1,5 @@
 {
-  "duration_s": 60.71403628117914,
+  "duration_s": 60.64097505668934,
   "sections": [
     {
       "name": "the_evasion",
@@ -76,31 +76,31 @@
       "PASS"
     ],
     [
-      0.6618,
+      0.8591,
       "stem.tick",
       "piano_theme",
       "PASS"
     ],
     [
-      6.8615,
+      6.8499,
       "stem.tick",
       "violins_long",
       "PASS"
     ],
     [
-      21.4436,
+      21.432,
       "stem.tick",
       "low_swell",
       "PASS"
     ],
     [
-      22.3956,
+      22.4073,
       "stem.tick",
       "trombones",
       "PASS"
     ],
     [
-      22.4189,
+      22.4073,
       "stem.tick",
       "tuba",
       "PASS"
@@ -112,37 +112,25 @@
       "PASS"
     ],
     [
-      42.2023,
+      42.179,
       "stem.tick",
       "violins_staccato",
       "PASS"
     ],
     [
-      54.235,
+      54.25,
       "dropout",
       "master",
       "FAIL"
     ],
     [
-      54.295,
+      54.325,
       "dropout",
       "master",
       "FAIL"
     ],
     [
-      54.38,
-      "dropout",
-      "master",
-      "FAIL"
-    ],
-    [
-      54.42,
-      "dropout",
-      "master",
-      "FAIL"
-    ],
-    [
-      54.51,
+      54.41,
       "dropout",
       "master",
       "FAIL"

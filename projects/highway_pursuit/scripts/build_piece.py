@@ -166,6 +166,11 @@ def clean(notes):
             continue
         kept.append(n)
         ends[n['p']] = n['t'] + n['d']
+    # the picture cut is at bar 30 (beat 116): everything that would still be sounding is released half a bar early,
+    # so the release and the room have decayed by the time the declared second of silence starts
+    for n in kept:
+        if n['d'] > 1.5 and n['t'] < 114.5 < n['t'] + n['d']:
+            n['d'] = round(max(0.1, 114.5 - n['t']), 4)
     # no velocity cliff between consecutive notes: a section change is a crescendo, not a jump (intent.avoid sudden_loud)
     prev = None
     for n in kept:
@@ -183,12 +188,9 @@ def basses():
         if r == 'rupture':
             continue
         base = root_pitch(bar, 24, 35)
-        out.append(note(beat_of(bar), 3.7, base, vel(bar, 0.95)))
+        out.append(note(beat_of(bar), 3.99, base, vel(bar, 0.95)))
         if r in ('peak', 'button'):
             out.append(note(beat_of(bar, 2), 1.7, base + 7, round(vel(bar, 0.78), 3)))
-    # the drift: the bass itself slides, a semitone per bar, under the 16ths
-    for bar, p in ((11, 0), (12, -1), (13, -2)):
-        out.append(note(beat_of(bar), 3.7, root_pitch(11, 36, 47) + p, round(vel(bar, 0.9), 3)))
     return out
 
 
@@ -273,10 +275,12 @@ def violins_long():
         if r in ('build', 'release', 'button'):
             out.append(note(beat_of(bar), 3.7, tone(bar, 1, 72, 83), vel(bar, 0.85)))
         elif r == 'transition' and bar in (12, 13):   # the drift: a chromatic slide, written as notes
-            base = tone(bar, 0, 76, 87)
-            # three long falling notes, not a chromatic ladder: the drift is the wheel stepping out, heard as a bend
-            for i, (b, d, step) in enumerate(((0.0, 1.5, 0), (1.6, 1.3, -4), (3.0, 0.9, -7))):
-                out.append(note(beat_of(bar, b), d, base + 12 + step, round(vel(bar) * (0.9 - 0.08 * i), 3)))
+            base = tone(bar, 2, 72, 84)                 # the chord's fifth, high: a chord tone over the 16ths
+            for i, (b, d, step) in enumerate(((0.0, 1.5, 0), (1.6, 1.3, -5), (3.0, 0.9, -7))):
+                p = base + step
+                while p < 72:
+                    p += 12
+                out.append(note(beat_of(bar, b), d, min(p, 88), round(vel(bar) * (0.9 - 0.08 * i), 3)))
     return out
 
 
@@ -378,8 +382,10 @@ def piano_theme():
         if r in ('build', 'peak', 'establish'):
             b = root_pitch(bar, 36, 47)
             v = vel(bar, 0.8)
-            for i, bb in enumerate((0, 1.5, 2, 3.5)):
-                out.append(note(beat_of(bar, bb), 0.45, b, round(v * (0.92 if i % 2 == 0 else 0.74), 3)))
+            figure = ((0, 1.5, 2, 3.5), (0, 2, 2.5, 3), (0, 1, 2.5, 3.5), (0, 1.75, 2, 3.25))[bar % 4]
+            for i, bb in enumerate(figure):
+                p = b if i < 2 else b + 7
+                out.append(note(beat_of(bar, bb), 0.45, p, round(v * (0.92 if i % 2 == 0 else 0.74), 3)))
     return out
 
 
@@ -439,12 +445,21 @@ def taiko():
     out = []
     for bar in range(1, BARS + 1):
         r = role_of(bar)
-        if r in ('build', 'peak', 'establish'):
+        if r in ('establish', 'build') or (r == 'peak' and bar % 4 in (1, 2, 3)):
             v = vel(bar)
-            keys = (36, 37, 38, 37, 36, 37, 38, 43) if bar % 2 else (36, 38, 37, 38, 36, 43, 38, 37)
-            accents = (0.9, 0.72, 0.78, 0.7, 0.92, 0.74, 0.8, 0.76)
+            cycle = bar % 4
+            keys = ((36, 37, 38, 37, 36, 37, 38, 43), (36, 38, 37, 38, 36, 43, 38, 37),
+                    (36, 37, 37, 38, 36, 37, 43, 38), (36, 38, 36, 37, 43, 37, 38, 43))[cycle]
+            accents = ((0.9, 0.72, 0.78, 0.7, 0.92, 0.74, 0.8, 0.76),
+                       (0.86, 0.7, 0.8, 0.66, 0.9, 0.72, 0.84, 0.68),
+                       (0.92, 0.68, 0.76, 0.72, 0.88, 0.7, 0.82, 0.74),
+                       (0.84, 0.74, 0.88, 0.68, 0.8, 0.72, 0.9, 0.78))[cycle]
             for i in range(8):
                 out.append(note(beat_of(bar, i * 0.5), 0.2, keys[i], round(v * accents[i], 3)))
+        elif r == 'peak':
+            v = vel(bar)
+            for b, a in ((0.0, 0.9), (1.5, 0.7), (2.0, 0.86), (3.25, 0.66), (3.75, 0.8)):
+                out.append(note(beat_of(bar, b), 0.2, 36 if a > 0.8 else 37, round(v * a, 3)))
         elif bar in (30, 31):                    # after the near miss: two hits, then the room
             if bar == 31:
                 out.append(note(beat_of(bar, 2.9), 0.3, 36, 0.42))
@@ -478,8 +493,10 @@ def snare():
     for bar in range(14, BARS + 1):
         r = role_of(bar)
         if r == 'peak':
-            for b in (1.0, 3.0):
-                out.append(note(beat_of(bar, b), 0.25, 38, vel(bar, 0.85)))
+            hits = ((1.0, 1.0), (3.0, 1.0)) if bar % 4 else ((1.0, 1.0), (2.5, 0.55), (2.75, 0.6),
+                                                            (3.0, 0.9), (3.25, 0.55), (3.5, 0.7))
+            for b, a in hits:
+                out.append(note(beat_of(bar, b), 0.25, 38 if a > 0.6 else 40, round(vel(bar) * 0.85 * a, 3)))
         elif r == 'release':                     # slow motion: a rim, once a bar
             out.append(note(beat_of(bar, 2.0), 0.25, 37, round(vel(bar) * 0.6, 3)))
     return out
@@ -488,7 +505,8 @@ def snare():
 def cymbals():
     out = []
     for bar in (1, 5, 11, 14, 20, 24, 31, 32):
-        out.append(note(beat_of(bar, 2.7 if bar == 31 else 0.0), 2.4, 49, round(vel(bar, 0.85), 3)))
+        out.append(note(beat_of(bar, 2.7 if bar == 31 else 0.0), 1.2 if bar == 29 else 2.4, 49,
+                                round(vel(bar, 1.0) if bar == 31 else vel(bar, 0.85), 3)))
     for bar in (18, 19):                         # the swell into the slow motion
         for i in range(8):
             key = 52 if i % 2 else 49
@@ -500,7 +518,7 @@ def cymbals():
 def low_swell():
     out = []
     for bar in (13, 23, 29):
-        out.append(note(beat_of(bar, 2), 2.0, root_pitch(bar, 36, 47) - 12, 0.8))
+        out.append(note(beat_of(bar, 2), 1.4 if bar == 29 else 2.0, max(28, root_pitch(bar, 36, 47)), 0.85))
     return out
 
 
@@ -741,7 +759,7 @@ def space():
             {'anchor': {'section': 'the_near_miss'}, 'transition_s': 0.3,
              'space_overrides': {'geometry': {'width_m': 26.0, 'depth_m': 400.0, 'height_m': 14.0,
                                               'listener': {'x': 13.0, 'y': 120.0, 'z': 1.1}},
-                                 'late': {'rt60_s': 3.2, 'level_db': -12.0}}},
+                                 'late': {'rt60_s': 0.8, 'level_db': -42.0}}},
             {'anchor': {'section': 'the_escape'}, 'transition_s': 1.0,
              'space_overrides': {'geometry': {'width_m': 26.0, 'depth_m': 400.0, 'height_m': 14.0,
                                               'listener': {'x': 13.0, 'y': 120.0, 'z': 1.1}},

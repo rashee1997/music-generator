@@ -1,5 +1,5 @@
 {
- "stamp": "20261127T151822",
+ "stamp": "20261127T162647",
  "project": "highway_pursuit",
  "level": "FAIL",
  "sources": {
@@ -18,18 +18,18 @@
   ],
   "stems": "18 processed stems from .cache/mix",
   "master": "out/_draft_highway_pursuit.wav",
-  "verdict": "2026-11-27T14:53:49Z"
+  "verdict": "2026-11-27T16:15:02Z"
  },
  "binding": [
   {
    "row": "dropout",
    "stem": null,
    "level": "FAIL",
-   "value": 425.00000000000426,
+   "value": 145.00000000000313,
    "threshold": 20.0,
    "unit": "ms",
-   "safety": -20.25,
-   "detail": "longest hole 425 ms (limit 20-1000 ms), floor -63.0 dBFS; 5 hole(s)"
+   "safety": -6.25,
+   "detail": "longest hole 145 ms (limit 20-1000 ms), floor -63.1 dBFS; 3 hole(s)"
   }
  ],
  "advisory": [
@@ -279,8 +279,8 @@
   "clearing": {},
   "predicted": {
    "dropout::-": [
-    -20.250000000000213,
-    -20.250000000000213
+    -6.250000000000156,
+    -6.250000000000156
    ],
    "clicks::-": [
     0.0,
@@ -291,8 +291,8 @@
     0.02
    ],
    "true peak::-": [
-    0.0002494233580594418,
-    0.0002494233580594418
+    0.00011425163605016664,
+    0.00011425163605016664
    ],
    "cut.hard::-": [
     2.0,
@@ -307,8 +307,8 @@
     0.0
    ],
    "master.dc::-": [
-    0.09824947226430372,
-    0.09824947226430372
+    0.09909484498603707,
+    0.09909484498603707
    ]
   },
   "conflicts": [],
@@ -321,6 +321,6 @@
  },
  "forensics": [],
  "notes": [
-  "dropout has 5 event(s) at 54.235s, 54.295s, 54.380s, 54.420s; the transient is taiko 65%, bass_drum 34%, basses_pizz 1%"
+  "dropout has 3 event(s) at 54.250s, 54.325s, 54.410s; the transient is taiko 77%, bass_drum 23%, basses_pizz 0%"
  ]
 }
