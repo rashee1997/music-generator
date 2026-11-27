@@ -205,7 +205,7 @@
       "anchor": {
         "section": "the_near_miss"
       },
-      "transition_s": 0.3,
+      "transition_s": 0.05,
       "space_overrides": {
         "geometry": {
           "width_m": 26.0,
@@ -218,8 +218,9 @@
           }
         },
         "late": {
-          "rt60_s": 0.8,
-          "level_db": -42.0
+          "rt60_s": 0.5,
+          "level_db": -58.0,
+          "count": 4
         }
       }
     },

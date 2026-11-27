@@ -166,11 +166,6 @@ def clean(notes):
             continue
         kept.append(n)
         ends[n['p']] = n['t'] + n['d']
-    # the picture cut is at bar 30 (beat 116): everything that would still be sounding is released half a bar early,
-    # so the release and the room have decayed by the time the declared second of silence starts
-    for n in kept:
-        if n['d'] > 1.5 and n['t'] < 114.5 < n['t'] + n['d']:
-            n['d'] = round(max(0.1, 114.5 - n['t']), 4)
     # no velocity cliff between consecutive notes: a section change is a crescendo, not a jump (intent.avoid sudden_loud)
     prev = None
     for n in kept:
@@ -756,10 +751,10 @@ def space():
                                               'materials': {'floor': 'steel_deck', 'ceiling': 'open',
                                                             'walls': 'open'}},
                                  'late': {'rt60_s': 2.2, 'level_db': -19.0, 'hf_decay': 0.45}}},
-            {'anchor': {'section': 'the_near_miss'}, 'transition_s': 0.3,
+            {'anchor': {'section': 'the_near_miss'}, 'transition_s': 0.05,
              'space_overrides': {'geometry': {'width_m': 26.0, 'depth_m': 400.0, 'height_m': 14.0,
                                               'listener': {'x': 13.0, 'y': 120.0, 'z': 1.1}},
-                                 'late': {'rt60_s': 0.8, 'level_db': -42.0}}},
+                                 'late': {'rt60_s': 0.5, 'level_db': -58.0, 'count': 4}}},
             {'anchor': {'section': 'the_escape'}, 'transition_s': 1.0,
              'space_overrides': {'geometry': {'width_m': 26.0, 'depth_m': 400.0, 'height_m': 14.0,
                                               'listener': {'x': 13.0, 'y': 120.0, 'z': 1.1}},

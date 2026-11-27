@@ -1,5 +1,5 @@
 file: /workspace/chats/0ae6b42243a7a3f4cbccb523/projects/highway_pursuit/out/_draft_highway_pursuit.wav
-duration_s: 60.641
+duration_s: 60.752
 sample_rate: 44100
 sections:
   the_evasion: 0.00-6.84 s, dyn 0.72

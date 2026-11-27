@@ -1,7 +1,7 @@
 # Debug autopsy - highway_pursuit
 
-20261127T162647  ·  level FAIL  ·  plan nothing to move
-sources: score=/workspace/chats/0ae6b42243a7a3f4cbccb523/projects/highway_pursuit/scores/highway_pursuit_score.json, gate_data=['feedback.json', 'level.json', 'rca.json', 'rows.json', 'section_energy.json', 'spectrogram.json', 'stem_gate.json', 'stem_levels.json', 'stereo.json', 'waveform.json'], stems=18 processed stems from .cache/mix, master=out/_draft_highway_pursuit.wav, verdict=2026-11-27T16:15:02Z
+20261127T164547  ·  level FAIL  ·  plan nothing to move
+sources: score=/workspace/chats/0ae6b42243a7a3f4cbccb523/projects/highway_pursuit/scores/highway_pursuit_score.json, gate_data=['feedback.json', 'level.json', 'rca.json', 'rows.json', 'section_energy.json', 'spectrogram.json', 'stem_gate.json', 'stem_levels.json', 'stereo.json', 'waveform.json'], stems=18 processed stems from .cache/mix, master=out/_draft_highway_pursuit.wav, verdict=2026-11-27T16:36:15Z
 
 ## In question (1)
 - **dropout**: 145.00000000000313 ms against 20.0 -> FAILS by 6.25 tolerance units
