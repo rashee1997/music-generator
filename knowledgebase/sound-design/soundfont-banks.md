@@ -55,3 +55,13 @@ Banks are fetched by `python scripts/setup_project.py --soundfonts <names|all>` 
 Sampling Plus data (`sonatina_sf2`) are used at run time and never committed or re-hosted by this repository; whether
 a rendered file's licence is affected by the bank that played it is a question for each bank's own licence text,
 which was not read here.
+
+## Audit and default banks (starting values)
+
+`scripts/soundbank_audit.py <bank>` measures, per instrument family, the velocity zones behind the family's programs (`sf2_read.py`),
+the spectral-centroid ratio of the same note at velocity 120 over 40, the 8-16 kHz share and whether the note sustains, and writes
+`assets/soundfonts/audit/<bank>.json`. Measured here (2026-11): MuseScore General and GeneralUser GS have 0 velocity zones and a centroid ratio
+of 1.00 for every orchestral family; TimGM6mb has 0 zones. `references/data/presets/banks/default.json` lists, per family, which banks may
+be the default and the thresholds (2 layers, ratio 1.15, starting values); the first installed bank that meets them wins, else GeneralUser GS.
+`scripts/soundbank_build.py` builds a multi-layer SF2 from WAV samples with a licence read for every source. Candidate CC0 sources
+(VSCO 2 Community Edition, VCSL, CC0 Orchestra compilation) were not downloaded here: the host refused (403), so none has been heard.

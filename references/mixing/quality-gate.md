@@ -281,3 +281,13 @@ direction sheet's hard cuts (`sync: hard` opens a +-150 ms window in which `stem
 
 The rows that judge a delivered format, the immersive probes, the z-axis and mono checks, the extraction gate
 and the roughness workflow are in [`quality-gate-rows.md`](quality-gate-rows.md).
+
+### 3i. Cinematic realism rows (advisory, stage 5a)
+
+Six more dimensions in `scripts/realism_cinema.py`, read by `realism_report.analyse`: `sub_weight` (the 20-60 Hz share the stems carry reaches the
+master; WARN when the master is thin and has lost more than 6 dB of it), `air` (8-16 kHz share at least -40 dB; band-limited parts named),
+`dynamic_scale` (loudest section mean at least 10 dB over the quietest), `impact_attack` (a `drum`-role or `struck_*` part rises in 30 ms
+or less, or carries a click above -18 dB), `foreground` (voices in the score's `foreground` list within 12 dB of the loudest part while they
+play), `harmonic_motion` (a section over 20 s moves the bass or declares `pedal`). All thresholds are starting values; none can FAIL.
+The sheet rows `direction.harmony_plan` and `direction.stinger` are WARN only. Fixes live in presets and notes: `family` blocks, an `air` fx,
+`sfx:impact_cinematic`, `mastering.section_levels`, `anticipate_ms`, `bar_breath_ms`.

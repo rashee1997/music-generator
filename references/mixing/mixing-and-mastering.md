@@ -281,3 +281,9 @@ The mixing engine ([`scripts/mixer.py`](../../scripts/mixer.py)) uses Spotify's 
 - An environment preset's own `blending` (high-pass and the vocal-pocket notch, applied in `environment.py`) runs **before** that, inside the environment render. So an ambience stem can hold two notches near 2.2-2.4 kHz: keep the blending notch or the chain's, or move one by a third of an octave.
 - A `spectral_profile` belongs to the **stem**, and an environment preset's layers are summed into one stem. A bright layer (insects above 7.2 kHz) therefore shares the stem's chain; give the preset a profile that keeps that band, or set `preserve_spectrum` on the track.
 - A project mix preset lists only what differs from the schema. `mix_schema.redundant_chains(mix)` names role chains and profiles that repeat the shipped values; such copies stop following later tuning of the defaults. The scaffold writes every key on purpose (so each is visible); trim the ones you did not change before you rely on a default.
+
+## Section levels (`mastering.section_levels`)
+
+`{"range_db": 10.0, "ramp_s": 1.5}` applies a gain curve from the plan's section `energy` before the limiter loop: range_db between energy 0 and 1, centred
+on the duration-weighted mean, ramped at the edges. The loudness target still lands (the converge loop re-levels), so the loud sections stand above the
+quiet ones without a louder cue. Off by default. It collides with nothing protected, but check `master.dc`, `dropout` and `fold.timbre` after turning it on.

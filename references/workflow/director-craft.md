@@ -15,7 +15,7 @@ and what must stay out of the way, then writes only the notes that do that. The 
 not say the piece was directed. This file is the pass between the brief and the first note, and the pass after the first
 render.
 
-## 1. The craft pass: six answers before any note
+## 1. The craft pass: six answers before any note (and a seventh for a long piece)
 
 Every answer goes into a field the sheet already has. Nothing here adds a field.
 
@@ -27,6 +27,13 @@ Every answer goes into a field the sheet already has. Nothing here adds a field.
 | The lanes: who carries, who answers, who keeps pulse, who is the bed | `mix_intent`, `spatial_staging`, `instruments` | one carrier per section; a second part speaks only in the carrier's rests |
 | The contrast: what changes at each boundary | `sections[].music`, `expression.producer_moves` | at least one of register, timbre, density, rhythm or harmony changes, and one thing stays |
 | The ending | `ending`, `sections[-1]` | a cadence or a deliberate open ending, never a cut in the middle of a phrase |
+
+The seventh answer, for a piece of 40 s or more with three or more sections, is the harmony plan: write `harmony_plan` in the sheet, one
+entry per section naming what moves (`root`, `key`, `move`, `counter_hook`) or `pedal: true` with the reason the harmony holds. A bass that
+sits on one note for a whole long section, with no key change and no declared pedal, reads as static (`realism.harmonic_motion`,
+`direction.harmony_plan`). A key raise (a semitone, a whole tone or a minor third) on an ostinato lands best where the picture or the
+story turns (search-result text, starting value); violas or a middle-register ostinato carry the pulse when percussion is absent.
+A hit that must stop the music carries `silence_after_s`: nothing but the room sounds in that window (`direction.stinger`).
 
 Then fill `expression.anti_generic`: the generic version of this piece in one sentence, and the one measurable thing that
 stops this piece being it. If the score's first idea is that sentence, rewrite the score.

@@ -296,3 +296,10 @@ own mean (sd at least 5 %), so a quiet shaker and a loud snare are held to the s
 
 
 ---
+
+## Anticipation and bar breath (opt-in)
+
+`anticipate_ms` leans an off-beat note that sits within 0.76 beat before the next bar line or the middle of the bar a few ms early (0.6-1.4 x the
+value, drawn from the track's generator); `bar_breath_ms` lets the last note of a bar go early and delays the first note of the next bar by 35 % of it,
+and the legato rule does not close that gap. Both default to 0 and draw nothing then, so an existing track plays exactly as before. Starting values:
+anticipate 20-40 ms, breath 60-120 ms. Roles: figure roles, counter, arp, chord, ostinato.

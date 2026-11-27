@@ -131,3 +131,9 @@ or the other on a part, not both at one moment.
   from the part's `spatial` block and the space preset.
 - `external` is loaded through Pedalboard and was exercised in tests with a stand-in plugin object; a real VST3 was not run.
 - Nothing here has been auditioned unless `listen.py` ran.
+
+## The `air` effect
+
+`air` (corner_hz, drive, amount_db): the band at and above the corner is normalised and saturated, only what lands above twice the corner is kept, and
+it is added under the stem following its envelope. It creates content in a band the samples lack (a shelf cannot); measure it with `realism.air`.
+Starting values: corner 5000 Hz, drive 3, amount -24 dB.
