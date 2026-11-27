@@ -431,6 +431,15 @@ class MusicPipeline:
 
         if self.verbose:
             print(f"\n  --- CI/CD Quality Scoreboard: {passes} PASS, {warns} WARN, {fails} FAIL ---")
+            # The tier split is read from presets/gate/tiers.json, not decided here: an invariant, an expressive
+            # judgement and telemetry are three different kinds of statement and are read apart even when they arrive
+            # in one list. The verdict is still the whole list (0 FAIL = certified).
+            import gate_tiers
+            for _tier, _block in gate_tiers.summary(ci_rows).items():
+                if _tier == 'unclassified':
+                    continue
+                print(f"  [{_block['name']}] {_block['rows']} row(s): {_block['pass']} PASS, {_block['warn']} WARN, "
+                      f"{_block['fail']} FAIL (blocks: {_block['blocks']})")
             for lvl, name, detail in ci_rows:
                 indicator = f"[{lvl:4s}]"
                 print(f"  {indicator} {name:26s} {detail}")
@@ -488,6 +497,7 @@ class MusicPipeline:
             'ci_summary': {'pass': sum(1 for l, _, _ in ci_rows if l == 'PASS'),
                            'warn': warns,
                            'fail': fails},
+            'ci_tiers': __import__('gate_tiers').summary(ci_rows),
             'ci_checks': [{'level': l, 'check': n, 'detail': d} for l, n, d in ci_rows]
         }
         if getattr(self, 'video_block', None):

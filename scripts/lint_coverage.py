@@ -141,6 +141,14 @@ def missing(rows):
     return sorted(r for r in rows if r not in COVERAGE)
 
 
+def tier_problems():
+    """Rows with no tier, or a row listed in two: the tier map is data (scripts/gate_tiers.py reads
+    references/data/presets/gate/tiers.json). Checked with the coverage, so a new row needs both an entry here and a
+    tier there before it can ship."""
+    import gate_tiers
+    return gate_tiers.problems()
+
+
 def unknown_rules():
     """Preflight rules named in the table that do not exist."""
     named = {r for kind, detail in COVERAGE.values() if kind == 'preflight' for r in detail}
