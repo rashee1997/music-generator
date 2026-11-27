@@ -60,7 +60,7 @@ def write(path, doc):
 
 
 # ------------------------------------------------------------------ instrument presets
-STAGE = dict(bansuri=(0, 6, 1.5), sitar=(-28, 0, 1.9), violins_counter=(52, 12, 2.4), violas=(-88, 0, 2.6), celli=(88, 0, 2.8),
+STAGE = dict(bansuri=(0, 6, 1.5), sitar=(-28, 0, 1.9), violins_counter=(52, 12, 2.4), violas=(-68, 0, 2.6), celli=(88, 0, 2.8),
              violins_long=(150, 22, 4.0), tanpura=(-108, -2, 2.6), santoor=(118, 30, 2.8), tabla=(-150, 0, 2.4), pipes=(172, 5, 7.5))
 # the sections sit on the sides and behind (measured: imm.surround_ratio read -9.9 and then -10.1 dB against a -9.0 window with the strings at +-56 deg)
 

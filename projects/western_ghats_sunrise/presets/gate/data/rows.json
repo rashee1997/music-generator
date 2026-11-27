@@ -1942,17 +1942,17 @@
     "margin": 0.0,
     "worst_times_s": [],
     "calibrated": true,
-    "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2 event(s) rejected as a dense burst, 10 as a steep attack; max cluster span 0.136 ms"
+    "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2 event(s) rejected as a dense burst, 11 as a steep attack; max cluster span 0.136 ms"
    },
    {
     "row": "loudness",
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -16.000007819182954,
+    "value": -16.000007045882015,
     "unit": "LUFS",
     "threshold": -16.0,
-    "margin": -2.4999921808170456,
+    "margin": -2.4999929541179853,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-16.0 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -1962,13 +1962,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -1.8919925521071026,
+    "value": -1.9420890735748153,
     "unit": "dBTP",
     "threshold": -1.5,
-    "margin": -0.3919925521071026,
+    "margin": -0.4420890735748153,
     "worst_times_s": [],
     "calibrated": true,
-    "detail": "-1.89 dBTP vs ceiling -1.5"
+    "detail": "-1.94 dBTP vs ceiling -1.5"
    },
    {
     "row": "dropout",
@@ -1981,7 +1981,7 @@
     "margin": -20.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "longest hole 0 ms (limit 20-1000 ms), floor -71.1 dBFS; 0 hole(s)"
+    "detail": "longest hole 0 ms (limit 20-1000 ms), floor -71.0 dBFS; 0 hole(s)"
    },
    {
     "row": "cut.hard",
@@ -2001,13 +2001,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 57.357507910485594,
+    "value": 57.326974812387476,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -45.357507910485594,
+    "margin": -45.326974812387476,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "end level -117.0 dBFS (limit -45), decay over final 300 ms 57.4 dB (limit 12); natural release"
+    "detail": "end level -116.8 dBFS (limit -45), decay over final 300 ms 57.3 dB (limit 12); natural release"
    },
    {
     "row": "clipping",
@@ -2027,10 +2027,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 1.5570610959332604e-06,
+    "value": 1.5108532602796639e-06,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009984429389040667,
+    "margin": -0.0009984891467397204,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
@@ -2040,10 +2040,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 86.29796221312037,
+    "value": 86.31028284638037,
     "unit": "BPM",
     "threshold": 2.0,
-    "margin": 84.29796221312037,
+    "margin": 84.31028284638037,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 174.3 BPM vs 88.0 (tolerance 2.0) from the onset-envelope autocorrelation (peak 4.5x the median); beat tracker said 172.3; four-quarter drift 41.3 BPM reported, not decisive"
@@ -2066,28 +2066,28 @@
       "start_s": 0.0,
       "end_s": 13.636,
       "energy": 0.12,
-      "level_db": -31.310281185367618
+      "level_db": -31.192018325260367
      },
      {
       "name": "first_light",
       "start_s": 13.636,
       "end_s": 30.0,
       "energy": 0.38,
-      "level_db": -25.722971331919386
+      "level_db": -25.638977437147823
      },
      {
       "name": "sunrise",
       "start_s": 30.0,
       "end_s": 49.091,
       "energy": 0.85,
-      "level_db": -17.121003001284343
+      "level_db": -17.001413065573825
      },
      {
       "name": "morning",
       "start_s": 49.091,
       "end_s": 60.0,
       "energy": 0.35,
-      "level_db": -28.35697036623196
+      "level_db": -28.216796996203126
      }
     ]
    }

@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-11-27T07:43:01Z",
-  "status": "PASSED",
+  "timestamp": "2026-11-27T07:46:08Z",
+  "status": "FAILED",
   "deliverables": {
-    "master_wav": "/home/user/music-generator/projects/western_ghats_sunrise/out/western_ghats_sunrise.wav",
+    "master_wav": "/home/user/music-generator/projects/western_ghats_sunrise/out/_draft_western_ghats_sunrise.wav",
     "midi": "/home/user/music-generator/projects/western_ghats_sunrise/midi/western_ghats_sunrise_score.mid",
-    "duration_s": 61.529818594104306,
+    "duration_s": 61.52963718820862,
     "sample_rate": 44100,
     "outputs": [
       "stereo",
@@ -28,31 +28,16 @@
         "file": "western_ghats_sunrise_immersive_7_1.wav"
       }
     ],
-    "certified": [
-      "stereo"
-    ],
+    "certified": [],
     "stems_dir": "/home/user/music-generator/projects/western_ghats_sunrise/stems",
-    "stem_count": 12,
-    "metadata": "/home/user/music-generator/projects/western_ghats_sunrise/out/western_ghats_sunrise.json",
-    "version": 2,
-    "versioned_master": "western_ghats_sunrise_v02.wav",
-    "metadata_tagged": [
-      "title",
-      "artist",
-      "genre",
-      "copyright",
-      "comment",
-      "license",
-      "description"
-    ],
-    "versioned_metadata": "/home/user/music-generator/projects/western_ghats_sunrise/out/western_ghats_sunrise_v02.json"
+    "stem_count": 12
   },
   "measurements": {
-    "integrated_lufs": -16.000007819182954,
-    "true_peak_dbtp": -1.8919925521071026,
-    "crest_factor_db": 17.95685663084609,
-    "mono_loss_db": -0.5750537379311392,
-    "mono_phone_loss_db": -0.28193657154843266,
+    "integrated_lufs": -16.000007045882015,
+    "true_peak_dbtp": -1.9420890735748153,
+    "crest_factor_db": 17.90323434803659,
+    "mono_loss_db": -0.5106013187199812,
+    "mono_phone_loss_db": -0.287270874639229,
     "clipped_samples": 0,
     "mean_roughness": 0.0564,
     "max_roughness": 0.0965,
@@ -61,9 +46,9 @@
     "spiral_strain_end": 0.54
   },
   "ci_summary": {
-    "pass": 180,
-    "warn": 75,
-    "fail": 0
+    "pass": 179,
+    "warn": 74,
+    "fail": 1
   },
   "ci_checks": [
     {
@@ -1059,7 +1044,7 @@
     {
       "level": "PASS",
       "check": "spatial_staging",
-      "detail": "11 of 11 staged track(s) use the binaural route; L/R correlation 0.76"
+      "detail": "11 of 11 staged track(s) use the binaural route; L/R correlation 0.79"
     },
     {
       "level": "PASS",
@@ -1079,12 +1064,12 @@
     {
       "level": "WARN",
       "check": "audio",
-      "detail": "low end is wide (-4 dB side/mid below 120 Hz) - mono the bass (mono_below)"
+      "detail": "low end is wide (-5 dB side/mid below 120 Hz) - mono the bass (mono_below)"
     },
     {
       "level": "INFO",
       "check": "master.micro_dynamics",
-      "detail": "PLR 14.1 LU, PSR 7.4 LU, LRA 14.9 LU, true peak -1.89 dBTP (4x -1.89, 8x -1.89): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
+      "detail": "PLR 14.1 LU, PSR 7.4 LU, LRA 14.9 LU, true peak -1.94 dBTP (4x -1.94, 8x -1.94): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
     },
     {
       "level": "PASS",
@@ -1114,7 +1099,7 @@
     {
       "level": "PASS",
       "check": "delivery.true_peak",
-      "detail": "stereo: worst channel true peak -1.9 dBTP (ceiling -1.5 dBTP; per channel -2.0, -1.9)"
+      "detail": "stereo: worst channel true peak -1.9 dBTP (ceiling -1.5 dBTP; per channel -2.1, -1.9)"
     },
     {
       "level": "PASS",
@@ -1129,12 +1114,12 @@
     {
       "level": "PASS",
       "check": "stereo.correlation",
-      "detail": "stereo: inter-channel correlation +0.76 (floor +0.15: below it the centre is cancelling)"
+      "detail": "stereo: inter-channel correlation +0.79 (floor +0.15: below it the centre is cancelling)"
     },
     {
       "level": "PASS",
       "check": "dropout",
-      "detail": "longest hole 0 ms (limit 20-1000 ms), floor -71.1 dBFS; 0 hole(s)"
+      "detail": "longest hole 0 ms (limit 20-1000 ms), floor -71.0 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -1144,7 +1129,7 @@
     {
       "level": "PASS",
       "check": "end.abrupt",
-      "detail": "end level -117.0 dBFS (limit -45), decay over final 300 ms 57.4 dB (limit 12); natural release"
+      "detail": "end level -116.8 dBFS (limit -45), decay over final 300 ms 57.3 dB (limit 12); natural release"
     },
     {
       "level": "PASS",
@@ -1214,7 +1199,7 @@
     {
       "level": "PASS",
       "check": "imm_width",
-      "detail": "L/R correlation 0.76 (limit 0.95)"
+      "detail": "L/R correlation 0.79 (limit 0.95)"
     },
     {
       "level": "PASS",
@@ -1239,7 +1224,7 @@
     {
       "level": "PASS",
       "check": "imm_low_fold",
-      "detail": "below 250 Hz the mono fold loses 1.3 dB (limit 2.5): the low end holds on one speaker"
+      "detail": "below 250 Hz the mono fold loses 1.0 dB (limit 2.5): the low end holds on one speaker"
     },
     {
       "level": "PASS",
@@ -1277,9 +1262,9 @@
       "detail": "every accompaniment stem sits within its role allowance of the lead"
     },
     {
-      "level": "PASS",
+      "level": "FAIL",
       "check": "spatial.z_separation",
-      "detail": "closest competing pair \"choir\"/\"violins_long\": band envelope overlap 0.79 (limit 0.50), 113 deg apart (azimuth 113, elevation 2); every pair that shares the midrange in the climax is separated"
+      "detail": "\"tanpura\" and \"violas\" both hold the 500-4000 Hz band in the climax (envelope overlap 0.50) and sit 20 deg apart (azimuth 20, elevation 2); the limit is 25 deg apart or 15 deg of height. Give one part an elevated arc (for a strings-versus-low-brass collision: strings out at about +-50 deg azimuth, +25..35 deg elevation; low brass and timpani anchored at about +-20 deg, -10..0 deg) or move one 25 deg or more in azimuth"
     },
     {
       "level": "PASS",
@@ -1394,7 +1379,7 @@
     {
       "level": "INFO",
       "check": "ear.iacc",
-      "detail": "interaural correlation of the neural patterns, 500-880 Hz: mean 0.60 (window 0.1..0.98)"
+      "detail": "interaural correlation of the neural patterns, 500-880 Hz: mean 0.62 (window 0.1..0.98)"
     },
     {
       "level": "INFO",
@@ -1404,7 +1389,7 @@
     {
       "level": "INFO",
       "check": "chem.reward_build",
-      "detail": "the build earns the strongest measured change at 30.0 s (the sheet declares no hits_at): 12.2 s of lead, rank correlation +1.00, peak 0.57. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
+      "detail": "the build earns the strongest measured change at 30.0 s (the sheet declares no hits_at): 12.0 s of lead, rank correlation +1.00, peak 0.57. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
     },
     {
       "level": "INFO",
@@ -1499,7 +1484,7 @@
     {
       "level": "INFO",
       "check": "env.cpu_budget",
-      "detail": "\"ambience\": 11.1 s of CPU per minute of audio on this machine, projected from a 3 s render (limit 12)"
+      "detail": "\"ambience\": 11.0 s of CPU per minute of audio on this machine, projected from a 3 s render (limit 12)"
     },
     {
       "level": "WARN",
@@ -1532,11 +1517,6 @@
       "detail": "10 stems route to the shared room; if the mix reads as washy, lower the return (mix.reverb_return) before shortening the room"
     },
     {
-      "level": "WARN",
-      "check": "mix:intelligibility",
-      "detail": "the lead sits -4.6 dB against the beds in 1-4 kHz: words and articulation will be covered. Carve the beds there or lift the lead"
-    },
-    {
       "level": "PASS",
       "check": "music21_tonality",
       "detail": "strong tonal center in B minor (correlation 0.81)"
@@ -1563,7 +1543,7 @@
     "stopped": null,
     "cache": {
       "dir": "/home/user/music-generator/projects/western_ghats_sunrise/.cache/mix",
-      "hits": 1,
+      "hits": 0,
       "stems": 12
     },
     "stages": {
@@ -1574,7 +1554,7 @@
         "warns": 0,
         "rows": 104,
         "profile": "western_ghats_sunrise",
-        "total_ms": 114.38314199949673,
+        "total_ms": 139.65186899986293,
         "timings": {
           "ambience": 0.0,
           "bansuri": 0.0,
@@ -3552,8 +3532,8 @@
       },
       "mix": {
         "stage": "mix",
-        "fails": 0,
-        "warns": 75,
+        "fails": 1,
+        "warns": 74,
         "metrics": [
           {
             "row": "clicks",
@@ -3566,17 +3546,17 @@
             "margin": 0.0,
             "worst_times_s": [],
             "calibrated": true,
-            "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2 event(s) rejected as a dense burst, 10 as a steep attack; max cluster span 0.136 ms"
+            "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 2 event(s) rejected as a dense burst, 11 as a steep attack; max cluster span 0.136 ms"
           },
           {
             "row": "loudness",
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -16.000007819182954,
+            "value": -16.000007045882015,
             "unit": "LUFS",
             "threshold": -16.0,
-            "margin": -2.4999921808170456,
+            "margin": -2.4999929541179853,
             "worst_times_s": [],
             "calibrated": true,
             "detail": "-16.0 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -3586,13 +3566,13 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -1.8919925521071026,
+            "value": -1.9420890735748153,
             "unit": "dBTP",
             "threshold": -1.5,
-            "margin": -0.3919925521071026,
+            "margin": -0.4420890735748153,
             "worst_times_s": [],
             "calibrated": true,
-            "detail": "-1.89 dBTP vs ceiling -1.5"
+            "detail": "-1.94 dBTP vs ceiling -1.5"
           },
           {
             "row": "dropout",
@@ -3605,7 +3585,7 @@
             "margin": -20.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "longest hole 0 ms (limit 20-1000 ms), floor -71.1 dBFS; 0 hole(s)"
+            "detail": "longest hole 0 ms (limit 20-1000 ms), floor -71.0 dBFS; 0 hole(s)"
           },
           {
             "row": "cut.hard",
@@ -3625,13 +3605,13 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 57.357507910485594,
+            "value": 57.326974812387476,
             "unit": "dB",
             "threshold": 12.0,
-            "margin": -45.357507910485594,
+            "margin": -45.326974812387476,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "end level -117.0 dBFS (limit -45), decay over final 300 ms 57.4 dB (limit 12); natural release"
+            "detail": "end level -116.8 dBFS (limit -45), decay over final 300 ms 57.3 dB (limit 12); natural release"
           },
           {
             "row": "clipping",
@@ -3651,10 +3631,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 1.5570610959332604e-06,
+            "value": 1.5108532602796639e-06,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.0009984429389040667,
+            "margin": -0.0009984891467397204,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
@@ -3664,10 +3644,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 86.29796221312037,
+            "value": 86.31028284638037,
             "unit": "BPM",
             "threshold": 2.0,
-            "margin": 84.29796221312037,
+            "margin": 84.31028284638037,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 174.3 BPM vs 88.0 (tolerance 2.0) from the onset-envelope autocorrelation (peak 4.5x the median); beat tracker said 172.3; four-quarter drift 41.3 BPM reported, not decisive"
@@ -3690,28 +3670,28 @@
                 "start_s": 0.0,
                 "end_s": 13.636,
                 "energy": 0.12,
-                "level_db": -31.310281185367618
+                "level_db": -31.192018325260367
               },
               {
                 "name": "first_light",
                 "start_s": 13.636,
                 "end_s": 30.0,
                 "energy": 0.38,
-                "level_db": -25.722971331919386
+                "level_db": -25.638977437147823
               },
               {
                 "name": "sunrise",
                 "start_s": 30.0,
                 "end_s": 49.091,
                 "energy": 0.85,
-                "level_db": -17.121003001284343
+                "level_db": -17.001413065573825
               },
               {
                 "name": "morning",
                 "start_s": 49.091,
                 "end_s": 60.0,
                 "energy": 0.35,
-                "level_db": -28.35697036623196
+                "level_db": -28.216796996203126
               }
             ]
           }
@@ -3853,6 +3833,14 @@
       "time": "2026-11-27T07:43:01Z",
       "fails": 0,
       "failing": []
+    },
+    {
+      "attempt": 15,
+      "time": "2026-11-27T07:46:08Z",
+      "fails": 1,
+      "failing": [
+        "spatial.z_separation: \"tanpura\" and \"violas\" both hold the 500-4000 Hz band in the climax (envelope overlap 0.50) and sit 20 deg apart (azimuth 20, elevation 2); the limit is 25 deg apart or 15 deg of height. Give one part an elevated arc (for a strings-versus-low-brass collision: strings out at about +-50 deg azimuth, +25..35 deg elevation; low brass and timpani anchored at about +-20 deg, -10..0 deg) or move one 25 deg or more in azimuth"
+      ]
     }
   ]
 }

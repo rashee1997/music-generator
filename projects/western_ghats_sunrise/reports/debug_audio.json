@@ -1,7 +1,7 @@
 {
- "stamp": "20261127T073533",
+ "stamp": "20261127T074608",
  "project": "western_ghats_sunrise",
- "level": "FAIL",
+ "level": "WARN",
  "sources": {
   "score": "/home/user/music-generator/projects/western_ghats_sunrise/scores/western_ghats_sunrise_score.json",
   "gate_data": [
@@ -16,22 +16,11 @@
    "waveform.json"
   ],
   "stems": "12 processed stems from .cache/mix",
-  "master": "out/_draft_western_ghats_sunrise.wav",
-  "verdict": "2026-11-27T07:34:33Z",
+  "master": "out/western_ghats_sunrise.wav",
+  "verdict": "2026-11-27T07:43:01Z",
   "drift": "the presets or score changed after this master was rendered: presets/environments/western_ghats_sunrise.json, presets/instruments/ghats_bansuri.json, presets/instruments/ghats_celli.json, presets/instruments/ghats_pipes.json - the autopsy describes the previous mix until you re-render"
  },
- "binding": [
-  {
-   "row": "clicks",
-   "stem": null,
-   "level": "FAIL",
-   "value": 3.0,
-   "threshold": 0.0,
-   "unit": "events",
-   "safety": -3.0,
-   "detail": "3 clustered impulse event(s) (MAD), 2 LPC frame(s); 190 event(s) rejected as a dense burst, 39 as a steep attack; max cluster span 1.451 ms"
-  }
- ],
+ "binding": [],
  "advisory": [
   {
    "row": "stem.dropout",
@@ -75,297 +64,28 @@
   }
  ],
  "domains": {
-  "run": [
-   "master"
-  ],
+  "run": [],
   "skipped": {
    "stems": 8
   }
  },
  "model": {
   "first_order": true,
-  "rows": 8,
-  "levers": [
-   {
-    "id": "render.oversample",
-    "domain": "master",
-    "kind": "oversample",
-    "stem": null,
-    "current": 1.0,
-    "lo": 1.0,
-    "hi": 8.0,
-    "step": 1.0,
-    "unit": "x",
-    "text": "master oversampling before the limiter"
-   },
-   {
-    "id": "hf.ambience",
-    "domain": "master",
-    "kind": "hf_shelf",
-    "stem": "ambience",
-    "current": 0.0,
-    "lo": -12.0,
-    "hi": 0.0,
-    "step": 0.5,
-    "unit": "dB",
-    "text": "ambience high shelf at 5500 Hz: inst_eq[\"env:western_ghats_sunrise\"]"
-   },
-   {
-    "id": "hf.tabla",
-    "domain": "master",
-    "kind": "hf_shelf",
-    "stem": "tabla",
-    "current": -15.0,
-    "lo": -27.0,
-    "hi": 0.0,
-    "step": 0.5,
-    "unit": "dB",
-    "text": "tabla high shelf at 5500 Hz: inst_eq[\"ghats_tabla\"]"
-   }
-  ]
+  "rows": 0,
+  "levers": []
  },
  "plan": {
-  "status": "replay (unproven)",
+  "status": "no rows",
   "worst_safety": null,
-  "deltas": {
-   "hf.ambience": -6.0
-  },
-  "clearing": {
-   "hf.ambience": -6.0
-  },
-  "predicted": {
-   "clicks::-": [
-    -3.0,
-    -3.0
-   ],
-   "loudness::-": [
-    0.02,
-    0.02
-   ],
-   "true peak::-": [
-    0.23797047973151253,
-    0.23797047973151253
-   ],
-   "dropout::-": [
-    1.0,
-    1.0
-   ],
-   "cut.hard::-": [
-    2.0,
-    2.0
-   ],
-   "end.abrupt::-": [
-    0.02,
-    0.02
-   ],
-   "clipping::-": [
-    0.0,
-    0.0
-   ],
-   "master.dc::-": [
-    0.0998771848982469,
-    0.0998771848982469
-   ]
-  },
+  "deltas": {},
+  "clearing": {},
+  "predicted": {},
   "conflicts": [],
   "closed": [],
-  "burned": [
-   {
-    "lever": "hf.tabla",
-    "text": "tabla high shelf at 5500 Hz: inst_eq[\"ghats_tabla\"]",
-    "rows": [
-     "clicks"
-    ]
-   }
-  ],
-  "notes": [
-   "best candidate clears the modelled row with 1 dB of margin but the model's own error is 1.1 dB: this is a direction, not a proof, and the next render is the test (it will be recorded against this prediction)"
-  ],
-  "experiments": [
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 0,
-    "baseline": 3,
-    "margin_db": 1.0,
-    "unverified": false,
-    "resolution_db": 1.08,
-    "moves": {
-     "hf.ambience": -6.0
-    },
-    "times": [],
-    "verdict": "clears",
-    "robust": 0.0,
-    "proved": false
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 1,
-    "baseline": 3,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 1.08,
-    "moves": {
-     "hf.ambience": -3.0
-    },
-    "times": [
-     45.023
-    ],
-    "verdict": "better",
-    "robust": 1.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 2,
-    "baseline": 3,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 1.08,
-    "moves": {
-     "hf.ambience": -9.0
-    },
-    "times": [
-     31.386,
-     48.764
-    ],
-    "verdict": "better",
-    "robust": 0.5
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 2,
-    "baseline": 3,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 1.08,
-    "moves": {
-     "hf.ambience": -12.0
-    },
-    "times": [
-     31.386,
-     48.453
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   }
-  ]
+  "burned": [],
+  "notes": [],
+  "experiments": []
  },
- "forensics": [
-  {
-   "t": 34.1165,
-   "step": 0.07096,
-   "threshold": 0.04768,
-   "over_threshold_db": 3.45,
-   "z": 11.9,
-   "kind": "single source",
-   "trusted": true,
-   "fit_ratio": 0.89,
-   "owners": [
-    {
-     "stem": "tabla",
-     "share": 0.761,
-     "signed": -0.04945
-    },
-    {
-     "stem": "ambience",
-     "share": 0.219,
-     "signed": -0.01423
-    }
-   ],
-   "raw_step_fs": 0.0954,
-   "notes": [
-    {
-     "track": "ambience",
-     "pitch": null,
-     "velocity": null,
-     "onset_s": null,
-     "after_onset_ms": 0.0,
-     "written_len": null,
-     "continuous": true,
-     "layers": []
-    },
-    {
-     "track": "tabla",
-     "pitch": "tabla_na",
-     "velocity": 0.4,
-     "onset_s": 34.0,
-     "after_onset_ms": 116.5,
-     "written_len": 0.3
-    }
-   ]
-  },
-  {
-   "t": 45.0228,
-   "step": 0.05825,
-   "threshold": 0.04768,
-   "over_threshold_db": 1.74,
-   "z": 9.8,
-   "kind": "single source",
-   "trusted": true,
-   "fit_ratio": 0.92,
-   "owners": [
-    {
-     "stem": "tabla",
-     "share": 0.807,
-     "signed": 0.04515
-    }
-   ],
-   "raw_step_fs": 0.0781,
-   "notes": [
-    {
-     "track": "tabla",
-     "pitch": "shaker",
-     "velocity": 0.42,
-     "onset_s": 45.0,
-     "after_onset_ms": 22.8,
-     "written_len": 0.2
-    }
-   ]
-  },
-  {
-   "t": 47.0672,
-   "step": 0.05912,
-   "threshold": 0.04768,
-   "over_threshold_db": 1.87,
-   "z": 9.9,
-   "kind": "single source",
-   "trusted": true,
-   "fit_ratio": 0.98,
-   "owners": [
-    {
-     "stem": "tabla",
-     "share": 0.934,
-     "signed": -0.0617
-    }
-   ],
-   "raw_step_fs": 0.098,
-   "notes": [
-    {
-     "track": "tabla",
-     "pitch": "tabla_tin",
-     "velocity": 0.52,
-     "onset_s": 47.0,
-     "after_onset_ms": 67.2,
-     "written_len": 0.3
-    }
-   ]
-  }
- ],
- "notes": [
-  "clicks: sham replay (no change) reproduces the gate's 3 event(s) exactly (decomposition R^2 0.937); counterfactuals below are priced on a model that passes its own test",
-  "clicks: model resolution 1.1 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
-  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.94); gains ambience 5.27, bansuri 3.02, celli 1.64, choir 1.14, pipes 0.51, santoor 0.92, sitar 2.06, tabla 2.55, tanpura 1.41, violas 1.59, violins_counter 1.72, violins_long 1.46",
-  "event 34.117s [single source] tabla 76%, ambience 22%; step 0.0710 vs threshold 0.0477 (+3.5 dB over); nearest onset ambience pNone vNone +0 ms",
-  "event 45.023s [single source] tabla 81%; step 0.0583 vs threshold 0.0477 (+1.7 dB over); nearest onset tabla pshaker v0.42 +23 ms",
-  "event 47.067s [single source] tabla 93%; step 0.0591 vs threshold 0.0477 (+1.9 dB over); nearest onset tabla ptabla_tin v0.52 +67 ms",
-  "clicks: cutting the band of ambience is NOT monotone (replay: -6 dB -> 0 event(s), -3 dB -> 1 event(s), -9 dB -> 2 event(s), -12 dB -> 2 event(s) against 3 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
-  "clicks: iterative replay, profile (events at 0/1/2/3 dB tighter) (3, 5, 2, 3) -> (0, 0, 0, 0) after tabla -9 dB, ambience -3 dB"
- ]
+ "forensics": [],
+ "notes": []
 }
