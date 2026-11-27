@@ -6,9 +6,9 @@
     "warns": 0,
     "rows": 148,
     "profile": "western_ghats_sunrise",
-    "total_ms": 1117.034447000151,
+    "total_ms": 195.99555599961604,
     "timings": {
-      "ambience": 947.2756909999589,
+      "ambience": 0.0,
       "bansuri": 0.0,
       "bass": 0.0,
       "celli": 0.0,
@@ -2990,8 +2990,8 @@
       }
     ],
     "duration_s": 63.98879818594104,
-    "cached_stems": 16,
-    "measured_stems": 1
+    "cached_stems": 17,
+    "measured_stems": 0
   },
   "rows": [
     {

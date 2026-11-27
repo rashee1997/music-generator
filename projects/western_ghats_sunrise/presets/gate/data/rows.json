@@ -2929,26 +2929,24 @@
     "row": "clicks",
     "stage": "mix",
     "stem": null,
-    "level": "FAIL",
-    "value": 1.0,
+    "level": "PASS",
+    "value": 0.0,
     "unit": "events",
     "threshold": 0.0,
-    "margin": 1.0,
-    "worst_times_s": [
-     60.8441
-    ],
+    "margin": 0.0,
+    "worst_times_s": [],
     "calibrated": true,
-    "detail": "1 clustered impulse event(s) (MAD), 0 LPC frame(s); 53 event(s) rejected as a dense burst, 91 as a steep attack; max cluster span 1.134 ms"
+    "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 288 event(s) rejected as a dense burst, 114 as a steep attack; max cluster span 1.497 ms"
    },
    {
     "row": "loudness",
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -16.085436976028213,
+    "value": -16.120742002318583,
     "unit": "LUFS",
     "threshold": -16.0,
-    "margin": -2.4145630239717875,
+    "margin": -2.3792579976814174,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-16.1 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -2958,10 +2956,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -1.5007495008015257,
+    "value": -1.4995108619599318,
     "unit": "dBTP",
     "threshold": -1.5,
-    "margin": -0.0007495008015256932,
+    "margin": 0.0004891380400682266,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-1.50 dBTP vs ceiling -1.5"
@@ -2977,7 +2975,7 @@
     "margin": -20.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "longest hole 0 ms (limit 20-1000 ms), floor -68.8 dBFS; 0 hole(s)"
+    "detail": "longest hole 0 ms (limit 20-1000 ms), floor -68.9 dBFS; 0 hole(s)"
    },
    {
     "row": "cut.hard",
@@ -2997,13 +2995,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 87.10002077423395,
+    "value": 83.75551426772881,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -75.10002077423395,
+    "margin": -71.75551426772881,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "end level -117.8 dBFS (limit -45), decay over final 300 ms 87.1 dB (limit 12); natural release"
+    "detail": "end level -117.5 dBFS (limit -45), decay over final 300 ms 83.8 dB (limit 12); natural release"
    },
    {
     "row": "clipping",
@@ -3023,10 +3021,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 1.1854944861684033e-06,
+    "value": 1.381097656428183e-06,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009988145055138315,
+    "margin": -0.0009986189023435718,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
@@ -3036,13 +3034,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 104.44744067777441,
+    "value": 104.353386270794,
     "unit": "BPM",
     "threshold": 2.08,
-    "margin": 102.36744067777441,
+    "margin": 102.273386270794,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 208.4 BPM vs 104.0 (tolerance 2.1) from the onset-envelope autocorrelation (peak 4.0x the median); beat tracker said 103.4; four-quarter drift 3.7 BPM reported, not decisive"
+    "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 208.4 BPM vs 104.0 (tolerance 2.1) from the onset-envelope autocorrelation (peak 3.7x the median); beat tracker said 103.4; four-quarter drift 1.4 BPM reported, not decisive"
    },
    {
     "row": "section.energy",
@@ -3062,42 +3060,42 @@
       "start_s": 0.0,
       "end_s": 4.615,
       "energy": 0.3,
-      "level_db": -34.00051189138505
+      "level_db": -33.87524649300583
      },
      {
       "name": "groove",
       "start_s": 4.615,
       "end_s": 20.769,
       "energy": 0.55,
-      "level_db": -25.38899075523355
+      "level_db": -25.14991180503021
      },
      {
       "name": "sunrise",
       "start_s": 20.769,
       "end_s": 30.0,
       "energy": 0.8,
-      "level_db": -18.649740151336573
+      "level_db": -18.465812600205446
      },
      {
       "name": "piper",
       "start_s": 30.0,
       "end_s": 39.231,
       "energy": 0.75,
-      "level_db": -22.632984927206547
+      "level_db": -23.05126354653089
      },
      {
       "name": "crest",
       "start_s": 39.231,
       "end_s": 48.462,
       "energy": 1.0,
-      "level_db": -14.793169123586141
+      "level_db": -14.731949278243352
      },
      {
       "name": "morning",
       "start_s": 48.462,
       "end_s": 60.0,
       "energy": 0.4,
-      "level_db": -27.21057375368154
+      "level_db": -29.1254052377003
      }
     ]
    }
