@@ -44,6 +44,10 @@ hard one open. Rules:
 - A note's neighbours in another band are invisible to the humanizer, so a slur across two bands does not overlap. Keep
   a legato line within a narrow velocity range, or give it its own track.
 - It cannot add a real second layer: the attack and the harmonic series stay those of the one sample. Say so.
+- To read like an SFZ library's layers, give the block fixed zones and a velocity-to-attack ramp:
+  `"velocity_timbre": {"points": [[25, 1800], [60, 3400], [100, 6500], [127, 9500]], "zones": 12, "attack_ms": [[25, 28], [127, 4]]}`.
+  `zones` (2-16) replaces the equal-count `bands`: a note's layer depends on its own velocity only. `attack_ms` is the onset ramp of each
+  zone (a soft note begins more slowly). Neither adds a real second sample; the numbers are starting values (`knowledgebase/sound-design/soundfont-velocity-and-realism.md`, section 5).
 
 ## 2b. A continuous loudness-timbre coupling: `timbre_dynamics`
 

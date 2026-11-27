@@ -129,9 +129,11 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **9.4c** Check the expression against the sheet: `python scripts/helpers/expression_report.py scores/<title>_score.json --direction direction/<sheet>.json`. It reports whether the written notes follow the sections' declared energy (tempo, density, velocity, register, staccato share) and whether the melody has variety (interval entropy, range, leaps, bars that repeat exactly). It is non-neural, uses starting-value anchors and says nothing about valence or taste; report its flags and what you changed.
 - [ ] **9.4d** Short-form or looping piece (a ringtone, an alert, a jingle): `python scripts/helpers/short_form_report.py out/master.wav --score scores/<title>_score.json --loop`. It measures the loop seam, the energy in the phone band, the onsets in the first seconds, how often the opening shape returns and whether the density moves. Report its FLAG lines and what you changed; its defaults are starting values, and it does not say a tune is catchy.
 - [ ] **9.4e** The director's second review (`references/workflow/director-craft.md` section 5): in `STATUS.md`, which failures of its section 2 the piece could still show and the measurement that says it does not, the one thing a human producer would change first, and what was not heard or measured. A piece that passes every row and fails this review goes back to 4.9, not to the gate.
-- [ ] **9.4f** For a cue briefed as theatrical, cinematic, orchestral or "less synthetic": run
-      `python scripts/realism_report.py out/<project>.wav --score scores/<title>_score.json --stems out/stems --project <dir>`.
-      Report every `WARN` with the dimension it names, and fix the part, the preset or the placement. The measurements are
+- [ ] **9.4f** For a cue briefed as theatrical, cinematic, orchestral or "less synthetic": the pipeline runs the realism report itself, on the certified
+      stereo master, as stage 5a (`[WARN] realism.<dimension>` rows; written to `presets/gate/data/realism.json` and `realism.txt`; a score says
+      `"realism": false` to skip it or `true` to ask for it on any piece; `intent.registers` naming cinematic, orchestral, hybrid or theatrical turns it on). To run it by hand:
+      `python scripts/realism_report.py out/<project>.wav --score scores/<title>_score.json --stems stems --project <dir>`.
+      Read the stage 5a rows before the next render, and report every `WARN` with the dimension it names, and fix the part, the preset or the placement. The measurements are
       advisory, not gate rows (`references/mixing/quality-gate.md` section 3h); the gate rows a theatrical change can break
       are listed there.
 - [ ] **9.4g** **A FAIL, before any edit:** run `python scripts/debug_audio.py <project>`. It reads the gate's own

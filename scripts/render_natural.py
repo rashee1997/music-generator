@@ -719,7 +719,7 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
         _return_slot()
 
 
-VELOCITY_TIMBRE_KEYS = ('points', 'bands', 'order')
+VELOCITY_TIMBRE_KEYS = ('points', 'bands', 'order', 'zones', 'attack_ms')
 
 
 def _velocity_timbre(tr):
@@ -745,6 +745,14 @@ def _velocity_timbre(tr):
                          f'two or more, in rising velocity order (got {pts!r})')
     if int(blk.get('bands', 4)) < 2:
         raise ValueError(f'track "{name}": velocity_timbre.bands must be 2 or more')
+    if 'zones' in blk and not (2 <= int(blk['zones']) <= 16):
+        raise ValueError(f'track "{name}": velocity_timbre.zones is the number of fixed velocity zones, 2 to 16 (got {blk["zones"]!r})')
+    att = blk.get('attack_ms')
+    if att is not None and (not isinstance(att, list) or len(att) < 2 or any(not isinstance(p, (list, tuple)) or len(p) != 2 for p in att)
+                            or any(not (0 <= float(p[0]) <= 127 and 0.0 <= float(p[1]) <= 120.0) for p in att)
+                            or [float(p[0]) for p in att] != sorted(float(p[0]) for p in att)):
+        raise ValueError(f'track "{name}": velocity_timbre.attack_ms is a list of [velocity 0-127, onset ramp 0-120 ms] pairs, two or more, '
+                         f'in rising velocity order (got {att!r})')
     return blk
 
 
@@ -759,22 +767,40 @@ def _render_velocity_layers(tr, vt, tm, sfpath, global_dyn, cfg, seed, ts, swing
     if not notes:
         return _render_track({k: v for k, v in tr.items() if k != 'velocity_timbre'}, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead)
     vels = np.array([float(n.get('v', 80)) for n in notes])
-    nb = int(vt.get('bands', 4))
-    edges = np.quantile(vels, np.linspace(0.0, 1.0, nb + 1)[1:-1]) if len(set(vels)) > 1 else []
-    idx = np.searchsorted(np.asarray(edges), vels, side='right') if len(edges) else np.zeros(len(vels), int)
+    unit = 127.0 if vels.max() <= 1.0 else 1.0           # a score writes velocity 0-1 or 1-127; the preset's points are 0-127 (a 0-1 part was read as velocity 1: always the darkest cutoff)
+    if vt.get('zones'):
+        # fixed velocity zones, as an SFZ library lays out its layers (lovel/hivel): a note's layer depends on its own velocity only,
+        # never on how the rest of the part is written, and a dense set of zones steps the cutoff by about a semitone or two, so no
+        # crossfade is needed (the Renoise forum remark that dense layers are similar enough not to be abrupt; see the research note)
+        nz = int(vt['zones'])
+        v127 = np.clip(vels * unit, 1.0, 127.0)
+        idx = np.minimum(((v127 - 1.0) / 127.0 * nz).astype(int), nz - 1)
+    else:
+        nb = int(vt.get('bands', 4))
+        edges = np.quantile(vels, np.linspace(0.0, 1.0, nb + 1)[1:-1]) if len(set(vels)) > 1 else []
+        idx = np.searchsorted(np.asarray(edges), vels, side='right') if len(edges) else np.zeros(len(vels), int)
     pts = vt['points']
     xs, fs = np.array([float(p[0]) for p in pts]), np.log([float(p[1]) for p in pts])
     layers, info = [], []
     for b in sorted(set(idx.tolist())):
         sub = [n for n, i in zip(notes, idx) if i == b]
-        mv = float(np.mean([float(n.get('v', 80)) for n in sub]))
+        mv = float(np.mean([float(n.get('v', 80)) for n in sub])) * unit
         lp = float(np.exp(np.interp(mv, xs, fs)))
         t2 = {k: v for k, v in tr.items() if k != 'velocity_timbre'}
         t2['notes'] = sub
+        att_ms = None
+        if vt.get('attack_ms'):
+            # a soft note begins more slowly (SFZ `ampeg_vel2attack`: attack time = attack + vel2attack * velocity / 127, a rise over the
+            # velocity range); the ramp is the onset fade the renderer already has, forced on for a sustained part
+            ap = vt['attack_ms']
+            att_ms = float(np.interp(mv, [float(p[0]) for p in ap], [float(p[1]) for p in ap]))
+            t2['onset_fade_ms'] = att_ms
+            t2['onset_fade_all'] = True
         x = _render_track(t2, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead)
         x = dsp.slope_filter(x, sr=SR, f=lp, kind='lp', order=int(vt.get('order', 2)))
         layers.append(x)
-        info.append(dict(band=b, notes=len(sub), mean_vel=round(mv, 1), lowpass_hz=round(lp)))
+        info.append(dict(band=b, notes=len(sub), mean_vel=round(mv, 1), lowpass_hz=round(lp),
+                         **({} if att_ms is None else dict(attack_ms=round(att_ms, 1)))))
     _record(tr.get('name', 'track'), velocity_layers=info)
     n = max(len(x) for x in layers)
     out = np.zeros((n, layers[0].shape[1] if layers[0].ndim > 1 else 1), np.float32)

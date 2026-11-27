@@ -152,3 +152,25 @@ class ScoreTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class PipelineHook(unittest.TestCase):
+    """The realism report runs after a certified render of a cinematic or orchestral cue, as advisory rows."""
+
+    def test_wanted_follows_the_intent_and_the_override(self):
+        import realism_report as rr
+        self.assertTrue(rr.wanted(dict(intent=dict(registers=['cinematic']))))
+        self.assertTrue(rr.wanted(dict(intent=dict(emotions=['tense'], registers=['Orchestral']))))
+        self.assertFalse(rr.wanted(dict(intent=dict(registers=['lofi']))))
+        self.assertFalse(rr.wanted(dict(intent=dict(registers=['cinematic']), realism=False)))
+        self.assertTrue(rr.wanted(dict(realism=True)))
+        self.assertFalse(rr.wanted({}))
+
+    def test_rows_are_warn_or_pass_never_fail(self):
+        import realism_report as rr
+        rows = rr.rows_from({'1_timbre_loudness': dict(value=1.4, verdict='WARN', note='loud and quiet differ mainly in volume'),
+                             '4_depth': dict(value=0.0, verdict='PASS', note='detail sits in front of the room'),
+                             'source': dict(sr=44100)})
+        self.assertEqual([r[0] for r in rows], ['WARN', 'PASS'])
+        self.assertEqual(rows[0][1], 'realism.timbre_loudness')
+        self.assertIn('differ mainly in volume', rows[0][2])

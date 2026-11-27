@@ -946,6 +946,22 @@ class MusicPipeline:
         else:
             print(f"  [DRAFT] {fails} gate FAIL(s): the uncertified mix stays at {draft_wav}, {out_wav} is untouched")
 
+        # The realism report (AGENTS 9.4f) runs on the certified stereo master, before the long extra formats: a cue briefed as cinematic,
+        # orchestral or theatrical is measured for the eight qualities that separate a produced cue from a generated one. Advisory: a WARN
+        # here is a question for the director, never a failure, and a report that cannot run never costs the certified master.
+        if fails == 0 and not draft and project_dir:
+            try:
+                import realism_report
+                if realism_report.wanted(score):
+                    self.log('5a', 'Realism report (advisory, on the certified master)')
+                    _rows, _path = realism_report.run_after_certification(
+                        project_dir, score, out_wav, stems_dir if stems_dir and os.path.isdir(stems_dir) else os.path.join(project_dir, 'stems'))
+                    for lvl, n, d in _rows:
+                        print(f"  [{lvl}] {n}: {d}")
+                    print(f"  [INFO] realism report written to {_path}")
+            except Exception as exc:
+                print(f"  [WARN] realism report skipped ({exc})")
+
         # Additional requested formats: rendered only after the primary is certified, so one format's failure never
         # takes the certified master with it; each is checked against its own format rows before it enters out/.
         extra_paths, certified, extra_bad = [], [], []

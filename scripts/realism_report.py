@@ -370,6 +370,55 @@ def compare_report(reports):
     return '\n'.join(lines)
 
 
+REALISM_REGISTERS = ('cinematic', 'orchestral', 'hybrid', 'theatrical', 'epic', 'trailer')
+
+
+def wanted(score):
+    """True when the pipeline should run this report after a certified render: a cue briefed as cinematic, orchestral, hybrid or theatrical
+    (`intent.registers`, or `intent.emotions` naming one), unless the score says `"realism": false`; `"realism": true` asks for it on any
+    piece. It is advisory, so a piece that does not need it is simply not measured."""
+    flag = (score or {}).get('realism')
+    if flag is not None:
+        return bool(flag)
+    intent = (score or {}).get('intent') or {}
+    words = [str(w).lower() for key in ('registers', 'emotions', 'scenes') for w in (intent.get(key) or [])]
+    return any(w in REALISM_REGISTERS for w in words)
+
+
+def rows_from(report):
+    """The report as pipeline rows: [(level, row name, detail)], WARN or PASS, never FAIL (the report measures, it does not judge a render)."""
+    out = []
+    for key in sorted(k for k in report if k[0].isdigit()):
+        d = report[key]
+        name = 'realism.' + key[2:]
+        value = d.get('value')
+        out.append(('WARN' if d.get('verdict') == 'WARN' else 'PASS', name,
+                    (f"value {value}: " if value is not None else '') + str(d.get('note', ''))
+                    + f" (target: {TARGETS.get(DIMENSION.get(key, ''), '')})"))
+    return out
+
+
+def run_after_certification(project_dir, score, master_wav, stems_dir=None):
+    """Measure the certified master and write the result next to the other gate artefacts: presets/gate/data/realism.json and realism.txt
+    (never reports/, which holds research, the CI report and the debug autopsy). Returns (rows, path of the json)."""
+    master, sr = load_audio(master_wav)
+    stems = []
+    if stems_dir and os.path.isdir(stems_dir):
+        for p in sorted(glob.glob(os.path.join(stems_dir, '*.wav'))):
+            y, _ = load_audio(p)
+            stems.append(y)
+    r = analyse(master, sr, stems=stems, score=score, project=project_dir)
+    import gate_profiles
+    d = gate_profiles.data_dir(project_dir)
+    os.makedirs(d, exist_ok=True)
+    path = os.path.join(d, 'realism.json')
+    with open(path, 'w', encoding='utf-8') as fh:
+        json.dump(dict(master=os.path.basename(master_wav), report=r), fh, indent=2)
+    with open(os.path.join(d, 'realism.txt'), 'w', encoding='utf-8') as fh:
+        fh.write(format_report(r) + '\n')
+    return rows_from(r), path
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description='Measure the eight qualities of a theatrical mix.')
     ap.add_argument('master', nargs='?', help='a master wav')
