@@ -249,7 +249,7 @@ def environment():
                     'score': {'occupancy': 'from_score', 'protect_roles': ['melody', 'lead', 'vocal'], 'margin_db': 3, 'pocket_threshold': 0.7}}
     e['spatial_coupling'] = {'field': {'kind': 'diffuse', 'emitters': 12, 'order': 5, 'correlation_target': 0.2}, 'room': {'space': f'{SLUG}_room'}, 'decode_hint': ['stereo', 'immersive_7_1']}
     e['reference'] = {'full_scale_pa': 0.1}                  # ESTIMATE: calibrates the physical levels to a stem that sits near -40 dBFS rms (the shipped 2.0 renders at -65)
-    e['sources'] = ['malabar_thrush', 'tree_frogs']      # the sound slugs of research/research_*.md (Real-world references); the other layers carry ESTIMATE in their own blocks
+    e['sources'] = ['malabar_whistling_thrush', 'malabar_grey_hornbill', 'malabar_barbet', 'racket_tailed_drongo', 'flame_throated_bulbul', 'tree_frogs']      # the sound slugs of research/research_*.md (Real-world references); the other layers carry ESTIMATE in their own blocks
     return e
 
 

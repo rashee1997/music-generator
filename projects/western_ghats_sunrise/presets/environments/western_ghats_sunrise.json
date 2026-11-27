@@ -552,7 +552,11 @@
     "full_scale_pa": 0.1
   },
   "sources": [
-    "malabar_thrush",
+    "malabar_whistling_thrush",
+    "malabar_grey_hornbill",
+    "malabar_barbet",
+    "racket_tailed_drongo",
+    "flame_throated_bulbul",
     "tree_frogs"
   ]
 }
