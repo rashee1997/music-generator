@@ -1781,6 +1781,54 @@ def _expression_rows(score, sheet, out):
                     f'{mv["range_semitones"]} semitones, {100 * mv["identical_bar_share"]:.0f} % of bars repeated'))
 
 
+def _harmony_rows(score, sheet, out):
+    """direction.harmony_plan (advisory): a piece of 40 s or more with three or more sections says where its harmony turns. Each entry of
+    sheet["harmony_plan"] names a section and what changes (`root`, `key`, `move`, `counter_hook`) or declares `pedal` with a reason. A sheet
+    without it is a WARN, never a FAIL: the gate cannot tell a good turn from a bad one (realism.harmonic_motion measures the notes)."""
+    secs = sheet.get('sections') or []
+    dur = float(sheet.get('duration_s') or 0.0)
+    if len(secs) < 3 or dur < 40.0:
+        return
+    plan = sheet.get('harmony_plan')
+    if not plan:
+        out.append(('WARN', 'direction.harmony_plan', 'the sheet has no `harmony_plan`: say per section where the harmony turns (root, key change, '
+                    'counter-hook) or why it stays on a pedal (references/workflow/director-craft.md)'))
+        return
+    names = {str(x.get('name')) for x in secs}
+    bad = [str(e.get('section')) for e in plan if str(e.get('section')) not in names]
+    empty = [str(e.get('section')) for e in plan if not (e.get('root') or e.get('key') or e.get('move') or e.get('counter_hook')
+                                                        or (e.get('pedal') and e.get('why')))]
+    if bad or empty:
+        out.append(('WARN', 'direction.harmony_plan', (f'entries name no section of the sheet: {bad}; ' if bad else '')
+                    + (f'entries say nothing about what changes: {empty}' if empty else '')))
+    else:
+        out.append(('PASS', 'direction.harmony_plan', f'{len(plan)} section(s) say where the harmony turns or why it holds'))
+
+
+def _stinger_rows(score, sheet, out):
+    """direction.stinger (advisory): a hit with `silence_after_s` promises that nothing but the room sounds after it. The notes of every
+    track except environment and fx must not start inside that window (an impact that glides into its aftermath is not a stop)."""
+    hits = [h for h in (sheet.get('hits') or []) if h.get('silence_after_s')]
+    if not hits:
+        return
+    try:
+        import humanize as hz
+        tm = hz.tempo_map_for(score, seed=0)
+        starts = sorted(float(tm.sec(float(n['t']))) for t in score.get('tracks') or [] if t.get('role') not in ('environment', 'fx')
+                        for n in t.get('notes') or [])
+    except Exception as exc:
+        out.append(('WARN', 'direction.stinger', f'cannot read the notes against the hits ({exc})'))
+        return
+    broken = []
+    for h in hits:
+        t0, w = float(h['t']), float(h['silence_after_s'])
+        inside = [x for x in starts if t0 + 0.05 < x < t0 + w]
+        if inside:
+            broken.append(f't={t0:g}s: {len(inside)} note(s) start within {w:g} s (first at {inside[0]:.2f} s)')
+    out.append(('WARN', 'direction.stinger', '; '.join(broken) + ': the hit does not stop; remove the notes or shorten `silence_after_s`')
+               if broken else ('PASS', 'direction.stinger', f'{len(hits)} hit(s) are followed by the silence they promise'))
+
+
 def direction_rows(score, out, project_dir=None, wav_path=None, mode='full'):
     """The direction sheet is a promise about the delivery, so the gate judges the delivered file against it.
 
@@ -1808,6 +1856,8 @@ def direction_rows(score, out, project_dir=None, wav_path=None, mode='full'):
                         'no direction/*.json: the delivered file is not judged against a sheet (draft run)'))
         return
     _expression_rows(score, sheet, out)
+    _harmony_rows(score, sheet, out)
+    _stinger_rows(score, sheet, out)
     if mode == 'full' and wav_path and os.path.isfile(wav_path):
         import affect
         out.extend(affect.rows(score, sheet, wav_path))
