@@ -138,3 +138,13 @@ anchors (bass, drums) fixed, keeps a unique spot per part, and says when no plac
 
 ### Sources
 The click-detection methods this engine and the gate rest on (noise-power and MAD thresholds, high-pass residual, autoregressive prediction error, sham intervention) are listed with their status in `knowledgebase/sound-design/click-detection.md`.
+
+## Root cause first: `scripts/rca.py`
+
+The debug engine prices levers against rows the gate wrote to disk. It cannot analyse a row the gate only printed (a stem failure that blocked the mix, a
+delivery-format row), and it does not say whether a failure is a fault in the material or a rule that does not fit the piece. `python scripts/rca.py <project>
+[--log <log>] [--formats] [--row <name>]` does that, per row family: dropout (tail, retrigger gap, bed at the floor, rest), stem.dead and stem.edge (the section
+table and the notes under the master high-pass), spatial.z_separation (the pair table and the placements that clear it), fold.timbre (the band table and whether it is a
+smooth tilt or one band), imm.surround_ratio and imm.height_arc (the channel energies and the parts that put them there), channel.bars (the per-bar series),
+cochlear_roughness (the sounding parts and their beating partials), section.energy and ambient_bed. A row with no analyzer says `unknown`; add the analyzer when you learn
+the cause. Verdicts: `fault`, `mismatch`, `unknown` (AGENTS.md 9.4h). Its thresholds are starting values; it never edits the project.

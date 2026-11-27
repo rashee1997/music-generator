@@ -16,7 +16,7 @@ These are not negotiable.
 |---|---|---|
 | Sound design stays in presets | Sound and space belong in `presets/`, notes in `scores/`, intent in `direction/`. Do not write synthesis, EQ, mixing logic or sound generation in a Python script. | the gate rejects it |
 | Acoustic values are cited or measured | Do not guess formants, tuning, ranges or reverb times. Cite the knowledge base, a research note, or a measurement. | the gate rejects it |
-| A failing gate row is a fact | Measure it, fix the score or the presets. Do not loosen a threshold, skip a row or suppress a failure. A profile may relax a row only with measured evidence and a written reason. | hard limits in code |
+| A failing gate row is a fact | Find its root cause (`scripts/rca.py`), then fix the score or the presets. Do not loosen a threshold, skip a row or suppress a failure. A profile may relax a row only with measured evidence, a written reason, and a root-cause verdict of `mismatch`. | hard limits in code |
 | Ambience and SFX only when asked | Do not add ambience, rooms or effects unless the user asks for them. | follow exactly |
 | A preset needs research first | Every instrument, vocal and culture preset cites knowledge base `id`s. | the pipeline blocks without a research note |
 | No inline EQ or spatial values in a score | A score holds track names and notes; EQ and placement live in the presets. | separation is strict |
@@ -108,7 +108,7 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
       `orch.voice_leading`, `orch.playable`, `orch.legato`: a note outside the instrument's range, parallel fifths, more
       notes than a player has, a breathless phrase, a gap in a legato line). Fix the notes; a deliberate extreme is
       declared on the track (`extended_range`, `section`), never by loosening a row. `quality-gate-rows.md` section 7.
-- [ ] **8.2** Read scoreboard, not early logs. Fix ONE thing at a time based on gate failures. Max 5 attempts.
+- [ ] **8.2** Read scoreboard, not early logs. Find the cause of each failure before touching anything (`python scripts/rca.py <dir>`, step 9.4h), then fix ONE thing at a time. Max 5 attempts.
 - [ ] **8.3** For immersive pieces, fix imm_* rows in presets/score, never loosen. `imm_kinematics`: spread the
       keyframes. `imm_low_fold` / `mix.band_fold`: narrow the stem the row names. `imm_clarity`: lower the space's
       `late.level_db`. Table: `references/mixing/quality-gate-rows.md` §5c.
@@ -144,6 +144,14 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
       value of that lever clears both rows: fix the score, the sample or the density instead of turning the knob again.
       Record what you tried with `--record <row>=<lever>=<delta> --outcome <cleared|no change|worse>` so a failed
       experiment is never proposed twice. The engine renders nothing and changes nothing.
+- [ ] **9.4h** **Root cause before any edit, and before any tolerance:** run `python scripts/rca.py <project>` (add `--log <pipeline log>` for a stem row that blocked the
+      mix, and `--formats` for a delivery format that failed its own rows). Where the debug engine answers "which knob moves this number", rca answers
+      "what in the signal or the score made the row fail": the hole's time and what carries the level there, the notes under the high-pass, the pair of parts that
+      share the midrange, the fold's band table, the bar's front-to-back series, the partials that beat. Each finding carries a verdict:
+      `fault` (fix it in the notes, the presets or the placement; a tolerance change would hide it), `mismatch` (the signal is as written and the row's rule does not fit the
+      piece: a bounded `gate_profiles.py relax` with the measurement is legitimate, and only then) or `unknown` (measure more; do not edit). Write each
+      failure in `STATUS.md` under "Failure log": the row, the cause class, the evidence, the lever and what happened. It reads and writes only `presets/gate/data/rca.*`.
+      It loads every processed stem (2-3 GB): do not run it while a render is in its 8-channel stage, which needs about 10 GB of the container's memory.
 - [ ] **9.5** Listen: `python scripts/listen.py out/<project>.wav --direction direction/<sheet>.json` (if missing, say so)
 - [ ] **9.6** Complete self-check in `references/workflow/self-check.md` in STATUS.md (all yes/no)
 - [ ] **9.7** Report: what was done, what was checked, what was NOT checked, gate results, the version number delivered, any limitations. Update STATUS.md.
@@ -364,6 +372,7 @@ Rules:
     header (`id`, `title`, `domain`, `status`, `sources`, `used_by`, `updated`), and
     `python tests/check_kb.py` must pass. Writing new Python generator for new sound name is forbidden. Unknown fields = error, no fallback. No normalization erasing physical intensity differences.
 17b. **A green gate is not the brief** - Every gate fix is made in the notes, the presets or the placement, and each one can take pressure out of the piece (a sparser stab, a quieter hit, a high-passed sub). After the gate is green, measure the arc (9.4b) and compare it with the direction sheet's `energy` and `loudness`. A cue briefed as tense, hostile or epic that reads as ambient is a failed brief however many rows pass. Never flatten velocities, remove a pulse or a low hit to quiet a row; fix the row where it arises.
+17d. **A tolerance is the last answer, not the first** - A row that fails is measured by `scripts/rca.py` before anything changes. If the verdict is `fault`, the fix is in the material; a relaxed tolerance would only move the failure out of sight. If it is `mismatch`, the relaxation is bounded by the row's range, carries the measurement in its reason, and is listed in the report. A project whose `rows` fill with relaxations that no `mismatch` verdict supports has not been fixed.
 17c. **A producer decides how it is played before writing it** - The `expression` block (Phase 4.8) is the entry point of the piece. An agent that has not decided who plays each part, what a human does, what the theme's shape is and what the generic version would be writes the generic version. A theme is a shape with a variation plan, never a mood word.
 17. **A declaration is judged** - `focus.declared`, `intent.vocabulary` and `intent.avoid` are rows like any other (Section 6b).
     They fail in the score or the presets; a declaration is never deleted, loosened or skipped to get a green report.
