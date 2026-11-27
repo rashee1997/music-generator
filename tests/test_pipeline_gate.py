@@ -298,3 +298,16 @@ class PresetAdoption(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class AdoptPresetsData(unittest.TestCase):
+    def test_a_json_list_under_presets_is_not_a_preset(self):
+        with tempfile.TemporaryDirectory() as td:
+            d = Path(td) / 'presets' / 'gate' / 'data'
+            d.mkdir(parents=True)
+            (d / 'findings.json').write_text('[{"row": "x"}]', encoding='utf-8')
+            import pipeline
+            pipe = pipeline.MusicPipeline.__new__(pipeline.MusicPipeline)
+            pipe.verbose = False
+            out = pipe.adopt_presets(dict(tracks=[]), presets_dir=str(Path(td) / 'presets'), project_dir=td)
+            self.assertIsInstance(out, dict)

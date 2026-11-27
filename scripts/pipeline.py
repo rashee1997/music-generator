@@ -551,6 +551,8 @@ class MusicPipeline:
             except Exception as e:      # the project gate fails on this; outside project mode say so loudly
                 print(f"  [WARN] preset '{pf.name}' is not valid JSON and was skipped: {e}")
                 continue
+            if not isinstance(data, dict):          # a list or a scalar is a data file (a gate or report artefact), not a preset
+                continue
             name = data.get('name') or pf.stem
             preset_map[name] = data
             preset_map[pf.stem] = data

@@ -566,7 +566,7 @@ def main(argv=None):
     d = os.path.join(ctx.project, 'presets', 'gate', 'data')
     os.makedirs(d, exist_ok=True)
     with open(os.path.join(d, 'rca.json'), 'w', encoding='utf-8') as fh:
-        json.dump(findings, fh, indent=1, default=str)
+        json.dump(dict(name='rca', findings=findings), fh, indent=1, default=str)      # an object, like every other file under presets/: the pipeline reads that folder
     with open(os.path.join(d, 'rca.txt'), 'w', encoding='utf-8') as fh:
         fh.write(format_text(findings) + '\n')
     print(json.dumps(findings, indent=1, default=str) if a.json else format_text(findings))
