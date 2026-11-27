@@ -39,29 +39,29 @@
         {
           "section": "mist",
           "start_s": 0.0,
-          "measured_db": -33.58,
-          "expected_db": -40.52,
+          "measured_db": -33.62,
+          "expected_db": -40.79,
           "dyn": 0.12
         },
         {
           "section": "first_light",
           "start_s": 13.636,
-          "measured_db": -29.97,
-          "expected_db": -30.51,
+          "measured_db": -30.03,
+          "expected_db": -30.77,
           "dyn": 0.38
         },
         {
           "section": "sunrise",
           "start_s": 30.0,
-          "measured_db": -22.36,
-          "expected_db": -23.52,
+          "measured_db": -22.67,
+          "expected_db": -23.78,
           "dyn": 0.85
         },
         {
           "section": "morning",
           "start_s": 49.091,
-          "measured_db": -31.75,
-          "expected_db": -31.22,
+          "measured_db": -32.22,
+          "expected_db": -31.49,
           "dyn": 0.35
         }
       ]
@@ -121,6 +121,32 @@
           "start_s": 49.091,
           "measured_db": -25.85,
           "expected_db": -26.56,
+          "dyn": 0.35
+        }
+      ]
+    },
+    {
+      "stem": "pipes",
+      "table": [
+        {
+          "section": "first_light",
+          "start_s": 13.636,
+          "measured_db": -32.05,
+          "expected_db": -28.98,
+          "dyn": 0.38
+        },
+        {
+          "section": "sunrise",
+          "start_s": 30.0,
+          "measured_db": -24.91,
+          "expected_db": -21.98,
+          "dyn": 0.85
+        },
+        {
+          "section": "morning",
+          "start_s": 49.091,
+          "measured_db": -28.98,
+          "expected_db": -29.69,
           "dyn": 0.35
         }
       ]

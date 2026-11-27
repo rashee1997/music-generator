@@ -1,5 +1,5 @@
 {
-  "duration_s": 62.106643990929705,
+  "duration_s": 61.51637188208617,
   "sections": [
     {
       "name": "mist",
@@ -58,6 +58,12 @@
       "PASS"
     ],
     [
+      16.029,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
       19.4467,
       "stem.tick",
       "santoor",
@@ -76,7 +82,31 @@
       "FAIL"
     ],
     [
-      33.7331,
+      42.6634,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      45.389,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      45.729,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      46.069,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      48.4064,
       "clicks",
       "master",
       "FAIL"

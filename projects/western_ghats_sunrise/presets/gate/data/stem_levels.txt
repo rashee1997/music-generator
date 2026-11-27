@@ -3,10 +3,10 @@ ambience,mist,-36.37,-47.77,0.12
 ambience,first_light,-28.01,-37.76,0.38
 ambience,sunrise,-39.85,-30.76,0.85
 ambience,morning,-41.64,-38.47,0.35
-bansuri,mist,-33.58,-40.52,0.12
-bansuri,first_light,-29.97,-30.51,0.38
-bansuri,sunrise,-22.36,-23.52,0.85
-bansuri,morning,-31.75,-31.22,0.35
+bansuri,mist,-33.62,-40.79,0.12
+bansuri,first_light,-30.03,-30.77,0.38
+bansuri,sunrise,-22.67,-23.78,0.85
+bansuri,morning,-32.22,-31.49,0.35
 celli,mist,-30.38,-37.22,0.12
 celli,first_light,-28.25,-27.21,0.38
 celli,sunrise,-21.55,-20.22,0.85
@@ -14,6 +14,9 @@ celli,morning,-26.87,-27.92,0.35
 choir,first_light,-31.16,-25.85,0.38
 choir,sunrise,-23.36,-18.86,0.85
 choir,morning,-25.85,-26.56,0.35
+pipes,first_light,-32.05,-28.98,0.38
+pipes,sunrise,-24.91,-21.98,0.85
+pipes,morning,-28.98,-29.69,0.35
 santoor,first_light,-53.54,-51.62,0.38
 santoor,morning,-50.4,-52.33,0.35
 sitar,first_light,-39.45,-39.11,0.38

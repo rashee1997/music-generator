@@ -10,8 +10,9 @@
     "timing_ms": 4.0,
     "drum_ms": 3.0
   },
-  "gain_db": -4.0,
+  "gain_db": -7.0,
   "reverb": 0.14,
+  "onset_fade_ms": 2.0,
   "spatial": {
     "azimuth": -150,
     "elevation": 0,
@@ -34,12 +35,12 @@
     {
       "type": "peak",
       "f": 3800.0,
-      "gain": 1.2,
+      "gain": 0.5,
       "q": 1.0
     },
     {
       "type": "lp",
-      "f": 12000.0
+      "f": 8500.0
     }
   ],
   "sources": [

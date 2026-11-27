@@ -172,7 +172,8 @@
       "sources": [
         "Marshall-Palmer drop sizes (scripts/biome/physics.py)",
         "ESTIMATE: a light drip from wet leaves after the night, 0.5-3 mm/h; replace once a recording is measured"
-      ]
+      ],
+      "gain_db": 6.0
     },
     {
       "name": "stream",
@@ -212,7 +213,8 @@
       "sources": [
         "Minnaert bubble pitch from the medium (scripts/biome/physics.py)",
         "ESTIMATE: splash rate, sizes and bubble probabilities; measure a stream recording with scripts/ambience_reference.py"
-      ]
+      ],
+      "gain_db": 20.0
     },
     {
       "name": "canopy_wind",
@@ -228,9 +230,9 @@
         "oscillators": 8
       },
       "flow": {
-        "u_m_s": 2.6,
+        "u_m_s": 3.0,
         "gust_corner_hz": 0.08,
-        "intensity": 0.5
+        "intensity": 0.08
       },
       "k_dipole": 0.001,
       "strouhal": {
@@ -338,7 +340,7 @@
     {
       "name": "malabar_grey_hornbill",
       "call": "ghats_hornbill",
-      "salience": "foreground",
+      "salience": "bed",
       "power_w": 4e-05,
       "bouts_per_min": 2.0,
       "individuals": 2,
@@ -370,7 +372,7 @@
     {
       "name": "malabar_barbet",
       "call": "ghats_barbet",
-      "salience": "foreground",
+      "salience": "bed",
       "power_w": 1e-05,
       "bouts_per_min": 1.5,
       "individuals": 1,
@@ -413,8 +415,8 @@
       },
       "niche": {
         "band_hz": [
-          1800,
-          4000
+          4000,
+          7500
         ],
         "active": {
           "control": "light"
@@ -445,8 +447,8 @@
       },
       "niche": {
         "band_hz": [
-          2800,
-          4200
+          4500,
+          8000
         ],
         "active": {
           "control": "light"

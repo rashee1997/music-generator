@@ -138,9 +138,9 @@ for _i in INSTRUMENTS:
 
 TABLA = dict(name='ghats_tabla', description='Tabla and daf', instrument='standard', role='drum', family='struck_membrane',
              character='Tabla strokes (ge, na, tin) with a shaker underneath in the 3+3+2 pattern, and one low daf stroke where the sun clears the ridge: light hands, never a kit.',
-             humanize=dict(preset='tight', timing_ms=4.0, drum_ms=3.0), gain_db=-4.0, reverb=0.14,
+             humanize=dict(preset='tight', timing_ms=4.0, drum_ms=3.0), gain_db=-7.0, reverb=0.14, onset_fade_ms=2.0,
              spatial=dict(azimuth=-150, elevation=0, distance=2.4, space=f'{SLUG}_room', binaural=True, kind='spot'),
-             eq=[HP(70), PK(250, -2.0, 0.9), PK(3800, 1.2, 1.0), LP(12000)], sources=list(SRC))
+             eq=[HP(70), PK(250, -2.0, 0.9), PK(3800, 0.5, 1.0), LP(8500)], sources=list(SRC))
 
 
 def vocal_choir():
@@ -176,9 +176,11 @@ def environment():
     stream['spatial'].update(azimuth=-75.0, distance=16.0)
     stream['population']['rate_mm_h'] = 80.0                # ESTIMATE: a brook at 16 m is the steady bed under the birds (measured against the 1 s level steps of the render)
     stream['surface']['area_m2'] = 6.0
+    stream['gain_db'] = 20.0                                  # the brook is steady but 24 dB under the wind at these rates (measured), so it is lifted here
+    drip['gain_db'] = 6.0
     wind = gens['canopy_wind']
-    wind['flow']['u_m_s'] = 2.6
-    wind['flow']['intensity'] = 0.5
+    wind['flow']['u_m_s'] = 3.0
+    wind['flow']['intensity'] = 0.08                        # measured: intensity 0.35 gusted 33 dB over 30 s, 0.08 moves 6 dB (ambient_bed pumping)
     e['generators'] = [drip, stream, wind]
     frogs = copy.deepcopy(e['fauna'][1])
     frogs.update(first_s=0.5)
@@ -193,16 +195,16 @@ def environment():
     birds = [
         bird('malabar_whistling_thrush', 'ghats_whistling_thrush', 1.5e-05, 3.0, 4.0, (1300, 3000), (25.0, 20.0, 14.0), 4.5,
              sources=['https://en.wikipedia.org/wiki/Malabar_whistling_thrush (a human-like whistle; longer, melodious phrases in the morning, short sharp whistles later)']),
-        bird('malabar_grey_hornbill', 'ghats_hornbill', 4.0e-05, 2.0, 16.0, (700, 2600), (-100.0, 30.0, 40.0), 12.0, individuals=2,
+        bird('malabar_grey_hornbill', 'ghats_hornbill', 4.0e-05, 2.0, 16.0, (700, 2600), (-100.0, 30.0, 40.0), 12.0, individuals=2, salience='bed',
              sources=['https://iucnhornbills.org/malabar-grey-hornbill/ (an assortment of loud, harsh chuckles and squawks with raucous cackling like mock laughter)',
                       'https://app.birdweather.com/species/malabar-gray-hornbill (loud cackling and laughing call; endemic to the Western Ghats)']),
-        bird('malabar_barbet', 'ghats_barbet', 1.0e-05, 1.5, 21.0, (800, 1400), (110.0, 38.0, 30.0), 6.0, individuals=1,
+        bird('malabar_barbet', 'ghats_barbet', 1.0e-05, 1.5, 21.0, (800, 1400), (110.0, 38.0, 30.0), 6.0, individuals=1, salience='bed',
              sources=['https://macaulaylibrary.org/asset/646733603 (Kerala recording: a sharp single-note call like a coppersmith barbet, repeated)',
                       'https://en.wikipedia.org/wiki/Malabar_barbet (similar to the coppersmith barbet, a more rapid call)']),
-        bird('racket_tailed_drongo', 'ghats_drongo', 1.2e-05, 4.0, 11.0, (1800, 4000), (62.0, 34.0, 17.0), 3.5,
+        bird('racket_tailed_drongo', 'ghats_drongo', 1.2e-05, 4.0, 11.0, (4000, 7500), (62.0, 34.0, 17.0), 3.5,
              sources=['https://en.wikipedia.org/wiki/Greater_racket-tailed_drongo (a wide range of loud calls including near-perfect imitations of other birds)',
                       'https://pmc.ncbi.nlm.nih.gov/articles/PMC3945749/ (mimicked notes sit in its repertoire)']),
-        bird('flame_throated_bulbul', 'ghats_bulbul', 1.0e-05, 6.0, 14.0, (2800, 4200), (-48.0, 26.0, 11.0), 3.0, individuals=3,
+        bird('flame_throated_bulbul', 'ghats_bulbul', 1.0e-05, 6.0, 14.0, (4500, 8000), (-48.0, 26.0, 11.0), 3.0, individuals=3,
              sources=['https://sanctuarynaturefoundation.org/public/article/shhh-can-you-hear-me%3F (an endemic dawn voice of the Valparai rainforest)'])]
     e['fauna'] = [frogs] + birds
     e['ecology'] = {'density_budget': {'events_per_s_max': 1.2}, 'niches': {'auto': True, 'min_separation': 'D<=0.4'}, 'rules': [],
@@ -243,15 +245,15 @@ def calls():
             sequence=[['tuk', 14, 30]], gap_ms=[190, 230], sources=est),
         'ghats_drongo': dict(
             name='ghats_drongo', character='A mixed repertoire: a clear metallic note, a held whistle, a harsh pulsed creak and an imitated call with a register break.',
-            elements=dict(tink=el([[0, 3300], [0.3, 3000], [1, 2700]], [110, 160], harmonics=6, rolloff=1.4, attack=0.03, release=0.4),
-                          whistle=el([[0, 2300], [0.5, 2800], [1, 2400]], [260, 380], harmonics=3, rolloff=2.0, vibrato_hz=7.0, vibrato_cents=40),
-                          creak=el([[0, 1900], [1, 1700]], [180, 260], harmonics=10, rolloff=1.2, noise=0.5, pulse_hz=60, pulse_duty=0.5),
-                          mimic=el([[0, 3800], [0.5, 2200], [1, 3600]], [200, 320], harmonics=4, rolloff=1.8, jump=[0.5, 0.8])),
+            elements=dict(tink=el([[0, 5200], [0.3, 4800], [1, 4300]], [110, 160], harmonics=6, rolloff=1.4, attack=0.03, release=0.4),
+                          whistle=el([[0, 4200], [0.5, 4900], [1, 4300]], [260, 380], harmonics=2, rolloff=2.0, vibrato_hz=7.0, vibrato_cents=40),
+                          creak=el([[0, 4100], [1, 3900]], [180, 260], harmonics=6, rolloff=1.2, noise=0.5, pulse_hz=60, pulse_duty=0.5),
+                          mimic=el([[0, 6200], [0.5, 4300], [1, 5800]], [200, 320], harmonics=4, rolloff=1.8, jump=[0.5, 0.8])),
             sequence=['tink', 'whistle', ['creak', 1, 2], 'tink', 'mimic', 'whistle'], gap_ms=[80, 240], sources=est),
         'ghats_bulbul': dict(
             name='ghats_bulbul', character='A bright three-to-four note phrase, up, down and a falling last note, repeated.',
-            elements=dict(p1=el([[0, 3000], [1, 3300]], [110, 150], harmonics=2, rolloff=2.0), p2=el([[0, 3400], [1, 3000]], [120, 160], harmonics=2, rolloff=2.0),
-                          p3=el([[0, 3600], [0.6, 2800], [1, 2500]], [180, 260], harmonics=2, rolloff=2.0, attack=0.1)),
+            elements=dict(p1=el([[0, 4800], [1, 5200]], [110, 150], harmonics=2, rolloff=2.0), p2=el([[0, 5400], [1, 4800]], [120, 160], harmonics=2, rolloff=2.0),
+                          p3=el([[0, 5800], [0.6, 4600], [1, 4100]], [180, 260], harmonics=2, rolloff=2.0, attack=0.1)),
             sequence=['p1', 'p2', 'p1', 'p3'], gap_ms=[70, 120], sources=est)}
 
 
@@ -477,7 +479,7 @@ def sitar():
             for k, (b, idx) in enumerate(((0.0, 0), (0.5, 2), (1.0, 3), (1.5, 2), (2.0, 4), (2.5, 3), (3.0, 2), (3.5, 1))):
                 if bar < 12 and k % 2:
                     continue
-                s.append(n(bar, b, 0.5, pit(idx, sa), vel + (0.06 if k % 4 == 0 else 0.0)))
+                s.append(n(bar, b, 0.4, pit(idx + 5, sa), vel + (0.06 if k % 4 == 0 else 0.0)))
     return s
 
 

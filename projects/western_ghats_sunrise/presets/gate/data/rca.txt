@@ -1,35 +1,27 @@
-[UNKNOWN] tempo.audio  -  no analyzer for this row yet
-    measured 176.2 BPM vs 88.0 (tolerance 2.0) from the onset-envelope autocorrelation (peak 3.7x the median); beat tracker said 172.3; four-quarter drift 4.6 BPM reported, not decisive
-    fix here: measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause
-    tolerance: bounded relaxation exists: tol_bpm 2.0 (range 1.0..5.0), tol_pct 2.0 (range 1.0..5.0), drift_bpm 2.0 (range 1.0..5.0)
-
-[UNKNOWN] channels  -  no analyzer for this row yet
-    3 note(s) started on a channel that was still sounding: a microtone or glide moved a note already playing. Split the track or shorten notes
+[UNKNOWN] clicks  -  no analyzer for this row yet
+    7 clustered impulse event(s) (MAD), 7 LPC frame(s); 141 event(s) rejected as a dense burst, 70 as a steep attack; max cluster span 1.361 ms
     fix here: measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause
     tolerance: protected: no profile or score can change it, so the audio is the only fix
 
-[UNKNOWN] mix.band_fold on violas  -  no analyzer for this row yet
-    1 band(s) lose more than 3.5 dB in mono, worst 442-519 Hz at 3.6 dB; stem "violas" is the most out of phase there: narrow that stem below the band, or lower its widening
-    fix here: measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause
-    tolerance: bounded relaxation exists: max_db 3.5 (range 2.0..9.0), floor_db 30.0 (range 12.0..60.0)
+[FAULT] cochlear_roughness  -  partials of sounding parts beat
+    Cochlear sensory roughness chronically high (median 0.073 > 0.070); continuous clashing overtones throughout piece. Separate chord voices by at least a minor 3rd or notch clashing frequencies.
+    window 0.0-61.5 s; sounding parts: bansuri -31 dB [1481, 1481, 1483], celli -33 dB [124, 124, 139], tabla -37 dB [205, 205, 206], sitar -38 dB [494, 494, 416], violins_counter -39 dB [331, 331, 331], violins_long -39 dB [664, 415, 663], choir -39 dB [665, 665, 665], violas -40 dB [498, 498, 498]
+    partials of different parts within about a quarter critical band: sitar 416 Hz vs violins_long 415 Hz (1 Hz apart); sitar 494 Hz vs violas 498 Hz (4 Hz apart); sitar 494 Hz vs violas 498 Hz (4 Hz apart); sitar 494 Hz vs violas 498 Hz (4 Hz apart); sitar 494 Hz vs violas 498 Hz (4 Hz apart); sitar 494 Hz vs violas 498 Hz (4 Hz apart)
+    fix here: the notes or the placement of the parts named: move one off the other's partial by a minor third or an octave, or drop one from the window
+    tolerance: bounded relaxation exists: scale 1.0 (range 0.5..2.0), outro_resolve True (choices [True]), model legacy (choices ['legacy', 'level_aware']), median 0.024 (range 0.02..0.4), calib_spl_db 70.0 (range 60.0..80.0), mask_band_bark 1.0 (range 0.5..3.0), mask_slope_up_db_bark 10.5 (range 5.0..20.0), mask_slope_down_db_bark 27.0 (range 15.0..40.0)
 
 [FAULT] ambient_bed on ambience  -  the bed sits at the silence floor of the mix
-    ambient stem "ambience" drops out to silence at 15.0s
-    bed level -60.4 dB (median over its body); the gate's floor is -64.0 dB (the mix level minus 38 dB, never above -58)
+    ambient stem "ambience" drops out to silence at 32.5s
+    bed level -46.5 dB (median over its body); the gate's floor is -64.1 dB (the mix level minus 38 dB, never above -58)
     fix here: the mix preset: level_by_role.environment, or the bed preset gain (a 3-6 dB lift clears a bed within 3 dB of the floor)
     tolerance: bounded relaxation exists: pump_db 3.8 (range 3.0..6.0)
 
 [UNKNOWN] ambient_bed  -  no processed bed
-    rapid gain pumping on "ambience" (15.7 dB jump at 14.5s, limit 3.9). Smooth ducker release or use sigmoid crossfade
+    rapid gain pumping on "ambience" (21.0 dB jump at 14.5s, limit 3.9). Smooth ducker release or use sigmoid crossfade
     tolerance: bounded relaxation exists: pump_db 3.8 (range 3.0..6.0)
 
-[UNKNOWN] spectral.equal_loudness  -  no analyzer for this row yet
-    "violins_counter" (counter) puts 11.2 dB more ear-weighted level in 2500-5000 Hz than its 500-2500 Hz mids (warn 6, fail 10). Trim about 3.0 dB at 3536 Hz in the mix preset: "inst_eq": {"violins_counter": [{"type": "peak", "f": 3536, "gain": -3.0, "q": 1.0}]}
-    fix here: measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause
-    tolerance: bounded relaxation exists: warn_db 6.0 (range 3.0..12.0), fail_db 10.0 (range 6.0..20.0), band_lo_hz 2500.0 (range 2000.0..3000.0), band_hi_hz 5000.0 (range 4000.0..6000.0), max_trim_db 3.0 (range 1.0..6.0)
-
 [UNKNOWN] env.score_pocket  -  no analyzer for this row yet
-    "ambience": 0 of 2 foreground calls (0 %) sit where the score occupies their band under 0.35 (want 85 %). Raise ecology.score.pocket_threshold or margin_db, lower bouts_per_min, or move the niche band
+    "ambience": 1 of 3 foreground calls (33 %) sit where the score occupies their band under 0.7 (want 85 %). Raise ecology.score.pocket_threshold or margin_db, lower bouts_per_min, or move the niche band
     fix here: measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause
     tolerance: bounded relaxation exists: min_in_pocket 0.85 (range 0.5..1.0), fail_in_pocket 0.6 (range 0.2..0.95)
 
