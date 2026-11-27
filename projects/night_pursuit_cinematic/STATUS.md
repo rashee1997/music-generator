@@ -23,18 +23,35 @@
 
 ## Decisions / feedback
 
-## Outcome (version 07)
+## Outcome (version 10)
 
-- Certified stereo master: `out/night_pursuit_cinematic.wav` (a copy of `out/night_pursuit_cinematic_v07.wav`): 44.1 kHz, 24-bit, 193.9 s, -16 LUFS, -1.5 dBTP. Gate: 0 FAIL.
-- 8-channel 7.1 (ITU System H) delivered: `out/night_pursuit_cinematic_immersive_7_1.wav` (FL FR FC LFE BL BR SL SR), 24-bit, 193.9 s. It passed its own rows, including `fold.timbre`.
-- Files are named after the project folder (stereo `<project>.wav`, versions `<project>_vNN.wav`, other formats `<project>_<format>.wav`); `master.wav` and `master_v01..v05` are earlier versions, kept as the record.
-  v01 and v02 are the first, synth-heavy cut; v03 onward are the orchestral cut; v04 to v07 differ in placement, the evaded ending and the 8-channel target.
-- Project gate profile `night_pursuit_cinematic`: `rows` is empty. No row of the profile was relaxed.
-- One project override, written down in `presets/outputs/immersive_7_1.json` (`gate_note`): the fold-down limit is 7 dB per band, not the shipped 6 (a starting value the
-  shipped file calls not measured). Measured: the fold of the 8-channel file against the stereo master, after level matching on 200-2000 Hz, is -0.5 dB at 500-1000 Hz,
-  -2.1 dB at 2-3 kHz, -5.1 dB at 4.4-5 kHz and -3.9 to -4.4 dB above 5 kHz, a smooth tilt (-6.2 dB at 4426-4955 Hz); the 10-channel 7.1.2 fold of the same cue showed the same
-  shape (-6.1 dB in three renders that moved the cymbals, sirens, strings and brass). The stereo master carries the binaural HRTF lift; a loudspeaker bed does not.
-  The 10-channel 7.1.2 file was rendered and passed its other rows (kept in the history), but the delivery asked for is 8 channels.
+- Certified stereo master: `out/night_pursuit_cinematic.wav` (a copy of `out/night_pursuit_cinematic_v10.wav`): 44.1 kHz, 24-bit, 193.9 s, -16 LUFS, -1.5 dBTP. Gate: 0 FAIL.
+- 8-channel 7.1 (ITU System H) delivered: `out/night_pursuit_cinematic_immersive_7_1.wav` (FL FR FC LFE BL BR SL SR), 24-bit. It passed its own rows.
+- Files are named after the project folder; `master.wav`, `master_v01..v05` and `night_pursuit_cinematic_v06..v09` are earlier versions, kept as the record. v03 onward is the orchestral cut
+  (MuseScore General for the orchestra, GeneralUser GS for the drums); v08 onward has velocity zones on the orchestral parts.
+- Two project-level relaxations, each with its measurement in its own file, and nothing else relaxed:
+  1. `presets/outputs/immersive_7_1.json`: the fold-down limit of the 8-channel target is 7 dB per band, not 6. Measured: a smooth tilt of the fold against the stereo master
+     (-0.5 dB at 500-1000 Hz to -5.1 dB at 4.4-5 kHz), -6.2 dB at 4426-4955 Hz; the 10-channel fold of the same cue showed the same shape. The stereo master carries the binaural HRTF lift.
+  2. `presets/gate/night_pursuit_cinematic.json`: `channel.bars.balance_db` 6, not 4. Measured: the front-to-back balance moves +10.0 to +15.7 dB across bars 21-27 (the hit at bar 23 decays
+     into bar 24); the row flagged bar 24 at +5.2 dB.
+- Realism report (stage 5a, on the certified master): PASS coherence 0.55, depth -0.1 dB, distance (the score's ISO 9613-1 medium), ensemble (36 players), openness, repetition 0.19, transient.
+  WARN: `low_mid` 2.26 (the 180-450 Hz band grows into the peak), `timbre_loudness` 2.15 (loud and quiet differ mainly in volume), `velocity_response` 0.24 (celli, horns, piano_theme, trombones, tuba,
+  violins_staccato get louder but not brighter), `vibrato` (the basses hold a flat pitch), `phrasing` 14.7 (the tempo map swings by design).
+  Measured while fixing it: steeper cutoffs scaled to each part raised the brightness-velocity correlation (violas 0.81, solo violin 0.6, celli 0.37 in isolation); horns and trombones stayed at 0.1-0.17
+  at every cutoff I tried and the cause is not found. Nothing is auditioned.
+
+## Failure log (rca, AGENTS 9.4h)
+
+| Row | Cause class | Evidence | Lever and result |
+|---|---|---|---|
+| dropout (master, tail) | the tail of the city bed sat 2-4 dB above the dropout floor and dipped below it 45 ms before it ended | bed alone carried the last 0.7 s at -61 to -68 dBFS | raised the environment level 9 dB in the mix preset: cleared |
+| stem.dropout / stem.edge / stem.dead (basses, horns) | notes under the master high-pass (C1) and an escape section 12.7-18 dB under the part's median; a same-pitch gap | 99 % of the bass notes under 105 Hz; escape -48 dB against -31 | bass an octave up, louder, overlapped by a quarter beat; the horns' escape hits raised: cleared |
+| stem.tick (violas, violins_long, trombones) | six detuned players beating near 10 Hz; a per-zone onset ramp | onset autocorrelation 0.49-0.60 at a 93 ms grid | detune 3 cents; the ramp off on those parts: cleared |
+| channels (choir) | more sounding notes than the 15 channels a part can use | 3-note chords x 8 players plus the hook | 3 players: cleared |
+| spatial.z_separation (five times) | two parts in the same midrange within 25 degrees | the gate's pair table, re-checked offline against the real stems | moved the part, not the limit: cleared |
+| fold.timbre | structural: a smooth tilt of the speaker fold against the binaural master | band table, quadratic residual 1.0 dB | `mismatch`: bounded override with the table (above) |
+| channel.bars | a deliberate one-bar swing after a hit | per-bar front-to-back series | `mismatch`: bounded `balance_db` with the series (above) |
+| imm.surround_ratio / imm.height_arc | mid-band parts lifted to 15 degrees put energy on the height speakers and the rear | channel energies; the height share rose when the parts moved forward at 15 degrees | the mid-band parts at ear level, 25 degrees apart: cleared |
 
 ## Craft pass (4.9)
 
