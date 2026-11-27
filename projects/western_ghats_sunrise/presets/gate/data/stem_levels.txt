@@ -66,9 +66,9 @@ violins_counter,groove,-35.14,-32.95,0.55
 violins_counter,sunrise,-30.04,-29.69,0.8
 violins_counter,piper,-29.89,-30.25,0.75
 violins_counter,crest,-28.11,-27.75,1.0
-violins_long,mist,-39.25,-42.7,0.3
-violins_long,groove,-37.49,-37.43,0.55
-violins_long,sunrise,-31.11,-34.18,0.8
-violins_long,piper,-34.47,-34.74,0.75
-violins_long,crest,-28.68,-32.24,1.0
-violins_long,morning,-38.42,-40.2,0.4
+violins_long,mist,-40.24,-41.44,0.3
+violins_long,groove,-36.22,-36.18,0.55
+violins_long,sunrise,-30.23,-32.92,0.8
+violins_long,piper,-33.23,-33.48,0.75
+violins_long,crest,-27.55,-30.99,1.0
+violins_long,morning,-38.3,-38.94,0.4

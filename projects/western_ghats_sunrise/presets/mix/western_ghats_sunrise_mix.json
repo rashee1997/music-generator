@@ -763,6 +763,30 @@
         "gain": -15.0,
         "q": 0.7
       }
+    ],
+    "ghats_kit": [
+      {
+        "type": "highshelf",
+        "f": 8000,
+        "gain": -3.0,
+        "q": 0.7
+      }
+    ],
+    "ambience": [
+      {
+        "type": "highshelf",
+        "f": 7000,
+        "gain": -6.0,
+        "q": 0.7
+      }
+    ],
+    "env:western_ghats_sunrise": [
+      {
+        "type": "highshelf",
+        "f": 7000,
+        "gain": -6.0,
+        "q": 0.7
+      }
     ]
   },
   "immersive": {

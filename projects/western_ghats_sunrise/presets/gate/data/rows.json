@@ -2729,18 +2729,18 @@
     "stage": "stem",
     "stem": "violins_long",
     "level": "PASS",
-    "value": 2.3747320090296824e-06,
+    "value": 8.215833772385045e-07,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009976252679909704,
+    "margin": -0.0009991784166227616,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "stem \"violins_long\": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
     "channel_means": [
-     5.455766944165581e-13,
-     -4.974156063753533e-13
+     4.255799482179899e-13,
+     -9.139859469238259e-13
     ],
-    "drift": 2.3747320090296824e-06
+    "drift": 8.215833772385045e-07
    },
    {
     "row": "stem.clipping",
@@ -2785,7 +2785,7 @@
     "margin": -20.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"violins_long\": longest hole 0 ms (limit 20-1000 ms), floor -81.4 dBFS; 0 hole(s)",
+    "detail": "stem \"violins_long\": longest hole 0 ms (limit 20-1000 ms), floor -80.6 dBFS; 0 hole(s)",
     "holes": []
    },
    {
@@ -2801,8 +2801,8 @@
     "calibrated": false,
     "detail": "stem \"violins_long\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
     "drops": [
-     43.2,
-     43.8
+     39.2,
+     41.7
     ],
     "exempted": []
    },
@@ -2817,9 +2817,9 @@
     "margin": -25.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"violins_long\": audible span 2.280-60.560 s against score notes 2.308-60.000 s: leading silence -28 ms, trailing silence -560 ms (limit 25 ms)",
+    "detail": "stem \"violins_long\": audible span 2.280-60.500 s against score notes 2.308-60.000 s: leading silence -28 ms, trailing silence -500 ms (limit 25 ms)",
     "head_ms": -27.7,
-    "tail_ms": -560.0,
+    "tail_ms": -500.0,
     "fail": false
    },
    {
@@ -2827,24 +2827,24 @@
     "stage": "stem",
     "stem": "violins_long",
     "level": "PASS",
-    "value": 0.4852032660973683,
+    "value": 0.543352297635924,
     "unit": "rho",
     "threshold": 0.35,
-    "margin": 0.13520326609736832,
+    "margin": 0.193352297635924,
     "worst_times_s": [
      2.322
     ],
     "calibrated": false,
-    "detail": "stem \"violins_long\": onset autocorrelation 0.49 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 12 strong onset(s) of 473, 9 on the grid, IOI CV 0.986; peak rise 0.98 dB at those onsets over 12 onset(s) (min 3); tempogram peak ratio 0.79, PLP peak ratio 1.00",
+    "detail": "stem \"violins_long\": onset autocorrelation 0.54 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 75 strong onset(s) of 495, 32 on the grid, IOI CV 1.690; peak rise 2.12 dB at those onsets over 75 onset(s) (min 3); tempogram peak ratio 0.78, PLP peak ratio 1.00",
     "periodic": false,
     "period_ms": 92.87981859410431,
-    "events": 12,
-    "cv": 0.9856985748798731,
-    "grid_matched": 9,
-    "tempogram_ratio": 0.7854675321905575,
-    "plp_ratio": 0.9999999999980113,
-    "rise_db": 0.98,
-    "rise_onsets": 12
+    "events": 75,
+    "cv": 1.6900884034836512,
+    "grid_matched": 32,
+    "tempogram_ratio": 0.783653950004237,
+    "plp_ratio": 0.9999999999981087,
+    "rise_db": 2.124,
+    "rise_onsets": 75
    },
    {
     "row": "stem.dead",
@@ -2857,49 +2857,49 @@
     "margin": -12.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"violins_long\": own median -36.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 6; follows the curve",
+    "detail": "stem \"violins_long\": own median -34.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 6; follows the curve",
     "fail": false,
     "table": [
      {
       "section": "mist",
       "start_s": 0.0,
-      "measured_db": -39.25,
-      "expected_db": -42.7,
+      "measured_db": -40.24,
+      "expected_db": -41.44,
       "dyn": 0.3
      },
      {
       "section": "groove",
       "start_s": 4.615,
-      "measured_db": -37.49,
-      "expected_db": -37.43,
+      "measured_db": -36.22,
+      "expected_db": -36.18,
       "dyn": 0.55
      },
      {
       "section": "sunrise",
       "start_s": 20.769,
-      "measured_db": -31.11,
-      "expected_db": -34.18,
+      "measured_db": -30.23,
+      "expected_db": -32.92,
       "dyn": 0.8
      },
      {
       "section": "piper",
       "start_s": 30.0,
-      "measured_db": -34.47,
-      "expected_db": -34.74,
+      "measured_db": -33.23,
+      "expected_db": -33.48,
       "dyn": 0.75
      },
      {
       "section": "crest",
       "start_s": 39.231,
-      "measured_db": -28.68,
-      "expected_db": -32.24,
+      "measured_db": -27.55,
+      "expected_db": -30.99,
       "dyn": 1.0
      },
      {
       "section": "morning",
       "start_s": 48.462,
-      "measured_db": -38.42,
-      "expected_db": -40.2,
+      "measured_db": -38.3,
+      "expected_db": -38.94,
       "dyn": 0.4
      }
     ],
@@ -2924,28 +2924,32 @@
     "stage": "mix",
     "stem": null,
     "level": "FAIL",
-    "value": 4.0,
+    "value": 8.0,
     "unit": "events",
     "threshold": 0.0,
-    "margin": 4.0,
+    "margin": 8.0,
     "worst_times_s": [
+     39.7894,
+     45.2849,
+     46.6979,
+     47.6244,
      59.6319,
      59.6652,
      60.0178,
      60.034
     ],
     "calibrated": true,
-    "detail": "4 clustered impulse event(s) (MAD), 0 LPC frame(s); 189 event(s) rejected as a dense burst, 146 as a steep attack; max cluster span 1.474 ms"
+    "detail": "8 clustered impulse event(s) (MAD), 5 LPC frame(s); 177 event(s) rejected as a dense burst, 140 as a steep attack; max cluster span 1.474 ms"
    },
    {
     "row": "loudness",
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -16.131932656919755,
+    "value": -16.139913211457415,
     "unit": "LUFS",
     "threshold": -16.0,
-    "margin": -2.368067343080245,
+    "margin": -2.360086788542585,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-16.1 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -2955,10 +2959,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -1.5007495008015257,
+    "value": -1.5007488854378301,
     "unit": "dBTP",
     "threshold": -1.5,
-    "margin": -0.0007495008015256932,
+    "margin": -0.0007488854378301379,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-1.50 dBTP vs ceiling -1.5"
@@ -2994,10 +2998,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 58.22861552980919,
+    "value": 58.22811561264336,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -46.22861552980919,
+    "margin": -46.22811561264336,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "end level -116.3 dBFS (limit -45), decay over final 300 ms 58.2 dB (limit 12); natural release"
@@ -3020,10 +3024,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 1.52312960970207e-06,
+    "value": 1.3055721899835292e-06,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.000998476870390298,
+    "margin": -0.0009986944278100164,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
@@ -3033,13 +3037,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 104.19404727999085,
+    "value": 104.16717335968323,
     "unit": "BPM",
     "threshold": 2.08,
-    "margin": 102.11404727999086,
+    "margin": 102.08717335968323,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 208.2 BPM vs 104.0 (tolerance 2.1) from the onset-envelope autocorrelation (peak 3.9x the median); beat tracker said 103.4; four-quarter drift 8.2 BPM reported, not decisive"
+    "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 208.2 BPM vs 104.0 (tolerance 2.1) from the onset-envelope autocorrelation (peak 3.8x the median); beat tracker said 103.4; four-quarter drift 8.3 BPM reported, not decisive"
    },
    {
     "row": "section.energy",
@@ -3059,42 +3063,42 @@
       "start_s": 0.0,
       "end_s": 4.615,
       "energy": 0.3,
-      "level_db": -33.95486729286199
+      "level_db": -33.99660021809034
      },
      {
       "name": "groove",
       "start_s": 4.615,
       "end_s": 20.769,
       "energy": 0.55,
-      "level_db": -25.72763969570136
+      "level_db": -25.721272069182422
      },
      {
       "name": "sunrise",
       "start_s": 20.769,
       "end_s": 30.0,
       "energy": 0.8,
-      "level_db": -18.825237403202237
+      "level_db": -18.813888155544728
      },
      {
       "name": "piper",
       "start_s": 30.0,
       "end_s": 39.231,
       "energy": 0.75,
-      "level_db": -23.02528208727395
+      "level_db": -23.036790854315353
      },
      {
       "name": "crest",
       "start_s": 39.231,
       "end_s": 48.462,
       "energy": 1.0,
-      "level_db": -14.810193735308683
+      "level_db": -14.825338403215724
      },
      {
       "name": "morning",
       "start_s": 48.462,
       "end_s": 60.0,
       "energy": 0.4,
-      "level_db": -27.138032705996398
+      "level_db": -27.139518242676466
      }
     ]
    }

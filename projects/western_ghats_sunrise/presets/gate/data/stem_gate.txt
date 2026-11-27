@@ -1,4 +1,4 @@
-stem gate: 0 FAIL, 0 WARN, 148 rows, profile western_ghats_sunrise, 5373 ms
+stem gate: 0 FAIL, 0 WARN, 148 rows, profile western_ghats_sunrise, 1694 ms
 [PASS] stem.dc: stem "ambience": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "ambience": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "ambience": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -137,11 +137,11 @@ stem gate: 0 FAIL, 0 WARN, 148 rows, profile western_ghats_sunrise, 5373 ms
 [PASS] stem.dc: stem "violins_long": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "violins_long": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "violins_long": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
-[PASS] stem.dropout: stem "violins_long": longest hole 0 ms (limit 20-1000 ms), floor -81.4 dBFS; 0 hole(s)
+[PASS] stem.dropout: stem "violins_long": longest hole 0 ms (limit 20-1000 ms), floor -80.6 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "violins_long": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
-[PASS] stem.edge: stem "violins_long": audible span 2.280-60.560 s against score notes 2.308-60.000 s: leading silence -28 ms, trailing silence -560 ms (limit 25 ms)
-[PASS] stem.tick: stem "violins_long": onset autocorrelation 0.49 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 12 strong onset(s) of 473, 9 on the grid, IOI CV 0.986; peak rise 0.98 dB at those onsets over 12 onset(s) (min 3); tempogram peak ratio 0.79, PLP peak ratio 1.00
-[PASS] stem.dead: stem "violins_long": own median -36.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 6; follows the curve
+[PASS] stem.edge: stem "violins_long": audible span 2.280-60.500 s against score notes 2.308-60.000 s: leading silence -28 ms, trailing silence -500 ms (limit 25 ms)
+[PASS] stem.tick: stem "violins_long": onset autocorrelation 0.54 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 75 strong onset(s) of 495, 32 on the grid, IOI CV 1.690; peak rise 2.12 dB at those onsets over 75 onset(s) (min 3); tempogram peak ratio 0.78, PLP peak ratio 1.00
+[PASS] stem.dead: stem "violins_long": own median -34.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 6; follows the curve
 [PASS] stem.flatness: stem "violins_long": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
 [INFO] piece_type: western_ghats_sunrise (declared)
 [INFO] focus: judged around a line the ear can follow

@@ -1,5 +1,5 @@
 {
- "stamp": "20261127T090956",
+ "stamp": "20261127T091656",
  "project": "western_ghats_sunrise",
  "level": "FAIL",
  "sources": {
@@ -17,18 +17,18 @@
   ],
   "stems": "17 processed stems from .cache/mix",
   "master": "out/_draft_western_ghats_sunrise.wav",
-  "verdict": "2026-11-27T09:02:13Z"
+  "verdict": "2026-11-27T09:15:36Z"
  },
  "binding": [
   {
    "row": "clicks",
    "stem": null,
    "level": "FAIL",
-   "value": 4.0,
+   "value": 8.0,
    "threshold": 0.0,
    "unit": "events",
-   "safety": -4.0,
-   "detail": "4 clustered impulse event(s) (MAD), 0 LPC frame(s); 189 event(s) rejected as a dense burst, 146 as a steep attack; max cluster span 1.474 ms"
+   "safety": -8.0,
+   "detail": "8 clustered impulse event(s) (MAD), 5 LPC frame(s); 177 event(s) rejected as a dense burst, 140 as a steep attack; max cluster span 1.474 ms"
   }
  ],
  "advisory": [
@@ -149,36 +149,84 @@
     "text": "ambience high shelf at 5500 Hz: inst_eq[\"env:western_ghats_sunrise\"]"
    },
    {
-    "id": "note.ambience.d",
+    "id": "hf.bansuri",
+    "domain": "master",
+    "kind": "hf_shelf",
+    "stem": "bansuri",
+    "current": 0.0,
+    "lo": -12.0,
+    "hi": 0.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "bansuri high shelf at 5500 Hz: inst_eq[\"ghats_bansuri\"]"
+   },
+   {
+    "id": "hf.violins_counter",
+    "domain": "master",
+    "kind": "hf_shelf",
+    "stem": "violins_counter",
+    "current": 0.0,
+    "lo": -12.0,
+    "hi": 0.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "violins_counter high shelf at 5500 Hz: inst_eq[\"ghats_violins_counter\"]"
+   },
+   {
+    "id": "hf.violins_long",
+    "domain": "master",
+    "kind": "hf_shelf",
+    "stem": "violins_long",
+    "current": 0.0,
+    "lo": -12.0,
+    "hi": 0.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "violins_long high shelf at 5500 Hz: inst_eq[\"ghats_violins_long\"]"
+   },
+   {
+    "id": "hf.kit",
+    "domain": "master",
+    "kind": "hf_shelf",
+    "stem": "kit",
+    "current": 0.0,
+    "lo": -12.0,
+    "hi": 0.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "kit high shelf at 5500 Hz: inst_eq[\"ghats_kit\"]"
+   },
+   {
+    "id": "note.violins_counter.d",
     "domain": "stems",
     "kind": "note_len",
-    "stem": "ambience",
-    "current": 104.0,
-    "lo": 103.94,
-    "hi": 104.06,
+    "stem": "violins_counter",
+    "current": 0.7675,
+    "lo": 0.7075,
+    "hi": 0.8274999999999999,
     "step": 0.010416666666666666,
     "unit": "beats",
-    "text": "ambience written note length (mean 104 beats)"
+    "text": "violins_counter written note length (mean 0.7675 beats)"
    }
   ]
  },
  "plan": {
   "status": "linear",
-  "worst_safety": -4.0,
+  "worst_safety": -8.0,
   "deltas": {},
   "clearing": {},
   "predicted": {
    "clicks::-": [
-    -4.0,
-    -4.0
+    -8.0,
+    -8.0
    ],
    "loudness::-": [
     0.02,
     0.02
    ],
    "true peak::-": [
-    0.0002498336005085644,
-    0.0002498336005085644
+    0.00024962847927671267,
+    0.00024962847927671267
    ],
    "dropout::-": [
     1.0,
@@ -197,49 +245,49 @@
     0.0
    ],
    "master.dc::-": [
-    0.09984768703902978,
-    0.09984768703902978
+    0.09986944278100164,
+    0.09986944278100164
    ],
-   "stem.dc::ambience": [
-    0.09986504832820552,
-    0.09986504832820552
+   "stem.dc::violins_counter": [
+    0.09994838268875089,
+    0.09994838268875089
    ],
-   "stem.clipping::ambience": [
+   "stem.clipping::violins_counter": [
     0.0,
     0.0
    ],
-   "stem.clicks::ambience": [
+   "stem.clicks::violins_counter": [
     0.0,
     0.0
    ],
-   "stem.dropout::ambience": [
+   "stem.dropout::violins_counter": [
     1.0,
     1.0
    ],
-   "stem.cut::ambience": [
+   "stem.cut::violins_counter": [
     2.0,
     2.0
    ],
-   "stem.edge::ambience": [
+   "stem.edge::violins_counter": [
     1.0,
     1.0
    ],
-   "stem.tick::ambience": [
-    0.38931147012314926,
-    0.38931147012314926
+   "stem.dead::violins_counter": [
+    2.0,
+    2.0
    ],
-   "stem.dead::ambience": [
+   "stem.flatness::violins_counter": [
     2.0,
     2.0
    ]
   },
   "conflicts": [
    {
-    "lever": "hf.ambience",
-    "text": "ambience high shelf at 5500 Hz: inst_eq[\"env:western_ghats_sunrise\"]",
+    "lever": "hf.violins_counter",
+    "text": "violins_counter high shelf at 5500 Hz: inst_eq[\"ghats_violins_counter\"]",
     "unit": "dB",
     "feasible": [
-     18.0,
+     72.0,
      0.0
     ],
     "bounds": [
@@ -249,11 +297,11 @@
     "rows": [
      {
       "row": "clicks",
-      "needs": 18.0,
-      "safety": -4.0
+      "needs": 72.0,
+      "safety": -8.0
      }
     ],
-    "why": "ambience high shelf at 5500 Hz: inst_eq[\"env:western_ghats_sunrise\"] cannot satisfy clicks at once: the moves that pass one row fail the other, and the bounds leave no value between"
+    "why": "violins_counter high shelf at 5500 Hz: inst_eq[\"ghats_violins_counter\"] cannot satisfy clicks at once: the moves that pass one row fail the other, and the bounds leave no value between"
    }
   ],
   "closed": [],
@@ -266,30 +314,1668 @@
     "row": "clicks",
     "key": "clicks::-",
     "kind": "hf_shelf",
-    "value": 3,
-    "baseline": 4,
+    "value": 4,
+    "baseline": 8,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 26.78,
+    "resolution_db": 26.99,
     "moves": {
-     "hf.ambience": -12.0
+     "hf.ambience": -6.0,
+     "hf.kit": -9.0
     },
     "times": [
-     40.39,
      42.553,
+     59.632,
+     59.698,
      60.034
     ],
     "verdict": "better",
     "robust": 0.0,
     "proved": false
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "iterative",
+    "value": 5,
+    "baseline": 8,
+    "near3": 31,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "times": [],
+    "verdict": "better",
+    "moves": {
+     "hf.kit": -3.0
+    },
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 5,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -3.0
+    },
+    "times": [
+     46.698,
+     59.632,
+     59.665,
+     60.018,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 5,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -12.0
+    },
+    "times": [
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 5,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -9.0,
+     "hf.kit": -6.0
+    },
+    "times": [
+     42.553,
+     59.632,
+     59.698,
+     60.034,
+     60.066
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 5,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -6.0,
+     "hf.violins_counter": -9.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 5,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -9.0,
+     "hf.kit": -9.0
+    },
+    "times": [
+     42.553,
+     59.632,
+     59.698,
+     60.034,
+     60.066
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -6.0
+    },
+    "times": [
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -3.0,
+     "hf.violins_counter": -3.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -3.0,
+     "hf.bansuri": -3.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     59.632,
+     59.665,
+     60.018,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -9.0
+    },
+    "times": [
+     46.698,
+     59.632,
+     59.665,
+     59.968,
+     60.018,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -3.0,
+     "hf.kit": -6.0
+    },
+    "times": [
+     42.553,
+     46.698,
+     47.624,
+     59.632,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -3.0,
+     "hf.bansuri": -6.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -6.0,
+     "hf.bansuri": -3.0
+    },
+    "times": [
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -3.0,
+     "hf.violins_counter": -6.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -6.0,
+     "hf.violins_counter": -3.0
+    },
+    "times": [
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -3.0,
+     "hf.kit": -9.0
+    },
+    "times": [
+     42.553,
+     46.698,
+     47.624,
+     59.632,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -6.0,
+     "hf.kit": -6.0
+    },
+    "times": [
+     42.553,
+     47.624,
+     59.632,
+     59.698,
+     60.034,
+     60.066
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -9.0,
+     "hf.kit": -3.0
+    },
+    "times": [
+     40.39,
+     42.553,
+     45.285,
+     47.624,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -3.0,
+     "hf.bansuri": -9.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -6.0,
+     "hf.bansuri": -6.0
+    },
+    "times": [
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -3.0,
+     "hf.violins_counter": -9.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -6.0,
+     "hf.violins_counter": -6.0
+    },
+    "times": [
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -9.0,
+     "hf.violins_counter": -3.0
+    },
+    "times": [
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -9.0,
+     "hf.bansuri": -3.0
+    },
+    "times": [
+     46.698,
+     59.632,
+     59.665,
+     59.968,
+     60.018,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -9.0,
+     "hf.violins_counter": -3.0
+    },
+    "times": [
+     46.698,
+     59.632,
+     59.665,
+     59.968,
+     60.018,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -6.0,
+     "hf.bansuri": -9.0
+    },
+    "times": [
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -9.0,
+     "hf.bansuri": -6.0
+    },
+    "times": [
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -9.0,
+     "hf.violins_counter": -6.0
+    },
+    "times": [
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -9.0,
+     "hf.bansuri": -6.0
+    },
+    "times": [
+     46.698,
+     59.632,
+     59.665,
+     59.968,
+     60.018,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -9.0,
+     "hf.violins_counter": -6.0
+    },
+    "times": [
+     46.698,
+     59.632,
+     59.665,
+     59.968,
+     60.018,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -9.0,
+     "hf.bansuri": -9.0
+    },
+    "times": [
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -9.0,
+     "hf.violins_counter": -9.0
+    },
+    "times": [
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.698,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -9.0,
+     "hf.bansuri": -9.0
+    },
+    "times": [
+     46.698,
+     59.632,
+     59.665,
+     59.968,
+     60.018,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 6,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -9.0,
+     "hf.violins_counter": -9.0
+    },
+    "times": [
+     46.698,
+     59.632,
+     59.665,
+     59.968,
+     60.018,
+     60.034
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -3.0
+    },
+    "times": [
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.698
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.bansuri": -3.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -6.0
+    },
+    "times": [
+     46.698,
+     59.293,
+     59.632,
+     59.665,
+     59.968,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.bansuri": -6.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -3.0,
+     "hf.kit": -3.0
+    },
+    "times": [
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.698
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -3.0,
+     "hf.bansuri": -3.0
+    },
+    "times": [
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.698
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -3.0,
+     "hf.violins_counter": -3.0
+    },
+    "times": [
+     39.789,
+     45.285,
+     46.698,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.bansuri": -3.0,
+     "hf.violins_counter": -3.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -9.0
+    },
+    "times": [
+     40.39,
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.698
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.bansuri": -9.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.violins_counter": -9.0
+    },
+    "times": [
+     39.789,
+     45.285,
+     46.698,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -3.0,
+     "hf.bansuri": -6.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -6.0,
+     "hf.bansuri": -3.0
+    },
+    "times": [
+     46.698,
+     59.293,
+     59.632,
+     59.665,
+     59.968,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -3.0,
+     "hf.violins_counter": -6.0
+    },
+    "times": [
+     39.789,
+     45.285,
+     46.698,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -6.0,
+     "hf.violins_counter": -3.0
+    },
+    "times": [
+     46.698,
+     59.293,
+     59.632,
+     59.665,
+     59.968,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.bansuri": -6.0,
+     "hf.violins_counter": -3.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -12.0
+    },
+    "times": [
+     41.532,
+     46.698,
+     59.632,
+     59.665,
+     59.968,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.bansuri": -12.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.violins_counter": -12.0
+    },
+    "times": [
+     39.789,
+     45.285,
+     46.698,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.ambience": -9.0,
+     "hf.bansuri": -3.0
+    },
+    "times": [
+     40.39,
+     42.553,
+     45.285,
+     46.698,
+     47.624,
+     59.698
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -6.0,
+     "hf.bansuri": -6.0
+    },
+    "times": [
+     46.698,
+     59.293,
+     59.632,
+     59.665,
+     59.968,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -3.0,
+     "hf.violins_counter": -9.0
+    },
+    "times": [
+     39.789,
+     45.285,
+     46.698,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -6.0,
+     "hf.violins_counter": -6.0
+    },
+    "times": [
+     46.698,
+     59.293,
+     59.632,
+     59.665,
+     59.968,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.bansuri": -6.0,
+     "hf.violins_counter": -6.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.bansuri": -9.0,
+     "hf.violins_counter": -3.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -6.0,
+     "hf.bansuri": -9.0
+    },
+    "times": [
+     46.698,
+     59.293,
+     59.632,
+     59.665,
+     59.968,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.kit": -6.0,
+     "hf.violins_counter": -9.0
+    },
+    "times": [
+     46.698,
+     59.293,
+     59.632,
+     59.665,
+     59.968,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.bansuri": -6.0,
+     "hf.violins_counter": -9.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.bansuri": -9.0,
+     "hf.violins_counter": -6.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 7,
+    "baseline": 8,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 26.99,
+    "moves": {
+     "hf.bansuri": -9.0,
+     "hf.violins_counter": -9.0
+    },
+    "times": [
+     45.285,
+     46.698,
+     47.624,
+     59.632,
+     59.665,
+     60.018
+    ],
+    "verdict": "better",
+    "robust": 0.0
    }
   ]
  },
  "forensics": [
   {
+   "t": 39.7894,
+   "step": 0.04402,
+   "threshold": 0.04319,
+   "over_threshold_db": 0.17,
+   "z": 8.2,
+   "kind": "coincident transients",
+   "trusted": false,
+   "fit_ratio": 0.08,
+   "owners": [
+    {
+     "stem": "bansuri",
+     "share": 0.392,
+     "signed": 0.0019
+    },
+    {
+     "stem": "ambience",
+     "share": 0.322,
+     "signed": 0.00156
+    }
+   ],
+   "raw_step_fs": 0.0871,
+   "notes": [
+    {
+     "track": "ambience",
+     "pitch": null,
+     "velocity": null,
+     "onset_s": null,
+     "after_onset_ms": 0.0,
+     "written_len": null,
+     "continuous": true,
+     "layers": []
+    }
+   ]
+  },
+  {
+   "t": 45.2849,
+   "step": 0.04737,
+   "threshold": 0.04319,
+   "over_threshold_db": 0.8,
+   "z": 8.8,
+   "kind": "single source",
+   "trusted": false,
+   "fit_ratio": 0.4,
+   "owners": [
+    {
+     "stem": "kit",
+     "share": 0.889,
+     "signed": 0.01966
+    }
+   ],
+   "raw_step_fs": 0.1113,
+   "notes": []
+  },
+  {
+   "t": 46.6979,
+   "step": 0.04437,
+   "threshold": 0.04319,
+   "over_threshold_db": 0.24,
+   "z": 8.2,
+   "kind": "coincident transients",
+   "trusted": false,
+   "fit_ratio": 0.03,
+   "owners": [
+    {
+     "stem": "bansuri",
+     "share": 0.272,
+     "signed": -0.00134
+    },
+    {
+     "stem": "violins_long",
+     "share": 0.247,
+     "signed": 0.00122
+    },
+    {
+     "stem": "violins_counter",
+     "share": 0.238,
+     "signed": 0.00117
+    }
+   ],
+   "raw_step_fs": 0.0552,
+   "notes": []
+  },
+  {
+   "t": 47.6244,
+   "step": 0.04421,
+   "threshold": 0.04319,
+   "over_threshold_db": 0.2,
+   "z": 8.2,
+   "kind": "mixed",
+   "trusted": false,
+   "fit_ratio": -0.04,
+   "owners": [
+    {
+     "stem": "ambience",
+     "share": 0.358,
+     "signed": -0.0021
+    },
+    {
+     "stem": "violins_counter",
+     "share": 0.271,
+     "signed": -0.00159
+    }
+   ],
+   "raw_step_fs": 0.0459,
+   "notes": [
+    {
+     "track": "ambience",
+     "pitch": null,
+     "velocity": null,
+     "onset_s": null,
+     "after_onset_ms": 0.0,
+     "written_len": null,
+     "continuous": true,
+     "layers": []
+    },
+    {
+     "track": "violins_counter",
+     "pitch": 64,
+     "velocity": 0.72,
+     "onset_s": 47.5,
+     "after_onset_ms": 124.4,
+     "written_len": 0.5
+    }
+   ]
+  },
+  {
    "t": 59.6319,
-   "step": 0.04483,
-   "threshold": 0.04323,
+   "step": 0.0448,
+   "threshold": 0.04319,
    "over_threshold_db": 0.32,
    "z": 8.3,
    "kind": "single source",
@@ -298,7 +1984,7 @@
    "owners": [
     {
      "stem": "ambience",
-     "share": 0.991,
+     "share": 0.992,
      "signed": 0.00398
     }
    ],
@@ -318,8 +2004,8 @@
   },
   {
    "t": 59.6652,
-   "step": 0.0443,
-   "threshold": 0.04323,
+   "step": 0.04426,
+   "threshold": 0.04319,
    "over_threshold_db": 0.21,
    "z": 8.2,
    "kind": "single source",
@@ -329,10 +2015,10 @@
     {
      "stem": "ambience",
      "share": 0.994,
-     "signed": 0.02041
+     "signed": 0.02038
     }
    ],
-   "raw_step_fs": 0.0446,
+   "raw_step_fs": 0.0447,
    "notes": [
     {
      "track": "ambience",
@@ -348,8 +2034,8 @@
   },
   {
    "t": 60.017,
-   "step": 0.04857,
-   "threshold": 0.04323,
+   "step": 0.04853,
+   "threshold": 0.04319,
    "over_threshold_db": 1.01,
    "z": 9.0,
    "kind": "single source",
@@ -358,11 +2044,11 @@
    "owners": [
     {
      "stem": "ambience",
-     "share": 0.911,
+     "share": 0.912,
      "signed": 0.00033
     }
    ],
-   "raw_step_fs": 0.0535,
+   "raw_step_fs": 0.0534,
    "notes": [
     {
      "track": "ambience",
@@ -378,8 +2064,8 @@
   },
   {
    "t": 60.0339,
-   "step": 0.04526,
-   "threshold": 0.04323,
+   "step": 0.04522,
+   "threshold": 0.04319,
    "over_threshold_db": 0.4,
    "z": 8.4,
    "kind": "single source",
@@ -389,7 +2075,7 @@
     {
      "stem": "ambience",
      "share": 0.993,
-     "signed": -0.00572
+     "signed": -0.00571
     }
    ],
    "raw_step_fs": 0.0686,
@@ -408,13 +2094,22 @@
   }
  ],
  "notes": [
-  "clicks: sham replay (no change) reproduces the gate's 4 event(s) exactly (decomposition R^2 0.218); counterfactuals below are priced on a model that passes its own test",
-  "clicks: model resolution 26.8 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
-  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.22); gains ambience 2.92, bansuri 2.91, bass 10.35, celli 1.93, choir 1.43, guitar_clean 1.34, guitar_drive 1.75, kit 1.19, pipes 0.43, pipes_drone 0.42, santoor 1.08, sitar 1.54, tabla 1.41, tanpura 1.43, violas 0.70, violins_counter 1.69, violins_long 1.45",
+  "clicks: sham replay (no change) reproduces the gate's 8 event(s) exactly (decomposition R^2 0.218); counterfactuals below are priced on a model that passes its own test",
+  "clicks: model resolution 27.0 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
+  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.22); gains ambience 2.92, bansuri 2.90, bass 10.32, celli 1.92, choir 1.44, guitar_clean 1.35, guitar_drive 1.74, kit 1.19, pipes 0.43, pipes_drone 0.42, santoor 1.08, sitar 1.54, tabla 1.41, tanpura 1.42, violas 0.71, violins_counter 1.69, violins_long 1.33",
+  "event 39.789s [coincident transients] bansuri 39%, ambience 32%; step 0.0440 vs threshold 0.0432 (+0.2 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
+  "event 45.285s [single source] kit 89%; step 0.0474 vs threshold 0.0432 (+0.8 dB over)  (fit unreliable)",
+  "event 46.698s [coincident transients] bansuri 27%, violins_long 25%, violins_counter 24%; step 0.0444 vs threshold 0.0432 (+0.2 dB over)  (fit unreliable)",
+  "event 47.624s [mixed] ambience 36%, violins_counter 27%; step 0.0442 vs threshold 0.0432 (+0.2 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
   "event 59.632s [single source] ambience 99%; step 0.0448 vs threshold 0.0432 (+0.3 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
   "event 59.665s [single source] ambience 99%; step 0.0443 vs threshold 0.0432 (+0.2 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
-  "event 60.017s [single source] ambience 91%; step 0.0486 vs threshold 0.0432 (+1.0 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
-  "event 60.034s [single source] ambience 99%; step 0.0453 vs threshold 0.0432 (+0.4 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
-  "risk closure: the levers that move this row belong to ambience, so every row of those stems was loaded as a constraint before the plan was solved"
+  "event 60.017s [single source] ambience 91%; step 0.0485 vs threshold 0.0432 (+1.0 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
+  "event 60.034s [single source] ambience 99%; step 0.0452 vs threshold 0.0432 (+0.4 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
+  "clicks: cutting the band of ambience is NOT monotone (replay: -12 dB -> 5 event(s), -6 dB -> 6 event(s), -3 dB -> 7 event(s), -9 dB -> 7 event(s) against 8 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
+  "clicks: cutting the band of kit is NOT monotone (replay: -3 dB -> 5 event(s), -9 dB -> 6 event(s), -6 dB -> 7 event(s), -12 dB -> 7 event(s) against 8 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
+  "clicks: iterative replay, profile (events at 0/1/2/3 dB tighter) (8, 6, 7, 12) -> (5, 7, 7, 12) after kit -3 dB",
+  "violins_counter: the tightest gap in the score is 58 ms at beat spacing 0.577 s (104 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "violins_counter: the tightest gap in the score is 58 ms at beat spacing 0.577 s (104 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "risk closure: the levers that move this row belong to violins_counter, so every row of those stems was loaded as a constraint before the plan was solved"
  ]
 }

@@ -16,42 +16,42 @@
       "start_s": 0.0,
       "end_s": 4.615,
       "energy": 0.3,
-      "level_db": -33.95486729286199
+      "level_db": -33.99660021809034
     },
     {
       "name": "groove",
       "start_s": 4.615,
       "end_s": 20.769,
       "energy": 0.55,
-      "level_db": -25.72763969570136
+      "level_db": -25.721272069182422
     },
     {
       "name": "sunrise",
       "start_s": 20.769,
       "end_s": 30.0,
       "energy": 0.8,
-      "level_db": -18.825237403202237
+      "level_db": -18.813888155544728
     },
     {
       "name": "piper",
       "start_s": 30.0,
       "end_s": 39.231,
       "energy": 0.75,
-      "level_db": -23.02528208727395
+      "level_db": -23.036790854315353
     },
     {
       "name": "crest",
       "start_s": 39.231,
       "end_s": 48.462,
       "energy": 1.0,
-      "level_db": -14.810193735308683
+      "level_db": -14.825338403215724
     },
     {
       "name": "morning",
       "start_s": 48.462,
       "end_s": 60.0,
       "energy": 0.4,
-      "level_db": -27.138032705996398
+      "level_db": -27.139518242676466
     }
   ]
 }
