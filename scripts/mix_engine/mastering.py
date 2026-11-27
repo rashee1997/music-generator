@@ -36,11 +36,39 @@ def master_measures(x, sr=SR):
     return meters.master_measures(to_stereo(x), sr)
 
 
+def section_gain(n, sr, sections, range_db, ramp_s):
+    """Per-sample gain (linear, length n) from the plan's section energies: `range_db` dB between energy 0 and 1, centred on the
+    duration-weighted mean so the whole stays near unity, with raised-cosine ramps of `ramp_s` at the section edges. 1.0 where a section
+    names no energy. Returns None when fewer than two sections carry an energy (nothing to contrast)."""
+    secs = [s for s in sections or [] if s.get('energy') is not None and float(s.get('end_s', 0)) > float(s.get('start_s', 0))]
+    if len(secs) < 2:
+        return None
+    dur = np.array([float(s['end_s']) - float(s['start_s']) for s in secs])
+    en = np.array([float(s['energy']) for s in secs])
+    centre = float(np.sum(en * dur) / np.sum(dur))
+    db = np.zeros(n)
+    edges = [(int(float(s['start_s']) * sr), int(float(s['end_s']) * sr), float(range_db) * (e - centre)) for s, e in zip(secs, en)]
+    for a, b, g in edges:
+        db[max(0, a):min(n, b)] = g
+    k = max(1, int(float(ramp_s) * sr))
+    if k > 1:                                         # a moving average of the dB curve is a smooth ramp; twice makes it raised-cosine-like
+        w = np.ones(k) / k
+        db = np.convolve(np.convolve(db, w, mode='same'), w, mode='same')
+    return 10.0 ** (db / 20.0)
+
+
 def master_chain(x, m, sr=SR, ctx=None):
     """Glue + tone + limiter + loudness. m: {"lufs":-14,"true_peak":-1.5,"tone":"neutral","glue":true}."""
     if ctx is not None and ctx is not mix_context.current():
         _install(ctx.mix, ctx.space)
+    sections = (m or {}).get('_sections')
+    m = {k: v for k, v in (m or {}).items() if k != '_sections'}
     cfg = _master_cfg(m, _mix())
+    sl = cfg['_cfg'].get('section_levels')
+    if sl and sections:
+        g = section_gain(len(x), sr, sections, float(sl['range_db']), float(sl.get('ramp_s', 1.5)))
+        if g is not None:
+            x = x * (g[:, None] if getattr(x, 'ndim', 1) == 2 else g).astype(np.float32)
     target = float(cfg.get('lufs', -14.0))
     ceiling = float(cfg.get('true_peak', -1.5))
     tone = cfg.get('tone', 'neutral')

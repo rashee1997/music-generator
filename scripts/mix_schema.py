@@ -286,6 +286,9 @@ DEFAULTS = {
         'fallback_limiter': {'margin_db': 0.6, 'release_ms': 120.0},   # only if the true-peak limiter is missing
         'min_crest_db': 8.0,           # suggest_master_target: below this much crest a target is called infeasible
         'lra_target_lu': None,         # only reported, never forced
+        # Section levels: a gain curve from the plan's section `energy`, applied before the limiter loop, so the loud sections stand above
+        # the quiet ones by up to `range_db` between energy 0 and 1 while the integrated loudness still lands on the target. None = off.
+        'section_levels': None,        # {"range_db": 10.0, "ramp_s": 1.5}
         'crest_floor_db': 0.0,         # if limiting would take crest below this, stop and report
         # the write (float32, then a 24-bit word) moves a true peak by about 1e-6 dB, so a peak trimmed to exactly the
         # ceiling can land a hair over it. The last safety trim after the DC servo aims this far below the ceiling.
