@@ -324,8 +324,8 @@ def mix():
     # debug_audio.py attributed all six `clicks` events to the tabla (hf. above 6 kHz, 95-99 % of each step) and priced a -9 dB high shelf at the row's 6 kHz corner as clearing 6 -> 0
     m['inst_eq'] = {'ghats_tabla': [{'type': 'highshelf', 'f': 6000, 'gain': -15.0, 'q': 0.7}],
                     'ghats_kit': [{'type': 'highshelf', 'f': 8000, 'gain': -3.0, 'q': 0.7}],         # debug_audio priced kit -3 dB highs at 8 -> 5 click events (replay)
-                    'ambience': [{'type': 'highshelf', 'f': 7000, 'gain': -6.0, 'q': 0.7}],           # the ambience carried 66% of the master's click transients, four of them at the end (debug_audio)
-                    f'env:{SLUG}': [{'type': 'highshelf', 'f': 7000, 'gain': -6.0, 'q': 0.7}]}
+                    'ambience': [{'type': 'highshelf', 'f': 7000, 'gain': -12.0, 'q': 0.7}],           # the ambience carried 66% of the master's click transients, four of them at the end (debug_audio)
+                    f'env:{SLUG}': [{'type': 'highshelf', 'f': 7000, 'gain': -12.0, 'q': 0.7}]}
     m['immersive'] = dict(enabled=True, engine='hoa_bus', order=5, anchor_max_span_deg=6.0, max_deg_per_sec={'anchor': 10.0, 'mover': 120.0},
                           height_by_role={r: 0.0 for r in ('melody', 'lead', 'vocal', 'pad', 'texture', 'environment', 'chord', 'bass', 'drum', 'percussion', 'drone', 'ostinato', 'arp', 'counter', 'fx')},
                           max_elevation=70.0, min_height_tracks=2, stereo_decode='speakers')       # a fifth-order ambisonic bus decoded once to the 7.1 layout and to stereo

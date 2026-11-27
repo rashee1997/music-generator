@@ -1,11 +1,11 @@
-stem gate: 0 FAIL, 0 WARN, 148 rows, profile western_ghats_sunrise, 1000 ms
+stem gate: 0 FAIL, 0 WARN, 148 rows, profile western_ghats_sunrise, 1117 ms
 [PASS] stem.dc: stem "ambience": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "ambience": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "ambience": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
 [PASS] stem.dropout: stem "ambience": longest hole 0 ms (limit 20-1000 ms), floor -90.9 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "ambience": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
 [PASS] stem.edge: stem "ambience": audible span 0.000-61.865 s against score notes 0.000-61.731 s: leading silence 0 ms, trailing silence -134 ms (limit 25 ms)
-[PASS] stem.tick: stem "ambience": onset autocorrelation 0.10 at a 104 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 1 strong onset(s) of 493, 1 on the grid, IOI CV 1.000; peak rise 1.34 dB at those onsets over 1 onset(s) (min 3); tempogram peak ratio 0.73, PLP peak ratio 1.00
+[PASS] stem.tick: stem "ambience": onset autocorrelation 0.10 at a 104 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 1 strong onset(s) of 497, 1 on the grid, IOI CV 1.000; peak rise 1.34 dB at those onsets over 1 onset(s) (min 3); tempogram peak ratio 0.73, PLP peak ratio 1.00
 [PASS] stem.dead: stem "ambience": own median -48.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 6; follows the curve
 [PASS] stem.dc: stem "bansuri": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "bansuri": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)

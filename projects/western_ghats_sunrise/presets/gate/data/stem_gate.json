@@ -6,9 +6,9 @@
     "warns": 0,
     "rows": 148,
     "profile": "western_ghats_sunrise",
-    "total_ms": 1000.3879480000251,
+    "total_ms": 1117.034447000151,
     "timings": {
-      "ambience": 855.0426010001502,
+      "ambience": 947.2756909999589,
       "bansuri": 0.0,
       "bass": 0.0,
       "celli": 0.0,
@@ -33,18 +33,18 @@
         "stage": "stem",
         "stem": "ambience",
         "level": "PASS",
-        "value": 4.6512478411413093e-07,
+        "value": 4.651248010760804e-07,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.000999534875215886,
+        "margin": -0.000999534875198924,
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"ambience\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          5.831775111553908e-08,
-          4.6512478411413093e-07
+          5.831770123105249e-08,
+          4.651248010760804e-07
         ],
-        "drift": 4.272459164646354e-07
+        "drift": 4.546066813974659e-07
       },
       {
         "row": "stem.clipping",
@@ -105,9 +105,9 @@
         "calibrated": false,
         "detail": "stem \"ambience\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          14.1,
-          30.1,
-          21.7
+          14.2,
+          29.2,
+          20.7
         ],
         "exempted": []
       },
@@ -132,22 +132,22 @@
         "stage": "stem",
         "stem": "ambience",
         "level": "PASS",
-        "value": 0.09579568498383402,
+        "value": 0.1007664636106963,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": -0.25420431501616597,
+        "margin": -0.24923353638930368,
         "worst_times_s": [
           0.0348
         ],
         "calibrated": false,
-        "detail": "stem \"ambience\": onset autocorrelation 0.10 at a 104 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 1 strong onset(s) of 493, 1 on the grid, IOI CV 1.000; peak rise 1.34 dB at those onsets over 1 onset(s) (min 3); tempogram peak ratio 0.73, PLP peak ratio 1.00",
+        "detail": "stem \"ambience\": onset autocorrelation 0.10 at a 104 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 1 strong onset(s) of 497, 1 on the grid, IOI CV 1.000; peak rise 1.34 dB at those onsets over 1 onset(s) (min 3); tempogram peak ratio 0.73, PLP peak ratio 1.00",
         "periodic": false,
         "period_ms": 104.48979591836735,
         "events": 1,
         "cv": 1.0,
         "grid_matched": 1,
-        "tempogram_ratio": 0.7279896648950335,
-        "plp_ratio": 0.9981141017634461,
+        "tempogram_ratio": 0.7279480429229662,
+        "plp_ratio": 0.9999999999986666,
         "rise_db": 1.337,
         "rise_onsets": 1
       },
@@ -196,14 +196,14 @@
           {
             "section": "crest",
             "start_s": 39.231,
-            "measured_db": -42.06,
+            "measured_db": -42.03,
             "expected_db": -44.55,
             "dyn": 1.0
           },
           {
             "section": "morning",
             "start_s": 48.462,
-            "measured_db": -44.55,
+            "measured_db": -44.53,
             "expected_db": -52.5,
             "dyn": 0.4
           }
@@ -3027,7 +3027,7 @@
     {
       "level": "PASS",
       "row": "stem.tick",
-      "detail": "stem \"ambience\": onset autocorrelation 0.10 at a 104 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 1 strong onset(s) of 493, 1 on the grid, IOI CV 1.000; peak rise 1.34 dB at those onsets over 1 onset(s) (min 3); tempogram peak ratio 0.73, PLP peak ratio 1.00"
+      "detail": "stem \"ambience\": onset autocorrelation 0.10 at a 104 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 1 strong onset(s) of 497, 1 on the grid, IOI CV 1.000; peak rise 1.34 dB at those onsets over 1 onset(s) (min 3); tempogram peak ratio 0.73, PLP peak ratio 1.00"
     },
     {
       "level": "PASS",

@@ -34,14 +34,14 @@
         {
           "section": "crest",
           "start_s": 39.231,
-          "measured_db": -42.06,
+          "measured_db": -42.03,
           "expected_db": -44.55,
           "dyn": 1.0
         },
         {
           "section": "morning",
           "start_s": 48.462,
-          "measured_db": -44.55,
+          "measured_db": -44.53,
           "expected_db": -52.5,
           "dyn": 0.4
         }
