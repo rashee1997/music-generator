@@ -58,12 +58,6 @@
       "PASS"
     ],
     [
-      19.4467,
-      "stem.tick",
-      "santoor",
-      "PASS"
-    ],
-    [
       29.9886,
       "stem.tick",
       "violas",
@@ -82,7 +76,19 @@
       "FAIL"
     ],
     [
+      34.4736,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
       45.6994,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      48.4304,
       "clicks",
       "master",
       "FAIL"

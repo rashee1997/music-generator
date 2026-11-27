@@ -92,7 +92,7 @@ INSTRUMENTS = [
          'The lead: a bansuri (bamboo flute) breathing through the Mohanam phrase, pure at the start of each long note and warming as it holds, with a slide into the notes the gamaka asks for.',
          -2.0, 0.22, [HP(220), PK(2600, 1.4, 1.1), LP(11000)],
          hum=dict(preset='natural', timing_ms=6.0, drift_ms=7.0, vel_sigma=4.0, lead_ms=18.0, anticipate_ms=22.0, bar_breath_ms=70.0),
-         extra=dict(vibrato=dict(depth_cents=15, rate_hz=5.2, delay_ms=420, model='ou'), expression='breath',
+         extra=dict(vibrato=dict(depth_cents=10, rate_hz=5.2, delay_ms=420, model='ou'), expression='breath',
                     velocity_timbre=dict(points=vel_points(1400), zones=10, attack_ms=[[25, 40], [127, 8]]))),
     inst('sitar', 'veena', 'arp', 'plucked',
          'A plucked veena-sitar figure that answers the flute in running eighths, soft in the first light and brighter at the sunrise.',
@@ -155,6 +155,10 @@ def vocal_choir():
     d['ensemble']['layers'][-1]['overrides']['technique']['singer_formant'] = 0.5     # measured clicks near the tutti: a gentler singer's formant                  # the sum of five sections clipped (275 samples at full scale, measured): cap it before the soft limit
     for L in d['ensemble']['layers']:
         L['level_db'] = round(L.get('level_db', 0.0) - 2.0, 2)
+        # the choir stem alone measured 0.070 on cochlear_roughness (limit 0.070): 25 singers beat against each other; a tighter, smaller section beats less
+        L['cohesion'] = 0.78
+        L['voices'] = max(3, round(L['voices'] * 0.7))
+        L.setdefault('overrides', {}).setdefault('ensemble', {}).update(pitch_spread_cents=4.0, pitch_drift_cents=3.0)
     return d
 
 
@@ -286,6 +290,8 @@ def mix():
     m['lead_carve'] = dict(enabled=True, from_intent=True)
     m['level_by_role'] = {'environment': -9.0, 'texture': -2.0}
     m['render'] = {'mix_workers': 2}
+    # debug_audio.py attributed all six `clicks` events to the tabla (hf. above 6 kHz, 95-99 % of each step) and priced a -9 dB high shelf at the row's 6 kHz corner as clearing 6 -> 0
+    m['inst_eq'] = {'ghats_tabla': [{'type': 'highshelf', 'f': 6000, 'gain': -9.0, 'q': 0.7}]}
     m['immersive'] = dict(enabled=True, engine='hoa_bus', order=5, anchor_max_span_deg=6.0, max_deg_per_sec={'anchor': 10.0, 'mover': 120.0},
                           height_by_role={r: 0.0 for r in ('melody', 'lead', 'vocal', 'pad', 'texture', 'environment', 'chord', 'bass', 'drum', 'percussion', 'drone', 'ostinato', 'arp', 'counter', 'fx')},
                           max_elevation=70.0, min_height_tracks=2, stereo_decode='speakers')       # a fifth-order ambisonic bus decoded once to the 7.1 layout and to stereo

@@ -784,5 +784,15 @@
     "max_elevation": 70.0,
     "min_height_tracks": 2,
     "stereo_decode": "speakers"
+  },
+  "inst_eq": {
+    "ghats_tabla": [
+      {
+        "type": "highshelf",
+        "f": 6000,
+        "gain": -9.0,
+        "q": 0.7
+      }
+    ]
   }
 }

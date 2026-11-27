@@ -23,7 +23,7 @@
     "layers": [
       {
         "name": "air_high",
-        "voices": 4,
+        "voices": 3,
         "select": "highest",
         "shift": 12,
         "vowel": "u",
@@ -45,12 +45,17 @@
           },
           "tract": {
             "formant_scale": 1.12
+          },
+          "ensemble": {
+            "pitch_spread_cents": 4.0,
+            "pitch_drift_cents": 3.0
           }
-        }
+        },
+        "cohesion": 0.78
       },
       {
         "name": "women",
-        "voices": 6,
+        "voices": 4,
         "select": "highest",
         "vowel": "o",
         "vel": [
@@ -67,12 +72,17 @@
           "vibrato": {
             "depth_cents": 18.0,
             "delay_s": 0.5
+          },
+          "ensemble": {
+            "pitch_spread_cents": 4.0,
+            "pitch_drift_cents": 3.0
           }
-        }
+        },
+        "cohesion": 0.78
       },
       {
         "name": "altos",
-        "voices": 5,
+        "voices": 4,
         "select": "middle",
         "vowel": "o",
         "vel": [
@@ -88,12 +98,17 @@
           },
           "vibrato": {
             "depth_cents": 16.0
+          },
+          "ensemble": {
+            "pitch_spread_cents": 4.0,
+            "pitch_drift_cents": 3.0
           }
-        }
+        },
+        "cohesion": 0.78
       },
       {
         "name": "men",
-        "voices": 6,
+        "voices": 4,
         "select": "lowest",
         "shift": -12,
         "vowel": "o",
@@ -113,12 +128,17 @@
           },
           "vibrato": {
             "depth_cents": 14.0
+          },
+          "ensemble": {
+            "pitch_spread_cents": 4.0,
+            "pitch_drift_cents": 3.0
           }
-        }
+        },
+        "cohesion": 0.78
       },
       {
         "name": "tutti_forte",
-        "voices": 8,
+        "voices": 6,
         "select": "all",
         "vowel": "a",
         "vel": [
@@ -142,8 +162,13 @@
           "vibrato": {
             "depth_cents": 30.0,
             "rate_hz": 5.6
+          },
+          "ensemble": {
+            "pitch_spread_cents": 4.0,
+            "pitch_drift_cents": 3.0
           }
-        }
+        },
+        "cohesion": 0.78
       }
     ]
   },

@@ -84,7 +84,7 @@
   ],
   "soundfont": "muse_general",
   "vibrato": {
-    "depth_cents": 15,
+    "depth_cents": 10,
     "rate_hz": 5.2,
     "delay_ms": 420,
     "model": "ou"

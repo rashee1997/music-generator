@@ -6,15 +6,16 @@ sections:
   first_light: 13.64-30.00 s, dyn 0.38
   sunrise: 30.00-49.09 s, dyn 0.85
   morning: 49.09-60.00 s, dyn 0.35
-flagged times: 11
+flagged times: 12
   0.035s stem.tick [PASS] ambience
   0.035s stem.tick [PASS] choir
   0.035s stem.tick [PASS] tanpura
   5.468s stem.tick [PASS] violins_long
   13.653s stem.tick [PASS] sitar
-  19.447s stem.tick [PASS] santoor
   29.989s stem.tick [PASS] violas
   30.707s clicks [FAIL] master
   32.053s clicks [FAIL] master
+  34.474s clicks [FAIL] master
   45.699s clicks [FAIL] master
+  48.430s clicks [FAIL] master
   48.767s clicks [FAIL] master
