@@ -1,5 +1,5 @@
 {
- "stamp": "20261127T091656",
+ "stamp": "20261127T092246",
  "project": "western_ghats_sunrise",
  "level": "FAIL",
  "sources": {
@@ -17,18 +17,18 @@
   ],
   "stems": "17 processed stems from .cache/mix",
   "master": "out/_draft_western_ghats_sunrise.wav",
-  "verdict": "2026-11-27T09:15:36Z"
+  "verdict": "2026-11-27T09:22:09Z"
  },
  "binding": [
   {
    "row": "clicks",
    "stem": null,
    "level": "FAIL",
-   "value": 8.0,
+   "value": 6.0,
    "threshold": 0.0,
    "unit": "events",
-   "safety": -8.0,
-   "detail": "8 clustered impulse event(s) (MAD), 5 LPC frame(s); 177 event(s) rejected as a dense burst, 140 as a steep attack; max cluster span 1.474 ms"
+   "safety": -6.0,
+   "detail": "6 clustered impulse event(s) (MAD), 3 LPC frame(s); 163 event(s) rejected as a dense burst, 142 as a steep attack; max cluster span 1.474 ms"
   }
  ],
  "advisory": [
@@ -122,7 +122,7 @@
  },
  "model": {
   "first_order": true,
-  "rows": 24,
+  "rows": 40,
   "levers": [
    {
     "id": "render.oversample",
@@ -141,8 +141,8 @@
     "domain": "master",
     "kind": "hf_shelf",
     "stem": "ambience",
-    "current": 0.0,
-    "lo": -12.0,
+    "current": -6.0,
+    "lo": -18.0,
     "hi": 0.0,
     "step": 0.5,
     "unit": "dB",
@@ -185,16 +185,16 @@
     "text": "violins_long high shelf at 5500 Hz: inst_eq[\"ghats_violins_long\"]"
    },
    {
-    "id": "hf.kit",
-    "domain": "master",
-    "kind": "hf_shelf",
-    "stem": "kit",
-    "current": 0.0,
-    "lo": -12.0,
-    "hi": 0.0,
-    "step": 0.5,
-    "unit": "dB",
-    "text": "kit high shelf at 5500 Hz: inst_eq[\"ghats_kit\"]"
+    "id": "note.bansuri.d",
+    "domain": "stems",
+    "kind": "note_len",
+    "stem": "bansuri",
+    "current": 0.7088,
+    "lo": 0.6488,
+    "hi": 0.7687999999999999,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "bansuri written note length (mean 0.7088 beats)"
    },
    {
     "id": "note.violins_counter.d",
@@ -212,21 +212,21 @@
  },
  "plan": {
   "status": "linear",
-  "worst_safety": -8.0,
+  "worst_safety": -6.0,
   "deltas": {},
   "clearing": {},
   "predicted": {
    "clicks::-": [
-    -8.0,
-    -8.0
+    -6.0,
+    -6.0
    ],
    "loudness::-": [
     0.02,
     0.02
    ],
    "true peak::-": [
-    0.00024962847927671267,
-    0.00024962847927671267
+    0.00020532263377030327,
+    0.00020532263377030327
    ],
    "dropout::-": [
     1.0,
@@ -245,8 +245,40 @@
     0.0
    ],
    "master.dc::-": [
-    0.09986944278100164,
-    0.09986944278100164
+    0.09986844427074087,
+    0.09986844427074087
+   ],
+   "stem.dc::bansuri": [
+    0.09982893917367328,
+    0.09982893917367328
+   ],
+   "stem.clipping::bansuri": [
+    0.0,
+    0.0
+   ],
+   "stem.clicks::bansuri": [
+    0.0,
+    0.0
+   ],
+   "stem.dropout::bansuri": [
+    1.0,
+    1.0
+   ],
+   "stem.cut::bansuri": [
+    2.0,
+    2.0
+   ],
+   "stem.edge::bansuri": [
+    1.0,
+    1.0
+   ],
+   "stem.dead::bansuri": [
+    2.0,
+    2.0
+   ],
+   "stem.flatness::bansuri": [
+    2.0,
+    2.0
    ],
    "stem.dc::violins_counter": [
     0.09994838268875089,
@@ -283,11 +315,11 @@
   },
   "conflicts": [
    {
-    "lever": "hf.violins_counter",
-    "text": "violins_counter high shelf at 5500 Hz: inst_eq[\"ghats_violins_counter\"]",
+    "lever": "hf.bansuri",
+    "text": "bansuri high shelf at 5500 Hz: inst_eq[\"ghats_bansuri\"]",
     "unit": "dB",
     "feasible": [
-     72.0,
+     54.0,
      0.0
     ],
     "bounds": [
@@ -297,8 +329,29 @@
     "rows": [
      {
       "row": "clicks",
-      "needs": 72.0,
-      "safety": -8.0
+      "needs": 54.0,
+      "safety": -6.0
+     }
+    ],
+    "why": "bansuri high shelf at 5500 Hz: inst_eq[\"ghats_bansuri\"] cannot satisfy clicks at once: the moves that pass one row fail the other, and the bounds leave no value between"
+   },
+   {
+    "lever": "hf.violins_counter",
+    "text": "violins_counter high shelf at 5500 Hz: inst_eq[\"ghats_violins_counter\"]",
+    "unit": "dB",
+    "feasible": [
+     54.0,
+     0.0
+    ],
+    "bounds": [
+     -12.0,
+     0.0
+    ],
+    "rows": [
+     {
+      "row": "clicks",
+      "needs": 54.0,
+      "safety": -6.0
      }
     ],
     "why": "violins_counter high shelf at 5500 Hz: inst_eq[\"ghats_violins_counter\"] cannot satisfy clicks at once: the moves that pass one row fail the other, and the bounds leave no value between"
@@ -313,60 +366,40 @@
    {
     "row": "clicks",
     "key": "clicks::-",
-    "kind": "hf_shelf",
+    "kind": "iterative",
     "value": 4,
-    "baseline": 8,
+    "baseline": 6,
+    "near3": 34,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -6.0,
-     "hf.kit": -9.0
-    },
-    "times": [
-     42.553,
-     59.632,
-     59.698,
-     60.034
-    ],
+    "resolution_db": 34.05,
+    "times": [],
     "verdict": "better",
+    "moves": {
+     "hf.kit": -6.0,
+     "hf.ambience": -3.0
+    },
     "robust": 0.0,
     "proved": false
    },
    {
     "row": "clicks",
     "key": "clicks::-",
-    "kind": "iterative",
-    "value": 5,
-    "baseline": 8,
-    "near3": 31,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "times": [],
-    "verdict": "better",
-    "moves": {
-     "hf.kit": -3.0
-    },
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
     "kind": "hf_shelf",
     "value": 5,
-    "baseline": 8,
+    "baseline": 6,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 26.99,
+    "resolution_db": 34.05,
     "moves": {
-     "hf.kit": -3.0
+     "hf.ambience": -3.0,
+     "hf.violins_counter": -3.0
     },
     "times": [
+     45.285,
      46.698,
+     47.624,
      59.632,
-     59.665,
-     60.018,
      60.034
     ],
     "verdict": "better",
@@ -377,18 +410,19 @@
     "key": "clicks::-",
     "kind": "hf_shelf",
     "value": 5,
-    "baseline": 8,
+    "baseline": 6,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 26.99,
+    "resolution_db": 34.05,
     "moves": {
-     "hf.ambience": -12.0
+     "hf.ambience": -3.0,
+     "hf.violins_counter": -6.0
     },
     "times": [
-     42.553,
      45.285,
      46.698,
      47.624,
+     59.632,
      60.034
     ],
     "verdict": "better",
@@ -399,42 +433,19 @@
     "key": "clicks::-",
     "kind": "hf_shelf",
     "value": 5,
-    "baseline": 8,
+    "baseline": 6,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 26.99,
+    "resolution_db": 34.05,
     "moves": {
-     "hf.ambience": -9.0,
-     "hf.kit": -6.0
-    },
-    "times": [
-     42.553,
-     59.632,
-     59.698,
-     60.034,
-     60.066
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -6.0,
+     "hf.ambience": -3.0,
      "hf.violins_counter": -9.0
     },
     "times": [
      45.285,
      46.698,
      47.624,
-     59.698,
+     59.632,
      60.034
     ],
     "verdict": "better",
@@ -445,201 +456,12 @@
     "key": "clicks::-",
     "kind": "hf_shelf",
     "value": 5,
-    "baseline": 8,
+    "baseline": 6,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -9.0,
-     "hf.kit": -9.0
-    },
-    "times": [
-     42.553,
-     59.632,
-     59.698,
-     60.034,
-     60.066
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -6.0
-    },
-    "times": [
-     42.553,
-     45.285,
-     46.698,
-     47.624,
-     59.698,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -3.0,
-     "hf.violins_counter": -3.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.698,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -3.0,
-     "hf.bansuri": -3.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     59.632,
-     59.665,
-     60.018,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -9.0
-    },
-    "times": [
-     46.698,
-     59.632,
-     59.665,
-     59.968,
-     60.018,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -3.0,
-     "hf.kit": -6.0
-    },
-    "times": [
-     42.553,
-     46.698,
-     47.624,
-     59.632,
-     59.698,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -3.0,
-     "hf.bansuri": -6.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.698,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
+    "resolution_db": 34.05,
     "moves": {
      "hf.ambience": -6.0,
-     "hf.bansuri": -3.0
-    },
-    "times": [
-     42.553,
-     45.285,
-     46.698,
-     47.624,
-     59.698,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -3.0,
      "hf.violins_counter": -6.0
     },
     "times": [
@@ -647,7 +469,6 @@
      46.698,
      47.624,
      59.632,
-     59.698,
      60.034
     ],
     "verdict": "better",
@@ -657,107 +478,11 @@
     "row": "clicks",
     "key": "clicks::-",
     "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
+    "value": 5,
+    "baseline": 6,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -6.0,
-     "hf.violins_counter": -3.0
-    },
-    "times": [
-     42.553,
-     45.285,
-     46.698,
-     47.624,
-     59.698,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -3.0,
-     "hf.kit": -9.0
-    },
-    "times": [
-     42.553,
-     46.698,
-     47.624,
-     59.632,
-     59.698,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -6.0,
-     "hf.kit": -6.0
-    },
-    "times": [
-     42.553,
-     47.624,
-     59.632,
-     59.698,
-     60.034,
-     60.066
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -9.0,
-     "hf.kit": -3.0
-    },
-    "times": [
-     40.39,
-     42.553,
-     45.285,
-     47.624,
-     59.698,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
+    "resolution_db": 34.05,
     "moves": {
      "hf.ambience": -3.0,
      "hf.bansuri": -9.0
@@ -767,7 +492,6 @@
      46.698,
      47.624,
      59.632,
-     59.698,
      60.034
     ],
     "verdict": "better",
@@ -777,37 +501,13 @@
     "row": "clicks",
     "key": "clicks::-",
     "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
+    "value": 5,
+    "baseline": 6,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 26.99,
+    "resolution_db": 34.05,
     "moves": {
      "hf.ambience": -6.0,
-     "hf.bansuri": -6.0
-    },
-    "times": [
-     42.553,
-     45.285,
-     46.698,
-     47.624,
-     59.698,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -3.0,
      "hf.violins_counter": -9.0
     },
     "times": [
@@ -815,7 +515,6 @@
      46.698,
      47.624,
      59.632,
-     59.698,
      60.034
     ],
     "verdict": "better",
@@ -825,1020 +524,21 @@
     "row": "clicks",
     "key": "clicks::-",
     "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
+    "value": 5,
+    "baseline": 6,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -6.0,
-     "hf.violins_counter": -6.0
-    },
-    "times": [
-     42.553,
-     45.285,
-     46.698,
-     47.624,
-     59.698,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -9.0,
-     "hf.violins_counter": -3.0
-    },
-    "times": [
-     42.553,
-     45.285,
-     46.698,
-     47.624,
-     59.698,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -9.0,
-     "hf.bansuri": -3.0
-    },
-    "times": [
-     46.698,
-     59.632,
-     59.665,
-     59.968,
-     60.018,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -9.0,
-     "hf.violins_counter": -3.0
-    },
-    "times": [
-     46.698,
-     59.632,
-     59.665,
-     59.968,
-     60.018,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -6.0,
-     "hf.bansuri": -9.0
-    },
-    "times": [
-     42.553,
-     45.285,
-     46.698,
-     47.624,
-     59.698,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -9.0,
-     "hf.bansuri": -6.0
-    },
-    "times": [
-     42.553,
-     45.285,
-     46.698,
-     47.624,
-     59.698,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -9.0,
-     "hf.violins_counter": -6.0
-    },
-    "times": [
-     42.553,
-     45.285,
-     46.698,
-     47.624,
-     59.698,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -9.0,
-     "hf.bansuri": -6.0
-    },
-    "times": [
-     46.698,
-     59.632,
-     59.665,
-     59.968,
-     60.018,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -9.0,
-     "hf.violins_counter": -6.0
-    },
-    "times": [
-     46.698,
-     59.632,
-     59.665,
-     59.968,
-     60.018,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -9.0,
-     "hf.bansuri": -9.0
-    },
-    "times": [
-     42.553,
-     45.285,
-     46.698,
-     47.624,
-     59.698,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
+    "resolution_db": 34.05,
     "moves": {
      "hf.ambience": -9.0,
      "hf.violins_counter": -9.0
     },
     "times": [
-     42.553,
      45.285,
      46.698,
      47.624,
-     59.698,
+     59.632,
      60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -9.0,
-     "hf.bansuri": -9.0
-    },
-    "times": [
-     46.698,
-     59.632,
-     59.665,
-     59.968,
-     60.018,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 6,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -9.0,
-     "hf.violins_counter": -9.0
-    },
-    "times": [
-     46.698,
-     59.632,
-     59.665,
-     59.968,
-     60.018,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -3.0
-    },
-    "times": [
-     42.553,
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.698
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.bansuri": -3.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -6.0
-    },
-    "times": [
-     46.698,
-     59.293,
-     59.632,
-     59.665,
-     59.968,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.bansuri": -6.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -3.0,
-     "hf.kit": -3.0
-    },
-    "times": [
-     42.553,
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.698
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -3.0,
-     "hf.bansuri": -3.0
-    },
-    "times": [
-     42.553,
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.698
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -3.0,
-     "hf.violins_counter": -3.0
-    },
-    "times": [
-     39.789,
-     45.285,
-     46.698,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.bansuri": -3.0,
-     "hf.violins_counter": -3.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -9.0
-    },
-    "times": [
-     40.39,
-     42.553,
-     45.285,
-     46.698,
-     47.624,
-     59.698
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.bansuri": -9.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.violins_counter": -9.0
-    },
-    "times": [
-     39.789,
-     45.285,
-     46.698,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -3.0,
-     "hf.bansuri": -6.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -6.0,
-     "hf.bansuri": -3.0
-    },
-    "times": [
-     46.698,
-     59.293,
-     59.632,
-     59.665,
-     59.968,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -3.0,
-     "hf.violins_counter": -6.0
-    },
-    "times": [
-     39.789,
-     45.285,
-     46.698,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -6.0,
-     "hf.violins_counter": -3.0
-    },
-    "times": [
-     46.698,
-     59.293,
-     59.632,
-     59.665,
-     59.968,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.bansuri": -6.0,
-     "hf.violins_counter": -3.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -12.0
-    },
-    "times": [
-     41.532,
-     46.698,
-     59.632,
-     59.665,
-     59.968,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.bansuri": -12.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.violins_counter": -12.0
-    },
-    "times": [
-     39.789,
-     45.285,
-     46.698,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.ambience": -9.0,
-     "hf.bansuri": -3.0
-    },
-    "times": [
-     40.39,
-     42.553,
-     45.285,
-     46.698,
-     47.624,
-     59.698
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -6.0,
-     "hf.bansuri": -6.0
-    },
-    "times": [
-     46.698,
-     59.293,
-     59.632,
-     59.665,
-     59.968,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -3.0,
-     "hf.violins_counter": -9.0
-    },
-    "times": [
-     39.789,
-     45.285,
-     46.698,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -6.0,
-     "hf.violins_counter": -6.0
-    },
-    "times": [
-     46.698,
-     59.293,
-     59.632,
-     59.665,
-     59.968,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.bansuri": -6.0,
-     "hf.violins_counter": -6.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.bansuri": -9.0,
-     "hf.violins_counter": -3.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -6.0,
-     "hf.bansuri": -9.0
-    },
-    "times": [
-     46.698,
-     59.293,
-     59.632,
-     59.665,
-     59.968,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.kit": -6.0,
-     "hf.violins_counter": -9.0
-    },
-    "times": [
-     46.698,
-     59.293,
-     59.632,
-     59.665,
-     59.968,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.bansuri": -6.0,
-     "hf.violins_counter": -9.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.bansuri": -9.0,
-     "hf.violins_counter": -6.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.665,
-     60.018
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 7,
-    "baseline": 8,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 26.99,
-    "moves": {
-     "hf.bansuri": -9.0,
-     "hf.violins_counter": -9.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     59.665,
-     60.018
     ],
     "verdict": "better",
     "robust": 0.0
@@ -1847,110 +547,56 @@
  },
  "forensics": [
   {
-   "t": 39.7894,
-   "step": 0.04402,
-   "threshold": 0.04319,
-   "over_threshold_db": 0.17,
-   "z": 8.2,
-   "kind": "coincident transients",
-   "trusted": false,
-   "fit_ratio": 0.08,
-   "owners": [
-    {
-     "stem": "bansuri",
-     "share": 0.392,
-     "signed": 0.0019
-    },
-    {
-     "stem": "ambience",
-     "share": 0.322,
-     "signed": 0.00156
-    }
-   ],
-   "raw_step_fs": 0.0871,
-   "notes": [
-    {
-     "track": "ambience",
-     "pitch": null,
-     "velocity": null,
-     "onset_s": null,
-     "after_onset_ms": 0.0,
-     "written_len": null,
-     "continuous": true,
-     "layers": []
-    }
-   ]
-  },
-  {
-   "t": 45.2849,
-   "step": 0.04737,
-   "threshold": 0.04319,
-   "over_threshold_db": 0.8,
-   "z": 8.8,
-   "kind": "single source",
-   "trusted": false,
-   "fit_ratio": 0.4,
-   "owners": [
-    {
-     "stem": "kit",
-     "share": 0.889,
-     "signed": 0.01966
-    }
-   ],
-   "raw_step_fs": 0.1113,
-   "notes": []
-  },
-  {
    "t": 46.6979,
-   "step": 0.04437,
-   "threshold": 0.04319,
-   "over_threshold_db": 0.24,
-   "z": 8.2,
+   "step": 0.04297,
+   "threshold": 0.04136,
+   "over_threshold_db": 0.33,
+   "z": 8.3,
    "kind": "coincident transients",
    "trusted": false,
    "fit_ratio": 0.03,
    "owners": [
     {
      "stem": "bansuri",
-     "share": 0.272,
-     "signed": -0.00134
+     "share": 0.286,
+     "signed": -0.00136
     },
     {
      "stem": "violins_long",
-     "share": 0.247,
-     "signed": 0.00122
+     "share": 0.251,
+     "signed": 0.00119
     },
     {
      "stem": "violins_counter",
-     "share": 0.238,
+     "share": 0.247,
      "signed": 0.00117
     }
    ],
-   "raw_step_fs": 0.0552,
+   "raw_step_fs": 0.0545,
    "notes": []
   },
   {
    "t": 47.6244,
-   "step": 0.04421,
-   "threshold": 0.04319,
-   "over_threshold_db": 0.2,
-   "z": 8.2,
+   "step": 0.04337,
+   "threshold": 0.04136,
+   "over_threshold_db": 0.41,
+   "z": 8.4,
    "kind": "mixed",
    "trusted": false,
-   "fit_ratio": -0.04,
+   "fit_ratio": -0.03,
    "owners": [
     {
      "stem": "ambience",
-     "share": 0.358,
-     "signed": -0.0021
+     "share": 0.325,
+     "signed": -0.00205
     },
     {
      "stem": "violins_counter",
-     "share": 0.271,
+     "share": 0.251,
      "signed": -0.00159
     }
    ],
-   "raw_step_fs": 0.0459,
+   "raw_step_fs": 0.0453,
    "notes": [
     {
      "track": "ambience",
@@ -1974,21 +620,21 @@
   },
   {
    "t": 59.6319,
-   "step": 0.0448,
-   "threshold": 0.04319,
-   "over_threshold_db": 0.32,
-   "z": 8.3,
+   "step": 0.04317,
+   "threshold": 0.04136,
+   "over_threshold_db": 0.37,
+   "z": 8.4,
    "kind": "single source",
    "trusted": false,
-   "fit_ratio": 0.09,
+   "fit_ratio": -0.04,
    "owners": [
     {
      "stem": "ambience",
-     "share": 0.992,
-     "signed": 0.00398
+     "share": 0.98,
+     "signed": -0.00157
     }
    ],
-   "raw_step_fs": 0.0518,
+   "raw_step_fs": 0.0501,
    "notes": [
     {
      "track": "ambience",
@@ -2004,21 +650,21 @@
   },
   {
    "t": 59.6652,
-   "step": 0.04426,
-   "threshold": 0.04319,
-   "over_threshold_db": 0.21,
+   "step": 0.04261,
+   "threshold": 0.04136,
+   "over_threshold_db": 0.26,
    "z": 8.2,
    "kind": "single source",
    "trusted": false,
-   "fit_ratio": 0.46,
+   "fit_ratio": 0.18,
    "owners": [
     {
      "stem": "ambience",
-     "share": 0.994,
-     "signed": 0.02038
+     "share": 0.984,
+     "signed": 0.00761
     }
    ],
-   "raw_step_fs": 0.0447,
+   "raw_step_fs": 0.0431,
    "notes": [
     {
      "track": "ambience",
@@ -2034,21 +680,21 @@
   },
   {
    "t": 60.017,
-   "step": 0.04853,
-   "threshold": 0.04319,
-   "over_threshold_db": 1.01,
-   "z": 9.0,
+   "step": 0.04686,
+   "threshold": 0.04136,
+   "over_threshold_db": 1.08,
+   "z": 9.1,
    "kind": "single source",
    "trusted": false,
-   "fit_ratio": -0.01,
+   "fit_ratio": -0.13,
    "owners": [
     {
      "stem": "ambience",
-     "share": 0.912,
-     "signed": 0.00033
+     "share": 0.995,
+     "signed": 0.00606
     }
    ],
-   "raw_step_fs": 0.0534,
+   "raw_step_fs": 0.0516,
    "notes": [
     {
      "track": "ambience",
@@ -2064,21 +710,21 @@
   },
   {
    "t": 60.0339,
-   "step": 0.04522,
-   "threshold": 0.04319,
-   "over_threshold_db": 0.4,
-   "z": 8.4,
+   "step": 0.04372,
+   "threshold": 0.04136,
+   "over_threshold_db": 0.48,
+   "z": 8.5,
    "kind": "single source",
    "trusted": false,
-   "fit_ratio": 0.13,
+   "fit_ratio": 0.06,
    "owners": [
     {
      "stem": "ambience",
-     "share": 0.993,
-     "signed": -0.00571
+     "share": 0.985,
+     "signed": -0.0027
     }
    ],
-   "raw_step_fs": 0.0686,
+   "raw_step_fs": 0.0663,
    "notes": [
     {
      "track": "ambience",
@@ -2094,22 +740,20 @@
   }
  ],
  "notes": [
-  "clicks: sham replay (no change) reproduces the gate's 8 event(s) exactly (decomposition R^2 0.218); counterfactuals below are priced on a model that passes its own test",
-  "clicks: model resolution 27.0 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
-  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.22); gains ambience 2.92, bansuri 2.90, bass 10.32, celli 1.92, choir 1.44, guitar_clean 1.35, guitar_drive 1.74, kit 1.19, pipes 0.43, pipes_drone 0.42, santoor 1.08, sitar 1.54, tabla 1.41, tanpura 1.42, violas 0.71, violins_counter 1.69, violins_long 1.33",
-  "event 39.789s [coincident transients] bansuri 39%, ambience 32%; step 0.0440 vs threshold 0.0432 (+0.2 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
-  "event 45.285s [single source] kit 89%; step 0.0474 vs threshold 0.0432 (+0.8 dB over)  (fit unreliable)",
-  "event 46.698s [coincident transients] bansuri 27%, violins_long 25%, violins_counter 24%; step 0.0444 vs threshold 0.0432 (+0.2 dB over)  (fit unreliable)",
-  "event 47.624s [mixed] ambience 36%, violins_counter 27%; step 0.0442 vs threshold 0.0432 (+0.2 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
-  "event 59.632s [single source] ambience 99%; step 0.0448 vs threshold 0.0432 (+0.3 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
-  "event 59.665s [single source] ambience 99%; step 0.0443 vs threshold 0.0432 (+0.2 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
-  "event 60.017s [single source] ambience 91%; step 0.0485 vs threshold 0.0432 (+1.0 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
-  "event 60.034s [single source] ambience 99%; step 0.0452 vs threshold 0.0432 (+0.4 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
-  "clicks: cutting the band of ambience is NOT monotone (replay: -12 dB -> 5 event(s), -6 dB -> 6 event(s), -3 dB -> 7 event(s), -9 dB -> 7 event(s) against 8 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
-  "clicks: cutting the band of kit is NOT monotone (replay: -3 dB -> 5 event(s), -9 dB -> 6 event(s), -6 dB -> 7 event(s), -12 dB -> 7 event(s) against 8 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient",
-  "clicks: iterative replay, profile (events at 0/1/2/3 dB tighter) (8, 6, 7, 12) -> (5, 7, 7, 12) after kit -3 dB",
+  "clicks: sham replay (no change) reproduces the gate's 6 event(s) exactly (decomposition R^2 0.133); counterfactuals below are priced on a model that passes its own test",
+  "clicks: model resolution 34.0 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
+  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.13); gains ambience 2.79, bansuri 2.94, bass 10.66, celli 1.92, choir 1.42, guitar_clean 1.36, guitar_drive 1.75, kit 1.20, pipes 0.46, pipes_drone 0.40, santoor 1.04, sitar 1.41, tabla 1.41, tanpura 1.41, violas 0.75, violins_counter 1.69, violins_long 1.31",
+  "event 46.698s [coincident transients] bansuri 29%, violins_long 25%, violins_counter 25%; step 0.0430 vs threshold 0.0414 (+0.3 dB over)  (fit unreliable)",
+  "event 47.624s [mixed] ambience 32%, violins_counter 25%; step 0.0434 vs threshold 0.0414 (+0.4 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
+  "event 59.632s [single source] ambience 98%; step 0.0432 vs threshold 0.0414 (+0.4 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
+  "event 59.665s [single source] ambience 98%; step 0.0426 vs threshold 0.0414 (+0.3 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
+  "event 60.017s [single source] ambience 100%; step 0.0469 vs threshold 0.0414 (+1.1 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
+  "event 60.034s [single source] ambience 98%; step 0.0437 vs threshold 0.0414 (+0.5 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
+  "clicks: iterative replay, profile (events at 0/1/2/3 dB tighter) (6, 7, 8, 11) -> (4, 7, 9, 14) after kit -6 dB, ambience -3 dB",
+  "bansuri: the tightest gap in the score is 58 ms at beat spacing 0.577 s (104 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
   "violins_counter: the tightest gap in the score is 58 ms at beat spacing 0.577 s (104 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
+  "bansuri: the tightest gap in the score is 58 ms at beat spacing 0.577 s (104 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
   "violins_counter: the tightest gap in the score is 58 ms at beat spacing 0.577 s (104 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
-  "risk closure: the levers that move this row belong to violins_counter, so every row of those stems was loaded as a constraint before the plan was solved"
+  "risk closure: the levers that move this row belong to bansuri, violins_counter, so every row of those stems was loaded as a constraint before the plan was solved"
  ]
 }

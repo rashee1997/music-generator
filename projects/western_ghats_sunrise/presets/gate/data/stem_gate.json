@@ -6,7 +6,7 @@
     "warns": 0,
     "rows": 148,
     "profile": "western_ghats_sunrise",
-    "total_ms": 1694.301482000128,
+    "total_ms": 1114.1529030001038,
     "timings": {
       "ambience": 0.0,
       "bansuri": 0.0,
@@ -15,16 +15,16 @@
       "choir": 0.0,
       "guitar_clean": 0.0,
       "guitar_drive": 0.0,
-      "kit": 0.0,
+      "kit": 304.02405299992097,
       "pipes": 0.0,
       "pipes_drone": 0.0,
       "santoor": 0.0,
       "sitar": 0.0,
       "tabla": 0.0,
       "tanpura": 0.0,
-      "violas": 0.0,
+      "violas": 869.1350340000099,
       "violins_counter": 0.0,
-      "violins_long": 1420.7523190000302
+      "violins_long": 0.0
     },
     "workers": 3,
     "metrics": [
@@ -1289,18 +1289,18 @@
         "stage": "stem",
         "stem": "kit",
         "level": "PASS",
-        "value": 4.121728339364175e-06,
+        "value": 4.121728302172703e-06,
         "unit": "FS",
         "threshold": 0.001,
-        "margin": -0.0009958782716606358,
+        "margin": -0.0009958782716978274,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"kit\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"kit\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          1.626079266778328e-07,
-          4.582276637854257e-08
+          -4.5097177234360276e-08,
+          -5.8071438104339356e-08
         ],
-        "drift": 4.121728339364175e-06
+        "drift": 4.121728302172703e-06
       },
       {
         "row": "stem.clipping",
@@ -2431,10 +2431,10 @@
         "margin": -0.0009994529442943234,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"violas\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"violas\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          3.140457519480297e-10,
-          3.141827533518097e-10
+          -3.149322019118193e-13,
+          -8.115198275950259e-14
         ],
         "drift": 5.470557056766746e-07
       },
@@ -2497,8 +2497,6 @@
         "calibrated": false,
         "detail": "stem \"violas\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          41.7,
-          40.1,
           23.6,
           49.8,
           30.3
@@ -2516,8 +2514,8 @@
         "margin": -25.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"violas\": audible span 0.000-48.715 s against score notes 11.538-48.462 s: leading silence -11538 ms, trailing silence -253 ms (limit 25 ms)",
-        "head_ms": -11538.5,
+        "detail": "stem \"violas\": audible span 11.485-48.715 s against score notes 11.538-48.462 s: leading silence -53 ms, trailing silence -253 ms (limit 25 ms)",
+        "head_ms": -53.5,
         "tail_ms": -253.5,
         "fail": false
       },
@@ -2526,21 +2524,21 @@
         "stage": "stem",
         "stem": "violas",
         "level": "PASS",
-        "value": 0.43895166678675807,
+        "value": 0.4389671581313756,
         "unit": "rho",
         "threshold": 0.35,
-        "margin": 0.08895166678675809,
+        "margin": 0.08896715813137562,
         "worst_times_s": [
           11.5287
         ],
         "calibrated": false,
-        "detail": "stem \"violas\": onset autocorrelation 0.44 at a 871 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 52 strong onset(s) of 356, 5 on the grid, IOI CV 0.430; peak rise 8.90 dB at those onsets over 52 onset(s) (min 3); tempogram peak ratio 0.97, PLP peak ratio 1.00",
+        "detail": "stem \"violas\": onset autocorrelation 0.44 at a 871 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 52 strong onset(s) of 351, 5 on the grid, IOI CV 0.430; peak rise 8.90 dB at those onsets over 52 onset(s) (min 3); tempogram peak ratio 0.97, PLP peak ratio 1.00",
         "periodic": false,
         "period_ms": 870.7482993197278,
         "events": 52,
         "cv": 0.4300506723453094,
         "grid_matched": 5,
-        "tempogram_ratio": 0.9681369716081342,
+        "tempogram_ratio": 0.9729795668662279,
         "plp_ratio": 0.9999999999989074,
         "rise_db": 8.904,
         "rise_onsets": 52
@@ -2984,8 +2982,8 @@
       }
     ],
     "duration_s": 64.04145124716554,
-    "cached_stems": 16,
-    "measured_stems": 1
+    "cached_stems": 15,
+    "measured_stems": 2
   },
   "rows": [
     {
@@ -3296,7 +3294,7 @@
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"kit\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"kit\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -3586,7 +3584,7 @@
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"violas\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"violas\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -3611,12 +3609,12 @@
     {
       "level": "PASS",
       "row": "stem.edge",
-      "detail": "stem \"violas\": audible span 0.000-48.715 s against score notes 11.538-48.462 s: leading silence -11538 ms, trailing silence -253 ms (limit 25 ms)"
+      "detail": "stem \"violas\": audible span 11.485-48.715 s against score notes 11.538-48.462 s: leading silence -53 ms, trailing silence -253 ms (limit 25 ms)"
     },
     {
       "level": "PASS",
       "row": "stem.tick",
-      "detail": "stem \"violas\": onset autocorrelation 0.44 at a 871 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 52 strong onset(s) of 356, 5 on the grid, IOI CV 0.430; peak rise 8.90 dB at those onsets over 52 onset(s) (min 3); tempogram peak ratio 0.97, PLP peak ratio 1.00"
+      "detail": "stem \"violas\": onset autocorrelation 0.44 at a 871 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 52 strong onset(s) of 351, 5 on the grid, IOI CV 0.430; peak rise 8.90 dB at those onsets over 52 onset(s) (min 3); tempogram peak ratio 0.97, PLP peak ratio 1.00"
     },
     {
       "level": "PASS",

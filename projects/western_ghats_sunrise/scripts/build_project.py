@@ -679,7 +679,7 @@ def guitar_clean():
 # ------------------------------------------------------------------ score
 def score(plan_times=None):
     tracks = [
-        dict(name='ambience', instrument=f'env:{SLUG}', role='environment', notes=[dict(t=0.0, d=BARS * 4.0, p=60, v=1.0)]),
+        dict(name='ambience', instrument=f'env:{SLUG}', role='environment', notes=[dict(t=0.0, d=BARS * 4.0 + 3.0, p=60, v=1.0)]),
         dict(name='tanpura', instrument='ghats_tanpura', role='drone', notes=tanpura()),
         dict(name='bansuri', instrument='ghats_bansuri', role='melody', notes=flute()),
         dict(name='violins_counter', instrument='ghats_violins_counter', role='counter', notes=counter()),

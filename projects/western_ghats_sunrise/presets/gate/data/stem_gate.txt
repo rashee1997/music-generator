@@ -1,4 +1,4 @@
-stem gate: 0 FAIL, 0 WARN, 148 rows, profile western_ghats_sunrise, 1694 ms
+stem gate: 0 FAIL, 0 WARN, 148 rows, profile western_ghats_sunrise, 1114 ms
 [PASS] stem.dc: stem "ambience": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "ambience": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "ambience": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -60,7 +60,7 @@ stem gate: 0 FAIL, 0 WARN, 148 rows, profile western_ghats_sunrise, 1694 ms
 [PASS] stem.tick: stem "guitar_drive": onset autocorrelation 0.70 at a 859 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 65 strong onset(s) of 106, 7 on the grid, IOI CV 2.830; peak rise 5.49 dB at those onsets over 65 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
 [PASS] stem.dead: stem "guitar_drive": own median -37.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 2; follows the curve
 [PASS] stem.flatness: stem "guitar_drive": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
-[PASS] stem.dc: stem "kit": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+[PASS] stem.dc: stem "kit": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "kit": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "kit": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 972 event(s) rejected as a dense burst, 89 as a steep attack; max cluster span 1.474 ms
 [INFO] stem.dropout: stem "kit": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit
@@ -118,13 +118,13 @@ stem gate: 0 FAIL, 0 WARN, 148 rows, profile western_ghats_sunrise, 1694 ms
 [PASS] stem.tick: stem "tanpura": onset autocorrelation 0.36 at a 859 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 2 strong onset(s) of 400, 1 on the grid, IOI CV 1.000; peak rise 53.90 dB at those onsets over 2 onset(s) (min 3); tempogram peak ratio 0.98, PLP peak ratio 1.00
 [PASS] stem.dead: stem "tanpura": own median -34.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve
 [PASS] stem.flatness: stem "tanpura": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
-[PASS] stem.dc: stem "violas": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+[PASS] stem.dc: stem "violas": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "violas": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "violas": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
 [PASS] stem.dropout: stem "violas": longest hole 0 ms (limit 20-1000 ms), floor -85.4 dBFS; 0 hole(s)
 [PASS] stem.cut: stem "violas": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
-[PASS] stem.edge: stem "violas": audible span 0.000-48.715 s against score notes 11.538-48.462 s: leading silence -11538 ms, trailing silence -253 ms (limit 25 ms)
-[PASS] stem.tick: stem "violas": onset autocorrelation 0.44 at a 871 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 52 strong onset(s) of 356, 5 on the grid, IOI CV 0.430; peak rise 8.90 dB at those onsets over 52 onset(s) (min 3); tempogram peak ratio 0.97, PLP peak ratio 1.00
+[PASS] stem.edge: stem "violas": audible span 11.485-48.715 s against score notes 11.538-48.462 s: leading silence -53 ms, trailing silence -253 ms (limit 25 ms)
+[PASS] stem.tick: stem "violas": onset autocorrelation 0.44 at a 871 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 52 strong onset(s) of 351, 5 on the grid, IOI CV 0.430; peak rise 8.90 dB at those onsets over 52 onset(s) (min 3); tempogram peak ratio 0.97, PLP peak ratio 1.00
 [PASS] stem.dead: stem "violas": own median -33.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 4; follows the curve
 [PASS] stem.dc: stem "violins_counter": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "violins_counter": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
