@@ -544,9 +544,10 @@ def bass_guitar():
         if p < 28:
             p += 12
         v = 0.5 if bar < 10 else (0.6 if bar >= 22 else 0.72)
-        s.append(n(bar, 0.0, 1.2, p, v + 0.06))
-        if bar < 22:
-            s += [n(bar, 1.5, 0.9, p, v), n(bar, 2.5, 0.45, p + 7 if r == 0 else p, v - 0.06), n(bar, 3.5, 0.4, p, v - 0.08)]
+        if bar < 22:                                           # each note runs into the next onset (stem.dropout measured 60 ms holes between short plucks)
+            s += [n(bar, 0.0, 1.6, p, v + 0.06), n(bar, 1.5, 1.1, p, v), n(bar, 2.5, 1.1, p + 7 if r == 0 else p, v - 0.06), n(bar, 3.5, 0.6, p, v - 0.08)]
+        else:
+            s.append(n(bar, 0.0, 4.2, p, v + 0.06))
     return s
 
 
@@ -561,13 +562,14 @@ def tanpura():
 
 
 def sitar():
+    """Plucked eighths with a different syncopated rhythm in each bar (a plucked part that repeats one bar reads as a tick: stem.tick measured 0.43 at one beat)."""
+    rhythms = {3: (0.0, 1.5, 2.5), 4: (0.0, 1.0, 2.5, 3.5), 5: (0.5, 1.5, 3.0), 6: (0.0, 1.5, 2.0, 3.5), 22: (0.0, 1.5, 3.0), 23: (0.5, 2.0, 3.5)}
     s = []
-    for bars, sa, vel in (((3, 4, 5, 6), SA, 0.4), ((22, 23), SA, 0.34)):                       # the clean guitar takes the arpeggio from bar 7
-        for bar in bars:
-            for k, (b, idx) in enumerate(((0.0, 0), (0.5, 2), (1.0, 3), (1.5, 2), (2.0, 4), (2.5, 3), (3.0, 2), (3.5, 1))):
-                if k % 2:
-                    continue
-                s.append(n(bar, b, 0.4, pit(idx + 5, sa), vel + (0.06 if k % 4 == 0 else 0.0)))
+    for bar, offs in rhythms.items():
+        sa = SA
+        for k, b in enumerate(offs):
+            idx = (0, 2, 3, 2, 4, 3)[(bar + k) % 6]
+            s.append(n(bar, b, 0.4, pit(idx + 5, sa), 0.4 + (0.06 if k == 0 else 0.0)))
     return s
 
 
@@ -621,16 +623,14 @@ def choir():
 def kit():
     """A rock kit on the groove: kick on the 3+3+2 accents, snare on two and four, eighth hats; the reel (bars 14-17) takes it to kick, snare and hats."""
     s = []
-    for bar in range(3, 25):
+    for bar in range(3, 26):
         groove = bar < 10
         morning = bar >= 22
         v = 0.5 if groove else (0.6 if morning else 0.64 + 0.008 * (bar - 10))       # intent.avoid sudden_loud: no two simultaneous notes more than 0.4 apart
         s += [n(bar, 0.0, 0.2, 'kick', v), n(bar, 2.5, 0.2, 'kick', v - 0.1)]
         if not groove and not morning:
             s += [n(bar, 1.5, 0.2, 'kick', v - 0.12)]
-        if morning and bar > 23:
-            continue
-        if groove:
+        if groove or morning:
             s += [n(bar, 1.0, 0.2, 'rim', v - 0.1), n(bar, 3.0, 0.2, 'rim', v - 0.1)]
         else:
             s += [n(bar, 1.0, 0.2, 'snare', v), n(bar, 3.0, 0.2, 'snare', v + 0.04)]
