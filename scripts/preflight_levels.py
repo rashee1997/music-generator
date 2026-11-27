@@ -109,10 +109,16 @@ def arc_rows(score):
     rho = er.spearman([float(s['energy']) for s in secs], power)
     if rho is None:
         return [('INFO', 'preflight.arc', 'the declared energy or the predicted level does not vary: nothing to rank')]
-    if rho < ARC_MIN_RHO:
+    # the same limit the audio row fails at, read from the row instead of restated here
+    try:
+        import gate_profiles
+        need = float(gate_profiles.resolve(score).param('section.energy', 'fail_rho'))
+    except Exception:
+        need = ARC_MIN_RHO
+    if rho < need:
         order = ', '.join(f'{s["name"]} {p:.0f}' for s, p in zip(secs, power))
         return [('WARN', 'preflight.arc', f'predicted section level (parts playing x velocity x curve) follows the declared energy with rank correlation {rho:+.2f} '
-                 f'(< {ARC_MIN_RHO:g}); the audio row section.energy fails below that. Predicted dB by section: {order}')]
+                 f'(< {need:g}); the audio row section.energy fails below that. Predicted dB by section: {order}')]
     return [('PASS', 'preflight.arc', f'predicted section level follows the declared energy (rank correlation {rho:+.2f})')]
 
 

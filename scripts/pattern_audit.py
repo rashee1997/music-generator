@@ -291,6 +291,29 @@ def _gp(score):
     return gate_profiles.resolve(score)
 
 
+def _timeline(score, gp=None):
+    """The piece's scene windows, or None when its profile declares no scene block. A timeline that cannot be read is
+    None as well: a broken sheet must not stop the acoustic rows, it must make the scene rows say they did not run."""
+    try:
+        import scene_timeline
+        return scene_timeline.load(score, gp or _gp(score))
+    except Exception:
+        return None
+
+
+def _judged_diffs(notes, diffs, tl, waived):
+    """(diffs kept for judging, count excluded): an interval whose first note sits in a window that waives this row is
+    not judged by it. A climax is allowed to be the leapiest, roughest part of the piece; it is not allowed to make the
+    whole-piece ceiling a lie."""
+    if tl is None or not waived or not len(diffs):
+        return diffs, 0
+    keep = np.ones(len(diffs), dtype=bool)
+    for i in range(len(diffs)):
+        if tl.in_windows(tl.beat_to_s(notes[i]['t']), waived):
+            keep[i] = False
+    return diffs[keep], int((~keep).sum())
+
+
 def build_metric_tree(ts):
     """16th-note metric weight hierarchy M(pos) for any time signature ts=[num, den].
 
@@ -339,51 +362,65 @@ def melodic_contour_feel(score):
     """
     rows = []
     intent = get_intent_profile(score)
+    gp = _gp(score)          # every figure below is the piece's (defaults = the constants this function used to hold)
+    min_notes = int(gp.param('feel.contour', 'min_notes'))
+    step_max = float(gp.param('feel.contour', 'step_max_semitones'))
+    step_min = float(gp.param('feel.contour', 'step_frac'))
+    step_fail = float(gp.param('feel.contour', 'step_frac_fail'))
+    leap_semis = float(gp.param('feel.contour', 'leap_semis'))
+    gap_recover = float(gp.param('feel.contour', 'gap_recover_semis'))
+    gap_fill_max = float(gp.param('feel.contour', 'gap_fill_max'))
+    flip_max = float(gp.param('feel.contour', 'flip_frac'))
+    zigzag_max = float(gp.param('feel.contour', 'zigzag_max'))
+    zigzag_step = float(gp.param('feel.contour', 'zigzag_step_frac'))
+    tl = _timeline(score, gp)
+    waived = tl.waived('feel.contour') if tl is not None else []
     for t in score.get('tracks', []):
         if not _is_melodic(t):
             continue
         raw_notes = sorted(t.get('notes', []), key=lambda n: n['t'])
         notes = [n for n in raw_notes if isinstance(n.get('p'), (int, float))]
-        if len(notes) < 8:
+        if len(notes) < min_notes:
             continue
 
         pitches = np.array([_pitch_cont(n) for n in notes])
-        diffs = np.diff(pitches)
+        all_diffs = np.diff(pitches)
+        if len(all_diffs) == 0:
+            continue
+        diffs, excluded = _judged_diffs(notes, all_diffs, tl, waived)
         if len(diffs) == 0:
+            rows.append(('INFO', 'melodic_contour_feel',
+                         f"Track '{name}': every interval sits in a scene window that waives this ceiling, so none was judged"))
             continue
 
         name = t.get('name', 'melody')
         flagged = False
-
-        # thresholds come from the piece's gate profile: an arpeggiated lead, a pentatonic call or a 12-tone line
-        # is legitimately leap-heavy, and one global constant failed them as "unmelodic"
-        mc = (getattr(_gp(score), 'rows', {}) or {}).get('melodic_contour') or {}
-        step_min = float(mc.get('step_frac', 0.45))
-        step_fail = float(mc.get('step_frac_fail', 0.25))
-        leap_semis = float(mc.get('leap_semis', 4.8))
-        flip_max = float(mc.get('flip_frac', 0.85))
+        clause = f' ({excluded} interval(s) in a waiving scene window not judged)' if excluded else ''
 
         # 1. Stepwise Balance
-        step_frac = float(np.mean(np.abs(diffs) <= 3.2))
+        step_frac = float(np.mean(np.abs(diffs) <= step_max))
         if step_frac < step_min and not intent['is_ambient']:
             lvl = 'FAIL' if step_frac < step_fail else 'WARN'
             rows.append((lvl, 'melodic_contour_feel',
-                         f"Track '{name}' has only {step_frac:.0%} stepwise intervals (<= 3 semitones; expect >= {step_min:.0%}). "
+                         f"Track '{name}' has only {step_frac:.0%} stepwise intervals (<= {step_max:g} semitones; expect >= {step_min:.0%}){clause}. "
                          "Human vocal and lead melodies are predominantly conjunct. Shape phrases as smooth arches."))
             flagged = True
 
-        # 2. Meyer's Gap-Fill Law
+        # 2. Meyer's Gap-Fill Law (a pair is judged only when both intervals are)
         large_leaps = []
-        for i in range(len(diffs) - 1):
-            if abs(diffs[i]) >= leap_semis:
-                same_dir_leap = (np.sign(diffs[i]) == np.sign(diffs[i + 1])) and (abs(diffs[i + 1]) >= 3.8)
+        for i in range(len(all_diffs) - 1):
+            if tl is not None and waived and (tl.in_windows(tl.beat_to_s(notes[i]['t']), waived)
+                                              or tl.in_windows(tl.beat_to_s(notes[i + 1]['t']), waived)):
+                continue
+            if abs(all_diffs[i]) >= leap_semis:
+                same_dir_leap = (np.sign(all_diffs[i]) == np.sign(all_diffs[i + 1])) and (abs(all_diffs[i + 1]) >= gap_recover)
                 large_leaps.append(same_dir_leap)
         if len(large_leaps) >= 2:
             unrecovered_frac = float(np.mean(large_leaps))
-            if unrecovered_frac > 0.50:
+            if unrecovered_frac > gap_fill_max:
                 rows.append(('FAIL', 'melodic_contour_feel',
-                             f"Track '{name}' breaches Meyer's Gap-Fill law: {unrecovered_frac:.0%} of large leaps (>= 5 semitones) "
-                             "continue leaping in the same direction without stepwise or reversal recovery. "
+                             f"Track '{name}' breaches Meyer's Gap-Fill law: {unrecovered_frac:.0%} of large leaps (>= {leap_semis:g} semitones) "
+                             f"continue leaping in the same direction without stepwise or reversal recovery (limit {gap_fill_max:.0%}). "
                              "Recover large leaps by changing direction with stepwise motion (1-2 semitones)."))
                 flagged = True
 
@@ -392,19 +429,19 @@ def melodic_contour_feel(score):
         if len(nonzero) >= 4:
             dirs = np.sign(nonzero)
             flips = float(np.mean(dirs[:-1] != dirs[1:]))
-            if (flips > flip_max or (flips > 0.75 and step_frac < 0.30)):
+            if (flips > flip_max or (flips > zigzag_max and step_frac < zigzag_step)):
                 rows.append(('FAIL', 'melodic_contour_feel',
                              f"Track '{name}' exhibits mechanical sawtooth zig-zagging ({flips:.0%} direction reversals). "
                              "Human melodies form sustained contour arches rather than alternating up/down on every note."))
                 flagged = True
-            elif flips > 0.75 and not intent['is_ambient']:
+            elif flips > zigzag_max and not intent['is_ambient']:
                 rows.append(('WARN', 'melodic_contour_feel',
                              f"Track '{name}' has frequent directional alternation ({flips:.0%} reversals). Shape lines with longer contour arches."))
                 flagged = True
 
         if not flagged:
             rows.append(('PASS', 'melodic_contour_feel',
-                         f"Track '{name}' maintains natural melodic arch and stepwise balance ({step_frac:.0%} conjunct)"))
+                         f"Track '{name}' maintains natural melodic arch and stepwise balance ({step_frac:.0%} conjunct){clause}"))
     return rows
 
 
@@ -415,6 +452,12 @@ def harmonic_resolution_feel(score):
     """
     rows = []
     intent = get_intent_profile(score)
+    gp = _gp(score)
+    min_tension = int(gp.param('feel.resolution', 'min_tension_notes'))
+    max_unresolved = float(gp.param('feel.resolution', 'max_unresolved_share'))
+    resolve_step = float(gp.param('feel.resolution', 'resolve_step_semitones'))
+    resolve_leap = float(gp.param('feel.resolution', 'resolve_leap_semitones'))
+    tl = _timeline(score, gp)
     mel_tracks = [t for t in score.get('tracks', []) if _is_figure(t)]
     if not mel_tracks:
         mel_tracks = [t for t in score.get('tracks', []) if _role(t) == 'counter']
@@ -448,6 +491,8 @@ def harmonic_resolution_feel(score):
         name = t.get('name', 'melody')
         tension_count = 0
         unresolved_count = 0
+        premature_count = 0
+        relaxed_count = 0
         first_unresolved_info = None
 
         for i in range(len(notes) - 1):
@@ -469,33 +514,47 @@ def harmonic_resolution_feel(score):
                 next_pc = int(round(_pitch_cont(next_mn))) % 12
                 if scale_pcs:
                     is_chromatic = (mel_pc not in scale_pcs)
-                    resolved = (leap <= 2.2) or (not is_chromatic and next_pc in scale_pcs and leap <= 4.2)
+                    resolved = (leap <= resolve_step) or (not is_chromatic and next_pc in scale_pcs and leap <= resolve_leap)
                 else:
-                    resolved = (leap <= 2.2)
+                    resolved = (leap <= resolve_step)
 
+                # A scene role decides what a tension may do here: a build may FORBID the homecoming, a release may
+                # ENFORCE it, a stillness RELAX it. No role, no gate block: the counters are the ones this row had.
+                role = tl.role_at(tl.beat_to_s(t_mel)) if (tl is not None and tl.active) else None
+                gravity = (tl.role_cfg(role).get('huron_resolution_gravity') if role else None)
                 tension_count += 1
-                if not resolved:
-                    unresolved_count += 1
-                    if first_unresolved_info is None:
-                        first_unresolved_info = (t_mel, leap)
+                if gravity == 'FORBID':
+                    if resolved:
+                        premature_count += 1
+                elif not resolved:
+                    if gravity == 'RELAX':
+                        relaxed_count += 1
+                    else:
+                        unresolved_count += 1
+                        if first_unresolved_info is None:
+                            first_unresolved_info = (t_mel, leap)
 
-        if tension_count >= 3:
-            unresolved_ratio = unresolved_count / tension_count
-            if unresolved_ratio > 0.40 and not intent['is_tense']:
+        violations = unresolved_count + premature_count
+        if tension_count >= min_tension:
+            bad_ratio = violations / tension_count
+            extra = (f'; {premature_count} resolved home inside a scene window that forbids it' if premature_count else '') \
+                + (f'; {relaxed_count} left open inside a role that allows it' if relaxed_count else '')
+            if bad_ratio > max_unresolved and not intent['is_tense']:
                 beat, leap = first_unresolved_info or (0.0, 0)
                 rows.append(('FAIL', 'harmonic_resolution_feel',
-                             f"Track '{name}' has unresolved harmonic tension: {unresolved_count} of {tension_count} "
-                             f"({unresolved_ratio:.0%}) dissonant tension notes leaped away without stepwise resolution. "
+                             f"Track '{name}' breaks the resolution rule this piece declared: {violations} of {tension_count} "
+                             f"({bad_ratio:.0%}, limit {max_unresolved:.0%}) dissonant tension notes neither resolve by step nor "
+                             f"belong to a window that allows them{extra}. "
                              f"E.g. note at beat {beat:.1f} leaped by {leap:.1f} semitones. Resolve tensions by step (1-2 semitones)."))
-            elif unresolved_count > 0:
+            elif violations > 0:
                 rows.append(('WARN', 'harmonic_resolution_feel',
-                             f"Track '{name}' has {unresolved_count} unresolved harmonic tension note(s) leaping away instead of resolving by step."))
+                             f"Track '{name}' has {violations} tension note(s) against this piece's resolution rule{extra}."))
             else:
                 rows.append(('PASS', 'harmonic_resolution_feel',
-                             f"Track '{name}' resolves all {tension_count} harmonic tension notes stepwise into consonant chord tones"))
-        elif tension_count > 0 and unresolved_count > 0:
+                             f"Track '{name}' resolves its {tension_count} tension notes the way the piece's scenes ask{extra}"))
+        elif tension_count > 0 and violations > 0:
             rows.append(('WARN', 'harmonic_resolution_feel',
-                         f"Track '{name}' has {unresolved_count} unresolved harmonic tension note(s) leaping away without stepwise resolution."))
+                         f"Track '{name}' has {violations} unresolved harmonic tension note(s) leaping away without stepwise resolution{extra}."))
         else:
             rows.append(('PASS', 'harmonic_resolution_feel',
                          f"Track '{name}' adheres to harmonic resolution gravity"))
@@ -509,6 +568,9 @@ def groove_pocket_lock(score):
     Fails if pocket_corr < 0.30 over >= 4 bars.
     """
     rows = []
+    gp = _gp(score)
+    min_bars = int(gp.param('feel.groove', 'min_bars'))
+    min_corr = float(gp.param('feel.groove', 'min_pocket_corr'))
     rhythm_tracks = [t for t in score.get('tracks', []) if _role(t) in ('drum', 'arp', 'bass')]
     if not rhythm_tracks:
         return rows
@@ -522,8 +584,9 @@ def groove_pocket_lock(score):
     num, den = ts if (isinstance(ts, (list, tuple)) and len(ts) >= 2) else (4, 4)
 
     total_beats = max(n['t'] + n.get('d', 1.0) for n in all_notes)
-    if total_beats < num * 4:
-        return [('INFO', 'groove_pocket_lock', 'Rhythmic duration under 4 bars: not measured, not passed')]
+    if total_beats < num * min_bars:
+        return [('INFO', 'groove_pocket_lock',
+                 f'Rhythmic duration under {min_bars} bars: not measured, not passed')]
 
     grid_len = int(np.ceil(total_beats * steps_per_beat)) + total_bar_steps * 2 + 16
     grid = np.zeros(grid_len, dtype=float)
@@ -547,14 +610,14 @@ def groove_pocket_lock(score):
 
     pocket_corr = max(corrs) if corrs else 0.0
     intent = get_intent_profile(score)
-    if pocket_corr < 0.30 and not intent['is_ambient']:
+    if pocket_corr < min_corr and not intent['is_ambient']:
         rows.append(('FAIL', 'groove_pocket_lock',
-                     f"Rhythmic autocorrelation is chaotic ({pocket_corr:.2f} < 0.30). "
+                     f"Rhythmic autocorrelation is chaotic ({pocket_corr:.2f} < {min_corr:g}). "
                      "Off-beat hits are scattered randomly instead of locking into a repeating groove pocket. "
                      "Repeat rhythmic syncopations consistently across bar boundaries."))
     else:
         rows.append(('PASS', 'groove_pocket_lock',
-                     f"Rhythmic groove pocket locked (autocorrelation {pocket_corr:.2f} >= 0.30)"))
+                     f"Rhythmic groove pocket locked (autocorrelation {pocket_corr:.2f} >= {min_corr:g})"))
 
     return rows
 
@@ -682,6 +745,15 @@ def spiral_tension_arc(score):
     """
     rows = []
     intent = get_intent_profile(score)
+    gp = _gp(score)
+    static_mom = float(gp.param('feel.spiral', 'static_momentum'))
+    teleport_mom = float(gp.param('feel.spiral', 'teleport_momentum'))
+    outro_max = float(gp.param('feel.spiral', 'outro_strain_max'))
+    outro_pct = float(gp.param('feel.spiral', 'outro_percentile'))
+    concordance = float(gp.param('feel.spiral', 'concordance_min_rho'))
+    tl = _timeline(score, gp)
+    last_role = tl.spans[-1]['role'] if (tl is not None and tl.active) else None
+    last_gravity = tl.role_cfg(last_role).get('huron_resolution_gravity') if last_role else None
     series = _spiral_series(score)
     if series is None:
         return rows
@@ -693,26 +765,31 @@ def spiral_tension_arc(score):
     # Gate 1: Harmonic Stagnation vs. Teleportation
     if T_cms:
         mean_cm = float(np.mean(T_cms))
-        if mean_cm < 0.05 and N >= 8 and not intent['is_ambient']:
+        if mean_cm < static_mom and N >= 8 and not intent['is_ambient']:
             rows.append(('WARN', 'spiral_tension_arc',
                          f"Static harmony: mean cloud momentum is {mean_cm:.3f} (< 0.05) across {N*2} bars; harmonic movement is stalled."))
         max_cm = float(np.max(T_cms))
-        if max_cm > 1.45:
+        if max_cm > teleport_mom:
             w_jump = int(np.argmax(T_cms)) + 1
             rows.append(('FAIL', 'spiral_tension_arc',
-                         f"Jarring un-led harmonic teleportation at bar {w_jump*2} (momentum {max_cm:.2f} > 1.45); prescribe common-tone voice leading."))
+                         f"Jarring un-led harmonic teleportation at bar {w_jump*2} (momentum {max_cm:.2f} > {teleport_mom:g}); "
+                         f"prescribe common-tone voice leading."))
 
     # Gate 2: Cadential Home Resolution in final 2 bars
-    if len(T_tss) >= 2 and not intent['is_tense'] and not intent['is_cliffhanger']:
+    # A scene role decides whether the end must come home: ENFORCE asks even of a tense or cliffhanger piece,
+    # RELAX/FORBID excuse it, and with no role the type flags decide exactly as they did.
+    outro_required = (last_gravity == 'ENFORCE') or (
+        last_gravity not in ('RELAX', 'FORBID') and not intent['is_tense'] and not intent['is_cliffhanger'])
+    if len(T_tss) >= 2 and outro_required:
         last_strain = T_tss[-1]
-        p30 = float(np.percentile(T_tss, 30))
-        if last_strain > p30 and last_strain > 0.50:
+        p30 = float(np.percentile(T_tss, outro_pct))
+        if last_strain > p30 and last_strain > outro_max:
             rows.append(('FAIL', 'spiral_tension_arc',
                          f"Unresolved harmonic tension at outro: final 2 bars tensile strain ({last_strain:.2f}) "
-                         f"does not resolve to the bottom 30th percentile ({p30:.2f}) of the piece's tension range."))
+                         f"does not resolve to the bottom {outro_pct:g}th percentile ({p30:.2f}) of the piece's tension range."))
         else:
             rows.append(('PASS', 'spiral_tension_arc',
-                         f"Cadential home resolution confirmed (final tensile strain {last_strain:.2f} <= {max(p30, 0.50):.2f})"))
+                         f"Cadential home resolution confirmed (final tensile strain {last_strain:.2f} <= {max(p30, outro_max):.2f})"))
     else:
         rows.append(('PASS', 'spiral_tension_arc', f"Harmonic tension arc tracked across {N*2} bars"))
 
@@ -726,18 +803,20 @@ def spiral_tension_arc(score):
         comb_tension = np.array(T_tss) + np.array(T_cds)
         if np.std(interp_dyn) > 0.04 and np.std(comb_tension) > 0.04:
             r = float(np.corrcoef(interp_dyn, comb_tension)[0, 1])
-            if r < -0.35:
+            if r < concordance:
                 rows.append(('WARN', 'spiral_tension_arc',
-                             f"Tension-dynamics discordance (corr {r:.2f} < -0.35): harmony gets more tense while dynamics quiet down, fighting emotional arc."))
+                             f"Tension-dynamics discordance (corr {r:.2f} < {concordance:g}): harmony gets more tense while "
+                             f"dynamics quiet down, fighting emotional arc."))
 
     return rows
 
 
-def bar_syncopation(score):
+def bar_syncopation(score, t0=None, t1=None):
     """Witek's Bar Syncopation Index of the drum/bass/arp cell, or None when the piece has no rhythm part to score.
 
     The one place the index is computed: the `feel.witek` row and the chem model's motor pool both read it, so a
     change to the metric tree moves both. Weighted by the 16th-note metric hierarchy of the score's own time signature.
+    `t0`/`t1` (beats) judge one scene window instead of the whole piece; the metric tree is still the score's own.
     """
     ts = score.get('ts', [4, 4])
     weights, steps_per_beat, total_bar_steps = build_metric_tree(ts)
@@ -746,6 +825,10 @@ def bar_syncopation(score):
     if not rhythm_tracks:
         return None
     rhythm_notes = [n for t in rhythm_tracks for n in t.get('notes', []) if 't' in n]
+    if t0 is not None or t1 is not None:
+        a = -1e9 if t0 is None else float(t0)
+        b = 1e9 if t1 is None else float(t1)
+        rhythm_notes = [n for n in rhythm_notes if a <= float(n['t']) < b]
     if not rhythm_notes:
         return None
     vels = [_vel(n) for n in rhythm_notes]
@@ -771,26 +854,76 @@ def bar_syncopation(score):
 
 def witek_groove_curve(score):
     """1.2 Witek-Vuust Inverted-U Groove & Syncopation Pleasure Curve (Witek 2014, Vuust 2018).
-    Measures Bar Syncopation Index (BSI) across the metric tree of any time signature.
+
+    Measures the Bar Syncopation Index (BSI) across the metric tree of any time signature. The window and the collapse
+    limit are the piece's (`feel.witek`); the band between them used to print a PASS while the text said the index was
+    outside it, so it now warns. A scene role may state `bsi_mode`: `stillness` accepts a low index, `rupture` accepts
+    one above the collapse limit, and only `pocket` (the default) enforces the inverted U.
     """
     rows = []
     intent = get_intent_profile(score)
+    gp = _gp(score)
+    lo = float(gp.param('feel.witek', 'bsi_lo'))
+    hi = float(gp.param('feel.witek', 'bsi_hi'))
+    fail_hi = float(gp.param('feel.witek', 'bsi_fail_hi'))
+    still_max = float(gp.param('feel.witek', 'bsi_still_max'))
+    rupture_min = float(gp.param('feel.witek', 'bsi_rupture_min'))
     bsi = bar_syncopation(score)
     if bsi is None:
         return rows
 
+    tl = _timeline(score, gp)
+    scoped = []
+    if tl is not None and tl.active:
+        for s in tl.spans:
+            mode = tl.role_cfg(s['role']).get('bsi_mode')
+            if not mode:
+                continue
+            b = bar_syncopation(score, tl.s_to_beat(s['start_s']), tl.s_to_beat(s['end_s']))
+            if b is not None:
+                scoped.append((s['role'], mode, b))
+    if scoped:
+        for role, mode, b in scoped:
+            if mode == 'stillness':
+                rows.append(('PASS' if b <= still_max else 'WARN', 'witek_groove_curve',
+                             f"Scene role '{role}' is stillness: BSI {b:.2f}/bar (at or below {still_max:g} wanted){'' if b <= still_max else ', this window is busier than the role declared'}."))
+            elif mode == 'rupture':
+                if b < rupture_min:
+                    rows.append(('WARN', 'witek_groove_curve',
+                                 f"Scene role '{role}' is a rupture but reads BSI {b:.2f}/bar, under its floor {rupture_min:g}: "
+                                 f"the break is not written as one. Off-beat accents, not more notes."))
+                else:
+                    rows.append(('PASS', 'witek_groove_curve',
+                                 f"Scene role '{role}' is a rupture: BSI {b:.2f}/bar, and a rupture may exceed the "
+                                 f"collapse limit {fail_hi:g} without failing the pocket rule."))
+            else:
+                if b < lo:
+                    lvl, note = 'WARN', f'under the pocket {lo:g}'
+                elif b > fail_hi:
+                    lvl, note = 'FAIL', f'over the collapse limit {fail_hi:g}'
+                elif b > hi:
+                    lvl, note = 'WARN', f'over the pocket {hi:g} and under the collapse limit {fail_hi:g}'
+                else:
+                    lvl, note = 'PASS', f'inside the pocket [{lo:g}, {hi:g}]'
+                rows.append((lvl, 'witek_groove_curve', f"Scene role '{role}' is a pocket: BSI {b:.2f}/bar is {note}."))
+        return rows
+
     if intent['is_ambient']:
         rows.append(('PASS', 'witek_groove_curve', f"Ambient/free-pulse mode: BSI {bsi:.2f}/bar conforms to meditative profile"))
-    elif bsi < 0.4:
+    elif bsi < lo:
         rows.append(('WARN', 'witek_groove_curve',
-                     f"Dead-on-grid rhythmic predictability: Bar Syncopation Index {bsi:.2f} < 0.4/bar. "
+                     f"Dead-on-grid rhythmic predictability: Bar Syncopation Index {bsi:.2f} < {lo:g}/bar. "
                      "Add syncopated pickups before strong beats to trigger human groove prediction."))
-    elif bsi > 5.5:
+    elif bsi > fail_hi:
         rows.append(('FAIL', 'witek_groove_curve',
-                     f"Metric collapse: excessive syncopation (BSI {bsi:.2f} > 5.5/bar) destroys internal beat prediction model. "
+                     f"Metric collapse: excessive syncopation (BSI {bsi:.2f} > {fail_hi:g}/bar) destroys internal beat prediction model. "
                      "Anchor beats 1 and 3 in bass or kick."))
+    elif bsi > hi:
+        rows.append(('WARN', 'witek_groove_curve',
+                     f"Bar Syncopation Index {bsi:.2f}/bar is above the pocket {hi:g} and under the collapse limit {fail_hi:g}: "
+                     "busier than the role asked for, not yet a collapse. Anchor more accents on the beat."))
     else:
-        rows.append(('PASS', 'witek_groove_curve', f"Optimal human groove zone (BSI {bsi:.2f}/bar in [0.4, 4.8])"))
+        rows.append(('PASS', 'witek_groove_curve', f"Optimal human groove zone (BSI {bsi:.2f}/bar in [{lo:g}, {hi:g}])"))
 
     return rows
 

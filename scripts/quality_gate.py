@@ -766,21 +766,45 @@ def audio_checks(path, score, out, metrics=None, analysis=None):
              f"certified against this format's own ceiling of {_target_ceiling:+.1f} dBTP by delivery.true_peak. "
              f"A fold is a sum of channels, so its peak is not a delivery limit")
     mono = x.mean(axis=1) if x.ndim == 2 else x
-    # silent gap: a run of 1 s or more under -60 dBFS, away from the start and end
-    win = int(0.25 * sr)
-    n = len(mono) // win
-    rms_db = 10 * np.log10(np.mean(mono[:n * win].reshape(n, win) ** 2, axis=1) + 1e-12)
-    quiet = rms_db < -60
+    # silent gap: a run of `min_gap_s` or more under `floor_dbfs`, away from the start and end. The thresholds are the
+    # row's (the module used 1 s and -60 dBFS); a rest the direction sheet declared is not a hole - the gap is reported
+    # and not failed, which is the half that let a scene ask for silence at all.
+    import gate_profiles as _gp
+    import scene_timeline as _st
+    gp = _gp.resolve(score)
+    try:
+        tl = _st.load(score, gp)
+    except Exception:
+        tl = None
+    rests = list(tl.rests) if tl is not None else []
+    min_gap = float(gp.param('silence', 'min_gap_s'))
+    floor_db = float(gp.param('silence', 'floor_dbfs'))
+    margin_s = float(gp.param('silence', 'inner_margin_s'))
+    win_n = int(0.25 * sr)
+    n = len(mono) // win_n
+    rms_db = 10 * np.log10(np.mean(mono[:n * win_n].reshape(n, win_n) ** 2, axis=1) + 1e-12)
+    quiet = rms_db < floor_db
+    need = max(1, int(round(min_gap / 0.25)))
     run, gaps = 0, []
     for i, q in enumerate(quiet):
         run = run + 1 if q else 0
-        if run == 4:                                   # 1 s of quiet
-            gaps.append(i * 0.25)
-    inner = [g for g in gaps if 2.0 < g < r['dur'] - 2.0]
-    if inner:
-        _row(out, 'FAIL', 'silence', f'silent gap of 1 s or more at {", ".join(f"{g:.1f}s" for g in inner[:4])}')
+        if run == need:
+            gaps.append((i - need + 1) * 0.25)
+    holes, declared = [], []
+    for g in gaps:
+        if tl is not None and rests and (tl.is_rest(g) or tl.is_rest(g + min_gap)):
+            declared.append(g)
+        elif margin_s < g < r['dur'] - margin_s:
+            holes.append(g)
+    if holes:
+        _row(out, 'FAIL', 'silence', f'silent gap of {min_gap:g} s or more at {", ".join(f"{g:.1f}s" for g in holes[:4])} '
+                                    f'(under {floor_db:g} dBFS)')
+    elif declared:
+        _row(out, 'PASS', 'silence',
+             f'{len(declared)} gap(s) of {min_gap:g} s or more at {", ".join(f"{g:.1f}s" for g in declared[:4])} are rests the '
+             f'direction sheet declared, so they are not holes')
     else:
-        _row(out, 'PASS', 'silence', 'no silent gap in the middle of the piece')
+        _row(out, 'PASS', 'silence', f'no silent gap of {min_gap:g} s or more in the middle of the piece')
     clicks = find_clicks(mono)
     gate_clicks = gc.check_clicks(GateAudio(path, y=x, sr=sr))
     # A click can live in one channel of a multichannel master and vanish in the fold-down: measured, a +0.6 FS
@@ -820,8 +844,6 @@ def audio_checks(path, score, out, metrics=None, analysis=None):
                             value=float(r['true_peak']), unit='dBTP', threshold=float(tp_target),
                             margin=float(r['true_peak'] - tp_target), worst_times_s=[], calibrated=True,
                             detail=f'{r["true_peak"]:.2f} dBTP vs ceiling {tp_target}'))
-    import gate_profiles
-    gp = gate_profiles.resolve(score)
     if gp.on('natural.aliasing'):
         # the sampler resamples with linear interpolation; a note transposed up leaves images up there, and a
         # real instrument has little energy above 15 kHz unless it is a cymbal. Measured on the delivered master.
@@ -1052,6 +1074,13 @@ def masking_rows(stems, score, sr=44100, out=None):
     if not gp.on('masking.vs_melody'):
         return rows                                        # listed once, with its reason, by the profile notes
     margin_db = gp.param('masking.vs_melody', 'margin_db')
+    max_collisions = int(gp.param('masking.vs_melody', 'max_collisions'))
+    margin_tight = float(gp.param('masking.vs_melody', 'margin_db_tight'))
+    try:
+        import scene_timeline
+        _tl_m = scene_timeline.load(score, gp)
+    except Exception:
+        _tl_m = None
     if mixer.STATE.get('processed'):                       # measure the mix as played: after the EQ and the carve
         stems = mixer.STATE['processed']
     roles = {t['name']: t.get('role') for t in score['tracks']}
@@ -1133,6 +1162,9 @@ def masking_rows(stems, score, sr=44100, out=None):
                         pan_diff = abs(l_pan - b_pan)
                         delta_bmld = min(3.5, 3.5 * pan_diff)
                         effective_margin = margin_db - delta_bmld
+                        if (_tl_m is not None and _tl_m.dialogue_windows
+                                and _tl_m.in_windows(i * MASK_WIN_S, _tl_m.dialogue_windows)):
+                            effective_margin -= margin_tight      # a voice speaks here: the figure needs more room
                         if bd[i] > ld[i] - effective_margin:
                             congested.append((i * MASK_WIN_S, ln, bn, fc, round(bd[i] - (ld[i] - effective_margin), 1)))
 
@@ -1140,10 +1172,12 @@ def masking_rows(stems, score, sr=44100, out=None):
         t0, ln, bn, fc, ov = congested[0]
         stems_hit = sorted(set(c[2] for c in congested))
         fcs_hit = sorted(set(c[3] for c in congested))
-        lvl = 'FAIL' if len(congested) > 8 else 'WARN'
+        lvl = 'FAIL' if len(congested) > max_collisions else 'WARN'
+        dlg = (f"; the margin tightened by {margin_tight:g} dB inside the dialogue window(s) the sheet declares"
+               if (_tl_m is not None and _tl_m.dialogue_windows and margin_tight) else '')
         rows.append((lvl, 'erb_binaural_masking',
                      f"{len(congested)} ERB critical-band collision window(s) where lead ({ln}) is masked by {', '.join(stems_hit)} "
-                     f"around {', '.join(f'{f}Hz' for f in fcs_hit[:3])}, first at {t0:.1f}s. "
+                     f"around {', '.join(f'{f}Hz' for f in fcs_hit[:3])}, first at {t0:.1f}s (limit {max_collisions}){dlg}. "
                      f"Apply a narrow parametric EQ notch at {fc}Hz or increase stereo azimuth separation (spatial.azimuth)."))
     elif compared == 0:
         rows.append(('INFO', 'erb_binaural_masking',
@@ -1151,6 +1185,27 @@ def masking_rows(stems, score, sr=44100, out=None):
                      'A row that could not run is not a pass.'))
     else:
         rows.append(('PASS', 'erb_binaural_masking', 'Lead vocal/melody has clear auditory separation across all 8 ERB critical bands (250-4000 Hz)'))
+
+    # The scene row that reads this measurement (the profile asked where a voice sits): how much of the speech time the
+    # figure spent colliding. Emitted here because this is where the collisions are measured; recomputing the ERB bands
+    # in scene_gate.py would be a second estimator of the same figure.
+    if _tl_m is not None and _tl_m.dialogue_windows:
+        dlg_wins = [(a, b) for a, b in _tl_m.dialogue_windows if b - a >= MASK_WIN_S]
+        n_dlg = sum(max(1, int((b - a) // MASK_WIN_S)) for a, b in dlg_wins)
+        if not n_dlg:
+            rows.append(('INFO', 'scene.dialogue_mask',
+                         f'not measured: every declared dialogue window is shorter than one {MASK_WIN_S:g} s analysis window'))
+        else:
+            share_limit = float(gp.param('scene.dialogue_mask', 'max_fail_share'))
+            hit = [c for c in congested if _tl_m.in_windows(c[0], dlg_wins)]
+            share = len(hit) / float(n_dlg)
+            detail = (f'{len(hit)} of {n_dlg} analysis window(s) inside the declared dialogue collide at the tight margin '
+                      f'(share {share:.0%}, limit {share_limit:.0%})')
+            if share > share_limit:
+                rows.append(('FAIL', 'scene.dialogue_mask',
+                             detail + '; the figure is drowning the voice: notch it, pan it away or thin it while the voice speaks'))
+            else:
+                rows.append(('PASS', 'scene.dialogue_mask', detail))
 
     if out is not None:
         out.extend(rows)
@@ -1178,6 +1233,12 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
     rows = []
     import gate_profiles
     gp = gate_profiles.resolve(score)               # pump_db belongs to the piece's type, not to this function
+    try:                                            # a declared rest is a rest, not a dropout - and not a pump either
+        import scene_timeline as _st
+        _tl = _st.load(score, gp)
+    except Exception:
+        _tl = None
+    _rests = list(_tl.rests) if _tl is not None else []
     env_tracks = [t['name'] for t in score.get('tracks', [])
                   if t.get('role') == 'environment' or str(t.get('instrument', '')).startswith('env:')]
     if not env_tracks:
@@ -1244,7 +1305,8 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
                                      f'between silent gaps (steady-bed dropout and pumping tests do not apply)'))
                     continue
                 # A. Dropout check: no block in the active musical section should drop to the silent floor (relative to the mix, see above)
-                dropouts = np.where(body_db < floor_db)[0]
+                dropouts = [int(i) for i in np.where(body_db < floor_db)[0]
+                            if not (_tl is not None and _rests and _tl.is_rest((idx_start + i) * 0.5))]
                 if len(dropouts) > 0:
                     t_drop = (idx_start + dropouts[0]) * 0.5
                     rows.append(('FAIL', 'ambient_bed', f'ambient stem "{name}" drops out to silence at {t_drop:.1f}s'))
@@ -1260,6 +1322,10 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
                 except Exception:
                     measure_db = body_db
                 diffs = np.abs(np.diff(measure_db))
+                if _tl is not None and _rests:          # a block either side of a declared rest is not a pump
+                    for _i in range(len(diffs)):
+                        if _tl.is_rest((idx_start + _i) * 0.5) or _tl.is_rest((idx_start + _i + 1) * 0.5):
+                            diffs[_i] = 0.0
                 max_diff = float(np.max(diffs)) if len(diffs) else 0.0
                 slope_db_s = 0.0
                 dyn = score.get('dynamics') or []
@@ -1275,7 +1341,7 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
                                 slope_db_s = max(slope_db_s, abs(20 * np.log10(v1 / v0)) / max(1e-6, float(_secs(b1)) - float(_secs(b0))))
                     except (TypeError, ValueError):
                         slope_db_s = 0.0
-                pump_limit = gp.param('ambient_bed', 'pump_db') + 0.5 * slope_db_s
+                pump_limit = gp.param('ambient_bed', 'pump_db') + float(gp.param('ambient_bed', 'slope_allowance')) * slope_db_s
                 if max_diff > pump_limit:
                     i_max = int(np.argmax(diffs))
                     t_pump = (idx_start + i_max) * 0.5
@@ -2131,6 +2197,9 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mo
         chroma_concordance_rows(score, rendered, stems, out=out)
         kick_grid_rows(score, stems, out=out)
         soul_rows(score, out)
+        import scene_gate                                # the rows a profile's `scene` block asks for; none otherwise
+        _timed('scene', lambda: scene_gate.rows(score, path=rendered, stems=stems, out=out,
+                                                project_dir=project_dir))
         if stems is None:
             out.append(('INFO', 'stem_rows', 'stem rows not measured: no stems were given or rendered, so balance, '
                                              'spatial separation, equal loudness, kick grid, chroma, masking and flutter '

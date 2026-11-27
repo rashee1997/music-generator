@@ -1,0 +1,32 @@
+{
+  "name": "expressive_acoustic",
+  "character": "a solo or small acoustic performance where rubato, portamento and an unresolved appoggiatura are the expression: the contour and resolution rows still measure, and their verdict is a warning rather than a failed certification",
+  "extends": "melodic",
+  "_source": "docs/DYNAMIC-GATE-PLAN.md P2; the role keys and their ranges are references/data/presets/gate/data/scene_roles.json",
+  "scene": {
+    "timeline": {"tolerance_s": 0.5},
+    "roles": {
+      "place": {"arousal_max": 0.45, "waive_ceiling": ["feel.contour", "feel.resolution"]},
+      "build": {"huron_resolution_gravity": "RELAX"},
+      "peak": {"arousal_min": 0.6, "surprise_min_z": 1.0, "roughness_min_frac": 0.5,
+               "waive_ceiling": ["roughness", "feel.contour", "feel.resolution"],
+               "huron_resolution_gravity": "RELAX"},
+      "release": {"strain_drop_min": 0.15, "huron_resolution_gravity": "ENFORCE"},
+      "button": {"arousal_max": 0.45, "huron_resolution_gravity": "RELAX"}
+    }
+  },
+  "rows": {
+    "feel.contour": {
+      "mode": "relax",
+      "reason": "measured on western_ghats_sunrise: bansuri 89% stepwise, violins_counter 86%, pipes 72%, every figure line above the 45% floor. The row is relaxed, not loosened: the 0.45 floor and the 0.25 fail floor stay where the corpus put them, and a line that falls under them is reported as a warning because a solo acoustic take adds appoggiaturas and portamento that a note-event contour reads as leaps - the player's slide up to a grace note is not a melodic leap"
+    },
+    "feel.resolution": {
+      "mode": "relax",
+      "reason": "measured on indo_afro_sunrise: bansuri resolves all 24 of its tension notes under the piece's own gravity, so a line here that leaves a tension open is a choice, not a defect; on night_pursuit_cinematic the same rule leaves 8 of the horns' tension notes open and the cue is right to (the sheet's release is a cut). A warning keeps that visible without failing a performance whose whole idiom is the suspended appoggiatura"
+    },
+    "scene.macro_contrast": {
+      "min_tension_variance": 0.0005,
+      "reason": "same measurement as cinematic_suspense: indo_afro_sunrise 0.144 and western_ghats_sunrise 0.238 against night_pursuit_cinematic 0.00002, so 0.0005 separates a small acoustic set that moves from one that holds a single harmonic state for its whole length"
+    }
+  }
+}

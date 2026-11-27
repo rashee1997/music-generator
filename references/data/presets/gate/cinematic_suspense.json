@@ -1,0 +1,38 @@
+{
+  "name": "cinematic_suspense",
+  "character": "a suspense cue scored to picture: the sheet's own scenes decide where tension, roughness and silence belong, so the climax is judged as a climax and the rest as the rest",
+  "extends": "video_cinematic",
+  "_source": "docs/DYNAMIC-GATE-PLAN.md P2; the role keys and their ranges are references/data/presets/gate/data/scene_roles.json",
+  "scene": {
+    "timeline": {"tolerance_s": 0.5},
+    "roles": {
+      "place": {"arousal_max": 0.45, "waive_ceiling": ["feel.contour"]},
+      "establish": {"bsi_mode": "stillness"},
+      "build": {"huron_resolution_gravity": "RELAX", "strain_slope_min": 0.0, "bsi_mode": "pocket"},
+      "peak": {"arousal_min": 0.6, "surprise_min_z": 1.0, "min_hits": 1, "roughness_min_frac": 0.5,
+               "waive_ceiling": ["roughness", "feel.contour", "feel.resolution"],
+               "bsi_mode": "rupture", "huron_resolution_gravity": "RELAX"},
+      "release": {"strain_drop_min": 0.15, "arousal_max": 0.5, "huron_resolution_gravity": "ENFORCE"},
+      "button": {"arousal_max": 0.45},
+      "rupture": {"bsi_mode": "rupture", "bsi_min": 1.5, "surprise_min_z": 1.0, "allow_intentional_silence": true,
+                  "waive_ceiling": ["roughness", "feel.witek"]}
+    },
+    "dialogue": {"margin_db_tight": 5.0}
+  },
+  "rows": {
+    "scene.macro_contrast": {
+      "min_tension_variance": 0.0005,
+      "reason": "measured on the three certified pieces: night_pursuit_cinematic is a pulse cue whose windowed Chew strain varies 0.00002 (0.004-0.015, one harmonic state for 193 s), while indo_afro_sunrise varies 0.144 and western_ghats_sunrise 0.238. 0.0005 is two orders of magnitude under a piece that actually moves and 25x over the flat cue, so it flags a cue with no harmonic arc without demanding a symphony from a 30 s suspense bed. The default 0.02 would fail every short cue for being short"
+    },
+    "scene.arc_step": {
+      "strain_step_min": 0.02,
+      "reason": "measured on night_pursuit_cinematic: its peak stands +0.010 strain over the build before it (0.005 -> 0.015), and that cue carries its suspense in pulse and register rather than harmony, so the row stays at the default 0.02 and FAILS it honestly rather than lowering the floor until nothing fails. A piece whose build actually climbs passes: indo_afro_sunrise +0.208 (0.796 -> 1.004), western_ghats_sunrise +0.905 (0.800 -> 1.705)"
+    },
+    "scene.release_delta": {
+      "reason": "the default 0.15 is what the measured pieces do: indo_afro_sunrise falls 0.360 from its peak into the resolve (1.004 -> 0.644) and western_ghats_sunrise 0.853 (1.705 -> 0.852), so a release that falls less than a fifth of that is a release in name only. night_pursuit_cinematic falls 0.011 and would fail; its release is a cut, not a resolution, which is a picture-level decision the editor makes and the mix must not fake"
+    },
+    "scene.hit_surprise": {
+      "reason": "1.0 sd of information content inside +-250 ms of a hard hit is below anything this estimator calls surprising (two sd is the usual listening threshold) and the level fallback (1.5 LU) catches the cut-without-a-note case; both stay at the row defaults because no measured hit in the archive was written to fail them"
+    }
+  }
+}

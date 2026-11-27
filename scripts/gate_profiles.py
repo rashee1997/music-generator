@@ -59,7 +59,10 @@ ROWS = {
     'loudness':    dict(meaning='integrated loudness against the target', protected=True),
     'true_peak':   dict(meaning='true peak under the ceiling', protected=True),
     'clipping':    dict(meaning='clipped bends / samples', protected=True),
-    'silence':     dict(meaning='silent gap in the middle', protected=True),
+    # The numbers are the module's old constants, now readable parameters. `silence` stays protected: a declared rest
+    # exempts its window from the *measurement* (the direction sheet's `silence_after_s`), never the threshold.
+    'silence':     dict(meaning='silent gap in the middle', protected=True, params={
+        'min_gap_s': (1.0, 0.5, 3.0), 'floor_dbfs': (-60.0, -80.0, -40.0), 'inner_margin_s': (2.0, 0.0, 10.0)}),
     'clicks':      dict(meaning='single-sample jumps', protected=True),
     # stem gate (scripts/stem_gate.py, before mixing)
     'stem.clicks': dict(meaning='click/impulse on one stem (high-pass MAD + LPC residual)', params={
@@ -124,6 +127,26 @@ ROWS = {
     # so 12 units between two section means is below every measured piece, not a taste threshold.
     'shape.contrast':        dict(meaning='the piece changes level and density between its sections',
                                   params={'min_vel_spread': (12.0, 4.0, 30.0), 'min_density_ratio': (1.6, 1.0, 4.0)}),
+    # The scene rows (scripts/scene_gate.py). Emitted only when a profile declares a `scene` block, so a piece that has
+    # not declared scenes is judged exactly as it was. Every floor is a parameter here: a project sets it in `rows` with
+    # a range and a reason, one figure, one home. Adjusting any of them IS loosening a threshold and needs the same
+    # measured evidence as the rest (`tests/test_gate_no_loosening.py` snapshots them).
+    'scene.arc_step':        dict(meaning='a peak stands measurably above the build that set it up', params={
+        'arousal_step_min': (0.15, 0.00, 0.80), 'strain_step_min': (0.02, 0.00, 0.50)}),
+    'scene.hit_surprise':    dict(meaning='a hard hit point has a surprise on it', params={
+        'surprise_min_z': (1.0, 0.0, 3.0), 'min_hits': (1, 0, 16), 'hit_window_ms': (250, 50, 1000),
+        'delta_min_db': (1.5, 0.0, 12.0)}),
+    'scene.release_delta':   dict(meaning='the tension actually comes down into the release', params={
+        'strain_drop_min': (0.15, 0.00, 1.00), 'arousal_drop_min': (0.10, 0.00, 1.00)}),
+    'scene.dialogue_mask':   dict(meaning='the figure keeps its ERB margin while a voice speaks', params={
+        'margin_db_tight': (5.0, 0.0, 12.0), 'max_fail_share': (0.20, 0.00, 1.00)}),
+    'scene.silence_honoured': dict(meaning='a declared rest really is silent', params={
+        'max_dbfs': (-50.0, -90.0, -20.0), 'min_s': (0.30, 0.00, 5.00)}),
+    'scene.bed_stability':   dict(meaning='the beds rest where the sheet says silence', params={
+        'max_dbfs': (-50.0, -90.0, -20.0), 'min_s': (0.30, 0.00, 5.00)}),
+    'scene.macro_contrast':  dict(meaning='the piece has a dynamic range, a tension variance and a roughness contrast', params={
+        'min_dynamic_range_lu': (6.0, 0.0, 30.0), 'min_tension_variance': (0.02, 0.0, 0.50),
+        'min_roughness_contrast_db': (3.0, 0.0, 20.0), 'min_sections': (2, 1, 12), 'force': (False,)}),
     # audio / mix
     # `model` switches the estimator: 'legacy' is the original Plomp-Levelt/Sethares pair weight with per-frame
     # normalisation; 'level_aware' adds absolute partial level, simultaneous masking and the Vassilakis amplitude
@@ -133,13 +156,19 @@ ROWS = {
         'scale': (1.0, 0.5, 2.0),
         'outro_resolve': (True,),
         'model': ('legacy', 'level_aware'),
-        'median': (0.024, 0.02, 0.40),                    # calibrated on tests/fixtures/roughness, not on a cue
+        # the calibrated median threshold (adaptive frames, below). A scene role's `roughness_min_frac` is the OTHER
+        # figure: the share of a window's frames at or above this value, 0..1. Keeping the two names apart keeps a
+        # profile from writing 0.5 into a 0.02..0.40 threshold.
+        'median_min': (0.024, 0.02, 0.40),                 # calibrated on tests/fixtures/roughness, not on a cue
         'calib_spl_db': (70.0, 60.0, 80.0),              # Zwicker & Fastl measure roughness at 60-70 dB SPL
         'mask_band_bark': (1.0, 0.5, 3.0),               # Daniel & Weber use 1-Bark filters
         'mask_slope_up_db_bark': (10.5, 5.0, 20.0),      # measured upper masking slope, 64-70 dB near 450 Hz
         'mask_slope_down_db_bark': (27.0, 15.0, 40.0),   # Daniel & Weber lower slope, -27 dB/Bark
     }, no_skip=True),
-    'ambient_bed':           dict(meaning='an ambient bed that drops out or pumps', params={'pump_db': (3.8, 3.0, 6.0)}, no_skip=True),
+    # `slope_allowance` is how much of the score's own dB/s arc a bed may follow before a jump is pumping (0.5 was the
+    # constant). A declared rest window is not a dropout: the row reads the sheet, not just the stem.
+    'ambient_bed':           dict(meaning='an ambient bed that drops out or pumps',
+                                  params={'pump_db': (3.8, 3.0, 6.0), 'slope_allowance': (0.5, 0.0, 2.0)}, no_skip=True),
     'modulation_flutter':    dict(meaning='6-25 Hz amplitude flutter in a sustained part', params={'warn': (0.18, 0.10, 0.30)}, no_skip=True),
     # score checks (pattern_audit.acoustic_checks). No numbers to retune, but a type of music may legitimately have them:
     # an ambient piece has no chord voicing, an effects piece has no notes, a percussion-only loop has no "flam".
@@ -163,7 +192,11 @@ ROWS = {
     'intent.avoid':          dict(meaning='the gesture the piece said it would avoid does not happen in the score'),
     'balance.layers':        dict(meaning='each layer against the median layer (no lead needed)',
                                   params={'warn_db': (9.0, 4.0, 18.0), 'fail_db': (15.0, 8.0, 24.0)}),
-    'masking.vs_melody':     dict(meaning='ERB-band masking of the melody by beds', params={'margin_db': (3.0, 1.0, 6.0)}),
+    # `max_collisions` is the count this row has always failed at; `margin_db_tight` is how far it tightens inside a
+    # dialogue window the sheet declares (0 = no tightening, so a piece without dialogue is judged as before).
+    'masking.vs_melody':     dict(meaning='ERB-band masking of the melody by beds',
+                                  params={'margin_db': (3.0, 1.0, 6.0), 'max_collisions': (8, 1, 200),
+                                          'margin_db_tight': (0.0, 0.0, 12.0)}),
     'spatial.z_separation':  dict(meaning='parts that fight for the same midrange share one place in the climax (azimuth + elevation)',
                                   params={'overlap_min': (0.5, 0.2, 0.9), 'min_sep_deg': (25.0, 5.0, 90.0), 'min_elev_deg': (15.0, 0.0, 45.0)}),
     'spectral.equal_loudness': dict(meaning='2.5-5 kHz sits far louder than the mids once ear sensitivity is weighted',
@@ -261,9 +294,19 @@ ROWS = {
     'vocal.spatial':      dict(meaning='the voice mix keeps binaural cues: L/R correlation and the mono sum',
                                params={'max_stereo_corr': (0.98, 0.8, 1.0), 'min_mono_db': (-3.0, -9.0, 0.0)}),
     # cognitive feel checks (pattern_audit.cognitive_feel_checks); modes apply/skip, relaxing is by the profile's flags
-    'feel.contour':    dict(meaning='melodic arch / gap-fill'),
-    'feel.resolution': dict(meaning='harmonic tension to resolution'),
-    'feel.groove':     dict(meaning='groove pocket lock'),
+    # Every number here was a constant in pattern_audit; the defaults are those constants, so a profile that says
+    # nothing is judged exactly as before. A range that reached the "off" value (a step share of 0, an unresolved
+    # share of 1) is not in the tuples: a type of music says what its line is, it does not switch the rule off.
+    'feel.contour':    dict(meaning='melodic arch / gap-fill', params={
+        'min_notes': (8, 4, 32), 'step_max_semitones': (3.2, 2.0, 5.0), 'step_frac': (0.45, 0.20, 0.70),
+        'step_frac_fail': (0.25, 0.05, 0.50), 'leap_semis': (4.8, 3.0, 8.0), 'gap_recover_semis': (3.8, 2.0, 6.0),
+        'gap_fill_max': (0.50, 0.20, 0.90), 'flip_frac': (0.85, 0.60, 0.99),
+        'zigzag_max': (0.75, 0.50, 0.99), 'zigzag_step_frac': (0.30, 0.05, 0.60)}),
+    'feel.resolution': dict(meaning='harmonic tension to resolution', params={
+        'min_tension_notes': (3, 2, 10), 'max_unresolved_share': (0.40, 0.10, 0.80),
+        'resolve_step_semitones': (2.2, 1.0, 4.0), 'resolve_leap_semitones': (4.2, 2.0, 7.0)}),
+    'feel.groove':     dict(meaning='groove pocket lock', params={
+        'min_bars': (4, 2, 16), 'min_pocket_corr': (0.30, 0.05, 0.70)}),
     # Immersive 2.0 (quality_gate.immersive2_rows, fold_rows). Starting values, not calibrated on a corpus yet.
     'imm.iacc_early':    dict(meaning='room probe, first 80 ms: interaural correlation over the 500-2000 Hz octaves',
                               params={'max_iacc': (0.97, 0.3, 1.0)}),
@@ -402,8 +445,17 @@ ROWS = {
     }),
     'render.finite':     dict(meaning='no NaN or infinite sample in any delivered channel', protected=True),
     'feel.effort':     dict(meaning='kinematic effort / respiration'),
-    'feel.spiral':     dict(meaning='tonal tension arc'),
-    'feel.witek':      dict(meaning='groove pleasure curve'),
+    'feel.spiral':     dict(meaning='tonal tension arc', params={
+        'static_momentum': (0.05, 0.0, 0.30), 'teleport_momentum': (1.45, 0.80, 3.0),
+        'outro_strain_max': (0.50, 0.20, 1.00), 'outro_percentile': (30, 5, 50),
+        'concordance_min_rho': (-0.35, -0.80, 0.0)}),
+    # bsi_hi is the top of the pocket, bsi_fail_hi the collapse limit: the row used to pass everything up to 5.5 while
+    # telling the reader it was inside [lo, hi]. Between the two it now warns, which changes no certified verdict
+    # except a piece that was between 4.8 and 5.5 and reading a PASS it had not earned.
+    'feel.witek':      dict(meaning='groove pleasure curve', params={
+        'bsi_lo': (0.4, 0.0, 2.0), 'bsi_hi': (4.8, 2.0, 8.0), 'bsi_fail_hi': (5.5, 4.0, 9.0),
+        'bsi_mode': ('pocket', 'pocket', 'stillness', 'rupture'),
+        'bsi_still_max': (0.15, 0.0, 0.60), 'bsi_rupture_min': (5.5, 3.0, 9.0)}),
     'feel.entropy':    dict(meaning='melodic information content of a line (PPM model, scripts/expectation.py): not a loop, not a random walk',
                             params={'min_bits': (1.15, 0.5, 2.0), 'max_bits': (4.4, 3.5, 4.6)}),
     'expr.ic_profile': dict(meaning='information content and uncertainty of each melodic line, per bar (reported)'),
@@ -562,6 +614,138 @@ def expression_problems(expr, where):
     return problems
 
 
+# ---------- the scene block ----------
+# A profile may point at the piece's own timeline (`"scene": {...}`). The roles and the range of every figure live in
+# references/data/presets/gate/scene_roles.json, not here: the contract is data, and a role the file does not list is an
+# error rather than a silent 'place'. scripts/scene_timeline.py reads the windows; scene_gate.py judges them.
+SCENE_KEYS = ('timeline', 'roles', 'dialogue')
+SCENE_PATH = os.path.join(os.path.dirname(HERE), 'references', 'data', 'presets', 'gate', 'data', 'scene_roles.json')
+
+
+def scene_contract():
+    """The role/key contract: roles, their allowed keys, required keys, and the range of every figure."""
+    with open(SCENE_PATH, encoding='utf-8') as f:
+        return json.load(f)
+
+
+def _scene_num(key, spec, v, where):
+    """Range/type problems for one scene figure, [] when it is usable. Ranges come from the contract file."""
+    typ = spec.get('type', 'number')
+    if typ == 'bool':
+        return [] if isinstance(v, bool) else [f'{where}: {key} must be true or false']
+    if typ == 'enum':
+        return [] if v in spec.get('values', ()) else [f'{where}: {key} must be one of {list(spec.get("values", ()))}, not {v!r}']
+    if typ == 'rows':
+        bad = []
+        if not isinstance(v, list) or not v:
+            return [f'{where}: {key} must be a non-empty list of gate row ids']
+        for rid in v:
+            if canonical(rid) not in ROWS:
+                bad.append(f'{where}: {key} names "{rid}", which is not a gate row')
+        return bad
+    if isinstance(v, bool) or not isinstance(v, (int, float)):
+        return [f'{where}: {key} must be a number, not {v!r}']
+    lo, hi = (spec.get('range') or [None, None])
+    if lo is not None and not (lo <= float(v) <= hi):
+        return [f'{where}: {key} = {v} is outside {lo:g}..{hi:g}']
+    if typ == 'integer' and float(v) != int(v):
+        return [f'{where}: {key} must be an integer, not {v!r}']
+    return []
+
+
+def scene_problems(scene, where):
+    """Problems in a profile's `scene` block; [] when it is usable or absent.
+
+    The block is how a piece says what its scenes are: which window is a peak, what a build may not do, where the sheet
+    says silence. It cannot be half-written - an unknown role, a key a role may not state, a role missing the rule type
+    its kind requires, or a figure outside its range is a failure (`scene.preset`), never a default.
+    """
+    if scene is None:
+        return []
+    if not isinstance(scene, dict):
+        return [f'{where}: "scene" must be an object ({', '.join(SCENE_KEYS)})']
+    try:
+        doc = scene_contract()
+    except (OSError, ValueError) as exc:
+        return [f'{where}: scene_roles.json cannot be read ({exc})']
+    keys, roles = doc.get('keys') or {}, doc.get('roles') or {}
+    problems = []
+    for k in scene:
+        if k not in SCENE_KEYS + ('_source',):
+            problems.append(f'{where}: scene has unknown key "{k}" (known: {", ".join(SCENE_KEYS)})')
+    tl = scene.get('timeline')
+    if tl is not None:
+        if not isinstance(tl, dict):
+            problems.append(f'{where}: scene.timeline must be an object')
+        else:
+            for k in tl:
+                if k not in ('sheet', '_source', 'roles_from_sections', 'tolerance_s'):
+                    problems.append(f'{where}: scene.timeline has unknown key "{k}" (sheet, roles_from_sections, tolerance_s)')
+            if tl.get('sheet') is not None and not isinstance(tl['sheet'], str):
+                problems.append(f'{where}: scene.timeline.sheet must be a path relative to the project')
+            for k in ('roles_from_sections', 'tolerance_s'):
+                if k in tl:
+                    problems += _scene_num(k, doc['timeline'][k], tl[k], f'{where}: scene.timeline')
+    role_map = scene.get('roles')
+    if role_map is not None:
+        if not isinstance(role_map, dict):
+            problems.append(f'{where}: scene.roles must be an object {role: {...}}')
+        else:
+            for role, cfg in role_map.items():
+                rk = str(role).strip().lower()
+                if rk not in roles:
+                    problems.append(f'{where}: scene.roles names "{role}", which is not a scene role. '
+                                    f'Known: {", ".join(sorted(roles))}')
+                    continue
+                if not isinstance(cfg, dict):
+                    problems.append(f'{where}: scene.roles.{role} must be an object')
+                    continue
+                rule = roles[rk]
+                allowed = rule.get('allowed') or []
+                for k in cfg:
+                    if k == '_source':
+                        continue
+                    if k not in allowed:
+                        problems.append(f'{where}: scene.roles.{role} may not state "{k}" '
+                                        f'(allowed: {", ".join(allowed)})')
+                    elif k in keys:
+                        problems += _scene_num(f'scene.roles.{role}.{k}', keys[k], cfg[k], where)
+                    else:
+                        problems.append(f'{where}: scene.roles.{role}.{k} has no contract entry in scene_roles.json')
+                for k in rule.get('required') or []:
+                    if k not in cfg:
+                        problems.append(f'{where}: scene.roles.{role} must state "{k}" (a {rule.get("kind", "scene")} '
+                                        f'role without it is a word, not a rule)')
+    dlg = scene.get('dialogue')
+    if dlg is not None:
+        if not isinstance(dlg, dict):
+            problems.append(f'{where}: scene.dialogue must be an object')
+        else:
+            contract_d = doc.get('dialogue') or {}
+            for k, v in dlg.items():
+                if k in ('_source', 'windows'):
+                    continue
+                spec = contract_d.get(k)
+                if spec is None:
+                    problems.append(f'{where}: scene.dialogue has unknown key "{k}" '
+                                    f'(known: windows, {", ".join(sorted(contract_d))})')
+                else:
+                    problems += _scene_num(f'scene.dialogue.{k}', spec, v, where)
+            for row in dlg.get('windows') or []:
+                try:
+                    a, b = float(row[0]), float(row[1])
+                except (TypeError, ValueError, IndexError):
+                    problems.append(f'{where}: scene.dialogue.windows entries must be [start_s, end_s]')
+                    break
+                if b <= a:
+                    problems.append(f'{where}: scene.dialogue.windows has {row} with end before start')
+                    break
+    if not role_map:
+        problems.append(f'{where}: scene is declared but names no role: it would judge nothing. The whole-piece contrast '
+                        f'floors are the scene.macro_contrast row parameters, set in "rows"')
+    return problems
+
+
 def _check_range(row, name, val, problems, where):
     spec = _pspec(row, name)
     if spec is None:
@@ -676,6 +860,7 @@ def profile_problems(name, p, all_profiles):
             problems.append(f'{where}: trait {k} must be {TRAITS[k][0]}..{TRAITS[k][1]}')
     problems += row_problems(p.get('rows', {}), where)
     problems += expression_problems(p.get('expression'), where)
+    problems += scene_problems(p.get('scene'), where)
     return problems
 
 
@@ -722,16 +907,17 @@ def _chain(name, allp):
 
 
 def _merge_profile(name, allp):
-    flags, rows, focus, expr = set(), {}, {}, {}
+    flags, rows, focus, expr, scene = set(), {}, {}, {}, {}
     for n in _chain(name, allp):
         p = allp[n]
         flags |= set(p.get('flags', []))
         focus = presets._deep_merge(focus, p.get('focus') or {})
         expr = presets._deep_merge(expr, p.get('expression') or {})
+        scene = presets._deep_merge(scene, p.get('scene') or {})
         for rid, cfg in (p.get('rows') or {}).items():
             rid = canonical(rid)            # mode()/param() look rows up by canonical id: store them the same way
             rows[rid] = presets._deep_merge(rows.get(rid, {}), cfg)
-    return flags, rows, focus, expr
+    return flags, rows, focus, expr, scene
 
 
 def _drone_ratio(score):
@@ -776,11 +962,12 @@ def infer(score, allp):
 
 
 class Profile:
-    def __init__(self, names, how, why, flags, rows, errors, focus=None, expression=None):
+    def __init__(self, names, how, why, flags, rows, errors, focus=None, expression=None, scene=None):
         self.names, self.how, self.why = names, how, why
         self.flags, self.rows, self.errors = flags, rows, errors
         self.focus = focus or {}
         self.expression = expression or {}
+        self.scene = scene or {}
 
     def expression_cfg(self):
         """The figures this piece's expression rows are judged with, from the profile's `expression` block.
@@ -952,12 +1139,13 @@ def resolve(score):
             why = '; '.join(f'{n}: {w}' for n, _, w in found)
     if not names:
         names = [DEFAULT_PROFILE] if DEFAULT_PROFILE in allp else []
-    flags, rows, focus, expr = set(), {}, {}, {}
+    flags, rows, focus, expr, scene = set(), {}, {}, {}, {}
     for n in names:
-        f, r, foc, ex = _merge_profile(n, allp)
+        f, r, foc, ex, sc = _merge_profile(n, allp)
         flags |= f
         focus = presets._deep_merge(focus, foc)
         expr = presets._deep_merge(expr, ex)
+        scene = presets._deep_merge(scene, sc)
         for rid, cfg in r.items():
             rows[rid] = presets._deep_merge(rows.get(rid, {}), cfg)
     over = score.get('gate')
@@ -967,7 +1155,7 @@ def resolve(score):
             rid = canonical(rid)
             if rid in ROWS and not ROWS[rid].get('protected'):
                 rows[rid] = presets._deep_merge(rows.get(rid, {}), cfg)
-    return Profile(names, how, why, flags, rows, errors, focus, expr)
+    return Profile(names, how, why, flags, rows, errors, focus, expr, scene)
 
 
 # ---------- command line ----------
@@ -981,7 +1169,7 @@ def cmd_list():
     allp = presets.load('gate')
     for name in sorted(allp):
         p = allp[name]
-        flags, rows, focus, _expr = _merge_profile(name, allp)
+        flags, rows, focus, _expr, _scene = _merge_profile(name, allp)
         print(f'{name}: {p.get("character", "")}   [{p.get("_source")}]')
         if p.get('extends'):
             print(f'  extends {p["extends"]}; flags {sorted(flags) or "-"}')

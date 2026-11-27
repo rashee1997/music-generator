@@ -47,7 +47,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
-TIERS_PATH = os.path.join(os.path.dirname(HERE), 'references', 'data', 'presets', 'gate', 'tiers.json')
+TIERS_PATH = os.path.join(os.path.dirname(HERE), 'references', 'data', 'presets', 'gate', 'data', 'tiers.json')
 TIER_NAMES = ('1', '2', '3')
 REQUIRED = ('name', 'blocks', 'why', 'ids')
 
