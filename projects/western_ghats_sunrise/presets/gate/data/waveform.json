@@ -1,5 +1,5 @@
 {
-  "duration_s": 61.51637188208617,
+  "duration_s": 61.529818594104306,
   "sections": [
     {
       "name": "mist",
@@ -46,7 +46,7 @@
       "PASS"
     ],
     [
-      5.4567,
+      5.4683,
       "stem.tick",
       "violins_long",
       "PASS"
@@ -70,13 +70,25 @@
       "PASS"
     ],
     [
-      34.8176,
+      30.7071,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      40.9212,
+      32.0528,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      45.6994,
+      "clicks",
+      "master",
+      "FAIL"
+    ],
+    [
+      48.7667,
       "clicks",
       "master",
       "FAIL"

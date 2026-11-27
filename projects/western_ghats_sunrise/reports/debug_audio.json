@@ -1,5 +1,5 @@
 {
- "stamp": "20261127T071358",
+ "stamp": "20261127T072305",
  "project": "western_ghats_sunrise",
  "level": "FAIL",
  "sources": {
@@ -17,18 +17,18 @@
   ],
   "stems": "12 processed stems from .cache/mix",
   "master": "out/_draft_western_ghats_sunrise.wav",
-  "verdict": "2026-11-27T07:09:43Z"
+  "verdict": "2026-11-27T07:16:43Z"
  },
  "binding": [
   {
    "row": "clicks",
    "stem": null,
    "level": "FAIL",
-   "value": 2.0,
+   "value": 4.0,
    "threshold": 0.0,
    "unit": "events",
-   "safety": -2.0,
-   "detail": "2 clustered impulse event(s) (MAD), 2 LPC frame(s); 83 event(s) rejected as a dense burst, 48 as a steep attack; max cluster span 1.474 ms"
+   "safety": -4.0,
+   "detail": "4 clustered impulse event(s) (MAD), 0 LPC frame(s); 87 event(s) rejected as a dense burst, 39 as a steep attack; max cluster span 1.383 ms"
   }
  ],
  "advisory": [
@@ -75,14 +75,15 @@
  ],
  "domains": {
   "run": [
-   "master",
-   "stems"
+   "master"
   ],
-  "skipped": {}
+  "skipped": {
+   "stems": 8
+  }
  },
  "model": {
   "first_order": true,
-  "rows": 24,
+  "rows": 8,
   "levers": [
    {
     "id": "render.oversample",
@@ -107,42 +108,30 @@
     "step": 0.5,
     "unit": "dB",
     "text": "tabla high shelf at 5500 Hz: inst_eq[\"ghats_tabla\"]"
-   },
-   {
-    "id": "note.tabla.d",
-    "domain": "stems",
-    "kind": "note_len",
-    "stem": "tabla",
-    "current": 0.2743,
-    "lo": 0.2143,
-    "hi": 0.3343,
-    "step": 0.010416666666666666,
-    "unit": "beats",
-    "text": "tabla written note length (mean 0.2743 beats)"
    }
   ]
  },
  "plan": {
-  "status": "replay",
-  "worst_safety": -2.0,
+  "status": "replay (unproven)",
+  "worst_safety": null,
   "deltas": {
-   "hf.tabla": -12.0
+   "hf.tabla": -9.0
   },
   "clearing": {
-   "hf.tabla": -12.0
+   "hf.tabla": -9.0
   },
   "predicted": {
    "clicks::-": [
-    -2.0,
-    -2.0
+    -4.0,
+    -4.0
    ],
    "loudness::-": [
     0.02,
     0.02
    ],
    "true peak::-": [
-    4.738601554069947e-05,
-    4.738601554069947e-05
+    0.0002494233580594418,
+    0.0002494233580594418
    ],
    "dropout::-": [
     1.0,
@@ -161,54 +150,15 @@
     0.0
    ],
    "master.dc::-": [
-    0.0998703611119445,
-    0.0998703611119445
-   ],
-   "stem.dc::tabla": [
-    0.09981152320087892,
-    0.09981152320087892
-   ],
-   "stem.clipping::tabla": [
-    0.0,
-    0.0
-   ],
-   "stem.clicks::tabla": [
-    0.0,
-    0.0
-   ],
-   "stem.dead::tabla": [
-    2.0,
-    2.0
+    0.09943227935055951,
+    0.09943227935055951
    ]
   },
-  "conflicts": [
-   {
-    "lever": "hf.tabla",
-    "text": "tabla high shelf at 5500 Hz: inst_eq[\"ghats_tabla\"]",
-    "unit": "dB",
-    "feasible": [
-     6.0,
-     0.0
-    ],
-    "bounds": [
-     -12.0,
-     0.0
-    ],
-    "rows": [
-     {
-      "row": "clicks",
-      "needs": 6.0,
-      "safety": -2.0
-     }
-    ],
-    "why": "tabla high shelf at 5500 Hz: inst_eq[\"ghats_tabla\"] cannot satisfy clicks at once: the moves that pass one row fail the other, and the bounds leave no value between"
-   }
-  ],
+  "conflicts": [],
   "closed": [],
   "burned": [],
   "notes": [
-   "no admissible move improves the binding rows: every lever is burned, closed or already optimal",
-   "clearing set read from a replay through the gate's own checker, not from the linear model; the next render is the measurement"
+   "best candidate clears the modelled row with 0 dB of margin but the model's own error is 1.5 dB: this is a direction, not a proof, and the next render is the test (it will be recorded against this prediction)"
   ],
   "experiments": [
    {
@@ -216,69 +166,163 @@
     "key": "clicks::-",
     "kind": "hf_shelf",
     "value": 0,
-    "baseline": 2,
-    "margin_db": 2.0,
+    "baseline": 4,
+    "margin_db": 0.0,
     "unverified": false,
-    "resolution_db": 0.57,
+    "resolution_db": 1.53,
     "moves": {
-     "hf.tabla": -12.0
+     "hf.tabla": -9.0
     },
     "times": [],
     "verdict": "clears",
     "robust": 0.0,
-    "proved": true
+    "proved": false
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 2,
+    "baseline": 4,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.53,
+    "moves": {
+     "hf.tabla": -12.0
+    },
+    "times": [
+     39.221,
+     45.023
+    ],
+    "verdict": "better",
+    "robust": 1.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 3,
+    "baseline": 4,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 1.53,
+    "moves": {
+     "hf.tabla": -6.0
+    },
+    "times": [
+     33.087,
+     34.115,
+     36.836
+    ],
+    "verdict": "better",
+    "robust": 1.0
    }
   ]
  },
  "forensics": [
   {
-   "t": 34.815,
-   "step": 0.06894,
-   "threshold": 0.04762,
-   "over_threshold_db": 3.21,
-   "z": 11.6,
+   "t": 30.7071,
+   "step": 0.10268,
+   "threshold": 0.06466,
+   "over_threshold_db": 4.02,
+   "z": 12.7,
    "kind": "single source",
    "trusted": true,
-   "fit_ratio": 0.97,
+   "fit_ratio": 1.02,
    "owners": [
     {
      "stem": "tabla",
-     "share": 0.944,
-     "signed": -0.06545
+     "share": 0.99,
+     "signed": 0.10384
     }
    ],
-   "raw_step_fs": 0.1104,
+   "raw_step_fs": 0.1072,
    "notes": []
   },
   {
-   "t": 40.9241,
-   "step": 0.09518,
-   "threshold": 0.04762,
-   "over_threshold_db": 6.02,
-   "z": 16.0,
-   "kind": "discontinuity",
+   "t": 32.0555,
+   "step": 0.11412,
+   "threshold": 0.06466,
+   "over_threshold_db": 4.93,
+   "z": 14.1,
+   "kind": "single source",
    "trusted": true,
-   "fit_ratio": 1.06,
+   "fit_ratio": 1.01,
    "owners": [
     {
      "stem": "tabla",
-     "share": 0.919,
-     "signed": -0.09439
+     "share": 0.953,
+     "signed": 0.1157
     }
    ],
-   "raw_step_fs": 0.4258,
+   "raw_step_fs": 0.1224,
+   "notes": [
+    {
+     "track": "tabla",
+     "pitch": "tabla_ge",
+     "velocity": 0.5,
+     "onset_s": 32.0,
+     "after_onset_ms": 55.5,
+     "written_len": 0.4
+    }
+   ]
+  },
+  {
+   "t": 45.6994,
+   "step": 0.10411,
+   "threshold": 0.06466,
+   "over_threshold_db": 4.14,
+   "z": 12.9,
+   "kind": "single source",
+   "trusted": true,
+   "fit_ratio": 0.85,
+   "owners": [
+    {
+     "stem": "tabla",
+     "share": 0.967,
+     "signed": 0.09046
+    }
+   ],
+   "raw_step_fs": 0.1042,
+   "notes": [
+    {
+     "track": "tabla",
+     "pitch": "tabla_na",
+     "velocity": 0.5,
+     "onset_s": 45.5,
+     "after_onset_ms": 199.4,
+     "written_len": 0.3
+    }
+   ]
+  },
+  {
+   "t": 48.7667,
+   "step": 0.09754,
+   "threshold": 0.06466,
+   "over_threshold_db": 3.57,
+   "z": 12.1,
+   "kind": "single source",
+   "trusted": true,
+   "fit_ratio": 1.24,
+   "owners": [
+    {
+     "stem": "tabla",
+     "share": 0.947,
+     "signed": 0.11564
+    }
+   ],
+   "raw_step_fs": 0.1164,
    "notes": []
   }
  ],
  "notes": [
-  "clicks: sham replay (no change) reproduces the gate's 2 event(s) exactly (decomposition R^2 0.963); counterfactuals below are priced on a model that passes its own test",
-  "clicks: model resolution 0.6 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
-  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.96); gains ambience 5.19, bansuri 2.95, celli 1.24, choir 1.22, pipes 0.51, santoor 0.90, sitar 2.11, tabla 2.54, tanpura 1.37, violas 1.58, violins_counter 1.70, violins_long 1.51",
-  "event 34.815s [single source] tabla 94%; step 0.0689 vs threshold 0.0476 (+3.2 dB over)",
-  "event 40.924s [discontinuity] tabla 92%; step 0.0952 vs threshold 0.0476 (+6.0 dB over)",
-  "clicks at 40.924s is a true discontinuity (raw step 0.43 FS): the cause is a sample start or a cut, not a band level; a shelf cannot move it",
-  "tabla: the tightest gap in the score is 136 ms at beat spacing 0.682 s (88 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
-  "tabla: the tightest gap in the score is 136 ms at beat spacing 0.682 s (88 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
-  "risk closure: the levers that move this row belong to tabla, so every row of those stems was loaded as a constraint before the plan was solved"
+  "clicks: sham replay (no change) reproduces the gate's 4 event(s) exactly (decomposition R^2 0.522); counterfactuals below are priced on a model that passes its own test",
+  "clicks: model resolution 1.5 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
+  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.52); gains ambience 2.57, bansuri 3.08, celli 0.34, choir 0.95, pipes 0.51, santoor 1.07, sitar 2.19, tabla 2.60, tanpura 1.38, violas 1.53, violins_counter 1.72, violins_long 1.50",
+  "event 30.707s [single source] tabla 99%; step 0.1027 vs threshold 0.0647 (+4.0 dB over)",
+  "event 32.056s [single source] tabla 95%; step 0.1141 vs threshold 0.0647 (+4.9 dB over); nearest onset tabla ptabla_ge v0.5 +56 ms",
+  "event 45.699s [single source] tabla 97%; step 0.1041 vs threshold 0.0647 (+4.1 dB over); nearest onset tabla ptabla_na v0.5 +199 ms",
+  "event 48.767s [single source] tabla 95%; step 0.0975 vs threshold 0.0647 (+3.6 dB over)",
+  "clicks: cutting the band of tabla is NOT monotone (replay: -9 dB -> 0 event(s), -12 dB -> 2 event(s), -6 dB -> 3 event(s), -3 dB -> 5 event(s) against 4 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient"
  ]
 }

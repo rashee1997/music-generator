@@ -173,7 +173,7 @@
         "Marshall-Palmer drop sizes (scripts/biome/physics.py)",
         "ESTIMATE: a light drip from wet leaves after the night, 0.5-3 mm/h; replace once a recording is measured"
       ],
-      "gain_db": 6.0
+      "gain_db": 0.0
     },
     {
       "name": "stream",

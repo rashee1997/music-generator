@@ -134,7 +134,7 @@
             "breathiness": 0.02
           },
           "technique": {
-            "singer_formant": 0.8
+            "singer_formant": 0.5
           },
           "dynamics": {
             "timbre_follow": 0.7

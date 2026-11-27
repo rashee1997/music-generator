@@ -122,7 +122,7 @@ INSTRUMENTS = [
                     velocity_timbre=dict(points=vel_points(2200), zones=8))),   # no onset ramp: a ramp on a held bed opened a 50 ms hole (stem.dropout, measured)
     inst('tanpura', 'sitar', 'drone', 'plucked',
          'The tanpura drone: the four-string cycle Pa, Sa, Sa, low Sa, plucked softly and left to ring under everything, the anchor of the one key centre.',
-         -11.0, 0.3, [HP(70), PK(300, -2.0, 0.9), LP(6500)],
+         -11.0, 0.3, [HP(70), PK(300, -2.0, 0.9), LP(4000)],
          extra=dict(snap=None, onset_fade_ms=3.0, humanize=dict(preset='natural', timing_ms=10.0, drift_ms=12.0, vel_sigma=4.0))),
     inst('santoor', 'santoor', 'texture', 'struck_pitched',
          'Dew on the leaves: sparse high santoor notes from the five-note scale, soft and bright, scattered over the first light and the morning.',
@@ -151,7 +151,8 @@ def vocal_choir():
              spatial=dict(azimuth=-125, elevation=24, distance=4.5, space=f'{SLUG}_room', binaural=True, kind='spot'),
              vowel='u', expression='hopeful')
     d['ensemble']['voices'] = 12
-    d['peak_trim'] = 0.85                  # the sum of five sections clipped (275 samples at full scale, measured): cap it before the soft limit
+    d['peak_trim'] = 0.85
+    d['ensemble']['layers'][-1]['overrides']['technique']['singer_formant'] = 0.5     # measured clicks near the tutti: a gentler singer's formant                  # the sum of five sections clipped (275 samples at full scale, measured): cap it before the soft limit
     for L in d['ensemble']['layers']:
         L['level_db'] = round(L.get('level_db', 0.0) - 2.0, 2)
     return d
@@ -180,7 +181,7 @@ def environment():
     stream['population']['rate_mm_h'] = 80.0                # ESTIMATE: a brook at 16 m is the steady bed under the birds (measured against the 1 s level steps of the render)
     stream['surface']['area_m2'] = 6.0
     stream['gain_db'] = 20.0                                  # the brook is steady but 24 dB under the wind at these rates (measured), so it is lifted here
-    drip['gain_db'] = 6.0
+    drip['gain_db'] = 0.0
     wind = gens['canopy_wind']
     wind['flow']['u_m_s'] = 3.0
     wind['flow']['intensity'] = 0.08                        # measured: intensity 0.35 gusted 33 dB over 30 s, 0.08 moves 6 dB (ambient_bed pumping)
@@ -380,7 +381,8 @@ def pipes():
         s += bar_notes(first, last, pit(3, SA - 24), v)                                          # A2: a bass drone, clear of the strings' notes above
     # the chanter doubles the hook an octave below the flute in the new key (heterophony), cut by gracenotes: bars 12-13
     sa = SA + 2
-    s += with_grace([x for x in hook(12, 0, 0.6, sa)], sa)
+    canon = [dict(x, t=round(x['t'] + 2.0, 4)) for x in hook(12, 0, 0.6, sa)]                      # two beats behind the flute (a canon, not a unison: the flute's vibrato would beat against a doubled pitch)
+    s += with_grace(canon, sa)
     # the call: a dotted figure of snaps with a gracenote, in the flute's six rests, bars 16-17 (key E: the pipes' B mixolydian is the same E major notes)
     call = [(2.0, 0.75, 3), (2.75, 0.25, 4), (3.0, 0.75, 5), (3.75, 0.25, 4)]
     call2 = [(0.0, 0.75, 3), (0.75, 0.25, 2), (1.0, 1.0, 3), (2.0, 0.75, 1), (2.75, 0.25, 2), (3.0, 1.0, 0)]
@@ -493,7 +495,7 @@ def sitar():
 
 def santoor():
     s = []
-    for bar in list(range(8, 12)) + [19, 20]:
+    for bar in list(range(8, 12)):
         sa = sa_of(bar)
         for k, (b, idx) in enumerate(((0.5, 8 + (bar % 3)), (2.5, 10 + (bar % 2)))):
             s.append(n(bar, b, 1.2, pit(idx, sa), 0.46 + 0.04 * k))
