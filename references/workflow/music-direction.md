@@ -119,7 +119,7 @@ The core targets. `listen.py` reads these directly, so fill them with words and 
 |---|---|
 | `job` | what must the music do, in order of importance? (a list, not a sentence) |
 | `story` | the cue in one sentence, first moment to last |
-| `sections` | the arc in seconds: `name`, `start_s`, `end_s`, `energy`, `action` (picture), `music` (what enters and does what), `role` (`place`, `establish`, `build`, `peak`, `transition`, `button`) |
+| `sections` | the arc in seconds: `name`, `start_s`, `end_s`, `energy`, `action` (picture), `music` (what enters and does what), `role` (`place`, `establish`, `build`, `peak`, `transition`, `button`, and `release`/`resolve` or `rupture` for a cue that resolves or breaks) |
 | `motifs` | the theme plan: `name`, `first_at_s`, `shape` (its few notes), `returns` (where it comes back and how it changed) |
 | `hits` | the same moments as `hits_at`, each with `kind` (`cut`, `motion`, `musical`), `sync` (`hard`, `soft`), `sound`, and `why` - the reason the moment needs an accent |
 | `ending` | how it leaves: `hard_out`, `tail_out`, `combination` |
@@ -300,3 +300,14 @@ failures that make a piece read as generated and the counter for each, the rules
 after the render. A ringtone, alert or loop adds [`short-form-and-ringtones.md`](../scoring/short-form-and-ringtones.md).
 
 Sections 3-8 (cue order, picture moments, adaptive music, revision levers, earshot, delivery): [`music-direction-revision.md`](music-direction-revision.md).
+
+### 2.13 The section `role` is a checked field, not a label
+
+`role` on a section is read by the gate when the piece's profile declares a `scene` block
+(`references/mixing/quality-gate-scenes.md`). It must be one of the roles in
+`references/data/presets/gate/data/scene_roles.json` (`place`, `establish`, `build`, `transition`, `peak`, `release` or
+its spelling `resolve`, `rupture`, `button`); a typo is `scene.preset` FAIL, never a silent default. The role decides
+which of its own windows may waive a whole-piece ceiling (`waive_ceiling`), which band the groove is judged in
+(`bsi_mode`), whether an unresolved tension is allowed (`huron_resolution_gravity`) and where the piece must actually be
+silent. So write the role you mean: a section called `peak` that is quieter than its build is a promise the music
+breaks.

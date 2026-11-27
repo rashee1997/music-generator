@@ -54,425 +54,50 @@ TRAITS = {'drone_ratio_min': (0.0, 1.0)}
 FOCUS_KEYS = ('roles', 'fallback', 'label', 'reason')
 
 # id -> meaning, params {name: (default, lo, hi)}, protected. A bool default means a bool parameter.
-ROWS = {
-    # protected: measured faults no type of music excuses
-    'loudness':    dict(meaning='integrated loudness against the target', protected=True),
-    'true_peak':   dict(meaning='true peak under the ceiling', protected=True),
-    'clipping':    dict(meaning='clipped bends / samples', protected=True),
-    # The numbers are the module's old constants, now readable parameters. `silence` stays protected: a declared rest
-    # exempts its window from the *measurement* (the direction sheet's `silence_after_s`), never the threshold.
-    'silence':     dict(meaning='silent gap in the middle', protected=True, params={
-        'min_gap_s': (1.0, 0.5, 3.0), 'floor_dbfs': (-60.0, -80.0, -40.0), 'inner_margin_s': (2.0, 0.0, 10.0)}),
-    'clicks':      dict(meaning='single-sample jumps', protected=True),
-    # stem gate (scripts/stem_gate.py, before mixing)
-    'stem.clicks': dict(meaning='click/impulse on one stem (high-pass MAD + LPC residual)', params={
-        'mad_z': (8.0, 5.0, 15.0), 'floor_fs': (0.02, 0.005, 0.1),
-        'cluster_gap_ms': (1.5, 0.5, 5.0), 'isolate_ms': (10.0, 5.0, 30.0)}, no_skip=True),
-    'stem.dropout': dict(meaning='a short hole in one stem', params={
-        'min_ms': (20.0, 5.0, 50.0), 'max_ms': (1000.0, 500.0, 2000.0), 'floor_below_db': (45.0, 30.0, 60.0)}),
-    'stem.cut': dict(meaning='a level step with no release at a section boundary or the end', params={
-        'drop_db': (12.0, 8.0, 20.0), 'location_ms': (75.0, 25.0, 200.0)}),
-    'stem.end': dict(meaning='a stem truncated at full level', params={
-        'min_decay_db': (12.0, 8.0, 20.0), 'floor_db': (-45.0, -60.0, -30.0)}),
-    'stem.edge': dict(meaning='a stem starts or stops away from its own score notes', params={
-        'max_silence_ms': (25.0, 5.0, 100.0)}),
-    'stem.tick': dict(meaning='a periodic tick in a stem that should have no beat', params={
-        'rho': (0.35, 0.2, 0.6), 'min_events': (6, 3, 12), 'cv_max': (0.05, 0.01, 0.2),
-        'rise_db': (3.0, 1.5, 8.0)}),
-    'stem.dead': dict(meaning='a part missing/dropped against the score dynamics', params={
-        'under_db': (12.0, 6.0, 24.0), 'floor_db': (-70.0, -80.0, -50.0)}),
-    'stem.clipping': dict(meaning='clipped samples on one stem', protected=True),
-    'stem.dc': dict(meaning='DC offset on one stem', params={'dc_max': (0.001, 0.0005, 0.01)}),
-    'stem.flatness': dict(meaning='a noise burst in a tonal stem', params={
-        'threshold': (0.10, 0.03, 0.4), 'min_ms': (50.0, 20.0, 200.0)}),
-    'stem.vocal': dict(meaning='vocal stem integrity (finite, DC, clicks)'),
-    'stem.present': dict(meaning='every score track with notes has a stem'),
-    'stem.duplicate': dict(meaning='two stems are the same signal', params={'max_corr': (0.999, 0.99, 1.0)}),
-    # master rows added by the mix gate
-    'dropout': dict(meaning='a short hole in the master', params={
-        'min_ms': (20.0, 5.0, 50.0), 'max_ms': (1000.0, 500.0, 2000.0), 'floor_below_db': (45.0, 30.0, 60.0)}),
-    'cut.hard': dict(meaning='a hard cut at a boundary/end in the master', params={
-        'drop_db': (12.0, 8.0, 20.0), 'location_ms': (75.0, 25.0, 200.0)}),
-    'end.abrupt': dict(meaning='the master ends at full level with no release', params={
-        'min_decay_db': (12.0, 8.0, 20.0), 'floor_db': (-45.0, -60.0, -30.0)}),
-    'master.dc': dict(meaning='DC offset on the master', params={'dc_max': (0.001, 0.0005, 0.01)}),
-    # measured delivery, reported rather than judged: no document defines a pass mark for these
-    'master.micro_dynamics': dict(meaning='PLR/PSR/LRA and the 4x/8x true-peak reading (reported)'),
-    'master.mono_bands': dict(meaning='per-band L/R correlation and mono-fold loss (reported)'),
-    'delivery.standard': dict(meaning='the delivered file against the standard its profile declares'),
-    'masking.excess': dict(meaning='the beds level over the figure per critical band (proxy, advisory)'),
-    'tempo.audio': dict(meaning='measured tempo against the score/sheet', params={
-        'tol_bpm': (2.0, 1.0, 5.0), 'tol_pct': (2.0, 1.0, 5.0), 'drift_bpm': (2.0, 1.0, 5.0), 'octave_ok': (0.0, 0.0, 1.0)}),
-    'section.energy': dict(meaning='section level against the promised energy arc', params={
-        'fail_rho': (0.5, 0.3, 0.8), 'warn_rho': (0.7, 0.5, 0.9)}),
-    'channels':    dict(meaning='note started on a channel still sounding', protected=True),
-    # score patterns (pattern_audit.audit)
-    'pattern.drums_few':     dict(meaning='drums play only a few different bars', params={'distinct_div': (8, 2, 32)}),
-    'pattern.loop_short':    dict(meaning='chord/pad/arp/bass/ostinato/texture loops every few bars for the whole piece',
-                                  params={'max_period_bars': (4, 1, 16), 'max_distinct': (4, 1, 16), 'min_bars': (16, 8, 64),
-                                          'min_distinct_frac': (0.15, 0.0, 0.60)}),
-    'pattern.melody_notes':  dict(meaning='melody: few note lengths, on-grid starts, repeated pitches',
-                                  params={'min_lengths': (3, 1, 6), 'on_beat_max': (0.9, 0.5, 1.0), 'repeat_max': (0.35, 0.2, 0.8)}),
-    'pattern.bass_pitches':  dict(meaning='bass uses very few pitch classes', params={'max_classes': (3, 1, 6)}),
-    'pattern.velocity_flat': dict(meaning='velocity barely moves', params={'sd_frac': (0.15, 0.02, 0.35)}),
-    'pattern.flat_dynamics': dict(meaning='whole piece stays in a narrow dynamic range', params={'min_range_frac': (0.25, 0.05, 0.25)}),
-    'pattern.four_on_floor': dict(meaning='a kick on every beat and nothing else'),
-    'pattern.flags_max':     dict(meaning='how many pattern flags make a FAIL', params={'max': (3, 1, 12)}, no_skip=True),
-    'pattern.track_flags_max': dict(meaning='how many pattern flags one part may carry on its own: one part that loops for '
-                                    'the whole piece is heard as a loop even when every other part varies',
-                                    params={'max': (2, 1, 6)}),
-    # The one positive score row. Every other score row asks whether a part repeats; this one asks whether the
-    # sections differ from each other at all, which is the arc a repetition count cannot see. The spread is in
-    # MIDI velocity units: the ASAP corpus measured 5-95 percentile ranges of 36.7 (Baroque) and 53.8 (Romantic),
-    # so 12 units between two section means is below every measured piece, not a taste threshold.
-    'shape.contrast':        dict(meaning='the piece changes level and density between its sections',
-                                  params={'min_vel_spread': (12.0, 4.0, 30.0), 'min_density_ratio': (1.6, 1.0, 4.0)}),
-    # The scene rows (scripts/scene_gate.py). Emitted only when a profile declares a `scene` block, so a piece that has
-    # not declared scenes is judged exactly as it was. Every floor is a parameter here: a project sets it in `rows` with
-    # a range and a reason, one figure, one home. Adjusting any of them IS loosening a threshold and needs the same
-    # measured evidence as the rest (`tests/test_gate_no_loosening.py` snapshots them).
-    'scene.arc_step':        dict(meaning='a peak stands measurably above the build that set it up', params={
-        'arousal_step_min': (0.15, 0.00, 0.80), 'strain_step_min': (0.02, 0.00, 0.50)}),
-    'scene.hit_surprise':    dict(meaning='a hard hit point has a surprise on it', params={
-        'surprise_min_z': (1.0, 0.0, 3.0), 'min_hits': (1, 0, 16), 'hit_window_ms': (250, 50, 1000),
-        'delta_min_db': (1.5, 0.0, 12.0)}),
-    'scene.release_delta':   dict(meaning='the tension actually comes down into the release', params={
-        'strain_drop_min': (0.15, 0.00, 1.00), 'arousal_drop_min': (0.10, 0.00, 1.00)}),
-    'scene.dialogue_mask':   dict(meaning='the figure keeps its ERB margin while a voice speaks', params={
-        'margin_db_tight': (5.0, 0.0, 12.0), 'max_fail_share': (0.20, 0.00, 1.00)}),
-    'scene.silence_honoured': dict(meaning='a declared rest really is silent', params={
-        'max_dbfs': (-50.0, -90.0, -20.0), 'min_s': (0.30, 0.00, 5.00)}),
-    'scene.bed_stability':   dict(meaning='the beds rest where the sheet says silence', params={
-        'max_dbfs': (-50.0, -90.0, -20.0), 'min_s': (0.30, 0.00, 5.00)}),
-    'scene.macro_contrast':  dict(meaning='the piece has a dynamic range, a tension variance and a roughness contrast', params={
-        'min_dynamic_range_lu': (6.0, 0.0, 30.0), 'min_tension_variance': (0.02, 0.0, 0.50),
-        'min_roughness_contrast_db': (3.0, 0.0, 20.0), 'min_sections': (2, 1, 12), 'force': (False,)}),
-    # audio / mix
-    # `model` switches the estimator: 'legacy' is the original Plomp-Levelt/Sethares pair weight with per-frame
-    # normalisation; 'level_aware' adds absolute partial level, simultaneous masking and the Vassilakis amplitude
-    # terms (knowledgebase/sound-design/roughness.md). Default stays 'legacy' until the listening check in
-    # docs/roughness_model.md is answered. The other params are read only by 'level_aware'.
-    'roughness':             dict(meaning='cochlear sensory roughness', params={
-        'scale': (1.0, 0.5, 2.0),
-        'outro_resolve': (True,),
-        'model': ('legacy', 'level_aware'),
-        # the calibrated median threshold (adaptive frames, below). A scene role's `roughness_min_frac` is the OTHER
-        # figure: the share of a window's frames at or above this value, 0..1. Keeping the two names apart keeps a
-        # profile from writing 0.5 into a 0.02..0.40 threshold.
-        'median_min': (0.024, 0.02, 0.40),                 # calibrated on tests/fixtures/roughness, not on a cue
-        'calib_spl_db': (70.0, 60.0, 80.0),              # Zwicker & Fastl measure roughness at 60-70 dB SPL
-        'mask_band_bark': (1.0, 0.5, 3.0),               # Daniel & Weber use 1-Bark filters
-        'mask_slope_up_db_bark': (10.5, 5.0, 20.0),      # measured upper masking slope, 64-70 dB near 450 Hz
-        'mask_slope_down_db_bark': (27.0, 15.0, 40.0),   # Daniel & Weber lower slope, -27 dB/Bark
-    }, no_skip=True),
-    # `slope_allowance` is how much of the score's own dB/s arc a bed may follow before a jump is pumping (0.5 was the
-    # constant). A declared rest window is not a dropout: the row reads the sheet, not just the stem.
-    'ambient_bed':           dict(meaning='an ambient bed that drops out or pumps',
-                                  params={'pump_db': (3.8, 3.0, 6.0), 'slope_allowance': (0.5, 0.0, 2.0)}, no_skip=True),
-    'modulation_flutter':    dict(meaning='6-25 Hz amplitude flutter in a sustained part', params={'warn': (0.18, 0.10, 0.30)}, no_skip=True),
-    # score checks (pattern_audit.acoustic_checks). No numbers to retune, but a type of music may legitimately have them:
-    # an ambient piece has no chord voicing, an effects piece has no notes, a percussion-only loop has no "flam".
-    'note_collision':        dict(meaning='a pitch attacked twice on one beat or re-attacked while ringing'),
-    'chord_voicing_and_strum': dict(meaning='chord voicing and strum shape'),
-    'choked_resonance':      dict(meaning='a note cut before its resonance can speak'),
-    'machine_gun_percussion': dict(meaning='percussion repeated at one velocity and one interval'),
-    'percussion_flam':       dict(meaning='two percussion hits too close to read as one or two'),
-    'low_interval_mud':      dict(meaning='low intervals closer than a minor third'),
-    'orch.range':            dict(meaning='a note outside the playing range of its orchestral instrument (FAIL only far outside it)',
-                                  params={'fail_over_semitones': (12, 3, 24)}),
-    'orch.voice_leading':    dict(meaning='parallel fifths (and, when asked, octaves that are not a doubling) between two single lines',
-                                  params={'max_parallel_share': (0.2, 0.05, 0.6), 'min_events': (3, 2, 12), 'include_octaves': (False, False, True)}),
-    'orch.playable':         dict(meaning='more simultaneous notes, a faster repeated-note run or a longer breathless phrase than the player or section has',
-                                  params={'rate_scale': (1.0, 0.5, 2.0), 'phrase_scale': (1.0, 0.5, 2.0)}),
-    'orch.legato':           dict(meaning='notes marked legato that start after a gap, so a sampler plays them detached',
-                                  params={'max_gap_beats': (0.1, 0.0, 0.5)}),
-    'balance.vs_lead':       dict(meaning='accompaniment against the figure (melody, lead or vocal)', params={'warn_over_db': (3.0, 1.0, 6.0), 'fail_over_db': (6.0, 3.0, 12.0)}),
-    'focus.declared':        dict(meaning='the piece carries the line its type and its own declaration promise'),
-    'intent.vocabulary':     dict(meaning='every word the piece declares resolves to one concept in the intent presets'),
-    'intent.avoid':          dict(meaning='the gesture the piece said it would avoid does not happen in the score'),
-    'balance.layers':        dict(meaning='each layer against the median layer (no lead needed)',
-                                  params={'warn_db': (9.0, 4.0, 18.0), 'fail_db': (15.0, 8.0, 24.0)}),
-    # `max_collisions` is the count this row has always failed at; `margin_db_tight` is how far it tightens inside a
-    # dialogue window the sheet declares (0 = no tightening, so a piece without dialogue is judged as before).
-    'masking.vs_melody':     dict(meaning='ERB-band masking of the melody by beds',
-                                  params={'margin_db': (3.0, 1.0, 6.0), 'max_collisions': (8, 1, 200),
-                                          'margin_db_tight': (0.0, 0.0, 12.0)}),
-    'spatial.z_separation':  dict(meaning='parts that fight for the same midrange share one place in the climax (azimuth + elevation)',
-                                  params={'overlap_min': (0.5, 0.2, 0.9), 'min_sep_deg': (25.0, 5.0, 90.0), 'min_elev_deg': (15.0, 0.0, 45.0)}),
-    'spectral.equal_loudness': dict(meaning='2.5-5 kHz sits far louder than the mids once ear sensitivity is weighted',
-                                    params={'warn_db': (6.0, 3.0, 12.0), 'fail_db': (10.0, 6.0, 20.0),
-                                            'band_lo_hz': (2500.0, 2000.0, 3000.0), 'band_hi_hz': (5000.0, 4000.0, 6000.0),
-                                            'max_trim_db': (3.0, 1.0, 6.0)}),
-    'bow.breath_gap':        dict(meaning='bowed/wind melody has a breath or bow gap', params={'gap_beats': (0.08, 0.02, 0.2)}),
-    'chroma.concordance':    dict(meaning='ambient beds against the key (semitone clash)', params={'max_dissonance': (0.28, 0.1, 0.5)}),
-    'kick.grid':             dict(meaning='kick transients locked to the beat grid', params={'min_lock': (0.70, 0.3, 0.9)}),
-    # immersive headphone route (scripts/quality_gate.py::immersive_rows, references/spatial/immersive-spatial.md). Registered here
-    # so a type of piece can skip or relax one with a measured reason; the numbers below are the gate's starting points.
-    'imm.cues':          dict(meaning='binaural probe at +-60 deg: level difference and which ear arrives first',
-                              params={'min_ild_db': (8.0, 4.0, 20.0), 'min_itd_ms': (0.3, 0.1, 1.0)}),
-    'imm.elevation':     dict(meaning='the high-frequency tilt grows with height', params={'min_tilt_db': (3.0, 1.0, 10.0)}),
-    'imm.frontback':     dict(meaning='front and rear colour differ', params={'min_tilt_db': (2.0, 1.0, 10.0)}),
-    'imm.height_rules':  dict(meaning='heights legal, bass and drums flat, enough tracks lifted'),
-    'imm.band':          dict(meaning='a lifted stem holds energy above 4 kHz to carry its height',
-                              params={'min_hf_frac': (0.003, 0.001, 0.02)}),
-    'imm.externalization': dict(meaning='reflections arrive from several directions at a sane level',
-                                params={'min_directions': (3, 1, 6), 'min_db': (-30.0, -40.0, -12.0), 'max_db': (-3.0, -12.0, 0.0)}),
-    'imm.envelopment':   dict(meaning='late-tail interaural correlation', params={'max_late_iacc': (0.4, 0.1, 0.9)}),
-    'imm.width':         dict(meaning='master L/R correlation', params={'max_corr': (0.95, 0.7, 1.0)}),
-    'imm.foldown':       dict(meaning='mono fold-down level loss', params={'max_lu': (3.0, 1.0, 8.0)}),
-    'imm.coloration':    dict(meaning='the measured head set colours the front of the mix no more than tolerance',
-                              params={'max_dev_db': (3.5, 1.0, 8.0), 'lo_hz': (500.0, 200.0, 1000.0),
-                                      'hi_hz': (5000.0, 3000.0, 10000.0)}),
-    'imm.route_parity':  dict(meaning='the measured-head route and the analytic route agree on level and time difference',
-                              params={'max_ild_db': (3.0, 1.0, 8.0), 'max_itd_ms': (0.20, 0.05, 0.6)}),
-    # rendering naturalness (references/instruments-and-vocals/natural-instruments.md, humanization.md)
-    'natural.aliasing':  dict(meaning='energy above 15 kHz that a transposed sample should not have (interpolation images)',
-                              params={'max_hf_share_db': (-45.0, -70.0, -20.0)}),
-    # delivery traceability (scripts/helpers/, written at certification; the gate only reads it)
-    'meta.tags':     dict(meaning='standard metadata written beside the certified master',
-                          params={'max_missing': (0, 0, 12)}),
-    # the direction sheet is the promise the delivery is judged against (scripts/quality_gate.py direction_rows)
-    'delivery.sample_rate': dict(meaning='delivered sample rate against the direction sheet'),
-    'delivery.bit_depth':   dict(meaning='delivered bit depth against the direction sheet'),
-    'delivery.channels':    dict(meaning='delivered channel count against the direction sheet'),
-    'delivery.duration':    dict(meaning='delivered length against the direction sheet',
-                                  params={'tolerance_s': (0.5, 0.1, 5.0)}),
-    'tempo.bpm':            dict(meaning='score tempo inside the range the direction sheet promises'),
-    'key.mode':             dict(meaning='score key and mode against the direction sheet'),
-    'meta.version':  dict(meaning='a version record for the certified master, and its versioned file still on disk',
-                          params={'max_missing': (0, 0, 5)}),
-    # video delivery (scripts/video_score.py; measured by video-mixer/video_gate.py)
-    'video.duration_lock':   dict(meaning='program length against the picture', params={'tolerance_ms': (50, 10, 200)}, protected=True),
-    'video.cut_sync':        dict(meaning='every hit against its cut, early and late measured separately',
-                                  params={'early_ms': (45, 10, 150), 'late_ms': (125, 20, 300), 'aim_ms': (40, 5, 120)}),
-    'video.dialogue_snr':    dict(meaning='music level under speech', params={'min_db': (15.0, 6.0, 30.0)}),
-    'video.master_compliance': dict(meaning='delivered loudness in the declared gating mode and true peak',
-                                    params={'tolerance_lu': (1.0, 0.3, 3.0)}, protected=True),
-    # the picture rows read at the three timescales (video-mixer/gate/pass_.py); thresholds are starting values
-    # except where a reference is named in references/scoring/video-scoring.md
-    'video.motion_sync':  dict(meaning='a movement hit against the movement it accents',
-                               params={'window_ms': (150.0, 60.0, 450.0)}),
-    'video.hit_class':    dict(meaning='a delayed accent lands after its moment, a dead-on one does not drift'),
-    'video.grid_phase':   dict(meaning="the cuts' residual against the fitted beat grid",
-                               params={'tolerance_frames': (1.0, 0.25, 2.0)}),
-    'video.hit_density':  dict(meaning='accents per minute, and no Mickey Mousing',
-                               params={'budget_per_minute': (24, 4, 60),
-                                       'max_consecutive_cut_hits': (0.60, 0.20, 0.95)}),
-    'video.cue_silence':  dict(meaning='music where the spotting asked for silence',
-                               params={'max_dbfs': (-50.0, -90.0, -20.0)}),
-    'video.dialogue_band': dict(meaning='music energy in the consonant band under speech',
-                                params={'min_db': (12.0, 6.0, 30.0)}),
-    'video.shot_scale':   dict(meaning='density against the camera distance',
-                               params={'tolerance': (0.15, 0.0, 0.50)}),
-    'video.gating_mode':  dict(meaning='the declared gating mode was actually measured', protected=True),
-    # vocal tracks (scripts/vocals.py + vocal_engine; measured by quality_gate.vocal_rows from the render's vocal report)
-    'vocal.integrity':    dict(meaning='vocal stems finite, no DC offset, no limiter hit', params={'dc_max': (0.005, 0.0005, 0.02)}, protected=True),
-    'vocal.clicks':       dict(meaning='single-sample jumps inside a vocal stem (joins between notes)', params={'max_clicks': (0, 0, 5)}),
-    'vocal.breath':       dict(meaning='a phrase longer than the singers can hold on one breath',
-                               params={'over_capacity_factor': (1.0, 0.8, 2.0)}),
-    'vocal.ensemble':     dict(meaning='3+ voices that are really one voice copied (stem correlation)', params={'max_corr': (0.6, 0.3, 0.9)}),
-    'vocal.intonation':   dict(meaning='sung pitch against the written pitch, vibrato excluded', params={'max_cents': (60.0, 20.0, 150.0)}),
-    'vocal.dynamics':     dict(meaning='note level follows note velocity (no per-note normalisation)', params={'min_corr': (0.5, 0.0, 0.9)}),
-    'vocal.hum_tone':     dict(meaning='a hum stays dark and murmur-like, not a bright instrument tone', params={'max_hf_frac': (0.02, 0.001, 0.2)}),
-    'vocal.ring':         dict(meaning="the singer's formant is an F3-F5 cluster near 2.8-3.2 kHz, not a boost pole",
-                               params={'max_spread_hz': (400.0, 150.0, 900.0),
-                                       'spread_at_zero_hz': (1600.0, 800.0, 3000.0)}),
-    'vocal.formant_tuning': dict(meaning='a note whose f0 is above F1 keeps its fundamental out of a spectral valley',
-                                 params={'max_deficit_db': (6.0, 2.0, 12.0)}),
-    'vocal.consonant':    dict(meaning='consonants sit in their declared band before the onset, at the declared VOT',
-                               params={'vot_tol': (0.3, 0.1, 0.6), 'centroid_margin': (2.0, 1.2, 4.0)}),
-    'vocal.coarticulation': dict(meaning='the formant track moves toward the next vowel before the note boundary',
-                                 params={'min_lead_ms': (20.0, 5.0, 60.0)}),
-    'vocal.perturbation': dict(meaning='period-to-period jitter measured on the rendered signal (not flutter)',
-                               params={'min_pct': (0.3, 0.1, 1.0), 'max_pct': (2.0, 1.0, 4.0)}, no_skip=True),
-    'vocal.passaggio':    dict(meaning='no register step across the break (open quotient stays continuous)',
-                               params={'max_step': (0.01, 0.002, 0.05)}),
-    'vocal.vibrato':      dict(meaning='vibrato carries amplitude modulation in step with f0',
-                               params={'min_corr': (0.5, 0.2, 0.9), 'min_db': (0.2, 0.05, 2.0)}),
-    'vocal.identity':     dict(meaning='two singers have measurably different tracts (formant distance)',
-                               params={'min_pct': (2.0, 1.0, 8.0)}),
-    'vocal.spatial':      dict(meaning='the voice mix keeps binaural cues: L/R correlation and the mono sum',
-                               params={'max_stereo_corr': (0.98, 0.8, 1.0), 'min_mono_db': (-3.0, -9.0, 0.0)}),
-    # cognitive feel checks (pattern_audit.cognitive_feel_checks); modes apply/skip, relaxing is by the profile's flags
-    # Every number here was a constant in pattern_audit; the defaults are those constants, so a profile that says
-    # nothing is judged exactly as before. A range that reached the "off" value (a step share of 0, an unresolved
-    # share of 1) is not in the tuples: a type of music says what its line is, it does not switch the rule off.
-    'feel.contour':    dict(meaning='melodic arch / gap-fill', params={
-        'min_notes': (8, 4, 32), 'step_max_semitones': (3.2, 2.0, 5.0), 'step_frac': (0.45, 0.20, 0.70),
-        'step_frac_fail': (0.25, 0.05, 0.50), 'leap_semis': (4.8, 3.0, 8.0), 'gap_recover_semis': (3.8, 2.0, 6.0),
-        'gap_fill_max': (0.50, 0.20, 0.90), 'flip_frac': (0.85, 0.60, 0.99),
-        'zigzag_max': (0.75, 0.50, 0.99), 'zigzag_step_frac': (0.30, 0.05, 0.60)}),
-    'feel.resolution': dict(meaning='harmonic tension to resolution', params={
-        'min_tension_notes': (3, 2, 10), 'max_unresolved_share': (0.40, 0.10, 0.80),
-        'resolve_step_semitones': (2.2, 1.0, 4.0), 'resolve_leap_semitones': (4.2, 2.0, 7.0)}),
-    'feel.groove':     dict(meaning='groove pocket lock', params={
-        'min_bars': (4, 2, 16), 'min_pocket_corr': (0.30, 0.05, 0.70)}),
-    # Immersive 2.0 (quality_gate.immersive2_rows, fold_rows). Starting values, not calibrated on a corpus yet.
-    'imm.iacc_early':    dict(meaning='room probe, first 80 ms: interaural correlation over the 500-2000 Hz octaves',
-                              params={'max_iacc': (0.97, 0.3, 1.0)}),
-    'imm.clarity':       dict(meaning='room probe C80 over 500-4000 Hz: only a washed-out room trips it',
-                              params={'min_c80_db': (-5.0, -15.0, 5.0)}),
-    'imm.low_fold':      dict(meaning='mono fold-down loss below the bass corner',
-                              params={'max_db': (2.5, 1.0, 6.0), 'hz': (250.0, 80.0, 400.0)}),
-    'mix.band_fold':     dict(meaning='mono fold-down loss in each auditory band, 100-5000 Hz',
-                              params={'max_db': (3.5, 2.0, 9.0), 'floor_db': (30.0, 12.0, 60.0)}),
-    'imm.kinematics':    dict(meaning='no source travels faster than its role allows'),
-    # Immersive 3.1: delivery ceilings and decoder uniformity (scripts/spatial_gate.py)
-    'delivery.loudness_ceiling': dict(meaning='integrated loudness against the ceiling the target declares',
-                                     params={'max_lufs': (-18.0, -24.0, -10.0)}),
-    'delivery.conform': dict(meaning='duration against the certified stereo master',
-                             params={'max_abs_ms': (50.0, 10.0, 200.0)}),
-    'iamf.container': dict(meaning='an IAMF deliverable was written by the external encoder'),
-    'imm.decode_uniformity': dict(meaning='plane-wave power spread of the all-round decoder',
-                                  params={'max_spread_db': (2.0, 0.5, 12.0)}),
-    # two low-frequency channels and a three-front stage (scripts/spatial_engine/lfe_qa.py, spatial_gate.lfe_rows).
-    # Advisory except a flipped sub: limits are starting values until measured on a room.
-    'lfe.sum_coherence': dict(meaning='LFE1 and LFE2 add coherently below the decorrelation corner',
-                              params={'min_rho': (0.9, 0.5, 0.99)},
-                              hint='mode stereo_bass, a lower decorrelate_above_hz, or lfe_pan on the bass tracks'),
-    'lfe.polarity': dict(meaning='LFE1 and LFE2 are not in opposed polarity',
-                         params={'min_rho': (-0.3, -0.9, 0.0)},
-                         hint='fix lfe.polarity in the layout, or the bass preset that is inverted'),
-    'lfe.fold_loss': dict(meaning='summing the two low-frequency channels into one loses no level in any 1/3 octave',
-                          params={'max_db': (1.5, 0.5, 6.0)},
-                          hint='reduce the decorrelation (stages or max_group_delay_ms) or narrow the stereo bass'),
-    'lfe.modal_spread': dict(meaning='two subs do not widen the spatial spread of a virtual box room against one (model, advisory)',
-                             params={'min_gain_db': (0.0, -3.0, 6.0)},
-                             hint='the model is of the layout\'s qa.listening_room: change its sub positions or report that the room is unknown'),
-    'front.fold_phantom': dict(meaning='the centre folded into L and R keeps its interaural time and level cues (measured head set)',
-                               params={'max_itd_us': (100.0, 30.0, 300.0), 'max_ild_db': (2.0, 0.5, 6.0)},
-                               hint='move content off L/R toward C, or lower the inter-channel correlation of L and R'),
-    # the virtual ear (scripts/ear_model, scripts/ear_rows.py): advisory, starting values calibrated on synthetic fixtures only
-    'ear.fatigue': dict(meaning='sustained neural adaptation at a stable loudness (a dense pad a loudness meter does not see)',
-                        params={'f_max': (0.6, 0.3, 0.9), 'min_seconds': (5.0, 2.0, 30.0), 'lufs_range_lu': (2.0, 0.5, 6.0)},
-                        hint='thin the pad, add rests or motion, lower the bed gain_db, or high-pass it'),
-    'ear.masking': dict(meaning='the figure keeps its share of neural activity in its own channels against the beds',
-                        params={'min_share': (0.5, 0.2, 0.9), 'min_frames': (0.7, 0.3, 1.0)},
-                        hint='lane EQ, lead_carve, a lower bed level or a different register'),
-    'ear.mod_roughness': dict(meaning='30-150 Hz envelope modulation of the neural pattern (saturates with level: under-reads loud material)',
-                              params={'max_index': (0.6, 0.2, 1.0), 'min_frames': (3, 1, 10)},
-                              hint='roughness_forecast.py diagnose names the clashing partials; move the part'),
-    'ear.pitch_salience': dict(meaning='the figure keeps a clear pitch inside the mix (fundamentals up to about 700 Hz)',
-                               params={'min_salience': (0.25, 0.05, 0.8), 'min_frames': (0.5, 0.2, 1.0)},
-                               hint='raise the register, remove a co-registered bed, or change the timbre'),
-    'ear.iacc': dict(meaning='interaural correlation of the neural patterns of a two-channel master, 500-880 Hz',
-                     params={'min_iacc': (0.1, 0.0, 0.5), 'max_iacc': (0.98, 0.8, 1.0)},
-                     hint='set the placement; widen or narrow the stems'),
-    # the inferred-neurochemical layer (scripts/chem_model, scripts/chem_rows.py): advisory, INFO/WARN at most, every
-    # number a starting value and no row ever a FAIL (docs/NEUROCHEMICAL-AFFECT-PLAN.md section 4.1). A profile may
-    # skip one for a type of music whose brief is different, with the measurement that says so.
-    'chem.model': dict(meaning='the chem presets validated, and what the layer reads and does not read',
-                       hint='fix references/data/presets/gate/chem/model.json, moods.json or genres.json; the row names the key'),
-    'chem.reward_build': dict(meaning='the anticipation pool earns the arrival instead of the piece just getting louder',
-                              params={'min_lead_s': (4.0, 1.0, 20.0), 'min_rho': (0.4, 0.0, 0.95), 'min_peak': (0.45, 0.1, 0.9)},
-                              hint='lengthen the build, withhold the tonic, raise the tension before the hit, or move the arrival later'),
-    'chem.reward_arrival': dict(meaning='a consummation event lands at the declared hit, with a real change in it',
-                                params={'min_peak': (0.5, 0.1, 0.9), 'max_offset_s': (2.0, 0.5, 8.0), 'min_contrast_db': (3.0, 0.5, 9.0)},
-                                hint='put a timbre, low-end, voice or register change at the hit instead of a level nudge'),
-    'chem.stress_load': dict(meaning='tension is carried and then resolved, not accumulated',
-                             params={'max_mean_load': (0.35, 0.05, 1.0), 'max_unresolved_s': (8.0, 2.0, 30.0),
-                                     'min_resolve_frac': (0.6, 0.2, 1.0)},
-                             hint='resolve the dominant, thin the cluster, add a breath, move roughness out of the figure band'),
-    'chem.affiliation': dict(meaning='there is something voice-like to bond with',
-                             params={'min_mean': (0.45, 0.1, 0.9), 'min_legato': (0.5, 0.1, 0.95)},
-                             hint='a singable legato contour, a voice or hum, a slower harmonic rhythm, warmth at 150-400 Hz'),
-    'chem.motor_drive': dict(meaning='the body has a pulse to lock to, inside the Witek syncopation window',
-                             params={'bsi_lo': (0.4, 0.0, 2.0), 'bsi_hi': (4.8, 2.0, 8.0), 'min_pulse': (0.4, 0.1, 0.9),
-                                     'min_mean': (0.4, 0.1, 0.9)},
-                             hint='syncopate the cell into the window, give the kick and bass one owner, keep the peak long enough'),
-    'chem.recovery': dict(meaning='the piece comes down, or declares that it will not',
-                          params={'min_drop_frac': (0.35, 0.05, 0.9), 'max_final_cort': (0.4, 0.1, 0.9)},
-                          hint='a resolution section: slower, consonant, thinner, with a cadence; a cliff is a declared ending, not a pass'),
-    'chem.arc_variety': dict(meaning='the piece is more than one chemical state',
-                             params={'min_states': (3, 1, 7), 'max_flat_share': (0.6, 0.2, 1.0),
-                                     'max_arrivals_per_min': (1.0, 0.2, 4.0)},
-                             hint='change the state between sections and delete a duplicate arrival (a repeat releases less)'),
-    'chem.mood_connection': dict(meaning='the inferred signature answers the mood the direction sheet declares',
-                                 params={'max_distance': (0.25, 0.05, 0.6)},
-                                 hint='the row names the furthest dimension and its lever; change the notes, not the mood word'),
-    'chem.genre_connection': dict(meaning='the inferred signature answers the genre the score declares',
-                                  params={},
-                                  hint='the family constraint is in references/data/presets/gate/chem/genres.json; fix the part the row names'),
-    # the acoustic biome (scripts/biome, scripts/env_rows.py): environment tracks written as `biome/1` presets. Starting values: none has
-    # been calibrated on real recordings; the declaration and medium rows check facts, the rest are advisory
-    'env.declaration': dict(meaning='a biome preset is valid, and every number in it names its source or says ESTIMATE',
-                            hint='fix the field the message names; replace an ESTIMATE with a measurement from the research note'),
-    'env.medium_consistency': dict(meaning='the declared medium agrees with itself, with the measured speed of sound, with the bus and with the tubes of its animals',
-                                   params={'max_err_c': (0.03, 0.005, 0.2), 'fail_err_c': (0.15, 0.05, 0.5), 'max_err_alpha': (0.02, 0.005, 0.2),
-                                           'fail_err_alpha': (0.10, 0.02, 0.5), 'max_f1_err': (0.03, 0.005, 0.2)},
-                                   hint='set c_measured_m_s or a gas gamma and molar mass that reproduce it; declare the same medium on the score; replace a module constant with the medium'),
-    'env.niche_collision': dict(meaning='animals whose bands overlap (Schoener D) do not call at the same time',
-                                params={'warn_d': (0.4, 0.1, 0.9), 'warn_co': (0.25, 0.05, 0.9), 'fail_d': (0.7, 0.3, 1.0), 'fail_co': (0.5, 0.1, 1.0)},
-                                hint='move niche.band_hz apart, change their active windows, lower individuals, or set ecology.niches.auto'),
-    'env.score_pocket': dict(meaning='foreground calls fall where the score leaves their band open',
-                             params={'min_in_pocket': (0.85, 0.5, 1.0), 'fail_in_pocket': (0.6, 0.2, 0.95)},
-                             hint='raise ecology.score.pocket_threshold, widen margin_db, lower the animal\'s bouts_per_min, or move its niche band'),
-    'env.foreground_salience': dict(meaning='a foreground call is heard above its surroundings without covering a figure',
-                                    params={'min_db': (3.0, 0.0, 12.0), 'max_db': (15.0, 6.0, 30.0), 'max_share_low': (0.3, 0.05, 0.8), 'max_over_s': (10.0, 1.0, 120.0)},
-                                    hint='raise the call\'s power_w or lower the beds in its band; move the call off the lead\'s band'),
-    'env.loop_stationarity': dict(meaning='a bed declared stationary holds its level and spectrum, has no seam at a chunk edge and does not repeat',
-                                  params={'max_window_dev': (2.0, 0.5, 6.0), 'fail_window_dev': (3.5, 1.0, 10.0), 'max_seam_db': (0.5, 0.1, 3.0),
-                                          'fail_seam_db': (1.5, 0.3, 6.0), 'max_repeat': (0.4, 0.1, 0.9), 'fail_repeat': (0.8, 0.3, 1.0)},
-                                  hint='raise the gust corner or intensity, give the control curve more variance, or split a tiled bed into two named generators'),
-    'env.density_budget': dict(meaning='the calls begun per second stay inside the ecology budget',
-                               params={'max_over': (0.25, 0.0, 2.0)},
-                               hint='lower bouts_per_min or individuals, add a control rest curve, thin the beds; ear.fatigue judges the stem'),
-    'env.level_physical': dict(meaning='a generator\'s rendered pressure matches what its own physics predicts (nothing normalised it away)',
-                               params={'max_db': (3.0, 0.5, 12.0), 'fail_db': (8.0, 2.0, 30.0)},
-                               hint='remove any normalisation; check k_dipole, efficiency, area_m2 and the rate curve'),
-    'env.diffuse_field': dict(meaning='a field source is as decorrelated as its spatial_coupling asks',
-                              params={'target': (0.2, 0.0, 1.0), 'warn_over': (0.1, 0.02, 0.5), 'fail_over': (0.25, 0.05, 0.8)},
-                              hint='more emitters, a different correlation_target, or a wider decorrelator'),
-    'env.ecology_rules': dict(meaning='every freeze rule was honoured and every rule fired at least once',
-                              hint='check the rule names against sections and animals; a trigger that never calls never fires'),
-    'env.cpu_budget': dict(meaning='the biome renders in a bounded time per minute of audio (measured on a short render, a projection)',
-                           params={'max_s_per_min': (12.0, 1.0, 120.0), 'fail_s_per_min': (30.0, 5.0, 600.0)},
-                           hint='fewer oscillators, patches, individuals or emitters'),
-    # per-channel and per-bar delivery QA for any channel count (scripts/channel_qa.py,
-    # references/spatial/virtual-speaker-qa.md). A real layout uses its speaker positions; order-5 AmbiX
-    # decodes to the 36-point ambix_qa_36 sphere; an undeclared file is still checked per channel.
-    'channel.virtual':  dict(meaning='the delivered channels map to the layout the target claims, or to the virtual speaker sphere for AmbiX'),
-    'channel.bars':     dict(meaning='an isolated bar where one channel jumps, drops out, flips polarity or swings the spatial balance while the other channels stay still', params={
-        'jump_db': (8.0, 3.0, 30.0),
-        'dropout_db': (15.0, 6.0, 40.0),
-        'balance_db': (4.0, 1.0, 12.0),
-        'stable_db': (3.0, 1.0, 9.0),
-        'polarity_corr': (-0.5, -0.95, -0.1),
-        'polarity_neighbor': (0.2, 0.0, 0.9),
-        'floor_abs_db': (-65.0, -100.0, -30.0),
-        'floor_programme_db': (40.0, 10.0, 80.0),
-        'balance_spread_db': (2.5, 0.5, 9.0),
-    }),
-    'render.finite':     dict(meaning='no NaN or infinite sample in any delivered channel', protected=True),
-    'feel.effort':     dict(meaning='kinematic effort / respiration'),
-    'feel.spiral':     dict(meaning='tonal tension arc', params={
-        'static_momentum': (0.05, 0.0, 0.30), 'teleport_momentum': (1.45, 0.80, 3.0),
-        'outro_strain_max': (0.50, 0.20, 1.00), 'outro_percentile': (30, 5, 50),
-        'concordance_min_rho': (-0.35, -0.80, 0.0)}),
-    # bsi_hi is the top of the pocket, bsi_fail_hi the collapse limit: the row used to pass everything up to 5.5 while
-    # telling the reader it was inside [lo, hi]. Between the two it now warns, which changes no certified verdict
-    # except a piece that was between 4.8 and 5.5 and reading a PASS it had not earned.
-    'feel.witek':      dict(meaning='groove pleasure curve', params={
-        'bsi_lo': (0.4, 0.0, 2.0), 'bsi_hi': (4.8, 2.0, 8.0), 'bsi_fail_hi': (5.5, 4.0, 9.0),
-        'bsi_mode': ('pocket', 'pocket', 'stillness', 'rupture'),
-        'bsi_still_max': (0.15, 0.0, 0.60), 'bsi_rupture_min': (5.5, 3.0, 9.0)}),
-    'feel.entropy':    dict(meaning='melodic information content of a line (PPM model, scripts/expectation.py): not a loop, not a random walk',
-                            params={'min_bits': (1.15, 0.5, 2.0), 'max_bits': (4.4, 3.5, 4.6)}),
-    'expr.ic_profile': dict(meaning='information content and uncertainty of each melodic line, per bar (reported)'),
-    'expr.surprise_grounded': dict(meaning='a high-surprise note is followed by a predictable one (advisory)',
-                                   params={'max_share': (0.6, 0.3, 0.9)},
-                                   hint='resolve high-surprise leaps stepwise, or repeat the figure after them'),
-    'expr.agogic_coupling': dict(meaning='a line\'s onsets and velocities follow its melodic surprise when the coupling is on (advisory)',
-                                 params={'min_rho': (0.15, 0.0, 0.5)},
-                                 hint='raise ic_agogic_ms / ic_vel, or check the groove preset is not tight; rubato and drift also move the timing'),
-    'emotion.arc_arousal': dict(meaning='the measured arousal of each section follows the order of the sheet\'s section energy (advisory)',
-                                params={'min_rho': (0.6, 0.0, 0.95)},
-                                hint='change the density, level or register of the section in the notes; the sheet is the promise'),
-    'emotion.arc_valence': dict(meaning='the measured valence has the sign the brief\'s emotion words imply (advisory, a weak measure)',
-                                params={'neutral_band': (0.3, 0.1, 0.6)},
-                                hint='mode and harmonic clashes; listen before changing the notes'),
-    'expr.tension_ic': dict(meaning='harmonic tension (Chew) against melodic information content per two bars (reported)'),
-}
+ROWS_PATH = os.path.join(os.path.dirname(HERE), 'references', 'data', 'presets', 'gate', 'data', 'rows.json')
+
+
+def _load_rows(path=ROWS_PATH):
+    """Every gate row's numbers, read from references/data/presets/gate/data/rows.json.
+
+    The table used to be a Python literal. It is data now: `meaning`, `why` (the rationale the literal carried), the
+    `protected`/`no_skip` marks, each parameter's default, its range or choices, and the `source` that number came from -
+    copied from the row's own rationale where it had one, the words "starting value" where no published measurement
+    exists. Nothing here is a second copy: this function is the only reader.
+
+    Returns (rows, sources). `rows` keeps the shape the rest of the gate expects (`params` as tuples: (default, low,
+    high[, unit]) for a number, (default, *choices) for an enumeration, (default,) for a flag), so no caller changed.
+    """
+    with open(path, encoding='utf-8') as f:
+        doc = json.load(f)
+    rows, sources = {}, {}
+    for rid, spec in (doc.get('rows') or {}).items():
+        entry = {'meaning': spec.get('meaning', '')}
+        for k in ('protected', 'no_skip', 'hint'):
+            if spec.get(k):
+                entry[k] = spec[k]
+        params, src = {}, {}
+        for name, p in (spec.get('params') or {}).items():
+            default = p.get('default')
+            if isinstance(default, bool):
+                params[name] = (default,)
+            elif 'choices' in p:
+                vals = [default] + [c for c in (p.get('choices') or []) if c != default]
+                params[name] = tuple(vals)
+            else:
+                t = (default, p.get('low'), p.get('high'))
+                if p.get('unit'):
+                    t = t + (str(p['unit']),)
+                params[name] = t
+            src[name] = p.get('source', '')
+        if params:
+            entry['params'] = params
+        rows[rid] = entry
+        sources[rid] = src
+    return rows, sources
+
+
+ROWS, SOURCES = _load_rows()
 
 
 # The report and the profile must name the same row, or nobody can tell which rule was relaxed. The gate prints some rows

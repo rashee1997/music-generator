@@ -50,9 +50,11 @@ def table(path=PATH):
 
 
 def _tier(rid):
+    """The row's tier as an int (gate_tiers returns it as a string, and `rows_in` compares numbers)."""
     try:
         import gate_tiers
-        return gate_tiers.tier_of(rid)
+        t = gate_tiers.tier_of(rid)
+        return int(t) if t is not None else None
     except Exception:
         return None
 

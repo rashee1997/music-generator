@@ -1,7 +1,13 @@
 # Dynamic project- and scene-synced gate plan
 
-Status: PROPOSED (revision 1), nothing implemented. Phase 1 audit below is measured on the current tree; Phases 2-4 are
-the plan. Waiting for approval before the first edit (AGENTS.md 1.2).
+Status: IMPLEMENTED (revision 2). Phases P0-P4 are in the tree; the Phase 1 audit below is kept as the record of why.
+Deviations from revision 1, all deliberate: the whole-piece contrast floors are the `scene.macro_contrast` row's
+parameters rather than a `scene.macro` block (one figure, one home); P1 and P2 landed in one commit because they share
+`gate_profiles.py` and `quality_gate.py`; the row table itself moved to
+`references/data/presets/gate/data/rows.json` with a `source` per parameter (a citation or "starting value"), which
+revision 1 did not ask for and the owner did; `GateFeedback` became `scripts/gate_feedback.py` +
+`references/data/presets/gate/data/feedback.json`, wired into `rca.py`, the gate report and `debug_audio.py --feedback`.
+New reference: `references/mixing/quality-gate-scenes.md`.
 
 Scope rule that governs every item: **JSON only, no YAML, no new file format**. Every new number goes in a file the
 code already reads (`<project>/presets/gate/`, `references/data/presets/gate/`, the project's `direction/*.json`), under

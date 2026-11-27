@@ -310,3 +310,24 @@ or less, or carries a click above -18 dB), `foreground` (voices in the score's `
 play), `harmonic_motion` (a section over 20 s moves the bass or declares `pedal`). All thresholds are starting values; none can FAIL.
 The sheet rows `direction.harmony_plan` and `direction.stinger` are WARN only. Fixes live in presets and notes: `family` blocks, an `air` fx,
 `sfx:impact_cinematic`, `mastering.section_levels`, `anticipate_ms`, `bar_breath_ms`.
+
+## 3j. Scenes, thresholds as data, and what to change next
+
+Three files took the last hardcoded judgement out of the engine. None of them adds a verdict: they are read by rows that
+already existed or by the scene rows below, and a piece with no scene block is judged exactly as before.
+
+- **Every threshold is data.** `references/data/presets/gate/data/rows.json` holds each row's default, its range or
+  choices, its rationale and the `source` that number came from - a citation, or the words "starting value" when no
+  published measurement exists. `scripts/gate_profiles.py` builds `ROWS` from it and keeps no second copy;
+  `tests/test_gate_thresholds_provenance.py` fails on a number with no provenance and on a default that exists in two
+  places. Changing a default is a gate decision and `tests/fixtures/gate/thresholds.json` records it.
+- **A scene is the piece's own direction sheet.** A profile may declare `"scene"`, which names the sheet's roles and
+  the keys they must state (`references/data/presets/gate/data/scene_roles.json`), and the whole-piece rows that used to
+  judge a climax by the piece's median now honour it (`waive_ceiling`, `bsi_mode`, `huron_resolution_gravity`, a declared
+  rest). The rows that ask the scene's own questions (`scene.arc_step`, `scene.hit_surprise`, `scene.release_delta`,
+  `scene.macro_contrast`, `scene.silence_honoured`, `scene.bed_stability`, `scene.dialogue_mask`) are documented in
+  `references/mixing/quality-gate-scenes.md`.
+- **A failure says what to change.** `references/data/presets/gate/data/feedback.json` is the one table behind
+  `scripts/gate_feedback.py`, `rca.py` ("do next"), `reports/.../feedback.txt` and `debug_audio.py --feedback`: what the
+  row asks for, where it is changed, and whether that costs a re-render, a re-performance or a code fix. A tier-1 row
+  never falls through to the generic advice.

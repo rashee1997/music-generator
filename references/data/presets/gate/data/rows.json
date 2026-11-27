@@ -1,0 +1,2567 @@
+{
+ "_source": "docs/DYNAMIC-GATE-PLAN.md: every gate row's numbers, their ranges and their provenance. scripts/gate_profiles.py builds ROWS from this file; no number here is duplicated in Python.",
+ "_rules": [
+  "`default` is what a piece is judged by until its own profile or score says otherwise; `low`/`high` bound a profile's or a score's override, so no number can switch a row off.",
+  "`source` is either the citation the number came from or the words \"starting value\" when no published measurement exists. Every parameter carries one, copied from the row's own rationale where it had one and written as \"starting value\" where it did not; tests/test_gate_thresholds_provenance.py fails on a number with neither.",
+  "`why` is the rationale the row had in scripts/gate_profiles.py before the move, kept so the reasoning is not lost.",
+  "`choices` lists the allowed values of an enumerated parameter; `unit` is present only where the unit is not obvious from the name.",
+  "Changing a `default` is a gate decision: tests/fixtures/gate/thresholds.json records it, so regenerate that deliberately and say why."
+ ],
+ "rows": {
+  "loudness": {
+   "meaning": "integrated loudness against the target",
+   "why": "protected: measured faults no type of music excuses",
+   "protected": true
+  },
+  "true_peak": {
+   "meaning": "true peak under the ceiling",
+   "protected": true
+  },
+  "clipping": {
+   "meaning": "clipped bends / samples",
+   "protected": true
+  },
+  "silence": {
+   "meaning": "silent gap in the middle",
+   "why": "The numbers are the module's old constants, now readable parameters. `silence` stays protected: a declared rest exempts its window from the *measurement* (the direction sheet's `silence_after_s`), never the threshold.",
+   "protected": true,
+   "params": {
+    "min_gap_s": {
+     "default": 1.0,
+     "low": 0.5,
+     "high": 3.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "floor_dbfs": {
+     "default": -60.0,
+     "low": -80.0,
+     "high": -40.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "inner_margin_s": {
+     "default": 2.0,
+     "low": 0.0,
+     "high": 10.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "clicks": {
+   "meaning": "single-sample jumps",
+   "protected": true
+  },
+  "stem.clicks": {
+   "meaning": "click/impulse on one stem (high-pass MAD + LPC residual)",
+   "why": "stem gate (scripts/stem_gate.py, before mixing)",
+   "no_skip": true,
+   "params": {
+    "mad_z": {
+     "default": 8.0,
+     "low": 5.0,
+     "high": 15.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "floor_fs": {
+     "default": 0.02,
+     "low": 0.005,
+     "high": 0.1,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "cluster_gap_ms": {
+     "default": 1.5,
+     "low": 0.5,
+     "high": 5.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "isolate_ms": {
+     "default": 10.0,
+     "low": 5.0,
+     "high": 30.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "stem.dropout": {
+   "meaning": "a short hole in one stem",
+   "params": {
+    "min_ms": {
+     "default": 20.0,
+     "low": 5.0,
+     "high": 50.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_ms": {
+     "default": 1000.0,
+     "low": 500.0,
+     "high": 2000.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "floor_below_db": {
+     "default": 45.0,
+     "low": 30.0,
+     "high": 60.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "stem.cut": {
+   "meaning": "a level step with no release at a section boundary or the end",
+   "params": {
+    "drop_db": {
+     "default": 12.0,
+     "low": 8.0,
+     "high": 20.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "location_ms": {
+     "default": 75.0,
+     "low": 25.0,
+     "high": 200.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "stem.end": {
+   "meaning": "a stem truncated at full level",
+   "params": {
+    "min_decay_db": {
+     "default": 12.0,
+     "low": 8.0,
+     "high": 20.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "floor_db": {
+     "default": -45.0,
+     "low": -60.0,
+     "high": -30.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "stem.edge": {
+   "meaning": "a stem starts or stops away from its own score notes",
+   "params": {
+    "max_silence_ms": {
+     "default": 25.0,
+     "low": 5.0,
+     "high": 100.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "stem.tick": {
+   "meaning": "a periodic tick in a stem that should have no beat",
+   "params": {
+    "rho": {
+     "default": 0.35,
+     "low": 0.2,
+     "high": 0.6,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_events": {
+     "default": 6,
+     "low": 3,
+     "high": 12,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "cv_max": {
+     "default": 0.05,
+     "low": 0.01,
+     "high": 0.2,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "rise_db": {
+     "default": 3.0,
+     "low": 1.5,
+     "high": 8.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "stem.dead": {
+   "meaning": "a part missing/dropped against the score dynamics",
+   "params": {
+    "under_db": {
+     "default": 12.0,
+     "low": 6.0,
+     "high": 24.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "floor_db": {
+     "default": -70.0,
+     "low": -80.0,
+     "high": -50.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "stem.clipping": {
+   "meaning": "clipped samples on one stem",
+   "protected": true
+  },
+  "stem.dc": {
+   "meaning": "DC offset on one stem",
+   "params": {
+    "dc_max": {
+     "default": 0.001,
+     "low": 0.0005,
+     "high": 0.01,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "stem.flatness": {
+   "meaning": "a noise burst in a tonal stem",
+   "params": {
+    "threshold": {
+     "default": 0.1,
+     "low": 0.03,
+     "high": 0.4,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_ms": {
+     "default": 50.0,
+     "low": 20.0,
+     "high": 200.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "stem.vocal": {
+   "meaning": "vocal stem integrity (finite, DC, clicks)"
+  },
+  "stem.present": {
+   "meaning": "every score track with notes has a stem"
+  },
+  "stem.duplicate": {
+   "meaning": "two stems are the same signal",
+   "params": {
+    "max_corr": {
+     "default": 0.999,
+     "low": 0.99,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "dropout": {
+   "meaning": "a short hole in the master",
+   "why": "master rows added by the mix gate",
+   "params": {
+    "min_ms": {
+     "default": 20.0,
+     "low": 5.0,
+     "high": 50.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_ms": {
+     "default": 1000.0,
+     "low": 500.0,
+     "high": 2000.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "floor_below_db": {
+     "default": 45.0,
+     "low": 30.0,
+     "high": 60.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "cut.hard": {
+   "meaning": "a hard cut at a boundary/end in the master",
+   "params": {
+    "drop_db": {
+     "default": 12.0,
+     "low": 8.0,
+     "high": 20.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "location_ms": {
+     "default": 75.0,
+     "low": 25.0,
+     "high": 200.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "end.abrupt": {
+   "meaning": "the master ends at full level with no release",
+   "params": {
+    "min_decay_db": {
+     "default": 12.0,
+     "low": 8.0,
+     "high": 20.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "floor_db": {
+     "default": -45.0,
+     "low": -60.0,
+     "high": -30.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "master.dc": {
+   "meaning": "DC offset on the master",
+   "params": {
+    "dc_max": {
+     "default": 0.001,
+     "low": 0.0005,
+     "high": 0.01,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "master.micro_dynamics": {
+   "meaning": "PLR/PSR/LRA and the 4x/8x true-peak reading (reported)",
+   "why": "measured delivery, reported rather than judged: no document defines a pass mark for these"
+  },
+  "master.mono_bands": {
+   "meaning": "per-band L/R correlation and mono-fold loss (reported)"
+  },
+  "delivery.standard": {
+   "meaning": "the delivered file against the standard its profile declares"
+  },
+  "masking.excess": {
+   "meaning": "the beds level over the figure per critical band (proxy, advisory)"
+  },
+  "tempo.audio": {
+   "meaning": "measured tempo against the score/sheet",
+   "params": {
+    "tol_bpm": {
+     "default": 2.0,
+     "low": 1.0,
+     "high": 5.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "tol_pct": {
+     "default": 2.0,
+     "low": 1.0,
+     "high": 5.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "drift_bpm": {
+     "default": 2.0,
+     "low": 1.0,
+     "high": 5.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "octave_ok": {
+     "default": 0.0,
+     "low": 0.0,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "section.energy": {
+   "meaning": "section level against the promised energy arc",
+   "params": {
+    "fail_rho": {
+     "default": 0.5,
+     "low": 0.3,
+     "high": 0.8,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "warn_rho": {
+     "default": 0.7,
+     "low": 0.5,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "channels": {
+   "meaning": "note started on a channel still sounding",
+   "protected": true
+  },
+  "pattern.drums_few": {
+   "meaning": "drums play only a few different bars",
+   "why": "score patterns (pattern_audit.audit)",
+   "params": {
+    "distinct_div": {
+     "default": 8,
+     "low": 2,
+     "high": 32,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "pattern.loop_short": {
+   "meaning": "chord/pad/arp/bass/ostinato/texture loops every few bars for the whole piece",
+   "params": {
+    "max_period_bars": {
+     "default": 4,
+     "low": 1,
+     "high": 16,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_distinct": {
+     "default": 4,
+     "low": 1,
+     "high": 16,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_bars": {
+     "default": 16,
+     "low": 8,
+     "high": 64,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_distinct_frac": {
+     "default": 0.15,
+     "low": 0.0,
+     "high": 0.6,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "pattern.melody_notes": {
+   "meaning": "melody: few note lengths, on-grid starts, repeated pitches",
+   "params": {
+    "min_lengths": {
+     "default": 3,
+     "low": 1,
+     "high": 6,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "on_beat_max": {
+     "default": 0.9,
+     "low": 0.5,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "repeat_max": {
+     "default": 0.35,
+     "low": 0.2,
+     "high": 0.8,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "pattern.bass_pitches": {
+   "meaning": "bass uses very few pitch classes",
+   "params": {
+    "max_classes": {
+     "default": 3,
+     "low": 1,
+     "high": 6,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "pattern.velocity_flat": {
+   "meaning": "velocity barely moves",
+   "params": {
+    "sd_frac": {
+     "default": 0.15,
+     "low": 0.02,
+     "high": 0.35,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "pattern.flat_dynamics": {
+   "meaning": "whole piece stays in a narrow dynamic range",
+   "params": {
+    "min_range_frac": {
+     "default": 0.25,
+     "low": 0.05,
+     "high": 0.25,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "pattern.four_on_floor": {
+   "meaning": "a kick on every beat and nothing else"
+  },
+  "pattern.flags_max": {
+   "meaning": "how many pattern flags make a FAIL",
+   "no_skip": true,
+   "params": {
+    "max": {
+     "default": 3,
+     "low": 1,
+     "high": 12,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "pattern.track_flags_max": {
+   "meaning": "how many pattern flags one part may carry on its own: one part that loops for the whole piece is heard as a loop even when every other part varies",
+   "params": {
+    "max": {
+     "default": 2,
+     "low": 1,
+     "high": 6,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "shape.contrast": {
+   "meaning": "the piece changes level and density between its sections",
+   "why": "The one positive score row. Every other score row asks whether a part repeats; this one asks whether the sections differ from each other at all, which is the arc a repetition count cannot see. The spread is in MIDI velocity units: the ASAP corpus measured 5-95 percentile ranges of 36.7 (Baroque) and 53.8 (Romantic), so 12 units between two section means is below every measured piece, not a taste threshold.",
+   "params": {
+    "min_vel_spread": {
+     "default": 12.0,
+     "low": 4.0,
+     "high": 30.0,
+     "source": "The spread is in MIDI velocity units: the ASAP corpus measured 5-95 percentile ranges of 36.7 (Baroque) and 53.8 (Romantic), so 12 units between two section means is below every measured piece, not a taste threshold."
+    },
+    "min_density_ratio": {
+     "default": 1.6,
+     "low": 1.0,
+     "high": 4.0,
+     "source": "The spread is in MIDI velocity units: the ASAP corpus measured 5-95 percentile ranges of 36.7 (Baroque) and 53.8 (Romantic), so 12 units between two section means is below every measured piece, not a taste threshold."
+    }
+   }
+  },
+  "scene.arc_step": {
+   "meaning": "a peak stands measurably above the build that set it up",
+   "why": "The scene rows (scripts/scene_gate.py). Emitted only when a profile declares a `scene` block, so a piece that has not declared scenes is judged exactly as it was. Every floor is a parameter here: a project sets it in `rows` with a range and a reason, one figure, one home. Adjusting any of them IS loosening a threshold and needs the same measured evidence as the rest (`tests/test_gate_no_loosening.py` snapshots them).",
+   "params": {
+    "arousal_step_min": {
+     "default": 0.15,
+     "low": 0.0,
+     "high": 0.8,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "strain_step_min": {
+     "default": 0.02,
+     "low": 0.0,
+     "high": 0.5,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "scene.hit_surprise": {
+   "meaning": "a hard hit point has a surprise on it",
+   "params": {
+    "surprise_min_z": {
+     "default": 1.0,
+     "low": 0.0,
+     "high": 3.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_hits": {
+     "default": 1,
+     "low": 0,
+     "high": 16,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "hit_window_ms": {
+     "default": 250,
+     "low": 50,
+     "high": 1000,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "delta_min_db": {
+     "default": 1.5,
+     "low": 0.0,
+     "high": 12.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "scene.release_delta": {
+   "meaning": "the tension actually comes down into the release",
+   "params": {
+    "strain_drop_min": {
+     "default": 0.15,
+     "low": 0.0,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "arousal_drop_min": {
+     "default": 0.1,
+     "low": 0.0,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "scene.dialogue_mask": {
+   "meaning": "the figure keeps its ERB margin while a voice speaks",
+   "params": {
+    "margin_db_tight": {
+     "default": 5.0,
+     "low": 0.0,
+     "high": 12.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_fail_share": {
+     "default": 0.2,
+     "low": 0.0,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "scene.silence_honoured": {
+   "meaning": "a declared rest really is silent",
+   "params": {
+    "max_dbfs": {
+     "default": -50.0,
+     "low": -90.0,
+     "high": -20.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_s": {
+     "default": 0.3,
+     "low": 0.0,
+     "high": 5.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "scene.bed_stability": {
+   "meaning": "the beds rest where the sheet says silence",
+   "params": {
+    "max_dbfs": {
+     "default": -50.0,
+     "low": -90.0,
+     "high": -20.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_s": {
+     "default": 0.3,
+     "low": 0.0,
+     "high": 5.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "scene.macro_contrast": {
+   "meaning": "the piece has a dynamic range, a tension variance and a roughness contrast",
+   "params": {
+    "min_dynamic_range_lu": {
+     "default": 6.0,
+     "low": 0.0,
+     "high": 30.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_tension_variance": {
+     "default": 0.02,
+     "low": 0.0,
+     "high": 0.5,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_roughness_contrast_db": {
+     "default": 3.0,
+     "low": 0.0,
+     "high": 20.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_sections": {
+     "default": 2,
+     "low": 1,
+     "high": 12,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "force": {
+     "default": false,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "roughness": {
+   "meaning": "cochlear sensory roughness",
+   "why": "audio / mix `model` switches the estimator: 'legacy' is the original Plomp-Levelt/Sethares pair weight with per-frame normalisation; 'level_aware' adds absolute partial level, simultaneous masking and the Vassilakis amplitude terms (knowledgebase/sound-design/roughness.md). Default stays 'legacy' until the listening check in docs/roughness_model.md is answered. The other params are read only by 'level_aware'.",
+   "no_skip": true,
+   "params": {
+    "scale": {
+     "default": 1.0,
+     "low": 0.5,
+     "high": 2.0,
+     "source": "Daniel & Weber 1997 (roughness) and Zwicker & Fastl 1990 (simultaneous-masking slopes); the 0.024 median and the slope values are calibrated on tests/fixtures/roughness, not on a cue"
+    },
+    "outro_resolve": {
+     "default": true,
+     "source": "Daniel & Weber 1997 (roughness) and Zwicker & Fastl 1990 (simultaneous-masking slopes); the 0.024 median and the slope values are calibrated on tests/fixtures/roughness, not on a cue"
+    },
+    "model": {
+     "default": "legacy",
+     "choices": [
+      "legacy",
+      "level_aware"
+     ],
+     "source": "Daniel & Weber 1997 (roughness) and Zwicker & Fastl 1990 (simultaneous-masking slopes); the 0.024 median and the slope values are calibrated on tests/fixtures/roughness, not on a cue"
+    },
+    "median_min": {
+     "default": 0.024,
+     "low": 0.02,
+     "high": 0.4,
+     "source": "Daniel & Weber 1997 (roughness) and Zwicker & Fastl 1990 (simultaneous-masking slopes); the 0.024 median and the slope values are calibrated on tests/fixtures/roughness, not on a cue"
+    },
+    "calib_spl_db": {
+     "default": 70.0,
+     "low": 60.0,
+     "high": 80.0,
+     "source": "Daniel & Weber 1997 (roughness) and Zwicker & Fastl 1990 (simultaneous-masking slopes); the 0.024 median and the slope values are calibrated on tests/fixtures/roughness, not on a cue"
+    },
+    "mask_band_bark": {
+     "default": 1.0,
+     "low": 0.5,
+     "high": 3.0,
+     "source": "Daniel & Weber 1997 (roughness) and Zwicker & Fastl 1990 (simultaneous-masking slopes); the 0.024 median and the slope values are calibrated on tests/fixtures/roughness, not on a cue"
+    },
+    "mask_slope_up_db_bark": {
+     "default": 10.5,
+     "low": 5.0,
+     "high": 20.0,
+     "source": "Daniel & Weber 1997 (roughness) and Zwicker & Fastl 1990 (simultaneous-masking slopes); the 0.024 median and the slope values are calibrated on tests/fixtures/roughness, not on a cue"
+    },
+    "mask_slope_down_db_bark": {
+     "default": 27.0,
+     "low": 15.0,
+     "high": 40.0,
+     "source": "Daniel & Weber 1997 (roughness) and Zwicker & Fastl 1990 (simultaneous-masking slopes); the 0.024 median and the slope values are calibrated on tests/fixtures/roughness, not on a cue"
+    }
+   }
+  },
+  "ambient_bed": {
+   "meaning": "an ambient bed that drops out or pumps",
+   "why": "`slope_allowance` is how much of the score's own dB/s arc a bed may follow before a jump is pumping (0.5 was the constant). A declared rest window is not a dropout: the row reads the sheet, not just the stem.",
+   "no_skip": true,
+   "params": {
+    "pump_db": {
+     "default": 3.8,
+     "low": 3.0,
+     "high": 6.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "slope_allowance": {
+     "default": 0.5,
+     "low": 0.0,
+     "high": 2.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "modulation_flutter": {
+   "meaning": "6-25 Hz amplitude flutter in a sustained part",
+   "no_skip": true,
+   "params": {
+    "warn": {
+     "default": 0.18,
+     "low": 0.1,
+     "high": 0.3,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "note_collision": {
+   "meaning": "a pitch attacked twice on one beat or re-attacked while ringing",
+   "why": "score checks (pattern_audit.acoustic_checks). No numbers to retune, but a type of music may legitimately have them: an ambient piece has no chord voicing, an effects piece has no notes, a percussion-only loop has no \"flam\"."
+  },
+  "chord_voicing_and_strum": {
+   "meaning": "chord voicing and strum shape"
+  },
+  "choked_resonance": {
+   "meaning": "a note cut before its resonance can speak"
+  },
+  "machine_gun_percussion": {
+   "meaning": "percussion repeated at one velocity and one interval"
+  },
+  "percussion_flam": {
+   "meaning": "two percussion hits too close to read as one or two"
+  },
+  "low_interval_mud": {
+   "meaning": "low intervals closer than a minor third"
+  },
+  "orch.range": {
+   "meaning": "a note outside the playing range of its orchestral instrument (FAIL only far outside it)",
+   "params": {
+    "fail_over_semitones": {
+     "default": 12,
+     "low": 3,
+     "high": 24,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "orch.voice_leading": {
+   "meaning": "parallel fifths (and, when asked, octaves that are not a doubling) between two single lines",
+   "params": {
+    "max_parallel_share": {
+     "default": 0.2,
+     "low": 0.05,
+     "high": 0.6,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_events": {
+     "default": 3,
+     "low": 2,
+     "high": 12,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "include_octaves": {
+     "default": false,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "orch.playable": {
+   "meaning": "more simultaneous notes, a faster repeated-note run or a longer breathless phrase than the player or section has",
+   "params": {
+    "rate_scale": {
+     "default": 1.0,
+     "low": 0.5,
+     "high": 2.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "phrase_scale": {
+     "default": 1.0,
+     "low": 0.5,
+     "high": 2.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "orch.legato": {
+   "meaning": "notes marked legato that start after a gap, so a sampler plays them detached",
+   "params": {
+    "max_gap_beats": {
+     "default": 0.1,
+     "low": 0.0,
+     "high": 0.5,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "balance.vs_lead": {
+   "meaning": "accompaniment against the figure (melody, lead or vocal)",
+   "params": {
+    "warn_over_db": {
+     "default": 3.0,
+     "low": 1.0,
+     "high": 6.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "fail_over_db": {
+     "default": 6.0,
+     "low": 3.0,
+     "high": 12.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "focus.declared": {
+   "meaning": "the piece carries the line its type and its own declaration promise"
+  },
+  "intent.vocabulary": {
+   "meaning": "every word the piece declares resolves to one concept in the intent presets"
+  },
+  "intent.avoid": {
+   "meaning": "the gesture the piece said it would avoid does not happen in the score"
+  },
+  "balance.layers": {
+   "meaning": "each layer against the median layer (no lead needed)",
+   "params": {
+    "warn_db": {
+     "default": 9.0,
+     "low": 4.0,
+     "high": 18.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "fail_db": {
+     "default": 15.0,
+     "low": 8.0,
+     "high": 24.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "masking.vs_melody": {
+   "meaning": "ERB-band masking of the melody by beds",
+   "why": "`max_collisions` is the count this row has always failed at; `margin_db_tight` is how far it tightens inside a dialogue window the sheet declares (0 = no tightening, so a piece without dialogue is judged as before).",
+   "params": {
+    "margin_db": {
+     "default": 3.0,
+     "low": 1.0,
+     "high": 6.0,
+     "source": "Moore & Glasberg 1983 (ERB scale) with the usual BMLD bonus convention; the 8 dB margin is a starting value"
+    },
+    "max_collisions": {
+     "default": 8,
+     "low": 1,
+     "high": 200,
+     "source": "Moore & Glasberg 1983 (ERB scale) with the usual BMLD bonus convention; the 8 dB margin is a starting value"
+    },
+    "margin_db_tight": {
+     "default": 0.0,
+     "low": 0.0,
+     "high": 12.0,
+     "source": "Moore & Glasberg 1983 (ERB scale) with the usual BMLD bonus convention; the 8 dB margin is a starting value"
+    }
+   }
+  },
+  "spatial.z_separation": {
+   "meaning": "parts that fight for the same midrange share one place in the climax (azimuth + elevation)",
+   "params": {
+    "overlap_min": {
+     "default": 0.5,
+     "low": 0.2,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_sep_deg": {
+     "default": 25.0,
+     "low": 5.0,
+     "high": 90.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_elev_deg": {
+     "default": 15.0,
+     "low": 0.0,
+     "high": 45.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "spectral.equal_loudness": {
+   "meaning": "2.5-5 kHz sits far louder than the mids once ear sensitivity is weighted",
+   "params": {
+    "warn_db": {
+     "default": 6.0,
+     "low": 3.0,
+     "high": 12.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "fail_db": {
+     "default": 10.0,
+     "low": 6.0,
+     "high": 20.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "band_lo_hz": {
+     "default": 2500.0,
+     "low": 2000.0,
+     "high": 3000.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "band_hi_hz": {
+     "default": 5000.0,
+     "low": 4000.0,
+     "high": 6000.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_trim_db": {
+     "default": 3.0,
+     "low": 1.0,
+     "high": 6.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "bow.breath_gap": {
+   "meaning": "bowed/wind melody has a breath or bow gap",
+   "params": {
+    "gap_beats": {
+     "default": 0.08,
+     "low": 0.02,
+     "high": 0.2,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "chroma.concordance": {
+   "meaning": "ambient beds against the key (semitone clash)",
+   "params": {
+    "max_dissonance": {
+     "default": 0.28,
+     "low": 0.1,
+     "high": 0.5,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "kick.grid": {
+   "meaning": "kick transients locked to the beat grid",
+   "params": {
+    "min_lock": {
+     "default": 0.7,
+     "low": 0.3,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "imm.cues": {
+   "meaning": "binaural probe at +-60 deg: level difference and which ear arrives first",
+   "why": "immersive headphone route (scripts/quality_gate.py::immersive_rows, references/spatial/immersive-spatial.md). Registered here so a type of piece can skip or relax one with a measured reason; the numbers below are the gate's starting points.",
+   "params": {
+    "min_ild_db": {
+     "default": 8.0,
+     "low": 4.0,
+     "high": 20.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_itd_ms": {
+     "default": 0.3,
+     "low": 0.1,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "imm.elevation": {
+   "meaning": "the high-frequency tilt grows with height",
+   "params": {
+    "min_tilt_db": {
+     "default": 3.0,
+     "low": 1.0,
+     "high": 10.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "imm.frontback": {
+   "meaning": "front and rear colour differ",
+   "params": {
+    "min_tilt_db": {
+     "default": 2.0,
+     "low": 1.0,
+     "high": 10.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "imm.height_rules": {
+   "meaning": "heights legal, bass and drums flat, enough tracks lifted"
+  },
+  "imm.band": {
+   "meaning": "a lifted stem holds energy above 4 kHz to carry its height",
+   "params": {
+    "min_hf_frac": {
+     "default": 0.003,
+     "low": 0.001,
+     "high": 0.02,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "imm.externalization": {
+   "meaning": "reflections arrive from several directions at a sane level",
+   "params": {
+    "min_directions": {
+     "default": 3,
+     "low": 1,
+     "high": 6,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_db": {
+     "default": -30.0,
+     "low": -40.0,
+     "high": -12.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_db": {
+     "default": -3.0,
+     "low": -12.0,
+     "high": 0.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "imm.envelopment": {
+   "meaning": "late-tail interaural correlation",
+   "params": {
+    "max_late_iacc": {
+     "default": 0.4,
+     "low": 0.1,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "imm.width": {
+   "meaning": "master L/R correlation",
+   "params": {
+    "max_corr": {
+     "default": 0.95,
+     "low": 0.7,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "imm.foldown": {
+   "meaning": "mono fold-down level loss",
+   "params": {
+    "max_lu": {
+     "default": 3.0,
+     "low": 1.0,
+     "high": 8.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "imm.coloration": {
+   "meaning": "the measured head set colours the front of the mix no more than tolerance",
+   "params": {
+    "max_dev_db": {
+     "default": 3.5,
+     "low": 1.0,
+     "high": 8.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "lo_hz": {
+     "default": 500.0,
+     "low": 200.0,
+     "high": 1000.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "hi_hz": {
+     "default": 5000.0,
+     "low": 3000.0,
+     "high": 10000.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "imm.route_parity": {
+   "meaning": "the measured-head route and the analytic route agree on level and time difference",
+   "params": {
+    "max_ild_db": {
+     "default": 3.0,
+     "low": 1.0,
+     "high": 8.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_itd_ms": {
+     "default": 0.2,
+     "low": 0.05,
+     "high": 0.6,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "natural.aliasing": {
+   "meaning": "energy above 15 kHz that a transposed sample should not have (interpolation images)",
+   "why": "rendering naturalness (references/instruments-and-vocals/natural-instruments.md, humanization.md)",
+   "params": {
+    "max_hf_share_db": {
+     "default": -45.0,
+     "low": -70.0,
+     "high": -20.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "meta.tags": {
+   "meaning": "standard metadata written beside the certified master",
+   "why": "delivery traceability (scripts/helpers/, written at certification; the gate only reads it)",
+   "params": {
+    "max_missing": {
+     "default": 0,
+     "low": 0,
+     "high": 12,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "delivery.sample_rate": {
+   "meaning": "delivered sample rate against the direction sheet",
+   "why": "the direction sheet is the promise the delivery is judged against (scripts/quality_gate.py direction_rows)"
+  },
+  "delivery.bit_depth": {
+   "meaning": "delivered bit depth against the direction sheet"
+  },
+  "delivery.channels": {
+   "meaning": "delivered channel count against the direction sheet"
+  },
+  "delivery.duration": {
+   "meaning": "delivered length against the direction sheet",
+   "params": {
+    "tolerance_s": {
+     "default": 0.5,
+     "low": 0.1,
+     "high": 5.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "tempo.bpm": {
+   "meaning": "score tempo inside the range the direction sheet promises"
+  },
+  "key.mode": {
+   "meaning": "score key and mode against the direction sheet"
+  },
+  "meta.version": {
+   "meaning": "a version record for the certified master, and its versioned file still on disk",
+   "params": {
+    "max_missing": {
+     "default": 0,
+     "low": 0,
+     "high": 5,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "video.duration_lock": {
+   "meaning": "program length against the picture",
+   "why": "video delivery (scripts/video_score.py; measured by video-mixer/video_gate.py)",
+   "protected": true,
+   "params": {
+    "tolerance_ms": {
+     "default": 50,
+     "low": 10,
+     "high": 200,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "video.cut_sync": {
+   "meaning": "every hit against its cut, early and late measured separately",
+   "params": {
+    "early_ms": {
+     "default": 45,
+     "low": 10,
+     "high": 150,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "late_ms": {
+     "default": 125,
+     "low": 20,
+     "high": 300,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "aim_ms": {
+     "default": 40,
+     "low": 5,
+     "high": 120,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "video.dialogue_snr": {
+   "meaning": "music level under speech",
+   "params": {
+    "min_db": {
+     "default": 15.0,
+     "low": 6.0,
+     "high": 30.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "video.master_compliance": {
+   "meaning": "delivered loudness in the declared gating mode and true peak",
+   "protected": true,
+   "params": {
+    "tolerance_lu": {
+     "default": 1.0,
+     "low": 0.3,
+     "high": 3.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "video.motion_sync": {
+   "meaning": "a movement hit against the movement it accents",
+   "why": "the picture rows read at the three timescales (video-mixer/gate/pass_.py); thresholds are starting values except where a reference is named in references/scoring/video-scoring.md",
+   "params": {
+    "window_ms": {
+     "default": 150.0,
+     "low": 60.0,
+     "high": 450.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "video.hit_class": {
+   "meaning": "a delayed accent lands after its moment, a dead-on one does not drift"
+  },
+  "video.grid_phase": {
+   "meaning": "the cuts' residual against the fitted beat grid",
+   "params": {
+    "tolerance_frames": {
+     "default": 1.0,
+     "low": 0.25,
+     "high": 2.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "video.hit_density": {
+   "meaning": "accents per minute, and no Mickey Mousing",
+   "params": {
+    "budget_per_minute": {
+     "default": 24,
+     "low": 4,
+     "high": 60,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_consecutive_cut_hits": {
+     "default": 0.6,
+     "low": 0.2,
+     "high": 0.95,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "video.cue_silence": {
+   "meaning": "music where the spotting asked for silence",
+   "params": {
+    "max_dbfs": {
+     "default": -50.0,
+     "low": -90.0,
+     "high": -20.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "video.dialogue_band": {
+   "meaning": "music energy in the consonant band under speech",
+   "params": {
+    "min_db": {
+     "default": 12.0,
+     "low": 6.0,
+     "high": 30.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "video.shot_scale": {
+   "meaning": "density against the camera distance",
+   "params": {
+    "tolerance": {
+     "default": 0.15,
+     "low": 0.0,
+     "high": 0.5,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "video.gating_mode": {
+   "meaning": "the declared gating mode was actually measured",
+   "protected": true
+  },
+  "vocal.integrity": {
+   "meaning": "vocal stems finite, no DC offset, no limiter hit",
+   "why": "vocal tracks (scripts/vocals.py + vocal_engine; measured by quality_gate.vocal_rows from the render's vocal report)",
+   "protected": true,
+   "params": {
+    "dc_max": {
+     "default": 0.005,
+     "low": 0.0005,
+     "high": 0.02,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "vocal.clicks": {
+   "meaning": "single-sample jumps inside a vocal stem (joins between notes)",
+   "params": {
+    "max_clicks": {
+     "default": 0,
+     "low": 0,
+     "high": 5,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "vocal.breath": {
+   "meaning": "a phrase longer than the singers can hold on one breath",
+   "params": {
+    "over_capacity_factor": {
+     "default": 1.0,
+     "low": 0.8,
+     "high": 2.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "vocal.ensemble": {
+   "meaning": "3+ voices that are really one voice copied (stem correlation)",
+   "params": {
+    "max_corr": {
+     "default": 0.6,
+     "low": 0.3,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "vocal.intonation": {
+   "meaning": "sung pitch against the written pitch, vibrato excluded",
+   "params": {
+    "max_cents": {
+     "default": 60.0,
+     "low": 20.0,
+     "high": 150.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "vocal.dynamics": {
+   "meaning": "note level follows note velocity (no per-note normalisation)",
+   "params": {
+    "min_corr": {
+     "default": 0.5,
+     "low": 0.0,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "vocal.hum_tone": {
+   "meaning": "a hum stays dark and murmur-like, not a bright instrument tone",
+   "params": {
+    "max_hf_frac": {
+     "default": 0.02,
+     "low": 0.001,
+     "high": 0.2,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "vocal.ring": {
+   "meaning": "the singer's formant is an F3-F5 cluster near 2.8-3.2 kHz, not a boost pole",
+   "params": {
+    "max_spread_hz": {
+     "default": 400.0,
+     "low": 150.0,
+     "high": 900.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "spread_at_zero_hz": {
+     "default": 1600.0,
+     "low": 800.0,
+     "high": 3000.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "vocal.formant_tuning": {
+   "meaning": "a note whose f0 is above F1 keeps its fundamental out of a spectral valley",
+   "params": {
+    "max_deficit_db": {
+     "default": 6.0,
+     "low": 2.0,
+     "high": 12.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "vocal.consonant": {
+   "meaning": "consonants sit in their declared band before the onset, at the declared VOT",
+   "params": {
+    "vot_tol": {
+     "default": 0.3,
+     "low": 0.1,
+     "high": 0.6,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "centroid_margin": {
+     "default": 2.0,
+     "low": 1.2,
+     "high": 4.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "vocal.coarticulation": {
+   "meaning": "the formant track moves toward the next vowel before the note boundary",
+   "params": {
+    "min_lead_ms": {
+     "default": 20.0,
+     "low": 5.0,
+     "high": 60.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "vocal.perturbation": {
+   "meaning": "period-to-period jitter measured on the rendered signal (not flutter)",
+   "no_skip": true,
+   "params": {
+    "min_pct": {
+     "default": 0.3,
+     "low": 0.1,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_pct": {
+     "default": 2.0,
+     "low": 1.0,
+     "high": 4.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "vocal.passaggio": {
+   "meaning": "no register step across the break (open quotient stays continuous)",
+   "params": {
+    "max_step": {
+     "default": 0.01,
+     "low": 0.002,
+     "high": 0.05,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "vocal.vibrato": {
+   "meaning": "vibrato carries amplitude modulation in step with f0",
+   "params": {
+    "min_corr": {
+     "default": 0.5,
+     "low": 0.2,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_db": {
+     "default": 0.2,
+     "low": 0.05,
+     "high": 2.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "vocal.identity": {
+   "meaning": "two singers have measurably different tracts (formant distance)",
+   "params": {
+    "min_pct": {
+     "default": 2.0,
+     "low": 1.0,
+     "high": 8.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "vocal.spatial": {
+   "meaning": "the voice mix keeps binaural cues: L/R correlation and the mono sum",
+   "params": {
+    "max_stereo_corr": {
+     "default": 0.98,
+     "low": 0.8,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_mono_db": {
+     "default": -3.0,
+     "low": -9.0,
+     "high": 0.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "feel.contour": {
+   "meaning": "melodic arch / gap-fill",
+   "why": "cognitive feel checks (pattern_audit.cognitive_feel_checks); modes apply/skip, relaxing is by the profile's flags Every number here was a constant in pattern_audit; the defaults are those constants, so a profile that says nothing is judged exactly as before. A range that reached the \"off\" value (a step share of 0, an unresolved share of 1) is not in the tuples: a type of music says what its line is, it does not switch the rule off.",
+   "params": {
+    "min_notes": {
+     "default": 8,
+     "low": 4,
+     "high": 32,
+     "source": "Meyer 1956 (gap-fill) and Huron 2006 (stepwise balance); the 45 % floor is a starting value chosen under both the Baroque and Romantic ASAP medians"
+    },
+    "step_max_semitones": {
+     "default": 3.2,
+     "low": 2.0,
+     "high": 5.0,
+     "source": "Meyer 1956 (gap-fill) and Huron 2006 (stepwise balance); the 45 % floor is a starting value chosen under both the Baroque and Romantic ASAP medians"
+    },
+    "step_frac": {
+     "default": 0.45,
+     "low": 0.2,
+     "high": 0.7,
+     "source": "Meyer 1956 (gap-fill) and Huron 2006 (stepwise balance); the 45 % floor is a starting value chosen under both the Baroque and Romantic ASAP medians"
+    },
+    "step_frac_fail": {
+     "default": 0.25,
+     "low": 0.05,
+     "high": 0.5,
+     "source": "Meyer 1956 (gap-fill) and Huron 2006 (stepwise balance); the 45 % floor is a starting value chosen under both the Baroque and Romantic ASAP medians"
+    },
+    "leap_semis": {
+     "default": 4.8,
+     "low": 3.0,
+     "high": 8.0,
+     "source": "Meyer 1956 (gap-fill) and Huron 2006 (stepwise balance); the 45 % floor is a starting value chosen under both the Baroque and Romantic ASAP medians"
+    },
+    "gap_recover_semis": {
+     "default": 3.8,
+     "low": 2.0,
+     "high": 6.0,
+     "source": "Meyer 1956 (gap-fill) and Huron 2006 (stepwise balance); the 45 % floor is a starting value chosen under both the Baroque and Romantic ASAP medians"
+    },
+    "gap_fill_max": {
+     "default": 0.5,
+     "low": 0.2,
+     "high": 0.9,
+     "source": "Meyer 1956 (gap-fill) and Huron 2006 (stepwise balance); the 45 % floor is a starting value chosen under both the Baroque and Romantic ASAP medians"
+    },
+    "flip_frac": {
+     "default": 0.85,
+     "low": 0.6,
+     "high": 0.99,
+     "source": "Meyer 1956 (gap-fill) and Huron 2006 (stepwise balance); the 45 % floor is a starting value chosen under both the Baroque and Romantic ASAP medians"
+    },
+    "zigzag_max": {
+     "default": 0.75,
+     "low": 0.5,
+     "high": 0.99,
+     "source": "Meyer 1956 (gap-fill) and Huron 2006 (stepwise balance); the 45 % floor is a starting value chosen under both the Baroque and Romantic ASAP medians"
+    },
+    "zigzag_step_frac": {
+     "default": 0.3,
+     "low": 0.05,
+     "high": 0.6,
+     "source": "Meyer 1956 (gap-fill) and Huron 2006 (stepwise balance); the 45 % floor is a starting value chosen under both the Baroque and Romantic ASAP medians"
+    }
+   }
+  },
+  "feel.resolution": {
+   "meaning": "harmonic tension to resolution",
+   "params": {
+    "min_tension_notes": {
+     "default": 3,
+     "low": 2,
+     "high": 10,
+     "source": "Huron 2006 (tension and its resolution); the semitone windows are starting values"
+    },
+    "max_unresolved_share": {
+     "default": 0.4,
+     "low": 0.1,
+     "high": 0.8,
+     "source": "Huron 2006 (tension and its resolution); the semitone windows are starting values"
+    },
+    "resolve_step_semitones": {
+     "default": 2.2,
+     "low": 1.0,
+     "high": 4.0,
+     "source": "Huron 2006 (tension and its resolution); the semitone windows are starting values"
+    },
+    "resolve_leap_semitones": {
+     "default": 4.2,
+     "low": 2.0,
+     "high": 7.0,
+     "source": "Huron 2006 (tension and its resolution); the semitone windows are starting values"
+    }
+   }
+  },
+  "feel.groove": {
+   "meaning": "groove pocket lock",
+   "params": {
+    "min_bars": {
+     "default": 4,
+     "low": 2,
+     "high": 16,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_pocket_corr": {
+     "default": 0.3,
+     "low": 0.05,
+     "high": 0.7,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "imm.iacc_early": {
+   "meaning": "room probe, first 80 ms: interaural correlation over the 500-2000 Hz octaves",
+   "why": "Immersive 2.0 (quality_gate.immersive2_rows, fold_rows). Starting values, not calibrated on a corpus yet.",
+   "params": {
+    "max_iacc": {
+     "default": 0.97,
+     "low": 0.3,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "imm.clarity": {
+   "meaning": "room probe C80 over 500-4000 Hz: only a washed-out room trips it",
+   "params": {
+    "min_c80_db": {
+     "default": -5.0,
+     "low": -15.0,
+     "high": 5.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "imm.low_fold": {
+   "meaning": "mono fold-down loss below the bass corner",
+   "params": {
+    "max_db": {
+     "default": 2.5,
+     "low": 1.0,
+     "high": 6.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "hz": {
+     "default": 250.0,
+     "low": 80.0,
+     "high": 400.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "mix.band_fold": {
+   "meaning": "mono fold-down loss in each auditory band, 100-5000 Hz",
+   "params": {
+    "max_db": {
+     "default": 3.5,
+     "low": 2.0,
+     "high": 9.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "floor_db": {
+     "default": 30.0,
+     "low": 12.0,
+     "high": 60.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "imm.kinematics": {
+   "meaning": "no source travels faster than its role allows"
+  },
+  "delivery.loudness_ceiling": {
+   "meaning": "integrated loudness against the ceiling the target declares",
+   "why": "Immersive 3.1: delivery ceilings and decoder uniformity (scripts/spatial_gate.py)",
+   "params": {
+    "max_lufs": {
+     "default": -18.0,
+     "low": -24.0,
+     "high": -10.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "delivery.conform": {
+   "meaning": "duration against the certified stereo master",
+   "params": {
+    "max_abs_ms": {
+     "default": 50.0,
+     "low": 10.0,
+     "high": 200.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "iamf.container": {
+   "meaning": "an IAMF deliverable was written by the external encoder"
+  },
+  "imm.decode_uniformity": {
+   "meaning": "plane-wave power spread of the all-round decoder",
+   "params": {
+    "max_spread_db": {
+     "default": 2.0,
+     "low": 0.5,
+     "high": 12.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "lfe.sum_coherence": {
+   "meaning": "LFE1 and LFE2 add coherently below the decorrelation corner",
+   "why": "two low-frequency channels and a three-front stage (scripts/spatial_engine/lfe_qa.py, spatial_gate.lfe_rows). Advisory except a flipped sub: limits are starting values until measured on a room.",
+   "hint": "mode stereo_bass, a lower decorrelate_above_hz, or lfe_pan on the bass tracks",
+   "params": {
+    "min_rho": {
+     "default": 0.9,
+     "low": 0.5,
+     "high": 0.99,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "lfe.polarity": {
+   "meaning": "LFE1 and LFE2 are not in opposed polarity",
+   "hint": "fix lfe.polarity in the layout, or the bass preset that is inverted",
+   "params": {
+    "min_rho": {
+     "default": -0.3,
+     "low": -0.9,
+     "high": 0.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "lfe.fold_loss": {
+   "meaning": "summing the two low-frequency channels into one loses no level in any 1/3 octave",
+   "hint": "reduce the decorrelation (stages or max_group_delay_ms) or narrow the stereo bass",
+   "params": {
+    "max_db": {
+     "default": 1.5,
+     "low": 0.5,
+     "high": 6.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "lfe.modal_spread": {
+   "meaning": "two subs do not widen the spatial spread of a virtual box room against one (model, advisory)",
+   "hint": "the model is of the layout's qa.listening_room: change its sub positions or report that the room is unknown",
+   "params": {
+    "min_gain_db": {
+     "default": 0.0,
+     "low": -3.0,
+     "high": 6.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "front.fold_phantom": {
+   "meaning": "the centre folded into L and R keeps its interaural time and level cues (measured head set)",
+   "hint": "move content off L/R toward C, or lower the inter-channel correlation of L and R",
+   "params": {
+    "max_itd_us": {
+     "default": 100.0,
+     "low": 30.0,
+     "high": 300.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_ild_db": {
+     "default": 2.0,
+     "low": 0.5,
+     "high": 6.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "ear.fatigue": {
+   "meaning": "sustained neural adaptation at a stable loudness (a dense pad a loudness meter does not see)",
+   "why": "the virtual ear (scripts/ear_model, scripts/ear_rows.py): advisory, starting values calibrated on synthetic fixtures only",
+   "hint": "thin the pad, add rests or motion, lower the bed gain_db, or high-pass it",
+   "params": {
+    "f_max": {
+     "default": 0.6,
+     "low": 0.3,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_seconds": {
+     "default": 5.0,
+     "low": 2.0,
+     "high": 30.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "lufs_range_lu": {
+     "default": 2.0,
+     "low": 0.5,
+     "high": 6.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "ear.masking": {
+   "meaning": "the figure keeps its share of neural activity in its own channels against the beds",
+   "hint": "lane EQ, lead_carve, a lower bed level or a different register",
+   "params": {
+    "min_share": {
+     "default": 0.5,
+     "low": 0.2,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_frames": {
+     "default": 0.7,
+     "low": 0.3,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "ear.mod_roughness": {
+   "meaning": "30-150 Hz envelope modulation of the neural pattern (saturates with level: under-reads loud material)",
+   "hint": "roughness_forecast.py diagnose names the clashing partials; move the part",
+   "params": {
+    "max_index": {
+     "default": 0.6,
+     "low": 0.2,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_frames": {
+     "default": 3,
+     "low": 1,
+     "high": 10,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "ear.pitch_salience": {
+   "meaning": "the figure keeps a clear pitch inside the mix (fundamentals up to about 700 Hz)",
+   "hint": "raise the register, remove a co-registered bed, or change the timbre",
+   "params": {
+    "min_salience": {
+     "default": 0.25,
+     "low": 0.05,
+     "high": 0.8,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_frames": {
+     "default": 0.5,
+     "low": 0.2,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "ear.iacc": {
+   "meaning": "interaural correlation of the neural patterns of a two-channel master, 500-880 Hz",
+   "hint": "set the placement; widen or narrow the stems",
+   "params": {
+    "min_iacc": {
+     "default": 0.1,
+     "low": 0.0,
+     "high": 0.5,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_iacc": {
+     "default": 0.98,
+     "low": 0.8,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "chem.model": {
+   "meaning": "the chem presets validated, and what the layer reads and does not read",
+   "why": "the inferred-neurochemical layer (scripts/chem_model, scripts/chem_rows.py): advisory, INFO/WARN at most, every number a starting value and no row ever a FAIL (docs/NEUROCHEMICAL-AFFECT-PLAN.md section 4.1). A profile may skip one for a type of music whose brief is different, with the measurement that says so.",
+   "hint": "fix references/data/presets/gate/chem/model.json, moods.json or genres.json; the row names the key"
+  },
+  "chem.reward_build": {
+   "meaning": "the anticipation pool earns the arrival instead of the piece just getting louder",
+   "hint": "lengthen the build, withhold the tonic, raise the tension before the hit, or move the arrival later",
+   "params": {
+    "min_lead_s": {
+     "default": 4.0,
+     "low": 1.0,
+     "high": 20.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_rho": {
+     "default": 0.4,
+     "low": 0.0,
+     "high": 0.95,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_peak": {
+     "default": 0.45,
+     "low": 0.1,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "chem.reward_arrival": {
+   "meaning": "a consummation event lands at the declared hit, with a real change in it",
+   "hint": "put a timbre, low-end, voice or register change at the hit instead of a level nudge",
+   "params": {
+    "min_peak": {
+     "default": 0.5,
+     "low": 0.1,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_offset_s": {
+     "default": 2.0,
+     "low": 0.5,
+     "high": 8.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_contrast_db": {
+     "default": 3.0,
+     "low": 0.5,
+     "high": 9.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "chem.stress_load": {
+   "meaning": "tension is carried and then resolved, not accumulated",
+   "hint": "resolve the dominant, thin the cluster, add a breath, move roughness out of the figure band",
+   "params": {
+    "max_mean_load": {
+     "default": 0.35,
+     "low": 0.05,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_unresolved_s": {
+     "default": 8.0,
+     "low": 2.0,
+     "high": 30.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_resolve_frac": {
+     "default": 0.6,
+     "low": 0.2,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "chem.affiliation": {
+   "meaning": "there is something voice-like to bond with",
+   "hint": "a singable legato contour, a voice or hum, a slower harmonic rhythm, warmth at 150-400 Hz",
+   "params": {
+    "min_mean": {
+     "default": 0.45,
+     "low": 0.1,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_legato": {
+     "default": 0.5,
+     "low": 0.1,
+     "high": 0.95,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "chem.motor_drive": {
+   "meaning": "the body has a pulse to lock to, inside the Witek syncopation window",
+   "hint": "syncopate the cell into the window, give the kick and bass one owner, keep the peak long enough",
+   "params": {
+    "bsi_lo": {
+     "default": 0.4,
+     "low": 0.0,
+     "high": 2.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "bsi_hi": {
+     "default": 4.8,
+     "low": 2.0,
+     "high": 8.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_pulse": {
+     "default": 0.4,
+     "low": 0.1,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "min_mean": {
+     "default": 0.4,
+     "low": 0.1,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "chem.recovery": {
+   "meaning": "the piece comes down, or declares that it will not",
+   "hint": "a resolution section: slower, consonant, thinner, with a cadence; a cliff is a declared ending, not a pass",
+   "params": {
+    "min_drop_frac": {
+     "default": 0.35,
+     "low": 0.05,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_final_cort": {
+     "default": 0.4,
+     "low": 0.1,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "chem.arc_variety": {
+   "meaning": "the piece is more than one chemical state",
+   "hint": "change the state between sections and delete a duplicate arrival (a repeat releases less)",
+   "params": {
+    "min_states": {
+     "default": 3,
+     "low": 1,
+     "high": 7,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_flat_share": {
+     "default": 0.6,
+     "low": 0.2,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_arrivals_per_min": {
+     "default": 1.0,
+     "low": 0.2,
+     "high": 4.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "chem.mood_connection": {
+   "meaning": "the inferred signature answers the mood the direction sheet declares",
+   "hint": "the row names the furthest dimension and its lever; change the notes, not the mood word",
+   "params": {
+    "max_distance": {
+     "default": 0.25,
+     "low": 0.05,
+     "high": 0.6,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "chem.genre_connection": {
+   "meaning": "the inferred signature answers the genre the score declares",
+   "hint": "the family constraint is in references/data/presets/gate/chem/genres.json; fix the part the row names"
+  },
+  "env.declaration": {
+   "meaning": "a biome preset is valid, and every number in it names its source or says ESTIMATE",
+   "why": "the acoustic biome (scripts/biome, scripts/env_rows.py): environment tracks written as `biome/1` presets. Starting values: none has been calibrated on real recordings; the declaration and medium rows check facts, the rest are advisory",
+   "hint": "fix the field the message names; replace an ESTIMATE with a measurement from the research note"
+  },
+  "env.medium_consistency": {
+   "meaning": "the declared medium agrees with itself, with the measured speed of sound, with the bus and with the tubes of its animals",
+   "hint": "set c_measured_m_s or a gas gamma and molar mass that reproduce it; declare the same medium on the score; replace a module constant with the medium",
+   "params": {
+    "max_err_c": {
+     "default": 0.03,
+     "low": 0.005,
+     "high": 0.2,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "fail_err_c": {
+     "default": 0.15,
+     "low": 0.05,
+     "high": 0.5,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_err_alpha": {
+     "default": 0.02,
+     "low": 0.005,
+     "high": 0.2,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "fail_err_alpha": {
+     "default": 0.1,
+     "low": 0.02,
+     "high": 0.5,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_f1_err": {
+     "default": 0.03,
+     "low": 0.005,
+     "high": 0.2,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "env.niche_collision": {
+   "meaning": "animals whose bands overlap (Schoener D) do not call at the same time",
+   "hint": "move niche.band_hz apart, change their active windows, lower individuals, or set ecology.niches.auto",
+   "params": {
+    "warn_d": {
+     "default": 0.4,
+     "low": 0.1,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "warn_co": {
+     "default": 0.25,
+     "low": 0.05,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "fail_d": {
+     "default": 0.7,
+     "low": 0.3,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "fail_co": {
+     "default": 0.5,
+     "low": 0.1,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "env.score_pocket": {
+   "meaning": "foreground calls fall where the score leaves their band open",
+   "hint": "raise ecology.score.pocket_threshold, widen margin_db, lower the animal's bouts_per_min, or move its niche band",
+   "params": {
+    "min_in_pocket": {
+     "default": 0.85,
+     "low": 0.5,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "fail_in_pocket": {
+     "default": 0.6,
+     "low": 0.2,
+     "high": 0.95,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "env.foreground_salience": {
+   "meaning": "a foreground call is heard above its surroundings without covering a figure",
+   "hint": "raise the call's power_w or lower the beds in its band; move the call off the lead's band",
+   "params": {
+    "min_db": {
+     "default": 3.0,
+     "low": 0.0,
+     "high": 12.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_db": {
+     "default": 15.0,
+     "low": 6.0,
+     "high": 30.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_share_low": {
+     "default": 0.3,
+     "low": 0.05,
+     "high": 0.8,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_over_s": {
+     "default": 10.0,
+     "low": 1.0,
+     "high": 120.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "env.loop_stationarity": {
+   "meaning": "a bed declared stationary holds its level and spectrum, has no seam at a chunk edge and does not repeat",
+   "hint": "raise the gust corner or intensity, give the control curve more variance, or split a tiled bed into two named generators",
+   "params": {
+    "max_window_dev": {
+     "default": 2.0,
+     "low": 0.5,
+     "high": 6.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "fail_window_dev": {
+     "default": 3.5,
+     "low": 1.0,
+     "high": 10.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_seam_db": {
+     "default": 0.5,
+     "low": 0.1,
+     "high": 3.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "fail_seam_db": {
+     "default": 1.5,
+     "low": 0.3,
+     "high": 6.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "max_repeat": {
+     "default": 0.4,
+     "low": 0.1,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "fail_repeat": {
+     "default": 0.8,
+     "low": 0.3,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "env.density_budget": {
+   "meaning": "the calls begun per second stay inside the ecology budget",
+   "hint": "lower bouts_per_min or individuals, add a control rest curve, thin the beds; ear.fatigue judges the stem",
+   "params": {
+    "max_over": {
+     "default": 0.25,
+     "low": 0.0,
+     "high": 2.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "env.level_physical": {
+   "meaning": "a generator's rendered pressure matches what its own physics predicts (nothing normalised it away)",
+   "hint": "remove any normalisation; check k_dipole, efficiency, area_m2 and the rate curve",
+   "params": {
+    "max_db": {
+     "default": 3.0,
+     "low": 0.5,
+     "high": 12.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "fail_db": {
+     "default": 8.0,
+     "low": 2.0,
+     "high": 30.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "env.diffuse_field": {
+   "meaning": "a field source is as decorrelated as its spatial_coupling asks",
+   "hint": "more emitters, a different correlation_target, or a wider decorrelator",
+   "params": {
+    "target": {
+     "default": 0.2,
+     "low": 0.0,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "warn_over": {
+     "default": 0.1,
+     "low": 0.02,
+     "high": 0.5,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "fail_over": {
+     "default": 0.25,
+     "low": 0.05,
+     "high": 0.8,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "env.ecology_rules": {
+   "meaning": "every freeze rule was honoured and every rule fired at least once",
+   "hint": "check the rule names against sections and animals; a trigger that never calls never fires"
+  },
+  "env.cpu_budget": {
+   "meaning": "the biome renders in a bounded time per minute of audio (measured on a short render, a projection)",
+   "hint": "fewer oscillators, patches, individuals or emitters",
+   "params": {
+    "max_s_per_min": {
+     "default": 12.0,
+     "low": 1.0,
+     "high": 120.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "fail_s_per_min": {
+     "default": 30.0,
+     "low": 5.0,
+     "high": 600.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "channel.virtual": {
+   "meaning": "the delivered channels map to the layout the target claims, or to the virtual speaker sphere for AmbiX",
+   "why": "per-channel and per-bar delivery QA for any channel count (scripts/channel_qa.py, references/spatial/virtual-speaker-qa.md). A real layout uses its speaker positions; order-5 AmbiX decodes to the 36-point ambix_qa_36 sphere; an undeclared file is still checked per channel."
+  },
+  "channel.bars": {
+   "meaning": "an isolated bar where one channel jumps, drops out, flips polarity or swings the spatial balance while the other channels stay still",
+   "params": {
+    "jump_db": {
+     "default": 8.0,
+     "low": 3.0,
+     "high": 30.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "dropout_db": {
+     "default": 15.0,
+     "low": 6.0,
+     "high": 40.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "balance_db": {
+     "default": 4.0,
+     "low": 1.0,
+     "high": 12.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "stable_db": {
+     "default": 3.0,
+     "low": 1.0,
+     "high": 9.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "polarity_corr": {
+     "default": -0.5,
+     "low": -0.95,
+     "high": -0.1,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "polarity_neighbor": {
+     "default": 0.2,
+     "low": 0.0,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "floor_abs_db": {
+     "default": -65.0,
+     "low": -100.0,
+     "high": -30.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "floor_programme_db": {
+     "default": 40.0,
+     "low": 10.0,
+     "high": 80.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "balance_spread_db": {
+     "default": 2.5,
+     "low": 0.5,
+     "high": 9.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "render.finite": {
+   "meaning": "no NaN or infinite sample in any delivered channel",
+   "protected": true
+  },
+  "feel.effort": {
+   "meaning": "kinematic effort / respiration"
+  },
+  "feel.spiral": {
+   "meaning": "tonal tension arc",
+   "params": {
+    "static_momentum": {
+     "default": 0.05,
+     "low": 0.0,
+     "high": 0.3,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "teleport_momentum": {
+     "default": 1.45,
+     "low": 0.8,
+     "high": 3.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "outro_strain_max": {
+     "default": 0.5,
+     "low": 0.2,
+     "high": 1.0,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "outro_percentile": {
+     "default": 30,
+     "low": 5,
+     "high": 50,
+     "source": "starting value: no published measurement recorded for this row"
+    },
+    "concordance_min_rho": {
+     "default": -0.35,
+     "low": -0.8,
+     "high": 0.0,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "feel.witek": {
+   "meaning": "groove pleasure curve",
+   "why": "bsi_hi is the top of the pocket, bsi_fail_hi the collapse limit: the row used to pass everything up to 5.5 while telling the reader it was inside [lo, hi]. Between the two it now warns, which changes no certified verdict except a piece that was between 4.8 and 5.5 and reading a PASS it had not earned.",
+   "params": {
+    "bsi_lo": {
+     "default": 0.4,
+     "low": 0.0,
+     "high": 2.0,
+     "source": "Witek et al. 2014 and Vuust et al. 2018 (the inverted U of syncopation and pleasure); the 0.4 / 4.8 / 5.5 band is a starting value, not a fitted curve"
+    },
+    "bsi_hi": {
+     "default": 4.8,
+     "low": 2.0,
+     "high": 8.0,
+     "source": "Witek et al. 2014 and Vuust et al. 2018 (the inverted U of syncopation and pleasure); the 0.4 / 4.8 / 5.5 band is a starting value, not a fitted curve"
+    },
+    "bsi_fail_hi": {
+     "default": 5.5,
+     "low": 4.0,
+     "high": 9.0,
+     "source": "Witek et al. 2014 and Vuust et al. 2018 (the inverted U of syncopation and pleasure); the 0.4 / 4.8 / 5.5 band is a starting value, not a fitted curve"
+    },
+    "bsi_mode": {
+     "default": "pocket",
+     "choices": [
+      "pocket",
+      "pocket",
+      "stillness",
+      "rupture"
+     ],
+     "source": "Witek et al. 2014 and Vuust et al. 2018 (the inverted U of syncopation and pleasure); the 0.4 / 4.8 / 5.5 band is a starting value, not a fitted curve"
+    },
+    "bsi_still_max": {
+     "default": 0.15,
+     "low": 0.0,
+     "high": 0.6,
+     "source": "Witek et al. 2014 and Vuust et al. 2018 (the inverted U of syncopation and pleasure); the 0.4 / 4.8 / 5.5 band is a starting value, not a fitted curve"
+    },
+    "bsi_rupture_min": {
+     "default": 5.5,
+     "low": 3.0,
+     "high": 9.0,
+     "source": "Witek et al. 2014 and Vuust et al. 2018 (the inverted U of syncopation and pleasure); the 0.4 / 4.8 / 5.5 band is a starting value, not a fitted curve"
+    }
+   }
+  },
+  "feel.entropy": {
+   "meaning": "melodic information content of a line (PPM model, scripts/expectation.py): not a loop, not a random walk",
+   "params": {
+    "min_bits": {
+     "default": 1.15,
+     "low": 0.5,
+     "high": 2.0,
+     "source": "Pearce & Wiggins 2004 (PPM information content) and Huron 2006; the window is a starting value"
+    },
+    "max_bits": {
+     "default": 4.4,
+     "low": 3.5,
+     "high": 4.6,
+     "source": "Pearce & Wiggins 2004 (PPM information content) and Huron 2006; the window is a starting value"
+    }
+   }
+  },
+  "expr.ic_profile": {
+   "meaning": "information content and uncertainty of each melodic line, per bar (reported)"
+  },
+  "expr.surprise_grounded": {
+   "meaning": "a high-surprise note is followed by a predictable one (advisory)",
+   "hint": "resolve high-surprise leaps stepwise, or repeat the figure after them",
+   "params": {
+    "max_share": {
+     "default": 0.6,
+     "low": 0.3,
+     "high": 0.9,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "expr.agogic_coupling": {
+   "meaning": "a line's onsets and velocities follow its melodic surprise when the coupling is on (advisory)",
+   "hint": "raise ic_agogic_ms / ic_vel, or check the groove preset is not tight; rubato and drift also move the timing",
+   "params": {
+    "min_rho": {
+     "default": 0.15,
+     "low": 0.0,
+     "high": 0.5,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "emotion.arc_arousal": {
+   "meaning": "the measured arousal of each section follows the order of the sheet's section energy (advisory)",
+   "hint": "change the density, level or register of the section in the notes; the sheet is the promise",
+   "params": {
+    "min_rho": {
+     "default": 0.6,
+     "low": 0.0,
+     "high": 0.95,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "emotion.arc_valence": {
+   "meaning": "the measured valence has the sign the brief's emotion words imply (advisory, a weak measure)",
+   "hint": "mode and harmonic clashes; listen before changing the notes",
+   "params": {
+    "neutral_band": {
+     "default": 0.3,
+     "low": 0.1,
+     "high": 0.6,
+     "source": "starting value: no published measurement recorded for this row"
+    }
+   }
+  },
+  "expr.tension_ic": {
+   "meaning": "harmonic tension (Chew) against melodic information content per two bars (reported)"
+  }
+ }
+}

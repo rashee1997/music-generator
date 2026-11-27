@@ -383,6 +383,7 @@ def melodic_contour_feel(score):
         if len(notes) < min_notes:
             continue
 
+        name = t.get('name', 'melody')
         pitches = np.array([_pitch_cont(n) for n in notes])
         all_diffs = np.diff(pitches)
         if len(all_diffs) == 0:
@@ -392,8 +393,6 @@ def melodic_contour_feel(score):
             rows.append(('INFO', 'melodic_contour_feel',
                          f"Track '{name}': every interval sits in a scene window that waives this ceiling, so none was judged"))
             continue
-
-        name = t.get('name', 'melody')
         flagged = False
         clause = f' ({excluded} interval(s) in a waiving scene window not judged)' if excluded else ''
 
@@ -852,6 +851,31 @@ def bar_syncopation(score, t0=None, t1=None):
     return float(syncopation / total_bars)
 
 
+def bsi_verdict(bsi, lo, hi, fail_hi, mode='pocket', still_max=0.0, rupture_min=0.0):
+    """(level, note) for one Bar Syncopation Index against the piece's own band.
+
+    The band is the piece's `feel.witek` parameters; this function is the one place its three zones (dead-on, pocket,
+    the WARN band `hi..fail_hi`, and the collapse limit) are decided, so a caller, a scene window and a test cannot read
+    the same number differently. `mode` is a scene role's `bsi_mode`.
+    """
+    b = float(bsi)
+    head = f'{b:.2f}/bar'
+    if mode == 'stillness':
+        return ('PASS', f'{head} is at or below the stillness limit {still_max:g}') if b <= still_max else \
+               ('WARN', f'{head} is over the stillness limit {still_max:g}: this window is busier than the role declared')
+    if mode == 'rupture':
+        if b < rupture_min:
+            return ('WARN', f'{head} is under the rupture floor {rupture_min:g}: the break is not written as one')
+        return ('PASS', f'{head}, and a rupture may exceed the collapse limit {fail_hi:g} without failing the pocket rule')
+    if b < lo:
+        return ('WARN', f'{head} is under the pocket {lo:g}')
+    if b > fail_hi:
+        return ('FAIL', f'{head} is over the collapse limit {fail_hi:g}')
+    if b > hi:
+        return ('WARN', f'{head} is over the pocket {hi:g} and under the collapse limit {fail_hi:g}')
+    return ('PASS', f'{head} is inside the pocket [{lo:g}, {hi:g}]')
+
+
 def witek_groove_curve(score):
     """1.2 Witek-Vuust Inverted-U Groove & Syncopation Pleasure Curve (Witek 2014, Vuust 2018).
 
@@ -884,46 +908,17 @@ def witek_groove_curve(score):
                 scoped.append((s['role'], mode, b))
     if scoped:
         for role, mode, b in scoped:
-            if mode == 'stillness':
-                rows.append(('PASS' if b <= still_max else 'WARN', 'witek_groove_curve',
-                             f"Scene role '{role}' is stillness: BSI {b:.2f}/bar (at or below {still_max:g} wanted){'' if b <= still_max else ', this window is busier than the role declared'}."))
-            elif mode == 'rupture':
-                if b < rupture_min:
-                    rows.append(('WARN', 'witek_groove_curve',
-                                 f"Scene role '{role}' is a rupture but reads BSI {b:.2f}/bar, under its floor {rupture_min:g}: "
-                                 f"the break is not written as one. Off-beat accents, not more notes."))
-                else:
-                    rows.append(('PASS', 'witek_groove_curve',
-                                 f"Scene role '{role}' is a rupture: BSI {b:.2f}/bar, and a rupture may exceed the "
-                                 f"collapse limit {fail_hi:g} without failing the pocket rule."))
-            else:
-                if b < lo:
-                    lvl, note = 'WARN', f'under the pocket {lo:g}'
-                elif b > fail_hi:
-                    lvl, note = 'FAIL', f'over the collapse limit {fail_hi:g}'
-                elif b > hi:
-                    lvl, note = 'WARN', f'over the pocket {hi:g} and under the collapse limit {fail_hi:g}'
-                else:
-                    lvl, note = 'PASS', f'inside the pocket [{lo:g}, {hi:g}]'
-                rows.append((lvl, 'witek_groove_curve', f"Scene role '{role}' is a pocket: BSI {b:.2f}/bar is {note}."))
+            lvl, note = bsi_verdict(b, lo, hi, fail_hi, mode=mode, still_max=still_max, rupture_min=rupture_min)
+            rows.append((lvl, 'witek_groove_curve', f"Scene role '{role}' is {mode}: BSI {note}."))
         return rows
 
     if intent['is_ambient']:
         rows.append(('PASS', 'witek_groove_curve', f"Ambient/free-pulse mode: BSI {bsi:.2f}/bar conforms to meditative profile"))
-    elif bsi < lo:
-        rows.append(('WARN', 'witek_groove_curve',
-                     f"Dead-on-grid rhythmic predictability: Bar Syncopation Index {bsi:.2f} < {lo:g}/bar. "
-                     "Add syncopated pickups before strong beats to trigger human groove prediction."))
-    elif bsi > fail_hi:
-        rows.append(('FAIL', 'witek_groove_curve',
-                     f"Metric collapse: excessive syncopation (BSI {bsi:.2f} > {fail_hi:g}/bar) destroys internal beat prediction model. "
-                     "Anchor beats 1 and 3 in bass or kick."))
-    elif bsi > hi:
-        rows.append(('WARN', 'witek_groove_curve',
-                     f"Bar Syncopation Index {bsi:.2f}/bar is above the pocket {hi:g} and under the collapse limit {fail_hi:g}: "
-                     "busier than the role asked for, not yet a collapse. Anchor more accents on the beat."))
     else:
-        rows.append(('PASS', 'witek_groove_curve', f"Optimal human groove zone (BSI {bsi:.2f}/bar in [{lo:g}, {hi:g}])"))
+        lvl, note = bsi_verdict(bsi, lo, hi, fail_hi)
+        rows.append((lvl, 'witek_groove_curve', f"Bar Syncopation Index {note}."
+                     + (' Anchor beats 1 and 3 in bass or kick.' if lvl == 'FAIL' else '')
+                     + (' Add syncopated pickups before strong beats.' if lvl == 'WARN' and bsi < lo else '')))
 
     return rows
 

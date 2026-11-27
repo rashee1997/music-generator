@@ -329,6 +329,21 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
   `python scripts/helpers/expression_report.py <score> --direction <sheet> --project <dir>` judges with the same numbers.
   The chem presets are the project's as well: `presets/gate/chem/{model,moods,genres}.json` override the shipped ones,
   and `chem.model` prints which file supplied them.
+- Every number in the gate is data: `references/data/presets/gate/data/rows.json` holds each row's default, its range
+  and the `source` of that number (a citation, or the words "starting value" where no published measurement exists).
+  `gate_profiles.ROWS` is built from that file and keeps no copy; a default with no provenance fails
+  `tests/test_gate_thresholds_provenance.py`. Never edit a default in Python, and never write a citation for a number
+  nobody measured.
+- A piece may be judged against its own scenes. A profile's `"scene"` block points at the project's direction sheet
+  (`sections[].role`, `hits[]`, `video.dialogue.windows`); the role contract, its keys and their ranges are
+  `references/data/presets/gate/data/scene_roles.json`; the rows are `scene.arc_step`, `scene.hit_surprise`,
+  `scene.release_delta`, `scene.macro_contrast`, `scene.silence_honoured`, `scene.bed_stability` and
+  `scene.dialogue_mask`, plus `scene.preset` for the block itself. With no block, nothing new is emitted. Read
+  `references/mixing/quality-gate-scenes.md` before writing one; a section `role` is a checked field, so a typo is a
+  FAIL, never a default.
+- What a failing row asks you to change is data too (`references/data/presets/gate/data/feedback.json`, read by
+  `scripts/gate_feedback.py`, `rca.py`, the gate report and `debug_audio.py --feedback`). Read it before editing: it
+  names the lever and what the fix costs, and it is the same answer in all four places.
 - Read brief for demands. If demands conflict with profile flags, don't pick it.
 - Mixed situations: create custom profile with `python scripts/gate_profiles.py new <name> --from <closest> --project <dir>`. Can merge with list like `["cinematic", "dance"]`.
 - Start strict. Only relax/skip AFTER measurement with reason naming the measurement. Never in advance.
