@@ -475,6 +475,93 @@ def defaults(row):
     return {k: v[0] for k, v in (ROWS[row].get('params') or {}).items()}
 
 
+# ---------- the figures the expression rows judge with ----------
+# direction.expression is read from the sheet; expression.arousal_order and melody.variety are measured from the notes
+# against the anchors below. Those anchors live in the piece's own gate profile (`"expression": {...}`), not in
+# scripts/helpers/expression_report.py, because the anchors describe the piece: a drone cue has no build to rank, a
+# through-composed cue has no repeating figure, a twenty-second sting is shorter than a phrase. The values here are the
+# ones every profile inherited before the block existed, so a profile that says nothing is judged exactly as it was.
+# Neither measured row can FAIL (WARN at most), and no value here switches a row off: EXPRESSION_RANGES bounds every
+# number, so a profile states its piece instead of silencing the row (a min_rho of -1 would pass everything).
+EXPRESSION_DEFAULTS = {
+    'anchors': {'tempo_bpm': (60.0, 180.0), 'notes_per_beat': (0.0, 8.0), 'velocity': (0.2, 1.0),
+                'pitch': (36.0, 84.0)},
+    'arousal_order': {'min_sections': 3, 'min_rho': 0.5},
+    'melody_variety': {'min_notes': 16, 'max_identical_bar_share': 0.6, 'min_interval_entropy_bits': 1.0,
+                       'min_range_semitones': 7, 'intervals_for_leap_check': 20},
+    'figure_roles': ('melody', 'lead', 'vocal'),
+    'skip_roles': ('environment', 'fx', 'texture'),
+}
+
+EXPRESSION_RANGES = {
+    ('arousal_order', 'min_sections'): (2, 10),
+    ('arousal_order', 'min_rho'): (0.1, 1.0),          # 0 means "no rank order required": that is switching the row off
+    ('melody_variety', 'min_notes'): (4, 200),
+    ('melody_variety', 'max_identical_bar_share'): (0.0, 0.9),   # 1.0 would pass any amount of repetition
+    ('melody_variety', 'min_interval_entropy_bits'): (0.2, 6.0),  # 0.0 would pass a single-interval line
+    ('melody_variety', 'min_range_semitones'): (1, 48),
+    ('melody_variety', 'intervals_for_leap_check'): (4, 200),
+}
+
+EXPRESSION_KEYS = ('anchors', 'arousal_order', 'melody_variety', 'figure_roles', 'skip_roles')
+
+
+def expression_problems(expr, where):
+    """Problems in a profile's `expression` block; [] when it is usable (the same contract as profile_problems)."""
+    if expr is None:
+        return []
+    if not isinstance(expr, dict):
+        return [f'{where}: "expression" must be an object ({', '.join(EXPRESSION_KEYS)})']
+    problems = []
+    for k in expr:
+        if k not in EXPRESSION_KEYS + ('_source',):
+            problems.append(f'{where}: expression has unknown key "{k}" (known: {", ".join(EXPRESSION_KEYS)})')
+    for block in ('anchors', 'arousal_order', 'melody_variety'):
+        d = expr.get(block)
+        if d is None:
+            continue
+        if not isinstance(d, dict):
+            problems.append(f'{where}: expression.{block} must be an object')
+            continue
+        for k, v in d.items():
+            if k == '_source':
+                continue
+            if k not in EXPRESSION_DEFAULTS[block]:
+                problems.append(f'{where}: expression.{block} has unknown key "{k}" '
+                                f'(known: {", ".join(EXPRESSION_DEFAULTS[block])})')
+            elif block == 'anchors':
+                if not (isinstance(v, (list, tuple)) and len(v) == 2):
+                    problems.append(f'{where}: expression.anchors.{k} must be [lo, hi]')
+                else:
+                    try:
+                        lo, hi = float(v[0]), float(v[1])
+                    except (TypeError, ValueError):
+                        problems.append(f'{where}: expression.anchors.{k} must be two numbers')
+                    else:
+                        if hi <= lo:
+                            problems.append(f'{where}: expression.anchors.{k} = {v}: hi must be above lo')
+            else:
+                lo, hi = EXPRESSION_RANGES[(block, k)]
+                if isinstance(v, bool) or not isinstance(v, (int, float)):
+                    problems.append(f'{where}: expression.{block}.{k} must be a number, not {v!r}')
+                elif not lo <= float(v) <= hi:
+                    problems.append(f'{where}: expression.{block}.{k} = {v} is outside {lo:g}..{hi:g}')
+    for key in ('figure_roles', 'skip_roles'):
+        v = expr.get(key)
+        if v is None:
+            continue
+        if not isinstance(v, list) or not v:
+            problems.append(f'{where}: expression.{key} must be a non-empty list of roles')
+            continue
+        for r in v:
+            try:
+                rolelib.canonical(r)
+            except (rolelib.UnknownRole, TypeError):
+                problems.append(f'{where}: expression.{key}: "{r}" is not a role. '
+                                f'Known: {", ".join(rolelib.CANONICAL_ROLES)}')
+    return problems
+
+
 def _check_range(row, name, val, problems, where):
     spec = _pspec(row, name)
     if spec is None:
@@ -588,6 +675,7 @@ def profile_problems(name, p, all_profiles):
         elif not (isinstance(v, (int, float)) and TRAITS[k][0] <= v <= TRAITS[k][1]):
             problems.append(f'{where}: trait {k} must be {TRAITS[k][0]}..{TRAITS[k][1]}')
     problems += row_problems(p.get('rows', {}), where)
+    problems += expression_problems(p.get('expression'), where)
     return problems
 
 
@@ -634,15 +722,16 @@ def _chain(name, allp):
 
 
 def _merge_profile(name, allp):
-    flags, rows, focus = set(), {}, {}
+    flags, rows, focus, expr = set(), {}, {}, {}
     for n in _chain(name, allp):
         p = allp[n]
         flags |= set(p.get('flags', []))
         focus = presets._deep_merge(focus, p.get('focus') or {})
+        expr = presets._deep_merge(expr, p.get('expression') or {})
         for rid, cfg in (p.get('rows') or {}).items():
             rid = canonical(rid)            # mode()/param() look rows up by canonical id: store them the same way
             rows[rid] = presets._deep_merge(rows.get(rid, {}), cfg)
-    return flags, rows, focus
+    return flags, rows, focus, expr
 
 
 def _drone_ratio(score):
@@ -687,10 +776,39 @@ def infer(score, allp):
 
 
 class Profile:
-    def __init__(self, names, how, why, flags, rows, errors, focus=None):
+    def __init__(self, names, how, why, flags, rows, errors, focus=None, expression=None):
         self.names, self.how, self.why = names, how, why
         self.flags, self.rows, self.errors = flags, rows, errors
         self.focus = focus or {}
+        self.expression = expression or {}
+
+    def expression_cfg(self):
+        """The figures this piece's expression rows are judged with, from the profile's `expression` block.
+
+        The block is optional: without it a profile inherits EXPRESSION_DEFAULTS, which is what every profile used
+        before the block existed. An unknown key, a number outside its range or a role that does not exist raises, so
+        a typo in the piece's own figures is an error and never a silent default.
+        """
+        problems = expression_problems(self.expression, f'gate/{self.label}')
+        if problems:
+            raise ValueError('; '.join(problems))
+        out = copy.deepcopy(EXPRESSION_DEFAULTS)
+        for block in ('anchors', 'arousal_order', 'melody_variety'):
+            for k, v in (self.expression.get(block) or {}).items():
+                if k == '_source':
+                    continue
+                out[block][k] = tuple(float(x) for x in v) if block == 'anchors' else v
+        for key in ('figure_roles', 'skip_roles'):
+            if self.expression.get(key) is not None:
+                out[key] = tuple(self.expression[key])
+        both = set(out['figure_roles']) & set(out['skip_roles'])
+        if both:
+            # a role cannot be the figure and be skipped in the same profile: the figure would vanish from every
+            # measurement and the row would report "no figure" for a piece that has one
+            raise ValueError(f'gate/{self.label}: {sorted(both)} is in both figure_roles and skip_roles')
+        out['source'] = (self.expression.get('_source')
+                         or f'gate/{self.label} (no expression block: the shipped figures)')  
+        return out
 
     @property
     def label(self):
@@ -834,11 +952,12 @@ def resolve(score):
             why = '; '.join(f'{n}: {w}' for n, _, w in found)
     if not names:
         names = [DEFAULT_PROFILE] if DEFAULT_PROFILE in allp else []
-    flags, rows, focus = set(), {}, {}
+    flags, rows, focus, expr = set(), {}, {}, {}
     for n in names:
-        f, r, foc = _merge_profile(n, allp)
+        f, r, foc, ex = _merge_profile(n, allp)
         flags |= f
         focus = presets._deep_merge(focus, foc)
+        expr = presets._deep_merge(expr, ex)
         for rid, cfg in r.items():
             rows[rid] = presets._deep_merge(rows.get(rid, {}), cfg)
     over = score.get('gate')
@@ -848,7 +967,7 @@ def resolve(score):
             rid = canonical(rid)
             if rid in ROWS and not ROWS[rid].get('protected'):
                 rows[rid] = presets._deep_merge(rows.get(rid, {}), cfg)
-    return Profile(names, how, why, flags, rows, errors, focus)
+    return Profile(names, how, why, flags, rows, errors, focus, expr)
 
 
 # ---------- command line ----------
@@ -862,7 +981,7 @@ def cmd_list():
     allp = presets.load('gate')
     for name in sorted(allp):
         p = allp[name]
-        flags, rows, focus = _merge_profile(name, allp)
+        flags, rows, focus, _expr = _merge_profile(name, allp)
         print(f'{name}: {p.get("character", "")}   [{p.get("_source")}]')
         if p.get('extends'):
             print(f'  extends {p["extends"]}; flags {sorted(flags) or "-"}')

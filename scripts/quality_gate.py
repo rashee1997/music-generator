@@ -1762,7 +1762,7 @@ def _direction_sheet(project_dir):
     return cut_windows.read_sheet(project_dir)
 
 
-def _expression_rows(score, sheet, out):
+def _expression_rows(score, sheet, out, gp=None):
     """How the music is played and heard: the sheet's `expression` block, and whether the notes carry it.
 
     direction.expression: WARN when the block is absent, FAIL when it is present but incomplete (a half-written promise
@@ -1770,6 +1770,13 @@ def _expression_rows(score, sheet, out):
     WARN at most: their anchors are starting values that no corpus has calibrated, so they flag and never fail."""
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'helpers'))
     import expression_report as er
+    try:
+        er_cfg = gp.expression_cfg() if gp is not None else er.defaults()
+    except ValueError as exc:
+        # a piece's own figures are validated like a row: an unknown key or a number outside its range is a fact,
+        # and silently falling back to the shipped anchors would judge the piece by numbers it did not choose
+        out.append(('FAIL', 'expression.preset', f"the piece's own expression figures are not usable: {exc}"))
+        return
     problems = er.expression_block_problems(sheet)
     if not isinstance(sheet.get('expression'), dict):
         out.append(('WARN', 'direction.expression', problems[0] + ' (references/workflow/music-direction.md, section 2.11)'))
@@ -1777,14 +1784,14 @@ def _expression_rows(score, sheet, out):
         out.append(('FAIL', 'direction.expression', '; '.join(problems)))
     else:
         out.append(('PASS', 'direction.expression', 'the sheet says how the music is played and heard'))
-    rho, _rows, flag = er.arousal_order(score)
+    rho, _rows, flag = er.arousal_order(score, er_cfg)
     if rho is None:
         out.append(('INFO', 'expression.arousal_order', 'fewer than three sections with a declared energy and notes: no rank order to compare'))
     elif flag:
         out.append(('WARN', 'expression.arousal_order', flag))
     else:
         out.append(('PASS', 'expression.arousal_order', f'the written notes follow the declared section energy (rank correlation {rho:+.2f})'))
-    mv = er.melody_variety(score)
+    mv = er.melody_variety(score, er_cfg)
     if mv.get('note'):
         out.append(('INFO', 'melody.variety', mv['note']))
     elif mv['flags']:
@@ -1868,7 +1875,7 @@ def direction_rows(score, out, project_dir=None, wav_path=None, mode='full'):
             out.append(('INFO', 'delivery.direction',
                         'no direction/*.json: the delivered file is not judged against a sheet (draft run)'))
         return
-    _expression_rows(score, sheet, out)
+    _expression_rows(score, sheet, out, gp)
     _harmony_rows(score, sheet, out)
     _stinger_rows(score, sheet, out)
     if mode == 'full' and wav_path and os.path.isfile(wav_path):

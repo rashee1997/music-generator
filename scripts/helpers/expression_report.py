@@ -21,12 +21,17 @@ Two reports
     melody variety  for the figure track (role melody, lead or vocal): interval entropy, step and leap shares, contour
                     variety, bars that repeat an earlier bar exactly. A theme that is one cell repeated is flagged.
 
-Every anchor and limit below is a STARTING VALUE, not a measured limit; none has been calibrated on a corpus. The
-module reports and warns; `quality_gate.direction_rows` turns a flag into a WARN, never a FAIL.
+The anchors and limits are the piece's own: they come from its gate profile (`"expression": {...}` in
+`<project>/presets/gate/<piece_type>.json`, read by `gate_profiles.Profile.expression_cfg`), because they describe the
+piece - a drone cue has no build to rank, a through-composed cue no repeating figure, a sting no phrase. The constants
+below are what every profile inherited before that block existed, and what this module uses when nothing passes a cfg.
+Every one of them is a STARTING VALUE, not a measured limit; none has been calibrated on a corpus. The module reports
+and warns; the gate turns a flag into a WARN, never a FAIL.
 """
 import argparse
 import json
 import math
+import os
 import sys
 from collections import Counter
 
@@ -42,6 +47,17 @@ MAX_IDENTICAL_BAR_SHARE = 0.6
 MIN_INTERVAL_ENTROPY_BITS = 1.0
 MIN_RANGE_SEMITONES = 7
 MIN_INTERVALS_FOR_LEAP = 20   # a line this long with no leap at all has no peak
+
+
+def defaults():
+    """The figures used when no gate profile supplied any: the starting values this module has always shipped with."""
+    return dict(anchors={k: tuple(v) for k, v in ANCHORS.items()},
+                arousal_order=dict(min_sections=MIN_SECTIONS, min_rho=MIN_RHO),
+                melody_variety=dict(min_notes=MIN_NOTES, max_identical_bar_share=MAX_IDENTICAL_BAR_SHARE,
+                                    min_interval_entropy_bits=MIN_INTERVAL_ENTROPY_BITS,
+                                    min_range_semitones=MIN_RANGE_SEMITONES,
+                                    intervals_for_leap_check=MIN_INTERVALS_FOR_LEAP),
+                figure_roles=tuple(FIGURE_ROLES), skip_roles=tuple(ARRANGEMENT_SKIP), source='module defaults')
 
 
 def _tempo_at(score, beat):
@@ -62,7 +78,8 @@ def _beats_per_bar(score):
     return float(ts[0]) * 4.0 / float(ts[1])
 
 
-def _notes(score, skip=ARRANGEMENT_SKIP):
+def _notes(score, skip=None):
+    skip = ARRANGEMENT_SKIP if skip is None else skip
     for tr in score.get('tracks') or []:
         if tr.get('role') in skip:
             continue
@@ -78,13 +95,15 @@ def _unit_velocity(n):
     return v / 127.0 if v > 1.0 else v
 
 
-def arousal_by_section(score):
+def arousal_by_section(score, cfg=None):
     """[{name, energy, index, parts}] one row per plan section that has notes. `parts` holds the five cue values."""
+    cfg = cfg or defaults()
+    anchors = cfg['anchors']
     bpb = _beats_per_bar(score)
     rows = []
     for s in (score.get('plan') or {}).get('sections') or []:
         a, b = (float(s['start_bar']) - 1) * bpb, float(s['end_bar']) * bpb
-        sel = [n for _, n in _notes(score) if a <= float(n['t']) < b]
+        sel = [n for _, n in _notes(score, cfg.get('skip_roles')) if a <= float(n['t']) < b]
         if not sel:
             continue
         beats = max(b - a, 1e-6)
@@ -92,11 +111,11 @@ def arousal_by_section(score):
         vel = sum(_unit_velocity(n) for n in sel) / len(sel)
         # register is the pitched notes' average: a percussion stroke is a name ('dum'), not a pitch
         pitched = [float(n['p']) for n in sel if isinstance(n['p'], (int, float)) and not isinstance(n['p'], bool)]
-        pitch = sum(pitched) / len(pitched) if pitched else sum(ANCHORS['pitch']) / 2.0
+        pitch = sum(pitched) / len(pitched) if pitched else sum(anchors['pitch']) / 2.0
         stac = sum(1 for n in sel if float(n.get('d', 1.0)) < 0.5) / len(sel)
         tempo = _tempo_at(score, (a + b) / 2.0)
-        parts = dict(tempo=_scale(tempo, *ANCHORS['tempo_bpm']), density=_scale(dens, *ANCHORS['notes_per_beat']),
-                     velocity=_scale(vel, *ANCHORS['velocity']), register=_scale(pitch, *ANCHORS['pitch']),
+        parts = dict(tempo=_scale(tempo, *anchors['tempo_bpm']), density=_scale(dens, *anchors['notes_per_beat']),
+                     velocity=_scale(vel, *anchors['velocity']), register=_scale(pitch, *anchors['pitch']),
                      staccato=stac)
         rows.append(dict(name=str(s.get('name', '?')), energy=s.get('energy'), index=sum(parts.values()) / len(parts),
                          parts=parts))
@@ -128,25 +147,28 @@ def spearman(a, b):
     return None if den == 0 else num / den
 
 
-def arousal_order(score):
+def arousal_order(score, cfg=None):
     """(rho, rows, flag): flag is a sentence when the written build does not follow the declared energy, else ''."""
-    rows = [r for r in arousal_by_section(score) if r['energy'] is not None]
-    if len(rows) < MIN_SECTIONS:
+    cfg = cfg or defaults()
+    lim = cfg['arousal_order']
+    rows = [r for r in arousal_by_section(score, cfg) if r['energy'] is not None]
+    if len(rows) < lim['min_sections']:
         return None, rows, ''
     rho = spearman([float(r['energy']) for r in rows], [r['index'] for r in rows])
     if rho is None:
         return None, rows, ''
     flag = ''
-    if rho < MIN_RHO:
-        flag = (f'the written notes follow the declared section energy with rank correlation {rho:+.2f} (< {MIN_RHO:g}): '
+    if rho < lim['min_rho']:
+        flag = (f'the written notes follow the declared section energy with rank correlation {rho:+.2f} '
+                f'(< {float(lim["min_rho"]):g}): '
                 'the sections that are declared to push hardest are not the ones with the fastest, densest, loudest, '
                 'highest or most detached notes')
     return rho, rows, flag
 
 
-def figure_notes(score):
+def figure_notes(score, cfg=None):
     """The top voice of the figure track, in time order, as [(t, pitch, dur)]. Empty when the piece has none."""
-    for role in FIGURE_ROLES:
+    for role in (cfg or defaults())['figure_roles']:
         for tr in score.get('tracks') or []:
             if tr.get('role') == role and tr.get('notes'):
                 ns = sorted(((float(n['t']), int(n['p']), float(n.get('d', 1.0))) for n in tr['notes'] if 'p' in n),
@@ -165,12 +187,14 @@ def _entropy(counts):
     return -sum((c / n) * math.log2(c / n) for c in counts.values()) if n else 0.0
 
 
-def melody_variety(score):
+def melody_variety(score, cfg=None):
     """dict of measures for the figure track, with `flags`: sentences, empty when the line has variety."""
-    seq = figure_notes(score)
+    cfg = cfg or defaults()
+    lim = cfg['melody_variety']
+    seq = figure_notes(score, cfg)
     out = dict(notes=len(seq), flags=[])
-    if len(seq) < MIN_NOTES:
-        out['note'] = f'figure track has {len(seq)} notes (< {MIN_NOTES}): too short to measure'
+    if len(seq) < lim['min_notes']:
+        out['note'] = f'figure track has {len(seq)} notes (< {lim["min_notes"]:g}): too short to measure'
         return out
     ivs = [seq[i + 1][1] - seq[i][1] for i in range(len(seq) - 1)]
     cl = [max(-12, min(12, i)) for i in ivs]
@@ -198,15 +222,17 @@ def melody_variety(score):
     out['bars'] = len(keys)
     out['identical_bar_share'] = same / len(keys) if keys else 0.0
     f = out['flags']
-    if len(keys) >= 4 and out['identical_bar_share'] > MAX_IDENTICAL_BAR_SHARE:
+    if len(keys) >= 4 and out['identical_bar_share'] > lim['max_identical_bar_share']:
         f.append(f'{100 * out["identical_bar_share"]:.0f} % of the figure\'s bars repeat an earlier bar exactly '
-                 f'(> {100 * MAX_IDENTICAL_BAR_SHARE:.0f} %): one cell, not a theme that develops')
-    if out['interval_entropy_bits'] < MIN_INTERVAL_ENTROPY_BITS:
-        f.append(f'interval entropy {out["interval_entropy_bits"]:.2f} bits (< {MIN_INTERVAL_ENTROPY_BITS:g}): the line '
+                 f'(> {100 * float(lim["max_identical_bar_share"]):.0f} %): one cell, not a theme that develops')
+    if out['interval_entropy_bits'] < lim['min_interval_entropy_bits']:
+        f.append(f'interval entropy {out["interval_entropy_bits"]:.2f} bits '
+                 f'(< {float(lim["min_interval_entropy_bits"]):g}): the line '
                  'moves by almost one interval, which a listener hears as a pattern, not a melody')
-    if out['range_semitones'] < MIN_RANGE_SEMITONES:
-        f.append(f'the line spans {out["range_semitones"]} semitones (< {MIN_RANGE_SEMITONES}): no climb, so no peak')
-    if len(ivs) >= MIN_INTERVALS_FOR_LEAP and out['leap_share'] == 0:
+    if out['range_semitones'] < lim['min_range_semitones']:
+        f.append(f'the line spans {out["range_semitones"]} semitones (< {float(lim["min_range_semitones"]):g}): '
+                 'no climb, so no peak')
+    if len(ivs) >= lim['intervals_for_leap_check'] and out['leap_share'] == 0:
         f.append('no leap of a fourth or more in the whole line: it has no moment of reach')
     return out
 
@@ -240,17 +266,28 @@ def expression_block_problems(sheet):
     return out
 
 
-def report(score_path, sheet_path=None):
+def profile_cfg(score_path, project_dir):
+    """The figures the gate would judge this score with: the project's own gate profile's `expression` block."""
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    import gate_profiles
+    import presets
+    presets.add_project(project_dir)
     score = json.load(open(score_path, encoding='utf-8'))
-    rho, rows, flag = arousal_order(score)
-    print('arousal index by section (tempo, density, velocity, register, staccato; starting-value anchors)')
+    return gate_profiles.resolve(score).expression_cfg()
+
+
+def report(score_path, sheet_path=None, cfg=None):
+    cfg = cfg or defaults()
+    score = json.load(open(score_path, encoding='utf-8'))
+    rho, rows, flag = arousal_order(score, cfg)
+    print(f'arousal index by section (tempo, density, velocity, register, staccato) - figures from {cfg.get("source")}')
     print(f'{"section":<18}{"energy":>8}{"index":>8}   cues')
     for r in rows:
         print(f'{r["name"]:<18}{r["energy"]!s:>8}{r["index"]:>8.2f}   ' + ' '.join(f'{k}={v:.2f}' for k, v in r['parts'].items()))
     print('rank correlation with declared energy: ' + ('n/a' if rho is None else f'{rho:+.2f}'))
     if flag:
         print('FLAG: ' + flag)
-    mv = melody_variety(score)
+    mv = melody_variety(score, cfg)
     print(f'figure track: {mv["notes"]} notes' + (f' - {mv["note"]}' if mv.get('note') else ''))
     for k in ('interval_entropy_bits', 'step_share', 'leap_share', 'repeat_share', 'range_semitones', 'contour_trigrams',
               'bars', 'identical_bar_share'):
@@ -269,8 +306,11 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('score')
     ap.add_argument('--direction', default=None, help='the direction sheet JSON, to check its `expression` block')
+    ap.add_argument('--project', default=None,
+                    help="the project folder: judge with the figures in its gate profile (the gate's own numbers)")
     a = ap.parse_args(argv)
-    report(a.score, a.direction)
+    cfg = profile_cfg(a.score, a.project) if a.project else None
+    report(a.score, a.direction, cfg)
     return 0
 
 

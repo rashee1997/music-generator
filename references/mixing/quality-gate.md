@@ -158,6 +158,16 @@ No neural model and no audio: the rows read the sheet and the score's notes. Anc
 | `expression.arousal_order` | rank correlation (Spearman) between the sections' declared `energy` and an index of tempo, note density, velocity, register and staccato share per section; limit 0.5 | WARN below the limit, INFO under three sections |
 | `melody.variety` | the figure track: interval entropy (limit 1.0 bit), range (7 semitones), bars that repeat exactly (60 %), no leap in a long line | WARN on a flag, INFO without a figure track |
 
+The last two rows are measured against the **piece's own figures**, not a module constant: `expression.arousal_order`
+and `melody.variety` read the `"expression"` block of the project's gate profile
+(`<project>/presets/gate/<piece_type>.json`, merged through `extends`), and inherit these values when the block is
+absent. That is where a piece states what it is - a drone cue has no build to rank, a sting is shorter than a phrase,
+a through-composed cue has no repeating figure - and the block cannot switch a row off: `min_rho` is bounded away from
+0, the identical-bar share away from 1, and a role may not be the figure and be skipped at the same time. An unknown
+key, a number outside its range or a role that does not exist is `FAIL expression.preset`. Neither row can FAIL; both
+only flag. Judge with the same numbers by hand with
+`python scripts/helpers/expression_report.py <score> --direction <sheet> --project <dir>`.
+
 The index follows the cue research (mode, tempo, register, dynamics, articulation, timbre; Gabrielsson and Lindstrom 2010, Eerola, Friberg and Bresin 2013). It measures how hard the written music pushes, not its valence.
 
 ## 3g. Pre-render rows (`scripts/preflight_lint.py`, stage 2)

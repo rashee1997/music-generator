@@ -317,6 +317,18 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
   mood or genre is a preset edit and not a code change. `python scripts/helpers/chem_report.py` prints the traces when
   a brief asked for emotional connection. Never optimise a generator against these rows - that produces
   riser-impact cliche. `docs/NEUROCHEMICAL-AFFECT-PLAN.md`.
+- The expression rows take their figures from the piece's own profile, not from the module that measures them:
+  `expression.arousal_order` (`min_sections`, `min_rho`) and `melody.variety` (`min_notes`, the identical-bar share, the
+  interval-entropy floor, the range, the leap-check length) read `<project>/presets/gate/<piece_type>.json` →
+  `"expression": {...}`, merged through `extends`; a profile that says nothing inherits the shipped starting values, so
+  every piece judged before the block existed is judged exactly as it was. The block is where a piece says what it is -
+  a drone cue has no build to rank, a through-composed cue has no repeating figure, a twenty-second sting is shorter
+  than a phrase - and it is checked like a row: an unknown key, a number outside its range, a role that does not exist,
+  or a role in both `figure_roles` and `skip_roles` is a FAIL (`expression.preset`), never a silent default. Neither
+  measured row can FAIL, and no value can switch one off (the ranges forbid `min_rho` 0 and an identical-bar share of 1).
+  `python scripts/helpers/expression_report.py <score> --direction <sheet> --project <dir>` judges with the same numbers.
+  The chem presets are the project's as well: `presets/gate/chem/{model,moods,genres}.json` override the shipped ones,
+  and `chem.model` prints which file supplied them.
 - Read brief for demands. If demands conflict with profile flags, don't pick it.
 - Mixed situations: create custom profile with `python scripts/gate_profiles.py new <name> --from <closest> --project <dir>`. Can merge with list like `["cinematic", "dance"]`.
 - Start strict. Only relax/skip AFTER measurement with reason naming the measurement. Never in advance.

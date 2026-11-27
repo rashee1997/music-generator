@@ -1,0 +1,145 @@
+{
+  "name": "model",
+  "character": "The reaction-kinetics model behind the chem.* gate rows: seven inferred pools released by elicitors the pipeline already measures, cleared by first-order loss with Michaelis-Menten saturation, and depleted by their own release. It integrates expectation, tonal tension, groove and the virtual ear; it does not measure a molecule.",
+  "provenance": "Every number in this file is a starting value [start], chosen so the model's qualitative behaviour is right (a build creates drive, a repeated arrival spends it, the ending recovers) and never fitted to annotated data. docs/NEUROCHEMICAL-AFFECT-PLAN.md sections 3.2-3.4 give the rationale; section 6 gives the corpus calibration that would replace them. No chem.* row may FAIL on these numbers (section 4.1).",
+  "step_s": 0.25,
+  "pools": {
+    "DA_ant": {
+      "tier": "B",
+      "reads_as": "dopaminergic anticipation: wanting the next event",
+      "k": 0.15,
+      "tau_rec_s": 8.0,
+      "k_des": 0.6,
+      "vmax": 1.0,
+      "km": 0.4,
+      "why": "[start] Salimpoor et al. 2011 measured caudate dopamine release during anticipation, not during the peak; k and tau_rec put the build on a 4-12 s scale a listener can feel."
+    },
+    "DA_con": {
+      "tier": "B",
+      "reads_as": "dopaminergic consummation: the arrival lands",
+      "k": 0.25,
+      "tau_rec_s": 12.0,
+      "k_des": 0.8,
+      "vmax": 1.0,
+      "km": 0.35,
+      "why": "[start] Salimpoor 2011 also measured ventral-striatal release at the peak; the faster clearance and stronger depletion are what make a second identical drop weaker."
+    },
+    "NE": {
+      "tier": "B",
+      "reads_as": "noradrenergic arousal and alertness",
+      "k": 0.08,
+      "tau_rec_s": 20.0,
+      "k_des": 0.2,
+      "vmax": 1.0,
+      "km": 0.5,
+      "why": "[start] an arousal state inferred from surprise, roughness and onset rate; no assay is involved, so this pool is a summary of the audio, not a transmitter."
+    },
+    "CORT": {
+      "tier": "C",
+      "reads_as": "stress load (slow HPA-like accumulation)",
+      "k": 0.002,
+      "tau_rec_s": 600.0,
+      "k_des": 0.02,
+      "vmax": 1.0,
+      "km": 0.6,
+      "why": "[start] tension, roughness, masking and ungrounded surprise accumulate; consonance and recovery clear it. Tier C because cortisol is confounded by context and time of day (de Witte 2019, d = 0.35 hormonal)."
+    },
+    "OXT": {
+      "tier": "C",
+      "reads_as": "affiliative warmth: something voice-like to bond with",
+      "k": 0.004,
+      "tau_rec_s": 300.0,
+      "k_des": 0.05,
+      "vmax": 1.0,
+      "km": 0.5,
+      "why": "[start] legato, vocal presence, consonance, slow tempo and a stable pulse raise it. Tier C: peripheral oxytocin assays disagree on direction (Ooishi 2017 raised, choir singing 2017 lowered)."
+    },
+    "END": {
+      "tier": "C",
+      "reads_as": "effort and entrainment: something for the body to lock to",
+      "k": 0.01,
+      "tau_rec_s": 120.0,
+      "k_des": 0.1,
+      "vmax": 1.0,
+      "km": 0.5,
+      "why": "[start] the Witek syncopation window, low end and onset rate raise it; the pain-threshold work (Tarr 2015, Pearce 2016) is a proxy for exertion and synchrony, not a pleasure meter."
+    },
+    "PSNS": {
+      "tier": "C",
+      "reads_as": "parasympathetic recovery: the piece comes down",
+      "k": 0.05,
+      "tau_rec_s": 60.0,
+      "k_des": 0.1,
+      "vmax": 1.0,
+      "km": 0.5,
+      "why": "[start] a measured fall in arousal, consonance and legato raise it, tension and a new arrival cut it. Recovery from listening alone is weak evidence (g = 0.15, n.s., 2022 meta-analysis), so this pool can only advise."
+    }
+  },
+  "weights": {
+    "DA_ant": {"build": 1.0, "proximity": 1.1, "tension": 0.6, "uncertainty": 0.5, "silence": -0.9},
+    "DA_con": {"arrival": 2.4, "surprise": 0.5, "low_end": 0.3, "vocal": 0.4, "fatigue": -0.5},
+    "NE": {"surprise": 0.8, "roughness": 0.6, "density": 0.6, "low_end": 0.3, "legato": -0.3, "silence": -0.5},
+    "CORT": {"tension": 0.9, "roughness": 0.5, "ungrounded": 0.6, "consonance": -0.7, "recovery": -0.5, "silence": -0.4},
+    "OXT": {"legato": 0.9, "vocal": 0.8, "consonance": 0.6, "slow_tempo": 0.5, "pulse": 0.4, "roughness": -0.5, "surprise": -0.3},
+    "END": {"pulse": 1.0, "low_end": 0.4, "density": 0.5, "arrival": 0.2, "silence": -0.8, "slow_tempo": -0.4},
+    "PSNS": {"recovery": 1.0, "consonance": 0.6, "legato": 0.5, "slow_tempo": 0.5, "tension": -0.5, "arrival": -0.2}
+  },
+  "elicitors": {
+    "build": {"window_s": [4.0, 12.0], "low_pct": 5.0, "high_pct": 95.0,
+              "why": "[start] a rise over 4-12 s is long enough to be an anticipation and short enough to still point at the arrival."},
+    "proximity": {"max_lead_s": 20.0,
+                  "why": "[start] the declared arrival is felt inside 20 s; further away the ramp is flat and the pool does not rise."},
+    "arrival": {"window_s": 3.0, "loud_ref_db": 6.0, "centroid_ref_oct": 1.0, "density_ref_per_s": 1.0,
+                "why": "[start] contrast is read on 3 s either side, and a 6 dB / one-octave / two-onsets-per-second change is what counts as a full arrival."},
+    "recovery": {"tail_frac": 0.2,
+                 "why": "[start] the last fifth of the piece is where a come-down is measurable; a 30 s cue at 6 s."},
+    "slow_tempo": {"bpm_ref": 92.0,
+                   "why": "[start] the slow-tempo listening studies use relaxing selections well under 100 BPM (Ooishi 2017)."},
+    "silence": {"window_s": 2.0,
+                "why": "[start] a hole is scored over 2 s: shorter is articulation, longer is a rest."},
+    "density": {"window_s": 2.0, "ref_per_s": 4.0,
+                "why": "[start] onsets per second over 2 s, against 4 per second as the busiest a groove reads; absolute on purpose, because a per-piece normalisation would give a static pad the same density as a drum pattern."},
+    "consonance": {"clash_ref": 0.22,
+                   "why": "[start] the adjacent-pitch-class product of a plain triad sits near 0.05 and a chromatic cluster near 0.30; 0.22 is the scale's ceiling."},
+    "surprise": {"high_bits": 4.2,
+                 "why": "[start] the repo's own grounding rule (expectation.ungrounded_share) uses 4.2 bits as a high-surprise note."},
+    "pulse": {"bsi_window": [0.4, 4.8],
+              "why": "[lit] Witek et al. 2014 find the most moving syncopation in the middle of the range, not at either end; the figures are the repo's feel.witek window."},
+    "low_end": {"midi_below": 48,
+                "why": "[start] below C3 (MIDI 48) is the weight region a body feels rather than hears."}
+  },
+  "measures": {
+    "build": {"min_event_strength": 0.2, "why": "the lead time before the strongest declared arrival, and whether the anticipation pool rises through that lead-up; below the event floor there is no arrival to build towards and the row says so [start]"},
+    "arrival": {"window_s": 3.0, "why": "[start] contrast is read on 3 s either side of the hit, the shortest span that holds a bar in most tempi"},
+    "stress": {"high_frac": 0.5, "settle_frac": 0.4, "settle_s": 10.0,
+               "why": "[start] a load above half its own maximum that has not fallen to 40 % of it within 10 s is carried, not resolved"},
+    "recovery": {"tail_frac": 0.2,
+                 "why": "[start] the come-down is measured over the last fifth of the piece"},
+    "variety": {"range_frac": 0.25, "flat_frac": 0.05, "min_level": 0.1, "min_window_s": 60.0, "warmup_s": 10.0,
+                "why": "[start] a pool 'moves' when it spans a quarter of its own maximum and reaches 0.1; a stretch is flat when the seven pools together move less than 5 % of their mean step"}
+  },
+  "anchors": {
+    "reward_build": 1.0,
+    "reward_arrival": 1.0,
+    "stress_load": 0.3,
+    "affiliation": 1.4,
+    "motor_drive": 1.4,
+    "recovery": 1.0,
+    "arc_variety": 1.0,
+    "why": "[start] each connection dimension divides its measured value by this anchor and clips to 0..1, so a mood target written as 0.7 means 'about 70 % of the level the row's own starting bar calls high'."
+  },
+  "levers": {
+    "reward_build": "lengthen the build before the hit, withhold the tonic, or move the arrival later in the score",
+    "reward_arrival": "put a real change at the hit (timbre, low end, a voice, a register change) instead of a level nudge",
+    "stress_load": "resolve the dominant, thin the cluster, or add a breath where the roughness runs",
+    "affiliation": "give the lead a singable legato contour, add a voice or a hum, or slow the harmonic rhythm",
+    "motor_drive": "syncopate the cell into the 0.4-4.8 BSI window, or give the kick and bass one owner",
+    "recovery": "write a resolution section: slower, consonant, thinner, with a real cadence or a declared cliff",
+    "arc_variety": "change the state between sections and delete a duplicate arrival"
+  },
+  "confidence": {
+    "A": "held-out predictive validity on a corpus, with a shuffled-label control at chance. No chem.* row starts here.",
+    "B": "a mechanism with causal or imaging evidence, modelled from elicitors the pipeline measures (anticipation, consummation, arousal).",
+    "C": "inferred from peripheral assays that disagree, or from a proxy (stress, affiliation, effort, recovery). Advisory only."
+  }
+}
