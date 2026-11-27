@@ -46,3 +46,24 @@ def family_of(inst_cfg=None, tr=None):
 def behaviour(family):
     """The family's entry ({bloom, noise, flare, snap, audit_programs}) or {} for no family."""
     return dict(table()['families'].get(family) or {})
+
+
+def declared(inst_cfg=None, tr=None):
+    """The family a preset or track DECLARES (never the legacy name guess), or None. Behaviour that changes a render only follows a declaration."""
+    return ((tr or {}).get('family') or (inst_cfg or {}).get('family')) and family_of(inst_cfg, tr)
+
+
+def effective(inst_cfg=None, tr=None):
+    """The family's behaviour dict with the preset's and the track's own `bloom`, `noise`, `flare`, `snap` blocks merged over it
+    (a block set to null switches it off). {} when no family is declared and no block is given."""
+    out = {}
+    fam = declared(inst_cfg, tr)
+    if fam:
+        out = behaviour(fam)
+        out.pop('audit_programs', None)
+    for src in (inst_cfg or {}, tr or {}):
+        for k in ('bloom', 'noise', 'flare', 'snap'):
+            if k in src:
+                v = src[k]
+                out[k] = None if v is None else dict(out.get(k) or {}, **v)
+    return {k: v for k, v in out.items() if v}

@@ -3,25 +3,253 @@
   "character": "Instrument families: what a family of instruments does that another does not. A preset declares `family`; the engine reads the behaviour here, never the instrument's name. A preset that names no family keeps the behaviour it had before families existed.",
   "provenance": "Every number is a starting value until measured on an audited bank (soundbank_audit.py) or a research note. Sources behind the shapes: brass spectral enrichment with dynamic level (Campbell; Stevenson and Campbell, nonlinear propagation, https://www.ioa.org.uk/system/files/proceedings/s_stevenson_dm_campbell_effects_of_non-linear_propagation_on_timbre_of_brass_instruments.pdf, search-result text only); string vibrato delayed after the note onset (Sample Modeling strings review, https://www.soundonsound.com/reviews/audio-modeling-swam-string-sections, search-result text only); typical string vibrato about 6 Hz and about 30 cents (starting value).",
   "families": {
-    "bowed":          {"audit_programs": [40, 41, 42, 43, 48, 49], "bloom": {"start_depth": 0.0, "ramp_s": 0.55}, "noise": {"kind": "bow", "level_db": -42}, "flare": null, "snap": null},
-    "blown_reed":     {"audit_programs": [68, 69, 70, 71, 73],     "bloom": {"start_depth": 0.2, "ramp_s": 0.35}, "noise": {"kind": "breath", "level_db": -40}, "flare": null, "snap": null},
-    "blown_brass":    {"audit_programs": [56, 57, 58, 60, 61],     "bloom": {"start_depth": 0.3, "ramp_s": 0.30}, "noise": {"kind": "breath", "level_db": -44}, "flare": {"onset_velocity": 0.62, "gain_db_per_unit": 10.0, "corner_hz": 2200}, "snap": null},
-    "struck_membrane":{"audit_programs": [47, 116, 117],           "bloom": null, "noise": null, "flare": null, "snap": {"attack": 3.0, "sustain": -0.8, "click_db": 6.0}},
-    "struck_pitched": {"audit_programs": [0, 8, 9, 11, 12, 14],    "bloom": null, "noise": null, "flare": null, "snap": {"attack": 2.0, "sustain": -0.4, "click_db": 3.0}},
-    "plucked":        {"audit_programs": [24, 25, 45, 46, 104],    "bloom": null, "noise": null, "flare": null, "snap": {"attack": 2.0, "sustain": -0.3, "click_db": 3.0}},
-    "voice":          {"audit_programs": [52, 53, 54, 85],         "bloom": {"start_depth": 0.1, "ramp_s": 0.45}, "noise": {"kind": "breath", "level_db": -38}, "flare": null, "snap": null},
-    "keys":           {"audit_programs": [16, 19, 20, 21],         "bloom": null, "noise": null, "flare": null, "snap": null},
-    "synth":          {"audit_programs": [80, 81, 88, 89, 90],     "bloom": null, "noise": null, "flare": null, "snap": null}
+    "bowed": {
+      "audit_programs": [
+        40,
+        41,
+        42,
+        43,
+        48,
+        49
+      ],
+      "bloom": {
+        "start_depth": 0.0,
+        "ramp_s": 0.55
+      },
+      "noise": {
+        "kind": "bow",
+        "level_db": -42
+      },
+      "flare": null,
+      "snap": null
+    },
+    "blown_reed": {
+      "audit_programs": [
+        68,
+        69,
+        70,
+        71,
+        73
+      ],
+      "bloom": {
+        "start_depth": 0.2,
+        "ramp_s": 0.35
+      },
+      "noise": {
+        "kind": "breath",
+        "level_db": -40
+      },
+      "flare": null,
+      "snap": null
+    },
+    "blown_brass": {
+      "audit_programs": [
+        56,
+        57,
+        58,
+        60,
+        61
+      ],
+      "bloom": {
+        "start_depth": 0.3,
+        "ramp_s": 0.3
+      },
+      "noise": {
+        "kind": "breath",
+        "level_db": -44
+      },
+      "flare": {
+        "onset_velocity": 0.62,
+        "gain_db_per_unit": 10.0,
+        "corner_hz": 2200
+      },
+      "snap": null
+    },
+    "struck_membrane": {
+      "audit_programs": [
+        47,
+        116,
+        117
+      ],
+      "bloom": null,
+      "noise": null,
+      "flare": null,
+      "snap": {
+        "attack": 3.0,
+        "sustain": -0.8
+      }
+    },
+    "struck_pitched": {
+      "audit_programs": [
+        0,
+        8,
+        9,
+        11,
+        12,
+        14
+      ],
+      "bloom": null,
+      "noise": null,
+      "flare": null,
+      "snap": {
+        "attack": 2.0,
+        "sustain": -0.4
+      }
+    },
+    "plucked": {
+      "audit_programs": [
+        24,
+        25,
+        45,
+        46,
+        104
+      ],
+      "bloom": null,
+      "noise": null,
+      "flare": null,
+      "snap": {
+        "attack": 2.0,
+        "sustain": -0.3
+      }
+    },
+    "voice": {
+      "audit_programs": [
+        52,
+        53,
+        54,
+        85
+      ],
+      "bloom": {
+        "start_depth": 0.1,
+        "ramp_s": 0.45
+      },
+      "noise": {
+        "kind": "breath",
+        "level_db": -38
+      },
+      "flare": null,
+      "snap": null
+    },
+    "keys": {
+      "audit_programs": [
+        16,
+        19,
+        20,
+        21
+      ],
+      "bloom": null,
+      "noise": null,
+      "flare": null,
+      "snap": null
+    },
+    "synth": {
+      "audit_programs": [
+        80,
+        81,
+        88,
+        89,
+        90
+      ],
+      "bloom": null,
+      "noise": null,
+      "flare": null,
+      "snap": null
+    }
   },
   "legacy_names": {
     "note": "Only for a preset with no `family`: the sets that render_natural.py used to hard-code. A new instrument declares a family instead of being added here.",
-    "bowed": ["violin", "viola", "cello", "double_bass", "contrabass", "strings", "string_ensemble", "fast_strings", "slow_strings", "fiddle", "bowed_pad", "tremolo_strings", "synth_strings"],
-    "blown_brass": ["trumpet", "trombone", "tuba", "horn", "french_horn", "brass", "brass_section", "muted_trumpet"],
-    "blown_reed": ["oboe", "english_horn", "bassoon", "clarinet", "flute", "piccolo", "recorder", "sax", "alto_sax", "tenor_sax", "soprano_sax", "baritone_sax", "shehnai", "pan_flute", "whistle", "ocarina"],
-    "struck_membrane": ["timpani", "taiko", "melodic_tom", "synth_drum"],
-    "struck_pitched": ["piano", "grand_piano", "bright_piano", "celesta", "glockenspiel", "vibraphone", "marimba", "xylophone", "tubular_bells", "bells", "dulcimer", "music_box", "kalimba"],
-    "plucked": ["harp", "nylon_guitar", "classical_guitar", "acoustic_guitar", "steel_guitar", "pizzicato", "pizzicato_strings", "sitar", "banjo", "koto", "shamisen"],
-    "voice": ["choir", "choir_aahs", "oohs", "voice_oohs", "synth_voice", "solo_vox"],
-    "keys": ["organ", "church_organ", "pipe_organ", "reed_organ", "harmonium", "accordion"]
+    "bowed": [
+      "violin",
+      "viola",
+      "cello",
+      "double_bass",
+      "contrabass",
+      "strings",
+      "string_ensemble",
+      "fast_strings",
+      "slow_strings",
+      "fiddle",
+      "bowed_pad",
+      "tremolo_strings",
+      "synth_strings"
+    ],
+    "blown_brass": [
+      "trumpet",
+      "trombone",
+      "tuba",
+      "horn",
+      "french_horn",
+      "brass",
+      "brass_section",
+      "muted_trumpet"
+    ],
+    "blown_reed": [
+      "oboe",
+      "english_horn",
+      "bassoon",
+      "clarinet",
+      "flute",
+      "piccolo",
+      "recorder",
+      "sax",
+      "alto_sax",
+      "tenor_sax",
+      "soprano_sax",
+      "baritone_sax",
+      "shehnai",
+      "pan_flute",
+      "whistle",
+      "ocarina"
+    ],
+    "struck_membrane": [
+      "timpani",
+      "taiko",
+      "melodic_tom",
+      "synth_drum"
+    ],
+    "struck_pitched": [
+      "piano",
+      "grand_piano",
+      "bright_piano",
+      "celesta",
+      "glockenspiel",
+      "vibraphone",
+      "marimba",
+      "xylophone",
+      "tubular_bells",
+      "bells",
+      "dulcimer",
+      "music_box",
+      "kalimba"
+    ],
+    "plucked": [
+      "harp",
+      "nylon_guitar",
+      "classical_guitar",
+      "acoustic_guitar",
+      "steel_guitar",
+      "pizzicato",
+      "pizzicato_strings",
+      "sitar",
+      "banjo",
+      "koto",
+      "shamisen"
+    ],
+    "voice": [
+      "choir",
+      "choir_aahs",
+      "oohs",
+      "voice_oohs",
+      "synth_voice",
+      "solo_vox"
+    ],
+    "keys": [
+      "organ",
+      "church_organ",
+      "pipe_organ",
+      "reed_organ",
+      "harmonium",
+      "accordion"
+    ]
   }
 }

@@ -76,6 +76,8 @@ import presets
 import mix_schema
 import mechanics
 import cli_util
+import family_dsp
+import families
 
 SR = 44100
 
@@ -1048,7 +1050,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
                 elif len(part) < n:
                     part = np.pad(part, ((0, n - len(part)), (0, 0)))
                 hit = hit + part
-        return dsp.enhance_sf2_dynamics(hit, sr=SR, role=role, velocity=_mean_vel(ev))
+        return family_dsp.apply(dsp.enhance_sf2_dynamics(hit, sr=SR, role=role, velocity=_mean_vel(ev)), inst_cfg, tr, SR, seed)
 
     # note-off times: let a plucked body ring past the written note-off, but never into a re-strike of the same pitch
     # (a note-off on a shared channel cuts every sounding instance of that pitch, including the new one).
@@ -1092,6 +1094,9 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
     if expr_kind is None:
         expr_kind = 'bow' if inst in BOWED else ('flat' if inst in _world.PLUCKED else ('breath' if per_note else 'flat'))
     step = 0.006
+    _bloom = (families.effective(inst_cfg, tr) or {}).get('bloom') or {}
+    bloom_ramp_s = float(_bloom.get('ramp_s', 0.35))        # no declared family or bloom: the ramp it always had
+    bloom_start = float(_bloom.get('start_depth', 0.0))
 
     if per_note:
         pool = [c for c in range(16) if c != 9]
@@ -1165,7 +1170,9 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
                 age = t - e['t']
                 slide = glide * (1 - min(age / gs, 1.0)) ** 2 if glide else 0.0
                 if depth > 0 and dur > 0.30 and age > delay * 0.5:
-                    ramp = np.clip((age - delay * 0.5) / 0.35, 0, 1)
+                    ramp = np.clip((age - delay * 0.5) / bloom_ramp_s, 0, 1)
+                    if bloom_start:                     # a family bloom: pure at the start, the vibrato warms up to full depth
+                        ramp = bloom_start + (1.0 - bloom_start) * ramp
                     osc = np.sin(2 * np.pi * rate * age + phase) if vph is None else vdep[k] * np.sin(vph[k])
                     cents = (micro + slide + depth * ramp * osc
                              + jitter_cents * np.sin(2 * np.pi * 0.9 * age + phase * 1.7))
@@ -1186,7 +1193,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
         if fade_ms > 0:   # the preset's own 2-3 ms ramp, for sampled patches that start on a step
             stem = dsp.soften_onsets(stem, sr=SR, times=[e['t'] for e in ev], ms=fade_ms,
                                      skip_sounding=skip_sounding)
-        return dsp.enhance_sf2_dynamics(stem, sr=SR, role=role, velocity=_mean_vel(ev))
+        return family_dsp.apply(dsp.enhance_sf2_dynamics(stem, sr=SR, role=role, velocity=_mean_vel(ev)), inst_cfg, tr, SR, seed)
 
     # shared channel (piano, guitar, plucked, mallets)
     vox.program(0, bank, preset)
@@ -1213,7 +1220,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
     fade_ms = float(tr.get('onset_fade_ms') or (inst_cfg or {}).get('onset_fade_ms') or 0.0)
     if fade_ms > 0:   # the preset's own 2-3 ms ramp, for sampled patches that start on a step
         stem = dsp.soften_onsets(stem, sr=SR, times=[e['t'] for e in ev], ms=fade_ms)
-    return dsp.enhance_sf2_dynamics(stem, sr=SR, role=role, velocity=_mean_vel(ev))
+    return family_dsp.apply(dsp.enhance_sf2_dynamics(stem, sr=SR, role=role, velocity=_mean_vel(ev)), inst_cfg, tr, SR, seed)
 
 
 def _track_cache_dir():
