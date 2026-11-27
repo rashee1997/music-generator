@@ -7,7 +7,7 @@ everything else that is not bass or drum is lifted to a ring or to the two heigh
 """
 STAGE = {
     'pursuit_basses':           (0.0, 0.0, 1.5),
-    'pursuit_bass_drum':        (-40.0, 0.0, 2.2),
+    'pursuit_bass_drum':        (-25.0, 0.0, 2.2),
     'pursuit_basses_pizz':      (40.0, 0.0, 1.2),
     'pursuit_snare':            (-80.0, 0.0, 2.6),
     'pursuit_timpani':          (80.0, 0.0, 3.0),
@@ -22,7 +22,7 @@ STAGE = {
     'pursuit_violins_staccato': (-130.0, 30.0, 3.0),
     'pursuit_violins_long':  (180.0, 45.0, 4.0),
     'pursuit_cymbals':          (-160.0, 30.0, 3.6),
-    'pursuit_piano_theme':      (-15.0, 15.0, 1.8),
+    'pursuit_piano_theme':      (-30.0, 15.0, 1.8),
     'pursuit_choir':            (0.0, 60.0, 5.0),
     'pursuit_solo_violin':      (-35.0, 45.0, 2.4),
 }

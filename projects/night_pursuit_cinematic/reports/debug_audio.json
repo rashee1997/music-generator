@@ -1,11 +1,12 @@
 {
- "stamp": "20261127T004730",
+ "stamp": "20261127T041521",
  "project": "night_pursuit_cinematic",
  "level": "WARN",
  "sources": {
   "score": "/home/user/music-generator/projects/night_pursuit_cinematic/scores/night_pursuit_cinematic_score.json",
   "gate_data": [
    "level.json",
+   "realism.json",
    "rows.json",
    "section_energy.json",
    "spectrogram.json",
@@ -14,10 +15,10 @@
    "stereo.json",
    "waveform.json"
   ],
-  "stems": "29 processed stems from .cache/mix",
-  "master": "out/master.wav",
-  "verdict": "2026-11-26T23:08:19Z",
-  "warning": "the audio is newer than the verdict: the pending render has not been judged"
+  "stems": "30 processed stems from .cache/mix",
+  "master": "out/night_pursuit_cinematic.wav",
+  "verdict": "2026-11-27T03:36:07Z",
+  "drift": "the presets or score changed after this master was rendered: presets/environments/np_city_far.json, presets/environments/np_drips.json, presets/instruments/pursuit_bass_clarinet.json, presets/instruments/pursuit_bass_drum.json - the autopsy describes the previous mix until you re-render"
  },
  "binding": [],
  "advisory": [

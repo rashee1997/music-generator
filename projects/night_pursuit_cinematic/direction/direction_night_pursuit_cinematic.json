@@ -292,7 +292,7 @@
       "space": "np_street_canyon"
     },
     "pursuit_bass_drum": {
-      "azimuth": -40.0,
+      "azimuth": -25.0,
       "elevation": 0.0,
       "distance": 2.2,
       "space": "np_street_canyon"
@@ -382,7 +382,7 @@
       "space": "np_street_canyon"
     },
     "pursuit_piano_theme": {
-      "azimuth": -15.0,
+      "azimuth": -30.0,
       "elevation": 15.0,
       "distance": 1.8,
       "space": "np_street_canyon"
