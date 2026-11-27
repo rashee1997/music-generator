@@ -107,7 +107,8 @@ class Shipped(Base):
     def test_melodic_changes_nothing(self):
         p = gpf.resolve(loop_score())
         self.assertEqual((p.label, p.how), ('melodic', 'default'))
-        self.assertEqual(p.param('pattern.flags_max', 'max'), 6)
+        # tightened from 6 after the audit: every shipped piece passed at 5 of 6, so the budget was never the rule
+        self.assertEqual(p.param('pattern.flags_max', 'max'), 3)
         self.assertTrue(all(p.on(r) for r in gpf.ROWS))
 
     def test_every_relax_and_skip_has_a_reason(self):

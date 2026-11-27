@@ -12,7 +12,7 @@
   },
   "rows": {
     "ear.fatigue": {"mode": "relax", "f_max": 0.75, "min_seconds": 15.0, "reason": "a held bed is this type's subject. Measured on synthetic fixtures (tests/test_ear_model.py, scripts/ear_rows.py): a held 16-voice pad reads an adaptation index of 0.58 at 0.3 full scale and 0.67 at 0.9, a three-voice drone 0.47 and 0.52; the shipped 0.6 over 5 s would flag the normal case, 0.75 over 15 s flags only a bed that is denser and longer than those. Fixtures only: no real ambient piece has been measured"},
-    "pattern.loop_short": {"mode": "relax", "max_period_bars": 2, "max_distinct": 2, "reason": "beds and drones loop for long stretches by design"},
+    "pattern.loop_short": {"mode": "relax", "max_period_bars": 2, "max_distinct": 2, "min_distinct_frac": 0.01, "reason": "beds and drones loop for long stretches by design: the 0.15 distinct-bar share a melody needs would flag every bed, so only a part with fewer than 1 % of its bars differing is flagged"},
     "pattern.flat_dynamics": {"mode": "relax", "min_range_frac": 0.1, "reason": "a bed holds its level; the change is in colour, not loudness"},
     "pattern.velocity_flat": {"mode": "relax", "sd_frac": 0.02, "reason": "pads and drones are not accented"},
     "pattern.melody_notes": {"mode": "relax", "min_lengths": 2, "on_beat_max": 1.0, "repeat_max": 0.6, "reason": "slow repeated tones are the style, with no beat grid to avoid"},

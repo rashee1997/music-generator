@@ -19,12 +19,12 @@ PRESETS = {
     # regimes in >100 jazz and rock/pop recordings: a short process below ~8 beats that is much larger in jazz, and a
     # long process above ~8 beats (the shared tempo drift) that is similar across genres. So `timing_ms` is the
     # short, genre-dependent part and `drift_ms` the long, shared one - they are not interchangeable.
-    'tight':   dict(timing_ms=3,  drum_ms=2,  lead_ms=8,  drift_ms=3,  vel_sigma=3, rubato=0.00, wander=0.000, strum_ms=4,  ritard=0.20, accent=0.6, short_share=0.15),
-    'natural': dict(timing_ms=7,  drum_ms=5,  lead_ms=20, drift_ms=9,  vel_sigma=5, rubato=0.025, wander=0.006, strum_ms=10, ritard=0.35, accent=1.0, short_share=0.22),
-    'loose':   dict(timing_ms=12, drum_ms=9,  lead_ms=25, drift_ms=15, vel_sigma=7, rubato=0.04, wander=0.010, strum_ms=16, ritard=0.40, accent=1.2, short_share=0.30),
-    'rubato':  dict(timing_ms=9,  drum_ms=6,  lead_ms=28, drift_ms=12, vel_sigma=6, rubato=0.07, wander=0.015, strum_ms=22, ritard=0.50, accent=0.8, short_share=0.30),
-    'punchy':  dict(timing_ms=4,  drum_ms=2,  lead_ms=10, drift_ms=4,  vel_sigma=4, rubato=0.01, wander=0.002, strum_ms=6,  ritard=0.20, accent=1.3, upbeat=True, short_share=0.15),
-    'bouncy':  dict(timing_ms=5,  drum_ms=3,  lead_ms=12, drift_ms=5,  vel_sigma=5, rubato=0.01, wander=0.003, strum_ms=8,  ritard=0.20, accent=1.4, upbeat=True, short_share=0.18),
+    'tight':   dict(timing_ms=3,  drum_ms=2,  lead_ms=8,  drift_ms=3,  vel_sigma=3, rubato=0.00, wander=0.000, strum_ms=4,  ritard=0.20, accent=0.6, short_share=0.15, vel_arch=5),
+    'natural': dict(timing_ms=7,  drum_ms=5,  lead_ms=20, drift_ms=9,  vel_sigma=5, rubato=0.025, wander=0.006, strum_ms=10, ritard=0.35, accent=1.0, short_share=0.22, vel_arch=7),
+    'loose':   dict(timing_ms=12, drum_ms=9,  lead_ms=25, drift_ms=15, vel_sigma=7, rubato=0.04, wander=0.010, strum_ms=16, ritard=0.40, accent=1.2, short_share=0.30, vel_arch=11),
+    'rubato':  dict(timing_ms=9,  drum_ms=6,  lead_ms=28, drift_ms=12, vel_sigma=6, rubato=0.07, wander=0.015, strum_ms=22, ritard=0.50, accent=0.8, short_share=0.30, vel_arch=10),
+    'punchy':  dict(timing_ms=4,  drum_ms=2,  lead_ms=10, drift_ms=4,  vel_sigma=4, rubato=0.01, wander=0.002, strum_ms=6,  ritard=0.20, accent=1.3, upbeat=True, short_share=0.15, vel_arch=6),
+    'bouncy':  dict(timing_ms=5,  drum_ms=3,  lead_ms=12, drift_ms=5,  vel_sigma=5, rubato=0.01, wander=0.003, strum_ms=8,  ritard=0.20, accent=1.4, upbeat=True, short_share=0.18, vel_arch=8),
 }
 
 

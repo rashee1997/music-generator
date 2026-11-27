@@ -1015,13 +1015,28 @@ def acoustic_checks(score):
             + spatial_glue(score) + cognitive_feel_checks(score) + orch_rows.checks(score))
 
 
+LOOP_ROLES = ('chord', 'pad', 'arp', 'bass', 'ostinato', 'texture')
+
+
 def audit(score):
     """(info, flags). Which rules run, and their numbers, come from the piece's gate profile (gate_profiles.py); the
     defaults below are the 'melodic' profile."""
+    info, flags, _ = audit_detail(score)
+    return info, flags
+
+
+def audit_detail(score):
+    """(info, flags, per_track). `per_track` counts the flags by the part that earned them, so the gate can tell one
+    part that loops for the whole piece (a fault) from eight parts with one flag each (a piece with work to do)."""
     gp = _gp(score)
     P = gp.param
     bb = score['ts'][0]
-    flags, info = [], []
+    flags, info, per_track = [], [], {}
+
+    def flag(part, msg):
+        flags.append(msg)
+        per_track.setdefault(part, []).append(msg)
+
     for t in score['tracks']:
         if _role(t) == 'environment' or 'notes' not in t or str(t.get('instrument', '')).startswith('env:'):
             continue
@@ -1038,30 +1053,45 @@ def audit(score):
         on_beat = np.mean([abs(n['t'] - round(n['t'])) < 1e-6 for n in notes])
         info.append(f'{name:10s} {role:7s} bars {n_bars:3d}  distinct {distinct:3d}  loop-period {period or "-"}  '
                     f'velocity sd {vel.std():.2f}  on-beat {on_beat:.0%}')
-        if t.get('allow_ostinato') or t.get('is_drone') or t.get('is_ostinato') or role in ('drone', 'pad'):
+        # Which checks apply is decided per role below, not by one blanket exemption. A pad, a drone and a declared
+        # ostinato were skipped before any rule ran, so the parts that repeat the most were the only ones the
+        # auditor never looked at. A part that is meant to repeat is relaxed by the profile's own numbers instead.
+        if role == 'fx':
             continue
+        held = role == 'drone' or bool(t.get('is_drone'))      # a held drone is the part, not a performance of it
         if gp.on('pattern.drums_few') and role == 'drum' and n_bars >= 8 and distinct <= max(2, n_bars // P('pattern.drums_few', 'distinct_div')):
-            flags.append(f'{name}: the drums play {distinct} different bar(s) in {n_bars}. Add fills, dropouts, a different groove in the chorus, ghost notes')
-        if (gp.on('pattern.loop_short') and role in ('chord', 'pad', 'arp', 'bass') and n_bars >= P('pattern.loop_short', 'min_bars')
-                and period and period <= P('pattern.loop_short', 'max_period_bars') and distinct <= P('pattern.loop_short', 'max_distinct')):
-            flags.append(f'{name}: loops every {period} bar(s) for the whole piece. Change the figure between sections, add a pickup, a variation every 4th bar')
+            flag(name, f'{name}: the drums play {distinct} different bar(s) in {n_bars}. Add fills, dropouts, a different groove in the chorus, ghost notes')
+        # A part is heard as a loop when it has too few different bars to carry the piece, not when its period is
+        # merely holdable in memory: the old rule needed a non-zero period AND a short one, so a part repeating one
+        # bar 22 times through a 96-bar piece was invisible whenever its `best_period` was 0 or long.
+        if gp.on('pattern.loop_short') and role in LOOP_ROLES and not held and n_bars >= P('pattern.loop_short', 'min_bars'):
+            frac = distinct / max(n_bars, 1)
+            short = bool(period) and period <= P('pattern.loop_short', 'max_period_bars')
+            if frac < P('pattern.loop_short', 'min_distinct_frac') or (short and distinct <= P('pattern.loop_short', 'max_distinct')):
+                if short:
+                    flag(name, f'{name}: loops every {period} bar(s) for the whole piece ({distinct} different bar(s) in {n_bars}, '
+                               f'{frac:.0%} of them). Change the figure between sections, add a pickup, a variation every 4th bar')
+                else:
+                    flag(name, f'{name}: {distinct} different bar(s) in {n_bars} ({frac:.0%} of them). '
+                               f'Change the figure between sections, add a pickup, a variation every 4th bar')
         if gp.on('pattern.melody_notes') and _is_melodic(t) and len(notes) >= 12:
             durs = {round(n['d'], 2) for n in notes}
             if len(durs) < P('pattern.melody_notes', 'min_lengths'):
-                flags.append(f'{name}: only {len(durs)} note length(s). Mix long and short notes, add a rest, a held note, a pickup')
+                flag(name, f'{name}: only {len(durs)} note length(s). Mix long and short notes, add a rest, a held note, a pickup')
             if on_beat > P('pattern.melody_notes', 'on_beat_max'):
-                flags.append(f'{name}: {on_beat:.0%} of the notes sit exactly on the beat (the march grid). Use off-beat starts, ties across the bar, triplets')
+                flag(name, f'{name}: {on_beat:.0%} of the notes sit exactly on the beat (the march grid). Use off-beat starts, ties across the bar, triplets')
             rep = np.mean([a['p'] == b['p'] for a, b in zip(notes, notes[1:])])
             if rep > P('pattern.melody_notes', 'repeat_max'):
-                flags.append(f'{name}: {rep:.0%} of the notes repeat the previous pitch. Give the line contour')
+                flag(name, f'{name}: {rep:.0%} of the notes repeat the previous pitch. Give the line contour')
         if gp.on('pattern.bass_pitches') and role == 'bass' and len(notes) >= 16:
             pcs = collections.Counter(n['p'] % 12 for n in notes)
             if len(pcs) <= P('pattern.bass_pitches', 'max_classes') and n_bars >= 12:
-                flags.append(f'{name}: the bass uses {len(pcs)} pitch classes in {n_bars} bars. Add passing notes, octave jumps, a walk into chord changes')
+                flag(name, f'{name}: the bass uses {len(pcs)} pitch classes in {n_bars} bars. Add passing notes, octave jumps, a walk into chord changes')
         # judged against the track's own level: a quiet pad at 0.3 and a loud lead at 0.6 both need their own
         # contour, and an absolute 0.04 sd flagged every soft mood while letting a loud flat track pass.
         if gp.on('pattern.velocity_flat') and len(notes) >= 16 and vel.std() < P('pattern.velocity_flat', 'sd_frac') * max(float(vel.mean()), 1e-6):
-            flags.append(f'{name}: velocity barely moves (sd {vel.std():.2f} on a mean of {vel.mean():.2f}). Accent by phrase, add ghost notes, swell and fade')
+            flag(name, f'{name}: velocity barely moves (sd {vel.std():.2f} on a mean of {vel.mean():.2f}, {vel.std() / max(float(vel.mean()), 1e-6):.0%} of it). '
+                       f'Accent by phrase, add ghost notes, swell and fade')
     dyn = [d[1] for d in score.get('dynamics', [])]
     if gp.on('pattern.flat_dynamics') and dyn and max(dyn) - min(dyn) < P('pattern.flat_dynamics', 'min_range_frac') * max(float(np.mean(dyn)), 1e-6):
         flags.append(f'dynamics: the whole piece stays between {min(dyn):.2f} and {max(dyn):.2f}. Build and release: a quiet intro, a peak, a breath before it')
@@ -1071,7 +1101,66 @@ def audit(score):
         on = np.mean([abs(n['t'] - round(n['t'])) < 1e-6 for n in kicks]) if kicks else 0
         if kicks and on == 1.0 and len({round(n['t'] % bb, 2) for n in kicks}) >= bb:
             flags.append('drums: a kick on every beat and nothing else (four-on-the-floor / march). Drop beats out; move one to an off-beat')
-    return info, flags
+    return info, flags, per_track
+
+
+def _midi_vel(n):
+    """A score writes velocity on 0..1 or on 1..127; the contrast row compares MIDI units."""
+    v = float(n.get('v', 0.7))
+    return v * 127.0 if v <= 1.0 else v
+
+
+def section_stats(score):
+    """[{name, velocity, density}] one row per plan section that has notes. Velocity is the section mean in MIDI
+    units, density the notes per beat: the two things a listener hears change between sections."""
+    bb = float(score['ts'][0]) if score.get('ts') else 4.0
+    rows = []
+    for s in ((score.get('plan') or {}).get('sections') or []):
+        try:
+            a = (float(s['start_bar']) - 1) * bb
+            b = float(s['end_bar']) * bb
+        except (KeyError, TypeError, ValueError):
+            continue
+        sel = []
+        for t in score.get('tracks') or []:
+            for n in t.get('notes') or []:
+                if 't' in n and a <= float(n['t']) < b:
+                    sel.append(n)
+        if len(sel) < 4:
+            continue
+        beats = max(b - a, 1e-6)
+        rows.append(dict(name=str(s.get('name', '?')),
+                         velocity=sum(_midi_vel(n) for n in sel) / len(sel),
+                         density=len(sel) / beats))
+    return rows
+
+
+def shape_contrast(score):
+    """shape.contrast: does the piece go anywhere? A piece can pass every repetition row with eight perfectly
+    varied parts that all play at one level - that is the soulless case the pattern row cannot see, because it
+    counts faults per part and never compares section with section. Fails only when BOTH the level and the
+    density are flat between sections: a quiet section that is busier, or a loud one that is sparser, is contrast."""
+    gp = _gp(score)
+    if not gp.on('shape.contrast'):
+        return [('INFO', 'shape.contrast', 'the profile does not judge section contrast')]
+    secs = section_stats(score)
+    if len(secs) < 2:
+        return [('INFO', 'shape.contrast', 'fewer than two plan sections with notes: no contrast to measure')]
+    lo = min(secs, key=lambda s: s['velocity'])
+    hi = max(secs, key=lambda s: s['velocity'])
+    spread = hi['velocity'] - lo['velocity']
+    dens = max(s['density'] for s in secs) / max(min(s['density'] for s in secs), 1e-6)
+    need_v = float(gp.param('shape.contrast', 'min_vel_spread'))
+    need_d = float(gp.param('shape.contrast', 'min_density_ratio'))
+    detail = (f"quietest section '{lo['name']}' at {lo['velocity']:.0f} against loudest '{hi['name']}' at "
+              f"{hi['velocity']:.0f} (spread {spread:.0f} of {need_v:.0f} MIDI units), density {dens:.1f}x "
+              f'(needs {need_d:.1f}x)')
+    if spread < need_v and dens < need_d:
+        return [('FAIL', 'shape.contrast', detail + ': nothing carries the listener from one section to the next. '
+                 'Build one section above the others and let another sit under them')]
+    if spread < need_v or dens < need_d:
+        return [('WARN', 'shape.contrast', detail + ': one of the two arcs is flat')]
+    return [('PASS', 'shape.contrast', detail)]
 
 
 def main():

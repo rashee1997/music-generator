@@ -105,15 +105,25 @@ ROWS = {
     'channels':    dict(meaning='note started on a channel still sounding', protected=True),
     # score patterns (pattern_audit.audit)
     'pattern.drums_few':     dict(meaning='drums play only a few different bars', params={'distinct_div': (8, 2, 32)}),
-    'pattern.loop_short':    dict(meaning='chord/pad/arp/bass loops every few bars for the whole piece',
-                                  params={'max_period_bars': (4, 1, 16), 'max_distinct': (4, 1, 16), 'min_bars': (16, 8, 64)}),
+    'pattern.loop_short':    dict(meaning='chord/pad/arp/bass/ostinato/texture loops every few bars for the whole piece',
+                                  params={'max_period_bars': (4, 1, 16), 'max_distinct': (4, 1, 16), 'min_bars': (16, 8, 64),
+                                          'min_distinct_frac': (0.15, 0.0, 0.60)}),
     'pattern.melody_notes':  dict(meaning='melody: few note lengths, on-grid starts, repeated pitches',
                                   params={'min_lengths': (3, 1, 6), 'on_beat_max': (0.9, 0.5, 1.0), 'repeat_max': (0.35, 0.2, 0.8)}),
     'pattern.bass_pitches':  dict(meaning='bass uses very few pitch classes', params={'max_classes': (3, 1, 6)}),
-    'pattern.velocity_flat': dict(meaning='velocity barely moves', params={'sd_frac': (0.05, 0.01, 0.05)}),
+    'pattern.velocity_flat': dict(meaning='velocity barely moves', params={'sd_frac': (0.15, 0.02, 0.35)}),
     'pattern.flat_dynamics': dict(meaning='whole piece stays in a narrow dynamic range', params={'min_range_frac': (0.25, 0.05, 0.25)}),
     'pattern.four_on_floor': dict(meaning='a kick on every beat and nothing else'),
-    'pattern.flags_max':     dict(meaning='how many pattern flags make a FAIL', params={'max': (6, 3, 12)}, no_skip=True),
+    'pattern.flags_max':     dict(meaning='how many pattern flags make a FAIL', params={'max': (3, 1, 12)}, no_skip=True),
+    'pattern.track_flags_max': dict(meaning='how many pattern flags one part may carry on its own: one part that loops for '
+                                    'the whole piece is heard as a loop even when every other part varies',
+                                    params={'max': (2, 1, 6)}),
+    # The one positive score row. Every other score row asks whether a part repeats; this one asks whether the
+    # sections differ from each other at all, which is the arc a repetition count cannot see. The spread is in
+    # MIDI velocity units: the ASAP corpus measured 5-95 percentile ranges of 36.7 (Baroque) and 53.8 (Romantic),
+    # so 12 units between two section means is below every measured piece, not a taste threshold.
+    'shape.contrast':        dict(meaning='the piece changes level and density between its sections',
+                                  params={'min_vel_spread': (12.0, 4.0, 30.0), 'min_density_ratio': (1.6, 1.0, 4.0)}),
     # audio / mix
     # `model` switches the estimator: 'legacy' is the original Plomp-Levelt/Sethares pair weight with per-frame
     # normalisation; 'level_aware' adds absolute partial level, simultaneous masking and the Vassilakis amplitude

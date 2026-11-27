@@ -223,6 +223,15 @@ numbers, come from a **gate profile**: a preset of kind `gate` (`references/data
   `roughness`, `ambient_bed`, `modulation_flutter` and `pattern.flags_max` cannot be skipped; every number has a range (a value
   outside it is an error, because that is loosening, not adapting). A bed may be allowed 6 dB of pump by a profile, never 20. Relax means "a small amount of this is normal", not "off": a dynamics curve that does not move at all is
   still flagged in a dance profile.
+- **The repetition rows count parts, and one row asks for contrast.** `pattern.track_flags_max` fails when a single part carries
+  two or more of the pattern flags: one part looping for the whole piece is heard as a loop even when every other part varies, and
+  the old total could not see it (every shipped piece passed at 5 flags of 6 in the audit that added this row). `pattern.loop_short`
+  now judges a part by the share of its bars that differ (`min_distinct_frac`, 15 % by default) instead of requiring a short
+  `best_period`, so a one-bar cell under a 96-bar piece is flagged; `pattern.velocity_flat` asks for an sd of 15 % of the part's
+  mean velocity, because 5 % sat below every measured performance. `shape.contrast` is the one positive row: it fails when the
+  quietest and the loudest plan sections sit within 12 MIDI velocity units of each other AND their densities within 1.6x, which is
+  the flat piece that passes every repetition row. A type that loops by design says so in its own profile (`ambient`, `dance`,
+  `groove`, `texture`, `tense` and `cinematic` each relax `min_distinct_frac` with a reason), never by switching a row off.
 - The report always lists the chosen type, and every relaxed row (`gate_relax`) and skipped row (`gate_skip`) with its reason.
 - Per-score one-off: `"gate": {"pattern.flags_max": {"mode": "relax", "max": 9, "reason": "single-take improvisation"}}`.
 - **Relaxing is the project profile's job, and it has a command.** After a render has measured a row as failing, and the fix would

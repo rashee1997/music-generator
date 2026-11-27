@@ -341,7 +341,7 @@
       "distinct_div": 8
     },
     "pattern.flags_max": {
-      "max": 6
+      "max": 3
     },
     "pattern.flat_dynamics": {
       "min_range_frac": 0.25
@@ -350,15 +350,19 @@
     "pattern.loop_short": {
       "max_distinct": 4,
       "max_period_bars": 4,
-      "min_bars": 16
+      "min_bars": 16,
+      "min_distinct_frac": 0.15
     },
     "pattern.melody_notes": {
       "min_lengths": 3,
       "on_beat_max": 0.9,
       "repeat_max": 0.35
     },
+    "pattern.track_flags_max": {
+      "max": 2
+    },
     "pattern.velocity_flat": {
-      "sd_frac": 0.05
+      "sd_frac": 0.15
     },
     "percussion_flam": {},
     "render.finite": {},
@@ -375,6 +379,10 @@
     "section.energy": {
       "fail_rho": 0.5,
       "warn_rho": 0.7
+    },
+    "shape.contrast": {
+      "min_density_ratio": 1.6,
+      "min_vel_spread": 12.0
     },
     "silence": {},
     "spatial.z_separation": {

@@ -145,7 +145,7 @@ def score_checks(score, out):
                     _row(out, 'WARN', t['name'], f'{no_gap} phrase window(s) of {WINDOW_BARS} bars with no breath or bow gap: add 0.1-0.2 beat rests at phrase ends')
     for level, name, detail in pattern_audit.acoustic_checks(score):
         _row(out, level, name, detail)
-    _, flags = pattern_audit.audit(score)           # audit() returns (info, flags)
+    _, flags, per_track = pattern_audit.audit_detail(score)     # (info, flags, flags counted by part)
     for f in flags:
         _row(out, 'WARN', 'pattern', f)
     max_flags = flags_limit(score, gp)
@@ -153,6 +153,18 @@ def score_checks(score, out):
         _row(out, 'FAIL', 'pattern', f'{len(flags)} repetition or flatness flags: the piece reads as a loop, not a composition')
     if not flags:
         _row(out, 'PASS', 'pattern', 'no copy-paste, grid-bound or flat-dynamics flags in the score')
+    # Counting only the total hid the worst case: one part could carry every flag while the others varied, and a
+    # piece with eight good parts and one 22-bar loop still passed. A part's own budget is the rule that hears it.
+    track_max = gp.param('pattern.track_flags_max', 'max')
+    worst = max(per_track.items(), key=lambda kv: len(kv[1]), default=(None, []))
+    if worst[0] is not None and len(worst[1]) >= track_max:
+        _row(out, 'FAIL', 'pattern.track_flags_max',
+             f"'{worst[0]}' carries {len(worst[1])} of the flags on its own (limit {track_max}): one part doing the "
+             'same thing for the whole piece is heard as a loop even when every other part varies')
+    else:
+        _row(out, 'PASS', 'pattern.track_flags_max', f'no part carries more than {track_max - 1} repetition flags on its own')
+    for level, name, detail in pattern_audit.shape_contrast(score):
+        _row(out, level, name, detail)
 
 
 def flags_limit(score, gp):
