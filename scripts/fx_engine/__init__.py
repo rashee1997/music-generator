@@ -52,6 +52,7 @@ EFFECTS = {
     'tremolo': (modfx.tremolo, 'ranged', None),
     'gate_pulse': (modfx.gate_pulse, 'ranged', None),
     'transient': (modfx.transient, 'ranged', None),
+    'air': (modfx.air, 'ranged', None),
     'reverse_swell': (spacefx.reverse_swell, 'ranged', None),
     'shimmer': (spacefx.shimmer, 'ranged', None),
     'pedalboard': (host.pedalboard, 'ranged', None),

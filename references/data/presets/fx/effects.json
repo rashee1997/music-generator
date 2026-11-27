@@ -508,6 +508,32 @@
           "text": "plugin parameters by name"
         }
       }
+    },
+    "air": {
+      "character": "Air exciter: adds harmonics above a corner from the band that exists, for samples that hold nothing above 8 kHz. It creates content; it is not an EQ, and it is measured by realism.air.",
+      "params": {
+        "corner_hz": {
+          "default": 5000.0,
+          "min": 2000.0,
+          "max": 12000.0,
+          "unit": "Hz",
+          "text": "the band at and above this frequency feeds the exciter"
+        },
+        "drive": {
+          "default": 3.0,
+          "min": 1.0,
+          "max": 10.0,
+          "unit": "x",
+          "text": "saturation drive of the excited band"
+        },
+        "amount_db": {
+          "default": -24.0,
+          "min": -48.0,
+          "max": -6.0,
+          "unit": "dB",
+          "text": "level of the added harmonics under the stem"
+        }
+      }
     }
   }
 }

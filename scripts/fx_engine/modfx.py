@@ -107,3 +107,27 @@ def transient(x, sr, p, rng):
     """`dsp.transient_shaper`: attack and sustain in dB."""
     import dsp
     return dsp.transient_shaper(x, sr, attack=float(p['attack_db']), sustain=float(p['sustain_db']))
+
+
+def air(x, sr, p, rng):
+    """Harmonic exciter: the band above `corner_hz` is normalised and saturated, only what lands above twice the corner is kept, and it is
+    added `amount_db` under the stem and follows the stem's own envelope. A sample set with nothing above 8 kHz gets content there; an EQ
+    shelf could not, since a shelf only scales what exists."""
+    from scipy import signal
+    y = np.asarray(x, dtype=np.float32)
+    mono = y.ndim == 1
+    y2 = y[:, None] if mono else y
+    corner = float(min(p['corner_hz'], sr * 0.2))
+    hp = signal.butter(2, corner / (sr / 2), 'high', output='sos')
+    hp2 = signal.butter(4, min(2.0 * corner, sr * 0.45) / (sr / 2), 'high', output='sos')
+    win = max(1, int(0.03 * sr))
+    amt = float(10 ** (float(p['amount_db']) / 20.0))
+    out = y2.copy()
+    for c in range(y2.shape[1]):
+        ch = y2[:, c]
+        band = signal.sosfilt(hp, ch)
+        norm = float(np.sqrt(np.mean(band ** 2))) + 1e-9
+        harm = signal.sosfilt(hp2, np.tanh(float(p['drive']) * band / norm))
+        env = np.convolve(np.abs(ch), np.ones(win) / win, mode='same')
+        out[:, c] += (amt * harm * env * 2.0).astype(np.float32)
+    return out[:, 0] if mono else out

@@ -52,6 +52,7 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
     """
     c = resolve(cfg)
     rng = np.random.default_rng(seed)
+    breathed = set()               # beats of the notes that let go before a bar line: legato must not close that gap
     if not role:                    # a role-less track still plays as a chord part, but it is said, not assumed
         print('[WARN] humanize_track: no role given, humanized as a chord part. Set the track role (scripts/roles.py).',
               file=sys.stderr)
@@ -192,6 +193,31 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
                 rise = float(p[i] - p[i - 1])
                 if rise > 0:
                     start_boost[i] -= min(fu, 0.35 * rise) / 1000.0
+        # Anticipation: a note that sits just before a strong beat (the next bar line or the middle of the bar) and is not on a beat
+        # itself leans into it, a few ms early; and the last note of a bar lets go before the bar line so the bar breathes. Both are
+        # opt-in per track (`anticipate_ms`, `bar_breath_ms`) and draw from the generator only when asked, so a track that names
+        # neither plays exactly as before. Ensemble studies find push and pull of the beat in every performance (Danielsen et al.).
+        an = float(c.get('anticipate_ms', 0.0) or 0.0)
+        bb = float(c.get('bar_breath_ms', 0.0) or 0.0)
+        if (an > 0 or bb > 0) and base_role in FIG + ('counter', 'arp', 'chord', 'ostinato'):
+            bar = float(ts[0]) * 4.0 / float(ts[1])
+            half = bar / 2.0 if ts[0] % 2 == 0 else None
+            for i in range(n):
+                pos = t_beats[i] % bar
+                to_bar = bar - pos
+                to_half = (half - (pos % half)) if half else None
+                near = min(x for x in (to_bar, to_half) if x is not None)
+                frac_pos = t_beats[i] - np.floor(t_beats[i] + 1e-9)
+                if an > 0 and frac_pos > 1e-6 and 0 < near <= 0.76:
+                    start_boost[i] -= an / 1000.0 * (0.6 + 0.8 * rng.random())
+                end_off = (t_beats[i] + d_beats[i]) % bar
+                if bb > 0 and (end_off < 0.06 or bar - end_off < 0.06):
+                    d_beats[i] = max(0.5 * d_beats[i], d_beats[i] - bb * ms2b)
+                    breathed.add(float(t_beats[i]))
+                    for j in range(i + 1, n):
+                        if t_beats[j] >= t_beats[i] + d_beats[i] - 1e-6 and t_beats[j] % bar < 0.06:
+                            start_boost[j] += 0.35 * bb / 1000.0
+                            break
         # Punctuation: a micro-phrase comma - a fragment that departs at least a whole tone and then turns back -
         # is lengthened on its last note and the next gesture waits for it
         pu = float(c.get('punctuation_ms', 0.0))
@@ -355,7 +381,7 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
         mono = sorted(ev, key=lambda e_: e_['t'])
         for a, b in zip(mono[:-1], mono[1:]):
             gap = b['t'] - (a['t'] + a['dur'])
-            if a.get('art') == 'staccato' or b['t'] <= a['t'] + 0.05:   # staccato or a chord tone: leave alone
+            if a.get('art') == 'staccato' or b['t'] <= a['t'] + 0.05 or a['beat'] in breathed:   # staccato, a chord tone or a bar breath: leave alone
                 continue
             if -0.001 < gap < 0.20:
                 a['dur'] = (b['t'] - a['t']) + legato_overlap_ms / 1000.0

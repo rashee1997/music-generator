@@ -113,7 +113,7 @@ CHORD_ROLES = ('chord', 'pad', 'bass', 'arp', 'texture')
 # error: a typo must not become a silent no-op (the reason `pocket` or `timing_beat_frac` could otherwise be
 # written and do nothing).
 HUMANIZE_KEYS = frozenset([*TIMING, *PRESETS['natural'], 'mood', 'vel_bias', 'gate_bias', 'upbeat', 'upbeats',
-                           'pocket'])
+                           'pocket', 'anticipate_ms', 'bar_breath_ms'])
 
 
 def resolve(cfg):
