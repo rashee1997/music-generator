@@ -174,3 +174,25 @@ class PipelineHook(unittest.TestCase):
         self.assertEqual([r[0] for r in rows], ['WARN', 'PASS'])
         self.assertEqual(rows[0][1], 'realism.timbre_loudness')
         self.assertIn('differ mainly in volume', rows[0][2])
+
+
+class PresetAwareChecks(unittest.TestCase):
+    """The report reads what the renderer reads: a section's players from its instrument preset, and the score's own air model."""
+
+    def test_players_come_from_the_instrument_preset_too(self):
+        from unittest import mock
+        score = dict(tracks=[dict(name='celli', instrument='p_celli', notes=[]), dict(name='violas', instrument='p_violas', notes=[])])
+        cfgs = {'p_celli': dict(ensemble=dict(players=4)), 'p_violas': dict(ensemble=dict(players=3))}
+        with mock.patch('presets.find_instrument', side_effect=lambda n: cfgs.get(n)):
+            r = rr.ensemble(score)
+        self.assertEqual((r['value'], r['verdict']), (7, 'PASS'))
+
+    def test_a_score_medium_is_the_air_model(self):
+        import json, tempfile
+        with tempfile.TemporaryDirectory() as td:
+            os.makedirs(os.path.join(td, 'presets', 'instruments'))
+            json.dump(dict(spatial=dict(distance=30.0)), open(os.path.join(td, 'presets', 'instruments', 'far.json'), 'w'))
+            self.assertEqual(rr.distance(td)['verdict'], 'WARN')
+            r = rr.distance(td, dict(medium=dict(model='iso9613', state=dict(temperature_k=283.15, rh_percent=95))))
+            self.assertEqual(r['verdict'], 'PASS')
+            self.assertIn('ISO 9613-1', r['note'])

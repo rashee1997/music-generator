@@ -154,7 +154,7 @@ sheet = dict(
                 dict(part='np_siren_wail', why='the first cruiser closes in behind', path='far at the kerb, behind the pack from the chase, stops at the escape'),
                 dict(part='np_siren_second', why='the second cruiser joins on the right', path='enters in the chase and crosses behind in the tunnel'),
                 dict(part='np_helicopter', why='the helicopter is overhead and crosses the room', path='far and high, over the listener in the air shot, still above on the flyover')],
-        height={'np_helicopter': 55, 'pursuit_choir': 60, 'pursuit_solo_violin': 45, 'pursuit_violins_long': 30, 'pursuit_bass_clarinet': 30},
+        height={'np_helicopter': 55, 'pursuit_choir': 60, 'pursuit_solo_violin': 45, 'pursuit_violins_long': 30, 'pursuit_bass_clarinet': 30, 'pursuit_piano_theme': 15},
         room_changes=[dict(at_section='the_race', why='inside the car: a very small, dry cabin', transition_s=0.5),
                       dict(at_section='spotted', why='the kerb: the street canyon between two façades, wet asphalt, open sky', transition_s=1.0),
                       dict(at_section='the_tunnel', why='a tunnel: concrete above and on both sides, a long close tail', transition_s=6.0),

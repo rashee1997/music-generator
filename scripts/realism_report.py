@@ -36,7 +36,7 @@ TARGETS = {
     'phrasing': 'bar-scale tempo deviation 1-8 % over the body, excluding the final ritardando',
 }
 
-SECTION_WORDS = ('string', 'violin', 'viola', 'cello', 'bass', 'brass', 'horn', 'trumpet', 'trombone', 'tuba',
+SECTION_WORDS = ('string', 'violin', 'viola', 'cello', 'celli', 'bass', 'brass', 'horn', 'trumpet', 'trombone', 'tuba',
                  'wind', 'flute', 'oboe', 'clarinet', 'bassoon', 'choir', 'voice', 'section', 'ensemble', 'tutti')
 BANDS = ((20.0, 80.0, 'sub'), (180.0, 450.0, 'low_mid'), (500.0, 2000.0, 'mid'),
          (2000.0, 8000.0, 'high'), (8000.0, 16000.0, 'air'))
@@ -120,12 +120,25 @@ def timbre_loudness(f):
                 note='timbre follows loudness' if ok else 'loud and quiet differ mainly in volume')
 
 
+def _players(track):
+    """The players a section part declares: its own `ensemble` block, else its instrument preset's (the renderer reads both)."""
+    blk = track.get('ensemble')
+    if not blk:
+        try:
+            import presets
+            cfg = presets.find_instrument(str(track.get('instrument', '')))
+            blk = (cfg or {}).get('ensemble')
+        except Exception:
+            blk = None
+    return int((blk or {}).get('players', 1) or 1)
+
+
 def ensemble(score):
     if not score:
         return dict(value=None, verdict='N/A', note='no score given')
     tracks = score.get('tracks', []) or []
     named = [t for t in tracks if any(w in str(t.get('name', '')).lower() for w in SECTION_WORDS)]
-    declared = sum(int((t.get('ensemble') or {}).get('players', 1) or 1) for t in named)
+    declared = sum(_players(t) for t in named)
     if not named:
         return dict(value=0, verdict='INFO', note='no section-named parts in the score')
     ok = declared > len(named)
@@ -274,7 +287,7 @@ def phrasing(score):
                 note='bar-scale breathing' if ok else ('metronomic at the bar' if cv < 1.0 else 'unstable at the bar'))
 
 
-def distance(project):
+def distance(project, score=None):
     if not project:
         return dict(value=None, verdict='N/A', note='no project given')
     rows = []
@@ -307,13 +320,15 @@ def distance(project):
     if not rows:
         return dict(value=None, verdict='N/A', note='no spatial distances in the project presets')
     far = [r for r in rows if r['distance_m'] > 4.0 and not r['scene']]
-    missing = [r for r in far if not r['temp'] and r['absorption']]
+    medium = ((score or {}).get('medium') or {})
+    modelled = str(medium.get('model', '')).startswith('iso9613') and bool(medium.get('state'))      # the score's own medium is the air model of every source in it
+    missing = [] if modelled else [r for r in far if not r['temp'] and r['absorption']]
     # ISO 9613-1 at 20 C / 50 % RH: 4 kHz alpha is 0.02967 dB/m, so this is the predicted high-band loss
     worst = max((0.02967 * max(0.0, r['distance_m'] - 1.0) for r in far), default=0.0)
     return dict(value=len(rows), far=int(len(far)), missing_model=int(len(missing)),
                 predicted_4k_loss_db=round(float(worst), 2),
                 verdict='PASS' if not missing else 'WARN',
-                note='every far source has an air model' if not missing
+                note=('every far source has an air model' + (' (the score\'s medium, ISO 9613-1)' if modelled else '')) if not missing
                      else f'{len(missing)} far source(s) have no temperature/humidity air model')
 
 
@@ -325,7 +340,7 @@ def analyse(master, sr, stems=None, score=None, project=None):
         '2_ensemble': ensemble(score),
         '3_transient': transient_similarity(master, sr),
         '4_depth': depth(master, stems, sr),
-        '6_distance': distance(project),
+        '6_distance': distance(project, score),
         '7_openness': openness(f),
         '8_phrasing': phrasing(score),
     }

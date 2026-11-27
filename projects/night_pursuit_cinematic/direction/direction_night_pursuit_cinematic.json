@@ -133,6 +133,7 @@
     "pursuit_violins_staccato",
     "pursuit_violins_long",
     "pursuit_cymbals",
+    "pursuit_piano_theme",
     "pursuit_choir",
     "pursuit_solo_violin"
   ],
@@ -380,6 +381,12 @@
       "distance": 3.6,
       "space": "np_street_canyon"
     },
+    "pursuit_piano_theme": {
+      "azimuth": -15.0,
+      "elevation": 15.0,
+      "distance": 1.8,
+      "space": "np_street_canyon"
+    },
     "pursuit_choir": {
       "azimuth": 0.0,
       "elevation": 60.0,
@@ -448,7 +455,8 @@
       "pursuit_choir": 60,
       "pursuit_solo_violin": 45,
       "pursuit_violins_long": 30,
-      "pursuit_bass_clarinet": 30
+      "pursuit_bass_clarinet": 30,
+      "pursuit_piano_theme": 15
     },
     "room_changes": [
       {

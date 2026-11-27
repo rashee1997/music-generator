@@ -38,5 +38,36 @@
   ],
   "soundfont": "muse_general",
   "per_note_channels": true,
-  "expression": "bow"
+  "expression": "bow",
+  "velocity_timbre": {
+    "points": [
+      [
+        25,
+        1800
+      ],
+      [
+        60,
+        3400
+      ],
+      [
+        100,
+        6500
+      ],
+      [
+        127,
+        9500
+      ]
+    ],
+    "zones": 6,
+    "attack_ms": [
+      [
+        25,
+        60
+      ],
+      [
+        127,
+        20
+      ]
+    ]
+  }
 }

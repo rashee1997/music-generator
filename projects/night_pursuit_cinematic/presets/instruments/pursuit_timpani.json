@@ -34,5 +34,22 @@
     "KB cinematic-hybrid-scoring (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising device)",
     "KB soundfont-velocity-and-realism (a General MIDI SoundFont has one sample per key: velocity moves level, so the colour is added by velocity_timbre and the section by ensemble)",
     "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
-  ]
+  ],
+  "velocity_timbre": {
+    "points": [
+      [
+        25,
+        2500
+      ],
+      [
+        60,
+        4500
+      ],
+      [
+        127,
+        9500
+      ]
+    ],
+    "zones": 8
+  }
 }

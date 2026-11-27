@@ -92,6 +92,7 @@ violins_st = Track('violins_staccato', 'pursuit_violins_staccato', 'arp')
 violins_tr = Track('violins_long', 'pursuit_violins_long', 'pad', fade_in_s=0.3, fade_out_s=0.6)
 choir = Track('choir', 'pursuit_choir', 'pad', fade_in_s=1.0, fade_out_s=1.5)
 solo = Track('solo_violin', 'pursuit_solo_violin', 'counter', fade_in_s=0.2, fade_out_s=0.8)
+piano_theme = Track('piano_theme', 'pursuit_piano_theme', 'counter')
 
 # ---------------------------------------------------------------------------------------------------------------- the low end, written by phrase
 BASS_WALKS = [(0, 0, 0, 7), (0, 0, 3, 0), (0, 0, 10, 7), (0, 0, 0, 1), (0, 7, 0, 5), (0, 0, 8, 7)]
@@ -279,7 +280,13 @@ solo.add(s0('the_escape') + 1, 0, 14.0, p(C, 5), 0.4)      # home: the Gb4 held 
 violins_tr.add(s0('the_escape') + 2, 0, 20.0, p(G, 5), 0.3)
 choir.add(s0('the_escape'), 0, 10.0, p(G, 4), 0.3)
 
-music = [basses, basses_pizz, tuba, bass_drum, timpani, taiko, snare, cymbals, low_swell, violas, celli, bass_clarinet, horns, trombones,
+# the exposed piano (the Antigravity cue's theme piano: soft, alone, every note left to ring): the hook once over the helicopter's long chords and twice in the escape,
+# where the music has thinned to a pedal; written velocities 0.50-0.62 (about 64-79), the notes as written in `hook` (0.5 to 2.5 beats)
+hook(piano_theme, s0('the_helicopter') + 1, 4, shift=2, v=0.56, variant=0)
+hook(piano_theme, s0('the_escape') + 3, 4, shift=7, v=0.50, variant=0)
+hook(piano_theme, s0('the_escape') + 7, 4, shift=7, v=0.46, variant=0)
+
+music = [basses, basses_pizz, tuba, bass_drum, timpani, taiko, snare, cymbals, low_swell, violas, celli, piano_theme, bass_clarinet, horns, trombones,
          violins_st, violins_tr, choir, solo]
 
 # ---------------------------------------------------------------------------------------------------------------- the sounds and the places

@@ -41,5 +41,36 @@
     "KB orchestral-writing (playable ranges, section sizes and note rates of the instrument)",
     "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
   ],
-  "soundfont": "muse_general"
+  "soundfont": "muse_general",
+  "velocity_timbre": {
+    "points": [
+      [
+        25,
+        1500
+      ],
+      [
+        60,
+        3000
+      ],
+      [
+        100,
+        6000
+      ],
+      [
+        127,
+        9500
+      ]
+    ],
+    "zones": 8,
+    "attack_ms": [
+      [
+        25,
+        30
+      ],
+      [
+        127,
+        8
+      ]
+    ]
+  }
 }

@@ -22,6 +22,7 @@ STAGE = {
     'pursuit_violins_staccato': (-130.0, 30.0, 3.0),
     'pursuit_violins_long':  (180.0, 45.0, 4.0),
     'pursuit_cymbals':          (-160.0, 30.0, 3.6),
+    'pursuit_piano_theme':      (-15.0, 15.0, 1.8),
     'pursuit_choir':            (0.0, 60.0, 5.0),
     'pursuit_solo_violin':      (-35.0, 45.0, 2.4),
 }

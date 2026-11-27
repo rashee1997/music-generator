@@ -795,6 +795,46 @@
     "release_ms": 1500.0
   },
   "inst_eq": {
+    "pursuit_celli": [
+      {
+        "type": "peak",
+        "f": 300,
+        "gain": -2.5,
+        "q": 0.9
+      }
+    ],
+    "pursuit_violas": [
+      {
+        "type": "peak",
+        "f": 300,
+        "gain": -2.5,
+        "q": 0.9
+      }
+    ],
+    "pursuit_horns": [
+      {
+        "type": "peak",
+        "f": 300,
+        "gain": -2.5,
+        "q": 0.9
+      }
+    ],
+    "pursuit_trombones": [
+      {
+        "type": "peak",
+        "f": 300,
+        "gain": -2.5,
+        "q": 0.9
+      }
+    ],
+    "pursuit_tuba": [
+      {
+        "type": "peak",
+        "f": 300,
+        "gain": -2.5,
+        "q": 0.9
+      }
+    ],
     "pursuit_snare": [
       {
         "type": "peak",

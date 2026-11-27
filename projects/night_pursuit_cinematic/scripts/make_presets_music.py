@@ -128,11 +128,41 @@ inst('pursuit_solo_violin', 'violin', 'counter',
      'The cry over the flyover: one high violin carrying the hook an octave above the horns, close and a little exposed.',
      -40, 2.4, -6.0, 0.12, [HP(250), PK(3500, -4.0, 1.0), LP(8000)],
      extra=dict(soundfont='muse_general'), sources=[KB['hybrid'], KB['orch']])
+inst('pursuit_piano_theme', 'piano', 'counter',
+     'The exposed phrase: a close, soft grand piano states the hook alone, each note left to ring into the hall (the Antigravity cue\'s theme piano: written velocities 51-66, long notes, a 300 ms release).',
+     -15, 1.8, -1.0, 0.30, [HP(90)],
+     humanize=dict(preset='natural', timing_ms=6.0, drift_ms=6.0, vel_sigma=5.0),
+     extra=dict(soundfont='muse_general', mechanics_class='plucked', articulation=dict(overlap_ms=0.0, gate=1.0, release_ms=300.0)),
+     sources=[KB['hybrid'], KB['orch'], KB['sf']])
 # the GM drum kit presets carry `gm`, not `instrument`
 for n in ('pursuit_bass_drum', 'pursuit_snare', 'pursuit_cymbals', 'pursuit_taiko'):
     path = os.path.join(P, 'instruments', n + '.json')
     d = json.load(open(path, encoding='utf-8'))
     d.pop('instrument', None)
+    json.dump(d, open(path, 'w', encoding='utf-8'), indent=2)
+
+# ----------------------------------------------------------------------------------------------- velocity layers, like an SFZ library
+# A General MIDI bank has one sample per key and velocity moves only its level. `velocity_timbre` rebuilds what an SFZ library gets from its layers:
+# fixed velocity zones (a note's layer follows its own velocity), a low-pass per zone (SFZ `fil_veltrack`: soft is darker) and an onset ramp per
+# zone (SFZ `ampeg_vel2attack`: soft begins more slowly). Every number is a starting value: the physical direction (a brighter spectrum at a higher
+# dynamic level, a faster attack) is in the research note, the figures are not measured on these banks.
+BOWED = [[25, 1800], [60, 3400], [100, 6500], [127, 9500]]
+BLOWN = [[25, 1500], [60, 3000], [100, 6000], [127, 9500]]
+STRUCK = [[25, 2500], [60, 4500], [127, 9500]]
+VEL = {'pursuit_violas': (BOWED, 12, [[25, 22], [127, 5]]), 'pursuit_basses': (BOWED, 8, [[25, 30], [127, 8]]),
+       'pursuit_celli': (BOWED, 12, [[25, 26], [127, 5]]), 'pursuit_violins_staccato': (BOWED, 10, [[25, 14], [127, 4]]),
+       'pursuit_violins_long': (BOWED, 8, [[25, 45], [127, 12]]), 'pursuit_solo_violin': (BOWED, 12, [[25, 40], [127, 8]]),
+       'pursuit_bass_clarinet': (BLOWN, 8, [[25, 30], [127, 8]]), 'pursuit_horns': (BLOWN, 12, [[25, 35], [127, 7]]),
+       'pursuit_trombones': (BLOWN, 10, [[25, 30], [127, 6]]), 'pursuit_tuba': (BLOWN, 8, [[25, 30], [127, 8]]),
+       'pursuit_choir': (BOWED, 8, [[25, 70], [127, 25]]), 'pursuit_low_swell': (BOWED, 6, [[25, 60], [127, 20]]),
+       'pursuit_basses_pizz': (STRUCK, 8, None), 'pursuit_timpani': (STRUCK, 8, None), 'pursuit_piano_theme': (STRUCK, 12, None)}
+for n, (pts, zones, att) in VEL.items():
+    path = os.path.join(P, 'instruments', n + '.json')
+    d = json.load(open(path, encoding='utf-8'))
+    blk = dict(points=pts, zones=zones)
+    if att:
+        blk['attack_ms'] = att
+    d['velocity_timbre'] = blk
     json.dump(d, open(path, 'w', encoding='utf-8'), indent=2)
 
 # ----------------------------------------------------------------------------------------------- the street materials
@@ -202,7 +232,9 @@ mix['immersive'] = dict(enabled=True, engine='hoa_bus', order=5, anchor_max_span
                         height_by_role=dict(melody=0.0, lead=0.0, vocal=0.0, pad=0.0, texture=0.0, environment=0.0, chord=0.0, bass=0.0, drum=0.0,
                                             percussion=0.0, drone=0.0, ostinato=0.0, arp=0.0, counter=0.0, fx=0.0),
                         max_elevation=70.0, min_height_tracks=2, stereo_decode='speakers')
-mix['inst_eq'] = dict(pursuit_snare=[dict(type='peak', f=3536, gain=-1.5, q=1.0), dict(type='highshelf', f=5500, gain=-12.0, q=0.7)])      # the gate's own advice, 11.4 dB and 6.8 dB over the mids at 2.5-5 kHz
+LOWMID = [dict(type='peak', f=300, gain=-2.5, q=0.9)]       # realism.low_mid read the 180-450 Hz band 15.6 dB over the sub and growing 3.3 dB into the peak
+mix['inst_eq'] = dict(pursuit_celli=LOWMID, pursuit_violas=LOWMID, pursuit_horns=LOWMID, pursuit_trombones=LOWMID, pursuit_tuba=LOWMID,
+                      pursuit_snare=[dict(type='peak', f=3536, gain=-1.5, q=1.0), dict(type='highshelf', f=5500, gain=-12.0, q=0.7)])      # the gate's own advice, 11.4 dB and 6.8 dB over the mids at 2.5-5 kHz
 mix['lead_carve'] = dict(enabled=True, from_intent=True, roles=['pad', 'texture', 'chord', 'arp', 'counter', 'environment'], ratio=1.6, threshold_db=-34.0, attack_ms=100.0, release_ms=1500.0)
 mix['sidechain'] = dict(mode='legacy', band_hz=[250.0, 3800.0], residual=0.3, env_plateau=True)
 mix['dynamics'] = dict(engine='pedalboard', knee_db=0.0, detector='peak', stereo_link=True, lookahead_ms=0.0, parallel=1.0)

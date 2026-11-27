@@ -1,0 +1,59 @@
+{
+  "name": "pursuit_piano_theme",
+  "character": "The exposed phrase: a close, soft grand piano states the hook alone, each note left to ring into the hall (the Antigravity cue's theme piano: written velocities 51-66, long notes, a 300 ms release).",
+  "description": "The exposed phrase: a close, soft grand piano states the hook alone, each note left to ring into the hall (the Antigravity cue's theme piano: written velocities 51-66, long notes, a 300 ms release).",
+  "instrument": "piano",
+  "role": "counter",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 5.0
+  },
+  "spatial": {
+    "azimuth": -15.0,
+    "elevation": 15.0,
+    "distance": 1.8,
+    "space": "np_street_canyon",
+    "binaural": true,
+    "kind": "spot"
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 90.0
+    }
+  ],
+  "gain_db": -1.0,
+  "reverb": 0.3,
+  "sources": [
+    "KB cinematic-hybrid-scoring (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising device)",
+    "KB orchestral-writing (playable ranges, section sizes and note rates of the instrument)",
+    "KB soundfont-velocity-and-realism (a General MIDI SoundFont has one sample per key: velocity moves level, so the colour is added by velocity_timbre and the section by ensemble)",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
+  ],
+  "soundfont": "muse_general",
+  "mechanics_class": "plucked",
+  "articulation": {
+    "overlap_ms": 0.0,
+    "gate": 1.0,
+    "release_ms": 300.0
+  },
+  "velocity_timbre": {
+    "points": [
+      [
+        25,
+        2500
+      ],
+      [
+        60,
+        4500
+      ],
+      [
+        127,
+        9500
+      ]
+    ],
+    "zones": 12
+  }
+}
