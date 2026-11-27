@@ -13,8 +13,8 @@
     "anticipate_ms": 18.0
   },
   "spatial": {
-    "azimuth": 52,
-    "elevation": 12,
+    "azimuth": 70,
+    "elevation": 14,
     "distance": 2.4,
     "space": "western_ghats_sunrise_room",
     "binaural": true,

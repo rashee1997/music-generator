@@ -5,7 +5,7 @@
   "medium": "audio",
   "brief": "A 60 second A.R. Rahman style cultural mix with his signature; the ambience of a sunrise in the Western Ghats; Scottish bagpipes joined smoothly (real pipes play fast); catchy and upbeat; the ambience quiet at the start.",
   "audience": "a listener on headphones or speakers, a travel-film or album-opener context; they know the sound of Indian film fusion",
-  "purpose": "a one-minute upbeat fusion cue: a catchy syncopated bansuri riff in the Mohanam pentatonic over a rhythmic string pulse, tabla, a layered choir and a Highland piper playing a fast reel, in a living Western Ghats dawn",
+  "purpose": "a one-minute upbeat fusion cue: a catchy syncopated bansuri riff in the Mohanam pentatonic over a rhythmic string pulse, tabla, a layered choir and a Highland piper playing a fast reel, a Western rock kit and electric guitars, in a living Western Ghats dawn",
   "point_of_view": "an observer on the ridge: the world wakes around the music, and the music gives it a voice",
   "job": [
     "hook the listener inside six seconds with the riff and the pulse",
@@ -85,17 +85,18 @@
     "santoor",
     "tanpura",
     "tabla",
+    "rock drum kit",
+    "electric guitars",
     "choir",
     "bagpipes",
     "environment"
   ],
   "avoid_sounds": [
     "synth pad",
-    "drum kit",
-    "electric guitar",
-    "reverb wash"
+    "reverb wash",
+    "four-on-the-floor kick"
   ],
-  "pulse": "tabla from 2 s, a 3+3+2 eighth-note pulse from 7 s, the full groove from 21 s",
+  "pulse": "tabla from 2 s, the rock kit and a 3+3+2 pulse from 7 s, the full groove with palm-muted guitar chugs from 21 s",
   "tempo_bpm": [
     112,
     112
@@ -158,25 +159,25 @@
       "space": "western_ghats_sunrise_room"
     },
     "sitar": {
-      "azimuth": -28.0,
+      "azimuth": -55.0,
       "elevation": 0.0,
       "distance": 1.9,
       "space": "western_ghats_sunrise_room"
     },
     "violins_counter": {
-      "azimuth": 52.0,
-      "elevation": 12.0,
+      "azimuth": 70.0,
+      "elevation": 14.0,
       "distance": 2.4,
       "space": "western_ghats_sunrise_room"
     },
     "violas": {
-      "azimuth": -68.0,
+      "azimuth": -80.0,
       "elevation": 0.0,
       "distance": 2.6,
       "space": "western_ghats_sunrise_room"
     },
     "celli": {
-      "azimuth": 88.0,
+      "azimuth": 100.0,
       "elevation": 0.0,
       "distance": 2.8,
       "space": "western_ghats_sunrise_room"
@@ -215,6 +216,24 @@
       "azimuth": 180.0,
       "elevation": 22.0,
       "distance": 7.5,
+      "space": "western_ghats_sunrise_room"
+    },
+    "kit": {
+      "azimuth": 40.0,
+      "elevation": 0.0,
+      "distance": 2.6,
+      "space": "western_ghats_sunrise_room"
+    },
+    "guitar_drive": {
+      "azimuth": 130.0,
+      "elevation": 4.0,
+      "distance": 2.4,
+      "space": "western_ghats_sunrise_room"
+    },
+    "guitar_clean": {
+      "azimuth": -60.0,
+      "elevation": 18.0,
+      "distance": 2.4,
       "space": "western_ghats_sunrise_room"
     }
   },

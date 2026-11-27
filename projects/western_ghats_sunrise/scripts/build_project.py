@@ -60,8 +60,9 @@ def write(path, doc):
 
 
 # ------------------------------------------------------------------ instrument presets
-STAGE = dict(bansuri=(0, 6, 1.5), sitar=(-28, 0, 1.9), violins_counter=(52, 12, 2.4), violas=(-68, 0, 2.6), celli=(88, 0, 2.8),
-             violins_long=(150, 22, 4.0), tanpura=(-108, -2, 2.6), santoor=(118, 30, 2.8), tabla=(-150, 0, 2.4), pipes=(172, 5, 7.5), pipes_drone=(180, 22, 7.5))
+STAGE = dict(bansuri=(0, 6, 1.5), sitar=(-55, 0, 1.9), violins_counter=(70, 14, 2.4), violas=(-80, 0, 2.6), celli=(100, 0, 2.8),
+             violins_long=(150, 22, 4.0), tanpura=(-108, -2, 2.6), santoor=(118, 30, 2.8), tabla=(-150, 0, 2.4), pipes=(172, 5, 7.5),
+             pipes_drone=(180, 22, 7.5), kit=(40, 0, 2.6), guitar_drive=(130, 4, 2.4), guitar_clean=(-60, 18, 2.4))
 # the sections sit on the sides and behind (measured: imm.surround_ratio read -9.9 and then -10.1 dB against a -9.0 window with the strings at +-56 deg)
 
 
@@ -84,6 +85,15 @@ PK = lambda f, g, q=1.0: dict(type='peak', f=float(f), gain=float(g), q=float(q)
 LP = lambda f: dict(type='lp', f=float(f))
 
 INSTRUMENTS = [
+    inst('guitar_drive', 'overdrive_guitar', 'chord', 'plucked',
+         'The rock engine: a palm-muted overdriven guitar chugging eighth notes on root-and-fifth power chords in the 3+3+2 pattern, tight and dry, the Western half of the groove.',
+         -6.0, 0.12, [HP(90), PK(400, -2.0, 0.9), PK(2500, 1.0, 1.0), LP(6500)],
+         hum=dict(preset='tight', timing_ms=3.0, lead_ms=4.0),
+         extra=dict(snap=None, onset_fade_ms=3.0)),
+    inst('guitar_clean', 'clean_guitar', 'arp', 'plucked',
+         'A clean electric guitar playing a dotted arpeggio over the chords, the rhythmic shimmer Indian film fusion puts under a flute: bright, a little echo, never loud.',
+         -9.0, 0.28, [HP(160), PK(3200, 0.5, 1.0), LP(8000)],
+         extra=dict(snap=None, onset_fade_ms=3.0)),
     inst('pipes', 'bagpipes', 'counter', 'blown_reed',
          'A Highland piper on the far ridge: the chanter plays fast eighth-note reels with a cut on the beats and a gracenote between repeated notes, steady in level with no swell and no vibrato (a pipe has no dynamics), heard across the valley.',
          -7.0, 0.34, [HP(220), PK(2800, -1.0, 1.0), LP(7000)],
@@ -140,6 +150,12 @@ for _i in INSTRUMENTS:
             dict(t_s=0.0, azimuth=-30.0, distance=1.7, elevation=6.0), dict(t_s=6.4, azimuth=-18.0, distance=1.6, elevation=8.0),
             dict(t_s=21.4, azimuth=0.0, distance=1.5, elevation=12.0), dict(t_s=47.1, azimuth=14.0, distance=1.6, elevation=8.0),
             dict(t_s=60.0, azimuth=22.0, distance=1.8, elevation=6.0)])
+
+KIT = dict(name='ghats_kit', description='Rock drum kit', instrument='power', role='drum', family='struck_membrane',
+           character='A Western rock kit playing the groove owner\'s part: kick on the 3+3+2 accents, snare on two and four, eighth-note hats, a crash at each turn and tom fills; the tabla keeps only the accents between its strokes.',
+           humanize=dict(preset='tight', timing_ms=3.0, drum_ms=2.5), gain_db=-5.0, reverb=0.16, onset_fade_ms=2.0, snap=None,
+           spatial=dict(azimuth=40, elevation=0, distance=2.6, space=f'{SLUG}_room', binaural=True, kind='spot'),
+           eq=[HP(45), PK(300, -2.0, 0.9), PK(4000, 0.0, 1.0), LP(9000)], sources=list(SRC) + ['references/scoring/genre-fusion.md (one kit, one bass: the other tradition\'s percussion is a fill or an accent); the pattern is an ESTIMATE'])
 
 TABLA = dict(name='ghats_tabla', description='Tabla and daf', instrument='standard', role='drum', family='struck_membrane',
              character='Tabla strokes (ge, na, tin) with a shaker underneath in the 3+3+2 pattern, and one low daf stroke where the sun clears the ridge: light hands, never a kit.',
@@ -520,7 +536,7 @@ def tanpura():
 
 def sitar():
     s = []
-    for bars, sa, vel in (((4, 5, 6, 7, 8, 9, 10), SA, 0.4), (tuple(range(11, 23)), SA + 2, 0.6), ((23, 24, 25), SA, 0.36)):
+    for bars, sa, vel in (((4, 5, 6, 7), SA, 0.4), ((23, 24), SA, 0.34)):                       # the clean guitar and the drive guitar take the arpeggio over from bar 8
         for bar in bars:
             if 15 <= bar <= 18:
                 continue                                        # the piper has the stage: no plucks under the reel
@@ -541,16 +557,15 @@ def santoor():
 
 
 def tabla():
+    """The kit owns the groove (one kit, KB genre-fusion): the tabla plays the Indian accents between its strokes, a fill at the turns."""
     s = []
-    for bar in (2, 3):                              # the pulse starts under the mist already
+    for bar in (2, 3):                              # under the mist already
         s += [n(bar, 0.0, 0.4, 'tabla_ge', 0.46), n(bar, 2.0, 0.3, 'tabla_na', 0.36), n(bar, 3.5, 0.3, 'tabla_tin', 0.34)]
-    for bar in range(4, 11):                        # first light: a light 3+3+2 with a syncopated ge on the and of 2
-        s += [n(bar, 0.0, 0.4, 'tabla_ge', 0.5), n(bar, 1.5, 0.3, 'tabla_na', 0.4), n(bar, 2.5, 0.3, 'tabla_ge', 0.38), n(bar, 3.0, 0.3, 'tabla_tin', 0.4), n(bar, 3.5, 0.3, 'tabla_na', 0.34)]
-        s += [n(bar, k * 0.5, 0.2, 'shaker', 0.38 + 0.04 * (k % 2)) for k in range(8)]
-    for bar in range(11, 23):                       # sunrise: the full groove
-        v = 0.58 + 0.015 * (bar - 11)
-        s += [n(bar, 0.0, 0.4, 'tabla_ge', v), n(bar, 1.5, 0.3, 'tabla_na', v - 0.12), n(bar, 2.5, 0.3, 'tabla_ge', v - 0.16), n(bar, 3.0, 0.3, 'tabla_tin', v - 0.1), n(bar, 3.5, 0.3, 'tabla_na', v - 0.2)]
-        s += [n(bar, k * 0.5, 0.2, 'shaker', 0.42 + 0.05 * (k % 2)) for k in range(8)]
+    for bar in range(4, 23):
+        v = 0.4 if bar < 11 else 0.5
+        s += [n(bar, 1.5, 0.3, 'tabla_na', v - 0.06), n(bar, 3.5, 0.3, 'tabla_tin', v - 0.06)]
+        if bar % 2:
+            s += [n(bar, 2.0, 0.3, 'tabla_ge', v - 0.1)]
     s.append(n(11, 0.0, 1.5, 'daf', 0.78))          # the sun clears the ridge
     for bar in range(23, 27):                       # morning: thinning
         s += [n(bar, 0.0, 0.4, 'tabla_ge', 0.4), n(bar, 2.0, 0.3, 'tabla_na', 0.3)]
@@ -576,6 +591,64 @@ def choir():
     return s
 
 
+
+def kit():
+    """A rock kit on the groove: kick on the 3+3+2 accents, snare on two and four, eighth hats; the reel (bars 15-18) takes it down to kick and hats."""
+    s = []
+    for bar in range(4, 27):
+        reel_bar = 15 <= bar <= 18
+        first_light = bar < 11
+        morning = bar >= 23
+        v = 0.5 if first_light else (0.6 if morning else 0.64 + 0.008 * (bar - 11))   # intent.avoid sudden_loud: no two simultaneous notes more than 0.4 apart
+        s += [n(bar, 0.0, 0.2, 'kick', v), n(bar, 2.5, 0.2, 'kick', v - 0.1)]
+        if not first_light and not morning and not reel_bar:
+            s += [n(bar, 1.5, 0.2, 'kick', v - 0.12)]
+        if morning and bar > 24:
+            continue
+        if first_light:
+            s += [n(bar, 1.0, 0.2, 'rim', v - 0.1), n(bar, 3.0, 0.2, 'rim', v - 0.1)]
+        elif not reel_bar:
+            s += [n(bar, 1.0, 0.2, 'snare', v), n(bar, 3.0, 0.2, 'snare', v + 0.04)]
+        s += [n(bar, k * 0.5, 0.15, 'hat_closed', 0.34 + 0.06 * (k % 2) + (0.1 if not first_light else 0.0)) for k in range(8)]
+    for bar, b in ((4, 0.0), (11, 0.0), (19, 0.0), (23, 0.0)):                 # a crash at each turn
+        s.append(n(bar, b, 1.5, 'crash', 0.62))
+    for bar in (10, 14, 18, 22):                                                 # tom fills into the next section
+        s += [n(bar, 3.0, 0.2, 'tom_high', 0.55), n(bar, 3.25, 0.2, 'tom_mid', 0.58), n(bar, 3.5, 0.2, 'tom_low', 0.62), n(bar, 3.75, 0.2, 'tom_low', 0.66)]
+    return s
+
+
+def guitar_drive():
+    """Palm-muted power-chord chugs in the 3+3+2 accents on the chord's root and fifth: bars 11-14 and 19-22 (the piper has the stage in 15-18)."""
+    s = []
+    roots = {}
+    for bars, idxs, sa in chords():
+        r, f = {(0, 2, 3): (0, 3), (-1, 0, 2): (-1, 2), (3, 6, 8): (3, 6)}[tuple(idxs)]
+        for bar in bars:
+            roots[bar] = (r, f, sa)
+    for bar in list(range(11, 15)) + list(range(19, 23)):
+        r, f, sa = roots[bar]
+        lo, hi = pit(r, sa - 12), pit(f, sa - 12)
+        if lo < 40:
+            lo, hi = lo + 12, hi + 12
+        for b, d, vv in ((0.0, 0.45, 0.72), (0.5, 0.2, 0.5), (1.0, 0.2, 0.5), (1.5, 0.45, 0.68), (2.0, 0.2, 0.5), (2.5, 0.2, 0.5), (3.0, 0.45, 0.7), (3.5, 0.2, 0.52)):
+            s += [n(bar, b, d, lo, vv), n(bar, b, d, hi, vv - 0.04)]
+    return s
+
+
+def guitar_clean():
+    """A dotted arpeggio on the chord tones (3+3+2 spacing): bars 8-14 and 19-25."""
+    s = []
+    for bars, idxs, sa in chords():
+        for bar in bars:
+            if not (8 <= bar <= 14 or 19 <= bar <= 25):
+                continue
+            tones = [pit(i, sa) for i in idxs]
+            order = [0, 1, 2, 1, 2, 0]
+            for k, (b, d) in enumerate(((0.0, 0.7), (0.75, 0.7), (1.5, 0.7), (2.25, 0.7), (3.0, 0.45), (3.5, 0.45))):
+                s.append(n(bar, b, d, tones[order[k % len(order)] % len(tones)], 0.4 + (0.05 if k == 0 else 0.0)))
+    return s
+
+
 # ------------------------------------------------------------------ score
 def score(plan_times=None):
     tracks = [
@@ -590,7 +663,10 @@ def score(plan_times=None):
         dict(name='celli', instrument='ghats_celli', role='bass', notes=celli()),
         dict(name='sitar', instrument='ghats_sitar', role='arp', notes=sitar()),
         dict(name='santoor', instrument='ghats_santoor', role='texture', notes=santoor()),
+        dict(name='kit', instrument='ghats_kit', role='drum', notes=kit()),
         dict(name='tabla', instrument='ghats_tabla', role='drum', notes=tabla()),
+        dict(name='guitar_drive', instrument='ghats_guitar_drive', role='chord', notes=guitar_drive()),
+        dict(name='guitar_clean', instrument='ghats_guitar_clean', role='arp', notes=guitar_clean()),
         dict(name='choir', instrument='ghats_choir', role='pad', notes=choir()),
     ]
     sections = []
@@ -627,7 +703,7 @@ def direction():
         title=TITLE, project='Western Ghats Sunrise (a 60 s cue, a fusion of Carnatic, orchestral and Scottish pipe writing)', version=2, medium='audio',
         brief='A 60 second A.R. Rahman style cultural mix with his signature; the ambience of a sunrise in the Western Ghats; Scottish bagpipes joined smoothly (real pipes play fast); catchy and upbeat; the ambience quiet at the start.',
         audience='a listener on headphones or speakers, a travel-film or album-opener context; they know the sound of Indian film fusion',
-        purpose='a one-minute upbeat fusion cue: a catchy syncopated bansuri riff in the Mohanam pentatonic over a rhythmic string pulse, tabla, a layered choir and a Highland piper playing a fast reel, in a living Western Ghats dawn',
+        purpose='a one-minute upbeat fusion cue: a catchy syncopated bansuri riff in the Mohanam pentatonic over a rhythmic string pulse, tabla, a layered choir and a Highland piper playing a fast reel, a Western rock kit and electric guitars, in a living Western Ghats dawn',
         point_of_view='an observer on the ridge: the world wakes around the music, and the music gives it a voice',
         job=['hook the listener inside six seconds with the riff and the pulse', 'turn the harmony up a whole tone when the sun clears the ridge and bring it home to the tonic', 'let a piper take the stage with a fast reel in the flute\'s rest', 'keep the ambience under the music for the first thirty seconds'],
         story='A short mist, then the pulse starts and the riff repeats; the sun clears the ridge at 21 s, a piper answers at 30 s, the crest is at 42 s and a calm morning follows.',
@@ -643,9 +719,9 @@ def direction():
             dict(name='morning', start_s=t(23), end_s=t(29), energy=0.4, action='full daylight, birds everywhere', role='release',
                  music='back in the home key: the riff once, softly; a distant flourish on the pipes; Sa alone; the choir returns to pp')],
         motifs=[dict(name='the riff', first_at_s=t(3), shape='a syncopated rise D . E . F# A F# A, then B A F# E F# D: a leap of a fifth (Sa to Pa) on the weak part of the bar', returns='at 7 s, 13 s, a third below on the violins at 11 s, up a step in the new key at 21 s, in canon on the pipes at 24 s, high at 38.6 s, once softly at 47 s, then Sa alone at 53 s')],
-        instruments=['bansuri', 'strings', 'celli', 'sitar', 'santoor', 'tanpura', 'tabla', 'choir', 'bagpipes', 'environment'],
-        avoid_sounds=['synth pad', 'drum kit', 'electric guitar', 'reverb wash'],
-        pulse='tabla from 2 s, a 3+3+2 eighth-note pulse from 7 s, the full groove from 21 s', tempo_bpm=[112, 112], key='D', mode='major',
+        instruments=['bansuri', 'strings', 'celli', 'sitar', 'santoor', 'tanpura', 'tabla', 'rock drum kit', 'electric guitars', 'choir', 'bagpipes', 'environment'],
+        avoid_sounds=['synth pad', 'reverb wash', 'four-on-the-floor kick'],
+        pulse='tabla from 2 s, the rock kit and a 3+3+2 pulse from 7 s, the full groove with palm-muted guitar chugs from 21 s', tempo_bpm=[112, 112], key='D', mode='major',
         energy=0.6, space=f'{SLUG}_room',
         hits_at=[t(11)], hits=[dict(t=t(11), kind='musical', sync='soft', sound='a low daf stroke and the first chord of the new key as the sun clears the ridge', why='the harmonic turn of the piece; the strings keep sounding, so it is a musical hit, not a cut')],
         mix_intent=dict(hero='bansuri', support=['violins_counter', 'violins_long', 'celli'], sits_under=[], must_hear=['the bansuri in the first 2 s', 'the reel on the pipes at 30 s', 'the choir growing from 21 s'], leave_free_hz=[500.0, 3000.0]),
@@ -687,6 +763,7 @@ def main():
     for i in INSTRUMENTS:
         write(os.path.join(P, 'presets', 'instruments', i['name'] + '.json'), i)
     write(os.path.join(P, 'presets', 'instruments', 'ghats_tabla.json'), TABLA)
+    write(os.path.join(P, 'presets', 'instruments', 'ghats_kit.json'), KIT)
     write(os.path.join(P, 'presets', 'vocals', 'ghats_choir.json'), vocal_choir())
     write(os.path.join(P, 'presets', 'environments', SLUG + '.json'), environment())
     for cname, cdoc in calls().items():
