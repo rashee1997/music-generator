@@ -1,80 +1,80 @@
 {
   "title": "Western Ghats Sunrise",
-  "project": "Western Ghats Sunrise (a 60 s cue, fusion of Carnatic and orchestral writing)",
-  "version": 1,
+  "project": "Western Ghats Sunrise (a 60 s cue, a fusion of Carnatic, orchestral and Scottish pipe writing)",
+  "version": 2,
   "medium": "audio",
-  "brief": "A 60 second A.R. Rahman style cultural mix with his signature; the ambience of a sunrise in the Western Ghats.",
+  "brief": "A 60 second A.R. Rahman style cultural mix with his signature; the ambience of a sunrise in the Western Ghats; Scottish bagpipes joined smoothly (real pipes play fast); catchy and upbeat; the ambience quiet at the start.",
   "audience": "a listener on headphones or speakers, a travel-film or album-opener context; they know the sound of Indian film fusion",
-  "purpose": "a one-minute fusion cue: a bansuri line in the Mohanam pentatonic over a lush string bed, tanpura, tabla and a layered choir, set in a living Western Ghats dawn, rising to the sun clearing the ridge and landing softly",
+  "purpose": "a one-minute upbeat fusion cue: a catchy syncopated bansuri riff in the Mohanam pentatonic over a rhythmic string pulse, tabla, a layered choir and a Highland piper playing a fast reel, in a living Western Ghats dawn",
   "point_of_view": "an observer on the ridge: the world wakes around the music, and the music gives it a voice",
   "job": [
-    "open on the bansuri alone in the mist",
+    "hook the listener inside six seconds with the riff and the pulse",
     "turn the harmony up a whole tone when the sun clears the ridge and bring it home to the tonic",
-    "let the ambience open out as the light rises",
-    "end with Sa alone and the birds"
+    "let a piper take the stage with a fast reel in the flute's rest",
+    "keep the ambience under the music for the first thirty seconds"
   ],
-  "story": "Mist, then first light, then the sun on the ridge, then a calm morning: one breath that crests at 36 s.",
+  "story": "A short mist, then the pulse starts and the riff repeats; the sun clears the ridge at 21 s, a piper answers at 30 s, the crest is at 42 s and a calm morning follows.",
   "duration_s": 60.0,
   "in_point_s": 0.0,
   "out_point_s": 60.0,
   "ending": "tail_out",
   "feel": [
-    "hopeful",
+    "upbeat",
+    "catchy",
     "warm",
-    "luminous",
-    "rooted"
+    "luminous"
   ],
   "avoid_feel": [
     "synthetic",
     "robotic",
-    "aggressive",
+    "sleepy",
     "new-age cliche",
-    "busy"
+    "ambient wash"
   ],
   "sections": [
     {
       "name": "mist",
       "start_s": 0.0,
-      "end_s": 13.6,
-      "energy": 0.12,
-      "action": "mist over the valley, a stream below, the first bird",
+      "end_s": 6.4,
+      "energy": 0.22,
+      "action": "mist over the valley, one far bird",
       "role": "place",
-      "music": "bansuri alone over the tanpura; the first strings arrive as a bare fifth at the end; no pulse"
+      "music": "the bansuri alone over the tanpura; the tabla starts at 2 s; the riff arrives as a pickup in bar 3"
     },
     {
       "name": "first_light",
-      "start_s": 13.6,
-      "end_s": 30.0,
-      "energy": 0.38,
+      "start_s": 6.4,
+      "end_s": 21.4,
+      "energy": 0.5,
       "action": "the light finds the ridge",
       "role": "establish",
-      "music": "the hook on the bansuri, answered by the violins a third below; light tabla; veena plucks; the pipes' drone swells in under the tanpura at 25 s; pp choir enters at the end"
+      "music": "the riff repeats on the bansuri, the violins answer it a third below, the 3+3+2 pulse, veena plucks, the pipes' drone swells in at 15 s, pp choir at 13 s"
     },
     {
       "name": "sunrise",
-      "start_s": 30.0,
-      "end_s": 49.1,
-      "energy": 0.85,
+      "start_s": 21.4,
+      "end_s": 47.1,
+      "energy": 0.9,
       "action": "the sun clears the ridge",
       "role": "peak",
-      "music": "a whole-tone key raise; the hook an octave up with a distant Highland piper doubling it an octave below; violas in 3+3+2; tabla and daf; the pipes answer alone in the flute's rests at 41 s; the choir builds from pp to ff"
+      "music": "a whole-tone key raise and a daf stroke; the riff up a step; the piper echoes it in canon, then plays a fast reel alone at 30 s while the flute rests; the flute returns high at 38.6 s; the choir builds from pp to ff"
     },
     {
       "name": "morning",
-      "start_s": 49.1,
+      "start_s": 47.1,
       "end_s": 60.0,
-      "energy": 0.35,
+      "energy": 0.4,
       "action": "full daylight, birds everywhere",
       "role": "release",
-      "music": "back in the home key: the hook once, softly, then Sa alone; the choir returns to pp; the birds remain"
+      "music": "back in the home key: the riff once, softly; a distant flourish on the pipes; Sa alone; the choir returns to pp"
     }
   ],
   "motifs": [
     {
-      "name": "the hook",
-      "first_at_s": 13.6,
-      "shape": "D E F# then a leap of a fifth to A and a step back (Sa Re Ga, leap to Pa), then an answer E D E D",
-      "returns": "a third below on the violins at 19 s, an octave higher at 27 s and in the new key at 30 s doubled an octave below by a Highland piper on the far ridge, a dotted answer on the pipes alone at 41 s, once softly in D at 49 s, then Sa alone at 55 s"
+      "name": "the riff",
+      "first_at_s": 4.3,
+      "shape": "a syncopated rise D . E . F# A F# A, then B A F# E F# D: a leap of a fifth (Sa to Pa) on the weak part of the bar",
+      "returns": "at 7 s, 13 s, a third below on the violins at 11 s, up a step in the new key at 21 s, in canon on the pipes at 24 s, high at 38.6 s, once softly at 47 s, then Sa alone at 53 s"
     }
   ],
   "instruments": [
@@ -95,21 +95,21 @@
     "electric guitar",
     "reverb wash"
   ],
-  "pulse": "none for 14 s, then a light tabla, then a 3+3+2 eighth-note pulse from 30 s",
+  "pulse": "tabla from 2 s, a 3+3+2 eighth-note pulse from 7 s, the full groove from 21 s",
   "tempo_bpm": [
-    88,
-    88
+    112,
+    112
   ],
   "key": "D",
   "mode": "major",
-  "energy": 0.5,
+  "energy": 0.6,
   "space": "western_ghats_sunrise_room",
   "hits_at": [
-    30.0
+    21.4
   ],
   "hits": [
     {
-      "t": 30.0,
+      "t": 21.4,
       "kind": "musical",
       "sync": "soft",
       "sound": "a low daf stroke and the first chord of the new key as the sun clears the ridge",
@@ -126,8 +126,8 @@
     "sits_under": [],
     "must_hear": [
       "the bansuri in the first 2 s",
-      "the choir growing from 30 s",
-      "the thrush and the stream from the start"
+      "the reel on the pipes at 30 s",
+      "the choir growing from 21 s"
     ],
     "leave_free_hz": [
       500.0,
@@ -148,7 +148,7 @@
     "played_on": "headphones and speakers (stereo), and an 8-channel 7.1 bed (a fifth-order ambisonic mix decoded once)"
   },
   "references": [
-    "in words, not a track: a solo bansuri over strings and a drone, the layered warmth of an Indian film fusion cue, with a living forest under it"
+    "in words, not a track: an upbeat Indian film fusion cue with a flute riff and a rhythmic string pulse, a piper on a far hill, a living forest under it"
   ],
   "spatial_staging": {
     "bansuri": {
@@ -210,6 +210,12 @@
       "elevation": 5.0,
       "distance": 7.5,
       "space": "western_ghats_sunrise_room"
+    },
+    "pipes_drone": {
+      "azimuth": 180.0,
+      "elevation": 22.0,
+      "distance": 7.5,
+      "space": "western_ghats_sunrise_room"
     }
   },
   "immersive": {
@@ -221,6 +227,7 @@
       "celli",
       "tabla",
       "pipes",
+      "pipes_drone",
       "ambience"
     ],
     "movers": [
@@ -233,12 +240,13 @@
     "height": {
       "violins_long": 22,
       "choir": 24,
-      "santoor": 30
+      "santoor": 30,
+      "pipes_drone": 22
     },
     "room_changes": [],
     "must_hear": [
-      "the bansuri crossing the centre at 30 s",
-      "the piper far behind at 25 s and 41 s"
+      "the bansuri crossing the centre at 21 s",
+      "the piper far behind at 30 s"
     ],
     "deliverables": [
       "stereo",
@@ -247,36 +255,36 @@
     "notes": "Heights, trajectory keyframes and the room live in the presets; this block records the intent."
   },
   "expression": {
-    "sonic_picture": "The first ten seconds are a bansuri alone in a wide-open valley over a soft tanpura, a stream and one bird; by the middle the strings sing the hook back to it and a light tabla enters; the last note is Sa alone with the morning birds.",
-    "performer": "The flute breathes in the phrase gaps and the long notes start pure and warm up; the strings lean on beat one and ease the bow off before each change; the violins answer in the flute's rests; the choir is people in sections who join as the sound grows.",
-    "producer_moves": "The key rises a whole tone as the sun clears the ridge and comes home; the tutti choir enters only above forte; the ambience opens out over the second half; the mix carries section loudness from the plan.",
-    "anti_generic": "The generic version is a pad, a flute loop and a drum loop on a fixed key; what stops it is a theme with a leap on the weak beat, a harmonic turn and return, and a choir that changes make-up with its dynamic.",
+    "sonic_picture": "The first ten seconds are a bansuri over a soft tanpura and a light tabla, one far bird and a faint stream; a catchy syncopated riff repeats; by the middle a rhythmic viola pulse drives, a piper plays a fast reel on a far hill; the last note is Sa alone with the morning birds.",
+    "performer": "The flute breathes in the phrase gaps and the long notes warm up; the strings lean on beat one and ease the bow off before each change; the piper never stops the drone and never lifts the chanter: cuts and gracenotes separate the notes; the choir is people in sections who join as the sound grows.",
+    "producer_moves": "The key rises a whole tone as the sun clears the ridge and comes home; the tutti choir enters only above forte; the ambience opens out after 30 s; the mix carries section loudness from the plan.",
+    "anti_generic": "The generic version is a pad, a flute loop and a drum loop on a fixed key; what stops it is a syncopated riff with a leap on the weak beat, a harmonic turn and return, a fast ornamented pipe reel, and a choir that changes make-up with its dynamic.",
     "cues": [
       {
         "section": "mist",
-        "arousal": "low",
+        "arousal": "low-medium",
         "mode_register": "major pentatonic, mid-high flute",
-        "tempo_trend": "free-feeling, no pulse",
-        "dynamics": "pp rising to mp",
+        "tempo_trend": "steady 112 with the tabla from bar 2",
+        "dynamics": "mp rising to mf",
         "articulation": "legato with slides",
         "timbre": "breathy, soft attack"
       },
       {
         "section": "first_light",
-        "arousal": "low-medium",
+        "arousal": "medium",
         "mode_register": "same, strings below",
-        "tempo_trend": "steady 88",
-        "dynamics": "mp rising to mf",
-        "articulation": "legato, plucked answers",
+        "tempo_trend": "steady 112",
+        "dynamics": "mf",
+        "articulation": "syncopated riff, plucked answers",
         "timbre": "warm"
       },
       {
         "section": "sunrise",
         "arousal": "high",
-        "mode_register": "up a whole tone, octave up",
-        "tempo_trend": "steady, 3+3+2 pulse",
+        "mode_register": "up a whole tone, octave up, the pipes in B mixolydian",
+        "tempo_trend": "steady, 3+3+2 pulse, a reel of eighths",
         "dynamics": "f to ff",
-        "articulation": "driving eighths, held choir",
+        "articulation": "driving eighths, cut gracenotes, held choir",
         "timbre": "bright, open vowels"
       },
       {
@@ -290,11 +298,11 @@
       }
     ],
     "theme": {
-      "contour": "arch: a step-wise rise, a leap of a fifth, and a step back",
-      "interval_character": "steps with one leap of a fifth (Sa to Pa)",
-      "rhythm_cell": "long, short, short, long-short",
-      "why_memorable": "the leap lands on the long note and returns by steps; the answer repeats the first notes",
-      "variation_plan": "a third below on the violins, an octave up with a faster run in the new key, once softly in the home key, alone on Sa at the end"
+      "contour": "arch: a syncopated step-wise rise, a leap of a fifth, and a step back",
+      "interval_character": "steps with one leap of a fifth (Sa to Pa) on the weak part of the bar",
+      "rhythm_cell": "dotted, short, short, long, short-short",
+      "why_memorable": "the riff repeats with small changes and its leap lands off the beat",
+      "variation_plan": "a third below on the violins, a step up in the new key, in canon on the pipes, high near the crest, once softly in the home key, alone on Sa at the end"
     }
   },
   "focus": "melody",
@@ -344,7 +352,7 @@
     "preset": "default",
     "notes": "music-only sheet: leave enabled false. For a cue written against a cut, scripts/video_score.py fills this block from the picture (cuts, fps, sync windows, dialogue policy, delivery profile, mux target) and writes the hits with their kind; the music still follows every rule in the rest of this sheet."
   },
-  "notes": "Mohanam pentatonic over raga-safe chords; Rahman overlay: lush strings, a violin answer, a layered choir, layered production.",
+  "notes": "Mohanam pentatonic over raga-safe chords; Rahman overlay: lush strings, a violin answer, a layered choir, layered production; the pipes play a fast reel with cuts, a gracenote between repeated notes and a continuous drone.",
   "harmony_plan": [
     {
       "section": "mist",
@@ -354,19 +362,19 @@
     },
     {
       "section": "first_light",
-      "move": "the bass moves D, Bm, D, Asus2 under the hook",
-      "counter_hook": "violins answer a third below in the flute rests"
+      "move": "the bass moves D, Bm, D, Asus2 under the riff",
+      "counter_hook": "violins answer a third below the flute"
     },
     {
       "section": "sunrise",
       "key": "raise a whole tone to E",
-      "move": "E(add9), C#m, E(add9), Bsus2 over the same pulse",
-      "counter_hook": "violins carry the hook in thirds above the flute's run"
+      "move": "E, C#m, E, B over the same pulse",
+      "counter_hook": "the piper plays a fast reel in the flute's rest"
     },
     {
       "section": "morning",
       "key": "return to D",
-      "move": "D(add9) then Asus2, ending on Sa",
+      "move": "D then Asus2, ending on a D triad",
       "counter_hook": "the flute alone, the strings thin out"
     }
   ]

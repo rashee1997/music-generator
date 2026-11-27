@@ -1,14 +1,14 @@
 {
   "name": "ghats_pipes",
-  "description": "A Scottish Highland piper on the far ridge: a steady drone on A, the Pa of the tanpura, and a chanter that plays the same five notes as the bansuri with a snap and a neighbour gracenote; no swell, no vibrato (a pipe has no dynamics), heard across the valley.",
-  "character": "A Scottish Highland piper on the far ridge: a steady drone on A, the Pa of the tanpura, and a chanter that plays the same five notes as the bansuri with a snap and a neighbour gracenote; no swell, no vibrato (a pipe has no dynamics), heard across the valley.",
+  "description": "A Highland piper on the far ridge: the chanter plays fast eighth-note reels with a cut on the beats and a gracenote between repeated notes, steady in level with no swell and no vibrato (a pipe has no dynamics), heard across the valley.",
+  "character": "A Highland piper on the far ridge: the chanter plays fast eighth-note reels with a cut on the beats and a gracenote between repeated notes, steady in level with no swell and no vibrato (a pipe has no dynamics), heard across the valley.",
   "instrument": "bagpipes",
   "role": "counter",
   "family": "blown_reed",
   "humanize": {
     "preset": "tight",
-    "timing_ms": 4.0,
-    "lead_ms": 6.0
+    "timing_ms": 3.0,
+    "lead_ms": 4.0
   },
   "spatial": {
     "azimuth": 172,
@@ -49,5 +49,5 @@
     "depth_cents": 0
   },
   "expression": "flat",
-  "onset_fade_ms": 4.0
+  "onset_fade_ms": 3.0
 }

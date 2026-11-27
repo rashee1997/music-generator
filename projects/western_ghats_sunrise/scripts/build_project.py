@@ -18,15 +18,15 @@ SRC = ['KB indian-film-fusion (Mohanam pentatonic, raga-safe voicings, gamaka, 3
        'research_western_ghats_sunrise_rahman_fusion.md (web sources, search-result text only)',
        'ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render']
 
-# ------------------------------------------------------------------ time: 88 BPM, 22 bars = 60 s
-BPM = 88.0
+# ------------------------------------------------------------------ time: 112 BPM (a reel's tempo), 28 bars = 60 s
+BPM = 112.0
 BAR_S = 4 * 60.0 / BPM
-BARS = 22
+BARS = 28
 SECTIONS = [  # name, first bar, last bar, energy, role, key offset (semitones above Sa=D)
-    ('mist', 1, 5, 0.12, 'place', 0),
-    ('first_light', 6, 11, 0.38, 'establish', 0),
-    ('sunrise', 12, 18, 0.85, 'peak', 2),
-    ('morning', 19, 22, 0.35, 'release', 0)]
+    ('mist', 1, 3, 0.22, 'place', 0),
+    ('first_light', 4, 10, 0.5, 'establish', 0),
+    ('sunrise', 11, 22, 0.9, 'peak', 2),
+    ('morning', 23, 28, 0.4, 'release', 0)]
 PENT = [0, 2, 4, 7, 9]           # Mohanam / Bhupali: Sa Re Ga Pa Dha (KB indian-film-fusion 2.1)
 SA = 62                          # D4
 
@@ -61,7 +61,7 @@ def write(path, doc):
 
 # ------------------------------------------------------------------ instrument presets
 STAGE = dict(bansuri=(0, 6, 1.5), sitar=(-28, 0, 1.9), violins_counter=(52, 12, 2.4), violas=(-68, 0, 2.6), celli=(88, 0, 2.8),
-             violins_long=(150, 22, 4.0), tanpura=(-108, -2, 2.6), santoor=(118, 30, 2.8), tabla=(-150, 0, 2.4), pipes=(172, 5, 7.5))
+             violins_long=(150, 22, 4.0), tanpura=(-108, -2, 2.6), santoor=(118, 30, 2.8), tabla=(-150, 0, 2.4), pipes=(172, 5, 7.5), pipes_drone=(180, 22, 7.5))
 # the sections sit on the sides and behind (measured: imm.surround_ratio read -9.9 and then -10.1 dB against a -9.0 window with the strings at +-56 deg)
 
 
@@ -85,10 +85,14 @@ LP = lambda f: dict(type='lp', f=float(f))
 
 INSTRUMENTS = [
     inst('pipes', 'bagpipes', 'counter', 'blown_reed',
-         'A Scottish Highland piper on the far ridge: a steady drone on A, the Pa of the tanpura, and a chanter that plays the same five notes as the bansuri with a snap and a neighbour gracenote; no swell, no vibrato (a pipe has no dynamics), heard across the valley.',
+         'A Highland piper on the far ridge: the chanter plays fast eighth-note reels with a cut on the beats and a gracenote between repeated notes, steady in level with no swell and no vibrato (a pipe has no dynamics), heard across the valley.',
          -7.0, 0.34, [HP(220), PK(2800, -1.0, 1.0), LP(7000)],
-         hum=dict(preset='tight', timing_ms=4.0, lead_ms=6.0),
-         extra=dict(bloom=None, noise=None, vibrato=dict(depth_cents=0), expression='flat', onset_fade_ms=4.0)),
+         hum=dict(preset='tight', timing_ms=3.0, lead_ms=4.0),
+         extra=dict(bloom=None, noise=None, vibrato=dict(depth_cents=0), expression='flat', onset_fade_ms=3.0)),
+    inst('pipes_drone', 'bagpipes', 'drone', 'blown_reed',
+         'The pipes\' drone: a low continuous note on the Pa of the key (A in D, B in E) that never stops while the piper plays, the same A the tanpura plucks.',
+         -10.0, 0.34, [HP(60), LP(2200)],
+         extra=dict(bloom=None, noise=None, vibrato=dict(depth_cents=0), expression='flat', onset_fade_ms=20.0)),
     inst('bansuri', 'flute', 'melody', 'blown_reed',
          'The lead: a bansuri (bamboo flute) breathing through the Mohanam phrase, pure at the start of each long note and warming as it holds, with a slide into the notes the gamaka asks for.',
          -2.0, 0.22, [HP(220), PK(2600, 1.4, 1.1), LP(11000)],
@@ -133,8 +137,8 @@ INSTRUMENTS = [
 for _i in INSTRUMENTS:
     if _i['name'] == 'ghats_bansuri':       # the one mover: it enters left in the mist, crosses the centre as the sun clears the ridge, settles right for the last breath
         _i['spatial']['trajectory'] = dict(spatial_role='mover', doppler_strength=0.0, keyframes=[
-            dict(t_s=0.0, azimuth=-30.0, distance=1.7, elevation=6.0), dict(t_s=13.6, azimuth=-14.0, distance=1.6, elevation=8.0),
-            dict(t_s=30.0, azimuth=0.0, distance=1.5, elevation=12.0), dict(t_s=49.1, azimuth=14.0, distance=1.6, elevation=8.0),
+            dict(t_s=0.0, azimuth=-30.0, distance=1.7, elevation=6.0), dict(t_s=6.4, azimuth=-18.0, distance=1.6, elevation=8.0),
+            dict(t_s=21.4, azimuth=0.0, distance=1.5, elevation=12.0), dict(t_s=47.1, azimuth=14.0, distance=1.6, elevation=8.0),
             dict(t_s=60.0, azimuth=22.0, distance=1.8, elevation=6.0)])
 
 TABLA = dict(name='ghats_tabla', description='Tabla and daf', instrument='standard', role='drum', family='struck_membrane',
@@ -172,7 +176,9 @@ def environment():
                       'under a dawn chorus that arrives bird by bird as the light rises, while the tree frogs of the night fall silent.')
     e['medium']['state'] = dict(temperature_k=289.15, pressure_pa=89900, rh_percent=92)
     e['medium']['sources'] = ['ISO 9613-1 for the absorption', '89.9 kPa is the standard atmosphere at 1000 m (starting value)', '16 C and 92 % RH: a clear misty dawn (ESTIMATE)']
-    e['controls'] = {'light': {'curve': [[0, 0.12], [14, 0.4], [30, 0.85], [48, 1.0], [60, 0.9]]},
+    e['controls'] = {'light': {'curve': [[0, 0.04], [8, 0.1], [20, 0.35], [30, 0.85], [48, 1.0], [60, 0.9]]},
+                     'wind_u': {'curve': [[0, 1.6], [18, 1.8], [30, 2.7], [60, 3.0]]},
+                     'stream_rate': {'curve': [[0, 10], [18, 14], [30, 55], [60, 80]]},
                      'night_fade': {'curve': [[0, 1.0], [12, 0.8], [26, 0.25], [40, 0.05], [60, 0.0]]},
                      'mist_drip': {'curve': [[0, 3], [30, 1.5], [60, 0.5]]}}
     gens = {g['name']: g for g in e['generators']}
@@ -183,12 +189,12 @@ def environment():
     drip['sources'] = ['Marshall-Palmer drop sizes (scripts/biome/physics.py)', 'ESTIMATE: a light drip from wet leaves after the night, 0.5-3 mm/h; replace once a recording is measured']
     stream = gens['stream']
     stream['spatial'].update(azimuth=-75.0, distance=16.0)
-    stream['population']['rate_mm_h'] = 80.0                # ESTIMATE: a brook at 16 m is the steady bed under the birds (measured against the 1 s level steps of the render)
+    stream['population']['rate_mm_h'] = {'control': 'stream_rate'}      # quiet in the first 20 s (the user heard too much ambience there), at full level after the sun                # ESTIMATE: a brook at 16 m is the steady bed under the birds (measured against the 1 s level steps of the render)
     stream['surface']['area_m2'] = 6.0
     stream['gain_db'] = 20.0                                  # the brook is steady but 24 dB under the wind at these rates (measured), so it is lifted here
     drip['gain_db'] = 0.0
     wind = gens['canopy_wind']
-    wind['flow']['u_m_s'] = 3.0
+    wind['flow']['u_m_s'] = {'control': 'wind_u'}
     wind['flow']['intensity'] = 0.08                        # measured: intensity 0.35 gusted 33 dB over 30 s, 0.08 moves 6 dB (ambient_bed pumping)
     e['generators'] = [drip, stream, wind]
     frogs = copy.deepcopy(e['fauna'][1])
@@ -202,18 +208,18 @@ def environment():
                     resonator=dict(kind='tube', length_cm=tube_cm), niche=dict(band_hz=list(band), active={'control': 'light'}),
                     position=dict(azimuth=pos[0], elevation=pos[1], distance=pos[2]), sources=list(sources) + ['ESTIMATE: element contours, lengths and rates (qualitative descriptions only); replace from a measured spectrogram'])
     birds = [
-        bird('malabar_whistling_thrush', 'ghats_whistling_thrush', 1.5e-05, 3.0, 4.0, (1300, 3000), (25.0, 20.0, 14.0), 4.5,
+        bird('malabar_whistling_thrush', 'ghats_whistling_thrush', 1.5e-05, 3.0, 9.0, (1300, 3000), (25.0, 20.0, 14.0), 4.5,
              sources=['https://en.wikipedia.org/wiki/Malabar_whistling_thrush (a human-like whistle; longer, melodious phrases in the morning, short sharp whistles later)']),
-        bird('malabar_grey_hornbill', 'ghats_hornbill', 4.0e-05, 2.0, 16.0, (700, 2600), (-100.0, 30.0, 40.0), 12.0, individuals=2, salience='bed',
+        bird('malabar_grey_hornbill', 'ghats_hornbill', 4.0e-05, 2.0, 24.0, (700, 2600), (-100.0, 30.0, 40.0), 12.0, individuals=2, salience='bed',
              sources=['https://iucnhornbills.org/malabar-grey-hornbill/ (an assortment of loud, harsh chuckles and squawks with raucous cackling like mock laughter)',
                       'https://app.birdweather.com/species/malabar-gray-hornbill (loud cackling and laughing call; endemic to the Western Ghats)']),
-        bird('malabar_barbet', 'ghats_barbet', 1.0e-05, 1.5, 21.0, (800, 1400), (110.0, 38.0, 30.0), 6.0, individuals=1, salience='bed',
+        bird('malabar_barbet', 'ghats_barbet', 1.0e-05, 1.5, 28.0, (800, 1400), (110.0, 38.0, 30.0), 6.0, individuals=1, salience='bed',
              sources=['https://macaulaylibrary.org/asset/646733603 (Kerala recording: a sharp single-note call like a coppersmith barbet, repeated)',
                       'https://en.wikipedia.org/wiki/Malabar_barbet (similar to the coppersmith barbet, a more rapid call)']),
-        bird('racket_tailed_drongo', 'ghats_drongo', 1.2e-05, 4.0, 11.0, (4000, 7500), (62.0, 34.0, 17.0), 3.5,
+        bird('racket_tailed_drongo', 'ghats_drongo', 1.2e-05, 4.0, 22.0, (4000, 7500), (62.0, 34.0, 17.0), 3.5,
              sources=['https://en.wikipedia.org/wiki/Greater_racket-tailed_drongo (a wide range of loud calls including near-perfect imitations of other birds)',
                       'https://pmc.ncbi.nlm.nih.gov/articles/PMC3945749/ (mimicked notes sit in its repertoire)']),
-        bird('flame_throated_bulbul', 'ghats_bulbul', 1.0e-05, 6.0, 14.0, (4500, 8000), (-48.0, 26.0, 11.0), 3.0, individuals=3,
+        bird('flame_throated_bulbul', 'ghats_bulbul', 1.0e-05, 6.0, 20.0, (4500, 8000), (-48.0, 26.0, 11.0), 3.0, individuals=3,
              sources=['https://sanctuarynaturefoundation.org/public/article/shhh-can-you-hear-me%3F (an endemic dawn voice of the Valparai rainforest)'])]
     e['fauna'] = [frogs] + birds
     e['ecology'] = {'density_budget': {'events_per_s_max': 1.2}, 'niches': {'auto': True, 'min_separation': 'D<=0.4'}, 'rules': [],
@@ -309,22 +315,19 @@ def gate():
 
 
 # ------------------------------------------------------------------ the music
-HOOK = [(0.0, 1.0, 0), (1.0, 0.5, 1), (1.5, 0.5, 2), (2.0, 1.5, 3), (3.5, 0.5, 2)]            # D E F# A F#: rise, leap of a fifth, step back
-HOOK2 = [(0.0, 1.0, 1), (1.0, 1.5, 0), (2.5, 0.5, 1), (3.0, 1.0, 0)]                         # E D E D: the answer, settling
+# The hook is a short syncopated riff that repeats (a catchy cell, not a mood): D . E . F# A F# A | B A F# E F# D, two bars; the leap D to A is the fifth.
+H1 = [(0.0, 0.75, 0), (0.75, 0.75, 1), (1.5, 0.5, 2), (2.0, 1.0, 3), (3.0, 0.5, 2), (3.5, 0.5, 3)]
+H2 = [(0.0, 0.75, 4), (0.75, 0.25, 3), (1.0, 1.0, 2), (2.0, 0.5, 1), (2.5, 0.5, 2), (3.0, 0.7, 0)]
 
 
-def hook(bar, idx_shift, vel, sa, rhythm_scale=1.0, answer=True, tail_to=None):
-    out = []
-    for b, d, i in HOOK:
-        out.append(n(bar, b, d * rhythm_scale, pit(i + idx_shift, sa), vel))
-    if answer:
-        for b, d, i in HOOK2:
-            out.append(n(bar + 1, b, d * rhythm_scale, pit(i + idx_shift, sa), vel * 0.92))
+def hook(bar, idx_shift, vel, sa):
+    out = [n(bar, b, d, pit(i + idx_shift, sa), vel) for b, d, i in H1]
+    out += [n(bar + 1, b, d, pit(i + idx_shift, sa), vel * 0.94) for b, d, i in H2]
     return out
 
 
-def breaths(notes, max_run=13.0, gap=0.45):
-    """A wind player needs air: shorten the note that ends a run longer than `max_run` beats (about 9 s at 88 BPM) so a gap of `gap` beats opens."""
+def breaths(notes, max_run=14.0, gap=0.45):
+    """A wind player needs air: shorten the note that ends a run longer than `max_run` beats so a gap of `gap` beats opens."""
     out = sorted((dict(x) for x in notes), key=lambda x: x['t'])
     run0 = None
     for i, x in enumerate(out):
@@ -344,24 +347,26 @@ def breaths(notes, max_run=13.0, gap=0.45):
 def flute():
     S0 = SA + 12                                   # the bansuri sings from D5
     s = []
-    # mist (bars 1-5): the breath, one long note then a slow phrase; a slide up into the fifth
-    s += [n(1, 0, 4.0, pit(0, S0), 0.45, gl=-180), n(2, 0, 2.0, pit(1, S0), 0.5), n(2, 2, 2.0, pit(2, S0), 0.52),
-          n(3, 0, 3.0, pit(3, S0), 0.55, gl=-140), n(3, 3, 1.0, pit(2, S0), 0.5), n(4, 0, 2.0, pit(1, S0), 0.5), n(4, 2, 2.0, pit(0, S0), 0.48),
-          n(5, 0, 3.5, pit(0, S0), 0.5)]
-    # first light (bars 6-11): the hook, its answer, the hook again, then higher and more ornamented
-    s += hook(6, 0, 0.58, S0) + hook(8, 0, 0.62, S0) + hook(10, 2, 0.68, S0)
-    # sunrise (bars 12-18) in E: the hook a step up, then running eighths with a leap to the sixth (Dha)
+    # mist (bars 1-3): a breath, a slide into the fifth, then the hook arrives as a pickup into the first light
+    s += [n(1, 0, 3.4, pit(0, S0), 0.5, gl=-180), n(1, 3.5, 0.5, pit(1, S0), 0.5), n(2, 0, 1.5, pit(2, S0), 0.55), n(2, 1.5, 0.5, pit(3, S0), 0.56),
+          n(2, 2, 1.5, pit(2, S0), 0.52), n(2, 3.5, 0.5, pit(1, S0), 0.5)]
+    s += [n(3, b, d, pit(i, S0), 0.58) for b, d, i in H1]
+    # first light (bars 4-10): the hook again and again, a little higher each time, the last bar a rising pickup into the sun
+    s += [n(4, b, d, pit(i, S0), 0.62 * (0.94 if False else 1.0)) for b, d, i in H2]
+    s += hook(5, 0, 0.66, S0) + hook(7, 2, 0.7, S0) + [n(9, b, d, pit(i + 2, S0), 0.72) for b, d, i in H1] + [n(10, b, d, pit(i + 2, S0), 0.7) for b, d, i in H2[:4]]
+    s += [n(10, 3.0, 0.25, pit(5, S0), 0.74), n(10, 3.25, 0.25, pit(6, S0), 0.78), n(10, 3.5, 0.25, pit(7, S0), 0.82), n(10, 3.75, 0.25, pit(8, S0), 0.86)]
+    # sunrise (bars 11-22) in E: the hook a step up; running eighths; the flute rests while the pipes play the reel (bars 15-18); it returns high (19-20); a long note (21-22)
     sa = S0 + 2
-    s += hook(12, 0, 0.82, sa)
-    s += [n(14, 0, 1.0, pit(3, sa), 0.84), n(14, 1, 0.5, pit(4, sa), 0.85), n(14, 1.5, 0.5, pit(5, sa), 0.86), n(14, 2, 1.5, pit(6, sa), 0.9, gl=-120),
-          n(14, 3.5, 0.5, pit(5, sa), 0.84), n(15, 0, 1.0, pit(4, sa), 0.84), n(15, 1, 0.5, pit(5, sa), 0.86), n(15, 1.5, 0.5, pit(6, sa), 0.88),
-          n(15, 2, 2.0, pit(7, sa), 0.92, gl=-160), n(16, 0, 1.75, pit(6, sa), 0.9),
-          n(18, 0, 4.0, pit(4, sa), 0.8, gl=-100)]
-    # morning (bars 19-22): back in D: the hook once, softly, then Sa alone
-    s += hook(19, 0, 0.5, S0) + [n(21, 0, 2.0, pit(2, S0), 0.42), n(21, 2, 2.0, pit(0, S0), 0.4), n(22, 0, 4.0, pit(0, S0), 0.32, gl=-100)]
+    s += hook(11, 0, 0.84, sa) + hook(13, 2, 0.88, sa)
+    s += hook(19, 3, 0.9, sa)
+    s += [n(21, 0, 3.0, pit(7, sa), 0.94, gl=-160), n(21, 3.0, 0.5, pit(6, sa), 0.86), n(21, 3.5, 0.5, pit(5, sa), 0.84), n(22, 0, 3.4, pit(3, sa), 0.8, gl=-100)]
+    # morning (bars 23-28): back in D: the hook once, softly, a last echo of its first bar, then Sa alone
+    s += hook(23, 0, 0.55, S0) + [n(25, b, d, pit(i, S0), 0.45) for b, d, i in H1[:3]] + [n(26, 0, 4.0, pit(0, S0), 0.4, gl=-100), n(28, 0, 3.6, pit(0, S0), 0.3)]
     return breaths(s)
 
 
+# ------------------------------------------------------------------ the pipes: a Highland piper plays FAST, never a held note: eighth-note reels with
+# cuts on the beats, a gracenote between repeated notes (a pipe cannot articulate with the breath), and a continuous drone under it
 def up_step(p, sa):
     """The next pitch above `p` that belongs to the raga's five notes (Sa = sa): the neighbour a gracenote leans on."""
     ok = {(sa + x) % 12 for x in PENT}
@@ -371,43 +376,67 @@ def up_step(p, sa):
     return q
 
 
-def with_grace(notes, sa, lead=0.1):
-    """A piper's cut: a very short neighbour note just before each main note of 0.5 beat or more (Scottish ornament, ESTIMATE timing)."""
+def ornament(notes, sa, cut=0.0625):
+    """Pipe ornaments (ESTIMATE timing, search results give none): a cut (a very short neighbour note) before every note that lands on a beat or
+    repeats the note before it, taking its time from the note before; the last note of a phrase gets a birl (a quick low-high-low shake)."""
+    ns = sorted((dict(x) for x in notes), key=lambda x: x['t'])
     out = []
-    for x in sorted(notes, key=lambda y: y['t']):
-        if x['d'] >= 0.5:
-            out.append(dict(t=round(x['t'] - lead, 4), d=round(lead, 4), p=up_step(x['p'], sa), v=round(x['v'] * 0.8, 3)))
+    for i, x in enumerate(ns):
+        prev = out[-1] if out else None
+        on_beat = abs(x['t'] - round(x['t'])) < 1e-6
+        repeat = prev is not None and prev['p'] == x['p'] and abs(prev['t'] + prev['d'] - x['t']) < 0.01
+        if prev is not None and (on_beat or repeat) and x['d'] > cut * 2:
+            prev['d'] = round(max(0.1, x['t'] - cut - prev['t']), 4)
+            out.append(dict(t=round(x['t'] - cut, 4), d=cut, p=up_step(x['p'], sa), v=round(x['v'] * 0.8, 3)))
         out.append(x)
-    return [x for x in out if x['t'] >= 0]
+    return out
+
+
+def reel(bar, sa, vel, variant=0):
+    """Two bars of an eight-notes-to-the-bar reel on the five notes (idx into the raga); variant 1 is the second strain a step higher."""
+    A = [3, 4, 5, 4, 3, 2, 3, 5, 4, 3, 2, 1, 2, 3, 1, 0]
+    B = [5, 6, 7, 6, 5, 4, 5, 7, 6, 5, 4, 3, 4, 5, 3, 3]
+    idx = A if variant == 0 else B
+    notes = [n(bar + k // 8, (k % 8) * 0.5, 0.5, pit(i, sa), vel + (0.04 if k % 4 == 0 else 0.0)) for k, i in enumerate(idx)]
+    notes[-1]['d'] = 1.5                                # the strain ends on a held low note
+    return ornament(notes, sa)
 
 
 def pipes():
+    sa = SA + 2                                          # the pipes enter in the new key (B mixolydian on the chanter = the E major notes)
     s = []
-    # the drone swells in under the tanpura (A = Pa and D = Sa, the highland drones' own A): bars 9-11 and again at the end, bars 19-20
-    for first, last, v in ((9, 11, 0.42), (19, 20, 0.36)):
-        s += bar_notes(first, last, pit(3, SA - 24), v)                                          # A2: a bass drone, clear of the strings' notes above
-    # the chanter doubles the hook an octave below the flute in the new key (heterophony), cut by gracenotes: bars 12-13
-    sa = SA + 2
-    canon = [dict(x, t=round(x['t'] + 2.0, 4)) for x in hook(12, 0, 0.6, sa)]                      # two beats behind the flute (a canon, not a unison: the flute's vibrato would beat against a doubled pitch)
-    s += with_grace(canon, sa)
-    # the call: a dotted figure of snaps with a gracenote, in the flute's six rests, bars 16-17 (key E: the pipes' B mixolydian is the same E major notes)
-    call = [(2.0, 0.75, 3), (2.75, 0.25, 4), (3.0, 0.75, 5), (3.75, 0.25, 4)]
-    call2 = [(0.0, 0.75, 3), (0.75, 0.25, 2), (1.0, 1.0, 3), (2.0, 0.75, 1), (2.75, 0.25, 2), (3.0, 1.0, 0)]
-    notes = [n(16, b, d, pit(i, sa), 0.62) for b, d, i in call] + [n(17, b, d, pit(i, sa), 0.62) for b, d, i in call2]
-    s += with_grace(notes, sa)
-    s += bar_notes(16, 17, pit(3, sa - 12), 0.4)[:0]
+    # bars 12-14: the chanter echoes the hook two beats behind the flute, in eighths, so the pipes join as a canon and not a unison
+    canon = [dict(x, t=round(x['t'] + 2.0, 4)) for x in hook(12, 0, 0.6, sa)]
+    s += ornament(canon, sa)
+    # bars 15-18: the flute rests and the piper plays the reel, two strains, twice
+    s += reel(15, sa, 0.66, 0) + reel(17, sa, 0.68, 1)
+    # bars 19-20: the reel again, lower and under the flute's return, so the two answer instead of doubling
+    s += reel(19, sa, 0.56, 0)
+    # bar 25: a distant flourish in D as the morning settles
+    s += ornament([n(25, b, 0.5, pit(i, SA), 0.5) for b, i in ((0.0, 3), (0.5, 4), (1.0, 5), (1.5, 4), (2.0, 3), (2.5, 2), (3.0, 3))] + [n(25, 3.5, 0.5, pit(1, SA), 0.5)], SA)
     return s
 
+
+def pipes_drone():
+    """The continuous drone: the pipes never stop sounding. A (Pa) in D, B (Pa) in E; one note per bar overlapping the next."""
+    s = []
+    s += bar_notes(8, 10, pit(3, SA - 24), 0.4)                    # swells in under the tanpura in the first light
+    s += bar_notes(11, 22, pit(3, SA + 2 - 24), 0.5)               # B2, the Pa of E
+    s += bar_notes(23, 26, pit(3, SA - 24), 0.36)                  # A2 again
+    return s
 
 
 def counter():
     s = []
-    for bar, vel, sa, sh in ((7, 0.5, SA, -2), (9, 0.55, SA, -2), (11, 0.6, SA, -2)):                  # answers in the flute's rests, a third below
-        s += [n(bar, 2.0, 1.0, pit(1 + sh, sa), vel), n(bar, 3.0, 1.0, pit(2 + sh, sa), vel), n(bar + 1, 0.0, 2.0, pit(3 + sh, sa), vel + 0.05)]
+    sa = SA
+    for bar in (6, 8):                                             # the violins sing the hook a third below the flute (the same rhythm: heterophony)
+        s += [n(bar, b, d, pit(i - 2, sa), 0.5) for b, d, i in H1] + [n(bar + 1, b, d, pit(i - 2, sa), 0.48) for b, d, i in H2]
     sa = SA + 2
-    for bar in (13, 15, 17):
-        s += [n(bar, 2.0, 0.5, pit(3, sa), 0.8), n(bar, 2.5, 0.5, pit(4, sa), 0.82), n(bar, 3.0, 1.0, pit(5, sa), 0.88), n(bar + 1, 0.0, 2.0, pit(6, sa), 0.9)]
-    s += [n(20, 2.0, 1.0, pit(1), 0.4), n(20, 3.0, 1.0, pit(2), 0.4), n(21, 0.0, 2.0, pit(3), 0.38)]
+    for bar in (11, 13):
+        s += [n(bar, b, d, pit(i - 2 + 5, sa), 0.74) for b, d, i in H1] + [n(bar + 1, b, d, pit(i - 2 + 5, sa), 0.72) for b, d, i in H2]
+    for bar in (15, 17):                                           # over the pipes' reel: held thirds, two to a bar, never the reel's own notes
+        s += [n(bar, 0.0, 1.9, pit(5, sa), 0.6), n(bar, 2.0, 1.9, pit(4, sa), 0.6), n(bar + 1, 0.0, 1.9, pit(5, sa), 0.62), n(bar + 1, 2.0, 1.9, pit(3, sa), 0.6)]
+    s += [n(19, b, d, pit(i - 2 + 5, sa), 0.78) for b, d, i in H1] + [n(20, b, d, pit(i - 2 + 5, sa), 0.76) for b, d, i in H2]
     return s
 
 
@@ -417,9 +446,10 @@ D_ADD9, BM, ASUS2, D_TRIAD = [0, 2, 3], [-1, 0, 2], [3, 6, 8], [0, 2, 3]       #
 
 def chords():
     out = []
-    for bars, idxs, sa in (((6, 7), D_ADD9, SA), ((8, 9), BM, SA), ((10,), D_ADD9, SA), ((11,), ASUS2, SA),
-                           ((12, 13), D_ADD9, SA + 2), ((14, 15), BM, SA + 2), ((16,), D_ADD9, SA + 2), ((17, 18), ASUS2, SA + 2),
-                           ((19, 20), D_ADD9, SA), ((21, 22), D_TRIAD, SA)):
+    for bars, idxs, sa in (((4, 5), D_ADD9, SA), ((6, 7), BM, SA), ((8, 9), D_ADD9, SA), ((10,), ASUS2, SA),
+                           ((11, 12), D_ADD9, SA + 2), ((13, 14), BM, SA + 2), ((15, 16), D_ADD9, SA + 2), ((17, 18), ASUS2, SA + 2),
+                           ((19, 20), D_ADD9, SA + 2), ((21, 22), ASUS2, SA + 2),
+                           ((23, 24), D_ADD9, SA), ((25,), ASUS2, SA), ((26, 27, 28), D_TRIAD, SA)):
         out.append((bars, idxs, sa))
     return out
 
@@ -438,45 +468,44 @@ def bar_notes(first, last, pitch, vel, tail_bar=BARS, voice=0):
     return out
 
 
+def section_vel(bar, soft, mid, loud):
+    return soft if bar < 4 else (mid if bar < 11 else (loud if bar < 23 else soft))
+
+
 def strings_bed():
     s = []
     for p, v in ((pit(0, SA), 0.5), (pit(3, SA), 0.48)):
-        s += bar_notes(3, 5, p, v)                                                               # open fifth under the end of the mist
+        s += bar_notes(2, 3, p, v)                                                               # open fifth under the end of the mist
     for bars, idxs, sa in chords():
-        v = 0.52 if bars[0] < 12 else (0.84 if bars[0] < 19 else 0.48)
+        v = section_vel(bars[0], 0.48, 0.54, 0.84)
         for j, i in enumerate(idxs):
             s += bar_notes(bars[0], bars[-1], pit(i, sa), v - 0.04 * (i % 2), voice=j)
     return s
 
 
 def violas():
+    """The pulse: 3+3+2 eighths, with a pickup that anticipates the next bar (syncopation)."""
     s = []
-    for bar in range(12, 19):
-        sa = SA + 2
+    for bar in range(6, 23):
+        sa = SA + 2 if bar >= 11 else SA
         root, fifth, nine = pit(0, sa - 12), pit(3, sa - 12), pit(1, sa - 12)
-        if bar in (14, 15):
+        if bar in (13, 14, 6, 7):
             root, fifth, nine = pit(-1, sa - 12), pit(2, sa - 12), pit(0, sa - 12)                  # the minor colour (Dha)
-        v0 = 0.62 + 0.04 * (bar - 12)
-        for b, p, vv in ((0.0, root, v0 + 0.08), (1.5, nine, v0), (3.0, fifth, v0 - 0.04)):         # 3+3+2 eighths
+            root, fifth, nine = [q + 12 if q < 48 else q for q in (root, fifth, nine)]               # keep inside the viola's range (C3 = 48)
+        v0 = (0.5 if bar < 11 else 0.66) + 0.01 * (bar - 6) % 0.1
+        for b, p, vv in ((0.0, root, v0 + 0.08), (1.5, nine, v0), (3.0, fifth, v0 - 0.04)):
             s.append(n(bar, b, 0.5, p, vv))
             s.append(n(bar, b + 0.5, 0.5, root if b != 0.0 else nine, vv - 0.1))
+        s.append(n(bar, 3.5, 0.25, fifth, v0 - 0.1))                                                # a sixteenth pickup into the next bar
     return s
 
 
 def celli():
-    s = bar_notes(1, 5, pit(0, SA - 24), 0.5)
+    s = bar_notes(2, 3, pit(0, SA - 24), 0.5)
     for bars, idxs, sa in chords():
-        v = 0.56 if bars[0] < 12 else (0.82 if bars[0] < 19 else 0.5)
-        s += bar_notes(bars[0], bars[-1], pit(idxs[0], sa - 24) + (12 if idxs[0] < 0 else 0), v)
-    return s
-
-
-def basses():
-    s = []
-    for bar in range(12, 19):
-        sa = SA + 2
-        s.append(n(bar, 0.0, 4.25, pit(0, sa - 24), 0.7))
-    s.append(n(19, 0.0, 8.0, pit(0, SA - 24), 0.62))
+        v = section_vel(bars[0], 0.52, 0.58, 0.82)
+        root = pit(idxs[0], sa - 24)
+        s += bar_notes(bars[0], bars[-1], root + 12 if root < 36 else root, v)       # inside the cello's range (C2 = 36), as low as it goes: clear of the pipes' drone above it
     return s
 
 
@@ -491,10 +520,12 @@ def tanpura():
 
 def sitar():
     s = []
-    for bars, sa, vel in (((6, 7, 8, 9, 10, 11), SA, 0.4), ((12, 13, 14, 15, 16, 17, 18), SA + 2, 0.62), ((19, 20), SA, 0.36)):
+    for bars, sa, vel in (((4, 5, 6, 7, 8, 9, 10), SA, 0.4), (tuple(range(11, 23)), SA + 2, 0.6), ((23, 24, 25), SA, 0.36)):
         for bar in bars:
+            if 15 <= bar <= 18:
+                continue                                        # the piper has the stage: no plucks under the reel
             for k, (b, idx) in enumerate(((0.0, 0), (0.5, 2), (1.0, 3), (1.5, 2), (2.0, 4), (2.5, 3), (3.0, 2), (3.5, 1))):
-                if bar < 12 and k % 2:
+                if bar < 11 and k % 2:
                     continue
                 s.append(n(bar, b, 0.4, pit(idx + 5, sa), vel + (0.06 if k % 4 == 0 else 0.0)))
     return s
@@ -502,7 +533,7 @@ def sitar():
 
 def santoor():
     s = []
-    for bar in list(range(8, 12)):
+    for bar in list(range(8, 11)) + [23, 24, 25]:
         sa = sa_of(bar)
         for k, (b, idx) in enumerate(((0.5, 8 + (bar % 3)), (2.5, 10 + (bar % 2)))):
             s.append(n(bar, b, 1.2, pit(idx, sa), 0.46 + 0.04 * k))
@@ -511,33 +542,35 @@ def santoor():
 
 def tabla():
     s = []
-    names = ('tabla_ge', 'tabla_na', 'tabla_tin', 'shaker', 'daf')
-    for bar in range(6, 12):                       # first light: sparse
-        s += [n(bar, 0.0, 0.4, 'tabla_ge', 0.5), n(bar, 2.0, 0.3, 'tabla_na', 0.4), n(bar, 3.5, 0.3, 'tabla_tin', 0.36)]
-    for bar in range(12, 19):                      # sunrise: 3+3+2
-        v = 0.62 + 0.02 * (bar - 12)
-        s += [n(bar, 0.0, 0.4, 'tabla_ge', v), n(bar, 1.5, 0.3, 'tabla_na', v - 0.12), n(bar, 3.0, 0.3, 'tabla_tin', v - 0.1), n(bar, 3.5, 0.3, 'tabla_na', v - 0.2)]
+    for bar in (2, 3):                              # the pulse starts under the mist already
+        s += [n(bar, 0.0, 0.4, 'tabla_ge', 0.46), n(bar, 2.0, 0.3, 'tabla_na', 0.36), n(bar, 3.5, 0.3, 'tabla_tin', 0.34)]
+    for bar in range(4, 11):                        # first light: a light 3+3+2 with a syncopated ge on the and of 2
+        s += [n(bar, 0.0, 0.4, 'tabla_ge', 0.5), n(bar, 1.5, 0.3, 'tabla_na', 0.4), n(bar, 2.5, 0.3, 'tabla_ge', 0.38), n(bar, 3.0, 0.3, 'tabla_tin', 0.4), n(bar, 3.5, 0.3, 'tabla_na', 0.34)]
+        s += [n(bar, k * 0.5, 0.2, 'shaker', 0.38 + 0.04 * (k % 2)) for k in range(8)]
+    for bar in range(11, 23):                       # sunrise: the full groove
+        v = 0.58 + 0.015 * (bar - 11)
+        s += [n(bar, 0.0, 0.4, 'tabla_ge', v), n(bar, 1.5, 0.3, 'tabla_na', v - 0.12), n(bar, 2.5, 0.3, 'tabla_ge', v - 0.16), n(bar, 3.0, 0.3, 'tabla_tin', v - 0.1), n(bar, 3.5, 0.3, 'tabla_na', v - 0.2)]
         s += [n(bar, k * 0.5, 0.2, 'shaker', 0.42 + 0.05 * (k % 2)) for k in range(8)]
-    s.append(n(12, 0.0, 1.5, 'daf', 0.78))          # the sun clears the ridge
-    for bar in range(19, 22):                       # morning: thinning
+    s.append(n(11, 0.0, 1.5, 'daf', 0.78))          # the sun clears the ridge
+    for bar in range(23, 27):                       # morning: thinning
         s += [n(bar, 0.0, 0.4, 'tabla_ge', 0.4), n(bar, 2.0, 0.3, 'tabla_na', 0.3)]
     return s
 
 
 def choir():
     """Sections enter by velocity (ensemble.layers): pp is the breathy high air alone, mf adds women and men, above 0.75 the tutti. The pitches
-    are the strings' own chord an octave lower, so nothing beats against them (roughness)."""
+    are the strings' own chord an octave higher, so nothing beats against them (roughness)."""
     s = []
     for bars, idxs, sa in chords():
         for bar in bars:
-            if bar < 8:
+            if bar < 7:
                 continue
-            if bar < 12:
-                vel = {8: 0.30, 9: 0.34, 10: 0.38, 11: 0.42}[bar]
-            elif bar < 19:
-                vel = min(0.97, 0.56 + 0.06 * (bar - 12))
+            if bar < 11:
+                vel = {7: 0.30, 8: 0.32, 9: 0.36, 10: 0.42}[bar]
+            elif bar < 23:
+                vel = min(0.97, 0.56 + 0.04 * (bar - 11))
             else:
-                vel = {19: 0.5, 20: 0.4, 21: 0.3, 22: 0.22}[bar]
+                vel = {23: 0.5, 24: 0.42, 25: 0.34, 26: 0.26, 27: 0.2, 28: 0.16}[bar]
             for i in idxs:
                 s.append(n(bar, 0.0, 4.0, pit(i, sa + 12), vel))
     return s
@@ -551,6 +584,7 @@ def score(plan_times=None):
         dict(name='bansuri', instrument='ghats_bansuri', role='melody', notes=flute()),
         dict(name='violins_counter', instrument='ghats_violins_counter', role='counter', notes=counter()),
         dict(name='pipes', instrument='ghats_pipes', role='counter', notes=pipes()),
+        dict(name='pipes_drone', instrument='ghats_pipes_drone', role='drone', notes=pipes_drone()),
         dict(name='violins_long', instrument='ghats_violins_long', role='chord', notes=strings_bed()),
         dict(name='violas', instrument='ghats_violas', role='ostinato', notes=violas()),
         dict(name='celli', instrument='ghats_celli', role='bass', notes=celli()),
@@ -571,17 +605,10 @@ def score(plan_times=None):
     return {
         'title': TITLE, 'bpm': BPM, 'ts': [4, 4], 'seed': 2611, 'humanize': 'natural', 'key': 'D', 'mode': 'major',
         'rubato': 0.0, 'wander': 0.0, 'ritard': 0.0,
-        'dynamics': [[0.0, 0.78], [20.0, 0.8], [44.0, 0.86], [64.0, 0.97], [72.0, 1.0], [76.0, 0.92], [84.0, 0.8], [88.0, 0.76]],
+        'dynamics': [[0.0, 0.78], [24.0, 0.8], [40.0, 0.86], [84.0, 0.97], [96.0, 1.0], [100.0, 0.92], [108.0, 0.8], [112.0, 0.76]],
         'space': f'{SLUG}_room', 'mix_preset': f'{SLUG}_mix', 'output_targets': ['stereo', 'immersive_7_1'],
         'master': {'lufs': -16.0, 'true_peak': -1.5, 'tone': 'neutral', 'fade_out': 0.8},
         'piece_type': SLUG, 'focus': 'melody',
-        # a one-off exception for one bar of one delivery format, in the score's own gate block (AGENTS.md section 6), with the measurement as the reason
-        'gate': {'channel.bars': {'mode': 'relax', 'jump_db': 14.0, 'reason': (
-            'Measured on the 8-channel render (immersive_7_1, bars 14-20): the front centre channel reads -13.4, -16.2, -27.0, -15.7, -21.8 dB by bar and '
-            'the row flagged bar 17 (jump -12.3 dB against neighbours at -15.8 dB on the final placement; -14.6, -12.2, -12.3 and -11.0 dB on earlier placements). Bar 17 is where the bansuri, the figure that lives in the centre, rests for six '
-            'beats and the Highland pipes answer alone from the far ridge at 172 degrees: a written call-and-response (direction sheet motifs, returns at 41 s). '
-            'Holding the flute softly under it (velocity 0.4) did not close the dip (-11.0 dB, measured) and only added roughness. The limit is 14 dB, inside the '
-            "row's range of 3-30; the dropout, balance and polarity tests keep their defaults.")}},
         'intent': {'emotions': ['hopeful', 'wonder'], 'registers': ['natural', 'cinematic'], 'scenes': ['establish', 'arrival'],
                    'tensions': ['rising_line'], 'avoid': ['four_on_the_floor']},
         'mix_intent': {'hero': 'bansuri', 'leave_free_hz': [500.0, 3000.0]},
@@ -595,63 +622,64 @@ def score(plan_times=None):
 def direction():
     with open(os.path.join(SKILL, 'templates', 'direction_sheet.json'), encoding='utf-8') as fh:
         d = json.load(fh)
+    t = lambda bar: round((bar - 1) * BAR_S, 1)
     d.update(
-        title=TITLE, project='Western Ghats Sunrise (a 60 s cue, fusion of Carnatic and orchestral writing)', version=1, medium='audio',
-        brief='A 60 second A.R. Rahman style cultural mix with his signature; the ambience of a sunrise in the Western Ghats.',
+        title=TITLE, project='Western Ghats Sunrise (a 60 s cue, a fusion of Carnatic, orchestral and Scottish pipe writing)', version=2, medium='audio',
+        brief='A 60 second A.R. Rahman style cultural mix with his signature; the ambience of a sunrise in the Western Ghats; Scottish bagpipes joined smoothly (real pipes play fast); catchy and upbeat; the ambience quiet at the start.',
         audience='a listener on headphones or speakers, a travel-film or album-opener context; they know the sound of Indian film fusion',
-        purpose='a one-minute fusion cue: a bansuri line in the Mohanam pentatonic over a lush string bed, tanpura, tabla and a layered choir, set in a living Western Ghats dawn, rising to the sun clearing the ridge and landing softly',
+        purpose='a one-minute upbeat fusion cue: a catchy syncopated bansuri riff in the Mohanam pentatonic over a rhythmic string pulse, tabla, a layered choir and a Highland piper playing a fast reel, in a living Western Ghats dawn',
         point_of_view='an observer on the ridge: the world wakes around the music, and the music gives it a voice',
-        job=['open on the bansuri alone in the mist', 'turn the harmony up a whole tone when the sun clears the ridge and bring it home to the tonic', 'let the ambience open out as the light rises', 'end with Sa alone and the birds'],
-        story='Mist, then first light, then the sun on the ridge, then a calm morning: one breath that crests at 36 s.',
+        job=['hook the listener inside six seconds with the riff and the pulse', 'turn the harmony up a whole tone when the sun clears the ridge and bring it home to the tonic', 'let a piper take the stage with a fast reel in the flute\'s rest', 'keep the ambience under the music for the first thirty seconds'],
+        story='A short mist, then the pulse starts and the riff repeats; the sun clears the ridge at 21 s, a piper answers at 30 s, the crest is at 42 s and a calm morning follows.',
         duration_s=60.0, in_point_s=0.0, out_point_s=60.0, ending='tail_out',
-        feel=['hopeful', 'warm', 'luminous', 'rooted'], avoid_feel=['synthetic', 'robotic', 'aggressive', 'new-age cliche', 'busy'],
+        feel=['upbeat', 'catchy', 'warm', 'luminous'], avoid_feel=['synthetic', 'robotic', 'sleepy', 'new-age cliche', 'ambient wash'],
         sections=[
-            dict(name='mist', start_s=0.0, end_s=13.6, energy=0.12, action='mist over the valley, a stream below, the first bird', role='place',
-                 music='bansuri alone over the tanpura; the first strings arrive as a bare fifth at the end; no pulse'),
-            dict(name='first_light', start_s=13.6, end_s=30.0, energy=0.38, action='the light finds the ridge', role='establish',
-                 music='the hook on the bansuri, answered by the violins a third below; light tabla; veena plucks; the pipes\' drone swells in under the tanpura at 25 s; pp choir enters at the end'),
-            dict(name='sunrise', start_s=30.0, end_s=49.1, energy=0.85, action='the sun clears the ridge', role='peak',
-                 music='a whole-tone key raise; the hook an octave up with a distant Highland piper doubling it an octave below; violas in 3+3+2; tabla and daf; the pipes answer alone in the flute\'s rests at 41 s; the choir builds from pp to ff'),
-            dict(name='morning', start_s=49.1, end_s=60.0, energy=0.35, action='full daylight, birds everywhere', role='release',
-                 music='back in the home key: the hook once, softly, then Sa alone; the choir returns to pp; the birds remain')],
-        motifs=[dict(name='the hook', first_at_s=13.6, shape='D E F# then a leap of a fifth to A and a step back (Sa Re Ga, leap to Pa), then an answer E D E D', returns='a third below on the violins at 19 s, an octave higher at 27 s and in the new key at 30 s doubled an octave below by a Highland piper on the far ridge, a dotted answer on the pipes alone at 41 s, once softly in D at 49 s, then Sa alone at 55 s')],
+            dict(name='mist', start_s=t(1), end_s=t(4), energy=0.22, action='mist over the valley, one far bird', role='place',
+                 music='the bansuri alone over the tanpura; the tabla starts at 2 s; the riff arrives as a pickup in bar 3'),
+            dict(name='first_light', start_s=t(4), end_s=t(11), energy=0.5, action='the light finds the ridge', role='establish',
+                 music='the riff repeats on the bansuri, the violins answer it a third below, the 3+3+2 pulse, veena plucks, the pipes\' drone swells in at 15 s, pp choir at 13 s'),
+            dict(name='sunrise', start_s=t(11), end_s=t(23), energy=0.9, action='the sun clears the ridge', role='peak',
+                 music='a whole-tone key raise and a daf stroke; the riff up a step; the piper echoes it in canon, then plays a fast reel alone at 30 s while the flute rests; the flute returns high at 38.6 s; the choir builds from pp to ff'),
+            dict(name='morning', start_s=t(23), end_s=t(29), energy=0.4, action='full daylight, birds everywhere', role='release',
+                 music='back in the home key: the riff once, softly; a distant flourish on the pipes; Sa alone; the choir returns to pp')],
+        motifs=[dict(name='the riff', first_at_s=t(3), shape='a syncopated rise D . E . F# A F# A, then B A F# E F# D: a leap of a fifth (Sa to Pa) on the weak part of the bar', returns='at 7 s, 13 s, a third below on the violins at 11 s, up a step in the new key at 21 s, in canon on the pipes at 24 s, high at 38.6 s, once softly at 47 s, then Sa alone at 53 s')],
         instruments=['bansuri', 'strings', 'celli', 'sitar', 'santoor', 'tanpura', 'tabla', 'choir', 'bagpipes', 'environment'],
         avoid_sounds=['synth pad', 'drum kit', 'electric guitar', 'reverb wash'],
-        pulse='none for 14 s, then a light tabla, then a 3+3+2 eighth-note pulse from 30 s', tempo_bpm=[88, 88], key='D', mode='major',
-        energy=0.5, space=f'{SLUG}_room',
-        hits_at=[30.0], hits=[dict(t=30.0, kind='musical', sync='soft', sound='a low daf stroke and the first chord of the new key as the sun clears the ridge', why='the harmonic turn of the piece; the strings keep sounding, so it is a musical hit, not a cut')],
-        mix_intent=dict(hero='bansuri', support=['violins_counter', 'violins_long', 'celli'], sits_under=[], must_hear=['the bansuri in the first 2 s', 'the choir growing from 30 s', 'the thrush and the stream from the start'], leave_free_hz=[500.0, 3000.0]),
+        pulse='tabla from 2 s, a 3+3+2 eighth-note pulse from 7 s, the full groove from 21 s', tempo_bpm=[112, 112], key='D', mode='major',
+        energy=0.6, space=f'{SLUG}_room',
+        hits_at=[t(11)], hits=[dict(t=t(11), kind='musical', sync='soft', sound='a low daf stroke and the first chord of the new key as the sun clears the ridge', why='the harmonic turn of the piece; the strings keep sounding, so it is a musical hit, not a cut')],
+        mix_intent=dict(hero='bansuri', support=['violins_counter', 'violins_long', 'celli'], sits_under=[], must_hear=['the bansuri in the first 2 s', 'the reel on the pipes at 30 s', 'the choir growing from 21 s'], leave_free_hz=[500.0, 3000.0]),
         loudness_lufs=-16.0, true_peak_max=-1.5,
         delivery=dict(format='wav', sample_rate=44100, bit_depth=24, stage='streaming', output_targets=['stereo', 'immersive_7_1'], played_on='headphones and speakers (stereo), and an 8-channel 7.1 bed (a fifth-order ambisonic mix decoded once)'),
-        references=['in words, not a track: a solo bansuri over strings and a drone, the layered warmth of an Indian film fusion cue, with a living forest under it'],
+        references=['in words, not a track: an upbeat Indian film fusion cue with a flute riff and a rhythmic string pulse, a piper on a far hill, a living forest under it'],
         spatial_staging={k: dict(azimuth=float(v[0]), elevation=float(v[1]), distance=float(v[2]), space=f'{SLUG}_room') for k, v in STAGE.items()},
         immersive=dict(enabled=True, why='the valley is a field: the birds sit high and far around the listener, the stream is below left, the piper stands far behind on the ridge, and the bansuri is the one part that moves',
-                       engine='hoa_bus', anchors=['tanpura', 'celli', 'tabla', 'pipes', 'ambience'],
+                       engine='hoa_bus', anchors=['tanpura', 'celli', 'tabla', 'pipes', 'pipes_drone', 'ambience'],
                        movers=[dict(part='bansuri', why='it walks into the valley', path='enters 30 degrees left in the mist, crosses the centre as the sun clears the ridge, settles 22 degrees right for the last breath')],
-                       height=dict(violins_long=22, choir=24, santoor=30), room_changes=[], must_hear=['the bansuri crossing the centre at 30 s', 'the piper far behind at 25 s and 41 s'],
+                       height=dict(violins_long=22, choir=24, santoor=30, pipes_drone=22), room_changes=[], must_hear=['the bansuri crossing the centre at 21 s', 'the piper far behind at 30 s'],
                        deliverables=['stereo', 'immersive_7_1'], notes='Heights, trajectory keyframes and the room live in the presets; this block records the intent.'),
         focus='melody',
         intent=dict(emotions=['hopeful', 'wonder'], registers=['natural', 'cinematic'], scenes=['establish', 'arrival'], tensions=['rising_line'], avoid=['four_on_the_floor']),
         piece_type=SLUG,
         gate_reason='A melody-led acoustic piece: the melodic rows judge it unchanged; nothing is relaxed in advance.',
         video=dict(d['video'], enabled=False),
-        notes='Mohanam pentatonic over raga-safe chords; Rahman overlay: lush strings, a violin answer, a layered choir, layered production.')
+        notes='Mohanam pentatonic over raga-safe chords; Rahman overlay: lush strings, a violin answer, a layered choir, layered production; the pipes play a fast reel with cuts, a gracenote between repeated notes and a continuous drone.')
     d['expression'] = dict(
-        sonic_picture='The first ten seconds are a bansuri alone in a wide-open valley over a soft tanpura, a stream and one bird; by the middle the strings sing the hook back to it and a light tabla enters; the last note is Sa alone with the morning birds.',
-        performer='The flute breathes in the phrase gaps and the long notes start pure and warm up; the strings lean on beat one and ease the bow off before each change; the violins answer in the flute\'s rests; the choir is people in sections who join as the sound grows.',
-        producer_moves='The key rises a whole tone as the sun clears the ridge and comes home; the tutti choir enters only above forte; the ambience opens out over the second half; the mix carries section loudness from the plan.',
-        anti_generic='The generic version is a pad, a flute loop and a drum loop on a fixed key; what stops it is a theme with a leap on the weak beat, a harmonic turn and return, and a choir that changes make-up with its dynamic.',
-        cues=[dict(section='mist', arousal='low', mode_register='major pentatonic, mid-high flute', tempo_trend='free-feeling, no pulse', dynamics='pp rising to mp', articulation='legato with slides', timbre='breathy, soft attack'),
-              dict(section='first_light', arousal='low-medium', mode_register='same, strings below', tempo_trend='steady 88', dynamics='mp rising to mf', articulation='legato, plucked answers', timbre='warm'),
-              dict(section='sunrise', arousal='high', mode_register='up a whole tone, octave up', tempo_trend='steady, 3+3+2 pulse', dynamics='f to ff', articulation='driving eighths, held choir', timbre='bright, open vowels'),
+        sonic_picture='The first ten seconds are a bansuri over a soft tanpura and a light tabla, one far bird and a faint stream; a catchy syncopated riff repeats; by the middle a rhythmic viola pulse drives, a piper plays a fast reel on a far hill; the last note is Sa alone with the morning birds.',
+        performer='The flute breathes in the phrase gaps and the long notes warm up; the strings lean on beat one and ease the bow off before each change; the piper never stops the drone and never lifts the chanter: cuts and gracenotes separate the notes; the choir is people in sections who join as the sound grows.',
+        producer_moves='The key rises a whole tone as the sun clears the ridge and comes home; the tutti choir enters only above forte; the ambience opens out after 30 s; the mix carries section loudness from the plan.',
+        anti_generic='The generic version is a pad, a flute loop and a drum loop on a fixed key; what stops it is a syncopated riff with a leap on the weak beat, a harmonic turn and return, a fast ornamented pipe reel, and a choir that changes make-up with its dynamic.',
+        cues=[dict(section='mist', arousal='low-medium', mode_register='major pentatonic, mid-high flute', tempo_trend='steady 112 with the tabla from bar 2', dynamics='mp rising to mf', articulation='legato with slides', timbre='breathy, soft attack'),
+              dict(section='first_light', arousal='medium', mode_register='same, strings below', tempo_trend='steady 112', dynamics='mf', articulation='syncopated riff, plucked answers', timbre='warm'),
+              dict(section='sunrise', arousal='high', mode_register='up a whole tone, octave up, the pipes in B mixolydian', tempo_trend='steady, 3+3+2 pulse, a reel of eighths', dynamics='f to ff', articulation='driving eighths, cut gracenotes, held choir', timbre='bright, open vowels'),
               dict(section='morning', arousal='low', mode_register='home key, mid', tempo_trend='settling', dynamics='mp falling to pp', articulation='long tails', timbre='warm, thin')],
-        theme=dict(contour='arch: a step-wise rise, a leap of a fifth, and a step back', interval_character='steps with one leap of a fifth (Sa to Pa)', rhythm_cell='long, short, short, long-short',
-                   why_memorable='the leap lands on the long note and returns by steps; the answer repeats the first notes',
-                   variation_plan='a third below on the violins, an octave up with a faster run in the new key, once softly in the home key, alone on Sa at the end'))
+        theme=dict(contour='arch: a syncopated step-wise rise, a leap of a fifth, and a step back', interval_character='steps with one leap of a fifth (Sa to Pa) on the weak part of the bar', rhythm_cell='dotted, short, short, long, short-short',
+                   why_memorable='the riff repeats with small changes and its leap lands off the beat',
+                   variation_plan='a third below on the violins, a step up in the new key, in canon on the pipes, high near the crest, once softly in the home key, alone on Sa at the end'))
     d['harmony_plan'] = [dict(section='mist', root='D', pedal=True, why='the dawn holds one note: Sa and Pa on the tanpura'),
-                         dict(section='first_light', move='the bass moves D, Bm, D, Asus2 under the hook', counter_hook='violins answer a third below in the flute rests'),
-                         dict(section='sunrise', key='raise a whole tone to E', move='E(add9), C#m, E(add9), Bsus2 over the same pulse', counter_hook='violins carry the hook in thirds above the flute\'s run'),
-                         dict(section='morning', key='return to D', move='D(add9) then Asus2, ending on Sa', counter_hook='the flute alone, the strings thin out')]
+                         dict(section='first_light', move='the bass moves D, Bm, D, Asus2 under the riff', counter_hook='violins answer a third below the flute'),
+                         dict(section='sunrise', key='raise a whole tone to E', move='E, C#m, E, B over the same pulse', counter_hook='the piper plays a fast reel in the flute\'s rest'),
+                         dict(section='morning', key='return to D', move='D then Asus2, ending on a D triad', counter_hook='the flute alone, the strings thin out')]
     return d
 
 
