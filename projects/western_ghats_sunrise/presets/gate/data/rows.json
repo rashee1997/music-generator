@@ -1949,10 +1949,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -16.00000776945472,
+    "value": -16.00000777316221,
     "unit": "LUFS",
     "threshold": -16.0,
-    "margin": -2.4999922305452813,
+    "margin": -2.49999222683779,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-16.0 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -2027,10 +2027,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 1.5078430155501569e-06,
+    "value": 1.5075986473836623e-06,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009984921569844499,
+    "margin": -0.0009984924013526164,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
@@ -2040,10 +2040,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 86.31875909358769,
+    "value": 86.31876084929513,
     "unit": "BPM",
     "threshold": 2.0,
-    "margin": 84.31875909358769,
+    "margin": 84.31876084929513,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 174.3 BPM vs 88.0 (tolerance 2.0) from the onset-envelope autocorrelation (peak 4.5x the median); beat tracker said 172.3; four-quarter drift 41.3 BPM reported, not decisive"
@@ -2073,21 +2073,21 @@
       "start_s": 13.636,
       "end_s": 30.0,
       "energy": 0.38,
-      "level_db": -25.63659655891004
+      "level_db": -25.63659656671937
      },
      {
       "name": "sunrise",
       "start_s": 30.0,
       "end_s": 49.091,
       "energy": 0.85,
-      "level_db": -17.027830413698243
+      "level_db": -17.02783041365876
      },
      {
       "name": "morning",
       "start_s": 49.091,
       "end_s": 60.0,
       "energy": 0.35,
-      "level_db": -28.214416127437545
+      "level_db": -28.214416140275997
      }
     ]
    }

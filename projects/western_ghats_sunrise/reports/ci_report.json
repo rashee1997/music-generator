@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-27T07:59:13Z",
+  "timestamp": "2026-11-27T08:03:29Z",
   "status": "PASSED",
   "deliverables": {
     "master_wav": "/home/user/music-generator/projects/western_ghats_sunrise/out/western_ghats_sunrise.wav",
@@ -11,7 +11,9 @@
       "immersive_7_1"
     ],
     "outputs_skipped": [],
-    "output_files": [],
+    "output_files": [
+      "/home/user/music-generator/projects/western_ghats_sunrise/out/western_ghats_sunrise_immersive_7_1.wav"
+    ],
     "delivered": [
       {
         "name": "stereo",
@@ -29,13 +31,14 @@
       }
     ],
     "certified": [
-      "stereo"
+      "stereo",
+      "immersive_7_1"
     ],
     "stems_dir": "/home/user/music-generator/projects/western_ghats_sunrise/stems",
     "stem_count": 12,
     "metadata": "/home/user/music-generator/projects/western_ghats_sunrise/out/western_ghats_sunrise.json",
-    "version": 5,
-    "versioned_master": "western_ghats_sunrise_v05.wav",
+    "version": 6,
+    "versioned_master": "western_ghats_sunrise_v06.wav",
     "metadata_tagged": [
       "title",
       "artist",
@@ -45,14 +48,14 @@
       "license",
       "description"
     ],
-    "versioned_metadata": "/home/user/music-generator/projects/western_ghats_sunrise/out/western_ghats_sunrise_v05.json"
+    "versioned_metadata": "/home/user/music-generator/projects/western_ghats_sunrise/out/western_ghats_sunrise_v06.json"
   },
   "measurements": {
-    "integrated_lufs": -16.00000776945472,
+    "integrated_lufs": -16.00000777316221,
     "true_peak_dbtp": -1.9133341040242613,
-    "crest_factor_db": 17.932705643248607,
-    "mono_loss_db": -0.5231593284926004,
-    "mono_phone_loss_db": -0.2901184571978709,
+    "crest_factor_db": 17.932705647119818,
+    "mono_loss_db": -0.5231593275958882,
+    "mono_phone_loss_db": -0.2901184570354743,
     "clipped_samples": 0,
     "mean_roughness": 0.0588,
     "max_roughness": 0.0965,
@@ -584,7 +587,7 @@
     {
       "level": "INFO",
       "check": "gate_relax",
-      "detail": "channel.bars: jump_db=12.0 (Measured on the 8-channel render (immersive_7_1, bars 14-20): the front centre channel reads -13.4, -16.2, -27.0, -15.7, -21.8 dB by bar and the row flagged bar 17 (jump -11.0 dB against neighbours at -16.0 dB). Bar 17 is where the bansuri, the figure that lives in the centre, rests for six beats and the Highland pipes answer alone from the far ridge at 172 degrees: a written call-and-response (direction sheet motifs, returns at 41 s). Holding the flute softly under it (velocity 0.4) did not close the dip (-11.0 dB, measured) and only added roughness. The limit is 12 dB, inside the row's range of 3-30; the dropout, balance and polarity tests keep their defaults.)"
+      "detail": "channel.bars: jump_db=14.0 (Measured on the 8-channel render (immersive_7_1, bars 14-20): the front centre channel reads -13.4, -16.2, -27.0, -15.7, -21.8 dB by bar and the row flagged bar 17 (jump -12.3 dB against neighbours at -15.8 dB on the final placement; -14.6, -12.2, -12.3 and -11.0 dB on earlier placements). Bar 17 is where the bansuri, the figure that lives in the centre, rests for six beats and the Highland pipes answer alone from the far ridge at 172 degrees: a written call-and-response (direction sheet motifs, returns at 41 s). Holding the flute softly under it (velocity 0.4) did not close the dip (-11.0 dB, measured) and only added roughness. The limit is 14 dB, inside the row's range of 3-30; the dropout, balance and polarity tests keep their defaults.)"
     },
     {
       "level": "INFO",
@@ -609,7 +612,7 @@
     {
       "level": "INFO",
       "check": "gate_relax",
-      "detail": "channel.bars: jump_db=12.0 (Measured on the 8-channel render (immersive_7_1, bars 14-20): the front centre channel reads -13.4, -16.2, -27.0, -15.7, -21.8 dB by bar and the row flagged bar 17 (jump -11.0 dB against neighbours at -16.0 dB). Bar 17 is where the bansuri, the figure that lives in the centre, rests for six beats and the Highland pipes answer alone from the far ridge at 172 degrees: a written call-and-response (direction sheet motifs, returns at 41 s). Holding the flute softly under it (velocity 0.4) did not close the dip (-11.0 dB, measured) and only added roughness. The limit is 12 dB, inside the row's range of 3-30; the dropout, balance and polarity tests keep their defaults.)"
+      "detail": "channel.bars: jump_db=14.0 (Measured on the 8-channel render (immersive_7_1, bars 14-20): the front centre channel reads -13.4, -16.2, -27.0, -15.7, -21.8 dB by bar and the row flagged bar 17 (jump -12.3 dB against neighbours at -15.8 dB on the final placement; -14.6, -12.2, -12.3 and -11.0 dB on earlier placements). Bar 17 is where the bansuri, the figure that lives in the centre, rests for six beats and the Highland pipes answer alone from the far ridge at 172 degrees: a written call-and-response (direction sheet motifs, returns at 41 s). Holding the flute softly under it (velocity 0.4) did not close the dip (-11.0 dB, measured) and only added roughness. The limit is 14 dB, inside the row's range of 3-30; the dropout, balance and polarity tests keep their defaults.)"
     },
     {
       "level": "INFO",
@@ -1509,7 +1512,7 @@
     {
       "level": "INFO",
       "check": "env.cpu_budget",
-      "detail": "\"ambience\": 11.8 s of CPU per minute of audio on this machine, projected from a 3 s render (limit 12)"
+      "detail": "\"ambience\": 10.5 s of CPU per minute of audio on this machine, projected from a 3 s render (limit 12)"
     },
     {
       "level": "WARN",
@@ -1524,12 +1527,12 @@
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"choir\" and \"violins_long\" overlap within 4 dB in sub, low-mid, mid, presence, brilliance, air; separate them with level, pan or a complementary EQ rather than more compression"
+      "detail": "\"tabla\" and \"tanpura\" overlap within 4 dB in low-mid, mid, presence; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"tabla\" and \"tanpura\" overlap within 4 dB in low-mid, mid, presence; separate them with level, pan or a complementary EQ rather than more compression"
+      "detail": "\"choir\" and \"violins_long\" overlap within 4 dB in sub, low-mid, mid, presence, brilliance, air; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "WARN",
@@ -1544,7 +1547,7 @@
     {
       "level": "PASS",
       "check": "music21_tonality",
-      "detail": "strong tonal center in B minor (correlation 0.82)"
+      "detail": "strong tonal center in B minor (correlation 0.81)"
     },
     {
       "level": "INFO",
@@ -1579,20 +1582,20 @@
         "warns": 0,
         "rows": 105,
         "profile": "western_ghats_sunrise",
-        "total_ms": 3543.846462000147,
+        "total_ms": 4458.278981000149,
         "timings": {
-          "ambience": 1019.255642000644,
-          "bansuri": 572.4038870002914,
-          "celli": 581.7628179993335,
-          "choir": 1179.8976909994963,
-          "pipes": 777.0196139999825,
-          "santoor": 383.01074799983326,
-          "sitar": 872.0928200000344,
-          "tabla": 372.9838870003732,
-          "tanpura": 1007.2802919994501,
-          "violas": 979.1522989999066,
-          "violins_counter": 551.6086090001409,
-          "violins_long": 656.8305689997942
+          "ambience": 1399.7079079999821,
+          "bansuri": 704.6154400004525,
+          "celli": 767.0041609999316,
+          "choir": 1652.5600310005757,
+          "pipes": 912.2204260002036,
+          "santoor": 352.05649899944547,
+          "sitar": 1263.4033770000315,
+          "tabla": 441.6767439997784,
+          "tanpura": 1476.792251999541,
+          "violas": 1062.1729499998764,
+          "violins_counter": 765.5306970000311,
+          "violins_long": 894.4252459996278
         },
         "workers": 3,
         "metrics": [
@@ -3578,10 +3581,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -16.00000776945472,
+            "value": -16.00000777316221,
             "unit": "LUFS",
             "threshold": -16.0,
-            "margin": -2.4999922305452813,
+            "margin": -2.49999222683779,
             "worst_times_s": [],
             "calibrated": true,
             "detail": "-16.0 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -3656,10 +3659,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 1.5078430155501569e-06,
+            "value": 1.5075986473836623e-06,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.0009984921569844499,
+            "margin": -0.0009984924013526164,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
@@ -3669,10 +3672,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 86.31875909358769,
+            "value": 86.31876084929513,
             "unit": "BPM",
             "threshold": 2.0,
-            "margin": 84.31875909358769,
+            "margin": 84.31876084929513,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 174.3 BPM vs 88.0 (tolerance 2.0) from the onset-envelope autocorrelation (peak 4.5x the median); beat tracker said 172.3; four-quarter drift 41.3 BPM reported, not decisive"
@@ -3702,21 +3705,21 @@
                 "start_s": 13.636,
                 "end_s": 30.0,
                 "energy": 0.38,
-                "level_db": -25.63659655891004
+                "level_db": -25.63659656671937
               },
               {
                 "name": "sunrise",
                 "start_s": 30.0,
                 "end_s": 49.091,
                 "energy": 0.85,
-                "level_db": -17.027830413698243
+                "level_db": -17.02783041365876
               },
               {
                 "name": "morning",
                 "start_s": 49.091,
                 "end_s": 60.0,
                 "energy": 0.35,
-                "level_db": -28.214416127437545
+                "level_db": -28.214416140275997
               }
             ]
           }
@@ -3882,6 +3885,12 @@
     {
       "attempt": 18,
       "time": "2026-11-27T07:59:13Z",
+      "fails": 0,
+      "failing": []
+    },
+    {
+      "attempt": 19,
+      "time": "2026-11-27T08:03:29Z",
       "fails": 0,
       "failing": []
     }

@@ -106,6 +106,19 @@ class Harmony(unittest.TestCase):
         self.assertEqual(rc.harmonic_motion(self.score([36] * 8))['verdict'], 'WARN')
         self.assertEqual(rc.harmonic_motion(self.score([36, 36, 41, 43, 36, 41, 43, 36]))['verdict'], 'PASS')
 
+    def test_ts_written_as_a_list_works_like_a_string(self):
+        s = self.score([36] * 8)
+        s['ts'] = [4, 4]
+        self.assertEqual(rc.harmonic_motion(s)['verdict'], 'WARN')
+        s['ts'] = '4/4'
+        self.assertEqual(rc.harmonic_motion(s)['verdict'], 'WARN')
+
+    def test_drum_names_and_ambience_do_not_break_it(self):
+        s = self.score([36, 41, 43, 36, 41, 43, 36, 41])
+        s['tracks'].append(dict(name='kit', role='drum', notes=[dict(t=0.0, d=0.5, p='tabla_ge')]))
+        s['tracks'].append(dict(name='amb', role='environment', notes=[dict(t=0.0, d=30.0, p=60)]))
+        self.assertEqual(rc.harmonic_motion(s)['verdict'], 'PASS')
+
     def test_a_declared_pedal_is_respected(self):
         s = self.score([36] * 8)
         s['plan']['sections'][0]['pedal'] = True

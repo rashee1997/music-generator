@@ -6,20 +6,20 @@
     "warns": 0,
     "rows": 105,
     "profile": "western_ghats_sunrise",
-    "total_ms": 3543.846462000147,
+    "total_ms": 4458.278981000149,
     "timings": {
-      "ambience": 1019.255642000644,
-      "bansuri": 572.4038870002914,
-      "celli": 581.7628179993335,
-      "choir": 1179.8976909994963,
-      "pipes": 777.0196139999825,
-      "santoor": 383.01074799983326,
-      "sitar": 872.0928200000344,
-      "tabla": 372.9838870003732,
-      "tanpura": 1007.2802919994501,
-      "violas": 979.1522989999066,
-      "violins_counter": 551.6086090001409,
-      "violins_long": 656.8305689997942
+      "ambience": 1399.7079079999821,
+      "bansuri": 704.6154400004525,
+      "celli": 767.0041609999316,
+      "choir": 1652.5600310005757,
+      "pipes": 912.2204260002036,
+      "santoor": 352.05649899944547,
+      "sitar": 1263.4033770000315,
+      "tabla": 441.6767439997784,
+      "tanpura": 1476.792251999541,
+      "violas": 1062.1729499998764,
+      "violins_counter": 765.5306970000311,
+      "violins_long": 894.4252459996278
     },
     "workers": 3,
     "metrics": [
@@ -2501,7 +2501,7 @@
     {
       "level": "INFO",
       "row": "gate_relax",
-      "detail": "channel.bars: jump_db=12.0 (Measured on the 8-channel render (immersive_7_1, bars 14-20): the front centre channel reads -13.4, -16.2, -27.0, -15.7, -21.8 dB by bar and the row flagged bar 17 (jump -11.0 dB against neighbours at -16.0 dB). Bar 17 is where the bansuri, the figure that lives in the centre, rests for six beats and the Highland pipes answer alone from the far ridge at 172 degrees: a written call-and-response (direction sheet motifs, returns at 41 s). Holding the flute softly under it (velocity 0.4) did not close the dip (-11.0 dB, measured) and only added roughness. The limit is 12 dB, inside the row's range of 3-30; the dropout, balance and polarity tests keep their defaults.)"
+      "detail": "channel.bars: jump_db=14.0 (Measured on the 8-channel render (immersive_7_1, bars 14-20): the front centre channel reads -13.4, -16.2, -27.0, -15.7, -21.8 dB by bar and the row flagged bar 17 (jump -12.3 dB against neighbours at -15.8 dB on the final placement; -14.6, -12.2, -12.3 and -11.0 dB on earlier placements). Bar 17 is where the bansuri, the figure that lives in the centre, rests for six beats and the Highland pipes answer alone from the far ridge at 172 degrees: a written call-and-response (direction sheet motifs, returns at 41 s). Holding the flute softly under it (velocity 0.4) did not close the dip (-11.0 dB, measured) and only added roughness. The limit is 14 dB, inside the row's range of 3-30; the dropout, balance and polarity tests keep their defaults.)"
     },
     {
       "level": "INFO",

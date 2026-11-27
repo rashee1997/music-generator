@@ -187,8 +187,16 @@ def foreground(stems, sr, score=None):
                 else 'every declared voice is within reach of the loudest part')
 
 
+def _beats_per_bar(score):
+    """Beats per bar from the score's `ts`, written either as [4, 4] (what scores use) or as "4/4"."""
+    ts = score.get('ts', [4, 4])
+    if isinstance(ts, str):
+        ts = [int(x) for x in ts.split('/')]
+    return float(ts[0]) * 4.0 / float(ts[1])
+
+
 def _bars(score, a, b):
-    bpb = int(str(score.get('ts', '4/4')).split('/')[0]) * 4.0 / int(str(score.get('ts', '4/4')).split('/')[1])
+    bpb = _beats_per_bar(score)
     return (a - 1) * bpb, b * bpb
 
 
@@ -204,8 +212,10 @@ def harmonic_motion(score):
         lo, hi = _bars(score, int(s.get('start_bar', 1)), int(s.get('end_bar', 1)))
         pcs, hist = set(), np.zeros(12)
         for t in score.get('tracks') or []:
+            if t.get('role') in ('drum', 'environment', 'fx'):          # drum keys are names, not pitches; ambience and effects carry no harmony
+                continue
             for n in t.get('notes') or []:
-                if lo <= float(n.get('t', 0)) < hi:
+                if isinstance(n.get('p'), (int, float)) and lo <= float(n.get('t', 0)) < hi:
                     hist[int(n['p']) % 12] += float(n.get('d', 1))
                     if t.get('role') in bass_roles:
                         pcs.add(int(n['p']) % 12)
