@@ -222,6 +222,6 @@ class ChoirLayers(unittest.TestCase):
         self.assertEqual(r[0][0], 'PASS')
 
     def test_one_sampled_choir_warns_and_no_voice_is_silent(self):
-        r = self.rows([dict(name='c', instrument='choir', role='pad', notes=[{'t': 0, 'd': 1, 'p': 60}])], {'choir': {'instrument': 'choir'}})
+        r = self.rows([dict(name='c', instrument='x_oohs', role='pad', notes=[{'t': 0, 'd': 1, 'p': 60}])], {'x_oohs': {'family': 'voice'}})
         self.assertEqual(r[0][0], 'WARN')
         self.assertEqual(self.rows([dict(name='v', instrument='violin', role='melody', notes=[{'t': 0, 'd': 1, 'p': 60}])], {'violin': {'instrument': 'violin'}}), [])
