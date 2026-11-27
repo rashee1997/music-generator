@@ -190,5 +190,23 @@ class NewRows(unittest.TestCase):
             shutil.rmtree(tmp, ignore_errors=True)
 
 
+class ReportText(unittest.TestCase):
+    """The autopsy text is a list of lines: a loop variable in the prediction-record block once overwrote it with the word `no change`."""
+
+    def test_a_settled_prediction_that_did_not_hold_keeps_the_report_intact(self):
+        from types import SimpleNamespace as NS
+        from unittest import mock
+        from audio_debug import report, history
+        plan = NS(status='no rows', deltas={}, clearing={}, conflicts=[], closed=[], burned=[], notes=[], predicted={}, replay=[], experiments=[])
+        analysis = NS(forensics=[], notes=[], levers=[], rows=[], first_order={}, coefficients={})
+        case = NS(project='/nonexistent/proj', sources={}, drift=None, stale=False)
+        rep = report.Report(case, analysis, plan, [], [], [], {}, 'FAIL', stamp='t')
+        with mock.patch.object(history, 'calibration', return_value=[('lever.a', 0, 'cleared'), ('lever.b', 2, 'no change')]):
+            text = rep.text
+        self.assertIn('# Debug autopsy', text)
+        self.assertIn('`lever.b`: replay predicted 2 event(s), the render said no change', text)
+        self.assertGreater(len(text.splitlines()), 8)
+
+
 if __name__ == '__main__':
     unittest.main()

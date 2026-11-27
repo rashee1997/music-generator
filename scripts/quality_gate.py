@@ -1909,7 +1909,8 @@ def metadata_rows(score, out, project_dir=None, wav_path=None):
     if not project_dir:
         return
     out_dir = os.path.join(project_dir, 'out')
-    master = wav_path or os.path.join(out_dir, 'master.wav')
+    import render_targets as _rtm
+    master = wav_path or _rtm.certified_master(project_dir)
     first_render = not os.path.isfile(master) and not os.path.isfile(os.path.join(out_dir, 'versions.json'))
 
     if first_render:

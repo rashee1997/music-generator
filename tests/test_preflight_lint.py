@@ -183,3 +183,19 @@ class FullChecks(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class InstEq(unittest.TestCase):
+    """An inst_eq entry that names no instrument of the score is silent at render time, so preflight says so."""
+
+    def test_a_key_by_track_name_is_flagged_and_a_key_by_instrument_passes(self):
+        from unittest import mock
+        score = dict(mix_preset='m', tracks=[dict(name='snare', instrument='pursuit_snare', notes=[dict(t=0, d=1, p=38)])])
+        with mock.patch('presets.load', return_value={'m': {'inst_eq': {'snare': [{'type': 'peak'}]}}}):
+            rows = pl.inst_eq_rows(score)
+        self.assertEqual(rows[0][0], 'WARN')
+        self.assertIn('snare', rows[0][2])
+        with mock.patch('presets.load', return_value={'m': {'inst_eq': {'pursuit_snare': [{'type': 'peak'}]}}}):
+            self.assertEqual(pl.inst_eq_rows(score)[0][0], 'PASS')
+        with mock.patch('presets.load', return_value={'m': {}}):
+            self.assertEqual(pl.inst_eq_rows(score), [])

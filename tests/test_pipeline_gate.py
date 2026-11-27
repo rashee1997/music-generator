@@ -254,7 +254,7 @@ class Cli(unittest.TestCase):
                 mixpath.write_text(json.dumps(cfg), encoding='utf-8')
             r = self.run_cli(str(proj / 'scores' / 'main_score.json'), '--project', str(proj))
             self.assertIn(r.returncode, (0, 1), r.stdout[-800:] + r.stderr[-800:])
-            self.assertTrue((proj / 'out' / 'master.wav').is_file(), r.stdout[-800:])
+            self.assertTrue((proj / 'out' / 'p.wav').is_file(), r.stdout[-800:])      # the stereo master is named after the project folder
             self.assertTrue((proj / 'midi' / 'main_score.mid').is_file())
             self.assertGreaterEqual(len(list((proj / 'stems').glob('*.wav'))), 5)
             rep = json.loads((proj / 'reports' / 'ci_report.json').read_text(encoding='utf-8'))

@@ -114,3 +114,25 @@ class Targets(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class ProjectFileNames(unittest.TestCase):
+    """A project's deliverables are named after the project: the stereo master <name>.wav, every other format <name>_<format>.wav."""
+
+    def test_names_follow_the_project_folder(self):
+        import render_targets as rt
+        self.assertEqual(rt.project_slug('/x/Night Pursuit-Cinematic/'), 'night_pursuit_cinematic')
+        self.assertEqual(rt.filename('stereo', '/x/night_pursuit', primary=True), 'night_pursuit.wav')
+        self.assertEqual(rt.filename('immersive_7_1', '/x/night_pursuit'), 'night_pursuit_immersive_7_1.wav')
+        self.assertEqual(rt.filename('immersive_7_1'), 'master_7_1.wav')                 # outside a project the preset's own name
+
+    def test_the_certified_master_is_found_by_either_name(self):
+        import os, tempfile
+        import render_targets as rt
+        with tempfile.TemporaryDirectory() as td:
+            proj = os.path.join(td, 'piece'); os.makedirs(os.path.join(proj, 'out'))
+            self.assertTrue(rt.certified_master(proj).endswith('piece.wav'))
+            open(os.path.join(proj, 'out', 'master.wav'), 'w').close()
+            self.assertTrue(rt.certified_master(proj).endswith('master.wav'))
+            open(os.path.join(proj, 'out', 'piece.wav'), 'w').close()
+            self.assertTrue(rt.certified_master(proj).endswith('piece.wav'))

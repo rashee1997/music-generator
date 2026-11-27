@@ -23,6 +23,7 @@ The legacy score key `outputs` is accepted as an alias for `output_targets`.
 
 This module only reads presets and the score. It renders nothing.
 """
+import re
 import copy
 
 import presets
@@ -89,7 +90,24 @@ def buildable(name):
     return t.get('renderer') in ENGINE_RENDERERS
 
 
-def delivered(score):
+def project_slug(project_dir):
+    """The project's own name as a file stem: the folder name, lower case, letters and digits joined by underscores."""
+    import os
+    base = os.path.basename(os.path.abspath(str(project_dir))) or 'project'
+    return re.sub(r'[^a-z0-9]+', '_', base.lower()).strip('_') or 'project'
+
+
+def certified_master(project_dir):
+    """The newest certified stereo master of a project: <project>/out/<name>.wav, or the older out/master.wav."""
+    import os
+    out = os.path.join(str(project_dir), 'out')
+    for name in (project_slug(project_dir) + '.wav', 'master.wav'):
+        if os.path.isfile(os.path.join(out, name)):
+            return os.path.join(out, name)
+    return os.path.join(out, project_slug(project_dir) + '.wav')
+
+
+def delivered(score, project_dir=None):
     """What this run delivers, in promise order: one dict per target, no guessing from a file name.
 
     Stage 5 renders these, stage 6 certifies the first (and each extra against its own rows), and the packaging
@@ -97,16 +115,19 @@ def delivered(score):
     format width.
     """
     out = []
-    for name in resolve(score)['selected']:
+    for i, name in enumerate(resolve(score)['selected']):
         t = get(name) or {}
         out.append(dict(name=name, channels=int(t.get('channels') or 0), channel_order=list(t.get('channel_order') or []),
-                        layout=t.get('layout'), renderer=t.get('renderer'), file=filename(name),
+                        layout=t.get('layout'), renderer=t.get('renderer'), file=filename(name, project_dir, primary=(i == 0)),
                         true_peak_dbtp=true_peak(name)))
     return out
 
 
-def filename(name):
-    """The file a target is delivered as, inside out/."""
+def filename(name, project_dir=None, primary=False):
+    """The file a target is delivered as, inside out/. In a project it is named after the project and the format
+    (the primary, stereo master as <project>.wav, every other format as <project>_<format>.wav), so a delivery folder says what each file is; outside a project the preset's own name."""
+    if project_dir:
+        return f'{project_slug(project_dir)}.wav' if primary else f'{project_slug(project_dir)}_{name}.wav'
     return (get(name) or {}).get('file') or (name + '.wav')
 
 

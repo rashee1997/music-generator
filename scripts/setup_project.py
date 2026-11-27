@@ -532,9 +532,9 @@ The pipeline will not render until a note cites the knowledge base and lists at 
 - [ ] 4. Presets for every non-built-in instrument / vocal (presets/instruments, presets/vocals), each ambience (presets/environments)
       and tuned one-hit effect (presets/sfx), each listing its "sources"
 - [ ] 5. Score written (scores/*.json) referencing presets by exact name
-- [ ] 6. `pipeline.py scores/<title>_score.json --project .` renders out/master.wav, midi/, stems/, reports/ci_report.json
+- [ ] 6. `pipeline.py scores/<title>_score.json --project .` renders out/<project>.wav, midi/, stems/, reports/ci_report.json
 - [ ] 7. Revise one lever at a time until 0 FAIL (max 5 attempts, then report)
-- [ ] 8. listen.py on out/master.wav; deliver
+- [ ] 8. listen.py on out/<project>.wav; deliver
 
 ## Rules
 1. Never monolithic: sound and space in presets/, notes in scores/, intent in direction/.
@@ -582,8 +582,8 @@ The pipeline will not render until a note cites the knowledge base and lists at 
     print("      ci_report.json")
     print("    metadata.json           (standard delivery tags: overrides only; the defaults live in the skill)")
     print("    out/                   (Master WAV and exported MIDI)")
-    print("      master.wav           (copy of the newest certified version)")
-    print("      master_vNN.wav       (every certified version; earlier ones are never overwritten)")
+    print("      <project>.wav        (the certified stereo master: a copy of the newest version, named after the folder)")
+    print("      <project>_vNN.wav    (every certified version; earlier ones are never overwritten; other formats are <project>_<format>.wav)")
     print("      versions.json        (each version with the gate failures it cleared)")
     print("    STATUS.md              (Project tracking and decisions)")
     print("\nNext: 2) research_kb.py  3) fill direction/  4) presets  5) score  6) pipeline.py (blocked until 2-4 are done):")

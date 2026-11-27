@@ -341,7 +341,7 @@ score = dict(
     dynamics=dyn,
     space='np_street_canyon',
     mix_preset='night_pursuit_cinematic_mix',
-    output_targets=['stereo', 'immersive_7_1_2'],
+    output_targets=['stereo', 'immersive_7_1'],
     master=dict(lufs=-16.0, true_peak=-1.5, tone='neutral', fade_out=3.0),
     piece_type='night_pursuit_cinematic',
     focus='melody',

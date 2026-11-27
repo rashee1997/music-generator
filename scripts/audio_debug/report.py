@@ -146,12 +146,12 @@ class Report:
         except Exception:
             cal = []
         if cal:
-            hit = sum(1 for _l, pr, out in cal if pr == 0 and out == 'cleared')
-            miss = [(l, pr, out) for l, pr, out in cal if not (pr == 0 and out == 'cleared')]
+            hit = sum(1 for _l, pr, verdict in cal if pr == 0 and verdict == 'cleared')
+            miss = [(l, pr, verdict) for l, pr, verdict in cal if not (pr == 0 and verdict == 'cleared')]
             push('')
             push(f"## Prediction record: {len(cal)} settled, {hit} held, {len(miss)} did not")
-            for l, pr, out in miss[:6]:
-                push(f"- `{l}`: replay predicted {pr} event(s), the render said {out}")
+            for l, pr, verdict in miss[:6]:
+                push(f"- `{l}`: replay predicted {pr} event(s), the render said {verdict}")
         push('')
         push('## Conflicts (no value satisfies both)')
         if not self.plan.conflicts:

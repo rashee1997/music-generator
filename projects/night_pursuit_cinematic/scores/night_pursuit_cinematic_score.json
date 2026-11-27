@@ -964,7 +964,7 @@
  "mix_preset": "night_pursuit_cinematic_mix",
  "output_targets": [
   "stereo",
-  "immersive_7_1_2"
+  "immersive_7_1"
  ],
  "master": {
   "lufs": -16.0,

@@ -364,6 +364,27 @@ def _shared_seconds(sa, sb):
     return total
 
 
+def inst_eq_rows(score):
+    """`preflight.inst_eq`: an entry of the mix preset's `inst_eq` that names no instrument of the score is never applied. It is silent
+    (a table lookup that misses), and it cost two renders on a project that keyed a trim by track name instead of by instrument."""
+    try:
+        import presets
+        from mix_engine import chains
+        mix = presets.load('mix').get(str(score.get('mix_preset') or ''))
+        table = (mix or {}).get('inst_eq') or {}
+        if not table:
+            return []
+        insts = [str(t.get('instrument', '')) for t in _tracks(score)]
+        names = {n for inst in insts for n in chains.base_names(inst)}
+        dead = sorted(k for k in table if k not in names)
+    except Exception:
+        return []
+    if not dead:
+        return [('PASS', 'preflight.inst_eq', f'every inst_eq entry ({len(table)}) names an instrument of the score')]
+    return [('WARN', 'preflight.inst_eq', f'{len(dead)} inst_eq entr{"y" if len(dead) == 1 else "ies"} of the mix preset name no instrument of the score and '
+             f'will never be applied: {", ".join(dead[:5])}. Key it by the instrument (e.g. the preset name), not by the track name')]
+
+
 def clock_rows(score):
     """The plan's section times against the tempo map the renderer will play. A plan (and every preset curve and trigger that was
     written from it) built on another clock is wrong by seconds, and the audio rows find it only after a render: one project's plan
@@ -414,6 +435,7 @@ def checks(score, project_dir=None, lookup=None, patch_range=None, probe=True, r
     rows += figure_level_rows(score)
     rows += placement_rows(score, lookup)
     rows += clock_rows(score)
+    rows += inst_eq_rows(score)
     import preflight_levels
     rows += preflight_levels.checks(score)
     import roughness_forecast

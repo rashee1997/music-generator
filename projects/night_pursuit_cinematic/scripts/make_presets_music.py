@@ -186,8 +186,8 @@ write('spaces', SPACE, dict(
 # ----------------------------------------------------------------------------------------------- the mix
 mix_src = os.path.join(P, 'mix', 'night_pursuit_cinematic_mix.json')
 mix = json.load(open(mix_src, encoding='utf-8'))
-mix['character'] = ('A film mix: the music is the foreground, the engines, sirens and the road are a supporting layer under it and come forward only at a hit; the 7.1.2 field is a '
-                    'fifth-order ambisonic bus decoded once to ten speakers, with the helicopter, the choir and the high strings on the height pair.')
+mix['character'] = ('A film mix: the music is the foreground, the engines, sirens and the road are a supporting layer under it and come forward only at a hit; the 7.1 field is a '
+                    'fifth-order ambisonic bus decoded once to eight speakers; on headphones the helicopter, the choir and the high strings sit above the ring.')
 mix['note'] = 'Written for Night Pursuit Cinematic; the scaffold copy of the default was replaced.'
 mix['level_by_role'] = dict(fx=-14.0, environment=-9.0)       # effects and beds under the music (starting values, measured after the first render)
 mix['gain_staging']['ref_lufs'] = -22.0
@@ -197,7 +197,7 @@ mix['space'] = dict(auto_env_blend=dict(enabled=True),
                     drr=dict(enabled=False, target_db=0.0))
 mix['mastering'] = dict(profile='cinema', crest_floor_db=7.0, profiles=dict(cinema=dict(lufs=-16.0, true_peak=-1.5, tone='neutral', glue=True, fade_out=0.6)),
                         highpass_hz=105.0, highpass_order=4)
-mix['render'] = dict(mix_workers=2)      # measured: four workers took about 11 GB on the 7.1.2 field of this 194 s cue and the container was killed at 14 GB; two fit beside the mixer's 4.8 GB
+mix['render'] = dict(mix_workers=2)      # measured: four workers took about 11 GB on the speaker field of this 194 s cue and the container was killed at 14 GB; two fit beside the mixer's 4.8 GB
 mix['immersive'] = dict(enabled=True, engine='hoa_bus', order=5, anchor_max_span_deg=6.0, max_deg_per_sec=dict(anchor=10.0, mover=120.0),
                         height_by_role=dict(melody=0.0, lead=0.0, vocal=0.0, pad=0.0, texture=0.0, environment=0.0, chord=0.0, bass=0.0, drum=0.0,
                                             percussion=0.0, drone=0.0, ostinato=0.0, arp=0.0, counter=0.0, fx=0.0),

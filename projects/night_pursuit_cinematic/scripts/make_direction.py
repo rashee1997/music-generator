@@ -90,13 +90,13 @@ CAR_LINE = ', '.join(f'{cars.CARS[c]["label"]}' for c in cars.CARS)
 
 sheet = dict(
     title='Night Pursuit Cinematic',
-    project='A cinematic street race and car chase through a wet New York night after the rain: four cars, the police, a tunnel, a flyover and an escape, written as a listening piece for a ten-channel 7.1.2 system',
+    project='A cinematic street race and car chase through a wet New York night after the rain: four cars, the police, a tunnel, a flyover and an escape, written as a listening piece for an eight-channel 7.1 system',
     version=1,
     medium='film',
     brief='A street race that the police see; four cars (a Mustang, a Ferrari, a Lamborghini and a Porsche) at different speeds up to 150 km/h, one of them at one speed all the way; '
           'streets, a tunnel, cuts, bumps and a flyover edge; evaded at the end. The road is wet after the rain, nothing is falling, no wipers. The camera changes: inside the car, '
           'at the kerb, beside the cars and from a helicopter. Music in front, effects and fx behind it; a film mix; ten channels.',
-    audience='a listener on a 7.1.2 system or headphones who came for the chase',
+    audience='a listener on a 7.1 system or headphones who came for the chase',
     purpose=f'a {DUR:.0f}-second cue that tells a whole chase: a street race, a spotting, a chase, a tunnel, a helicopter, a flyover, a jump and an escape',
     point_of_view='the camera: inside the Ferrari in the race and on the deck, on the kerb at the pass, behind the pack in the chase, in the air over the city for the helicopter',
     job=['start in motion with no slow opening and keep the listener in the car from the first bar',
@@ -136,8 +136,8 @@ sheet = dict(
                     leave_free_hz=[]),
     loudness_lufs=-16.0,
     true_peak_max=-1.5,
-    delivery=dict(format='wav', sample_rate=48000, bit_depth=24, stage='cinema', output_targets=['stereo', 'immersive_7_1_2'],
-                  played_on='a 7.1.2 system of ten speakers (the fifth-order field decoded once), and headphones through the stereo master'),
+    delivery=dict(format='wav', sample_rate=48000, bit_depth=24, stage='cinema', output_targets=['stereo', 'immersive_7_1'],
+                  played_on='a 7.1 system of eight speakers (the fifth-order field decoded once), and headphones through the stereo master'),
     references=['a relentless low-string and viola pulse with taiko at the camera cuts, the engines and sirens a layer under it, and a hard-edged flyover at the end',
                 'the camera as the listener: the room changes at every cut, the music stays in front'],
     spatial_staging={n: dict(azimuth=a, elevation=e, distance=r, space=SPACE) for n, (a, e, r) in STAGE.items()},
@@ -164,8 +164,8 @@ sheet = dict(
                       dict(at_section='the_escape', why='the street again, empty and wet', transition_s=4.0)],
         must_hear=[f'the pass at the kerb near {S("spotted", 8):.0f} s', f'the helicopter on the height pair from {S("the_helicopter"):.0f} s',
                    f'the room closing at {S("the_tunnel"):.0f} s', f'the landing at {EV["land"]:.0f} s'],
-        deliverables=['stereo', 'immersive_7_1_2'],
-        notes='the sheet records intent; the presets execute it. The bus is fifth order (36 channels) decoded once to the ten speakers of 7.1.2. Keyframes, room geometry and '
+        deliverables=['stereo', 'immersive_7_1'],
+        notes='the sheet records intent; the presets execute it. The bus is fifth order (36 channels) decoded once to the eight speakers of 7.1 (the heights of the immersive plan fold onto the ear-level ring there and stay overhead on the headphone master). Keyframes, room geometry and '
               'materials are in presets/spaces and presets/sfx; bass and drums are on the horizontal plane (no pinna cue at low frequency).'),
     expression=dict(
         sonic_picture='The first ten seconds: the hook on the horns over a driving low pulse, a big V8 engine behind and the road hissing under the car, a Mustang alongside on the right; '

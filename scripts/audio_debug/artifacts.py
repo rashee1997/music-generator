@@ -147,7 +147,8 @@ class Case:
         master, stale = None, False
         declared = ((ci.get('deliverables') or {}).get('master_wav') if isinstance(ci, dict) else None)
         candidates = ([declared] if declared and os.path.isfile(declared) else
-                      [os.path.join(project, 'out', n) for n in ('master.wav', '_draft_master.wav')])
+                      [os.path.join(project, 'out', n) for n in (__import__('render_targets').project_slug(project) + '.wav', 'master.wav',
+                                                              '_draft_' + __import__('render_targets').project_slug(project) + '.wav', '_draft_master.wav')])
         for p in candidates:
             if os.path.isfile(p):
                 master = p
