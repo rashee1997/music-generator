@@ -522,8 +522,8 @@
         {
           "section": "the_race",
           "start_s": 0.0,
-          "measured_db": -23.04,
-          "expected_db": -23.04,
+          "measured_db": -22.81,
+          "expected_db": -22.81,
           "dyn": 0.9
         }
       ]

@@ -1,4 +1,4 @@
-file: /home/user/music-generator/projects/night_pursuit_cinematic/out/_draft_master.wav
+file: /home/user/music-generator/projects/night_pursuit_cinematic/out/_draft_night_pursuit_cinematic.wav
 duration_s: 193.978
 sample_rate: 44100
 sections:
