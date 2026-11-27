@@ -12,7 +12,7 @@
     "vel_sigma": 4.0
   },
   "spatial": {
-    "azimuth": -88,
+    "azimuth": -108,
     "elevation": -2,
     "distance": 2.6,
     "space": "western_ghats_sunrise_room",

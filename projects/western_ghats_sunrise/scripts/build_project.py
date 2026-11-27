@@ -60,8 +60,9 @@ def write(path, doc):
 
 
 # ------------------------------------------------------------------ instrument presets
-STAGE = dict(bansuri=(0, 6, 1.5), sitar=(-28, 0, 1.9), violins_counter=(28, 12, 2.4), violas=(-56, 0, 2.6), celli=(56, 0, 2.8),
-             violins_long=(122, 22, 4.0), tanpura=(-88, -2, 2.6), santoor=(86, 30, 2.8), tabla=(-150, 0, 2.4), pipes=(172, 5, 7.5))
+STAGE = dict(bansuri=(0, 6, 1.5), sitar=(-28, 0, 1.9), violins_counter=(52, 12, 2.4), violas=(-88, 0, 2.6), celli=(88, 0, 2.8),
+             violins_long=(150, 22, 4.0), tanpura=(-108, -2, 2.6), santoor=(118, 30, 2.8), tabla=(-150, 0, 2.4), pipes=(172, 5, 7.5))
+# the sections sit on the sides and behind (measured: imm.surround_ratio read -9.9 and then -10.1 dB against a -9.0 window with the strings at +-56 deg)
 
 
 def vel_points(ref, soft=(0.25, 0.50), loud=(4.0, 8.0)):
@@ -148,7 +149,7 @@ def vocal_choir():
         d = json.load(fh)
     d.update(name='ghats_choir', character='A choir of sections that opens with the sun: a breathy high oo at pp, women and men in octaves on the long vowels, and an aa tutti with the singer\'s formant at the crest; the same voices never sing at every dynamic.',
              category='choir_layered', role='pad', gain_db=-6.5, reverb=0.4, sources=list(SRC) + ['scripts/vocal_engine/layers.py; references/data/presets/vocals/vocal_choir_cinematic.json'],
-             spatial=dict(azimuth=-125, elevation=24, distance=4.5, space=f'{SLUG}_room', binaural=True, kind='spot'),
+             spatial=dict(azimuth=-140, elevation=24, distance=4.5, space=f'{SLUG}_room', binaural=True, kind='spot'),
              vowel='u', expression='hopeful')
     d['ensemble']['voices'] = 12
     d['peak_trim'] = 0.85

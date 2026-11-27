@@ -175,7 +175,7 @@
   "gain_db": -6.5,
   "reverb": 0.4,
   "spatial": {
-    "azimuth": -125,
+    "azimuth": -140,
     "elevation": 24,
     "distance": 4.5,
     "space": "western_ghats_sunrise_room",
