@@ -1,0 +1,311 @@
+{
+  "rows": [
+    {
+      "stem": "ambience",
+      "table": [
+        {
+          "section": "mist",
+          "start_s": 0.0,
+          "measured_db": -36.37,
+          "expected_db": -47.77,
+          "dyn": 0.12
+        },
+        {
+          "section": "first_light",
+          "start_s": 13.636,
+          "measured_db": -28.01,
+          "expected_db": -37.76,
+          "dyn": 0.38
+        },
+        {
+          "section": "sunrise",
+          "start_s": 30.0,
+          "measured_db": -39.85,
+          "expected_db": -30.76,
+          "dyn": 0.85
+        },
+        {
+          "section": "morning",
+          "start_s": 49.091,
+          "measured_db": -41.64,
+          "expected_db": -38.47,
+          "dyn": 0.35
+        }
+      ]
+    },
+    {
+      "stem": "bansuri",
+      "table": [
+        {
+          "section": "mist",
+          "start_s": 0.0,
+          "measured_db": -33.58,
+          "expected_db": -40.52,
+          "dyn": 0.12
+        },
+        {
+          "section": "first_light",
+          "start_s": 13.636,
+          "measured_db": -29.97,
+          "expected_db": -30.51,
+          "dyn": 0.38
+        },
+        {
+          "section": "sunrise",
+          "start_s": 30.0,
+          "measured_db": -22.36,
+          "expected_db": -23.52,
+          "dyn": 0.85
+        },
+        {
+          "section": "morning",
+          "start_s": 49.091,
+          "measured_db": -31.75,
+          "expected_db": -31.22,
+          "dyn": 0.35
+        }
+      ]
+    },
+    {
+      "stem": "celli",
+      "table": [
+        {
+          "section": "mist",
+          "start_s": 0.0,
+          "measured_db": -30.38,
+          "expected_db": -37.22,
+          "dyn": 0.12
+        },
+        {
+          "section": "first_light",
+          "start_s": 13.636,
+          "measured_db": -28.25,
+          "expected_db": -27.21,
+          "dyn": 0.38
+        },
+        {
+          "section": "sunrise",
+          "start_s": 30.0,
+          "measured_db": -21.55,
+          "expected_db": -20.22,
+          "dyn": 0.85
+        },
+        {
+          "section": "morning",
+          "start_s": 49.091,
+          "measured_db": -26.87,
+          "expected_db": -27.92,
+          "dyn": 0.35
+        }
+      ]
+    },
+    {
+      "stem": "choir",
+      "table": [
+        {
+          "section": "first_light",
+          "start_s": 13.636,
+          "measured_db": -31.16,
+          "expected_db": -25.85,
+          "dyn": 0.38
+        },
+        {
+          "section": "sunrise",
+          "start_s": 30.0,
+          "measured_db": -23.36,
+          "expected_db": -18.86,
+          "dyn": 0.85
+        },
+        {
+          "section": "morning",
+          "start_s": 49.091,
+          "measured_db": -25.85,
+          "expected_db": -26.56,
+          "dyn": 0.35
+        }
+      ]
+    },
+    {
+      "stem": "santoor",
+      "table": [
+        {
+          "section": "first_light",
+          "start_s": 13.636,
+          "measured_db": -53.54,
+          "expected_db": -51.62,
+          "dyn": 0.38
+        },
+        {
+          "section": "morning",
+          "start_s": 49.091,
+          "measured_db": -50.4,
+          "expected_db": -52.33,
+          "dyn": 0.35
+        }
+      ]
+    },
+    {
+      "stem": "sitar",
+      "table": [
+        {
+          "section": "first_light",
+          "start_s": 13.636,
+          "measured_db": -39.45,
+          "expected_db": -39.11,
+          "dyn": 0.38
+        },
+        {
+          "section": "sunrise",
+          "start_s": 30.0,
+          "measured_db": -29.68,
+          "expected_db": -32.12,
+          "dyn": 0.85
+        },
+        {
+          "section": "morning",
+          "start_s": 49.091,
+          "measured_db": -39.11,
+          "expected_db": -39.82,
+          "dyn": 0.35
+        }
+      ]
+    },
+    {
+      "stem": "tabla",
+      "table": [
+        {
+          "section": "first_light",
+          "start_s": 13.636,
+          "measured_db": -28.62,
+          "expected_db": -34.38,
+          "dyn": 0.38
+        },
+        {
+          "section": "sunrise",
+          "start_s": 30.0,
+          "measured_db": -35.28,
+          "expected_db": -27.39,
+          "dyn": 0.85
+        },
+        {
+          "section": "morning",
+          "start_s": 49.091,
+          "measured_db": -34.38,
+          "expected_db": -35.1,
+          "dyn": 0.35
+        }
+      ]
+    },
+    {
+      "stem": "tanpura",
+      "table": [
+        {
+          "section": "mist",
+          "start_s": 0.0,
+          "measured_db": -34.86,
+          "expected_db": -43.45,
+          "dyn": 0.12
+        },
+        {
+          "section": "first_light",
+          "start_s": 13.636,
+          "measured_db": -33.88,
+          "expected_db": -33.44,
+          "dyn": 0.38
+        },
+        {
+          "section": "sunrise",
+          "start_s": 30.0,
+          "measured_db": -32.07,
+          "expected_db": -26.44,
+          "dyn": 0.85
+        },
+        {
+          "section": "morning",
+          "start_s": 49.091,
+          "measured_db": -33.69,
+          "expected_db": -34.15,
+          "dyn": 0.35
+        }
+      ]
+    },
+    {
+      "stem": "violas",
+      "table": [
+        {
+          "section": "first_light",
+          "start_s": 13.636,
+          "measured_db": -42.02,
+          "expected_db": -39.92,
+          "dyn": 0.38
+        },
+        {
+          "section": "sunrise",
+          "start_s": 30.0,
+          "measured_db": -29.45,
+          "expected_db": -32.93,
+          "dyn": 0.85
+        }
+      ]
+    },
+    {
+      "stem": "violins_counter",
+      "table": [
+        {
+          "section": "first_light",
+          "start_s": 13.636,
+          "measured_db": -31.65,
+          "expected_db": -31.65,
+          "dyn": 0.38
+        },
+        {
+          "section": "sunrise",
+          "start_s": 30.0,
+          "measured_db": -27.41,
+          "expected_db": -24.65,
+          "dyn": 0.85
+        },
+        {
+          "section": "morning",
+          "start_s": 49.091,
+          "measured_db": -35.07,
+          "expected_db": -32.36,
+          "dyn": 0.35
+        }
+      ]
+    },
+    {
+      "stem": "violins_long",
+      "table": [
+        {
+          "section": "mist",
+          "start_s": 0.0,
+          "measured_db": -39.88,
+          "expected_db": -44.86,
+          "dyn": 0.12
+        },
+        {
+          "section": "first_light",
+          "start_s": 13.636,
+          "measured_db": -36.53,
+          "expected_db": -34.85,
+          "dyn": 0.38
+        },
+        {
+          "section": "sunrise",
+          "start_s": 30.0,
+          "measured_db": -29.47,
+          "expected_db": -27.86,
+          "dyn": 0.85
+        },
+        {
+          "section": "morning",
+          "start_s": 49.091,
+          "measured_db": -33.88,
+          "expected_db": -35.57,
+          "dyn": 0.35
+        }
+      ]
+    }
+  ]
+}

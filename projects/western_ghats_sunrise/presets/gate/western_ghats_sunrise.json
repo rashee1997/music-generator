@@ -1,0 +1,22 @@
+{
+ "name": "western_ghats_sunrise",
+ "character": "A melody-led acoustic piece with an ambience, judged by the melodic rows unchanged: a bansuri line the ear can follow over strings, a drone and light percussion; it departs from `melodic` by nothing until a render measures a reason.",
+ "flags": [],
+ "focus": {
+  "roles": [
+   "melody",
+   "lead",
+   "vocal"
+  ],
+  "label": "a line the ear can follow",
+  "reason": "this type is defined by a figure, so a piece that declares it must carry one; the same list means a lead or a vocal is checked exactly like a melody"
+ },
+ "rows": {
+  "tempo.audio": {
+   "mode": "relax",
+   "reason": "Measured on the first full render: tempo.audio read 176.2 BPM against the written 88 (2.002x; the beat tracker said 172.3). The piece carries steady eighth-note pulses (tabla, shaker, violas in 3+3+2 and the veena figure from bar 6) that the onset autocorrelation locks to; the grid itself is the written 88 BPM tempo map with no rubato. A metrical octave of the written pulse is accepted; any other tempo still fails. Measured in the last render: master 88.2 BPM.",
+   "octave_ok": 1.0
+  }
+ },
+ "extends": "melodic"
+}

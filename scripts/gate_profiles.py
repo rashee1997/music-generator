@@ -99,7 +99,7 @@ ROWS = {
     'delivery.standard': dict(meaning='the delivered file against the standard its profile declares'),
     'masking.excess': dict(meaning='the beds level over the figure per critical band (proxy, advisory)'),
     'tempo.audio': dict(meaning='measured tempo against the score/sheet', params={
-        'tol_bpm': (2.0, 1.0, 5.0), 'tol_pct': (2.0, 1.0, 5.0), 'drift_bpm': (2.0, 1.0, 5.0)}),
+        'tol_bpm': (2.0, 1.0, 5.0), 'tol_pct': (2.0, 1.0, 5.0), 'drift_bpm': (2.0, 1.0, 5.0), 'octave_ok': (0.0, 0.0, 1.0)}),
     'section.energy': dict(meaning='section level against the promised energy arc', params={
         'fail_rho': (0.5, 0.3, 0.8), 'warn_rho': (0.7, 0.5, 0.9)}),
     'channels':    dict(meaning='note started on a channel still sounding', protected=True),

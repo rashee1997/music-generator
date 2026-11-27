@@ -938,7 +938,8 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
              f'score.bpm {float(bpm_ref):g} is declared, but the score has no percussion and no isochronous part: a beat '
              'tracker cannot measure a pulse the music does not play, so the tempo is not judged')
     elif bpm_ref:
-        res = gc.check_tempo(program_sig, float(bpm_ref))
+        _tp = _gprof.resolve(score)
+        res = gc.check_tempo(program_sig, float(bpm_ref), **{k: float(_tp.param('tempo.audio', k)) for k in ('tol_bpm', 'tol_pct', 'drift_bpm', 'octave_ok')})
         if not res.get('skipped'):
             level = 'FAIL' if res.get('fail') else 'PASS'
             _row(out, level, 'tempo.audio', res['detail'])

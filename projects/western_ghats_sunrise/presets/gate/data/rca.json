@@ -1,0 +1,95 @@
+{
+ "name": "rca",
+ "findings": [
+  {
+   "row": "tempo.audio",
+   "stem": null,
+   "verdict": "unknown",
+   "cause": "no analyzer for this row yet",
+   "evidence": [
+    "measured 176.2 BPM vs 88.0 (tolerance 2.0) from the onset-envelope autocorrelation (peak 3.7x the median); beat tracker said 172.3; four-quarter drift 4.6 BPM reported, not decisive"
+   ],
+   "where": [
+    "measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause"
+   ],
+   "tolerance": "bounded relaxation exists: tol_bpm 2.0 (range 1.0..5.0), tol_pct 2.0 (range 1.0..5.0), drift_bpm 2.0 (range 1.0..5.0)"
+  },
+  {
+   "row": "channels",
+   "stem": null,
+   "verdict": "unknown",
+   "cause": "no analyzer for this row yet",
+   "evidence": [
+    "3 note(s) started on a channel that was still sounding: a microtone or glide moved a note already playing. Split the track or shorten notes"
+   ],
+   "where": [
+    "measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause"
+   ],
+   "tolerance": "protected: no profile or score can change it, so the audio is the only fix"
+  },
+  {
+   "row": "mix.band_fold",
+   "stem": "violas",
+   "verdict": "unknown",
+   "cause": "no analyzer for this row yet",
+   "evidence": [
+    "1 band(s) lose more than 3.5 dB in mono, worst 442-519 Hz at 3.6 dB; stem \"violas\" is the most out of phase there: narrow that stem below the band, or lower its widening"
+   ],
+   "where": [
+    "measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause"
+   ],
+   "tolerance": "bounded relaxation exists: max_db 3.5 (range 2.0..9.0), floor_db 30.0 (range 12.0..60.0)"
+  },
+  {
+   "row": "ambient_bed",
+   "stem": "ambience",
+   "verdict": "fault",
+   "cause": "the bed sits at the silence floor of the mix",
+   "evidence": [
+    "ambient stem \"ambience\" drops out to silence at 15.0s",
+    "bed level -60.4 dB (median over its body); the gate's floor is -64.0 dB (the mix level minus 38 dB, never above -58)"
+   ],
+   "where": [
+    "the mix preset: level_by_role.environment, or the bed preset gain (a 3-6 dB lift clears a bed within 3 dB of the floor)"
+   ],
+   "tolerance": "bounded relaxation exists: pump_db 3.8 (range 3.0..6.0)"
+  },
+  {
+   "row": "ambient_bed",
+   "stem": null,
+   "verdict": "unknown",
+   "cause": "no processed bed",
+   "evidence": [
+    "rapid gain pumping on \"ambience\" (15.7 dB jump at 14.5s, limit 3.9). Smooth ducker release or use sigmoid crossfade"
+   ],
+   "where": [],
+   "tolerance": "bounded relaxation exists: pump_db 3.8 (range 3.0..6.0)"
+  },
+  {
+   "row": "spectral.equal_loudness",
+   "stem": null,
+   "verdict": "unknown",
+   "cause": "no analyzer for this row yet",
+   "evidence": [
+    "\"violins_counter\" (counter) puts 11.2 dB more ear-weighted level in 2500-5000 Hz than its 500-2500 Hz mids (warn 6, fail 10). Trim about 3.0 dB at 3536 Hz in the mix preset: \"inst_eq\": {\"violins_counter\": [{\"type\": \"peak\", \"f\": 3536, \"gain\": -3.0, \"q\": 1.0}]}"
+   ],
+   "where": [
+    "measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause"
+   ],
+   "tolerance": "bounded relaxation exists: warn_db 6.0 (range 3.0..12.0), fail_db 10.0 (range 6.0..20.0), band_lo_hz 2500.0 (range 2000.0..3000.0), band_hi_hz 5000.0 (range 4000.0..6000.0), max_trim_db 3.0 (range 1.0..6.0)"
+  },
+  {
+   "row": "env.score_pocket",
+   "stem": null,
+   "verdict": "unknown",
+   "cause": "no analyzer for this row yet",
+   "evidence": [
+    "\"ambience\": 0 of 2 foreground calls (0 %) sit where the score occupies their band under 0.35 (want 85 %). Raise ecology.score.pocket_threshold or margin_db, lower bouts_per_min, or move the niche band"
+   ],
+   "where": [
+    "measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause"
+   ],
+   "tolerance": "bounded relaxation exists: min_in_pocket 0.85 (range 0.5..1.0), fail_in_pocket 0.6 (range 0.2..0.95)"
+  }
+ ]
+}

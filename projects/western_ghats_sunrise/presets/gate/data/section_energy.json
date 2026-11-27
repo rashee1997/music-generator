@@ -1,0 +1,43 @@
+{
+  "row": "section.energy",
+  "stage": "mix",
+  "stem": null,
+  "level": "PASS",
+  "value": 1.0,
+  "unit": "rho",
+  "threshold": 0.5,
+  "margin": 0.5,
+  "worst_times_s": [],
+  "calibrated": false,
+  "detail": "Spearman rho 1.00 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
+  "table": [
+    {
+      "name": "mist",
+      "start_s": 0.0,
+      "end_s": 13.636,
+      "energy": 0.12,
+      "level_db": -36.35304121564039
+    },
+    {
+      "name": "first_light",
+      "start_s": 13.636,
+      "end_s": 30.0,
+      "energy": 0.38,
+      "level_db": -28.897661827402526
+    },
+    {
+      "name": "sunrise",
+      "start_s": 30.0,
+      "end_s": 49.091,
+      "energy": 0.85,
+      "level_db": -17.696968754759297
+    },
+    {
+      "name": "morning",
+      "start_s": 49.091,
+      "end_s": 60.0,
+      "energy": 0.35,
+      "level_db": -33.50154610294864
+    }
+  ]
+}

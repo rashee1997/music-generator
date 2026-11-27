@@ -1,0 +1,283 @@
+{
+ "stamp": "20261127T065009",
+ "project": "western_ghats_sunrise",
+ "level": "FAIL",
+ "sources": {
+  "score": "/home/user/music-generator/projects/western_ghats_sunrise/scores/western_ghats_sunrise_score.json",
+  "gate_data": [
+   "level.json",
+   "rca.json",
+   "rows.json",
+   "section_energy.json",
+   "spectrogram.json",
+   "stem_gate.json",
+   "stem_levels.json",
+   "stereo.json",
+   "waveform.json"
+  ],
+  "stems": "11 processed stems from .cache/mix",
+  "master": "out/_draft_western_ghats_sunrise.wav",
+  "verdict": "2026-11-27T06:42:19Z"
+ },
+ "binding": [
+  {
+   "row": "clicks",
+   "stem": null,
+   "level": "FAIL",
+   "value": 2.0,
+   "threshold": 0.0,
+   "unit": "events",
+   "safety": -2.0,
+   "detail": "2 clustered impulse event(s) (MAD), 1 LPC frame(s); 105 event(s) rejected as a dense burst, 60 as a steep attack; max cluster span 1.406 ms"
+  }
+ ],
+ "advisory": [
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  }
+ ],
+ "domains": {
+  "run": [
+   "master"
+  ],
+  "skipped": {
+   "stems": 8
+  }
+ },
+ "model": {
+  "first_order": true,
+  "rows": 8,
+  "levers": [
+   {
+    "id": "render.oversample",
+    "domain": "master",
+    "kind": "oversample",
+    "stem": null,
+    "current": 1.0,
+    "lo": 1.0,
+    "hi": 8.0,
+    "step": 1.0,
+    "unit": "x",
+    "text": "master oversampling before the limiter"
+   },
+   {
+    "id": "hf.tabla",
+    "domain": "master",
+    "kind": "hf_shelf",
+    "stem": "tabla",
+    "current": 0.0,
+    "lo": -12.0,
+    "hi": 0.0,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "tabla high shelf at 5500 Hz: inst_eq[\"ghats_tabla\"]"
+   }
+  ]
+ },
+ "plan": {
+  "status": "replay (unproven)",
+  "worst_safety": null,
+  "deltas": {
+   "hf.tabla": -3.0
+  },
+  "clearing": {
+   "hf.tabla": -3.0
+  },
+  "predicted": {
+   "clicks::-": [
+    -2.0,
+    -2.0
+   ],
+   "loudness::-": [
+    0.02,
+    0.02
+   ],
+   "true peak::-": [
+    0.002048895454307124,
+    0.002048895454307124
+   ],
+   "dropout::-": [
+    1.0,
+    1.0
+   ],
+   "cut.hard::-": [
+    2.0,
+    2.0
+   ],
+   "end.abrupt::-": [
+    0.02,
+    0.02
+   ],
+   "clipping::-": [
+    0.0,
+    0.0
+   ],
+   "master.dc::-": [
+    0.09985587264356409,
+    0.09985587264356409
+   ]
+  },
+  "conflicts": [],
+  "closed": [],
+  "burned": [],
+  "notes": [
+   "best candidate clears the modelled row with 1 dB of margin but the model's own error is 6.0 dB: this is a direction, not a proof, and the next render is the test (it will be recorded against this prediction)"
+  ],
+  "experiments": [
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 0,
+    "baseline": 2,
+    "margin_db": 1.0,
+    "unverified": false,
+    "resolution_db": 6.01,
+    "moves": {
+     "hf.tabla": -3.0
+    },
+    "times": [],
+    "verdict": "clears",
+    "robust": 0.0,
+    "proved": false
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 0,
+    "baseline": 2,
+    "margin_db": 0.0,
+    "unverified": false,
+    "resolution_db": 6.01,
+    "moves": {
+     "hf.tabla": -9.0
+    },
+    "times": [],
+    "verdict": "clears",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 6.01,
+    "moves": {
+     "hf.tabla": -6.0
+    },
+    "times": [
+     30.356
+    ],
+    "verdict": "better",
+    "robust": 1.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 1,
+    "baseline": 2,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 6.01,
+    "moves": {
+     "hf.tabla": -12.0
+    },
+    "times": [
+     42.293
+    ],
+    "verdict": "better",
+    "robust": 1.0
+   }
+  ]
+ },
+ "forensics": [
+  {
+   "t": 33.0617,
+   "step": 0.03018,
+   "threshold": 0.02,
+   "over_threshold_db": 3.57,
+   "z": 26.4,
+   "kind": "single source",
+   "trusted": true,
+   "fit_ratio": 0.79,
+   "owners": [
+    {
+     "stem": "tabla",
+     "share": 0.987,
+     "signed": 0.02398
+    }
+   ],
+   "raw_step_fs": 0.0411,
+   "notes": []
+  },
+  {
+   "t": 33.7358,
+   "step": 0.0248,
+   "threshold": 0.02,
+   "over_threshold_db": 1.87,
+   "z": 21.7,
+   "kind": "single source",
+   "trusted": true,
+   "fit_ratio": 0.98,
+   "owners": [
+    {
+     "stem": "tabla",
+     "share": 0.978,
+     "signed": -0.02436
+    }
+   ],
+   "raw_step_fs": 0.0394,
+   "notes": []
+  }
+ ],
+ "notes": [
+  "clicks: sham replay (no change) reproduces the gate's 2 event(s) exactly (decomposition R^2 0.758); counterfactuals below are priced on a model that passes its own test",
+  "clicks: model resolution 6.0 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
+  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.76); gains ambience 1.44, bansuri 1.37, celli 1.36, choir 0.44, santoor 0.54, sitar 2.03, tabla 1.32, tanpura 1.28, violas 1.21, violins_counter 0.85, violins_long 0.44",
+  "event 33.062s [single source] tabla 99%; step 0.0302 vs threshold 0.0200 (+3.6 dB over)",
+  "event 33.736s [single source] tabla 98%; step 0.0248 vs threshold 0.0200 (+1.9 dB over)",
+  "clicks: cutting the band of tabla is NOT monotone (replay: -3 dB -> 0 event(s), -9 dB -> 0 event(s), -6 dB -> 1 event(s), -12 dB -> 1 event(s) against 2 now): its highs set the floor the threshold is taken against, so the lever is priced at zero and the cut belongs on the part that makes the transient"
+ ]
+}

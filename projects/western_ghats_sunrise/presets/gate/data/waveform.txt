@@ -1,0 +1,18 @@
+file: /home/user/music-generator/projects/western_ghats_sunrise/out/_draft_western_ghats_sunrise.wav
+duration_s: 62.107
+sample_rate: 44100
+sections:
+  mist: 0.00-13.64 s, dyn 0.12
+  first_light: 13.64-30.00 s, dyn 0.38
+  sunrise: 30.00-49.09 s, dyn 0.85
+  morning: 49.09-60.00 s, dyn 0.35
+flagged times: 9
+  0.035s stem.tick [PASS] ambience
+  0.035s stem.tick [PASS] choir
+  0.035s stem.tick [PASS] tanpura
+  5.457s stem.tick [PASS] violins_long
+  13.653s stem.tick [PASS] sitar
+  19.447s stem.tick [PASS] santoor
+  29.989s stem.tick [PASS] violas
+  33.059s clicks [FAIL] master
+  33.733s clicks [FAIL] master

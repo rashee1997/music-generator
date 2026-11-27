@@ -641,7 +641,7 @@ def tempo_from_onsets(y, sr, hop=512, lo_bpm=50.0, hi_bpm=220.0):
     return bpm, strength
 
 
-def check_tempo(sig, bpm_ref, tol_bpm=2.0, tol_pct=2.0, drift_bpm=2.0):
+def check_tempo(sig, bpm_ref, tol_bpm=2.0, tol_pct=2.0, drift_bpm=2.0, octave_ok=0.0):
     """Tempo from the onset periodicity against the score/sheet, plus drift over four quarters."""
     if librosa is None or not bpm_ref:
         return _result(0.0, tol_bpm, 'BPM', [], 'librosa missing or no reference tempo', skipped=True)
@@ -682,7 +682,13 @@ def check_tempo(sig, bpm_ref, tol_bpm=2.0, tol_pct=2.0, drift_bpm=2.0):
     tol = max(float(tol_bpm), float(bpm_ref) * float(tol_pct) / 100.0)
     # Drift is reported, not decisive: quarter-length estimates are noisy even on a metronomic render.
     fail = abs(bpm - float(bpm_ref)) > tol
-    detail = (f'measured {bpm:.1f} BPM vs {float(bpm_ref):.1f} (tolerance {tol:.1f}) from the onset-envelope '
+    octave = None
+    if fail and float(octave_ok) >= 0.5:          # a project's own measured relaxation: the tracker locked to the double or the half of the written pulse
+        for mult in (2.0, 0.5):
+            if abs(bpm - float(bpm_ref) * mult) <= tol * mult:
+                fail, octave = False, mult
+                break
+    detail = ((f'the measured tempo is {octave:g}x the written one (metrical octave, accepted by this piece\'s gate profile); ' if octave else '') + f'measured {bpm:.1f} BPM vs {float(bpm_ref):.1f} (tolerance {tol:.1f}) from the onset-envelope '
               f'autocorrelation (peak {strength:.1f}x the median); beat tracker said {beat_bpm:.1f}; '
               f'four-quarter drift {drift:.1f} BPM reported, not decisive')
     return _result(abs(bpm - float(bpm_ref)), tol, 'BPM', [], detail,

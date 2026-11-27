@@ -1,0 +1,6 @@
+rho: 1.000
+section,start_s,end_s,promised,level_db
+mist,0.00,13.64,0.120,-36.35
+first_light,13.64,30.00,0.380,-28.90
+sunrise,30.00,49.09,0.850,-17.70
+morning,49.09,60.00,0.350,-33.50

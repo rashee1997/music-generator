@@ -1,0 +1,335 @@
+{
+  "title": "Western Ghats Sunrise",
+  "project": "Western Ghats Sunrise (a 60 s cue, fusion of Carnatic and orchestral writing)",
+  "version": 1,
+  "medium": "audio",
+  "brief": "A 60 second A.R. Rahman style cultural mix with his signature; the ambience of a sunrise in the Western Ghats.",
+  "audience": "a listener on headphones or speakers, a travel-film or album-opener context; they know the sound of Indian film fusion",
+  "purpose": "a one-minute fusion cue: a bansuri line in the Mohanam pentatonic over a lush string bed, tanpura, tabla and a layered choir, set in a living Western Ghats dawn, rising to the sun clearing the ridge and landing softly",
+  "point_of_view": "an observer on the ridge: the world wakes around the music, and the music gives it a voice",
+  "job": [
+    "open on the bansuri alone in the mist",
+    "turn the harmony up a whole tone when the sun clears the ridge and bring it home to the tonic",
+    "let the ambience open out as the light rises",
+    "end with Sa alone and the birds"
+  ],
+  "story": "Mist, then first light, then the sun on the ridge, then a calm morning: one breath that crests at 36 s.",
+  "duration_s": 60.0,
+  "in_point_s": 0.0,
+  "out_point_s": 60.0,
+  "ending": "tail_out",
+  "feel": [
+    "hopeful",
+    "warm",
+    "luminous",
+    "rooted"
+  ],
+  "avoid_feel": [
+    "synthetic",
+    "robotic",
+    "aggressive",
+    "new-age cliche",
+    "busy"
+  ],
+  "sections": [
+    {
+      "name": "mist",
+      "start_s": 0.0,
+      "end_s": 13.6,
+      "energy": 0.12,
+      "action": "mist over the valley, a stream below, the first bird",
+      "role": "place",
+      "music": "bansuri alone over the tanpura; the first strings arrive as a bare fifth at the end; no pulse"
+    },
+    {
+      "name": "first_light",
+      "start_s": 13.6,
+      "end_s": 30.0,
+      "energy": 0.38,
+      "action": "the light finds the ridge",
+      "role": "establish",
+      "music": "the hook on the bansuri, answered by the violins a third below; light tabla; veena plucks; pp choir enters at the end"
+    },
+    {
+      "name": "sunrise",
+      "start_s": 30.0,
+      "end_s": 49.1,
+      "energy": 0.85,
+      "action": "the sun clears the ridge",
+      "role": "peak",
+      "music": "a whole-tone key raise; the hook an octave up; violas in 3+3+2; tabla and daf; the choir builds from pp to ff"
+    },
+    {
+      "name": "morning",
+      "start_s": 49.1,
+      "end_s": 60.0,
+      "energy": 0.35,
+      "action": "full daylight, birds everywhere",
+      "role": "release",
+      "music": "back in the home key: the hook once, softly, then Sa alone; the choir returns to pp; the birds remain"
+    }
+  ],
+  "motifs": [
+    {
+      "name": "the hook",
+      "first_at_s": 13.6,
+      "shape": "D E F# then a leap of a fifth to A and a step back (Sa Re Ga, leap to Pa), then an answer E D E D",
+      "returns": "a third below on the violins at 19 s, an octave higher at 27 s and in the new key at 30 s, once softly in D at 49 s, then Sa alone at 55 s"
+    }
+  ],
+  "instruments": [
+    "bansuri",
+    "strings",
+    "celli",
+    "sitar",
+    "santoor",
+    "tanpura",
+    "tabla",
+    "choir",
+    "environment"
+  ],
+  "avoid_sounds": [
+    "synth pad",
+    "drum kit",
+    "electric guitar",
+    "reverb wash"
+  ],
+  "pulse": "none for 14 s, then a light tabla, then a 3+3+2 eighth-note pulse from 30 s",
+  "tempo_bpm": [
+    88,
+    88
+  ],
+  "key": "D",
+  "mode": "major",
+  "energy": 0.5,
+  "space": "western_ghats_sunrise_room",
+  "hits_at": [
+    30.0
+  ],
+  "hits": [
+    {
+      "t": 30.0,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "a low daf stroke and the first chord of the new key as the sun clears the ridge",
+      "why": "the harmonic turn of the piece; the strings keep sounding, so it is a musical hit, not a cut"
+    }
+  ],
+  "mix_intent": {
+    "hero": "bansuri",
+    "support": [
+      "violins_counter",
+      "violins_long",
+      "celli"
+    ],
+    "sits_under": [],
+    "must_hear": [
+      "the bansuri in the first 2 s",
+      "the choir growing from 30 s",
+      "the thrush and the stream from the start"
+    ],
+    "leave_free_hz": [
+      500.0,
+      3000.0
+    ]
+  },
+  "loudness_lufs": -16.0,
+  "true_peak_max": -1.5,
+  "delivery": {
+    "format": "wav",
+    "sample_rate": 44100,
+    "bit_depth": 24,
+    "stage": "streaming",
+    "output_targets": [
+      "stereo"
+    ],
+    "played_on": "headphones and speakers (stereo only; an 8-channel version was not asked for)"
+  },
+  "references": [
+    "in words, not a track: a solo bansuri over strings and a drone, the layered warmth of an Indian film fusion cue, with a living forest under it"
+  ],
+  "spatial_staging": {
+    "bansuri": {
+      "azimuth": 0.0,
+      "elevation": 6.0,
+      "distance": 1.5,
+      "space": "western_ghats_sunrise_room"
+    },
+    "sitar": {
+      "azimuth": -28.0,
+      "elevation": 0.0,
+      "distance": 1.9,
+      "space": "western_ghats_sunrise_room"
+    },
+    "violins_counter": {
+      "azimuth": 28.0,
+      "elevation": 12.0,
+      "distance": 2.4,
+      "space": "western_ghats_sunrise_room"
+    },
+    "violas": {
+      "azimuth": -56.0,
+      "elevation": 0.0,
+      "distance": 2.6,
+      "space": "western_ghats_sunrise_room"
+    },
+    "celli": {
+      "azimuth": 56.0,
+      "elevation": 0.0,
+      "distance": 2.8,
+      "space": "western_ghats_sunrise_room"
+    },
+    "violins_long": {
+      "azimuth": 122.0,
+      "elevation": 22.0,
+      "distance": 4.0,
+      "space": "western_ghats_sunrise_room"
+    },
+    "tanpura": {
+      "azimuth": -88.0,
+      "elevation": -2.0,
+      "distance": 2.6,
+      "space": "western_ghats_sunrise_room"
+    },
+    "santoor": {
+      "azimuth": 86.0,
+      "elevation": 30.0,
+      "distance": 2.8,
+      "space": "western_ghats_sunrise_room"
+    },
+    "tabla": {
+      "azimuth": 0.0,
+      "elevation": -22.0,
+      "distance": 2.2,
+      "space": "western_ghats_sunrise_room"
+    }
+  },
+  "immersive": {
+    "enabled": false,
+    "why": "stereo delivery only"
+  },
+  "expression": {
+    "sonic_picture": "The first ten seconds are a bansuri alone in a wide-open valley over a soft tanpura, a stream and one bird; by the middle the strings sing the hook back to it and a light tabla enters; the last note is Sa alone with the morning birds.",
+    "performer": "The flute breathes in the phrase gaps and the long notes start pure and warm up; the strings lean on beat one and ease the bow off before each change; the violins answer in the flute's rests; the choir is people in sections who join as the sound grows.",
+    "producer_moves": "The key rises a whole tone as the sun clears the ridge and comes home; the tutti choir enters only above forte; the ambience opens out over the second half; the mix carries section loudness from the plan.",
+    "anti_generic": "The generic version is a pad, a flute loop and a drum loop on a fixed key; what stops it is a theme with a leap on the weak beat, a harmonic turn and return, and a choir that changes make-up with its dynamic.",
+    "cues": [
+      {
+        "section": "mist",
+        "arousal": "low",
+        "mode_register": "major pentatonic, mid-high flute",
+        "tempo_trend": "free-feeling, no pulse",
+        "dynamics": "pp rising to mp",
+        "articulation": "legato with slides",
+        "timbre": "breathy, soft attack"
+      },
+      {
+        "section": "first_light",
+        "arousal": "low-medium",
+        "mode_register": "same, strings below",
+        "tempo_trend": "steady 88",
+        "dynamics": "mp rising to mf",
+        "articulation": "legato, plucked answers",
+        "timbre": "warm"
+      },
+      {
+        "section": "sunrise",
+        "arousal": "high",
+        "mode_register": "up a whole tone, octave up",
+        "tempo_trend": "steady, 3+3+2 pulse",
+        "dynamics": "f to ff",
+        "articulation": "driving eighths, held choir",
+        "timbre": "bright, open vowels"
+      },
+      {
+        "section": "morning",
+        "arousal": "low",
+        "mode_register": "home key, mid",
+        "tempo_trend": "settling",
+        "dynamics": "mp falling to pp",
+        "articulation": "long tails",
+        "timbre": "warm, thin"
+      }
+    ],
+    "theme": {
+      "contour": "arch: a step-wise rise, a leap of a fifth, and a step back",
+      "interval_character": "steps with one leap of a fifth (Sa to Pa)",
+      "rhythm_cell": "long, short, short, long-short",
+      "why_memorable": "the leap lands on the long note and returns by steps; the answer repeats the first notes",
+      "variation_plan": "a third below on the violins, an octave up with a faster run in the new key, once softly in the home key, alone on Sa at the end"
+    }
+  },
+  "focus": "melody",
+  "intent": {
+    "emotions": [
+      "hopeful",
+      "wonder"
+    ],
+    "registers": [
+      "natural",
+      "cinematic"
+    ],
+    "scenes": [
+      "establish",
+      "arrival"
+    ],
+    "tensions": [
+      "rising_line"
+    ],
+    "avoid": [
+      "four_on_the_floor"
+    ]
+  },
+  "piece_type": "western_ghats_sunrise",
+  "gate_reason": "A melody-led acoustic piece: the melodic rows judge it unchanged; nothing is relaxed in advance.",
+  "video": {
+    "enabled": false,
+    "source": null,
+    "in_s": 0.0,
+    "out_s": null,
+    "fps": null,
+    "duration_s": null,
+    "cuts": [],
+    "cut_source": null,
+    "motion_hits": 0,
+    "cut_sync": {
+      "early_ms": 45,
+      "late_ms": 125
+    },
+    "dialogue": {
+      "present": false,
+      "duck_db": -9.0,
+      "snr_min_db": 15.0
+    },
+    "master_profile": null,
+    "deliverable": null,
+    "preset": "default",
+    "notes": "music-only sheet: leave enabled false. For a cue written against a cut, scripts/video_score.py fills this block from the picture (cuts, fps, sync windows, dialogue policy, delivery profile, mux target) and writes the hits with their kind; the music still follows every rule in the rest of this sheet."
+  },
+  "notes": "Mohanam pentatonic over raga-safe chords; Rahman overlay: lush strings, a violin answer, a layered choir, layered production.",
+  "harmony_plan": [
+    {
+      "section": "mist",
+      "root": "D",
+      "pedal": true,
+      "why": "the dawn holds one note: Sa and Pa on the tanpura"
+    },
+    {
+      "section": "first_light",
+      "move": "the bass moves D, Bm, D, Asus2 under the hook",
+      "counter_hook": "violins answer a third below in the flute rests"
+    },
+    {
+      "section": "sunrise",
+      "key": "raise a whole tone to E",
+      "move": "E(add9), C#m, E(add9), Bsus2 over the same pulse",
+      "counter_hook": "violins carry the hook in thirds above the flute's run"
+    },
+    {
+      "section": "morning",
+      "key": "return to D",
+      "move": "D(add9) then Asus2, ending on Sa",
+      "counter_hook": "the flute alone, the strings thin out"
+    }
+  ]
+}
