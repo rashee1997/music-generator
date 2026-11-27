@@ -544,10 +544,8 @@ def bass_guitar():
         if p < 28:
             p += 12
         v = 0.5 if bar < 10 else (0.6 if bar >= 22 else 0.72)
-        if bar < 22:                                           # each note runs into the next onset (stem.dropout measured 60 ms holes between short plucks)
-            s += [n(bar, 0.0, 1.6, p, v + 0.06), n(bar, 1.5, 1.1, p, v), n(bar, 2.5, 1.1, p + 7 if r == 0 else p, v - 0.06), n(bar, 3.5, 0.6, p, v - 0.08)]
-        else:                                                  # the morning: two plucks a bar, the last one ends before the file does (stem.dropout and stem.edge, measured)
-            s += [n(bar, 0.0, 2.6, p, v + 0.06), n(bar, 2.5, 1.2 if bar < 26 else 0.9, p, v - 0.04)]
+        last = 0.35 if bar == 26 else 0.6                       # each note runs into the next onset (stem.dropout measured holes between short plucks and under decaying long notes); the last one ends before the file does
+        s += [n(bar, 0.0, 1.6, p, v + 0.06), n(bar, 1.5, 1.1, p, v), n(bar, 2.5, 1.1, p + 7 if r == 0 else p, v - 0.06), n(bar, 3.5, last, p, v - 0.08)]
     return s
 
 
