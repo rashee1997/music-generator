@@ -6,12 +6,12 @@
     "warns": 0,
     "rows": 104,
     "profile": "western_ghats_sunrise",
-    "total_ms": 1370.602508999582,
+    "total_ms": 112.01108499972179,
     "timings": {
       "ambience": 0.0,
-      "bansuri": 544.5735889998105,
+      "bansuri": 0.0,
       "celli": 0.0,
-      "choir": 1179.6154690000549,
+      "choir": 0.0,
       "pipes": 0.0,
       "santoor": 0.0,
       "sitar": 0.0,
@@ -1979,8 +1979,8 @@
       }
     ],
     "duration_s": 64.3112925170068,
-    "cached_stems": 10,
-    "measured_stems": 2
+    "cached_stems": 12,
+    "measured_stems": 0
   },
   "rows": [
     {
