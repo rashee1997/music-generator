@@ -271,3 +271,11 @@ class PartDimensions(unittest.TestCase):
         rows = rr.rows_from({'9_vibrato': dict(value=0.1, verdict='WARN', note='x'), '10_repetition': dict(value=0.0, verdict='PASS', note='y'),
                              '2_ensemble': dict(value=3, verdict='PASS', note='z')})
         self.assertEqual([r[1] for r in rows], ['realism.ensemble', 'realism.vibrato', 'realism.repetition'])
+
+
+class StaleStems(unittest.TestCase):
+    def test_a_stem_of_an_older_version_of_the_cue_is_not_measured(self):
+        score = dict(bpm=60, tracks=[dict(name='celli', role='ostinato', notes=[])])
+        x = np.zeros((44100 * 2, 2), np.float32)
+        r = rr.analyse(x + 0.01, 44100, stems={'celli': x, 'piano_low': x, 'sub_pulse': x}, score=score)
+        self.assertEqual(r['source']['stems'], 1)

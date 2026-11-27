@@ -146,15 +146,24 @@ for n in ('pursuit_bass_drum', 'pursuit_snare', 'pursuit_cymbals', 'pursuit_taik
 # fixed velocity zones (a note's layer follows its own velocity), a low-pass per zone (SFZ `fil_veltrack`: soft is darker) and an onset ramp per
 # zone (SFZ `ampeg_vel2attack`: soft begins more slowly). Every number is a starting value: the physical direction (a brighter spectrum at a higher
 # dynamic level, a faster attack) is in the research note, the figures are not measured on these banks.
-BOWED = [[25, 1800], [60, 3400], [100, 6500], [127, 9500]]
-BLOWN = [[25, 1500], [60, 3000], [100, 6000], [127, 9500]]
-STRUCK = [[25, 2500], [60, 4500], [127, 9500]]
-VEL = {'pursuit_violas': (BOWED, 12, [[25, 22], [127, 5]]),        'pursuit_celli': (BOWED, 12, [[25, 26], [127, 5]]), 'pursuit_violins_staccato': (BOWED, 10, [[25, 14], [127, 4]]),
-       'pursuit_violins_long': (BOWED, 8, None), 'pursuit_solo_violin': (BOWED, 12, [[25, 40], [127, 8]]),
-       'pursuit_bass_clarinet': (BLOWN, 8, [[25, 30], [127, 8]]), 'pursuit_horns': (BLOWN, 12, [[25, 35], [127, 7]]),
-       'pursuit_trombones': (BLOWN, 10, None), 'pursuit_tuba': (BLOWN, 8, [[25, 30], [127, 8]]),
-       'pursuit_choir': (BOWED, 8, [[25, 70], [127, 25]]), 'pursuit_low_swell': (BOWED, 6, [[25, 60], [127, 20]]),
-       'pursuit_basses_pizz': (STRUCK, 8, None), 'pursuit_timpani': (STRUCK, 8, None), 'pursuit_piano_theme': (STRUCK, 12, None)}
+# Cutoffs relative to each part's own brightness. The first cut used one table for every family (soft 1.8 kHz, loud 9.5 kHz): for a cello or a horn those
+# sit above where the sample carries energy, so a soft note was not darker, and the realism report read brightness against velocity at 0.0 on nine parts.
+# `ref` is the part's brightness in Hz (measured by trying values against `realism_report.velocity_response` on the dry stems; a starting value,
+# not a property of the instrument); the points are soft = a fraction of it, loud = several times it.
+def vel_points(ref, soft=(0.25, 0.50), loud=(4.0, 8.0)):
+    return [[25, round(soft[0] * ref)], [55, round(soft[1] * ref)], [100, min(16000, round(loud[0] * ref))], [127, min(16000, round(loud[1] * ref))]]
+
+
+VEL = {'pursuit_violas': (vel_points(900), 12, [[25, 22], [127, 5]]),
+       'pursuit_celli': (vel_points(1200), 12, [[25, 26], [127, 5]]),
+       'pursuit_violins_staccato': (vel_points(2600), 10, [[25, 14], [127, 4]]),
+       'pursuit_violins_long': (vel_points(2200), 8, None), 'pursuit_solo_violin': (vel_points(2200), 12, [[25, 40], [127, 8]]),
+       'pursuit_bass_clarinet': (vel_points(1200), 8, [[25, 30], [127, 8]]), 'pursuit_horns': (vel_points(900), 12, [[25, 35], [127, 7]]),
+       'pursuit_trombones': (vel_points(900), 10, None), 'pursuit_tuba': (vel_points(600), 8, [[25, 30], [127, 8]]),
+       'pursuit_choir': (vel_points(1500), 8, [[25, 70], [127, 25]]), 'pursuit_low_swell': (vel_points(500), 6, [[25, 60], [127, 20]]),
+       'pursuit_basses_pizz': (vel_points(400, soft=(0.3, 0.6), loud=(3.0, 6.0)), 8, None),
+       'pursuit_timpani': (vel_points(500, soft=(0.3, 0.6), loud=(3.0, 6.0)), 8, None),
+       'pursuit_piano_theme': (vel_points(1500, soft=(0.3, 0.6), loud=(3.0, 6.0)), 12, None)}
 # the basses carry no zones: their notes overlap by design (a quarter beat) so the pedal never opens a hole, and notes that fall in different zones
 # are rendered apart, which takes the overlap away (stem.dropout, 60 ms, measured)
 for n, (pts, zones, att) in VEL.items():

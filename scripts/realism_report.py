@@ -503,14 +503,14 @@ def repetition(stems, score=None):
 
 
 def velocity_response(stems, score=None):
-    """Per monophonic stem: does the brightness of a note's first 250 ms follow its written velocity once the pitch is taken out?"""
+    """Per monophonic stem: does the brightness of a note's attack (up to 250 ms, never into the next note) follow its written velocity once the pitch is taken out?"""
     stems = _stem_dict(stems)
     if not stems or not score:
         return dict(value=None, verdict='N/A', note='needs the dry stems by name and the score')
     tm = _tempo(score)
     tracks = _track_map(score)
     sr = int(SR_DEFAULT)
-    rows = {}
+    rows, spread = {}, {}
     for name, x in stems.items():
         tr = tracks.get(name)
         if not tr or str(tr.get('role')) in ('drum', 'fx', 'environment'):
@@ -528,10 +528,16 @@ def velocity_response(stems, score=None):
             continue
         mono = _mono(x).astype(np.float64)
         cents, pitch, v_used = [], [], []
+        nxt = np.append(np.sort(starts)[1:], np.inf)
+        gap = dict(zip(np.sort(starts).tolist(), nxt.tolist()))
         for n, t0, v in zip(notes, starts, vel):
-            a = int(t0 * sr)
-            seg = mono[a:a + int(0.25 * sr)]
-            if len(seg) < int(0.2 * sr) or float(np.sqrt(np.mean(seg ** 2))) < 1e-4:
+            # the window is the note's own attack: 250 ms at most, and never into the next note (an eighth at 140 bpm is 210 ms)
+            win = min(0.25, float(gap.get(float(t0), np.inf)) - float(t0) - 0.02)
+            if win < 0.06:
+                continue
+            a = int((t0 + 0.01) * sr)
+            seg = mono[a:a + int(win * sr)]
+            if len(seg) < int(0.05 * sr) or float(np.sqrt(np.mean(seg ** 2))) < 1e-4:
                 continue
             spec = np.abs(np.fft.rfft(seg * np.hanning(len(seg)), 8192)) ** 2
             f = np.fft.rfftfreq(8192, 1.0 / sr)
@@ -542,13 +548,16 @@ def velocity_response(stems, score=None):
             continue
         c, p, v = np.array(cents), np.array(pitch), np.array(v_used)
         resid = c - np.polyval(np.polyfit(p, c, 1), p) if np.ptp(p) > 0 else c - c.mean()
-        if np.std(resid) < 1e-6 or np.std(v) < 1e-9:
+        if np.std(v) < 1e-9:
             continue
-        rows[name] = round(float(np.corrcoef(resid, v)[0, 1]), 2)
+        # a part whose attack centroid barely moves (under 0.02 octave, about 1.4 %) has no brightness response to correlate: the correlation of
+        # numerical noise with velocity is not evidence, so it reads as 0
+        rows[name] = round(float(np.corrcoef(resid, v)[0, 1]), 2) if np.std(resid) >= 0.02 else 0.0
+        spread[name] = round(float(np.std(resid)), 3)
     if not rows:
         return dict(value=None, verdict='N/A', note='no single-line part with a spread of written velocities to compare')
     flat = sorted(n for n, r in rows.items() if r < VELOCITY_R_MIN)
-    return dict(value=round(float(np.median(list(rows.values()))), 2), parts=rows, verdict='PASS' if not flat else 'WARN',
+    return dict(value=round(float(np.median(list(rows.values()))), 2), parts=rows, centroid_spread_octaves=spread, verdict='PASS' if not flat else 'WARN',
                 note=('brightness follows velocity in every measured part' if not flat
                       else f'{len(flat)} part(s) get louder but not brighter with velocity (a one-sample layer): {", ".join(flat[:6])}'))
 
@@ -570,6 +579,9 @@ def coherence(master, sr):
 def analyse(master, sr, stems=None, score=None, project=None):
     """`stems` is {name: array} (the per-stem dimensions 9-11 need the names) or a list (dimensions 1-8 only)."""
     f = _frame_features(master, sr)
+    if isinstance(stems, dict) and score:
+        names = {t.get('name') for t in (score.get('tracks') or [])}
+        stems = {k: v for k, v in stems.items() if k in names}          # a stems folder keeps the files of earlier versions of the cue: only the score's own parts count
     plain = list(stems.values()) if isinstance(stems, dict) else stems
     out = {
         'source': dict(sr=sr, seconds=round(len(master) / float(sr), 2), stems=len(stems or [])),
