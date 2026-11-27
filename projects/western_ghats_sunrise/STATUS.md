@@ -53,3 +53,18 @@ WARN, and not fixed:
 | spatial.z_separation | fault | tanpura and violas 20 deg apart | violas -68 | cleared |
 | channel.bars (7.1) | mismatch | bar 17 FC jump -12.3 dB, the flute rests under the pipes' call | score-level exception `jump_db` 14 with the per-bar table | cleared |
 | realism stage 5a | tool bug | `ts` written as a list crashed harmonic_motion; drum names broke it | fixed in `realism_cinema.py`, two regression tests | fixed |
+
+## Direction restarted from scratch (v3), pending approval to score
+
+Why: listening feedback on the certified v01 and the v2 rewrite: not catchy or upbeat, too much ambience in the first 20-30 s, the pipes played too slowly and not like real Highland pipes, no Western kit or electric guitars. The web research is in `reports/research_western_ghats_sunrise_rahman_fusion.md` (Rahman, the Highland pipe scale and gracenotes, reels, Celtic and Indian fusion, Western Ghats dawn); the decisions are listed at its end. **The score and presets in the repository still match the older direction until the plan below is approved and written.**
+
+Craft pass (references/workflow/director-craft.md section 1), written before any note:
+1. **Hook:** a syncopated riff, D . E . F# A F# A | B A F# E F# D (two bars, a leap of a fifth on the off-beat), repeated with small changes; the reel answers it with a different gesture, eight even notes.
+2. **Arc:** mist (2 bars) -> groove (bars 3-10) -> sunrise (11-14, the sun and the band) -> piper (15-18, the reel) -> crest (19-22, up a whole tone, the pipes stopped) -> morning (23-28). Energy 0.3, 0.55, 0.8, 0.75, 1.0, 0.4.
+3. **Density map:** mist: bansuri, tanpura, tabla, kick; groove: + kit, clean guitar, bass, violins, pp choir; sunrise: + drive guitar, violas, daf, crash; piper: pipes, drone, kit on kick/snare/hats, violin thirds, no flute and no guitar chugs; crest: everything, tutti choir; morning: bansuri, thin kit, one distant pipe flourish.
+4. **Lanes:** one lead at a time: bansuri, then pipes, then bansuri; the kit and the bass guitar own the groove (one kit, one bass); the tabla only accents; guitars play chords and arpeggios, never the lead.
+5. **Contrast at each boundary:** groove (a rock kit drops in), sunrise (a crash and the drive guitar), piper (the lead changes instrument and register and stops the flute), crest (the key rises), morning (the band thins). The one thing that stays: the 112 BPM pulse and the drone on A.
+6. **Ending:** Sa alone with the birds, a tail-out, not a cut.
+Harmony plan: in the direction sheet (`harmony_plan`). The pipes keep D (their A mixolydian = the D major notes), so the whole-tone raise comes only after they stop.
+
+Proposed changes to build once approved: tempo 112 BPM, 28 bars; kit and bass guitar and two guitars added (presets exist for the kit and guitars from the earlier attempt); celli leave the bass role; the pipes rewritten to the sourced reel (two four-bar strains in the chanter's range A4-A5, gracenotes G/D/E on the beat, birl on low A, three drones on A) and moved before the key raise; the ambience curves stay quiet to 30 s; every gate row is re-measured.
