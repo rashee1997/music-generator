@@ -63,8 +63,8 @@
   "gate": {
     "channel.bars": {
       "mode": "relax",
-      "jump_db": 12.0,
-      "reason": "Measured on the 8-channel render (immersive_7_1, bars 14-20): the front centre channel reads -13.4, -16.2, -27.0, -15.7, -21.8 dB by bar and the row flagged bar 17 (jump -11.0 dB against neighbours at -16.0 dB). Bar 17 is where the bansuri, the figure that lives in the centre, rests for six beats and the Highland pipes answer alone from the far ridge at 172 degrees: a written call-and-response (direction sheet motifs, returns at 41 s). Holding the flute softly under it (velocity 0.4) did not close the dip (-11.0 dB, measured) and only added roughness. The limit is 12 dB, inside the row's range of 3-30; the dropout, balance and polarity tests keep their defaults."
+      "jump_db": 14.0,
+      "reason": "Measured on the 8-channel render (immersive_7_1, bars 14-20): the front centre channel reads -13.4, -16.2, -27.0, -15.7, -21.8 dB by bar and the row flagged bar 17 (jump -12.3 dB against neighbours at -15.8 dB on the final placement; -14.6, -12.2, -12.3 and -11.0 dB on earlier placements). Bar 17 is where the bansuri, the figure that lives in the centre, rests for six beats and the Highland pipes answer alone from the far ridge at 172 degrees: a written call-and-response (direction sheet motifs, returns at 41 s). Holding the flute softly under it (velocity 0.4) did not close the dip (-11.0 dB, measured) and only added roughness. The limit is 14 dB, inside the row's range of 3-30; the dropout, balance and polarity tests keep their defaults."
     }
   },
   "intent": {

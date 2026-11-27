@@ -39,29 +39,29 @@
         {
           "section": "mist",
           "start_s": 0.0,
-          "measured_db": -33.58,
-          "expected_db": -40.53,
+          "measured_db": -33.62,
+          "expected_db": -40.78,
           "dyn": 0.12
         },
         {
           "section": "first_light",
           "start_s": 13.636,
-          "measured_db": -30.05,
-          "expected_db": -30.51,
+          "measured_db": -30.03,
+          "expected_db": -30.77,
           "dyn": 0.38
         },
         {
           "section": "sunrise",
           "start_s": 30.0,
-          "measured_db": -23.38,
-          "expected_db": -23.52,
+          "measured_db": -22.68,
+          "expected_db": -23.78,
           "dyn": 0.85
         },
         {
           "section": "morning",
           "start_s": 49.091,
-          "measured_db": -31.68,
-          "expected_db": -31.23,
+          "measured_db": -32.22,
+          "expected_db": -31.49,
           "dyn": 0.35
         }
       ]
