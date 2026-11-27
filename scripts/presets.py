@@ -105,6 +105,22 @@ def _files(kind):
     return out
 
 
+def signature(kind):
+    """(path, mtime, size) of every file `load(kind)` would read: a cache key that follows an edited preset.
+
+    A module that reads one kind over and over (the room's material library, once per `taps()` call) keys its cache
+    on this, so editing a preset invalidates it and switching projects changes it, without re-parsing the JSONs.
+    """
+    out = []
+    for _name, path, _root in _files(kind):
+        try:
+            st = os.stat(path)
+            out.append((path, st.st_mtime_ns, st.st_size))
+        except OSError:
+            out.append((path, 0, 0))
+    return tuple(out)
+
+
 def load(kind):
     """All presets of a kind, merged across the layers. Returns {name: dict}; the source of each is in '_source'."""
     out = {}

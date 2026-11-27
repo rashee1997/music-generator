@@ -158,15 +158,29 @@ class ReflectionTaps(unittest.TestCase):
         self.temp, self.rh = 20.0, 50.0
 
     def per_tap(self, tap, raw=None):
-        """One tap the way the engine rendered it before: delayed copy, absorption, then air."""
+        """One tap written out by hand: a delayed copy, the surface's response read out centred (its own group delay
+        removed: the tap's delay is its path length), then the air that path crosses."""
         from scipy import signal
         raw = self.raw if raw is None else raw
         n = len(raw)
         d = int(round(tap['delay_ms'] / 1000.0 * SR))
         s = np.zeros(n)
         s[d:] = raw[:n - d] * (1.0 / tap['distance_m'])
-        s = signal.lfilter(room.absorption_fir(tap['coeffs'], sr=SR), 1.0, s)
+        fir = room.absorption_fir(tap['coeffs'], sr=SR)
+        g = room.group_delay(len(fir))
+        s = signal.fftconvolve(s, fir)[g:g + n]
         return airabs.apply(s, tap['distance_m'] - 1.0, self.temp, self.rh, sr=SR)
+
+    def test_a_tap_arrives_at_its_path_length(self):
+        """The 129-tap surface filter is linear phase: convolved causally it used to add its 64 samples (1.45 ms) to
+        every early reflection of the room while the direct sound stayed put."""
+        signals, kept = list(hoa.tap_signals(self.raw, self.taps, SR, self.temp, self.rh))[0]
+        for j, tap in enumerate(kept):
+            d = int(round(tap['delay_ms'] / 1000.0 * SR))
+            plain = np.zeros(len(self.raw))
+            plain[d:] = self.raw[:len(self.raw) - d]
+            self.assertEqual(self.lag(plain, signals[:, j].astype(np.float64)), 0,
+                             msg=f'tap {tap["image"]} does not arrive at its path length')
 
     @staticmethod
     def lag(a, b):

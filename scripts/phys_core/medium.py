@@ -274,41 +274,50 @@ class Medium:
             return airabs.iso_alpha_db_per_m(f, self.temp_c, self.rh, self.pressure_pa / 1000.0)
         return 8.685889638 * self.alpha_np_per_m(f)
 
-    def fir(self, distance_m, sr=44100):
-        """The linear-phase impulse response (TAPS taps, group delay TAPS // 2 samples) of distance_m of this medium; a
-        unit impulse at the centre when the distance is zero. `absorb` is the whole-buffer convolution with it."""
-        if distance_m <= 0:
-            ir = np.zeros(TAPS)
-            ir[TAPS // 2] = 1.0
-            return ir
-        if self.model == 'iso9613':
-            import airabs
-            return airabs.iso_fir(distance_m, self.temp_c, self.rh, self.pressure_pa / 1000.0, sr)
+    def _fir_key(self, distance_m, sr):
+        """What the impulse response of this distance depends on: the whole absorption law, not the object."""
+        return ('medium', self.model, round(self.c, 6), round(float(self.classical), 15),
+                tuple((round(f, 6), round(mu, 12)) for f, mu in self.relaxations),
+                round(float(distance_m), 4), int(sr), TAPS)
+
+    def _design_fir(self, distance_m, sr):
+        """Build the linear-phase response by frequency sampling (the one arithmetic the old code used, on the same
+        grid: rfftfreq(TAPS - 1) is linspace(0, sr / 2, TAPS // 2 + 1))."""
         from scipy import signal
-        freqs = np.linspace(0.0, sr / 2.0, TAPS // 2 + 1)
+        freqs = np.fft.rfftfreq(TAPS - 1, 1.0 / float(sr))
         gain = 10.0 ** (-self.alpha_db_per_m(freqs) * float(distance_m) / 20.0)
         n = TAPS - 1
         ir = np.roll(np.fft.irfft(gain, n=n), n // 2)
         return np.append(ir, 0.0) * signal.windows.blackman(TAPS)
 
+    def fir(self, distance_m, sr=44100):
+        """The linear-phase impulse response (TAPS taps, group delay TAPS // 2 samples) of distance_m of this medium; a
+        unit impulse at the centre when the distance is zero. `absorb` is the whole-buffer convolution with it.
+
+        A medium with its own law is designed once per (law, distance, rate) and kept in airabs' FIR cache: this used
+        to be redesigned on every call, and a render asks for the same path once per reflection tap and once per
+        level of the air blend of a moving source."""
+        if distance_m <= 0:
+            ir = np.zeros(TAPS)
+            ir[TAPS // 2] = 1.0
+            return ir
+        import airabs
+        if self.model == 'iso9613':
+            return airabs.iso_fir(distance_m, self.temp_c, self.rh, self.pressure_pa / 1000.0, sr)
+        return airabs.cached_fir(self._fir_key(distance_m, sr), lambda: self._design_fir(distance_m, sr)).copy()
+
     def absorb(self, x, distance_m, sr=44100):
         """Filter x ((N,) or (N, C)) for distance_m of this medium: gain 10^(-alpha r / 20), linear phase, no spreading.
-        Earth air is delegated to airabs.apply, so its output is bit-identical to the old path."""
+        Earth air is delegated to airabs.apply, so its output is bit-identical to the old path; another medium is
+        filtered with its cached response and the convolution goes through `compute`, as the air does."""
         x = np.asarray(x, dtype=np.float32)
         if distance_m <= 0:
             return x
+        import airabs
         if self.model == 'iso9613':
-            import airabs
             return airabs.iso_apply(x, distance_m, temp_c=self.temp_c, rh=self.rh, pressure_kpa=self.pressure_pa / 1000.0, sr=sr)
-        from scipy import signal
-        freqs = np.linspace(0.0, sr / 2.0, TAPS // 2 + 1)
-        gain = 10.0 ** (-self.alpha_db_per_m(freqs) * float(distance_m) / 20.0)
-        n = TAPS - 1
-        ir = np.roll(np.fft.irfft(gain, n=n), n // 2)
-        ir = (np.append(ir, 0.0) * signal.windows.blackman(TAPS)).astype(np.float32)
-        out = signal.fftconvolve(x, ir if x.ndim == 1 else ir[:, None], mode='full', axes=0)
-        start = TAPS // 2
-        return out[start:start + len(x)].astype(np.float32)
+        ir = airabs.cached_fir(self._fir_key(distance_m, sr), lambda: self._design_fir(distance_m, sr))
+        return airabs.apply_fir(x, ir, centre=TAPS // 2)
 
     # ---- boundaries and flow --------------------------------------------------------------------------------
     def canopy_excess_db(self, f_hz, distance_m):
