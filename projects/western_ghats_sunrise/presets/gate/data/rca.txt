@@ -1,12 +1,16 @@
-[UNKNOWN] clicks  -  no analyzer for this row yet
-    2 clustered impulse event(s) (MAD), 2 LPC frame(s); 83 event(s) rejected as a dense burst, 48 as a steep attack; max cluster span 1.474 ms
-    fix here: measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause
-    tolerance: protected: no profile or score can change it, so the audio is the only fix
+[MISMATCH] channel.bars  -  a one-bar swing in a piece that breathes by the bar
+    immersive_7_1: 1 isolated per-bar channel conflict(s): bar 17 FC jump -14.6 dB (neighbours at -15.6 dB). Check that channel's automation, pan and polarity in that bar; a deliberate one-bar effect can be relaxed in the score gate with a measured reason, never by editing the row
+    channel energy (dB): FL -26.2, FR -23.4, FC -19.1, LFE -67.1, BL -32.0, BR -36.3, SL -32.2, SR -29.4
+    front-to-back by bar: 14: +15.2, 15: +15.2, 16: +13.0, 17: +7.9, 18: +14.6, 19: +11.8, 20: +12.6
+    the swing across these bars is 7.4 dB
+    fix here: if the swing follows the writing (a hit at the bar before, a dip after it): a bounded channel.bars balance_db with this table as the reason; if not, the part that jumps
+    tolerance: bounded relaxation exists: jump_db 8.0 (range 3.0..30.0), dropout_db 15.0 (range 6.0..40.0), balance_db 4.0 (range 1.0..12.0), stable_db 3.0 (range 1.0..9.0), polarity_corr -0.5 (range -0.95..-0.1), polarity_neighbor 0.2 (range 0.0..0.9), floor_abs_db -65.0 (range -100.0..-30.0), floor_programme_db 40.0 (range 10.0..80.0), balance_spread_db 2.5 (range 0.5..9.0)
 
-[FAULT] cochlear_roughness  -  partials of sounding parts beat
-    Cochlear sensory roughness chronically high (median 0.084 > 0.070); continuous clashing overtones throughout piece. Separate chord voices by at least a minor 3rd or notch clashing frequencies.
-    window 0.0-61.5 s; sounding parts: bansuri -31 dB [1481, 1481, 1483], celli -33 dB [124, 124, 139], sitar -38 dB [663, 663, 663], violins_counter -39 dB [331, 331, 331], violins_long -39 dB [664, 415, 663], choir -39 dB [665, 665, 665], violas -40 dB [498, 498, 498], tabla -41 dB [205, 205, 206]
-    partials of different parts within about a quarter critical band: sitar 663 Hz vs violins_long 664 Hz (1 Hz apart); sitar 663 Hz vs violins_long 664 Hz (1 Hz apart); sitar 663 Hz vs violins_long 664 Hz (1 Hz apart); sitar 663 Hz vs choir 665 Hz (2 Hz apart); sitar 663 Hz vs choir 665 Hz (2 Hz apart); sitar 663 Hz vs choir 665 Hz (2 Hz apart)
-    fix here: the notes or the placement of the parts named: move one off the other's partial by a minor third or an octave, or drop one from the window
-    tolerance: bounded relaxation exists: scale 1.0 (range 0.5..2.0), outro_resolve True (choices [True]), model legacy (choices ['legacy', 'level_aware']), median 0.024 (range 0.02..0.4), calib_spl_db 70.0 (range 60.0..80.0), mask_band_bark 1.0 (range 0.5..3.0), mask_slope_up_db_bark 10.5 (range 5.0..20.0), mask_slope_down_db_bark 27.0 (range 15.0..40.0)
+[FAULT] imm.surround_ratio  -  where the parts are placed
+    immersive_7_1: surround energy -9.9 dB against the front stage (window -9.0..-2.0 dB)
+    channel energy (dB): FL -26.2, FR -23.4, FC -19.1, LFE -67.1, BL -32.0, BR -36.3, SL -32.2, SR -29.4
+    largest energy at the sides and the back: violins_long 4.9% (122 deg), choir 4.6% (-125 deg), tabla 3.5% (-150 deg), pipes 2.7% (172 deg), tanpura 2.0% (-88 deg)
+    largest modelled height share: choir 1.32% (24 deg up), violins_long 1.16% (22 deg up), bansuri 0.66% (6 deg up), violins_counter 0.45% (12 deg up), pipes 0.03% (5 deg up)
+    fix here: the parts named: azimuth toward the front for the surround ratio; elevation down for the height arc (check z-separation after)
+    tolerance: this row is not a gate-profile row: its limit lives in a target preset or in code
 

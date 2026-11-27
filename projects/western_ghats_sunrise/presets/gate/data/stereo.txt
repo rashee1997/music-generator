@@ -1,5 +1,5 @@
 windows: 245
-min: 0.363
+min: 0.364
 median: 0.677
 max: 0.941
 channels: 2

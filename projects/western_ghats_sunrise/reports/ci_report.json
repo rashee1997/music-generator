@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-11-27T07:34:33Z",
-  "status": "FAILED",
+  "timestamp": "2026-11-27T07:39:02Z",
+  "status": "PASSED",
   "deliverables": {
-    "master_wav": "/home/user/music-generator/projects/western_ghats_sunrise/out/_draft_western_ghats_sunrise.wav",
+    "master_wav": "/home/user/music-generator/projects/western_ghats_sunrise/out/western_ghats_sunrise.wav",
     "midi": "/home/user/music-generator/projects/western_ghats_sunrise/midi/western_ghats_sunrise_score.mid",
     "duration_s": 61.529818594104306,
     "sample_rate": 44100,
@@ -28,27 +28,42 @@
         "file": "western_ghats_sunrise_immersive_7_1.wav"
       }
     ],
-    "certified": [],
+    "certified": [
+      "stereo"
+    ],
     "stems_dir": "/home/user/music-generator/projects/western_ghats_sunrise/stems",
-    "stem_count": 12
+    "stem_count": 12,
+    "metadata": "/home/user/music-generator/projects/western_ghats_sunrise/out/western_ghats_sunrise.json",
+    "version": 1,
+    "versioned_master": "western_ghats_sunrise_v01.wav",
+    "metadata_tagged": [
+      "title",
+      "artist",
+      "genre",
+      "copyright",
+      "comment",
+      "license",
+      "description"
+    ],
+    "versioned_metadata": "/home/user/music-generator/projects/western_ghats_sunrise/out/western_ghats_sunrise_v01.json"
   },
   "measurements": {
-    "integrated_lufs": -16.00000408106467,
-    "true_peak_dbtp": -2.2139114391945376,
-    "crest_factor_db": 18.159125464702967,
-    "mono_loss_db": -0.5215151268564793,
-    "mono_phone_loss_db": -0.23632635819475167,
+    "integrated_lufs": -16.00000485740319,
+    "true_peak_dbtp": -2.3931183632935995,
+    "crest_factor_db": 18.03758728201303,
+    "mono_loss_db": -0.5224409205764919,
+    "mono_phone_loss_db": -0.2367464578835019,
     "clipped_samples": 0,
-    "mean_roughness": 0.0585,
+    "mean_roughness": 0.0586,
     "max_roughness": 0.0963,
     "witek_bsi": 0.0,
     "melodic_entropy_bits": 2.62,
     "spiral_strain_end": 0.54
   },
   "ci_summary": {
-    "pass": 179,
-    "warn": 75,
-    "fail": 1
+    "pass": 181,
+    "warn": 73,
+    "fail": 0
   },
   "ci_checks": [
     {
@@ -1049,7 +1064,7 @@
     {
       "level": "PASS",
       "check": "audio",
-      "detail": "true peak -2.2 dBTP"
+      "detail": "true peak -2.4 dBTP"
     },
     {
       "level": "PASS",
@@ -1059,7 +1074,7 @@
     {
       "level": "PASS",
       "check": "audio",
-      "detail": "dynamics move (short-term loudness std 5.8 dB, range 16.9 LU)"
+      "detail": "dynamics move (short-term loudness std 5.8 dB, range 16.8 LU)"
     },
     {
       "level": "WARN",
@@ -1069,7 +1084,7 @@
     {
       "level": "INFO",
       "check": "master.micro_dynamics",
-      "detail": "PLR 13.8 LU, PSR 7.5 LU, LRA 16.9 LU, true peak -2.21 dBTP (4x -2.22, 8x -2.21): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
+      "detail": "PLR 13.6 LU, PSR 7.3 LU, LRA 16.9 LU, true peak -2.39 dBTP (4x -2.39, 8x -2.39): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
     },
     {
       "level": "PASS",
@@ -1077,14 +1092,14 @@
       "detail": "no silent gap in the middle of the piece"
     },
     {
-      "level": "FAIL",
+      "level": "PASS",
       "check": "clicks",
-      "detail": "3 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 3 and LPC 2. Check the sample start or add a 2-5 ms fade-in at that note"
+      "detail": "no click: no single-sample jump above 0.5 FS and no high-pass/LPC impulse event"
     },
     {
-      "level": "WARN",
+      "level": "PASS",
       "check": "natural_aliasing",
-      "detail": "15-22 kHz holds -43.9 dB of the 200 Hz-16 kHz band (limit -45); above that it is sampler interpolation images, not instrument (fix: render.oversample in the mix preset)"
+      "detail": "15-22 kHz holds -45.6 dB of the 200 Hz-16 kHz band (limit -45); above that it is sampler interpolation images, not instrument (fix: render.oversample in the mix preset)"
     },
     {
       "level": "PASS",
@@ -1099,7 +1114,7 @@
     {
       "level": "PASS",
       "check": "delivery.true_peak",
-      "detail": "stereo: worst channel true peak -2.2 dBTP (ceiling -1.5 dBTP; per channel -2.2, -2.6)"
+      "detail": "stereo: worst channel true peak -2.4 dBTP (ceiling -1.5 dBTP; per channel -2.4, -2.5)"
     },
     {
       "level": "PASS",
@@ -1119,7 +1134,7 @@
     {
       "level": "PASS",
       "check": "dropout",
-      "detail": "longest hole 0 ms (limit 20-1000 ms), floor -72.2 dBFS; 0 hole(s)"
+      "detail": "longest hole 0 ms (limit 20-1000 ms), floor -72.1 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -1144,7 +1159,7 @@
     {
       "level": "PASS",
       "check": "tempo.audio",
-      "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 175.1 BPM vs 88.0 (tolerance 2.0) from the onset-envelope autocorrelation (peak 3.8x the median); beat tracker said 172.3; four-quarter drift 3.5 BPM reported, not decisive"
+      "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 174.3 BPM vs 88.0 (tolerance 2.0) from the onset-envelope autocorrelation (peak 4.2x the median); beat tracker said 172.3; four-quarter drift 3.4 BPM reported, not decisive"
     },
     {
       "level": "PASS",
@@ -1204,7 +1219,7 @@
     {
       "level": "PASS",
       "check": "imm_foldown",
-      "detail": "mono fold-down is +0.2 LU vs the stereo master (limit 3): holds up on a phone speaker"
+      "detail": "mono fold-down is +0.3 LU vs the stereo master (limit 3): holds up on a phone speaker"
     },
     {
       "level": "PASS",
@@ -1389,7 +1404,7 @@
     {
       "level": "INFO",
       "check": "chem.reward_build",
-      "detail": "the build earns the strongest measured change at 30.0 s (the sheet declares no hits_at): 11.2 s of lead, rank correlation +1.00, peak 0.58. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
+      "detail": "the build earns the strongest measured change at 30.0 s (the sheet declares no hits_at): 12.0 s of lead, rank correlation +1.00, peak 0.58. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
     },
     {
       "level": "INFO",
@@ -1409,12 +1424,12 @@
     {
       "level": "WARN",
       "check": "chem.motor_drive",
-      "detail": "the drive pool averages 0.24 (want 0.4); bar syncopation 0.00 is outside the 0.4-4.8 window (Witek 2014 inverted U); measured pulse clarity 0.10 (want 0.4). Lever: syncopate the cell into the 0.4-4.8 BSI window, or give the kick and bass one owner. Tier C (effort and entrainment read from a pain-threshold proxy: Tarr 2015, Pearce 2016); inputs: pulse, low_end, density, slow_tempo"
+      "detail": "the drive pool averages 0.24 (want 0.4); bar syncopation 0.00 is outside the 0.4-4.8 window (Witek 2014 inverted U); measured pulse clarity 0.11 (want 0.4). Lever: syncopate the cell into the 0.4-4.8 BSI window, or give the kick and bass one owner. Tier C (effort and entrainment read from a pain-threshold proxy: Tarr 2015, Pearce 2016); inputs: pulse, low_end, density, slow_tempo"
     },
     {
       "level": "WARN",
       "check": "chem.recovery",
-      "detail": "the piece ends 33% below its peak instead of coming down (want 35%). Lever: write a resolution section: slower, consonant, thinner, with a real cadence or a declared cliff. Tier C (recovery from listening alone is weak: g = 0.15, CI -0.21..0.52, n.s., 2022 meta-analysis); inputs: recovery, consonance, legato, tension"
+      "detail": "the piece ends 30% below its peak instead of coming down (want 35%). Lever: write a resolution section: slower, consonant, thinner, with a real cadence or a declared cliff. Tier C (recovery from listening alone is weak: g = 0.15, CI -0.21..0.52, n.s., 2022 meta-analysis); inputs: recovery, consonance, legato, tension"
     },
     {
       "level": "INFO",
@@ -1484,7 +1499,7 @@
     {
       "level": "INFO",
       "check": "env.cpu_budget",
-      "detail": "\"ambience\": 10.8 s of CPU per minute of audio on this machine, projected from a 3 s render (limit 12)"
+      "detail": "\"ambience\": 10.6 s of CPU per minute of audio on this machine, projected from a 3 s render (limit 12)"
     },
     {
       "level": "WARN",
@@ -1517,11 +1532,6 @@
       "detail": "10 stems route to the shared room; if the mix reads as washy, lower the return (mix.reverb_return) before shortening the room"
     },
     {
-      "level": "WARN",
-      "check": "mix:intelligibility",
-      "detail": "the lead sits -13.2 dB against the beds in 1-4 kHz: words and articulation will be covered. Carve the beds there or lift the lead"
-    },
-    {
       "level": "PASS",
       "check": "music21_tonality",
       "detail": "strong tonal center in B minor (correlation 0.81)"
@@ -1548,7 +1558,7 @@
     "stopped": null,
     "cache": {
       "dir": "/home/user/music-generator/projects/western_ghats_sunrise/.cache/mix",
-      "hits": 0,
+      "hits": 1,
       "stems": 12
     },
     "stages": {
@@ -1559,12 +1569,12 @@
         "warns": 0,
         "rows": 104,
         "profile": "western_ghats_sunrise",
-        "total_ms": 1370.602508999582,
+        "total_ms": 112.01108499972179,
         "timings": {
           "ambience": 0.0,
-          "bansuri": 544.5735889998105,
+          "bansuri": 0.0,
           "celli": 0.0,
-          "choir": 1179.6154690000549,
+          "choir": 0.0,
           "pipes": 0.0,
           "santoor": 0.0,
           "sitar": 0.0,
@@ -3532,40 +3542,36 @@
           }
         ],
         "duration_s": 64.3112925170068,
-        "cached_stems": 10,
-        "measured_stems": 2
+        "cached_stems": 12,
+        "measured_stems": 0
       },
       "mix": {
         "stage": "mix",
-        "fails": 1,
-        "warns": 75,
+        "fails": 0,
+        "warns": 73,
         "metrics": [
           {
             "row": "clicks",
             "stage": "mix",
             "stem": null,
-            "level": "FAIL",
-            "value": 3.0,
+            "level": "PASS",
+            "value": 0.0,
             "unit": "events",
             "threshold": 0.0,
-            "margin": 3.0,
-            "worst_times_s": [
-              34.1166,
-              45.0228,
-              47.0648
-            ],
+            "margin": 0.0,
+            "worst_times_s": [],
             "calibrated": true,
-            "detail": "3 clustered impulse event(s) (MAD), 2 LPC frame(s); 190 event(s) rejected as a dense burst, 39 as a steep attack; max cluster span 1.451 ms"
+            "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 35 event(s) rejected as a dense burst, 23 as a steep attack; max cluster span 1.224 ms"
           },
           {
             "row": "loudness",
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -16.00000408106467,
+            "value": -16.00000485740319,
             "unit": "LUFS",
             "threshold": -16.0,
-            "margin": -2.49999591893533,
+            "margin": -2.499995142596809,
             "worst_times_s": [],
             "calibrated": true,
             "detail": "-16.0 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -3575,13 +3581,13 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -2.2139114391945376,
+            "value": -2.3931183632935995,
             "unit": "dBTP",
             "threshold": -1.5,
-            "margin": -0.7139114391945376,
+            "margin": -0.8931183632935995,
             "worst_times_s": [],
             "calibrated": true,
-            "detail": "-2.21 dBTP vs ceiling -1.5"
+            "detail": "-2.39 dBTP vs ceiling -1.5"
           },
           {
             "row": "dropout",
@@ -3594,7 +3600,7 @@
             "margin": -20.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "longest hole 0 ms (limit 20-1000 ms), floor -72.2 dBFS; 0 hole(s)"
+            "detail": "longest hole 0 ms (limit 20-1000 ms), floor -72.1 dBFS; 0 hole(s)"
           },
           {
             "row": "cut.hard",
@@ -3614,10 +3620,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 57.35541566539868,
+            "value": 57.35713067167852,
             "unit": "dB",
             "threshold": 12.0,
-            "margin": -45.35541566539868,
+            "margin": -45.35713067167852,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "end level -117.2 dBFS (limit -45), decay over final 300 ms 57.4 dB (limit 12); natural release"
@@ -3640,10 +3646,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 1.2281510175309228e-06,
+            "value": 1.215448791555456e-06,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.000998771848982469,
+            "margin": -0.0009987845512084445,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
@@ -3653,13 +3659,13 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 87.1325045831178,
+            "value": 86.28442263571966,
             "unit": "BPM",
             "threshold": 2.0,
-            "margin": 85.1325045831178,
+            "margin": 84.28442263571966,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 175.1 BPM vs 88.0 (tolerance 2.0) from the onset-envelope autocorrelation (peak 3.8x the median); beat tracker said 172.3; four-quarter drift 3.5 BPM reported, not decisive"
+            "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 174.3 BPM vs 88.0 (tolerance 2.0) from the onset-envelope autocorrelation (peak 4.2x the median); beat tracker said 172.3; four-quarter drift 3.4 BPM reported, not decisive"
           },
           {
             "row": "section.energy",
@@ -3679,28 +3685,28 @@
                 "start_s": 0.0,
                 "end_s": 13.636,
                 "energy": 0.12,
-                "level_db": -33.083052829068855
+                "level_db": -33.06064348902157
               },
               {
                 "name": "first_light",
                 "start_s": 13.636,
                 "end_s": 30.0,
                 "energy": 0.38,
-                "level_db": -26.59693655226007
+                "level_db": -26.582630843996704
               },
               {
                 "name": "sunrise",
                 "start_s": 30.0,
                 "end_s": 49.091,
                 "energy": 0.85,
-                "level_db": -17.51328916148656
+                "level_db": -17.50335623982233
               },
               {
                 "name": "morning",
                 "start_s": 49.091,
                 "end_s": 60.0,
                 "energy": 0.35,
-                "level_db": -29.966835537125583
+                "level_db": -29.946406084196575
               }
             ]
           }
@@ -3830,6 +3836,12 @@
       "failing": [
         "clicks: 3 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 3 and LPC 2. Check the sample start or add a 2-5 ms fade-in at that note"
       ]
+    },
+    {
+      "attempt": 13,
+      "time": "2026-11-27T07:39:02Z",
+      "fails": 0,
+      "failing": []
     }
   ]
 }

@@ -22,3 +22,7 @@
 {"stamp": "2026-11-27T07:35:04.457591", "lever": "hf.ambience", "row": "clicks::-", "delta": -3.0, "outcome": "proposed", "baseline": 0.0, "rows": {"clicks::-": -3.0}, "predicted": 0, "baseline_value": 3, "stem": "ambience", "stem_hash": "dda02897d8c43417", "note": "proposed by the autopsy (replay)"}
 {"stamp": "2026-11-27T07:35:12", "lever": "hf.tabla", "row": "clicks", "delta": -9.0, "outcome": "no change", "note": ""}
 {"stamp": "2026-11-27T07:35:33.079307", "lever": "hf.ambience", "row": "clicks::-", "delta": -6.0, "outcome": "proposed", "baseline": 0.0, "rows": {"clicks::-": -3.0}, "predicted": 0, "baseline_value": 3, "stem": "ambience", "stem_hash": "dda02897d8c43417", "note": "proposed by the autopsy (replay (unproven))"}
+{"stamp": "2026-11-27T07:38:08", "lever": "hf.tabla", "row": "clicks::-", "delta": -9.0, "outcome": "cleared", "note": "settled automatically against the next render; the replay had predicted 0 event(s)", "target": -18.0}
+{"stamp": "2026-11-27T07:38:08", "lever": "hf.tabla", "row": "clicks::-", "outcome": "settled", "ref": "2026-11-27T07:34:33.808735", "target": -18.0}
+{"stamp": "2026-11-27T07:38:08", "lever": "hf.tabla", "row": "clicks::-", "delta": -9.0, "outcome": "cleared", "note": "settled automatically against the next render; the replay had predicted 0 event(s)", "target": -18.0}
+{"stamp": "2026-11-27T07:38:08", "lever": "hf.tabla", "row": "clicks::-", "outcome": "settled", "ref": "2026-11-27T07:35:04.435408", "target": -18.0}

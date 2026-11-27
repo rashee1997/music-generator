@@ -749,7 +749,7 @@
     "from_intent": true
   },
   "level_by_role": {
-    "environment": -9.0,
+    "environment": -6.0,
     "texture": -2.0
   },
   "render": {

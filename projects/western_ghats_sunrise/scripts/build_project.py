@@ -288,7 +288,7 @@ def mix():
                           profiles={'cinema': dict(lufs=-16.0, true_peak=-1.5, tone='neutral', glue=True, fade_out=0.8)},
                           section_levels=dict(range_db=9.0, ramp_s=1.8))
     m['lead_carve'] = dict(enabled=True, from_intent=True)
-    m['level_by_role'] = {'environment': -9.0, 'texture': -2.0}
+    m['level_by_role'] = {'environment': -6.0, 'texture': -2.0}      # +3 dB on the diffuse ambience field: imm.surround_ratio measured -9.9 dB against the -9.0 limit (more surround energy needed)
     m['render'] = {'mix_workers': 2}
     # debug_audio.py attributed all six `clicks` events to the tabla (hf. above 6 kHz, 95-99 % of each step) and priced a -9 dB high shelf at the row's 6 kHz corner as clearing 6 -> 0
     m['inst_eq'] = {'ghats_tabla': [{'type': 'highshelf', 'f': 6000, 'gain': -15.0, 'q': 0.7}]}
