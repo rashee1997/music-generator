@@ -1949,10 +1949,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -16.000007045882015,
+    "value": -16.00000776867178,
     "unit": "LUFS",
     "threshold": -16.0,
-    "margin": -2.4999929541179853,
+    "margin": -2.4999922313282212,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-16.0 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -1962,13 +1962,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -1.9420890735748153,
+    "value": -1.9133341040242613,
     "unit": "dBTP",
     "threshold": -1.5,
-    "margin": -0.4420890735748153,
+    "margin": -0.4133341040242613,
     "worst_times_s": [],
     "calibrated": true,
-    "detail": "-1.94 dBTP vs ceiling -1.5"
+    "detail": "-1.91 dBTP vs ceiling -1.5"
    },
    {
     "row": "dropout",
@@ -2001,10 +2001,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 57.326974812387476,
+    "value": 57.32628742312109,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -45.326974812387476,
+    "margin": -45.32628742312109,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "end level -116.8 dBFS (limit -45), decay over final 300 ms 57.3 dB (limit 12); natural release"
@@ -2027,10 +2027,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 1.5108532602796639e-06,
+    "value": 1.5077949067841087e-06,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009984891467397204,
+    "margin": -0.000998492205093216,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
@@ -2040,10 +2040,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 86.31028284638037,
+    "value": 86.31876371111076,
     "unit": "BPM",
     "threshold": 2.0,
-    "margin": 84.31028284638037,
+    "margin": 84.31876371111076,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 174.3 BPM vs 88.0 (tolerance 2.0) from the onset-envelope autocorrelation (peak 4.5x the median); beat tracker said 172.3; four-quarter drift 41.3 BPM reported, not decisive"
@@ -2066,28 +2066,28 @@
       "start_s": 0.0,
       "end_s": 13.636,
       "energy": 0.12,
-      "level_db": -31.192018325260367
+      "level_db": -31.189637470639358
      },
      {
       "name": "first_light",
       "start_s": 13.636,
       "end_s": 30.0,
       "energy": 0.38,
-      "level_db": -25.638977437147823
+      "level_db": -25.636596548454865
      },
      {
       "name": "sunrise",
       "start_s": 30.0,
       "end_s": 49.091,
       "energy": 0.85,
-      "level_db": -17.001413065573825
+      "level_db": -17.027830413265626
      },
      {
       "name": "morning",
       "start_s": 49.091,
       "end_s": 60.0,
       "energy": 0.35,
-      "level_db": -28.216796996203126
+      "level_db": -28.214416146424576
      }
     ]
    }

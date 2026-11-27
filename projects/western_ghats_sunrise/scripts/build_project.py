@@ -355,7 +355,8 @@ def flute():
     s += hook(12, 0, 0.82, sa)
     s += [n(14, 0, 1.0, pit(3, sa), 0.84), n(14, 1, 0.5, pit(4, sa), 0.85), n(14, 1.5, 0.5, pit(5, sa), 0.86), n(14, 2, 1.5, pit(6, sa), 0.9, gl=-120),
           n(14, 3.5, 0.5, pit(5, sa), 0.84), n(15, 0, 1.0, pit(4, sa), 0.84), n(15, 1, 0.5, pit(5, sa), 0.86), n(15, 1.5, 0.5, pit(6, sa), 0.88),
-          n(15, 2, 2.0, pit(7, sa), 0.92, gl=-160), n(16, 0, 1.75, pit(6, sa), 0.9),                                # the flute rests for six beats: the pipes take bars 16-17
+          n(15, 2, 2.0, pit(7, sa), 0.92, gl=-160), n(16, 0, 1.75, pit(6, sa), 0.9),
+          n(16, 2.0, 5.5, pit(3, sa), 0.4, gl=-60),                       # the flute holds the fifth (Pa) softly under the pipes' call: the front stage keeps a voice in bars 16-17 (channel.bars measured a one-bar back-heavy swing when it rested)
           n(18, 0, 4.0, pit(4, sa), 0.8, gl=-100)]
     # morning (bars 19-22): back in D: the hook once, softly, then Sa alone
     s += hook(19, 0, 0.5, S0) + [n(21, 0, 2.0, pit(2, S0), 0.42), n(21, 2, 2.0, pit(0, S0), 0.4), n(22, 0, 4.0, pit(0, S0), 0.32, gl=-100)]

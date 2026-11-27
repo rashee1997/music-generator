@@ -1,6 +1,6 @@
 frames: 2460
 min_db: -114.6
-max_db: -11.8
+max_db: -11.9
 median_db: -26.0
 p05_db: -32.5
 p95_db: -14.2
