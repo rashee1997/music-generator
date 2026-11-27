@@ -546,8 +546,8 @@ def bass_guitar():
         v = 0.5 if bar < 10 else (0.6 if bar >= 22 else 0.72)
         if bar < 22:                                           # each note runs into the next onset (stem.dropout measured 60 ms holes between short plucks)
             s += [n(bar, 0.0, 1.6, p, v + 0.06), n(bar, 1.5, 1.1, p, v), n(bar, 2.5, 1.1, p + 7 if r == 0 else p, v - 0.06), n(bar, 3.5, 0.6, p, v - 0.08)]
-        else:
-            s.append(n(bar, 0.0, 4.2, p, v + 0.06))
+        else:                                                  # the morning: two plucks a bar, the last one ends before the file does (stem.dropout and stem.edge, measured)
+            s += [n(bar, 0.0, 2.6, p, v + 0.06), n(bar, 2.5, 1.2 if bar < 26 else 0.9, p, v - 0.04)]
     return s
 
 
@@ -626,15 +626,15 @@ def kit():
     for bar in range(3, 26):
         groove = bar < 10
         morning = bar >= 22
-        v = 0.5 if groove else (0.6 if morning else 0.64 + 0.008 * (bar - 10))       # intent.avoid sudden_loud: no two simultaneous notes more than 0.4 apart
+        v = 0.62 if groove else (0.6 if morning else 0.64 + 0.008 * (bar - 10))       # intent.avoid sudden_loud: no two simultaneous notes more than 0.4 apart
         s += [n(bar, 0.0, 0.2, 'kick', v), n(bar, 2.5, 0.2, 'kick', v - 0.1)]
         if not groove and not morning:
             s += [n(bar, 1.5, 0.2, 'kick', v - 0.12)]
         if groove or morning:
-            s += [n(bar, 1.0, 0.2, 'rim', v - 0.1), n(bar, 3.0, 0.2, 'rim', v - 0.1)]
+            s += [n(bar, 1.0, 0.2, 'snare', v - 0.12), n(bar, 3.0, 0.2, 'snare', v - 0.12)]            # a quiet snare backbeat, not a rim click (the stem measured 11 dB under the sunrise)
         else:
             s += [n(bar, 1.0, 0.2, 'snare', v), n(bar, 3.0, 0.2, 'snare', v + 0.04)]
-        s += [n(bar, k * 0.5, 0.15, 'hat_closed', 0.34 + 0.06 * (k % 2) + (0.1 if not groove else 0.0)) for k in range(8)]
+        s += [n(bar, k * 0.5, 0.15, 'hat_closed', 0.4 + 0.06 * (k % 2) + (0.04 if not groove else 0.0)) for k in range(8)]
     for bar in (3, 10, 18, 22):                                                  # a crash at each turn
         s.append(n(bar, 0.0, 1.5, 'crash', 0.62))
     for bar in (9, 13, 17, 21):                                                  # tom fills into the next section
