@@ -291,7 +291,7 @@ def mix():
     m['level_by_role'] = {'environment': -9.0, 'texture': -2.0}
     m['render'] = {'mix_workers': 2}
     # debug_audio.py attributed all six `clicks` events to the tabla (hf. above 6 kHz, 95-99 % of each step) and priced a -9 dB high shelf at the row's 6 kHz corner as clearing 6 -> 0
-    m['inst_eq'] = {'ghats_tabla': [{'type': 'highshelf', 'f': 6000, 'gain': -9.0, 'q': 0.7}]}
+    m['inst_eq'] = {'ghats_tabla': [{'type': 'highshelf', 'f': 6000, 'gain': -15.0, 'q': 0.7}]}
     m['immersive'] = dict(enabled=True, engine='hoa_bus', order=5, anchor_max_span_deg=6.0, max_deg_per_sec={'anchor': 10.0, 'mover': 120.0},
                           height_by_role={r: 0.0 for r in ('melody', 'lead', 'vocal', 'pad', 'texture', 'environment', 'chord', 'bass', 'drum', 'percussion', 'drone', 'ostinato', 'arp', 'counter', 'fx')},
                           max_elevation=70.0, min_height_tracks=2, stereo_decode='speakers')       # a fifth-order ambisonic bus decoded once to the 7.1 layout and to stereo

@@ -40,7 +40,7 @@
           "section": "mist",
           "start_s": 0.0,
           "measured_db": -33.62,
-          "expected_db": -40.79,
+          "expected_db": -40.78,
           "dyn": 0.12
         },
         {
@@ -53,7 +53,7 @@
         {
           "section": "sunrise",
           "start_s": 30.0,
-          "measured_db": -22.67,
+          "measured_db": -22.68,
           "expected_db": -23.78,
           "dyn": 0.85
         },
@@ -105,22 +105,22 @@
         {
           "section": "first_light",
           "start_s": 13.636,
-          "measured_db": -34.26,
-          "expected_db": -34.26,
+          "measured_db": -36.56,
+          "expected_db": -36.56,
           "dyn": 0.38
         },
         {
           "section": "sunrise",
           "start_s": 30.0,
-          "measured_db": -25.3,
-          "expected_db": -27.27,
+          "measured_db": -27.45,
+          "expected_db": -29.57,
           "dyn": 0.85
         },
         {
           "section": "morning",
           "start_s": 49.091,
-          "measured_db": -35.37,
-          "expected_db": -34.97,
+          "measured_db": -36.88,
+          "expected_db": -37.27,
           "dyn": 0.35
         }
       ]

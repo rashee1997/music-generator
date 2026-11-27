@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-27T07:29:06Z",
+  "timestamp": "2026-11-27T07:34:33Z",
   "status": "FAILED",
   "deliverables": {
     "master_wav": "/home/user/music-generator/projects/western_ghats_sunrise/out/_draft_western_ghats_sunrise.wav",
@@ -33,22 +33,22 @@
     "stem_count": 12
   },
   "measurements": {
-    "integrated_lufs": -16.031202646061857,
-    "true_peak_dbtp": -1.5007495008015257,
-    "crest_factor_db": 18.297906740054216,
-    "mono_loss_db": -0.4962408709337784,
-    "mono_phone_loss_db": -0.24467088476866516,
+    "integrated_lufs": -16.00000408106467,
+    "true_peak_dbtp": -2.2139114391945376,
+    "crest_factor_db": 18.159125464702967,
+    "mono_loss_db": -0.5215151268564793,
+    "mono_phone_loss_db": -0.23632635819475167,
     "clipped_samples": 0,
-    "mean_roughness": 0.0798,
-    "max_roughness": 0.1242,
+    "mean_roughness": 0.0585,
+    "max_roughness": 0.0963,
     "witek_bsi": 0.0,
     "melodic_entropy_bits": 2.62,
     "spiral_strain_end": 0.54
   },
   "ci_summary": {
-    "pass": 178,
+    "pass": 179,
     "warn": 75,
-    "fail": 2
+    "fail": 1
   },
   "ci_checks": [
     {
@@ -174,7 +174,7 @@
     {
       "level": "PASS",
       "check": "stem.dc",
-      "detail": "stem \"choir\": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"choir\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -189,7 +189,7 @@
     {
       "level": "PASS",
       "check": "stem.dropout",
-      "detail": "stem \"choir\": longest hole 0 ms (limit 20-1000 ms), floor -80.6 dBFS; 0 hole(s)"
+      "detail": "stem \"choir\": longest hole 0 ms (limit 20-1000 ms), floor -82.1 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -204,12 +204,12 @@
     {
       "level": "PASS",
       "check": "stem.tick",
-      "detail": "stem \"choir\": onset autocorrelation 0.43 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 590 strong onset(s) of 593, 239 on the grid, IOI CV 0.501; peak rise 1.78 dB at those onsets over 590 onset(s) (min 3); tempogram peak ratio 0.73, PLP peak ratio 0.99"
+      "detail": "stem \"choir\": onset autocorrelation 0.41 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 346 strong onset(s) of 627, 142 on the grid, IOI CV 0.923; peak rise 1.91 dB at those onsets over 346 onset(s) (min 3); tempogram peak ratio 0.73, PLP peak ratio 1.00"
     },
     {
       "level": "PASS",
       "check": "stem.dead",
-      "detail": "stem \"choir\": own median -34.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve"
+      "detail": "stem \"choir\": own median -36.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve"
     },
     {
       "level": "PASS",
@@ -594,7 +594,7 @@
     {
       "level": "PASS",
       "check": "mix_preset",
-      "detail": "\"western_ghats_sunrise_mix\" customises 13 mix value(s): automation, dynamics, gain_staging, immersive, lead_carve, level_by_role"
+      "detail": "\"western_ghats_sunrise_mix\" customises 14 mix value(s): automation, dynamics, gain_staging, immersive, inst_eq, lead_carve"
     },
     {
       "level": "WARN",
@@ -1044,12 +1044,12 @@
     {
       "level": "PASS",
       "check": "spatial_staging",
-      "detail": "11 of 11 staged track(s) use the binaural route; L/R correlation 0.79"
+      "detail": "11 of 11 staged track(s) use the binaural route; L/R correlation 0.78"
     },
     {
       "level": "PASS",
       "check": "audio",
-      "detail": "true peak -1.5 dBTP"
+      "detail": "true peak -2.2 dBTP"
     },
     {
       "level": "PASS",
@@ -1059,17 +1059,17 @@
     {
       "level": "PASS",
       "check": "audio",
-      "detail": "dynamics move (short-term loudness std 5.3 dB, range 15.3 LU)"
+      "detail": "dynamics move (short-term loudness std 5.8 dB, range 16.9 LU)"
     },
     {
       "level": "WARN",
       "check": "audio",
-      "detail": "low end is wide (-7 dB side/mid below 120 Hz) - mono the bass (mono_below)"
+      "detail": "low end is wide (-4 dB side/mid below 120 Hz) - mono the bass (mono_below)"
     },
     {
       "level": "INFO",
       "check": "master.micro_dynamics",
-      "detail": "PLR 14.5 LU, PSR 7.9 LU, LRA 15.5 LU, true peak -1.50 dBTP (4x -1.50, 8x -1.50): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
+      "detail": "PLR 13.8 LU, PSR 7.5 LU, LRA 16.9 LU, true peak -2.21 dBTP (4x -2.22, 8x -2.21): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
     },
     {
       "level": "PASS",
@@ -1079,17 +1079,17 @@
     {
       "level": "FAIL",
       "check": "clicks",
-      "detail": "6 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 6 and LPC 0. Check the sample start or add a 2-5 ms fade-in at that note"
+      "detail": "3 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 3 and LPC 2. Check the sample start or add a 2-5 ms fade-in at that note"
     },
     {
       "level": "WARN",
       "check": "natural_aliasing",
-      "detail": "15-22 kHz holds -33.9 dB of the 200 Hz-16 kHz band (limit -45); above that it is sampler interpolation images, not instrument (fix: render.oversample in the mix preset)"
+      "detail": "15-22 kHz holds -43.9 dB of the 200 Hz-16 kHz band (limit -45); above that it is sampler interpolation images, not instrument (fix: render.oversample in the mix preset)"
     },
     {
-      "level": "FAIL",
+      "level": "PASS",
       "check": "cochlear_roughness",
-      "detail": "Cochlear sensory roughness chronically high (median 0.087 > 0.070); continuous clashing overtones throughout piece. Separate chord voices by at least a minor 3rd or notch clashing frequencies."
+      "detail": "Cochlear sensory roughness within physiological threshold (mean 0.059, max 0.096 <= 0.093)"
     },
     {
       "level": "PASS",
@@ -1099,7 +1099,7 @@
     {
       "level": "PASS",
       "check": "delivery.true_peak",
-      "detail": "stereo: worst channel true peak -1.5 dBTP (ceiling -1.5 dBTP; per channel -1.5, -1.5)"
+      "detail": "stereo: worst channel true peak -2.2 dBTP (ceiling -1.5 dBTP; per channel -2.2, -2.6)"
     },
     {
       "level": "PASS",
@@ -1114,12 +1114,12 @@
     {
       "level": "PASS",
       "check": "stereo.correlation",
-      "detail": "stereo: inter-channel correlation +0.79 (floor +0.15: below it the centre is cancelling)"
+      "detail": "stereo: inter-channel correlation +0.78 (floor +0.15: below it the centre is cancelling)"
     },
     {
       "level": "PASS",
       "check": "dropout",
-      "detail": "longest hole 0 ms (limit 20-1000 ms), floor -70.9 dBFS; 0 hole(s)"
+      "detail": "longest hole 0 ms (limit 20-1000 ms), floor -72.2 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -1129,7 +1129,7 @@
     {
       "level": "PASS",
       "check": "end.abrupt",
-      "detail": "end level -117.0 dBFS (limit -45), decay over final 300 ms 57.3 dB (limit 12); natural release"
+      "detail": "end level -117.2 dBFS (limit -45), decay over final 300 ms 57.4 dB (limit 12); natural release"
     },
     {
       "level": "PASS",
@@ -1139,12 +1139,12 @@
     {
       "level": "PASS",
       "check": "master.dc",
-      "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
+      "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
       "check": "tempo.audio",
-      "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 175.4 BPM vs 88.0 (tolerance 2.0) from the onset-envelope autocorrelation (peak 3.8x the median); beat tracker said 172.3; four-quarter drift 4.4 BPM reported, not decisive"
+      "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 175.1 BPM vs 88.0 (tolerance 2.0) from the onset-envelope autocorrelation (peak 3.8x the median); beat tracker said 172.3; four-quarter drift 3.5 BPM reported, not decisive"
     },
     {
       "level": "PASS",
@@ -1199,12 +1199,12 @@
     {
       "level": "PASS",
       "check": "imm_width",
-      "detail": "L/R correlation 0.79 (limit 0.95)"
+      "detail": "L/R correlation 0.78 (limit 0.95)"
     },
     {
       "level": "PASS",
       "check": "imm_foldown",
-      "detail": "mono fold-down is +0.3 LU vs the stereo master (limit 3): holds up on a phone speaker"
+      "detail": "mono fold-down is +0.2 LU vs the stereo master (limit 3): holds up on a phone speaker"
     },
     {
       "level": "PASS",
@@ -1224,7 +1224,7 @@
     {
       "level": "PASS",
       "check": "imm_low_fold",
-      "detail": "below 250 Hz the mono fold loses 1.0 dB (limit 2.5): the low end holds on one speaker"
+      "detail": "below 250 Hz the mono fold loses 1.3 dB (limit 2.5): the low end holds on one speaker"
     },
     {
       "level": "PASS",
@@ -1264,7 +1264,7 @@
     {
       "level": "PASS",
       "check": "spatial.z_separation",
-      "detail": "closest competing pair \"choir\"/\"violins_long\": band envelope overlap 0.80 (limit 0.50), 113 deg apart (azimuth 113, elevation 2); every pair that shares the midrange in the climax is separated"
+      "detail": "closest competing pair \"choir\"/\"violins_long\": band envelope overlap 0.79 (limit 0.50), 113 deg apart (azimuth 113, elevation 2); every pair that shares the midrange in the climax is separated"
     },
     {
       "level": "PASS",
@@ -1274,7 +1274,7 @@
     {
       "level": "PASS",
       "check": "vocal",
-      "detail": "vocal \"choir\": finite, DC 2.9e-09, peak 0.85, no limiter hit"
+      "detail": "vocal \"choir\": finite, DC 2.1e-09, peak 0.85, no limiter hit"
     },
     {
       "level": "PASS",
@@ -1284,7 +1284,7 @@
     {
       "level": "WARN",
       "check": "vocal",
-      "detail": "vocal \"choir\": a phrase runs 8.4 s, past one breath (6.3 s). Leave a rest of 0.3 s or more, or raise breathing.capacity_s"
+      "detail": "vocal \"choir\": a phrase runs 8.4 s, past one breath (6.5 s). Leave a rest of 0.3 s or more, or raise breathing.capacity_s"
     },
     {
       "level": "PASS",
@@ -1294,17 +1294,17 @@
     {
       "level": "PASS",
       "check": "vocal",
-      "detail": "vocal \"choir\": L/R correlation 0.15 (max 0.98), mono sum -2.37 dB (min -3.0)"
+      "detail": "vocal \"choir\": L/R correlation 0.14 (max 0.98), mono sum -2.45 dB (min -3.0)"
     },
     {
       "level": "PASS",
       "check": "vocal",
-      "detail": "vocal \"choir\": pitch within 9 cents of the score on average (vibrato excluded)"
+      "detail": "vocal \"choir\": pitch within 8 cents of the score on average (vibrato excluded)"
     },
     {
       "level": "PASS",
       "check": "vocal",
-      "detail": "vocal \"choir\": note level vs velocity correlation 0.86 (min 0.5)"
+      "detail": "vocal \"choir\": note level vs velocity correlation 0.87 (min 0.5)"
     },
     {
       "level": "PASS",
@@ -1314,12 +1314,12 @@
     {
       "level": "PASS",
       "check": "vocal",
-      "detail": "vocal \"choir\": formant motion starts 238 ms before the boundary (min 20)"
+      "detail": "vocal \"choir\": formant motion starts 299 ms before the boundary (min 20)"
     },
     {
       "level": "PASS",
       "check": "vocal",
-      "detail": "vocal \"choir\": measured period jitter 1.43 % (normal 0.3-2.0 %)"
+      "detail": "vocal \"choir\": measured period jitter 1.42 % (normal 0.3-2.0 %)"
     },
     {
       "level": "PASS",
@@ -1329,12 +1329,12 @@
     {
       "level": "PASS",
       "check": "vocal",
-      "detail": "vocal \"choir\": vibrato amplitude modulation 1.90 dB, correlation with f0 1.00 (min 0.5)"
+      "detail": "vocal \"choir\": vibrato amplitude modulation 1.88 dB, correlation with f0 1.00 (min 0.5)"
     },
     {
       "level": "PASS",
       "check": "vocal",
-      "detail": "vocal \"choir\": tract length differs by 10.4 % between singers (min 2.0 %)"
+      "detail": "vocal \"choir\": tract length differs by 7.3 % between singers (min 2.0 %)"
     },
     {
       "level": "INFO",
@@ -1354,32 +1354,32 @@
     {
       "level": "INFO",
       "check": "masking.excess",
-      "detail": "the beds sit above the figure in 120-180 Hz +35.9 dB, 180-250 Hz +35.3 dB, 250-350 Hz +33.8 dB (band-level masking proxy; a report, not a threshold)"
+      "detail": "the beds sit above the figure in 120-180 Hz +36.1 dB, 180-250 Hz +35.5 dB, 250-350 Hz +33.9 dB (band-level masking proxy; a report, not a threshold)"
     },
     {
       "level": "INFO",
       "check": "ear.fatigue",
-      "detail": "adaptation index peaks at 0.63 (warn above 0.6 for 5 s at stable loudness)"
+      "detail": "adaptation index peaks at 0.62 (warn above 0.6 for 5 s at stable loudness)"
     },
     {
       "level": "INFO",
       "check": "ear.mod_roughness",
-      "detail": "modulation roughness index peaks at 0.76 (warn above 0.6 for 3 frames)"
+      "detail": "modulation roughness index peaks at 0.77 (warn above 0.6 for 3 frames)"
     },
     {
       "level": "WARN",
       "check": "ear.masking",
-      "detail": "\"bansuri\" holds at least 50% of the neural activity in its own channels in 9% of its active frames (want 70%); median share 0.46. The figure is buried by the beds: lane EQ, `lead_carve`, a lower bed level or a different register"
+      "detail": "\"bansuri\" holds at least 50% of the neural activity in its own channels in 11% of its active frames (want 70%); median share 0.46. The figure is buried by the beds: lane EQ, `lead_carve`, a lower bed level or a different register"
     },
     {
       "level": "WARN",
       "check": "ear.pitch_salience",
-      "detail": "\"bansuri\" keeps its pitch (salience >= 0.25, same f0 within 6 %) in 5% of its pitched frames (want 50%). The pitch is lost in the mix: raise the register, remove a co-registered bed, or change the timbre"
+      "detail": "\"bansuri\" keeps its pitch (salience >= 0.25, same f0 within 6 %) in 7% of its pitched frames (want 50%). The pitch is lost in the mix: raise the register, remove a co-registered bed, or change the timbre"
     },
     {
       "level": "INFO",
       "check": "ear.iacc",
-      "detail": "interaural correlation of the neural patterns, 500-880 Hz: mean 0.66 (window 0.1..0.98)"
+      "detail": "interaural correlation of the neural patterns, 500-880 Hz: mean 0.62 (window 0.1..0.98)"
     },
     {
       "level": "INFO",
@@ -1389,7 +1389,7 @@
     {
       "level": "INFO",
       "check": "chem.reward_build",
-      "detail": "the build earns the strongest measured change at 30.0 s (the sheet declares no hits_at): 13.5 s of lead, rank correlation +1.00, peak 0.50. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
+      "detail": "the build earns the strongest measured change at 30.0 s (the sheet declares no hits_at): 11.2 s of lead, rank correlation +1.00, peak 0.58. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
     },
     {
       "level": "INFO",
@@ -1414,7 +1414,7 @@
     {
       "level": "WARN",
       "check": "chem.recovery",
-      "detail": "the piece ends 34% below its peak instead of coming down (want 35%). Lever: write a resolution section: slower, consonant, thinner, with a real cadence or a declared cliff. Tier C (recovery from listening alone is weak: g = 0.15, CI -0.21..0.52, n.s., 2022 meta-analysis); inputs: recovery, consonance, legato, tension"
+      "detail": "the piece ends 33% below its peak instead of coming down (want 35%). Lever: write a resolution section: slower, consonant, thinner, with a real cadence or a declared cliff. Tier C (recovery from listening alone is weak: g = 0.15, CI -0.21..0.52, n.s., 2022 meta-analysis); inputs: recovery, consonance, legato, tension"
     },
     {
       "level": "INFO",
@@ -1484,12 +1484,12 @@
     {
       "level": "INFO",
       "check": "env.cpu_budget",
-      "detail": "\"ambience\": 11.6 s of CPU per minute of audio on this machine, projected from a 3 s render (limit 12)"
+      "detail": "\"ambience\": 10.8 s of CPU per minute of audio on this machine, projected from a 3 s render (limit 12)"
     },
     {
       "level": "WARN",
       "check": "modulation_flutter",
-      "detail": "\"choir\" (pad) swings 0.24 of its level at 6-25 Hz (around 54.0s into the stem): rapid flutter, heard as chopped or stepped notes. Check vibrato depth, expression steps, or chord voices beating on separate channels."
+      "detail": "\"choir\" (pad) swings 0.28 of its level at 6-25 Hz (around 40.0s into the stem): rapid flutter, heard as chopped or stepped notes. Check vibrato depth, expression steps, or chord voices beating on separate channels."
     },
     {
       "level": "INFO",
@@ -1499,17 +1499,17 @@
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"tabla\" and \"ambience\" overlap within 4 dB in low-mid, mid, air; separate them with level, pan or a complementary EQ rather than more compression"
-    },
-    {
-      "level": "WARN",
-      "check": "mix:spectral overlap",
       "detail": "\"tabla\" and \"tanpura\" overlap within 4 dB in low-mid, mid, presence; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"choir\" and \"tanpura\" overlap within 4 dB in mid, presence, brilliance, air; separate them with level, pan or a complementary EQ rather than more compression"
+      "detail": "\"choir\" and \"violins_long\" overlap within 4 dB in sub, low-mid, mid, presence, brilliance, air; separate them with level, pan or a complementary EQ rather than more compression"
+    },
+    {
+      "level": "WARN",
+      "check": "mix:spectral overlap",
+      "detail": "\"tanpura\" and \"violas\" overlap within 4 dB in low-mid, presence, air; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "INFO",
@@ -1519,12 +1519,7 @@
     {
       "level": "WARN",
       "check": "mix:intelligibility",
-      "detail": "the lead sits -3.0 dB against the beds in 1-4 kHz: words and articulation will be covered. Carve the beds there or lift the lead"
-    },
-    {
-      "level": "INFO",
-      "check": "mix:headroom",
-      "detail": "the true-peak safety trimmed the master after limiting: the loudness target could not be met at this ceiling"
+      "detail": "the lead sits -13.2 dB against the beds in 1-4 kHz: words and articulation will be covered. Carve the beds there or lift the lead"
     },
     {
       "level": "PASS",
@@ -1544,7 +1539,7 @@
     {
       "level": "PASS",
       "check": "music21_harmonic_rhythm",
-      "detail": "300 vertical harmonic slices analyzed across multi-track arrangement"
+      "detail": "297 vertical harmonic slices analyzed across multi-track arrangement"
     }
   ],
   "mode": "project",
@@ -1564,14 +1559,14 @@
         "warns": 0,
         "rows": 104,
         "profile": "western_ghats_sunrise",
-        "total_ms": 1481.2992389997817,
+        "total_ms": 1370.602508999582,
         "timings": {
-          "ambience": 940.4650389997187,
-          "bansuri": 0.0,
+          "ambience": 0.0,
+          "bansuri": 544.5735889998105,
           "celli": 0.0,
-          "choir": 1217.6136429998223,
-          "pipes": 661.015158999362,
-          "santoor": 302.262119000261,
+          "choir": 1179.6154690000549,
+          "pipes": 0.0,
+          "santoor": 0.0,
           "sitar": 0.0,
           "tabla": 0.0,
           "tanpura": 0.0,
@@ -1750,18 +1745,18 @@
             "stage": "stem",
             "stem": "bansuri",
             "level": "PASS",
-            "value": 9.285247540198668e-07,
+            "value": 9.447770436384318e-07,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.0009990714752459802,
+            "margin": -0.0009990552229563615,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "stem \"bansuri\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
             "channel_means": [
-              -2.3078414250485896e-08,
-              -2.3637811913903895e-08
+              -2.5030878114655956e-08,
+              -2.559506331775317e-08
             ],
-            "drift": 9.285247540198668e-07
+            "drift": 9.447770436384318e-07
           },
           {
             "row": "stem.clipping",
@@ -1822,10 +1817,10 @@
             "calibrated": false,
             "detail": "stem \"bansuri\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
             "drops": [
-              58.7,
-              58.1,
-              52.8,
-              48.0
+              50.1,
+              53.2,
+              37.9,
+              36.9
             ],
             "exempted": []
           },
@@ -1863,7 +1858,7 @@
                 "section": "mist",
                 "start_s": 0.0,
                 "measured_db": -33.62,
-                "expected_db": -40.79,
+                "expected_db": -40.78,
                 "dyn": 0.12
               },
               {
@@ -1876,7 +1871,7 @@
               {
                 "section": "sunrise",
                 "start_s": 30.0,
-                "measured_db": -22.67,
+                "measured_db": -22.68,
                 "expected_db": -23.78,
                 "dyn": 0.85
               },
@@ -2066,18 +2061,18 @@
             "stage": "stem",
             "stem": "choir",
             "level": "PASS",
-            "value": 3.4077790502461254e-07,
+            "value": 3.6223503497656316e-07,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.0009996592220949754,
+            "margin": -0.0009996377649650235,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"choir\": channel mean(s) 0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+            "detail": "stem \"choir\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
             "channel_means": [
-              2.6776673642335938e-08,
-              -1.634316596644938e-08
+              2.3436529616087335e-08,
+              1.1915747213394861e-08
             ],
-            "drift": 3.4077790502461254e-07
+            "drift": 3.6223503497656316e-07
           },
           {
             "row": "stem.clipping",
@@ -2122,7 +2117,7 @@
             "margin": -20.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"choir\": longest hole 0 ms (limit 20-1000 ms), floor -80.6 dBFS; 0 hole(s)",
+            "detail": "stem \"choir\": longest hole 0 ms (limit 20-1000 ms), floor -82.1 dBFS; 0 hole(s)",
             "holes": []
           },
           {
@@ -2161,24 +2156,24 @@
             "stage": "stem",
             "stem": "choir",
             "level": "PASS",
-            "value": 0.42536617105424435,
+            "value": 0.4115656388050661,
             "unit": "rho",
             "threshold": 0.35,
-            "margin": 0.07536617105424437,
+            "margin": 0.0615656388050661,
             "worst_times_s": [
               0.0348
             ],
             "calibrated": false,
-            "detail": "stem \"choir\": onset autocorrelation 0.43 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 590 strong onset(s) of 593, 239 on the grid, IOI CV 0.501; peak rise 1.78 dB at those onsets over 590 onset(s) (min 3); tempogram peak ratio 0.73, PLP peak ratio 0.99",
+            "detail": "stem \"choir\": onset autocorrelation 0.41 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 346 strong onset(s) of 627, 142 on the grid, IOI CV 0.923; peak rise 1.91 dB at those onsets over 346 onset(s) (min 3); tempogram peak ratio 0.73, PLP peak ratio 1.00",
             "periodic": false,
             "period_ms": 92.87981859410431,
-            "events": 590,
-            "cv": 0.5009571854391748,
-            "grid_matched": 239,
-            "tempogram_ratio": 0.7310188398946749,
-            "plp_ratio": 0.9917759764256397,
-            "rise_db": 1.781,
-            "rise_onsets": 590
+            "events": 346,
+            "cv": 0.9228735918308661,
+            "grid_matched": 142,
+            "tempogram_ratio": 0.7313927060414299,
+            "plp_ratio": 0.9955460032128857,
+            "rise_db": 1.907,
+            "rise_onsets": 346
           },
           {
             "row": "stem.dead",
@@ -2191,28 +2186,28 @@
             "margin": -12.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"choir\": own median -34.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve",
+            "detail": "stem \"choir\": own median -36.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 3; follows the curve",
             "fail": false,
             "table": [
               {
                 "section": "first_light",
                 "start_s": 13.636,
-                "measured_db": -34.26,
-                "expected_db": -34.26,
+                "measured_db": -36.56,
+                "expected_db": -36.56,
                 "dyn": 0.38
               },
               {
                 "section": "sunrise",
                 "start_s": 30.0,
-                "measured_db": -25.3,
-                "expected_db": -27.27,
+                "measured_db": -27.45,
+                "expected_db": -29.57,
                 "dyn": 0.85
               },
               {
                 "section": "morning",
                 "start_s": 49.091,
-                "measured_db": -35.37,
-                "expected_db": -34.97,
+                "measured_db": -36.88,
+                "expected_db": -37.27,
                 "dyn": 0.35
               }
             ],
@@ -3537,12 +3532,12 @@
           }
         ],
         "duration_s": 64.3112925170068,
-        "cached_stems": 8,
-        "measured_stems": 4
+        "cached_stems": 10,
+        "measured_stems": 2
       },
       "mix": {
         "stage": "mix",
-        "fails": 2,
+        "fails": 1,
         "warns": 75,
         "metrics": [
           {
@@ -3550,30 +3545,27 @@
             "stage": "mix",
             "stem": null,
             "level": "FAIL",
-            "value": 6.0,
+            "value": 3.0,
             "unit": "events",
             "threshold": 0.0,
-            "margin": 6.0,
+            "margin": 3.0,
             "worst_times_s": [
-              30.7071,
-              32.0528,
-              34.4736,
-              45.6994,
-              48.4304,
-              48.7667
+              34.1166,
+              45.0228,
+              47.0648
             ],
             "calibrated": true,
-            "detail": "6 clustered impulse event(s) (MAD), 0 LPC frame(s); 88 event(s) rejected as a dense burst, 38 as a steep attack; max cluster span 1.383 ms"
+            "detail": "3 clustered impulse event(s) (MAD), 2 LPC frame(s); 190 event(s) rejected as a dense burst, 39 as a steep attack; max cluster span 1.451 ms"
           },
           {
             "row": "loudness",
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -16.031202646061857,
+            "value": -16.00000408106467,
             "unit": "LUFS",
             "threshold": -16.0,
-            "margin": -2.468797353938143,
+            "margin": -2.49999591893533,
             "worst_times_s": [],
             "calibrated": true,
             "detail": "-16.0 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -3583,13 +3575,13 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -1.5007495008015257,
+            "value": -2.2139114391945376,
             "unit": "dBTP",
             "threshold": -1.5,
-            "margin": -0.0007495008015256932,
+            "margin": -0.7139114391945376,
             "worst_times_s": [],
             "calibrated": true,
-            "detail": "-1.50 dBTP vs ceiling -1.5"
+            "detail": "-2.21 dBTP vs ceiling -1.5"
           },
           {
             "row": "dropout",
@@ -3602,7 +3594,7 @@
             "margin": -20.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "longest hole 0 ms (limit 20-1000 ms), floor -70.9 dBFS; 0 hole(s)"
+            "detail": "longest hole 0 ms (limit 20-1000 ms), floor -72.2 dBFS; 0 hole(s)"
           },
           {
             "row": "cut.hard",
@@ -3622,13 +3614,13 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 57.28918684041423,
+            "value": 57.35541566539868,
             "unit": "dB",
             "threshold": 12.0,
-            "margin": -45.28918684041423,
+            "margin": -45.35541566539868,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "end level -117.0 dBFS (limit -45), decay over final 300 ms 57.3 dB (limit 12); natural release"
+            "detail": "end level -117.2 dBFS (limit -45), decay over final 300 ms 57.4 dB (limit 12); natural release"
           },
           {
             "row": "clipping",
@@ -3648,26 +3640,26 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 5.689541326879984e-06,
+            "value": 1.2281510175309228e-06,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.00099431045867312,
+            "margin": -0.000998771848982469,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
+            "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
           },
           {
             "row": "tempo.audio",
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 87.44992486566721,
+            "value": 87.1325045831178,
             "unit": "BPM",
             "threshold": 2.0,
-            "margin": 85.44992486566721,
+            "margin": 85.1325045831178,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 175.4 BPM vs 88.0 (tolerance 2.0) from the onset-envelope autocorrelation (peak 3.8x the median); beat tracker said 172.3; four-quarter drift 4.4 BPM reported, not decisive"
+            "detail": "the measured tempo is 2x the written one (metrical octave, accepted by this piece's gate profile); measured 175.1 BPM vs 88.0 (tolerance 2.0) from the onset-envelope autocorrelation (peak 3.8x the median); beat tracker said 172.3; four-quarter drift 3.5 BPM reported, not decisive"
           },
           {
             "row": "section.energy",
@@ -3687,28 +3679,28 @@
                 "start_s": 0.0,
                 "end_s": 13.636,
                 "energy": 0.12,
-                "level_db": -30.619345201010763
+                "level_db": -33.083052829068855
               },
               {
                 "name": "first_light",
                 "start_s": 13.636,
                 "end_s": 30.0,
                 "energy": 0.38,
-                "level_db": -25.4084274534218
+                "level_db": -26.59693655226007
               },
               {
                 "name": "sunrise",
                 "start_s": 30.0,
                 "end_s": 49.091,
                 "energy": 0.85,
-                "level_db": -16.896376257477108
+                "level_db": -17.51328916148656
               },
               {
                 "name": "morning",
                 "start_s": 49.091,
                 "end_s": 60.0,
                 "energy": 0.35,
-                "level_db": -27.95327502042005
+                "level_db": -29.966835537125583
               }
             ]
           }
@@ -3829,6 +3821,14 @@
       "failing": [
         "clicks: 6 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 6 and LPC 0. Check the sample start or add a 2-5 ms fade-in at that note",
         "cochlear_roughness: Cochlear sensory roughness chronically high (median 0.087 > 0.070); continuous clashing overtones throughout piece. Separate chord voices by at least a minor 3rd or notch clashing frequencies."
+      ]
+    },
+    {
+      "attempt": 12,
+      "time": "2026-11-27T07:34:33Z",
+      "fails": 1,
+      "failing": [
+        "clicks: 3 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 3 and LPC 2. Check the sample start or add a 2-5 ms fade-in at that note"
       ]
     }
   ]
