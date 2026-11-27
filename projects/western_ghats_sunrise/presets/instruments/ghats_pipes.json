@@ -48,5 +48,6 @@
   "vibrato": {
     "depth_cents": 0
   },
-  "expression": "flat"
+  "expression": "flat",
+  "onset_fade_ms": 4.0
 }

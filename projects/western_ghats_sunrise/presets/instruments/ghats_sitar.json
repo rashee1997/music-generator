@@ -44,6 +44,7 @@
     "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
   ],
   "soundfont": "muse_general",
+  "snap": null,
   "velocity_timbre": {
     "points": [
       [

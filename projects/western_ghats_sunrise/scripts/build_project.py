@@ -87,7 +87,7 @@ INSTRUMENTS = [
          'A Scottish Highland piper on the far ridge: a steady drone on A, the Pa of the tanpura, and a chanter that plays the same five notes as the bansuri with a snap and a neighbour gracenote; no swell, no vibrato (a pipe has no dynamics), heard across the valley.',
          -7.0, 0.34, [HP(220), PK(2800, -1.0, 1.0), LP(7000)],
          hum=dict(preset='tight', timing_ms=4.0, lead_ms=6.0),
-         extra=dict(bloom=None, noise=None, vibrato=dict(depth_cents=0), expression='flat')),
+         extra=dict(bloom=None, noise=None, vibrato=dict(depth_cents=0), expression='flat', onset_fade_ms=4.0)),
     inst('bansuri', 'flute', 'melody', 'blown_reed',
          'The lead: a bansuri (bamboo flute) breathing through the Mohanam phrase, pure at the start of each long note and warming as it holds, with a slide into the notes the gamaka asks for.',
          -2.0, 0.22, [HP(220), PK(2600, 1.4, 1.1), LP(11000)],
@@ -97,7 +97,7 @@ INSTRUMENTS = [
     inst('sitar', 'veena', 'arp', 'plucked',
          'A plucked veena-sitar figure that answers the flute in running eighths, soft in the first light and brighter at the sunrise.',
          -6.0, 0.16, [HP(180), PK(3000, 1.5, 1.0), LP(9000)],
-         extra=dict(velocity_timbre=dict(points=vel_points(900, soft=(0.3, 0.6), loud=(3.5, 7.0)), zones=8))),
+         extra=dict(snap=None, velocity_timbre=dict(points=vel_points(900, soft=(0.3, 0.6), loud=(3.5, 7.0)), zones=8))),
     inst('violins_counter', 'violin', 'counter', 'bowed',
          "Rahman's string answer: a violin section playing the hook a third below the flute in the flute's rests, bowed and singing, with the vibrato growing on the held notes.",
          -3.5, 0.2, [HP(200), PK(3500, -2.0, 1.0), LP(10000)],
@@ -126,7 +126,7 @@ INSTRUMENTS = [
          extra=dict(humanize=dict(preset='natural', timing_ms=10.0, drift_ms=12.0, vel_sigma=4.0))),
     inst('santoor', 'santoor', 'texture', 'struck_pitched',
          'Dew on the leaves: sparse high santoor notes from the five-note scale, soft and bright, scattered over the first light and the morning.',
-         -12.0, 0.34, [HP(400), PK(4200, 1.0, 1.0)]),
+         -12.0, 0.34, [HP(400), PK(4200, 1.0, 1.0)], extra=dict(snap=None)),
 ]
 
 for _i in INSTRUMENTS:
@@ -138,7 +138,7 @@ for _i in INSTRUMENTS:
 
 TABLA = dict(name='ghats_tabla', description='Tabla and daf', instrument='standard', role='drum', family='struck_membrane',
              character='Tabla strokes (ge, na, tin) with a shaker underneath in the 3+3+2 pattern, and one low daf stroke where the sun clears the ridge: light hands, never a kit.',
-             humanize=dict(preset='tight', timing_ms=4.0, drum_ms=3.0), gain_db=-7.0, reverb=0.14, onset_fade_ms=2.0,
+             humanize=dict(preset='tight', timing_ms=4.0, drum_ms=3.0), gain_db=-7.0, reverb=0.14, onset_fade_ms=2.0, snap=None,
              spatial=dict(azimuth=-150, elevation=0, distance=2.4, space=f'{SLUG}_room', binaural=True, kind='spot'),
              eq=[HP(70), PK(250, -2.0, 0.9), PK(3800, 0.5, 1.0), LP(8500)], sources=list(SRC))
 
@@ -537,7 +537,7 @@ def score(plan_times=None):
         dict(name='violins_long', instrument='ghats_violins_long', role='chord', notes=strings_bed()),
         dict(name='violas', instrument='ghats_violas', role='ostinato', notes=violas()),
         dict(name='celli', instrument='ghats_celli', role='bass', notes=celli()),
-        dict(name='sitar', instrument='ghats_sitar', role='arp', notes=sitar()),
+        dict(name='sitar', instrument='ghats_sitar', role='arp', notes=sitar(), detune_cents=10.0),
         dict(name='santoor', instrument='ghats_santoor', role='texture', notes=santoor()),
         dict(name='tabla', instrument='ghats_tabla', role='drum', notes=tabla()),
         dict(name='choir', instrument='ghats_choir', role='pad', notes=choir()),

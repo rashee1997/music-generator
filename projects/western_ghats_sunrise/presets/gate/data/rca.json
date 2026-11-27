@@ -7,7 +7,7 @@
    "verdict": "unknown",
    "cause": "no analyzer for this row yet",
    "evidence": [
-    "7 clustered impulse event(s) (MAD), 7 LPC frame(s); 141 event(s) rejected as a dense burst, 70 as a steep attack; max cluster span 1.361 ms"
+    "8 clustered impulse event(s) (MAD), 3 LPC frame(s); 90 event(s) rejected as a dense burst, 41 as a steep attack; max cluster span 1.429 ms"
    ],
    "where": [
     "measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause"
@@ -21,51 +21,13 @@
    "cause": "partials of sounding parts beat",
    "evidence": [
     "Cochlear sensory roughness chronically high (median 0.073 > 0.070); continuous clashing overtones throughout piece. Separate chord voices by at least a minor 3rd or notch clashing frequencies.",
-    "window 0.0-61.5 s; sounding parts: bansuri -31 dB [1481, 1481, 1483], celli -33 dB [124, 124, 139], tabla -37 dB [205, 205, 206], sitar -38 dB [494, 494, 416], violins_counter -39 dB [331, 331, 331], violins_long -39 dB [664, 415, 663], choir -39 dB [665, 665, 665], violas -40 dB [498, 498, 498]",
-    "partials of different parts within about a quarter critical band: sitar 416 Hz vs violins_long 415 Hz (1 Hz apart); sitar 494 Hz vs violas 498 Hz (4 Hz apart); sitar 494 Hz vs violas 498 Hz (4 Hz apart); sitar 494 Hz vs violas 498 Hz (4 Hz apart); sitar 494 Hz vs violas 498 Hz (4 Hz apart); sitar 494 Hz vs violas 498 Hz (4 Hz apart)"
+    "window 0.0-61.5 s; sounding parts: bansuri -31 dB [1481, 1481, 1483], celli -33 dB [124, 124, 139], sitar -39 dB [660, 1109, 659], violins_counter -39 dB [331, 331, 331], violins_long -39 dB [664, 415, 663], choir -39 dB [665, 665, 665], violas -40 dB [498, 498, 498], tabla -41 dB [205, 205, 206]",
+    "partials of different parts within about a quarter critical band: sitar 660 Hz vs violins_long 664 Hz (4 Hz apart); sitar 660 Hz vs violins_long 663 Hz (3 Hz apart); sitar 659 Hz vs violins_long 664 Hz (5 Hz apart); sitar 659 Hz vs violins_long 663 Hz (4 Hz apart); sitar 660 Hz vs choir 665 Hz (5 Hz apart); sitar 660 Hz vs choir 665 Hz (5 Hz apart)"
    ],
    "where": [
     "the notes or the placement of the parts named: move one off the other's partial by a minor third or an octave, or drop one from the window"
    ],
    "tolerance": "bounded relaxation exists: scale 1.0 (range 0.5..2.0), outro_resolve True (choices [True]), model legacy (choices ['legacy', 'level_aware']), median 0.024 (range 0.02..0.4), calib_spl_db 70.0 (range 60.0..80.0), mask_band_bark 1.0 (range 0.5..3.0), mask_slope_up_db_bark 10.5 (range 5.0..20.0), mask_slope_down_db_bark 27.0 (range 15.0..40.0)"
-  },
-  {
-   "row": "ambient_bed",
-   "stem": "ambience",
-   "verdict": "fault",
-   "cause": "the bed sits at the silence floor of the mix",
-   "evidence": [
-    "ambient stem \"ambience\" drops out to silence at 32.5s",
-    "bed level -46.5 dB (median over its body); the gate's floor is -64.1 dB (the mix level minus 38 dB, never above -58)"
-   ],
-   "where": [
-    "the mix preset: level_by_role.environment, or the bed preset gain (a 3-6 dB lift clears a bed within 3 dB of the floor)"
-   ],
-   "tolerance": "bounded relaxation exists: pump_db 3.8 (range 3.0..6.0)"
-  },
-  {
-   "row": "ambient_bed",
-   "stem": null,
-   "verdict": "unknown",
-   "cause": "no processed bed",
-   "evidence": [
-    "rapid gain pumping on \"ambience\" (21.0 dB jump at 14.5s, limit 3.9). Smooth ducker release or use sigmoid crossfade"
-   ],
-   "where": [],
-   "tolerance": "bounded relaxation exists: pump_db 3.8 (range 3.0..6.0)"
-  },
-  {
-   "row": "env.score_pocket",
-   "stem": null,
-   "verdict": "unknown",
-   "cause": "no analyzer for this row yet",
-   "evidence": [
-    "\"ambience\": 1 of 3 foreground calls (33 %) sit where the score occupies their band under 0.7 (want 85 %). Raise ecology.score.pocket_threshold or margin_db, lower bouts_per_min, or move the niche band"
-   ],
-   "where": [
-    "measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause"
-   ],
-   "tolerance": "bounded relaxation exists: min_in_pocket 0.85 (range 0.5..1.0), fail_in_pocket 0.6 (range 0.2..0.95)"
   }
  ]
 }
