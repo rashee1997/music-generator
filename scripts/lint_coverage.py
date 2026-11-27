@@ -50,6 +50,8 @@ COVERAGE = {
     'pattern.flat_dynamics': ('stage2', 'pattern_audit.audit'),
     'pattern.four_on_floor': ('stage2', 'pattern_audit.audit'),
     'pattern.flags_max': ('stage2', 'pattern_audit.audit'),
+    'pattern.track_flags_max': ('stage2', 'pattern_audit.audit_detail'),
+    'shape.contrast': ('stage2', 'pattern_audit.shape_contrast'),
     'roughness': ('preflight', ['preflight.roughness', 'preflight.unison']),
     'ambient_bed': (A, 'the level of a rendered bed against the mix; the tempo-map bug is covered by tests/test_gate_clock.py'),
     'modulation_flutter': (A, 'amplitude modulation of rendered stems'),

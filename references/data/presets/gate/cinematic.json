@@ -10,6 +10,7 @@
     "reason": "a cue may be led by a line, by a texture or by a held drone; all three are the scene's centre"
   },
   "rows": {
+    "pattern.loop_short": {"mode": "relax", "min_distinct_frac": 0.06, "reason": "a cue holds a pad, a drone or an ostinato for a whole section on purpose; 6 % of the bars differing is the floor, so a part that never changes is still flagged while a section-level bed is not"},
     "balance.vs_lead": {"mode": "apply", "fallback": "balance.layers"}
   }
 }

@@ -11,7 +11,7 @@
   },
   "rows": {
     "pattern.melody_notes": {"mode": "skip", "reason": "there is no melodic line to judge"},
-    "pattern.loop_short": {"mode": "relax", "max_period_bars": 2, "max_distinct": 2, "reason": "a texture repeats its own grain by design"},
+    "pattern.loop_short": {"mode": "relax", "max_period_bars": 2, "max_distinct": 2, "min_distinct_frac": 0.02, "reason": "a texture repeats its own grain by design: 2 % of the bars differing is the floor that still catches a bed that never changes at all"},
     "pattern.flat_dynamics": {"mode": "relax", "min_range_frac": 0.06, "reason": "the level holds while the spectrum moves"},
     "pattern.flags_max": {"mode": "relax", "max": 8, "reason": "few parts, few varied lines"},
     "masking.vs_melody": {"mode": "skip", "reason": "no figure to unmask; the texture is the subject"},

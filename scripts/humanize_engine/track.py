@@ -257,10 +257,15 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
                 start_boost[i] += 0.003 if i % 2 else -0.003
 
     # ---- tonal tension: KTH melodic charge and harmonic charge --------------------------------
+    # Every velocity-shaping term is expressed on the same level scale as the phrase arch (dynamics.shape_velocity),
+    # so a phrase the score wrote louder gets a proportionally larger charge and expectation instead of having its
+    # expression diluted by a bigger arch. `gain` is that scale: the level clamp times the preset's arch size.
+    lvl = float(np.clip(float(np.mean(v)) / 90.0, 0.45, 1.35)) if n else 1.0
+    gain = lvl * (float(c.get('vel_arch', 7.0)) / 7.0)      # the arch's scale, so every term keeps its share of it
     tonic = key_tonic(key) if key is not None else getattr(tm, 'key', None)
     roots = chord_roots if chord_roots is not None else getattr(tm, 'chord_roots', None)
-    mc_v, mc_d = float(c.get('melodic_charge_vel', 0.0)), float(c.get('melodic_charge_dur', 0.0))
-    hc_v, hc_d = float(c.get('harmonic_charge_vel', 0.0)), float(c.get('harmonic_charge_dur', 0.0))
+    mc_v, mc_d = float(c.get('melodic_charge_vel', 0.0)) * gain, float(c.get('melodic_charge_dur', 0.0))
+    hc_v, hc_d = float(c.get('harmonic_charge_vel', 0.0)) * gain, float(c.get('harmonic_charge_dur', 0.0))
     if tonic is not None:
         if (mc_v or mc_d) and roots is not None and len(roots[0]):
             rb, rp = np.asarray(roots[0], float), np.asarray(roots[1], int)
@@ -288,6 +293,7 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
 
     # ---- expectation -> expression: hesitation before a surprise, a breath before an uncertain note ---------------
     ic_ms, ic_v, h_ms = (float(c.get(k, 0.0)) for k in ('ic_agogic_ms', 'ic_vel', 'h_breath_ms'))
+    ic_v *= gain                                   # the expectation's velocity share keeps its weight as the arch grows
     if (ic_ms or ic_v or h_ms) and base_role in FIG + ('counter',) and tonic is not None:
         z_ic, z_h = expectation.note_z(ns, tonic)
         start_boost += ic_ms / 1000.0 * z_ic + h_ms / 1000.0 * np.maximum(z_h - 0.5, 0.0)
