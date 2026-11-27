@@ -9,6 +9,17 @@ revision 1 did not ask for and the owner did; `GateFeedback` became `scripts/gat
 `references/data/presets/gate/data/feedback.json`, wired into `rca.py`, the gate report and `debug_audio.py --feedback`.
 New reference: `references/mixing/quality-gate-scenes.md`.
 
+Revision 3 (loud, dense and silent music): reading a real cue (Highway Pursuit, 18 stems, FAILED after 14 attempts) showed the
+scene machinery stopped at the master and score rows while the stem tier, which blocks the mix, stayed scene-blind. The
+false positives found there are row parameters now (`references/mixing/quality-gate.md` section 3k): `roughness.median_legacy`
+(was a compiled constant), `pattern.velocity_flat.sd_abs_max`, `masking.vs_melody.max_share`, `stem.tick.score_match_share`,
+`stem.dead.honour_rests` / `dyn_scale`, `dropout.honour_rests`, `scene.silence_honoured.tail_grace_s`. Declared rests are read
+from the sheet with or without a `scene` block (`scene_timeline.rests_of`). Genre starting profiles and a compose-genre map
+(`data/genre_map.json`, `setup_project.py --genre`) and `scripts/threshold_audit.py` with a ratchet test came with it.
+Still open: `spatial.z_separation` on layered mid-range parts, `stem.clipping` on stems before the master limiter, the BSI
+reading 0.00 for every Highway section, the 45 literal constants `threshold_audit.py` lists, and a re-render of Highway
+under these parameters (not done: nothing was rendered or heard here).
+
 Scope rule that governs every item: **JSON only, no YAML, no new file format**. Every new number goes in a file the
 code already reads (`<project>/presets/gate/`, `references/data/presets/gate/`, the project's `direction/*.json`), under
 a key validated by `gate_profiles.row_problems` / `profile_problems` with a `(default, lo, hi)` range. No project, track

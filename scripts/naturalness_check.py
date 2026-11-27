@@ -46,7 +46,7 @@ ROUGHNESS_AUDIBLE_DB = -40.0    # a partial this far under the frame's loudest c
 # partials are present, so a 6-part consonant chord scored 2x the fail threshold while a semitone dyad scored less (both
 # measured, see tests/test_gate_profiles.py::Roughness). Calibrated on 6 real masters (median 0.029-0.047) and a synthetic
 # anchor set (consonant triad/4-part/8-part 0.041-0.062; semitone at 262/500/1000 Hz and a 3-semitone cluster 0.073-0.099).
-ROUGHNESS_MEDIAN = 0.070
+ROUGHNESS_MEDIAN = 0.070       # fallback when no profile resolves; the row parameter roughness.median_legacy (rows.json) is the figure a piece is judged by
 ROUGHNESS_RELATIVE = 1.6        # a spike must also stand this far above the piece's own median
 ROUGHNESS_OUTRO_RATIO = 1.2     # the last 3 s must not be rougher than the piece's median by more than this
 # Level-aware model (roughness.model = "level_aware"). Every value below is a profile parameter of the `roughness`
@@ -366,6 +366,7 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None, model=None):
     calib_spl_db, band_bark = ROUGHNESS_CALIB_SPL_DB, ROUGHNESS_MASK_BAND_BARK
     slope_up, slope_down = ROUGHNESS_MASK_SLOPE_UP_DB_BARK, ROUGHNESS_MASK_SLOPE_DOWN_DB_BARK
     median_la = ROUGHNESS_MEDIAN_LEVEL_AWARE
+    median_legacy = ROUGHNESS_MEDIAN
     if score:
         try:
             import pattern_audit
@@ -379,6 +380,7 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None, model=None):
             slope_up = float(gp.param('roughness', 'mask_slope_up_db_bark'))
             slope_down = float(gp.param('roughness', 'mask_slope_down_db_bark'))
             median_la = float(gp.param('roughness', 'median_min'))
+            median_legacy = float(gp.param('roughness', 'median_legacy'))
         except Exception:
             pass
     if model is not None:
@@ -548,7 +550,7 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None, model=None):
     legacy_med = float(np.median(r_leg)) if len(r_leg) else 0.0
     legacy_max = float(np.max(r_leg)) if len(r_leg) else 0.0
 
-    median_base = ROUGHNESS_MEDIAN if model_name == 'legacy' else median_la
+    median_base = median_legacy if model_name == 'legacy' else median_la
     abs_thresh = median_base * scale            # `scale` applied once, here
     rel_thresh = max(abs_thresh, ROUGHNESS_RELATIVE * r_med)
 

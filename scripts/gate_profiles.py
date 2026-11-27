@@ -138,6 +138,37 @@ for _reported, _row in ALIASES.items():
     REPORT_IDS.setdefault(_row, []).append(_reported)
 
 
+GENRE_MAP_PATH = os.path.join(os.path.dirname(ROWS_PATH), 'genre_map.json')
+
+
+def genre_profile(genre):
+    """The shipped gate profile a compose.py genre (or alias, or a profile name) starts from; `melodic` when unmapped.
+
+    The map is data (references/data/presets/gate/data/genre_map.json) and names a starting structure, not a measurement.
+    """
+    g = str(genre or '').strip().lower().replace('-', '_').replace(' ', '_')
+    shipped = shipped_names()
+    if g in shipped:
+        return g
+    try:
+        with open(GENRE_MAP_PATH, encoding='utf-8') as f:
+            m = (json.load(f).get('genres')) or {}
+    except (OSError, ValueError):
+        m = {}
+    if g in m:
+        return m[g]
+    try:                                    # an alias (a Pixabay or common name) resolves through compose's own table
+        import compose
+        c = compose.GENRE_ALIASES.get(g)
+        if c in shipped:
+            return c
+        if c in m:
+            return m[c]
+    except Exception:
+        pass
+    return 'melodic'
+
+
 def canonical(rid):
     """The profile row that owns a reported row id (identity when it already is a profile row)."""
     return ALIASES.get(rid, rid)

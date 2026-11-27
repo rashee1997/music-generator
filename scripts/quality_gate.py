@@ -915,7 +915,15 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
     secs = gc.section_bounds(score, program_sig.dur, sheet)
     boundaries = [s['start_s'] for s in secs if s['start_s'] > 0.05]
 
-    res = gc.check_dropout(program_sig)
+    ignore = []
+    try:
+        import gate_profiles, scene_timeline
+        _gp = gate_profiles.resolve(score)
+        if _gp.param('dropout', 'honour_rests'):
+            ignore = scene_timeline.rests_of(score, _gp, project_dir)
+    except Exception:
+        ignore = []
+    res = gc.check_dropout(program_sig, ignore_windows=ignore)
     level = 'FAIL' if res.get('holes') else 'PASS'
     _row(out, level, 'dropout', res['detail'])
     _metric(metrics, row='dropout', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
@@ -1075,6 +1083,7 @@ def masking_rows(stems, score, sr=44100, out=None):
         return rows                                        # listed once, with its reason, by the profile notes
     margin_db = gp.param('masking.vs_melody', 'margin_db')
     max_collisions = int(gp.param('masking.vs_melody', 'max_collisions'))
+    max_share = float(gp.param('masking.vs_melody', 'max_share'))
     margin_tight = float(gp.param('masking.vs_melody', 'margin_db_tight'))
     try:
         import scene_timeline
@@ -1172,12 +1181,15 @@ def masking_rows(stems, score, sr=44100, out=None):
         t0, ln, bn, fc, ov = congested[0]
         stems_hit = sorted(set(c[2] for c in congested))
         fcs_hit = sorted(set(c[3] for c in congested))
-        lvl = 'FAIL' if len(congested) > max_collisions else 'WARN'
+        # A count alone grows with the piece's length and the number of beds. A FAIL needs the count AND a share of the
+        # compared cells over `max_share`; either alone is a WARN.
+        share = len(congested) / max(compared, 1)
+        lvl = 'FAIL' if (len(congested) > max_collisions and share > max_share) else 'WARN'
         dlg = (f"; the margin tightened by {margin_tight:g} dB inside the dialogue window(s) the sheet declares"
                if (_tl_m is not None and _tl_m.dialogue_windows and margin_tight) else '')
         rows.append((lvl, 'erb_binaural_masking',
                      f"{len(congested)} ERB critical-band collision window(s) where lead ({ln}) is masked by {', '.join(stems_hit)} "
-                     f"around {', '.join(f'{f}Hz' for f in fcs_hit[:3])}, first at {t0:.1f}s (limit {max_collisions}){dlg}. "
+                     f"around {', '.join(f'{f}Hz' for f in fcs_hit[:3])}, first at {t0:.1f}s (limit {max_collisions} and {max_share:.0%} of {compared} compared cells; this is {share:.0%}){dlg}. "
                      f"Apply a narrow parametric EQ notch at {fc}Hz or increase stereo azimuth separation (spatial.azimuth)."))
     elif compared == 0:
         rows.append(('INFO', 'erb_binaural_masking',

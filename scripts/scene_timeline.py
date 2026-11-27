@@ -297,6 +297,29 @@ def load(score, gp=None, project_dir=None):
     return tl
 
 
+def rests_of(score, gp=None, project_dir=None):
+    """The rests the project's direction sheet declares, as [(start_s, end_s)], with or without a `scene` block.
+
+    A rest is a fact of the sheet (a hit's `silence_after_s`, a `silence_windows` entry, a section whose own words say
+    silence), not a scene-judging choice, so the rows that must not mistake a rest for a defect (`dropout`,
+    `stem.dead`) read it here and do not need the profile to declare scenes. No sheet means no rests, never a guess.
+    """
+    import gate_profiles
+    profile = gp or gate_profiles.resolve(score)
+    scene = dict(getattr(profile, 'scene', None) or {})
+    path = _sheet_path(scene, _project_dir(score, project_dir))
+    if not path or not os.path.isfile(path):
+        return []
+    try:
+        with open(path, encoding='utf-8') as f:
+            sheet = json.load(f)
+    except (OSError, ValueError):
+        return []
+    scene['_score_tempo'] = _tempo_points(score)
+    scene['_score_bpm'] = score.get('bpm')
+    return list(Timeline(scene, sheet=sheet, source=path).rests)
+
+
 def describe(tl):
     """One line for a report: the sheet it read and the roles it found."""
     if tl is None:

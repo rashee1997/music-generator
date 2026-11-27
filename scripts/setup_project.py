@@ -75,7 +75,7 @@ def install(venv, uv, *args):
         run([venv_python(venv), '-m', 'pip', 'install', *args])
 
 
-def scaffold_project(proj_path, title="New Composition", ambience=False):
+def scaffold_project(proj_path, title="New Composition", ambience=False, genre=None):
     """ambience=False (default): no environment preset or track. Ambience is added only when the user asked for it."""
     proj_dir = Path(proj_path).resolve()
     direction_dir = proj_dir / 'direction'
@@ -110,9 +110,17 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
         except (OSError, ValueError):
             body = {'name': 'melodic', 'extends': 'melodic'}
         body['name'] = slug
-        body['extends'] = 'melodic'
+        # `--genre` starts the piece's own profile from a shipped genre profile by `extends`, so its rows are inherited
+        # (one source) and the project states only where it departs. No genre means `melodic`, the old behaviour.
+        if genre:                      # a shipped profile name, a compose.py genre or an alias (gate_profiles.genre_profile)
+            sys.path.insert(0, str(Path(__file__).resolve().parent))
+            import gate_profiles
+            genre = gate_profiles.genre_profile(genre)
+        body['extends'] = genre or 'melodic'
+        if genre:                      # inherit the genre's focus, flags and rows; a copy of melodic's would override them
+            body = {k: v for k, v in body.items() if k not in ('focus', 'flags', 'rows', 'detect')}
         body['character'] = ('ONE SENTENCE: why this piece is judged by these rows and where it departs from '
-                            '`melodic` (fill before the first render; the project gate blocks a placeholder)')
+                            '`' + (genre or 'melodic') + '` (fill before the first render; the project gate blocks a placeholder)')
         prof_path.write_text(json.dumps(body, indent=1), encoding='utf-8')
 
     # Delivery metadata: the standard tags live in the skill (presets/metadata/metadata.json); this file only
@@ -675,6 +683,7 @@ def main():
     ap.add_argument('--new-film', metavar='DIR', help='scaffold a film: film.json, spotting/, analysis/, cues/<id>/ (one music project each), deliver/')
     ap.add_argument('--fps', type=float, default=25.0, help='with --new-film: the picture rate (default 25)')
     ap.add_argument('--cues', default=None, help='with --new-film: comma-separated cue ids (default M01_open)')
+    ap.add_argument('--genre', default=None, help='with --new-project: start the piece\'s own gate profile from a shipped genre profile (python scripts/gate_profiles.py list), e.g. orchestral, rock_band, hiphop, jazz_ensemble, world_percussion, game_loop, dance, ambient, cinematic')
     ap.add_argument('--title', default='New Composition', help='title of the piece when scaffolding a new project')
     ap.add_argument('--ears', action='store_true', help='also install earshot and download its models (about 1 GB)')
     ap.add_argument('--soundfonts', nargs='?', const='all', default=None, metavar='NAMES',
@@ -686,7 +695,7 @@ def main():
     args = ap.parse_args()
 
     if args.new_project:
-        scaffold_project(args.new_project, title=args.title, ambience=args.ambience)
+        scaffold_project(args.new_project, title=args.title, ambience=args.ambience, genre=args.genre)
         return
 
     if args.new_film:

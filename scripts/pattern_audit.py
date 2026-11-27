@@ -1217,7 +1217,13 @@ def audit_detail(score):
                 flag(name, f'{name}: the bass uses {len(pcs)} pitch classes in {n_bars} bars. Add passing notes, octave jumps, a walk into chord changes')
         # judged against the track's own level: a quiet pad at 0.3 and a loud lead at 0.6 both need their own
         # contour, and an absolute 0.04 sd flagged every soft mood while letting a loud flat track pass.
-        if gp.on('pattern.velocity_flat') and len(notes) >= 16 and vel.std() < P('pattern.velocity_flat', 'sd_frac') * max(float(vel.mean()), 1e-6):
+        # The relative figure asks a loud part for a spread it has no headroom for (a mean of 0.8 asks for 0.12 against a
+        # ceiling of 1.0), so the demand is capped at `sd_abs_max` in the score's own velocity units: 0..1 scores are
+        # judged on 0..1, 1..127 scores on 127 times that.
+        vscale = 127.0 if float(vel.max()) > 1.0 else 1.0
+        vel_need = min(P('pattern.velocity_flat', 'sd_frac') * max(float(vel.mean()), 1e-6),
+                       P('pattern.velocity_flat', 'sd_abs_max') * vscale)
+        if gp.on('pattern.velocity_flat') and len(notes) >= 16 and vel.std() < vel_need:
             flag(name, f'{name}: velocity barely moves (sd {vel.std():.2f} on a mean of {vel.mean():.2f}, {vel.std() / max(float(vel.mean()), 1e-6):.0%} of it). '
                        f'Accent by phrase, add ghost notes, swell and fade')
     dyn = [d[1] for d in score.get('dynamics', [])]

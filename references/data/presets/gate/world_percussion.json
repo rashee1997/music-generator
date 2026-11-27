@@ -1,0 +1,36 @@
+{
+  "name": "world_percussion",
+  "character": "percussion-led folk or world music (frame drums, tabla, djembe, dhol): a cyclic rhythm is the form and the melodic line is optional",
+  "extends": "melodic",
+  "detect": {
+    "keywords": [
+      "tabla",
+      "djembe",
+      "dhol",
+      "talam",
+      "tala",
+      "frame drum",
+      "folk percussion"
+    ]
+  },
+  "why": "a shipped starting point for `gate_profiles.py new <name> --from world_percussion`: the figures are starting values chosen for the genre structure, not measurements of a piece; measure with scripts/rca.py and state the real figures in the project profile",
+  "rows": {
+    "pattern.loop_short": {
+      "mode": "relax",
+      "max_period_bars": 2,
+      "max_distinct": 2,
+      "min_distinct_frac": 0.04,
+      "reason": "a rhythmic cycle (tala, clave, bell pattern) repeats by definition"
+    },
+    "pattern.drums_few": {
+      "mode": "relax",
+      "distinct_div": 16,
+      "reason": "the cycle repeats; variation is the improvised line over it"
+    },
+    "pattern.flags_max": {
+      "mode": "relax",
+      "max": 6,
+      "reason": "cyclic structure: several parts repeat on purpose"
+    }
+  }
+}

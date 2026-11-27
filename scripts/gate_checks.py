@@ -204,13 +204,16 @@ def _lpc_clicks(sig, mad_z=8.0, starts=None):
 
 
 def check_dropout(sig, min_ms=20.0, max_ms=1000.0, floor_below_db=45.0, edge_ms=250.0,
-                  frame_ms=20.0, hop_ms=5.0, sounding=None, note_margin_s=0.03):
+                  frame_ms=20.0, hop_ms=5.0, sounding=None, note_margin_s=0.03, ignore_windows=()):
     """A run of frames 45 dB below the file's median and below -60 dBFS, away from both edges.
 
     sounding: the track's own note intervals. When given, only a hole whose middle falls inside a sounding note is a
     dropout: silence between phrases is the score's rest, not a fault. Measured on a real project, a hummed vocal stem
     read seven 20-40 ms "holes" that were all the gaps between phrases; without the score the row cannot tell a cut
     from a rest.
+
+    ignore_windows: (start_s, end_s) pairs the direction sheet declared as rests; a hole whose middle falls in one is the
+    score's silence, not an edit (the scene row `scene.silence_honoured` judges whether that rest is really quiet).
     """
     db, times = frame_db(sig, frame_ms, hop_ms)
     if db.size == 0:
@@ -234,6 +237,9 @@ def check_dropout(sig, min_ms=20.0, max_ms=1000.0, floor_below_db=45.0, edge_ms=
         spans = [(float(x), float(y)) for x, y in sounding]
         holes = [(a, d) for a, d in holes
                  if any(x - note_margin_s <= a + d / 2000.0 <= y + note_margin_s for x, y in spans)]
+    if ignore_windows:
+        holes = [(a, d) for a, d in holes
+                 if not any(float(x) <= a + d / 2000.0 <= float(y) for x, y in ignore_windows)]
     longest = max((d for _, d in holes), default=0.0)
     detail = (f'longest hole {longest:.0f} ms (limit {min_ms:.0f}-{max_ms:.0f} ms), '
               f'floor {floor:.1f} dBFS; {len(holes)} hole(s)')

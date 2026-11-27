@@ -1,0 +1,30 @@
+{
+  "name": "jazz_ensemble",
+  "character": "small acoustic ensemble (rhythm section plus soloists): the harmony cycles, the solos vary, the swing feel is in the timing",
+  "extends": "melodic",
+  "detect": {
+    "keywords": [
+      "jazz",
+      "swing",
+      "bebop",
+      "bossa",
+      "ensemble"
+    ]
+  },
+  "why": "a shipped starting point for `gate_profiles.py new <name> --from jazz_ensemble`: the figures are starting values chosen for the genre structure, not measurements of a piece; measure with scripts/rca.py and state the real figures in the project profile",
+  "rows": {
+    "pattern.loop_short": {
+      "mode": "relax",
+      "max_period_bars": 4,
+      "max_distinct": 4,
+      "min_distinct_frac": 0.08,
+      "reason": "a walking bass and comping follow a repeating chord cycle; the soloist and the voicings vary on top"
+    },
+    "feel.witek": {
+      "mode": "relax",
+      "bsi_hi": 6.0,
+      "bsi_fail_hi": 7.0,
+      "reason": "swing and syncopated comping sit above the pop window of the syncopation index (Witek 2014 measured funk and jazz-like patterns up to the top of the inverted U)"
+    }
+  }
+}

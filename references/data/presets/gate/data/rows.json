@@ -175,6 +175,18 @@
      "low": 1.5,
      "high": 8.0,
      "source": "starting value: no published measurement recorded for this row"
+    },
+    "score_match_share": {
+     "default": 0.6,
+     "low": 0.3,
+     "high": 0.95,
+     "source": "starting value: a periodic onset train is the piece's own pulse, not a defect, when this share of the part's written note starts sit on that period (within tol_ms of one phase). A tick defect is by definition not in the score."
+    },
+    "tol_ms": {
+     "default": 40.0,
+     "low": 10.0,
+     "high": 100.0,
+     "source": "starting value: the written-note phase tolerance for stem.tick score_match_share; about one 16th at 190 bpm; the humanizer's timing spread sets the real figure (scripts/humanize_engine/config.py TIMING)."
     }
    }
   },
@@ -192,6 +204,16 @@
      "low": -80.0,
      "high": -50.0,
      "source": "starting value: no published measurement recorded for this row"
+    },
+    "dyn_scale": {
+     "default": 1.0,
+     "low": 0.25,
+     "high": 1.0,
+     "source": "starting value: 1.0 expects a stem's section level to follow the sheet's energy ratio in full (20*log10). A bank with one velocity layer cannot follow it (scripts/soundbank_audit.py reports velocity layers), so a profile may state a smaller share with the audit's measurement as the reason."
+    },
+    "honour_rests": {
+     "default": true,
+     "source": "starting value: a section inside a declared rest or inside a window whose role waives stem.dead is not judged: a stem silent where the sheet asks for silence is not dead. A flag, so no range."
     }
    }
   },
@@ -265,6 +287,10 @@
      "low": 30.0,
      "high": 60.0,
      "source": "starting value: no published measurement recorded for this row"
+    },
+    "honour_rests": {
+     "default": true,
+     "source": "starting value: a hole whose middle falls in a declared rest (hit silence_after_s, silence_windows, a section whose own words say silence) is the score, not an edit. A flag, so no range."
     }
    }
   },
@@ -459,6 +485,12 @@
      "low": 0.02,
      "high": 0.35,
      "source": "starting value: no published measurement recorded for this row"
+    },
+    "sd_abs_max": {
+     "default": 0.09,
+     "low": 0.04,
+     "high": 0.2,
+     "source": "ceiling on what the relative rule may demand, in 0..1 velocity units: a loud part cannot spread above 127, so 15% of a mean of 0.8 asks for more headroom than exists. 0.09 = 11.4 MIDI units = the ASAP 5-95 percentile range of 36.7 (Baroque, the smallest measured; see shape.contrast) divided by 3.29 (the width of a normal distribution's 5-95 interval); a derivation, not a fitted value."
     }
    }
   },
@@ -612,6 +644,12 @@
      "low": 0.0,
      "high": 5.0,
      "source": "starting value: no published measurement recorded for this row"
+    },
+    "tail_grace_s": {
+     "default": 0.5,
+     "low": 0.0,
+     "high": 3.0,
+     "source": "starting value: a declared rest starts at a hit, and the room (reverb tail) decays after it; AGENTS 4b.2 asks for 'nothing but the room', so the level is read after this grace. The real figure is the space preset's early/late decay, see references/spatial/acoustic-laws.md."
     }
    }
   },
@@ -717,6 +755,12 @@
      "low": 15.0,
      "high": 40.0,
      "source": "Daniel & Weber 1997 (roughness) and Zwicker & Fastl 1990 (simultaneous-masking slopes); the 0.024 median and the slope values are calibrated on tests/fixtures/roughness, not on a cue"
+    },
+    "median_legacy": {
+     "default": 0.07,
+     "low": 0.04,
+     "high": 0.2,
+     "source": "Daniel & Weber 1997 / Plomp-Levelt pair weight; 0.070 is the median the legacy model was calibrated to in naturalness_check.py (6 real masters measured median 0.029-0.047, a semitone cluster 0.073-0.099, tests/fixtures/roughness); was the Python constant ROUGHNESS_MEDIAN, now a row parameter so a profile can state it with a reason. median_min below is the level_aware model's own figure."
     }
    }
   },
@@ -894,6 +938,12 @@
      "low": 0.0,
      "high": 12.0,
      "source": "Moore & Glasberg 1983 (ERB scale) with the usual BMLD bonus convention; the 8 dB margin is a starting value"
+    },
+    "max_share": {
+     "default": 0.25,
+     "low": 0.05,
+     "high": 1.0,
+     "source": "starting value: a FAIL needs the collision count over max_collisions AND this share of the compared lead/bed/band/window cells, so a longer piece or one with more beds is not failed by count alone. The share is not a published figure."
     }
    }
   },

@@ -45,7 +45,7 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **1.3** Determine project type and fill in STATUS.md
 
 ### PHASE 2: SETUP
-- [ ] **2.1** Create project: `python scripts/setup_project.py --new-project <dir> --title "<Title>"` (only add `--ambience` if explicitly requested). The scaffold includes `presets/gate/` (the piece's **own** gate profile, cloned from `melodic` with its `character` still to be written) and `<dir>/metadata.json` (delivery tags). A project cannot render on a shipped gate profile: fill the scaffolded one before Phase 6.
+- [ ] **2.1** Create project: `python scripts/setup_project.py --new-project <dir> --title "<Title>" [--genre <profile>]` (only add `--ambience` if explicitly requested; `--genre` makes the project's own gate profile extend a shipped genre profile: `orchestral`, `rock_band`, `hiphop`, `jazz_ensemble`, `world_percussion`, `game_loop`, `dance`, `ambient`, `cinematic`, `tense`, `groove`, `texture`). The scaffold includes `presets/gate/` (the piece's **own** gate profile, cloned from `melodic` with its `character` still to be written) and `<dir>/metadata.json` (delivery tags). A project cannot render on a shipped gate profile: fill the scaffolded one before Phase 6.
 - [ ] **2.2** Write only into `<dir>/`, never into the skill folder
 - [ ] **2.3** Fill `<dir>/metadata.json` with the real delivery values (artist, album, year, publisher, ISRC, copyright, licence). These override the standard tags in `presets/metadata/metadata.json`. Title and genre are derived from the score; do not hardcode tags in a script.
 
@@ -61,16 +61,17 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **4.1** Confirm R1-R3 are done, the research notes carry citations, and `references/workflow/music-direction.md` has been read.
 - [ ] **4.2** Copy `templates/direction_sheet.json` to `<dir>/direction/direction_<title>.json`
 - [ ] **4.3** FILL EVERY FIELD: `job`, `purpose`, `point_of_view`, `sections` (with picture action), `motifs`, `hits_at`+`hits`, `ending`, `feel`, `avoid_feel`, `palette`, `avoid_sounds`, `tempo`, `key/mode`, `energy`, `space`, `mix_intent`, `loudness`, `true_peak_max`, `delivery`, `references` (words only), `spatial_staging`, `piece_type`, `focus` (what carries it), `intent`, `expression` (4.8), and for an immersive piece `immersive` (4.7)
-- [ ] **4.6** Decide the focus before the arrangement: `melody`, `drone`, `groove`, `texture` or `gesture`, and the roles that may carry it. A piece whose type expects a figure and has none will FAIL `focus.declared`, and that is the point.
-- [ ] **4.7** For an immersive piece, fill `immersive` after reading `references/workflow/directing-space.md`: whether the field does a job (`why`), which parts are anchors and which move (`movers[].why`, `.path` in words), the height plan, where the room changes (`room_changes[].at_section`, named by section) and the `deliverables`, two-channel first. Every number (keyframes, heights, room geometry) goes in the presets; the section names here are the vocabulary a trajectory or a room scene is anchored to, so they must match the score's `plan.sections`.
-- [ ] **4.8** Fill `expression` after reading `references/workflow/music-direction.md` section 2.11, before any note: the `sonic_picture` (what the listener hears in the first ten seconds, the middle and the last note), the `performer` (what a human player does), the `producer_moves`, the `anti_generic` sentence, per-section `cues` (arousal, mode and register, tempo, dynamics, articulation, timbre) and, for a melody piece, the `theme` as a shape with a `variation_plan`. A sheet without it is a WARN (`direction.expression`); a half-written one is a FAIL.
-- [ ] **4.9** Craft pass, after 4.8 and before any note: write the six answers of `references/workflow/director-craft.md` section 1 (the hook, the arc, the density map, the lanes, the contrast, the ending) in `STATUS.md` and in the sheet's existing fields. For a blend of traditions, write the shared core (one tonic, one scale, one pulse) and each tradition's job. A piece whose six answers cannot be written is not decided: do not start the score.
-- [ ] **4.9b** Harmony plan, after 4.9 and before any note: for a piece of 40 s or more with three or more sections, fill the sheet's `harmony_plan` (one entry per section: `root`, `key`, `move` or `counter_hook`, or `pedal: true` with a `why`). A static pedal under a whole piece is a decision to write down, not a default. A hit that must stop the music carries `silence_after_s` (`direction.stinger`). Rows: `direction.harmony_plan`, `direction.stinger`, `realism.harmonic_motion`.
 - [ ] **4.4** If scoring to video, run `scripts/video_score.py` - it fills video block but YOU still write music intent
 - [ ] **4.5** Ensure sections don't overlap, hits align with hits_at. Gate rejects otherwise. A hit with `sync: hard` opens a
       ±150 ms intentional cut window in which `stem.cut` / `cut.hard` skip the level drop (nothing else is skipped); with
       `kind: cut` it also ramps the sustained voices to silence over 15 ms. Write a hit as `musical`, not `cut`, when the strings
       must keep sounding. `references/mixing/quality-gate-rows.md` section 8.
+
+- [ ] **4.6** Decide the focus before the arrangement: `melody`, `drone`, `groove`, `texture` or `gesture`, and the roles that may carry it. A piece whose type expects a figure and has none will FAIL `focus.declared`, and that is the point.
+- [ ] **4.7** For an immersive piece, fill `immersive` after reading `references/workflow/directing-space.md`: whether the field does a job (`why`), which parts are anchors and which move (`movers[].why`, `.path` in words), the height plan, where the room changes (`room_changes[].at_section`, named by section) and the `deliverables`, two-channel first. Every number (keyframes, heights, room geometry) goes in the presets; the section names here are the vocabulary a trajectory or a room scene is anchored to, so they must match the score's `plan.sections`.
+- [ ] **4.8** Fill `expression` after reading `references/workflow/music-direction.md` section 2.11, before any note: the `sonic_picture` (what the listener hears in the first ten seconds, the middle and the last note), the `performer` (what a human player does), the `producer_moves`, the `anti_generic` sentence, per-section `cues` (arousal, mode and register, tempo, dynamics, articulation, timbre) and, for a melody piece, the `theme` as a shape with a `variation_plan`. A sheet without it is a WARN (`direction.expression`); a half-written one is a FAIL.
+- [ ] **4.9** Craft pass, after 4.8 and before any note: write the six answers of `references/workflow/director-craft.md` section 1 (the hook, the arc, the density map, the lanes, the contrast, the ending) in `STATUS.md` and in the sheet's existing fields. For a blend of traditions, write the shared core (one tonic, one scale, one pulse) and each tradition's job. A piece whose six answers cannot be written is not decided: do not start the score.
+- [ ] **4.9b** Harmony plan, after 4.9 and before any note: for a piece of 40 s or more with three or more sections, fill the sheet's `harmony_plan` (one entry per section: `root`, `key`, `move` or `counter_hook`, or `pedal: true` with a `why`). A static pedal under a whole piece is a decision to write down, not a default. A hit that must stop the music carries `silence_after_s` (`direction.stinger`). Rows: `direction.harmony_plan`, `direction.stinger`, `realism.harmonic_motion`.
 
 ### PHASE 5: PRESETS
 - [ ] **5.1** Scaffold instruments/vocals: `python scripts/presets.py scaffold instruments|vocals <exact_name> --project <dir>`. Each needs unique `spatial.azimuth/distance`. Fill real `character` sentence (placeholder blocked).
@@ -105,13 +106,13 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **7.2** Follow all rules in Section 4.
 
 ### PHASE 8: RENDER & ITERATE
-- [ ] **8.1** Render: `python scripts/pipeline.py <dir>/scores/<title>_score.json --project <dir> --max-attempts 3` (background for long runs)
+- [ ] **8.1** Render: `python scripts/pipeline.py <dir>/scores/<title>_score.json --project <dir> --max-attempts 5` (background for long runs)
 - [ ] **8.1b** Before a long render run `python scripts/preflight_lint.py <dir>/scores/<title>_score.json <dir>` (stage 2 runs it too): fix every FAIL (note outside the patch range, one-shot cut short) and read every WARN, since each one cost a full render when it was found by the audio rows. `preflight.roughness_partials` names the overtones that will beat; after a failing render run `python scripts/roughness_forecast.py diagnose <draft_master> --stems <dir>/stems --score <score>` before changing a note (`references/mixing/quality-gate-rows.md`, end of the file). `references/mixing/quality-gate.md` section 3g.
       For an orchestral part stage 2 also runs `python scripts/orch_rows.py <score> --project <dir>` (`orch.range`,
       `orch.voice_leading`, `orch.playable`, `orch.legato`: a note outside the instrument's range, parallel fifths, more
       notes than a player has, a breathless phrase, a gap in a legato line). Fix the notes; a deliberate extreme is
       declared on the track (`extended_range`, `section`), never by loosening a row. `quality-gate-rows.md` section 7.
-- [ ] **8.2** Read scoreboard, not early logs. Find the cause of each failure before touching anything (`python scripts/rca.py <dir>`, step 9.4h), then fix ONE thing at a time. Max 5 attempts.
+- [ ] **8.2** Read scoreboard, not early logs. Find the cause of each failure before touching anything (`python scripts/rca.py <dir>`, step 9.4h), then fix ONE thing at a time. After 5 attempts that do not lower the FAIL count, STOP: write the failure log and the rca verdict in `STATUS.md`, report, and ask; attempts 6 and later are not a strategy. A failing row whose verdict is `mismatch` is relaxed through `gate_profiles.py relax`, not retried.
 - [ ] **8.3** For immersive pieces, fix imm_* rows in presets/score, never loosen. `imm_kinematics`: spread the
       keyframes. `imm_low_fold` / `mix.band_fold`: narrow the stem the row names. `imm_clarity`: lower the space's
       `late.level_db`. Table: `references/mixing/quality-gate-rows.md` §5c.
@@ -269,7 +270,7 @@ levers. Using GM habits on an SFZ track is what leaves it sounding like a sample
 Full procedure: `references/scoring/cinematic-commercial-grade.md`. Facts and sources: `knowledgebase/genre-and-feel/cinematic-hybrid-scoring.md`.
 
 1. **Pressure is a deliverable.** Decide the carriers (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising or accelerating device) in the direction sheet before any note.
-2. **A stinger is a decision.** A hit that should stop the music declares `silence_after_s` in the sheet and nothing but the room sounds after it; layer it (`sfx:impact_cinematic`: click, body, sub, tail) and do not glide into the aftermath. A section's contrast between quiet and loud is set in `mastering.section_levels` (from the plan's `energy`), not by pushing the whole cue louder.
+2. **A stinger is a decision.** A hit that should stop the music declares `silence_after_s` in the sheet and nothing but the room sounds after it (`scene.silence_honoured` reads the level after `tail_grace_s`, and `dropout` does not count a declared rest); layer it (`sfx:impact_cinematic`: click, body, sub, tail) and do not glide into the aftermath. A section's contrast between quiet and loud is set in `mastering.section_levels` (from the plan's `energy`), not by pushing the whole cue louder.
 2b. **The last section is the peak or the cliff**, never the fade of a peak, unless the brief asks for relief.
 3. **Atmosphere sits under the cue.** For a brief about threat, turn rain, river and canopy down.
 4. **Gate rows and pressure collide on heavy cues** (`master.dc`, `dropout`, `cochlear_roughness`, `z_separation`, `fold.mono`). The table in the reference file lists the fix for each in the piece; none of them is a loosened row.
@@ -307,6 +308,15 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
 | Dark/unresolved/suspense (no cadence) | `tense` | SKIPS "resolves to tonic" |
 | Effects/ambience only (no notes) | `effects_only` | Declares an empty focus and skips the row |
 
+- **Loud, dense, layered and silent music is judged on what it is.** The rows that used to read an arrangement choice as a defect
+  carry a parameter for it (`references/mixing/quality-gate.md` §3k): `roughness.median_legacy`, `pattern.velocity_flat.sd_abs_max`,
+  `masking.vs_melody.max_share`, `stem.tick.score_match_share`, `stem.dead.honour_rests` / `dyn_scale`, `dropout.honour_rests`,
+  `scene.silence_honoured.tail_grace_s`. A rest the direction sheet declares (`hits[].silence_after_s`, `silence_windows`, a section
+  whose words say silence) exempts its window from `dropout` and `stem.dead`, and `scene.silence_honoured` reads the level after the
+  room's tail. A part whose written notes sit on a detected period is a pulse, not a `stem.tick`. State a figure in the project
+  profile with `gate_profiles.py relax` and the measurement; never in Python. Shipped genre profiles (`orchestral`, `rock_band`,
+  `hiphop`, `jazz_ensemble`, `world_percussion`, `game_loop`) are starting values for the structure of a genre, not measurements of
+  your piece: the project profile `extends` one (`setup_project.py --genre`) and measures its own.
 - The virtual-ear rows (`ear.fatigue`, `ear.masking`, `ear.mod_roughness`, `ear.pitch_salience`, `ear.iacc`) are advisory (INFO / WARN, never FAIL) and their numbers are starting values calibrated on synthetic fixtures only. `ambient` (which covers drone pieces) relaxes `ear.fatigue` to 0.75 over 15 s because a held bed is its subject; the reason and the measurement are in `presets/gate/ambient.json`. Any other profile that holds a pad on purpose does the same, with its own measurement, never in advance.
 - The chem rows (`chem.model`, `chem.reward_build`, `chem.reward_arrival`, `chem.stress_load`, `chem.affiliation`,
   `chem.motor_drive`, `chem.recovery`, `chem.arc_variety`, `chem.mood_connection`, `chem.genre_connection`) are
@@ -413,6 +423,9 @@ Rules:
 17c. **A producer decides how it is played before writing it** - The `expression` block (Phase 4.8) is the entry point of the piece. An agent that has not decided who plays each part, what a human does, what the theme's shape is and what the generic version would be writes the generic version. A theme is a shape with a variation plan, never a mood word.
 17. **A declaration is judged** - `focus.declared`, `intent.vocabulary` and `intent.avoid` are rows like any other (Section 6b).
     They fail in the score or the presets; a declaration is never deleted, loosened or skipped to get a green report.
+
+18. **A threshold is a row parameter.** A number a piece is judged by lives in `references/data/presets/gate/data/rows.json` (default, range, `source`), is read with `gp.param()`, and is stated per piece in the project's profile. A literal in a gate module fails `tests/test_gate_literals.py`; `python scripts/threshold_audit.py` lists what is left to migrate. A new row parameter regenerates `tests/fixtures/gate/thresholds.json` on purpose, with the reason in the commit.
+19. **A row must be satisfiable.** Two rows that read one event (a stinger's silence, a section's level) must not demand opposite things: the sheet's declaration decides which window each reads. When a piece can only pass one of two rows, that is a gate bug: report it with `rca.py`, do not rewrite the music to dodge a row.
 
 ---
 

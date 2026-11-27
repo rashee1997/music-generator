@@ -1,0 +1,35 @@
+{
+  "name": "hiphop",
+  "character": "beat, bass and sample or vocal loop: a groove piece whose loop is the hook and whose variation is arrangement and mutes",
+  "extends": "groove",
+  "detect": {
+    "keywords": [
+      "hiphop",
+      "hip-hop",
+      "trap",
+      "boom bap",
+      "lofi",
+      "lo-fi"
+    ]
+  },
+  "why": "a shipped starting point for `gate_profiles.py new <name> --from hiphop`: the figures are starting values chosen for the genre structure, not measurements of a piece; measure with scripts/rca.py and state the real figures in the project profile",
+  "rows": {
+    "pattern.loop_short": {
+      "mode": "relax",
+      "max_period_bars": 2,
+      "max_distinct": 2,
+      "min_distinct_frac": 0.04,
+      "reason": "a sample or 808 loop is the genre; sections change by what enters and leaves"
+    },
+    "pattern.drums_few": {
+      "mode": "relax",
+      "distinct_div": 16,
+      "reason": "a repeated drum bar is the groove, hats roll and fills mark the section"
+    },
+    "pattern.velocity_flat": {
+      "mode": "relax",
+      "sd_frac": 0.06,
+      "reason": "a programmed hat or 808 line is written near-flat and swung; the ghost-note pattern, not velocity sd, carries the groove"
+    }
+  }
+}

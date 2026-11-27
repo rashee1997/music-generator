@@ -331,3 +331,40 @@ already existed or by the scene rows below, and a piece with no scene block is j
   `scripts/gate_feedback.py`, `rca.py` ("do next"), `reports/.../feedback.txt` and `debug_audio.py --feedback`: what the
   row asks for, where it is changed, and whether that costs a re-render, a re-performance or a code fix. A tier-1 row
   never falls through to the generic advice.
+
+## 3k. Loud, dense and layered music: what a row may and may not mistake
+
+A row measures a defect. These measurements used to read an arrangement choice as a defect, so a loud, layered or
+deliberately silent piece failed for being what it was (the Highway Pursuit cue ended FAILED after 14 attempts, on rows
+none of which was a fault in the music). Each is now a row parameter in `rows.json`, set in the project profile with the
+measurement as the reason, never in Python:
+
+| Row | Read as a defect before | Parameter | What it does |
+|---|---|---|---|
+| `roughness` | a median over 0.070 in the default (`legacy`) model, a literal in `naturalness_check.py` | `median_legacy` | the legacy model's median is a profile figure; `median_min` is the `level_aware` model's. The forecast reads the same one. |
+| `pattern.velocity_flat` | a spread under 15 % of the part's mean, which asks a part near ff for more than 127 allows | `sd_abs_max` | the demand is capped at 0.09 (11.4 MIDI units: the ASAP 5-95 range of 36.7 divided by 3.29) so only a truly flat loud part is flagged |
+| `masking.vs_melody` | more than 8 congested cells, a count that grows with length and number of beds | `max_share` | a FAIL needs the count and this share of the compared cells; either alone is a WARN |
+| `stem.tick` | a periodic onset train in a part that is not drums or melody, however the score wrote it | `score_match_share`, `tol_ms` | not a tick when this share of the part's written notes start on that period (or a divisor of it): the pulse is in the score. A defect is not in the score. |
+| `stem.dead` | a section more than 12 dB under the sheet's energy ratio, even where the sheet asks for silence | `honour_rests`, `dyn_scale` | a declared rest or a window that waives the row is not judged; `dyn_scale` < 1 states that the bank cannot follow the written ratio (`soundbank_audit.py` reports its velocity layers), with that measurement as the reason |
+| `dropout` (master) | a hole of 20-1000 ms anywhere | `honour_rests` | a hole whose middle is inside a rest the sheet declared (`silence_after_s`, `silence_windows`, a section whose words say silence) is the score; `scene.silence_honoured` judges whether the rest is quiet |
+| `scene.silence_honoured` | the room tail after the hit that opens the rest, counted as sound | `tail_grace_s` | the level is read after the tail has had this long (0.5 s); the real figure is the space preset's decay |
+
+What is not loosened: clipping (stem and master), true peak, loudness, clicks, DC and the channel rows. A loud brass stem
+that clips is turned down at its stem, and the dynamic range the sheet asked for is kept by the other parts rising, not by
+flattening velocities (AGENTS 17b).
+
+Shipped genre profiles (`orchestral`, `rock_band`, `hiphop`, `jazz_ensemble`, `world_percussion`, `game_loop`, with
+`dance`, `ambient`, `cinematic`, `tense`, `groove`, `texture`) are starting points for structure: where the genre repeats
+or layers by design, which rows ask a different question. Their figures are starting values, not measurements of a piece.
+`python scripts/setup_project.py --new-project <dir> --title "<Title>" --genre orchestral` makes the project's own profile
+`extend` one, so it inherits the rows and states only where the piece departs.
+
+Research behind these figures, and what it did not find: EBU R 128 sets no loudness-range limit and says LRA may be limited
+for style or genre, and that it is not recommended for programmes under a minute (EBU Tech 3342, R 128); no published
+loudness-range table by genre was found, so no genre profile carries one. Streaming targets (-14 LUFS Spotify and YouTube,
+-16 Apple Music, AES TD1008 -16 LUFS music, -1 dBTP) were found only in secondary sources and stay as the delivery profile's
+starting values until read from the platforms' own pages. ASAP velocity statistics were not found on the web; the 0.09 cap
+is a derivation from the corpus range already cited in `shape.contrast`, not a fitted value.
+
+`python scripts/threshold_audit.py` lists the numbers still compiled into the gate modules; `tests/test_gate_literals.py`
+fails when a new one appears. A new threshold goes in `rows.json` with a default, a range and a source.

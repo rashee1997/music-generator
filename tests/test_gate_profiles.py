@@ -95,7 +95,9 @@ class Shipped(Base):
         self.assertEqual(set(presets.load('gate')), {'melodic', 'tense', 'ambient', 'dance', 'cinematic', 'effects_only',
                                                      'groove', 'texture', 'expressive_acoustic', 'cinematic_suspense',
                                                      'video_cinematic', 'video_basic', 'video_dialogue',
-                                                     'video_underscore', 'video_montage', 'video_trailer'})
+                                                     'video_underscore', 'video_montage', 'video_trailer',
+                                                     'orchestral', 'rock_band', 'hiphop', 'jazz_ensemble',
+                                                     'world_percussion', 'game_loop'})
 
     def test_every_focus_role_is_a_role_the_engine_knows(self):
         """A focus list is a promise about the arrangement: an unknown name in it would check nothing."""

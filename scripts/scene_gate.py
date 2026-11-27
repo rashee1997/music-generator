@@ -377,7 +377,9 @@ def rows(score, path=None, stems=None, out=None, gp=None, project_dir=None):
         _row(behalf, 'INFO', 'scene.silence_honoured', 'not measured: no rendered audio')
         _row(behalf, 'INFO', 'scene.bed_stability', 'not measured: no rendered audio')
     else:
-        loud = [(a, b, _rms_dbfs(x, a, b, sr)) for a, b in windows]
+        # the room decays after the hit that opened the rest: read the level once that tail has had `tail_grace_s`
+        grace = float(gp.param('scene.silence_honoured', 'tail_grace_s'))
+        loud = [(a, b, _rms_dbfs(x, a + (grace if b - a - grace >= 0.1 else 0.0), b, sr)) for a, b in windows]
         loud = [(a, b, v) for a, b, v in loud if v is not None]
         bad = [(a, b, v) for a, b, v in loud if v > max_db]
         if bad:
