@@ -123,7 +123,7 @@ INSTRUMENTS = [
     inst('tanpura', 'sitar', 'drone', 'plucked',
          'The tanpura drone: the four-string cycle Pa, Sa, Sa, low Sa, plucked softly and left to ring under everything, the anchor of the one key centre.',
          -11.0, 0.3, [HP(70), PK(300, -2.0, 0.9), LP(6500)],
-         extra=dict(humanize=dict(preset='natural', timing_ms=10.0, drift_ms=12.0, vel_sigma=4.0))),
+         extra=dict(snap=None, onset_fade_ms=3.0, humanize=dict(preset='natural', timing_ms=10.0, drift_ms=12.0, vel_sigma=4.0))),
     inst('santoor', 'santoor', 'texture', 'struck_pitched',
          'Dew on the leaves: sparse high santoor notes from the five-note scale, soft and bright, scattered over the first light and the morning.',
          -12.0, 0.34, [HP(400), PK(4200, 1.0, 1.0)], extra=dict(snap=None)),
@@ -400,7 +400,7 @@ def counter():
 
 
 # chords from the five raga notes only (raga-safe voicings, KB indian-film-fusion 3.1): (bars, degree indices, Sa)
-D_ADD9, BM, ASUS2, D_TRIAD = [0, 1, 2, 3], [-1, 0, 2], [3, 4, 6], [0, 2, 3]       # D E F# A | B D F# | A B E
+D_ADD9, BM, ASUS2, D_TRIAD = [0, 2, 3], [-1, 0, 2], [3, 6, 8], [0, 2, 3]       # D F# A | B D F# | A E A: open voicings with no second between the sustained voices (cochlear_roughness, measured)
 
 
 def chords():
@@ -537,7 +537,7 @@ def score(plan_times=None):
         dict(name='violins_long', instrument='ghats_violins_long', role='chord', notes=strings_bed()),
         dict(name='violas', instrument='ghats_violas', role='ostinato', notes=violas()),
         dict(name='celli', instrument='ghats_celli', role='bass', notes=celli()),
-        dict(name='sitar', instrument='ghats_sitar', role='arp', notes=sitar(), detune_cents=10.0),
+        dict(name='sitar', instrument='ghats_sitar', role='arp', notes=sitar()),
         dict(name='santoor', instrument='ghats_santoor', role='texture', notes=santoor()),
         dict(name='tabla', instrument='ghats_tabla', role='drum', notes=tabla()),
         dict(name='choir', instrument='ghats_choir', role='pad', notes=choir()),

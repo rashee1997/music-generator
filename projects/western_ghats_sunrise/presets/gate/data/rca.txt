@@ -1,12 +1,12 @@
 [UNKNOWN] clicks  -  no analyzer for this row yet
-    8 clustered impulse event(s) (MAD), 3 LPC frame(s); 90 event(s) rejected as a dense burst, 41 as a steep attack; max cluster span 1.429 ms
+    2 clustered impulse event(s) (MAD), 2 LPC frame(s); 83 event(s) rejected as a dense burst, 48 as a steep attack; max cluster span 1.474 ms
     fix here: measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause
     tolerance: protected: no profile or score can change it, so the audio is the only fix
 
 [FAULT] cochlear_roughness  -  partials of sounding parts beat
-    Cochlear sensory roughness chronically high (median 0.073 > 0.070); continuous clashing overtones throughout piece. Separate chord voices by at least a minor 3rd or notch clashing frequencies.
-    window 0.0-61.5 s; sounding parts: bansuri -31 dB [1481, 1481, 1483], celli -33 dB [124, 124, 139], sitar -39 dB [660, 1109, 659], violins_counter -39 dB [331, 331, 331], violins_long -39 dB [664, 415, 663], choir -39 dB [665, 665, 665], violas -40 dB [498, 498, 498], tabla -41 dB [205, 205, 206]
-    partials of different parts within about a quarter critical band: sitar 660 Hz vs violins_long 664 Hz (4 Hz apart); sitar 660 Hz vs violins_long 663 Hz (3 Hz apart); sitar 659 Hz vs violins_long 664 Hz (5 Hz apart); sitar 659 Hz vs violins_long 663 Hz (4 Hz apart); sitar 660 Hz vs choir 665 Hz (5 Hz apart); sitar 660 Hz vs choir 665 Hz (5 Hz apart)
+    Cochlear sensory roughness chronically high (median 0.084 > 0.070); continuous clashing overtones throughout piece. Separate chord voices by at least a minor 3rd or notch clashing frequencies.
+    window 0.0-61.5 s; sounding parts: bansuri -31 dB [1481, 1481, 1483], celli -33 dB [124, 124, 139], sitar -38 dB [663, 663, 663], violins_counter -39 dB [331, 331, 331], violins_long -39 dB [664, 415, 663], choir -39 dB [665, 665, 665], violas -40 dB [498, 498, 498], tabla -41 dB [205, 205, 206]
+    partials of different parts within about a quarter critical band: sitar 663 Hz vs violins_long 664 Hz (1 Hz apart); sitar 663 Hz vs violins_long 664 Hz (1 Hz apart); sitar 663 Hz vs violins_long 664 Hz (1 Hz apart); sitar 663 Hz vs choir 665 Hz (2 Hz apart); sitar 663 Hz vs choir 665 Hz (2 Hz apart); sitar 663 Hz vs choir 665 Hz (2 Hz apart)
     fix here: the notes or the placement of the parts named: move one off the other's partial by a minor third or an octave, or drop one from the window
     tolerance: bounded relaxation exists: scale 1.0 (range 0.5..2.0), outro_resolve True (choices [True]), model legacy (choices ['legacy', 'level_aware']), median 0.024 (range 0.02..0.4), calib_spl_db 70.0 (range 60.0..80.0), mask_band_bark 1.0 (range 0.5..3.0), mask_slope_up_db_bark 10.5 (range 5.0..20.0), mask_slope_down_db_bark 27.0 (range 15.0..40.0)
 
