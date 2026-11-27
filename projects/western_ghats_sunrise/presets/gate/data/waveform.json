@@ -1,5 +1,5 @@
 {
-  "duration_s": 61.36968253968254,
+  "duration_s": 62.1343537414966,
   "sections": [
     {
       "name": "mist",
@@ -58,7 +58,7 @@
       "PASS"
     ],
     [
-      2.322,
+      2.3104,
       "stem.tick",
       "violins_long",
       "PASS"
@@ -66,29 +66,29 @@
     [
       4.6324,
       "stem.tick",
-      "sitar",
-      "PASS"
-    ],
-    [
-      4.644,
-      "stem.tick",
       "bass",
       "PASS"
     ],
     [
-      11.5287,
+      4.6556,
+      "stem.tick",
+      "sitar",
+      "PASS"
+    ],
+    [
+      11.5403,
       "stem.tick",
       "violas",
       "PASS"
     ],
     [
-      13.8623,
+      13.8739,
       "stem.tick",
       "guitar_clean",
       "PASS"
     ],
     [
-      16.4513,
+      16.4629,
       "stem.tick",
       "santoor",
       "PASS"
@@ -100,37 +100,25 @@
       "PASS"
     ],
     [
-      46.6979,
+      45.5619,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      47.6244,
+      60.91,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      59.6319,
+      60.981,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      59.6652,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      60.0178,
-      "clicks",
-      "master",
-      "FAIL"
-    ],
-    [
-      60.034,
+      61.0631,
       "clicks",
       "master",
       "FAIL"

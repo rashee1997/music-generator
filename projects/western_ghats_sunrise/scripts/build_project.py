@@ -201,7 +201,7 @@ def environment():
     e['medium']['sources'] = ['ISO 9613-1 for the absorption', '89.9 kPa is the standard atmosphere at 1000 m (starting value)', '16 C and 92 % RH: a clear misty dawn (ESTIMATE)']
     e['controls'] = {'light': {'curve': [[0, 0.04], [8, 0.1], [20, 0.35], [30, 0.85], [48, 1.0], [60, 0.9]]},
                      'wind_u': {'curve': [[0, 1.6], [18, 1.8], [30, 2.7], [60, 3.0]]},
-                     'stream_rate': {'curve': [[0, 18], [18, 22], [30, 40], [60, 52]]},
+                     'stream_rate': {'curve': [[0, 18], [18, 22], [30, 40], [57, 52], [62, 10]]},
                      'night_fade': {'curve': [[0, 1.0], [12, 0.8], [26, 0.25], [40, 0.05], [60, 0.0]]},
                      'mist_drip': {'curve': [[0, 3], [30, 1.5], [60, 0.5]]}}
     gens = {g['name']: g for g in e['generators']}

@@ -1,5 +1,5 @@
 {
- "stamp": "20261127T092246",
+ "stamp": "20261127T092941",
  "project": "western_ghats_sunrise",
  "level": "FAIL",
  "sources": {
@@ -17,18 +17,18 @@
   ],
   "stems": "17 processed stems from .cache/mix",
   "master": "out/_draft_western_ghats_sunrise.wav",
-  "verdict": "2026-11-27T09:22:09Z"
+  "verdict": "2026-11-27T09:28:47Z"
  },
  "binding": [
   {
    "row": "clicks",
    "stem": null,
    "level": "FAIL",
-   "value": 6.0,
+   "value": 4.0,
    "threshold": 0.0,
    "unit": "events",
-   "safety": -6.0,
-   "detail": "6 clustered impulse event(s) (MAD), 3 LPC frame(s); 163 event(s) rejected as a dense burst, 142 as a steep attack; max cluster span 1.474 ms"
+   "safety": -4.0,
+   "detail": "4 clustered impulse event(s) (MAD), 1 LPC frame(s); 68 event(s) rejected as a dense burst, 103 as a steep attack; max cluster span 1.451 ms"
   }
  ],
  "advisory": [
@@ -122,7 +122,7 @@
  },
  "model": {
   "first_order": true,
-  "rows": 40,
+  "rows": 24,
   "levers": [
    {
     "id": "render.oversample",
@@ -173,60 +173,50 @@
     "text": "violins_counter high shelf at 5500 Hz: inst_eq[\"ghats_violins_counter\"]"
    },
    {
-    "id": "hf.violins_long",
-    "domain": "master",
-    "kind": "hf_shelf",
-    "stem": "violins_long",
-    "current": 0.0,
-    "lo": -12.0,
-    "hi": 0.0,
+    "id": "inst_eq.ambience.0",
+    "domain": "stems",
+    "kind": "eq",
+    "stem": "ambience",
+    "current": -6.0,
+    "lo": -18.0,
+    "hi": 6.0,
     "step": 0.5,
     "unit": "dB",
-    "text": "violins_long high shelf at 5500 Hz: inst_eq[\"ghats_violins_long\"]"
+    "text": "ambience highshelf 7000 Hz q0.7"
    },
    {
-    "id": "note.bansuri.d",
+    "id": "note.ambience.d",
     "domain": "stems",
     "kind": "note_len",
-    "stem": "bansuri",
-    "current": 0.7088,
-    "lo": 0.6488,
-    "hi": 0.7687999999999999,
+    "stem": "ambience",
+    "current": 107.0,
+    "lo": 106.94,
+    "hi": 107.06,
     "step": 0.010416666666666666,
     "unit": "beats",
-    "text": "bansuri written note length (mean 0.7088 beats)"
-   },
-   {
-    "id": "note.violins_counter.d",
-    "domain": "stems",
-    "kind": "note_len",
-    "stem": "violins_counter",
-    "current": 0.7675,
-    "lo": 0.7075,
-    "hi": 0.8274999999999999,
-    "step": 0.010416666666666666,
-    "unit": "beats",
-    "text": "violins_counter written note length (mean 0.7675 beats)"
+    "text": "ambience written note length (mean 107 beats)"
    }
   ]
  },
  "plan": {
-  "status": "linear",
-  "worst_safety": -6.0,
-  "deltas": {},
+  "status": "partial",
+  "worst_safety": -2.666666666666667,
+  "deltas": {
+   "hf.ambience": 6.0
+  },
   "clearing": {},
   "predicted": {
    "clicks::-": [
-    -6.0,
-    -6.0
+    -4.0,
+    -2.666666666666667
    ],
    "loudness::-": [
     0.02,
     0.02
    ],
    "true peak::-": [
-    0.00020532263377030327,
-    0.00020532263377030327
+    0.00021496319984789144,
+    0.00021496319984789144
    ],
    "dropout::-": [
     1.0,
@@ -245,140 +235,89 @@
     0.0
    ],
    "master.dc::-": [
-    0.09986844427074087,
-    0.09986844427074087
+    0.09988239986973076,
+    0.09988239986973076
    ],
-   "stem.dc::bansuri": [
-    0.09982893917367328,
-    0.09982893917367328
+   "stem.dc::ambience": [
+    0.09995348748996326,
+    0.09995348748996326
    ],
-   "stem.clipping::bansuri": [
+   "stem.clipping::ambience": [
     0.0,
     0.0
    ],
-   "stem.clicks::bansuri": [
+   "stem.clicks::ambience": [
     0.0,
     0.0
    ],
-   "stem.dropout::bansuri": [
+   "stem.dropout::ambience": [
     1.0,
     1.0
    ],
-   "stem.cut::bansuri": [
+   "stem.cut::ambience": [
     2.0,
     2.0
    ],
-   "stem.edge::bansuri": [
+   "stem.edge::ambience": [
     1.0,
     1.0
    ],
-   "stem.dead::bansuri": [
-    2.0,
-    2.0
+   "stem.tick::ambience": [
+    1.2505345628265652,
+    1.2505345628265652
    ],
-   "stem.flatness::bansuri": [
-    2.0,
-    2.0
-   ],
-   "stem.dc::violins_counter": [
-    0.09994838268875089,
-    0.09994838268875089
-   ],
-   "stem.clipping::violins_counter": [
-    0.0,
-    0.0
-   ],
-   "stem.clicks::violins_counter": [
-    0.0,
-    0.0
-   ],
-   "stem.dropout::violins_counter": [
-    1.0,
-    1.0
-   ],
-   "stem.cut::violins_counter": [
-    2.0,
-    2.0
-   ],
-   "stem.edge::violins_counter": [
-    1.0,
-    1.0
-   ],
-   "stem.dead::violins_counter": [
-    2.0,
-    2.0
-   ],
-   "stem.flatness::violins_counter": [
+   "stem.dead::ambience": [
     2.0,
     2.0
    ]
   },
   "conflicts": [
    {
-    "lever": "hf.bansuri",
-    "text": "bansuri high shelf at 5500 Hz: inst_eq[\"ghats_bansuri\"]",
+    "lever": "hf.ambience",
+    "text": "ambience high shelf at 5500 Hz: inst_eq[\"env:western_ghats_sunrise\"]",
     "unit": "dB",
     "feasible": [
-     54.0,
-     0.0
+     18.0,
+     6.0
     ],
     "bounds": [
      -12.0,
-     0.0
+     6.0
     ],
     "rows": [
      {
       "row": "clicks",
-      "needs": 54.0,
-      "safety": -6.0
+      "needs": 18.0,
+      "safety": -4.0
      }
     ],
-    "why": "bansuri high shelf at 5500 Hz: inst_eq[\"ghats_bansuri\"] cannot satisfy clicks at once: the moves that pass one row fail the other, and the bounds leave no value between"
-   },
-   {
-    "lever": "hf.violins_counter",
-    "text": "violins_counter high shelf at 5500 Hz: inst_eq[\"ghats_violins_counter\"]",
-    "unit": "dB",
-    "feasible": [
-     54.0,
-     0.0
-    ],
-    "bounds": [
-     -12.0,
-     0.0
-    ],
-    "rows": [
-     {
-      "row": "clicks",
-      "needs": 54.0,
-      "safety": -6.0
-     }
-    ],
-    "why": "violins_counter high shelf at 5500 Hz: inst_eq[\"ghats_violins_counter\"] cannot satisfy clicks at once: the moves that pass one row fail the other, and the bounds leave no value between"
+    "why": "ambience high shelf at 5500 Hz: inst_eq[\"env:western_ghats_sunrise\"] cannot satisfy clicks at once: the moves that pass one row fail the other, and the bounds leave no value between"
    }
   ],
   "closed": [],
   "burned": [],
   "notes": [
-   "no admissible move improves the binding rows: every lever is burned, closed or already optimal"
+   "no admissible combination clears clicks; the best set leaves it at safety -2.67. The rows that limit it have no lever here - fix those first, or change the piece rather than the knob"
   ],
   "experiments": [
    {
     "row": "clicks",
     "key": "clicks::-",
-    "kind": "iterative",
-    "value": 4,
-    "baseline": 6,
-    "near3": 34,
+    "kind": "hf_shelf",
+    "value": 3,
+    "baseline": 4,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 34.05,
-    "times": [],
-    "verdict": "better",
+    "resolution_db": 34.67,
     "moves": {
-     "hf.kit": -6.0,
-     "hf.ambience": -3.0
+     "hf.ambience": -9.0
     },
+    "times": [
+     45.562,
+     60.91,
+     60.981
+    ],
+    "verdict": "better",
     "robust": 0.0,
     "proved": false
    },
@@ -386,21 +325,39 @@
     "row": "clicks",
     "key": "clicks::-",
     "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
+    "value": 3,
+    "baseline": 4,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 34.05,
+    "resolution_db": 34.67,
     "moves": {
-     "hf.ambience": -3.0,
+     "hf.ambience": -12.0
+    },
+    "times": [
+     45.562,
+     60.91,
+     60.981
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 3,
+    "baseline": 4,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 34.67,
+    "moves": {
+     "hf.ambience": -9.0,
      "hf.violins_counter": -3.0
     },
     "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     60.034
+     45.562,
+     60.91,
+     60.981
     ],
     "verdict": "better",
     "robust": 0.0
@@ -409,21 +366,40 @@
     "row": "clicks",
     "key": "clicks::-",
     "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
+    "value": 3,
+    "baseline": 4,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 34.05,
+    "resolution_db": 34.67,
     "moves": {
-     "hf.ambience": -3.0,
+     "hf.ambience": -9.0,
+     "hf.bansuri": -3.0
+    },
+    "times": [
+     45.562,
+     60.91,
+     60.981
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 3,
+    "baseline": 4,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 34.67,
+    "moves": {
+     "hf.ambience": -9.0,
      "hf.violins_counter": -6.0
     },
     "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     60.034
+     45.562,
+     60.91,
+     60.981
     ],
     "verdict": "better",
     "robust": 0.0
@@ -432,21 +408,19 @@
     "row": "clicks",
     "key": "clicks::-",
     "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
+    "value": 3,
+    "baseline": 4,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 34.05,
+    "resolution_db": 34.67,
     "moves": {
-     "hf.ambience": -3.0,
-     "hf.violins_counter": -9.0
+     "hf.ambience": -9.0,
+     "hf.bansuri": -6.0
     },
     "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     60.034
+     45.562,
+     60.91,
+     60.981
     ],
     "verdict": "better",
     "robust": 0.0
@@ -455,186 +429,122 @@
     "row": "clicks",
     "key": "clicks::-",
     "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
+    "value": 3,
+    "baseline": 4,
     "margin_db": null,
     "unverified": false,
-    "resolution_db": 34.05,
-    "moves": {
-     "hf.ambience": -6.0,
-     "hf.violins_counter": -6.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 34.05,
-    "moves": {
-     "hf.ambience": -3.0,
-     "hf.bansuri": -9.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 34.05,
-    "moves": {
-     "hf.ambience": -6.0,
-     "hf.violins_counter": -9.0
-    },
-    "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     60.034
-    ],
-    "verdict": "better",
-    "robust": 0.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 5,
-    "baseline": 6,
-    "margin_db": null,
-    "unverified": false,
-    "resolution_db": 34.05,
+    "resolution_db": 34.67,
     "moves": {
      "hf.ambience": -9.0,
      "hf.violins_counter": -9.0
     },
     "times": [
-     45.285,
-     46.698,
-     47.624,
-     59.632,
-     60.034
+     45.562,
+     60.91,
+     60.981
     ],
     "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 3,
+    "baseline": 4,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 34.67,
+    "moves": {
+     "hf.ambience": -9.0,
+     "hf.bansuri": -9.0
+    },
+    "times": [
+     45.562,
+     60.91,
+     60.981
+    ],
+    "verdict": "better",
+    "robust": 0.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "iterative",
+    "value": 4,
+    "baseline": 4,
+    "near3": 30,
+    "margin_db": null,
+    "unverified": false,
+    "resolution_db": 34.67,
+    "times": [],
+    "verdict": "better",
+    "moves": {
+     "hf.bansuri": -3.0
+    },
     "robust": 0.0
    }
   ]
  },
  "forensics": [
   {
-   "t": 46.6979,
-   "step": 0.04297,
-   "threshold": 0.04136,
-   "over_threshold_db": 0.33,
-   "z": 8.3,
-   "kind": "coincident transients",
-   "trusted": false,
-   "fit_ratio": 0.03,
-   "owners": [
-    {
-     "stem": "bansuri",
-     "share": 0.286,
-     "signed": -0.00136
-    },
-    {
-     "stem": "violins_long",
-     "share": 0.251,
-     "signed": 0.00119
-    },
-    {
-     "stem": "violins_counter",
-     "share": 0.247,
-     "signed": 0.00117
-    }
-   ],
-   "raw_step_fs": 0.0545,
-   "notes": []
-  },
-  {
-   "t": 47.6244,
-   "step": 0.04337,
-   "threshold": 0.04136,
-   "over_threshold_db": 0.41,
-   "z": 8.4,
+   "t": 45.5619,
+   "step": 0.04867,
+   "threshold": 0.04532,
+   "over_threshold_db": 0.62,
+   "z": 8.6,
    "kind": "mixed",
    "trusted": false,
-   "fit_ratio": -0.03,
+   "fit_ratio": 0.04,
    "owners": [
     {
-     "stem": "ambience",
-     "share": 0.325,
-     "signed": -0.00205
+     "stem": "violins_counter",
+     "share": 0.522,
+     "signed": 0.00436
     },
     {
-     "stem": "violins_counter",
-     "share": 0.251,
-     "signed": -0.00159
+     "stem": "bansuri",
+     "share": 0.333,
+     "signed": -0.00278
     }
    ],
-   "raw_step_fs": 0.0453,
+   "raw_step_fs": 0.0696,
    "notes": [
     {
-     "track": "ambience",
-     "pitch": null,
-     "velocity": null,
-     "onset_s": null,
-     "after_onset_ms": 0.0,
-     "written_len": null,
-     "continuous": true,
-     "layers": []
+     "track": "bansuri",
+     "pitch": 78,
+     "velocity": 0.88,
+     "onset_s": 45.5,
+     "after_onset_ms": 61.9,
+     "written_len": 0.5
     },
     {
      "track": "violins_counter",
-     "pitch": 64,
+     "pitch": 62,
      "velocity": 0.72,
-     "onset_s": 47.5,
-     "after_onset_ms": 124.4,
+     "onset_s": 45.5,
+     "after_onset_ms": 61.9,
      "written_len": 0.5
     }
    ]
   },
   {
-   "t": 59.6319,
-   "step": 0.04317,
-   "threshold": 0.04136,
-   "over_threshold_db": 0.37,
-   "z": 8.4,
+   "t": 60.9106,
+   "step": 0.05504,
+   "threshold": 0.04532,
+   "over_threshold_db": 1.69,
+   "z": 9.7,
    "kind": "single source",
    "trusted": false,
-   "fit_ratio": -0.04,
+   "fit_ratio": 0.13,
    "owners": [
     {
      "stem": "ambience",
-     "share": 0.98,
-     "signed": -0.00157
+     "share": 0.997,
+     "signed": -0.00732
     }
    ],
-   "raw_step_fs": 0.0501,
+   "raw_step_fs": 0.0643,
    "notes": [
     {
      "track": "ambience",
@@ -649,22 +559,22 @@
    ]
   },
   {
-   "t": 59.6652,
-   "step": 0.04261,
-   "threshold": 0.04136,
-   "over_threshold_db": 0.26,
-   "z": 8.2,
+   "t": 60.9785,
+   "step": 0.05332,
+   "threshold": 0.04532,
+   "over_threshold_db": 1.41,
+   "z": 9.4,
    "kind": "single source",
    "trusted": false,
-   "fit_ratio": 0.18,
+   "fit_ratio": -0.05,
    "owners": [
     {
      "stem": "ambience",
-     "share": 0.984,
-     "signed": 0.00761
+     "share": 0.996,
+     "signed": 0.00251
     }
    ],
-   "raw_step_fs": 0.0431,
+   "raw_step_fs": 0.0537,
    "notes": [
     {
      "track": "ambience",
@@ -679,52 +589,22 @@
    ]
   },
   {
-   "t": 60.017,
-   "step": 0.04686,
-   "threshold": 0.04136,
-   "over_threshold_db": 1.08,
-   "z": 9.1,
+   "t": 61.0631,
+   "step": 0.04716,
+   "threshold": 0.04532,
+   "over_threshold_db": 0.34,
+   "z": 8.3,
    "kind": "single source",
    "trusted": false,
-   "fit_ratio": -0.13,
+   "fit_ratio": 0.15,
    "owners": [
     {
      "stem": "ambience",
-     "share": 0.995,
-     "signed": 0.00606
+     "share": 0.997,
+     "signed": 0.00721
     }
    ],
-   "raw_step_fs": 0.0516,
-   "notes": [
-    {
-     "track": "ambience",
-     "pitch": null,
-     "velocity": null,
-     "onset_s": null,
-     "after_onset_ms": 0.0,
-     "written_len": null,
-     "continuous": true,
-     "layers": []
-    }
-   ]
-  },
-  {
-   "t": 60.0339,
-   "step": 0.04372,
-   "threshold": 0.04136,
-   "over_threshold_db": 0.48,
-   "z": 8.5,
-   "kind": "single source",
-   "trusted": false,
-   "fit_ratio": 0.06,
-   "owners": [
-    {
-     "stem": "ambience",
-     "share": 0.985,
-     "signed": -0.0027
-    }
-   ],
-   "raw_step_fs": 0.0663,
+   "raw_step_fs": 0.0646,
    "notes": [
     {
      "track": "ambience",
@@ -740,20 +620,14 @@
   }
  ],
  "notes": [
-  "clicks: sham replay (no change) reproduces the gate's 6 event(s) exactly (decomposition R^2 0.133); counterfactuals below are priced on a model that passes its own test",
-  "clicks: model resolution 34.0 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
-  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.13); gains ambience 2.79, bansuri 2.94, bass 10.66, celli 1.92, choir 1.42, guitar_clean 1.36, guitar_drive 1.75, kit 1.20, pipes 0.46, pipes_drone 0.40, santoor 1.04, sitar 1.41, tabla 1.41, tanpura 1.41, violas 0.75, violins_counter 1.69, violins_long 1.31",
-  "event 46.698s [coincident transients] bansuri 29%, violins_long 25%, violins_counter 25%; step 0.0430 vs threshold 0.0414 (+0.3 dB over)  (fit unreliable)",
-  "event 47.624s [mixed] ambience 32%, violins_counter 25%; step 0.0434 vs threshold 0.0414 (+0.4 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
-  "event 59.632s [single source] ambience 98%; step 0.0432 vs threshold 0.0414 (+0.4 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
-  "event 59.665s [single source] ambience 98%; step 0.0426 vs threshold 0.0414 (+0.3 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
-  "event 60.017s [single source] ambience 100%; step 0.0469 vs threshold 0.0414 (+1.1 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
-  "event 60.034s [single source] ambience 98%; step 0.0437 vs threshold 0.0414 (+0.5 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
-  "clicks: iterative replay, profile (events at 0/1/2/3 dB tighter) (6, 7, 8, 11) -> (4, 7, 9, 14) after kit -6 dB, ambience -3 dB",
-  "bansuri: the tightest gap in the score is 58 ms at beat spacing 0.577 s (104 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
-  "violins_counter: the tightest gap in the score is 58 ms at beat spacing 0.577 s (104 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
-  "bansuri: the tightest gap in the score is 58 ms at beat spacing 0.577 s (104 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
-  "violins_counter: the tightest gap in the score is 58 ms at beat spacing 0.577 s (104 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
-  "risk closure: the levers that move this row belong to bansuri, violins_counter, so every row of those stems was loaded as a constraint before the plan was solved"
+  "clicks: sham replay (no change) reproduces the gate's 4 event(s) exactly (decomposition R^2 0.133); counterfactuals below are priced on a model that passes its own test",
+  "clicks: model resolution 34.7 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
+  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.13); gains ambience 2.78, bansuri 2.82, celli 0.67, choir 1.27, guitar_clean 1.40, guitar_drive 1.88, kit 1.21, pipes 0.41, pipes_drone 0.56, santoor 0.93, sitar 1.65, tabla 1.39, tanpura 1.44, violas 2.94, violins_counter 1.69, violins_long 1.36",
+  "event 45.562s [mixed] violins_counter 52%, bansuri 33%; step 0.0487 vs threshold 0.0453 (+0.6 dB over); nearest onset bansuri p78 v0.88 +62 ms  (fit unreliable)",
+  "event 60.911s [single source] ambience 100%; step 0.0550 vs threshold 0.0453 (+1.7 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
+  "event 60.978s [single source] ambience 100%; step 0.0533 vs threshold 0.0453 (+1.4 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
+  "event 61.063s [single source] ambience 100%; step 0.0472 vs threshold 0.0453 (+0.3 dB over); nearest onset ambience pNone vNone +0 ms  (fit unreliable)",
+  "clicks: iterative replay, profile (events at 0/1/2/3 dB tighter) (4, 5, 11, 11) -> (4, 5, 10, 11) after bansuri -3 dB",
+  "risk closure: the levers that move this row belong to ambience, so every row of those stems was loaded as a constraint before the plan was solved"
  ]
 }
