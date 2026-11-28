@@ -1,0 +1,66 @@
+{
+ "kind": "film_scene_score",
+ "title": "Film scene score: scene-based background music, what it must and must not do",
+ "knowledge": "knowledgebase/media/film-scene-score-dos-and-donts.md",
+ "registers": {"underscore": "film_underscore", "cue_with_picture_hits": "cinematic"},
+ "structure": {
+  "cue_in_out": "from the spotting notes: the director's start and end timecodes and a mood for each cue",
+  "hit_points": "only the moments that matter; the strongest land on a downbeat",
+  "tempo_from_hits": true,
+  "hits_per_minute_max_for_drama": 6,
+  "silence_is_a_choice": true,
+  "diegetic_vs_score": "source music that the characters hear is placed in the room (reverb, level and EQ of the space); a score is heard only by the audience"
+ },
+ "scenes": {
+  "dialogue_underscore": {"energy": 0.2, "density": "sparse", "families_prefer": ["plucked", "keys", "synth", "bowed"], "families_avoid": ["blown_brass", "struck_membrane", "voice"], "register": "very low or high; keep the 1-5 kHz band light", "duck_db": [4.0, 8.0], "why": "dense midrange scoring under dialogue competes with the voice; the lower strings sit where the voice sits"},
+  "suspense": {"energy": 0.45, "density": "sparse to building", "families_prefer": ["bowed", "synth", "struck_membrane", "blown_reed"], "families_avoid": ["keys", "blown_brass"], "register": "low drones, high tremolo, a pulse", "duck_db": [3.0, 6.0], "why": "tension from a held or pulsing bed, not from a melody"},
+  "action": {"energy": 0.9, "density": "dense", "families_prefer": ["struck_membrane", "bowed", "blown_brass", "synth"], "families_avoid": [], "register": "full range", "duck_db": [6.0, 10.0], "why": "drive and size; hits land on the picture; the dialogue and effects still own the centre"},
+  "emotional": {"energy": 0.4, "density": "sparse", "families_prefer": ["bowed", "keys", "voice", "blown_reed"], "families_avoid": ["struck_membrane", "synth"], "register": "mid, a single line or a small group", "duck_db": [3.0, 6.0], "why": "a simple line the picture can carry, not a mood the picture already shows"},
+  "montage": {"energy": 0.6, "density": "medium, steady", "families_prefer": ["plucked", "keys", "synth", "bowed"], "families_avoid": [], "register": "full range, a steady pulse", "duck_db": [0.0, 3.0], "why": "no dialogue, so the music can carry the passage of time"},
+  "source_music": {"energy": 0.4, "density": "as the source", "families_prefer": [], "families_avoid": [], "register": "as the source, placed in the room", "duck_db": [6.0, 12.0], "why": "music the characters hear is part of the scene and sits at the room's level, then ducks under speech"},
+  "transition": {"energy": 0.35, "density": "sparse", "families_prefer": ["bowed", "synth", "keys"], "families_avoid": [], "register": "a bridge between two moods", "duck_db": [3.0, 6.0], "why": "carry the listener across a cut without announcing it"},
+  "silence": {"energy": 0.0, "density": "none", "families_prefer": [], "families_avoid": [], "register": "nothing", "duck_db": [0.0, 0.0], "why": "when a scene needs nothing beyond what the picture and sound show, no music is the right cue"}
+ },
+ "mixing": {
+  "speech_band_hz": [1000.0, 5000.0],
+  "intelligibility_band_hz": [2500.0, 5000.0],
+  "carve_cut_db": [2.0, 4.0],
+  "keep_midrange_light": true,
+  "audition_with_dialogue": true,
+  "two_versions": "a full version for where there is no dialogue and an underscore version for where there is; cut between them",
+  "bed_vs_program_lufs": "the cue is a bed under a dialogue-gated program (references/data/presets/film/delivery.json); judge it against the dialogue, not alone",
+  "techniques": ["EQ the music, not only duck it: take 2-4 dB out of 2.5-5 kHz while the voice is there", "keep the low end tight and the top crisp, with the midrange reduced", "sparse instrumentation: a high bell with a low plucked bass instead of a full string quartet under speech", "audition the music with the real dialogue and effects, never soloed", "fade out of silence and into it on purpose; a cue that begins and ends on a hit is a decision"]
+ },
+ "dos": [
+  {"id": "spot_first", "text": "Decide where each cue starts and ends, and its mood, from the spotting notes before writing.", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 3"},
+  {"id": "hit_what_matters", "text": "Hit the few moments that matter, ideally on a downbeat, and set the tempo so the hits land.", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 3"},
+  {"id": "leave_the_speech_band", "text": "Keep the midrange light under dialogue and take 2-4 dB out of 2.5-5 kHz while a voice is speaking.", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 4"},
+  {"id": "sparse_under_speech", "text": "Choose sparse instrumentation under dialogue: a high and a low voice rather than a full middle.", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 4"},
+  {"id": "audition_with_dialogue", "text": "Check the music against the real dialogue and effects, not soloed.", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 4"},
+  {"id": "recurring_theme_for_a_person", "text": "Give a recurring character, place or idea a short theme that can change as the story does.", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 3"},
+  {"id": "place_source_music", "text": "Put music a character hears in the room: its level, reverb and EQ come from the space, and it is non-diegetic only when it leaves the room.", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 3"},
+  {"id": "music_can_be_nothing", "text": "Leave a scene without music when it needs nothing beyond what the picture already shows.", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 3"}
+ ],
+ "donts": [
+  {"id": "hit_everything", "text": "Do not hit everything you see: that is mickey-mousing and reads as cartoon in live action; drama needs fewer hits.", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 3"},
+  {"id": "dense_midrange_under_speech", "text": "Do not put a lush, midrange-heavy score where the voice is (about 1-5 kHz).", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 4"},
+  {"id": "full_cue_under_dialogue", "text": "Do not run the full-arrangement version of a cue under dialogue.", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 4"},
+  {"id": "mix_in_solo", "text": "Do not judge the music in isolation; a mix that sounds a range short alone is often right in the film.", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 4"},
+  {"id": "tell_what_the_picture_shows", "text": "Do not score the emotion the picture and the acting already carry.", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 3"},
+  {"id": "copy_the_temp", "text": "Do not let a temp track decide the cue: directors can attach to it, so take its function and mood, not its notes.", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 3"},
+  {"id": "clip_art", "text": "Do not drop a stock cue in place of a scored one: music that does not follow the scene reads as clip art.", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 3"},
+  {"id": "start_or_end_without_reason", "text": "Do not start or end a cue where nothing changes: there are no fixed rules, but each in and out is a decision the spotting notes record.", "source": "knowledgebase/media/film-scene-score-dos-and-donts.md section 3"}
+ ],
+ "provenance": {
+  "registers": "references/data/presets/intent/registers.json",
+  "structure.cue_in_out": "spotting sessions: start and end timecodes and a mood description per cue (Packt, Berklee Online, B&H Explora)",
+  "structure.hit_points": "hit points are moments the music should synchronise with; the most effective land on a downbeat (Packt, Art of Composing)",
+  "structure.hits_per_minute_max_for_drama": "starting value: the sources say a drama should not hit everything, and give no figure",
+  "structure.diegetic_vs_score": "definitions in the sources of knowledgebase/media/film-scene-score-dos-and-donts.md section 3",
+  "scenes": "starting values for energy, density and duck depth (no sourced figures were found); the family choices follow the practitioner advice quoted in the knowledge file",
+  "mixing.speech_band_hz": "practitioner ranges disagree: about 1-3 kHz (MusicTech), 1-5 kHz (a studio blog), 2.5-5 kHz (ProSoundWeb)",
+  "mixing.intelligibility_band_hz": "ProSoundWeb: the band that most affects speech intelligibility is 2.5-5 kHz",
+  "mixing.carve_cut_db": "ProSoundWeb: reduce the music 2-4 dB in that band while boosting the voice there",
+  "mixing.techniques": "ProSoundWeb, MusicTech, c-istudios and Robin Hoffmann as quoted in the knowledge file; practitioner advice"
+ }
+}

@@ -6,7 +6,7 @@
     "warns": 0,
     "rows": 161,
     "profile": "highway_pursuit",
-    "total_ms": 3217.933756999997,
+    "total_ms": 1273.4813339998254,
     "timings": {
       "bass_clarinet": 0.0,
       "bass_drum": 0.0,
@@ -18,9 +18,9 @@
       "horns": 0.0,
       "low_swell": 0.0,
       "piano_theme": 0.0,
-      "snare": 0.0,
+      "snare": 521.8533779998324,
       "taiko": 0.0,
-      "timpani": 0.0,
+      "timpani": 592.919675000303,
       "trombones": 0.0,
       "tuba": 0.0,
       "violas": 0.0,
@@ -1875,10 +1875,10 @@
         "margin": -0.000998690031072246,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"snare\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"snare\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          5.035889763223701e-09,
-          3.35917915936696e-09
+          -1.2872398484532274e-07,
+          -1.3040069541301952e-07
         ],
         "drift": 1.309968927754099e-06
       },
@@ -2184,10 +2184,10 @@
         "margin": -0.0009964778413104705,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"timpani\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"timpani\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.6031729225083868e-10,
-          -1.5988788061509452e-10
+          -3.543872923441049e-14,
+          3.939729065097435e-13
         ],
         "drift": 3.522158689529525e-06
       },
@@ -3285,8 +3285,8 @@
       }
     ],
     "duration_s": 63.10507936507936,
-    "cached_stems": 18,
-    "measured_stems": 0
+    "cached_stems": 16,
+    "measured_stems": 2
   },
   "rows": [
     {
@@ -3717,7 +3717,7 @@
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"snare\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"snare\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
@@ -3797,7 +3797,7 @@
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"timpani\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"timpani\": channel mean(s) -0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",

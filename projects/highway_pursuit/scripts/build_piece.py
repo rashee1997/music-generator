@@ -603,7 +603,7 @@ def sheet():
                          'any Indian classical instrument or scale', 'ambience', 'rain', 'sound effects'],
         'space': 'highway_canyon',
         'mix_intent': {'hero': 'horns', 'leave_free_hz': []},
-        'loudness': LOUDNESS, 'true_peak_max': -1.5,
+        'loudness_lufs': LOUDNESS, 'true_peak_max': -1.5,
         'delivery': {'format': 'wav', 'sample_rate': 48000, 'bit_depth': 24, 'stage': 'master'},
         'references': ['night_pursuit_cinematic: the same chase grammar, rewritten for a highway, a colder colour and '
                        'a real slow-motion beat'],

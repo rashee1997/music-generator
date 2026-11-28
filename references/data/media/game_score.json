@@ -1,0 +1,79 @@
+{
+ "kind": "game_score",
+ "title": "Game score: how it is built, mixed and what it must not do",
+ "knowledge": "knowledgebase/media/game-score-dos-and-donts.md",
+ "registers": {"console": "game_console", "mobile": "game_mobile", "vr": "game_vr"},
+ "structure": {
+  "loop_min_s": 60,
+  "loop_preferred_s": 120,
+  "layers_per_state": [3, 6],
+  "transition_quantise": "next_bar",
+  "enter_intense_state_s": 1.0,
+  "leave_intense_state_hold_s": 8.0,
+  "stinger_fits_key": true,
+  "seam": "the loop's last bar carries the tail into the first bar; export with a crossfaded tail or pre-roll, never a hard cut"
+ },
+ "states": {
+  "menu": {"energy": 0.3, "layers": 2, "tempo": "slow to medium, a steady pulse", "families_prefer": ["keys", "plucked", "bowed", "synth"], "families_avoid": ["blown_brass", "struck_membrane"], "role_in_mix": "full range, it is the only thing playing", "why": "a menu is heard before and between play: calm, recognisable, never tiring"},
+  "exploration": {"energy": 0.45, "layers": 3, "tempo": "medium, loose", "families_prefer": ["bowed", "plucked", "keys", "voice", "blown_reed"], "families_avoid": ["blown_brass", "struck_membrane"], "role_in_mix": "sparse bed under the world's own sound", "why": "medium intensity that can be heard for a long time, and leaves room for footsteps, ambience and dialogue"},
+  "puzzle": {"energy": 0.25, "layers": 2, "tempo": "slow, little rhythm", "families_prefer": ["keys", "plucked", "synth"], "families_avoid": ["blown_brass", "struck_membrane", "voice"], "role_in_mix": "quiet and minimal", "why": "quiet, minimal music lowers the load while the player thinks; elements can phase in as the solution builds"},
+  "stealth": {"energy": 0.35, "layers": 3, "tempo": "slow, sparse", "families_prefer": ["bowed", "blown_reed", "plucked", "synth"], "families_avoid": ["blown_brass", "struck_membrane", "voice"], "role_in_mix": "sparse, muted, leaves room for footsteps and cues", "why": "a sparse arrangement leaves the sounds the player must hear audible"},
+  "tension": {"energy": 0.6, "layers": 4, "tempo": "steady pulse, rising", "families_prefer": ["bowed", "struck_membrane", "synth"], "families_avoid": ["keys"], "role_in_mix": "pulse and a rising layer under effects", "why": "a state between calm and combat so the step into combat is not a cliff"},
+  "combat": {"energy": 0.85, "layers": 5, "tempo": "fast, driving", "families_prefer": ["struck_membrane", "bowed", "blown_brass", "synth"], "families_avoid": [], "role_in_mix": "dense, ducks for dialogue and loud effects", "why": "layers are added as intensity rises; the music must still sit under hit sounds"},
+  "boss": {"energy": 1.0, "layers": 6, "tempo": "fast, with a theme", "families_prefer": ["struck_membrane", "blown_brass", "bowed", "voice", "synth"], "families_avoid": [], "role_in_mix": "the loudest state, still inside the loudness range", "why": "the peak of the game's own arc"},
+  "victory": {"energy": 0.7, "layers": 3, "tempo": "medium, resolved", "families_prefer": ["blown_brass", "bowed", "keys", "voice"], "families_avoid": [], "role_in_mix": "a short resolved phrase, then back to calm", "why": "a stinger or short cue that resolves, not a loop"},
+  "defeat": {"energy": 0.2, "layers": 2, "tempo": "slow, falling", "families_prefer": ["bowed", "keys", "voice"], "families_avoid": ["blown_brass", "struck_membrane"], "role_in_mix": "a short falling phrase", "why": "a short cue that lets the player reset"}
+ },
+ "mixing": {
+  "music_bus_rel_to_dialogue_db": [-12.0, -6.0],
+  "duck_under_dialogue_db": [6.0, 12.0],
+  "duck_flat_db_floor_for_loud_orchestra": 6.0,
+  "duck_eq_band_hz": [2500.0, 5000.0],
+  "duck_eq_cut_db": [2.0, 4.0],
+  "lra_max_lu": 20.0,
+  "true_peak_db": -1.0,
+  "keep_midrange_light_under_effects": true,
+  "stereo": "wide and soft, positional effects keep the centre and the sides they need",
+  "techniques": ["a state-driven bus duck that follows dialogue and loud effects, with a longer release than attack", "an EQ duck on the speech and effect band as well as the level duck", "layers built as stems that share one tempo and bar grid", "a limiter only on the final game bus, never on a loop stem that will be summed", "measure integrated loudness over a long capture of real play, not over one loop"]
+ },
+ "dos": [
+  {"id": "loop_long", "text": "Make a loop long enough to hide that it loops: a minute is the least, two minutes or more is better, or give it variants and small random variation.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 3"},
+  {"id": "loop_seam", "text": "Finish the loop so its end carries into its start: a crossfaded tail or pre-roll, a gentle fade at the join, never a hard cut.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 3"},
+  {"id": "layer_on_one_grid", "text": "Build vertical layers as stems on one tempo and bar grid so any mix of them is in time.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 3"},
+  {"id": "quantise_transitions", "text": "Move between states on a bar or a beat, with a stinger or a fill bridging when the key or tempo differs.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 3"},
+  {"id": "hysteresis", "text": "Enter an intense state quickly and leave it slowly, and hold a change until the new state has lasted a moment.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 3"},
+  {"id": "write_each_state", "text": "Write material for every state the game can be in (menu, exploration, tension, combat, victory, defeat); one loop cannot serve them all.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 3"},
+  {"id": "leave_room", "text": "Leave the band and the level that dialogue, footsteps and cues need; thin the arrangement in the states where they matter (stealth, puzzle).", "source": "knowledgebase/media/game-score-dos-and-donts.md section 4"},
+  {"id": "stinger_in_key", "text": "Fit a stinger to the current key and harmony, and let it wait for a beat or phrase end.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 3"},
+  {"id": "match_the_platform", "text": "Level the music for the platform it ships on (console, mobile, headset), and measure over real play.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 2"}
+ ],
+ "donts": [
+  {"id": "short_loop", "text": "Do not loop a short phrase for the length of a level: repetition fatigue sets in and the player mutes the music.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 3"},
+  {"id": "hard_cut_seam", "text": "Do not export a loop with a click, an abrupt end or a gap at the join.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 3"},
+  {"id": "flat_duck", "text": "Do not rely on a flat 3 dB duck under a loud full orchestra: it was found not enough, so duck by EQ in the speech band too.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 4"},
+  {"id": "one_state_for_all", "text": "Do not play combat music in exploration or the reverse: the music tells the player the state.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 3"},
+  {"id": "chatter_between_states", "text": "Do not flip between states every second: calm that lasts two seconds is a reload, not calm.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 3"},
+  {"id": "film_loudness", "text": "Do not master a game cue to a film or streaming loudness: console is -24 LUFS, not -14, and the music has to fit under the effects.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 2"},
+  {"id": "dense_midrange_under_effects", "text": "Do not fill the midrange under footsteps, dialogue and the cues a player must hear.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 4"},
+  {"id": "tied_to_a_cut", "text": "Do not write hits tied to a cut or a timecode: the player decides when things happen.", "source": "knowledgebase/media/game-score-dos-and-donts.md section 3"}
+ ],
+ "provenance": {
+  "registers": "references/data/presets/intent/registers.json",
+  "structure.loop_min_s": "one reviewer's rule of thumb: a minute is usually the bare minimum, two at least (gamedeveloper.com opinion piece); not a measurement",
+  "structure.layers_per_state": "starting value",
+  "structure.transition_quantise": "stingers and transitions fire on a beat or phrase end (Berklee Online, Audiokinetic); the choice of next_bar is a starting value",
+  "structure.enter_intense_state_s": "starting value: the source says enter quickly and leave slowly but gives no figures",
+  "structure.leave_intense_state_hold_s": "starting value: see enter_intense_state_s",
+  "structure.stinger_fits_key": "Berklee Online: a stinger should fit the current key and harmony",
+  "structure.seam": "crossfade the end with the beginning, fade gently at the loop point (wayline.io loop guide)",
+  "states": "starting values for energy, layers and tempo (no sourced figures were found); the family choices follow the descriptions of puzzle, stealth, exploration and combat music in the sources of knowledgebase/media/game-score-dos-and-donts.md section 5",
+  "mixing.music_bus_rel_to_dialogue_db": "Unity audio-mixing tutorial: music about -30 to -20 dB, effects -10 to -5, dialogue -6 to -3 on its example mix; the difference is used here as a starting figure",
+  "mixing.duck_under_dialogue_db": "starting value: the search found no standard duck depth; Audiokinetic's case study found 3 dB not enough for a loud orchestra",
+  "mixing.duck_flat_db_floor_for_loud_orchestra": "Audiokinetic case study: 3 dB was clearly not enough, so a flat duck should start above it",
+  "mixing.duck_eq_band_hz": "ProSoundWeb: the speech-intelligibility band is 2.5-5 kHz; practitioner range, sources disagree",
+  "mixing.duck_eq_cut_db": "ProSoundWeb: reduce the music 2-4 dB in that band",
+  "mixing.lra_max_lu": "Sony console guidance: a maximum loudness range of 20 LU (secondary report)",
+  "mixing.true_peak_db": "Independent G.A.N.G. IESD mix reference levels: -1 dBTP",
+  "mixing.techniques": "Audiokinetic (Wwise HDR and ducking) and the sources of the knowledge file; a practice list, not a standard"
+ }
+}

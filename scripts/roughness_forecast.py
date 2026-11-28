@@ -67,7 +67,7 @@ def frame_value(freqs, amps, top=10):
     mx = float(np.max(amps[keep]))
     if mx <= 1e-12:
         return float('nan'), []
-    keep = keep[amps[keep] >= mx * 10 ** (nc.ROUGHNESS_AUDIBLE_DB / 20.0)]
+    keep = keep[amps[keep] >= mx * 10 ** (nc.k_ROUGHNESS_AUDIBLE_DB() / 20.0)]
     keep = keep[np.argsort(amps[keep])[-top:]]
     if len(keep) < 2:
         return float('nan'), []
@@ -189,7 +189,7 @@ def forecast(score, lookup=None, data=None, win=1.0, hop=0.5):
 
 def flag_frames(fc, ratio=None, min_frames=2):
     """Frames that stand out against the forecast's own median (the gate's relative rule), with the worst pair."""
-    ratio = float(ratio if ratio is not None else nc.ROUGHNESS_RELATIVE)
+    ratio = float(ratio if ratio is not None else nc.k_ROUGHNESS_RELATIVE())
     vals = np.array([v for v in fc['values'] if not np.isnan(v)])
     if len(vals) < 4:
         return [], float('nan')
@@ -276,7 +276,7 @@ def diagnose(wav, stems_dir=None, score=None, top=3):
             limit = float(gate_profiles.resolve(score).param('roughness', 'median_legacy'))
         except Exception:
             pass
-    thr = limit if med > limit else max(limit, nc.ROUGHNESS_RELATIVE * med)
+    thr = limit if med > limit else max(limit, nc.k_ROUGHNESS_RELATIVE() * med)
     hop = int(sr // 2)
     mono = x.mean(axis=1)
     stems = {}
@@ -296,7 +296,7 @@ def diagnose(wav, stems_dir=None, score=None, top=3):
             continue
         mx = float(mg.max())
         sel = np.argsort(mg)[-10:]
-        sel = sel[mg[sel] >= mx * 10 ** (nc.ROUGHNESS_AUDIBLE_DB / 20.0)]
+        sel = sel[mg[sel] >= mx * 10 ** (nc.k_ROUGHNESS_AUDIBLE_DB() / 20.0)]
         pairs = []
         for a in range(len(sel)):
             for b in range(a + 1, len(sel)):
@@ -405,7 +405,7 @@ def main(argv=None):
         score = json.load(open(a.score, encoding='utf-8'))
         fc = forecast(score, _lookup(a.project))
         flagged, med = flag_frames(fc)
-        print(f'{len(fc["times"])} frames, forecast median {med:.3f}; {len(flagged)} frame(s) stand out (> {nc.ROUGHNESS_RELATIVE} x median)')
+        print(f'{len(fc["times"])} frames, forecast median {med:.3f}; {len(flagged)} frame(s) stand out (> {nc.k_ROUGHNESS_RELATIVE()} x median)')
         for fl in flagged:
             print(f'  {fl["t"]:6.1f} s  value {fl["value"]:.3f}: {fl["f_a"]:.0f} Hz ({", ".join(fl["tracks_a"])}) against '
                   f'{fl["f_b"]:.0f} Hz ({", ".join(fl["tracks_b"])}), {abs(fl["f_b"] - fl["f_a"]):.0f} Hz apart')

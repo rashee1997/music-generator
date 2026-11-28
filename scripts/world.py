@@ -499,304 +499,304 @@ _BS = lambda inst, kind='half', lo=31, hi=48, mn=0.0, g=0: _L('bass', inst, 'bas
 
 GENRES = {
     # ---- India ----
-    'hindustani': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', lufs=-17, groove='teental', bpm=(60, 92),
+    'hindustani': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', groove='teental', bpm=(60, 92),
                        mode='raga_yaman', prog='Isus2-Isus2-Isus2-Isus2', layers=[
         _DRONE('tanpura', 36, 55, 0.0, -4), _LEAD('bansuri', min=0.0, glide=0.45, gain_db=-1), _ALT('sarangi', min=0.5, glide=0.4, gain_db=-5),
         _SPK('santoor', 72, 91, 0.25, -7), _DR('standard', 0.15, -4)]),
-    'carnatic': dict(room='hall', swing=0.5, humanize='natural', tone='warm', lufs=-16, groove='adi', bpm=(90, 130),
+    'carnatic': dict(room='hall', swing=0.5, humanize='natural', tone='warm', groove='adi', bpm=(90, 130),
                      mode='raga_bhairav', prog='Isus2-Isus2-IVsus2-Isus2', layers=[
         _DRONE('tanpura', 36, 55, 0.0, -4), _LEAD('violin', glide=0.5, gain_db=-1), _ALT('bansuri', min=0.4, glide=0.3, gain_db=-5),
         _SPK('veena', 60, 84, 0.3, -6), _DR('standard', 0.1, -4)]),
-    'bollywood': dict(room='studio', swing=0.5, humanize='natural', tone='bright', lufs=-14, groove='bollywood', bpm=(96, 128),
+    'bollywood': dict(room='studio', swing=0.5, humanize='natural', tone='bright', groove='bollywood', bpm=(96, 128),
                       mode='raga_bhairavi', prog='i-VI-VII-i', layers=[
         _CH('strings', 'string_ensemble', 'block', 'half', 'arp8', 45, 72, 0.0, -4), _LEAD('bansuri', glide=0.3, gain_db=-1),
         _ALT('sitar', min=0.4, gain_db=-5), _BS('finger_bass', 'sync', 31, 46, 0.1, 0), _SPK('santoor', 72, 91, 0.3, -7), _DR('standard', 0.0, -4)]),
-    'bhangra': dict(room='studio', swing=0.5, humanize='tight', tone='bright', lufs=-13, groove='bhangra', bpm=(100, 126),
+    'bhangra': dict(room='studio', swing=0.5, humanize='tight', tone='bright', groove='bhangra', bpm=(100, 126),
                     mode='mixolydian', prog='I-VII-IV-I', layers=[
         _LEAD('tumbi', oct=1, gain_db=-1), _CH('synth', 'polysynth', 'pulse', 'pulse', 'pulse', 48, 70, 0.2, -6), _BS('synth_bass', 'sync', 31, 46, 0.0, 0),
         _ALT('shehnai', min=0.5, gain_db=-5), _DR('standard', 0.0, -2)]),
-    'qawwali': dict(room='hall', swing=0.5, humanize='loose', tone='warm', lufs=-14, groove='qawwali', bpm=(108, 140),
+    'qawwali': dict(room='hall', swing=0.5, humanize='loose', tone='warm', groove='qawwali', bpm=(108, 140),
                     mode='raga_bhairavi', prog='Isus2-IVsus2-Isus2-Isus2', layers=[
         _CH('harmonium', 'indian_harmonium', 'block', 'block', 'half', 48, 70, 0.0, -2), _LEAD('sarangi', glide=0.4, gain_db=-1),
         _DRONE('tanpura', 36, 55, 0.0, -6), _DR('standard', 0.0, -3)]),
-    'ghazal': dict(room='chamber', swing=0.5, humanize='rubato', tone='warm', lufs=-17, groove='keherwa', bpm=(66, 90),
+    'ghazal': dict(room='chamber', swing=0.5, humanize='rubato', tone='warm', groove='keherwa', bpm=(66, 90),
                    mode='raga_kafi', prog='i-IV-i-VII', layers=[
         _CH('harmonium', 'indian_harmonium', 'sparse', 'half', 'arp8', 48, 70, 0.0, -3), _LEAD('sarangi', glide=0.4, gain_db=-1),
         _SPK('santoor', 72, 91, 0.2, -6), _DRONE('tanpura', 36, 55, 0.0, -6), _DR('standard', 0.3, -6)]),
     # ---- Arabic, Turkish, Persian, Greek, Balkan, flamenco, klezmer ----
-    'arabic_pop': dict(room='studio', swing=0.5, humanize='natural', tone='bright', lufs=-14, groove='maqsum', bpm=(92, 112),
+    'arabic_pop': dict(room='studio', swing=0.5, humanize='natural', tone='bright', groove='maqsum', bpm=(92, 112),
                        mode='maqam_hijaz', prog='Isus2-Isus2-IVsus2-Isus2', layers=[
         _LEAD('arabic_violin', glide=0.35, gain_db=-1), _ALT('oud', min=0.2, gain_db=-4), _CH('strings', 'string_ensemble', 'block', 'half', 'half', 45, 70, 0.3, -7),
         _BS('synth_bass', 'sync', 31, 46, 0.0, -1), _SPK('qanun', 72, 93, 0.25, -6), _DR('standard', 0.0, -3)]),
-    'tarab': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', lufs=-17, groove='wahda', bpm=(70, 104),
+    'tarab': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', groove='wahda', bpm=(70, 104),
                   mode='maqam_rast', prog='Isus2-Isus2-IVsus2-Isus2', layers=[
         _LEAD('arabic_violin', glide=0.4, gain_db=-1), _ALT('ney', oct=0, min=0.3, glide=0.3, gain_db=-4), _CH('oud', 'oud', 'fingerpick', 'fingerpick', 'strum', 43, 67, 0.0, -2),
         _SPK('qanun', 72, 93, 0.3, -5), _DR('standard', 0.2, -5)]),
-    'dabke': dict(room='studio', swing=0.5, humanize='tight', tone='bright', lufs=-13, groove='dabke', bpm=(116, 140),
+    'dabke': dict(room='studio', swing=0.5, humanize='tight', tone='bright', groove='dabke', bpm=(116, 140),
                   mode='maqam_hijaz', prog='Isus2-IVsus2-Isus2-Isus2', layers=[
         _LEAD('mijwiz', glide=0.3, gain_db=-1), _CH('oud', 'oud', 'pulse', 'strum', 'strum', 43, 67, 0.0, -2),
         _BS('acoustic_bass', 'half', 31, 46, 0.0, 0), _SPK('qanun', 72, 93, 0.4, -6), _DR('standard', 0.0, -3)]),
-    'mahraganat': dict(room='studio', swing=0.5, humanize='tight', tone='bright', lufs=-12, groove='mahraganat', bpm=(120, 140),
+    'mahraganat': dict(room='studio', swing=0.5, humanize='tight', tone='bright', groove='mahraganat', bpm=(120, 140),
                        mode='maqam_hijaz', prog='Isus2-Isus2-VIIsus2-Isus2', layers=[
         _LEAD('mizmar', gain_db=-3), _CH('synth', 'saw_lead', 'pulse', 'pulse', 'pulse', 48, 70, 0.0, -9), _BS('synth_bass', 'sync', 28, 43, 0.0, 0), _DR('808', 0.0, -2)]),
-    'turkish_classical': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', lufs=-17, groove='duyek', bpm=(68, 108),
+    'turkish_classical': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', groove='duyek', bpm=(68, 108),
                               mode='makam_hicaz', prog='Isus2-Isus2-IVsus2-Isus2', layers=[
         _LEAD('kemence', glide=0.35, gain_db=-1), _ALT('ney', min=0.3, glide=0.3, gain_db=-4), _CH('oud', 'oud', 'fingerpick', 'fingerpick', 'strum', 43, 67, 0.0, -2),
         _SPK('kanun', 72, 93, 0.3, -5), _DR('standard', 0.25, -5)]),
-    'turkish_folk': dict(room='room_warm', swing=0.5, humanize='loose', tone='warm', lufs=-15, groove='zeybek_4', bpm=(84, 120),
+    'turkish_folk': dict(room='room_warm', swing=0.5, humanize='loose', tone='warm', groove='zeybek_4', bpm=(84, 120),
                          mode='makam_ussak', prog='Isus2-Isus2-VIIsus2-Isus2', layers=[
         _LEAD('saz', oct=0, gain_db=-1), _CH('baglama', 'baglama', 'strum', 'strum', 'strum', 43, 67, 0.0, -3), _ALT('zurna', min=0.5, gain_db=-5),
         _BS('acoustic_bass', 'half', 31, 46, 0.2, -1), _DR('standard', 0.0, -4)]),
-    'arabesk': dict(room='hall', swing=0.5, humanize='natural', tone='warm', lufs=-15, groove='maqsum', bpm=(86, 108),
+    'arabesk': dict(room='hall', swing=0.5, humanize='natural', tone='warm', groove='maqsum', bpm=(86, 108),
                     mode='makam_hicaz', prog='Isus2-IVsus2-Isus2-Isus2', layers=[
         _LEAD('kemence', glide=0.4, gain_db=-1), _CH('strings', 'string_ensemble', 'block', 'half', 'half', 45, 70, 0.0, -6), _ALT('oud', min=0.3, gain_db=-4),
         _BS('finger_bass', 'half', 31, 46, 0.2, -1), _DR('standard', 0.0, -4)]),
-    'persian': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', lufs=-17, groove='tombak', bpm=(76, 108),
+    'persian': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', groove='tombak', bpm=(76, 108),
                     mode='persian_shur', prog='Isus2-Isus2-IVsus2-Isus2', layers=[
         _LEAD('kamancheh', glide=0.3, gain_db=-1), _CH('santur', 'santur', 'arp16', 'arp16', 'arp16', 55, 84, 0.0, -4), _ALT('ney', min=0.4, glide=0.3, gain_db=-5),
         _DRONE('tar', 36, 52, 0.0, -7), _DR('standard', 0.3, -5)]),
-    'flamenco': dict(room='studio', swing=0.5, humanize='loose', tone='bright', lufs=-14, groove='rumba_flamenca', bpm=(96, 124),
+    'flamenco': dict(room='studio', swing=0.5, humanize='loose', tone='bright', groove='rumba_flamenca', bpm=(96, 124),
                      mode='phrygian_dominant', prog='i-VII-VI-V', layers=[
         _CH('guitar', 'nylon_guitar', 'strum', 'strum', 'arp16', 43, 67, 0.0, -1), _LEAD('nylon_guitar', gain_db=-3), _BS('acoustic_bass', 'half', 31, 46, 0.2, -1),
         _DR('standard', 0.0, -3)]),
-    'greek': dict(room='room_warm', swing=0.5, humanize='loose', tone='warm', lufs=-15, groove='two_step', bpm=(92, 124),
+    'greek': dict(room='room_warm', swing=0.5, humanize='loose', tone='warm', groove='two_step', bpm=(92, 124),
                   mode='makam_hicaz', prog='i-VII-i-V', layers=[
         _LEAD('bouzouki', glide=0.2, gain_db=-1), _CH('baglamas', 'baglamas', 'strum', 'strum', 'strum', 50, 74, 0.0, -4), _ALT('accordion', min=0.5, gain_db=-5),
         _BS('acoustic_bass', 'half', 31, 46, 0.1, -1), _DR('standard', 0.2, -5)]),
-    'klezmer': dict(room='room_warm', swing=0.5, humanize='loose', tone='warm', lufs=-14, groove='oompah', bpm=(104, 150),
+    'klezmer': dict(room='room_warm', swing=0.5, humanize='loose', tone='warm', groove='oompah', bpm=(104, 150),
                     mode='freygish', prog='i-iv-i-V', layers=[
         _LEAD('clarinet_klezmer', glide=0.5, gain_db=-1), _ALT('violin', min=0.4, glide=0.3, gain_db=-4), _CH('accordion', 'accordion', 'pulse', 'pulse', 'pulse', 48, 70, 0.0, -4),
         _BS('tuba', 'half', 28, 46, 0.0, 0), _DR('standard', 0.2, -5)]),
     # ---- East Asia ----
-    'chinese_classical': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', lufs=-17, bpm=(58, 92),
+    'chinese_classical': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', bpm=(58, 92),
                               mode='chinese_gong', prog='I-vi-IV-V', layers=[
         _LEAD('erhu', glide=0.4, gain_db=-1), _CH('guzheng', 'guzheng', 'arp8', 'arp8', 'arp16', 50, 81, 0.0, -3), _ALT('dizi', oct=1, min=0.4, glide=0.2, gain_db=-5),
         _SPK('pipa', 67, 88, 0.3, -6), _BS('cello', 'whole', 33, 52, 0.5, -3)]),
-    'guofeng': dict(room='studio', swing=0.5, humanize='natural', tone='bright', lufs=-14, groove='synthpop', bpm=(88, 112),
+    'guofeng': dict(room='studio', swing=0.5, humanize='natural', tone='bright', groove='synthpop', bpm=(88, 112),
                     mode='chinese_yu', prog='i-VI-III-VII', layers=[
         _LEAD('dizi', glide=0.2, gain_db=-1), _CH('guzheng', 'guzheng', 'arp8', 'arp16', 'arp16', 55, 84, 0.0, -3), _ALT('erhu', min=0.4, glide=0.4, gain_db=-4),
         _CH('strings', 'string_ensemble', 'block', 'half', 'half', 45, 70, 0.2, -8), _BS('synth_bass', 'sync', 31, 46, 0.3, -1), _DR('electronic', 0.3, -4)]),
-    'cpop': dict(room='studio', swing=0.5, humanize='natural', tone='neutral', lufs=-15, groove='soft_pulse', bpm=(68, 92),
+    'cpop': dict(room='studio', swing=0.5, humanize='natural', tone='neutral', groove='soft_pulse', bpm=(68, 92),
                  mode='major', prog='I-V-vi-IV', layers=[
         _CH('piano', 'piano', 'sparse', 'arp8', 'arp8', 48, 72, 0.0, -2), _LEAD('piano', oct=0, min=0.1, gain_db=-2), _CH('guzheng', 'guzheng', 'arp16', 'arp16', 'arp16', 60, 84, 0.4, -7),
         _CH('strings', 'slow_strings', 'block', 'block', 'block', 45, 69, 0.3, -7), _BS('finger_bass', 'half', 31, 46, 0.4, -1), _DR('standard', 0.35, -6)]),
-    'japanese_traditional': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', lufs=-17, bpm=(54, 88),
+    'japanese_traditional': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', bpm=(54, 88),
                                  mode='hirajoshi', prog='i-VII-VI-i', layers=[
         _LEAD('shakuhachi', glide=0.35, gain_db=-1), _CH('koto', 'koto', 'arp8', 'arp8', 'arp16', 55, 84, 0.0, -2), _ALT('shamisen', min=0.4, gain_db=-5),
         _SPK('woodblock', 72, 84, 0.5, -10), _DRONE('taiko', 33, 45, 0.6, -10)]),
-    'wadaiko': dict(room='large_hall', swing=0.5, humanize='tight', tone='warm', lufs=-13, groove='taiko_matsuri', bpm=(100, 148),
+    'wadaiko': dict(room='large_hall', swing=0.5, humanize='tight', tone='warm', groove='taiko_matsuri', bpm=(100, 148),
                     mode='yo', prog='I-IV-I-V', layers=[
         _DR('standard', 0.0, 0), _LEAD('shinobue', gain_db=-3), _CH('koto', 'koto', 'arp8', 'arp16', 'arp16', 55, 84, 0.3, -6),
         _BS('taiko', 'half', 33, 48, 0.3, -4)]),
-    'enka': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', lufs=-16, groove='soft_pulse', bpm=(60, 80),
+    'enka': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', groove='soft_pulse', bpm=(60, 80),
                  mode='miyako_bushi', prog='i-iv-i-V', layers=[
         _LEAD('shakuhachi', glide=0.5, gain_db=-1), _CH('strings', 'slow_strings', 'block', 'block', 'half', 45, 69, 0.0, -5), _ALT('shamisen', min=0.3, gain_db=-4),
         _BS('acoustic_bass', 'half', 31, 46, 0.3, -2), _SPK('koto', 67, 88, 0.3, -6)]),
-    'jpop': dict(room='studio', swing=0.5, humanize='natural', tone='bright', lufs=-14, groove='jpop', bpm=(124, 168),
+    'jpop': dict(room='studio', swing=0.5, humanize='natural', tone='bright', groove='jpop', bpm=(124, 168),
                  mode='major', prog='IVmaj7-V-iii-vi', layers=[
         _CH('piano', 'piano', 'pulse', 'pulse', 'arp16', 50, 74, 0.0, -2), _LEAD('saw_lead', gain_db=-4), _CH('guitar', 'clean_guitar', 'pulse', 'strum', 'strum', 48, 72, 0.2, -4),
         _CH('strings', 'string_ensemble', 'block', 'half', 'half', 45, 70, 0.4, -8), _BS('pick_bass', 'pulse8', 31, 46, 0.1, 0), _DR('standard', 0.0, -3)]),
-    'city_pop': dict(room='studio', swing=0.52, humanize='natural', tone='warm', lufs=-14, groove='city_pop', bpm=(98, 120),
+    'city_pop': dict(room='studio', swing=0.52, humanize='natural', tone='warm', groove='city_pop', bpm=(98, 120),
                      mode='major', prog='IVmaj7-iii7-vi7-IImaj7', layers=[
         _CH('rhodes', 'epiano', 'comp', 'comp', 'comp', 50, 74, 0.0, -2, color='seventh'), _LEAD('alto_sax', gain_db=-2), _ALT('brass_section', min=0.55, gain_db=-6),
         _BS('slap_bass', 'sync', 31, 48, 0.0, 0), _CH('guitar', 'clean_guitar', 'chop', 'chop', 'chop', 52, 74, 0.3, -5), _DR('standard', 0.0, -4)]),
-    'kpop': dict(room='studio', swing=0.5, humanize='tight', tone='bright', lufs=-12, groove='kpop', bpm=(96, 126),
+    'kpop': dict(room='studio', swing=0.5, humanize='tight', tone='bright', groove='kpop', bpm=(96, 126),
                  mode='major', prog='vi-IV-I-V', layers=[
         _CH('synth', 'polysynth', 'pulse', 'pulse', 'arp16', 50, 74, 0.0, -4), _CH('piano', 'piano', 'pulse', 'pulse', 'pulse', 48, 70, 0.2, -5), _LEAD('saw_lead', gain_db=-4),
         _BS('synth_bass', 'sync', 28, 43, 0.0, 0), _L('pluck', 'pizzicato_strings', 'sparkle', lo=72, hi=96, min=0.35, role='arp', gain_db=-7), _DR('electronic', 0.0, -2)]),
-    'kpop_dance': dict(room='plate', swing=0.5, humanize='tight', tone='bright', lufs=-11, groove='kpop_dance', bpm=(116, 132),
+    'kpop_dance': dict(room='plate', swing=0.5, humanize='tight', tone='bright', groove='kpop_dance', bpm=(116, 132),
                        mode='minor', prog='i-VI-III-VII', layers=[
         _CH('stabs', 'saw_lead', 'pulse', 'pulse', 'pulse', 50, 72, 0.0, -7), _LEAD('square_lead', gain_db=-4), _BS('synth_bass', 'pulse8', 28, 43, 0.0, 0),
         _CH('pad', 'warm_pad', 'block', 'block', 'block', 48, 70, 0.1, -9), _DR('electronic', 0.0, -2)]),
-    'kpop_ballad': dict(room='hall', swing=0.5, humanize='natural', tone='warm', lufs=-15, groove='soft_pulse', bpm=(66, 84),
+    'kpop_ballad': dict(room='hall', swing=0.5, humanize='natural', tone='warm', groove='soft_pulse', bpm=(66, 84),
                         mode='major', prog='I-V-vi-iii-IV-I-IV-V', layers=[
         _CH('piano', 'piano', 'sparse', 'arp8', 'arp8', 48, 72, 0.0, -2), _LEAD('piano', min=0.1, gain_db=-2), _CH('strings', 'slow_strings', 'block', 'block', 'block', 45, 69, 0.3, -5),
         _BS('cello', 'whole', 33, 52, 0.4, -2), _DR('standard', 0.35, -6)]),
-    'trot': dict(room='studio', swing=0.5, humanize='natural', tone='bright', lufs=-13, groove='trot', bpm=(112, 140),
+    'trot': dict(room='studio', swing=0.5, humanize='natural', tone='bright', groove='trot', bpm=(112, 140),
                  mode='korean_gyemyeonjo', prog='i-iv-i-V', layers=[
         _LEAD('accordion', gain_db=-2), _CH('guitar', 'acoustic_guitar', 'strum', 'strum', 'strum', 45, 69, 0.0, -3), _ALT('violin', min=0.4, gain_db=-5),
         _BS('acoustic_bass', 'half', 31, 46, 0.0, -1), _DR('standard', 0.0, -4)]),
-    'gamelan': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', lufs=-17, groove='gamelan_kendang', bpm=(60, 96),
+    'gamelan': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', groove='gamelan_kendang', bpm=(60, 96),
                     mode='slendro', prog='I-I-V-I', layers=[
         _LEAD('gamelan_gender', gain_db=-1), _SPK('gamelan_bonang', 72, 96, 0.1, -4), _BS('gamelan_gong', 'whole', 36, 52, 0.0, -2), _ALT('suling', oct=1, min=0.5, gain_db=-5),
         _DR('standard', 0.3, -7)]),
     # ---- Rio and Brazil ----
-    'pagode': dict(room='studio', swing=0.5, humanize='loose', tone='warm', lufs=-14, groove='pagode', bpm=(86, 108),
+    'pagode': dict(room='studio', swing=0.5, humanize='loose', tone='warm', groove='pagode', bpm=(86, 108),
                    mode='major', prog='ii7-V7-Imaj7-vi7', layers=[
         _CH('cavaco', 'cavaquinho', 'strum', 'strum', 'strum', 55, 79, 0.0, -2), _CH('violao', 'violao_7', 'fingerpick', 'strum', 'strum', 45, 69, 0.0, -3, color='seventh'),
         _LEAD('flute', gain_db=-2), _BS('acoustic_bass', 'sync', 31, 48, 0.0, 0), _DR('standard', 0.0, -4)]),
-    'samba_enredo': dict(room='large_hall', swing=0.5, humanize='tight', tone='bright', lufs=-12, groove='samba_enredo', bpm=(128, 142),
+    'samba_enredo': dict(room='large_hall', swing=0.5, humanize='tight', tone='bright', groove='samba_enredo', bpm=(128, 142),
                          mode='major', prog='I-IV-V-I', layers=[
         _DR('standard', 0.0, 0), _CH('cavaco', 'cavaquinho', 'strum', 'strum', 'strum', 55, 79, 0.0, -3), _LEAD('trumpet', gain_db=-2),
         _BS('acoustic_bass', 'sync', 31, 48, 0.2, -1)]),
-    'choro': dict(room='room_warm', swing=0.52, humanize='natural', tone='warm', lufs=-15, groove='choro', bpm=(80, 108),
+    'choro': dict(room='room_warm', swing=0.52, humanize='natural', tone='warm', groove='choro', bpm=(80, 108),
                   mode='minor', prog='i-iv-V7-i', layers=[
         _LEAD('flute', gain_db=-1), _CH('violao', 'violao_7', 'fingerpick', 'fingerpick', 'strum', 45, 69, 0.0, -3), _ALT('cavaquinho', min=0.3, gain_db=-5),
         _BS('acoustic_bass', 'walk', 31, 48, 0.0, 0), _DR('standard', 0.2, -7)]),
-    'funk_carioca': dict(room='plate', swing=0.5, humanize='tight', tone='bright', lufs=-11, groove='funk_carioca', bpm=(128, 150),
+    'funk_carioca': dict(room='plate', swing=0.5, humanize='tight', tone='bright', groove='funk_carioca', bpm=(128, 150),
                          mode='minor', prog='i-i-VI-VII', layers=[
         _BS('synth_bass', 'sync', 26, 40, 0.0, 0), _LEAD('square_lead', gain_db=-5), _CH('stab', 'brass_section', 'pulse', 'pulse', 'pulse', 50, 72, 0.3, -9),
         _DR('808', 0.0, -2)]),
-    'baiao': dict(room='studio', swing=0.5, humanize='loose', tone='warm', lufs=-14, groove='baiao', bpm=(86, 116),
+    'baiao': dict(room='studio', swing=0.5, humanize='loose', tone='warm', groove='baiao', bpm=(86, 116),
                   mode='mixolydian', prog='I-VII-IV-I', layers=[
         _LEAD('accordion', gain_db=-1), _CH('violao', 'nylon_guitar', 'strum', 'strum', 'strum', 45, 69, 0.0, -3), _BS('acoustic_bass', 'sync', 31, 48, 0.0, 0), _DR('standard', 0.0, -5)]),
-    'maracatu': dict(room='large_hall', swing=0.5, humanize='tight', tone='warm', lufs=-12, groove='maracatu', bpm=(86, 112),
+    'maracatu': dict(room='large_hall', swing=0.5, humanize='tight', tone='warm', groove='maracatu', bpm=(86, 112),
                      mode='dorian', prog='i-IV-i-VII', layers=[
         _DR('standard', 0.0, 0), _L('alfaia', 'taiko', 'bass', bass='half', lo=33, hi=48, min=0.3, role='bass', gain_db=-5), _LEAD('trumpet', min=0.4, gain_db=-4),
         _CH('guitar', 'nylon_guitar', 'strum', 'strum', 'strum', 45, 69, 0.3, -6)]),
-    'axe': dict(room='studio', swing=0.5, humanize='tight', tone='bright', lufs=-12, groove='axe', bpm=(120, 140),
+    'axe': dict(room='studio', swing=0.5, humanize='tight', tone='bright', groove='axe', bpm=(120, 140),
                 mode='major', prog='I-IV-V-IV', layers=[
         _CH('guitar', 'clean_guitar', 'chop', 'chop', 'chop', 48, 72, 0.0, -3), _LEAD('trumpet', gain_db=-3), _BS('slap_bass', 'sync', 31, 48, 0.0, 0), _DR('standard', 0.0, -2)]),
-    'samba_reggae': dict(room='studio', swing=0.5, humanize='natural', tone='warm', lufs=-13, groove='samba_reggae', bpm=(84, 104),
+    'samba_reggae': dict(room='studio', swing=0.5, humanize='natural', tone='warm', groove='samba_reggae', bpm=(84, 104),
                          mode='dorian', prog='i-IV-i-V', layers=[
         _DR('standard', 0.0, -1), _CH('guitar', 'clean_guitar', 'skank', 'skank', 'skank', 48, 72, 0.0, -4), _LEAD('trombone', min=0.2, gain_db=-3), _BS('finger_bass', 'sync', 31, 48, 0.0, 0)]),
     # ---- Latin, Caribbean, Africa, Andes ----
-    'bachata': dict(room='studio', swing=0.5, humanize='natural', tone='warm', lufs=-14, groove='bachata', bpm=(116, 136),
+    'bachata': dict(room='studio', swing=0.5, humanize='natural', tone='warm', groove='bachata', bpm=(116, 136),
                     mode='minor', prog='i-iv-V-i', layers=[
         _LEAD('steel_guitar', gain_db=-1), _CH('rhythm', 'nylon_guitar', 'fingerpick', 'fingerpick', 'arp16', 45, 69, 0.0, -4), _BS('finger_bass', 'sync', 31, 48, 0.0, 0), _DR('standard', 0.0, -5)]),
-    'merengue': dict(room='studio', swing=0.5, humanize='tight', tone='bright', lufs=-13, groove='merengue', bpm=(126, 160),
+    'merengue': dict(room='studio', swing=0.5, humanize='tight', tone='bright', groove='merengue', bpm=(126, 160),
                      mode='major', prog='I-IV-V-I', layers=[
         _LEAD('accordion', gain_db=-1), _BS('acoustic_bass', 'half', 31, 48, 0.0, 0), _ALT('alto_sax', min=0.5, gain_db=-5), _DR('standard', 0.0, -3)]),
-    'tango': dict(room='hall', swing=0.5, humanize='natural', tone='warm', lufs=-15, groove='tango', bpm=(112, 132),
+    'tango': dict(room='hall', swing=0.5, humanize='natural', tone='warm', groove='tango', bpm=(112, 132),
                   mode='harmonic_minor', prog='i-iv-V7-i', layers=[
         _LEAD('bandoneon', gain_db=-1), _ALT('violin', min=0.3, gain_db=-4), _CH('piano', 'piano', 'pulse', 'pulse', 'pulse', 48, 70, 0.0, -4), _BS('double_bass', 'half', 28, 46, 0.0, -1), _DR('standard', 0.35, -8)]),
-    'mariachi': dict(room='hall', swing=0.5, humanize='loose', tone='bright', lufs=-14, groove='ranchera', bpm=(100, 132),
+    'mariachi': dict(room='hall', swing=0.5, humanize='loose', tone='bright', groove='ranchera', bpm=(100, 132),
                      mode='major', prog='I-IV-V-I', layers=[
         _LEAD('trumpet', gain_db=-2), _ALT('violin', min=0.2, gain_db=-4), _CH('vihuela', 'vihuela', 'strum', 'strum', 'strum', 50, 74, 0.0, -3), _BS('guitarron', 'half', 28, 46, 0.0, -1)]),
-    'bolero': dict(room='chamber', swing=0.5, humanize='natural', tone='warm', lufs=-16, groove='soft_pulse', bpm=(66, 88),
+    'bolero': dict(room='chamber', swing=0.5, humanize='natural', tone='warm', groove='soft_pulse', bpm=(66, 88),
                    mode='minor', prog='i-iv-V7-i', layers=[
         _CH('guitar', 'nylon_guitar', 'fingerpick', 'fingerpick', 'strum', 43, 67, 0.0, -2), _LEAD('trumpet', min=0.3, gain_db=-3), _BS('acoustic_bass', 'half', 31, 46, 0.1, -1), _DR('brush', 0.3, -6)]),
-    'soca': dict(room='studio', swing=0.5, humanize='tight', tone='bright', lufs=-12, groove='soca', bpm=(120, 150),
+    'soca': dict(room='studio', swing=0.5, humanize='tight', tone='bright', groove='soca', bpm=(120, 150),
                  mode='major', prog='I-IV-V-IV', layers=[
         _LEAD('steelpan', gain_db=-2), _CH('guitar', 'clean_guitar', 'chop', 'chop', 'chop', 48, 72, 0.0, -5), _ALT('brass_section', min=0.5, gain_db=-6), _BS('synth_bass', 'sync', 28, 43, 0.0, 0), _DR('standard', 0.0, -3)]),
-    'calypso': dict(room='room_warm', swing=0.54, humanize='loose', tone='warm', lufs=-14, groove='calypso', bpm=(100, 128),
+    'calypso': dict(room='room_warm', swing=0.54, humanize='loose', tone='warm', groove='calypso', bpm=(100, 128),
                     mode='major', prog='I-IV-I-V', layers=[
         _LEAD('steelpan', gain_db=-1), _CH('guitar', 'nylon_guitar', 'strum', 'strum', 'strum', 45, 69, 0.0, -4), _BS('acoustic_bass', 'half', 31, 48, 0.0, 0), _DR('standard', 0.0, -6)]),
-    'highlife': dict(room='studio', swing=0.54, humanize='loose', tone='warm', lufs=-14, groove='highlife', bpm=(100, 126),
+    'highlife': dict(room='studio', swing=0.54, humanize='loose', tone='warm', groove='highlife', bpm=(100, 126),
                      mode='major', prog='I-IV-I-V', layers=[
         _CH('guitar', 'highlife_guitar', 'pulse', 'chop', 'chop', 48, 74, 0.0, -2), _LEAD('trumpet', gain_db=-2), _ALT('alto_sax', min=0.4, gain_db=-5), _BS('finger_bass', 'sync', 31, 48, 0.0, 0), _DR('standard', 0.0, -4)]),
-    'soukous': dict(room='studio', swing=0.5, humanize='natural', tone='bright', lufs=-13, groove='soukous', bpm=(112, 140),
+    'soukous': dict(room='studio', swing=0.5, humanize='natural', tone='bright', groove='soukous', bpm=(112, 140),
                     mode='major', prog='I-IV-V-IV', layers=[
         _LEAD('soukous_guitar', oct=1, gain_db=-1), _CH('rhythm', 'highlife_guitar', 'arp16', 'arp16', 'arp16', 45, 69, 0.0, -4), _BS('finger_bass', 'sync', 28, 45, 0.0, 0), _DR('standard', 0.0, -4)]),
-    'amapiano': dict(room='plate', swing=0.5, humanize='tight', tone='warm', lufs=-12, groove='amapiano', bpm=(108, 116),
+    'amapiano': dict(room='plate', swing=0.5, humanize='tight', tone='warm', groove='amapiano', bpm=(108, 116),
                      mode='minor', prog='i-VI-III-VII', layers=[
         _L('log', 'log_drum', 'bass', bass='sync', lo=33, hi=48, min=0.0, role='bass', gain_db=-1), _CH('keys', 'epiano', 'comp', 'comp', 'comp', 50, 74, 0.0, -4, color='seventh'),
         _CH('pad', 'warm_pad', 'block', 'block', 'block', 48, 70, 0.2, -9), _LEAD('pan_flute', min=0.4, gain_db=-5), _DR('standard', 0.0, -3)]),
-    'kora': dict(room='room_warm', swing=0.5, humanize='loose', tone='warm', lufs=-16, groove='kora_6', bpm=(88, 118),
+    'kora': dict(room='room_warm', swing=0.5, humanize='loose', tone='warm', groove='kora_6', bpm=(88, 118),
                  mode='african_pentatonic', prog='I-IV-I-V', layers=[
         _CH('kora', 'kora', 'arp16', 'arp16', 'arp16', 48, 81, 0.0, -2), _LEAD('balafon', gain_db=-2), _ALT('mbira', oct=1, min=0.4, gain_db=-6), _BS('guembri', 'half', 31, 46, 0.2, -2), _DR('standard', 0.3, -7)]),
-    'mbira': dict(room='room_warm', swing=0.5, humanize='loose', tone='warm', lufs=-16, groove='kora_6', bpm=(96, 124),
+    'mbira': dict(room='room_warm', swing=0.5, humanize='loose', tone='warm', groove='kora_6', bpm=(96, 124),
                   mode='mbira_mixolydian', prog='I-VII-IV-I', layers=[
         _LEAD('mbira', gain_db=-1), _CH('mbira2', 'mbira', 'arp16', 'arp16', 'arp16', 55, 84, 0.0, -4), _BS('mbira', 'half', 36, 55, 0.3, -3), _DR('standard', 0.2, -8)]),
-    'andean': dict(room='hall', swing=0.5, humanize='natural', tone='warm', lufs=-16, groove='huayno', bpm=(92, 124),
+    'andean': dict(room='hall', swing=0.5, humanize='natural', tone='warm', groove='huayno', bpm=(92, 124),
                    mode='andean_minor', prog='i-VII-VI-VII', layers=[
         _LEAD('quena', glide=0.15, gain_db=-1), _ALT('zampona', oct=0, min=0.4, gain_db=-4), _CH('charango', 'charango', 'strum', 'arp16', 'arp16', 55, 79, 0.0, -3),
         _BS('acoustic_bass', 'half', 31, 46, 0.3, -1), _DR('standard', 0.2, -6)]),
-    'hawaiian': dict(room='room_warm', swing=0.52, humanize='loose', tone='warm', lufs=-16, groove='brush', bpm=(80, 108),
+    'hawaiian': dict(room='room_warm', swing=0.52, humanize='loose', tone='warm', groove='brush', bpm=(80, 108),
                      mode='major', prog='I-vi-ii-V', layers=[
         _CH('ukulele', 'ukulele', 'strum', 'strum', 'strum', 55, 79, 0.0, -3), _LEAD('slack_key', gain_db=-2), _BS('acoustic_bass', 'half', 31, 46, 0.2, -2), _DR('brush', 0.3, -8)]),
     # ---- Europe and the Americas ----
-    'celtic': dict(room='room_warm', swing=0.54, humanize='loose', tone='warm', lufs=-15, groove='bodhran', bpm=(100, 126),
+    'celtic': dict(room='room_warm', swing=0.54, humanize='loose', tone='warm', groove='bodhran', bpm=(100, 126),
                    mode='celtic_dorian', prog='i-VII-i-VII', layers=[
         _LEAD('fiddle', glide=0.1, gain_db=-1), _ALT('tin_whistle', oct=1, min=0.4, gain_db=-5), _CH('guitar', 'acoustic_guitar', 'strum', 'strum', 'strum', 45, 69, 0.0, -3),
         _BS('acoustic_bass', 'half', 31, 46, 0.2, -2), _DR('standard', 0.2, -7)]),
-    'country': dict(room='studio', swing=0.54, humanize='natural', tone='bright', lufs=-14, groove='two_step', bpm=(96, 132),
+    'country': dict(room='studio', swing=0.54, humanize='natural', tone='bright', groove='two_step', bpm=(96, 132),
                     mode='major', prog='I-IV-V-I', layers=[
         _CH('guitar', 'acoustic_guitar', 'strum', 'strum', 'strum', 45, 69, 0.0, -3), _LEAD('steel_guitar', gain_db=-2), _ALT('fiddle', min=0.4, gain_db=-4), _BS('acoustic_bass', 'half', 31, 46, 0.0, -1), _DR('standard', 0.0, -6)]),
-    'bluegrass': dict(room='room_warm', swing=0.5, humanize='loose', tone='bright', lufs=-14, bpm=(120, 160),
+    'bluegrass': dict(room='room_warm', swing=0.5, humanize='loose', tone='bright', bpm=(120, 160),
                       mode='mixolydian', prog='I-IV-I-V', layers=[
         _LEAD('banjo', gain_db=-1), _ALT('fiddle', min=0.2, gain_db=-3), _CH('guitar', 'acoustic_guitar', 'strum', 'strum', 'strum', 45, 69, 0.0, -4), _BS('acoustic_bass', 'half', 31, 46, 0.0, 0)]),
-    'blues': dict(room='room_warm', swing=0.66, humanize='loose', tone='warm', lufs=-15, groove='rock', bpm=(70, 104),
+    'blues': dict(room='room_warm', swing=0.66, humanize='loose', tone='warm', groove='rock', bpm=(70, 104),
                   mode='blues', prog='I7-I7-I7-I7-IV7-IV7-I7-I7-V7-IV7-I7-V7', layers=[
         _CH('guitar', 'clean_guitar', 'comp', 'comp', 'comp', 45, 69, 0.0, -3, color='seventh'), _LEAD('overdrive_guitar', gain_db=-3), _CH('organ', 'organ', 'block', 'block', 'block', 48, 69, 0.3, -9),
         _BS('acoustic_bass', 'walk', 31, 48, 0.0, 0), _DR('brush', 0.1, -5)]),
-    'gospel': dict(room='hall', swing=0.55, humanize='natural', tone='warm', lufs=-14, groove='gospel_clap', bpm=(70, 110),
+    'gospel': dict(room='hall', swing=0.55, humanize='natural', tone='warm', groove='gospel_clap', bpm=(70, 110),
                    mode='major', prog='I-IV-I-V7-vi-ii-V-I', layers=[
         _CH('organ', 'tonewheel_organ', 'block', 'block', 'block', 48, 72, 0.0, -4), _CH('piano', 'piano', 'comp', 'comp', 'comp', 48, 72, 0.0, -3, color='seventh'), _LEAD('choir_aahs', min=0.2, gain_db=-4),
         _BS('finger_bass', 'half', 31, 46, 0.0, 0), _DR('standard', 0.1, -5)]),
-    'swing': dict(room='hall', swing=0.66, humanize='loose', tone='warm', lufs=-15, groove='brush', bpm=(140, 190),
+    'swing': dict(room='hall', swing=0.66, humanize='loose', tone='warm', groove='brush', bpm=(140, 190),
                   mode='major', prog='Imaj7-vi7-ii7-V7', layers=[
         _CH('piano', 'piano', 'comp', 'comp', 'comp', 48, 70, 0.0, -4, color='seventh'), _LEAD('alto_sax', gain_db=-2), _ALT('brass_section', min=0.45, gain_db=-5),
         _BS('acoustic_bass', 'walk', 31, 48, 0.0, 0), _DR('brush', 0.0, -4)]),
-    'disco': dict(room='studio', swing=0.5, humanize='tight', tone='bright', lufs=-13, groove='disco', bpm=(108, 124),
+    'disco': dict(room='studio', swing=0.5, humanize='tight', tone='bright', groove='disco', bpm=(108, 124),
                   mode='minor', prog='i7-IV7-i7-V7', layers=[
         _CH('guitar', 'clean_guitar', 'chop', 'chop', 'chop', 48, 72, 0.0, -3), _CH('strings', 'string_ensemble', 'block', 'half', 'half', 45, 72, 0.2, -6), _LEAD('brass_section', min=0.2, gain_db=-4),
         _BS('slap_bass', 'pulse8', 28, 46, 0.0, 0), _DR('standard', 0.0, -3)]),
-    'baroque': dict(room='hall', swing=0.5, humanize='natural', tone='neutral', lufs=-17, bpm=(80, 120),
+    'baroque': dict(room='hall', swing=0.5, humanize='natural', tone='neutral', bpm=(80, 120),
                     mode='major', prog='I-V-vi-iii-IV-I-IV-V', layers=[
         _CH('harpsichord', 'harpsichord', 'arp16', 'arp16', 'arp16', 48, 76, 0.0, -2), _LEAD('violin', gain_db=-1), _BS('cello', 'walk', 36, 55, 0.0, -2), _ALT('oboe', min=0.5, gain_db=-5)]),
-    'medieval': dict(room='cave', swing=0.5, humanize='rubato', tone='warm', lufs=-17, groove='bodhran', bpm=(84, 112),
+    'medieval': dict(room='cave', swing=0.5, humanize='rubato', tone='warm', groove='bodhran', bpm=(84, 112),
                      mode='dorian', prog='i-VII-i-VII', layers=[
         _LEAD('recorder', gain_db=-1), _CH('lute', 'lute', 'fingerpick', 'fingerpick', 'arp8', 45, 69, 0.0, -3), _DRONE('hurdy_gurdy', 36, 55, 0.0, -6), _DR('standard', 0.4, -10)]),
-    'viennese_waltz': dict(room='hall', swing=0.5, humanize='natural', tone='warm', lufs=-16, bpm=(150, 186), bb=3,
+    'viennese_waltz': dict(room='hall', swing=0.5, humanize='natural', tone='warm', bpm=(150, 186), bb=3,
                            mode='major', prog='I-V7-V7-I', layers=[
         _CH('strings', 'string_ensemble', 'waltz', 'waltz', 'waltz', 45, 70, 0.0, -4), _LEAD('violin', gain_db=-1), _BS('double_bass', 'half', 28, 46, 0.0, -2), _ALT('flute', oct=1, min=0.5, gain_db=-6)]),
-    'chiptune': dict(room='room', swing=0.5, humanize='tight', tone='bright', lufs=-13, groove='rock', bpm=(120, 168),
+    'chiptune': dict(room='room', swing=0.5, humanize='tight', tone='bright', groove='rock', bpm=(120, 168),
                      mode='minor', prog='i-VI-III-VII', layers=[
         _LEAD('chiptune_lead', gain_db=-3), _CH('arp', '8bit', 'arp16', 'arp16', 'arp16', 55, 79, 0.0, -8), _BS('synth_bass', 'pulse8', 28, 43, 0.0, 0), _DR('electronic', 0.0, -4)]),
 }
 
 _FILM = dict(room='studio', swing=0.5, humanize='natural', tone='bright')
 GENRES.update({
-    'tamil_film': dict(**_FILM, lufs=-14, groove='tamil_film', bpm=(90, 128), mode='raga_kharaharapriya', prog='i-IV-i-VII', layers=[
+    'tamil_film': dict(**_FILM, groove='tamil_film', bpm=(90, 128), mode='raga_kharaharapriya', prog='i-IV-i-VII', layers=[
         _CH('strings', 'string_ensemble', 'block', 'half', 'arp8', 45, 72, 0.0, -4), _LEAD('violin', glide=0.3, gain_db=-1),
         _ALT('nadaswaram', min=0.55, glide=0.3, gain_db=-6), _BS('synth_bass', 'sync', 31, 46, 0.1, 0), _SPK('carnatic_mandolin', 60, 84, 0.3, -7), _DR('standard', 0.0, -4)]),
-    'gaana': dict(room='studio', swing=0.5, humanize='loose', tone='bright', lufs=-13, groove='gaana', bpm=(108, 138),
+    'gaana': dict(room='studio', swing=0.5, humanize='loose', tone='bright', groove='gaana', bpm=(108, 138),
                   mode='raga_asavari', prog='i-VII-VI-VII', layers=[
         _LEAD('nadaswaram', glide=0.3, gain_db=-2), _CH('synth', 'polysynth', 'pulse', 'pulse', 'pulse', 48, 70, 0.3, -7),
         _BS('synth_bass', 'sync', 28, 44, 0.0, 0), _DR('standard', 0.0, -2)]),
-    'dhrupad': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', lufs=-18, groove='dhrupad', bpm=(48, 70),
+    'dhrupad': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', groove='dhrupad', bpm=(48, 70),
                     mode='raga_asavari', prog='Isus2-Isus2-Isus2-Isus2', layers=[
         _DRONE('tanpura', 36, 55, 0.0, -3), _LEAD('rudra_veena', min=0.0, glide=0.5, gain_db=-1), _ALT('sarangi', min=0.6, glide=0.4, gain_db=-8),
         _DR('standard', 0.25, -5)]),
-    'bhajan': dict(room='room', swing=0.5, humanize='loose', tone='warm', lufs=-16, groove='bhajan', bpm=(72, 104),
+    'bhajan': dict(room='room', swing=0.5, humanize='loose', tone='warm', groove='bhajan', bpm=(72, 104),
                    mode='raga_khamaj', prog='Isus2-IVsus2-Isus2-Isus2', layers=[
         _CH('harmonium', 'indian_harmonium', 'block', 'block', 'half', 48, 70, 0.0, -2), _LEAD('bansuri', glide=0.3, min=0.3, gain_db=-3),
         _DRONE('tanpura', 36, 55, 0.0, -7), _DR('standard', 0.0, -4)]),
-    'sufi': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', lufs=-16, groove='sufi', bpm=(74, 104),
+    'sufi': dict(room='hall', swing=0.5, humanize='rubato', tone='warm', groove='sufi', bpm=(74, 104),
                  mode='raga_kafi', prog='i-VII-i-IV', layers=[
         _CH('harmonium', 'indian_harmonium', 'half', 'half', 'half', 48, 70, 0.0, -3), _LEAD('sarangi', glide=0.5, gain_db=-2),
         _CH('guitar', 'nylon_guitar', 'fingerpick', 'fingerpick', 'arp8', 45, 69, 0.3, -5), _DRONE('tanpura', 36, 55, 0.0, -7), _DR('standard', 0.0, -5)]),
-    'garba': dict(room='studio', swing=0.5, humanize='tight', tone='bright', lufs=-13, groove='garba', bpm=(112, 142),
+    'garba': dict(room='studio', swing=0.5, humanize='tight', tone='bright', groove='garba', bpm=(112, 142),
                   mode='raga_khamaj', prog='I-VII-IV-I', layers=[
         _CH('harmonium', 'indian_harmonium', 'chop', 'chop', 'chop', 48, 70, 0.0, -4), _LEAD('shehnai', gain_db=-2), _ALT('bansuri', oct=1, min=0.5, gain_db=-6),
         _BS('finger_bass', 'sync', 31, 46, 0.2, 0), _DR('standard', 0.0, -2)]),
-    'dandiya': dict(room='studio', swing=0.5, humanize='tight', tone='bright', lufs=-13, groove='dandiya', bpm=(130, 164),
+    'dandiya': dict(room='studio', swing=0.5, humanize='tight', tone='bright', groove='dandiya', bpm=(130, 164),
                     mode='raga_khamaj', prog='I-VII-IV-I', layers=[
         _CH('harmonium', 'indian_harmonium', 'chop', 'chop', 'chop', 48, 70, 0.0, -4), _LEAD('shehnai', gain_db=-2), _SPK('santoor', 72, 91, 0.3, -7),
         _BS('synth_bass', 'sync', 31, 46, 0.2, 0), _DR('standard', 0.0, -2)]),
-    'lavani': dict(room='studio', swing=0.5, humanize='loose', tone='bright', lufs=-13, groove='lavani', bpm=(116, 148),
+    'lavani': dict(room='studio', swing=0.5, humanize='loose', tone='bright', groove='lavani', bpm=(116, 148),
                    mode='raga_kafi', prog='i-IV-i-VII', layers=[
         _CH('harmonium', 'indian_harmonium', 'chop', 'half', 'half', 48, 70, 0.0, -4), _LEAD('sarangi', glide=0.4, gain_db=-2), _ALT('tumbi', oct=1, min=0.4, gain_db=-6),
         _BS('finger_bass', 'sync', 31, 46, 0.2, 0), _DR('standard', 0.0, -2)]),
-    'baul': dict(room='room', swing=0.5, humanize='loose', tone='warm', lufs=-17, groove='baul', bpm=(78, 108),
+    'baul': dict(room='room', swing=0.5, humanize='loose', tone='warm', groove='baul', bpm=(78, 108),
                  mode='mixolydian', prog='I-VII-I-IV', layers=[
         _LEAD('ektara', gain_db=-2), _CH('dotara', 'dotara', 'fingerpick', 'fingerpick', 'arp8', 45, 69, 0.0, -4),
         _CH('harmonium', 'indian_harmonium', 'half', 'half', 'half', 48, 70, 0.3, -7), _ALT('bansuri', min=0.5, glide=0.3, gain_db=-6), _DR('standard', 0.15, -6)]),
-    'rajasthani_folk': dict(room='room', swing=0.5, humanize='loose', tone='warm', lufs=-15, groove='rajasthani', bpm=(100, 136),
+    'rajasthani_folk': dict(room='room', swing=0.5, humanize='loose', tone='warm', groove='rajasthani', bpm=(100, 136),
                             mode='raga_khamaj', prog='Isus2-IVsus2-Isus2-Isus2', layers=[
         _LEAD('kamaicha', glide=0.45, gain_db=-1), _ALT('algoza', min=0.35, gain_db=-5), _DRONE('tanpura', 36, 55, 0.0, -7),
         _CH('harmonium', 'indian_harmonium', 'half', 'half', 'half', 48, 70, 0.3, -6), _DR('standard', 0.0, -3)]),
-    'bihu': dict(room='room', swing=0.5, humanize='tight', tone='bright', lufs=-14, groove='bihu', bpm=(120, 152),
+    'bihu': dict(room='room', swing=0.5, humanize='tight', tone='bright', groove='bihu', bpm=(120, 152),
                  mode='raga_bhoopali', prog='Isus2-IVsus2-Isus2-Vsus2', layers=[
         _LEAD('pepa', gain_db=-2), _ALT('gogona', min=0.4, gain_db=-6), _CH('guitar', 'acoustic_guitar', 'comp', 'comp', 'strum', 48, 69, 0.2, -6),
         _DR('standard', 0.0, -2)]),
-    'chenda_melam': dict(room='hall', swing=0.5, humanize='tight', tone='bright', lufs=-13, groove='chenda', bpm=(110, 150),
+    'chenda_melam': dict(room='hall', swing=0.5, humanize='tight', tone='bright', groove='chenda', bpm=(110, 150),
                          mode='raga_mayamalavagowla', prog='Isus2-Isus2-Isus2-Isus2', layers=[
         _LEAD('kuzhal', min=0.2, glide=0.3, gain_db=-3), _DRONE('tanpura', 36, 55, 0.0, -8), _DR('standard', 0.0, -1)]),
-    'desi_hiphop': dict(room='studio', swing=0.5, humanize='tight', tone='bright', lufs=-12, groove='desi_hiphop', bpm=(84, 102),
+    'desi_hiphop': dict(room='studio', swing=0.5, humanize='tight', tone='bright', groove='desi_hiphop', bpm=(84, 102),
                         mode='raga_asavari', prog='i-VII-VI-VII', layers=[
         _LEAD('sitar', gain_db=-3), _BS('synth_bass', 'sync', 24, 40, 0.0, 0), _SPK('santoor', 72, 91, 0.3, -9),
         _CH('pad', 'string_ensemble', 'half', 'half', 'half', 45, 70, 0.3, -9), _DR('standard', 0.0, -2)]),
-    'indipop': dict(room='studio', swing=0.5, humanize='natural', tone='bright', lufs=-14, groove='indipop', bpm=(98, 122),
+    'indipop': dict(room='studio', swing=0.5, humanize='natural', tone='bright', groove='indipop', bpm=(98, 122),
                     mode='major', prog='I-V-vi-IV', layers=[
         _CH('guitar', 'acoustic_guitar', 'strum', 'strum', 'arp8', 48, 72, 0.0, -4), _CH('piano', 'piano', 'block', 'half', 'arp8', 48, 70, 0.3, -6),
         _LEAD('bansuri', gain_db=-3), _BS('finger_bass', 'sync', 31, 46, 0.0, 0), _DR('standard', 0.0, -4)]),
-    'retro_filmi': dict(room='hall', swing=0.5, humanize='natural', tone='warm', lufs=-15, groove='retro_filmi', bpm=(100, 130),
+    'retro_filmi': dict(room='hall', swing=0.5, humanize='natural', tone='warm', groove='retro_filmi', bpm=(100, 130),
                         mode='raga_bhairavi', prog='i-VI-VII-i', layers=[
         _CH('strings', 'string_ensemble', 'block', 'half', 'half', 45, 72, 0.0, -3), _LEAD('accordion', gain_db=-2), _ALT('sitar', min=0.4, gain_db=-5),
         _SPK('mandolin', 60, 84, 0.3, -7), _BS('acoustic_bass', 'walk', 31, 46, 0.1, 0), _DR('standard', 0.0, -5)]),
-    'indian_lofi': dict(room='room', swing=0.54, humanize='loose', tone='warm', lufs=-17, groove='indian_lofi', bpm=(68, 88),
+    'indian_lofi': dict(room='room', swing=0.54, humanize='loose', tone='warm', groove='indian_lofi', bpm=(68, 88),
                         mode='raga_kafi', prog='i-IV-i-VII', layers=[
         _CH('keys', 'epiano', 'half', 'half', 'arp8', 48, 70, 0.0, -4, color='seventh'), _LEAD('bansuri', glide=0.3, min=0.3, gain_db=-4),
         _SPK('sitar', 60, 84, 0.4, -9), _BS('finger_bass', 'half', 31, 46, 0.0, 0), _DR('standard', 0.0, -5)]),

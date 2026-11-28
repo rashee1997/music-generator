@@ -57,6 +57,50 @@
       "lufs": [-20.0, -14.0],
       "forbidden": [],
       "sources": ["knowledgebase/media/video-scoring.md (diegetic to non-diegetic transitions)"]
+    },
+    "game_console": {
+      "character": "music for a console or PC game: it is heard for hours, under effects and dialogue, so it loops, layers and yields; a narrow level range and a long loop matter more than a big moment",
+      "lra_lu": [4.0, 20.0],
+      "crest_db": [10.0, 22.0],
+      "reverb_tail_s": [0.8, 3.0],
+      "stereo_corr_max": 0.95,
+      "sync_to_picture": false,
+      "lufs": [-26.0, -22.0],
+      "forbidden": ["cut_synced_hits", "loop_under_a_minute", "unresolved_loop_seam"],
+      "sources": ["knowledgebase/media/game-score-dos-and-donts.md section 2 (console -24 LUFS +-2 LU, 20 LU maximum loudness range, -1 dBTP: Sony and the Independent G.A.N.G.)"]
+    },
+    "game_mobile": {
+      "character": "music for a phone or handheld game: small speakers and headphones in noisy places, so the level is higher and the dynamic range smaller than on a console",
+      "lra_lu": [3.0, 12.0],
+      "crest_db": [8.0, 18.0],
+      "reverb_tail_s": [0.5, 2.0],
+      "stereo_corr_max": 0.98,
+      "sync_to_picture": false,
+      "lufs": [-20.0, -16.0],
+      "forbidden": ["cut_synced_hits", "loop_under_a_minute", "unresolved_loop_seam", "sub_bass_only_weight"],
+      "sources": ["knowledgebase/media/game-score-dos-and-donts.md section 2 (mobile -16 LUFS Independent G.A.N.G., -18 LUFS +-2 LU Sony; the two disagree)"]
+    },
+    "game_vr": {
+      "character": "music for a headset game: it sits in the player's space, so it stays quiet and wide and never fights positional effects",
+      "lra_lu": [3.0, 12.0],
+      "crest_db": [10.0, 22.0],
+      "reverb_tail_s": [0.8, 2.5],
+      "stereo_corr_max": 0.9,
+      "sync_to_picture": false,
+      "lufs": [-18.0, -16.0],
+      "forbidden": ["cut_synced_hits", "loop_under_a_minute", "unresolved_loop_seam"],
+      "sources": ["knowledgebase/media/game-score-dos-and-donts.md section 2 (Meta Quest -16 LUFS, PCVR through Link -18 LUFS)"]
+    },
+    "film_underscore": {
+      "character": "music that sits under a scene and the dialogue in it: it supports the scene instead of leading it, leaves the speech band alone and comes out of and goes back into silence on purpose",
+      "lra_lu": [6.0, 20.0],
+      "crest_db": [10.0, 22.0],
+      "reverb_tail_s": [1.0, 4.0],
+      "stereo_corr_max": 0.9,
+      "sync_to_picture": true,
+      "lufs": [-30.0, -22.0],
+      "forbidden": ["dense_midrange_under_dialogue", "hit_every_movement"],
+      "sources": ["knowledgebase/media/film-scene-score-dos-and-donts.md section 2 (starting value: a bed sits under the dialogue-gated program levels of references/data/presets/film/delivery.json)"]
     }
   },
   "provenance": {

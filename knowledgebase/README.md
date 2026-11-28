@@ -26,6 +26,8 @@ Read one file at a time. `scripts/research_kb.py` pulls the file a piece needs.
 | `genre-and-feel/short-form-functional-music.md` | Phone-speaker band, hook and alert length, alarm and wake-up findings, and the working figures for a ringtone or alarm | partly-sourced |
 | `genre-and-feel/orchestral-writing.md` | Playable ranges, polyphony and note rates for orchestral parts a SoundFont plays, parallel fifths and octaves, legato overlap | partly-sourced |
 | `genre-and-feel/psychoacoustic-genre.md` | Genre and mood tempo, interval, timbre and reverb values | unverified |
+| `media/game-score-dos-and-donts.md` | What a game score should and should not be: platform loudness, loops, layers, states, ducking, instrument families per state | partly-sourced |
+| `media/film-scene-score-dos-and-donts.md` | What a scene-based film underscore should and should not be: spotting, hit points, speech band, dialogue carve, instrument families per scene | partly-sourced |
 | `media/game-music.md` | Stem layers, transition modes and loop folding | unverified |
 | `media/game-sfx.md` | Hit variation, impact stages, footstep surfaces and interface tones | unverified |
 | `media/video-scoring.md` | Frame-locked tempo, hit windows and voice-over ducking bands | unverified |

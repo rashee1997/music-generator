@@ -51,17 +51,41 @@ import render_natural as rn
 # instruments that need breath or bow room between phrases (the KB's "ma" rule)
 WIND = {'flute', 'bansuri', 'shakuhachi', 'ney', 'mizmar', 'shehnai', 'dizi', 'recorder', 'horn', 'french_horn', 'trumpet',
         'saxophone', 'alto_sax', 'tenor_sax', 'clarinet', 'oboe', 'bassoon', 'trombone', 'tuba', 'harmonica', 'accordion'}
-GAP_BEATS = 0.08          # a breath or bow gap is at least this long
-WINDOW_BARS = 4
-CLICK_STEP = 0.5          # one-sample jump, full scale: no real note rises this fast; a sample that starts mid-wave does
+
+
+import gate_constants
+
+
+def k_GAP_BEATS():
+    return gate_constants.get("score.gap_beats")
+
+
+def k_WINDOW_BARS():
+    return gate_constants.get("score.window_bars")
+
+
+def k_CLICK_STEP():
+    return gate_constants.get("clicks.step")
+
+
+def k_MASK_WIN_S():
+    return gate_constants.get("masking.window_s")
+
+
+def k_Z_BAND_HZ():
+    return gate_constants.get("z_separation.band_hz")
+
+
+def k_Z_FRAME_S():
+    return gate_constants.get("z_separation.frame_s")
 
 
 def find_clicks(mono, quiet=220):
-    """Isolated single-sample jumps: a jump of more than CLICK_STEP in one or two samples, with no other jump within
+    """Isolated single-sample jumps: a jump of more than k_CLICK_STEP() in one or two samples, with no other jump within
     `quiet` samples (5 ms at 44.1 kHz). A dense cluster of jumps is loud high-frequency content (cymbal, shaker,
     crash), not a click. A second-difference test was tried first and flagged 841 spikes in the desert sample, most of
     them real attacks."""
-    idx = np.flatnonzero(np.abs(np.diff(mono)) > CLICK_STEP)
+    idx = np.flatnonzero(np.abs(np.diff(mono)) > k_CLICK_STEP())
     if not len(idx):
         return idx
     groups = np.split(idx, np.flatnonzero(np.diff(idx) > 2) + 1)
@@ -130,7 +154,7 @@ def score_checks(score, out):
         if (t.get('instrument') in rn.BOWED or t.get('instrument') in WIND) and gp.on('bow.breath_gap'):
             gap_beats = gp.param('bow.breath_gap', 'gap_beats')
             if t.get('role') in ('melody', 'counter') and len(ns) >= 12:
-                win = WINDOW_BARS * bb
+                win = k_WINDOW_BARS() * bb
                 ns = sorted(ns, key=lambda n: n['t'])
                 starts = np.arange(0, max(n['t'] for n in ns) + win, win)
                 no_gap = 0
@@ -142,7 +166,7 @@ def score_checks(score, out):
                     if max(gaps) < gap_beats:
                         no_gap += 1
                 if no_gap:
-                    _row(out, 'WARN', t['name'], f'{no_gap} phrase window(s) of {WINDOW_BARS} bars with no breath or bow gap: add 0.1-0.2 beat rests at phrase ends')
+                    _row(out, 'WARN', t['name'], f'{no_gap} phrase window(s) of {k_WINDOW_BARS()} bars with no breath or bow gap: add 0.1-0.2 beat rests at phrase ends')
     for level, name, detail in pattern_audit.acoustic_checks(score):
         _row(out, level, name, detail)
     _, flags, per_track = pattern_audit.audit_detail(score)     # (info, flags, flags counted by part)
@@ -824,13 +848,13 @@ def audio_checks(path, score, out, metrics=None, analysis=None):
     n_clicks = max(len(clicks), int(gate_clicks.get('mad_count', 0)))
     if n_clicks:
         when = ', '.join(f'{i / sr:.3f}s' for i in clicks[:5])
-        detail = (f'{n_clicks} click event(s): {len(clicks)} single-sample jump(s) above {CLICK_STEP} FS'
+        detail = (f'{n_clicks} click event(s): {len(clicks)} single-sample jump(s) above {k_CLICK_STEP()} FS'
                   + (f', first at {when}' if len(clicks) else '')
                   + f'; high-pass MAD found {gate_clicks.get("mad_count", 0)} and LPC {gate_clicks.get("lpc_count", 0)}')
         _row(out, 'FAIL', 'clicks', detail + '. Check the sample start or add a 2-5 ms fade-in at that note')
     else:
         _row(out, 'PASS', 'clicks',
-             f'no click: no single-sample jump above {CLICK_STEP} FS and no high-pass/LPC impulse event')
+             f'no click: no single-sample jump above {k_CLICK_STEP()} FS and no high-pass/LPC impulse event')
     if metrics is not None:
         metrics.append(dict(row='clicks', stage='mix', stem=None, level='FAIL' if n_clicks else 'PASS',
                             value=float(n_clicks), unit='events', threshold=0.0, margin=float(n_clicks),
@@ -999,8 +1023,6 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
             calibrated=False, detail=res['detail'], table=res.get('table'))
 
 
-MASK_WIN_S = 4.0            # the congestion check looks at 4-second windows
-MASK_MARGIN_DB = 3.0        # a bed within 3 dB of the lead in an ERB critical band is congested
 
 
 def _role_in(role, want):
@@ -1111,7 +1133,7 @@ def masking_rows(stems, score, sr=44100, out=None):
 
     # 8 ERB center frequencies spanning 250 - 4000 Hz
     center_freqs = [300, 500, 800, 1200, 1750, 2400, 3100, 3900]
-    win = int(MASK_WIN_S * sr)
+    win = int(k_MASK_WIN_S() * sr)
 
     def pan_profile(x):
         if x.ndim == 2 and x.shape[1] >= 2:
@@ -1174,10 +1196,10 @@ def masking_rows(stems, score, sr=44100, out=None):
                         delta_bmld = min(3.5, 3.5 * pan_diff)
                         effective_margin = margin_db - delta_bmld
                         if (_tl_m is not None and _tl_m.dialogue_windows
-                                and _tl_m.in_windows(i * MASK_WIN_S, _tl_m.dialogue_windows)):
+                                and _tl_m.in_windows(i * k_MASK_WIN_S(), _tl_m.dialogue_windows)):
                             effective_margin -= margin_tight      # a voice speaks here: the figure needs more room
                         if bd[i] > ld[i] - effective_margin:
-                            congested.append((i * MASK_WIN_S, ln, bn, fc, round(bd[i] - (ld[i] - effective_margin), 1)))
+                            congested.append((i * k_MASK_WIN_S(), ln, bn, fc, round(bd[i] - (ld[i] - effective_margin), 1)))
 
     if congested:
         t0, ln, bn, fc, ov = congested[0]
@@ -1195,7 +1217,7 @@ def masking_rows(stems, score, sr=44100, out=None):
                      f"Apply a narrow parametric EQ notch at {fc}Hz or increase stereo azimuth separation (spatial.azimuth)."))
     elif compared == 0:
         rows.append(('INFO', 'erb_binaural_masking',
-                     f'not measured: no stem is as long as one {MASK_WIN_S:g} s analysis window, so no band had data. '
+                     f'not measured: no stem is as long as one {k_MASK_WIN_S():g} s analysis window, so no band had data. '
                      'A row that could not run is not a pass.'))
     else:
         rows.append(('PASS', 'erb_binaural_masking', 'Lead vocal/melody has clear auditory separation across all 8 ERB critical bands (250-4000 Hz)'))
@@ -1204,11 +1226,11 @@ def masking_rows(stems, score, sr=44100, out=None):
     # figure spent colliding. Emitted here because this is where the collisions are measured; recomputing the ERB bands
     # in scene_gate.py would be a second estimator of the same figure.
     if _tl_m is not None and _tl_m.dialogue_windows:
-        dlg_wins = [(a, b) for a, b in _tl_m.dialogue_windows if b - a >= MASK_WIN_S]
-        n_dlg = sum(max(1, int((b - a) // MASK_WIN_S)) for a, b in dlg_wins)
+        dlg_wins = [(a, b) for a, b in _tl_m.dialogue_windows if b - a >= k_MASK_WIN_S()]
+        n_dlg = sum(max(1, int((b - a) // k_MASK_WIN_S())) for a, b in dlg_wins)
         if not n_dlg:
             rows.append(('INFO', 'scene.dialogue_mask',
-                         f'not measured: every declared dialogue window is shorter than one {MASK_WIN_S:g} s analysis window'))
+                         f'not measured: every declared dialogue window is shorter than one {k_MASK_WIN_S():g} s analysis window'))
         else:
             share_limit = float(gp.param('scene.dialogue_mask', 'max_fail_share'))
             hit = [c for c in congested if _tl_m.in_windows(c[0], dlg_wins)]
@@ -1573,15 +1595,13 @@ def layer_balance_rows(score, lv, roles, gp):
     return rows
 
 
-Z_BAND_HZ = (500.0, 4000.0)      # where strings, brass and a bright synth lead all sit
-Z_FRAME_S = 0.25                 # band-envelope resolution for the overlap measure
 
 
 _BAND_FRAME_CACHE = {}       # (id(x), shape, lo, hi, win_s, sr) -> (the array itself, the frames)
 _BAND_FRAME_MAX = 128
 
 
-def _band_frames(x, sr, lo=500.0, hi=4000.0, win_s=Z_FRAME_S):
+def _band_frames(x, sr, lo=500.0, hi=4000.0, win_s=k_Z_FRAME_S()):
     """RMS of the lo-hi band in win_s frames, or None when the stem is shorter than two frames.
 
     Memoised per array object: the separation, masking and balance rows each band-pass the same stems, and a

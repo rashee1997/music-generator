@@ -385,3 +385,14 @@ try the material fix, and where the verdict is `mismatch` or the fix would cost 
 user with the row, the measured value and limit, the cost of the fix and what the relaxation would hide. On a clear yes, use
 `gate_profiles.py relax` (or a scene `waive_ceiling`) with the measurement and the approval in the reason. Protected rows are
 never loosened.
+
+### 3k.3 Where a number lives
+
+| Number | Home | Override |
+|---|---|---|
+| What a row judges a piece by | `references/data/presets/gate/data/rows.json` (default, range, source) | the project profile's `rows`, with a reason (`gate_profiles.py relax`) |
+| A window or cut-off a measurement is made with (breath gap, masking window, click step, unison length, roughness spike ratio) | `references/data/presets/gate/data/constants.json` | `<project>/presets/gate/constants.json`, `{"name": value}` |
+| The master's loudness | score `master.lufs`, the mix preset's profile, the declared registers, then `references/data/master_targets.json` (`default`, `profiles`, per-genre `genres`, `voiceover`) | each step overrides the next |
+| A game or film-scene score's states, families and mixing | `references/data/media/game_score.json`, `film_scene_score.json` (read with `scripts/media_profile.py`) | the sheet states the choice |
+
+Algorithm constants (sample rates, filter orders, FFT sizes, epsilons) stay in code and are listed by `scripts/threshold_audit.py`.

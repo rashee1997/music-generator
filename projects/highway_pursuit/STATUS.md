@@ -1,6 +1,6 @@
 # Project Status: Highway Pursuit
 
-Certified PASS: `out/highway_pursuit.wav` (v01), -16.0 LUFS, -1.5 dBTP, 60.1 s, plus `out/highway_pursuit_ambix.wav`. 0 FAIL, 18 attempts in the project's history (14 before the gate work, 4 after). Nothing was listened to: `listen.py` did not run, so taste, realism and fit are not measured.
+Certified PASS: `out/highway_pursuit.wav` (v02, re-rendered after the gate constants moved to JSON; v01 kept), -16.0 LUFS, -1.5 dBTP, 60.1 s, plus `out/highway_pursuit_ambix.wav`. 0 FAIL, 18 attempts in the project's history (14 before the gate work, 4 after). Nothing was listened to: `listen.py` did not run, so taste, realism and fit are not measured.
 
 ## Decisions
 - Gate profile extends `orchestral` (loud, layered, locked percussion). `build_piece.py` writes it, the sheet and the score; run it, do not hand-edit those files.
