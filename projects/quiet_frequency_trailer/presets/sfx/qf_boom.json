@@ -1,9 +1,9 @@
 {
  "kind": "sfx",
  "character": "The sub-boom tail of the last hit: a falling sub under the room, long enough to carry the fade.",
- "seconds": 3.4,
+ "seconds": 3.0,
  "spec": {
-  "seconds": 3.4,
+  "seconds": 3.0,
   "layers": [
    {
     "kind": "glide",
@@ -31,9 +31,9 @@
   ]
  },
  "sources": [
-  "engine"
+  "trailer_hit_sub"
  ],
- "note": "ESTIMATE: the sub frequencies sit above the 24 Hz master high-pass and are starting values.",
+ "note": "ESTIMATE: 46 to 29 Hz fall and the 1.6 s decay are starting values inside the 30-60 Hz range the sources give; nothing was analysed.",
  "name": "qf_boom",
  "role": "fx",
  "gain_db": 0.0,

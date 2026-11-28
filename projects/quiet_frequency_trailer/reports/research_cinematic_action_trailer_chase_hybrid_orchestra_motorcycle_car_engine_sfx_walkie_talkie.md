@@ -211,3 +211,22 @@ All results are search-result summaries, not fetched pages; every figure is a st
 - Loudness: -16 LUFS integrated, -1.5 dBTP, as the user decided; `scene.silence_honoured` is satisfied by a declared one-second silence and the master's rest dip.
 - Nothing is auditioned (no listen.py), and no recording of any engine was analysed.
 - Rhythm (v2): the chase pulse is not a loop. Each bar takes one of five odd-length cycles (3+3+2, 3+2+3, 3+3+3+3+2+2, 2+3+3+2+3+3, 4+3+3+3+3) that never repeats the bar before; the violins sit a sixteenth behind the cellos, the violas answer on the steps the cellos left open, the drums take the accents the strings did not, and some bars rest on one or two sixteenths. A style direction drawn from general knowledge of Rahman-style rhythm layering; not a transcription of any piece.
+
+
+## Real-world references: reverse_riser
+
+
+- URL: https://ask.audio/articles/exciting-transitions-using-reverse-cymbals-in-ableton-live (a reversed swell rises to a sudden stop; reverb on the reverse masks the hard cut-off)
+- URL: https://freesound.org/s/134941 (a reversed-cymbal sample page; page read for description only)
+Licence: analysed only; no recording was downloaded or kept
+Measured: No measurement found: ESTIMATE the sources are practice descriptions; the 0.6 s length, band and glide are starting values
+
+## Real-world references: trailer_hit_sub
+
+
+- URL: https://www.ableton.com/en/blog/learn-how-to-make-high-impact-sounds-for-movies-and-trailers/ (transient, body and sub layers; sub drops between 30 and 60 Hz, a falling sine with a quick decay; high-pass below about 25 Hz)
+- URL: https://violetrecording.com/how-to-make-impact-sounds/ (layer a low sub under the hit's attack and EQ each layer into its own band)
+Licence: analysed only; no recording was downloaded or kept
+Measured: No measurement found: ESTIMATE both are sound-design guides, not measurements; 46 to 29 Hz and the decay times are starting values
+
+- Added v06 (director notes): qf_suck (rising envelope, cut by the hit), qf_boom (ends at 120.0 s), a 58 Hz snap on each walkie close; sources reverse_riser and trailer_hit_sub above.

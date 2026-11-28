@@ -45,6 +45,6 @@ lessons:
   cause: fx role send 0.12 and no EQ on the alarm; the last hit had no lead-in or sub tail
   check: list the events at the noted times from the story clock (P08), then read the part's send and EQ
   fix: raise orchestral and fx sends and darken the return (9 kHz); PeakFilter -5 dB at 3.5 kHz plus ducked ping_delay on the alarm; 58 Hz sub snap on each walkie close; reverse suck then sub boom into the last hit
-  avoid: claiming it works before a render and a listen
-  evidence: quiet_frequency_trailer v06, 2026-11-28, unrendered, unheard
+  avoid: 'a sfx spec envelope with tau and a long attack: tau decays from t=0 so the sound peaks at once (attack is a fraction of the length). A swell uses attack near 0.97 and no tau. Do not claim it works before a render and a listen'
+  evidence: 'quiet_frequency_trailer v06 2026-11-28. First render FAILED clicks (2 events): the loudest 5 kHz step in the master was at 116.4 s, the start of qf_suck. Fixed (rising envelope, boom ends at 120.0). Second render result and listening: not known'
 ---
