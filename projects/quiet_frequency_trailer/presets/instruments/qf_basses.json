@@ -41,7 +41,8 @@
     "KB orchestral-writing (playable ranges, section sizes and note rates of the instrument)",
     "KB theatrical-realism (a section is several players; colour follows loudness)",
     "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render",
-    "Quiet Frequency: copied from the Highway Pursuit preset of the same part and renamed; placement, level and EQ are starting values for this cue and are re-measured on its render."
+    "Quiet Frequency: copied from the Highway Pursuit preset of the same part and renamed; placement, level and EQ are starting values for this cue and are re-measured on its render.",
+    "Family override: the velocity-driven saturator is off on this bass (drive_k 0): with it on, stem.dropout read a 35 ms hole in the first notes after a rest; the brightness filter stays (the same fault was measured on the Indo-Afro bass)."
   ],
   "soundfont": "muse_general",
   "ensemble": {
@@ -49,5 +50,8 @@
     "spread_cents": 6,
     "spread_ms": 9,
     "vel_spread": 3
+  },
+  "velocity_brightness": {
+    "drive_k": 0.0
   }
 }

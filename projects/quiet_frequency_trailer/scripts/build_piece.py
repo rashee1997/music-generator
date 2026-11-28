@@ -438,9 +438,9 @@ def snare():
         if role_of(bar) == 'peak':
             beats = [(1.0, 0.85), (3.0, 0.85)]
             if bar % 2 == 0:
-                beats.append((2.5, 0.3))           # a ghost note before the backbeat
+                beats.append((2.5, 0.55))          # a ghost note before the backbeat (not so quiet that the section's median falls: stem.dead)
             if bar % 3 == 0:
-                beats = [(0.75, 0.4)] + beats      # a pickup
+                beats = [(0.75, 0.6)] + beats      # a pickup
             if bar % 4 == 3:
                 beats += [(3.5, 0.55), (3.75, 0.7)]    # a drag into the next bar
             for bb, sc in beats:

@@ -1,6 +1,5 @@
 === MUSIC21 SYMBOLIC MUSICOLOGY REPORT ===
-[PASS] music21_tonality           A minor (confidence 0.66) matches target A mixolydian
-[PASS] music21_bass_register      bass anchored naturally at MIDI 31 - 62
-[PASS] music21_voice_separation   clean vertical register separation between bass and lead
-[PASS] music21_melodic_contour    4 unique pitch classes, ambitus 5 semitones (38% rising motion)
-[PASS] music21_harmonic_rhythm    2195 vertical harmonic slices analyzed across multi-track arrangement
+[PASS] music21_tonality           D major (confidence 0.81) matches target A mixolydian
+[INFO] music21_registers          register note: 'int' object has no attribute 'lower'
+[INFO] music21_contour            contour note: 'int' object has no attribute 'lower'
+[PASS] music21_harmonic_rhythm    508 vertical harmonic slices analyzed across multi-track arrangement

@@ -2300,45 +2300,45 @@
     "stage": "mix",
     "stem": null,
     "level": "FAIL",
-    "value": 21.0,
+    "value": 9.0,
     "unit": "events",
     "threshold": 0.0,
-    "margin": 21.0,
+    "margin": 9.0,
     "worst_times_s": [
-     13.4013,
-     13.9104,
-     17.4157,
-     18.2313,
-     19.1504,
-     19.8259,
-     23.4646,
-     30.5968
+     18.497,
+     24.3695,
+     30.7055,
+     47.3368,
+     54.4217,
+     56.1453,
+     60.0254,
+     62.067
     ],
     "calibrated": true,
-    "detail": "21 clustered impulse event(s) (MAD), 17 LPC frame(s); 782 event(s) rejected as a dense burst, 185 as a steep attack; max cluster span 1.497 ms"
+    "detail": "9 clustered impulse event(s) (MAD), 7 LPC frame(s); 368 event(s) rejected as a dense burst, 149 as a steep attack; max cluster span 1.497 ms"
    },
    {
     "row": "loudness",
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -14.164776391049571,
+    "value": -14.148326258231092,
     "unit": "LUFS",
     "threshold": -14.0,
-    "margin": -2.335223608950429,
+    "margin": -2.3516737417689075,
     "worst_times_s": [],
     "calibrated": true,
-    "detail": "-14.2 LUFS vs target -14.0 (tolerance 2.5 LU)"
+    "detail": "-14.1 LUFS vs target -14.0 (tolerance 2.5 LU)"
    },
    {
     "row": "true peak",
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -1.4950703200053748,
+    "value": -1.5007495008015257,
     "unit": "dBTP",
     "threshold": -1.5,
-    "margin": 0.004929679994625236,
+    "margin": -0.0007495008015256932,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-1.50 dBTP vs ceiling -1.5"
@@ -2374,10 +2374,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 78.09348916043903,
+    "value": 78.07322368078172,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -66.09348916043903,
+    "margin": -66.07322368078172,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "end level -129.4 dBFS (limit -45), decay over final 300 ms 78.1 dB (limit 12); natural release"
@@ -2400,10 +2400,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 7.239024324604305e-06,
+    "value": 6.3505527069109975e-06,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009927609756753958,
+    "margin": -0.000993649447293089,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
@@ -2413,10 +2413,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 0.16065712075214833,
+    "value": 0.16229645026542983,
     "unit": "BPM",
     "threshold": 2.24,
-    "margin": -2.079342879247852,
+    "margin": -2.0777035497345704,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "measured 111.8 BPM vs 112.0 (tolerance 2.2) from the onset-envelope autocorrelation (peak 3.1x the median); beat tracker said 112.3; four-quarter drift 0.8 BPM reported, not decisive"
@@ -2439,28 +2439,28 @@
       "start_s": 0.0,
       "end_s": 17.1429,
       "energy": 0.32,
-      "level_db": -31.646649625618245
+      "level_db": -31.57566629982121
      },
      {
       "name": "grove",
       "start_s": 17.1429,
       "end_s": 34.2857,
       "energy": 0.7,
-      "level_db": -21.84520159027185
+      "level_db": -21.835929570239742
      },
      {
       "name": "high_sun",
       "start_s": 34.2857,
       "end_s": 51.4286,
       "energy": 0.95,
-      "level_db": -15.026543528196878
+      "level_db": -15.01859097154746
      },
      {
       "name": "golden_hour",
       "start_s": 51.4286,
       "end_s": 68.5714,
       "energy": 0.6,
-      "level_db": -22.38795999516752
+      "level_db": -22.377828213360534
      }
     ]
    }

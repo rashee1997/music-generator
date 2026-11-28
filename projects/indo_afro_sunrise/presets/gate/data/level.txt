@@ -1,7 +1,7 @@
 frames: 2776
-min_db: -122.5
-max_db: -10.7
+min_db: -122.6
+max_db: -10.6
 median_db: -21.5
-p05_db: -38.0
+p05_db: -37.8
 p95_db: -12.5
 target_lufs: -14 (not the same unit as dBFS)

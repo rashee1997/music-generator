@@ -12,12 +12,12 @@ flagged times: 14
   0.035s stem.tick [PASS] vocal_group
   4.574s stem.tick [PASS] guitar
   8.557s stem.tick [PASS] bass
-  13.401s clicks [FAIL] master
-  13.910s clicks [FAIL] master
   17.148s stem.tick [PASS] marimba
-  17.416s clicks [FAIL] master
-  18.231s clicks [FAIL] master
-  19.150s clicks [FAIL] master
-  19.826s clicks [FAIL] master
-  23.465s clicks [FAIL] master
-  30.597s clicks [FAIL] master
+  18.497s clicks [FAIL] master
+  24.369s clicks [FAIL] master
+  30.706s clicks [FAIL] master
+  47.337s clicks [FAIL] master
+  54.422s clicks [FAIL] master
+  56.145s clicks [FAIL] master
+  60.025s clicks [FAIL] master
+  62.067s clicks [FAIL] master
