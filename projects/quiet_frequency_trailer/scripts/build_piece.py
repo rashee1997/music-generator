@@ -52,7 +52,7 @@ for b, c in zip(range(13, 19), ('Fm', 'Fm', 'Db', 'Db', 'Bbm', 'C')):
     PLAN[b] = c
 for b, c in zip(range(19, 27), ('Fm', 'Db', 'Ab', 'Eb', 'Fm', 'Db', 'Bbm', 'C')):
     PLAN[b] = c
-for b, c in zip(range(27, 33), ('Fm', 'Gb', 'Fm', 'Gb', 'Cl', 'Cl')):
+for b, c in zip(range(27, 33), ('Fm', 'Db', 'Fm', 'Gb', 'Cl', 'Cl')):
     PLAN[b] = c
 for b, c in zip(range(33, 45), ('Fm', 'Db', 'Ab', 'Eb', 'Fm', 'Db', 'Bbm', 'C', 'Fm', 'Gb', 'C', 'C')):
     PLAN[b] = c
@@ -242,7 +242,7 @@ def violas():
     for bar in list(range(19, 31)) + list(range(33, 53)):
         base = tone(bar, 0, 47, 58)
         v = vel(bar)
-        third = 4 if PLAN[bar] == 'C' else 3
+        third = 4 if PLAN[bar] in ('C', 'Cb9') else 3
         shape = [0, third, 7, third, 7, 10 if third == 3 else 12]
         acc = set(cycle(bar))
         replies = [st for st in range(16) if st not in acc and st not in holes(bar) and (st + bar) % 3 != 2]
@@ -255,7 +255,7 @@ def violas():
 def violins_staccato():
     out = []
     for bar in range(33, 53):
-        third = 4 if PLAN[bar] == 'C' else 3
+        third = 4 if PLAN[bar] in ('C', 'Cb9') else 3
         base = tone(bar, 0, 72, 83)
         figure = [0, 7, 12, 7, third, 10, 12, 10]
         acc = cycle(bar, shift=1)                  # a sixteenth behind the cellos: the two lines never fall together
@@ -340,7 +340,7 @@ def trombones():
         if r != 'peak':
             continue
         x = tone(bar, 0, 52, 63)
-        third = 4 if PLAN[bar] == 'C' else 3
+        third = 4 if PLAN[bar] in ('C', 'Cb9') else 3
         for idx, off in enumerate((0, third, 7)):
             out.append(note(b(bar, idx * 0.02), 0.55, x + off, round(vel(bar, 0.95) * (0.5 + 0.34 * ((bar % 4) / 3.0)) * (0.88 + 0.06 * idx), 3)))
     out.append(note(b(53), 1.5, 53, 0.8))          # the dropout's hit: one low brass note as the music leaves
@@ -619,7 +619,7 @@ def sheet():
         'harmony_plan': [{'section': s['name'], 'root': PLAN[s['start_bar']],
                           'move': {'the_lab': 'pedal F, a hint of Db at the end of the bar 6', 'the_take': 'Fm Db Ab Eb then the dominant C',
                                    'the_alert': 'Neapolitan Gb over F, then C', 'the_chase': 'Fm Db Ab Eb / Fm Db Bbm C',
-                                   'the_flyover': 'F and Gb alternate, a cluster at the end', 'the_truck': 'a semitone cluster, then nothing',
+                                   'the_flyover': 'Fm and Db, then Gb into the cluster', 'the_truck': 'a semitone cluster, then nothing',
                                    'the_escalation': 'the chase progression again, a fourth tighter', 'the_wall': 'Neapolitan Gb before the dominant',
                                    'the_dropout': 'a bare F pedal', 'the_signal': 'Fm Fm Db Bbm Bbm: it ends on the minor subdominant and never goes home'}[s['name']],
                           'why': 'each harmonic event is a picture event'} for s in secs],

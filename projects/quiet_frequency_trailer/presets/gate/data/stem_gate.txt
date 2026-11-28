@@ -1,4 +1,4 @@
-stem gate: 0 FAIL, 0 WARN, 237 rows, profile quiet_frequency, 3972 ms
+stem gate: 0 FAIL, 0 WARN, 237 rows, profile quiet_frequency, 3171 ms
 [PASS] stem.dc: stem "bass_drum": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)
 [PASS] stem.clipping: stem "bass_drum": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "bass_drum": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -45,12 +45,12 @@ stem gate: 0 FAIL, 0 WARN, 237 rows, profile quiet_frequency, 3972 ms
 [PASS] stem.vocal: vocal stem: DC 0.00000, 0 click event(s)
 [PASS] stem.dc: stem "cymbals": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "cymbals": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
-[PASS] stem.clicks: stem "cymbals": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 171 event(s) rejected as a dense burst, 6 as a steep attack; max cluster span 1.497 ms
+[PASS] stem.clicks: stem "cymbals": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 167 event(s) rejected as a dense burst, 10 as a steep attack; max cluster span 1.497 ms
 [INFO] stem.dropout: stem "cymbals": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit
 [INFO] stem.cut: stem "cymbals": not applied: a percussive stem has no sustained level to cut at a section boundary
 [INFO] stem.edge: stem "cymbals": not applied: a percussive note length is a trigger, not a sound length
 [INFO] stem.tick: stem "cymbals": not applied: a percussive stem is allowed a pulse
-[PASS] stem.dead: stem "cymbals": own median -36.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 9; follows the curve
+[PASS] stem.dead: stem "cymbals": own median -38.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 9; follows the curve
 [PASS] stem.dc: stem "horns": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)
 [PASS] stem.clipping: stem "horns": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "horns": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -164,7 +164,7 @@ stem gate: 0 FAIL, 0 WARN, 237 rows, profile quiet_frequency, 3972 ms
 [INFO] stem.edge: stem "sfx_walkie": not applied: a one-shot effect note length is a trigger, not a sound length
 [INFO] stem.tick: stem "sfx_walkie": not applied: a one-shot effect stem is a sequence of triggers, not a pulse to hold still
 [PASS] stem.dead: stem "sfx_walkie": own median -19.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve
-[PASS] stem.dc: stem "snare": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+[PASS] stem.dc: stem "snare": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "snare": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "snare": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 850 event(s) rejected as a dense burst, 76 as a steep attack; max cluster span 1.497 ms
 [INFO] stem.dropout: stem "snare": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit

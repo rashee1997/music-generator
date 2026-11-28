@@ -248,64 +248,64 @@
         {
           "section": "the_take",
           "start_s": 12.0,
-          "measured_db": -39.76,
-          "expected_db": -39.6,
+          "measured_db": -41.8,
+          "expected_db": -41.34,
           "dyn": 0.45
         },
         {
           "section": "the_alert",
           "start_s": 24.0,
-          "measured_db": -34.42,
-          "expected_db": -36.41,
+          "measured_db": -37.49,
+          "expected_db": -38.15,
           "dyn": 0.65
         },
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -35.53,
-          "expected_db": -33.58,
+          "measured_db": -37.13,
+          "expected_db": -35.32,
           "dyn": 0.9
         },
         {
           "section": "the_flyover",
           "start_s": 52.0,
-          "measured_db": -36.82,
-          "expected_db": -34.6,
+          "measured_db": -38.46,
+          "expected_db": -36.35,
           "dyn": 0.8
         },
         {
           "section": "the_truck",
           "start_s": 58.0,
-          "measured_db": -33.48,
-          "expected_db": -37.1,
+          "measured_db": -33.91,
+          "expected_db": -38.84,
           "dyn": 0.6
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -36.41,
-          "expected_db": -33.11,
+          "measured_db": -39.48,
+          "expected_db": -34.85,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -34.47,
-          "expected_db": -32.67,
+          "measured_db": -35.06,
+          "expected_db": -34.41,
           "dyn": 1.0
         },
         {
           "section": "the_dropout",
           "start_s": 104.0,
-          "measured_db": -43.33,
-          "expected_db": -41.78,
+          "measured_db": -43.08,
+          "expected_db": -43.53,
           "dyn": 0.35
         },
         {
           "section": "the_signal",
           "start_s": 110.0,
-          "measured_db": -38.63,
-          "expected_db": -43.12,
+          "measured_db": -38.15,
+          "expected_db": -44.87,
           "dyn": 0.3
         }
       ]

@@ -1,7 +1,7 @@
 {
- "stamp": "20261128T090302",
+ "stamp": "20261128T092037",
  "project": "quiet_frequency_trailer",
- "level": "FAIL",
+ "level": "WARN",
  "sources": {
   "score": "/home/user/music-generator/projects/quiet_frequency_trailer/scores/quiet_frequency_score.json",
   "gate_data": [
@@ -18,18 +18,18 @@
   ],
   "stems": "28 processed stems from .cache/mix",
   "master": "out/_draft_quiet_frequency_trailer.wav",
-  "verdict": "2026-11-28T08:46:14Z"
+  "verdict": "2026-11-28T09:03:02Z"
  },
  "binding": [
   {
-   "row": "clicks",
+   "row": "section.energy",
    "stem": null,
-   "level": "FAIL",
-   "value": 1.0,
-   "threshold": 0.0,
-   "unit": "events",
-   "safety": -1.0,
-   "detail": "1 clustered impulse event(s) (MAD), 1 LPC frame(s); 300 event(s) rejected as a dense burst, 36 as a steep attack; max cluster span 1.474 ms"
+   "level": "WARN",
+   "value": 0.5757575757575757,
+   "threshold": 0.5,
+   "unit": "rho",
+   "safety": -0.3788,
+   "detail": "Spearman rho 0.58 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)"
   }
  ],
  "advisory": [
@@ -565,203 +565,30 @@
   }
  ],
  "domains": {
-  "run": [
-   "master"
-  ],
+  "run": [],
   "skipped": {
    "stems": 106
   }
  },
  "model": {
   "first_order": true,
-  "rows": 8,
-  "levers": [
-   {
-    "id": "render.oversample",
-    "domain": "master",
-    "kind": "oversample",
-    "stem": null,
-    "current": 1.0,
-    "lo": 1.0,
-    "hi": 8.0,
-    "step": 1.0,
-    "unit": "x",
-    "text": "master oversampling before the limiter"
-   },
-   {
-    "id": "hf.cymbals",
-    "domain": "master",
-    "kind": "hf_shelf",
-    "stem": "cymbals",
-    "current": 0.0,
-    "lo": -12.0,
-    "hi": 0.0,
-    "step": 0.5,
-    "unit": "dB",
-    "text": "cymbals high shelf at 5500 Hz: inst_eq[\"qf_cymbals\"]"
-   }
-  ]
+  "rows": 0,
+  "levers": []
  },
  "plan": {
-  "status": "replay",
+  "status": "no rows",
   "worst_safety": null,
-  "deltas": {
-   "hf.cymbals": -3.0
-  },
-  "clearing": {
-   "hf.cymbals": -3.0
-  },
-  "predicted": {
-   "clicks::-": [
-    -1.0,
-    -1.0
-   ],
-   "loudness::-": [
-    0.02,
-    0.02
-   ],
-   "true peak::-": [
-    0.0002494233580594418,
-    0.0002494233580594418
-   ],
-   "dropout::-": [
-    1.0,
-    1.0
-   ],
-   "cut.hard::-": [
-    2.0,
-    2.0
-   ],
-   "end.abrupt::-": [
-    0.02,
-    0.02
-   ],
-   "clipping::-": [
-    0.0,
-    0.0
-   ],
-   "master.dc::-": [
-    0.09812800403080134,
-    0.09812800403080134
-   ]
-  },
+  "deltas": {},
+  "clearing": {},
+  "predicted": {},
   "conflicts": [],
   "closed": [],
   "burned": [],
-  "notes": [
-   "clearing set read from a replay through the gate's own checker, not from the linear model; the next render is the measurement"
-  ],
-  "experiments": [
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "iterative",
-    "value": 0,
-    "baseline": 1,
-    "near3": 0,
-    "margin_db": 3.0,
-    "unverified": false,
-    "resolution_db": 1.45,
-    "times": [],
-    "verdict": "clears",
-    "moves": {
-     "hf.cymbals": -3.0
-    },
-    "robust": 1.0,
-    "proved": true
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 0,
-    "baseline": 1,
-    "margin_db": 3.0,
-    "unverified": false,
-    "resolution_db": 1.45,
-    "moves": {
-     "hf.cymbals": -3.0
-    },
-    "times": [],
-    "verdict": "clears",
-    "robust": 1.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 0,
-    "baseline": 1,
-    "margin_db": 3.0,
-    "unverified": false,
-    "resolution_db": 1.45,
-    "moves": {
-     "hf.cymbals": -6.0
-    },
-    "times": [],
-    "verdict": "clears",
-    "robust": 1.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 0,
-    "baseline": 1,
-    "margin_db": 3.0,
-    "unverified": false,
-    "resolution_db": 1.45,
-    "moves": {
-     "hf.cymbals": -9.0
-    },
-    "times": [],
-    "verdict": "clears",
-    "robust": 1.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 0,
-    "baseline": 1,
-    "margin_db": 3.0,
-    "unverified": false,
-    "resolution_db": 1.45,
-    "moves": {
-     "hf.cymbals": -12.0
-    },
-    "times": [],
-    "verdict": "clears",
-    "robust": 1.0
-   }
-  ]
+  "notes": [],
+  "experiments": []
  },
- "forensics": [
-  {
-   "t": 87.8076,
-   "step": 0.02305,
-   "threshold": 0.02,
-   "over_threshold_db": 1.23,
-   "z": 15.1,
-   "kind": "single source",
-   "trusted": true,
-   "fit_ratio": 0.98,
-   "owners": [
-    {
-     "stem": "cymbals",
-     "share": 0.896,
-     "signed": -0.02038
-    }
-   ],
-   "raw_step_fs": 0.0319,
-   "notes": []
-  }
- ],
+ "forensics": [],
  "notes": [
-  "clicks: sham replay (no change) reproduces the gate's 1 event(s) exactly (decomposition R^2 0.931); counterfactuals below are priced on a model that passes its own test",
-  "clicks: model resolution 1.4 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
-  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.93); gains bass_drum 0.82, basses 1.34, celli 0.63, choir 0.72, cymbals 0.53, horns 0.76, low_swell 0.42, piano_theme 1.28, sfx_alarm 0.47, sfx_device 0.59, sfx_impacts 0.23, sfx_road 1.27, sfx_walkie 1.34, snare 0.68, taiko 0.58, timpani 0.48, trombones 0.77, tuba 1.11, violas 0.82, violins_long 0.69, violins_staccato 0.63",
-  "event 87.808s [single source] cymbals 90%; step 0.0231 vs threshold 0.0200 (+1.2 dB over)",
-  "clicks: iterative replay, profile (events at 0/1/2/3 dB tighter) (1, 1, 1, 1) -> (0, 0, 0, 0) after cymbals -3 dB"
+  "section.energy: no domain module examines this row yet"
  ]
 }
