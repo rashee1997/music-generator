@@ -3,7 +3,7 @@
  "character": "A night highway chase: the ostinato and the low end carry the front, the percussion sits behind the listener, the tunnel is loud and dry, the flyover opens the room. Stereo and a fifth-order field from the same mix.",
  "carve_db": -4.0,
  "max_boost_db": 12.0,
- "note": "Written for Night Pursuit Cinematic; the scaffold copy of the default was replaced.",
+ "note": "Written for Night Pursuit Cinematic; the scaffold copy of the default was replaced. v04 low-end ownership: basses, basses_pizz, bass_drum, taiko and timpani own 40-160 Hz; the celli ostinato, the horns and the trombones are high-passed at 110-130 Hz (their attack lives above it), the beds duck from 110 Hz under the first drum track, and the reverb return starts at 220 Hz so the room tail does not carry the low ostinato.",
  "gain_staging": {
   "strategy": "legacy",
   "ref_lufs": -22.0,
@@ -262,12 +262,15 @@
   "drr": {
    "enabled": false,
    "target_db": 0.0
+  },
+  "return": {
+   "highpass_hz": 220.0
   }
  },
  "sidechain": {
   "mode": "legacy",
   "band_hz": [
-   250.0,
+   110.0,
    3800.0
   ],
   "residual": 0.3,
@@ -810,6 +813,11 @@
  "inst_eq": {
   "pursuit_celli": [
    {
+    "type": "hp",
+    "f": 110.0,
+    "order": 2
+   },
+   {
     "type": "peak",
     "f": 300,
     "gain": -2.5,
@@ -826,6 +834,11 @@
   ],
   "pursuit_horns": [
    {
+    "type": "hp",
+    "f": 110.0,
+    "order": 2
+   },
+   {
     "type": "peak",
     "f": 300,
     "gain": -2.5,
@@ -833,6 +846,11 @@
    }
   ],
   "pursuit_trombones": [
+   {
+    "type": "hp",
+    "f": 130.0,
+    "order": 2
+   },
    {
     "type": "peak",
     "f": 300,

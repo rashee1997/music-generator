@@ -1,4 +1,4 @@
-stem gate: 0 FAIL, 0 WARN, 161 rows, profile highway_pursuit, 222 ms
+stem gate: 0 FAIL, 0 WARN, 161 rows, profile highway_pursuit, 1129 ms
 [PASS] stem.dc: stem "bass_clarinet": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "bass_clarinet": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "bass_clarinet": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -84,7 +84,7 @@ stem gate: 0 FAIL, 0 WARN, 161 rows, profile highway_pursuit, 222 ms
 [PASS] stem.tick: stem "piano_theme": onset autocorrelation 0.47 at a 859 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 89 strong onset(s) of 258, 18 on the grid, IOI CV 1.924; peak rise 31.43 dB at those onsets over 89 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00
 [PASS] stem.dead: stem "piano_theme": own median -44.3 dBFS, worst section shortfall 0.0 dB (limit 15 dB), active sections 5; follows the curve
 [PASS] stem.flatness: stem "piano_theme": max sustained flatness 0.00 (limit 0.1) over 0 window(s) >= 50 ms
-[PASS] stem.dc: stem "snare": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)
+[PASS] stem.dc: stem "snare": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)
 [PASS] stem.clipping: stem "snare": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "snare": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 356 event(s) rejected as a dense burst, 50 as a steep attack; max cluster span 1.497 ms
 [INFO] stem.dropout: stem "snare": not applied: a percussive stem is silent between hits by design: the gap is the sample's decay against the trigger spacing, not an edit

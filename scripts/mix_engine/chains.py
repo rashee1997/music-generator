@@ -259,10 +259,13 @@ def _code_tag():
     global _CODE_TAG
     if _CODE_TAG is None:
         import stem_cache
-        here = os.path.dirname(os.path.abspath(__file__))
+        # the files and packages below are relative to scripts/, not to mix_engine/: with mix_engine/ as the base none of them existed
+        # and the tag ignored the code entirely, so an engine edit could be served an old processed stem
+        here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         _CODE_TAG = stem_cache.code_hash(here, files=('mixer.py', 'dsp.py', 'mix_schema.py', 'mix_context.py',
                                                       'presets.py', 'spatial.py', 'airabs.py', 'spatial_hrtf/room.py',
-                                                      'spatial_hrtf/binaural.py'),
+                                                      'spatial_hrtf/binaural.py', '../references/data/mix_defaults.json',
+                                                      '../references/data/master_targets.json'),
                                          packages=('spatial_engine', 'mix_engine', 'fx_engine'))
     return _CODE_TAG
 

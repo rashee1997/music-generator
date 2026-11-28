@@ -32,3 +32,14 @@ Certified PASS: `out/highway_pursuit.wav` (v03: the bass is back, see below; v01
   v02 had passed only because the high-pass removed that tail too.
 - Not checked: nothing was listened to. `realism.velocity_response` on this cue is unchanged (0.44; tuba -0.45, bass_clarinet 0.44): the per-note
   brightness law helped five isolated test lines but not these fast ostinati and low brass.
+
+## v04: the 80-160 Hz zone in the climax (user note, 42-52 s)
+- Measured on the raw stems in 42.16-52.97 s, 80-160 Hz power: bass_drum -31.2 dB, basses_pizz -32.3, basses -32.6, taiko -33.3, celli -37.1, horns -44.8.
+  The zone is made by the four bass-owner stems; the celli ostinato is 4-6 dB behind them.
+- Changed (project mix preset only): high-pass 110 Hz on the celli, 110 Hz on the horns, 130 Hz on the trombones (their attack lives above it), the
+  reverb return high-pass 220 Hz (the room tail does not carry the low ostinato), the sidechain's ducked band from 110 Hz. Result: the climax
+  band powers moved by 0.1 dB or less, so these are not the lever; certified PASS as v04.
+- Tried and reverted: `virtual_bass.harmonics_hz` [120, 260]. It cut 80-120 Hz by 3.6 dB and raised 120-160 Hz by 3.4 dB (the pile-up moved up), and
+  `scene.macro_contrast` read 5.9 LU against its 6 LU floor.
+- Open: the owners' own overlap (kick and taiko body at 100-140 Hz against the basses). Untested: a cut of their body, which trades weight for
+  definition and is a decision for the ear. Nothing was listened to.
