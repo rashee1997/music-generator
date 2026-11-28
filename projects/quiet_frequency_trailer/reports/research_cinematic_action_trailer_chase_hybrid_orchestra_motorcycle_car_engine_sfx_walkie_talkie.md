@@ -205,7 +205,7 @@ All results are search-result summaries, not fetched pages; every figure is a st
 
 ## Decisions taken from this research
 
-- Key F minor, 120 BPM 4/4, 60 bars = 120 s (one bar = 2 s). A minor key a half-step above Highway Pursuit's D so the two cues do not share a tonic; the harmony stays unresolved (ends on a held tritone).
+- Key F minor, 120 BPM 4/4, 60 bars = 120 s (one bar = 2 s). A minor key a half-step above Highway Pursuit's D so the two cues do not share a tonic; the harmony stays unresolved: the last chord is Bb minor over the F pedal, not home.
 - The hero bike is a single-cylinder four-stroke model (f0 = rpm/120, 11.7 Hz at 1,400 rpm idle to 87.5 Hz at the 10,500 rpm limit) through six gears with the listed ratios; the villain is a V8 car (f0 = rpm/15) so the two are different in pitch range, firing rate and body.
 - A shift is written as waypoints: the rpm after a shift is the rpm before it times the ratio quotient; an upshift has a 90 ms power gap, a downshift a 120 ms blip.
 - SFX in this cue: the two engines, tyre squeal on the drift and the corners, a truck pass with an air horn, the walkie-talkie (squelch, roger beep, static, no speech), a lab alarm and power hum, a heartbeat, wind at speed, the device pulse. Impact hits use the shipped `impact_cinematic`.
@@ -213,3 +213,4 @@ All results are search-result summaries, not fetched pages; every figure is a st
 - Music ducks 2-4 dB with a 120 ms attack and a 900 ms release under a pass-by (`sidechain` from the SFX roles); engines are high-passed at 40 Hz and the continuous ones notched around the horn's 800-2500 Hz when the horn plays.
 - Loudness: -16 LUFS integrated, -1.5 dBTP, as the user decided; `scene.silence_honoured` is satisfied by a declared one-second silence and the master's rest dip.
 - Nothing is auditioned (no listen.py), and no recording of any engine was analysed.
+- Rhythm (v2): the chase pulse is not a loop. Each bar takes one of five odd-length cycles (3+3+2, 3+2+3, 3+3+3+3+2+2, 2+3+3+2+3+3, 4+3+3+3+3) that never repeats the bar before; the violins sit a sixteenth behind the cellos, the violas answer on the steps the cellos left open, the drums take the accents the strings did not, and some bars rest on one or two sixteenths. A style direction drawn from general knowledge of Rahman-style rhythm layering; not a transcription of any piece.

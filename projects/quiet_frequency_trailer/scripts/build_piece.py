@@ -6,7 +6,7 @@ no EQ, no mixing. The sounds are presets (scripts/make_sfx.py writes the sound m
     python projects/quiet_frequency_trailer/scripts/build_piece.py
 
 Decisions, written before the first note (AGENTS.md 4.9):
-  * 120 BPM, 4/4, 60 bars = 120 s (a bar is 2 s). F minor, nothing resolves: the last sound is a dominant C with a b9 and a device that never stops.
+  * 120 BPM, 4/4, 60 bars = 120 s (a bar is 2 s). F minor, nothing resolves: the last chord is Bb minor over an F pedal, and the device never stops.
   * The hook: a four-note cell (root, minor 3rd, 4th falling to the 3rd, 5th) on horns, fragmented in the alert, stated in full in the chase,
     inverted in the escalation, and left as two notes on the end.
   * Act 1 (0-24 s) is sound design: an alarm, a radio, a pulse, one low pedal. Act 2 (24-104 s) is the chase: a 16th ostinato that does not
@@ -139,6 +139,36 @@ def active(bar):
     return bar not in SILENT_BARS
 
 
+
+# ---- the rhythm: odd-length cycles that move, not a loop. A bar is 16 sixteenths; a cycle is where its accents fall (3+3+2, 2+3+3, ...).
+CYCLES = [
+    (0, 3, 6, 8, 11, 14),      # 3+3+2+3+3+2
+    (0, 3, 5, 8, 11, 14),      # 3+2+3+3+3+2
+    (0, 3, 6, 9, 12, 14),      # 3+3+3+3+2+2
+    (0, 2, 5, 8, 10, 13),      # 2+3+3+2+3+3
+    (0, 4, 7, 10, 13),         # 4+3+3+3+3
+]
+
+
+def cycle(bar, shift=0):
+    """The accent steps of a bar: the cycle changes every bar and never repeats the bar before it; `shift` moves it by sixteenths for another part."""
+    i = (bar * 3 + bar // 4 + (bar // 7)) % len(CYCLES)
+    if i == (((bar - 1) * 3 + (bar - 1) // 4 + ((bar - 1) // 7)) % len(CYCLES)):
+        i = (i + 1) % len(CYCLES)
+    return [(st + shift) % 16 for st in CYCLES[i]]
+
+
+def holes(bar):
+    """One or two sixteenths that rest in some bars, so the pulse stumbles where the ear expects it (never on the downbeat)."""
+    if bar % 4 == 1:
+        return set()
+    return {(5 + bar * 5) % 16 or 5, (11 + bar * 3) % 16 or 11} if bar % 3 == 0 else {(9 + bar * 7) % 16 or 9}
+
+
+def accent_vel(pos, n, v):
+    """Velocity of the k-th accent of a bar: the first strong, the later ones uneven (not a ramp)."""
+    return round(v * (0.95, 0.66, 0.78, 0.88, 0.62, 0.8)[pos % 6], 3)
+
 # ---- parts -----------------------------------------------------------------------------------------------------------------------------
 def basses():
     out = []
@@ -185,58 +215,51 @@ def tuba():
 
 def celli():
     out = []
-    shape = [0, 7, 12, 7, 10, 7, 12, 7]
-    accent = (0.92, 0.60, 0.70, 0.88, 0.56, 0.78, 0.66, 0.94, 0.58, 0.72, 0.90, 0.62, 0.68, 0.56, 0.84, 0.64)
+    shape = [0, 7, 12, 7, 10, 12]
     for bar in list(range(13, 31)) + list(range(33, 53)):
         if role_of(bar) not in ('build', 'peak'):
             continue
         base = root_pitch(bar, 36, 47)
         v = vel(bar)
-        for i in range(16):
-            if i in (7, 12):
+        acc = cycle(bar)
+        for k, st in enumerate(acc):
+            if st in holes(bar):
                 continue
-            out.append(note(b(bar, i * 0.25), 0.27, base + shape[i % 8], round(v * accent[i], 3)))
+            out.append(note(b(bar, st * 0.25), 0.27, base + shape[(k + bar) % 6], accent_vel(k, bar, v)))
+        for st in range(16):                       # ghost notes between the accents, low and uneven
+            if st not in acc and st not in holes(bar) and (st + bar) % 4 == 1:
+                out.append(note(b(bar, st * 0.25), 0.2, base + shape[(st + bar) % 6], round(v * 0.42, 3)))
     for p in (41, 48, 53):
         out.append(note(b(31, 2.7), 2.4, p, 0.62))
     return out
 
-
 def violas():
     out = []
-    accent = (0.95, 0.62, 0.72, 0.95, 0.58, 0.80, 0.66, 0.95, 0.60, 0.74, 0.95, 0.64, 0.70, 0.58, 0.86, 0.66)
-    shape = [0, 3, 7, 3, 5, 3, 7, 10, 7, 3, 5, 3, 2, 3, 5, 7]
     for bar in list(range(19, 31)) + list(range(33, 53)):
         base = tone(bar, 0, 47, 58)
         v = vel(bar)
-        sh = [0, 3, 7, 3, 7, 3, 7, 3, 0, 3, 7, 3, 7, 3, 0, 3] if PLAN[bar] in ('Gb', 'C') else shape
-        # a chord whose third is major (the dominant) takes a major third, not the minor 3 of the shape
-        if PLAN[bar] == 'C':
-            sh = [0, 4, 7, 4, 7, 4, 7, 4, 0, 4, 7, 4, 7, 4, 0, 4]
-        for i, off in enumerate(sh):
-            if i in (6, 13):
-                continue
-            out.append(note(b(bar, i * 0.25), 0.27, base + off, round(v * accent[i], 3)))
+        third = 4 if PLAN[bar] == 'C' else 3
+        shape = [0, third, 7, third, 7, 10 if third == 3 else 12]
+        acc = set(cycle(bar))
+        replies = [st for st in range(16) if st not in acc and st not in holes(bar) and (st + bar) % 3 != 2]
+        for k, st in enumerate(replies[: 5 + bar % 3]):      # the answer: the steps the cellos left open, fewer and lower
+            out.append(note(b(bar, st * 0.25), 0.25, base + shape[(k + bar) % 6], round(v * (0.58 + 0.12 * ((k + bar) % 3)), 3)))
     for p in (53, 57, 60):
         out.append(note(b(31, 2.7), 2.6, p, 0.66))
     return out
 
-
 def violins_staccato():
     out = []
-    accent = (0.95, 0.55, 0.74, 0.88, 0.52, 0.82, 0.60, 0.92, 0.56, 0.70, 0.94, 0.58, 0.66, 0.54, 0.86, 0.62)
     for bar in range(33, 53):
-        if PLAN[bar] == 'C':
-            third = 4
-        else:
-            third = 3
+        third = 4 if PLAN[bar] == 'C' else 3
         base = tone(bar, 0, 72, 83)
-        for i in range(16):
-            if i in (5, 11):
+        figure = [0, 7, 12, 7, third, 10, 12, 10]
+        acc = cycle(bar, shift=1)                  # a sixteenth behind the cellos: the two lines never fall together
+        for k, st in enumerate(acc):
+            if st in holes(bar + 1):
                 continue
-            p = base + [0, 7, 12, 7, third, 10, 12, 10][i % 8]
-            out.append(note(b(bar, i * 0.25), 0.20, p, round(vel(bar) * accent[i], 3)))
+            out.append(note(b(bar, st * 0.25), 0.20, base + figure[(k + bar) % 8], accent_vel(k, bar, vel(bar))))
     return out
-
 
 def violins_long():
     out = []
@@ -258,7 +281,7 @@ def choir():
             out.append(note(b(bar), 3.7, r_ + off, round(vel(bar) * 0.55, 3)))
     for bar in (57, 58, 59):                       # the end: an open fifth over the dominant, no third
         r_ = root_pitch(bar, 55, 66)
-        for off in (0, 7):
+        for off in (-5, 7):                        # a fifth around the root, not on the horn's note
             out.append(note(b(bar), 3.8, r_ + off, 0.4))
     return out
 
@@ -359,16 +382,15 @@ def timpani():
 
 def taiko():
     out = []
+    keys = (36, 37, 38, 37, 36, 38)
     for bar in range(19, 53):
-        if role_of(bar) != 'peak':
+        if role_of(bar) != 'peak' or not active(bar):
             continue
-        keys = (36, 37, 38, 37, 36, 37, 38, 43) if bar % 2 else (36, 38, 37, 38, 36, 43, 38, 37)
-        accents = (0.9, 0.72, 0.78, 0.7, 0.92, 0.74, 0.8, 0.76)
-        for i in range(8):
-            out.append(note(b(bar, i * 0.5), 0.2, keys[i], round(vel(bar) * accents[i], 3)))
+        acc = cycle(bar + 1)                       # the hand-off: the drums take the accents the strings did not
+        for k, st in enumerate(acc):
+            out.append(note(b(bar, st * 0.25), 0.2, keys[(k + bar) % 6], accent_vel(k, bar, vel(bar))))
     out.append(note(b(59, 2.0), 0.4, 36, 1.0))
     return out
-
 
 def bass_drum():
     out = []
@@ -529,7 +551,7 @@ def sheet():
                     'why': 'four notes survive engine noise, a radio and a cut'}],
         'hits_at': [h['t'] for h in hits()], 'hits': hits(),
         'ending': 'combination',
-        'ending_note': 'a low hit, a bark of timpani, a dominant C with a b9 that never resolves, and the device still pulsing: no fade, a cut to black',
+        'ending_note': 'a low hit, a bark of timpani, a minor subdominant (Bb minor over the F pedal) that never goes home, and the device still pulsing: no fade, a cut to black',
         'feel': ['relentless', 'dangerous', 'curious'],
         'avoid_feel': ['triumphant', 'playful', 'comic'],
         'avoid_feel_note': 'no victory, no joke, no stunt: heavy, cold and plain, the way a large studio trailer plays a chase',
@@ -554,13 +576,13 @@ def sheet():
                                    'the_alert': 'Neapolitan Gb over F, then C', 'the_chase': 'Fm Db Ab Eb / Fm Db Bbm C',
                                    'the_flyover': 'F and Gb alternate, a cluster at the end', 'the_truck': 'a semitone cluster, then nothing',
                                    'the_escalation': 'the chase progression again, a fourth tighter', 'the_wall': 'Neapolitan Gb before the dominant',
-                                   'the_dropout': 'a bare F pedal', 'the_signal': 'Fm Db Bbm C with a b9: unresolved'}[s['name']],
+                                   'the_dropout': 'a bare F pedal', 'the_signal': 'Fm Fm Db Bbm Bbm: it ends on the minor subdominant and never goes home'}[s['name']],
                           'why': 'each harmonic event is a picture event'} for s in secs],
     })
     base['expression'] = {
         'sonic_picture': {'first_10s': 'a lab at night: an alarm, a radio squelch, a pulse that speeds up, one low F',
                           'middle': 'the chase: a 16th ostinato that never stops, a V8 behind and a bike ahead, a second of nothing, a second peak louder than the first',
-                          'last_note': 'one low hit and a ring, the device still pulsing on a dominant with a b9'},
+                          'last_note': 'one low hit and a ring, the device still pulsing over Bb minor'},
         'performer': 'a session orchestra playing to picture and a sound-design team riding the engines: the music is conducted from a click, the engines from the rpm',
         'producer_moves': ['carve the music where the engines live and the engines where the horn lives, so both are heard',
                            'the engines duck 2-4 dB smoothly under the drums and come back over a second',

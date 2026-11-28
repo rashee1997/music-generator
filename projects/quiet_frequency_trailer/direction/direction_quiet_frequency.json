@@ -400,7 +400,7 @@
     "bpm": 120,
     "note": "120 BPM: a bar is two seconds, so every hit lands on a whole second and the clock needs no tempo map"
   },
-  "ending_note": "a low hit, a bark of timpani, a dominant C with a b9 that never resolves, and the device still pulsing: no fade, a cut to black",
+  "ending_note": "a low hit, a bark of timpani, a minor subdominant (Bb minor over the F pedal) that never goes home, and the device still pulsing: no fade, a cut to black",
   "avoid_feel_note": "no victory, no joke, no stunt: heavy, cold and plain, the way a large studio trailer plays a chase",
   "palette": [
     "strings: 16th ostinato in cellos and violas, staccato violins in the peaks",
@@ -468,7 +468,7 @@
     {
       "section": "the_signal",
       "root": "Fm",
-      "move": "Fm Db Bbm C with a b9: unresolved",
+      "move": "Fm Fm Db Bbm Bbm: it ends on the minor subdominant and never goes home",
       "why": "each harmonic event is a picture event"
     }
   ],
@@ -476,7 +476,7 @@
     "sonic_picture": {
       "first_10s": "a lab at night: an alarm, a radio squelch, a pulse that speeds up, one low F",
       "middle": "the chase: a 16th ostinato that never stops, a V8 behind and a bike ahead, a second of nothing, a second peak louder than the first",
-      "last_note": "one low hit and a ring, the device still pulsing on a dominant with a b9"
+      "last_note": "one low hit and a ring, the device still pulsing over Bb minor"
     },
     "performer": "a session orchestra playing to picture and a sound-design team riding the engines: the music is conducted from a click, the engines from the rpm",
     "producer_moves": [
