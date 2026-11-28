@@ -38,6 +38,10 @@
   "sources": [
     "indian-film-fusion",
     "african",
-    "Scaffolded for the latest implementation (2026-11-28): the preset declares its sound family so the family laws (velocity brightness, attack) apply, and carries its own placement. Levels and EQ are starting values for this piece."
-  ]
+    "Scaffolded for the latest implementation (2026-11-28): the preset declares its sound family so the family laws (velocity brightness, attack) apply, and carries its own placement. Levels and EQ are starting values for this piece.",
+    "Family override: the plucked family's velocity-driven saturator is off on this bass (drive_k 0): a 35 ms hole appeared 70 ms into the first note after each declared rest (stem.dropout, 51.5 s) with the saturator and its level-restore on; the brightness filter stays."
+  ],
+  "velocity_brightness": {
+    "drive_k": 0.0
+  }
 }

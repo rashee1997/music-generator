@@ -1,0 +1,34 @@
+{
+ "name": "rca",
+ "findings": [
+  {
+   "row": "clicks",
+   "stem": null,
+   "verdict": "unknown",
+   "cause": "no analyzer for this row yet",
+   "evidence": [
+    "15 clustered impulse event(s) (MAD), 13 LPC frame(s); 745 event(s) rejected as a dense burst, 141 as a steep attack; max cluster span 1.497 ms"
+   ],
+   "where": [
+    "measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause"
+   ],
+   "tolerance": "protected: no profile or score can change it, so the audio is the only fix",
+   "do_next": "find the click time in rca.py; it is usually a one-shot cut short or a DC step: fade it, or fix the sample start",
+   "cost": "render"
+  },
+  {
+   "row": "stem.dropout",
+   "stem": "bass",
+   "verdict": "unknown",
+   "cause": "the analyzer failed",
+   "evidence": [
+    "stem \"bass\": longest hole 35 ms (limit 20-1000 ms), floor -92.3 dBFS; 1 hole(s)",
+    "LibsndfileError: Error opening '/home/user/music-generator/projects/indo_afro_sunrise/out/indo_afro_sunrise.wav': System error."
+   ],
+   "where": [],
+   "tolerance": "bounded relaxation exists: min_ms 20.0 (range 5.0..50.0), max_ms 1000.0 (range 500.0..2000.0), floor_below_db 45.0 (range 30.0..60.0)",
+   "do_next": "a stem goes silent mid-phrase: a note shorter than the phrase, a rest written in the wrong beat, or an instrument release that ends before the next note",
+   "cost": "session"
+  }
+ ]
+}

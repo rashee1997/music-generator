@@ -6,16 +6,16 @@
     "warns": 0,
     "rows": 236,
     "profile": "quiet_frequency",
-    "total_ms": 4341.113904999929,
+    "total_ms": 1761.3567990001684,
     "timings": {
-      "bass_drum": 997.21911000006,
+      "bass_drum": 0.0,
       "basses": 0.0,
       "basses_pizz": 0.0,
       "celli": 0.0,
       "choir": 0.0,
       "cymbals": 0.0,
-      "horns": 1600.453116999688,
-      "low_swell": 3178.453781999906,
+      "horns": 0.0,
+      "low_swell": 0.0,
       "piano_theme": 0.0,
       "sfx_alarm": 0.0,
       "sfx_bike": 0.0,
@@ -30,7 +30,7 @@
       "sfx_walkie": 0.0,
       "snare": 0.0,
       "taiko": 0.0,
-      "timpani": 1366.0076539999864,
+      "timpani": 0.0,
       "trombones": 0.0,
       "tuba": 0.0,
       "violas": 0.0,
@@ -4697,8 +4697,8 @@
       }
     ],
     "duration_s": 123.3550566893424,
-    "cached_stems": 24,
-    "measured_stems": 4
+    "cached_stems": 28,
+    "measured_stems": 0
   },
   "rows": [
     {
