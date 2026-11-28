@@ -2299,28 +2299,24 @@
     "row": "clicks",
     "stage": "mix",
     "stem": null,
-    "level": "FAIL",
-    "value": 3.0,
+    "level": "PASS",
+    "value": 0.0,
     "unit": "events",
     "threshold": 0.0,
-    "margin": 3.0,
-    "worst_times_s": [
-     18.497,
-     32.8281,
-     36.3222
-    ],
+    "margin": 0.0,
+    "worst_times_s": [],
     "calibrated": true,
-    "detail": "3 clustered impulse event(s) (MAD), 2 LPC frame(s); 180 event(s) rejected as a dense burst, 105 as a steep attack; max cluster span 1.474 ms"
+    "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 342 event(s) rejected as a dense burst, 119 as a steep attack; max cluster span 1.497 ms"
    },
    {
     "row": "loudness",
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -14.18650126895137,
+    "value": -14.18438893399693,
     "unit": "LUFS",
     "threshold": -14.0,
-    "margin": -2.3134987310486306,
+    "margin": -2.31561106600307,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-14.2 LUFS vs target -14.0 (tolerance 2.5 LU)"
@@ -2330,10 +2326,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -1.5007482700741783,
+    "value": -1.4998461938367722,
     "unit": "dBTP",
     "threshold": -1.5,
-    "margin": -0.0007482700741783255,
+    "margin": 0.00015380616322779872,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-1.50 dBTP vs ceiling -1.5"
@@ -2349,7 +2345,7 @@
     "margin": -20.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "longest hole 0 ms (limit 20-1000 ms), floor -66.8 dBFS; 0 hole(s)"
+    "detail": "longest hole 0 ms (limit 20-1000 ms), floor -66.7 dBFS; 0 hole(s)"
    },
    {
     "row": "cut.hard",
@@ -2369,13 +2365,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 81.39542151507106,
+    "value": 81.14464940252222,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -69.39542151507106,
+    "margin": -69.14464940252222,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "end level -131.2 dBFS (limit -45), decay over final 300 ms 81.4 dB (limit 12); natural release"
+    "detail": "end level -131.0 dBFS (limit -45), decay over final 300 ms 81.1 dB (limit 12); natural release"
    },
    {
     "row": "clipping",
@@ -2395,10 +2391,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 6.377654283818009e-06,
+    "value": 6.773635162855399e-06,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.000993622345716182,
+    "margin": -0.0009932263648371447,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
@@ -2408,13 +2404,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 0.15949696673207825,
+    "value": 0.11214475379034639,
     "unit": "BPM",
     "threshold": 2.24,
-    "margin": -2.080503033267922,
+    "margin": -2.127855246209654,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "measured 111.8 BPM vs 112.0 (tolerance 2.2) from the onset-envelope autocorrelation (peak 3.0x the median); beat tracker said 112.3; four-quarter drift 0.9 BPM reported, not decisive"
+    "detail": "measured 111.9 BPM vs 112.0 (tolerance 2.2) from the onset-envelope autocorrelation (peak 3.2x the median); beat tracker said 112.3; four-quarter drift 1.0 BPM reported, not decisive"
    },
    {
     "row": "section.energy",
@@ -2434,28 +2430,28 @@
       "start_s": 0.0,
       "end_s": 17.1429,
       "energy": 0.32,
-      "level_db": -31.19893912973129
+      "level_db": -31.128132101516545
      },
      {
       "name": "grove",
       "start_s": 17.1429,
       "end_s": 34.2857,
       "energy": 0.7,
-      "level_db": -21.662205013497267
+      "level_db": -21.575014489570815
      },
      {
       "name": "high_sun",
       "start_s": 34.2857,
       "end_s": 51.4286,
       "energy": 0.95,
-      "level_db": -15.115205501258222
+      "level_db": -15.063147136542733
      },
      {
       "name": "golden_hour",
       "start_s": 51.4286,
       "end_s": 68.5714,
       "energy": 0.6,
-      "level_db": -22.214548617090614
+      "level_db": -22.11718599135885
      }
     ]
    }

@@ -171,29 +171,22 @@ def accent_vel(pos, n, v):
 
 # ---- parts -----------------------------------------------------------------------------------------------------------------------------
 def basses():
-    """One long note per run of bars that share a root, held a little past the last bar so it meets the next note: the humanizer plays 90 % of
-    a written length, and a note that ends at the bar line leaves a hole the stem gate reads as a dropout."""
+    """One note a bar, written to the bar line (4.0 beats) when the next bar plays on, so a note meets the next one; the preset's articulation
+    gate is 1.0, so the humanizer does not shorten it (the default 0.9 left a 35 ms hole the stem gate reads as a dropout). An eight-second
+    sample note does not hold: a run of bars is retriggered, not tied."""
     out = []
-    bars = [b_ for b_ in range(1, 61) if active(b_) and not (role_of(b_) == 'button' and b_ >= 58)]
-    i = 0
-    while i < len(bars):
-        bar = bars[i]
+    for bar in range(1, 61):
+        if not active(bar) or (role_of(bar) == 'button' and bar >= 58):
+            continue
         base = root_pitch(bar, 24, 35)
-        j = i
-        while (j + 1 < len(bars) and bars[j + 1] == bars[j] + 1 and root_pitch(bars[j + 1], 24, 35) == base
-               and bars[j + 1] != 31 and bar != 31):
-            j += 1
         v = vel(bar, 0.95 if bar >= 7 else 0.8)
         if bar == 31:
             out.append(note(b(bar), 1.9, base, v))      # stops at the cut (62 s)
-        else:
-            last = bars[j]
-            nxt_continues = last + 1 in bars
-            out.append(note(b(bar), (last - bar + 1) * 4.0 + (0.45 if nxt_continues else -0.3), base, v))
-        for k in range(i, j + 1):
-            if role_of(bars[k]) == 'peak' and bars[k] != 31:
-                out.append(note(b(bars[k], 2), 1.7, base + 7, round(vel(bars[k], 0.95) * 0.8, 3)))
-        i = j + 1
+            continue
+        nxt = bar + 1 <= 60 and active(bar + 1) and not (role_of(bar + 1) == 'button' and bar + 1 >= 58)
+        out.append(note(b(bar), 4.0 if nxt else 3.7, base, v))
+        if role_of(bar) == 'peak':
+            out.append(note(b(bar, 2), 1.7, base + 7, round(v * 0.8, 3)))
     out.append(note(b(32, 2.25), 3.45, root_pitch(32, 24, 35), 0.5))
     return out
 
@@ -443,7 +436,7 @@ def snare():
     out = []
     for bar in (17, 43):                            # the roll into the alert and into the wall
         for i in range(16):                          # an exponential crescendo with alternating accents, not a straight ramp
-            out.append(note(b(bar, i * 0.25), 0.2, 38, round(0.40 + 0.5 * (i / 15.0) ** 1.6 + (0.04 if i % 2 == 0 else -0.04), 3)))
+            out.append(note(b(bar, i * 0.25), 0.2, 38, round(0.55 + 0.4 * (i / 15.0) ** 1.6 + (0.04 if i % 2 == 0 else -0.04), 3)))
     for bar in range(19, 53):
         if role_of(bar) == 'peak':
             beats = [(1.0, 0.85), (3.0, 0.85)]
