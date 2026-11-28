@@ -7,12 +7,12 @@
       "stems": 28
     },
     "1_timbre_loudness": {
-      "value": 11.07,
-      "hf_shift_db": 5.19,
-      "centroid_quiet_hz": 150.2,
-      "centroid_loud_hz": 537.0,
-      "verdict": "PASS",
-      "note": "timbre follows loudness"
+      "value": 0.99,
+      "hf_shift_db": -2.01,
+      "centroid_quiet_hz": 145.0,
+      "centroid_loud_hz": 162.4,
+      "verdict": "WARN",
+      "note": "loud and quiet differ mainly in volume"
     },
     "2_ensemble": {
       "value": 34,
@@ -21,14 +21,14 @@
       "note": "34 player(s) across 11 section part(s)"
     },
     "3_transient": {
-      "value": 0.9045,
-      "onsets": 43,
+      "value": 0.9774,
+      "onsets": 175,
       "verdict": "PASS",
       "note": "attacks vary"
     },
     "4_depth": {
-      "value": -0.14,
-      "wet_share": 0.5079,
+      "value": -0.31,
+      "wet_share": 0.5179,
       "verdict": "PASS",
       "note": "detail sits in front of the room"
     },
@@ -41,7 +41,7 @@
       "note": "every far source has an air model (the score's medium, ISO 9613-1)"
     },
     "7_openness": {
-      "value": 16.95,
+      "value": 21.57,
       "verdict": "PASS",
       "note": "air survives the peak"
     },
@@ -53,10 +53,10 @@
       "note": "metronomic at the bar"
     },
     "5_low_mid": {
-      "value": 0.82,
-      "low_mid_over_sub_db": -1.8,
-      "low_mid_growth_db": 5.49,
-      "sub_growth_db": 1.95,
+      "value": 2.29,
+      "low_mid_over_sub_db": -3.87,
+      "low_mid_growth_db": 4.57,
+      "sub_growth_db": 4.15,
       "verdict": "WARN",
       "note": "low-mids thicken or grow into the peak"
     },
@@ -71,7 +71,7 @@
       "note": "1 sustained part(s) hold a flat pitch (no 3-9 Hz movement of 10 cents or more): basses"
     },
     "10_repetition": {
-      "value": 0.1,
+      "value": 1.0,
       "parts": {
         "bass_drum": 0.01,
         "basses": 0.0,
@@ -82,7 +82,7 @@
         "horns": 0.0,
         "low_swell": 0.0,
         "piano_theme": 0.0,
-        "sfx_alarm": 0.0,
+        "sfx_alarm": 1.0,
         "sfx_bike": 0.0,
         "sfx_device": 0.0,
         "sfx_heartbeat": 0.02,
@@ -92,7 +92,7 @@
         "sfx_tyres_bike": 0.0,
         "sfx_tyres_v8": 0.0,
         "sfx_v8": 0.0,
-        "sfx_walkie": 0.0,
+        "sfx_walkie": 0.01,
         "snare": 0.1,
         "taiko": 0.0,
         "timpani": 0.0,
@@ -102,8 +102,8 @@
         "violins_long": 0.0,
         "violins_staccato": 0.0
       },
-      "verdict": "PASS",
-      "note": "repeated attacks differ"
+      "verdict": "WARN",
+      "note": "1 part(s) repeat a pitch with the same attack: sfx_alarm"
     },
     "11_velocity_response": {
       "value": 0.24,
@@ -133,26 +133,26 @@
       "note": "5 part(s) get louder but not brighter with velocity (a one-sample layer): cymbals, horns, piano_theme, tuba, violins_staccato"
     },
     "12_coherence": {
-      "value": 0.73,
-      "mid": 0.72,
+      "value": 0.76,
+      "mid": 0.71,
       "verdict": "PASS",
       "note": "the top of the mix is decorrelated between the channels"
     },
     "13_sub_weight": {
-      "value": -7.2,
-      "loss_db": 2.6,
+      "value": -5.8,
+      "loss_db": 1.1,
       "carriers": 7,
       "verdict": "PASS",
       "note": "the sub the stems carry reaches the master"
     },
     "14_air": {
-      "value": -37.3,
-      "band_limited": 12,
-      "verdict": "PASS",
-      "note": "the top octave is present"
+      "value": -40.3,
+      "band_limited": 13,
+      "verdict": "WARN",
+      "note": "8-16 kHz is thin; 13 part(s) hold nothing there in their own samples (basses_pizz, choir, horns, low_swell, piano_theme, sfx_alarm): EQ cannot add a band the samples lack, so use a preset `air` treatment or a bank that has it"
     },
     "15_dynamic_scale": {
-      "value": 7.9,
+      "value": 8.9,
       "basis": "section means",
       "verdict": "WARN",
       "note": "the loud and the quiet passages are close in level: fortissimo reads polite"
