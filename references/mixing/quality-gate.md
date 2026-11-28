@@ -377,3 +377,11 @@ It is now `references/data/master_targets.json` (the default and the named profi
 authority: the score's `master.lufs`, a mastering profile the piece's mix preset chose, then the middle of the intersection of
 the declared registers' `lufs` bands (`intent.register_loudness`; `cinematic` with `hybrid` is -16.0, `natural` -14.5), then the
 shipped default. Registers whose bands do not overlap give no target and the default stands. The band edges are starting values.
+
+### 3k.2 Who decides a loosening
+
+An agent does not loosen, relax, waive or skip a row on its own judgement (AGENTS.md rule 20). The route is: measure (`rca.py`),
+try the material fix, and where the verdict is `mismatch` or the fix would cost something very important to the piece, ask the
+user with the row, the measured value and limit, the cost of the fix and what the relaxation would hide. On a clear yes, use
+`gate_profiles.py relax` (or a scene `waive_ceiling`) with the measurement and the approval in the reason. Protected rows are
+never loosened.
