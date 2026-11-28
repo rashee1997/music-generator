@@ -536,6 +536,7 @@ def sheet():
     secs = sections_json()
     base.update({
         'title': 'Quiet Frequency',
+        'duration_s': 120.0, 'in_point_s': 0.0, 'out_point_s': 120.0, 'tempo_bpm': BPM,
         'project': 'Quiet Frequency (working title): a 30-minute action short; this is its 120 s theatrical trailer',
         'medium': 'film trailer',
         'brief': ("Add cinematic trailer fx, a Yamaha R15 engine sound with gearshifts, drift SFX, the hero rides a bike and the villain chases him; "

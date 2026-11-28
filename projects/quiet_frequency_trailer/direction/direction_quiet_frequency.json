@@ -9,9 +9,9 @@
   "point_of_view": "the Hero's, and the Villain's closing in from behind: the viewer is on the bike, hearing the car in the mirror",
   "job": "a 120 s theatrical trailer for a 30-minute action short: the Hero steals a device that can control people, the Villain finds the case empty and hunts him down a highway, there are near misses and no rescue, and the last image is a case being opened",
   "story": "a thief takes a mind-control device from a lab, the owner hunts him down a highway, and the last image is the case being opened",
-  "duration_s": 45.0,
+  "duration_s": 120.0,
   "in_point_s": 0.0,
-  "out_point_s": 45.0,
+  "out_point_s": 120.0,
   "ending": "combination",
   "feel": [
     "relentless",
@@ -145,10 +145,7 @@
     "comic effects"
   ],
   "pulse": "steady",
-  "tempo_bpm": [
-    78,
-    92
-  ],
+  "tempo_bpm": 120,
   "key": "F minor",
   "mode": "dorian",
   "energy": 0.9,
