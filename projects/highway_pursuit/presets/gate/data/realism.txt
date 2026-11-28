@@ -1,23 +1,23 @@
 Realism report  60.7 s, 44100 Hz, 18 dry stem(s)
-[PASS] timbre loudness value 3.49  (hf_shift_db=3.4, centroid_quiet_hz=381.3, centroid_loud_hz=569.6)
-         timbre follows loudness
+[WARN] timbre loudness value -1.5  (hf_shift_db=4.98, centroid_quiet_hz=178.0, centroid_loud_hz=149.7)
+         loud and quiet differ mainly in volume
          target: loud passages at least 0.8 dB brighter (centroid) and 0.5 dB more 2-8 kHz energy than quiet ones
 [PASS] ensemble       value 35  (tracks=12)
          35 player(s) across 12 section part(s)
          target: a section part declares 2+ players; a solo declares none
-[PASS] transient      value 0.9866  (onsets=84)
+[PASS] transient      value 0.9909  (onsets=112)
          attacks vary
          target: repeated attacks are not sample-identical: 60 ms spectral similarity <= 0.995
-[PASS] depth          value -1.31  (wet_share=0.5751)
+[PASS] depth          value -0.74  (wet_share=0.5426)
          detail sits in front of the room
          target: direct-to-reverberant ratio -6..+18 dB: detail in front of a hall, not inside it
-[WARN] low mid        value 0.55  (low_mid_over_sub_db=14.56, low_mid_growth_db=2.28, sub_growth_db=2.83)
+[WARN] low mid        value 2.98  (low_mid_over_sub_db=-4.18, low_mid_growth_db=1.93, sub_growth_db=3.14)
          low-mids thicken or grow into the peak
          target: 180-450 Hz stays below the 500-2000 Hz band and does not grow faster than the sub at a peak
 [PASS] distance       value 23  (far=1, missing_model=0, predicted_4k_loss_db=0.12)
          every far source has an air model (the score's medium, ISO 9613-1)
          target: a source beyond 4 m uses the ISO 9613-1 air model or says why not
-[PASS] openness       value 14.52
+[PASS] openness       value 20.94
          air survives the peak
          target: the 8-16 kHz share does not fall by more than 1 dB at the loudest 10 % of the piece
 [WARN] phrasing       value 16.9  (peak_pct=68.91)
@@ -35,13 +35,13 @@ Realism report  60.7 s, 44100 Hz, 18 dry stem(s)
 [PASS] coherence      value 0.64  (mid=0.45)
          the top of the mix is decorrelated between the channels
          target: inter-channel coherence 2-8 kHz at most 0.85 (starting value)
-[PASS] sub weight     value -32.2  (loss_db=31.3, carriers=2)
+[PASS] sub weight     value -6.0  (loss_db=5.1, carriers=2)
          the sub the stems carry reaches the master
-         target: the 20-60 Hz share the stems carry reaches the master (loss at most 6 dB while the master is thin), starting value
-[WARN] air            value -45.1  (band_limited=9)
+         target: the 20-60 Hz share the stems carry reaches the master (loss at most realism.sub_loss_max_db, constants.json), starting value
+[WARN] air            value -51.9  (band_limited=9)
          8-16 kHz is thin; 9 part(s) hold nothing there in their own samples (bass_clarinet, basses_pizz, celli, choir, low_swell, piano_theme): EQ cannot add a band the samples lack, so use a preset `air` treatment or a bank that has it
          target: 8-16 kHz share of the master at least -40 dB; parts with no air in their samples are named (starting value)
-[WARN] dynamic scale  value 5.9  (basis=section means)
+[WARN] dynamic scale  value 9.4  (basis=section means)
          the loud and the quiet passages are close in level: fortissimo reads polite
          target: loudest section mean at least 10 dB above the quietest (starting value)
 [PASS] impact attack  value 12.7  (parts=4, soft_attack=0)

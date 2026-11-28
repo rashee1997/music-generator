@@ -804,7 +804,7 @@ def main():
         'key': 'D', 'mode': 'minor', 'space': 'highway_canyon', 'mix_preset': 'highway_pursuit_mix',
         'output_targets': ['stereo', 'ambix'],
         # no 'lufs': the piece declares registers, so the master is levelled to the register's range (intent.register_loudness)
-        'master': {'true_peak': -1.5, 'tone': 'neutral', 'fade_out': 0.8},
+        'master': {'true_peak': -1.5, 'tone': 'theatrical', 'fade_out': 0.8},
         'piece_type': 'highway_pursuit', 'focus': 'melody',
         'intent': {'emotions': ['tense', 'dark_epic'], 'registers': ['cinematic', 'hybrid'],
                    'scenes': ['establish', 'build', 'chase', 'dread'],

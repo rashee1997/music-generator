@@ -7,12 +7,12 @@
       "stems": 18
     },
     "1_timbre_loudness": {
-      "value": 3.49,
-      "hf_shift_db": 3.4,
-      "centroid_quiet_hz": 381.3,
-      "centroid_loud_hz": 569.6,
-      "verdict": "PASS",
-      "note": "timbre follows loudness"
+      "value": -1.5,
+      "hf_shift_db": 4.98,
+      "centroid_quiet_hz": 178.0,
+      "centroid_loud_hz": 149.7,
+      "verdict": "WARN",
+      "note": "loud and quiet differ mainly in volume"
     },
     "2_ensemble": {
       "value": 35,
@@ -21,14 +21,14 @@
       "note": "35 player(s) across 12 section part(s)"
     },
     "3_transient": {
-      "value": 0.9866,
-      "onsets": 84,
+      "value": 0.9909,
+      "onsets": 112,
       "verdict": "PASS",
       "note": "attacks vary"
     },
     "4_depth": {
-      "value": -1.31,
-      "wet_share": 0.5751,
+      "value": -0.74,
+      "wet_share": 0.5426,
       "verdict": "PASS",
       "note": "detail sits in front of the room"
     },
@@ -41,7 +41,7 @@
       "note": "every far source has an air model (the score's medium, ISO 9613-1)"
     },
     "7_openness": {
-      "value": 14.52,
+      "value": 20.94,
       "verdict": "PASS",
       "note": "air survives the peak"
     },
@@ -53,10 +53,10 @@
       "note": "unstable at the bar"
     },
     "5_low_mid": {
-      "value": 0.55,
-      "low_mid_over_sub_db": 14.56,
-      "low_mid_growth_db": 2.28,
-      "sub_growth_db": 2.83,
+      "value": 2.98,
+      "low_mid_over_sub_db": -4.18,
+      "low_mid_growth_db": 1.93,
+      "sub_growth_db": 3.14,
       "verdict": "WARN",
       "note": "low-mids thicken or grow into the peak"
     },
@@ -129,20 +129,20 @@
       "note": "the top of the mix is decorrelated between the channels"
     },
     "13_sub_weight": {
-      "value": -32.2,
-      "loss_db": 31.3,
+      "value": -6.0,
+      "loss_db": 5.1,
       "carriers": 2,
       "verdict": "PASS",
       "note": "the sub the stems carry reaches the master"
     },
     "14_air": {
-      "value": -45.1,
+      "value": -51.9,
       "band_limited": 9,
       "verdict": "WARN",
       "note": "8-16 kHz is thin; 9 part(s) hold nothing there in their own samples (bass_clarinet, basses_pizz, celli, choir, low_swell, piano_theme): EQ cannot add a band the samples lack, so use a preset `air` treatment or a bank that has it"
     },
     "15_dynamic_scale": {
-      "value": 5.9,
+      "value": 9.4,
       "basis": "section means",
       "verdict": "WARN",
       "note": "the loud and the quiet passages are close in level: fortissimo reads polite"

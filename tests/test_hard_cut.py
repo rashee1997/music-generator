@@ -67,9 +67,9 @@ class Windows(unittest.TestCase):
         self.assertEqual(cut_windows.from_sheet(self.SHEET)['cuts'], [38.0])
 
     def test_a_sheet_with_no_hard_hit_gives_nothing(self):
-        self.assertEqual(cut_windows.from_sheet({'hits': [{'t': 1.0, 'sync': 'soft'}]}), {'windows': [], 'cuts': []})
-        self.assertEqual(cut_windows.from_sheet({}), {'windows': [], 'cuts': []})
-        self.assertEqual(cut_windows.from_sheet(None), {'windows': [], 'cuts': []})
+        self.assertEqual(cut_windows.from_sheet({'hits': [{'t': 1.0, 'sync': 'soft'}]}), {'windows': [], 'cuts': [], 'rests': []})
+        self.assertEqual(cut_windows.from_sheet({}), {'windows': [], 'cuts': [], 'rests': []})
+        self.assertEqual(cut_windows.from_sheet(None), {'windows': [], 'cuts': [], 'rests': []})
 
     def test_a_hit_near_zero_does_not_open_a_negative_window(self):
         self.assertEqual(cut_windows.from_sheet({'hits': [{'t': 0.05, 'kind': 'cut', 'sync': 'hard'}]})['windows'], [[0.0, 0.2]])

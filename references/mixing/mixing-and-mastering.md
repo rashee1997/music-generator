@@ -287,3 +287,14 @@ The mixing engine ([`scripts/mixer.py`](../../scripts/mixer.py)) uses Spotify's 
 `{"range_db": 10.0, "ramp_s": 1.5}` applies a gain curve from the plan's section `energy` before the limiter loop: range_db between energy 0 and 1, centred
 on the duration-weighted mean, ramped at the edges. The loudness target still lands (the converge loop re-levels), so the loud sections stand above the
 quiet ones without a louder cue. Off by default. It collides with nothing protected, but check `master.dc`, `dropout` and `fold.timbre` after turning it on.
+
+
+## 11. The master's low end (high-pass, theatrical tone, virtual bass)
+
+- `mastering.highpass_hz` is the master high-pass and `highpass_order` the number of cascaded first-order stages (6 dB/octave each). The shipped
+  default is 24 Hz, order 1. A high-pass at 105 Hz, order 4 (written into one preset script and copied from project to project) removed the
+  whole sub and bass of a chase cue: the stems held 22 dB more of 20-80 Hz than the master. `preflight.master_highpass` fails a pitched bass or
+  drone part the high-pass takes down by 6 dB or more on 30 % of its notes, and warns above 45 Hz; both numbers are in `constants.json`.
+- `mastering.tones.theatrical` is a low shelf (+3 dB at 70 Hz) and a high shelf (+1 dB at 9 kHz); a master picks it with `master.tone`.
+- `mastering.virtual_bass` adds harmonics of the 30-90 Hz band at 80-240 Hz, scaled to the sub's own level, so bass is heard on headphones
+  and small speakers. It is off unless the preset enables it. Equations and sources: `knowledgebase/sound-design/low-end-and-virtual-bass.md`.

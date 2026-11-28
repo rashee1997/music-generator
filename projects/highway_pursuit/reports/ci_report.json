@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-28T00:57:51Z",
+  "timestamp": "2026-11-28T01:29:58Z",
   "status": "PASSED",
   "deliverables": {
     "master_wav": "/home/user/music-generator/projects/highway_pursuit/out/highway_pursuit.wav",
@@ -26,8 +26,8 @@
     "stems_dir": "/home/user/music-generator/projects/highway_pursuit/stems",
     "stem_count": 18,
     "metadata": "/home/user/music-generator/projects/highway_pursuit/out/highway_pursuit.json",
-    "version": 2,
-    "versioned_master": "highway_pursuit_v02.wav",
+    "version": 3,
+    "versioned_master": "highway_pursuit_v03.wav",
     "metadata_tagged": [
       "title",
       "artist",
@@ -37,24 +37,24 @@
       "license",
       "description"
     ],
-    "versioned_metadata": "/home/user/music-generator/projects/highway_pursuit/out/highway_pursuit_v02.json"
+    "versioned_metadata": "/home/user/music-generator/projects/highway_pursuit/out/highway_pursuit_v03.json"
   },
   "measurements": {
-    "integrated_lufs": -16.02259570589313,
-    "true_peak_dbtp": -1.5002904515989977,
-    "crest_factor_db": 17.040925568169527,
-    "mono_loss_db": -0.7764231397926176,
-    "mono_phone_loss_db": -0.9243854872387076,
+    "integrated_lufs": -16.130916463013946,
+    "true_peak_dbtp": -1.5007482700741783,
+    "crest_factor_db": 15.594906542467742,
+    "mono_loss_db": -0.6772108070128646,
+    "mono_phone_loss_db": -0.9228941526947755,
     "clipped_samples": 0,
-    "mean_roughness": 0.0641,
-    "max_roughness": 0.1081,
+    "mean_roughness": 0.0604,
+    "max_roughness": 0.0825,
     "witek_bsi": 0.21,
     "melodic_entropy_bits": 3.38,
     "spiral_strain_end": 0.6
   },
   "ci_summary": {
-    "pass": 213,
-    "warn": 30,
+    "pass": 215,
+    "warn": 29,
     "fail": 0
   },
   "ci_tiers": {
@@ -71,8 +71,8 @@
       "name": "expressive",
       "blocks": "certification",
       "rows": 74,
-      "pass": 54,
-      "warn": 17,
+      "pass": 56,
+      "warn": 15,
       "fail": 0,
       "info": 3
     },
@@ -81,9 +81,9 @@
       "blocks": "nothing",
       "rows": 33,
       "pass": 4,
-      "warn": 12,
+      "warn": 13,
       "fail": 0,
-      "info": 17
+      "info": 16
     },
     "unclassified": [
       "delivery.direction",
@@ -1196,7 +1196,7 @@
     {
       "level": "PASS",
       "check": "spatial_staging",
-      "detail": "17 of 17 staged track(s) use the binaural route; L/R correlation 0.67"
+      "detail": "17 of 17 staged track(s) use the binaural route; L/R correlation 0.71"
     },
     {
       "level": "PASS",
@@ -1206,22 +1206,22 @@
     {
       "level": "PASS",
       "check": "audio",
-      "detail": "loudness -16.0 LUFS vs target -16.0 (-0.0)"
+      "detail": "loudness -16.1 LUFS vs target -16.0 (-0.1)"
     },
     {
       "level": "PASS",
       "check": "audio",
-      "detail": "dynamics move (short-term loudness std 2.3 dB, range 6.1 LU)"
+      "detail": "dynamics move (short-term loudness std 2.3 dB, range 6.4 LU)"
     },
     {
       "level": "WARN",
       "check": "audio",
-      "detail": "low end is wide (-9 dB side/mid below 120 Hz) - mono the bass (mono_below)"
+      "detail": "low end is wide (-8 dB side/mid below 120 Hz) - mono the bass (mono_below)"
     },
     {
       "level": "INFO",
       "check": "master.micro_dynamics",
-      "detail": "PLR 14.5 LU, PSR 11.6 LU, LRA 6.2 LU, true peak -1.50 dBTP (4x -1.50, 8x -1.50): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
+      "detail": "PLR 14.6 LU, PSR 10.7 LU, LRA 6.6 LU, true peak -1.50 dBTP (4x -1.50, 8x -1.50): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
     },
     {
       "level": "PASS",
@@ -1236,12 +1236,12 @@
     {
       "level": "PASS",
       "check": "natural_aliasing",
-      "detail": "15-22 kHz holds -69.8 dB of the 200 Hz-16 kHz band (limit -45); above that it is sampler interpolation images, not instrument (fix: render.oversample in the mix preset)"
+      "detail": "15-22 kHz holds -70.3 dB of the 200 Hz-16 kHz band (limit -45); above that it is sampler interpolation images, not instrument (fix: render.oversample in the mix preset)"
     },
     {
-      "level": "WARN",
+      "level": "PASS",
       "check": "cochlear_roughness",
-      "detail": "one-frame roughness at 41.5s (0.108 > 0.103), 1 frame(s) of 20 (a FAIL needs 3): reads as a transient or a drum hit, not a sustained clash"
+      "detail": "Cochlear sensory roughness within physiological threshold (mean 0.060, max 0.083 <= 0.090) (63 frame(s) inside a scene window that waives this ceiling not judged)"
     },
     {
       "level": "PASS",
@@ -1251,7 +1251,7 @@
     {
       "level": "PASS",
       "check": "delivery.true_peak",
-      "detail": "stereo: worst channel true peak -1.5 dBTP (ceiling -1.5 dBTP; per channel -1.5, -1.5)"
+      "detail": "stereo: worst channel true peak -1.5 dBTP (ceiling -1.5 dBTP; per channel -1.5, -1.6)"
     },
     {
       "level": "PASS",
@@ -1266,12 +1266,12 @@
     {
       "level": "PASS",
       "check": "stereo.correlation",
-      "detail": "stereo: inter-channel correlation +0.67 (floor +0.15: below it the centre is cancelling)"
+      "detail": "stereo: inter-channel correlation +0.71 (floor +0.15: below it the centre is cancelling)"
     },
     {
       "level": "PASS",
       "check": "dropout",
-      "detail": "longest hole 0 ms (limit 20-1000 ms), floor -65.1 dBFS; 0 hole(s)"
+      "detail": "longest hole 0 ms (limit 20-1000 ms), floor -63.9 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -1281,7 +1281,7 @@
     {
       "level": "PASS",
       "check": "end.abrupt",
-      "detail": "end level -122.3 dBFS (limit -45), decay over final 300 ms 87.3 dB (limit 12); natural release"
+      "detail": "end level -120.7 dBFS (limit -45), decay over final 300 ms 82.4 dB (limit 12); natural release"
     },
     {
       "level": "PASS",
@@ -1291,17 +1291,17 @@
     {
       "level": "PASS",
       "check": "master.dc",
-      "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
+      "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00002 (limit 0.001)"
     },
     {
       "level": "PASS",
       "check": "tempo.audio",
-      "detail": "measured 139.2 BPM vs 140.0 (tolerance 2.8) from the onset-envelope autocorrelation (peak 3.8x the median); beat tracker said 139.7; four-quarter drift 1.1 BPM reported, not decisive"
+      "detail": "measured 139.2 BPM vs 140.0 (tolerance 2.8) from the onset-envelope autocorrelation (peak 4.0x the median); beat tracker said 139.7; four-quarter drift 1.3 BPM reported, not decisive"
     },
     {
-      "level": "WARN",
+      "level": "PASS",
       "check": "section.energy",
-      "detail": "Spearman rho 0.67 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)"
+      "detail": "Spearman rho 0.83 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)"
     },
     {
       "level": "PASS",
@@ -1351,12 +1351,12 @@
     {
       "level": "PASS",
       "check": "imm_width",
-      "detail": "L/R correlation 0.67 (limit 0.95)"
+      "detail": "L/R correlation 0.71 (limit 0.95)"
     },
     {
       "level": "PASS",
       "check": "imm_foldown",
-      "detail": "mono fold-down is +0.8 LU vs the stereo master (limit 3): holds up on a phone speaker"
+      "detail": "mono fold-down is +0.7 LU vs the stereo master (limit 3): holds up on a phone speaker"
     },
     {
       "level": "PASS",
@@ -1421,7 +1421,7 @@
     {
       "level": "PASS",
       "check": "scene.arc_step",
-      "detail": "strain the_twist->the_chase +0.157; level +3.0 LU; strain the_twist->the_swerve +0.119; level +4.2 LU (want +0.02 strain)"
+      "detail": "strain the_twist->the_chase +0.157; level +2.6 LU; strain the_twist->the_swerve +0.119; level +3.3 LU (want +0.02 strain)"
     },
     {
       "level": "PASS",
@@ -1436,12 +1436,12 @@
     {
       "level": "PASS",
       "check": "scene.macro_contrast",
-      "detail": "8 section(s), roles establish, build, transition, peak, release, rupture, button: tension variance 0.079 (floor 0.02); dynamic range 6.4 LU (floor 6); roughness contrast 102.4 dB (floor 3)"
+      "detail": "8 section(s), roles establish, build, transition, peak, release, rupture, button: tension variance 0.079 (floor 0.02); dynamic range 7.6 LU (floor 6); roughness contrast 100.4 dB (floor 3)"
     },
     {
       "level": "PASS",
       "check": "scene.silence_honoured",
-      "detail": "1 declared rest(s) are silent (loudest -55 dBFS, limit -50)"
+      "detail": "1 declared rest(s) are silent (loudest -52 dBFS, limit -50)"
     },
     {
       "level": "INFO",
@@ -1461,12 +1461,12 @@
     {
       "level": "INFO",
       "check": "ear.fatigue",
-      "detail": "adaptation index peaks at 0.59 (warn above 0.6 for 5 s at stable loudness)"
+      "detail": "adaptation index peaks at 0.54 (warn above 0.6 for 5 s at stable loudness)"
     },
     {
       "level": "WARN",
       "check": "ear.mod_roughness",
-      "detail": "30-150 Hz envelope modulation index stays above 0.6 for 3 frames from 53 s (peak 0.94). Name the clashing partials with `roughness_forecast.py diagnose`, then move the part. Advisory: the hair cell saturates, so loud material is under-read"
+      "detail": "30-150 Hz envelope modulation index stays above 0.6 for 6 frames from 0 s (peak 1.00). Name the clashing partials with `roughness_forecast.py diagnose`, then move the part. Advisory: the hair cell saturates, so loud material is under-read"
     },
     {
       "level": "INFO",
@@ -1476,12 +1476,12 @@
     {
       "level": "WARN",
       "check": "ear.pitch_salience",
-      "detail": "\"horns\" keeps its pitch (salience >= 0.25, same f0 within 6 %) in 3% of its pitched frames (want 50%). The pitch is lost in the mix: raise the register, remove a co-registered bed, or change the timbre"
+      "detail": "\"horns\" keeps its pitch (salience >= 0.25, same f0 within 6 %) in 0% of its pitched frames (want 50%). The pitch is lost in the mix: raise the register, remove a co-registered bed, or change the timbre"
     },
     {
       "level": "INFO",
       "check": "ear.iacc",
-      "detail": "interaural correlation of the neural patterns, 500-880 Hz: mean 0.63 (window 0.1..0.98)"
+      "detail": "interaural correlation of the neural patterns, 500-880 Hz: mean 0.61 (window 0.1..0.98)"
     },
     {
       "level": "INFO",
@@ -1491,37 +1491,37 @@
     {
       "level": "WARN",
       "check": "chem.reward_build",
-      "detail": "it rises through the lead-up at rank correlation -0.13 (want +0.40). 20.0 s lead, peak 0.65. Lever: lengthen the build before the hit, withhold the tonic, or move the arrival later in the score. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
+      "detail": "there is no measurable change at the strongest measured change at 35.0 s (the sheet declares no hits_at) to build towards (the change measures below the event floor), so the anticipation has nothing to earn. 0.0 s lead, peak 0.49. Lever: lengthen the build before the hit, withhold the tonic, or move the arrival later in the score. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
     },
     {
       "level": "WARN",
       "check": "chem.reward_arrival",
-      "detail": "the hit changes the level by +1.0 dB (want 3). Lever: put a real change at the hit (timbre, low end, a voice, a register change) instead of a level nudge. Tier B (Salimpoor 2011 measured ventral-striatal release at the peak; the model only infers it); inputs: arrival, surprise, low_end, vocal, fatigue. the sheet declares no hit, so only the peak was judged"
+      "detail": "the consummation pool peaks at 0.16 at 53.8 s (want 0.5); the hit changes the level by +0.8 dB (want 3). Lever: put a real change at the hit (timbre, low end, a voice, a register change) instead of a level nudge. Tier B (Salimpoor 2011 measured ventral-striatal release at the peak; the model only infers it); inputs: arrival, surprise, low_end, vocal, fatigue. the sheet declares no hit, so only the peak was judged"
     },
     {
       "level": "INFO",
       "check": "chem.stress_load",
-      "detail": "tension is carried and released: load averages 0.18, 0.0 s unresolved, 100% of peaks resolve. Tier C (stress is a proxy: de Witte 2019 found d = 0.35 hormonal across 104 trials, and context dominates); inputs: tension, roughness, surprise, consonance"
+      "detail": "tension is carried and released: load averages 0.20, 0.0 s unresolved, 100% of peaks resolve. Tier C (stress is a proxy: de Witte 2019 found d = 0.35 hormonal across 104 trials, and context dominates); inputs: tension, roughness, surprise, consonance"
     },
     {
       "level": "WARN",
       "check": "chem.affiliation",
-      "detail": "warmth averages 0.31 (want 0.45); only 31% of the sounding figure is legato or held (want 50%). Lever: give the lead a singable legato contour, add a voice or a hum, or slow the harmonic rhythm. Tier C (peripheral oxytocin assays disagree: Ooishi 2017 raised it, group singing lowered it); inputs: legato, vocal, consonance, slow_tempo, pulse"
+      "detail": "warmth averages 0.29 (want 0.45); only 31% of the sounding figure is legato or held (want 50%). Lever: give the lead a singable legato contour, add a voice or a hum, or slow the harmonic rhythm. Tier C (peripheral oxytocin assays disagree: Ooishi 2017 raised it, group singing lowered it); inputs: legato, vocal, consonance, slow_tempo, pulse"
     },
     {
       "level": "WARN",
       "check": "chem.motor_drive",
-      "detail": "the drive pool averages 0.30 (want 0.4); bar syncopation 0.21 is outside the 0.4-4.8 window (Witek 2014 inverted U); measured pulse clarity 0.08 (want 0.4). Lever: syncopate the cell into the 0.4-4.8 BSI window, or give the kick and bass one owner. Tier C (effort and entrainment read from a pain-threshold proxy: Tarr 2015, Pearce 2016); inputs: pulse, low_end, density, slow_tempo"
+      "detail": "the drive pool averages 0.29 (want 0.4); bar syncopation 0.21 is outside the 0.4-4.8 window (Witek 2014 inverted U); measured pulse clarity 0.06 (want 0.4). Lever: syncopate the cell into the 0.4-4.8 BSI window, or give the kick and bass one owner. Tier C (effort and entrainment read from a pain-threshold proxy: Tarr 2015, Pearce 2016); inputs: pulse, low_end, density, slow_tempo"
     },
     {
       "level": "WARN",
       "check": "chem.recovery",
-      "detail": "the piece ends 27% below its peak instead of coming down (want 35%). Lever: write a resolution section: slower, consonant, thinner, with a real cadence or a declared cliff. Tier C (recovery from listening alone is weak: g = 0.15, CI -0.21..0.52, n.s., 2022 meta-analysis); inputs: recovery, consonance, legato, tension"
+      "detail": "the piece ends 0% below its peak instead of coming down (want 35%). Lever: write a resolution section: slower, consonant, thinner, with a real cadence or a declared cliff. Tier C (recovery from listening alone is weak: g = 0.15, CI -0.21..0.52, n.s., 2022 meta-analysis); inputs: recovery, consonance, legato, tension"
     },
     {
-      "level": "INFO",
+      "level": "WARN",
       "check": "chem.arc_variety",
-      "detail": "3 of 7 pools move, 0% of the piece is flat, 1.00 arrivals per minute. Reads the traced pools, not the listener; a second identical arrival releases less because the availability pool is spent (the anti-cliche term in gate/chem/model.json)"
+      "detail": "only 2 of 7 pools move (want 3). Lever: change the state between sections and delete a duplicate arrival. Reads the traced pools, not the listener; a second identical arrival releases less because the availability pool is spent (the anti-cliche term in gate/chem/model.json)"
     },
     {
       "level": "INFO",
@@ -1615,7 +1615,7 @@
     "stopped": null,
     "cache": {
       "dir": "/home/user/music-generator/projects/highway_pursuit/.cache/mix",
-      "hits": 1,
+      "hits": 0,
       "stems": 18
     },
     "stages": {
@@ -1626,7 +1626,7 @@
         "warns": 0,
         "rows": 161,
         "profile": "highway_pursuit",
-        "total_ms": 1273.4813339998254,
+        "total_ms": 222.00789199996507,
         "timings": {
           "bass_clarinet": 0.0,
           "bass_drum": 0.0,
@@ -1638,9 +1638,9 @@
           "horns": 0.0,
           "low_swell": 0.0,
           "piano_theme": 0.0,
-          "snare": 521.8533779998324,
+          "snare": 0.0,
           "taiko": 0.0,
-          "timpani": 592.919675000303,
+          "timpani": 0.0,
           "trombones": 0.0,
           "tuba": 0.0,
           "violas": 0.0,
@@ -4905,13 +4905,13 @@
           }
         ],
         "duration_s": 63.10507936507936,
-        "cached_stems": 16,
-        "measured_stems": 2
+        "cached_stems": 18,
+        "measured_stems": 0
       },
       "mix": {
         "stage": "mix",
         "fails": 0,
-        "warns": 30,
+        "warns": 29,
         "metrics": [
           {
             "row": "clicks",
@@ -4924,30 +4924,30 @@
             "margin": 0.0,
             "worst_times_s": [],
             "calibrated": true,
-            "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 8 event(s) rejected as a dense burst, 3 as a steep attack; max cluster span 0.000 ms"
+            "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms"
           },
           {
             "row": "loudness",
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -16.02259570589313,
+            "value": -16.130916463013946,
             "unit": "LUFS",
             "threshold": -16.0,
-            "margin": -2.4774042941068686,
+            "margin": -2.3690835369860537,
             "worst_times_s": [],
             "calibrated": true,
-            "detail": "-16.0 LUFS vs target -16.0 (tolerance 2.5 LU)"
+            "detail": "-16.1 LUFS vs target -16.0 (tolerance 2.5 LU)"
           },
           {
             "row": "true peak",
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -1.5002904515989977,
+            "value": -1.5007482700741783,
             "unit": "dBTP",
             "threshold": -1.5,
-            "margin": -0.00029045159899765416,
+            "margin": -0.0007482700741783255,
             "worst_times_s": [],
             "calibrated": true,
             "detail": "-1.50 dBTP vs ceiling -1.5"
@@ -4963,7 +4963,7 @@
             "margin": -20.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "longest hole 0 ms (limit 20-1000 ms), floor -65.1 dBFS; 0 hole(s)"
+            "detail": "longest hole 0 ms (limit 20-1000 ms), floor -63.9 dBFS; 0 hole(s)"
           },
           {
             "row": "cut.hard",
@@ -4983,13 +4983,13 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 87.33293747742806,
+            "value": 82.39229171692256,
             "unit": "dB",
             "threshold": 12.0,
-            "margin": -75.33293747742806,
+            "margin": -70.39229171692256,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "end level -122.3 dBFS (limit -45), decay over final 300 ms 87.3 dB (limit 12); natural release"
+            "detail": "end level -120.7 dBFS (limit -45), decay over final 300 ms 82.4 dB (limit 12); natural release"
           },
           {
             "row": "clipping",
@@ -5009,95 +5009,95 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 8.578824593269622e-06,
+            "value": 1.681817861694523e-05,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.0009914211754067303,
+            "margin": -0.0009831818213830547,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
+            "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00002 (limit 0.001)"
           },
           {
             "row": "tempo.audio",
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 0.7767790861800563,
+            "value": 0.787407714647145,
             "unit": "BPM",
             "threshold": 2.8,
-            "margin": -2.0232209138199435,
+            "margin": -2.012592285352855,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "measured 139.2 BPM vs 140.0 (tolerance 2.8) from the onset-envelope autocorrelation (peak 3.8x the median); beat tracker said 139.7; four-quarter drift 1.1 BPM reported, not decisive"
+            "detail": "measured 139.2 BPM vs 140.0 (tolerance 2.8) from the onset-envelope autocorrelation (peak 4.0x the median); beat tracker said 139.7; four-quarter drift 1.3 BPM reported, not decisive"
           },
           {
             "row": "section.energy",
             "stage": "mix",
             "stem": null,
-            "level": "WARN",
-            "value": 0.6666666666666669,
+            "level": "PASS",
+            "value": 0.8333333333333335,
             "unit": "rho",
             "threshold": 0.5,
-            "margin": 0.16666666666666685,
+            "margin": 0.3333333333333335,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "Spearman rho 0.67 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
+            "detail": "Spearman rho 0.83 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
             "table": [
               {
                 "name": "the_evasion",
                 "start_s": 0.0,
                 "end_s": 6.8433,
                 "energy": 0.72,
-                "level_db": -22.42019171521052
+                "level_db": -19.67896112488846
               },
               {
                 "name": "the_twist",
                 "start_s": 6.8433,
                 "end_s": 17.1355,
                 "energy": 0.82,
-                "level_db": -21.291733256788852
+                "level_db": -18.65817425283371
               },
               {
                 "name": "the_drift",
                 "start_s": 17.1355,
                 "end_s": 22.2882,
                 "energy": 0.55,
-                "level_db": -23.32070942407205
+                "level_db": -22.866129755919683
               },
               {
                 "name": "the_chase",
                 "start_s": 22.2882,
                 "end_s": 32.5552,
                 "energy": 0.95,
-                "level_db": -18.177230345445714
+                "level_db": -16.447986678151437
               },
               {
                 "name": "the_slow_motion",
                 "start_s": 32.5552,
                 "end_s": 42.1625,
                 "energy": 0.5,
-                "level_db": -20.321939095137132
+                "level_db": -20.575353515186258
               },
               {
                 "name": "the_swerve",
                 "start_s": 42.1625,
                 "end_s": 52.9717,
                 "energy": 1.0,
-                "level_db": -16.948527051498807
+                "level_db": -15.396387705323791
               },
               {
                 "name": "the_near_miss",
                 "start_s": 52.9717,
                 "end_s": 56.3815,
                 "energy": 0.65,
-                "level_db": -32.79162472209227
+                "level_db": -34.73268182418654
               },
               {
                 "name": "the_escape",
                 "start_s": 56.3815,
                 "end_s": 60.0954,
                 "energy": 0.3,
-                "level_db": -23.519911538854867
+                "level_db": -23.326844101448692
               }
             ]
           }
@@ -5344,6 +5344,28 @@
     {
       "attempt": 19,
       "time": "2026-11-28T00:57:51Z",
+      "fails": 0,
+      "failing": []
+    },
+    {
+      "attempt": 20,
+      "time": "2026-11-28T01:18:57Z",
+      "fails": 1,
+      "failing": [
+        "scene.silence_honoured: the sheet declares silence and the master is not silent there: 53.0-54.0s at -32 dBFS (limit -50). Stop the sustained voices on the hit; do not glide into the rest"
+      ]
+    },
+    {
+      "attempt": 21,
+      "time": "2026-11-28T01:24:52Z",
+      "fails": 1,
+      "failing": [
+        "scene.silence_honoured: the sheet declares silence and the master is not silent there: 53.0-54.0s at -49 dBFS (limit -50). Stop the sustained voices on the hit; do not glide into the rest"
+      ]
+    },
+    {
+      "attempt": 22,
+      "time": "2026-11-28T01:29:58Z",
       "fails": 0,
       "failing": []
     }

@@ -69,12 +69,66 @@ def section_gain(n, sr, sections, range_db, ramp_s):
     return 10.0 ** (db / 20.0)
 
 
+def rest_gain(n, sr, rests, depth_db=-30.0, attack_ms=15.0, release_ms=120.0):
+    """A gain curve of `n` samples: 1 outside the declared rests and `depth_db` inside them, reaching it over `attack_ms` at the start of a
+    rest and returning over `release_ms` at its end (raised-cosine ramps, so there is no step). None when there is no rest to dip."""
+    if not rests:
+        return None
+    floor = 10.0 ** (float(depth_db) / 20.0)
+    g = np.ones(n, dtype=np.float64)
+    a, r = max(1, int(sr * attack_ms / 1000.0)), max(1, int(sr * release_ms / 1000.0))
+    for t0, t1 in rests:
+        i0, i1 = int(float(t0) * sr), int(float(t1) * sr)
+        if i1 <= 0 or i0 >= n or i1 <= i0:
+            continue
+        i0, i1 = max(0, i0), min(n, i1)
+        env = np.full(i1 - i0, floor)
+        na, nr = min(a, len(env) // 2), min(r, len(env) // 2)
+        if na > 1:
+            env[:na] = floor + (1.0 - floor) * (0.5 + 0.5 * np.cos(np.pi * np.linspace(0.0, 1.0, na)))
+        if nr > 1:
+            env[len(env) - nr:] = floor + (1.0 - floor) * (0.5 - 0.5 * np.cos(np.pi * np.linspace(0.0, 1.0, nr)))
+        g[i0:i1] = np.minimum(g[i0:i1], env)
+    return g
+
+
+def virtual_bass(x, sr=SR, source_hz=(30.0, 90.0), harmonics_hz=(80.0, 240.0), drive=4.0, gain_db=-6.0):
+    """The missing fundamental: harmonics of the sub band added back, so a bass a small speaker cannot play is still heard.
+
+    s = band-pass(x, source_hz);  h = band-pass(tanh(drive * s / peak(s)) + 0.35 * s^2 / peak(s), harmonics_hz); the harmonics are
+    scaled, moment by moment, to the short-time level of s plus `gain_db`, so they follow the bass and never add a level of their own.
+    """
+    from scipy import signal as _sg
+    y = np.asarray(x, dtype=np.float32)
+    if y.size == 0:
+        return y
+    two = y.ndim == 2
+    yy = y if two else y[:, None]
+    lo, hi = float(source_hz[0]), float(source_hz[1])
+    sos_s = _sg.butter(2, [lo / (sr / 2), hi / (sr / 2)], 'band', output='sos')
+    sos_h = _sg.butter(4, [float(harmonics_hz[0]) / (sr / 2), min(float(harmonics_hz[1]), sr * 0.45) / (sr / 2)], 'band', output='sos')
+    out = yy.copy()
+    k = max(1, int(sr * 0.04))
+    for c in range(yy.shape[1]):
+        s = _sg.sosfilt(sos_s, yy[:, c]).astype(np.float64)
+        pk = float(np.max(np.abs(s)))
+        if pk < 1e-7:
+            continue
+        h = _sg.sosfilt(sos_h, np.tanh(float(drive) * s / pk) + 0.35 * (s / pk) ** 2)
+        e_s = np.sqrt(np.convolve(s * s, np.ones(k) / k, mode='same'))
+        e_h = np.sqrt(np.convolve(h * h, np.ones(k) / k, mode='same'))
+        g = np.clip(e_s / np.maximum(e_h, 1e-9), 0.0, 50.0) * 10.0 ** (float(gain_db) / 20.0)
+        out[:, c] += (h * g).astype(np.float32)
+    return out if two else out[:, 0]
+
+
 def master_chain(x, m, sr=SR, ctx=None):
     """Glue + tone + limiter + loudness. m: {"lufs":-14,"true_peak":-1.5,"tone":"neutral","glue":true}."""
     if ctx is not None and ctx is not mix_context.current():
         _install(ctx.mix, ctx.space)
     sections = (m or {}).get('_sections')
-    m = {k: v for k, v in (m or {}).items() if k != '_sections'}
+    rests = (m or {}).get('_rests')
+    m = {k: v for k, v in (m or {}).items() if k not in ('_sections', '_rests')}
     cfg = _master_cfg(m, _mix())
     sl = cfg['_cfg'].get('section_levels')
     if sl and sections:
@@ -104,6 +158,12 @@ def master_chain(x, m, sr=SR, ctx=None):
     if cfg.get('width'):
         x = width_ms(x, cfg['width'])
     x = _run(pb.Pedalboard(chain), x, sr)
+    if rests and mm.get('rest_dip'):
+        dip = rest_gain(len(x), sr, rests, **mm['rest_dip'])
+        if dip is not None:
+            x = x * (dip[:, None] if getattr(x, 'ndim', 1) == 2 else dip).astype(np.float32)
+    if (mm.get('virtual_bass') or {}).get('enabled'):
+        x = virtual_bass(x, sr, **{k: v for k, v in mm['virtual_bass'].items() if k != 'enabled'})
     if cfg.get('mono_below'):
         x = mono_below(x, cfg['mono_below'], sr)
     try:

@@ -12,13 +12,11 @@ voices come from the score's own `foreground` list; harmonic_motion reads the no
 until measured on an audited render; none says a piece sounds good.
 """
 import numpy as np
+import gate_constants
 from scipy import signal
 
 SUB_BAND = (20.0, 60.0)
 AIR_BAND = (8000.0, 16000.0)
-SUB_LOSS_MAX_DB = 6.0           # starting value: stem-to-master loss of the sub share
-SUB_CARRIER_DB = -12.0          # starting value: a stem whose 20-60 Hz share is above this carries the sub
-SUB_MASTER_MIN_DB = -34.0       # starting value: a master with a sub carrier but less sub than this is thin
 AIR_MIN_DB = -40.0              # starting value
 BAND_LIMITED_DB = -60.0         # starting value: a stem whose own 8-16 kHz share is below this has no air to raise
 SCALE_MIN_DB = 10.0             # starting value: loudest minus quietest section mean (3 s windows when there are no sections)
@@ -46,7 +44,7 @@ def band_share_db(x, sr, band, total=(20.0, 20000.0)):
 
 def sub_weight(master, stems, sr):
     carriers = {k: band_share_db(v, sr, SUB_BAND) for k, v in (stems or {}).items()}
-    carriers = {k: round(v, 1) for k, v in carriers.items() if v >= SUB_CARRIER_DB}
+    carriers = {k: round(v, 1) for k, v in carriers.items() if v >= gate_constants.get('realism.sub_carrier_db')}
     m = band_share_db(master, sr, SUB_BAND)
     if not carriers:
         return dict(value=round(m, 1), verdict='PASS', carriers=0, note='no stem carries a sub, so none can be lost')
@@ -56,8 +54,9 @@ def sub_weight(master, stems, sr):
         summed = y if summed is None else summed[:min(len(summed), len(y))] + y[:min(len(summed), len(y))]
     # loss: how much lower the master's sub share is than the share of the carriers together
     loss = band_share_db(summed, sr, SUB_BAND) - m
-    thin = m < SUB_MASTER_MIN_DB
-    bad = loss > SUB_LOSS_MAX_DB and thin
+    # The loss alone is the fault. It used to need the master to be "thin" (under -34 dB) as well, and a master at -32 dB that had lost
+    # 31 dB of what its stems carried (a 105 Hz fourth-order master high-pass) read as a pass.
+    bad = loss > gate_constants.get('realism.sub_loss_max_db')
     return dict(value=round(m, 1), loss_db=round(loss, 1), carriers=len(carriers), verdict='WARN' if bad else 'PASS',
                 note=(f'{len(carriers)} stem(s) carry the sub ({", ".join(sorted(carriers))}) but the master keeps {loss:.1f} dB less of it '
                       'than they hold: look at the mix high-pass, ducking and the loudness stage (rca / band trace)') if bad

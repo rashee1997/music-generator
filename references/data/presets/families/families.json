@@ -1,7 +1,7 @@
 {
   "name": "families",
   "character": "Instrument families: what a family of instruments does that another does not. A preset declares `family`; the engine reads the behaviour here, never the instrument's name. A preset that names no family keeps the behaviour it had before families existed.",
-  "provenance": "Every number is a starting value until measured on an audited bank (soundbank_audit.py) or a research note. Sources behind the shapes: brass spectral enrichment with dynamic level (Campbell; Stevenson and Campbell, nonlinear propagation, https://www.ioa.org.uk/system/files/proceedings/s_stevenson_dm_campbell_effects_of_non-linear_propagation_on_timbre_of_brass_instruments.pdf, search-result text only); string vibrato delayed after the note onset (Sample Modeling strings review, https://www.soundonsound.com/reviews/audio-modeling-swam-string-sections, search-result text only); typical string vibrato about 6 Hz and about 30 cents (starting value).",
+  "provenance": "Every number is a starting value until measured on an audited bank (soundbank_audit.py) or a research note. Sources behind the shapes: brass spectral enrichment with dynamic level (Campbell; Stevenson and Campbell, nonlinear propagation, https://www.ioa.org.uk/system/files/proceedings/s_stevenson_dm_campbell_effects_of_non-linear_propagation_on_timbre_of_brass_instruments.pdf, search-result text only); string vibrato delayed after the note onset (Sample Modeling strings review, https://www.soundonsound.com/reviews/audio-modeling-swam-string-sections, search-result text only); typical string vibrato about 6 Hz and about 30 cents (starting value). velocity_brightness (the cutoff is the h-th harmonic of the note's fundamental, h rising with velocity, plus a velocity-driven saturator) and velocity_attack (a soft note rises slower): shapes from the rising high-frequency share with playing level in brass (Gilbert and Myers; Campbell, Institute of Acoustics) and the 50-90 ms acceptable transients of Knutsa's onset-transient times, search-result text only; every number is a starting value tuned on realism_report velocity_response, see knowledgebase/sound-design/sample-realism-equations.md.",
   "families": {
     "bowed": {
       "audit_programs": [
@@ -21,7 +21,21 @@
         "level_db": -42
       },
       "flare": null,
-      "snap": null
+      "snap": null,
+      "velocity_attack": {
+        "ms_soft": 45,
+        "ms_hard": 4,
+        "power": 1.5
+      },
+      "velocity_brightness": {
+        "h_lo": 3,
+        "h_hi": 22,
+        "gamma": 1.0,
+        "jitter_oct": 0.1,
+        "fc_min": 500,
+        "fc_max": 12000,
+        "drive_k": 8.0
+      }
     },
     "blown_reed": {
       "audit_programs": [
@@ -40,7 +54,21 @@
         "level_db": -40
       },
       "flare": null,
-      "snap": null
+      "snap": null,
+      "velocity_attack": {
+        "ms_soft": 30,
+        "ms_hard": 3,
+        "power": 1.5
+      },
+      "velocity_brightness": {
+        "h_lo": 3,
+        "h_hi": 14,
+        "gamma": 1.0,
+        "jitter_oct": 0.1,
+        "fc_min": 500,
+        "fc_max": 12000,
+        "drive_k": 4.0
+      }
     },
     "blown_brass": {
       "audit_programs": [
@@ -63,7 +91,21 @@
         "gain_db_per_unit": 10.0,
         "corner_hz": 2200
       },
-      "snap": null
+      "snap": null,
+      "velocity_attack": {
+        "ms_soft": 20,
+        "ms_hard": 3,
+        "power": 1.5
+      },
+      "velocity_brightness": {
+        "h_lo": 3,
+        "h_hi": 24,
+        "gamma": 1.0,
+        "jitter_oct": 0.1,
+        "fc_min": 500,
+        "fc_max": 12000,
+        "drive_k": 10.0
+      }
     },
     "struck_membrane": {
       "audit_programs": [
@@ -77,7 +119,9 @@
       "snap": {
         "attack": 3.0,
         "sustain": -0.8
-      }
+      },
+      "velocity_attack": null,
+      "velocity_brightness": null
     },
     "struck_pitched": {
       "audit_programs": [
@@ -94,6 +138,16 @@
       "snap": {
         "attack": 2.0,
         "sustain": -0.4
+      },
+      "velocity_attack": null,
+      "velocity_brightness": {
+        "h_lo": 5,
+        "h_hi": 26,
+        "gamma": 1.0,
+        "jitter_oct": 0.1,
+        "fc_min": 500,
+        "fc_max": 12000,
+        "drive_k": 3.0
       }
     },
     "plucked": {
@@ -110,6 +164,16 @@
       "snap": {
         "attack": 2.0,
         "sustain": -0.3
+      },
+      "velocity_attack": null,
+      "velocity_brightness": {
+        "h_lo": 5,
+        "h_hi": 28,
+        "gamma": 1.0,
+        "jitter_oct": 0.1,
+        "fc_min": 500,
+        "fc_max": 12000,
+        "drive_k": 3.0
       }
     },
     "voice": {
@@ -128,7 +192,21 @@
         "level_db": -38
       },
       "flare": null,
-      "snap": null
+      "snap": null,
+      "velocity_attack": {
+        "ms_soft": 40,
+        "ms_hard": 4,
+        "power": 1.5
+      },
+      "velocity_brightness": {
+        "h_lo": 4,
+        "h_hi": 16,
+        "gamma": 1.0,
+        "jitter_oct": 0.1,
+        "fc_min": 500,
+        "fc_max": 12000,
+        "drive_k": 4.0
+      }
     },
     "keys": {
       "audit_programs": [
@@ -140,7 +218,17 @@
       "bloom": null,
       "noise": null,
       "flare": null,
-      "snap": null
+      "snap": null,
+      "velocity_attack": null,
+      "velocity_brightness": {
+        "h_lo": 5,
+        "h_hi": 30,
+        "gamma": 1.0,
+        "jitter_oct": 0.1,
+        "fc_min": 500,
+        "fc_max": 12000,
+        "drive_k": 3.0
+      }
     },
     "synth": {
       "audit_programs": [
@@ -153,7 +241,9 @@
       "bloom": null,
       "noise": null,
       "flare": null,
-      "snap": null
+      "snap": null,
+      "velocity_attack": null,
+      "velocity_brightness": null
     }
   },
   "legacy_names": {

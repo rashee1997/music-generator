@@ -548,12 +548,19 @@ def soften_onsets(x, sr=44100, times=(), ms=2.0, skip_sounding=True):
     of the previous one, and in a dense pattern no hit ever starts from silence.
     """
     y = to_2d(x).astype(np.float32)
-    n = int(round(float(ms) * sr / 1000.0))
-    if n < 2 or len(y) == 0 or not len(times):
+    per_onset = np.ndim(ms) > 0          # one ramp length per onset (a soft note rises slower than a hard one)
+    if per_onset and len(ms) != len(times):
+        raise ValueError(f'soften_onsets: {len(ms)} ramp lengths for {len(times)} onsets')
+    if len(y) == 0 or not len(times):
         return y
-    ramp = (0.5 - 0.5 * np.cos(np.pi * np.linspace(0.0, 1.0, n))).astype(np.float32)[:, None]
+    if not per_onset and int(round(float(ms) * sr / 1000.0)) < 2:
+        return y
     peak = float(np.max(np.abs(y))) or 1.0
-    for t in times:
+    for k, t in enumerate(times):
+        n = int(round(float(ms[k] if per_onset else ms) * sr / 1000.0))
+        if n < 2:
+            continue
+        ramp = (0.5 - 0.5 * np.cos(np.pi * np.linspace(0.0, 1.0, n))).astype(np.float32)[:, None]
         i0 = int(round(float(t) * sr))
         if not (0 < i0 < len(y) - n):
             continue

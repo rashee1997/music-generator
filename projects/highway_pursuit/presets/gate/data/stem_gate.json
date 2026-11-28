@@ -6,7 +6,7 @@
     "warns": 0,
     "rows": 161,
     "profile": "highway_pursuit",
-    "total_ms": 1273.4813339998254,
+    "total_ms": 222.00789199996507,
     "timings": {
       "bass_clarinet": 0.0,
       "bass_drum": 0.0,
@@ -18,9 +18,9 @@
       "horns": 0.0,
       "low_swell": 0.0,
       "piano_theme": 0.0,
-      "snare": 521.8533779998324,
+      "snare": 0.0,
       "taiko": 0.0,
-      "timpani": 592.919675000303,
+      "timpani": 0.0,
       "trombones": 0.0,
       "tuba": 0.0,
       "violas": 0.0,
@@ -3285,8 +3285,8 @@
       }
     ],
     "duration_s": 63.10507936507936,
-    "cached_stems": 16,
-    "measured_stems": 2
+    "cached_stems": 18,
+    "measured_stems": 0
   },
   "rows": [
     {

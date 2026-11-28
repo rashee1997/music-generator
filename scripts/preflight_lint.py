@@ -67,6 +67,18 @@ def k_SPARSE_MAX_BEATS():
     return gate_constants.get("preflight.sparse_max_beats")
 
 
+def k_MASTER_HP_MAX_HZ():
+    return gate_constants.get("preflight.master_hp_max_hz")
+
+
+def k_MASTER_HP_LOST_DB():
+    return gate_constants.get("preflight.master_hp_lost_db")
+
+
+def k_MASTER_HP_LOST_SHARE():
+    return gate_constants.get("preflight.master_hp_lost_share")
+
+
 def _clock(score):
     """beats -> seconds, on the tempo map the renderer plays (a flat bpm looked at the wrong place)."""
     import gate_clock
@@ -409,6 +421,49 @@ def inst_eq_rows(score):
              f'will never be applied: {", ".join(dead[:5])}. Key it by the instrument (e.g. the preset name), not by the track name')]
 
 
+def master_highpass_rows(score):
+    """`preflight.master_highpass`: the mix preset's master high-pass against the notes the score writes.
+
+    A Butterworth-style cascade of `order` first-order high-passes at `highpass_hz` takes a note of fundamental f down by
+    10*log10(1 + (fc/f)**(2*order)) dB. A bass or drone part whose fundamentals the master removes (>= master_hp_lost_db) is not
+    shaped, it is gone: that was a 105 Hz, fourth-order master on a chase cue whose bass lives at 30-80 Hz (the sub stems carried it,
+    the master kept 31 dB less of it). FAIL when a bass or drone part loses >= master_hp_lost_share of its notes; WARN when the cutoff
+    is above master_hp_max_hz at all, since a master high-pass does not belong in the band the score's bass is written in.
+    """
+    try:
+        import presets
+        import mix_schema
+        mix = presets.load('mix').get(str(score.get('mix_preset') or '')) or {}
+        mm = dict(mix_schema.DEFAULTS['mastering'], **(mix.get('mastering') or {}))
+        fc = float(mm.get('highpass_hz') or 0.0)
+        order = max(1, int(mm.get('highpass_order') or 1))
+    except Exception:
+        return []
+    if fc <= 0:
+        return [('PASS', 'preflight.master_highpass', 'the master has no high-pass')]
+    lost_db, share_max, hp_max = k_MASTER_HP_LOST_DB(), k_MASTER_HP_LOST_SHARE(), k_MASTER_HP_MAX_HZ()
+    rows = []
+    for t in _tracks(score):
+        if str(t.get('role') or '') not in ('bass', 'drone'):         # pitched parts; a drum's key says little about its sound, realism.sub_weight measures that
+            continue
+        hz = [440.0 * 2.0 ** ((float(n['p']) - 69.0) / 12.0) for n in t.get('notes', []) if isinstance(n.get('p'), (int, float))]
+        if len(hz) < 4:
+            continue
+        att = [10.0 * np.log10(1.0 + (fc / f) ** (2 * order)) for f in hz]
+        lost = float(np.mean([a >= lost_db for a in att]))
+        if lost >= share_max:
+            rows.append(('FAIL', 'preflight.master_highpass',
+                         f'"{t["name"]}": {100 * lost:.0f} % of its notes have a fundamental the master high-pass takes down by {lost_db:g} dB or more '
+                         f'(highpass_hz {fc:g}, order {order}); the lowest is {min(hz):.0f} Hz. The sub the stems carry would not reach the master '
+                         f'(realism.sub_weight). Lower mastering.highpass_hz in the mix preset (the shipped default is 24 Hz, order 1); do not move the part up an octave'))
+    if rows:
+        return rows
+    if fc > hp_max:
+        return [('WARN', 'preflight.master_highpass', f'the master high-pass is {fc:g} Hz (order {order}), above {hp_max:g} Hz: the sub band belongs to the kick and the bass '
+                 f'(references/mixing/mixing-and-mastering.md); keep it near the default 24 Hz unless a measured row asks for more')]
+    return [('PASS', 'preflight.master_highpass', f'the master high-pass ({fc:g} Hz, order {order}) leaves the written bass and drums alone')]
+
+
 def choir_layer_rows(score, lookup=None):
     """`preflight.choir_layers`: a choir that is one block of identical singers sings the same choir at every dynamic, which a listener
     hears as "always the same choir". A synthesised vocal part of three or more voices needs `ensemble.layers` (sections that enter with
@@ -496,6 +551,7 @@ def checks(score, project_dir=None, lookup=None, patch_range=None, probe=True, r
     rows += placement_rows(score, lookup)
     rows += clock_rows(score)
     rows += inst_eq_rows(score)
+    rows += master_highpass_rows(score)
     rows += choir_layer_rows(score, lookup)
     import preflight_levels
     rows += preflight_levels.checks(score)

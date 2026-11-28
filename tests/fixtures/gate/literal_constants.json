@@ -28,7 +28,6 @@
   "TONAL_MIN_FRAMES"
  ],
  "quality_gate.py": [
-  "MASK_MARGIN_DB",
   "_BAND_FRAME_MAX"
  ]
 }

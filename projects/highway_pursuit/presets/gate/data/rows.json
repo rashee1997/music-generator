@@ -3218,30 +3218,30 @@
     "margin": 0.0,
     "worst_times_s": [],
     "calibrated": true,
-    "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 8 event(s) rejected as a dense burst, 3 as a steep attack; max cluster span 0.000 ms"
+    "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms"
    },
    {
     "row": "loudness",
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -16.02259570589313,
+    "value": -16.130916463013946,
     "unit": "LUFS",
     "threshold": -16.0,
-    "margin": -2.4774042941068686,
+    "margin": -2.3690835369860537,
     "worst_times_s": [],
     "calibrated": true,
-    "detail": "-16.0 LUFS vs target -16.0 (tolerance 2.5 LU)"
+    "detail": "-16.1 LUFS vs target -16.0 (tolerance 2.5 LU)"
    },
    {
     "row": "true peak",
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -1.5002904515989977,
+    "value": -1.5007482700741783,
     "unit": "dBTP",
     "threshold": -1.5,
-    "margin": -0.00029045159899765416,
+    "margin": -0.0007482700741783255,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-1.50 dBTP vs ceiling -1.5"
@@ -3257,7 +3257,7 @@
     "margin": -20.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "longest hole 0 ms (limit 20-1000 ms), floor -65.1 dBFS; 0 hole(s)"
+    "detail": "longest hole 0 ms (limit 20-1000 ms), floor -63.9 dBFS; 0 hole(s)"
    },
    {
     "row": "cut.hard",
@@ -3277,13 +3277,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 87.33293747742806,
+    "value": 82.39229171692256,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -75.33293747742806,
+    "margin": -70.39229171692256,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "end level -122.3 dBFS (limit -45), decay over final 300 ms 87.3 dB (limit 12); natural release"
+    "detail": "end level -120.7 dBFS (limit -45), decay over final 300 ms 82.4 dB (limit 12); natural release"
    },
    {
     "row": "clipping",
@@ -3303,95 +3303,95 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 8.578824593269622e-06,
+    "value": 1.681817861694523e-05,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009914211754067303,
+    "margin": -0.0009831818213830547,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)"
+    "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00002 (limit 0.001)"
    },
    {
     "row": "tempo.audio",
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 0.7767790861800563,
+    "value": 0.787407714647145,
     "unit": "BPM",
     "threshold": 2.8,
-    "margin": -2.0232209138199435,
+    "margin": -2.012592285352855,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "measured 139.2 BPM vs 140.0 (tolerance 2.8) from the onset-envelope autocorrelation (peak 3.8x the median); beat tracker said 139.7; four-quarter drift 1.1 BPM reported, not decisive"
+    "detail": "measured 139.2 BPM vs 140.0 (tolerance 2.8) from the onset-envelope autocorrelation (peak 4.0x the median); beat tracker said 139.7; four-quarter drift 1.3 BPM reported, not decisive"
    },
    {
     "row": "section.energy",
     "stage": "mix",
     "stem": null,
-    "level": "WARN",
-    "value": 0.6666666666666669,
+    "level": "PASS",
+    "value": 0.8333333333333335,
     "unit": "rho",
     "threshold": 0.5,
-    "margin": 0.16666666666666685,
+    "margin": 0.3333333333333335,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "Spearman rho 0.67 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
+    "detail": "Spearman rho 0.83 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
     "table": [
      {
       "name": "the_evasion",
       "start_s": 0.0,
       "end_s": 6.8433,
       "energy": 0.72,
-      "level_db": -22.42019171521052
+      "level_db": -19.67896112488846
      },
      {
       "name": "the_twist",
       "start_s": 6.8433,
       "end_s": 17.1355,
       "energy": 0.82,
-      "level_db": -21.291733256788852
+      "level_db": -18.65817425283371
      },
      {
       "name": "the_drift",
       "start_s": 17.1355,
       "end_s": 22.2882,
       "energy": 0.55,
-      "level_db": -23.32070942407205
+      "level_db": -22.866129755919683
      },
      {
       "name": "the_chase",
       "start_s": 22.2882,
       "end_s": 32.5552,
       "energy": 0.95,
-      "level_db": -18.177230345445714
+      "level_db": -16.447986678151437
      },
      {
       "name": "the_slow_motion",
       "start_s": 32.5552,
       "end_s": 42.1625,
       "energy": 0.5,
-      "level_db": -20.321939095137132
+      "level_db": -20.575353515186258
      },
      {
       "name": "the_swerve",
       "start_s": 42.1625,
       "end_s": 52.9717,
       "energy": 1.0,
-      "level_db": -16.948527051498807
+      "level_db": -15.396387705323791
      },
      {
       "name": "the_near_miss",
       "start_s": 52.9717,
       "end_s": 56.3815,
       "energy": 0.65,
-      "level_db": -32.79162472209227
+      "level_db": -34.73268182418654
      },
      {
       "name": "the_escape",
       "start_s": 56.3815,
       "end_s": 60.0954,
       "energy": 0.3,
-      "level_db": -23.519911538854867
+      "level_db": -23.326844101448692
      }
     ]
    }

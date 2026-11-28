@@ -1,6 +1,6 @@
 # Project Status: Highway Pursuit
 
-Certified PASS: `out/highway_pursuit.wav` (v02, re-rendered after the gate constants moved to JSON; v01 kept), -16.0 LUFS, -1.5 dBTP, 60.1 s, plus `out/highway_pursuit_ambix.wav`. 0 FAIL, 18 attempts in the project's history (14 before the gate work, 4 after). Nothing was listened to: `listen.py` did not run, so taste, realism and fit are not measured.
+Certified PASS: `out/highway_pursuit.wav` (v03: the bass is back, see below; v01 and v02 kept), -16.0 LUFS, -1.5 dBTP, 60.1 s, plus `out/highway_pursuit_ambix.wav`. 0 FAIL, 18 attempts in the project's history (14 before the gate work, 4 after). Nothing was listened to: `listen.py` did not run, so taste, realism and fit are not measured.
 
 ## Decisions
 - Gate profile extends `orchestral` (loud, layered, locked percussion). `build_piece.py` writes it, the sheet and the score; run it, do not hand-edit those files.
@@ -19,3 +19,16 @@ Certified PASS: `out/highway_pursuit.wav` (v02, re-rendered after the gate const
 - Could still show: a loop machine (locked kit and ostinato by design), thin realism from one-layer GM/MuseScore samples, a drift whose roughness is waived rather than removed.
 - A human producer would first: re-voice the drift so the bass slide and the violas do not share the 350-400 Hz band, then remove the waiver.
 - Not checked: nothing was heard.
+
+## v03: where the bass went (user feedback: no bass, no theatrical or headphone low end)
+- Measured on v02: the stems held most of their power at 20-80 Hz, the master kept 22 dB less of it (20-40 Hz share -55 dB, 40-80 Hz -20.7 dB), and
+  `realism.sub_weight` read a 31 dB loss as PASS.
+- Cause: the mix preset's `mastering.highpass_hz` 105, `highpass_order` 4 (a 24 dB/octave master high-pass, copied from the Night Pursuit preset script),
+  plus a `sub_weight` row that also needed the master to be "thin". Fixed: the master high-pass is the shipped 24 Hz, order 1; `preflight.master_highpass`
+  fails a bass part the high-pass removes; `sub_weight` warns on the loss alone; the cue uses `master.tone: "theatrical"` and
+  `mastering.virtual_bass` (headphones).
+- v03 against v02 (share of the master's power): 20-40 Hz -55.0 to -24.3 dB, 40-80 Hz -20.7 to -5.1 dB, sub loss 31 to 5.1 dB.
+- The sub tail then read -32 dBFS inside the declared one-second rest: `mastering.rest_dip` (-36 dB over each declared rest) fixed it. The earlier
+  v02 had passed only because the high-pass removed that tail too.
+- Not checked: nothing was listened to. `realism.velocity_response` on this cue is unchanged (0.44; tuba -0.45, bass_clarinet 0.44): the per-note
+  brightness law helped five isolated test lines but not these fast ostinati and low brass.

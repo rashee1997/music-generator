@@ -1,23 +1,100 @@
 {
  "_source": "gate numbers that are not a row's parameter: the window or step a measurement is made with and the cut-offs of the score and preflight checks. scripts/gate_constants.py reads them; a project overrides one by name in <project>/presets/gate/constants.json ({\"name\": value}). A number a row judges a piece by belongs in rows.json instead (AGENTS.md rule 18). Algorithm constants (sample rates, filter orders, FFT sizes, epsilons) stay in code on purpose.",
  "constants": {
-  "preflight.sfx_min_fraction": {"value": 0.75, "source": "starting value: a one-shot must be allowed this share of its length before the next onset or its own end"},
-  "preflight.unison_min_beats": {"value": 3.0, "source": "starting value: both notes this long, overlapping this long, before two sampled unisons are reported as beating"},
-  "preflight.unison_min_pitch": {"value": 60, "source": "starting value: MIDI 60 (middle C); below it a unison is a doubling, not a beat"},
-  "preflight.quiet_energy": {"value": 0.5, "source": "starting value: a section is quiet when its declared energy is under this share of the loudest section's"},
-  "preflight.quiet_share": {"value": 0.7, "source": "starting value: a figure part is a quiet-section part when this share of its note time is in quiet sections"},
-  "preflight.placement_min_shared": {"value": 0.3, "source": "starting value: share of the shorter part's playing time that two parts share before they compete for one place"},
-  "preflight.sparse_max_beats": {"value": 16.0, "source": "starting value: an event longer than this many beats is a bed, not a sparse sound"},
-  "score.gap_beats": {"value": 0.08, "source": "starting value: a breath or bow gap is at least this many beats"},
-  "score.window_bars": {"value": 4, "source": "starting value: the phrase window, in bars, a breath or bow gap is looked for in"},
-  "clicks.step": {"value": 0.5, "source": "starting value: a one-sample jump this big (full scale 1.0) is no note attack; a sample that starts mid-wave makes one"},
-  "masking.window_s": {"value": 4.0, "source": "starting value: the congestion check looks at windows this long, in seconds"},
-  "z_separation.band_hz": {"value": [500.0, 4000.0], "source": "starting value: where strings, brass and a bright synth lead all sit"},
-  "z_separation.frame_s": {"value": 0.25, "source": "starting value: band-envelope resolution for the overlap measure"},
-  "roughness.relative": {"value": 1.6, "source": "starting value: a roughness spike must also stand this far above the piece's own median"},
-  "roughness.outro_ratio": {"value": 1.2, "source": "starting value: the last 3 s must not be rougher than the piece's median by more than this"},
-  "roughness.peak_prominence_db": {"value": 15.0, "source": "measured: random noise peaks reach about 11 dB above the local floor, so a roughness peak must stand 15 dB above it"},
-  "roughness.audible_db": {"value": -40.0, "source": "starting value: a partial this far under the frame's loudest cannot make roughness audible"},
-  "chroma.sounding_db": {"value": -40.0, "source": "starting value: a frame this far under the loudest frame is not sounding"}
+  "preflight.sfx_min_fraction": {
+   "value": 0.75,
+   "source": "starting value: a one-shot must be allowed this share of its length before the next onset or its own end"
+  },
+  "preflight.unison_min_beats": {
+   "value": 3.0,
+   "source": "starting value: both notes this long, overlapping this long, before two sampled unisons are reported as beating"
+  },
+  "preflight.unison_min_pitch": {
+   "value": 60,
+   "source": "starting value: MIDI 60 (middle C); below it a unison is a doubling, not a beat"
+  },
+  "preflight.quiet_energy": {
+   "value": 0.5,
+   "source": "starting value: a section is quiet when its declared energy is under this share of the loudest section's"
+  },
+  "preflight.quiet_share": {
+   "value": 0.7,
+   "source": "starting value: a figure part is a quiet-section part when this share of its note time is in quiet sections"
+  },
+  "preflight.placement_min_shared": {
+   "value": 0.3,
+   "source": "starting value: share of the shorter part's playing time that two parts share before they compete for one place"
+  },
+  "preflight.sparse_max_beats": {
+   "value": 16.0,
+   "source": "starting value: an event longer than this many beats is a bed, not a sparse sound"
+  },
+  "score.gap_beats": {
+   "value": 0.08,
+   "source": "starting value: a breath or bow gap is at least this many beats"
+  },
+  "score.window_bars": {
+   "value": 4,
+   "source": "starting value: the phrase window, in bars, a breath or bow gap is looked for in"
+  },
+  "clicks.step": {
+   "value": 0.5,
+   "source": "starting value: a one-sample jump this big (full scale 1.0) is no note attack; a sample that starts mid-wave makes one"
+  },
+  "masking.window_s": {
+   "value": 4.0,
+   "source": "starting value: the congestion check looks at windows this long, in seconds"
+  },
+  "z_separation.band_hz": {
+   "value": [
+    500.0,
+    4000.0
+   ],
+   "source": "starting value: where strings, brass and a bright synth lead all sit"
+  },
+  "z_separation.frame_s": {
+   "value": 0.25,
+   "source": "starting value: band-envelope resolution for the overlap measure"
+  },
+  "roughness.relative": {
+   "value": 1.6,
+   "source": "starting value: a roughness spike must also stand this far above the piece's own median"
+  },
+  "roughness.outro_ratio": {
+   "value": 1.2,
+   "source": "starting value: the last 3 s must not be rougher than the piece's median by more than this"
+  },
+  "roughness.peak_prominence_db": {
+   "value": 15.0,
+   "source": "measured: random noise peaks reach about 11 dB above the local floor, so a roughness peak must stand 15 dB above it"
+  },
+  "roughness.audible_db": {
+   "value": -40.0,
+   "source": "starting value: a partial this far under the frame's loudest cannot make roughness audible"
+  },
+  "chroma.sounding_db": {
+   "value": -40.0,
+   "source": "starting value: a frame this far under the loudest frame is not sounding"
+  },
+  "realism.sub_loss_max_db": {
+   "value": 6.0,
+   "source": "starting value: the 20-60 Hz share the master keeps may be at most this far under the share the carrying stems hold together"
+  },
+  "realism.sub_carrier_db": {
+   "value": -12.0,
+   "source": "starting value: a stem whose 20-60 Hz share of its own power is above this carries the sub (the 'Sub < 60 Hz: only kick and bass' band of references/mixing/mixing-and-mastering.md)"
+  },
+  "preflight.master_hp_max_hz": {
+   "value": 45.0,
+   "source": "starting value: a master high-pass above this removes the sub the score writes (references/mixing/mixing-and-mastering.md: sub is below 60 Hz and belongs to kick and bass); the shipped default is 24 Hz"
+  },
+  "preflight.master_hp_lost_db": {
+   "value": 6.0,
+   "source": "starting value: a note whose fundamental the master high-pass takes down by this much is lost, not shaped"
+  },
+  "preflight.master_hp_lost_share": {
+   "value": 0.3,
+   "source": "starting value: a bass or drum part with this share of its notes lost to the master high-pass fails the preflight"
+  }
  }
 }
