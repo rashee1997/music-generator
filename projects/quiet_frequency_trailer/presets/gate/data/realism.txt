@@ -1,23 +1,23 @@
-Realism report  120.63 s, 44100 Hz, 28 dry stem(s)
-[WARN] timbre loudness value 0.99  (hf_shift_db=-2.01, centroid_quiet_hz=145.0, centroid_loud_hz=162.4)
+Realism report  120.63 s, 44100 Hz, 30 dry stem(s)
+[WARN] timbre loudness value 0.57  (hf_shift_db=-1.68, centroid_quiet_hz=145.3, centroid_loud_hz=155.2)
          loud and quiet differ mainly in volume
          target: loud passages at least 0.8 dB brighter (centroid) and 0.5 dB more 2-8 kHz energy than quiet ones
 [PASS] ensemble       value 34  (tracks=11)
          34 player(s) across 11 section part(s)
          target: a section part declares 2+ players; a solo declares none
-[PASS] transient      value 0.9774  (onsets=175)
+[PASS] transient      value 0.9773  (onsets=175)
          attacks vary
          target: repeated attacks are not sample-identical: 60 ms spectral similarity <= 0.995
-[PASS] depth          value -0.31  (wet_share=0.5179)
+[PASS] depth          value -0.34  (wet_share=0.5193)
          detail sits in front of the room
          target: direct-to-reverberant ratio -6..+18 dB: detail in front of a hall, not inside it
-[WARN] low mid        value 2.29  (low_mid_over_sub_db=-3.87, low_mid_growth_db=4.57, sub_growth_db=4.15)
+[WARN] low mid        value 1.77  (low_mid_over_sub_db=-4.5, low_mid_growth_db=4.98, sub_growth_db=4.7)
          low-mids thicken or grow into the peak
          target: 180-450 Hz stays below the 500-2000 Hz band and does not grow faster than the sub at a peak
-[PASS] distance       value 28  (far=7, missing_model=0, predicted_4k_loss_db=1.16)
+[PASS] distance       value 30  (far=8, missing_model=0, predicted_4k_loss_db=1.16)
          every far source has an air model (the score's medium, ISO 9613-1)
          target: a source beyond 4 m uses the ISO 9613-1 air model or says why not
-[PASS] openness       value 21.57
+[PASS] openness       value 22.6
          air survives the peak
          target: the 8-16 kHz share does not fall by more than 1 dB at the loudest 10 % of the piece
 [WARN] phrasing       value 0.62  (peak_pct=1.67)
@@ -26,22 +26,22 @@ Realism report  120.63 s, 44100 Hz, 28 dry stem(s)
 [WARN] vibrato        value 0.52  (parts={'basses': 0.15, 'choir': 1.0, 'violins_long': 0.52})
          1 sustained part(s) hold a flat pitch (no 3-9 Hz movement of 10 cents or more): basses
          target: a sustained part moves 3-9 Hz by 10 cents or more in 30 % of its stable held windows (starting value)
-[WARN] repetition     value 1.0  (parts={'bass_drum': 0.01, 'basses': 0.0, 'basses_pizz': 0.01, 'celli': 0.0, 'choir': 0.0, 'cymbals': 0.1, 'horns': 0.0, 'low_swell': 0.0, 'piano_theme': 0.0, 'sfx_alarm': 1.0, 'sfx_bike': 0.0, 'sfx_device': 0.0, 'sfx_heartbeat': 0.02, 'sfx_impacts': 0.0, 'sfx_road': 0.0, 'sfx_truck': 0.0, 'sfx_tyres_bike': 0.0, 'sfx_tyres_v8': 0.0, 'sfx_v8': 0.0, 'sfx_walkie': 0.01, 'snare': 0.1, 'taiko': 0.0, 'timpani': 0.0, 'trombones': 0.0, 'tuba': 0.0, 'violas': 0.0, 'violins_long': 0.0, 'violins_staccato': 0.0})
+[WARN] repetition     value 1.0  (parts={'bass_drum': 0.01, 'basses': 0.0, 'basses_pizz': 0.01, 'celli': 0.0, 'choir': 0.0, 'cymbals': 0.1, 'horns': 0.0, 'low_swell': 0.0, 'piano_theme': 0.0, 'sfx_alarm': 1.0, 'sfx_bike': 0.0, 'sfx_boom': 0.0, 'sfx_device': 0.0, 'sfx_heartbeat': 0.02, 'sfx_impacts': 0.0, 'sfx_road': 0.0, 'sfx_truck': 0.0, 'sfx_tyres_bike': 0.0, 'sfx_tyres_v8': 0.0, 'sfx_v8': 0.0, 'sfx_walkie': 0.0, 'snare': 0.1, 'taiko': 0.0, 'timpani': 0.0, 'trombones': 0.0, 'tuba': 0.0, 'violas': 0.0, 'violins_long': 0.0, 'violins_staccato': 0.0})
          1 part(s) repeat a pitch with the same attack: sfx_alarm
          target: under 40 % of a part's same-pitch attacks are the same sample twice (spectral similarity 0.995, starting value)
 [WARN] velocity response value 0.24  (parts={'basses_pizz': 0.4, 'celli': 0.38, 'cymbals': -0.2, 'horns': 0.2, 'piano_theme': -0.69, 'tuba': 0.11, 'violas': 0.54, 'violins_long': 0.51, 'violins_staccato': 0.24}, centroid_spread_octaves={'basses_pizz': 0.114, 'celli': 0.233, 'cymbals': 1.055, 'horns': 0.15, 'piano_theme': 0.562, 'tuba': 0.246, 'violas': 0.348, 'violins_long': 0.227, 'violins_staccato': 0.291})
          5 part(s) get louder but not brighter with velocity (a one-sample layer): cymbals, horns, piano_theme, tuba, violins_staccato
          target: brightness follows written velocity, correlation 0.30 or more once pitch is removed (starting value; the literature reads 0.62 for loudness)
-[PASS] coherence      value 0.76  (mid=0.71)
+[PASS] coherence      value 0.8  (mid=0.75)
          the top of the mix is decorrelated between the channels
          target: inter-channel coherence 2-8 kHz at most 0.85 (starting value)
-[PASS] sub weight     value -5.8  (loss_db=1.1, carriers=7)
+[PASS] sub weight     value -5.6  (loss_db=0.9, carriers=8)
          the sub the stems carry reaches the master
          target: the 20-60 Hz share the stems carry reaches the master (loss at most realism.sub_loss_max_db, constants.json), starting value
-[WARN] air            value -40.3  (band_limited=13)
-         8-16 kHz is thin; 13 part(s) hold nothing there in their own samples (basses_pizz, choir, horns, low_swell, piano_theme, sfx_alarm): EQ cannot add a band the samples lack, so use a preset `air` treatment or a bank that has it
+[PASS] air            value -39.5  (band_limited=14)
+         the top octave is present
          target: 8-16 kHz share of the master at least -40 dB; parts with no air in their samples are named (starting value)
-[WARN] dynamic scale  value 8.9  (basis=section means)
+[WARN] dynamic scale  value 8.5  (basis=section means)
          the loud and the quiet passages are close in level: fortissimo reads polite
          target: loudest section mean at least 10 dB above the quietest (starting value)
 [PASS] impact attack  value 16.0  (parts=4, soft_attack=0)

@@ -1,4 +1,4 @@
-stem gate: 0 FAIL, 0 WARN, 254 rows, profile quiet_frequency, 7229 ms
+stem gate: 0 FAIL, 0 WARN, 254 rows, profile quiet_frequency, 2940 ms
 [PASS] stem.dc: stem "bass_drum": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)
 [PASS] stem.clipping: stem "bass_drum": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "bass_drum": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -99,7 +99,7 @@ stem gate: 0 FAIL, 0 WARN, 254 rows, profile quiet_frequency, 7229 ms
 [PASS] stem.cut: stem "sfx_boom": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end
 [INFO] stem.edge: stem "sfx_boom": not applied: a one-shot effect note length is a trigger, not a sound length
 [INFO] stem.tick: stem "sfx_boom": not applied: a one-shot effect stem is a sequence of triggers, not a pulse to hold still
-[PASS] stem.dead: stem "sfx_boom": own median -5.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve
+[PASS] stem.dead: stem "sfx_boom": own median -6.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve
 [INFO] stem.dc: stem "sfx_device": not applied: a one-shot effect stem has no sustained baseline to drift
 [PASS] stem.clipping: stem "sfx_device": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "sfx_device": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms

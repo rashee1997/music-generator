@@ -2074,7 +2074,10 @@
     "worst_times_s": [],
     "calibrated": false,
     "detail": "stem \"sfx_boom\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
-    "drops": [],
+    "drops": [
+     16.8,
+     13.6
+    ],
     "exempted": []
    },
    {
@@ -2116,14 +2119,14 @@
     "margin": -12.0,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "stem \"sfx_boom\": own median -5.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+    "detail": "stem \"sfx_boom\": own median -6.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
     "fail": false,
     "table": [
      {
       "section": "the_signal",
       "start_s": 110.0,
-      "measured_db": -5.49,
-      "expected_db": -5.49,
+      "measured_db": -6.23,
+      "expected_db": -6.23,
       "dyn": 0.3
      }
     ],
@@ -4868,10 +4871,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -16.307453266981707,
+    "value": -16.30796603897346,
     "unit": "LUFS",
     "threshold": -16.0,
-    "margin": -2.1925467330182933,
+    "margin": -2.1920339610265387,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-16.3 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -4893,16 +4896,14 @@
     "row": "dropout",
     "stage": "mix",
     "stem": null,
-    "level": "FAIL",
-    "value": 69.99999999999318,
+    "level": "PASS",
+    "value": 0.0,
     "unit": "ms",
     "threshold": 20.0,
-    "margin": 49.99999999999318,
-    "worst_times_s": [
-     120.3
-    ],
+    "margin": -20.0,
+    "worst_times_s": [],
     "calibrated": false,
-    "detail": "longest hole 70 ms (limit 20-1000 ms), floor -64.6 dBFS; 1 hole(s)"
+    "detail": "longest hole 0 ms (limit 20-1000 ms), floor -64.6 dBFS; 0 hole(s)"
    },
    {
     "row": "cut.hard",
@@ -4922,13 +4923,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 70.03227943548559,
+    "value": 67.30419592993124,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -58.03227943548559,
+    "margin": -55.30419592993124,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "end level -129.7 dBFS (limit -45), decay over final 300 ms 70.0 dB (limit 12); natural release"
+    "detail": "end level -124.4 dBFS (limit -45), decay over final 300 ms 67.3 dB (limit 12); natural release"
    },
    {
     "row": "clipping",
@@ -4948,10 +4949,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 2.0587603918959157e-05,
+    "value": 2.0645199601849876e-05,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009794123960810408,
+    "margin": -0.00097935480039815,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00002 (limit 0.001)"
@@ -4974,70 +4975,70 @@
       "start_s": 0.0,
       "end_s": 12.0,
       "energy": 0.25,
-      "level_db": -28.388857401556916
+      "level_db": -28.39509543894097
      },
      {
       "name": "the_take",
       "start_s": 12.0,
       "end_s": 24.0,
       "energy": 0.45,
-      "level_db": -27.073248245810994
+      "level_db": -27.079554299370322
      },
      {
       "name": "the_alert",
       "start_s": 24.0,
       "end_s": 36.0,
       "energy": 0.65,
-      "level_db": -20.705004765701098
+      "level_db": -20.711296633830134
      },
      {
       "name": "the_chase",
       "start_s": 36.0,
       "end_s": 52.0,
       "energy": 0.9,
-      "level_db": -17.926226303380062
+      "level_db": -17.9325292385275
      },
      {
       "name": "the_flyover",
       "start_s": 52.0,
       "end_s": 58.0,
       "energy": 0.8,
-      "level_db": -20.527292208799256
+      "level_db": -20.53358764777959
      },
      {
       "name": "the_truck",
       "start_s": 58.0,
       "end_s": 64.0,
       "energy": 0.6,
-      "level_db": -38.80634785685703
+      "level_db": -38.81264077869777
      },
      {
       "name": "the_escalation",
       "start_s": 64.0,
       "end_s": 88.0,
       "energy": 0.95,
-      "level_db": -17.25206855491502
+      "level_db": -17.258365485546143
      },
      {
       "name": "the_wall",
       "start_s": 88.0,
       "end_s": 104.0,
       "energy": 1.0,
-      "level_db": -16.486352051410776
+      "level_db": -16.492498741734753
      },
      {
       "name": "the_dropout",
       "start_s": 104.0,
       "end_s": 110.0,
       "energy": 0.35,
-      "level_db": -22.625039549956874
+      "level_db": -22.631338090032216
      },
      {
       "name": "the_signal",
       "start_s": 110.0,
       "end_s": 120.0,
       "energy": 0.3,
-      "level_db": -26.768926801143714
+      "level_db": -26.851116717002327
      }
     ]
    }

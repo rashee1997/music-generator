@@ -6,7 +6,7 @@
     "warns": 0,
     "rows": 254,
     "profile": "quiet_frequency",
-    "total_ms": 7229.202982000061,
+    "total_ms": 2940.4553740000665,
     "timings": {
       "bass_drum": 0.0,
       "basses": 0.0,
@@ -19,17 +19,17 @@
       "piano_theme": 0.0,
       "sfx_alarm": 0.0,
       "sfx_bike": 0.0,
-      "sfx_boom": 928.3541019999575,
+      "sfx_boom": 1361.0839460002353,
       "sfx_device": 0.0,
       "sfx_heartbeat": 0.0,
       "sfx_impacts": 0.0,
       "sfx_road": 0.0,
-      "sfx_suck": 965.563819999943,
+      "sfx_suck": 0.0,
       "sfx_truck": 0.0,
       "sfx_tyres_bike": 0.0,
       "sfx_tyres_v8": 0.0,
       "sfx_v8": 0.0,
-      "sfx_walkie": 703.5599450000518,
+      "sfx_walkie": 0.0,
       "snare": 0.0,
       "taiko": 0.0,
       "timpani": 0.0,
@@ -2112,7 +2112,10 @@
         "worst_times_s": [],
         "calibrated": false,
         "detail": "stem \"sfx_boom\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
-        "drops": [],
+        "drops": [
+          16.8,
+          13.6
+        ],
         "exempted": []
       },
       {
@@ -2154,14 +2157,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_boom\": own median -5.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"sfx_boom\": own median -6.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_signal",
             "start_s": 110.0,
-            "measured_db": -5.49,
-            "expected_db": -5.49,
+            "measured_db": -6.23,
+            "expected_db": -6.23,
             "dyn": 0.3
           }
         ],
@@ -4952,8 +4955,8 @@
       }
     ],
     "duration_s": 123.28598639455782,
-    "cached_stems": 27,
-    "measured_stems": 3
+    "cached_stems": 29,
+    "measured_stems": 1
   },
   "rows": [
     {
@@ -5459,7 +5462,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"sfx_boom\": own median -5.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"sfx_boom\": own median -6.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",

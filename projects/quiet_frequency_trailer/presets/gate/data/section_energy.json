@@ -16,70 +16,70 @@
       "start_s": 0.0,
       "end_s": 12.0,
       "energy": 0.25,
-      "level_db": -28.388857401556916
+      "level_db": -28.39509543894097
     },
     {
       "name": "the_take",
       "start_s": 12.0,
       "end_s": 24.0,
       "energy": 0.45,
-      "level_db": -27.073248245810994
+      "level_db": -27.079554299370322
     },
     {
       "name": "the_alert",
       "start_s": 24.0,
       "end_s": 36.0,
       "energy": 0.65,
-      "level_db": -20.705004765701098
+      "level_db": -20.711296633830134
     },
     {
       "name": "the_chase",
       "start_s": 36.0,
       "end_s": 52.0,
       "energy": 0.9,
-      "level_db": -17.926226303380062
+      "level_db": -17.9325292385275
     },
     {
       "name": "the_flyover",
       "start_s": 52.0,
       "end_s": 58.0,
       "energy": 0.8,
-      "level_db": -20.527292208799256
+      "level_db": -20.53358764777959
     },
     {
       "name": "the_truck",
       "start_s": 58.0,
       "end_s": 64.0,
       "energy": 0.6,
-      "level_db": -38.80634785685703
+      "level_db": -38.81264077869777
     },
     {
       "name": "the_escalation",
       "start_s": 64.0,
       "end_s": 88.0,
       "energy": 0.95,
-      "level_db": -17.25206855491502
+      "level_db": -17.258365485546143
     },
     {
       "name": "the_wall",
       "start_s": 88.0,
       "end_s": 104.0,
       "energy": 1.0,
-      "level_db": -16.486352051410776
+      "level_db": -16.492498741734753
     },
     {
       "name": "the_dropout",
       "start_s": 104.0,
       "end_s": 110.0,
       "energy": 0.35,
-      "level_db": -22.625039549956874
+      "level_db": -22.631338090032216
     },
     {
       "name": "the_signal",
       "start_s": 110.0,
       "end_s": 120.0,
       "energy": 0.3,
-      "level_db": -26.768926801143714
+      "level_db": -26.851116717002327
     }
   ]
 }
