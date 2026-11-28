@@ -448,7 +448,7 @@ def cymbals():
 TRACKS = [
     ('basses', 'qf_basses', 'bass', basses), ('basses_pizz', 'qf_basses_pizz', 'bass', basses_pizz), ('tuba', 'qf_tuba', 'bass', tuba),
     ('bass_drum', 'qf_bass_drum', 'drum', bass_drum), ('timpani', 'qf_timpani', 'drum', timpani), ('taiko', 'qf_taiko', 'drum', taiko),
-    ('snare', 'qf_snare', 'drum', snare), ('snare_b', 'qf_snare_b', 'drum', snare_b), ('cymbals', 'qf_cymbals', 'texture', cymbals),
+    ('snare', 'qf_snare', 'drum', snare), ('cymbals', 'qf_cymbals', 'texture', cymbals),
     ('low_swell', 'qf_low_swell', 'texture', low_swell),
     ('violas', 'qf_violas', 'ostinato', violas), ('celli', 'qf_celli', 'ostinato', celli),
     ('violins_staccato', 'qf_violins_staccato', 'ostinato', violins_staccato),
@@ -460,8 +460,8 @@ TRACKS = [
 # ---- the sounds: one track per sound-model preset, one trigger note each; the preset's own clock starts at its trigger ------------------
 SFX = [  # (track, preset, start_s, length_s)
     ('sfx_alarm', 'qf_alarm', 0.0, 12.0), ('sfx_heartbeat', 'qf_heartbeat', 3.0, 115.8), ('sfx_walkie', 'qf_walkie', 6.0, 106.0),
-    ('sfx_device', 'qf_device', 8.0, 111.9), ('sfx_bike', 'qf_bike', 13.8, 104.2), ('sfx_tyres_bike', 'qf_tyres_bike', 21.2, 77.3),
-    ('sfx_road', 'qf_road', 21.5, 97.5), ('sfx_v8', 'qf_v8', 24.0, 94.0), ('sfx_tyres_v8', 'qf_tyres_v8', 54.9, 42.4),
+    ('sfx_device', 'qf_device', 8.4, 111.5), ('sfx_bike', 'qf_bike', 13.8, 104.2), ('sfx_tyres_bike', 'qf_tyres_bike', 21.65, 76.85),
+    ('sfx_road', 'qf_road', 21.5, 97.5), ('sfx_v8', 'qf_v8', 24.0, 94.0), ('sfx_tyres_v8', 'qf_tyres_v8', 55.35, 41.95),
     ('sfx_truck', 'qf_truck', 58.5, 3.5),
 ]
 HIT_TIMES = [TL.T['take'], TL.T['chase'], TL.T['back'], TL.T['wall'], TL.T['mid_wall'], TL.T['last']]
@@ -482,7 +482,7 @@ def sfx_tracks():
 # ---- staging: one table read by the presets, the sheet and the space ------------------------------------------------------------------------
 STAGE = {
     'qf_basses': (0.0, 0.0, 1.5), 'qf_basses_pizz': (30.0, 0.0, 1.4), 'qf_tuba': (150.0, 0.0, 1.8), 'qf_bass_drum': (-25.0, 0.0, 2.2),
-    'qf_timpani': (80.0, 0.0, 3.0), 'qf_taiko': (-130.0, 0.0, 3.2), 'qf_snare': (-80.0, 0.0, 2.6), 'qf_snare_b': (-105.0, 0.0, 2.9),
+    'qf_timpani': (80.0, 0.0, 3.0), 'qf_taiko': (-130.0, 0.0, 3.2), 'qf_snare': (-80.0, 0.0, 2.6),
     'qf_cymbals': (-160.0, 30.0, 3.6), 'qf_low_swell': (0.0, 45.0, 1.0), 'qf_violas': (-55.0, 0.0, 2.0), 'qf_celli': (-62.0, 26.0, 2.6),
     'qf_violins_staccato': (-130.0, 30.0, 3.0), 'qf_violins_long': (180.0, 45.0, 4.0), 'qf_choir': (0.0, 60.0, 5.0),
     'qf_trombones': (-108.0, 15.0, 2.8), 'qf_piano_theme': (-30.0, 15.0, 1.8), 'qf_horns': (0.0, 15.0, 2.6),
@@ -521,7 +521,7 @@ def hits():
          'why': 'the widest shot and the second peak, louder than the first'},
         {'t': TL.T['mid_wall'], 'kind': 'musical', 'sync': 'soft', 'sound': 'the car rams: timpani, crash and a lunge',
          'why': 'the Villain closes to a metre'},
-        {'t': TL.T['dropout'], 'kind': 'cut', 'sync': 'hard', 'sound': 'the music leaves: two engines idle, the radio, a breath',
+        {'t': TL.T['dropout'], 'kind': 'musical', 'sync': 'hard', 'sound': 'the music leaves: two engines idle, the radio, a breath',
          'why': 'the pursuit stops without a winner'},
         {'t': TL.T['signal'], 'kind': 'musical', 'sync': 'soft', 'sound': 'the bike has stopped; the case opens; the device pulses',
          'why': 'the question the trailer ends on'},

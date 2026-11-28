@@ -1,0 +1,140 @@
+{
+ "name": "rca",
+ "findings": [
+  {
+   "row": "stem.dead",
+   "stem": "cymbals",
+   "verdict": "unknown",
+   "cause": "no processed stem to measure",
+   "evidence": [
+    "stem \"cymbals\": own median -37.9 dBFS, worst section shortfall 75.8 dB (limit 12 dB), active sections 8; dropped in a section"
+   ],
+   "where": [
+    "re-render"
+   ],
+   "tolerance": "bounded relaxation exists: under_db 12.0 (range 6.0..24.0), floor_db -70.0 (range -80.0..-50.0), dyn_scale 1.0 (range 0.25..1.0), honour_rests True (choices [True])",
+   "do_next": "a stem carries no signal: the track has notes the renderer dropped (an unknown instrument, a mute, a zero velocity) - fix the track, not the mix",
+   "cost": "code"
+  },
+  {
+   "row": "stem.edge",
+   "stem": "low_swell",
+   "verdict": "unknown",
+   "cause": "no processed stem to measure",
+   "evidence": [
+    "stem \"low_swell\": audible span 11.000-104.000 s against score notes 11.000-108.000 s: leading silence 0 ms, trailing silence 4000 ms (limit 25 ms)"
+   ],
+   "where": [
+    "re-render"
+   ],
+   "tolerance": "bounded relaxation exists: max_silence_ms 25.0 (range 5.0..100.0)",
+   "do_next": "fix this before anything below it: it is a broken file, a broken delivery or a broken decode, and no musical decision makes it acceptable",
+   "cost": "render"
+  },
+  {
+   "row": "stem.tick",
+   "stem": "low_swell",
+   "verdict": "unknown",
+   "cause": "no analyzer for this row yet",
+   "evidence": [
+    "stem \"low_swell\": onset autocorrelation 0.52 at a 93 ms grid (limit 0.35; onset frames are 11.6 ms apart, so the reported grid can be a multiple of the tick spacing), 15 strong onset(s) of 263, 7 on the grid, IOI CV 1.181; peak rise 82.88 dB at those onsets over 14 onset(s) (min 3); tempogram peak ratio 1.00, PLP peak ratio 1.00"
+   ],
+   "where": [
+    "measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause"
+   ],
+   "tolerance": "bounded relaxation exists: rho 0.35 (range 0.2..0.6), min_events 6 (range 3..12), cv_max 0.05 (range 0.01..0.2), rise_db 3.0 (range 1.5..8.0), score_match_share 0.6 (range 0.3..0.95), tol_ms 40.0 (range 10.0..100.0)",
+   "do_next": "fix this before anything below it: it is a broken file, a broken delivery or a broken decode, and no musical decision makes it acceptable",
+   "cost": "render"
+  },
+  {
+   "row": "stem.dead",
+   "stem": "low_swell",
+   "verdict": "unknown",
+   "cause": "no processed stem to measure",
+   "evidence": [
+    "stem \"low_swell\": own median -28.4 dBFS, worst section shortfall 86.6 dB (limit 12 dB), active sections 8; dropped in a section"
+   ],
+   "where": [
+    "re-render"
+   ],
+   "tolerance": "bounded relaxation exists: under_db 12.0 (range 6.0..24.0), floor_db -70.0 (range -80.0..-50.0), dyn_scale 1.0 (range 0.25..1.0), honour_rests True (choices [True])",
+   "do_next": "a stem carries no signal: the track has notes the renderer dropped (an unknown instrument, a mute, a zero velocity) - fix the track, not the mix",
+   "cost": "code"
+  },
+  {
+   "row": "stem.dead",
+   "stem": "sfx_device",
+   "verdict": "unknown",
+   "cause": "no processed stem to measure",
+   "evidence": [
+    "stem \"sfx_device\": own median -89.9 dBFS, worst section shortfall 19.9 dB (limit 12 dB), active sections 1; all sections silent"
+   ],
+   "where": [
+    "re-render"
+   ],
+   "tolerance": "bounded relaxation exists: under_db 12.0 (range 6.0..24.0), floor_db -70.0 (range -80.0..-50.0), dyn_scale 1.0 (range 0.25..1.0), honour_rests True (choices [True])",
+   "do_next": "a stem carries no signal: the track has notes the renderer dropped (an unknown instrument, a mute, a zero velocity) - fix the track, not the mix",
+   "cost": "code"
+  },
+  {
+   "row": "stem.dead",
+   "stem": "sfx_road",
+   "verdict": "unknown",
+   "cause": "no processed stem to measure",
+   "evidence": [
+    "stem \"sfx_road\": own median -111.7 dBFS, worst section shortfall 41.7 dB (limit 12 dB), active sections 1; all sections silent"
+   ],
+   "where": [
+    "re-render"
+   ],
+   "tolerance": "bounded relaxation exists: under_db 12.0 (range 6.0..24.0), floor_db -70.0 (range -80.0..-50.0), dyn_scale 1.0 (range 0.25..1.0), honour_rests True (choices [True])",
+   "do_next": "a stem carries no signal: the track has notes the renderer dropped (an unknown instrument, a mute, a zero velocity) - fix the track, not the mix",
+   "cost": "code"
+  },
+  {
+   "row": "stem.dead",
+   "stem": "sfx_tyres_bike",
+   "verdict": "unknown",
+   "cause": "no processed stem to measure",
+   "evidence": [
+    "stem \"sfx_tyres_bike\": own median -93.2 dBFS, worst section shortfall 23.2 dB (limit 12 dB), active sections 1; all sections silent"
+   ],
+   "where": [
+    "re-render"
+   ],
+   "tolerance": "bounded relaxation exists: under_db 12.0 (range 6.0..24.0), floor_db -70.0 (range -80.0..-50.0), dyn_scale 1.0 (range 0.25..1.0), honour_rests True (choices [True])",
+   "do_next": "a stem carries no signal: the track has notes the renderer dropped (an unknown instrument, a mute, a zero velocity) - fix the track, not the mix",
+   "cost": "code"
+  },
+  {
+   "row": "stem.dead",
+   "stem": "sfx_tyres_v8",
+   "verdict": "unknown",
+   "cause": "no processed stem to measure",
+   "evidence": [
+    "stem \"sfx_tyres_v8\": own median -81.3 dBFS, worst section shortfall 11.3 dB (limit 12 dB), active sections 1; all sections silent"
+   ],
+   "where": [
+    "re-render"
+   ],
+   "tolerance": "bounded relaxation exists: under_db 12.0 (range 6.0..24.0), floor_db -70.0 (range -80.0..-50.0), dyn_scale 1.0 (range 0.25..1.0), honour_rests True (choices [True])",
+   "do_next": "a stem carries no signal: the track has notes the renderer dropped (an unknown instrument, a mute, a zero velocity) - fix the track, not the mix",
+   "cost": "code"
+  },
+  {
+   "row": "stem.dead",
+   "stem": "snare_b",
+   "verdict": "unknown",
+   "cause": "no processed stem to measure",
+   "evidence": [
+    "stem \"snare_b\": own median -35.2 dBFS, worst section shortfall 15.8 dB (limit 12 dB), active sections 4; dropped in a section"
+   ],
+   "where": [
+    "re-render"
+   ],
+   "tolerance": "bounded relaxation exists: under_db 12.0 (range 6.0..24.0), floor_db -70.0 (range -80.0..-50.0), dyn_scale 1.0 (range 0.25..1.0), honour_rests True (choices [True])",
+   "do_next": "a stem carries no signal: the track has notes the renderer dropped (an unknown instrument, a mute, a zero velocity) - fix the track, not the mix",
+   "cost": "code"
+  }
+ ]
+}

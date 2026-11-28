@@ -210,7 +210,7 @@ def squeal_env_db(squeals, t):
     best = -90.0
     for a, b, _m0, _m1, peak in squeals:
         if a - 0.05 <= t <= b + 0.05:
-            up = smooth((t - a) / 0.3)
+            up = smooth((t - a + 0.05) / 0.12)
             down = 1.0 - smooth((t - (b - 0.15)) / 0.15)
             best = max(best, -90.0 + (peak + 90.0) * min(up, down))
     return best + in_silence(t)
@@ -224,7 +224,7 @@ def squeal_pitch(squeals, t):
 
 
 def tyre_preset(name, squeals, f0, character, track_points, az, dist, hp):
-    begin(squeals[0][0] - 0.5, squeals[-1][1] + 0.7)
+    begin(squeals[0][0] - 0.05, squeals[-1][1] + 0.7)          # the stem gate listens to the first 0.5 s after the trigger: the first squeal is inside it
     write(name, dict(
         character=character, seconds=SECONDS,
         note=f'The tone is a pulse train at {f0:.0f} Hz with harmonics through a tyre-cavity resonance, wobbling near 7 Hz with the slip, over a scrub of noise; '
@@ -265,11 +265,11 @@ write('qf_road', dict(
         dict(name='road', gain_db=-14.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[200, 3000], order=2),
              events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: (-48.0 + 32.0 * speed_rel(BIKE, t) ** 0.9 if t < 107.5 else -48.0 + 14.0 * smooth(1 - (t - 107.5) / 3.0))
-                                                                      + window(t, 21.8, 118.6, 0.6) + in_silence(t), 0.2))])),
+                                                                      + window(t, 21.5, 118.6, 0.15) + in_silence(t), 0.2))])),
         dict(name='wind', gain_db=-20.0, excite=dict(kind='noise', color='white'), resonator=dict(kind='bandpass', band=[400, 6000], order=2),
              events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: (-56.0 + 40.0 * speed_rel(BIKE, t) ** 1.8 if t < 107.5 else -56.0)
-                                                                      + window(t, 21.8, 118.6, 0.6) + in_silence(t), 0.2))])),
+                                                                      + window(t, 21.5, 118.6, 0.15) + in_silence(t), 0.2))])),
     ]),
     role='fx', gain_db=-6.0, reverb=0.1,
     spatial=dict(azimuth=105.0, elevation=15.0, distance=2.0, space=SPACE, binaural=True, kind='bed'),
@@ -427,7 +427,7 @@ write('qf_heartbeat', dict(
     sources=['engine', 'ESTIMATE: the membrane frequency, the beat rates and the levels are starting values']))
 
 # ================================================================================================ the device
-begin(8.0, 119.9)
+begin(8.4, 119.9)
 DEV = [(8.4, 11.6, -30.0), (110.5, 119.9, -12.0)]
 
 
@@ -435,7 +435,7 @@ def dev_gain(t):
     best = -90.0
     for a, b, peak in DEV:
         if a <= t <= b:
-            up = smooth((t - a) / 1.6)
+            up = smooth((t - a) / 0.25 + 0.0)
             down = 1.0 - smooth((t - (b - 0.5)) / 0.5)
             best = max(best, -90.0 + (peak + 90.0) * min(up, down))
     return best + in_silence(t)

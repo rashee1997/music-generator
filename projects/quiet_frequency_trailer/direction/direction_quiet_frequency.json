@@ -223,7 +223,7 @@
     },
     {
       "t": 104.0,
-      "kind": "cut",
+      "kind": "musical",
       "sync": "hard",
       "sound": "the music leaves: two engines idle, the radio, a breath",
       "why": "the pursuit stops without a winner"
