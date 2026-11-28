@@ -328,7 +328,7 @@ def a_stem_level(ctx, row, stem, detail):
             under = float(np.mean(hz < hp))
             evidence.append(f'{100 * under:.0f} % of its notes have a fundamental under the master high-pass ({hp:.0f} Hz)')
             if under > 0.3:
-                cause, where = 'notes under the high-pass', ['the score: write the part an octave up, where the master keeps it (a sub-100 Hz fundamental is gone after a 105 Hz high-pass)']
+                cause, where = 'notes under the high-pass', [f'the mix preset: lower mastering.highpass_hz ({hp:.0f} Hz now; the shipped default is 24 Hz). Do not move the part up an octave: a master high-pass that removes the written bass is the fault, and preflight.master_highpass names it']
     if 'edge' in row and tr:
         ends = [ctx.sec(float(n['t']) + float(n.get('d', 0))) for n in tr.get('notes', [])]
         if ends:

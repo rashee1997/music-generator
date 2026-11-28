@@ -47,7 +47,7 @@
   ],
   "master": {
     "true_peak": -1.5,
-    "tone": "neutral",
+    "tone": "theatrical",
     "fade_out": 0.8
   },
   "piece_type": "highway_pursuit",

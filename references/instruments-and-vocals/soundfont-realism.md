@@ -49,6 +49,22 @@ hard one open. Rules:
   `zones` (2-16) replaces the equal-count `bands`: a note's layer depends on its own velocity only. `attack_ms` is the onset ramp of each
   zone (a soft note begins more slowly). Neither adds a real second sample; the numbers are starting values (`knowledgebase/sound-design/soundfont-velocity-and-realism.md`, section 5).
 
+## 2c. The family laws: `velocity_brightness` and `velocity_attack` (on by default for a declared family)
+
+`velocity_timbre` and `timbre_dynamics` are opt-in blocks. The family laws need no block: a preset that declares a `family`
+(`references/data/presets/families/families.json`) gets, per note and from the score's written velocities,
+
+- `velocity_brightness`: each note's cutoff is the h-th harmonic of its own fundamental, `fc = clip(f0 * h(v), fc_min, fc_max)` with
+  `h(v) = h_lo * (h_hi / h_lo) ** (v ** gamma)`, after a velocity-driven saturator (`drive_k`) that gives a hard note the overtones a
+  one-layer sample lacks; the level is restored so the dynamics are kept, and `jitter_oct` makes two takes of a note differ;
+- `velocity_attack`: a soft note rises over `ms_soft`, a hard one over `ms_hard` (`dsp.soften_onsets`, one length per onset).
+
+A preset or a track overrides a field with a block of the same name, or switches the law off with `null`. A part that declares the older
+`velocity_timbre` block keeps that one and the family law stays out, so they never stack. Check it with
+`python scripts/realism_report.py` (`velocity_response`, floor 0.30: on a random-velocity line it moved cello -0.12 to 0.77, violin
+0.03 to 0.48, flute 0.08 to 0.75, horn -0.16 to 0.41, piano 0.17 to 0.35). Equations, sources and what stays open (legato transitions,
+real round robins, ensemble spread, pitch-dependent attack): `knowledgebase/sound-design/sample-realism-equations.md`.
+
 ## 2b. A continuous loudness-timbre coupling: `timbre_dynamics`
 
 `velocity_timbre` splits written velocities into bands. A part whose written velocities already move can instead

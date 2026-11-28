@@ -304,6 +304,9 @@ DEFAULTS = {
                        {'type': 'peak', 'f': 320, 'gain': 1.2, 'q': 0.9},
                        {'type': 'highshelf', 'f': 8200, 'gain': -1.8, 'q': 0.7}],
             'bright': [{'type': 'highshelf', 'f': 7000, 'gain': 1.8, 'q': 0.7}],
+            # a theatrical low end: a broad shelf under the bass and a gentle one on top, starting values, measured by
+            # realism.sub_weight (the 20-60 Hz share the stems carry reaches the master); `bass_weight` is the cue's own call
+            'theatrical': [{'type': 'lowshelf', 'f': 70, 'gain': 3.0, 'q': 0.7}, {'type': 'highshelf', 'f': 9000, 'gain': 1.0, 'q': 0.7}],
         },
         'glue': {'threshold_db': -18.0, 'ratio': 1.6, 'attack_ms': 40.0, 'release_ms': 250.0},
         # how the limiter loop reaches the loudness target: at most `max_iterations` passes, done within
@@ -311,6 +314,15 @@ DEFAULTS = {
         # a miss larger than `report_miss_lu` is said on stderr.
         'converge': {'max_iterations': 6, 'tolerance_lu': 0.3, 'step': 0.75, 'report_miss_lu': 1.0},
         'fallback_limiter': {'margin_db': 0.6, 'release_ms': 120.0},   # only if the true-peak limiter is missing
+        # Rest dip: a hit that declares `silence_after_s` promises that nothing but the room sounds after it, but a sampled drum rings and a
+        # reverb tail runs on for seconds, so the sheet's silence was heard at -30 dBFS. The master is dipped by `depth_db` over each declared
+        # rest (`attack_ms` into it, `release_ms` out of it) so what is left is the room's faint tail. None = no dip.
+        'rest_dip': {'depth_db': -36.0, 'attack_ms': 15.0, 'release_ms': 80.0},
+        # Virtual bass (the missing fundamental): a phone, a laptop or a pair of headphones cannot move air at 30-60 Hz, but the ear
+        # hears a low pitch from its harmonics. The sub band is run through a saturator and the harmonics it makes (80-240 Hz) are
+        # added back at `gain_db` under the level of the sub, so the bass is heard where it cannot be reproduced. None = off.
+        # {"enabled": true, "source_hz": [30, 90], "harmonics_hz": [80, 240], "drive": 4.0, "gain_db": -6.0}
+        'virtual_bass': None,
         'min_crest_db': 8.0,           # suggest_master_target: below this much crest a target is called infeasible
         'lra_target_lu': None,         # only reported, never forced
         # Section levels: a gain curve from the plan's section `energy`, applied before the limiter loop, so the loud sections stand above

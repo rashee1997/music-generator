@@ -1193,7 +1193,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
         if fade_ms > 0:   # the preset's own 2-3 ms ramp, for sampled patches that start on a step
             stem = dsp.soften_onsets(stem, sr=SR, times=[e['t'] for e in ev], ms=fade_ms,
                                      skip_sounding=skip_sounding)
-        return family_dsp.apply(dsp.enhance_sf2_dynamics(stem, sr=SR, role=role, velocity=_mean_vel(ev)), inst_cfg, tr, SR, seed)
+        return family_dsp.apply(dsp.enhance_sf2_dynamics(stem, sr=SR, role=role, velocity=_mean_vel(ev)), inst_cfg, tr, SR, seed, events=ev)
 
     # shared channel (piano, guitar, plucked, mallets)
     vox.program(0, bank, preset)
@@ -1220,7 +1220,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
     fade_ms = float(tr.get('onset_fade_ms') or (inst_cfg or {}).get('onset_fade_ms') or 0.0)
     if fade_ms > 0:   # the preset's own 2-3 ms ramp, for sampled patches that start on a step
         stem = dsp.soften_onsets(stem, sr=SR, times=[e['t'] for e in ev], ms=fade_ms)
-    return family_dsp.apply(dsp.enhance_sf2_dynamics(stem, sr=SR, role=role, velocity=_mean_vel(ev)), inst_cfg, tr, SR, seed)
+    return family_dsp.apply(dsp.enhance_sf2_dynamics(stem, sr=SR, role=role, velocity=_mean_vel(ev)), inst_cfg, tr, SR, seed, events=ev)
 
 
 def _track_cache_dir():
@@ -1245,7 +1245,8 @@ _CODE_HASH = None
 # returned a stale stem from the cache, which is the one thing a cache keyed on code must never do.
 _RENDER_CODE = ('render_natural.py', 'dsp.py', 'sfz_render.py', 'environment.py', 'humanize.py', 'vocals.py',
                 'sound_model.py', 'clone_instrument.py', 'spatial.py', 'airabs.py', 'mechanics.py', 'world.py',
-                'soundbank.py', 'presets.py', 'mix_schema.py', 'cli_util.py', 'sfz_libs.py')
+                'soundbank.py', 'presets.py', 'mix_schema.py', 'cli_util.py', 'sfz_libs.py',
+                'family_dsp.py', 'families.py', '../references/data/presets/families/families.json')   # a family's behaviour is code and data of the stem
 # `spatial_engine` is not here: nothing the stem renderer imports reaches it (checked by search over every module and package listed), and it holds the
 # loudspeaker, object and ambisonic deliverables, so a fix to one of them used to throw away every cached stem of every project
 _RENDER_PACKAGES = ('vocal_engine', 'phys_core', 'env_engine', 'sfx_engine', 'spatial_hrtf',

@@ -288,8 +288,21 @@
     "fade_out": 0.6
    }
   },
-  "highpass_hz": 105.0,
-  "highpass_order": 4
+  "highpass_hz": 24.0,
+  "highpass_order": 1,
+  "virtual_bass": {
+   "enabled": true,
+   "source_hz": [
+    30,
+    90
+   ],
+   "harmonics_hz": [
+    80,
+    240
+   ],
+   "drive": 4.0,
+   "gain_db": -6.0
+  }
  },
  "role_chains": {
   "melody": {

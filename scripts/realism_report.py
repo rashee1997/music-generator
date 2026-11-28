@@ -38,7 +38,7 @@ TARGETS = {
     'repetition': 'under 40 % of a part\'s same-pitch attacks are the same sample twice (spectral similarity 0.995, starting value)',
     'velocity_response': 'brightness follows written velocity, correlation 0.30 or more once pitch is removed (starting value; the literature reads 0.62 for loudness)',
     'coherence': 'inter-channel coherence 2-8 kHz at most 0.85 (starting value)',
-    'sub_weight': 'the 20-60 Hz share the stems carry reaches the master (loss at most 6 dB while the master is thin), starting value',
+    'sub_weight': 'the 20-60 Hz share the stems carry reaches the master (loss at most realism.sub_loss_max_db, constants.json), starting value',
     'air': '8-16 kHz share of the master at least -40 dB; parts with no air in their samples are named (starting value)',
     'dynamic_scale': 'loudest section mean at least 10 dB above the quietest (starting value)',
     'impact_attack': 'a struck part rises in 30 ms or less or carries a click above -18 dB (starting value)',

@@ -23,12 +23,12 @@ COVERAGE = {
     'silence': (A, 'a gap in the finished mix'),
     'clicks': (A, 'mix-level clicks; a one-shot cut short is caught by preflight.sfx_length and probe.start'),
     'stem.clicks': ('preflight', ['preflight.sfx_length', 'probe.start']),
-    'stem.dropout': ('preflight', ['preflight.range', 'preflight.section_edge']),
+    'stem.dropout': ('preflight', ['preflight.range', 'preflight.section_edge', 'preflight.master_highpass']),
     'stem.cut': ('preflight', ['preflight.sfx_length']),
     'stem.end': ('preflight', ['probe.tail']),
     'stem.edge': ('preflight', ['preflight.sfx_length', 'preflight.range']),
     'stem.tick': (A, 'periodicity of rendered onsets'),
-    'stem.dead': ('preflight', ['preflight.stem_level', 'preflight.figure_level', 'preflight.section_edge']),
+    'stem.dead': ('preflight', ['preflight.stem_level', 'preflight.figure_level', 'preflight.section_edge', 'preflight.master_highpass']),
     'stem.clipping': ('preflight', ['probe.clip']),
     'stem.dc': ('preflight', ['probe.dc']),
     'stem.flatness': (A, 'noise inside a tonal stem'),
@@ -139,7 +139,7 @@ COVERAGE['imm.kinematics'] = ('score', 'the trajectories are in the presets and 
 
 PREFLIGHT_ROWS = (
     'preflight.range', 'preflight.sfx_length', 'preflight.fx', 'preflight.section_edge', 'preflight.unison', 'preflight.figure_level', 'preflight.placement',
-    'preflight.stem_level', 'preflight.arc', 'preflight.tempo', 'preflight.roughness', 'preflight.roughness_partials',
+    'preflight.stem_level', 'preflight.arc', 'preflight.tempo', 'preflight.roughness', 'preflight.roughness_partials', 'preflight.master_highpass',
     'probe.silent', 'probe.clip', 'probe.start', 'probe.tail', 'probe.dc',
 )
 

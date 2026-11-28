@@ -32,6 +32,7 @@ carries them keeps its own.
 
     score["intentional_cut_windows"]  [[start_s, end_s], ...]   what the gate skips
     score["hard_cuts"]                [t_s, ...]                what the renderer ramps
+    score["declared_rests"]           [[start_s, end_s], ...]   a hit's `silence_after_s`: what the master dips (mastering.rest_dip)
 """
 import json
 import math
@@ -41,6 +42,7 @@ HALF_S = 0.150           # the window either side of a hard hit: the gate's drop
 RAMP_MS = 15.0            # the renderer's micro-ramp: slower than a click, faster than any audible decay
 MAX_HALF_S = 0.5          # a window wider than this is not a cut, it would exempt a whole passage from the drop check
 MAX_WINDOWS = 64
+MAX_REST_S = 10.0         # a declared rest longer than this is a section, not a stinger's silence
 
 
 def _num(v):
@@ -82,7 +84,14 @@ def from_sheet(sheet, half_s=HALF_S):
             windows.append(w)
         if str(hit.get('kind', '')).lower() == 'cut' and round(t, 4) not in cuts:
             cuts.append(round(t, 4))
-    return {'windows': sorted(windows), 'cuts': sorted(cuts)}
+    rests = []
+    for hit in (sheet or {}).get('hits') or []:
+        if isinstance(hit, dict) and _num(hit.get('t')) and _num(hit.get('silence_after_s')) and float(hit['t']) >= 0 \
+                and 0.0 < float(hit['silence_after_s']) <= MAX_REST_S:
+            r = [round(float(hit['t']), 4), round(float(hit['t']) + float(hit['silence_after_s']), 4)]
+            if r not in rests:
+                rests.append(r)
+    return {'windows': sorted(windows), 'cuts': sorted(cuts), 'rests': sorted(rests)}
 
 
 def attach(score, sheet, half_s=HALF_S):
@@ -93,6 +102,8 @@ def attach(score, sheet, half_s=HALF_S):
         out['intentional_cut_windows'] = found['windows']
     if found['cuts'] and 'hard_cuts' not in out:
         out['hard_cuts'] = found['cuts']
+    if found['rests'] and 'declared_rests' not in out:
+        out['declared_rests'] = found['rests']          # the master dips the room under them (mastering.rest_dip)
     return out
 
 
@@ -106,6 +117,16 @@ def windows_of(score_or_list):
             a, b = float(w[0]), float(w[1])
             if 0.0 <= a < b and (b - a) <= 2.0 * MAX_HALF_S:
                 out.append((a, b))
+    return sorted(out)[:MAX_WINDOWS]
+
+
+def rests_of(score):
+    """The sheet's declared rests as [start_s, end_s] pairs (a hit's `silence_after_s`), sorted; malformed entries are dropped."""
+    out = []
+    for r in (score or {}).get('declared_rests') or []:
+        if isinstance(r, (list, tuple)) and len(r) == 2 and _num(r[0]) and _num(r[1]) and 0.0 <= float(r[0]) < float(r[1]) \
+                and float(r[1]) - float(r[0]) <= MAX_REST_S:
+            out.append((float(r[0]), float(r[1])))
     return sorted(out)[:MAX_WINDOWS]
 
 

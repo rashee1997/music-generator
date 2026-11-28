@@ -1,5 +1,5 @@
 {
- "stamp": "20261127T221054",
+ "stamp": "20261128T012452",
  "project": "highway_pursuit",
  "level": "WARN",
  "sources": {
@@ -8,6 +8,7 @@
    "feedback.json",
    "level.json",
    "rca.json",
+   "realism.json",
    "rows.json",
    "section_energy.json",
    "spectrogram.json",
@@ -18,20 +19,9 @@
   ],
   "stems": "18 processed stems from .cache/mix",
   "master": "out/_draft_highway_pursuit.wav",
-  "verdict": "2026-11-27T16:56:28Z"
+  "verdict": "2026-11-28T01:18:57Z"
  },
- "binding": [
-  {
-   "row": "section.energy",
-   "stem": null,
-   "level": "WARN",
-   "value": 0.6666666666666669,
-   "threshold": 0.5,
-   "unit": "rho",
-   "safety": -0.8333,
-   "detail": "Spearman rho 0.67 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)"
-  }
- ],
+ "binding": [],
  "advisory": [
   {
    "row": "stem.dropout",
@@ -258,7 +248,5 @@
   "experiments": []
  },
  "forensics": [],
- "notes": [
-  "section.energy: no domain module examines this row yet"
- ]
+ "notes": []
 }
