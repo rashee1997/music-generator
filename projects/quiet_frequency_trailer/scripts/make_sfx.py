@@ -53,7 +53,7 @@ def write(name, body):
     print('wrote presets/sfx/' + name + '.json', f'({SECONDS} s from {OFF} s)')
 
 
-def in_silence(t, edge=0.06):
+def in_silence(t, edge=0.15):
     """-90 dB inside the declared second of nothing, with short edges so the room falls away instead of clicking."""
     a, b = T.SILENCE
     if a - edge <= t <= b + edge:
