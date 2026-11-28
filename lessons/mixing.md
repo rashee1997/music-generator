@@ -45,5 +45,5 @@ lessons:
   check: sum stem power of sfx_* against the rest per 8 s window before touching a preset
   fix: 'per-sfx Gain in the mix preset fx table: engines -5 dB, road and tyres -4, device and alarm -3; leave impacts, horn, walkie (the cut-scene hits) alone'
   avoid: 'one cut on the whole fx role: it also lowers the hits the brief wants loud'
-  evidence: quiet_frequency_trailer, 2026-11-28, unrendered, unheard
+  evidence: 'quiet_frequency_trailer 2026-11-28: SFX cuts applied and certified in v05, but the stem-level SFX/music ratio (+3.4 dB) is measured before the mix gains, so the new balance in the final mix is not measured. Not listened to'
 ---

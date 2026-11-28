@@ -1,9 +1,9 @@
-[MISMATCH] channel.bars  -  a one-bar swing in a piece that breathes by the bar
-    immersive_7_1: immersive_7_1: 2 isolated per-bar channel conflict(s): bar 10 left/right balance +4.9 dB (+4.2 dB against -0.7 dB in both neighbours); bar 14 front/back balance -5.8 dB (-9.4 dB against -3.6 dB in both neighbours). Check that channel's automation, pan and polarity in that bar; a deliberate one-bar effect can be relaxed in the score gate with a measured reason, never by editing the row
-    channel energy (dB): FL -23.8, FR -25.2, FC -20.4, LFE -42.6, BL -22.1, BR -27.7, SL -26.2, SR -24.7
-    front-to-back by bar: 7: +9.9, 8: +16.7, 9: +14.9, 10: +16.6, 11: +11.4, 12: +12.7, 13: +0.4
-    the swing across these bars is 16.4 dB
-    fix here: if the swing follows the writing (a hit at the bar before, a dip after it): a bounded channel.bars balance_db with this table as the reason; if not, the part that jumps
-    tolerance: bounded relaxation exists: jump_db 8.0 (range 3.0..30.0), dropout_db 15.0 (range 6.0..40.0), balance_db 4.0 (range 1.0..12.0), stable_db 3.0 (range 1.0..9.0), polarity_corr -0.5 (range -0.95..-0.1), polarity_neighbor 0.2 (range 0.0..0.9), floor_abs_db -65.0 (range -100.0..-30.0), floor_programme_db 40.0 (range 10.0..80.0), balance_spread_db 2.5 (range 0.5..9.0)
-    do next (render): a channel is out of phase or silent for whole bars: check the pan and the width of that stem; a mono-sum cancellation shows here before the fold rows do
+[FAULT] dropout  -  rest
+    995 ms at 62.015 s (58.81 s before the end); master -27.0 dB there, floor -64.6 dB; carried by violas -32 dB, celli -32 dB, horns -33 dB, sfx_v8 -38 dB
+      -> rest: no stem in the score sounds there: a gap between phrases the row reads as a hole
+    70 ms at 120.300 s (0.52 s before the end); master -58.3 dB there, floor -64.6 dB; carried by sfx_boom -43 dB, violins_long -44 dB, sfx_impacts -54 dB, taiko -66 dB
+      -> tail: 0.52 s before the end of the file: the decay of the last sounds crosses the floor and wobbles around it
+    fix here: the score: a rest the row reads as a hole; fill it or make it a declared silence
+    tolerance: bounded relaxation exists: min_ms 20.0 (range 5.0..50.0), max_ms 1000.0 (range 500.0..2000.0), floor_below_db 45.0 (range 30.0..60.0), honour_rests True (choices [True])
+    do next (render): a stem or the mix falls to nothing outside a declared rest: check the note durations against the section edge (the renderer clips a note at the bar line), and check the reverb tail
 

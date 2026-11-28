@@ -59,7 +59,7 @@ lessons:
   symptom: a 25-40 ms hole just before the file's last 250 ms
   cause: an amplitude-modulated tail dips under the floor on its way out
   fix: end modulated parts well before the file ends (device off at 119.3 s) and fade the master over 1.5 s
-  evidence: trailer, 2026-11-28
+  evidence: 'trailer 2026-11-28, again with qf_boom (tau 1.6 s, ended 120.0 s): 70 ms hole at 120.3 s; tau 0.9 s ending 119.6 s cleared it'
 - id: M08
   title: channel.bars on the 7.1 format only
   keywords: [channel.bars, immersive_7_1, left right balance, front back, one-bar swing, format, relax refused]
