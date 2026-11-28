@@ -13,10 +13,11 @@
     "excite": {
      "kind": "periodic",
      "f0": 46.67,
-     "harmonics": 40,
-     "jitter": 0.02,
+     "harmonics": 32,
+     "jitter": 0.05,
+     "noise_mix": 0.2,
      "am_hz": 5.5,
-     "am_depth": 0.22
+     "am_depth": 0.3
     },
     "resonator": {
      "kind": "formant",

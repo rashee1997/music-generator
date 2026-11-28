@@ -70,7 +70,7 @@
   "note": "Copied from the shipped impact_cinematic default. ESTIMATE: its layers (a falling glide, a body, noise and a tail) and every level are starting values and were not re-measured for this cue; no recording of an impact was analysed.",
   "name": "qf_impact",
   "role": "fx",
-  "gain_db": -2.0,
+  "gain_db": 2.0,
   "spatial": {
     "azimuth": 130.0,
     "elevation": 30.0,

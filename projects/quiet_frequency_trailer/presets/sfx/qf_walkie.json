@@ -13,9 +13,9 @@
     "excite": {
      "kind": "periodic",
      "f0": 140.0,
-     "harmonics": 24,
-     "jitter": 0.06,
-     "noise_mix": 0.35,
+     "harmonics": 8,
+     "jitter": 0.12,
+     "noise_mix": 0.95,
      "am_hz": 5.5,
      "am_depth": 0.85
     },

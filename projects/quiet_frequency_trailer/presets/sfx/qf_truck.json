@@ -652,7 +652,8 @@
      "kind": "periodic",
      "f0": 311.0,
      "harmonics": 16,
-     "jitter": 0.004
+     "jitter": 0.004,
+     "noise_mix": 0.08
     },
     "resonator": {
      "kind": "formant",
@@ -1398,7 +1399,8 @@
      "kind": "periodic",
      "f0": 391.0,
      "harmonics": 14,
-     "jitter": 0.004
+     "jitter": 0.004,
+     "noise_mix": 0.08
     },
     "resonator": {
      "kind": "formant",
@@ -2140,7 +2142,7 @@
   ]
  },
  "role": "fx",
- "gain_db": -1.0,
+ "gain_db": 3.0,
  "reverb": 0.08,
  "spatial": {
   "azimuth": 175.0,

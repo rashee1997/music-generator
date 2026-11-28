@@ -3,7 +3,7 @@
  "character": "A hybrid-orchestral action trailer in one room: the ostinato and the low end carry the front, two engines and a radio sit inside the same space scenes as the strings, and the music and the sound effects are carved in each other's bands so both are heard.",
  "carve_db": -4.0,
  "max_boost_db": 12.0,
- "note": "Started from the Highway Pursuit mix and re-measured for this cue. SFX and music share one room (space.send_by_role gives the fx role the same send as the orchestra). The engines (role fx) duck smoothly under the drums with a 25 ms attack and a 1.6 s release (the sidechain's environment timing), the music is carved around the horn's formant, and the bed of engines is high-passed at 40 Hz in its presets so the sub belongs to the basses. The declared second of silence is dipped by -42 dB with a 25 ms release.",
+ "note": "Started from the Highway Pursuit mix and re-measured for this cue. SFX and music share one room (space.send_by_role gives the fx role the same send as the orchestra). The engines (role fx) duck smoothly under the drums with a 25 ms attack and a 1.6 s release (the sidechain's environment timing), the music is carved around the horn's formant, and the bed of engines is high-passed at 40 Hz in its presets so the sub belongs to the basses. The declared second of silence is dipped by -42 dB with a 25 ms release. 2026-11-28 listening note: the music is at 75 % (-2.5 dB on every music role, `fx` table); the effects keep their level, so at the -16 LUFS target they come forward at the hits, the passes and the cuts; the continuous road and wind are 10 dB lower; the engines, tyres, radio, alarm and device are noisier and less tonal, as real ones are.",
  "gain_staging": {
   "strategy": "legacy",
   "ref_lufs": -22.0,
@@ -1005,5 +1005,79 @@
  },
  "render": {
   "mix_workers": 2
+ },
+ "fx": {
+  "@bass": [
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -2.5
+    }
+   }
+  ],
+  "@drum": [
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -2.5
+    }
+   }
+  ],
+  "@melody": [
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -2.5
+    }
+   }
+  ],
+  "@chord": [
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -2.5
+    }
+   }
+  ],
+  "@pad": [
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -2.5
+    }
+   }
+  ],
+  "@ostinato": [
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -2.5
+    }
+   }
+  ],
+  "@texture": [
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -2.5
+    }
+   }
+  ],
+  "@counter": [
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -2.5
+    }
+   }
+  ]
  }
 }

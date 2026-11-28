@@ -124,13 +124,13 @@ write('qf_bike', dict(
          'the pitch curve is rpm / idle rpm through the gears of timeline.hero_bike (a shift multiplies the rpm by the ratio of the new gear to the old, '
          'with a 90 ms power gap on an upshift and a 120 ms blip on a downshift). Gear ratios are one listing\'s six-speed set.',
     model=dict(seconds=SECONDS, voices=[
-        dict(name='firing', gain_db=-5.0, excite=dict(kind='periodic', f0=round(BIKE_F_IDLE, 3), harmonics=64, jitter=0.04),
+        dict(name='firing', gain_db=-5.0, excite=dict(kind='periodic', f0=round(BIKE_F_IDLE, 3), harmonics=40, jitter=0.10, noise_mix=0.30),
              resonator=dict(kind='formant', formants=[[190, 100, 1.0], [430, 150, 0.85], [950, 320, 0.55], [2300, 800, 0.3]]),
              events=dict(kind='continuous'),
              control=dict(pitch=[dict(kind='curve', points=sample(bike_pitch, 0.05))], gain_db=[dict(kind='curve', points=sample(bike_gain_db, 0.05))])),
         dict(name='exhaust_body', gain_db=-13.0, excite=dict(kind='noise', color='brown'), resonator=dict(kind='bandpass', band=[60, 500], order=2),
              events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: bike_gain_db(t) - 5.0, 0.1))])),
-        dict(name='intake_rasp', gain_db=-19.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[1200, 4200], order=2),
+        dict(name='intake_rasp', gain_db=-27.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[1200, 4200], order=2),
              events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: bike_aux_db(-38.0, 30.0, t), 0.1))])),
         dict(name='valvetrain', gain_db=-30.0, excite=dict(kind='impact', tau=0.0006), resonator=dict(kind='modal', law='bar', f1=2400.0, n=4, t60=0.05),
              events=dict(kind='poisson', rate=45.0, start=0.2),
@@ -178,7 +178,7 @@ write('qf_v8', dict(
          'the pitch curve is rpm / idle rpm through timeline.villain_car, a shift multiplies the rpm by the ratio of the new gear to the old.',
     model=dict(seconds=SECONDS, voices=[
         dict(name='firing', gain_db=-5.0,
-             excite=dict(kind='periodic', f0=round(CAR_F_IDLE, 2), harmonics=40, jitter=0.02, am_hz=5.5, am_depth=0.22),
+             excite=dict(kind='periodic', f0=round(CAR_F_IDLE, 2), harmonics=32, jitter=0.05, noise_mix=0.20, am_hz=5.5, am_depth=0.30),
              resonator=dict(kind='formant', formants=[[85, 60, 1.0], [160, 80, 0.9], [330, 120, 0.7], [700, 260, 0.45], [1500, 500, 0.2]]),
              events=dict(kind='continuous'),
              control=dict(pitch=[dict(kind='curve', points=sample(car_pitch, 0.05))], gain_db=[dict(kind='curve', points=sample(car_gain_db, 0.05))])),
@@ -219,7 +219,7 @@ def squeal_env_db(squeals, t):
 def squeal_pitch(squeals, t):
     for a, b, m0, m1, _ in squeals:
         if a <= t <= b:
-            return (m0 + (m1 - m0) * (t - a) / (b - a)) * (1.0 + 0.05 * math.sin(2 * math.pi * 7.0 * t))     # a slip wobble near 7 Hz
+            return (m0 + (m1 - m0) * (t - a) / (b - a)) * (1.0 + 0.02 * math.sin(2 * math.pi * 7.0 * t))     # a slip wobble near 7 Hz
     return 1.0
 
 
@@ -230,11 +230,11 @@ def tyre_preset(name, squeals, f0, character, track_points, az, dist, hp):
         note=f'The tone is a pulse train at {f0:.0f} Hz with harmonics through a tyre-cavity resonance, wobbling near 7 Hz with the slip, over a scrub of noise; '
              'its pitch and level follow the slide (stick-slip: a self-excited oscillation at the contact, lateral creep the trigger).',
         model=dict(seconds=SECONDS, voices=[
-            dict(name='squeal', gain_db=0.0, excite=dict(kind='periodic', f0=f0, harmonics=8, jitter=0.03, noise_mix=0.12),
+            dict(name='squeal', gain_db=0.0, excite=dict(kind='periodic', f0=f0, harmonics=4, jitter=0.06, noise_mix=0.50),
                  resonator=dict(kind='formant', formants=[[f0 * 0.85, 300, 1.0], [f0 * 2.2, 600, 0.5]]), events=dict(kind='continuous'),
                  control=dict(pitch=[dict(kind='curve', points=sample(lambda t: squeal_pitch(squeals, t), 0.04))],
                               gain_db=[dict(kind='curve', points=sample(lambda t: squeal_env_db(squeals, t), 0.04))])),
-            dict(name='scrub', gain_db=-9.0, excite=dict(kind='noise', color='white'), resonator=dict(kind='bandpass', band=[1500, 6500], order=2),
+            dict(name='scrub', gain_db=-12.0, excite=dict(kind='noise', color='white'), resonator=dict(kind='bandpass', band=[1500, 6500], order=2),
                  events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: squeal_env_db(squeals, t) - 4.0, 0.04))])),
         ]),
         role='fx', gain_db=-4.0, reverb=0.05,
@@ -271,7 +271,7 @@ write('qf_road', dict(
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: (-56.0 + 40.0 * speed_rel(BIKE, t) ** 1.8 if t < 107.5 else -56.0)
                                                                       + window(t, 21.5, 118.6, 0.15) + in_silence(t), 0.2))])),
     ]),
-    role='fx', gain_db=-6.0, reverb=0.1,
+    role='fx', gain_db=-16.0, reverb=0.1,
     spatial=dict(azimuth=105.0, elevation=15.0, distance=2.0, space=SPACE, binaural=True, kind='bed'),
     eq=[dict(type='hp', f=140.0), dict(type='lp', f=8000.0)],
     sources=['engine', 'ESTIMATE: road and wind levels are starting values; the speed is a ratio, not metres per second']))
@@ -304,14 +304,14 @@ write('qf_truck', dict(
              control=dict(gain_db=[dict(kind='curve', points=sample(truck_gain, 0.05))])),
         dict(name='tyres', gain_db=-10.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[200, 3500], order=2), events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: truck_gain(t) - 6.0, 0.05))])),
-        dict(name='horn_low', gain_db=-5.0, excite=dict(kind='periodic', f0=311.0, harmonics=16, jitter=0.004),
+        dict(name='horn_low', gain_db=-5.0, excite=dict(kind='periodic', f0=311.0, harmonics=16, jitter=0.004, noise_mix=0.08),
              resonator=dict(kind='formant', formants=[[400, 150, 1.0], [1100, 300, 0.6], [2400, 700, 0.25]]), events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(horn_gain, 0.02))])),
-        dict(name='horn_high', gain_db=-6.5, excite=dict(kind='periodic', f0=391.0, harmonics=14, jitter=0.004),
+        dict(name='horn_high', gain_db=-6.5, excite=dict(kind='periodic', f0=391.0, harmonics=14, jitter=0.004, noise_mix=0.08),
              resonator=dict(kind='formant', formants=[[500, 160, 1.0], [1300, 320, 0.6], [2600, 700, 0.25]]), events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(horn_gain, 0.02))])),
     ]),
-    role='fx', gain_db=-1.0, reverb=0.08,
+    role='fx', gain_db=3.0, reverb=0.08,
     spatial=dict(azimuth=175.0, elevation=15.0, distance=40.0, space=SPACE, binaural=True, kind='spot', trajectory=traj([
         (58.5, 178.0, 40.0), (59.6, 170.0, 14.0), (60.2, 140.0, 5.0), (60.7, 90.0, 2.4), (61.3, 30.0, 6.0), (61.9, 5.0, 24.0)])),
     eq=[dict(type='hp', f=40.0), dict(type='lp', f=9000.0)],
@@ -350,7 +350,7 @@ write('qf_walkie', dict(
     seconds=SECONDS,
     note='No speech is synthesised. The carrier is a pulse train near 140 Hz amplitude-modulated at 5.5 Hz (a syllable rate) with noise, through three formant bands and the telephone band, then driven hard; the squelch tail is the burst of static after a transmission ends; the beep is 1.2 kHz for 90 ms.',
     model=dict(seconds=SECONDS, voices=[
-        dict(name='carrier', gain_db=-3.0, excite=dict(kind='periodic', f0=140.0, harmonics=24, jitter=0.06, noise_mix=0.35, am_hz=5.5, am_depth=0.85),
+        dict(name='carrier', gain_db=-3.0, excite=dict(kind='periodic', f0=140.0, harmonics=8, jitter=0.12, noise_mix=0.95, am_hz=5.5, am_depth=0.85),
              resonator=dict(kind='formant', formants=[[500, 130, 1.0], [1500, 300, 0.6], [2500, 500, 0.3]]), events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -8.0 + tx_gate(t), 0.04))])),
         dict(name='static', gain_db=-14.0, excite=dict(kind='noise', color='white'), resonator=dict(kind='bandpass', band=[800, 3400], order=2), events=dict(kind='continuous'),
@@ -376,17 +376,20 @@ def alarm_pitch(t):
 
 
 def alarm_gain(t):
-    return max(-90.0, -14.0 + window(t, ALARM_ON, ALARM_OFF, 0.2) * 1.0 - 14.0 * smooth((t - 8.0) / 2.6))
+    """A lab alarm: three short beeps a second (0.12 s on, 0.12 off), in the window the story gives it, fading as the Hero leaves."""
+    ph = t % 1.0
+    beep = 0.0 if (ph < 0.12 or 0.24 <= ph < 0.36 or 0.48 <= ph < 0.60) else -90.0
+    return max(-90.0, -12.0 + beep + window(t, ALARM_ON, ALARM_OFF, 0.05) - 14.0 * smooth((t - 8.0) / 2.6))
 
 
 write('qf_alarm', dict(
-    character='A lab alarm in a small hard room: a two-tone klaxon at 520 and 700 Hz that keeps going while the first minute of the story happens, with the 50 Hz hum of the building under it, both fading as the Hero leaves.',
+    character='A lab alarm in a small hard room: three short 1 kHz beeps a second that keep going while the first minute of the story happens, with the 50 Hz hum of the building under it, both fading as the Hero leaves.',
     seconds=SECONDS,
     note='The klaxon is a pulse train with ten harmonics at 520 Hz and a glide to 700 Hz at 1.7 cycles a second; the hum is the 50 Hz mains and its harmonics.',
     model=dict(seconds=SECONDS, voices=[
-        dict(name='klaxon', gain_db=0.0, excite=dict(kind='periodic', f0=520.0, harmonics=10, jitter=0.002),
+        dict(name='klaxon', gain_db=0.0, excite=dict(kind='periodic', f0=1000.0, harmonics=3, jitter=0.002),
              resonator=dict(kind='formant', formants=[[600, 300, 1.0], [1800, 600, 0.4]]), events=dict(kind='continuous'),
-             control=dict(pitch=[dict(kind='curve', points=sample(alarm_pitch, 0.02))], gain_db=[dict(kind='curve', points=sample(alarm_gain, 0.05))])),
+             control=dict(gain_db=[dict(kind='curve', points=sample(alarm_gain, 0.01))])),
         dict(name='hum', gain_db=-30.0, excite=dict(kind='periodic', f0=50.0, harmonics=8, jitter=0.0), resonator=dict(kind='formant', formants=[[100, 60, 1.0], [250, 100, 0.5]]),
              events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -4.0 - 24.0 * smooth((t - 9.0) / 3.0), 0.1))])),
     ]),
@@ -454,9 +457,9 @@ write('qf_device', dict(
     model=dict(seconds=SECONDS, voices=[
         dict(name='sub', gain_db=-6.0, excite=dict(kind='periodic', f0=41.0, harmonics=3, jitter=0.0, am_hz=1.0, am_depth=0.5), resonator=dict(kind='none'),
              events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: dev_gain(t) - 4.0, 0.1))])),
-        dict(name='carrier', gain_db=-14.0, excite=dict(kind='periodic', f0=1850.0, harmonics=3, jitter=0.002, am_hz=7.5, am_depth=0.6), resonator=dict(kind='none'),
+        dict(name='carrier', gain_db=-14.0, excite=dict(kind='periodic', f0=1850.0, harmonics=4, jitter=0.08, noise_mix=0.85, am_hz=7.5, am_depth=0.6), resonator=dict(kind='none'),
              events=dict(kind='continuous'),
-             control=dict(pitch=[dict(kind='curve', points=sample(dev_pitch, 0.1))], gain_db=[dict(kind='curve', points=sample(dev_gain, 0.1))])),
+             control=dict(gain_db=[dict(kind='curve', points=sample(dev_gain, 0.1))])),
     ]),
     role='fx', gain_db=-6.0, reverb=0.25,
     spatial=dict(azimuth=-30.0, elevation=45.0, distance=3.0, space=SPACE, binaural=True, kind='spot'),

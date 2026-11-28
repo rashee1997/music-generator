@@ -13,8 +13,9 @@
     "excite": {
      "kind": "periodic",
      "f0": 11.667,
-     "harmonics": 64,
-     "jitter": 0.04
+     "harmonics": 40,
+     "jitter": 0.1,
+     "noise_mix": 0.3
     },
     "resonator": {
      "kind": "formant",
@@ -20943,7 +20944,7 @@
    },
    {
     "name": "intake_rasp",
-    "gain_db": -19.0,
+    "gain_db": -27.0,
     "excite": {
      "kind": "noise",
      "color": "pink"
