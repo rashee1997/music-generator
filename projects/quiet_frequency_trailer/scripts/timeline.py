@@ -114,7 +114,7 @@ class Drive:
 def hero_bike():
     """The Hero's R15: a start in the lab yard at 14 s, the gate at 22 s, six gears up the highway, a downshift for each drift."""
     d = Drive(BIKE_GEARS, BIKE_IDLE, BIKE_LIMIT)
-    d.rpm(13.8, 1400, 0).rpm(15.0, 1400).rpm(15.4, 3600).rpm(15.9, 1500).rpm(18.0, 1450).rpm(19.2, 4200).rpm(19.7, 1450)
+    d.rpm(13.8, 1400, 0).rpm(15.0, 1400).rpm(15.4, 3600).rpm(15.9, 1500).rpm(18.0, 1450).rpm(19.2, 2800).rpm(19.7, 1450)
     d.rpm(21.5, 1450)
     d.shift(21.6, 1).rpm(21.7, 2600).rpm(23.2, 9400)
     d.shift(23.3, 2).rpm(25.0, 9300)
@@ -153,7 +153,7 @@ def hero_bike():
 def villain_car():
     """The Villain's V8: asleep until the alert at 24 s, six gears, a downshift under braking at the truck, a lunge at the wall."""
     d = Drive(CAR_GEARS, CAR_IDLE, CAR_LIMIT)
-    d.rpm(24.0, 700, 0).rpm(26.0, 700).rpm(26.4, 3200).rpm(27.0, 900).rpm(28.5, 900)
+    d.rpm(24.0, 700, 0).rpm(26.0, 700).rpm(26.4, 2000).rpm(27.0, 900).rpm(28.5, 900)
     d.shift(28.6, 1).rpm(28.7, 2200).rpm(30.5, 6000)
     d.shift(30.6, 2).rpm(32.5, 6100)
     d.shift(32.6, 3).rpm(35.0, 6200)
