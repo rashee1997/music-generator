@@ -137,3 +137,25 @@ or the other on a part, not both at one moment.
 `air` (corner_hz, drive, amount_db): the band at and above the corner is normalised and saturated, only what lands above twice the corner is kept, and
 it is added under the stem following its envelope. It creates content in a band the samples lack (a shelf cannot); measure it with `realism.air`.
 Starting values: corner 5000 Hz, drive 3, amount -24 dB.
+
+## Automation and recipes (all of it data)
+
+Both are keys in a chain, checked before the render like every other key, and neither adds per-effect code: the engine cuts the range into slices (`steps`) and runs the same function with each slice's values.
+
+**`automate`** moves numeric parameters over the effect's range. A pair `{"from": a, "to": b, "curve": "linear" | "exp"}` or keyframes `[[0, a], [0.6, b], [1, c]]` (time as a fraction of the range). Only an effect marked `"automatable": true` in `effects.json` takes it (`tremolo`, `gate_pulse`, `transient`, `air`, `ring_mod`, `tape_wobble`, `grain_cloud`, `shimmer`, `reverse_swell`); a Pedalboard plugin's own parameters and the effects that own their timing (`tape_stop`, `freeze`, `filter_sweep`) are refused with a message. Every value is checked against the parameter's range. Slices cross-fade, so a rate that changes does not click, but a very large `steps` on a slow rate is a waste: 8 to 16 is typical.
+
+```json
+{"type": "tremolo", "start_s": 24, "end_s": 32,
+ "automate": {"rate_hz": {"from": 0.8, "to": 10, "curve": "exp"}, "depth": [[0, 0.1], [1, 0.7]]}, "steps": 16}
+```
+
+**Recipes** are chain presets marked `"relative": true` with an `intent` list and a `provenance`; their effects carry `from` and `to` (fractions of the span) or `at` (a start only), and a chain places one in real time:
+
+```json
+"fx": [{"chain": "build_riser", "start_s": 24.0, "end_s": 32.0}, {"chain": "impact_bite", "start_s": 32.0, "end_s": 33.0, "mix": 0.8}]
+```
+
+`mix` on the placement scales every effect's own mix. `fx_engine.recipes("build")` lists the recipes tagged with an intent. Shipped: `build_riser` (filter opening while a tremolo speeds up and deepens), `pre_hit_vacuum` (the top closes before a hit), `impact_bite` (front-end teeth for a hit), `release_downlift`, `breathing_sustain` (a held chord that stops freezing), `drifting_pan_pad`, `grit_climax`. A project writes its own in `presets/fx/<name>.json`; a new recipe needs no code.
+
+Where the shapes come from: practitioner guidance, not measurement. Ramping an LFO's speed and depth together on a riser and automating distortion or filter for movement (Ableton, "Learn How to Make High-Impact Sounds for Movies and Trailers"); build and release tension, the largest impacts at the climax, near-silence before a hit (Violet Recording, "Sound Design for Trailers"); modest transient-shaper attack boosts to bring short strings forward (Soundfly, "Mixing and Processing a Virtual Orchestra"). Every figure is a starting value; none says it sounds good. Sources disagree on tape saturation and heavy compression for orchestral material, so none ships on by default.
+

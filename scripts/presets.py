@@ -213,6 +213,10 @@ def validate():
                 import fx_engine
                 if name == 'effects':
                     problems += [f'fx/effects: {w}' for w in fx_engine.library_problems()]
+                elif 'chain' in p and p.get('relative'):   # a recipe: fractions of a span, placed in 0..10 s to check it
+                    problems += [f'fx/{name}: {w} ({p.get("_source")})' for w in fx_engine.problems([{'chain': name, 'start_s': 0.0, 'end_s': 10.0}])]
+                    if not p.get('intent') or not p.get('provenance'):
+                        problems.append(f'fx/{name}: a recipe needs "intent" (a list) and "provenance" ({p.get("_source")})')
                 elif 'chain' in p:
                     problems += [f'fx/{name}: {w} ({p.get("_source")})' for w in fx_engine.problems(name)]   # by name: a chain inside a chain is refused
                 else:

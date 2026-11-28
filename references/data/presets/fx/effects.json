@@ -1,7 +1,7 @@
 {
   "name": "effects",
   "character": "The effect library of scripts/fx_engine: every effect's parameters, their ranges and their defaults. A chain in an instrument preset (`fx`) names effects from here.",
-  "provenance": "starting value: every default and range below is a working figure chosen so the effect is audible and safe on a stem, not a measurement. Physical relations (the Doppler delay is path length over the speed of sound, a wow depth in cents follows from the delay swing) are derived in the code from the parameters; the numbers are not. Replace one with a measured or cited value in a project's own `fx` preset and say so there.",
+  "provenance": "starting value: every default and range below is a working figure chosen so the effect is audible and safe on a stem, not a measurement. Physical relations (the Doppler delay is path length over the speed of sound, a wow depth in cents follows from the delay swing) are derived in the code from the parameters; the numbers are not. Replace one with a measured or cited value in a project's own `fx` preset and say so there. Automation and recipes: starting values drawn from practitioner guidance (ramping an LFO's rate and depth together on a riser, automating distortion or filter for movement, saving the biggest impacts for the climax; Ableton 'Learn How to Make High-Impact Sounds for Movies and Trailers', Violet Recording 'Sound Design for Trailers'); not measurements.",
   "common": {
     "mix": {
       "default": 1.0,
@@ -37,6 +37,18 @@
       "max": 4294967295,
       "unit": "",
       "text": "random seed of this effect; none derives one from the stem"
+    },
+    "automate": {
+      "default": null,
+      "type": "object",
+      "text": "parameters that move over the effect range: {\"rate_hz\": {\"from\": 0.5, \"to\": 12.0, \"curve\": \"exp\"}} or keyframes {\"depth\": [[0, 0.1], [0.6, 0.4], [1, 0.9]]} (time as a fraction of the range); only on an effect marked \"automatable\""
+    },
+    "steps": {
+      "default": 8,
+      "min": 2,
+      "max": 64,
+      "unit": "",
+      "text": "how many slices an automated range is cut into; each slice runs the effect with that slice's values and the slices cross-fade"
     }
   },
   "effects": {
@@ -156,7 +168,8 @@
           "unit": "cents",
           "text": "peak pitch deviation of the fast drift"
         }
-      }
+      },
+      "automatable": true
     },
     "stutter": {
       "character": "Beat repeat: the first slice of the range repeats until the range ends, each repeat a little quieter.",
@@ -248,7 +261,8 @@
           "unit": "dB",
           "text": "cloud level against the stem's own level in the range"
         }
-      }
+      },
+      "automatable": true
     },
     "filter_sweep": {
       "character": "A filter whose cutoff glides between two frequencies over the range: the riser sweep and the downlifter.",
@@ -311,7 +325,8 @@
           "unit": "Hz",
           "text": "carrier frequency"
         }
-      }
+      },
+      "automatable": true
     },
     "tremolo": {
       "character": "Amplitude tremolo, and an auto-pan when pan_depth is above zero.",
@@ -337,7 +352,8 @@
           "unit": "",
           "text": "how far the sound swings between the channels (opposite phase left to right)"
         }
-      }
+      },
+      "automatable": true
     },
     "gate_pulse": {
       "character": "A rhythmic gate: the stem chopped by a pulse of a given rate and duty.",
@@ -370,7 +386,8 @@
           "unit": "ms",
           "text": "edge smoothing of the pulse"
         }
-      }
+      },
+      "automatable": true
     },
     "reverse_swell": {
       "character": "A reverse reverb: a swell that builds into every note, made by reverberating the reversed stem.",
@@ -389,7 +406,8 @@
           "unit": "dB",
           "text": "swell level against the stem's own level"
         }
-      }
+      },
+      "automatable": true
     },
     "shimmer": {
       "character": "A shimmering reverb: the tail is pitched up and fed back, so each repeat sits an octave above the last.",
@@ -436,7 +454,8 @@
           "unit": "dB",
           "text": "shimmer level against the stem's own level"
         }
-      }
+      },
+      "automatable": true
     },
     "transient": {
       "character": "Transient shaper: sharpen or soften the front of a note, and lift or tuck its body.",
@@ -455,7 +474,8 @@
           "unit": "dB",
           "text": "gain on the body after the front"
         }
-      }
+      },
+      "automatable": true
     },
     "pedalboard": {
       "character": "Any built-in Pedalboard plugin in the chain: Chorus, Phaser, Delay, Reverb, Distortion, Bitcrush, LadderFilter, PitchShift and the rest of the allow-list.",
@@ -533,7 +553,8 @@
           "unit": "dB",
           "text": "level of the added harmonics under the stem"
         }
-      }
+      },
+      "automatable": true
     }
   }
 }

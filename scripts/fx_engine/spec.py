@@ -25,7 +25,7 @@ import os
 
 import presets
 
-COMMON_KEYS = ('mix', 'start_s', 'end_s', 'edge_ms', 'seed')
+COMMON_KEYS = ('mix', 'start_s', 'end_s', 'edge_ms', 'seed', 'automate', 'steps')
 
 
 def library():
@@ -66,6 +66,40 @@ def _check_value(label, meta, value):
     return None
 
 
+def _recipe(i, item, depth):
+    """A recipe: {"chain": name, "start_s": a, "end_s": b, "mix": m?}. The chain preset's effects carry `from` and `to` (fractions of
+    the span, 0 and 1 by default) or `at` (a start only, for a timed effect); they become real times inside [start_s, end_s].
+    `mix` scales every effect's own mix. Returns (effects, problems)."""
+    if depth:
+        return [], [f'fx[{i}]: a recipe inside a named chain is not followed: write its effects out']
+    unknown = sorted(set(item) - {'chain', 'start_s', 'end_s', 'mix'})
+    if unknown:
+        return [], [f'fx[{i}] recipe: unknown key(s) {unknown}; a recipe takes chain, start_s, end_s and mix']
+    a, b = item.get('start_s'), item.get('end_s')
+    if not (_is_number(a) and _is_number(b)) or float(b) <= float(a):
+        return [], [f'fx[{i}] recipe "{item["chain"]}": needs numbers start_s < end_s (the span its fractions are placed in)']
+    preset = presets.exact('fx', item['chain'])
+    if not preset or not isinstance(preset.get('chain'), list):
+        known = sorted(k for k, v in presets.load('fx').items() if isinstance(v, dict) and 'chain' in v)
+        return [], [f'fx[{i}]: no chain preset "{item["chain"]}". Known: {known}']
+    span, out, problems = float(b) - float(a), [], []
+    for j, e in enumerate(preset['chain']):
+        if not isinstance(e, dict):
+            problems.append(f'recipe "{item["chain"]}"[{j}]: an effect is an object with a "type"')
+            continue
+        e = dict(e)
+        frm, to, at = e.pop('from', None), e.pop('to', None), e.pop('at', None)
+        if at is not None:
+            e['start_s'] = round(float(a) + float(at) * span, 4)
+        else:
+            e['start_s'] = round(float(a) + float(0.0 if frm is None else frm) * span, 4)
+            e['end_s'] = round(float(a) + float(1.0 if to is None else to) * span, 4)
+        if item.get('mix') is not None:
+            e['mix'] = round(float(e.get('mix', 1.0)) * float(item['mix']), 4)
+        out.append(e)
+    return out, problems
+
+
 def _flatten(chain, depth=0):
     """Expand named chains: [effect dict | chain name]. Returns (items, problems). One level of naming only."""
     if isinstance(chain, str):
@@ -86,11 +120,53 @@ def _flatten(chain, depth=0):
             sub, sub_problems = _flatten(preset['chain'], depth + 1)
             items += sub
             problems += [f'chain "{item}": {p}' for p in sub_problems]
+        elif isinstance(item, dict) and 'chain' in item:
+            exp, exp_problems = _recipe(i, item, depth)
+            items += exp
+            problems += exp_problems
         elif isinstance(item, dict):
             items.append(item)
         else:
             problems.append(f'fx[{i}]: an effect is an object with a "type", got {item!r}')
     return items, problems
+
+
+def _automation_problems(label, entry, metas, auto):
+    """Problems of an `automate` block: only on an automatable effect, only numeric parameters, every value inside the parameter's range."""
+    if auto is None:
+        return []
+    if not entry.get('automatable'):
+        return [f'{label}: "automate" is not allowed on this effect (it is not marked automatable in the library)']
+    out = []
+    for key, spec_ in auto.items():
+        meta = metas.get(key)
+        if meta is None or key in COMMON_KEYS or 'min' not in meta:
+            out.append(f'{label} automate "{key}": not a numeric parameter of this effect')
+            continue
+        pts = automation_points(spec_)
+        if pts is None:
+            out.append(f'{label} automate "{key}": write {{"from": a, "to": b, "curve": "linear|exp"}} or keyframes [[0, a], [1, b]]')
+            continue
+        for _t, v in pts:
+            msg = _check_value(f'{label} automate "{key}"', meta, v)
+            if msg:
+                out.append(msg)
+    return out
+
+
+def automation_points(spec_):
+    """[(fraction, value), ...] sorted, or None when the block is not understood."""
+    try:
+        if isinstance(spec_, dict):
+            if set(spec_) - {'from', 'to', 'curve'} or 'from' not in spec_ or 'to' not in spec_ or spec_.get('curve', 'linear') not in ('linear', 'exp'):
+                return None
+            return [(0.0, float(spec_['from'])), (1.0, float(spec_['to']))]
+        pts = sorted((float(t), float(v)) for t, v in spec_)
+        if len(pts) < 2 or pts[0][0] < 0.0 or pts[-1][0] > 1.0:
+            return None
+        return pts
+    except (TypeError, ValueError):
+        return None
 
 
 def normalise(chain):
@@ -118,6 +194,7 @@ def normalise(chain):
             if msg:
                 problems.append(msg)
             values[key] = v
+        problems += _automation_problems(label, entry, metas, values.get('automate'))
         s, e = values.get('start_s'), values.get('end_s')
         if _is_number(s) and _is_number(e) and float(e) <= float(s):
             problems.append(f'{label}: end_s ({e}) must be after start_s ({s})')

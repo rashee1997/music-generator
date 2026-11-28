@@ -94,7 +94,7 @@ class Library(unittest.TestCase):
 
 class Chains(unittest.TestCase):
     def test_every_shipped_chain_is_valid_and_runs(self):
-        names = sorted(k for k, v in presets.load('fx').items() if 'chain' in v)
+        names = sorted(k for k, v in presets.load('fx').items() if 'chain' in v and not v.get('relative'))   # recipes are placed in a span: test_fx_automation_recipes
         self.assertGreaterEqual(len(names), 8)
         x = noise(3.0)
         for name in names:

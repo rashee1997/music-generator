@@ -1,0 +1,48 @@
+{
+  "name": "build_riser",
+  "character": "A part that climbs: a low-pass opening over the span while a tremolo speeds up and deepens together.",
+  "relative": true,
+  "intent": [
+    "build",
+    "tension",
+    "riser"
+  ],
+  "provenance": "starting value, not a measurement: the shape follows practitioner guidance - Ableton, 'Learn How to Make High-Impact Sounds for Movies and Trailers' (pitch and filter automation to climb, ramp an LFO's speed and depth together on a riser, automate distortion for movement); Violet Recording, 'Sound Design for Trailers' (build and release tension, the biggest impacts at the climax, near-silence before a hit); native Instruments blog, 'Epic movie trailer impacts' (layer, deconstruct, resample). Times are fractions of the span the recipe is placed in ({\"chain\": \"build_riser\", \"start_s\": a, \"end_s\": b}).",
+  "chain": [
+    {
+      "type": "filter_sweep",
+      "kind": "lowpass",
+      "f_start_hz": 300.0,
+      "f_end_hz": 12000.0,
+      "q": 1.2,
+      "from": 0.0,
+      "to": 1.0,
+      "after": "bypass"
+    },
+    {
+      "type": "tremolo",
+      "from": 0.0,
+      "to": 1.0,
+      "depth": 0.5,
+      "rate_hz": 0.8,
+      "automate": {
+        "rate_hz": {
+          "from": 0.8,
+          "to": 10.0,
+          "curve": "exp"
+        },
+        "depth": [
+          [
+            0,
+            0.1
+          ],
+          [
+            1,
+            0.7
+          ]
+        ]
+      },
+      "steps": 16
+    }
+  ]
+}
