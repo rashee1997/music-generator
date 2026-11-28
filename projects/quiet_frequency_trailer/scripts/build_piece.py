@@ -757,7 +757,9 @@ def main():
                    'tensions': ['ostinato', 'pedal', 'cluster', 'silence_before', 'unresolved_dominant'], 'avoid': ['joyful', 'playful']},
         'mix_intent': {'hero': 'horns', 'leave_free_hz': []},
         'medium': {'model': 'iso9613', 'state': {'temperature_k': 291.15, 'pressure_pa': 101325, 'rh_percent': 70}},
-        'gate': {'tempo.audio': {'mode': 'skip', 'reason': 'measured on the render (attempt 1): the beat tracker reads 59.9 BPM against the declared 120 (the half-time octave of the same pulse: 60 BPM is the heart, the engines and the half-bar the cycles shift against); the chase pulse is a set of odd-length cycles moved bar by bar on purpose, so no tracker locks onto the written beat'}},
+        'gate': {'channel.bars': {'mode': 'relax', 'balance_db': 6.5,
+                                  'reason': 'measured on the immersive_7_1 render (two renders, identical): bar 10 (18-20 s) left/right +4.9 dB (+4.2 dB against -0.7 dB in both neighbours) and bar 14 (26-28 s) front/back -5.8 dB (-9.4 dB against -3.6 dB); channel energy FL -23.8, FR -25.2, BL -22.1, BR -27.7 dB. rca verdict mismatch: the swings follow the writing. Bar 10 is the quiet take where the kick (placed left, 25 degrees from the basses) is the only loud part; bar 14 is the Villain V8 waking behind the camera (172 degrees), which is the picture. The stereo master is certified without it. Bounded: balance_db 4.0 -> 6.5 (range 1-12).'},
+                 'tempo.audio': {'mode': 'skip', 'reason': 'measured on the render (attempt 1): the beat tracker reads 59.9 BPM against the declared 120 (the half-time octave of the same pulse: 60 BPM is the heart, the engines and the half-bar the cycles shift against); the chase pulse is a set of odd-length cycles moved bar by bar on purpose, so no tracker locks onto the written beat'}},
         'plan': {'sections': sections_json()},
         'tracks': tracks, 'mix': {'tracks': {}},
     }

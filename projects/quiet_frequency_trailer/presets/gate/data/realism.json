@@ -7,10 +7,10 @@
       "stems": 28
     },
     "1_timbre_loudness": {
-      "value": 11.05,
-      "hf_shift_db": 5.32,
-      "centroid_quiet_hz": 149.8,
-      "centroid_loud_hz": 534.5,
+      "value": 11.07,
+      "hf_shift_db": 5.19,
+      "centroid_quiet_hz": 150.2,
+      "centroid_loud_hz": 537.0,
       "verdict": "PASS",
       "note": "timbre follows loudness"
     },
@@ -21,14 +21,14 @@
       "note": "34 player(s) across 11 section part(s)"
     },
     "3_transient": {
-      "value": 0.8983,
-      "onsets": 40,
+      "value": 0.9045,
+      "onsets": 43,
       "verdict": "PASS",
       "note": "attacks vary"
     },
     "4_depth": {
-      "value": -0.13,
-      "wet_share": 0.5074,
+      "value": -0.14,
+      "wet_share": 0.5079,
       "verdict": "PASS",
       "note": "detail sits in front of the room"
     },
@@ -41,7 +41,7 @@
       "note": "every far source has an air model (the score's medium, ISO 9613-1)"
     },
     "7_openness": {
-      "value": 16.94,
+      "value": 16.95,
       "verdict": "PASS",
       "note": "air survives the peak"
     },
@@ -53,10 +53,10 @@
       "note": "metronomic at the bar"
     },
     "5_low_mid": {
-      "value": 0.83,
+      "value": 0.82,
       "low_mid_over_sub_db": -1.8,
-      "low_mid_growth_db": 5.46,
-      "sub_growth_db": 1.94,
+      "low_mid_growth_db": 5.49,
+      "sub_growth_db": 1.95,
       "verdict": "WARN",
       "note": "low-mids thicken or grow into the peak"
     },
@@ -140,7 +140,7 @@
     },
     "13_sub_weight": {
       "value": -7.2,
-      "loss_db": 2.4,
+      "loss_db": 2.6,
       "carriers": 7,
       "verdict": "PASS",
       "note": "the sub the stems carry reaches the master"

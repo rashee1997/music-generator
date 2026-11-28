@@ -476,8 +476,8 @@
         {
           "section": "the_take",
           "start_s": 12.0,
-          "measured_db": -33.22,
-          "expected_db": -33.22,
+          "measured_db": -33.57,
+          "expected_db": -33.57,
           "dyn": 0.45
         }
       ]
@@ -600,8 +600,8 @@
         {
           "section": "the_alert",
           "start_s": 24.0,
-          "measured_db": -22.73,
-          "expected_db": -22.73,
+          "measured_db": -22.78,
+          "expected_db": -22.78,
           "dyn": 0.65
         }
       ]

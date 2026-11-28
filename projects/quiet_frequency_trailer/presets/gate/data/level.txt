@@ -3,5 +3,5 @@ min_db: -125.2
 max_db: -9.8
 median_db: -19.4
 p05_db: -30.5
-p95_db: -14.4
+p95_db: -14.3
 target_lufs: -16 (not the same unit as dBFS)

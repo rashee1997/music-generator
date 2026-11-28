@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-28T09:53:16Z",
+  "timestamp": "2026-11-28T10:20:23Z",
   "status": "PASSED",
   "deliverables": {
     "master_wav": "/home/user/music-generator/projects/quiet_frequency_trailer/out/quiet_frequency_trailer.wav",
@@ -34,8 +34,8 @@
     "stems_dir": "/home/user/music-generator/projects/quiet_frequency_trailer/stems",
     "stem_count": 28,
     "metadata": "/home/user/music-generator/projects/quiet_frequency_trailer/out/quiet_frequency_trailer.json",
-    "version": 1,
-    "versioned_master": "quiet_frequency_trailer_v01.wav",
+    "version": 2,
+    "versioned_master": "quiet_frequency_trailer_v02.wav",
     "metadata_tagged": [
       "title",
       "artist",
@@ -45,17 +45,17 @@
       "license",
       "description"
     ],
-    "versioned_metadata": "/home/user/music-generator/projects/quiet_frequency_trailer/out/quiet_frequency_trailer_v01.json"
+    "versioned_metadata": "/home/user/music-generator/projects/quiet_frequency_trailer/out/quiet_frequency_trailer_v02.json"
   },
   "measurements": {
-    "integrated_lufs": -16.167415118232608,
+    "integrated_lufs": -16.16673636446201,
     "true_peak_dbtp": -1.5007482700741783,
-    "crest_factor_db": 16.53227852575329,
-    "mono_loss_db": -0.5019751437363272,
-    "mono_phone_loss_db": -0.29939759343345146,
+    "crest_factor_db": 16.5313494349195,
+    "mono_loss_db": -0.5019384963338267,
+    "mono_phone_loss_db": -0.29923587420632275,
     "clipped_samples": 0,
     "mean_roughness": 0.045,
-    "max_roughness": 0.0869,
+    "max_roughness": 0.0871,
     "witek_bsi": 0.02,
     "melodic_entropy_bits": 2.32,
     "spiral_strain_end": 0.82
@@ -551,7 +551,7 @@
     {
       "level": "PASS",
       "check": "stem.dropout",
-      "detail": "stem \"sfx_bike\": longest hole 0 ms (limit 20-1000 ms), floor -61.2 dBFS; 0 hole(s)"
+      "detail": "stem \"sfx_bike\": longest hole 0 ms (limit 20-1000 ms), floor -61.6 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -571,7 +571,7 @@
     {
       "level": "PASS",
       "check": "stem.dead",
-      "detail": "stem \"sfx_bike\": own median -33.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"sfx_bike\": own median -33.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -891,7 +891,7 @@
     {
       "level": "PASS",
       "check": "stem.dead",
-      "detail": "stem \"sfx_v8\": own median -22.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"sfx_v8\": own median -22.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -1561,7 +1561,7 @@
     {
       "level": "PASS",
       "check": "audio",
-      "detail": "dynamics move (short-term loudness std 3.5 dB, range 11.5 LU)"
+      "detail": "dynamics move (short-term loudness std 3.5 dB, range 11.4 LU)"
     },
     {
       "level": "WARN",
@@ -1591,7 +1591,7 @@
     {
       "level": "WARN",
       "check": "cochlear_roughness",
-      "detail": "one-frame roughness at 113.0s (0.087 > 0.072), 2 frame(s) of 43 (a FAIL needs 5): reads as a transient or a drum hit, not a sustained clash"
+      "detail": "one-frame roughness at 113.0s (0.087 > 0.071), 2 frame(s) of 43 (a FAIL needs 5): reads as a transient or a drum hit, not a sustained clash"
     },
     {
       "level": "PASS",
@@ -1746,7 +1746,7 @@
     {
       "level": "PASS",
       "check": "sfx_eval",
-      "detail": "track \"sfx_bike\": no tonal excess, no cycle, transients vary, centroid 135 Hz, crest 5.8"
+      "detail": "track \"sfx_bike\": no tonal excess, no cycle, transients vary, centroid 135 Hz, crest 6.1"
     },
     {
       "level": "PASS",
@@ -1761,7 +1761,7 @@
     {
       "level": "PASS",
       "check": "sfx_eval",
-      "detail": "track \"sfx_v8\": no tonal excess, no cycle, transients vary, centroid 197 Hz, crest 8.1"
+      "detail": "track \"sfx_v8\": no tonal excess, no cycle, transients vary, centroid 196 Hz, crest 8.1"
     },
     {
       "level": "PASS",
@@ -1966,22 +1966,22 @@
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"taiko\" and \"low_swell\" overlap within 4 dB in sub, mid, presence; separate them with level, pan or a complementary EQ rather than more compression"
+      "detail": "\"timpani\" and \"bass_drum\" overlap within 4 dB in low-mid, mid, presence; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"taiko\" and \"violins_long\" overlap within 4 dB in mid, presence, brilliance; separate them with level, pan or a complementary EQ rather than more compression"
+      "detail": "\"timpani\" and \"sfx_alarm\" overlap within 4 dB in mid, brilliance, air; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "WARN",
       "check": "mix:spectral overlap",
-      "detail": "\"bass_drum\" and \"timpani\" overlap within 4 dB in low-mid, mid, presence; separate them with level, pan or a complementary EQ rather than more compression"
+      "detail": "\"timpani\" and \"sfx_bike\" overlap within 4 dB in sub, low-mid, presence; separate them with level, pan or a complementary EQ rather than more compression"
     },
     {
       "level": "WARN",
       "check": "mix:low-end congestion",
-      "detail": "7 stems carry their weight below 120 Hz (taiko, bass_drum, sfx_heartbeat, low_swell, basses, tuba, basses_pizz): one owner for the sub, the rest high-passed, is clearer and uses less headroom"
+      "detail": "7 stems carry their weight below 120 Hz (taiko, bass_drum, sfx_heartbeat, low_swell, tuba, basses_pizz, basses): one owner for the sub, the rest high-passed, is clearer and uses less headroom"
     },
     {
       "level": "INFO",
@@ -2031,19 +2031,19 @@
         "warns": 0,
         "rows": 237,
         "profile": "quiet_frequency",
-        "total_ms": 7219.4202419996145,
+        "total_ms": 1978.8826770000014,
         "timings": {
           "bass_drum": 0.0,
-          "basses": 3091.902638000647,
-          "basses_pizz": 3057.4825619996773,
-          "celli": 2738.380196000435,
+          "basses": 0.0,
+          "basses_pizz": 0.0,
+          "celli": 0.0,
           "choir": 0.0,
           "cymbals": 0.0,
           "horns": 0.0,
           "low_swell": 0.0,
-          "piano_theme": 2860.663695000767,
+          "piano_theme": 0.0,
           "sfx_alarm": 0.0,
-          "sfx_bike": 0.0,
+          "sfx_bike": 822.7907099999356,
           "sfx_device": 0.0,
           "sfx_heartbeat": 0.0,
           "sfx_impacts": 0.0,
@@ -2051,14 +2051,14 @@
           "sfx_truck": 0.0,
           "sfx_tyres_bike": 0.0,
           "sfx_tyres_v8": 0.0,
-          "sfx_v8": 0.0,
+          "sfx_v8": 924.6973219997017,
           "sfx_walkie": 0.0,
-          "snare": 1798.8251840006342,
+          "snare": 0.0,
           "taiko": 0.0,
           "timpani": 0.0,
           "trombones": 0.0,
           "tuba": 0.0,
-          "violas": 2269.5115859996804,
+          "violas": 0.0,
           "violins_long": 0.0,
           "violins_staccato": 0.0
         },
@@ -3979,7 +3979,7 @@
             "margin": -20.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_bike\": longest hole 0 ms (limit 20-1000 ms), floor -61.2 dBFS; 0 hole(s)",
+            "detail": "stem \"sfx_bike\": longest hole 0 ms (limit 20-1000 ms), floor -61.6 dBFS; 0 hole(s)",
             "holes": []
           },
           {
@@ -3999,10 +3999,10 @@
               12.6,
               12.3,
               12.2,
-              12.7,
-              12.8,
-              12.1,
-              12.2
+              12.9,
+              12.5,
+              13.1,
+              12.4
             ],
             "exempted": []
           },
@@ -4045,14 +4045,14 @@
             "margin": -12.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_bike\": own median -33.2 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+            "detail": "stem \"sfx_bike\": own median -33.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
             "fail": false,
             "table": [
               {
                 "section": "the_take",
                 "start_s": 12.0,
-                "measured_db": -33.22,
-                "expected_db": -33.22,
+                "measured_db": -33.57,
+                "expected_db": -33.57,
                 "dyn": 0.45
               }
             ],
@@ -5084,11 +5084,12 @@
             "drops": [
               12.7,
               14.1,
-              14.3,
+              14.4,
               14.2,
-              12.5,
+              12.4,
               15.5,
-              12.9
+              12.8,
+              12.1
             ],
             "exempted": []
           },
@@ -5131,14 +5132,14 @@
             "margin": -12.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_v8\": own median -22.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+            "detail": "stem \"sfx_v8\": own median -22.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
             "fail": false,
             "table": [
               {
                 "section": "the_alert",
                 "start_s": 24.0,
-                "measured_db": -22.73,
-                "expected_db": -22.73,
+                "measured_db": -22.78,
+                "expected_db": -22.78,
                 "dyn": 0.65
               }
             ],
@@ -6724,8 +6725,8 @@
           }
         ],
         "duration_s": 123.28598639455782,
-        "cached_stems": 22,
-        "measured_stems": 6
+        "cached_stems": 26,
+        "measured_stems": 2
       },
       "mix": {
         "stage": "mix",
@@ -6743,17 +6744,17 @@
             "margin": 0.0,
             "worst_times_s": [],
             "calibrated": true,
-            "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 293 event(s) rejected as a dense burst, 29 as a steep attack; max cluster span 1.474 ms"
+            "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 292 event(s) rejected as a dense burst, 30 as a steep attack; max cluster span 1.474 ms"
           },
           {
             "row": "loudness",
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -16.167415118232608,
+            "value": -16.16673636446201,
             "unit": "LUFS",
             "threshold": -16.0,
-            "margin": -2.332584881767392,
+            "margin": -2.333263635537989,
             "worst_times_s": [],
             "calibrated": true,
             "detail": "-16.2 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -6802,10 +6803,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 66.91277819114737,
+            "value": 66.9144396525671,
             "unit": "dB",
             "threshold": 12.0,
-            "margin": -54.91277819114737,
+            "margin": -54.9144396525671,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "end level -127.6 dBFS (limit -45), decay over final 300 ms 66.9 dB (limit 12); natural release"
@@ -6828,10 +6829,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 1.6055624397545395e-05,
+            "value": 1.6175349484970254e-05,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.0009839443756024546,
+            "margin": -0.0009838246505150298,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00002 (limit 0.001)"
@@ -6854,70 +6855,70 @@
                 "start_s": 0.0,
                 "end_s": 12.0,
                 "energy": 0.25,
-                "level_db": -25.392410887904663
+                "level_db": -25.39404408724469
               },
               {
                 "name": "the_take",
                 "start_s": 12.0,
                 "end_s": 24.0,
                 "energy": 0.45,
-                "level_db": -25.695120120930536
+                "level_db": -25.679097817262594
               },
               {
                 "name": "the_alert",
                 "start_s": 24.0,
                 "end_s": 36.0,
                 "energy": 0.65,
-                "level_db": -18.44369723133855
+                "level_db": -18.420604197227647
               },
               {
                 "name": "the_chase",
                 "start_s": 36.0,
                 "end_s": 52.0,
                 "energy": 0.9,
-                "level_db": -18.65271217538424
+                "level_db": -18.654589361436134
               },
               {
                 "name": "the_flyover",
                 "start_s": 52.0,
                 "end_s": 58.0,
                 "energy": 0.8,
-                "level_db": -19.98668076877427
+                "level_db": -19.987212130276127
               },
               {
                 "name": "the_truck",
                 "start_s": 58.0,
                 "end_s": 64.0,
                 "energy": 0.6,
-                "level_db": -37.949714900871676
+                "level_db": -37.98233463233074
               },
               {
                 "name": "the_escalation",
                 "start_s": 64.0,
                 "end_s": 88.0,
                 "energy": 0.95,
-                "level_db": -18.44962173310461
+                "level_db": -18.45936720411888
               },
               {
                 "name": "the_wall",
                 "start_s": 88.0,
                 "end_s": 104.0,
                 "energy": 1.0,
-                "level_db": -18.00989873069328
+                "level_db": -18.02769699404026
               },
               {
                 "name": "the_dropout",
                 "start_s": 104.0,
                 "end_s": 110.0,
                 "energy": 0.35,
-                "level_db": -18.660896390506828
+                "level_db": -18.66775389897162
               },
               {
                 "name": "the_signal",
                 "start_s": 110.0,
                 "end_s": 120.0,
                 "energy": 0.3,
-                "level_db": -25.02665615064776
+                "level_db": -25.133336214425206
               }
             ]
           }
@@ -7036,6 +7037,12 @@
     {
       "attempt": 12,
       "time": "2026-11-28T09:53:16Z",
+      "fails": 0,
+      "failing": []
+    },
+    {
+      "attempt": 13,
+      "time": "2026-11-28T10:20:23Z",
       "fails": 0,
       "failing": []
     }
