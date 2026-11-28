@@ -2,11 +2,11 @@
   "meta": {
     "stage": "stem",
     "mode": "full",
-    "fails": 1,
+    "fails": 0,
     "warns": 0,
     "rows": 238,
     "profile": "quiet_frequency",
-    "total_ms": 6153.380275000018,
+    "total_ms": 4813.850782000031,
     "timings": {
       "bass_drum": 0.0,
       "basses": 0.0,
@@ -17,17 +17,17 @@
       "horns": 0.0,
       "low_swell": 0.0,
       "piano_theme": 0.0,
-      "sfx_alarm": 2892.6680019999935,
-      "sfx_bike": 872.2503879999977,
-      "sfx_device": 733.0605459999902,
+      "sfx_alarm": 0.0,
+      "sfx_bike": 907.4765889999981,
+      "sfx_device": 737.8154870000344,
       "sfx_heartbeat": 0.0,
       "sfx_impacts": 0.0,
-      "sfx_road": 0.0,
-      "sfx_truck": 1922.8495389999694,
-      "sfx_tyres_bike": 1153.6626060000117,
-      "sfx_tyres_v8": 1188.519192000001,
-      "sfx_v8": 589.3488559999582,
-      "sfx_walkie": 778.8438560000372,
+      "sfx_road": 839.3280139999888,
+      "sfx_truck": 2195.4220750000104,
+      "sfx_tyres_bike": 1233.2794290000493,
+      "sfx_tyres_v8": 1475.3138180000178,
+      "sfx_v8": 601.0630619999802,
+      "sfx_walkie": 0.0,
       "snare": 0.0,
       "taiko": 0.0,
       "timpani": 0.0,
@@ -1952,22 +1952,15 @@
         "row": "stem.dropout",
         "stage": "stem",
         "stem": "sfx_bike",
-        "level": "FAIL",
-        "value": 1000.0,
+        "level": "PASS",
+        "value": 0.0,
         "unit": "ms",
         "threshold": 20.0,
-        "margin": 980.0,
-        "worst_times_s": [
-          61.985
-        ],
+        "margin": -20.0,
+        "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_bike\": longest hole 1000 ms (limit 20-1000 ms), floor -61.4 dBFS; 1 hole(s)",
-        "holes": [
-          {
-            "start_s": 61.985,
-            "length_ms": 1000.0
-          }
-        ]
+        "detail": "stem \"sfx_bike\": longest hole 0 ms (limit 20-1000 ms), floor -61.4 dBFS; 0 hole(s)",
+        "holes": []
       },
       {
         "row": "stem.cut",
@@ -2118,8 +2111,7 @@
         "calibrated": false,
         "detail": "stem \"sfx_device\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          13.3,
-          14.9,
+          13.1,
           15.9,
           17.3
         ],
@@ -2509,10 +2501,10 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_road\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6063 event(s) rejected as a dense burst, 542 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"sfx_road\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6066 event(s) rejected as a dense burst, 542 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 6063,
+        "rejected": 6066,
         "attacks_ignored": 542,
         "max_cluster_span_ms": 1.4965986394557824
       },
@@ -2673,8 +2665,8 @@
         "calibrated": false,
         "detail": "stem \"sfx_truck\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          18.6,
-          16.7
+          19.7,
+          20.5
         ],
         "exempted": []
       },
@@ -2933,14 +2925,8 @@
         "calibrated": false,
         "detail": "stem \"sfx_tyres_v8\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          14.0,
-          18.7,
-          19.3,
-          19.5,
-          19.1,
-          17.0,
-          12.4,
-          36.2
+          36.2,
+          34.6
         ],
         "exempted": []
       },
@@ -3069,11 +3055,6 @@
         "calibrated": false,
         "detail": "stem \"sfx_v8\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          13.0,
-          14.1,
-          13.4,
-          14.0,
-          13.4,
           25.3,
           22.5
         ],
@@ -4711,8 +4692,8 @@
       }
     ],
     "duration_s": 123.28598639455782,
-    "cached_stems": 20,
-    "measured_stems": 8
+    "cached_stems": 21,
+    "measured_stems": 7
   },
   "rows": [
     {
@@ -5156,9 +5137,9 @@
       "detail": "stem \"sfx_bike\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms"
     },
     {
-      "level": "FAIL",
+      "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"sfx_bike\": longest hole 1000 ms (limit 20-1000 ms), floor -61.4 dBFS; 1 hole(s)"
+      "detail": "stem \"sfx_bike\": longest hole 0 ms (limit 20-1000 ms), floor -61.4 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5313,7 +5294,7 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"sfx_road\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6063 event(s) rejected as a dense burst, 542 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"sfx_road\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6066 event(s) rejected as a dense burst, 542 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
