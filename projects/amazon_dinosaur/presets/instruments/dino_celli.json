@@ -1,0 +1,67 @@
+{
+ "name": "dino_celli",
+ "description": "Celli: the cathartic ostinato cell, chord tones repeated in straight eighths, a few notes changed each repeat, never a funk bassline",
+ "character": "Celli: the cathartic ostinato cell, chord tones repeated in straight eighths, a few notes changed each repeat, never a funk bassline",
+ "gm": "cello",
+ "role": "ostinato",
+ "humanize": {
+  "preset": "natural",
+  "timing_ms": 6.0,
+  "drift_ms": 6.0,
+  "vel_sigma": 4.0
+ },
+ "spatial": {
+  "azimuth": 30,
+  "elevation": 20.0,
+  "distance": 2.5,
+  "binaural": true
+ },
+ "eq": [
+  {
+   "type": "hp",
+   "f": 80
+  },
+  {
+   "type": "lp",
+   "f": 6000
+  }
+ ],
+ "gain_db": -3.0,
+ "reverb": 0.2,
+ "articulation": {
+  "overlap_ms": 30.0,
+  "gate": 1.0,
+  "release_ms": 180.0
+ },
+ "sources": [
+  "KB cinematic-hybrid-scoring (pressure: pulse that does not stop, low brass/sub weight, constant percussion, rising device)",
+  "KB soundfont-velocity-and-realism (velocity drives brightness; layer short attack over sustain; one shared room)",
+  "KB psychoacoustic-genre Adventurous_Cinematic_Frontier (horn half-note melody leaping fifths, timpani root/fifth, 116-126 feel slowed to 90 for awe not march)",
+  "Web: Hans Zimmer cathartic ostinato - short cell repeated and cumulatively intensified (Lehman, Manufacturing the Epic Score)",
+  "Web: Zimmer brass - low root/octave braam, trombones as staccato accents with percussion and low strings; horns for melody (UJAM/Bax/Zimmer tutorials)",
+  "Web: Jurassic Park orchestration - low/middle strings and winds first, horns soft, wordless choir added later, reverent wonder (Film Music Notes, Williams theme analysis) - original theme here, not a copy",
+  "ESTIMATE: azimuth/distance/EQ/gain are starting values, measured after first render"
+ ],
+ "velocity_timbre": {
+  "points": [
+   [
+    25,
+    1800
+   ],
+   [
+    60,
+    3200
+   ],
+   [
+    100,
+    6500
+   ],
+   [
+    127,
+    9500
+   ]
+  ],
+  "bands": 4
+ },
+ "mono_below": 2500
+}

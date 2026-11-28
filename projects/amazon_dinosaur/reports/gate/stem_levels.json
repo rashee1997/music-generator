@@ -1,0 +1,386 @@
+{
+  "rows": [
+    {
+      "stem": "basses_pedal",
+      "table": [
+        {
+          "section": "first sight",
+          "start_s": 0.0,
+          "measured_db": -40.63,
+          "expected_db": -40.26,
+          "dyn": 0.25
+        },
+        {
+          "section": "herd rises",
+          "start_s": 32.0,
+          "measured_db": -35.77,
+          "expected_db": -33.42,
+          "dyn": 0.55
+        },
+        {
+          "section": "predator dread",
+          "start_s": 64.0,
+          "measured_db": -31.32,
+          "expected_db": -31.32,
+          "dyn": 0.7
+        },
+        {
+          "section": "chase",
+          "start_s": 85.3,
+          "measured_db": -27.32,
+          "expected_db": -29.14,
+          "dyn": 0.9
+        },
+        {
+          "section": "awe finale",
+          "start_s": 106.7,
+          "measured_db": -27.13,
+          "expected_db": -28.22,
+          "dyn": 1.0
+        }
+      ]
+    },
+    {
+      "stem": "celli_ostinato",
+      "table": [
+        {
+          "section": "herd rises",
+          "start_s": 32.0,
+          "measured_db": -35.59,
+          "expected_db": -30.72,
+          "dyn": 0.55
+        },
+        {
+          "section": "predator dread",
+          "start_s": 64.0,
+          "measured_db": -29.75,
+          "expected_db": -28.63,
+          "dyn": 0.7
+        },
+        {
+          "section": "chase",
+          "start_s": 85.3,
+          "measured_db": -25.18,
+          "expected_db": -26.44,
+          "dyn": 0.9
+        },
+        {
+          "section": "awe finale",
+          "start_s": 106.7,
+          "measured_db": -24.81,
+          "expected_db": -25.53,
+          "dyn": 1.0
+        }
+      ]
+    },
+    {
+      "stem": "choir_pad",
+      "table": [
+        {
+          "section": "first sight",
+          "start_s": 0.0,
+          "measured_db": -50.02,
+          "expected_db": -43.75,
+          "dyn": 0.25
+        },
+        {
+          "section": "chase",
+          "start_s": 85.3,
+          "measured_db": -32.34,
+          "expected_db": -32.62,
+          "dyn": 0.9
+        },
+        {
+          "section": "awe finale",
+          "start_s": 106.7,
+          "measured_db": -32.62,
+          "expected_db": -31.71,
+          "dyn": 1.0
+        }
+      ]
+    },
+    {
+      "stem": "horns_theme",
+      "table": [
+        {
+          "section": "first sight",
+          "start_s": 0.0,
+          "measured_db": -48.14,
+          "expected_db": -47.53,
+          "dyn": 0.25
+        },
+        {
+          "section": "herd rises",
+          "start_s": 32.0,
+          "measured_db": -38.59,
+          "expected_db": -40.69,
+          "dyn": 0.55
+        },
+        {
+          "section": "predator dread",
+          "start_s": 64.0,
+          "measured_db": -45.43,
+          "expected_db": -38.59,
+          "dyn": 0.7
+        },
+        {
+          "section": "chase",
+          "start_s": 85.3,
+          "measured_db": -33.32,
+          "expected_db": -36.41,
+          "dyn": 0.9
+        },
+        {
+          "section": "awe finale",
+          "start_s": 106.7,
+          "measured_db": -32.06,
+          "expected_db": -35.49,
+          "dyn": 1.0
+        }
+      ]
+    },
+    {
+      "stem": "strings_pad",
+      "table": [
+        {
+          "section": "first sight",
+          "start_s": 0.0,
+          "measured_db": -47.2,
+          "expected_db": -42.85,
+          "dyn": 0.25
+        },
+        {
+          "section": "herd rises",
+          "start_s": 32.0,
+          "measured_db": -38.38,
+          "expected_db": -36.0,
+          "dyn": 0.55
+        },
+        {
+          "section": "predator dread",
+          "start_s": 64.0,
+          "measured_db": -31.14,
+          "expected_db": -33.91,
+          "dyn": 0.7
+        },
+        {
+          "section": "chase",
+          "start_s": 85.3,
+          "measured_db": -32.21,
+          "expected_db": -31.72,
+          "dyn": 0.9
+        },
+        {
+          "section": "awe finale",
+          "start_s": 106.7,
+          "measured_db": -33.91,
+          "expected_db": -30.81,
+          "dyn": 1.0
+        }
+      ]
+    },
+    {
+      "stem": "taiko",
+      "table": [
+        {
+          "section": "herd rises",
+          "start_s": 32.0,
+          "measured_db": -31.63,
+          "expected_db": -31.0,
+          "dyn": 0.55
+        },
+        {
+          "section": "predator dread",
+          "start_s": 64.0,
+          "measured_db": -28.14,
+          "expected_db": -28.9,
+          "dyn": 0.7
+        },
+        {
+          "section": "chase",
+          "start_s": 85.3,
+          "measured_db": -25.64,
+          "expected_db": -26.72,
+          "dyn": 0.9
+        },
+        {
+          "section": "awe finale",
+          "start_s": 106.7,
+          "measured_db": -27.34,
+          "expected_db": -25.8,
+          "dyn": 1.0
+        }
+      ]
+    },
+    {
+      "stem": "timpani",
+      "table": [
+        {
+          "section": "herd rises",
+          "start_s": 32.0,
+          "measured_db": -36.45,
+          "expected_db": -35.71,
+          "dyn": 0.55
+        },
+        {
+          "section": "predator dread",
+          "start_s": 64.0,
+          "measured_db": -33.15,
+          "expected_db": -33.61,
+          "dyn": 0.7
+        },
+        {
+          "section": "chase",
+          "start_s": 85.3,
+          "measured_db": -31.76,
+          "expected_db": -31.43,
+          "dyn": 0.9
+        },
+        {
+          "section": "awe finale",
+          "start_s": 106.7,
+          "measured_db": -31.49,
+          "expected_db": -30.51,
+          "dyn": 1.0
+        }
+      ]
+    },
+    {
+      "stem": "tremolo_dread",
+      "table": [
+        {
+          "section": "predator dread",
+          "start_s": 64.0,
+          "measured_db": -46.99,
+          "expected_db": -46.99,
+          "dyn": 0.7
+        }
+      ]
+    },
+    {
+      "stem": "trombones_braam",
+      "table": [
+        {
+          "section": "herd rises",
+          "start_s": 32.0,
+          "measured_db": -30.57,
+          "expected_db": -30.53,
+          "dyn": 0.55
+        },
+        {
+          "section": "predator dread",
+          "start_s": 64.0,
+          "measured_db": -31.79,
+          "expected_db": -28.43,
+          "dyn": 0.7
+        },
+        {
+          "section": "chase",
+          "start_s": 85.3,
+          "measured_db": -23.97,
+          "expected_db": -26.25,
+          "dyn": 0.9
+        },
+        {
+          "section": "awe finale",
+          "start_s": 106.7,
+          "measured_db": -21.7,
+          "expected_db": -25.33,
+          "dyn": 1.0
+        }
+      ]
+    },
+    {
+      "stem": "trumpets_fanfare",
+      "table": [
+        {
+          "section": "chase",
+          "start_s": 85.3,
+          "measured_db": -26.87,
+          "expected_db": -27.85,
+          "dyn": 0.9
+        },
+        {
+          "section": "awe finale",
+          "start_s": 106.7,
+          "measured_db": -27.89,
+          "expected_db": -26.94,
+          "dyn": 1.0
+        }
+      ]
+    },
+    {
+      "stem": "tuba_braam",
+      "table": [
+        {
+          "section": "herd rises",
+          "start_s": 32.0,
+          "measured_db": -34.12,
+          "expected_db": -29.66,
+          "dyn": 0.55
+        },
+        {
+          "section": "predator dread",
+          "start_s": 64.0,
+          "measured_db": -27.83,
+          "expected_db": -27.57,
+          "dyn": 0.7
+        },
+        {
+          "section": "chase",
+          "start_s": 85.3,
+          "measured_db": -24.99,
+          "expected_db": -25.39,
+          "dyn": 0.9
+        },
+        {
+          "section": "awe finale",
+          "start_s": 106.7,
+          "measured_db": -24.46,
+          "expected_db": -24.47,
+          "dyn": 1.0
+        }
+      ]
+    },
+    {
+      "stem": "violas_counter",
+      "table": [
+        {
+          "section": "first sight",
+          "start_s": 0.0,
+          "measured_db": -44.81,
+          "expected_db": -47.55,
+          "dyn": 0.25
+        },
+        {
+          "section": "herd rises",
+          "start_s": 32.0,
+          "measured_db": -42.92,
+          "expected_db": -40.7,
+          "dyn": 0.55
+        },
+        {
+          "section": "predator dread",
+          "start_s": 64.0,
+          "measured_db": -38.61,
+          "expected_db": -38.61,
+          "dyn": 0.7
+        },
+        {
+          "section": "chase",
+          "start_s": 85.3,
+          "measured_db": -34.27,
+          "expected_db": -36.42,
+          "dyn": 0.9
+        },
+        {
+          "section": "awe finale",
+          "start_s": 106.7,
+          "measured_db": -38.07,
+          "expected_db": -35.51,
+          "dyn": 1.0
+        }
+      ]
+    }
+  ]
+}

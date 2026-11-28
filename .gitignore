@@ -113,3 +113,7 @@ assets/soundfonts/LICENSES.md
 
 # gate artefacts are part of the project (presets/gate), not throwaway reports
 # (nothing to ignore: gate data and figures are versioned with the project)
+
+# delivered audio: kept on disk next to the project, never committed
+projects/*/deliver/*.wav
+projects/*/deliver/*.mp3

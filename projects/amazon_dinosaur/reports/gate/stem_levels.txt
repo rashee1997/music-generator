@@ -1,0 +1,47 @@
+stem,section,measured_db,expected_db,dyn
+basses_pedal,first sight,-40.63,-40.26,0.25
+basses_pedal,herd rises,-35.77,-33.42,0.55
+basses_pedal,predator dread,-31.32,-31.32,0.7
+basses_pedal,chase,-27.32,-29.14,0.9
+basses_pedal,awe finale,-27.13,-28.22,1.0
+celli_ostinato,herd rises,-35.59,-30.72,0.55
+celli_ostinato,predator dread,-29.75,-28.63,0.7
+celli_ostinato,chase,-25.18,-26.44,0.9
+celli_ostinato,awe finale,-24.81,-25.53,1.0
+choir_pad,first sight,-50.02,-43.75,0.25
+choir_pad,chase,-32.34,-32.62,0.9
+choir_pad,awe finale,-32.62,-31.71,1.0
+horns_theme,first sight,-48.14,-47.53,0.25
+horns_theme,herd rises,-38.59,-40.69,0.55
+horns_theme,predator dread,-45.43,-38.59,0.7
+horns_theme,chase,-33.32,-36.41,0.9
+horns_theme,awe finale,-32.06,-35.49,1.0
+strings_pad,first sight,-47.2,-42.85,0.25
+strings_pad,herd rises,-38.38,-36.0,0.55
+strings_pad,predator dread,-31.14,-33.91,0.7
+strings_pad,chase,-32.21,-31.72,0.9
+strings_pad,awe finale,-33.91,-30.81,1.0
+taiko,herd rises,-31.63,-31.0,0.55
+taiko,predator dread,-28.14,-28.9,0.7
+taiko,chase,-25.64,-26.72,0.9
+taiko,awe finale,-27.34,-25.8,1.0
+timpani,herd rises,-36.45,-35.71,0.55
+timpani,predator dread,-33.15,-33.61,0.7
+timpani,chase,-31.76,-31.43,0.9
+timpani,awe finale,-31.49,-30.51,1.0
+tremolo_dread,predator dread,-46.99,-46.99,0.7
+trombones_braam,herd rises,-30.57,-30.53,0.55
+trombones_braam,predator dread,-31.79,-28.43,0.7
+trombones_braam,chase,-23.97,-26.25,0.9
+trombones_braam,awe finale,-21.7,-25.33,1.0
+trumpets_fanfare,chase,-26.87,-27.85,0.9
+trumpets_fanfare,awe finale,-27.89,-26.94,1.0
+tuba_braam,herd rises,-34.12,-29.66,0.55
+tuba_braam,predator dread,-27.83,-27.57,0.7
+tuba_braam,chase,-24.99,-25.39,0.9
+tuba_braam,awe finale,-24.46,-24.47,1.0
+violas_counter,first sight,-44.81,-47.55,0.25
+violas_counter,herd rises,-42.92,-40.7,0.55
+violas_counter,predator dread,-38.61,-38.61,0.7
+violas_counter,chase,-34.27,-36.42,0.9
+violas_counter,awe finale,-38.07,-35.51,1.0
