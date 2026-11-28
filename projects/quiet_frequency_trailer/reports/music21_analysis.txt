@@ -2,4 +2,4 @@
 [PASS] music21_tonality           strong tonal center in B- minor (correlation 0.79)
 [INFO] music21_registers          register note: 'int' object has no attribute 'lower'
 [INFO] music21_contour            contour note: 'int' object has no attribute 'lower'
-[PASS] music21_harmonic_rhythm    683 vertical harmonic slices analyzed across multi-track arrangement
+[PASS] music21_harmonic_rhythm    686 vertical harmonic slices analyzed across multi-track arrangement

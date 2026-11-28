@@ -24,4 +24,4 @@ flagged times: 12
   35.968s stem.tick [PASS] tuba
   36.328s stem.tick [PASS] violas
   64.052s stem.tick [PASS] violins_staccato
-  120.310s dropout [FAIL] master
+  87.808s clicks [FAIL] master

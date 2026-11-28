@@ -470,7 +470,7 @@ def cymbals():
         if role_of(bar) == 'peak' and bar % 4 == 0:
             out.append(note(b(bar, 2.0), 1.5, 52, vel(bar, 0.5)))
     for bar in (12, 18, 26, 32, 44):
-        out.append(note(b(bar, 3.5), 0.6, 55, 0.5))
+        out.append(note(b(bar, 3.375), 0.6, 55, 0.5))        # off the sixteenth grid: at 3.5 it landed on a drum hit and read as a click
     for bar in (19, 33, 45):                         # a second crash 25 ms behind, brighter
         out.append(note(b(bar, 0.0) + 0.05, 3.0, 57, 0.85))
     out.append(note(b(53, 0.0), b(56) - b(53), 49, 0.4))     # a bloom into the empty room

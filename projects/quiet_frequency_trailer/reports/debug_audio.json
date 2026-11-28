@@ -1,5 +1,5 @@
 {
- "stamp": "20261128T084614",
+ "stamp": "20261128T090302",
  "project": "quiet_frequency_trailer",
  "level": "FAIL",
  "sources": {
@@ -18,18 +18,18 @@
   ],
   "stems": "28 processed stems from .cache/mix",
   "master": "out/_draft_quiet_frequency_trailer.wav",
-  "verdict": "2026-11-28T08:28:43Z"
+  "verdict": "2026-11-28T08:46:14Z"
  },
  "binding": [
   {
-   "row": "dropout",
+   "row": "clicks",
    "stem": null,
    "level": "FAIL",
-   "value": 39.99999999999204,
-   "threshold": 20.0,
-   "unit": "ms",
+   "value": 1.0,
+   "threshold": 0.0,
+   "unit": "events",
    "safety": -1.0,
-   "detail": "longest hole 40 ms (limit 20-1000 ms), floor -64.6 dBFS; 1 hole(s)"
+   "detail": "1 clustered impulse event(s) (MAD), 1 LPC frame(s); 300 event(s) rejected as a dense burst, 36 as a steep attack; max cluster span 1.474 ms"
   }
  ],
  "advisory": [
@@ -589,56 +589,32 @@
     "text": "master oversampling before the limiter"
    },
    {
-    "id": "inst_eq.violins_long.0",
+    "id": "hf.cymbals",
     "domain": "master",
-    "kind": "eq",
-    "stem": "violins_long",
-    "current": -2.0,
-    "lo": -14.0,
-    "hi": 10.0,
+    "kind": "hf_shelf",
+    "stem": "cymbals",
+    "current": 0.0,
+    "lo": -12.0,
+    "hi": 0.0,
     "step": 0.5,
     "unit": "dB",
-    "text": "violins_long peak 450 Hz q0.9"
-   },
-   {
-    "id": "inst_eq.violins_long.1",
-    "domain": "master",
-    "kind": "eq",
-    "stem": "violins_long",
-    "current": -1.5,
-    "lo": -13.5,
-    "hi": 10.5,
-    "step": 0.5,
-    "unit": "dB",
-    "text": "violins_long peak 2000 Hz q0.9"
-   },
-   {
-    "id": "note.violins_long.d",
-    "domain": "master",
-    "kind": "note_len",
-    "stem": "violins_long",
-    "current": 3.7,
-    "lo": 3.64,
-    "hi": 3.7600000000000002,
-    "step": 0.010416666666666666,
-    "unit": "beats",
-    "text": "violins_long written note length (mean 3.7 beats)"
+    "text": "cymbals high shelf at 5500 Hz: inst_eq[\"qf_cymbals\"]"
    }
   ]
  },
  "plan": {
-  "status": "nothing to move",
+  "status": "replay",
   "worst_safety": null,
-  "deltas": {},
-  "clearing": {},
+  "deltas": {
+   "hf.cymbals": -3.0
+  },
+  "clearing": {
+   "hf.cymbals": -3.0
+  },
   "predicted": {
-   "dropout::-": [
-    -0.9999999999996021,
-    -0.9999999999996021
-   ],
    "clicks::-": [
-    0.0,
-    0.0
+    -1.0,
+    -1.0
    ],
    "loudness::-": [
     0.02,
@@ -647,6 +623,10 @@
    "true peak::-": [
     0.0002494233580594418,
     0.0002494233580594418
+   ],
+   "dropout::-": [
+    1.0,
+    1.0
    ],
    "cut.hard::-": [
     2.0,
@@ -661,20 +641,127 @@
     0.0
    ],
    "master.dc::-": [
-    0.09812484454060723,
-    0.09812484454060723
+    0.09812800403080134,
+    0.09812800403080134
    ]
   },
   "conflicts": [],
-  "closed": [
-   "dropout"
-  ],
+  "closed": [],
   "burned": [],
-  "notes": [],
-  "experiments": []
+  "notes": [
+   "clearing set read from a replay through the gate's own checker, not from the linear model; the next render is the measurement"
+  ],
+  "experiments": [
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "iterative",
+    "value": 0,
+    "baseline": 1,
+    "near3": 0,
+    "margin_db": 3.0,
+    "unverified": false,
+    "resolution_db": 1.45,
+    "times": [],
+    "verdict": "clears",
+    "moves": {
+     "hf.cymbals": -3.0
+    },
+    "robust": 1.0,
+    "proved": true
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 0,
+    "baseline": 1,
+    "margin_db": 3.0,
+    "unverified": false,
+    "resolution_db": 1.45,
+    "moves": {
+     "hf.cymbals": -3.0
+    },
+    "times": [],
+    "verdict": "clears",
+    "robust": 1.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 0,
+    "baseline": 1,
+    "margin_db": 3.0,
+    "unverified": false,
+    "resolution_db": 1.45,
+    "moves": {
+     "hf.cymbals": -6.0
+    },
+    "times": [],
+    "verdict": "clears",
+    "robust": 1.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 0,
+    "baseline": 1,
+    "margin_db": 3.0,
+    "unverified": false,
+    "resolution_db": 1.45,
+    "moves": {
+     "hf.cymbals": -9.0
+    },
+    "times": [],
+    "verdict": "clears",
+    "robust": 1.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 0,
+    "baseline": 1,
+    "margin_db": 3.0,
+    "unverified": false,
+    "resolution_db": 1.45,
+    "moves": {
+     "hf.cymbals": -12.0
+    },
+    "times": [],
+    "verdict": "clears",
+    "robust": 1.0
+   }
+  ]
  },
- "forensics": [],
+ "forensics": [
+  {
+   "t": 87.8076,
+   "step": 0.02305,
+   "threshold": 0.02,
+   "over_threshold_db": 1.23,
+   "z": 15.1,
+   "kind": "single source",
+   "trusted": true,
+   "fit_ratio": 0.98,
+   "owners": [
+    {
+     "stem": "cymbals",
+     "share": 0.896,
+     "signed": -0.02038
+    }
+   ],
+   "raw_step_fs": 0.0319,
+   "notes": []
+  }
+ ],
  "notes": [
-  "dropout has 1 event(s) at 120.310s; the transient is violins_long 67%, sfx_impacts 33%, timpani 0%"
+  "clicks: sham replay (no change) reproduces the gate's 1 event(s) exactly (decomposition R^2 0.931); counterfactuals below are priced on a model that passes its own test",
+  "clicks: model resolution 1.4 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
+  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.93); gains bass_drum 0.82, basses 1.34, celli 0.63, choir 0.72, cymbals 0.53, horns 0.76, low_swell 0.42, piano_theme 1.28, sfx_alarm 0.47, sfx_device 0.59, sfx_impacts 0.23, sfx_road 1.27, sfx_walkie 1.34, snare 0.68, taiko 0.58, timpani 0.48, trombones 0.77, tuba 1.11, violas 0.82, violins_long 0.69, violins_staccato 0.63",
+  "event 87.808s [single source] cymbals 90%; step 0.0231 vs threshold 0.0200 (+1.2 dB over)",
+  "clicks: iterative replay, profile (events at 0/1/2/3 dB tighter) (1, 1, 1, 1) -> (0, 0, 0, 0) after cymbals -3 dB"
  ]
 }
