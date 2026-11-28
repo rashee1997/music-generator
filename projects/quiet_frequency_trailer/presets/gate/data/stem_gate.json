@@ -6,7 +6,7 @@
     "warns": 0,
     "rows": 238,
     "profile": "quiet_frequency",
-    "total_ms": 4813.850782000031,
+    "total_ms": 9329.430332999891,
     "timings": {
       "bass_drum": 0.0,
       "basses": 0.0,
@@ -17,17 +17,17 @@
       "horns": 0.0,
       "low_swell": 0.0,
       "piano_theme": 0.0,
-      "sfx_alarm": 0.0,
-      "sfx_bike": 907.4765889999981,
-      "sfx_device": 737.8154870000344,
+      "sfx_alarm": 3637.677602999929,
+      "sfx_bike": 844.6899959999428,
+      "sfx_device": 848.3615380000629,
       "sfx_heartbeat": 0.0,
       "sfx_impacts": 0.0,
-      "sfx_road": 839.3280139999888,
-      "sfx_truck": 2195.4220750000104,
-      "sfx_tyres_bike": 1233.2794290000493,
-      "sfx_tyres_v8": 1475.3138180000178,
-      "sfx_v8": 601.0630619999802,
-      "sfx_walkie": 0.0,
+      "sfx_road": 670.160893000002,
+      "sfx_truck": 2053.396833000079,
+      "sfx_tyres_bike": 1149.9902580001162,
+      "sfx_tyres_v8": 1257.267628999898,
+      "sfx_v8": 708.572231000062,
+      "sfx_walkie": 830.6918180001048,
       "snare": 0.0,
       "taiko": 0.0,
       "timpani": 0.0,
@@ -1976,7 +1976,7 @@
         "detail": "stem \"sfx_bike\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
           12.9,
-          12.2,
+          12.1,
           13.2,
           13.5,
           12.3,
@@ -2031,8 +2031,8 @@
           {
             "section": "the_take",
             "start_s": 12.0,
-            "measured_db": -33.31,
-            "expected_db": -33.31,
+            "measured_db": -33.34,
+            "expected_db": -33.34,
             "dyn": 0.45
           }
         ],
@@ -2077,12 +2077,12 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_device\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 253 event(s) rejected as a dense burst, 2 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"sfx_device\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 253,
-        "attacks_ignored": 2,
-        "max_cluster_span_ms": 1.4965986394557824
+        "rejected": 0,
+        "attacks_ignored": 0,
+        "max_cluster_span_ms": 0.0
       },
       {
         "row": "stem.dropout",
@@ -2095,7 +2095,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_device\": longest hole 0 ms (limit 20-1000 ms), floor -140.3 dBFS; 0 hole(s)",
+        "detail": "stem \"sfx_device\": longest hole 0 ms (limit 20-1000 ms), floor -136.8 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -2111,9 +2111,10 @@
         "calibrated": false,
         "detail": "stem \"sfx_device\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
+          12.0,
           13.1,
-          15.9,
-          17.3
+          14.1,
+          13.5
         ],
         "exempted": []
       },
@@ -2156,14 +2157,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_device\": own median -35.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"sfx_device\": own median -32.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_lab",
             "start_s": 0.0,
-            "measured_db": -35.69,
-            "expected_db": -35.69,
+            "measured_db": -32.45,
+            "expected_db": -32.45,
             "dyn": 0.25
           }
         ],
@@ -2501,12 +2502,12 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_road\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6066 event(s) rejected as a dense burst, 542 as a steep attack; max cluster span 1.497 ms",
+        "detail": "stem \"sfx_road\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 6066,
-        "attacks_ignored": 542,
-        "max_cluster_span_ms": 1.4965986394557824
+        "rejected": 0,
+        "attacks_ignored": 0,
+        "max_cluster_span_ms": 0.0
       },
       {
         "row": "stem.dropout",
@@ -2519,7 +2520,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_road\": longest hole 0 ms (limit 20-1000 ms), floor -67.1 dBFS; 0 hole(s)",
+        "detail": "stem \"sfx_road\": longest hole 0 ms (limit 20-1000 ms), floor -66.6 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -2535,8 +2536,8 @@
         "calibrated": false,
         "detail": "stem \"sfx_road\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          37.9,
-          37.7
+          39.9,
+          36.4
         ],
         "exempted": []
       },
@@ -2579,14 +2580,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_road\": own median -40.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"sfx_road\": own median -39.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_take",
             "start_s": 12.0,
-            "measured_db": -39.96,
-            "expected_db": -39.96,
+            "measured_db": -39.37,
+            "expected_db": -39.37,
             "dyn": 0.45
           }
         ],
@@ -2665,8 +2666,8 @@
         "calibrated": false,
         "detail": "stem \"sfx_truck\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          19.7,
-          20.5
+          19.6,
+          20.4
         ],
         "exempted": []
       },
@@ -2709,14 +2710,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_truck\": own median -43.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"sfx_truck\": own median -43.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_truck",
             "start_s": 58.0,
-            "measured_db": -43.76,
-            "expected_db": -43.76,
+            "measured_db": -43.3,
+            "expected_db": -43.3,
             "dyn": 0.6
           }
         ],
@@ -2761,12 +2762,12 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_tyres_bike\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 235 event(s) rejected as a dense burst, 23 as a steep attack; max cluster span 1.474 ms",
+        "detail": "stem \"sfx_tyres_bike\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1094 event(s) rejected as a dense burst, 54 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 235,
-        "attacks_ignored": 23,
-        "max_cluster_span_ms": 1.4739229024943312
+        "rejected": 1094,
+        "attacks_ignored": 54,
+        "max_cluster_span_ms": 1.4965986394557824
       },
       {
         "row": "stem.dropout",
@@ -2845,8 +2846,8 @@
           {
             "section": "the_take",
             "start_s": 12.0,
-            "measured_db": -17.6,
-            "expected_db": -17.6,
+            "measured_db": -17.62,
+            "expected_db": -17.62,
             "dyn": 0.45
           }
         ],
@@ -2891,12 +2892,12 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_tyres_v8\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 170 event(s) rejected as a dense burst, 15 as a steep attack; max cluster span 1.474 ms",
+        "detail": "stem \"sfx_tyres_v8\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 599 event(s) rejected as a dense burst, 29 as a steep attack; max cluster span 1.497 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 170,
-        "attacks_ignored": 15,
-        "max_cluster_span_ms": 1.4739229024943312
+        "rejected": 599,
+        "attacks_ignored": 29,
+        "max_cluster_span_ms": 1.4965986394557824
       },
       {
         "row": "stem.dropout",
@@ -2969,14 +2970,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_tyres_v8\": own median -13.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"sfx_tyres_v8\": own median -13.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_flyover",
             "start_s": 52.0,
-            "measured_db": -13.12,
-            "expected_db": -13.12,
+            "measured_db": -13.04,
+            "expected_db": -13.04,
             "dyn": 0.8
           }
         ],
@@ -3056,7 +3057,7 @@
         "detail": "stem \"sfx_v8\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
           25.3,
-          22.5
+          22.4
         ],
         "exempted": []
       },
@@ -3099,14 +3100,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_v8\": own median -21.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"sfx_v8\": own median -21.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_alert",
             "start_s": 24.0,
-            "measured_db": -21.7,
-            "expected_db": -21.7,
+            "measured_db": -21.6,
+            "expected_db": -21.6,
             "dyn": 0.65
           }
         ],
@@ -3151,12 +3152,12 @@
         "margin": 0.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_walkie\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 110 event(s) rejected as a dense burst, 38 as a steep attack; max cluster span 1.474 ms",
+        "detail": "stem \"sfx_walkie\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 19 event(s) rejected as a dense burst, 9 as a steep attack; max cluster span 1.451 ms",
         "mad_count": 0,
         "lpc_count": 0,
-        "rejected": 110,
-        "attacks_ignored": 38,
-        "max_cluster_span_ms": 1.4739229024943312
+        "rejected": 19,
+        "attacks_ignored": 9,
+        "max_cluster_span_ms": 1.4512471655328798
       },
       {
         "row": "stem.dropout",
@@ -3169,7 +3170,7 @@
         "margin": -20.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_walkie\": longest hole 0 ms (limit 20-1000 ms), floor -153.5 dBFS; 0 hole(s)",
+        "detail": "stem \"sfx_walkie\": longest hole 0 ms (limit 20-1000 ms), floor -146.7 dBFS; 0 hole(s)",
         "holes": []
       },
       {
@@ -3185,14 +3186,14 @@
         "calibrated": false,
         "detail": "stem \"sfx_walkie\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
         "drops": [
-          44.1,
-          40.7,
-          47.3,
-          39.2,
-          12.3,
-          43.0,
-          38.4,
-          39.5
+          35.0,
+          29.4,
+          33.0,
+          27.9,
+          30.4,
+          26.2,
+          12.5,
+          30.3
         ],
         "exempted": []
       },
@@ -3235,14 +3236,14 @@
         "margin": -12.0,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"sfx_walkie\": own median -21.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "detail": "stem \"sfx_walkie\": own median -20.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
         "fail": false,
         "table": [
           {
             "section": "the_lab",
             "start_s": 0.0,
-            "measured_db": -21.14,
-            "expected_db": -21.14,
+            "measured_db": -20.49,
+            "expected_db": -20.49,
             "dyn": 0.25
           }
         ],
@@ -4692,8 +4693,8 @@
       }
     ],
     "duration_s": 123.28598639455782,
-    "cached_stems": 21,
-    "measured_stems": 7
+    "cached_stems": 19,
+    "measured_stems": 9
   },
   "rows": [
     {
@@ -5174,12 +5175,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"sfx_device\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 253 event(s) rejected as a dense burst, 2 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"sfx_device\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms"
     },
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"sfx_device\": longest hole 0 ms (limit 20-1000 ms), floor -140.3 dBFS; 0 hole(s)"
+      "detail": "stem \"sfx_device\": longest hole 0 ms (limit 20-1000 ms), floor -136.8 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5199,7 +5200,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"sfx_device\": own median -35.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"sfx_device\": own median -32.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -5294,12 +5295,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"sfx_road\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6066 event(s) rejected as a dense burst, 542 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"sfx_road\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms"
     },
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"sfx_road\": longest hole 0 ms (limit 20-1000 ms), floor -67.1 dBFS; 0 hole(s)"
+      "detail": "stem \"sfx_road\": longest hole 0 ms (limit 20-1000 ms), floor -66.6 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5319,7 +5320,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"sfx_road\": own median -40.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"sfx_road\": own median -39.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -5359,7 +5360,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"sfx_truck\": own median -43.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"sfx_truck\": own median -43.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -5374,7 +5375,7 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"sfx_tyres_bike\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 235 event(s) rejected as a dense burst, 23 as a steep attack; max cluster span 1.474 ms"
+      "detail": "stem \"sfx_tyres_bike\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1094 event(s) rejected as a dense burst, 54 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
@@ -5414,7 +5415,7 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"sfx_tyres_v8\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 170 event(s) rejected as a dense burst, 15 as a steep attack; max cluster span 1.474 ms"
+      "detail": "stem \"sfx_tyres_v8\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 599 event(s) rejected as a dense burst, 29 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
@@ -5439,7 +5440,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"sfx_tyres_v8\": own median -13.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"sfx_tyres_v8\": own median -13.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -5479,7 +5480,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"sfx_v8\": own median -21.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"sfx_v8\": own median -21.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -5494,12 +5495,12 @@
     {
       "level": "PASS",
       "row": "stem.clicks",
-      "detail": "stem \"sfx_walkie\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 110 event(s) rejected as a dense burst, 38 as a steep attack; max cluster span 1.474 ms"
+      "detail": "stem \"sfx_walkie\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 19 event(s) rejected as a dense burst, 9 as a steep attack; max cluster span 1.451 ms"
     },
     {
       "level": "PASS",
       "row": "stem.dropout",
-      "detail": "stem \"sfx_walkie\": longest hole 0 ms (limit 20-1000 ms), floor -153.5 dBFS; 0 hole(s)"
+      "detail": "stem \"sfx_walkie\": longest hole 0 ms (limit 20-1000 ms), floor -146.7 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -5519,7 +5520,7 @@
     {
       "level": "PASS",
       "row": "stem.dead",
-      "detail": "stem \"sfx_walkie\": own median -21.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"sfx_walkie\": own median -20.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "PASS",

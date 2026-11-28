@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-11-28T12:06:23Z",
-  "status": "FAILED",
+  "timestamp": "2026-11-28T12:40:40Z",
+  "status": "PASSED",
   "deliverables": {
-    "master_wav": "/home/user/music-generator/projects/quiet_frequency_trailer/out/_draft_quiet_frequency_trailer.wav",
+    "master_wav": "/home/user/music-generator/projects/quiet_frequency_trailer/out/quiet_frequency_trailer.wav",
     "midi": "/home/user/music-generator/projects/quiet_frequency_trailer/midi/quiet_frequency_score.mid",
     "duration_s": 120.6337641723356,
     "sample_rate": 44100,
@@ -11,7 +11,9 @@
       "immersive_7_1"
     ],
     "outputs_skipped": [],
-    "output_files": [],
+    "output_files": [
+      "/home/user/music-generator/projects/quiet_frequency_trailer/out/quiet_frequency_trailer_immersive_7_1.wav"
+    ],
     "delivered": [
       {
         "name": "stereo",
@@ -28,55 +30,71 @@
         "file": "quiet_frequency_trailer_immersive_7_1.wav"
       }
     ],
-    "certified": [],
+    "certified": [
+      "stereo",
+      "immersive_7_1"
+    ],
     "stems_dir": "/home/user/music-generator/projects/quiet_frequency_trailer/stems",
-    "stem_count": 28
+    "stem_count": 28,
+    "metadata": "/home/user/music-generator/projects/quiet_frequency_trailer/out/quiet_frequency_trailer.json",
+    "version": 4,
+    "versioned_master": "quiet_frequency_trailer_v04.wav",
+    "metadata_tagged": [
+      "title",
+      "artist",
+      "genre",
+      "copyright",
+      "comment",
+      "license",
+      "description"
+    ],
+    "versioned_metadata": "/home/user/music-generator/projects/quiet_frequency_trailer/out/quiet_frequency_trailer_v04.json"
   },
   "measurements": {
-    "integrated_lufs": -16.422974616132983,
-    "true_peak_dbtp": -1.5007482700741783,
-    "crest_factor_db": 16.98246070338928,
-    "mono_loss_db": -0.4338988954085208,
-    "mono_phone_loss_db": -0.1491348256858938,
+    "integrated_lufs": -16.252707147359004,
+    "true_peak_dbtp": -1.5007495008015257,
+    "crest_factor_db": 16.122507708693668,
+    "mono_loss_db": -0.5996446710597598,
+    "mono_phone_loss_db": -0.38327312402514613,
     "clipped_samples": 0,
-    "mean_roughness": 0.0477,
-    "max_roughness": 0.0892,
+    "mean_roughness": 0.0483,
+    "max_roughness": 0.0928,
     "witek_bsi": 0.02,
     "melodic_entropy_bits": 2.32,
     "spiral_strain_end": 0.82
   },
   "ci_summary": {
-    "pass": 259,
-    "warn": 38,
-    "fail": 2
+    "pass": 262,
+    "warn": 34,
+    "fail": 0
   },
   "ci_tiers": {
     "1": {
       "name": "invariant",
       "blocks": "render-and-mix",
-      "rows": 252,
-      "pass": 195,
-      "warn": 3,
-      "fail": 1,
+      "rows": 251,
+      "pass": 197,
+      "warn": 1,
+      "fail": 0,
       "info": 53
     },
     "2": {
       "name": "expressive",
       "blocks": "certification",
-      "rows": 73,
-      "pass": 50,
-      "warn": 19,
-      "fail": 1,
+      "rows": 72,
+      "pass": 51,
+      "warn": 18,
+      "fail": 0,
       "info": 3
     },
     "3": {
       "name": "advisory",
       "blocks": "nothing",
-      "rows": 30,
+      "rows": 31,
       "pass": 3,
       "warn": 10,
       "fail": 0,
-      "info": 17
+      "info": 18
     },
     "unclassified": [
       "delivery.direction",
@@ -571,12 +589,12 @@
     {
       "level": "PASS",
       "check": "stem.clicks",
-      "detail": "stem \"sfx_device\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 253 event(s) rejected as a dense burst, 2 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"sfx_device\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms"
     },
     {
       "level": "PASS",
       "check": "stem.dropout",
-      "detail": "stem \"sfx_device\": longest hole 0 ms (limit 20-1000 ms), floor -140.3 dBFS; 0 hole(s)"
+      "detail": "stem \"sfx_device\": longest hole 0 ms (limit 20-1000 ms), floor -136.8 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -596,7 +614,7 @@
     {
       "level": "PASS",
       "check": "stem.dead",
-      "detail": "stem \"sfx_device\": own median -35.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"sfx_device\": own median -32.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -691,12 +709,12 @@
     {
       "level": "PASS",
       "check": "stem.clicks",
-      "detail": "stem \"sfx_road\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6066 event(s) rejected as a dense burst, 542 as a steep attack; max cluster span 1.497 ms"
+      "detail": "stem \"sfx_road\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms"
     },
     {
       "level": "PASS",
       "check": "stem.dropout",
-      "detail": "stem \"sfx_road\": longest hole 0 ms (limit 20-1000 ms), floor -67.1 dBFS; 0 hole(s)"
+      "detail": "stem \"sfx_road\": longest hole 0 ms (limit 20-1000 ms), floor -66.6 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -716,7 +734,7 @@
     {
       "level": "PASS",
       "check": "stem.dead",
-      "detail": "stem \"sfx_road\": own median -40.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"sfx_road\": own median -39.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -756,7 +774,7 @@
     {
       "level": "PASS",
       "check": "stem.dead",
-      "detail": "stem \"sfx_truck\": own median -43.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"sfx_truck\": own median -43.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -771,7 +789,7 @@
     {
       "level": "PASS",
       "check": "stem.clicks",
-      "detail": "stem \"sfx_tyres_bike\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 235 event(s) rejected as a dense burst, 23 as a steep attack; max cluster span 1.474 ms"
+      "detail": "stem \"sfx_tyres_bike\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1094 event(s) rejected as a dense burst, 54 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
@@ -811,7 +829,7 @@
     {
       "level": "PASS",
       "check": "stem.clicks",
-      "detail": "stem \"sfx_tyres_v8\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 170 event(s) rejected as a dense burst, 15 as a steep attack; max cluster span 1.474 ms"
+      "detail": "stem \"sfx_tyres_v8\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 599 event(s) rejected as a dense burst, 29 as a steep attack; max cluster span 1.497 ms"
     },
     {
       "level": "PASS",
@@ -836,7 +854,7 @@
     {
       "level": "PASS",
       "check": "stem.dead",
-      "detail": "stem \"sfx_tyres_v8\": own median -13.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"sfx_tyres_v8\": own median -13.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -876,7 +894,7 @@
     {
       "level": "PASS",
       "check": "stem.dead",
-      "detail": "stem \"sfx_v8\": own median -21.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"sfx_v8\": own median -21.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",
@@ -891,12 +909,12 @@
     {
       "level": "PASS",
       "check": "stem.clicks",
-      "detail": "stem \"sfx_walkie\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 110 event(s) rejected as a dense burst, 38 as a steep attack; max cluster span 1.474 ms"
+      "detail": "stem \"sfx_walkie\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 19 event(s) rejected as a dense burst, 9 as a steep attack; max cluster span 1.451 ms"
     },
     {
       "level": "PASS",
       "check": "stem.dropout",
-      "detail": "stem \"sfx_walkie\": longest hole 0 ms (limit 20-1000 ms), floor -153.5 dBFS; 0 hole(s)"
+      "detail": "stem \"sfx_walkie\": longest hole 0 ms (limit 20-1000 ms), floor -146.7 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -916,7 +934,7 @@
     {
       "level": "PASS",
       "check": "stem.dead",
-      "detail": "stem \"sfx_walkie\": own median -21.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+      "detail": "stem \"sfx_walkie\": own median -20.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "PASS",
@@ -1541,7 +1559,7 @@
     {
       "level": "PASS",
       "check": "spatial_staging",
-      "detail": "16 of 16 staged track(s) use the binaural route; L/R correlation 0.81"
+      "detail": "16 of 16 staged track(s) use the binaural route; L/R correlation 0.74"
     },
     {
       "level": "PASS",
@@ -1551,17 +1569,12 @@
     {
       "level": "PASS",
       "check": "audio",
-      "detail": "loudness -16.4 LUFS vs target -16.0 (-0.4)"
+      "detail": "loudness -16.3 LUFS vs target -16.0 (-0.3)"
     },
     {
       "level": "PASS",
       "check": "audio",
-      "detail": "dynamics move (short-term loudness std 4.0 dB, range 13.9 LU)"
-    },
-    {
-      "level": "WARN",
-      "check": "audio",
-      "detail": "too much sub energy; high-pass non-bass tracks and check small speakers"
+      "detail": "dynamics move (short-term loudness std 4.0 dB, range 12.0 LU)"
     },
     {
       "level": "WARN",
@@ -1571,7 +1584,7 @@
     {
       "level": "INFO",
       "check": "master.micro_dynamics",
-      "detail": "PLR 14.9 LU, PSR 8.8 LU, LRA 13.4 LU, true peak -1.50 dBTP (4x -1.50, 8x -1.50): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
+      "detail": "PLR 14.8 LU, PSR 11.1 LU, LRA 11.4 LU, true peak -1.50 dBTP (4x -1.50, 8x -1.50): reported, not judged (no document defines a pass mark; EBU Tech 3401, AES EBU 373)"
     },
     {
       "level": "PASS",
@@ -1579,19 +1592,19 @@
       "detail": "no silent gap of 1 s or more in the middle of the piece"
     },
     {
-      "level": "FAIL",
+      "level": "PASS",
       "check": "clicks",
-      "detail": "37 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 37 and LPC 12. Check the sample start or add a 2-5 ms fade-in at that note"
+      "detail": "no click: no single-sample jump above 0.5 FS and no high-pass/LPC impulse event"
     },
     {
-      "level": "WARN",
+      "level": "PASS",
       "check": "natural_aliasing",
-      "detail": "15-22 kHz holds -44.1 dB of the 200 Hz-16 kHz band (limit -45); above that it is sampler interpolation images, not instrument (fix: render.oversample in the mix preset)"
+      "detail": "15-22 kHz holds -53.1 dB of the 200 Hz-16 kHz band (limit -45); above that it is sampler interpolation images, not instrument (fix: render.oversample in the mix preset)"
     },
     {
       "level": "WARN",
       "check": "cochlear_roughness",
-      "detail": "one-frame roughness at 113.0s (0.089 > 0.076), 2 frame(s) of 36 (a FAIL needs 5): reads as a transient or a drum hit, not a sustained clash"
+      "detail": "one-frame roughness at 10.5s (0.093 > 0.078), 2 frame(s) of 34 (a FAIL needs 5): reads as a transient or a drum hit, not a sustained clash"
     },
     {
       "level": "PASS",
@@ -1616,12 +1629,12 @@
     {
       "level": "PASS",
       "check": "stereo.correlation",
-      "detail": "stereo: inter-channel correlation +0.81 (floor +0.15: below it the centre is cancelling)"
+      "detail": "stereo: inter-channel correlation +0.74 (floor +0.15: below it the centre is cancelling)"
     },
     {
       "level": "PASS",
       "check": "dropout",
-      "detail": "longest hole 0 ms (limit 20-1000 ms), floor -66.0 dBFS; 0 hole(s)"
+      "detail": "longest hole 0 ms (limit 20-1000 ms), floor -64.3 dBFS; 0 hole(s)"
     },
     {
       "level": "PASS",
@@ -1631,7 +1644,7 @@
     {
       "level": "PASS",
       "check": "end.abrupt",
-      "detail": "end level -125.3 dBFS (limit -45), decay over final 300 ms 67.3 dB (limit 12); natural release"
+      "detail": "end level -124.5 dBFS (limit -45), decay over final 300 ms 66.5 dB (limit 12); natural release"
     },
     {
       "level": "PASS",
@@ -1644,9 +1657,9 @@
       "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00002 (limit 0.001)"
     },
     {
-      "level": "FAIL",
+      "level": "PASS",
       "check": "section.energy",
-      "detail": "Spearman rho 0.38 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)"
+      "detail": "Spearman rho 0.84 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)"
     },
     {
       "level": "PASS",
@@ -1696,12 +1709,12 @@
     {
       "level": "PASS",
       "check": "imm_width",
-      "detail": "L/R correlation 0.81 (limit 0.95)"
+      "detail": "L/R correlation 0.74 (limit 0.95)"
     },
     {
       "level": "PASS",
       "check": "imm_foldown",
-      "detail": "mono fold-down is +0.4 LU vs the stereo master (limit 3): holds up on a phone speaker"
+      "detail": "mono fold-down is +0.6 LU vs the stereo master (limit 3): holds up on a phone speaker"
     },
     {
       "level": "PASS",
@@ -1736,42 +1749,37 @@
     {
       "level": "PASS",
       "check": "sfx_eval",
-      "detail": "track \"sfx_walkie\": no tonal excess, no cycle, transients vary, centroid 835 Hz, crest 23.5"
+      "detail": "track \"sfx_walkie\": no tonal excess, no cycle, transients vary, centroid 679 Hz, crest 38.5"
     },
     {
       "level": "WARN",
       "check": "sfx_eval",
-      "detail": "track \"sfx_device\": repeats every 0.049 s (autocorrelation 0.95, limit 0.6)"
-    },
-    {
-      "level": "WARN",
-      "check": "sfx_eval",
-      "detail": "track \"sfx_device\": 57 isolated click(s) in a sound that should be continuous"
+      "detail": "track \"sfx_device\": repeats every 0.049 s (autocorrelation 0.97, limit 0.6)"
     },
     {
       "level": "PASS",
       "check": "sfx_eval",
-      "detail": "track \"sfx_bike\": no tonal excess, no cycle, transients vary, centroid 124 Hz, crest 6.1"
+      "detail": "track \"sfx_bike\": no tonal excess, no cycle, transients vary, centroid 122 Hz, crest 6.2"
     },
     {
       "level": "PASS",
       "check": "sfx_eval",
-      "detail": "track \"sfx_tyres_bike\": no tonal excess, no cycle, transients vary, centroid 1412 Hz, crest 14.0"
+      "detail": "track \"sfx_tyres_bike\": no tonal excess, no cycle, transients vary, centroid 1381 Hz, crest 14.1"
     },
     {
       "level": "PASS",
       "check": "sfx_eval",
-      "detail": "track \"sfx_road\": no tonal excess, no cycle, transients vary, centroid 1206 Hz, crest 8.7"
+      "detail": "track \"sfx_road\": no tonal excess, no cycle, transients vary, centroid 527 Hz, crest 8.4"
     },
     {
       "level": "PASS",
       "check": "sfx_eval",
-      "detail": "track \"sfx_v8\": no tonal excess, no cycle, transients vary, centroid 196 Hz, crest 7.1"
+      "detail": "track \"sfx_v8\": no tonal excess, no cycle, transients vary, centroid 181 Hz, crest 7.1"
     },
     {
       "level": "PASS",
       "check": "sfx_eval",
-      "detail": "track \"sfx_tyres_v8\": no tonal excess, no cycle, transients vary, centroid 951 Hz, crest 17.3"
+      "detail": "track \"sfx_tyres_v8\": no tonal excess, no cycle, transients vary, centroid 913 Hz, crest 17.3"
     },
     {
       "level": "WARN",
@@ -1816,11 +1824,6 @@
     {
       "level": "WARN",
       "check": "spectral.equal_loudness",
-      "detail": "\"sfx_device\" (fx) puts 7.9 dB more ear-weighted level in 2500-5000 Hz than its 500-2500 Hz mids (warn 6, fail 10). Trim about 1.9 dB at 3536 Hz in the mix preset: \"inst_eq\": {\"sfx_device\": [{\"type\": \"peak\", \"f\": 3536, \"gain\": -1.9, \"q\": 1.0}]}"
-    },
-    {
-      "level": "WARN",
-      "check": "spectral.equal_loudness",
       "detail": "\"sfx_impacts\" (fx) puts 6.3 dB more ear-weighted level in 2500-5000 Hz than its 500-2500 Hz mids (warn 6, fail 10). Trim about 1.0 dB at 3536 Hz in the mix preset: \"inst_eq\": {\"sfx_impacts\": [{\"type\": \"peak\", \"f\": 3536, \"gain\": -1.0, \"q\": 1.0}]}"
     },
     {
@@ -1836,7 +1839,7 @@
     {
       "level": "PASS",
       "check": "scene.arc_step",
-      "detail": "strain the_alert->the_chase +0.141; level -4.9 LU; strain the_flyover->the_escalation +0.307; level +2.1 LU; strain the_flyover->the_wall +0.301; level +2.7 LU (want +0.02 strain)"
+      "detail": "strain the_alert->the_chase +0.141; level +2.0 LU; strain the_flyover->the_escalation +0.307; level +2.8 LU; strain the_flyover->the_wall +0.301; level +3.6 LU (want +0.02 strain)"
     },
     {
       "level": "PASS",
@@ -1851,12 +1854,12 @@
     {
       "level": "PASS",
       "check": "scene.macro_contrast",
-      "detail": "10 section(s), roles establish, transition, build, peak, rupture, release, button: tension variance 0.119 (floor 0.02); dynamic range 11.5 LU (floor 6); roughness contrast 98.7 dB (floor 3)"
+      "detail": "10 section(s), roles establish, transition, build, peak, rupture, release, button: tension variance 0.119 (floor 0.02); dynamic range 9.7 LU (floor 6); roughness contrast 95.2 dB (floor 3)"
     },
     {
       "level": "PASS",
       "check": "scene.silence_honoured",
-      "detail": "1 declared rest(s) are silent (loudest -102 dBFS, limit -50)"
+      "detail": "1 declared rest(s) are silent (loudest -100 dBFS, limit -50)"
     },
     {
       "level": "INFO",
@@ -1876,7 +1879,7 @@
     {
       "level": "INFO",
       "check": "ear.fatigue",
-      "detail": "adaptation index peaks at 0.62 (warn above 0.6 for 5 s at stable loudness)"
+      "detail": "adaptation index peaks at 0.59 (warn above 0.6 for 5 s at stable loudness)"
     },
     {
       "level": "WARN",
@@ -1904,34 +1907,34 @@
       "detail": "7 inferred pools at 0.25 s steps, tiers DA_ant B, DA_con B, NE B, CORT C, OXT C, END C, PSNS C; every constant is a starting value and no chem row can FAIL. A row says the arc contains (or lacks) the elicitors of a reward cycle: anticipation, consummation, load, warmth, drive, recovery. It does not say a listener will feel anything (docs/NEUROCHEMICAL-AFFECT-PLAN.md)"
     },
     {
-      "level": "WARN",
+      "level": "INFO",
       "check": "chem.reward_build",
-      "detail": "it peaks at 0.42 (want 0.45). 20.0 s lead, peak 0.42. Lever: lengthen the build before the hit, withhold the tonic, or move the arrival later in the score. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
+      "detail": "the build earns the strongest measured change at 63.2 s (the sheet declares no hits_at): 20.0 s of lead, rank correlation +0.89, peak 0.48. Tier B (inferred from expectation and proximity, not assayed); inputs: build, tension, uncertainty; not measured: proximity"
     },
     {
       "level": "INFO",
       "check": "chem.reward_arrival",
-      "detail": "a consummation event lands at 64.0 s with peak 0.87. Tier B (Salimpoor 2011 measured ventral-striatal release at the peak; the model only infers it); inputs: arrival, surprise, low_end, vocal, fatigue. the sheet declares no hit, so only the peak was judged"
+      "detail": "a consummation event lands at 64.0 s with peak 0.86. Tier B (Salimpoor 2011 measured ventral-striatal release at the peak; the model only infers it); inputs: arrival, surprise, low_end, vocal, fatigue. the sheet declares no hit, so only the peak was judged"
     },
     {
       "level": "INFO",
       "check": "chem.stress_load",
-      "detail": "tension is carried and released: load averages 0.09, 0.0 s unresolved, 100% of peaks resolve. Tier C (stress is a proxy: de Witte 2019 found d = 0.35 hormonal across 104 trials, and context dominates); inputs: tension, roughness, surprise, consonance"
+      "detail": "tension is carried and released: load averages 0.15, 0.0 s unresolved, 100% of peaks resolve. Tier C (stress is a proxy: de Witte 2019 found d = 0.35 hormonal across 104 trials, and context dominates); inputs: tension, roughness, surprise, consonance"
     },
     {
       "level": "WARN",
       "check": "chem.affiliation",
-      "detail": "warmth averages 0.21 (want 0.45); only 30% of the sounding figure is legato or held (want 50%). Lever: give the lead a singable legato contour, add a voice or a hum, or slow the harmonic rhythm. Tier C (peripheral oxytocin assays disagree: Ooishi 2017 raised it, group singing lowered it); inputs: legato, vocal, consonance, slow_tempo, pulse"
+      "detail": "warmth averages 0.20 (want 0.45); only 30% of the sounding figure is legato or held (want 50%). Lever: give the lead a singable legato contour, add a voice or a hum, or slow the harmonic rhythm. Tier C (peripheral oxytocin assays disagree: Ooishi 2017 raised it, group singing lowered it); inputs: legato, vocal, consonance, slow_tempo, pulse"
     },
     {
       "level": "WARN",
       "check": "chem.motor_drive",
-      "detail": "the drive pool averages 0.19 (want 0.4); bar syncopation 0.02 is outside the 0.4-4.8 window (Witek 2014 inverted U); measured pulse clarity 0.12 (want 0.4). Lever: syncopate the cell into the 0.4-4.8 BSI window, or give the kick and bass one owner. Tier C (effort and entrainment read from a pain-threshold proxy: Tarr 2015, Pearce 2016); inputs: pulse, low_end, density, slow_tempo"
+      "detail": "the drive pool averages 0.18 (want 0.4); bar syncopation 0.02 is outside the 0.4-4.8 window (Witek 2014 inverted U); measured pulse clarity 0.06 (want 0.4). Lever: syncopate the cell into the 0.4-4.8 BSI window, or give the kick and bass one owner. Tier C (effort and entrainment read from a pain-threshold proxy: Tarr 2015, Pearce 2016); inputs: pulse, low_end, density, slow_tempo"
     },
     {
       "level": "WARN",
       "check": "chem.recovery",
-      "detail": "the piece ends 27% below its peak instead of coming down (want 35%). Lever: write a resolution section: slower, consonant, thinner, with a real cadence or a declared cliff. Tier C (recovery from listening alone is weak: g = 0.15, CI -0.21..0.52, n.s., 2022 meta-analysis); inputs: recovery, consonance, legato, tension"
+      "detail": "the piece ends 33% below its peak instead of coming down (want 35%). Lever: write a resolution section: slower, consonant, thinner, with a real cadence or a declared cliff. Tier C (recovery from listening alone is weak: g = 0.15, CI -0.21..0.52, n.s., 2022 meta-analysis); inputs: recovery, consonance, legato, tension"
     },
     {
       "level": "INFO",
@@ -1970,13 +1973,8 @@
     },
     {
       "level": "WARN",
-      "check": "mix:spectral overlap",
-      "detail": "\"snare\" and \"sfx_road\" overlap within 4 dB in sub, brilliance, air; separate them with level, pan or a complementary EQ rather than more compression"
-    },
-    {
-      "level": "WARN",
-      "check": "mix:spectral overlap",
-      "detail": "\"snare\" and \"sfx_bike\" overlap within 4 dB in low-mid, mid, presence; separate them with level, pan or a complementary EQ rather than more compression"
+      "check": "mix:mud",
+      "detail": "energy below 400 Hz is +5.4 dB over 400 Hz-4 kHz; \"basses\" contributes most. A cut near 250-350 Hz or a higher high-pass is the usual fix"
     },
     {
       "level": "WARN",
@@ -1985,8 +1983,18 @@
     },
     {
       "level": "WARN",
+      "check": "mix:spectral overlap",
+      "detail": "\"bass_drum\" and \"celli\" overlap within 4 dB in low-mid, mid, presence, brilliance, air; separate them with level, pan or a complementary EQ rather than more compression"
+    },
+    {
+      "level": "WARN",
+      "check": "mix:spectral overlap",
+      "detail": "\"taiko\" and \"sfx_impacts\" overlap within 4 dB in low-mid, mid, presence; separate them with level, pan or a complementary EQ rather than more compression"
+    },
+    {
+      "level": "WARN",
       "check": "mix:low-end congestion",
-      "detail": "8 stems carry their weight below 120 Hz (bass_drum, taiko, sfx_heartbeat, sfx_bike, basses_pizz, low_swell, basses, tuba): one owner for the sub, the rest high-passed, is clearer and uses less headroom"
+      "detail": "8 stems carry their weight below 120 Hz (bass_drum, taiko, sfx_heartbeat, sfx_bike, basses, low_swell, tuba, basses_pizz): one owner for the sub, the rest high-passed, is clearer and uses less headroom"
     },
     {
       "level": "INFO",
@@ -2025,7 +2033,7 @@
     "stopped": null,
     "cache": {
       "dir": "/home/user/music-generator/projects/quiet_frequency_trailer/.cache/mix",
-      "hits": 0,
+      "hits": 1,
       "stems": 28
     },
     "stages": {
@@ -2036,7 +2044,7 @@
         "warns": 0,
         "rows": 238,
         "profile": "quiet_frequency",
-        "total_ms": 4813.850782000031,
+        "total_ms": 9329.430332999891,
         "timings": {
           "bass_drum": 0.0,
           "basses": 0.0,
@@ -2047,17 +2055,17 @@
           "horns": 0.0,
           "low_swell": 0.0,
           "piano_theme": 0.0,
-          "sfx_alarm": 0.0,
-          "sfx_bike": 907.4765889999981,
-          "sfx_device": 737.8154870000344,
+          "sfx_alarm": 3637.677602999929,
+          "sfx_bike": 844.6899959999428,
+          "sfx_device": 848.3615380000629,
           "sfx_heartbeat": 0.0,
           "sfx_impacts": 0.0,
-          "sfx_road": 839.3280139999888,
-          "sfx_truck": 2195.4220750000104,
-          "sfx_tyres_bike": 1233.2794290000493,
-          "sfx_tyres_v8": 1475.3138180000178,
-          "sfx_v8": 601.0630619999802,
-          "sfx_walkie": 0.0,
+          "sfx_road": 670.160893000002,
+          "sfx_truck": 2053.396833000079,
+          "sfx_tyres_bike": 1149.9902580001162,
+          "sfx_tyres_v8": 1257.267628999898,
+          "sfx_v8": 708.572231000062,
+          "sfx_walkie": 830.6918180001048,
           "snare": 0.0,
           "taiko": 0.0,
           "timpani": 0.0,
@@ -4006,7 +4014,7 @@
             "detail": "stem \"sfx_bike\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
             "drops": [
               12.9,
-              12.2,
+              12.1,
               13.2,
               13.5,
               12.3,
@@ -4061,8 +4069,8 @@
               {
                 "section": "the_take",
                 "start_s": 12.0,
-                "measured_db": -33.31,
-                "expected_db": -33.31,
+                "measured_db": -33.34,
+                "expected_db": -33.34,
                 "dyn": 0.45
               }
             ],
@@ -4107,12 +4115,12 @@
             "margin": 0.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_device\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 253 event(s) rejected as a dense burst, 2 as a steep attack; max cluster span 1.497 ms",
+            "detail": "stem \"sfx_device\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms",
             "mad_count": 0,
             "lpc_count": 0,
-            "rejected": 253,
-            "attacks_ignored": 2,
-            "max_cluster_span_ms": 1.4965986394557824
+            "rejected": 0,
+            "attacks_ignored": 0,
+            "max_cluster_span_ms": 0.0
           },
           {
             "row": "stem.dropout",
@@ -4125,7 +4133,7 @@
             "margin": -20.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_device\": longest hole 0 ms (limit 20-1000 ms), floor -140.3 dBFS; 0 hole(s)",
+            "detail": "stem \"sfx_device\": longest hole 0 ms (limit 20-1000 ms), floor -136.8 dBFS; 0 hole(s)",
             "holes": []
           },
           {
@@ -4141,9 +4149,10 @@
             "calibrated": false,
             "detail": "stem \"sfx_device\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
             "drops": [
+              12.0,
               13.1,
-              15.9,
-              17.3
+              14.1,
+              13.5
             ],
             "exempted": []
           },
@@ -4186,14 +4195,14 @@
             "margin": -12.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_device\": own median -35.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+            "detail": "stem \"sfx_device\": own median -32.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
             "fail": false,
             "table": [
               {
                 "section": "the_lab",
                 "start_s": 0.0,
-                "measured_db": -35.69,
-                "expected_db": -35.69,
+                "measured_db": -32.45,
+                "expected_db": -32.45,
                 "dyn": 0.25
               }
             ],
@@ -4531,12 +4540,12 @@
             "margin": 0.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_road\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 6066 event(s) rejected as a dense burst, 542 as a steep attack; max cluster span 1.497 ms",
+            "detail": "stem \"sfx_road\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms",
             "mad_count": 0,
             "lpc_count": 0,
-            "rejected": 6066,
-            "attacks_ignored": 542,
-            "max_cluster_span_ms": 1.4965986394557824
+            "rejected": 0,
+            "attacks_ignored": 0,
+            "max_cluster_span_ms": 0.0
           },
           {
             "row": "stem.dropout",
@@ -4549,7 +4558,7 @@
             "margin": -20.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_road\": longest hole 0 ms (limit 20-1000 ms), floor -67.1 dBFS; 0 hole(s)",
+            "detail": "stem \"sfx_road\": longest hole 0 ms (limit 20-1000 ms), floor -66.6 dBFS; 0 hole(s)",
             "holes": []
           },
           {
@@ -4565,8 +4574,8 @@
             "calibrated": false,
             "detail": "stem \"sfx_road\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
             "drops": [
-              37.9,
-              37.7
+              39.9,
+              36.4
             ],
             "exempted": []
           },
@@ -4609,14 +4618,14 @@
             "margin": -12.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_road\": own median -40.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+            "detail": "stem \"sfx_road\": own median -39.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
             "fail": false,
             "table": [
               {
                 "section": "the_take",
                 "start_s": 12.0,
-                "measured_db": -39.96,
-                "expected_db": -39.96,
+                "measured_db": -39.37,
+                "expected_db": -39.37,
                 "dyn": 0.45
               }
             ],
@@ -4695,8 +4704,8 @@
             "calibrated": false,
             "detail": "stem \"sfx_truck\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
             "drops": [
-              19.7,
-              20.5
+              19.6,
+              20.4
             ],
             "exempted": []
           },
@@ -4739,14 +4748,14 @@
             "margin": -12.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_truck\": own median -43.8 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+            "detail": "stem \"sfx_truck\": own median -43.3 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
             "fail": false,
             "table": [
               {
                 "section": "the_truck",
                 "start_s": 58.0,
-                "measured_db": -43.76,
-                "expected_db": -43.76,
+                "measured_db": -43.3,
+                "expected_db": -43.3,
                 "dyn": 0.6
               }
             ],
@@ -4791,12 +4800,12 @@
             "margin": 0.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_tyres_bike\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 235 event(s) rejected as a dense burst, 23 as a steep attack; max cluster span 1.474 ms",
+            "detail": "stem \"sfx_tyres_bike\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 1094 event(s) rejected as a dense burst, 54 as a steep attack; max cluster span 1.497 ms",
             "mad_count": 0,
             "lpc_count": 0,
-            "rejected": 235,
-            "attacks_ignored": 23,
-            "max_cluster_span_ms": 1.4739229024943312
+            "rejected": 1094,
+            "attacks_ignored": 54,
+            "max_cluster_span_ms": 1.4965986394557824
           },
           {
             "row": "stem.dropout",
@@ -4875,8 +4884,8 @@
               {
                 "section": "the_take",
                 "start_s": 12.0,
-                "measured_db": -17.6,
-                "expected_db": -17.6,
+                "measured_db": -17.62,
+                "expected_db": -17.62,
                 "dyn": 0.45
               }
             ],
@@ -4921,12 +4930,12 @@
             "margin": 0.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_tyres_v8\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 170 event(s) rejected as a dense burst, 15 as a steep attack; max cluster span 1.474 ms",
+            "detail": "stem \"sfx_tyres_v8\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 599 event(s) rejected as a dense burst, 29 as a steep attack; max cluster span 1.497 ms",
             "mad_count": 0,
             "lpc_count": 0,
-            "rejected": 170,
-            "attacks_ignored": 15,
-            "max_cluster_span_ms": 1.4739229024943312
+            "rejected": 599,
+            "attacks_ignored": 29,
+            "max_cluster_span_ms": 1.4965986394557824
           },
           {
             "row": "stem.dropout",
@@ -4999,14 +5008,14 @@
             "margin": -12.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_tyres_v8\": own median -13.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+            "detail": "stem \"sfx_tyres_v8\": own median -13.0 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
             "fail": false,
             "table": [
               {
                 "section": "the_flyover",
                 "start_s": 52.0,
-                "measured_db": -13.12,
-                "expected_db": -13.12,
+                "measured_db": -13.04,
+                "expected_db": -13.04,
                 "dyn": 0.8
               }
             ],
@@ -5086,7 +5095,7 @@
             "detail": "stem \"sfx_v8\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
             "drops": [
               25.3,
-              22.5
+              22.4
             ],
             "exempted": []
           },
@@ -5129,14 +5138,14 @@
             "margin": -12.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_v8\": own median -21.7 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+            "detail": "stem \"sfx_v8\": own median -21.6 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
             "fail": false,
             "table": [
               {
                 "section": "the_alert",
                 "start_s": 24.0,
-                "measured_db": -21.7,
-                "expected_db": -21.7,
+                "measured_db": -21.6,
+                "expected_db": -21.6,
                 "dyn": 0.65
               }
             ],
@@ -5181,12 +5190,12 @@
             "margin": 0.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_walkie\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 110 event(s) rejected as a dense burst, 38 as a steep attack; max cluster span 1.474 ms",
+            "detail": "stem \"sfx_walkie\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 19 event(s) rejected as a dense burst, 9 as a steep attack; max cluster span 1.451 ms",
             "mad_count": 0,
             "lpc_count": 0,
-            "rejected": 110,
-            "attacks_ignored": 38,
-            "max_cluster_span_ms": 1.4739229024943312
+            "rejected": 19,
+            "attacks_ignored": 9,
+            "max_cluster_span_ms": 1.4512471655328798
           },
           {
             "row": "stem.dropout",
@@ -5199,7 +5208,7 @@
             "margin": -20.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_walkie\": longest hole 0 ms (limit 20-1000 ms), floor -153.5 dBFS; 0 hole(s)",
+            "detail": "stem \"sfx_walkie\": longest hole 0 ms (limit 20-1000 ms), floor -146.7 dBFS; 0 hole(s)",
             "holes": []
           },
           {
@@ -5215,14 +5224,14 @@
             "calibrated": false,
             "detail": "stem \"sfx_walkie\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
             "drops": [
-              44.1,
-              40.7,
-              47.3,
-              39.2,
-              12.3,
-              43.0,
-              38.4,
-              39.5
+              35.0,
+              29.4,
+              33.0,
+              27.9,
+              30.4,
+              26.2,
+              12.5,
+              30.3
             ],
             "exempted": []
           },
@@ -5265,14 +5274,14 @@
             "margin": -12.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "stem \"sfx_walkie\": own median -21.1 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+            "detail": "stem \"sfx_walkie\": own median -20.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
             "fail": false,
             "table": [
               {
                 "section": "the_lab",
                 "start_s": 0.0,
-                "measured_db": -21.14,
-                "expected_db": -21.14,
+                "measured_db": -20.49,
+                "expected_db": -20.49,
                 "dyn": 0.25
               }
             ],
@@ -6722,58 +6731,49 @@
           }
         ],
         "duration_s": 123.28598639455782,
-        "cached_stems": 21,
-        "measured_stems": 7
+        "cached_stems": 19,
+        "measured_stems": 9
       },
       "mix": {
         "stage": "mix",
-        "fails": 2,
-        "warns": 38,
+        "fails": 0,
+        "warns": 34,
         "metrics": [
           {
             "row": "clicks",
             "stage": "mix",
             "stem": null,
-            "level": "FAIL",
-            "value": 37.0,
+            "level": "PASS",
+            "value": 0.0,
             "unit": "events",
             "threshold": 0.0,
-            "margin": 37.0,
-            "worst_times_s": [
-              63.623,
-              64.3063,
-              112.1816,
-              112.2173,
-              112.5126,
-              112.6482,
-              113.1482,
-              113.1867
-            ],
+            "margin": 0.0,
+            "worst_times_s": [],
             "calibrated": true,
-            "detail": "37 clustered impulse event(s) (MAD), 12 LPC frame(s); 911 event(s) rejected as a dense burst, 48 as a steep attack; max cluster span 1.497 ms"
+            "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 247 event(s) rejected as a dense burst, 27 as a steep attack; max cluster span 1.497 ms"
           },
           {
             "row": "loudness",
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -16.422974616132983,
+            "value": -16.252707147359004,
             "unit": "LUFS",
             "threshold": -16.0,
-            "margin": -2.077025383867017,
+            "margin": -2.247292852640996,
             "worst_times_s": [],
             "calibrated": true,
-            "detail": "-16.4 LUFS vs target -16.0 (tolerance 2.5 LU)"
+            "detail": "-16.3 LUFS vs target -16.0 (tolerance 2.5 LU)"
           },
           {
             "row": "true peak",
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": -1.5007482700741783,
+            "value": -1.5007495008015257,
             "unit": "dBTP",
             "threshold": -1.5,
-            "margin": -0.0007482700741783255,
+            "margin": -0.0007495008015256932,
             "worst_times_s": [],
             "calibrated": true,
             "detail": "-1.50 dBTP vs ceiling -1.5"
@@ -6789,7 +6789,7 @@
             "margin": -20.0,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "longest hole 0 ms (limit 20-1000 ms), floor -66.0 dBFS; 0 hole(s)"
+            "detail": "longest hole 0 ms (limit 20-1000 ms), floor -64.3 dBFS; 0 hole(s)"
           },
           {
             "row": "cut.hard",
@@ -6809,13 +6809,13 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 67.32735810716936,
+            "value": 66.53320178897854,
             "unit": "dB",
             "threshold": 12.0,
-            "margin": -55.32735810716936,
+            "margin": -54.533201788978545,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "end level -125.3 dBFS (limit -45), decay over final 300 ms 67.3 dB (limit 12); natural release"
+            "detail": "end level -124.5 dBFS (limit -45), decay over final 300 ms 66.5 dB (limit 12); natural release"
           },
           {
             "row": "clipping",
@@ -6835,10 +6835,10 @@
             "stage": "mix",
             "stem": null,
             "level": "PASS",
-            "value": 1.9662754612024234e-05,
+            "value": 2.2321077435167716e-05,
             "unit": "FS",
             "threshold": 0.001,
-            "margin": -0.0009803372453879757,
+            "margin": -0.0009776789225648323,
             "worst_times_s": [],
             "calibrated": false,
             "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00002 (limit 0.001)"
@@ -6847,84 +6847,84 @@
             "row": "section.energy",
             "stage": "mix",
             "stem": null,
-            "level": "FAIL",
-            "value": 0.38181818181818183,
+            "level": "PASS",
+            "value": 0.8424242424242423,
             "unit": "rho",
             "threshold": 0.5,
-            "margin": -0.11818181818181817,
+            "margin": 0.3424242424242423,
             "worst_times_s": [],
             "calibrated": false,
-            "detail": "Spearman rho 0.38 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
+            "detail": "Spearman rho 0.84 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
             "table": [
               {
                 "name": "the_lab",
                 "start_s": 0.0,
                 "end_s": 12.0,
                 "energy": 0.25,
-                "level_db": -25.712503909482574
+                "level_db": -28.02428346000296
               },
               {
                 "name": "the_take",
                 "start_s": 12.0,
                 "end_s": 24.0,
                 "energy": 0.45,
-                "level_db": -27.184475160547045
+                "level_db": -27.35404930808012
               },
               {
                 "name": "the_alert",
                 "start_s": 24.0,
                 "end_s": 36.0,
                 "energy": 0.65,
-                "level_db": -18.72207590730966
+                "level_db": -20.522006464366672
               },
               {
                 "name": "the_chase",
                 "start_s": 36.0,
                 "end_s": 52.0,
                 "energy": 0.9,
-                "level_db": -20.502420739710946
+                "level_db": -17.85011759711773
               },
               {
                 "name": "the_flyover",
                 "start_s": 52.0,
                 "end_s": 58.0,
                 "energy": 0.8,
-                "level_db": -22.14561807420677
+                "level_db": -19.90079945018713
               },
               {
                 "name": "the_truck",
                 "start_s": 58.0,
                 "end_s": 64.0,
                 "energy": 0.6,
-                "level_db": -39.33656559601168
+                "level_db": -38.257113150833746
               },
               {
                 "name": "the_escalation",
                 "start_s": 64.0,
                 "end_s": 88.0,
                 "energy": 0.95,
-                "level_db": -20.06671633634152
+                "level_db": -17.08469530225258
               },
               {
                 "name": "the_wall",
                 "start_s": 88.0,
                 "end_s": 104.0,
                 "energy": 1.0,
-                "level_db": -19.521223254274968
+                "level_db": -16.254823347700043
               },
               {
                 "name": "the_dropout",
                 "start_s": 104.0,
                 "end_s": 110.0,
                 "energy": 0.35,
-                "level_db": -18.48442745676178
+                "level_db": -22.295622978231634
               },
               {
                 "name": "the_signal",
                 "start_s": 110.0,
                 "end_s": 120.0,
                 "energy": 0.3,
-                "level_db": -24.523456368136234
+                "level_db": -25.58333550950467
               }
             ]
           }
@@ -7074,6 +7074,12 @@
         "clicks: 37 click event(s): 0 single-sample jump(s) above 0.5 FS; high-pass MAD found 37 and LPC 12. Check the sample start or add a 2-5 ms fade-in at that note",
         "section.energy: Spearman rho 0.38 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)"
       ]
+    },
+    {
+      "attempt": 17,
+      "time": "2026-11-28T12:40:40Z",
+      "fails": 0,
+      "failing": []
     }
   ]
 }
