@@ -428,7 +428,7 @@ write('qf_heartbeat', dict(
 
 # ================================================================================================ the device
 begin(8.4, 119.9)
-DEV = [(8.4, 11.6, -30.0), (110.5, 119.9, -12.0)]
+DEV = [(8.4, 11.6, -30.0), (110.5, 119.3, -12.0)]         # ends before the file does: an amplitude-modulated tail dips under the dropout floor
 
 
 def dev_gain(t):

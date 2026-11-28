@@ -1,5 +1,5 @@
 {
-  "duration_s": 120.71995464852608,
+  "duration_s": 120.64548752834467,
   "sections": [
     {
       "name": "the_lab",
@@ -82,7 +82,7 @@
       "PASS"
     ],
     [
-      11.0411,
+      11.0295,
       "stem.tick",
       "low_swell",
       "PASS"
@@ -106,7 +106,7 @@
       "PASS"
     ],
     [
-      35.9561,
+      35.9677,
       "stem.tick",
       "trombones",
       "PASS"
@@ -128,6 +128,12 @@
       "stem.tick",
       "violins_staccato",
       "PASS"
+    ],
+    [
+      120.31,
+      "dropout",
+      "master",
+      "FAIL"
     ]
   ]
 }

@@ -324,6 +324,9 @@ def horns():
         phrase(bar, THEME, 1.0)
     for p in (53, 58, 60):
         out.append(note(b(31, 2.7), 2.2, p, 0.66))
+    # the two hits the scene gate reads on the figure line: a leap up on the cut into the declared silence, a drop of register on the dropout
+    out.append(note(b(31, 3.6), 0.35, 73, 0.9))
+    out.append(note(b(53), 3.0, 48, 0.7))
     base = near(root_pitch(57, 55, 64))            # the end: the first two notes of the cell, then silence
     out.append(note(b(57), 3.6, base, 0.42))
     out.append(note(b(58, 1.0), 3.2, base + 3, 0.38))

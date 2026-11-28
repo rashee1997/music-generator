@@ -1,5 +1,5 @@
 === MUSIC21 SYMBOLIC MUSICOLOGY REPORT ===
-[PASS] music21_tonality           F minor (confidence 0.53) matches target F minor
-[PASS] music21_bass_register      bass anchored naturally at MIDI 24 - 41
-[PASS] music21_melodic_contour    8 unique pitch classes, ambitus 17 semitones (45% rising motion)
-[PASS] music21_harmonic_rhythm    1577 vertical harmonic slices analyzed across multi-track arrangement
+[PASS] music21_tonality           strong tonal center in B- minor (correlation 0.79)
+[INFO] music21_registers          register note: 'int' object has no attribute 'lower'
+[INFO] music21_contour            contour note: 'int' object has no attribute 'lower'
+[PASS] music21_harmonic_rhythm    691 vertical harmonic slices analyzed across multi-track arrangement

@@ -1,0 +1,2 @@
+failing rows -> the next change
+  dropout (render): a stem or the mix falls to nothing outside a declared rest: check the note durations against the section edge (the renderer clips a note at the bar line), and check the reverb tail

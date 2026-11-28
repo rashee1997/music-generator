@@ -3,83 +3,83 @@
   "stage": "mix",
   "stem": null,
   "level": "WARN",
-  "value": 0.6484848484848483,
+  "value": 0.6121212121212121,
   "unit": "rho",
   "threshold": 0.5,
-  "margin": 0.14848484848484833,
+  "margin": 0.11212121212121207,
   "worst_times_s": [],
   "calibrated": false,
-  "detail": "Spearman rho 0.65 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
+  "detail": "Spearman rho 0.61 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
   "table": [
     {
       "name": "the_lab",
       "start_s": 0.0,
       "end_s": 12.0,
       "energy": 0.25,
-      "level_db": -24.397602300433398
+      "level_db": -24.05043213150166
     },
     {
       "name": "the_take",
       "start_s": 12.0,
       "end_s": 24.0,
       "energy": 0.45,
-      "level_db": -25.519134976682725
+      "level_db": -24.753082670126464
     },
     {
       "name": "the_alert",
       "start_s": 24.0,
       "end_s": 36.0,
       "energy": 0.65,
-      "level_db": -18.3765141063681
+      "level_db": -18.414882023321148
     },
     {
       "name": "the_chase",
       "start_s": 36.0,
       "end_s": 52.0,
       "energy": 0.9,
-      "level_db": -19.021249677682388
+      "level_db": -18.838712467767195
     },
     {
       "name": "the_flyover",
       "start_s": 52.0,
       "end_s": 58.0,
       "energy": 0.8,
-      "level_db": -19.352164612255386
+      "level_db": -19.402772995203904
     },
     {
       "name": "the_truck",
       "start_s": 58.0,
       "end_s": 64.0,
       "energy": 0.6,
-      "level_db": -35.93965828036798
+      "level_db": -38.523354147491915
     },
     {
       "name": "the_escalation",
       "start_s": 64.0,
       "end_s": 88.0,
       "energy": 0.95,
-      "level_db": -18.332173711602834
+      "level_db": -18.476007718612127
     },
     {
       "name": "the_wall",
       "start_s": 88.0,
       "end_s": 104.0,
       "energy": 1.0,
-      "level_db": -17.820855258042034
+      "level_db": -17.706801323964346
     },
     {
       "name": "the_dropout",
       "start_s": 104.0,
       "end_s": 110.0,
       "energy": 0.35,
-      "level_db": -18.726517767674274
+      "level_db": -18.8069677567307
     },
     {
       "name": "the_signal",
       "start_s": 110.0,
       "end_s": 120.0,
       "energy": 0.3,
-      "level_db": -24.83850969188719
+      "level_db": -24.74680383004878
     }
   ]
 }
