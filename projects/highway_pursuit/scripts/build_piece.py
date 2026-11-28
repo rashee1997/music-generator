@@ -511,8 +511,8 @@ def cymbals():
     out = []
     for bar in (1, 5, 11, 14, 20, 24, 31, 32):
         out.append(note(beat_of(bar, 2.7 if bar == 31 else 0.0), 2.4, 49, round(vel(bar, 0.85), 3)))
-    for bar in (14, 24):                         # a second crash, brighter, cutting over the brass on the two peaks
-        out.append(note(beat_of(bar, 0.0), 3.0, 57, 1.0))
+    for bar in (14, 24):                         # a second crash 25 ms behind the first (two players never hit together): no stacked attack
+        out.append(note(beat_of(bar, 0.0) + 0.025, 3.0, 57, 0.85))
     out.append(note(beat_of(20, 0.0), beat_of(24) - beat_of(20, 0.0), 49, 0.42))   # the bloom into the empty room
     for bar in (18, 19):                         # the swell into the slow motion
         for i in range(8):
@@ -529,7 +529,7 @@ def low_swell():
     # the near miss: the sheet declares one second of nothing (hit at the section start, silence_after_s 1.0), then the
     # room. The notes used to leave about 2.9 s of nothing, so the master read a 165 ms hole at 54.4 s (rca: "no stem in the
     # score sounds there"). A low swell enters when the declared rest ends and runs into the escape.
-    out.append(note(beat_of(30, 2.5), beat_of(32) - beat_of(30, 2.5), root_pitch(31, 36, 47) - 12, 0.5))
+    out.append(note(beat_of(30, 2.75), beat_of(32) - beat_of(30, 2.75), root_pitch(31, 36, 47) - 12, 0.5))
     return out
 
 

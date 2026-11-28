@@ -1,5 +1,5 @@
 {
- "stamp": "20261128T020350",
+ "stamp": "20261128T032731",
  "project": "highway_pursuit",
  "level": "WARN",
  "sources": {
@@ -17,13 +17,52 @@
    "stereo.json",
    "waveform.json"
   ],
-  "stems": "18 processed stems from .cache/mix",
-  "master": "out/highway_pursuit.wav",
-  "verdict": "2026-11-28T01:59:19Z",
-  "drift": "the presets or score changed after this master was rendered: presets/mix/highway_pursuit_mix.json - the autopsy describes the previous mix until you re-render"
+  "stems": "19 processed stems from .cache/mix",
+  "master": "out/_draft_highway_pursuit.wav",
+  "verdict": "2026-11-28T03:23:35Z"
  },
  "binding": [],
  "advisory": [
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.dropout",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.cut",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.edge",
+   "value": 0.0,
+   "unit": ""
+  },
+  {
+   "row": "stem.tick",
+   "value": 0.0,
+   "unit": ""
+  },
   {
    "row": "stem.dropout",
    "value": 0.0,
@@ -228,7 +267,7 @@
  "domains": {
   "run": [],
   "skipped": {
-   "stems": 40
+   "stems": 48
   }
  },
  "model": {

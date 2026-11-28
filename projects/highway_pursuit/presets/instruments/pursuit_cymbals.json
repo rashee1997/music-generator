@@ -37,7 +37,7 @@
   ],
   "gm": "orchestral",
   "mechanics_class": "drum",
-  "onset_fade_ms": 0.3,
+  "onset_fade_ms": 3.0,
   "onset_fade_all": true,
   "fx": [
     {

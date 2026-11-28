@@ -4,13 +4,13 @@
     "source": {
       "sr": 44100,
       "seconds": 60.7,
-      "stems": 18
+      "stems": 19
     },
     "1_timbre_loudness": {
-      "value": -1.51,
-      "hf_shift_db": 5.03,
-      "centroid_quiet_hz": 177.5,
-      "centroid_loud_hz": 149.2,
+      "value": -2.34,
+      "hf_shift_db": 3.47,
+      "centroid_quiet_hz": 190.3,
+      "centroid_loud_hz": 145.3,
       "verdict": "WARN",
       "note": "loud and quiet differ mainly in volume"
     },
@@ -21,19 +21,19 @@
       "note": "35 player(s) across 12 section part(s)"
     },
     "3_transient": {
-      "value": 0.9911,
-      "onsets": 108,
+      "value": 0.9888,
+      "onsets": 115,
       "verdict": "PASS",
       "note": "attacks vary"
     },
     "4_depth": {
       "value": -0.82,
-      "wet_share": 0.5472,
+      "wet_share": 0.5473,
       "verdict": "PASS",
       "note": "detail sits in front of the room"
     },
     "6_distance": {
-      "value": 23,
+      "value": 24,
       "far": 1,
       "missing_model": 0,
       "predicted_4k_loss_db": 0.12,
@@ -41,7 +41,7 @@
       "note": "every far source has an air model (the score's medium, ISO 9613-1)"
     },
     "7_openness": {
-      "value": 21.04,
+      "value": 20.08,
       "verdict": "PASS",
       "note": "air survives the peak"
     },
@@ -53,10 +53,10 @@
       "note": "unstable at the bar"
     },
     "5_low_mid": {
-      "value": 2.95,
-      "low_mid_over_sub_db": -4.27,
-      "low_mid_growth_db": 1.91,
-      "sub_growth_db": 3.1,
+      "value": 3.13,
+      "low_mid_over_sub_db": -4.47,
+      "low_mid_growth_db": 2.0,
+      "sub_growth_db": 3.07,
       "verdict": "WARN",
       "note": "low-mids thicken or grow into the peak"
     },
@@ -71,7 +71,7 @@
       "note": "1 sustained part(s) hold a flat pitch (no 3-9 Hz movement of 10 cents or more): basses"
     },
     "10_repetition": {
-      "value": 0.14,
+      "value": 0.33,
       "parts": {
         "bass_clarinet": 0.0,
         "bass_drum": 0.01,
@@ -79,13 +79,14 @@
         "basses_pizz": 0.01,
         "celli": 0.0,
         "choir": 0.0,
-        "cymbals": 0.0,
+        "cymbals": 0.03,
         "horns": 0.0,
         "low_swell": 0.0,
         "piano_theme": 0.01,
-        "snare": 0.14,
+        "snare": 0.18,
+        "snare_b": 0.33,
         "taiko": 0.0,
-        "timpani": 0.04,
+        "timpani": 0.0,
         "trombones": 0.0,
         "tuba": 0.0,
         "violas": 0.0,
@@ -101,7 +102,7 @@
         "bass_clarinet": 0.64,
         "basses_pizz": 0.44,
         "celli": 0.25,
-        "cymbals": 0.65,
+        "cymbals": 0.54,
         "piano_theme": -0.52,
         "tuba": -0.07,
         "violas": 0.48,
@@ -112,7 +113,7 @@
         "bass_clarinet": 0.39,
         "basses_pizz": 0.14,
         "celli": 0.221,
-        "cymbals": 0.197,
+        "cymbals": 0.53,
         "piano_theme": 0.538,
         "tuba": 0.266,
         "violas": 0.373,
@@ -124,32 +125,32 @@
     },
     "12_coherence": {
       "value": 0.64,
-      "mid": 0.44,
+      "mid": 0.46,
       "verdict": "PASS",
       "note": "the top of the mix is decorrelated between the channels"
     },
     "13_sub_weight": {
-      "value": -6.0,
-      "loss_db": 5.1,
+      "value": -6.1,
+      "loss_db": 5.2,
       "carriers": 2,
       "verdict": "PASS",
       "note": "the sub the stems carry reaches the master"
     },
     "14_air": {
-      "value": -51.9,
+      "value": -43.4,
       "band_limited": 9,
       "verdict": "WARN",
       "note": "8-16 kHz is thin; 9 part(s) hold nothing there in their own samples (bass_clarinet, basses_pizz, celli, choir, low_swell, piano_theme): EQ cannot add a band the samples lack, so use a preset `air` treatment or a bank that has it"
     },
     "15_dynamic_scale": {
-      "value": 9.4,
+      "value": 9.7,
       "basis": "section means",
       "verdict": "WARN",
       "note": "the loud and the quiet passages are close in level: fortissimo reads polite"
     },
     "16_impact_attack": {
-      "value": 12.7,
-      "parts": 4,
+      "value": 12.9,
+      "parts": 5,
       "soft_attack": 0,
       "verdict": "PASS",
       "note": "struck onsets rise fast or carry a click"
