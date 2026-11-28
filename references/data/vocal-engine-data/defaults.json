@@ -478,7 +478,7 @@
     "distance_spread_m": 0.5,
     "expression": "",
     "expression_intensity": 1.0,
-    "singers": [],
+    "singers": [], "layers": [],
     "pitch_drift_cents": 8.0,
     "pitch_drift_hz": 0.35,
     "onset_spread_ms": 30.0,

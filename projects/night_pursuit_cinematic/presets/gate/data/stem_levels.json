@@ -1,0 +1,956 @@
+{
+  "rows": [
+    {
+      "stem": "bass_clarinet",
+      "table": [
+        {
+          "section": "spotted",
+          "start_s": 25.077,
+          "measured_db": -38.9,
+          "expected_db": -38.9,
+          "dyn": 0.8
+        }
+      ]
+    },
+    {
+      "stem": "bass_drum",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -18.49,
+          "expected_db": -18.01,
+          "dyn": 0.9
+        },
+        {
+          "section": "spotted",
+          "start_s": 25.077,
+          "measured_db": -18.53,
+          "expected_db": -19.03,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_chase",
+          "start_s": 38.892,
+          "measured_db": -18.21,
+          "expected_db": -18.01,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_bumps",
+          "start_s": 117.636,
+          "measured_db": -16.96,
+          "expected_db": -17.1,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -22.13,
+          "expected_db": -19.03,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_escape",
+          "start_s": 165.785,
+          "measured_db": -24.32,
+          "expected_db": -23.12,
+          "dyn": 0.5
+        }
+      ]
+    },
+    {
+      "stem": "basses",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -31.07,
+          "expected_db": -30.86,
+          "dyn": 0.9
+        },
+        {
+          "section": "spotted",
+          "start_s": 25.077,
+          "measured_db": -32.04,
+          "expected_db": -31.88,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_chase",
+          "start_s": 38.892,
+          "measured_db": -30.39,
+          "expected_db": -30.86,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_tunnel",
+          "start_s": 72.228,
+          "measured_db": -32.24,
+          "expected_db": -31.88,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_helicopter",
+          "start_s": 95.085,
+          "measured_db": -31.72,
+          "expected_db": -31.88,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_bumps",
+          "start_s": 117.636,
+          "measured_db": -30.16,
+          "expected_db": -29.94,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -37.68,
+          "expected_db": -31.88,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_escape",
+          "start_s": 165.785,
+          "measured_db": -44.87,
+          "expected_db": -35.96,
+          "dyn": 0.5
+        }
+      ]
+    },
+    {
+      "stem": "basses_pizz",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -29.29,
+          "expected_db": -27.7,
+          "dyn": 0.9
+        },
+        {
+          "section": "spotted",
+          "start_s": 25.077,
+          "measured_db": -28.73,
+          "expected_db": -28.73,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_chase",
+          "start_s": 38.892,
+          "measured_db": -28.42,
+          "expected_db": -27.7,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_tunnel",
+          "start_s": 72.228,
+          "measured_db": -30.03,
+          "expected_db": -28.73,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_helicopter",
+          "start_s": 95.085,
+          "measured_db": -28.28,
+          "expected_db": -28.73,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_bumps",
+          "start_s": 117.636,
+          "measured_db": -27.55,
+          "expected_db": -26.79,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -34.08,
+          "expected_db": -28.73,
+          "dyn": 0.8
+        }
+      ]
+    },
+    {
+      "stem": "celli",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -34.14,
+          "expected_db": -32.82,
+          "dyn": 0.9
+        },
+        {
+          "section": "spotted",
+          "start_s": 25.077,
+          "measured_db": -33.85,
+          "expected_db": -33.85,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_chase",
+          "start_s": 38.892,
+          "measured_db": -31.86,
+          "expected_db": -32.82,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_tunnel",
+          "start_s": 72.228,
+          "measured_db": -34.6,
+          "expected_db": -33.85,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_helicopter",
+          "start_s": 95.085,
+          "measured_db": -33.08,
+          "expected_db": -33.85,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_bumps",
+          "start_s": 117.636,
+          "measured_db": -31.91,
+          "expected_db": -31.91,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -40.6,
+          "expected_db": -33.85,
+          "dyn": 0.8
+        }
+      ]
+    },
+    {
+      "stem": "choir",
+      "table": [
+        {
+          "section": "the_helicopter",
+          "start_s": 95.085,
+          "measured_db": -36.69,
+          "expected_db": -46.48,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_escape",
+          "start_s": 165.785,
+          "measured_db": -59.88,
+          "expected_db": -50.56,
+          "dyn": 0.5
+        }
+      ]
+    },
+    {
+      "stem": "city_far",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -43.44,
+          "expected_db": -43.23,
+          "dyn": 0.9
+        },
+        {
+          "section": "spotted",
+          "start_s": 25.077,
+          "measured_db": -44.62,
+          "expected_db": -44.25,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_chase",
+          "start_s": 38.892,
+          "measured_db": -43.26,
+          "expected_db": -43.23,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_tunnel",
+          "start_s": 72.228,
+          "measured_db": -46.27,
+          "expected_db": -44.25,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_helicopter",
+          "start_s": 95.085,
+          "measured_db": -43.49,
+          "expected_db": -44.25,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_bumps",
+          "start_s": 117.636,
+          "measured_db": -45.81,
+          "expected_db": -42.31,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -47.51,
+          "expected_db": -44.25,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_escape",
+          "start_s": 165.785,
+          "measured_db": -43.88,
+          "expected_db": -48.33,
+          "dyn": 0.5
+        }
+      ]
+    },
+    {
+      "stem": "crash",
+      "table": [
+        {
+          "section": "the_chase",
+          "start_s": 38.892,
+          "measured_db": -14.91,
+          "expected_db": -14.91,
+          "dyn": 0.9
+        }
+      ]
+    },
+    {
+      "stem": "cymbals",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -39.12,
+          "expected_db": -37.81,
+          "dyn": 0.9
+        },
+        {
+          "section": "spotted",
+          "start_s": 25.077,
+          "measured_db": -39.29,
+          "expected_db": -38.84,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_chase",
+          "start_s": 38.892,
+          "measured_db": -38.96,
+          "expected_db": -37.81,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_tunnel",
+          "start_s": 72.228,
+          "measured_db": -37.22,
+          "expected_db": -38.84,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_helicopter",
+          "start_s": 95.085,
+          "measured_db": -38.71,
+          "expected_db": -38.84,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_bumps",
+          "start_s": 117.636,
+          "measured_db": -37.51,
+          "expected_db": -36.9,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -37.61,
+          "expected_db": -38.84,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_escape",
+          "start_s": 165.785,
+          "measured_db": -41.46,
+          "expected_db": -42.92,
+          "dyn": 0.5
+        }
+      ]
+    },
+    {
+      "stem": "ferrari",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -15.84,
+          "expected_db": -15.84,
+          "dyn": 0.9
+        }
+      ]
+    },
+    {
+      "stem": "helicopter",
+      "table": [
+        {
+          "section": "the_tunnel",
+          "start_s": 72.228,
+          "measured_db": -16.22,
+          "expected_db": -16.22,
+          "dyn": 0.8
+        }
+      ]
+    },
+    {
+      "stem": "horns",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -21.4,
+          "expected_db": -21.49,
+          "dyn": 0.9
+        },
+        {
+          "section": "spotted",
+          "start_s": 25.077,
+          "measured_db": -23.91,
+          "expected_db": -22.51,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_chase",
+          "start_s": 38.892,
+          "measured_db": -21.62,
+          "expected_db": -21.49,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_tunnel",
+          "start_s": 72.228,
+          "measured_db": -23.41,
+          "expected_db": -22.51,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_helicopter",
+          "start_s": 95.085,
+          "measured_db": -20.06,
+          "expected_db": -22.51,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_bumps",
+          "start_s": 117.636,
+          "measured_db": -18.31,
+          "expected_db": -20.58,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -26.08,
+          "expected_db": -22.51,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_escape",
+          "start_s": 165.785,
+          "measured_db": -35.31,
+          "expected_db": -26.6,
+          "dyn": 0.5
+        }
+      ]
+    },
+    {
+      "stem": "lamborghini",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -18.08,
+          "expected_db": -18.08,
+          "dyn": 0.9
+        }
+      ]
+    },
+    {
+      "stem": "landing",
+      "table": [
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -16.26,
+          "expected_db": -16.26,
+          "dyn": 0.8
+        }
+      ]
+    },
+    {
+      "stem": "low_swell",
+      "table": [
+        {
+          "section": "the_chase",
+          "start_s": 38.892,
+          "measured_db": -29.66,
+          "expected_db": -34.44,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_helicopter",
+          "start_s": 95.085,
+          "measured_db": -35.85,
+          "expected_db": -35.47,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -35.47,
+          "expected_db": -35.47,
+          "dyn": 0.8
+        }
+      ]
+    },
+    {
+      "stem": "mustang",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -23.78,
+          "expected_db": -23.78,
+          "dyn": 0.9
+        }
+      ]
+    },
+    {
+      "stem": "piano_theme",
+      "table": [
+        {
+          "section": "the_helicopter",
+          "start_s": 95.085,
+          "measured_db": -67.67,
+          "expected_db": -63.72,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_escape",
+          "start_s": 165.785,
+          "measured_db": -63.38,
+          "expected_db": -67.81,
+          "dyn": 0.5
+        }
+      ]
+    },
+    {
+      "stem": "porsche",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -16.16,
+          "expected_db": -16.16,
+          "dyn": 0.9
+        }
+      ]
+    },
+    {
+      "stem": "siren_first",
+      "table": [
+        {
+          "section": "spotted",
+          "start_s": 25.077,
+          "measured_db": -16.47,
+          "expected_db": -16.47,
+          "dyn": 0.8
+        }
+      ]
+    },
+    {
+      "stem": "snare",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -26.93,
+          "expected_db": -25.54,
+          "dyn": 0.9
+        },
+        {
+          "section": "spotted",
+          "start_s": 25.077,
+          "measured_db": -26.18,
+          "expected_db": -26.57,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_chase",
+          "start_s": 38.892,
+          "measured_db": -26.28,
+          "expected_db": -25.54,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_tunnel",
+          "start_s": 72.228,
+          "measured_db": -27.0,
+          "expected_db": -26.57,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_helicopter",
+          "start_s": 95.085,
+          "measured_db": -25.94,
+          "expected_db": -26.57,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_bumps",
+          "start_s": 117.636,
+          "measured_db": -25.3,
+          "expected_db": -24.63,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -26.86,
+          "expected_db": -26.57,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_escape",
+          "start_s": 165.785,
+          "measured_db": -31.14,
+          "expected_db": -30.65,
+          "dyn": 0.5
+        }
+      ]
+    },
+    {
+      "stem": "solo_violin",
+      "table": [
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -37.67,
+          "expected_db": -41.61,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_escape",
+          "start_s": 165.785,
+          "measured_db": -49.15,
+          "expected_db": -45.69,
+          "dyn": 0.5
+        }
+      ]
+    },
+    {
+      "stem": "taiko",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -25.14,
+          "expected_db": -24.41,
+          "dyn": 0.9
+        },
+        {
+          "section": "spotted",
+          "start_s": 25.077,
+          "measured_db": -25.09,
+          "expected_db": -25.44,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_chase",
+          "start_s": 38.892,
+          "measured_db": -23.48,
+          "expected_db": -24.41,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_tunnel",
+          "start_s": 72.228,
+          "measured_db": -25.74,
+          "expected_db": -25.44,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_helicopter",
+          "start_s": 95.085,
+          "measured_db": -29.64,
+          "expected_db": -25.44,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_bumps",
+          "start_s": 117.636,
+          "measured_db": -21.96,
+          "expected_db": -23.5,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -30.18,
+          "expected_db": -25.44,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_escape",
+          "start_s": 165.785,
+          "measured_db": -36.8,
+          "expected_db": -29.52,
+          "dyn": 0.5
+        }
+      ]
+    },
+    {
+      "stem": "timpani",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -28.06,
+          "expected_db": -26.81,
+          "dyn": 0.9
+        },
+        {
+          "section": "spotted",
+          "start_s": 25.077,
+          "measured_db": -26.54,
+          "expected_db": -27.83,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_chase",
+          "start_s": 38.892,
+          "measured_db": -27.6,
+          "expected_db": -26.81,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_tunnel",
+          "start_s": 72.228,
+          "measured_db": -28.68,
+          "expected_db": -27.83,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_helicopter",
+          "start_s": 95.085,
+          "measured_db": -26.32,
+          "expected_db": -27.83,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_bumps",
+          "start_s": 117.636,
+          "measured_db": -26.33,
+          "expected_db": -25.89,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -32.04,
+          "expected_db": -27.83,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_escape",
+          "start_s": 165.785,
+          "measured_db": -42.97,
+          "expected_db": -31.91,
+          "dyn": 0.5
+        }
+      ]
+    },
+    {
+      "stem": "trombones",
+      "table": [
+        {
+          "section": "the_tunnel",
+          "start_s": 72.228,
+          "measured_db": -20.38,
+          "expected_db": -22.95,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_helicopter",
+          "start_s": 95.085,
+          "measured_db": -25.51,
+          "expected_db": -22.95,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_bumps",
+          "start_s": 117.636,
+          "measured_db": -16.06,
+          "expected_db": -21.01,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -26.39,
+          "expected_db": -22.95,
+          "dyn": 0.8
+        }
+      ]
+    },
+    {
+      "stem": "tuba",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -24.23,
+          "expected_db": -24.0,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_chase",
+          "start_s": 38.892,
+          "measured_db": -24.76,
+          "expected_db": -24.0,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_tunnel",
+          "start_s": 72.228,
+          "measured_db": -26.08,
+          "expected_db": -25.02,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_helicopter",
+          "start_s": 95.085,
+          "measured_db": -23.1,
+          "expected_db": -25.02,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_bumps",
+          "start_s": 117.636,
+          "measured_db": -23.33,
+          "expected_db": -23.08,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -30.34,
+          "expected_db": -25.02,
+          "dyn": 0.8
+        }
+      ]
+    },
+    {
+      "stem": "violas",
+      "table": [
+        {
+          "section": "the_race",
+          "start_s": 0.0,
+          "measured_db": -38.81,
+          "expected_db": -38.16,
+          "dyn": 0.9
+        },
+        {
+          "section": "spotted",
+          "start_s": 25.077,
+          "measured_db": -39.18,
+          "expected_db": -39.18,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_chase",
+          "start_s": 38.892,
+          "measured_db": -38.33,
+          "expected_db": -38.16,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_tunnel",
+          "start_s": 72.228,
+          "measured_db": -39.31,
+          "expected_db": -39.18,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_helicopter",
+          "start_s": 95.085,
+          "measured_db": -43.8,
+          "expected_db": -39.18,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_bumps",
+          "start_s": 117.636,
+          "measured_db": -35.6,
+          "expected_db": -37.24,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -44.01,
+          "expected_db": -39.18,
+          "dyn": 0.8
+        }
+      ]
+    },
+    {
+      "stem": "violins_long",
+      "table": [
+        {
+          "section": "the_tunnel",
+          "start_s": 72.228,
+          "measured_db": -42.33,
+          "expected_db": -53.2,
+          "dyn": 0.8
+        },
+        {
+          "section": "the_escape",
+          "start_s": 165.785,
+          "measured_db": -67.66,
+          "expected_db": -57.28,
+          "dyn": 0.5
+        }
+      ]
+    },
+    {
+      "stem": "violins_staccato",
+      "table": [
+        {
+          "section": "the_chase",
+          "start_s": 38.892,
+          "measured_db": -40.6,
+          "expected_db": -40.6,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_bumps",
+          "start_s": 117.636,
+          "measured_db": -36.19,
+          "expected_db": -39.68,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_flyover",
+          "start_s": 139.888,
+          "measured_db": -42.49,
+          "expected_db": -41.62,
+          "dyn": 0.8
+        }
+      ]
+    }
+  ]
+}

@@ -177,6 +177,19 @@ about what a part is.
 `punchy` and `bouncy` are the two presets whose accent lands on the offbeat (`upbeat=True` in `PRESETS`), which is why
 they read as a groove rather than a sloppier `natural`.
 
+### 2a. The phrase arch has a size, and it follows the written level
+
+`vel_arch` (tight 5, natural 7, loose 11, rubato 10, punchy 6, bouncy 8, in MIDI velocity units) is how far a phrase
+swells to its middle. It is multiplied by `clip(v_in.mean() / 90, 0.45, 1.35)` for every phrase, so a phrase the score
+wrote at *pp* arches less than one at *ff*. One fixed +-7 on every phrase of every piece made a written *pp* and a
+written *ff* arch by the same amount, which is a mannerism rather than a performance.
+
+**Every velocity-shaping term shares that scale.** The run shaping in `dynamics.shape_velocity`, the KTH melodic and
+harmonic charge and the expectation coupling in `track.humanize_track` are all multiplied by the same
+`gain = clip(mean / 90, 0.45, 1.35) x vel_arch / 7`. A term left at a fixed value while the arch grows is a detail the
+arch cancels: the group-start accent of a run stopped reading as the loudest note of its group, and
+`event_stats()['coupling']['ic_vel_rho']` fell from 0.55 to 0.47 when only the arch was raised.
+
 Pass a dict to override any key: `"humanize": {"timing_ms": 5, "lead_ms": 30, "strum_ms": 18}`.
 Per-track: `"humanize": "loose"` inside a track overrides the score setting.
 
@@ -296,3 +309,10 @@ own mean (sd at least 5 %), so a quiet shaker and a loud snare are held to the s
 
 
 ---
+
+## Anticipation and bar breath (opt-in)
+
+`anticipate_ms` leans an off-beat note that sits within 0.76 beat before the next bar line or the middle of the bar a few ms early (0.6-1.4 x the
+value, drawn from the track's generator); `bar_breath_ms` lets the last note of a bar go early and delays the first note of the next bar by 35 % of it,
+and the legato rule does not close that gap. Both default to 0 and draw nothing then, so an existing track plays exactly as before. Starting values:
+anticipate 20-40 ms, breath 60-120 ms. Roles: figure roles, counter, arp, chord, ostinato.

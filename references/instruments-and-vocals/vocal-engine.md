@@ -298,3 +298,8 @@ all still work (`config.resolve`); `waveguide.mode: table` restores the old tabl
 connect instead of dropping out; `c` now works in cents; chorus default mix 0.25 (was 0.4); `qawwali_devotional` now gets its
 saturation; `harmonic_lock`, `bandwidths` and style registers now act. The three shipped vocal presets were converted to the new
 schema (they had no effect before). `tests/legacy_vocals.py` keeps the old code for A/B and benchmarks.
+
+## 12. Layers (sections)
+
+`ensemble.layers` renders each section with its own config (`layer_config`), seed offset and velocity band, then sums them; `info.layers`
+and each voice's `group` say which section sang. Without layers the render is bit-identical to before. See `vocals-and-choirs.md` section 6.

@@ -1,0 +1,28 @@
+{
+  "name": "telephone",
+  "character": "Narrowband voice: a 300-3400 Hz band with a little grit, the sound of a call.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "pedalboard",
+      "plugin": "HighpassFilter",
+      "params": {
+        "cutoff_frequency_hz": 300.0
+      }
+    },
+    {
+      "type": "pedalboard",
+      "plugin": "LowpassFilter",
+      "params": {
+        "cutoff_frequency_hz": 3400.0
+      }
+    },
+    {
+      "type": "pedalboard",
+      "plugin": "Distortion",
+      "params": {
+        "drive_db": 8.0
+      }
+    }
+  ]
+}

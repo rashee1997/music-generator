@@ -1,0 +1,40 @@
+{
+  "name": "orchestral",
+  "character": "loud, dense, layered orchestral or hybrid-orchestral writing (strings, brass, winds, percussion): many beds share one band and the dynamic range is the point",
+  "extends": "cinematic",
+  "detect": {
+    "keywords": [
+      "orchestral",
+      "orchestra",
+      "symphonic",
+      "strings",
+      "brass section",
+      "epic",
+      "chase"
+    ]
+  },
+  "why": "a shipped starting point for `gate_profiles.py new <name> --from orchestral`: the figures are starting values chosen for the genre structure, not measurements of a piece; measure with scripts/rca.py and state the real figures in the project profile",
+  "rows": {
+    "pattern.velocity_flat": {
+      "mode": "relax",
+      "sd_frac": 0.1,
+      "reason": "a part written near ff has no headroom for a 15 % spread; sd_abs_max caps what any part is asked for, and 10 % of the mean keeps the relative rule for the quiet parts"
+    },
+    "masking.vs_melody": {
+      "mode": "relax",
+      "max_collisions": 24,
+      "max_share": 0.35,
+      "reason": "an orchestra layers beds under the line by design; a FAIL needs both the count and a third of the compared cells, so section length and bed count do not decide it"
+    },
+    "pattern.drums_few": {
+      "mode": "relax",
+      "distinct_div": 16,
+      "reason": "a locked taiko or timpani pattern under a chase is the pulse, as in a dance groove"
+    },
+    "pattern.track_flags_max": {
+      "mode": "relax",
+      "max": 3,
+      "reason": "one locked percussion part may carry two flags without being a loop; a third still fails"
+    }
+  }
+}

@@ -30,7 +30,7 @@ for every non-built-in instrument must exist, or nothing renders.
 
 Usage:
   python3 scripts/pipeline.py <project>/scores/<title>_score.json [--project <project>]
-      project mode (real music): writes out/master.wav, midi/<title>_score.mid, stems/*.wav, reports/ci_report.json
+      project mode (real music): writes out/<project>.wav (the stereo master, named after the project folder), midi/<title>_score.mid, stems/*.wav, reports/ci_report.json
       by default; exit code 1 when any Stage 6 check FAILs; --max-attempts N prints the stop rule.
   python3 scripts/pipeline.py "motivational trailer in D minor, 8s" --test --out x.wav
       test mode: smoke test with generic General MIDI instruments, never a deliverable
@@ -57,6 +57,7 @@ if SCRIPTS_DIR not in sys.path:
 
 import cli_util
 import compose
+import cut_windows
 import envcheck
 import gate_profiles
 import gate_report
@@ -246,15 +247,11 @@ class MusicPipeline:
         """Stage 2: Check the 6 Acoustic Laws and 4 Cognitive Feel Laws prior to rendering, then the score against the
         presets that will play it (preflight_lint.py: patch range, one-shot length, section lines, unisons, figure level, placement)."""
         self.log(2, "Acoustic & Cognitive Pre-Flight Linter (Acoustic Laws + Cognitive Feel Laws + score against presets)")
-        rows = pattern_audit.acoustic_checks(score)
         try:
-            rows = rows + [r for r in preflight_lint.checks(score, project_dir) if r[0] in ('FAIL', 'WARN')]
-            extra = []
-            qg.focus_rows(score, extra)         # judged from the score alone: a missing figure is found here, not after a render
-            qg.intent_rows(score, extra)
-            rows = rows + [r for r in extra if r[0] in ('FAIL', 'WARN')]
+            rows = preflight_lint.full_checks(score, project_dir)     # the one list of rows: the command line prints the same
         except Exception as exc:                  # a lint that cannot run must say so, never stop the render by itself
             print(f"  [WARN] preflight_lint did not run ({exc})")
+            rows = pattern_audit.acoustic_checks(score)
         fails = sum(1 for kind, _, _ in rows if kind == 'FAIL')
         clean = (fails == 0)
         for kind, name, msg in rows:
@@ -434,6 +431,15 @@ class MusicPipeline:
 
         if self.verbose:
             print(f"\n  --- CI/CD Quality Scoreboard: {passes} PASS, {warns} WARN, {fails} FAIL ---")
+            # The tier split is read from presets/gate/tiers.json, not decided here: an invariant, an expressive
+            # judgement and telemetry are three different kinds of statement and are read apart even when they arrive
+            # in one list. The verdict is still the whole list (0 FAIL = certified).
+            import gate_tiers
+            for _tier, _block in gate_tiers.summary(ci_rows).items():
+                if _tier == 'unclassified':
+                    continue
+                print(f"  [{_block['name']}] {_block['rows']} row(s): {_block['pass']} PASS, {_block['warn']} WARN, "
+                      f"{_block['fail']} FAIL (blocks: {_block['blocks']})")
             for lvl, name, detail in ci_rows:
                 indicator = f"[{lvl:4s}]"
                 print(f"  {indicator} {name:26s} {detail}")
@@ -491,6 +497,7 @@ class MusicPipeline:
             'ci_summary': {'pass': sum(1 for l, _, _ in ci_rows if l == 'PASS'),
                            'warn': warns,
                            'fail': fails},
+            'ci_tiers': __import__('gate_tiers').summary(ci_rows),
             'ci_checks': [{'level': l, 'check': n, 'detail': d} for l, n, d in ci_rows]
         }
         if getattr(self, 'video_block', None):
@@ -507,6 +514,19 @@ class MusicPipeline:
     # -----------------------------------------------------------------------------------------
     # Preset & Stem Discovery for Pre-Existing Music
     # -----------------------------------------------------------------------------------------
+    def with_cut_windows(self, score, project_dir):
+        """The score with the direction sheet's hard cuts on it (`cut_windows.py`): the renderer ramps the sustained
+        voices there and the gate skips the drop check inside the window. A project with no sheet, or a sheet with no
+        hard hit, returns the score unchanged; a list the score already carries is kept."""
+        if not project_dir:
+            return score
+        sheet = qg._direction_sheet(project_dir)
+        out = cut_windows.attach(score, sheet)
+        if self.verbose and out.get('intentional_cut_windows') and out is not score and 'intentional_cut_windows' not in score:
+            print(f"  hard cuts from the direction sheet: {len(out.get('hard_cuts', []))} voice cut(s), "
+                  f"{len(out['intentional_cut_windows'])} intentional cut window(s) (+-{cut_windows.HALF_S * 1000:.0f} ms)")
+        return out
+
     def adopt_presets(self, score, presets_dir=None, project_dir=None):
         """Auto-discover and adopt presets from project presets/ directory into score tracks.
         Preserves all existing musical notes while attaching spatial, EQ, humanization, and role definitions."""
@@ -541,6 +561,8 @@ class MusicPipeline:
             except Exception as e:      # the project gate fails on this; outside project mode say so loudly
                 print(f"  [WARN] preset '{pf.name}' is not valid JSON and was skipped: {e}")
                 continue
+            if not isinstance(data, dict):          # a list or a scalar is a data file (a gate or report artefact), not a preset
+                continue
             name = data.get('name') or pf.stem
             preset_map[name] = data
             preset_map[pf.stem] = data
@@ -550,7 +572,7 @@ class MusicPipeline:
         preset_owns = ('spatial', 'synthesis', 'vocal', 'environment', 'formants', 'bandwidths', 'source',
                        'vibrato', 'articulation', 'performance', 'breathing', 'ensemble', 'humming', 'hum',
                        'atmosphere', 'layers', 'blending', 'character', 'vowel', 'expression', 'register_range',
-                       'category', 'phonetic_sound', 'program', 'bank', 'gm')
+                       'category', 'phonetic_sound', 'program', 'bank', 'gm', 'fx')
         bookkeeping = ('name', 'kind', 'note', 'notes', 'sources')      # identity and prose stay in the preset file
 
         adopted = []
@@ -711,6 +733,7 @@ class MusicPipeline:
 
             if adopt_presets and resolved_presets_dir:
                 score = self.adopt_presets(score, presets_dir=resolved_presets_dir, project_dir=discovered.get('project_dir'))
+            score = self.with_cut_windows(score, discovered.get('project_dir'))
 
             # Stage 2: Preflight Lint on symbolic score if tracks exist
             if score.get('tracks'):
@@ -777,7 +800,8 @@ class MusicPipeline:
             print("  *** TEST RENDER - generic General MIDI instruments, not a deliverable ***")
 
         if project_dir and not explicit_out:
-            out_wav = os.path.join(project_dir, 'out', 'master.wav')
+            import render_targets as _rtn
+            out_wav = os.path.join(project_dir, 'out', _rtn.project_slug(project_dir) + '.wav')
         if not out_wav.lower().endswith('.wav'):
             out_wav = out_wav + '.wav'
         if out_midi and not (out_midi.lower().endswith('.mid') or out_midi.lower().endswith('.midi')):
@@ -797,7 +821,7 @@ class MusicPipeline:
                 print(f"  [BLOCKED] {pr}")
             raise SystemExit(f"Output target blocked the render: {len(outputs['problems'])} problem(s) above.")
         if project_dir and not explicit_out and outputs['selected']:
-            out_wav = os.path.join(project_dir, 'out', render_targets.filename(outputs['selected'][0]))
+            out_wav = os.path.join(project_dir, 'out', render_targets.filename(outputs['selected'][0], project_dir, primary=True))
         skipped = ''.join(f"; skipped {s['target']} (cannot be built yet)" for s in outputs['skipped'])
         print(f"  [OUTPUTS] {', '.join(outputs['selected']) or 'nothing'}{skipped}")
 
@@ -821,6 +845,7 @@ class MusicPipeline:
 
         if adopt_presets:
             score = self.adopt_presets(score, presets_dir=presets_dir, project_dir=project_dir)
+        score = self.with_cut_windows(score, project_dir)
 
         prev_attempts = []
         if project_dir and json_report and os.path.isfile(json_report):
@@ -916,8 +941,8 @@ class MusicPipeline:
         published = None
         if fails == 0 and not draft:
             if project_dir:
-                # A certified render never destroys the previous one: it becomes master_vNN.wav and
-                # out/master.wav is refreshed as a copy of the newest version.
+                # A certified render never destroys the previous one: it becomes <project>_vNN.wav and
+                # out/<project>.wav is refreshed as a copy of the newest version.
                 try:
                     published = version_manager.publish(draft_wav, out_wav, score=score,
                                                         attempts=prev_attempts)
@@ -933,6 +958,22 @@ class MusicPipeline:
         else:
             print(f"  [DRAFT] {fails} gate FAIL(s): the uncertified mix stays at {draft_wav}, {out_wav} is untouched")
 
+        # The realism report (AGENTS 9.4f) runs on the certified stereo master, before the long extra formats: a cue briefed as cinematic,
+        # orchestral or theatrical is measured for the eight qualities that separate a produced cue from a generated one. Advisory: a WARN
+        # here is a question for the director, never a failure, and a report that cannot run never costs the certified master.
+        if fails == 0 and not draft and project_dir:
+            try:
+                import realism_report
+                if realism_report.wanted(score):
+                    self.log('5a', 'Realism report (advisory, on the certified master)')
+                    _rows, _path = realism_report.run_after_certification(
+                        project_dir, score, out_wav, stems_dir if stems_dir and os.path.isdir(stems_dir) else os.path.join(project_dir, 'stems'))
+                    for lvl, n, d in _rows:
+                        print(f"  [{lvl}] {n}: {d}")
+                    print(f"  [INFO] realism report written to {_path}")
+            except Exception as exc:
+                print(f"  [WARN] realism report skipped ({exc})")
+
         # Additional requested formats: rendered only after the primary is certified, so one format's failure never
         # takes the certified master with it; each is checked against its own format rows before it enters out/.
         extra_paths, certified, extra_bad = [], [], []
@@ -941,7 +982,7 @@ class MusicPipeline:
             import spatial_gate
             from spatial_engine import render as spatial_render
             for extra in outputs['selected'][1:]:
-                rel = render_targets.filename(extra)
+                rel = render_targets.filename(extra, project_dir)
                 extra_draft = os.path.join(os.path.dirname(out_wav) or '.', '_draft_' + rel)
                 resources.release_memory()                  # the last mix's freed memory goes back before the next one starts
                 import soundfile as _sf
@@ -971,7 +1012,7 @@ class MusicPipeline:
         report = self.stage7_package_release(score, out_wav if fails == 0 else draft_wav, ci_rows, fails, warns,
                                             out_midi=out_midi, json_report=json_report)
         import render_targets as _rt
-        delivered = _rt.delivered(score)          # one truth for what was rendered, and what was certified
+        delivered = _rt.delivered(score, project_dir)          # one truth for what was rendered, and what was certified
         report['deliverables']['outputs'] = outputs['selected']
         report['deliverables']['outputs_skipped'] = outputs['skipped']
         report['deliverables']['output_files'] = extra_paths if project_dir and fails == 0 else []
@@ -1049,7 +1090,7 @@ class MusicPipeline:
                 print(f"  STOP: the stereo master is certified, but {len(extra_bad)} requested format(s) failed "
                       f"their own rows and are not delivered: {', '.join(extra_bad)}.")
                 print("  Fix the failing format rows in the presets or the score, then run again; the certified "
-                      "stereo master stays at out/master.wav.")
+                      "stereo master stays at out/<project>.wav.")
             elif fails == 0:
                 print(f"  STOP: all gates passed after {n} attempt(s). Run listen.py, then deliver.")
                 import importlib.util
@@ -1154,7 +1195,7 @@ def main():
     ap.add_argument('--adopt-presets', action='store_true', default=True, help='Auto-discover and adopt presets from project directory (default: True)')
     ap.add_argument('--no-adopt-presets', action='store_false', dest='adopt_presets', help='Disable preset adoption')
     ap.add_argument('--stems', '--stems-dir', dest='stems', default=None, help='Folder with pre-existing stems or folder to export stems')
-    ap.add_argument('--out', default=None, help='Output master WAV (default: <project>/out/master.wav, or final.wav with --test)')
+    ap.add_argument('--out', default=None, help='Output master WAV (default: <project>/out/<project>.wav, or final.wav with --test)')
     ap.add_argument('--midi', default=None, help='Output MIDI (default in a project: <project>/midi/<score>.mid)')
     ap.add_argument('--bpm', type=float, help='Override tempo BPM')
     ap.add_argument('--key', help='Override musical key (e.g. "D minor")')

@@ -15,6 +15,8 @@ No synthesis, EQ, mixing or preset values: this module only reads samples.
 import numpy as np
 from scipy.signal import butter, sosfiltfilt, lfilter, find_peaks
 
+import cut_windows as _cut_windows
+
 try:
     import librosa
 except Exception:                                     # the gate must run and say what it could not measure
@@ -202,13 +204,16 @@ def _lpc_clicks(sig, mad_z=8.0, starts=None):
 
 
 def check_dropout(sig, min_ms=20.0, max_ms=1000.0, floor_below_db=45.0, edge_ms=250.0,
-                  frame_ms=20.0, hop_ms=5.0, sounding=None, note_margin_s=0.03):
+                  frame_ms=20.0, hop_ms=5.0, sounding=None, note_margin_s=0.03, ignore_windows=()):
     """A run of frames 45 dB below the file's median and below -60 dBFS, away from both edges.
 
     sounding: the track's own note intervals. When given, only a hole whose middle falls inside a sounding note is a
     dropout: silence between phrases is the score's rest, not a fault. Measured on a real project, a hummed vocal stem
     read seven 20-40 ms "holes" that were all the gaps between phrases; without the score the row cannot tell a cut
     from a rest.
+
+    ignore_windows: (start_s, end_s) pairs the direction sheet declared as rests; a hole whose middle falls in one is the
+    score's silence, not an edit (the scene row `scene.silence_honoured` judges whether that rest is really quiet).
     """
     db, times = frame_db(sig, frame_ms, hop_ms)
     if db.size == 0:
@@ -232,6 +237,9 @@ def check_dropout(sig, min_ms=20.0, max_ms=1000.0, floor_below_db=45.0, edge_ms=
         spans = [(float(x), float(y)) for x, y in sounding]
         holes = [(a, d) for a, d in holes
                  if any(x - note_margin_s <= a + d / 2000.0 <= y + note_margin_s for x, y in spans)]
+    if ignore_windows:
+        holes = [(a, d) for a, d in holes
+                 if not any(float(x) <= a + d / 2000.0 <= float(y) for x, y in ignore_windows)]
     longest = max((d for _, d in holes), default=0.0)
     detail = (f'longest hole {longest:.0f} ms (limit {min_ms:.0f}-{max_ms:.0f} ms), '
               f'floor {floor:.1f} dBFS; {len(holes)} hole(s)')
@@ -240,18 +248,24 @@ def check_dropout(sig, min_ms=20.0, max_ms=1000.0, floor_below_db=45.0, edge_ms=
 
 
 def check_cut(sig, boundaries_s, drop_db=12.0, window_ms=20.0, hop_ms=5.0,
-              recovery_db=3.0, location_ms=75.0, end_ms=200.0, silence_below_db=25.0):
+              recovery_db=3.0, location_ms=75.0, end_ms=200.0, silence_below_db=25.0,
+              intentional_cut_windows=()):
     """A one/two-frame RMS collapse with no release, near a section boundary or at the end.
 
     A 15.7 dB drop at a section boundary on a clean render is an arrangement change, not a cut: the remaining layers are
     still audible. Only a step that lands near silence (below the file median by `silence_below_db`) is a hard edit.
+
+    `intentional_cut_windows` is a list of (start_s, end_s) the direction sheet declared as hard cuts (`cut_windows.py`):
+    a drop that lands inside one is the cut the piece asked for and is not counted. It exempts this one measure only; the
+    detail says how many drops it skipped, so an exemption is never silent. Nothing outside a window changes.
     """
     db, times = frame_db(sig, window_ms, hop_ms)
     if db.size < 24:
         return _result(0.0, drop_db, 'dB', [], 'too short to judge')
     d = db[:-2] - db[2:]
     floor_ref = float(np.median(db))
-    best, hits = 0.0, []
+    best, hits, exempt = 0.0, [], []
+    windows = _cut_windows.windows_of(list(intentional_cut_windows or ()))
     for i in np.flatnonzero(d > drop_db):
         low = db[i + 2]
         if low > floor_ref - silence_below_db:
@@ -265,12 +279,18 @@ def check_cut(sig, boundaries_s, drop_db=12.0, window_ms=20.0, hop_ms=5.0,
         near = any(abs(t - b) <= location_ms / 1000.0 for b in boundaries_s)
         if not near:
             continue
+        if any(a <= t <= z for a, z in windows):
+            exempt.append(t)                            # the sheet asked for this cut: not a defect
+            continue
         if float(d[i]) > best:
             best = float(d[i])
         hits.append(t)
     detail = (f'largest un-recovered step {best:.1f} dB over ~10 ms (limit {drop_db:g} dB), '
               f'{len(hits)} location(s) near a boundary/end')
-    return _result(best, drop_db, 'dB', hits, detail, drops=[round(float(x), 1) for x in d[np.flatnonzero(d > drop_db)][:8]])
+    if exempt:
+        detail += f'; {len(exempt)} drop(s) skipped inside {len(windows)} intentional cut window(s) (first at {exempt[0]:.3f} s)'
+    return _result(best, drop_db, 'dB', hits, detail, drops=[round(float(x), 1) for x in d[np.flatnonzero(d > drop_db)][:8]],
+                   exempted=[round(float(x), 4) for x in exempt[:8]])
 
 
 def check_abrupt_end(sig, floor_db=-45.0, min_decay_db=12.0, tail_ms=50.0, body_ms=(300.0, 800.0),
@@ -627,7 +647,7 @@ def tempo_from_onsets(y, sr, hop=512, lo_bpm=50.0, hi_bpm=220.0):
     return bpm, strength
 
 
-def check_tempo(sig, bpm_ref, tol_bpm=2.0, tol_pct=2.0, drift_bpm=2.0):
+def check_tempo(sig, bpm_ref, tol_bpm=2.0, tol_pct=2.0, drift_bpm=2.0, octave_ok=0.0):
     """Tempo from the onset periodicity against the score/sheet, plus drift over four quarters."""
     if librosa is None or not bpm_ref:
         return _result(0.0, tol_bpm, 'BPM', [], 'librosa missing or no reference tempo', skipped=True)
@@ -668,7 +688,13 @@ def check_tempo(sig, bpm_ref, tol_bpm=2.0, tol_pct=2.0, drift_bpm=2.0):
     tol = max(float(tol_bpm), float(bpm_ref) * float(tol_pct) / 100.0)
     # Drift is reported, not decisive: quarter-length estimates are noisy even on a metronomic render.
     fail = abs(bpm - float(bpm_ref)) > tol
-    detail = (f'measured {bpm:.1f} BPM vs {float(bpm_ref):.1f} (tolerance {tol:.1f}) from the onset-envelope '
+    octave = None
+    if fail and float(octave_ok) >= 0.5:          # a project's own measured relaxation: the tracker locked to the double or the half of the written pulse
+        for mult in (2.0, 0.5):
+            if abs(bpm - float(bpm_ref) * mult) <= tol * mult:
+                fail, octave = False, mult
+                break
+    detail = ((f'the measured tempo is {octave:g}x the written one (metrical octave, accepted by this piece\'s gate profile); ' if octave else '') + f'measured {bpm:.1f} BPM vs {float(bpm_ref):.1f} (tolerance {tol:.1f}) from the onset-envelope '
               f'autocorrelation (peak {strength:.1f}x the median); beat tracker said {beat_bpm:.1f}; '
               f'four-quarter drift {drift:.1f} BPM reported, not decisive')
     return _result(abs(bpm - float(bpm_ref)), tol, 'BPM', [], detail,

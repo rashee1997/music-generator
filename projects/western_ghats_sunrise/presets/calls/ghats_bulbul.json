@@ -1,0 +1,81 @@
+{
+  "name": "ghats_bulbul",
+  "character": "A bright tinkling call of two or three notes, up, down and a falling last note (birdweather: a tinkling sound of two or three notes).",
+  "elements": {
+    "p1": {
+      "f0_hz": [
+        [
+          0,
+          5200
+        ],
+        [
+          1,
+          5400
+        ]
+      ],
+      "ms": [
+        80,
+        110
+      ],
+      "harmonics": 2,
+      "rolloff": 2.0
+    },
+    "p2": {
+      "f0_hz": [
+        [
+          0,
+          5600
+        ],
+        [
+          1,
+          5000
+        ]
+      ],
+      "ms": [
+        90,
+        120
+      ],
+      "harmonics": 2,
+      "rolloff": 2.0
+    },
+    "p3": {
+      "f0_hz": [
+        [
+          0,
+          5900
+        ],
+        [
+          0.5,
+          5000
+        ],
+        [
+          1,
+          4500
+        ]
+      ],
+      "ms": [
+        140,
+        200
+      ],
+      "harmonics": 2,
+      "rolloff": 2.0,
+      "attack": 0.1
+    }
+  },
+  "sequence": [
+    "p1",
+    "p2",
+    [
+      "p3",
+      0,
+      1
+    ]
+  ],
+  "gap_ms": [
+    50,
+    90
+  ],
+  "sources": [
+    "ESTIMATE: pitch contours, element lengths and pulse rates are written from the qualitative descriptions cited in the fauna block, not measured; replace from xeno-canto spectrograms (analysed only, not kept)"
+  ]
+}

@@ -24,15 +24,21 @@ def shape_velocity(ns, p, v_in, rd, c, base_role, is_drum, phrases, clusters, ts
     acc = np.array([_beat_accent(nt['t'], ts, upbeat=upbeat) for nt in ns])
     v += rd['vel'] + float(c.get('vel_bias', 0.0))
     v += c['accent'] * (acc - 0.35) * 9.0                          # downbeats stronger
+    arch_amp = float(c.get('vel_arch', 7.0))
     for k, idx in phrases.items():                                # phrase arch + pitch-contour loudness
         m = len(idx)
         x = np.linspace(0, 1, m) if m > 1 else np.array([0.5])
-        arch = np.sin(np.pi * x) - 0.5
-        # the figure swells to its middle; a counter-line answers softer in the middle; beds and drums get no arch
+        shape = np.sin(np.pi * x) - 0.5
+        # The figure swells to its middle; a counter-line answers softer in the middle; beds and drums get no arch.
+        # How far it swells follows the level the score wrote for that phrase. One fixed +-7 units on every phrase
+        # of every piece is a mannerism rather than a performance: it made a written pp and a written ff arch by the
+        # same amount, and left the rendered dynamic range below every measured corpus value.
+        if base_role in fig_roles or base_role == 'counter':
+            lvl = float(np.clip(float(v_in[idx].mean()) / 90.0, 0.45, 1.35))
         if base_role in fig_roles:
-            v[idx] += 7.0 * arch
+            v[idx] += arch_amp * lvl * shape
         elif base_role == 'counter':
-            v[idx] -= 3.0 * arch
+            v[idx] -= 0.43 * arch_amp * lvl * shape        # 3/7 of the figure's arch, at the same level scale
         if m > 2:
             pz = (p[idx] - p[idx].mean()) / (p[idx].std() + 1e-6)
             v[idx] += 2.0 * np.clip(pz, -1.5, 1.5)             # higher notes a little louder
@@ -60,15 +66,18 @@ def shape_velocity(ns, p, v_in, rd, c, base_role, is_drum, phrases, clusters, ts
                 cur = [i]
         if len(cur) >= 4:
             runs.append(cur)
+        # The run's shape scales with the arch around it, level included: a group-start accent held at 5.0 while the
+        # arch grows is a detail the arch cancels, and the group start stops reading as the loudest note of its group.
+        k = (arch_amp / 7.0) * float(np.clip(float(v_in.mean()) / 90.0, 0.45, 1.35))
         for run in runs:
             for pos, i in enumerate(run):
-                v[i] += 5.0 if pos % 4 == 0 else (1.0 if pos % 4 == 2 else -2.0)
-            v[run] += 4.0 * (np.sin(np.pi * np.linspace(0, 1, len(run))) - 0.5)
+                v[i] += k * (5.0 if pos % 4 == 0 else (1.0 if pos % 4 == 2 else -2.0))
+            v[run] += k * 4.0 * (np.sin(np.pi * np.linspace(0, 1, len(run))) - 0.5)
             # directional swell: an ascending run crescendos, a descending run decrescendos; the peak note leans forward
             pr = p[run]
             sgn = 1.0 if pr[-1] >= pr[0] else -1.0
-            v[run] += 5.0 * sgn * np.linspace(-0.5, 0.5, len(run))
-            v[run[int(np.argmax(pr))]] += 3.0
+            v[run] += k * 5.0 * sgn * np.linspace(-0.5, 0.5, len(run))
+            v[run[int(np.argmax(pr))]] += k * 3.0
     vs = c['vel_sigma']
     v += _fractal_noise(rng, n, beta=float(c.get('fractal_beta', 0.85)), fc=step_beats / 3.0) * vs * 0.6 \
         + rng.standard_normal(n) * vs * 0.6

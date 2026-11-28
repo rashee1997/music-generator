@@ -37,6 +37,7 @@ except Exception:
     median_filter = None
 
 import auditory
+import cut_windows
 import gate_checks as gc
 import gate_audio
 import gate_clock
@@ -144,7 +145,7 @@ def score_checks(score, out):
                     _row(out, 'WARN', t['name'], f'{no_gap} phrase window(s) of {WINDOW_BARS} bars with no breath or bow gap: add 0.1-0.2 beat rests at phrase ends')
     for level, name, detail in pattern_audit.acoustic_checks(score):
         _row(out, level, name, detail)
-    _, flags = pattern_audit.audit(score)           # audit() returns (info, flags)
+    _, flags, per_track = pattern_audit.audit_detail(score)     # (info, flags, flags counted by part)
     for f in flags:
         _row(out, 'WARN', 'pattern', f)
     max_flags = flags_limit(score, gp)
@@ -152,6 +153,18 @@ def score_checks(score, out):
         _row(out, 'FAIL', 'pattern', f'{len(flags)} repetition or flatness flags: the piece reads as a loop, not a composition')
     if not flags:
         _row(out, 'PASS', 'pattern', 'no copy-paste, grid-bound or flat-dynamics flags in the score')
+    # Counting only the total hid the worst case: one part could carry every flag while the others varied, and a
+    # piece with eight good parts and one 22-bar loop still passed. A part's own budget is the rule that hears it.
+    track_max = gp.param('pattern.track_flags_max', 'max')
+    worst = max(per_track.items(), key=lambda kv: len(kv[1]), default=(None, []))
+    if worst[0] is not None and len(worst[1]) >= track_max:
+        _row(out, 'FAIL', 'pattern.track_flags_max',
+             f"'{worst[0]}' carries {len(worst[1])} of the flags on its own (limit {track_max}): one part doing the "
+             'same thing for the whole piece is heard as a loop even when every other part varies')
+    else:
+        _row(out, 'PASS', 'pattern.track_flags_max', f'no part carries more than {track_max - 1} repetition flags on its own')
+    for level, name, detail in pattern_audit.shape_contrast(score):
+        _row(out, level, name, detail)
 
 
 def flags_limit(score, gp):
@@ -642,10 +655,11 @@ def resolved_master(score):
     a profile's loudness and ceiling were applied by the mixer and ignored by the judge."""
     import mixer
     raw = dict(score.get('master') or {})
+    raw['_registers'] = list(((score.get('intent') or {}).get('registers')) or [])
     ctx = mixer._context_for(score)
     cfg = mixer._master_cfg(raw, ctx.mix)
     out = {k: cfg[k] for k in ('lufs', 'true_peak', 'tone', 'glue') if k in cfg}
-    out.update(raw)
+    out.update({k: v for k, v in raw.items() if not k.startswith('_')})
     return out
 
 
@@ -655,8 +669,9 @@ def audio_checks(path, score, out, metrics=None, analysis=None):
     `analysis`, when given, receives this run's measurement of the file (`r`, the roughness metrics and the path)
     so the packaging stage can report them instead of measuring the same audio a second time.
     """
+    import mix_schema
     master = resolved_master(score)
-    target = master.get('lufs', -14.0)
+    target = master.get('lufs', mix_schema.master_targets()['default']['lufs'])
     lufs_tol = master.get('lufs_tolerance', master.get('tolerance_lu', 2.5))
     tp_target = master.get('true_peak', -1.5)
     # A speaker-layout master is analysed through its layout's fold-down, never a channel mean or the first two
@@ -753,21 +768,45 @@ def audio_checks(path, score, out, metrics=None, analysis=None):
              f"certified against this format's own ceiling of {_target_ceiling:+.1f} dBTP by delivery.true_peak. "
              f"A fold is a sum of channels, so its peak is not a delivery limit")
     mono = x.mean(axis=1) if x.ndim == 2 else x
-    # silent gap: a run of 1 s or more under -60 dBFS, away from the start and end
-    win = int(0.25 * sr)
-    n = len(mono) // win
-    rms_db = 10 * np.log10(np.mean(mono[:n * win].reshape(n, win) ** 2, axis=1) + 1e-12)
-    quiet = rms_db < -60
+    # silent gap: a run of `min_gap_s` or more under `floor_dbfs`, away from the start and end. The thresholds are the
+    # row's (the module used 1 s and -60 dBFS); a rest the direction sheet declared is not a hole - the gap is reported
+    # and not failed, which is the half that let a scene ask for silence at all.
+    import gate_profiles as _gp
+    import scene_timeline as _st
+    gp = _gp.resolve(score)
+    try:
+        tl = _st.load(score, gp)
+    except Exception:
+        tl = None
+    rests = list(tl.rests) if tl is not None else []
+    min_gap = float(gp.param('silence', 'min_gap_s'))
+    floor_db = float(gp.param('silence', 'floor_dbfs'))
+    margin_s = float(gp.param('silence', 'inner_margin_s'))
+    win_n = int(0.25 * sr)
+    n = len(mono) // win_n
+    rms_db = 10 * np.log10(np.mean(mono[:n * win_n].reshape(n, win_n) ** 2, axis=1) + 1e-12)
+    quiet = rms_db < floor_db
+    need = max(1, int(round(min_gap / 0.25)))
     run, gaps = 0, []
     for i, q in enumerate(quiet):
         run = run + 1 if q else 0
-        if run == 4:                                   # 1 s of quiet
-            gaps.append(i * 0.25)
-    inner = [g for g in gaps if 2.0 < g < r['dur'] - 2.0]
-    if inner:
-        _row(out, 'FAIL', 'silence', f'silent gap of 1 s or more at {", ".join(f"{g:.1f}s" for g in inner[:4])}')
+        if run == need:
+            gaps.append((i - need + 1) * 0.25)
+    holes, declared = [], []
+    for g in gaps:
+        if tl is not None and rests and (tl.is_rest(g) or tl.is_rest(g + min_gap)):
+            declared.append(g)
+        elif margin_s < g < r['dur'] - margin_s:
+            holes.append(g)
+    if holes:
+        _row(out, 'FAIL', 'silence', f'silent gap of {min_gap:g} s or more at {", ".join(f"{g:.1f}s" for g in holes[:4])} '
+                                    f'(under {floor_db:g} dBFS)')
+    elif declared:
+        _row(out, 'PASS', 'silence',
+             f'{len(declared)} gap(s) of {min_gap:g} s or more at {", ".join(f"{g:.1f}s" for g in declared[:4])} are rests the '
+             f'direction sheet declared, so they are not holes')
     else:
-        _row(out, 'PASS', 'silence', 'no silent gap in the middle of the piece')
+        _row(out, 'PASS', 'silence', f'no silent gap of {min_gap:g} s or more in the middle of the piece')
     clicks = find_clicks(mono)
     gate_clicks = gc.check_clicks(GateAudio(path, y=x, sr=sr))
     # A click can live in one channel of a multichannel master and vanish in the fold-down: measured, a +0.6 FS
@@ -807,8 +846,6 @@ def audio_checks(path, score, out, metrics=None, analysis=None):
                             value=float(r['true_peak']), unit='dBTP', threshold=float(tp_target),
                             margin=float(r['true_peak'] - tp_target), worst_times_s=[], calibrated=True,
                             detail=f'{r["true_peak"]:.2f} dBTP vs ceiling {tp_target}'))
-    import gate_profiles
-    gp = gate_profiles.resolve(score)
     if gp.on('natural.aliasing'):
         # the sampler resamples with linear interpolation; a note transposed up leaves images up there, and a
         # real instrument has little energy above 15 kHz unless it is a cymbal. Measured on the delivered master.
@@ -880,14 +917,24 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
     secs = gc.section_bounds(score, program_sig.dur, sheet)
     boundaries = [s['start_s'] for s in secs if s['start_s'] > 0.05]
 
-    res = gc.check_dropout(program_sig)
+    ignore = []
+    try:
+        import gate_profiles, scene_timeline
+        _gp = gate_profiles.resolve(score)
+        if _gp.param('dropout', 'honour_rests'):
+            ignore = scene_timeline.rests_of(score, _gp, project_dir)
+    except Exception:
+        ignore = []
+    res = gc.check_dropout(program_sig, ignore_windows=ignore)
     level = 'FAIL' if res.get('holes') else 'PASS'
     _row(out, level, 'dropout', res['detail'])
     _metric(metrics, row='dropout', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
             threshold=res['threshold'], margin=res['margin'], worst_times_s=res['times'][:8], calibrated=False,
             detail=res['detail'])
 
-    res = gc.check_cut(program_sig, boundaries)
+    # the sheet's hard cuts, and any list the score already carries (the pipeline attached them before rendering)
+    windows = sorted(set(cut_windows.windows_of(score)) | set(cut_windows.windows_of(cut_windows.from_sheet(sheet)['windows'])))
+    res = gc.check_cut(program_sig, boundaries, intentional_cut_windows=windows)
     level = 'FAIL' if res['value'] > res['threshold'] else 'PASS'
     _row(out, level, 'cut.hard', res['detail'])
     _metric(metrics, row='cut.hard', stage='mix', stem=None, level=level, value=res['value'], unit=res['unit'],
@@ -935,7 +982,8 @@ def master_extra_rows(score, wav_path, out, metrics=None, project_dir=None):
              f'score.bpm {float(bpm_ref):g} is declared, but the score has no percussion and no isochronous part: a beat '
              'tracker cannot measure a pulse the music does not play, so the tempo is not judged')
     elif bpm_ref:
-        res = gc.check_tempo(program_sig, float(bpm_ref))
+        _tp = _gprof.resolve(score)
+        res = gc.check_tempo(program_sig, float(bpm_ref), **{k: float(_tp.param('tempo.audio', k)) for k in ('tol_bpm', 'tol_pct', 'drift_bpm', 'octave_ok')})
         if not res.get('skipped'):
             level = 'FAIL' if res.get('fail') else 'PASS'
             _row(out, level, 'tempo.audio', res['detail'])
@@ -1036,6 +1084,14 @@ def masking_rows(stems, score, sr=44100, out=None):
     if not gp.on('masking.vs_melody'):
         return rows                                        # listed once, with its reason, by the profile notes
     margin_db = gp.param('masking.vs_melody', 'margin_db')
+    max_collisions = int(gp.param('masking.vs_melody', 'max_collisions'))
+    max_share = float(gp.param('masking.vs_melody', 'max_share'))
+    margin_tight = float(gp.param('masking.vs_melody', 'margin_db_tight'))
+    try:
+        import scene_timeline
+        _tl_m = scene_timeline.load(score, gp)
+    except Exception:
+        _tl_m = None
     if mixer.STATE.get('processed'):                       # measure the mix as played: after the EQ and the carve
         stems = mixer.STATE['processed']
     roles = {t['name']: t.get('role') for t in score['tracks']}
@@ -1117,6 +1173,9 @@ def masking_rows(stems, score, sr=44100, out=None):
                         pan_diff = abs(l_pan - b_pan)
                         delta_bmld = min(3.5, 3.5 * pan_diff)
                         effective_margin = margin_db - delta_bmld
+                        if (_tl_m is not None and _tl_m.dialogue_windows
+                                and _tl_m.in_windows(i * MASK_WIN_S, _tl_m.dialogue_windows)):
+                            effective_margin -= margin_tight      # a voice speaks here: the figure needs more room
                         if bd[i] > ld[i] - effective_margin:
                             congested.append((i * MASK_WIN_S, ln, bn, fc, round(bd[i] - (ld[i] - effective_margin), 1)))
 
@@ -1124,10 +1183,15 @@ def masking_rows(stems, score, sr=44100, out=None):
         t0, ln, bn, fc, ov = congested[0]
         stems_hit = sorted(set(c[2] for c in congested))
         fcs_hit = sorted(set(c[3] for c in congested))
-        lvl = 'FAIL' if len(congested) > 8 else 'WARN'
+        # A count alone grows with the piece's length and the number of beds. A FAIL needs the count AND a share of the
+        # compared cells over `max_share`; either alone is a WARN.
+        share = len(congested) / max(compared, 1)
+        lvl = 'FAIL' if (len(congested) > max_collisions and share > max_share) else 'WARN'
+        dlg = (f"; the margin tightened by {margin_tight:g} dB inside the dialogue window(s) the sheet declares"
+               if (_tl_m is not None and _tl_m.dialogue_windows and margin_tight) else '')
         rows.append((lvl, 'erb_binaural_masking',
                      f"{len(congested)} ERB critical-band collision window(s) where lead ({ln}) is masked by {', '.join(stems_hit)} "
-                     f"around {', '.join(f'{f}Hz' for f in fcs_hit[:3])}, first at {t0:.1f}s. "
+                     f"around {', '.join(f'{f}Hz' for f in fcs_hit[:3])}, first at {t0:.1f}s (limit {max_collisions} and {max_share:.0%} of {compared} compared cells; this is {share:.0%}){dlg}. "
                      f"Apply a narrow parametric EQ notch at {fc}Hz or increase stereo azimuth separation (spatial.azimuth)."))
     elif compared == 0:
         rows.append(('INFO', 'erb_binaural_masking',
@@ -1135,6 +1199,27 @@ def masking_rows(stems, score, sr=44100, out=None):
                      'A row that could not run is not a pass.'))
     else:
         rows.append(('PASS', 'erb_binaural_masking', 'Lead vocal/melody has clear auditory separation across all 8 ERB critical bands (250-4000 Hz)'))
+
+    # The scene row that reads this measurement (the profile asked where a voice sits): how much of the speech time the
+    # figure spent colliding. Emitted here because this is where the collisions are measured; recomputing the ERB bands
+    # in scene_gate.py would be a second estimator of the same figure.
+    if _tl_m is not None and _tl_m.dialogue_windows:
+        dlg_wins = [(a, b) for a, b in _tl_m.dialogue_windows if b - a >= MASK_WIN_S]
+        n_dlg = sum(max(1, int((b - a) // MASK_WIN_S)) for a, b in dlg_wins)
+        if not n_dlg:
+            rows.append(('INFO', 'scene.dialogue_mask',
+                         f'not measured: every declared dialogue window is shorter than one {MASK_WIN_S:g} s analysis window'))
+        else:
+            share_limit = float(gp.param('scene.dialogue_mask', 'max_fail_share'))
+            hit = [c for c in congested if _tl_m.in_windows(c[0], dlg_wins)]
+            share = len(hit) / float(n_dlg)
+            detail = (f'{len(hit)} of {n_dlg} analysis window(s) inside the declared dialogue collide at the tight margin '
+                      f'(share {share:.0%}, limit {share_limit:.0%})')
+            if share > share_limit:
+                rows.append(('FAIL', 'scene.dialogue_mask',
+                             detail + '; the figure is drowning the voice: notch it, pan it away or thin it while the voice speaks'))
+            else:
+                rows.append(('PASS', 'scene.dialogue_mask', detail))
 
     if out is not None:
         out.extend(rows)
@@ -1162,6 +1247,12 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
     rows = []
     import gate_profiles
     gp = gate_profiles.resolve(score)               # pump_db belongs to the piece's type, not to this function
+    try:                                            # a declared rest is a rest, not a dropout - and not a pump either
+        import scene_timeline as _st
+        _tl = _st.load(score, gp)
+    except Exception:
+        _tl = None
+    _rests = list(_tl.rests) if _tl is not None else []
     env_tracks = [t['name'] for t in score.get('tracks', [])
                   if t.get('role') == 'environment' or str(t.get('instrument', '')).startswith('env:')]
     if not env_tracks:
@@ -1228,7 +1319,8 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
                                      f'between silent gaps (steady-bed dropout and pumping tests do not apply)'))
                     continue
                 # A. Dropout check: no block in the active musical section should drop to the silent floor (relative to the mix, see above)
-                dropouts = np.where(body_db < floor_db)[0]
+                dropouts = [int(i) for i in np.where(body_db < floor_db)[0]
+                            if not (_tl is not None and _rests and _tl.is_rest((idx_start + i) * 0.5))]
                 if len(dropouts) > 0:
                     t_drop = (idx_start + dropouts[0]) * 0.5
                     rows.append(('FAIL', 'ambient_bed', f'ambient stem "{name}" drops out to silence at {t_drop:.1f}s'))
@@ -1244,6 +1336,10 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
                 except Exception:
                     measure_db = body_db
                 diffs = np.abs(np.diff(measure_db))
+                if _tl is not None and _rests:          # a block either side of a declared rest is not a pump
+                    for _i in range(len(diffs)):
+                        if _tl.is_rest((idx_start + _i) * 0.5) or _tl.is_rest((idx_start + _i + 1) * 0.5):
+                            diffs[_i] = 0.0
                 max_diff = float(np.max(diffs)) if len(diffs) else 0.0
                 slope_db_s = 0.0
                 dyn = score.get('dynamics') or []
@@ -1259,7 +1355,7 @@ def ambient_fusion_rows(score, rendered_path, stems=None, out=None, sr=44100):
                                 slope_db_s = max(slope_db_s, abs(20 * np.log10(v1 / v0)) / max(1e-6, float(_secs(b1)) - float(_secs(b0))))
                     except (TypeError, ValueError):
                         slope_db_s = 0.0
-                pump_limit = gp.param('ambient_bed', 'pump_db') + 0.5 * slope_db_s
+                pump_limit = gp.param('ambient_bed', 'pump_db') + float(gp.param('ambient_bed', 'slope_allowance')) * slope_db_s
                 if max_diff > pump_limit:
                     i_max = int(np.argmax(diffs))
                     t_pump = (idx_start + i_max) * 0.5
@@ -1743,24 +1839,10 @@ SUBTYPE_BITS = {'PCM_U8': 8, 'PCM_16': 16, 'PCM_24': 24, 'PCM_32': 32, 'FLOAT': 
 
 def _direction_sheet(project_dir):
     """The project's direction sheet (first parseable direction/*.json), or {}."""
-    if not project_dir:
-        return {}
-    folder = os.path.join(project_dir, 'direction')
-    if not os.path.isdir(folder):
-        return {}
-    for name in sorted(os.listdir(folder)):
-        if not name.endswith('.json'):
-            continue
-        try:
-            data = json.load(open(os.path.join(folder, name), encoding='utf-8'))
-        except Exception:
-            continue
-        if isinstance(data, dict):
-            return data
-    return {}
+    return cut_windows.read_sheet(project_dir)
 
 
-def _expression_rows(score, sheet, out):
+def _expression_rows(score, sheet, out, gp=None):
     """How the music is played and heard: the sheet's `expression` block, and whether the notes carry it.
 
     direction.expression: WARN when the block is absent, FAIL when it is present but incomplete (a half-written promise
@@ -1768,6 +1850,13 @@ def _expression_rows(score, sheet, out):
     WARN at most: their anchors are starting values that no corpus has calibrated, so they flag and never fail."""
     sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'helpers'))
     import expression_report as er
+    try:
+        er_cfg = gp.expression_cfg() if gp is not None else er.defaults()
+    except ValueError as exc:
+        # a piece's own figures are validated like a row: an unknown key or a number outside its range is a fact,
+        # and silently falling back to the shipped anchors would judge the piece by numbers it did not choose
+        out.append(('FAIL', 'expression.preset', f"the piece's own expression figures are not usable: {exc}"))
+        return
     problems = er.expression_block_problems(sheet)
     if not isinstance(sheet.get('expression'), dict):
         out.append(('WARN', 'direction.expression', problems[0] + ' (references/workflow/music-direction.md, section 2.11)'))
@@ -1775,14 +1864,14 @@ def _expression_rows(score, sheet, out):
         out.append(('FAIL', 'direction.expression', '; '.join(problems)))
     else:
         out.append(('PASS', 'direction.expression', 'the sheet says how the music is played and heard'))
-    rho, _rows, flag = er.arousal_order(score)
+    rho, _rows, flag = er.arousal_order(score, er_cfg)
     if rho is None:
         out.append(('INFO', 'expression.arousal_order', 'fewer than three sections with a declared energy and notes: no rank order to compare'))
     elif flag:
         out.append(('WARN', 'expression.arousal_order', flag))
     else:
         out.append(('PASS', 'expression.arousal_order', f'the written notes follow the declared section energy (rank correlation {rho:+.2f})'))
-    mv = er.melody_variety(score)
+    mv = er.melody_variety(score, er_cfg)
     if mv.get('note'):
         out.append(('INFO', 'melody.variety', mv['note']))
     elif mv['flags']:
@@ -1790,6 +1879,54 @@ def _expression_rows(score, sheet, out):
     else:
         out.append(('PASS', 'melody.variety', f'figure line: {mv["interval_entropy_bits"]:.2f} bits of interval entropy, '
                     f'{mv["range_semitones"]} semitones, {100 * mv["identical_bar_share"]:.0f} % of bars repeated'))
+
+
+def _harmony_rows(score, sheet, out):
+    """direction.harmony_plan (advisory): a piece of 40 s or more with three or more sections says where its harmony turns. Each entry of
+    sheet["harmony_plan"] names a section and what changes (`root`, `key`, `move`, `counter_hook`) or declares `pedal` with a reason. A sheet
+    without it is a WARN, never a FAIL: the gate cannot tell a good turn from a bad one (realism.harmonic_motion measures the notes)."""
+    secs = sheet.get('sections') or []
+    dur = float(sheet.get('duration_s') or 0.0)
+    if len(secs) < 3 or dur < 40.0:
+        return
+    plan = sheet.get('harmony_plan')
+    if not plan:
+        out.append(('WARN', 'direction.harmony_plan', 'the sheet has no `harmony_plan`: say per section where the harmony turns (root, key change, '
+                    'counter-hook) or why it stays on a pedal (references/workflow/director-craft.md)'))
+        return
+    names = {str(x.get('name')) for x in secs}
+    bad = [str(e.get('section')) for e in plan if str(e.get('section')) not in names]
+    empty = [str(e.get('section')) for e in plan if not (e.get('root') or e.get('key') or e.get('move') or e.get('counter_hook')
+                                                        or (e.get('pedal') and e.get('why')))]
+    if bad or empty:
+        out.append(('WARN', 'direction.harmony_plan', (f'entries name no section of the sheet: {bad}; ' if bad else '')
+                    + (f'entries say nothing about what changes: {empty}' if empty else '')))
+    else:
+        out.append(('PASS', 'direction.harmony_plan', f'{len(plan)} section(s) say where the harmony turns or why it holds'))
+
+
+def _stinger_rows(score, sheet, out):
+    """direction.stinger (advisory): a hit with `silence_after_s` promises that nothing but the room sounds after it. The notes of every
+    track except environment and fx must not start inside that window (an impact that glides into its aftermath is not a stop)."""
+    hits = [h for h in (sheet.get('hits') or []) if h.get('silence_after_s')]
+    if not hits:
+        return
+    try:
+        import humanize as hz
+        tm = hz.tempo_map_for(score, seed=0)
+        starts = sorted(float(tm.sec(float(n['t']))) for t in score.get('tracks') or [] if t.get('role') not in ('environment', 'fx')
+                        for n in t.get('notes') or [])
+    except Exception as exc:
+        out.append(('WARN', 'direction.stinger', f'cannot read the notes against the hits ({exc})'))
+        return
+    broken = []
+    for h in hits:
+        t0, w = float(h['t']), float(h['silence_after_s'])
+        inside = [x for x in starts if t0 + 0.05 < x < t0 + w]
+        if inside:
+            broken.append(f't={t0:g}s: {len(inside)} note(s) start within {w:g} s (first at {inside[0]:.2f} s)')
+    out.append(('WARN', 'direction.stinger', '; '.join(broken) + ': the hit does not stop; remove the notes or shorten `silence_after_s`')
+               if broken else ('PASS', 'direction.stinger', f'{len(hits)} hit(s) are followed by the silence they promise'))
 
 
 def direction_rows(score, out, project_dir=None, wav_path=None, mode='full'):
@@ -1818,7 +1955,9 @@ def direction_rows(score, out, project_dir=None, wav_path=None, mode='full'):
             out.append(('INFO', 'delivery.direction',
                         'no direction/*.json: the delivered file is not judged against a sheet (draft run)'))
         return
-    _expression_rows(score, sheet, out)
+    _expression_rows(score, sheet, out, gp)
+    _harmony_rows(score, sheet, out)
+    _stinger_rows(score, sheet, out)
     if mode == 'full' and wav_path and os.path.isfile(wav_path):
         import affect
         out.extend(affect.rows(score, sheet, wav_path))
@@ -1920,7 +2059,8 @@ def metadata_rows(score, out, project_dir=None, wav_path=None):
     if not project_dir:
         return
     out_dir = os.path.join(project_dir, 'out')
-    master = wav_path or os.path.join(out_dir, 'master.wav')
+    import render_targets as _rtm
+    master = wav_path or _rtm.certified_master(project_dir)
     first_render = not os.path.isfile(master) and not os.path.isfile(os.path.join(out_dir, 'versions.json'))
 
     if first_render:
@@ -2071,6 +2211,9 @@ def run_gate(score_path, wav_path=None, refresh=True, stems=None, score=None, mo
         chroma_concordance_rows(score, rendered, stems, out=out)
         kick_grid_rows(score, stems, out=out)
         soul_rows(score, out)
+        import scene_gate                                # the rows a profile's `scene` block asks for; none otherwise
+        _timed('scene', lambda: scene_gate.rows(score, path=rendered, stems=stems, out=out,
+                                                project_dir=project_dir))
         if stems is None:
             out.append(('INFO', 'stem_rows', 'stem rows not measured: no stems were given or rendered, so balance, '
                                              'spatial separation, equal loudness, kick grid, chroma, masking and flutter '

@@ -1,0 +1,845 @@
+{
+  "rows": [
+    {
+      "stem": "bass_clarinet",
+      "table": [
+        {
+          "section": "spotted",
+          "start_s": 11.25,
+          "measured_db": -45.17,
+          "expected_db": -45.17,
+          "dyn": 0.45
+        }
+      ]
+    },
+    {
+      "stem": "bass_drum",
+      "table": [
+        {
+          "section": "the_stakeout",
+          "start_s": 0.0,
+          "measured_db": -24.49,
+          "expected_db": -27.8,
+          "dyn": 0.3
+        },
+        {
+          "section": "spotted",
+          "start_s": 11.25,
+          "measured_db": -22.88,
+          "expected_db": -24.28,
+          "dyn": 0.45
+        },
+        {
+          "section": "the_avenue",
+          "start_s": 22.328,
+          "measured_db": -18.72,
+          "expected_db": -20.44,
+          "dyn": 0.7
+        },
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -18.75,
+          "expected_db": -18.75,
+          "dyn": 0.85
+        },
+        {
+          "section": "under_the_bridge",
+          "start_s": 73.961,
+          "measured_db": -18.09,
+          "expected_db": -18.26,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -17.95,
+          "expected_db": -17.34,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -20.57,
+          "expected_db": -17.79,
+          "dyn": 0.95
+        }
+      ]
+    },
+    {
+      "stem": "basses",
+      "table": [
+        {
+          "section": "the_stakeout",
+          "start_s": 0.0,
+          "measured_db": -49.65,
+          "expected_db": -47.16,
+          "dyn": 0.3
+        },
+        {
+          "section": "spotted",
+          "start_s": 11.25,
+          "measured_db": -45.77,
+          "expected_db": -43.63,
+          "dyn": 0.45
+        },
+        {
+          "section": "the_avenue",
+          "start_s": 22.328,
+          "measured_db": -38.11,
+          "expected_db": -39.8,
+          "dyn": 0.7
+        },
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -35.63,
+          "expected_db": -38.11,
+          "dyn": 0.85
+        },
+        {
+          "section": "under_the_bridge",
+          "start_s": 73.961,
+          "measured_db": -33.38,
+          "expected_db": -37.61,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -32.93,
+          "expected_db": -36.7,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -43.79,
+          "expected_db": -37.14,
+          "dyn": 0.95
+        }
+      ]
+    },
+    {
+      "stem": "celli",
+      "table": [
+        {
+          "section": "spotted",
+          "start_s": 11.25,
+          "measured_db": -46.29,
+          "expected_db": -42.91,
+          "dyn": 0.45
+        },
+        {
+          "section": "the_avenue",
+          "start_s": 22.328,
+          "measured_db": -40.28,
+          "expected_db": -39.07,
+          "dyn": 0.7
+        },
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -33.99,
+          "expected_db": -37.39,
+          "dyn": 0.85
+        },
+        {
+          "section": "under_the_bridge",
+          "start_s": 73.961,
+          "measured_db": -31.63,
+          "expected_db": -36.89,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -30.56,
+          "expected_db": -35.98,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -43.2,
+          "expected_db": -36.42,
+          "dyn": 0.95
+        }
+      ]
+    },
+    {
+      "stem": "city_far",
+      "table": [
+        {
+          "section": "the_stakeout",
+          "start_s": 0.0,
+          "measured_db": -42.12,
+          "expected_db": -52.34,
+          "dyn": 0.3
+        },
+        {
+          "section": "spotted",
+          "start_s": 11.25,
+          "measured_db": -43.98,
+          "expected_db": -48.82,
+          "dyn": 0.45
+        },
+        {
+          "section": "the_avenue",
+          "start_s": 22.328,
+          "measured_db": -44.22,
+          "expected_db": -44.98,
+          "dyn": 0.7
+        },
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -43.56,
+          "expected_db": -43.3,
+          "dyn": 0.85
+        },
+        {
+          "section": "under_the_bridge",
+          "start_s": 73.961,
+          "measured_db": -45.97,
+          "expected_db": -42.8,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -44.39,
+          "expected_db": -41.89,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -44.44,
+          "expected_db": -42.33,
+          "dyn": 0.95
+        },
+        {
+          "section": "the_cliff",
+          "start_s": 149.686,
+          "measured_db": -41.42,
+          "expected_db": -55.87,
+          "dyn": 0.2
+        }
+      ]
+    },
+    {
+      "stem": "crash",
+      "table": [
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -29.96,
+          "expected_db": -29.96,
+          "dyn": 1.0
+        }
+      ]
+    },
+    {
+      "stem": "cymbals",
+      "table": [
+        {
+          "section": "the_avenue",
+          "start_s": 22.328,
+          "measured_db": -37.39,
+          "expected_db": -37.64,
+          "dyn": 0.7
+        },
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -34.27,
+          "expected_db": -35.96,
+          "dyn": 0.85
+        },
+        {
+          "section": "under_the_bridge",
+          "start_s": 73.961,
+          "measured_db": -35.46,
+          "expected_db": -35.46,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -34.93,
+          "expected_db": -34.55,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -37.7,
+          "expected_db": -34.99,
+          "dyn": 0.95
+        }
+      ]
+    },
+    {
+      "stem": "engine",
+      "table": [
+        {
+          "section": "the_stakeout",
+          "start_s": 0.0,
+          "measured_db": -17.27,
+          "expected_db": -17.27,
+          "dyn": 0.3
+        }
+      ]
+    },
+    {
+      "stem": "horns",
+      "table": [
+        {
+          "section": "the_avenue",
+          "start_s": 22.328,
+          "measured_db": -41.23,
+          "expected_db": -41.88,
+          "dyn": 0.7
+        },
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -38.65,
+          "expected_db": -40.19,
+          "dyn": 0.85
+        },
+        {
+          "section": "under_the_bridge",
+          "start_s": 73.961,
+          "measured_db": -35.34,
+          "expected_db": -39.69,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -34.36,
+          "expected_db": -38.78,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -42.61,
+          "expected_db": -39.22,
+          "dyn": 0.95
+        },
+        {
+          "section": "the_cliff",
+          "start_s": 149.686,
+          "measured_db": -57.46,
+          "expected_db": -52.76,
+          "dyn": 0.2
+        }
+      ]
+    },
+    {
+      "stem": "piano",
+      "table": [
+        {
+          "section": "the_avenue",
+          "start_s": 22.328,
+          "measured_db": -37.39,
+          "expected_db": -36.78,
+          "dyn": 0.7
+        },
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -34.6,
+          "expected_db": -35.1,
+          "dyn": 0.85
+        },
+        {
+          "section": "under_the_bridge",
+          "start_s": 73.961,
+          "measured_db": -31.62,
+          "expected_db": -34.6,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -31.28,
+          "expected_db": -33.69,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -41.51,
+          "expected_db": -34.13,
+          "dyn": 0.95
+        }
+      ]
+    },
+    {
+      "stem": "piano_low",
+      "table": [
+        {
+          "section": "the_stakeout",
+          "start_s": 0.0,
+          "measured_db": -51.97,
+          "expected_db": -50.82,
+          "dyn": 0.3
+        },
+        {
+          "section": "spotted",
+          "start_s": 11.25,
+          "measured_db": -47.14,
+          "expected_db": -47.3,
+          "dyn": 0.45
+        },
+        {
+          "section": "the_avenue",
+          "start_s": 22.328,
+          "measured_db": -41.77,
+          "expected_db": -43.46,
+          "dyn": 0.7
+        },
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -39.04,
+          "expected_db": -41.77,
+          "dyn": 0.85
+        },
+        {
+          "section": "under_the_bridge",
+          "start_s": 73.961,
+          "measured_db": -36.78,
+          "expected_db": -41.28,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -36.31,
+          "expected_db": -40.36,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -46.94,
+          "expected_db": -40.81,
+          "dyn": 0.95
+        }
+      ]
+    },
+    {
+      "stem": "rain_awnings",
+      "table": [
+        {
+          "section": "the_stakeout",
+          "start_s": 0.0,
+          "measured_db": -47.69,
+          "expected_db": -56.41,
+          "dyn": 0.3
+        },
+        {
+          "section": "spotted",
+          "start_s": 11.25,
+          "measured_db": -48.22,
+          "expected_db": -52.89,
+          "dyn": 0.45
+        },
+        {
+          "section": "the_avenue",
+          "start_s": 22.328,
+          "measured_db": -48.21,
+          "expected_db": -49.05,
+          "dyn": 0.7
+        },
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -48.63,
+          "expected_db": -47.36,
+          "dyn": 0.85
+        },
+        {
+          "section": "under_the_bridge",
+          "start_s": 73.961,
+          "measured_db": -47.63,
+          "expected_db": -46.87,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -47.97,
+          "expected_db": -45.95,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -48.12,
+          "expected_db": -46.4,
+          "dyn": 0.95
+        },
+        {
+          "section": "the_cliff",
+          "start_s": 149.686,
+          "measured_db": -48.93,
+          "expected_db": -59.93,
+          "dyn": 0.2
+        }
+      ]
+    },
+    {
+      "stem": "rain_street",
+      "table": [
+        {
+          "section": "the_stakeout",
+          "start_s": 0.0,
+          "measured_db": -50.44,
+          "expected_db": -59.48,
+          "dyn": 0.3
+        },
+        {
+          "section": "spotted",
+          "start_s": 11.25,
+          "measured_db": -51.35,
+          "expected_db": -55.96,
+          "dyn": 0.45
+        },
+        {
+          "section": "the_avenue",
+          "start_s": 22.328,
+          "measured_db": -51.53,
+          "expected_db": -52.12,
+          "dyn": 0.7
+        },
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -51.12,
+          "expected_db": -50.43,
+          "dyn": 0.85
+        },
+        {
+          "section": "under_the_bridge",
+          "start_s": 73.961,
+          "measured_db": -51.95,
+          "expected_db": -49.94,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -51.67,
+          "expected_db": -49.02,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -50.84,
+          "expected_db": -49.47,
+          "dyn": 0.95
+        },
+        {
+          "section": "the_cliff",
+          "start_s": 149.686,
+          "measured_db": -51.11,
+          "expected_db": -63.0,
+          "dyn": 0.2
+        }
+      ]
+    },
+    {
+      "stem": "siren_first",
+      "table": [
+        {
+          "section": "the_stakeout",
+          "start_s": 0.0,
+          "measured_db": -17.08,
+          "expected_db": -17.08,
+          "dyn": 0.3
+        }
+      ]
+    },
+    {
+      "stem": "siren_second",
+      "table": [
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -7.82,
+          "expected_db": -7.82,
+          "dyn": 0.85
+        }
+      ]
+    },
+    {
+      "stem": "snare",
+      "table": [
+        {
+          "section": "the_avenue",
+          "start_s": 22.328,
+          "measured_db": -28.34,
+          "expected_db": -28.96,
+          "dyn": 0.7
+        },
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -26.78,
+          "expected_db": -27.27,
+          "dyn": 0.85
+        },
+        {
+          "section": "under_the_bridge",
+          "start_s": 73.961,
+          "measured_db": -26.54,
+          "expected_db": -26.78,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -25.79,
+          "expected_db": -25.86,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -26.97,
+          "expected_db": -26.31,
+          "dyn": 0.95
+        }
+      ]
+    },
+    {
+      "stem": "sub_drop",
+      "table": [
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -28.72,
+          "expected_db": -28.95,
+          "dyn": 0.85
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -26.73,
+          "expected_db": -27.53,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -27.98,
+          "expected_db": -27.98,
+          "dyn": 0.95
+        }
+      ]
+    },
+    {
+      "stem": "timpani",
+      "table": [
+        {
+          "section": "spotted",
+          "start_s": 11.25,
+          "measured_db": -33.0,
+          "expected_db": -32.42,
+          "dyn": 0.45
+        },
+        {
+          "section": "the_avenue",
+          "start_s": 22.328,
+          "measured_db": -27.65,
+          "expected_db": -28.58,
+          "dyn": 0.7
+        },
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -25.63,
+          "expected_db": -26.89,
+          "dyn": 0.85
+        },
+        {
+          "section": "under_the_bridge",
+          "start_s": 73.961,
+          "measured_db": -24.63,
+          "expected_db": -26.4,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -23.36,
+          "expected_db": -25.48,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -32.58,
+          "expected_db": -25.93,
+          "dyn": 0.95
+        }
+      ]
+    },
+    {
+      "stem": "trombones",
+      "table": [
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -32.66,
+          "expected_db": -32.77,
+          "dyn": 0.85
+        },
+        {
+          "section": "under_the_bridge",
+          "start_s": 73.961,
+          "measured_db": -31.42,
+          "expected_db": -32.28,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -26.0,
+          "expected_db": -31.36,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -36.73,
+          "expected_db": -31.81,
+          "dyn": 0.95
+        }
+      ]
+    },
+    {
+      "stem": "tuba",
+      "table": [
+        {
+          "section": "the_avenue",
+          "start_s": 22.328,
+          "measured_db": -36.42,
+          "expected_db": -35.91,
+          "dyn": 0.7
+        },
+        {
+          "section": "the_turn",
+          "start_s": 46.865,
+          "measured_db": -33.73,
+          "expected_db": -34.22,
+          "dyn": 0.85
+        },
+        {
+          "section": "under_the_bridge",
+          "start_s": 73.961,
+          "measured_db": -32.07,
+          "expected_db": -33.73,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -30.85,
+          "expected_db": -32.81,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -41.95,
+          "expected_db": -33.26,
+          "dyn": 0.95
+        }
+      ]
+    },
+    {
+      "stem": "tyres",
+      "table": [
+        {
+          "section": "the_avenue",
+          "start_s": 22.328,
+          "measured_db": -15.71,
+          "expected_db": -15.71,
+          "dyn": 0.7
+        }
+      ]
+    },
+    {
+      "stem": "violins_staccato",
+      "table": [
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -40.08,
+          "expected_db": -44.27,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -48.9,
+          "expected_db": -44.72,
+          "dyn": 0.95
+        }
+      ]
+    },
+    {
+      "stem": "violins_tremolo",
+      "table": [
+        {
+          "section": "under_the_bridge",
+          "start_s": 73.961,
+          "measured_db": -30.83,
+          "expected_db": -30.26,
+          "dyn": 0.9
+        },
+        {
+          "section": "the_roadblock",
+          "start_s": 96.361,
+          "measured_db": -28.91,
+          "expected_db": -29.35,
+          "dyn": 1.0
+        },
+        {
+          "section": "the_bridge",
+          "start_s": 127.859,
+          "measured_db": -29.22,
+          "expected_db": -29.79,
+          "dyn": 0.95
+        },
+        {
+          "section": "the_cliff",
+          "start_s": 149.686,
+          "measured_db": -54.44,
+          "expected_db": -43.33,
+          "dyn": 0.2
+        }
+      ]
+    },
+    {
+      "stem": "wipers",
+      "table": [
+        {
+          "section": "the_stakeout",
+          "start_s": 0.0,
+          "measured_db": -17.98,
+          "expected_db": -17.98,
+          "dyn": 0.3
+        }
+      ]
+    }
+  ]
+}

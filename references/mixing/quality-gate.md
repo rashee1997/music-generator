@@ -158,6 +158,16 @@ No neural model and no audio: the rows read the sheet and the score's notes. Anc
 | `expression.arousal_order` | rank correlation (Spearman) between the sections' declared `energy` and an index of tempo, note density, velocity, register and staccato share per section; limit 0.5 | WARN below the limit, INFO under three sections |
 | `melody.variety` | the figure track: interval entropy (limit 1.0 bit), range (7 semitones), bars that repeat exactly (60 %), no leap in a long line | WARN on a flag, INFO without a figure track |
 
+The last two rows are measured against the **piece's own figures**, not a module constant: `expression.arousal_order`
+and `melody.variety` read the `"expression"` block of the project's gate profile
+(`<project>/presets/gate/<piece_type>.json`, merged through `extends`), and inherit these values when the block is
+absent. That is where a piece states what it is - a drone cue has no build to rank, a sting is shorter than a phrase,
+a through-composed cue has no repeating figure - and the block cannot switch a row off: `min_rho` is bounded away from
+0, the identical-bar share away from 1, and a role may not be the figure and be skipped at the same time. An unknown
+key, a number outside its range or a role that does not exist is `FAIL expression.preset`. Neither row can FAIL; both
+only flag. Judge with the same numbers by hand with
+`python scripts/helpers/expression_report.py <score> --direction <sheet> --project <dir>`.
+
 The index follows the cue research (mode, tempo, register, dynamics, articulation, timbre; Gabrielsson and Lindstrom 2010, Eerola, Friberg and Bresin 2013). It measures how hard the written music pushes, not its valence.
 
 ## 3g. Pre-render rows (`scripts/preflight_lint.py`, stage 2)
@@ -197,6 +207,12 @@ numbers, come from a **gate profile**: a preset of kind `gate` (`references/data
 - Pick the type: `"piece_type": "tense"` in the score (a list merges in order, later wins; `compose.py` carries it from the brief; the
   direction sheet has the key). Not declared: each profile's `detect` (keywords, pulse words, drone ratio) is matched and the gate prints
   `piece_type: tense (inferred: ...)`. Nothing matches: `melodic`, today's gate. Declare it; keyword inference is a guess.
+- **A project uses only its own profile.** Inference and the `melodic` fallback exist for a loose score outside a project. A project
+  render is blocked unless the score's `piece_type` names the project's own `presets/gate/<name>.json` (the scaffold writes it into
+  the score and the direction sheet): no shipped profile, no inferred one, no default. That profile `extends` the closest shipped
+  starter for its numbers and then holds **only the rows this piece needs relaxed, each with a numeric change inside the row's range
+  and a written reason that names the measurement** (`gate_profiles.py relax` writes it). An empty `rows` is correct until a render has
+  measured a mismatch; a row that is relaxed without a measurement, or only to get past a fault in the notes, is not allowed.
 - A profile sets each row to `apply`, `relax` (new numbers) or `skip`, always with a `reason`. `extends` inherits. `flags` (`ambient`,
   `tense`, `dance`) keep the old switches of the feel checks. `fallback: balance.layers` hands a row over when it has nothing to measure
   against (no lead): each layer against the median layer, WARN / FAIL at `warn_db` / `fail_db`.
@@ -207,7 +223,8 @@ numbers, come from a **gate profile**: a preset of kind `gate` (`references/data
   `harmonic_concordance` → `chroma.concordance`, `spiral_tension_arc` → `feel.spiral`, …). A relax/skip line names both, so a
   relaxed row can be found in the report under either name. `Profile.on/mode/param` accept either id.
 - Every row the gate prints has a profile row: the score's acoustic rules (`note_collision`, `chord_voicing_and_strum`,
-  `choked_resonance`, `machine_gun_percussion`, `percussion_flam`, `low_interval_mud`), `ambient_bed` and `modulation_flutter`
+  `choked_resonance`, `machine_gun_percussion`, `percussion_flam`, `low_interval_mud`, and the orchestral-writing rows
+  `orch.range`, `orch.voice_leading`, `orch.playable`, `orch.legato`, `quality-gate-rows.md` section 7), `ambient_bed` and `modulation_flutter`
   included. A row with no profile entry could never be adapted, which meant a type of music the gate could not describe.
 - A project profile may not reuse a shipped profile's name (that would retune every piece of that type in the project at once,
   the quiet way to switch the gate off). Give it its own name and `extends` the closest shipped one; the report then says
@@ -216,14 +233,32 @@ numbers, come from a **gate profile**: a preset of kind `gate` (`references/data
   `roughness`, `ambient_bed`, `modulation_flutter` and `pattern.flags_max` cannot be skipped; every number has a range (a value
   outside it is an error, because that is loosening, not adapting). A bed may be allowed 6 dB of pump by a profile, never 20. Relax means "a small amount of this is normal", not "off": a dynamics curve that does not move at all is
   still flagged in a dance profile.
+- **The repetition rows count parts, and one row asks for contrast.** `pattern.track_flags_max` fails when a single part carries
+  two or more of the pattern flags: one part looping for the whole piece is heard as a loop even when every other part varies, and
+  the old total could not see it (every shipped piece passed at 5 flags of 6 in the audit that added this row). `pattern.loop_short`
+  now judges a part by the share of its bars that differ (`min_distinct_frac`, 15 % by default) instead of requiring a short
+  `best_period`, so a one-bar cell under a 96-bar piece is flagged; `pattern.velocity_flat` asks for an sd of 15 % of the part's
+  mean velocity, because 5 % sat below every measured performance. `shape.contrast` is the one positive row: it fails when the
+  quietest and the loudest plan sections sit within 12 MIDI velocity units of each other AND their densities within 1.6x, which is
+  the flat piece that passes every repetition row. A type that loops by design says so in its own profile (`ambient`, `dance`,
+  `groove`, `texture`, `tense` and `cinematic` each relax `min_distinct_frac` with a reason), never by switching a row off.
 - The report always lists the chosen type, and every relaxed row (`gate_relax`) and skipped row (`gate_skip`) with its reason.
 - Per-score one-off: `"gate": {"pattern.flags_max": {"mode": "relax", "max": 9, "reason": "single-take improvisation"}}`.
+- **Relaxing is the project profile's job, and it has a command.** After a render has measured a row as failing, and the fix would
+  take out what the brief asked for (a release section that is quiet by design, a tail that decays on purpose), write the
+  relaxation into the project's own profile:
+  `gate_profiles.py relax <row> --project D --set PARAM=VALUE --reason "<why this piece needs it>"`. It refuses a protected row, a
+  value outside the row's range (`gate_profiles.py rows` lists the ranges), a row that did not fail in the last render, and a
+  one-word reason; it records the measurement in the reason so the report's `gate_relax` line carries it. It is the route for a
+  *mismatch between the row's rule and the brief*. It is not the route for a fault: a click, a hole from a note below the
+  mastering high-pass, a part that is not there. Those are fixed in the notes or the presets. A number a row does not allow
+  (for example a stem that stops 170 ms early, when `stem.edge` allows at most 100 ms) is a fault by definition.
 - Commands: `gate_profiles.py list | rows | explain score.json | new <name> --from tense --project D | check`. The project gate runs
   `check`, rejects an unknown `piece_type`, and warns when the type was inferred.
 
 ## 3h. Realism measurements are advisory, not rows
 
-`python scripts/realism_report.py out/master.wav --score ... --stems out/stems --project .` measures the eight
+`python scripts/realism_report.py out/master.wav --score ... --stems out/stems --project .` measures the twelve (eight of the mix, and four of the parts: vibrato, repeated attacks, velocity response and high-band coherence; `knowledgebase/sound-design/theatrical-realism.md`)
 qualities in `knowledgebase/sound-design/theatrical-realism.md`: timbre against loudness, section scatter,
 transient variety, direct-to-reverberant depth, low-mid against sub, air absorption at distance, air at density and
 bar-scale phrasing. It prints `PASS` / `WARN` / `N/A` per dimension. They are **not** gate rows on purpose: the
@@ -232,6 +267,12 @@ director, not a faulty render. Report them beside the gate, never instead of it.
 actually threatens are `cochlear_roughness` (added harmonics), `masking` and `balance` (a lifted air band), `master.dc`
 and `fold.mono` (a low-mid stage), and `loudness` / `true_peak` (the air lift). Fix the part or the preset; never
 loosen a row to make the realism report look better.
+
+## 3i. Orchestral writing and intentional cuts
+
+Rows judged from the score alone before any render (`orch.range`, `orch.voice_leading`, `orch.playable`, `orch.legato`) and the
+direction sheet's hard cuts (`sync: hard` opens a +-150 ms window in which `stem.cut` and `cut.hard` skip the level drop) are in
+[`quality-gate-rows.md`](quality-gate-rows.md) sections 7 and 8.
 
 ## 4. What the gate cannot judge
 
@@ -259,3 +300,88 @@ loosen a row to make the realism report look better.
 
 The rows that judge a delivered format, the immersive probes, the z-axis and mono checks, the extraction gate
 and the roughness workflow are in [`quality-gate-rows.md`](quality-gate-rows.md).
+
+### 3i. Cinematic realism rows (advisory, stage 5a)
+
+Six more dimensions in `scripts/realism_cinema.py`, read by `realism_report.analyse`: `sub_weight` (the 20-60 Hz share the stems carry reaches the
+master; WARN when the master is thin and has lost more than 6 dB of it), `air` (8-16 kHz share at least -40 dB; band-limited parts named),
+`dynamic_scale` (loudest section mean at least 10 dB over the quietest), `impact_attack` (a `drum`-role or `struck_*` part rises in 30 ms
+or less, or carries a click above -18 dB), `foreground` (voices in the score's `foreground` list within 12 dB of the loudest part while they
+play), `harmonic_motion` (a section over 20 s moves the bass or declares `pedal`). All thresholds are starting values; none can FAIL.
+The sheet rows `direction.harmony_plan` and `direction.stinger` are WARN only. Fixes live in presets and notes: `family` blocks, an `air` fx,
+`sfx:impact_cinematic`, `mastering.section_levels`, `anticipate_ms`, `bar_breath_ms`.
+
+## 3j. Scenes, thresholds as data, and what to change next
+
+Three files took the last hardcoded judgement out of the engine. None of them adds a verdict: they are read by rows that
+already existed or by the scene rows below, and a piece with no scene block is judged exactly as before.
+
+- **Every threshold is data.** `references/data/presets/gate/data/rows.json` holds each row's default, its range or
+  choices, its rationale and the `source` that number came from - a citation, or the words "starting value" when no
+  published measurement exists. `scripts/gate_profiles.py` builds `ROWS` from it and keeps no second copy;
+  `tests/test_gate_thresholds_provenance.py` fails on a number with no provenance and on a default that exists in two
+  places. Changing a default is a gate decision and `tests/fixtures/gate/thresholds.json` records it.
+- **A scene is the piece's own direction sheet.** A profile may declare `"scene"`, which names the sheet's roles and
+  the keys they must state (`references/data/presets/gate/data/scene_roles.json`), and the whole-piece rows that used to
+  judge a climax by the piece's median now honour it (`waive_ceiling`, `bsi_mode`, `huron_resolution_gravity`, a declared
+  rest). The rows that ask the scene's own questions (`scene.arc_step`, `scene.hit_surprise`, `scene.release_delta`,
+  `scene.macro_contrast`, `scene.silence_honoured`, `scene.bed_stability`, `scene.dialogue_mask`) are documented in
+  `references/mixing/quality-gate-scenes.md`.
+- **A failure says what to change.** `references/data/presets/gate/data/feedback.json` is the one table behind
+  `scripts/gate_feedback.py`, `rca.py` ("do next"), `reports/.../feedback.txt` and `debug_audio.py --feedback`: what the
+  row asks for, where it is changed, and whether that costs a re-render, a re-performance or a code fix. A tier-1 row
+  never falls through to the generic advice.
+
+## 3k. Loud, dense and layered music: what a row may and may not mistake
+
+A row measures a defect. These measurements used to read an arrangement choice as a defect, so a loud, layered or
+deliberately silent piece failed for being what it was (the Highway Pursuit cue ended FAILED after 14 attempts, on rows
+none of which was a fault in the music). Each is now a row parameter in `rows.json`, set in the project profile with the
+measurement as the reason, never in Python:
+
+| Row | Read as a defect before | Parameter | What it does |
+|---|---|---|---|
+| `roughness` | a median over 0.070 in the default (`legacy`) model, a literal in `naturalness_check.py` | `median_legacy` | the legacy model's median is a profile figure; `median_min` is the `level_aware` model's. The forecast reads the same one. |
+| `pattern.velocity_flat` | a spread under 15 % of the part's mean, which asks a part near ff for more than 127 allows | `sd_abs_max` | the demand is capped at 0.09 (11.4 MIDI units: the ASAP 5-95 range of 36.7 divided by 3.29) so only a truly flat loud part is flagged |
+| `masking.vs_melody` | more than 8 congested cells, a count that grows with length and number of beds | `max_share` | a FAIL needs the count and this share of the compared cells; either alone is a WARN |
+| `stem.tick` | a periodic onset train in a part that is not drums or melody, however the score wrote it | `score_match_share`, `tol_ms` | not a tick when this share of the part's written notes start on that period (or a divisor of it): the pulse is in the score. A defect is not in the score. |
+| `stem.dead` | a section more than 12 dB under the sheet's energy ratio, even where the sheet asks for silence | `honour_rests`, `dyn_scale` | a declared rest or a window that waives the row is not judged; `dyn_scale` < 1 states that the bank cannot follow the written ratio (`soundbank_audit.py` reports its velocity layers), with that measurement as the reason |
+| `dropout` (master) | a hole of 20-1000 ms anywhere | `honour_rests` | a hole whose middle is inside a rest the sheet declared (`silence_after_s`, `silence_windows`, a section whose words say silence) is the score; `scene.silence_honoured` judges whether the rest is quiet |
+| `scene.silence_honoured` | the room tail after the hit that opens the rest, counted as sound | `tail_grace_s` | the level is read after the tail has had this long (0.5 s); the real figure is the space preset's decay |
+
+What is not loosened: clipping (stem and master), true peak, loudness, clicks, DC and the channel rows. A loud brass stem
+that clips is turned down at its stem, and the dynamic range the sheet asked for is kept by the other parts rising, not by
+flattening velocities (AGENTS 17b).
+
+Shipped genre profiles (`orchestral`, `rock_band`, `hiphop`, `jazz_ensemble`, `world_percussion`, `game_loop`, with
+`dance`, `ambient`, `cinematic`, `tense`, `groove`, `texture`) are starting points for structure: where the genre repeats
+or layers by design, which rows ask a different question. Their figures are starting values, not measurements of a piece.
+`python scripts/setup_project.py --new-project <dir> --title "<Title>" --genre orchestral` makes the project's own profile
+`extend` one, so it inherits the rows and states only where the piece departs.
+
+Research behind these figures, and what it did not find: EBU R 128 sets no loudness-range limit and says LRA may be limited
+for style or genre, and that it is not recommended for programmes under a minute (EBU Tech 3342, R 128); no published
+loudness-range table by genre was found, so no genre profile carries one. Streaming targets (-14 LUFS Spotify and YouTube,
+-16 Apple Music, AES TD1008 -16 LUFS music, -1 dBTP) were found only in secondary sources and stay as the delivery profile's
+starting values until read from the platforms' own pages. ASAP velocity statistics were not found on the web; the 0.09 cap
+is a derivation from the corpus range already cited in `shape.contrast`, not a fitted value.
+
+`python scripts/threshold_audit.py` lists the numbers still compiled into the gate modules; `tests/test_gate_literals.py`
+fails when a new one appears. A new threshold goes in `rows.json` with a default, a range and a source.
+
+### 3k.1 Loudness is data and follows the register
+
+The master's loudness used to fall back to -14.0 in `mix_schema.py`, `mastering.py`, `quality_gate.py`, `spatial_gate.py` and
+`gate_report.py`: Spotify's normalisation level (`standards.py`), not a mastering default, and not what AGENTS.md says (-16).
+It is now `references/data/master_targets.json` (the default and the named profiles, each with its source). Order of
+authority: the score's `master.lufs`, a mastering profile the piece's mix preset chose, then the middle of the intersection of
+the declared registers' `lufs` bands (`intent.register_loudness`; `cinematic` with `hybrid` is -16.0, `natural` -14.5), then the
+shipped default. Registers whose bands do not overlap give no target and the default stands. The band edges are starting values.
+
+### 3k.2 Who decides a loosening
+
+An agent does not loosen, relax, waive or skip a row on its own judgement (AGENTS.md rule 20). The route is: measure (`rca.py`),
+try the material fix, and where the verdict is `mismatch` or the fix would cost something very important to the piece, ask the
+user with the row, the measured value and limit, the cost of the fix and what the relaxation would hide. On a clear yes, use
+`gate_profiles.py relax` (or a scene `waive_ceiling`) with the measurement and the approval in the reason. Protected rows are
+never loosened.

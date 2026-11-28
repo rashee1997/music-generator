@@ -1,0 +1,25 @@
+{
+  "name": "riser_sweep",
+  "character": "A filter opening over the build: a low-pass from 200 Hz to 12 kHz across the range, with a little air added by a pitch rise.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "filter_sweep",
+      "kind": "lowpass",
+      "f_start_hz": 200.0,
+      "f_end_hz": 12000.0,
+      "q": 1.4,
+      "start_s": 0.0,
+      "end_s": 8.0,
+      "after": "bypass"
+    },
+    {
+      "type": "pitch_glide",
+      "semitones": 5.0,
+      "curve": 2.0,
+      "start_s": 0.0,
+      "end_s": 8.0,
+      "mix": 0.35
+    }
+  ]
+}

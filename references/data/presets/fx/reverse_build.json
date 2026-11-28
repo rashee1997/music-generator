@@ -1,0 +1,12 @@
+{
+  "name": "reverse_build",
+  "character": "A reverse reverb swelling into every note: the pre-hit suck of a trailer.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "reverse_swell",
+      "decay_s": 1.6,
+      "wet_db": -4.0
+    }
+  ]
+}

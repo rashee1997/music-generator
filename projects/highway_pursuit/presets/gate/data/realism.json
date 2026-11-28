@@ -1,0 +1,170 @@
+{
+  "master": "highway_pursuit.wav",
+  "report": {
+    "source": {
+      "sr": 44100,
+      "seconds": 60.7,
+      "stems": 18
+    },
+    "1_timbre_loudness": {
+      "value": 3.49,
+      "hf_shift_db": 3.4,
+      "centroid_quiet_hz": 381.3,
+      "centroid_loud_hz": 569.6,
+      "verdict": "PASS",
+      "note": "timbre follows loudness"
+    },
+    "2_ensemble": {
+      "value": 35,
+      "tracks": 12,
+      "verdict": "PASS",
+      "note": "35 player(s) across 12 section part(s)"
+    },
+    "3_transient": {
+      "value": 0.9866,
+      "onsets": 84,
+      "verdict": "PASS",
+      "note": "attacks vary"
+    },
+    "4_depth": {
+      "value": -1.31,
+      "wet_share": 0.5751,
+      "verdict": "PASS",
+      "note": "detail sits in front of the room"
+    },
+    "6_distance": {
+      "value": 23,
+      "far": 1,
+      "missing_model": 0,
+      "predicted_4k_loss_db": 0.12,
+      "verdict": "PASS",
+      "note": "every far source has an air model (the score's medium, ISO 9613-1)"
+    },
+    "7_openness": {
+      "value": 14.52,
+      "verdict": "PASS",
+      "note": "air survives the peak"
+    },
+    "8_phrasing": {
+      "value": 16.9,
+      "peak_pct": 68.91,
+      "elastic": false,
+      "verdict": "WARN",
+      "note": "unstable at the bar"
+    },
+    "5_low_mid": {
+      "value": 0.55,
+      "low_mid_over_sub_db": 14.56,
+      "low_mid_growth_db": 2.28,
+      "sub_growth_db": 2.83,
+      "verdict": "WARN",
+      "note": "low-mids thicken or grow into the peak"
+    },
+    "9_vibrato": {
+      "value": 0.92,
+      "parts": {
+        "basses": 0.29,
+        "choir": 1.0,
+        "violins_long": 0.92
+      },
+      "verdict": "WARN",
+      "note": "1 sustained part(s) hold a flat pitch (no 3-9 Hz movement of 10 cents or more): basses"
+    },
+    "10_repetition": {
+      "value": 0.14,
+      "parts": {
+        "bass_clarinet": 0.0,
+        "bass_drum": 0.01,
+        "basses": 0.0,
+        "basses_pizz": 0.01,
+        "celli": 0.0,
+        "choir": 0.0,
+        "cymbals": 0.0,
+        "horns": 0.0,
+        "low_swell": 0.0,
+        "piano_theme": 0.01,
+        "snare": 0.14,
+        "taiko": 0.0,
+        "timpani": 0.04,
+        "trombones": 0.0,
+        "tuba": 0.0,
+        "violas": 0.0,
+        "violins_long": 0.0,
+        "violins_staccato": 0.0
+      },
+      "verdict": "PASS",
+      "note": "repeated attacks differ"
+    },
+    "11_velocity_response": {
+      "value": 0.44,
+      "parts": {
+        "bass_clarinet": 0.64,
+        "basses_pizz": 0.44,
+        "celli": 0.25,
+        "cymbals": 0.65,
+        "piano_theme": -0.52,
+        "tuba": -0.07,
+        "violas": 0.48,
+        "violins_long": 0.5,
+        "violins_staccato": 0.08
+      },
+      "centroid_spread_octaves": {
+        "bass_clarinet": 0.39,
+        "basses_pizz": 0.14,
+        "celli": 0.221,
+        "cymbals": 0.197,
+        "piano_theme": 0.538,
+        "tuba": 0.266,
+        "violas": 0.373,
+        "violins_long": 0.269,
+        "violins_staccato": 0.293
+      },
+      "verdict": "WARN",
+      "note": "4 part(s) get louder but not brighter with velocity (a one-sample layer): celli, piano_theme, tuba, violins_staccato"
+    },
+    "12_coherence": {
+      "value": 0.64,
+      "mid": 0.45,
+      "verdict": "PASS",
+      "note": "the top of the mix is decorrelated between the channels"
+    },
+    "13_sub_weight": {
+      "value": -32.2,
+      "loss_db": 31.3,
+      "carriers": 2,
+      "verdict": "PASS",
+      "note": "the sub the stems carry reaches the master"
+    },
+    "14_air": {
+      "value": -45.1,
+      "band_limited": 9,
+      "verdict": "WARN",
+      "note": "8-16 kHz is thin; 9 part(s) hold nothing there in their own samples (bass_clarinet, basses_pizz, celli, choir, low_swell, piano_theme): EQ cannot add a band the samples lack, so use a preset `air` treatment or a bank that has it"
+    },
+    "15_dynamic_scale": {
+      "value": 5.9,
+      "basis": "section means",
+      "verdict": "WARN",
+      "note": "the loud and the quiet passages are close in level: fortissimo reads polite"
+    },
+    "16_impact_attack": {
+      "value": 12.7,
+      "parts": 4,
+      "soft_attack": 0,
+      "verdict": "PASS",
+      "note": "struck onsets rise fast or carry a click"
+    },
+    "17_foreground": {
+      "value": null,
+      "verdict": "N/A",
+      "note": "the score declares no `foreground` voices"
+    },
+    "18_harmonic_motion": {
+      "value": 5,
+      "sections": 8,
+      "moving_bass_sections": 7,
+      "verdict": "PASS",
+      "note": "5 pitch-class change(s) between sections; 7 section(s) move the bass"
+    }
+  }
+}

@@ -4,7 +4,7 @@ id: soundfont-velocity-and-realism
 title: SoundFont velocity, brightness and orchestral realism
 domain: sound-design
 status: partly-sourced
-sources: [https://www.polyphone.io/en/forum/help/872-velocity-to-cutoff, http://www.synthfont.com/modulators.html, https://www.polyphone.io/o/en/forum/support-bug-reports/401-v2-1-issues-with-default-velocity-to-fc-mod, https://www.un4seen.com/forum/?topic=19546.0, https://www.github.com/FluidSynth/fluidsynth/wiki/SoundFont3Format, https://simplesoundbank.com/guides/best-free-soundfonts/, https://flypaper.soundfly.com/produce/4-techniques-realistic-orchestral-strings/, https://www.sonarworks.com/blog/learn/how-to-bring-your-string-mock-ups-to-life, https://www.pro-tools-expert.com/production-expert-1/how-to-improve-realism-in-orchestral-mock-ups]
+sources: [https://sfzformat.com/opcodes/xfin_hivel, https://sfzformat.com/opcodes/fil_veltrack, https://sfzformat.com/opcodes/seq_length, https://forum.renoise.com/t/crossfading-between-velocity-layers/57284, https://homepage.univie.ac.at/christoph.reuter/unterwegs/Timbre2018_siddiq_reuter_czedik_knauf.pdf, https://en.wikipedia.org/wiki/Spectral_centroid, https://www.polyphone.io/en/forum/help/872-velocity-to-cutoff, http://www.synthfont.com/modulators.html, https://www.polyphone.io/o/en/forum/support-bug-reports/401-v2-1-issues-with-default-velocity-to-fc-mod, https://www.un4seen.com/forum/?topic=19546.0, https://www.github.com/FluidSynth/fluidsynth/wiki/SoundFont3Format, https://simplesoundbank.com/guides/best-free-soundfonts/, https://flypaper.soundfly.com/produce/4-techniques-realistic-orchestral-strings/, https://www.sonarworks.com/blog/learn/how-to-bring-your-string-mock-ups-to-life, https://www.pro-tools-expert.com/production-expert-1/how-to-improve-realism-in-orchestral-mock-ups]
 used_by: [AGENTS.md, references/instruments-and-vocals/soundfont-realism.md, scripts/render_natural.py]
 updated: 2026-11-21
 ---
@@ -67,3 +67,23 @@ None of these comes from a source. Change them to the instrument and say so.
 each group at the cutoff the `points` give for that group's mean velocity. It is the missing modulator, per note, from
 numbers in the preset. It is not a real second sample layer: the attack character and the harmonic series of the sample
 stay the same, only the top end moves.
+
+## 5. How an SFZ library makes velocity real, and what this repository copies (read as search-result text only)
+
+| SFZ mechanism | What a search result said | What `velocity_timbre` does with it |
+|---|---|---|
+| velocity zones (`lovel`/`hivel`) | each region plays inside a velocity range; `xfin_*`/`xfout_*` fade a layer in or out across a range so layers blend (sfzformat.com; Apple Logic sampler guide for the crossfade idea) | `zones` (2-16): a note's layer depends on its own velocity only, never on how the rest of the part is written |
+| dense layers need no crossfade | a Renoise forum user: with many layers the samples are similar enough for the step not to be abrupt (one opinion) | 12 zones step the cutoff by about two semitones over velocity 25-127; no crossfade is built |
+| velocity to cutoff (`fil_veltrack`) | the cutoff changes with note velocity, in cents, -9600 to 9600 (sfzformat.com) | `points`: [velocity, low-pass Hz], log-frequency interpolation |
+| velocity to attack (`ampeg_vel2attack`) | attack time = ampeg_attack + ampeg_vel2attack x velocity / 127 (a community reference page, not the sfzformat.com page) | `attack_ms`: [velocity, onset ramp ms]; the renderer's onset fade, longer for a soft note |
+| round robin (`seq_length`, `seq_position`) | the player counts per region and wraps at seq_length; one region per sample (sfzformat.com, KVR forum) | not copied: a GM bank has one sample per key; per-note random detune and timing are the only variation (`per_note_channels`) |
+| release samples (`trigger=release`) | piano release samples should consider how long the note was held (a forum post) | not copied |
+
+Why softer is darker (physical basis, per search result): a 2018 Timbre-conference study of five nonpercussive instruments at pp, mf and ff
+found sounds ordered by dynamic level in almost every case and a correlation of 0.62 between dynamic level and spectral centroid; a patent
+citing Askenfelt and Jansson reports the spectral cut-off frequency of a piano string rising with hammer velocity; Strong and Clark (cited in a
+1966 paper) put the attack transient first for identifying nonpercussive tones. The cutoff and attack numbers in a preset stay `starting value`
+until a SoundFont is measured; the engine does not read them from a source.
+
+Velocity scale: a score writes velocity as 0-1 or as 1-127. Before this section the preset's 0-127 points were read against a 0-1 velocity as
+velocity 1, which put every note of such a part on the darkest cutoff. A part whose largest velocity is 1.0 or less is now read as 0-1.

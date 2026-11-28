@@ -17,10 +17,10 @@
 
 A certified render never destroys the one before it. `publish()`:
 
-  1. gives the new master the next version number (`master_v03.wav`),
+  1. gives the new master the next version number (`<name>_v03.wav`, `master_v03.wav` for a plain master),
   2. keeps every earlier version on disk, each recorded with the change that
      produced it ("largest change") in `out/versions.json`,
-  3. refreshes `out/master.wav` as a copy of the newest version, so callers
+  3. refreshes the plain master (`out/<project>.wav`) as a copy of the newest version, so callers
      that expect a single master keep working.
 
 The change recorded for a version is the failure it resolved, read from the
@@ -86,11 +86,11 @@ def publish(draft_wav, master_wav, score=None, attempts=None, measurements=None,
 
     data = load(out_dir)
     version = int(data.get('latest', 0)) + 1
-    versioned = out_dir / f'master_v{version:02d}.wav'
+    versioned = out_dir / f'{master.stem}_v{version:02d}.wav'
 
     if versioned.exists():                       # never clobber an existing version
         version += 1
-        versioned = out_dir / f'master_v{version:02d}.wav'
+        versioned = out_dir / f'{master.stem}_v{version:02d}.wav'
 
     os.replace(str(draft), str(versioned))
     shutil.copyfile(str(versioned), str(master))
@@ -145,7 +145,7 @@ def main():
     p_pub = sub.add_parser('publish', help='version a certified draft')
     p_pub.add_argument('draft')
     p_pub.add_argument('--project', required=True)
-    p_pub.add_argument('--master', default=None, help='path of the plain master (default: out/master.wav)')
+    p_pub.add_argument('--master', default=None, help='path of the plain master (default: out/<project>.wav, or out/master.wav when that is the one there)')
     p_pub.add_argument('--change', default=None, help='description overriding the derived change')
     args = ap.parse_args()
 
@@ -159,7 +159,7 @@ def main():
         return
 
     out_dir = Path(args.project) / 'out'
-    master = Path(args.master) if args.master else out_dir / 'master.wav'
+    master = Path(args.master) if args.master else Path(__import__('render_targets').certified_master(out_dir.parent))
     entry = publish(args.draft, master, attempts=None)
     if args.change:
         data = load(out_dir)

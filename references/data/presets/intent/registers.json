@@ -63,7 +63,7 @@
     "registers.*.lra_lu": "starting value: a band wide enough to separate a cue from a natural room bed; calibrate on the first measured renders",
     "registers.*.crest_db": "starting value, same reason",
     "registers.cinematic.reverb_tail_s": "the large_hall figure in mixing-and-mastering.md section 3 (3.2 s) as the centre of the band",
-    "registers.*.lufs": "the delivery rows in mixing-and-mastering.md section 3",
+    "registers.*.lufs": "the delivery rows in mixing-and-mastering.md section 3 (a band, not a target). intent.register_loudness takes the middle of the intersection of the bands a piece's registers declare, to half a LU, as the master loudness when the piece states none and chose no mastering profile (mix_engine/mastering._master_cfg); registers whose bands do not overlap give no target and the master keeps the shipped default of references/data/master_targets.json. A starting value: the band edges are not measurements of released cues.",
     "registers.*.sync_to_picture": "a definition, not a measurement: cinema is written against the cut, a natural room bed is not"
   }
 }

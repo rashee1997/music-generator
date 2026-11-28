@@ -1,0 +1,4 @@
+shape: 1025 bins x 5352 frames
+frame_hop_s: 0.0116
+peak_db: 41.7
+band_db: 20-200Hz 8.8, 200-2000Hz 3.5, 2000-6000Hz -6.1, 6000-16000Hz -30.9

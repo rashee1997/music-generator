@@ -1,0 +1,23 @@
+{
+  "name": "impact_tail",
+  "character": "The tail after a hit: a freeze of the hit's body, a downward glide and a dark filter close.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "freeze",
+      "start_s": 0.0,
+      "hold_s": 3.0,
+      "fft": 4096,
+      "mix": 0.6
+    },
+    {
+      "type": "filter_sweep",
+      "kind": "lowpass",
+      "f_start_hz": 9000.0,
+      "f_end_hz": 250.0,
+      "start_s": 0.0,
+      "end_s": 3.0,
+      "after": "hold"
+    }
+  ]
+}

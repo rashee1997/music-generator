@@ -269,7 +269,14 @@ def diagnose(wav, stems_dir=None, score=None, top=3):
     med = float(np.median(ok))
     # the gate's two rules: a chronically high median (above the absolute limit) fails on its own, else a frame must
     # also stand ROUGHNESS_RELATIVE above the piece's median
-    thr = nc.ROUGHNESS_MEDIAN if med > nc.ROUGHNESS_MEDIAN else max(nc.ROUGHNESS_MEDIAN, nc.ROUGHNESS_RELATIVE * med)
+    limit = nc.ROUGHNESS_MEDIAN
+    if score:
+        try:                                    # the piece's own profile states the figure the gate judged by
+            import gate_profiles
+            limit = float(gate_profiles.resolve(score).param('roughness', 'median_legacy'))
+        except Exception:
+            pass
+    thr = limit if med > limit else max(limit, nc.ROUGHNESS_RELATIVE * med)
     hop = int(sr // 2)
     mono = x.mean(axis=1)
     stems = {}

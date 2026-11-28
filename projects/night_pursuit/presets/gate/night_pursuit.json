@@ -1,0 +1,16 @@
+{
+ "name": "night_pursuit",
+ "character": "A film chase cue judged as a build-hit-release piece: a motif on the horns, a pulse that never stops and two slow-motion passages; it starts as `melodic` and changes nothing until a render measures a reason.",
+ "flags": [],
+ "focus": {
+  "roles": [
+   "melody",
+   "lead",
+   "vocal"
+  ],
+  "label": "a line the ear can follow",
+  "reason": "this type is defined by a figure, so a piece that declares it must carry one; the same list means a lead or a vocal is checked exactly like a melody"
+ },
+ "rows": {},
+ "extends": "cinematic"
+}

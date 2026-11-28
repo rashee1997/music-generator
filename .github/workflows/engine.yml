@@ -44,4 +44,8 @@ jobs:
             tests.test_fusion \
             tests.test_soul \
             tests.test_world_integrity \
-            tests.test_robust
+            tests.test_robust \
+            tests.test_orch_rows \
+            tests.test_spiral_series \
+            tests.test_hard_cut \
+            tests.test_fx_engine

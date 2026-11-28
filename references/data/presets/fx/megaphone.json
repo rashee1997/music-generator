@@ -1,0 +1,36 @@
+{
+  "name": "megaphone",
+  "character": "A bullhorn: a hard band-limit, drive and a squeeze.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "pedalboard",
+      "plugin": "HighpassFilter",
+      "params": {
+        "cutoff_frequency_hz": 500.0
+      }
+    },
+    {
+      "type": "pedalboard",
+      "plugin": "LowpassFilter",
+      "params": {
+        "cutoff_frequency_hz": 4000.0
+      }
+    },
+    {
+      "type": "pedalboard",
+      "plugin": "Distortion",
+      "params": {
+        "drive_db": 16.0
+      }
+    },
+    {
+      "type": "pedalboard",
+      "plugin": "Compressor",
+      "params": {
+        "threshold_db": -24.0,
+        "ratio": 6.0
+      }
+    }
+  ]
+}

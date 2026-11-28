@@ -24,11 +24,13 @@ Read one file at a time. `scripts/research_kb.py` pulls the file a piece needs.
 | `genre-and-feel/commercial-promo.md` | Commercial tempo, ducking and voice-over rules, musical-theatre build | unverified |
 | `genre-and-feel/dynamic-flow.md` | Section flow rules and lo-fi, ambient, horror, jazz, rock and game values | unverified |
 | `genre-and-feel/short-form-functional-music.md` | Phone-speaker band, hook and alert length, alarm and wake-up findings, and the working figures for a ringtone or alarm | partly-sourced |
+| `genre-and-feel/orchestral-writing.md` | Playable ranges, polyphony and note rates for orchestral parts a SoundFont plays, parallel fifths and octaves, legato overlap | partly-sourced |
 | `genre-and-feel/psychoacoustic-genre.md` | Genre and mood tempo, interval, timbre and reverb values | unverified |
 | `media/game-music.md` | Stem layers, transition modes and loop folding | unverified |
 | `media/game-sfx.md` | Hit variation, impact stages, footstep surfaces and interface tones | unverified |
 | `media/video-scoring.md` | Frame-locked tempo, hit windows and voice-over ducking bands | unverified |
 | `sound-design/audio-cloning.md` | Pitch, timbre, groove and room values read from a recording | unverified |
+| `sound-design/click-detection.md` | The click-detection methods the gate and the debug engine rest on: noise-power and MAD thresholds, high-pass residual, autoregressive prediction error, sham intervention | partly-sourced |
 | `sound-design/roughness.md` | Auditory roughness: level, masking, critical-band and register values, and the pair model | partly-sourced |
 | `sound-design/virtual-ears.md` | Peripheral auditory model stages (middle ear, cochlear filtering and compression, hair cell, adaptation) and the quantities the gate reads from them | partly-sourced |
 | `sound-design/layout-3-2.md` | Three-front layout with two low-frequency channels: what is and is not a standard, bass management, fold-down | partly-sourced |

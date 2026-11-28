@@ -28,7 +28,7 @@ CACHE_VERSION = 1
 
 # Stage 5 owns every one of these: none of them changes a dry stem's bytes, so none of them may invalidate one.
 MIX_KEYS = ('spatial', 'eq', 'gain_db', 'reverb', 'send', 'pan', 'width', 'duck', 'level_db', 'automation',
-            'azimuth', 'elevation', 'distance', 'space', 'mix')
+            'azimuth', 'elevation', 'distance', 'space', 'mix', 'fx')
 
 
 CACHE_GB_DEFAULT = 6.0              # starting value: the stems and the processed stems of the current piece are about 3 GB; the rest is room for a few edits

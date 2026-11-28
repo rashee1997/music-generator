@@ -30,7 +30,7 @@ from . import data, expression
 
 SECTIONS = ('source', 'tract', 'technique', 'consonants', 'humming', 'articulation', 'performance', 'vibrato',
             'dynamics', 'breathing', 'phrasing', 'ensemble', 'dsp', 'singer_variation')
-IGNORED = {'name', 'description', 'character', 'category', 'phonetic_sound', 'register_range', 'role', 'synthesis',
+IGNORED = {'name', 'description', 'sources', 'character', 'category', 'phonetic_sound', 'register_range', 'role', 'synthesis',
            'spatial', 'gain_db', 'reverb', 'eq', 'pan', 'sends', 'kind', '_source', '_about', 'humanize', 'gm',
            'instrument', 'seating', 'width_ms', 'widen', 'mix',
            # mixer routing, read by mixer.py from this same file (a vocal is a track like any other):

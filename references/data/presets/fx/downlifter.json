@@ -1,0 +1,25 @@
+{
+  "name": "downlifter",
+  "character": "The release after a hit: a high-pass falls and the pitch dives, so the energy drains out of the part.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "filter_sweep",
+      "kind": "lowpass",
+      "f_start_hz": 14000.0,
+      "f_end_hz": 300.0,
+      "q": 1.0,
+      "start_s": 0.0,
+      "end_s": 4.0,
+      "after": "hold"
+    },
+    {
+      "type": "pitch_glide",
+      "semitones": -7.0,
+      "curve": 1.5,
+      "start_s": 0.0,
+      "end_s": 4.0,
+      "mix": 0.5
+    }
+  ]
+}

@@ -4,5 +4,27 @@
  "extends": "melodic",
  "why": "the piece has a figure (bansuri) and a full rhythm section, so `melodic` is the closest shipped type; this profile is the project's own document, and it starts with no row changed",
  "flags": [],
- "rows": {}
+ "rows": {},
+ "expression": {
+  "_source": "this piece's own figures for direction.expression, expression.arousal_order and melody.variety. The melody floors are tighter than the shipped starting values on purpose, and each one is measured on this score (expression_report --project): the bansuri line repeats 50 % of its bars exactly, carries 2.73 bits of interval entropy over 112 notes and spans 19 semitones. So the floors are 55 % / 1.5 bits / 12 semitones - each one met (0.50, 2.73, 19), each one tighter than the shipped 60 % / 1.0 / 7, and none of them a value the piece does not reach. The anchors and the arousal floor are the shipped starting values, unchanged; the arousal order measured +1.00 against the declared section energy.",
+  "anchors": {
+   "tempo_bpm": [60.0, 180.0],
+   "notes_per_beat": [0.0, 8.0],
+   "velocity": [0.2, 1.0],
+   "pitch": [36.0, 84.0]
+  },
+  "arousal_order": {
+   "min_sections": 3,
+   "min_rho": 0.5
+  },
+  "melody_variety": {
+   "min_notes": 16,
+   "max_identical_bar_share": 0.55,
+   "min_interval_entropy_bits": 1.5,
+   "min_range_semitones": 12,
+   "intervals_for_leap_check": 20
+  },
+  "figure_roles": ["melody", "lead", "vocal"],
+  "skip_roles": ["environment", "fx", "texture"]
+ }
 }

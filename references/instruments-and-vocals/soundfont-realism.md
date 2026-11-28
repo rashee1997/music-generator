@@ -44,6 +44,10 @@ hard one open. Rules:
 - A note's neighbours in another band are invisible to the humanizer, so a slur across two bands does not overlap. Keep
   a legato line within a narrow velocity range, or give it its own track.
 - It cannot add a real second layer: the attack and the harmonic series stay those of the one sample. Say so.
+- To read like an SFZ library's layers, give the block fixed zones and a velocity-to-attack ramp:
+  `"velocity_timbre": {"points": [[25, 1800], [60, 3400], [100, 6500], [127, 9500]], "zones": 12, "attack_ms": [[25, 28], [127, 4]]}`.
+  `zones` (2-16) replaces the equal-count `bands`: a note's layer depends on its own velocity only. `attack_ms` is the onset ramp of each
+  zone (a soft note begins more slowly). Neither adds a real second sample; the numbers are starting values (`knowledgebase/sound-design/soundfont-velocity-and-realism.md`, section 5).
 
 ## 2b. A continuous loudness-timbre coupling: `timbre_dynamics`
 
@@ -75,6 +79,16 @@ say so in the report.
 Velocity decides how a note begins; the CC11 (expression) curve decides how it evolves. The engine writes the score's
 `dynamics` as CC11, so a crescendo exists in the score's `dynamics` and in written velocities, not in the mix. A held
 note that must swell needs `per_note_channels` and an `expression` shape (`bow` or `breath`).
+
+## 4b. Write what an orchestra could play
+
+A SoundFont plays any note, so a line no player could play still renders and reads as a mock-up. Run
+`python scripts/orch_rows.py <score> --project <dir>` before a render (stage 2 runs it too): it flags a note outside the
+instrument's range (`orch.range`), parallel fifths between two lines (`orch.voice_leading`), more simultaneous notes,
+a faster repeated-note run or a longer breathless phrase than a player or section has (`orch.playable`), and a gap between
+notes marked legato (`orch.legato`). A section is a track named for one (`strings`, `horns`) or an `ensemble` block;
+mark a deliberate extreme with `"extended_range": true`. Rows and limits: `quality-gate-rows.md` section 7; facts and their
+status: `knowledgebase/genre-and-feel/orchestral-writing.md`.
 
 ## 5. Report
 

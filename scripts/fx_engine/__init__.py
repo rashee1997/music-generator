@@ -1,0 +1,131 @@
+# Copyright (C) 2026 rasheedh <rasheedhmech03@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+"""fx_engine - cinematic and creative effects for a stem, in a Pedalboard-style chain.
+
+    chain = [{"type": "filter_sweep", "kind": "lowpass", "f_start_hz": 200, "f_end_hz": 9000, "start_s": 24, "end_s": 32},
+             {"type": "tape_stop", "start_s": 32.0, "dur_s": 0.8},
+             {"type": "pedalboard", "plugin": "Chorus", "params": {"rate_hz": 0.4}}]
+    y = fx_engine.apply(stem, sr, chain, seed=7)          # (n, 2) in, (n, 2) out
+
+    board = fx_engine.Board(chain)                         # the Pedalboard call shape: (channels, samples) in and out
+    y = board(audio, sr)
+
+Pedalboard cannot host a plugin written in Python (its `Plugin` is an abstract C++ class), so each effect here is a function,
+and the same chain can name any built-in Pedalboard plugin (`pedalboard`) or a real VST3 / Audio Unit file (`external`).
+The library is data (`references/data/presets/fx/effects.json`); a chain lives in an instrument preset as `fx`, either written
+out or as the name of a chain preset. `spec.problems(chain)` lists everything wrong with a chain before a render.
+
+An effect has a range (`start_s` .. `end_s`, with raised-cosine edges of `edge_ms`) and a `mix`. A "ranged" effect computes its
+result over the stem and is blended in only inside its range; a "timed" one (tape_stop) owns its own timing. Effects are
+deterministic: the same chain, stem and seed give the same samples.
+"""
+import numpy as np
+
+from . import core, host, modfx, spacefx, spec, timefx
+
+# type -> (function, mode, window). mode "ranged": blended in inside the window from `window(p, n, sr)` (default: start_s..end_s);
+# "timed": the function's output is the result (it handles its own times). The window of an effect with its own length
+# (a freeze holds for hold_s; a sweep may hold after end_s) is given by that effect.
+EFFECTS = {
+    'tape_stop': (timefx.tape_stop, 'timed', None),
+    'pitch_glide': (timefx.pitch_glide, 'ranged', None),
+    'doppler': (timefx.doppler, 'ranged', None),
+    'tape_wobble': (timefx.tape_wobble, 'ranged', None),
+    'stutter': (timefx.stutter, 'ranged', None),
+    'freeze': (timefx.freeze, 'ranged', timefx.freeze_window),
+    'grain_cloud': (timefx.grain_cloud, 'ranged', None),
+    'filter_sweep': (modfx.filter_sweep, 'ranged', modfx.sweep_window),
+    'ring_mod': (modfx.ring_mod, 'ranged', None),
+    'tremolo': (modfx.tremolo, 'ranged', None),
+    'gate_pulse': (modfx.gate_pulse, 'ranged', None),
+    'transient': (modfx.transient, 'ranged', None),
+    'air': (modfx.air, 'ranged', None),
+    'reverse_swell': (spacefx.reverse_swell, 'ranged', None),
+    'shimmer': (spacefx.shimmer, 'ranged', None),
+    'pedalboard': (host.pedalboard, 'ranged', None),
+    'external': (host.external, 'ranged', None),
+}
+
+problems = spec.problems
+
+
+def library_problems():
+    """What is wrong with the effect library and its registry (empty = good)."""
+    return spec.library_problems(EFFECTS)
+
+
+resolve = spec.resolve
+effect_names = spec.effect_names
+
+
+def _seed(base, index, own):
+    return (int(base) * 1000003 + index * 7919 + (int(own) if own is not None else 0)) % (2 ** 32)
+
+
+def apply(x, sr, chain, seed=0):
+    """`x` through the chain. Returns (n, 2) float32. An empty or missing chain returns the input as float32 (n, 2). A
+    non-finite result raises ValueError naming the effect that made it."""
+    y = core.stereo(x)
+    if not chain or len(y) == 0:
+        return y
+    for i, entry in enumerate(spec.resolve(chain)):
+        kind, p = entry['type'], entry['params']
+        fn, mode, window = EFFECTS[kind]
+        rng = np.random.default_rng(_seed(seed, i, p.get('seed')))
+        out = fn(y, sr, p, rng)
+        if mode == 'ranged':
+            n = len(y)
+            i0, i1 = window(p, n, sr) if window else core.span(p, n, sr)
+            mask = core.range_mask(n, i0, i1, int(round(float(p['edge_ms']) * sr / 1000.0)))
+            out = y + mask[:, None] * (out - y)
+        out = y + np.float32(p['mix']) * (out - y)
+        if not np.isfinite(out).all():
+            raise ValueError(f'fx[{i}] {kind}: produced non-finite samples (check its parameters)')
+        y = np.ascontiguousarray(out, dtype=np.float32)
+    return y
+
+
+class Board:
+    """A Pedalboard-shaped callable over a chain: `board(audio, sr)` takes and returns (channels, samples), so it can stand where
+    a `pedalboard.Pedalboard` runs a stem. The chain is checked when the board is built."""
+
+    def __init__(self, chain, seed=0):
+        self.chain = spec.resolve(chain)
+        self.seed = int(seed)
+
+    def __call__(self, audio, sr, *args, **kwargs):
+        a = np.asarray(audio, dtype=np.float32)
+        mono = a.ndim == 1
+        if mono:
+            a = a[None, :]
+        out = apply(a.T, sr, [dict(e['params'], type=e['type']) for e in self.chain], seed=self.seed).T
+        if a.shape[0] == 1:
+            out = out[:1]
+        out = np.ascontiguousarray(out)
+        return out[0] if mono else out
+
+
+def describe():
+    """One line per effect: name, what it does and its parameters with ranges."""
+    lib = spec.library()
+    lines = []
+    for name in sorted(lib['effects']):
+        e = lib['effects'][name]
+        params = ', '.join(
+            f'{k}={m.get("default")!r}' + (f' [{m["min"]}..{m["max"]}{m.get("unit", "") and " " + m["unit"]}]' if 'min' in m else '')
+            for k, m in (e.get('params') or {}).items())
+        lines.append(f'{name:14s} {e["character"]}\n{"":14s} {params}')
+    return '\n'.join(lines)

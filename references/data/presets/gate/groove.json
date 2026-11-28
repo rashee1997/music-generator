@@ -10,7 +10,7 @@
     "reason": "this type is carried by rhythm and low end; demanding a melodic line would judge it as a different kind of music"
   },
   "rows": {
-    "pattern.loop_short": {"mode": "relax", "max_period_bars": 4, "max_distinct": 3, "reason": "a groove repeats; the variation lives in the fill and the mix"},
+    "pattern.loop_short": {"mode": "relax", "max_period_bars": 4, "max_distinct": 3, "min_distinct_frac": 0.06, "reason": "a groove repeats; the variation lives in the fill and the mix, so 6 % of the bars differing is the floor"},
     "pattern.flat_dynamics": {"mode": "relax", "min_range_frac": 0.08, "reason": "a groove holds its level; energy comes from the arrangement and the accents"},
     "pattern.flags_max": {"mode": "relax", "max": 8, "reason": "few parts by design, so fewer varied lines"},
     "pattern.melody_notes": {"mode": "skip", "reason": "there is no melodic line to judge in a groove-led piece"},

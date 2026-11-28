@@ -1,0 +1,154 @@
+{
+  "name": "np_street_canyon",
+  "kind": "spaces",
+  "character": "A wet city street between brick and glass fronts under open sky, with an underpass and a bridge as room changes: a short bright tail, strong side reflections and a long late tail only under the bridge.",
+  "room": {
+    "rt60": 1.1,
+    "pre_delay_ms": 10,
+    "hf_decay": 0.5,
+    "early_level": 0.45
+  },
+  "reflections": {
+    "path_physics": true,
+    "ref_m": 1.5,
+    "ground_delay_ms": 5.0,
+    "ground_gain": 0.5,
+    "ground_cutoff_hz": 5000,
+    "lateral_delay_ms": 11.0,
+    "lateral_gain": 0.55,
+    "lateral_cutoff_hz": 4200,
+    "ceiling_delay_ms": 18.0,
+    "ceiling_gain": 0.05,
+    "rear_delay_ms": 30.0,
+    "rear_gain": 0.3,
+    "geometry": {
+      "width_m": 18.0,
+      "depth_m": 140.0,
+      "height_m": 45.0,
+      "listener": {
+        "x": 9.0,
+        "y": 60.0,
+        "z": 1.2
+      },
+      "materials": {
+        "floor": "asphalt_wet",
+        "ceiling": "open",
+        "walls": "brick_facade"
+      },
+      "material_set": "np_street",
+      "max_order": 3,
+      "max_taps": 14,
+      "min_level_db": -34.0
+    },
+    "late": {
+      "enabled": true,
+      "rt60_s": 1.1,
+      "hf_decay": 0.5,
+      "level_db": -21.0,
+      "count": 8,
+      "spread_deg": 90.0,
+      "rise_s": 0.02,
+      "seed": 2611
+    }
+  },
+  "scenes": [
+    {
+      "anchor": {
+        "section": "under_the_bridge"
+      },
+      "transition_s": 10.0,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 16.0,
+          "depth_m": 140.0,
+          "height_m": 6.0,
+          "materials": {
+            "floor": "asphalt_wet",
+            "ceiling": "underpass_concrete",
+            "walls": "underpass_concrete"
+          }
+        },
+        "late": {
+          "rt60_s": 2.5,
+          "level_db": -16.0,
+          "hf_decay": 0.45
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_bridge"
+      },
+      "transition_s": 6.0,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 24.0,
+          "depth_m": 140.0,
+          "height_m": 45.0,
+          "materials": {
+            "floor": "steel_deck",
+            "ceiling": "open",
+            "walls": "open"
+          }
+        },
+        "late": {
+          "rt60_s": 0.6,
+          "level_db": -28.0,
+          "hf_decay": 0.6
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_cliff"
+      },
+      "transition_s": 2.0,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 18.0,
+          "depth_m": 140.0,
+          "height_m": 45.0,
+          "listener": {
+            "x": 9.0,
+            "y": 60.0,
+            "z": 1.2
+          },
+          "materials": {
+            "floor": "asphalt_wet",
+            "ceiling": "open",
+            "walls": "brick_facade"
+          },
+          "material_set": "np_street",
+          "max_order": 3,
+          "max_taps": 14,
+          "min_level_db": -34.0
+        },
+        "late": {
+          "rt60_s": 1.1,
+          "level_db": -21.0,
+          "hf_decay": 0.5
+        }
+      }
+    }
+  ],
+  "distance": {
+    "ref_m": 1.5,
+    "falloff": 0.18,
+    "air_damping": 0.4,
+    "min_cutoff_hz": 3200,
+    "reverb_exponent": 0.65,
+    "pre_delay_law": {
+      "base_ms": 12.0,
+      "per_m": 1.5,
+      "max_ms": 30.0
+    }
+  },
+  "binaural": {
+    "bed": false,
+    "spot": true
+  },
+  "sources": [
+    "research note: Real-world references: tunnel_air (rt60 of an underpass about 2.5 s is a starting value between a street and a long tunnel; a facade absorbs 0.10-0.19)",
+    "ESTIMATE: the street is 18 m between the fronts, 45 m high, open to the sky, with the listener at the centre 1.2 m up (a driver)"
+  ]
+}

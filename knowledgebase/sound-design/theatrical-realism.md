@@ -114,3 +114,22 @@ Working figure: bar-scale tempo deviation of 1-8 % over the body, excluding the 
 
 These are couplings and thresholds, not a recipe for a good cue. The report says a mix has the structure; it
 cannot say the theme is memorable, the orchestration is idiomatic or the room is the right room.
+
+## Four more measurements, per part (added to `scripts/realism_report.py` as dimensions 9-12)
+
+Each is read from the dry stems by name, the score and the master, is advisory, and uses starting values (none is calibrated on a reference cue).
+Search-result text only (the pages were not opened): typical string vibrato about 6 per second and about 30 cents, varying 10-60 cents (Fletcher
+and Sanders, as cited in the vibrato literature); a detector counts a pitch half-cycle as vibrato at 2-10 Hz and more than 0.1 semitone; the
+spectral centroid correlates 0.62 with dynamic level across five nonpercussive instruments at pp, mf and ff (Timbre 2018 study); spaced pickup lowers
+inter-channel coherence and is linked to a sense of envelopment (AES and Huddersfield papers). No source gave a figure for ensemble onset
+asynchrony or for high-frequency decorrelation, so those numbers are working values.
+
+| # | Dimension | What is measured | Starting value |
+|---|---|---|---|
+| 9 | vibrato | per sustained part, the share of stable one-second windows whose strongest partial moves 3-9 Hz by 10 cents or more | at least 30 % of windows |
+| 10 | repetition | per part, the share of same-pitch attacks whose 80 ms spectrum matches the previous one (similarity 0.995) | under 40 % |
+| 11 | velocity_response | per single-line part, the correlation between a note's written velocity and the centroid of its first 250 ms once pitch is removed | at least 0.30 |
+| 12 | coherence | master inter-channel coherence, 2-8 kHz | at most 0.85 |
+
+Limits: the vibrato measure follows one partial, so a section of several detuned players blurs it; the velocity measure skips parts that play
+chords or overlap; none of them says a part sounds like a player.

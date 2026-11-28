@@ -149,5 +149,79 @@ class Placement(unittest.TestCase):
         self.assertEqual(level(self.rows(-20.0, el_fx=20.0), 'preflight.placement'), ['PASS'])
 
 
+class Clock(unittest.TestCase):
+    """The plan must be built on the renderer's own tempo map."""
+
+    def score(self, start_s):
+        return {'ts': [4, 4], 'bpm': 120, 'tempo_points': [[0, 120], [8, 60], [16, 120]], 'rubato': 0.0, 'wander': 0.0, 'ritard': 0.0,
+                'tracks': [{'name': 'a', 'notes': [{'t': 0.0, 'd': 100.0, 'p': 60, 'v': 0.5}]}],
+                'plan': {'sections': [{'name': 'late', 'start_bar': 5, 'end_bar': 8, 'start_s': start_s}]}}
+
+    def test_a_plan_on_the_renderers_map_passes(self):
+        import humanize as hz
+        s = self.score(0.0)
+        s['plan']['sections'][0]['start_s'] = float(hz.tempo_map_for(s).sec(16.0))
+        self.assertEqual(level(pl.clock_rows(s), 'preflight.clock'), ['PASS'])
+
+    def test_a_plan_on_another_clock_fails(self):
+        self.assertEqual(level(pl.clock_rows(self.score(8.0)), 'preflight.clock'), ['FAIL'])
+
+    def test_a_score_with_no_map_is_not_judged(self):
+        s = self.score(8.0)
+        s.pop('tempo_points')
+        self.assertEqual(pl.clock_rows(s), [])
+
+
+class FullChecks(unittest.TestCase):
+    def test_the_command_line_set_includes_the_intent_rows(self):
+        s = {'ts': [4, 4], 'bpm': 100, 'intent': {'emotions': ['tense'], 'avoid': ['four_on_floor']},
+             'tracks': [{'name': 'kick', 'role': 'drum', 'instrument': 'standard',
+                         'notes': [{'t': float(i), 'd': 0.5, 'p': 36, 'v': 0.6} for i in range(32)]}]}
+        names = [r[1] for r in pl.full_checks(s, None, probe=False)]
+        self.assertIn('intent.avoid', names)
+
+
 if __name__ == '__main__':
     unittest.main()
+
+
+class InstEq(unittest.TestCase):
+    """An inst_eq entry that names no instrument of the score is silent at render time, so preflight says so."""
+
+    def test_a_key_by_track_name_is_flagged_and_a_key_by_instrument_passes(self):
+        from unittest import mock
+        score = dict(mix_preset='m', tracks=[dict(name='snare', instrument='pursuit_snare', notes=[dict(t=0, d=1, p=38)])])
+        with mock.patch('presets.load', return_value={'m': {'inst_eq': {'snare': [{'type': 'peak'}]}}}):
+            rows = pl.inst_eq_rows(score)
+        self.assertEqual(rows[0][0], 'WARN')
+        self.assertIn('snare', rows[0][2])
+        with mock.patch('presets.load', return_value={'m': {'inst_eq': {'pursuit_snare': [{'type': 'peak'}]}}}):
+            self.assertEqual(pl.inst_eq_rows(score)[0][0], 'PASS')
+        with mock.patch('presets.load', return_value={'m': {}}):
+            self.assertEqual(pl.inst_eq_rows(score), [])
+
+
+class ChoirLayers(unittest.TestCase):
+    """preflight.choir_layers: one block of identical singers is the same choir at every dynamic."""
+    def rows(self, tracks, presets_map):
+        import preflight_lint as pl
+
+        def lookup(kind, name):
+            return presets_map.get(name)
+        return pl.choir_layer_rows({'tracks': tracks}, lookup)
+
+    def test_a_flat_synthesised_choir_alone_warns(self):
+        r = self.rows([dict(name='choir', instrument='x_choir', role='pad', notes=[{'t': 0, 'd': 1, 'p': 60}], vocal={'ensemble': {'voices': 8}})], {})
+        self.assertEqual(r[0][:2], ('WARN', 'preflight.choir_layers'))
+
+    def test_layers_or_a_second_voice_part_pass(self):
+        r = self.rows([dict(name='choir', instrument='x_choir', role='pad', notes=[{'t': 0, 'd': 1, 'p': 60}], vocal={'ensemble': {'voices': 8, 'layers': [{'name': 'a'}]}})], {})
+        self.assertEqual(r[0][0], 'PASS')
+        r = self.rows([dict(name='a', instrument='x', role='pad', notes=[{'t': 0, 'd': 1, 'p': 60}], vocal={'ensemble': {'voices': 6}}),
+                       dict(name='b', instrument='y', role='pad', notes=[{'t': 0, 'd': 1, 'p': 60}], vocal={'ensemble': {'voices': 6}})], {})
+        self.assertEqual(r[0][0], 'PASS')
+
+    def test_one_sampled_choir_warns_and_no_voice_is_silent(self):
+        r = self.rows([dict(name='c', instrument='x_oohs', role='pad', notes=[{'t': 0, 'd': 1, 'p': 60}])], {'x_oohs': {'family': 'voice'}})
+        self.assertEqual(r[0][0], 'WARN')
+        self.assertEqual(self.rows([dict(name='v', instrument='violin', role='melody', notes=[{'t': 0, 'd': 1, 'p': 60}])], {'violin': {'instrument': 'violin'}}), [])

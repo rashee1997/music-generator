@@ -505,15 +505,19 @@ def spatialize_pair(audio, azimuth_deg, elevation_deg, distance_m, half_width_de
 
 def _place_tap(x, delay_ms, coeffs, dec, order, direction, sr):
     """One reflection: delayed, its wall's absorption applied, then arriving through the head filters from its own
-    direction. A directionless copy gives no height or rear cue and sounds like a short delay."""
+    direction. A directionless copy gives no height or rear cue and sounds like a short delay.
+
+    The absorption is applied centred (`room.apply_absorption`), so the tap arrives at its path length and not 64
+    samples (1.45 ms) later: the wall's filter is linear phase, and a causal `lfilter` with it delays every early
+    reflection of the room by its group delay while the direct sound stays where it is.
+    """
     d = int(round(float(delay_ms) / 1000.0 * sr))
     if d < 0 or d >= len(x):
         return None
     s = np.zeros(len(x))
     s[d:] = x[:len(x) - d]
     if coeffs is not None:
-        fir = room.absorption_fir(coeffs, sr=sr)
-        s = signal.lfilter(fir, 1.0, s)
+        s = room.apply_absorption(s, coeffs, sr=sr)
     g = gains(order, direction[0], direction[1])[0]
     return np.stack([compute.conv(s, g @ dec[0])[:len(x)],
                      compute.conv(s, g @ dec[1])[:len(x)]], axis=1)

@@ -1,0 +1,121 @@
+{
+  "duration_s": 171.295873015873,
+  "sections": [
+    {
+      "name": "the_stakeout",
+      "start_s": 0.0,
+      "end_s": 11.25,
+      "dyn": 0.3
+    },
+    {
+      "name": "spotted",
+      "start_s": 11.25,
+      "end_s": 22.328,
+      "dyn": 0.45
+    },
+    {
+      "name": "the_avenue",
+      "start_s": 22.328,
+      "end_s": 46.865,
+      "dyn": 0.7
+    },
+    {
+      "name": "the_turn",
+      "start_s": 46.865,
+      "end_s": 73.961,
+      "dyn": 0.85
+    },
+    {
+      "name": "under_the_bridge",
+      "start_s": 73.961,
+      "end_s": 96.361,
+      "dyn": 0.9
+    },
+    {
+      "name": "the_roadblock",
+      "start_s": 96.361,
+      "end_s": 127.859,
+      "dyn": 1.0
+    },
+    {
+      "name": "the_bridge",
+      "start_s": 127.859,
+      "end_s": 149.686,
+      "dyn": 0.95
+    },
+    {
+      "name": "the_cliff",
+      "start_s": 149.686,
+      "end_s": 171.05,
+      "dyn": 0.2
+    }
+  ],
+  "flags": [
+    [
+      0.0348,
+      "stem.tick",
+      "basses",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "city_far",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "rain_awnings",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "rain_street",
+      "PASS"
+    ],
+    [
+      3.7732,
+      "stem.tick",
+      "piano_low",
+      "PASS"
+    ],
+    [
+      11.2617,
+      "stem.tick",
+      "celli",
+      "PASS"
+    ],
+    [
+      22.3376,
+      "stem.tick",
+      "piano",
+      "PASS"
+    ],
+    [
+      25.9715,
+      "stem.tick",
+      "tuba",
+      "PASS"
+    ],
+    [
+      70.7744,
+      "stem.tick",
+      "trombones",
+      "PASS"
+    ],
+    [
+      83.5918,
+      "stem.tick",
+      "violins_tremolo",
+      "PASS"
+    ],
+    [
+      121.5565,
+      "stem.tick",
+      "violins_staccato",
+      "PASS"
+    ]
+  ]
+}

@@ -16,7 +16,7 @@ These are not negotiable.
 |---|---|---|
 | Sound design stays in presets | Sound and space belong in `presets/`, notes in `scores/`, intent in `direction/`. Do not write synthesis, EQ, mixing logic or sound generation in a Python script. | the gate rejects it |
 | Acoustic values are cited or measured | Do not guess formants, tuning, ranges or reverb times. Cite the knowledge base, a research note, or a measurement. | the gate rejects it |
-| A failing gate row is a fact | Measure it, fix the score or the presets. Do not loosen a threshold, skip a row or suppress a failure. A profile may relax a row only with measured evidence and a written reason. | hard limits in code |
+| A failing gate row is a fact | Find its root cause (`scripts/rca.py`), then fix the score or the presets. Do not loosen a threshold, skip a row or suppress a failure. A profile may relax a row only with measured evidence, a written reason, and a root-cause verdict of `mismatch`. **If the fix would cost something very important to the piece** (the pressure the brief asked for, the declared figure, a deliberate dissonance), do not decide alone: ask the user (rule 20) before relaxing or waiving anything. | hard limits in code |
 | Ambience and SFX only when asked | Do not add ambience, rooms or effects unless the user asks for them. | follow exactly |
 | A preset needs research first | Every instrument, vocal and culture preset cites knowledge base `id`s. | the pipeline blocks without a research note |
 | No inline EQ or spatial values in a score | A score holds track names and notes; EQ and placement live in the presets. | separation is strict |
@@ -24,6 +24,7 @@ These are not negotiable.
 | One role vocabulary | A track's `role` is a function from `scripts/roles.py`. A synonym goes in `roles.ALIASES`, never in a second list; a module that branches on a role string imports it. | unknown role raises |
 | The subject is declared | `piece_type` and `focus` say what carries the piece. Never delete the figure, the bed or the groove to get past `focus.declared`. | the gate row names what is missing |
 | Intent words resolve | Every emotion, register, scene and tension word must resolve in `references/data/presets/intent/`; a word that resolves to nothing, or to two concepts of one kind, is an error. | `intent.py check` |
+| A band the samples lack is not fixed by EQ | An EQ shelf scales what exists. If a part's samples hold nothing above 8 kHz, or no loud layer, say so and use a preset `family`/`air` treatment or a bank that has it (`soundbank_audit.py`). Never name a part in engine code: a preset declares its `family`, the engine reads the family's data. | `realism.air`, `realism.sub_weight`, `preflight.choir_layers` |
 | A piece is directed, not generated | The craft pass (4.9) is written before the first note and reviewed after the render (9.4e). A green gate is not the review: a flat density, a copied bar, two competing leads or a blend that is a medley passes the gate and fails the director. | the written review in `STATUS.md`, `references/workflow/director-craft.md` |
 
 ---
@@ -44,7 +45,7 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **1.3** Determine project type and fill in STATUS.md
 
 ### PHASE 2: SETUP
-- [ ] **2.1** Create project: `python scripts/setup_project.py --new-project <dir> --title "<Title>"` (only add `--ambience` if explicitly requested). The scaffold includes `presets/gate/` (the piece's **own** gate profile, cloned from `melodic` with its `character` still to be written) and `<dir>/metadata.json` (delivery tags). A project cannot render on a shipped gate profile: fill the scaffolded one before Phase 6.
+- [ ] **2.1** Create project: `python scripts/setup_project.py --new-project <dir> --title "<Title>" [--genre <profile>]` (only add `--ambience` if explicitly requested; `--genre` makes the project's own gate profile extend a shipped genre profile: `orchestral`, `rock_band`, `hiphop`, `jazz_ensemble`, `world_percussion`, `game_loop`, `dance`, `ambient`, `cinematic`, `tense`, `groove`, `texture`). The scaffold includes `presets/gate/` (the piece's **own** gate profile, cloned from `melodic` with its `character` still to be written) and `<dir>/metadata.json` (delivery tags). A project cannot render on a shipped gate profile: fill the scaffolded one before Phase 6.
 - [ ] **2.2** Write only into `<dir>/`, never into the skill folder
 - [ ] **2.3** Fill `<dir>/metadata.json` with the real delivery values (artist, album, year, publisher, ISRC, copyright, licence). These override the standard tags in `presets/metadata/metadata.json`. Title and genre are derived from the score; do not hardcode tags in a script.
 
@@ -60,17 +61,25 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 - [ ] **4.1** Confirm R1-R3 are done, the research notes carry citations, and `references/workflow/music-direction.md` has been read.
 - [ ] **4.2** Copy `templates/direction_sheet.json` to `<dir>/direction/direction_<title>.json`
 - [ ] **4.3** FILL EVERY FIELD: `job`, `purpose`, `point_of_view`, `sections` (with picture action), `motifs`, `hits_at`+`hits`, `ending`, `feel`, `avoid_feel`, `palette`, `avoid_sounds`, `tempo`, `key/mode`, `energy`, `space`, `mix_intent`, `loudness`, `true_peak_max`, `delivery`, `references` (words only), `spatial_staging`, `piece_type`, `focus` (what carries it), `intent`, `expression` (4.8), and for an immersive piece `immersive` (4.7)
+- [ ] **4.4** If scoring to video, run `scripts/video_score.py` - it fills video block but YOU still write music intent
+- [ ] **4.5** Ensure sections don't overlap, hits align with hits_at. Gate rejects otherwise. A hit with `sync: hard` opens a
+      ±150 ms intentional cut window in which `stem.cut` / `cut.hard` skip the level drop (nothing else is skipped); with
+      `kind: cut` it also ramps the sustained voices to silence over 15 ms. Write a hit as `musical`, not `cut`, when the strings
+      must keep sounding. `references/mixing/quality-gate-rows.md` section 8.
+
 - [ ] **4.6** Decide the focus before the arrangement: `melody`, `drone`, `groove`, `texture` or `gesture`, and the roles that may carry it. A piece whose type expects a figure and has none will FAIL `focus.declared`, and that is the point.
 - [ ] **4.7** For an immersive piece, fill `immersive` after reading `references/workflow/directing-space.md`: whether the field does a job (`why`), which parts are anchors and which move (`movers[].why`, `.path` in words), the height plan, where the room changes (`room_changes[].at_section`, named by section) and the `deliverables`, two-channel first. Every number (keyframes, heights, room geometry) goes in the presets; the section names here are the vocabulary a trajectory or a room scene is anchored to, so they must match the score's `plan.sections`.
 - [ ] **4.8** Fill `expression` after reading `references/workflow/music-direction.md` section 2.11, before any note: the `sonic_picture` (what the listener hears in the first ten seconds, the middle and the last note), the `performer` (what a human player does), the `producer_moves`, the `anti_generic` sentence, per-section `cues` (arousal, mode and register, tempo, dynamics, articulation, timbre) and, for a melody piece, the `theme` as a shape with a `variation_plan`. A sheet without it is a WARN (`direction.expression`); a half-written one is a FAIL.
 - [ ] **4.9** Craft pass, after 4.8 and before any note: write the six answers of `references/workflow/director-craft.md` section 1 (the hook, the arc, the density map, the lanes, the contrast, the ending) in `STATUS.md` and in the sheet's existing fields. For a blend of traditions, write the shared core (one tonic, one scale, one pulse) and each tradition's job. A piece whose six answers cannot be written is not decided: do not start the score.
-- [ ] **4.4** If scoring to video, run `scripts/video_score.py` - it fills video block but YOU still write music intent
-- [ ] **4.5** Ensure sections don't overlap, hits align with hits_at. Gate rejects otherwise.
+- [ ] **4.9b** Harmony plan, after 4.9 and before any note: for a piece of 40 s or more with three or more sections, fill the sheet's `harmony_plan` (one entry per section: `root`, `key`, `move` or `counter_hook`, or `pedal: true` with a `why`). A static pedal under a whole piece is a decision to write down, not a default. A hit that must stop the music carries `silence_after_s` (`direction.stinger`). Rows: `direction.harmony_plan`, `direction.stinger`, `realism.harmonic_motion`.
 
 ### PHASE 5: PRESETS
 - [ ] **5.1** Scaffold instruments/vocals: `python scripts/presets.py scaffold instruments|vocals <exact_name> --project <dir>`. Each needs unique `spatial.azimuth/distance`. Fill real `character` sentence (placeholder blocked).
+- [ ] **5.1b** Families and banks: every instrument preset declares a `family` (`bowed`, `blown_reed`, `blown_brass`, `struck_membrane`, `struck_pitched`, `plucked`, `voice`, `keys`, `synth`; `scripts/families.py`). The family brings vibrato bloom, a bow or breath noise layer, brass flare and a struck part's snap from `references/data/presets/families/families.json`; a block of the same name in the preset or track overrides it. The sound bank is chosen per family from `references/data/presets/banks/default.json` by audit, never by habit: run `python scripts/soundbank_audit.py <bank>` for every bank you install, read the report (velocity layers, centroid ratio, 8-16 kHz share), and say in STATUS.md which bank played each family (the render prints `[bank]` lines). The shipped GM banks measure one sample layer per instrument: a loud passage is only louder. `soundbank_build.py` builds a multi-layer bank from sources whose licence you read (refused otherwise). No bank is made the default unless it beats the fallback on the audit.
 - [ ] **5.2** Scaffold space preset if needed: `python scripts/presets.py scaffold spaces <name> --project <dir>`. Set `space`/`room` in score.
 - [ ] **5.3** Scaffold mix preset: `python scripts/presets.py scaffold mix --project <dir>`. **MUST customize it** - defaults are no-ops. Configure per piece needs (ducking, sidechain, mastering.crest_floor_db, inst_eq, etc.). Read `references/mixing/mixing-and-mastering.md` section 8b.
+      A treatment of one part (a riser, a downlifter, a tape stop, a reverse swell, a Pedalboard plugin or a VST3) is an `fx` chain in
+      that part's instrument preset, never in the score: `references/sound-design/fx-engine.md`. Stage 2 checks it (`preflight.fx`).
       The master tone curves, the glue compressor, the room send per role (`space.send_by_role`) and the duck timing are
       preset keys: change the number there, never in `mixer.py`. To make the sheet's `mix_intent` act on the mix, carry it
       on the score and set `lead_carve: {"enabled": true, "from_intent": true}`.
@@ -89,17 +98,21 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
 
 ### PHASE 6: GATE PROFILE
 - [ ] **6.1** A custom gate profile is **mandatory** for a project: `python scripts/gate_profiles.py new <name> --from <closest> --project <dir>` writes `presets/gate/<name>.json`, and the score's `piece_type` must name it. The table above says which shipped profile to start from, not which one to declare; `project_gate.py` blocks a render whose `piece_type` is a shipped name. Check with `python scripts/gate_profiles.py list` and `rows`.
-- [ ] **6.2** Put `piece_type` in score and direction sheet
-- [ ] **6.3** Only relax/skip after measurement with explicit reason. Never relax in advance.
+- [ ] **6.2** Put `piece_type` in score and direction sheet (the name of the project's own profile). A score with no `piece_type` is blocked in a project: the gate never infers a type or falls back to `melodic` there.
+- [ ] **6.3** Only relax/skip after measurement with explicit reason. Never relax in advance. When the row matters to the piece, ask the user first (rule 20). The route is `python scripts/gate_profiles.py relax <row> --project <dir> --set PARAM=VALUE --reason "..."`: it checks the last render measured the row failing, keeps the number inside its range, refuses protected rows and writes the measurement into the reason (`references/mixing/quality-gate.md` section 3c).
 
 ### PHASE 7: SCORE
 - [ ] **7.1** Write `<dir>/scores/<title>_score.json`. Tracks reference preset names only, every `role` from `scripts/roles.py`. NO inline EQ/spatial. Carry `piece_type`, `focus` and `intent` from the sheet.
 - [ ] **7.2** Follow all rules in Section 4.
 
 ### PHASE 8: RENDER & ITERATE
-- [ ] **8.1** Render: `python scripts/pipeline.py <dir>/scores/<title>_score.json --project <dir> --max-attempts 3` (background for long runs)
+- [ ] **8.1** Render: `python scripts/pipeline.py <dir>/scores/<title>_score.json --project <dir> --max-attempts 5` (background for long runs)
 - [ ] **8.1b** Before a long render run `python scripts/preflight_lint.py <dir>/scores/<title>_score.json <dir>` (stage 2 runs it too): fix every FAIL (note outside the patch range, one-shot cut short) and read every WARN, since each one cost a full render when it was found by the audio rows. `preflight.roughness_partials` names the overtones that will beat; after a failing render run `python scripts/roughness_forecast.py diagnose <draft_master> --stems <dir>/stems --score <score>` before changing a note (`references/mixing/quality-gate-rows.md`, end of the file). `references/mixing/quality-gate.md` section 3g.
-- [ ] **8.2** Read scoreboard, not early logs. Fix ONE thing at a time based on gate failures. Max 5 attempts.
+      For an orchestral part stage 2 also runs `python scripts/orch_rows.py <score> --project <dir>` (`orch.range`,
+      `orch.voice_leading`, `orch.playable`, `orch.legato`: a note outside the instrument's range, parallel fifths, more
+      notes than a player has, a breathless phrase, a gap in a legato line). Fix the notes; a deliberate extreme is
+      declared on the track (`extended_range`, `section`), never by loosening a row. `quality-gate-rows.md` section 7.
+- [ ] **8.2** Read scoreboard, not early logs. Find the cause of each failure before touching anything (`python scripts/rca.py <dir>`, step 9.4h), then fix ONE thing at a time. After 5 attempts that do not lower the FAIL count, STOP: write the failure log and the rca verdict in `STATUS.md`, report, and ask; attempts 6 and later are not a strategy. A failing row whose verdict is `mismatch` is relaxed through `gate_profiles.py relax`, not retried; if it matters to the piece, ask the user first (rule 20).
 - [ ] **8.3** For immersive pieces, fix imm_* rows in presets/score, never loosen. `imm_kinematics`: spread the
       keyframes. `imm_low_fold` / `mix.band_fold`: narrow the stem the row names. `imm_clarity`: lower the space's
       `late.level_db`. Table: `references/mixing/quality-gate-rows.md` §5c.
@@ -113,16 +126,18 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
       `presets/layouts/` and `presets/outputs/`. `references/spatial/immersive-deliverables.md`.
 
 ### PHASE 9: DELIVER
-- [ ] **9.1** Verify the delivery record: `python scripts/helpers/version_manager.py list --project <dir>`. Every certified render is kept as `out/master_vNN.wav` with its change in `out/versions.json`; `out/master.wav` is a copy of the newest. Never delete or overwrite a version file or a record.
-- [ ] **9.2** Metadata: `out/master.json` (written at certification from `presets/metadata/metadata.json` + the score + the project overrides) carries the standard tags. If a tag is wrong, fix `<dir>/metadata.json` and re-run `python scripts/helpers/ingest_metadata.py out/master.wav --project <dir>`; never edit the sidecar by hand.
-- [ ] **9.3** MP3 is manual and NOT part of the pipeline: `python scripts/helpers/compress_mp3.py out/master_vNN.wav -o <file>.mp3 -b 320k`. Report the file you produced and its bitrate.
-- [ ] **9.4b** Measure the arc against the brief: `python scripts/helpers/arc_report.py out/master.wav --score scores/<title>_score.json`. A green gate says the render is not faulty; it does not say the cue has the pressure the brief asked for (`references/scoring/cinematic-commercial-grade.md`, section 6). Report the section means, the pressure share and the quiet stretches, and say if they disagree with the sheet's `energy`.
+- [ ] **9.1** Verify the delivery record: `python scripts/helpers/version_manager.py list --project <dir>`. A project's files are named after its folder: the certified stereo master is `out/<project>.wav`, every certified render is kept as `out/<project>_vNN.wav` with its change in `out/versions.json`, and every other format is `out/<project>_<format>.wav` (for example `night_pursuit_immersive_7_1.wav`). A project certified before this naming keeps its `master.wav` and `master_vNN.wav`; readers find either. Never delete or overwrite a version file or a record.
+- [ ] **9.2** Metadata: the sidecar next to the master (written at certification from `presets/metadata/metadata.json` + the score + the project overrides) carries the standard tags. If a tag is wrong, fix `<dir>/metadata.json` and re-run `python scripts/helpers/ingest_metadata.py out/<project>.wav --project <dir>`; never edit the sidecar by hand.
+- [ ] **9.3** MP3 is manual and NOT part of the pipeline: `python scripts/helpers/compress_mp3.py out/<project>_vNN.wav -o <file>.mp3 -b 320k`. Report the file you produced and its bitrate.
+- [ ] **9.4b** Measure the arc against the brief: `python scripts/helpers/arc_report.py out/<project>.wav --score scores/<title>_score.json`. A green gate says the render is not faulty; it does not say the cue has the pressure the brief asked for (`references/scoring/cinematic-commercial-grade.md`, section 6). Report the section means, the pressure share and the quiet stretches, and say if they disagree with the sheet's `energy`.
 - [ ] **9.4c** Check the expression against the sheet: `python scripts/helpers/expression_report.py scores/<title>_score.json --direction direction/<sheet>.json`. It reports whether the written notes follow the sections' declared energy (tempo, density, velocity, register, staccato share) and whether the melody has variety (interval entropy, range, leaps, bars that repeat exactly). It is non-neural, uses starting-value anchors and says nothing about valence or taste; report its flags and what you changed.
 - [ ] **9.4d** Short-form or looping piece (a ringtone, an alert, a jingle): `python scripts/helpers/short_form_report.py out/master.wav --score scores/<title>_score.json --loop`. It measures the loop seam, the energy in the phone band, the onsets in the first seconds, how often the opening shape returns and whether the density moves. Report its FLAG lines and what you changed; its defaults are starting values, and it does not say a tune is catchy.
 - [ ] **9.4e** The director's second review (`references/workflow/director-craft.md` section 5): in `STATUS.md`, which failures of its section 2 the piece could still show and the measurement that says it does not, the one thing a human producer would change first, and what was not heard or measured. A piece that passes every row and fails this review goes back to 4.9, not to the gate.
-- [ ] **9.4f** For a cue briefed as theatrical, cinematic, orchestral or "less synthetic": run
-      `python scripts/realism_report.py out/master.wav --score scores/<title>_score.json --stems out/stems --project <dir>`.
-      Report every `WARN` with the dimension it names, and fix the part, the preset or the placement. The measurements are
+- [ ] **9.4f** For a cue briefed as theatrical, cinematic, orchestral or "less synthetic": the pipeline runs the realism report itself, on the certified
+      stereo master, as stage 5a (`[WARN] realism.<dimension>` rows; written to `presets/gate/data/realism.json` and `realism.txt`; a score says
+      `"realism": false` to skip it or `true` to ask for it on any piece; `intent.registers` naming cinematic, orchestral, hybrid or theatrical turns it on). To run it by hand:
+      `python scripts/realism_report.py out/<project>.wav --score scores/<title>_score.json --stems stems --project <dir>`.
+      Read the stage 5a rows before the next render, and report every `WARN` with the dimension it names, and fix the part, the preset or the placement. The measurements are
       advisory, not gate rows (`references/mixing/quality-gate.md` section 3h); the gate rows a theatrical change can break
       are listed there.
 - [ ] **9.4g** **A FAIL, before any edit:** run `python scripts/debug_audio.py <project>`. It reads the gate's own
@@ -133,7 +148,16 @@ Complete every step and tick it in `<project>/STATUS.md`. Do not skip ahead.
       value of that lever clears both rows: fix the score, the sample or the density instead of turning the knob again.
       Record what you tried with `--record <row>=<lever>=<delta> --outcome <cleared|no change|worse>` so a failed
       experiment is never proposed twice. The engine renders nothing and changes nothing.
-- [ ] **9.5** Listen: `python scripts/listen.py out/master.wav --direction direction/<sheet>.json` (if missing, say so)
+- [ ] **9.4h** **Root cause before any edit, and before any tolerance:** run `python scripts/rca.py <project>` (add `--log <pipeline log>` for a stem row that blocked the
+      mix, and `--formats` for a delivery format that failed its own rows). Where the debug engine answers "which knob moves this number", rca answers
+      "what in the signal or the score made the row fail": the hole's time and what carries the level there, the notes under the high-pass, the pair of parts that
+      share the midrange, the fold's band table, the bar's front-to-back series, the partials that beat. Each finding carries a verdict:
+      `fault` (fix it in the notes, the presets or the placement; a tolerance change would hide it), `mismatch` (the signal is as written and the row's rule does not fit the
+      piece: a bounded `gate_profiles.py relax` with the measurement is legitimate, and only then) or `unknown` (measure more; do not edit). Write each
+      failure in `STATUS.md` under "Failure log": the row, the cause class, the evidence, the lever and what happened. It reads and writes only `presets/gate/data/rca.*`.
+      It loads every processed stem (2-3 GB): do not run it while a render is in its 8-channel stage, which needs about 10 GB of the container's memory.
+- [ ] **9.4i** Cinematic realism rows (stage 5a, advisory): `realism.sub_weight` (the sub the stems carry reaches the master), `realism.air` (8-16 kHz, and the parts whose samples hold none), `realism.dynamic_scale` (loud sections stand above quiet ones), `realism.impact_attack` (struck parts rise fast or carry a click), `realism.foreground` (the score's `foreground` voices are not buried), `realism.harmonic_motion` (a long section moves or declares a pedal). Report every WARN with the stage that caused it (stem or master) and the lever you used: `family` blocks, an `air` fx, `impact_cinematic`, `mastering.section_levels`, `anticipate_ms` / `bar_breath_ms`, the harmony plan. Thresholds are starting values; none says it sounds good.
+- [ ] **9.5** Listen: `python scripts/listen.py out/<project>.wav --direction direction/<sheet>.json` (if missing, say so)
 - [ ] **9.6** Complete self-check in `references/workflow/self-check.md` in STATUS.md (all yes/no)
 - [ ] **9.7** Report: what was done, what was checked, what was NOT checked, gate results, the version number delivered, any limitations. Update STATUS.md.
 - `reports/` holds three kinds of file and nothing else: the research notes (`research_*.md`), the CI report (`ci_report.json`), and the debug autopsy written by `scripts/debug_audio.py` (`debug_audio.md`, `debug_audio.json`, `debug_history.jsonl`). The autopsy is a record of what a render measured and what the solver would move, so it belongs to that piece's history; it is never an input to the gate. Every gate artefact — profile, `gate/chem/`, `level.json`, `stem_gate.json`, `section_energy.json`, the spectrogram/waveform/stereo PNGs — is written under `presets/gate/` (figures in `presets/gate/figures/`) and is versioned with the project. `reports/` is versioned too: it is research evidence and the CI verdict, not scratch space.
@@ -149,7 +173,7 @@ Before Phase 4, open every file in the row that matches the request; union sever
 | **ANY PIECE** | `SKILL.md`, `references/workflow/brief-reading.md`, `references/workflow/music-direction.md`, `references/workflow/director-craft.md`, `references/workflow/intent-and-focus.md`, `references/spatial/acoustic-laws.md`, `references/mixing/mix-rules.md`, `references/mixing/humanization.md`, `references/mixing/quality-gate.md` |
 | **Ringtone / alert / alarm / jingle / any piece meant to be recognised in seconds, or a loop** | `references/scoring/short-form-and-ringtones.md`, `knowledgebase/genre-and-feel/short-form-functional-music.md`, `references/workflow/director-craft.md`, `scripts/helpers/short_form_report.py` |
 | **Intent/mood words/focus/roles** | `references/workflow/intent-and-focus.md`, `scripts/intent.py`, `scripts/roles.py` |
-| **Cinematic / epic / trailer / hybrid orchestral / thriller / "unknown, hostile place"** | `references/scoring/cinematic-commercial-grade.md`, `knowledgebase/genre-and-feel/cinematic-hybrid-scoring.md`, `references/scoring/emotion-and-scoring.md`, `references/workflow/scene-recipes.md`, `references/instruments-and-vocals/soundfont-realism.md` |
+| **Cinematic / epic / trailer / hybrid orchestral / thriller / "unknown, hostile place"** | `docs/REALISM-ENHANCEMENT-PLAN.md`, `references/scoring/cinematic-commercial-grade.md`, `knowledgebase/genre-and-feel/cinematic-hybrid-scoring.md`, `references/scoring/emotion-and-scoring.md`, `references/workflow/scene-recipes.md`, `references/instruments-and-vocals/soundfont-realism.md` |
 | **Mood/film/underscore/background** | `references/workflow/scene-recipes.md`, `references/scoring/emotion-and-scoring.md`, `knowledgebase/media/video-scoring.md` |
 | **Score video file** | `references/scoring/video-scoring.md`, `scripts/video_score.py`, `video-mixer/video_probe.py`, `video-mixer/context.py`, Section 10 below |
 | **Film reel / several cues / spotting** | `references/scoring/video-scoring.md`, `video-mixer/deliver/reel.py`, `video-mixer/gate/pass_.py`, `scripts/setup_project.py --new-film`, Section 9 and Section 10 |
@@ -163,7 +187,8 @@ Before Phase 4, open every file in the row that matches the request; union sever
 | **Western/classical/folk/country/Celtic** | `knowledgebase/cultures/western.md`, `knowledgebase/cultures/world-other.md`, `references/scoring/world-music.md` |
 | **Flutes/wind** | `knowledgebase/cultures/flutes.md`, `references/instruments-and-vocals/natural-instruments.md` |
 | **Fusion (2 traditions/genres)** | `references/scoring/genre-fusion.md`, both culture rows, `references/scoring/style-rahman.md` |
-| **Vocals/hums/choirs** | `references/instruments-and-vocals/vocals-and-choirs.md`, `references/instruments-and-vocals/vocal-engine.md`, `knowledgebase/cultures/world-other.md`, culture row, `presets/vocals/` preset |
+| **Vocals/hums/choirs** | `references/instruments-and-vocals/vocals-and-choirs.md` (section 6, choir layers), `references/instruments-and-vocals/vocal-engine.md`, `knowledgebase/cultures/world-other.md`, culture row, `presets/vocals/` preset |
+| **A treatment of a part: riser, downlifter, tape stop, reverse swell, freeze, pass-by, any Pedalboard plugin or a VST3** | `references/sound-design/fx-engine.md`, `references/data/presets/fx/effects.json` |
 | **Ambience/weather/nature/SFX (if requested)** | `references/spatial/environments-as-presets.md`, `references/sound-design/sound-effects.md`, `references/spatial/physical-scene.md`, `knowledgebase/sound-design/sfx-ambience.md` |
 | **A real or invented place by its physics (rainforest, alien atmosphere, animals that share time, a bed that follows the score)** | `references/spatial/biomes.md`, `knowledgebase/sound-design/biome-acoustics.md`, `references/spatial/environments-as-presets.md`, `scripts/biome/`, `scripts/phys_core/medium.py` |
 | **Physical sound (breaks/footsteps/rain/knock/creak/scatter)** | `references/spatial/physical-scene.md`, `references/sound-design/sound-effects.md` §2d, `knowledgebase/sound-design/sfx-formulas.md`, `scripts/physical.py laws` |
@@ -232,7 +257,7 @@ levers. Using GM habits on an SFZ track is what leaves it sounding like a sample
 3. **Clear arc** - Intro/build/drop/break/outro. Energy from arrangement, not just volume.
 4. **Lane discipline** - Lead 1-3kHz, pads below/wider, arps lower.
 5. **Humanize differently** - Tight grid for kick/hats/bass. Tiny velocity variation, rare ghost notes. No rubato. Never repeat identical 2/4 bars.
-6. **Mix/master** - Target -14 to -9 LUFS for club/stream (default -16 LUFS, true peak -1.5 dBTP). State and justify.
+6. **Mix/master** - Target -14 to -9 LUFS for club/stream (default -16 LUFS, true peak -1.5 dBTP). State and justify. The shipped default and the named profiles are data (`references/data/master_targets.json`); a piece that declares `intent.registers` and states no loudness and chooses no mastering profile is levelled to the middle of its registers' `lufs` bands (`intent.register_loudness`, `references/data/presets/intent/registers.json`). No module carries a literal loudness fallback (`tests/test_master_loudness.py`).
 7. **Fusion** - Keep one pulse, one key center. Traditional = lead, electronic = bed.
 8. **Honest limits** - Synthesis from SoundFont/simple synthesis. Don't claim hardware synth sound.
 
@@ -240,10 +265,13 @@ levers. Using GM habits on an SFZ track is what leaves it sounding like a sample
 
 ## 4b. CINEMATIC / HYBRID SPECIFICS
 
+0. **Choirs are sections, not a block.** A synthesised choir has `ensemble.layers` (high air, women, altos, men, a forte tutti) with `vel` bands, so it grows and changes colour as the dynamics rise (`references/data/presets/vocals/vocal_choir_cinematic.json`, `vocal_engine/layers.py`). A sampled choir is two or more parts (different programs, registers, velocity bands). One block of identical singers is `preflight.choir_layers`. Write the choir's dynamics as velocities: pp a few breathy high voices, mf women and men in octaves, ff everyone with the singer's formant.
+
 Full procedure: `references/scoring/cinematic-commercial-grade.md`. Facts and sources: `knowledgebase/genre-and-feel/cinematic-hybrid-scoring.md`.
 
 1. **Pressure is a deliverable.** Decide the carriers (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising or accelerating device) in the direction sheet before any note.
-2. **The last section is the peak or the cliff**, never the fade of a peak, unless the brief asks for relief.
+2. **A stinger is a decision.** A hit that should stop the music declares `silence_after_s` in the sheet and nothing but the room sounds after it (`scene.silence_honoured` reads the level after `tail_grace_s`, and `dropout` does not count a declared rest); layer it (`sfx:impact_cinematic`: click, body, sub, tail) and do not glide into the aftermath. A section's contrast between quiet and loud is set in `mastering.section_levels` (from the plan's `energy`), not by pushing the whole cue louder.
+2b. **The last section is the peak or the cliff**, never the fade of a peak, unless the brief asks for relief.
 3. **Atmosphere sits under the cue.** For a brief about threat, turn rain, river and canopy down.
 4. **Gate rows and pressure collide on heavy cues** (`master.dc`, `dropout`, `cochlear_roughness`, `z_separation`, `fold.mono`). The table in the reference file lists the fix for each in the piece; none of them is a loosened row.
 5. **Loudness is the medium's**: a trailer is not -16 LUFS. The figures are starting values until the delivery spec is known.
@@ -280,6 +308,15 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
 | Dark/unresolved/suspense (no cadence) | `tense` | SKIPS "resolves to tonic" |
 | Effects/ambience only (no notes) | `effects_only` | Declares an empty focus and skips the row |
 
+- **Loud, dense, layered and silent music is judged on what it is.** The rows that used to read an arrangement choice as a defect
+  carry a parameter for it (`references/mixing/quality-gate.md` §3k): `roughness.median_legacy`, `pattern.velocity_flat.sd_abs_max`,
+  `masking.vs_melody.max_share`, `stem.tick.score_match_share`, `stem.dead.honour_rests` / `dyn_scale`, `dropout.honour_rests`,
+  `scene.silence_honoured.tail_grace_s`. A rest the direction sheet declares (`hits[].silence_after_s`, `silence_windows`, a section
+  whose words say silence) exempts its window from `dropout` and `stem.dead`, and `scene.silence_honoured` reads the level after the
+  room's tail. A part whose written notes sit on a detected period is a pulse, not a `stem.tick`. State a figure in the project
+  profile with `gate_profiles.py relax` and the measurement; never in Python. Shipped genre profiles (`orchestral`, `rock_band`,
+  `hiphop`, `jazz_ensemble`, `world_percussion`, `game_loop`) are starting values for the structure of a genre, not measurements of
+  your piece: the project profile `extends` one (`setup_project.py --genre`) and measures its own.
 - The virtual-ear rows (`ear.fatigue`, `ear.masking`, `ear.mod_roughness`, `ear.pitch_salience`, `ear.iacc`) are advisory (INFO / WARN, never FAIL) and their numbers are starting values calibrated on synthetic fixtures only. `ambient` (which covers drone pieces) relaxes `ear.fatigue` to 0.75 over 15 s because a held bed is its subject; the reason and the measurement are in `presets/gate/ambient.json`. Any other profile that holds a pad on purpose does the same, with its own measurement, never in advance.
 - The chem rows (`chem.model`, `chem.reward_build`, `chem.reward_arrival`, `chem.stress_load`, `chem.affiliation`,
   `chem.motor_drive`, `chem.recovery`, `chem.arc_variety`, `chem.mood_connection`, `chem.genre_connection`) are
@@ -290,10 +327,38 @@ Default is the GM SoundFont. Use SFZ only when the user says "real samples", "fu
   mood or genre is a preset edit and not a code change. `python scripts/helpers/chem_report.py` prints the traces when
   a brief asked for emotional connection. Never optimise a generator against these rows - that produces
   riser-impact cliche. `docs/NEUROCHEMICAL-AFFECT-PLAN.md`.
+- The expression rows take their figures from the piece's own profile, not from the module that measures them:
+  `expression.arousal_order` (`min_sections`, `min_rho`) and `melody.variety` (`min_notes`, the identical-bar share, the
+  interval-entropy floor, the range, the leap-check length) read `<project>/presets/gate/<piece_type>.json` →
+  `"expression": {...}`, merged through `extends`; a profile that says nothing inherits the shipped starting values, so
+  every piece judged before the block existed is judged exactly as it was. The block is where a piece says what it is -
+  a drone cue has no build to rank, a through-composed cue has no repeating figure, a twenty-second sting is shorter
+  than a phrase - and it is checked like a row: an unknown key, a number outside its range, a role that does not exist,
+  or a role in both `figure_roles` and `skip_roles` is a FAIL (`expression.preset`), never a silent default. Neither
+  measured row can FAIL, and no value can switch one off (the ranges forbid `min_rho` 0 and an identical-bar share of 1).
+  `python scripts/helpers/expression_report.py <score> --direction <sheet> --project <dir>` judges with the same numbers.
+  The chem presets are the project's as well: `presets/gate/chem/{model,moods,genres}.json` override the shipped ones,
+  and `chem.model` prints which file supplied them.
+- Every number in the gate is data: `references/data/presets/gate/data/rows.json` holds each row's default, its range
+  and the `source` of that number (a citation, or the words "starting value" where no published measurement exists).
+  `gate_profiles.ROWS` is built from that file and keeps no copy; a default with no provenance fails
+  `tests/test_gate_thresholds_provenance.py`. Never edit a default in Python, and never write a citation for a number
+  nobody measured.
+- A piece may be judged against its own scenes. A profile's `"scene"` block points at the project's direction sheet
+  (`sections[].role`, `hits[]`, `video.dialogue.windows`); the role contract, its keys and their ranges are
+  `references/data/presets/gate/data/scene_roles.json`; the rows are `scene.arc_step`, `scene.hit_surprise`,
+  `scene.release_delta`, `scene.macro_contrast`, `scene.silence_honoured`, `scene.bed_stability` and
+  `scene.dialogue_mask`, plus `scene.preset` for the block itself. With no block, nothing new is emitted. Read
+  `references/mixing/quality-gate-scenes.md` before writing one; a section `role` is a checked field, so a typo is a
+  FAIL, never a default.
+- What a failing row asks you to change is data too (`references/data/presets/gate/data/feedback.json`, read by
+  `scripts/gate_feedback.py`, `rca.py`, the gate report and `debug_audio.py --feedback`). Read it before editing: it
+  names the lever and what the fix costs, and it is the same answer in all four places.
 - Read brief for demands. If demands conflict with profile flags, don't pick it.
 - Mixed situations: create custom profile with `python scripts/gate_profiles.py new <name> --from <closest> --project <dir>`. Can merge with list like `["cinematic", "dance"]`.
 - Start strict. Only relax/skip AFTER measurement with reason naming the measurement. Never in advance.
 - Hard limits in code: `loudness`, `true_peak`, `clipping`, `silence`, `clicks`, `channels` are protected, and `roughness` and `pattern.flags_max` cannot be skipped. Every number has a range.
+- The score rows count parts, and one of them asks for contrast: `pattern.track_flags_max` (2) fails one part carrying the flags on its own, `pattern.loop_short` judges the share of a part's bars that differ (`min_distinct_frac`, 15 %) rather than a short loop period, `pattern.velocity_flat` wants an sd of 15 % of the part's mean velocity, and `shape.contrast` fails a piece whose quietest and loudest plan sections differ in neither level (12 MIDI units) nor density (1.6x). A part that loops by design is relaxed in the type's own profile, with its reason, never by exempting a role in code.
 - Put `piece_type` in score and direction sheet, and make it the name of the project's own `presets/gate/<name>.json`.
 - Everything the gate reads lives in `presets/gate/`: the profile(s), the chemistry presets (`presets/gate/chem/model.json`, `moods.json`, `genres.json`), every gate data file (`level.json`, `stem_gate.json`, `section_energy.json`, ...) and every figure (`presets/gate/figures/*.png`). Nothing the gate produces belongs in `reports/`; the one exception is the debug autopsy (`debug_audio.*`), which reads the gate's numbers and records what was tried, and is not an input to any row.
 - One-off exceptions go in score as `"gate": {"<row>": {"mode": "relax", "reason": "...", ...}}`
@@ -352,9 +417,17 @@ Rules:
     header (`id`, `title`, `domain`, `status`, `sources`, `used_by`, `updated`), and
     `python tests/check_kb.py` must pass. Writing new Python generator for new sound name is forbidden. Unknown fields = error, no fallback. No normalization erasing physical intensity differences.
 17b. **A green gate is not the brief** - Every gate fix is made in the notes, the presets or the placement, and each one can take pressure out of the piece (a sparser stab, a quieter hit, a high-passed sub). After the gate is green, measure the arc (9.4b) and compare it with the direction sheet's `energy` and `loudness`. A cue briefed as tense, hostile or epic that reads as ambient is a failed brief however many rows pass. Never flatten velocities, remove a pulse or a low hit to quiet a row; fix the row where it arises.
+17d. **A tolerance is the last answer, not the first** - A row that fails is measured by `scripts/rca.py` before anything changes. If the verdict is `fault`, the fix is in the material; a relaxed tolerance would only move the failure out of sight. If it is `mismatch`, the relaxation is bounded by the row's range, carries the measurement in its reason, and is listed in the report. A project whose `rows` fill with relaxations that no `mismatch` verdict supports has not been fixed.
+17e. **A returning phrase is developed, not copied.** `theory.vary_phrase` plays a return as `transpose` (literal restatement), `invert` (the contour mirrored around the phrase's first degree) or `displace` (the phrase moved across the barline it sat on). The sheet's `theme.variation_plan` names which, `compose.py` mixes them for every A', and a return that is a copy is the audit's "one cell, not a theme that develops" flag.
+17f. **A written velocity that never moves is an arranging fault.** Each part's level follows its section (the plan's energy), an accent is 20-40 % and a ghost is not an accent. The mixer cannot restore a dynamic the notes never had: `pattern.velocity_flat` and `shape.contrast` read the score, and the humanizer's arch only shapes what the score already asked for.
 17c. **A producer decides how it is played before writing it** - The `expression` block (Phase 4.8) is the entry point of the piece. An agent that has not decided who plays each part, what a human does, what the theme's shape is and what the generic version would be writes the generic version. A theme is a shape with a variation plan, never a mood word.
 17. **A declaration is judged** - `focus.declared`, `intent.vocabulary` and `intent.avoid` are rows like any other (Section 6b).
     They fail in the score or the presets; a declaration is never deleted, loosened or skipped to get a green report.
+
+18. **A threshold is a row parameter.** A number a piece is judged by lives in `references/data/presets/gate/data/rows.json` (default, range, `source`), is read with `gp.param()`, and is stated per piece in the project's profile. A literal in a gate module fails `tests/test_gate_literals.py`; `python scripts/threshold_audit.py` lists what is left to migrate. A new row parameter regenerates `tests/fixtures/gate/thresholds.json` on purpose, with the reason in the commit.
+19. **A row must be satisfiable.** Two rows that read one event (a stinger's silence, a section's level) must not demand opposite things: the sheet's declaration decides which window each reads. When a piece can only pass one of two rows, that is a gate bug: report it with `rca.py`, do not rewrite the music to dodge a row.
+
+20. **Loosening a threshold is the user's decision when it matters.** An agent never loosens, relaxes, waives or skips a row to get a green report on its own. When the root cause (`rca.py`) is a `mismatch`, or a material fix would remove something very important (the brief's pressure, the declared figure, a deliberate harmonic event, the sheet's silence), stop and ask the user before editing: say the row, the measured value and limit, what the material fix would cost, what the relaxation or waiver would hide, and the bounded change you propose. Proceed only on a clear yes, then use the sanctioned route (`gate_profiles.py relax`, or a scene `waive_ceiling` in the project profile) with the measurement and the user's approval written in the reason, and list it in `STATUS.md` and the report. A relaxation of a row that is not important (a small overshoot on a row the piece does not depend on) still needs the `mismatch` verdict and the written measurement, but not a question. Protected rows (`loudness`, `true_peak`, `clipping`, `silence`, `clicks`, `channels`, the picture locks) are never loosened, even with a yes. A yes covers the named row and piece only. Do not work around a refused edit by another route.
 
 ---
 

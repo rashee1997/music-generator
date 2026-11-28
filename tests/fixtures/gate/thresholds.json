@@ -23,7 +23,8 @@
   ],
   "rows": {
     "ambient_bed": {
-      "pump_db": 3.8
+      "pump_db": 3.8,
+      "slope_allowance": 0.5
     },
     "balance.layers": {
       "fail_db": 15.0,
@@ -114,6 +115,7 @@
     "delivery.standard": {},
     "dropout": {
       "floor_below_db": 45.0,
+      "honour_rests": true,
       "max_ms": 1000.0,
       "min_ms": 20.0
     },
@@ -205,16 +207,48 @@
       "max_share": 0.6
     },
     "expr.tension_ic": {},
-    "feel.contour": {},
+    "feel.contour": {
+      "flip_frac": 0.85,
+      "gap_fill_max": 0.5,
+      "gap_recover_semis": 3.8,
+      "leap_semis": 4.8,
+      "min_notes": 8,
+      "step_frac": 0.45,
+      "step_frac_fail": 0.25,
+      "step_max_semitones": 3.2,
+      "zigzag_max": 0.75,
+      "zigzag_step_frac": 0.3
+    },
     "feel.effort": {},
     "feel.entropy": {
       "max_bits": 4.4,
       "min_bits": 1.15
     },
-    "feel.groove": {},
-    "feel.resolution": {},
-    "feel.spiral": {},
-    "feel.witek": {},
+    "feel.groove": {
+      "min_bars": 4,
+      "min_pocket_corr": 0.3
+    },
+    "feel.resolution": {
+      "max_unresolved_share": 0.4,
+      "min_tension_notes": 3,
+      "resolve_leap_semitones": 4.2,
+      "resolve_step_semitones": 2.2
+    },
+    "feel.spiral": {
+      "concordance_min_rho": -0.35,
+      "outro_percentile": 30,
+      "outro_strain_max": 0.5,
+      "static_momentum": 0.05,
+      "teleport_momentum": 1.45
+    },
+    "feel.witek": {
+      "bsi_fail_hi": 5.5,
+      "bsi_hi": 4.8,
+      "bsi_lo": 0.4,
+      "bsi_mode": "pocket",
+      "bsi_rupture_min": 5.5,
+      "bsi_still_max": 0.15
+    },
     "focus.declared": {},
     "front.fold_phantom": {
       "max_ild_db": 2.0,
@@ -295,7 +329,10 @@
     "machine_gun_percussion": {},
     "masking.excess": {},
     "masking.vs_melody": {
-      "margin_db": 3.0
+      "margin_db": 3.0,
+      "margin_db_tight": 0.0,
+      "max_collisions": 8,
+      "max_share": 0.25
     },
     "master.dc": {
       "dc_max": 0.001
@@ -319,6 +356,21 @@
       "max_hf_share_db": -45.0
     },
     "note_collision": {},
+    "orch.legato": {
+      "max_gap_beats": 0.1
+    },
+    "orch.playable": {
+      "phrase_scale": 1.0,
+      "rate_scale": 1.0
+    },
+    "orch.range": {
+      "fail_over_semitones": 12
+    },
+    "orch.voice_leading": {
+      "include_octaves": false,
+      "max_parallel_share": 0.2,
+      "min_events": 3
+    },
     "pattern.bass_pitches": {
       "max_classes": 3
     },
@@ -326,7 +378,7 @@
       "distinct_div": 8
     },
     "pattern.flags_max": {
-      "max": 6
+      "max": 3
     },
     "pattern.flat_dynamics": {
       "min_range_frac": 0.25
@@ -335,15 +387,20 @@
     "pattern.loop_short": {
       "max_distinct": 4,
       "max_period_bars": 4,
-      "min_bars": 16
+      "min_bars": 16,
+      "min_distinct_frac": 0.15
     },
     "pattern.melody_notes": {
       "min_lengths": 3,
       "on_beat_max": 0.9,
       "repeat_max": 0.35
     },
+    "pattern.track_flags_max": {
+      "max": 2
+    },
     "pattern.velocity_flat": {
-      "sd_frac": 0.05
+      "sd_abs_max": 0.09,
+      "sd_frac": 0.15
     },
     "percussion_flam": {},
     "render.finite": {},
@@ -352,16 +409,59 @@
       "mask_band_bark": 1.0,
       "mask_slope_down_db_bark": 27.0,
       "mask_slope_up_db_bark": 10.5,
-      "median": 0.024,
+      "median_legacy": 0.07,
+      "median_min": 0.024,
       "model": "legacy",
       "outro_resolve": true,
       "scale": 1.0
+    },
+    "scene.arc_step": {
+      "arousal_step_min": 0.15,
+      "strain_step_min": 0.02
+    },
+    "scene.bed_stability": {
+      "max_dbfs": -50.0,
+      "min_s": 0.3
+    },
+    "scene.dialogue_mask": {
+      "margin_db_tight": 5.0,
+      "max_fail_share": 0.2
+    },
+    "scene.hit_surprise": {
+      "delta_min_db": 1.5,
+      "hit_window_ms": 250,
+      "min_hits": 1,
+      "surprise_min_z": 1.0
+    },
+    "scene.macro_contrast": {
+      "force": false,
+      "min_dynamic_range_lu": 6.0,
+      "min_roughness_contrast_db": 3.0,
+      "min_sections": 2,
+      "min_tension_variance": 0.02
+    },
+    "scene.release_delta": {
+      "arousal_drop_min": 0.1,
+      "strain_drop_min": 0.15
+    },
+    "scene.silence_honoured": {
+      "max_dbfs": -50.0,
+      "min_s": 0.3,
+      "tail_grace_s": 0.5
     },
     "section.energy": {
       "fail_rho": 0.5,
       "warn_rho": 0.7
     },
-    "silence": {},
+    "shape.contrast": {
+      "min_density_ratio": 1.6,
+      "min_vel_spread": 12.0
+    },
+    "silence": {
+      "floor_dbfs": -60.0,
+      "inner_margin_s": 2.0,
+      "min_gap_s": 1.0
+    },
     "spatial.z_separation": {
       "min_elev_deg": 15.0,
       "min_sep_deg": 25.0,
@@ -389,7 +489,9 @@
       "dc_max": 0.001
     },
     "stem.dead": {
+      "dyn_scale": 1.0,
       "floor_db": -70.0,
+      "honour_rests": true,
       "under_db": 12.0
     },
     "stem.dropout": {
@@ -416,11 +518,14 @@
       "cv_max": 0.05,
       "min_events": 6,
       "rho": 0.35,
-      "rise_db": 3.0
+      "rise_db": 3.0,
+      "score_match_share": 0.6,
+      "tol_ms": 40.0
     },
     "stem.vocal": {},
     "tempo.audio": {
       "drift_bpm": 2.0,
+      "octave_ok": 0.0,
       "tol_bpm": 2.0,
       "tol_pct": 2.0
     },

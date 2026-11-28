@@ -1,0 +1,121 @@
+{
+  "duration_s": 60.69893424036281,
+  "sections": [
+    {
+      "name": "the_evasion",
+      "start_s": 0.0,
+      "end_s": 6.8433,
+      "dyn": 0.72
+    },
+    {
+      "name": "the_twist",
+      "start_s": 6.8433,
+      "end_s": 17.1355,
+      "dyn": 0.82
+    },
+    {
+      "name": "the_drift",
+      "start_s": 17.1355,
+      "end_s": 22.2882,
+      "dyn": 0.55
+    },
+    {
+      "name": "the_chase",
+      "start_s": 22.2882,
+      "end_s": 32.5552,
+      "dyn": 0.95
+    },
+    {
+      "name": "the_slow_motion",
+      "start_s": 32.5552,
+      "end_s": 42.1625,
+      "dyn": 0.5
+    },
+    {
+      "name": "the_swerve",
+      "start_s": 42.1625,
+      "end_s": 52.9717,
+      "dyn": 1.0
+    },
+    {
+      "name": "the_near_miss",
+      "start_s": 52.9717,
+      "end_s": 56.3815,
+      "dyn": 0.65
+    },
+    {
+      "name": "the_escape",
+      "start_s": 56.3815,
+      "end_s": 60.0954,
+      "dyn": 0.3
+    }
+  ],
+  "flags": [
+    [
+      0.0348,
+      "stem.tick",
+      "basses",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "basses_pizz",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "celli",
+      "PASS"
+    ],
+    [
+      0.0464,
+      "stem.tick",
+      "violas",
+      "PASS"
+    ],
+    [
+      0.6502,
+      "stem.tick",
+      "piano_theme",
+      "PASS"
+    ],
+    [
+      6.8615,
+      "stem.tick",
+      "violins_long",
+      "PASS"
+    ],
+    [
+      21.4436,
+      "stem.tick",
+      "low_swell",
+      "PASS"
+    ],
+    [
+      22.4073,
+      "stem.tick",
+      "trombones",
+      "PASS"
+    ],
+    [
+      22.4073,
+      "stem.tick",
+      "tuba",
+      "PASS"
+    ],
+    [
+      32.6124,
+      "stem.tick",
+      "choir",
+      "PASS"
+    ],
+    [
+      42.179,
+      "stem.tick",
+      "violins_staccato",
+      "PASS"
+    ]
+  ]
+}

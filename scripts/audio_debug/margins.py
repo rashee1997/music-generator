@@ -18,9 +18,10 @@ from __future__ import annotations
 import re
 
 # Rows whose good direction is "at least this much". Everything else is "at most this much", which is the gate's
-# default: a limit on a level, a count or a duration.
+# default: a limit on a level, a count or a duration. `stem.dead` is NOT here: its value is the worst section's shortfall in dB
+# against a limit, so it improves as it falls (listed as a minimum it was reported "passes with room" while it failed).
 MIN_ROWS = (
-    'loudness', 'delivery.true_peak', 'crest', 'stem.dead', 'imm.loudness', 'chem.reward_build',
+    'loudness', 'delivery.true_peak', 'crest', 'imm.loudness', 'chem.reward_build',
     'chem.reward_arrival', 'chem.affiliation', 'chem.motor_drive',
 )
 

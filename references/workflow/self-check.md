@@ -26,6 +26,7 @@ If any box is "no", do not deliver: fix it, or state plainly which step was skip
 - [ ] If the piece is immersive: its mix preset has the `immersive` block, the space has reflections from 3+ directions, the `imm_*` rows ran, and I said height with a dummy head is weak and not listened to.
 - [ ] If the piece was scored to a video file: the four `video.*` rows are in `reports/ci_report.json`, the mux report says `video_identical: true`, `cut_source` is quoted when it is a fallback, and I said the program was not auditioned.
 - [ ] `pipeline.py` ended with 0 FAIL; any WARN is listed with its cause.
+- [ ] The score carries its own variation: no part plays one bar for the whole piece (`pattern` clean, `pattern.track_flags_max`), every part's velocity moves with its section (`pattern.velocity_flat`), and the quietest and loudest sections differ in level or density (`shape.contrast`). A part that loops by design is named in the type's profile with its reason.
 - [ ] I measured balance (per-track levels), not only the gate.
 - [ ] I ran `listen.py`, or I said the ears did not run.
 - [ ] A new or changed ambience/effect is a `scene` (or a `model`) in its preset, not a new Python generator; its materials, interactions and calibration are in the preset and `physical.py check` reports no problem. A byte change to an existing sound is intended and explained, or `physical.py verify` still says identical.

@@ -1,0 +1,303 @@
+{
+ "_source": "The scene contract: which rule types a section role must state, and the range of every figure. Read by scripts/gate_profiles.py::scene_problems and by scripts/scene_timeline.py; the roles are the ones the direction sheet already writes (templates/direction_sheet.json: place, establish, build, peak, transition, button), plus resolve (the direction sheets already write it; same contract as release), release and rupture for a cue that resolves or breaks. A role may state a ceiling (place, button), a floor or a delta (peak, release, rupture) or a mode (build); none is required to state a numeric floor it cannot have. A role not listed here is an error, never a default - a typo in a sheet's role must not silently become 'place'.",
+ "default_hit_window_ms": 250,
+ "analysis": {
+  "_note": "How the rows read the sheet and the measurement. These are analysis mechanics, not doors: a profile cannot move them, so they are plain numbers here rather than row parameters.",
+  "peak_kind": "peak",
+  "build_kind": "approach",
+  "release_kind": "release",
+  "surprise_key": "surprise_min_z",
+  "accent_sync": "hard",
+  "accent_classes": [
+   "dead_on"
+  ],
+  "min_line_notes": 8,
+  "z_clip": 3.0,
+  "min_slice_s": 1.5,
+  "silence_floor_dbfs": -120.0,
+  "delta_lookback_s": 1.0
+ },
+ "keys": {
+  "arousal_min": {
+   "type": "number",
+   "range": [
+    0.0,
+    1.0
+   ],
+   "meaning": "measured arousal of the window at or above this"
+  },
+  "arousal_max": {
+   "type": "number",
+   "range": [
+    0.0,
+    1.0
+   ],
+   "meaning": "measured arousal at or below this: a quiet, setup or button scene"
+  },
+  "arousal_step_min": {
+   "type": "number",
+   "range": [
+    0.0,
+    1.0
+   ],
+   "meaning": "how far a peak must stand above the build before it"
+  },
+  "surprise_min_z": {
+   "type": "number",
+   "range": [
+    0.0,
+    3.0
+   ],
+   "meaning": "IDyOM information content at a hit point, in standard deviations of the line"
+  },
+  "strain_slope_min": {
+   "type": "number",
+   "range": [
+    -1.0,
+    1.0
+   ],
+   "meaning": "Chew strain per minute across the window; positive means it climbs"
+  },
+  "strain_drop_min": {
+   "type": "number",
+   "range": [
+    0.0,
+    1.0
+   ],
+   "meaning": "strain fall from the peak into the release"
+  },
+  "max_resolution_share": {
+   "type": "number",
+   "range": [
+    0.0,
+    1.0
+   ],
+   "meaning": "share of tension events inside the window that may resolve home; 0 forbids a resolution"
+  },
+  "min_hits": {
+   "type": "integer",
+   "range": [
+    0,
+    32
+   ],
+   "meaning": "hit points this role must have with a surprise"
+  },
+  "hit_window_ms": {
+   "type": "integer",
+   "range": [
+    50,
+    1000
+   ],
+   "meaning": "how far from the hit its evidence may land"
+  },
+  "roughness_min_frac": {
+   "type": "number",
+   "range": [
+    0.0,
+    1.0
+   ],
+   "meaning": "share of the window's frames at or above roughness.median_min"
+  },
+  "huron_resolution_gravity": {
+   "type": "enum",
+   "values": [
+    "ENFORCE",
+    "RELAX",
+    "FORBID"
+   ],
+   "meaning": "ENFORCE: tension must resolve; RELAX: unresolved is allowed; FORBID: resolving home here is the fault"
+  },
+  "bsi_mode": {
+   "type": "enum",
+   "values": [
+    "pocket",
+    "stillness",
+    "rupture"
+   ],
+   "meaning": "which Witek window this window is judged in"
+  },
+  "bsi_min": {
+   "type": "number",
+   "range": [
+    0.0,
+    9.0
+   ],
+   "meaning": "a rupture's minimum bar syncopation"
+  },
+  "allow_intentional_silence": {
+   "type": "bool",
+   "meaning": "the sheet's declared rest windows inside this role are rests, not dropouts"
+  },
+  "waive_ceiling": {
+   "type": "rows",
+   "meaning": "gate rows whose whole-piece ceiling does not apply inside this role's windows (a climax may be the roughest and leapiest part of the piece)"
+  }
+ },
+ "roles": {
+  "place": {
+   "kind": "setup",
+   "required": [
+    "arousal_max"
+   ],
+   "allowed": [
+    "arousal_max",
+    "allow_intentional_silence",
+    "huron_resolution_gravity",
+    "bsi_mode",
+    "waive_ceiling"
+   ]
+  },
+  "establish": {
+   "kind": "setup",
+   "required": [],
+   "allowed": [
+    "arousal_min",
+    "arousal_max",
+    "allow_intentional_silence",
+    "bsi_mode",
+    "waive_ceiling"
+   ]
+  },
+  "build": {
+   "kind": "approach",
+   "required": [
+    "huron_resolution_gravity"
+   ],
+   "allowed": [
+    "huron_resolution_gravity",
+    "strain_slope_min",
+    "max_resolution_share",
+    "roughness_min_frac",
+    "waive_ceiling",
+    "bsi_mode"
+   ]
+  },
+  "transition": {
+   "kind": "setup",
+   "required": [],
+   "allowed": [
+    "arousal_max",
+    "allow_intentional_silence",
+    "bsi_mode",
+    "waive_ceiling"
+   ]
+  },
+  "peak": {
+   "kind": "peak",
+   "required": [
+    "arousal_min",
+    "surprise_min_z"
+   ],
+   "allowed": [
+    "arousal_min",
+    "arousal_step_min",
+    "surprise_min_z",
+    "min_hits",
+    "hit_window_ms",
+    "roughness_min_frac",
+    "allow_intentional_silence",
+    "huron_resolution_gravity",
+    "bsi_mode",
+    "waive_ceiling"
+   ]
+  },
+  "release": {
+   "kind": "release",
+   "required": [
+    "strain_drop_min",
+    "huron_resolution_gravity"
+   ],
+   "allowed": [
+    "strain_drop_min",
+    "huron_resolution_gravity",
+    "arousal_max",
+    "allow_intentional_silence",
+    "bsi_mode",
+    "waive_ceiling"
+   ]
+  },
+  "rupture": {
+   "kind": "rupture",
+   "required": [
+    "bsi_mode"
+   ],
+   "allowed": [
+    "bsi_mode",
+    "bsi_min",
+    "arousal_min",
+    "surprise_min_z",
+    "allow_intentional_silence",
+    "waive_ceiling"
+   ]
+  },
+  "button": {
+   "kind": "setup",
+   "required": [
+    "arousal_max"
+   ],
+   "allowed": [
+    "arousal_max",
+    "allow_intentional_silence",
+    "huron_resolution_gravity",
+    "bsi_mode",
+    "waive_ceiling"
+   ]
+  },
+  "resolve": {
+   "kind": "release",
+   "required": [
+    "strain_drop_min",
+    "huron_resolution_gravity"
+   ],
+   "allowed": [
+    "strain_drop_min",
+    "huron_resolution_gravity",
+    "arousal_max",
+    "allow_intentional_silence",
+    "bsi_mode",
+    "waive_ceiling"
+   ]
+  }
+ },
+ "_macro_note": "The whole-piece contrast floors are the `scene.macro_contrast` row's parameters (gate_profiles.ROWS), not a block here: one figure, one home, the same way every other row works. A project sets them in `rows`, with a range and a reason.",
+ "dialogue": {
+  "margin_db_tight": {
+   "default": 5.0,
+   "range": [
+    0.0,
+    20.0
+   ],
+   "meaning": "how much the ERB margin tightens inside a dialogue window"
+  },
+  "min_window_share": {
+   "default": 0.8,
+   "range": [
+    0.0,
+    1.0
+   ],
+   "meaning": "share of dialogue windows the tightened margin must hold in"
+  },
+  "windows_from": {
+   "values": [
+    "video.dialogue.windows",
+    "mix_intent.sits_under"
+   ],
+   "meaning": "where the dialogue windows come from when the profile does not list them"
+  }
+ },
+ "timeline": {
+  "tolerance_s": {
+   "default": 0.25,
+   "range": [
+    0.0,
+    5.0
+   ],
+   "meaning": "how far a measured event may sit outside a declared window and still belong to it"
+  },
+  "roles_from_sections": {
+   "default": true,
+   "type": "bool",
+   "meaning": "take each window's role from the direction sheet's section.role"
+  }
+ }
+}

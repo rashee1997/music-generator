@@ -213,9 +213,30 @@ def catalog():
         return json.load(fh)['banks']
 
 
+def installed_banks():
+    """Keys of the manifest banks whose file is on this machine (the default and timgm6mb are always counted)."""
+    out = {DEFAULT_BANK}
+    for key, b in catalog().items():
+        if os.path.isfile(os.path.join(SF_DIR, b['file'])):
+            out.add(key)
+    return out
+
+
+def default_for(family):
+    """(bank key, why) the audited default for an instrument family: the first bank of references/data/presets/banks/default.json
+    that is installed and meets the family's thresholds, else the fallback. Reads assets/soundfonts/audit/<bank>.json."""
+    import soundbank_audit
+    return soundbank_audit.choose(family, installed_banks())
+
+
 def bank_key(tr, inst_cfg=None):
-    """The bank a track plays: its own `soundfont`, else its instrument preset's, else the default. Unknown names are an error."""
-    key = (tr or {}).get('soundfont') or (inst_cfg or {}).get('soundfont') or DEFAULT_BANK
+    """The bank a track plays: its own `soundfont`, else its instrument preset's, else the audited default of its instrument
+    family, else the fallback. Unknown names are an error."""
+    key = (tr or {}).get('soundfont') or (inst_cfg or {}).get('soundfont')
+    if not key:
+        import families
+        fam = families.family_of(inst_cfg, tr)
+        key = default_for(fam)[0] if fam else DEFAULT_BANK
     known = catalog()
     if key not in known:
         raise ValueError(f'track "{(tr or {}).get("name", "?")}" names soundfont "{key}"; known banks: {", ".join(known)}')

@@ -157,7 +157,7 @@ class LayoutBus:
         self.roles = set(self.lfe.get('roles') or [])
         self.reverb = layout.get('reverb') or {}
         self.decorrelation = layout.get('decorrelation') or {}
-        self.parts = {name: [] for name in self.names}
+        self.acc = {name: None for name in self.names}      # one running float64 sum per channel (a list of every track's share held ~4 GB on a 194 s 7.1.2 cue)
         self.low_sends = []
         self.low_pans = []
         self.room = None
@@ -170,8 +170,17 @@ class LayoutBus:
 
     def _add(self, channel, signal):
         signal = np.asarray(signal, dtype=np.float64)
-        if signal.size:
-            self.parts[channel].append(signal)
+        if not signal.size:
+            return
+        buf = self.acc[channel]
+        if buf is None:
+            self.acc[channel] = signal.copy()
+        elif len(buf) >= len(signal):
+            buf[:len(signal)] += signal
+        else:
+            grown = signal.copy()
+            grown[:len(buf)] += buf
+            self.acc[channel] = grown
 
     def add(self, name, y, spec):
         """Place one finished track: mains by VBAP, low-frequency roles through the low-frequency channel."""
@@ -254,11 +263,11 @@ class LayoutBus:
 
     def result(self):
         """(N, channels) float64 in the layout's channel order, with the low-frequency send applied."""
-        n = max((len(s) for parts in self.parts.values() for s in parts), default=0)
+        n = max((len(b) for b in self.acc.values() if b is not None), default=0)
         mix = {name: np.zeros(n, dtype=np.float64) for name in self.names}
-        for name, parts in self.parts.items():
-            for signal in parts:
-                mix[name][:len(signal)] += signal
+        for name, buf in self.acc.items():
+            if buf is not None:
+                mix[name][:len(buf)] += buf
         if self.room is not None and n:
             room = self.room.result()
             for i, speaker in enumerate(self.speakers):
@@ -294,7 +303,7 @@ class MonoBus:
     def __init__(self, sr=44100, cfg=None):
         self.sr = int(sr)
         self.cfg = dict(cfg or {})
-        self.parts = []
+        self.acc = None                      # one running float64 sum (a list of every track held its whole length each)
         self.compensation = {}
 
     def _one(self, name, y):
@@ -313,20 +322,27 @@ class MonoBus:
         self.compensation[name] = gain_db
         return mid * 10.0 ** (gain_db / 20.0)
 
+    def _sum(self, x):
+        if not x.size:
+            return
+        if self.acc is None:
+            self.acc = np.array(x, dtype=np.float64, copy=True)
+        elif len(self.acc) >= len(x):
+            self.acc[:len(x)] += x
+        else:
+            grown = np.array(x, dtype=np.float64, copy=True)
+            grown[:len(self.acc)] += self.acc
+            self.acc = grown
+
     def add(self, name, y, spec):
-        x = self._one(name, y)
-        if x.size:
-            self.parts.append(x)
+        self._sum(self._one(name, y))
 
     def add_reverb(self, ret):
         if ret is not None and len(ret):
-            self.parts.append(self._one('reverb_return', ret))
+            self._sum(self._one('reverb_return', ret))
 
     def result(self):
-        n = max((len(p) for p in self.parts), default=0)
-        out = np.zeros(n, dtype=np.float64)
-        for p in self.parts:
-            out[:len(p)] += p
+        out = self.acc if self.acc is not None else np.zeros(0, dtype=np.float64)
         return out.astype(np.float32)[:, None]
 
 

@@ -1021,14 +1021,23 @@ def compose(brief):
         end_deg = tonic_deg if (last_ph or pi % 2 == 1) else tonic_deg + (4 if L == 7 else 2)   # half cadence on odd phrases
         if letter not in material:
             c = center_deg + (3 if letter == 'B' else 0)
+            # the melody's level follows the same plan curve the accompaniment follows. It used to be a flat
+            # 0.62 for the whole piece while the beds swelled under it, which is why a written ff and a written pp
+            # measured the same velocity range (median 28.9 units against 36.7-53.8 in the ASAP corpus).
+            lv = float(inten[min(pi * phrase_bars, n_bars - 1)])
+            mvel = float(np.clip(E['dyn'][0] + (E['dyn'][1] - E['dyn'][0]) * lv, 0.18, 0.92))
             ph_notes, _, _ = make_phrase(rng, key, ch, bb, E['style'], center_deg=c, span=span,
                                          rest_p=E['rest'], contour='arch' if letter != 'B' else 'rise',
-                                         end_deg=end_deg, vel=0.62)
+                                         end_deg=end_deg, vel=mvel)
             material[letter] = ph_notes
             notes = ph_notes
         else:
-            notes = vary_phrase(rng, key, material[letter], ch, bb, shift=int(rng.choice([0, 0, 1, -1])) if not last_ph else 0,
-                                cadence_deg=end_deg, span=span)
+            # an A that returns as a copy is not a theme that develops: the return inverts or displaces the shape
+            # most of the time, and only transposes it as the literal restatement.
+            xf = 'transpose' if last_ph else str(rng.choice(['transpose', 'transpose', 'invert', 'displace']))
+            notes = vary_phrase(rng, key, material[letter], ch, bb,
+                                shift=int(rng.choice([0, 0, 1, -1])) if (not last_ph and xf == 'transpose') else 0,
+                                cadence_deg=end_deg, span=span, transform=xf)
         for n in notes:
             melody.append(dict(n, t=n['t'] + pi * phrase_bars * bb))
     # last note rings out

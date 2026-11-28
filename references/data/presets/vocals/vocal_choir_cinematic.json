@@ -1,0 +1,28 @@
+{
+  "name": "vocal_choir_cinematic",
+  "category": "choir_layered",
+  "phonetic_sound": "oo / oh / ah, opening with level",
+  "register_range": ["C2", "A5"],
+  "role": "pad",
+  "character": "A choir made of sections that enter with the dynamics: a breathy high whisper at pp, women and men in octaves at mf, a full forte with the singer's formant and wide vibrato at ff. Sections are different singers, so the choir changes make-up as it swells.",
+  "sources": ["theatrical-realism", "indian-film-fusion"],
+  "vowel": "o",
+  "expression": "cinematic",
+  "ensemble": {
+    "voices": 12,
+    "cohesion": 0.55,
+    "layers": [
+      {"name": "air_high", "voices": 4, "select": "highest", "shift": 12, "vowel": "u", "vel": [1, 75], "level_db": -4.0, "pan_width": 0.8, "distance_m": 4.0,
+       "overrides": {"source": {"register": "head", "breathiness": 0.3}, "vibrato": {"depth_cents": 8.0, "delay_s": 0.9}, "tract": {"formant_scale": 1.12}}},
+      {"name": "women", "voices": 6, "select": "highest", "vowel": "o", "vel": [1, 127], "level_db": 0.0, "pan_width": 0.6, "distance_m": 3.0,
+       "overrides": {"source": {"register": "modal"}, "vibrato": {"depth_cents": 18.0, "delay_s": 0.5}}},
+      {"name": "altos", "voices": 5, "select": "middle", "vowel": "o", "vel": [40, 127], "level_db": -1.5, "pan_width": 0.5, "distance_m": 3.2,
+       "overrides": {"tract": {"formant_scale": 1.0}, "vibrato": {"depth_cents": 16.0}}},
+      {"name": "men", "voices": 6, "select": "lowest", "shift": -12, "vowel": "o", "vel": [40, 127], "level_db": -0.5, "pan_width": 0.6, "distance_m": 3.4,
+       "overrides": {"source": {"register": "chest"}, "tract": {"formant_scale": 0.86}, "vibrato": {"depth_cents": 14.0}}},
+      {"name": "tutti_forte", "voices": 8, "select": "all", "vowel": "a", "vel": [95, 127], "level_db": 1.0, "pan_width": 0.9, "distance_m": 2.6,
+       "overrides": {"source": {"register": "chest", "breathiness": 0.02}, "technique": {"singer_formant": 0.8}, "dynamics": {"timbre_follow": 0.7},
+                     "vibrato": {"depth_cents": 30.0, "rate_hz": 5.6}}}
+    ]
+  }
+}

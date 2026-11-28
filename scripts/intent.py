@@ -117,6 +117,29 @@ def resolve(word):
                         'or use one of: ' + ', '.join(sorted(cid for _k, cid in concepts())))
 
 
+def register_loudness(registers):
+    """The integrated-loudness target (LUFS) a set of registers asks for, or None when they say nothing or disagree.
+
+    Each register carries `lufs: [low, high]` (references/data/presets/intent/registers.json). Several registers must
+    overlap: the target is the middle of the intersection, to half a LU. Registers that do not overlap (a cinema cue
+    that is also a diegetic room bed) give None, and the caller keeps its own default and says so: a conflict is the
+    sheet's to resolve, not a number to average.
+    """
+    voc = vocabulary()['registers']
+    bands = []
+    for r in registers or []:
+        for _k, cid in [h for h in resolve_word(r) if h[0] == 'registers']:
+            band = (voc.get(cid) or {}).get('lufs')
+            if band and len(band) == 2:
+                bands.append((float(band[0]), float(band[1])))
+    if not bands:
+        return None
+    lo, hi = max(b[0] for b in bands), min(b[1] for b in bands)
+    if lo > hi:
+        return None
+    return round(((lo + hi) / 2.0) * 2.0) / 2.0
+
+
 def normalise_block(block):
     """Resolve a score's `intent` block into ids. Raises IntentError on any word it cannot place."""
     if block is None:

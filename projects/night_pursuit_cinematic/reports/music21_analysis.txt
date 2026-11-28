@@ -1,0 +1,5 @@
+=== MUSIC21 SYMBOLIC MUSICOLOGY REPORT ===
+[PASS] music21_tonality           C minor (confidence 0.56) matches target C minor
+[INFO] music21_registers          register note: 'int' object has no attribute 'lower'
+[INFO] music21_contour            contour note: 'int' object has no attribute 'lower'
+[PASS] music21_harmonic_rhythm    2028 vertical harmonic slices analyzed across multi-track arrangement

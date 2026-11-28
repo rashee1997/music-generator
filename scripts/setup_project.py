@@ -75,7 +75,7 @@ def install(venv, uv, *args):
         run([venv_python(venv), '-m', 'pip', 'install', *args])
 
 
-def scaffold_project(proj_path, title="New Composition", ambience=False):
+def scaffold_project(proj_path, title="New Composition", ambience=False, genre=None):
     """ambience=False (default): no environment preset or track. Ambience is added only when the user asked for it."""
     proj_dir = Path(proj_path).resolve()
     direction_dir = proj_dir / 'direction'
@@ -110,9 +110,17 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
         except (OSError, ValueError):
             body = {'name': 'melodic', 'extends': 'melodic'}
         body['name'] = slug
-        body['extends'] = 'melodic'
+        # `--genre` starts the piece's own profile from a shipped genre profile by `extends`, so its rows are inherited
+        # (one source) and the project states only where it departs. No genre means `melodic`, the old behaviour.
+        if genre:                      # a shipped profile name, a compose.py genre or an alias (gate_profiles.genre_profile)
+            sys.path.insert(0, str(Path(__file__).resolve().parent))
+            import gate_profiles
+            genre = gate_profiles.genre_profile(genre)
+        body['extends'] = genre or 'melodic'
+        if genre:                      # inherit the genre's focus, flags and rows; a copy of melodic's would override them
+            body = {k: v for k, v in body.items() if k not in ('focus', 'flags', 'rows', 'detect')}
         body['character'] = ('ONE SENTENCE: why this piece is judged by these rows and where it departs from '
-                            '`melodic` (fill before the first render; the project gate blocks a placeholder)')
+                            '`' + (genre or 'melodic') + '` (fill before the first render; the project gate blocks a placeholder)')
         prof_path.write_text(json.dumps(body, indent=1), encoding='utf-8')
 
     # Delivery metadata: the standard tags live in the skill (presets/metadata/metadata.json); this file only
@@ -208,8 +216,10 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
         "focus": "melody",
         "intent": {"emotions": ["hopeful"], "registers": ["cinematic"], "scenes": ["establish"],
                    "tensions": [], "avoid": ["tense"]},
-        "piece_type": "melodic",
-        "gate_reason": "TODO: one line on why this gate profile fits this piece; the gate runs it",
+        "piece_type": slug,
+        "gate_reason": "TODO: one line on why this gate profile fits this piece; the gate runs it. "
+                       f"`{slug}` is this project's own profile (presets/gate/{slug}.json, cloned from melodic); "
+                       "a shipped name is blocked by the project gate",
         "video": {"enabled": False, "source": None, "fps": None, "cuts": [], "cut_source": None,
                   "cut_sync": {"early_ms": 45, "late_ms": 125},
                   "dialogue": {"present": False, "duck_db": -9.0, "snr_min_db": 15.0},
@@ -346,6 +356,7 @@ def scaffold_project(proj_path, title="New Composition", ambience=False):
         "mode": "dorian",
         "space": f"{slug}_room",
         "mix_preset": f"{slug}_mix",
+        "piece_type": slug,          # the project's own gate profile (presets/gate/<slug>.json): a project is judged by it, never by a shipped one
         "dynamics": [[0.0, 0.4], [8.0, 0.5], [16.0, 0.7], [24.0, 0.9], [28.0, 0.75], [32.0, 0.4]],
         "ritard": 0.35,
         "ritard_beats": 6,
@@ -529,9 +540,9 @@ The pipeline will not render until a note cites the knowledge base and lists at 
 - [ ] 4. Presets for every non-built-in instrument / vocal (presets/instruments, presets/vocals), each ambience (presets/environments)
       and tuned one-hit effect (presets/sfx), each listing its "sources"
 - [ ] 5. Score written (scores/*.json) referencing presets by exact name
-- [ ] 6. `pipeline.py scores/<title>_score.json --project .` renders out/master.wav, midi/, stems/, reports/ci_report.json
+- [ ] 6. `pipeline.py scores/<title>_score.json --project .` renders out/<project>.wav, midi/, stems/, reports/ci_report.json
 - [ ] 7. Revise one lever at a time until 0 FAIL (max 5 attempts, then report)
-- [ ] 8. listen.py on out/master.wav; deliver
+- [ ] 8. listen.py on out/<project>.wav; deliver
 
 ## Rules
 1. Never monolithic: sound and space in presets/, notes in scores/, intent in direction/.
@@ -579,8 +590,8 @@ The pipeline will not render until a note cites the knowledge base and lists at 
     print("      ci_report.json")
     print("    metadata.json           (standard delivery tags: overrides only; the defaults live in the skill)")
     print("    out/                   (Master WAV and exported MIDI)")
-    print("      master.wav           (copy of the newest certified version)")
-    print("      master_vNN.wav       (every certified version; earlier ones are never overwritten)")
+    print("      <project>.wav        (the certified stereo master: a copy of the newest version, named after the folder)")
+    print("      <project>_vNN.wav    (every certified version; earlier ones are never overwritten; other formats are <project>_<format>.wav)")
     print("      versions.json        (each version with the gate failures it cleared)")
     print("    STATUS.md              (Project tracking and decisions)")
     print("\nNext: 2) research_kb.py  3) fill direction/  4) presets  5) score  6) pipeline.py (blocked until 2-4 are done):")
@@ -672,6 +683,7 @@ def main():
     ap.add_argument('--new-film', metavar='DIR', help='scaffold a film: film.json, spotting/, analysis/, cues/<id>/ (one music project each), deliver/')
     ap.add_argument('--fps', type=float, default=25.0, help='with --new-film: the picture rate (default 25)')
     ap.add_argument('--cues', default=None, help='with --new-film: comma-separated cue ids (default M01_open)')
+    ap.add_argument('--genre', default=None, help='with --new-project: start the piece\'s own gate profile from a shipped genre profile (python scripts/gate_profiles.py list), e.g. orchestral, rock_band, hiphop, jazz_ensemble, world_percussion, game_loop, dance, ambient, cinematic')
     ap.add_argument('--title', default='New Composition', help='title of the piece when scaffolding a new project')
     ap.add_argument('--ears', action='store_true', help='also install earshot and download its models (about 1 GB)')
     ap.add_argument('--soundfonts', nargs='?', const='all', default=None, metavar='NAMES',
@@ -683,7 +695,7 @@ def main():
     args = ap.parse_args()
 
     if args.new_project:
-        scaffold_project(args.new_project, title=args.title, ambience=args.ambience)
+        scaffold_project(args.new_project, title=args.title, ambience=args.ambience, genre=args.genre)
         return
 
     if args.new_film:

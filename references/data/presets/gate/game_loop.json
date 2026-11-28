@@ -1,0 +1,26 @@
+{
+  "name": "game_loop",
+  "character": "a seamless loop for a game or an app: it repeats end to start, so the arrangement is short, cyclic and the seam matters more than a final cadence",
+  "extends": "dance",
+  "detect": {
+    "keywords": [
+      "game loop",
+      "looping",
+      "seamless loop",
+      "adaptive layer"
+    ]
+  },
+  "why": "a shipped starting point for `gate_profiles.py new <name> --from game_loop`: the figures are starting values chosen for the genre structure, not measurements of a piece; measure with scripts/rca.py and state the real figures in the project profile",
+  "rows": {
+    "pattern.flags_max": {
+      "mode": "relax",
+      "max": 8,
+      "reason": "a loop is repeated by design; the seam and the layers carry the variation"
+    },
+    "pattern.velocity_flat": {
+      "mode": "relax",
+      "sd_frac": 0.06,
+      "reason": "a game loop is mixed to sit under play; a narrow level range is a requirement, not a flaw"
+    }
+  }
+}

@@ -31,6 +31,8 @@ def main(argv=None):
     ap.add_argument('--record', action='append', default=[], metavar='ROW=LEVER=DELTA',
                     help='record an attempt in reports/debug_history.jsonl')
     ap.add_argument('--outcome', default='no change', choices=('cleared', 'no change', 'worse', 'same'))
+    ap.add_argument('--feedback', action='store_true',
+                    help='also print what each failing row asks you to change (scripts/gate_feedback.py)')
     args = ap.parse_args(argv)
 
     case = audio_debug.Case.load(args.project, args.score)
@@ -43,6 +45,9 @@ def main(argv=None):
         audio_debug.history.record(case.project, lever, row, float(delta), args.outcome)
         history = audio_debug.history.load(case.project)
     rep = audio_debug.autopsy(case, level=args.level, history=history)
+    if args.feedback and not args.json:
+        import gate_feedback
+        print(gate_feedback.text([(r.get('level'), r.get('row'), r.get('detail')) for r in case.failing()], limit=12))
     if args.json:
         print(json.dumps(rep.as_dict(), indent=1))
     elif not args.quiet:

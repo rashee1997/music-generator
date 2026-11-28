@@ -1,0 +1,121 @@
+{
+  "duration_s": 193.97807256235828,
+  "sections": [
+    {
+      "name": "the_race",
+      "start_s": 0.0,
+      "end_s": 25.077,
+      "dyn": 0.9
+    },
+    {
+      "name": "spotted",
+      "start_s": 25.077,
+      "end_s": 38.892,
+      "dyn": 0.8
+    },
+    {
+      "name": "the_chase",
+      "start_s": 38.892,
+      "end_s": 72.228,
+      "dyn": 0.9
+    },
+    {
+      "name": "the_tunnel",
+      "start_s": 72.228,
+      "end_s": 95.085,
+      "dyn": 0.8
+    },
+    {
+      "name": "the_helicopter",
+      "start_s": 95.085,
+      "end_s": 117.636,
+      "dyn": 0.8
+    },
+    {
+      "name": "the_bumps",
+      "start_s": 117.636,
+      "end_s": 139.888,
+      "dyn": 1.0
+    },
+    {
+      "name": "the_flyover",
+      "start_s": 139.888,
+      "end_s": 165.785,
+      "dyn": 0.8
+    },
+    {
+      "name": "the_escape",
+      "start_s": 165.785,
+      "end_s": 192.648,
+      "dyn": 0.5
+    }
+  ],
+  "flags": [
+    [
+      0.0348,
+      "stem.tick",
+      "basses",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "basses_pizz",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "celli",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "city_far",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "tuba",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "violas",
+      "PASS"
+    ],
+    [
+      65.6428,
+      "stem.tick",
+      "violins_staccato",
+      "PASS"
+    ],
+    [
+      71.4362,
+      "stem.tick",
+      "low_swell",
+      "PASS"
+    ],
+    [
+      72.2489,
+      "stem.tick",
+      "trombones",
+      "PASS"
+    ],
+    [
+      82.0825,
+      "stem.tick",
+      "violins_long",
+      "PASS"
+    ],
+    [
+      95.1205,
+      "stem.tick",
+      "choir",
+      "PASS"
+    ]
+  ]
+}

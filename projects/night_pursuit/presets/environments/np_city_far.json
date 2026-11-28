@@ -1,0 +1,50 @@
+{
+ "name": "np_city_far",
+ "description": "The far city at night: traffic as a low hum and an air of distant streets.",
+ "character": "A far, low traffic hum under the rain with a thin air of distant streets and no event: the city is a bed, never a foreground.",
+ "atmosphere": {
+  "temp_c": 10.0,
+  "rh": 95.0
+ },
+ "layers": [
+  {
+   "name": "traffic",
+   "primitive": "noise_bed",
+   "kind": "bed",
+   "color": "brown",
+   "low_hz": 45,
+   "high_hz": 450,
+   "mod_rate_hz": 0.04,
+   "mod_depth": 0.25,
+   "gain_db": -20.0,
+   "decorrelate": 1.0,
+   "spatial": {
+    "azimuth": 0,
+    "elevation": 0,
+    "distance": 80
+   }
+  },
+  {
+   "name": "city_air",
+   "primitive": "noise_bed",
+   "kind": "bed",
+   "color": "pink",
+   "low_hz": 450,
+   "high_hz": 2500,
+   "mod_rate_hz": 0.06,
+   "mod_depth": 0.2,
+   "gain_db": -30.0,
+   "decorrelate": 1.0,
+   "spatial": {
+    "azimuth": 0,
+    "elevation": 0,
+    "distance": 90
+   }
+  }
+ ],
+ "blending": {},
+ "sources": [
+  "city_traffic_far"
+ ],
+ "note": "ESTIMATE: no New York night spectrum was found; the bands and levels are starting values (the research note gives daytime street levels only)"
+}

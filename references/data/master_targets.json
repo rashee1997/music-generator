@@ -1,0 +1,14 @@
+{
+ "name": "master_targets",
+ "_source": "the mastering profiles mix_schema.py used to compile in. `default` is what a master with no stated loudness, no register and no chosen profile gets. A piece that declares intent.registers is levelled to its register's range instead (references/data/presets/intent/registers.json `lufs`, scripts/intent.py register_loudness).",
+ "default": {
+  "lufs": -16.0, "true_peak": -1.5, "tone": "neutral", "glue": true,
+  "source": "AES TD1008 (2021) music target of -16 LUFS (scripts/mix_engine/standards.py aes_td1008) with the skill's own -1.5 dBTP ceiling, as AGENTS.md section 4 states; a starting value until the delivery spec is known. It was -14.0 compiled into three modules, which is Spotify's normalisation level (standards.py), not a mastering default."
+ },
+ "profiles": {
+  "streaming": {"lufs": -14.0, "true_peak": -2.0, "tone": "neutral", "glue": true, "source": "Spotify loudness normalisation level with 2 dBTP of headroom for a lossy re-encode (standards.py spotify); secondary sources only for the platform figures"},
+  "podcast": {"lufs": -16.0, "true_peak": -1.0, "tone": "warm", "glue": true, "source": "starting value"},
+  "broadcast": {"lufs": -23.0, "true_peak": -1.0, "tone": "neutral", "glue": true, "source": "EBU R 128 programme loudness (standards.py ebu_r128)"},
+  "cinema": {"lufs": -18.0, "true_peak": -1.5, "tone": "neutral", "glue": true, "source": "starting value: the delivery rows in references/mixing/mixing-and-mastering.md section 3"}
+ }
+}

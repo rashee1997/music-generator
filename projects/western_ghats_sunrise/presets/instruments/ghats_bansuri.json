@@ -1,0 +1,124 @@
+{
+  "name": "ghats_bansuri",
+  "description": "The lead: a bansuri (bamboo flute) breathing through the Mohanam phrase, pure at the start of each long note and warming as it holds, with a slide into the notes the gamaka asks for.",
+  "character": "The lead: a bansuri (bamboo flute) breathing through the Mohanam phrase, pure at the start of each long note and warming as it holds, with a slide into the notes the gamaka asks for.",
+  "instrument": "flute",
+  "role": "melody",
+  "family": "blown_reed",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 7.0,
+    "vel_sigma": 4.0,
+    "lead_ms": 18.0,
+    "anticipate_ms": 22.0,
+    "bar_breath_ms": 70.0
+  },
+  "spatial": {
+    "azimuth": 0,
+    "elevation": 6,
+    "distance": 1.5,
+    "space": "western_ghats_sunrise_room",
+    "binaural": true,
+    "kind": "spot",
+    "trajectory": {
+      "spatial_role": "mover",
+      "doppler_strength": 0.0,
+      "keyframes": [
+        {
+          "t_s": 0.0,
+          "azimuth": -30.0,
+          "distance": 1.7,
+          "elevation": 6.0
+        },
+        {
+          "t_s": 4.6,
+          "azimuth": -18.0,
+          "distance": 1.6,
+          "elevation": 8.0
+        },
+        {
+          "t_s": 20.8,
+          "azimuth": 0.0,
+          "distance": 1.5,
+          "elevation": 12.0
+        },
+        {
+          "t_s": 46.2,
+          "azimuth": 14.0,
+          "distance": 1.6,
+          "elevation": 8.0
+        },
+        {
+          "t_s": 60.0,
+          "azimuth": 22.0,
+          "distance": 1.8,
+          "elevation": 6.0
+        }
+      ]
+    }
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 220.0
+    },
+    {
+      "type": "peak",
+      "f": 2600.0,
+      "gain": 1.4,
+      "q": 1.1
+    },
+    {
+      "type": "lp",
+      "f": 11000.0
+    }
+  ],
+  "gain_db": -2.0,
+  "reverb": 0.22,
+  "sources": [
+    "KB indian-film-fusion (Mohanam pentatonic, raga-safe voicings, gamaka, 3+3+2 tala grids)",
+    "KB pan-indian and flutes (bansuri range and breath)",
+    "research_western_ghats_sunrise_rahman_fusion.md (web sources, search-result text only)",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
+  ],
+  "soundfont": "muse_general",
+  "vibrato": {
+    "depth_cents": 10,
+    "rate_hz": 5.2,
+    "delay_ms": 420,
+    "model": "ou"
+  },
+  "expression": "breath",
+  "velocity_timbre": {
+    "points": [
+      [
+        25,
+        350
+      ],
+      [
+        55,
+        700
+      ],
+      [
+        100,
+        5600
+      ],
+      [
+        127,
+        11200
+      ]
+    ],
+    "zones": 10,
+    "attack_ms": [
+      [
+        25,
+        40
+      ],
+      [
+        127,
+        8
+      ]
+    ]
+  }
+}

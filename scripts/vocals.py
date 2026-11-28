@@ -81,8 +81,13 @@ def render_choir(events, sr=44100, voices=5, spread_cents=9.0, pan_width=0.45, v
                                 vowel=None if (hum and vowel == 'a') else vowel, formant_scale=formant_scale, hum=hum)
     for w in warn:
         warnings.warn(f'vocals: {w}', stacklevel=2)
-    res = _ensemble.render(events, sr, cfg, seed=seed, hum=bool(cfg.get('hum')), stems=True)
-    out, info = res
+    if (cfg.get('ensemble') or {}).get('layers'):          # a choir of sections: register, vowel, timbre and dynamics per section
+        from vocal_engine import layers as _layers
+        out, info = _layers.render(events, sr, cfg, seed, bool(cfg.get('hum')), None,
+                                   lambda ev, r, c, sd, h, dv: _ensemble.render(ev, r, c, seed=sd, hum=h, default_vowel=dv, stems=True))
+    else:
+        res = _ensemble.render(events, sr, cfg, seed=seed, hum=bool(cfg.get('hum')), stems=True)
+        out, info = res
     info['report']['warnings'] = warn
     return (out, info) if return_stems else out
 

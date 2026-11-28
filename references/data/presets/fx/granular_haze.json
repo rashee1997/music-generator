@@ -1,0 +1,16 @@
+{
+  "name": "granular_haze",
+  "character": "A haze of grains around the part, scattered in pitch and place: a soft cloud under a theme.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "grain_cloud",
+      "grain_ms": 90.0,
+      "density_hz": 30.0,
+      "pitch_spread_cents": 400.0,
+      "pos_spread_s": 2.0,
+      "level_db": -8.0,
+      "mix": 0.6
+    }
+  ]
+}

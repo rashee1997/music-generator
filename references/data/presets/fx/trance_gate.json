@@ -1,0 +1,14 @@
+{
+  "name": "trance_gate",
+  "character": "A chopped pad: eighth-note-ish gate at 4 Hz with a short smooth edge.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "gate_pulse",
+      "rate_hz": 4.0,
+      "duty": 0.5,
+      "floor_db": -30.0,
+      "smooth_ms": 10.0
+    }
+  ]
+}

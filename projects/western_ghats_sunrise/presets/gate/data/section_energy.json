@@ -1,0 +1,57 @@
+{
+  "row": "section.energy",
+  "stage": "mix",
+  "stem": null,
+  "level": "PASS",
+  "value": 1.0,
+  "unit": "rho",
+  "threshold": 0.5,
+  "margin": 0.5,
+  "worst_times_s": [],
+  "calibrated": false,
+  "detail": "Spearman rho 1.00 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
+  "table": [
+    {
+      "name": "mist",
+      "start_s": 0.0,
+      "end_s": 4.615,
+      "energy": 0.3,
+      "level_db": -33.87524649300583
+    },
+    {
+      "name": "groove",
+      "start_s": 4.615,
+      "end_s": 20.769,
+      "energy": 0.55,
+      "level_db": -25.14991180503021
+    },
+    {
+      "name": "sunrise",
+      "start_s": 20.769,
+      "end_s": 30.0,
+      "energy": 0.8,
+      "level_db": -18.465812600205446
+    },
+    {
+      "name": "piper",
+      "start_s": 30.0,
+      "end_s": 39.231,
+      "energy": 0.75,
+      "level_db": -23.05126354653089
+    },
+    {
+      "name": "crest",
+      "start_s": 39.231,
+      "end_s": 48.462,
+      "energy": 1.0,
+      "level_db": -14.731949278243352
+    },
+    {
+      "name": "morning",
+      "start_s": 48.462,
+      "end_s": 60.0,
+      "energy": 0.4,
+      "level_db": -29.1254052377003
+    }
+  ]
+}

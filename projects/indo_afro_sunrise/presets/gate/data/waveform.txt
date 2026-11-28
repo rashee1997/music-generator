@@ -1,13 +1,17 @@
-file: /home/user/music-generator/projects/indo_afro_sunrise/out/_draft_master.wav
-duration_s: 69.727
+file: /workspace/chats/0ae6b42243a7a3f4cbccb523/projects/indo_afro_sunrise/out/_draft_indo_afro_sunrise.wav
+duration_s: 69.434
 sample_rate: 44100
 sections:
   dawn: 0.00-17.14 s, dyn 0.32
   grove: 17.14-34.29 s, dyn 0.70
   high_sun: 34.29-51.43 s, dyn 0.95
   golden_hour: 51.43-68.57 s, dyn 0.60
-flagged times: 4
-  0.035s stem.tick [PASS] canopy
-  0.035s stem.tick [PASS] tanpura
-  4.574s stem.tick [PASS] guitar
-  8.557s stem.tick [PASS] bass
+flagged times: 8
+  8.549s clicks [FAIL] master
+  18.497s clicks [FAIL] master
+  18.625s clicks [FAIL] master
+  19.012s clicks [FAIL] master
+  20.086s clicks [FAIL] master
+  35.525s clicks [FAIL] master
+  36.583s clicks [FAIL] master
+  36.870s clicks [FAIL] master

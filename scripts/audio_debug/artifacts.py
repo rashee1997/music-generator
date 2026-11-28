@@ -84,6 +84,10 @@ class Case:
                 score = _read(pick[-1])
                 sources['score'] = pick[-1]
         score = score or {}
+        # the pipeline attaches the sheet's hard cuts to the score in memory only, so the saved score never carries them:
+        # read them back the same way, or the autopsy of a `stem.cut` would not know which stops were asked for
+        import cut_windows
+        score = cut_windows.attach(score, cut_windows.read_sheet(project))
 
         rows = []
         data_dir = os.path.join(project, 'presets', 'gate', 'data')
@@ -143,7 +147,8 @@ class Case:
         master, stale = None, False
         declared = ((ci.get('deliverables') or {}).get('master_wav') if isinstance(ci, dict) else None)
         candidates = ([declared] if declared and os.path.isfile(declared) else
-                      [os.path.join(project, 'out', n) for n in ('master.wav', '_draft_master.wav')])
+                      [os.path.join(project, 'out', n) for n in (__import__('render_targets').project_slug(project) + '.wav', 'master.wav',
+                                                              '_draft_' + __import__('render_targets').project_slug(project) + '.wav', '_draft_master.wav')])
         for p in candidates:
             if os.path.isfile(p):
                 master = p

@@ -75,8 +75,8 @@ class RefreshKeepsStems(unittest.TestCase):
 class ProfileAliasKey(unittest.TestCase):
     def test_alias_key_in_profile_is_canonical(self):
         allp = {'p': {'rows': {'kick_grid': {'mode': 'skip', 'reason': 'r'}}}}
-        flags, rows, focus = gate_profiles._merge_profile('p', allp)
-        prof = gate_profiles.Profile(['p'], 'declared', '', flags, rows, [], focus)
+        flags, rows, focus, expr, scene = gate_profiles._merge_profile('p', allp)
+        prof = gate_profiles.Profile(['p'], 'declared', '', flags, rows, [], focus, expr, scene)
         self.assertFalse(prof.on('kick.grid'))
         self.assertTrue([r for r in prof.notes() if r[1] == 'gate_skip'])
 

@@ -1,0 +1,5 @@
+=== MUSIC21 SYMBOLIC MUSICOLOGY REPORT ===
+[INFO] music21_tonality           modal center analyzed as A- major (correlation 0.46)
+[INFO] music21_registers          register note: 'int' object has no attribute 'lower'
+[INFO] music21_contour            contour note: 'int' object has no attribute 'lower'
+[PASS] music21_harmonic_rhythm    1521 vertical harmonic slices analyzed across multi-track arrangement

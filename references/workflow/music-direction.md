@@ -68,8 +68,8 @@ With a picture, watch it once end to end and mark four things. The notes are the
 | hit | `hits_at` + `hits` | a moment the music must land; hard (a cut, an explosion) or soft (a head turn, a line ending) |
 | descriptive | `sections[].action`, `notes` | a line of dialogue, a look, a shape in the frame - a reminder, not a sync point |
 
-A **hard sync point** must land on a specific frame (an explosion, a punch, a cut); a **soft** one may drift. The same
-split is `hits[].sync`, and the cut-sync window versus motion hits in the picture path.
+A **hard sync point** must land on a specific frame (an explosion, a punch, a cut); a **soft** one may drift. The same split is `hits[].sync`, and the cut-sync window versus motion hits in the picture path.
+A `sync: hard` hit also opens a +-150 ms gate window where the level drop is not a defect; as `kind: cut` it stops the sustained voices on a 15 ms ramp (`quality-gate-rows.md` section 8); a hard accent over held strings is `kind: musical`.
 
 Endings: a **hard out** ends on an accent and hands the frame to the sound effects; a **tail out** fades on a long
 note so the music leaves unnoticed, which is what most cues do; a **combination** accents then fades, so an editor
@@ -119,7 +119,7 @@ The core targets. `listen.py` reads these directly, so fill them with words and 
 |---|---|
 | `job` | what must the music do, in order of importance? (a list, not a sentence) |
 | `story` | the cue in one sentence, first moment to last |
-| `sections` | the arc in seconds: `name`, `start_s`, `end_s`, `energy`, `action` (picture), `music` (what enters and does what), `role` (`place`, `establish`, `build`, `peak`, `transition`, `button`) |
+| `sections` | the arc in seconds: `name`, `start_s`, `end_s`, `energy`, `action` (picture), `music` (what enters and does what), `role` (`place`, `establish`, `build`, `peak`, `transition`, `button`, and `release`/`resolve` or `rupture` for a cue that resolves or breaks) |
 | `motifs` | the theme plan: `name`, `first_at_s`, `shape` (its few notes), `returns` (where it comes back and how it changed) |
 | `hits` | the same moments as `hits_at`, each with `kind` (`cut`, `motion`, `musical`), `sync` (`hard`, `soft`), `sound`, and `why` - the reason the moment needs an accent |
 | `ending` | how it leaves: `hard_out`, `tail_out`, `combination` |
@@ -282,7 +282,9 @@ in `knowledgebase/sound-design/theatrical-realism.md`; the rules and the blocks 
    long-short-short-long, the leap on the weak beat, inverted at the return" is one. A melody an agent writes without a shape
    is the average of every melody it has seen.
 2. **Every return of a motif changes one thing** (interval, rhythm, register, harmony, instrument) and keeps another. The
-   plan says which, in `theme.variation_plan` and in `motifs[].returns`.
+   plan says which, in `theme.variation_plan` and in `motifs[].returns`. Name it as one of the three returns the engine can
+   play: `transpose` (the same contour, moved), `invert` (the contour mirrored around the phrase's first degree) or
+   `displace` (the phrase moved across the barline the first statement sat on) - `theory.vary_phrase(transform=...)`.
 3. **Name the human act.** "Violins sustain" is a patch. "The violins enter late, swell with the bow and drop off before the
    change" is a performance, and it becomes `dynamics` in the score and `articulation` on the notes.
 4. **The generic version is named so it can be refused.** If the score's first idea is the sentence in `anti_generic`, rewrite it.
@@ -298,3 +300,14 @@ failures that make a piece read as generated and the counter for each, the rules
 after the render. A ringtone, alert or loop adds [`short-form-and-ringtones.md`](../scoring/short-form-and-ringtones.md).
 
 Sections 3-8 (cue order, picture moments, adaptive music, revision levers, earshot, delivery): [`music-direction-revision.md`](music-direction-revision.md).
+
+### 2.13 The section `role` is a checked field, not a label
+
+`role` on a section is read by the gate when the piece's profile declares a `scene` block
+(`references/mixing/quality-gate-scenes.md`). It must be one of the roles in
+`references/data/presets/gate/data/scene_roles.json` (`place`, `establish`, `build`, `transition`, `peak`, `release` or
+its spelling `resolve`, `rupture`, `button`); a typo is `scene.preset` FAIL, never a silent default. The role decides
+which of its own windows may waive a whole-piece ceiling (`waive_ceiling`), which band the groove is judged in
+(`bsi_mode`), whether an unresolved tension is allowed (`huron_resolution_gravity`) and where the piece must actually be
+silent. So write the role you mean: a section called `peak` that is quieter than its build is a promise the music
+breaks.

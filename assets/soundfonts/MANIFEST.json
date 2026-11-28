@@ -107,6 +107,63 @@
       },
       "gm_order": false,
       "notes": "Dedicated orchestral strings, winds, brass and percussion in its own preset order, so an instrument preset must say which bank and program to play (`program_map`). No download URL is registered: obtain the .sf2 from the project's own page and place it at assets/soundfonts/Sonatina_Symphonic_Orchestra.sf2; setup_project.py will then record and verify its hash."
+    },
+    "cinematic_default": {
+      "file": "cinematic_default.sf2",
+      "label": "Cinematic default (built locally)",
+      "type": "orchestral",
+      "size_mb": 0,
+      "size_status": "approximate, from a web result, not measured",
+      "urls": [],
+      "sha256": null,
+      "sha256_status": "not taken: this bank is not downloaded or built yet; the container that wrote this entry could not reach its host",
+      "pin": false,
+      "license": {
+        "name": "per source, listed in the file's ICOP field and in LICENSES.md",
+        "holder": "the sample sources named in the build spec",
+        "url": "https://github.com/sgossner/VCSL",
+        "attribution": "Built by scripts/soundbank_build.py from sources whose licence was read; see assets/soundfonts/LICENSES.md for each."
+      },
+      "gm_order": true,
+      "notes": "Built on the user's machine from CC0 or permissive sample sets with scripts/soundbank_build.py (never committed). General MIDI program numbers, several velocity layers per program. Not installed here: no source could be fetched (github.com answered 403)."
+    },
+    "cc0_orchestra": {
+      "file": "CC0_Orchestra.sf2",
+      "label": "CC0 Orchestra compilation",
+      "type": "orchestral",
+      "size_mb": 9,
+      "size_status": "approximate, from a web result, not measured",
+      "urls": [],
+      "sha256": null,
+      "sha256_status": "not taken: this bank is not downloaded or built yet; the container that wrote this entry could not reach its host",
+      "pin": false,
+      "license": {
+        "name": "CC0 1.0 / public domain (per its musical-artifacts page)",
+        "holder": "unnamed compiler of public-domain samples",
+        "url": "https://musical-artifacts.com/artifacts/5457",
+        "attribution": "CC0 Orchestra compilation (musical-artifacts 5457); no attribution required."
+      },
+      "gm_order": false,
+      "notes": "About 9 MB, based on the Mini Cheapy Orchestra; no velocity-layer data known. A fallback, not an upgrade. Put the file in assets/soundfonts/ yourself; audit it with scripts/soundbank_audit.py before relying on it."
+    },
+    "neo_orchestra_hq": {
+      "file": "Neo_Orchestra_HQ.sf2",
+      "label": "NeoSoundFonts Orchestra HQ (libre variant)",
+      "type": "orchestral",
+      "size_mb": 0,
+      "size_status": "approximate, from a web result, not measured",
+      "urls": [],
+      "sha256": null,
+      "sha256_status": "not taken: this bank is not downloaded or built yet; the container that wrote this entry could not reach its host",
+      "pin": false,
+      "license": {
+        "name": "CC0 1.0 (per the repository page)",
+        "holder": "NeoSoundFonts",
+        "url": "https://github.com/NeoSoundFonts/neo-orchestra-hq-realistic-sf2",
+        "attribution": "NeoSoundFonts orchestra-hq, CC0 1.0."
+      },
+      "gm_order": false,
+      "notes": "Lineage of the original bank is questionable; audit before trusting. Put the file in assets/soundfonts/ yourself."
     }
   }
 }

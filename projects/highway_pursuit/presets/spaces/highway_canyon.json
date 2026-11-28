@@ -1,0 +1,270 @@
+{
+  "name": "highway_canyon",
+  "kind": "spaces",
+  "character": "NH-48 at night: an open asphalt corridor between concrete crash barriers, with a tunnel bore, a steel flyover deck above it and open air beyond. Each camera is a room scene.",
+  "room": {
+    "rt60": 1.3,
+    "pre_delay_ms": 14,
+    "hf_decay": 0.55,
+    "early_level": 0.4
+  },
+  "reflections": {
+    "path_physics": true,
+    "ref_m": 1.5,
+    "ground_delay_ms": 6.0,
+    "ground_gain": 0.45,
+    "ground_cutoff_hz": 4200,
+    "lateral_delay_ms": 13.0,
+    "lateral_gain": 0.5,
+    "lateral_cutoff_hz": 3600,
+    "ceiling_delay_ms": 26.0,
+    "ceiling_gain": 0.08,
+    "rear_delay_ms": 38.0,
+    "rear_gain": 0.28,
+    "geometry": {
+      "width_m": 26.0,
+      "depth_m": 400.0,
+      "height_m": 14.0,
+      "listener": {
+        "x": 13.0,
+        "y": 120.0,
+        "z": 1.1
+      },
+      "materials": {
+        "floor": "asphalt_wet",
+        "ceiling": "open",
+        "walls": "brick_facade"
+      },
+      "material_set": "highway_materials",
+      "max_order": 3,
+      "max_taps": 16,
+      "min_level_db": -34.0
+    },
+    "late": {
+      "enabled": true,
+      "rt60_s": 1.3,
+      "hf_decay": 0.55,
+      "level_db": -23.0,
+      "count": 8,
+      "spread_deg": 100.0,
+      "rise_s": 0.02,
+      "seed": 7181
+    }
+  },
+  "scenes": [
+    {
+      "anchor": {
+        "section": "the_evasion"
+      },
+      "transition_s": 0.4,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 26.0,
+          "depth_m": 400.0,
+          "height_m": 14.0,
+          "listener": {
+            "x": 13.0,
+            "y": 120.0,
+            "z": 2.5
+          }
+        },
+        "late": {
+          "rt60_s": 1.6,
+          "level_db": -26.0
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_twist"
+      },
+      "transition_s": 0.6,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 30.0,
+          "depth_m": 500.0,
+          "height_m": 20.0,
+          "listener": {
+            "x": 15.0,
+            "y": 150.0,
+            "z": 1.4
+          }
+        },
+        "late": {
+          "rt60_s": 1.9,
+          "level_db": -21.0
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_drift"
+      },
+      "transition_s": 1.0,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 6.0,
+          "depth_m": 9.0,
+          "height_m": 1.4,
+          "listener": {
+            "x": 3.0,
+            "y": 4.5,
+            "z": 0.5
+          },
+          "materials": {
+            "floor": "asphalt_wet",
+            "ceiling": "open",
+            "walls": "brick_facade"
+          }
+        },
+        "late": {
+          "rt60_s": 0.4,
+          "level_db": -32.0
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_chase"
+      },
+      "transition_s": 1.2,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 26.0,
+          "depth_m": 400.0,
+          "height_m": 14.0,
+          "listener": {
+            "x": 13.0,
+            "y": 120.0,
+            "z": 1.1
+          }
+        },
+        "late": {
+          "rt60_s": 1.3,
+          "level_db": -23.0
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_slow_motion"
+      },
+      "transition_s": 1.4,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 12.0,
+          "depth_m": 300.0,
+          "height_m": 6.5,
+          "listener": {
+            "x": 6.0,
+            "y": 90.0,
+            "z": 1.1
+          },
+          "materials": {
+            "floor": "underpass_concrete",
+            "ceiling": "underpass_concrete",
+            "walls": "underpass_concrete"
+          }
+        },
+        "late": {
+          "rt60_s": 2.7,
+          "level_db": -15.0,
+          "hf_decay": 0.35
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_swerve"
+      },
+      "transition_s": 1.5,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 40.0,
+          "depth_m": 600.0,
+          "height_m": 60.0,
+          "listener": {
+            "x": 20.0,
+            "y": 200.0,
+            "z": 9.0
+          },
+          "materials": {
+            "floor": "steel_deck",
+            "ceiling": "open",
+            "walls": "open"
+          }
+        },
+        "late": {
+          "rt60_s": 2.2,
+          "level_db": -19.0,
+          "hf_decay": 0.45
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_near_miss"
+      },
+      "transition_s": 0.3,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 26.0,
+          "depth_m": 400.0,
+          "height_m": 14.0,
+          "listener": {
+            "x": 13.0,
+            "y": 120.0,
+            "z": 1.1
+          }
+        },
+        "late": {
+          "rt60_s": 3.2,
+          "level_db": -12.0
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_escape"
+      },
+      "transition_s": 1.0,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 26.0,
+          "depth_m": 400.0,
+          "height_m": 14.0,
+          "listener": {
+            "x": 13.0,
+            "y": 120.0,
+            "z": 1.1
+          }
+        },
+        "late": {
+          "rt60_s": 1.2,
+          "level_db": -25.0
+        }
+      }
+    }
+  ],
+  "distance": {
+    "ref_m": 1.5,
+    "falloff": 0.18,
+    "air_damping": 0.42,
+    "min_cutoff_hz": 3200,
+    "reverb_exponent": 0.62,
+    "pre_delay_law": {
+      "base_ms": 11.0,
+      "per_m": 1.4,
+      "max_ms": 28.0
+    }
+  },
+  "binaural": {
+    "bed": false,
+    "spot": true
+  },
+  "sources": [
+    "KB cinematic-hybrid-scoring: pressure is a deliverable, a hit that stops the music is declared",
+    "Room physics: the tunnel and the flyover are the same engine scene module (scripts/phys_core) with geometry, materials and a late field, not a reverb preset switch",
+    "Barrier and asphalt materials come from the shipped static-scene material set"
+  ]
+}

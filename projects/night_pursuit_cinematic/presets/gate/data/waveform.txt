@@ -1,0 +1,24 @@
+file: /home/user/music-generator/projects/night_pursuit_cinematic/out/_draft_night_pursuit_cinematic.wav
+duration_s: 193.978
+sample_rate: 44100
+sections:
+  the_race: 0.00-25.08 s, dyn 0.90
+  spotted: 25.08-38.89 s, dyn 0.80
+  the_chase: 38.89-72.23 s, dyn 0.90
+  the_tunnel: 72.23-95.08 s, dyn 0.80
+  the_helicopter: 95.08-117.64 s, dyn 0.80
+  the_bumps: 117.64-139.89 s, dyn 1.00
+  the_flyover: 139.89-165.78 s, dyn 0.80
+  the_escape: 165.78-192.65 s, dyn 0.50
+flagged times: 11
+  0.035s stem.tick [PASS] basses
+  0.035s stem.tick [PASS] basses_pizz
+  0.035s stem.tick [PASS] celli
+  0.035s stem.tick [PASS] city_far
+  0.035s stem.tick [PASS] tuba
+  0.035s stem.tick [PASS] violas
+  65.643s stem.tick [PASS] violins_staccato
+  71.436s stem.tick [PASS] low_swell
+  72.249s stem.tick [PASS] trombones
+  82.082s stem.tick [PASS] violins_long
+  95.121s stem.tick [PASS] choir

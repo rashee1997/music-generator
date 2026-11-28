@@ -1,0 +1,21 @@
+{
+  "name": "lofi_8bit",
+  "character": "An old console: eight-bit sample depth and a band-limit.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "pedalboard",
+      "plugin": "Bitcrush",
+      "params": {
+        "bit_depth": 8.0
+      }
+    },
+    {
+      "type": "pedalboard",
+      "plugin": "LowpassFilter",
+      "params": {
+        "cutoff_frequency_hz": 9000.0
+      }
+    }
+  ]
+}

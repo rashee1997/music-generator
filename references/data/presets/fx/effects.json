@@ -1,0 +1,539 @@
+{
+  "name": "effects",
+  "character": "The effect library of scripts/fx_engine: every effect's parameters, their ranges and their defaults. A chain in an instrument preset (`fx`) names effects from here.",
+  "provenance": "starting value: every default and range below is a working figure chosen so the effect is audible and safe on a stem, not a measurement. Physical relations (the Doppler delay is path length over the speed of sound, a wow depth in cents follows from the delay swing) are derived in the code from the parameters; the numbers are not. Replace one with a measured or cited value in a project's own `fx` preset and say so there.",
+  "common": {
+    "mix": {
+      "default": 1.0,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "",
+      "text": "dry/wet blend of this effect"
+    },
+    "start_s": {
+      "default": 0.0,
+      "min": 0.0,
+      "max": 36000.0,
+      "unit": "s",
+      "text": "where the effect begins, in stem time"
+    },
+    "end_s": {
+      "default": null,
+      "min": 0.0,
+      "max": 36000.0,
+      "unit": "s",
+      "text": "where it ends; none means the end of the stem"
+    },
+    "edge_ms": {
+      "default": 20.0,
+      "min": 0.0,
+      "max": 2000.0,
+      "unit": "ms",
+      "text": "raised-cosine crossfade at both ends of the range"
+    },
+    "seed": {
+      "default": null,
+      "min": 0,
+      "max": 4294967295,
+      "unit": "",
+      "text": "random seed of this effect; none derives one from the stem"
+    }
+  },
+  "effects": {
+    "tape_stop": {
+      "character": "The tape slows to a halt: pitch and level fall to nothing over dur_s, then silence.",
+      "params": {
+        "dur_s": {
+          "default": 1.2,
+          "min": 0.05,
+          "max": 20.0,
+          "unit": "s",
+          "text": "time from full speed to stopped"
+        },
+        "curve": {
+          "default": 1.5,
+          "min": 0.3,
+          "max": 4.0,
+          "unit": "",
+          "text": "speed = (1 - t)^curve: above 1 the slow-down is back-loaded"
+        },
+        "level_pow": {
+          "default": 0.5,
+          "min": 0.0,
+          "max": 2.0,
+          "unit": "",
+          "text": "level follows speed^level_pow so the held sample does not leave a DC step"
+        }
+      }
+    },
+    "pitch_glide": {
+      "character": "A pitch dive or riser: playback speed glides by `semitones` over the range, then the dry signal returns.",
+      "params": {
+        "semitones": {
+          "default": -12.0,
+          "min": -48.0,
+          "max": 48.0,
+          "unit": "st",
+          "text": "pitch change reached at end_s (negative dives)"
+        },
+        "curve": {
+          "default": 1.0,
+          "min": 0.3,
+          "max": 4.0,
+          "unit": "",
+          "text": "pitch = semitones * t^curve"
+        }
+      }
+    },
+    "doppler": {
+      "character": "A pass-by: the source travels past the listener at speed_m_s, with the delay, pitch change and level the path length gives.",
+      "params": {
+        "closest_m": {
+          "default": 5.0,
+          "min": 0.5,
+          "max": 500.0,
+          "unit": "m",
+          "text": "distance at the closest approach"
+        },
+        "speed_m_s": {
+          "default": 30.0,
+          "min": 1.0,
+          "max": 300.0,
+          "unit": "m/s",
+          "text": "speed of the source along its straight path"
+        },
+        "pass_s": {
+          "default": null,
+          "min": 0.0,
+          "max": 36000.0,
+          "unit": "s",
+          "text": "time of closest approach; none is the middle of the range"
+        },
+        "c_m_s": {
+          "default": null,
+          "min": 100.0,
+          "max": 5000.0,
+          "unit": "m/s",
+          "text": "speed of sound; none reads the active medium (phys_core.medium)"
+        },
+        "edge_ms": {
+          "default": 300.0,
+          "min": 0.0,
+          "max": 2000.0,
+          "unit": "ms",
+          "text": "fade in from and out to the dry stem: the pass starts far away and quiet, so the edge is long"
+        }
+      }
+    },
+    "tape_wobble": {
+      "character": "Wow and flutter: slow and fast pitch drift of an old transport, set in cents.",
+      "params": {
+        "wow_hz": {
+          "default": 0.6,
+          "min": 0.05,
+          "max": 3.0,
+          "unit": "Hz",
+          "text": "slow drift rate"
+        },
+        "wow_cents": {
+          "default": 8.0,
+          "min": 0.0,
+          "max": 100.0,
+          "unit": "cents",
+          "text": "peak pitch deviation of the slow drift"
+        },
+        "flutter_hz": {
+          "default": 9.0,
+          "min": 3.0,
+          "max": 30.0,
+          "unit": "Hz",
+          "text": "fast drift rate"
+        },
+        "flutter_cents": {
+          "default": 3.0,
+          "min": 0.0,
+          "max": 60.0,
+          "unit": "cents",
+          "text": "peak pitch deviation of the fast drift"
+        }
+      }
+    },
+    "stutter": {
+      "character": "Beat repeat: the first slice of the range repeats until the range ends, each repeat a little quieter.",
+      "params": {
+        "slice_ms": {
+          "default": 120.0,
+          "min": 10.0,
+          "max": 2000.0,
+          "unit": "ms",
+          "text": "length of the repeated slice"
+        },
+        "decay_db": {
+          "default": -1.5,
+          "min": -12.0,
+          "max": 0.0,
+          "unit": "dB",
+          "text": "level change per repeat"
+        }
+      }
+    },
+    "freeze": {
+      "character": "Spectral freeze: the sound at start_s is held for hold_s as a smooth, phase-randomised wash.",
+      "params": {
+        "hold_s": {
+          "default": 4.0,
+          "min": 0.1,
+          "max": 60.0,
+          "unit": "s",
+          "text": "how long the frozen sound is held"
+        },
+        "fft": {
+          "default": 2048,
+          "min": 512,
+          "max": 8192,
+          "unit": "samples",
+          "text": "analysis size: a larger one is smoother and slower to bloom"
+        },
+        "edge_ms": {
+          "default": 80.0,
+          "min": 0.0,
+          "max": 2000.0,
+          "unit": "ms",
+          "text": "crossfade of the frozen wash with the dry stem"
+        }
+      }
+    },
+    "grain_cloud": {
+      "character": "A cloud of short grains read from the stem around their own position, scattered in pitch and place.",
+      "params": {
+        "grain_ms": {
+          "default": 80.0,
+          "min": 10.0,
+          "max": 500.0,
+          "unit": "ms",
+          "text": "grain length"
+        },
+        "density_hz": {
+          "default": 40.0,
+          "min": 1.0,
+          "max": 400.0,
+          "unit": "Hz",
+          "text": "grains started per second"
+        },
+        "pitch_spread_cents": {
+          "default": 300.0,
+          "min": 0.0,
+          "max": 2400.0,
+          "unit": "cents",
+          "text": "random pitch scatter of a grain"
+        },
+        "pos_spread_s": {
+          "default": 1.5,
+          "min": 0.0,
+          "max": 30.0,
+          "unit": "s",
+          "text": "how far from its own time a grain may read"
+        },
+        "pan_spread": {
+          "default": 0.8,
+          "min": 0.0,
+          "max": 1.0,
+          "unit": "",
+          "text": "random placement of a grain between the channels"
+        },
+        "level_db": {
+          "default": -3.0,
+          "min": -30.0,
+          "max": 12.0,
+          "unit": "dB",
+          "text": "cloud level against the stem's own level in the range"
+        }
+      }
+    },
+    "filter_sweep": {
+      "character": "A filter whose cutoff glides between two frequencies over the range: the riser sweep and the downlifter.",
+      "params": {
+        "kind": {
+          "default": "lowpass",
+          "choices": [
+            "lowpass",
+            "highpass",
+            "bandpass"
+          ],
+          "text": "filter shape"
+        },
+        "f_start_hz": {
+          "default": 200.0,
+          "min": 20.0,
+          "max": 20000.0,
+          "unit": "Hz",
+          "text": "cutoff at start_s"
+        },
+        "f_end_hz": {
+          "default": 12000.0,
+          "min": 20.0,
+          "max": 20000.0,
+          "unit": "Hz",
+          "text": "cutoff at end_s"
+        },
+        "q": {
+          "default": 0.9,
+          "min": 0.3,
+          "max": 12.0,
+          "unit": "",
+          "text": "resonance"
+        },
+        "curve": {
+          "default": "exp",
+          "choices": [
+            "exp",
+            "linear"
+          ],
+          "text": "how the cutoff moves: exp is even in octaves"
+        },
+        "after": {
+          "default": "bypass",
+          "choices": [
+            "bypass",
+            "hold"
+          ],
+          "text": "after end_s: the dry stem, or the filter held at f_end_hz"
+        }
+      }
+    },
+    "ring_mod": {
+      "character": "Ring modulation: the stem multiplied by a sine, for bell-like, metallic or robotic colour.",
+      "params": {
+        "freq_hz": {
+          "default": 220.0,
+          "min": 1.0,
+          "max": 8000.0,
+          "unit": "Hz",
+          "text": "carrier frequency"
+        }
+      }
+    },
+    "tremolo": {
+      "character": "Amplitude tremolo, and an auto-pan when pan_depth is above zero.",
+      "params": {
+        "rate_hz": {
+          "default": 5.0,
+          "min": 0.05,
+          "max": 40.0,
+          "unit": "Hz",
+          "text": "modulation rate"
+        },
+        "depth": {
+          "default": 0.5,
+          "min": 0.0,
+          "max": 1.0,
+          "unit": "",
+          "text": "how deep the level dips"
+        },
+        "pan_depth": {
+          "default": 0.0,
+          "min": 0.0,
+          "max": 1.0,
+          "unit": "",
+          "text": "how far the sound swings between the channels (opposite phase left to right)"
+        }
+      }
+    },
+    "gate_pulse": {
+      "character": "A rhythmic gate: the stem chopped by a pulse of a given rate and duty.",
+      "params": {
+        "rate_hz": {
+          "default": 4.0,
+          "min": 0.1,
+          "max": 32.0,
+          "unit": "Hz",
+          "text": "pulses per second"
+        },
+        "duty": {
+          "default": 0.5,
+          "min": 0.05,
+          "max": 0.95,
+          "unit": "",
+          "text": "share of each pulse that is open"
+        },
+        "floor_db": {
+          "default": -40.0,
+          "min": -80.0,
+          "max": 0.0,
+          "unit": "dB",
+          "text": "level while closed"
+        },
+        "smooth_ms": {
+          "default": 8.0,
+          "min": 0.5,
+          "max": 100.0,
+          "unit": "ms",
+          "text": "edge smoothing of the pulse"
+        }
+      }
+    },
+    "reverse_swell": {
+      "character": "A reverse reverb: a swell that builds into every note, made by reverberating the reversed stem.",
+      "params": {
+        "decay_s": {
+          "default": 1.5,
+          "min": 0.1,
+          "max": 8.0,
+          "unit": "s",
+          "text": "length of the swell (time to -60 dB)"
+        },
+        "wet_db": {
+          "default": -6.0,
+          "min": -30.0,
+          "max": 12.0,
+          "unit": "dB",
+          "text": "swell level against the stem's own level"
+        }
+      }
+    },
+    "shimmer": {
+      "character": "A shimmering reverb: the tail is pitched up and fed back, so each repeat sits an octave above the last.",
+      "params": {
+        "room_size": {
+          "default": 0.9,
+          "min": 0.1,
+          "max": 1.0,
+          "unit": "",
+          "text": "size of the reverb"
+        },
+        "damping": {
+          "default": 0.5,
+          "min": 0.0,
+          "max": 1.0,
+          "unit": "",
+          "text": "high-frequency damping of the reverb"
+        },
+        "shift_semitones": {
+          "default": 12.0,
+          "min": -24.0,
+          "max": 24.0,
+          "unit": "st",
+          "text": "pitch step of each feedback pass"
+        },
+        "feedback": {
+          "default": 0.35,
+          "min": 0.0,
+          "max": 0.9,
+          "unit": "",
+          "text": "level of the pitched tail fed back"
+        },
+        "iterations": {
+          "default": 3,
+          "min": 1,
+          "max": 6,
+          "unit": "",
+          "text": "feedback passes"
+        },
+        "wet_db": {
+          "default": -6.0,
+          "min": -30.0,
+          "max": 12.0,
+          "unit": "dB",
+          "text": "shimmer level against the stem's own level"
+        }
+      }
+    },
+    "transient": {
+      "character": "Transient shaper: sharpen or soften the front of a note, and lift or tuck its body.",
+      "params": {
+        "attack_db": {
+          "default": 3.0,
+          "min": -12.0,
+          "max": 12.0,
+          "unit": "dB",
+          "text": "gain on the front of a note"
+        },
+        "sustain_db": {
+          "default": 0.0,
+          "min": -12.0,
+          "max": 12.0,
+          "unit": "dB",
+          "text": "gain on the body after the front"
+        }
+      }
+    },
+    "pedalboard": {
+      "character": "Any built-in Pedalboard plugin in the chain: Chorus, Phaser, Delay, Reverb, Distortion, Bitcrush, LadderFilter, PitchShift and the rest of the allow-list.",
+      "params": {
+        "plugin": {
+          "default": null,
+          "choices": [
+            "Bitcrush",
+            "Chorus",
+            "Clipping",
+            "Compressor",
+            "Delay",
+            "Distortion",
+            "Gain",
+            "HighShelfFilter",
+            "HighpassFilter",
+            "Limiter",
+            "LadderFilter",
+            "LowShelfFilter",
+            "LowpassFilter",
+            "NoiseGate",
+            "PeakFilter",
+            "Phaser",
+            "PitchShift",
+            "Reverb",
+            "GSMFullRateCompressor",
+            "MP3Compressor",
+            "Resample"
+          ],
+          "text": "the Pedalboard class"
+        },
+        "params": {
+          "default": {},
+          "type": "object",
+          "text": "constructor arguments of the plugin, by name"
+        }
+      }
+    },
+    "external": {
+      "character": "A real VST3 or Audio Unit plugin on disk, loaded through Pedalboard, with its parameters set by name. The one way to add a compiled third-party effect.",
+      "params": {
+        "path": {
+          "default": null,
+          "type": "string",
+          "text": "file of the plugin; it must exist"
+        },
+        "params": {
+          "default": {},
+          "type": "object",
+          "text": "plugin parameters by name"
+        }
+      }
+    },
+    "air": {
+      "character": "Air exciter: adds harmonics above a corner from the band that exists, for samples that hold nothing above 8 kHz. It creates content; it is not an EQ, and it is measured by realism.air.",
+      "params": {
+        "corner_hz": {
+          "default": 5000.0,
+          "min": 2000.0,
+          "max": 12000.0,
+          "unit": "Hz",
+          "text": "the band at and above this frequency feeds the exciter"
+        },
+        "drive": {
+          "default": 3.0,
+          "min": 1.0,
+          "max": 10.0,
+          "unit": "x",
+          "text": "saturation drive of the excited band"
+        },
+        "amount_db": {
+          "default": -24.0,
+          "min": -48.0,
+          "max": -6.0,
+          "unit": "dB",
+          "text": "level of the added harmonics under the stem"
+        }
+      }
+    }
+  }
+}

@@ -66,6 +66,7 @@ import numpy as np
 import soundfile as sf
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import cut_windows
 import dsp
 import humanize as hz
 import soundbank as sb
@@ -75,6 +76,8 @@ import presets
 import mix_schema
 import mechanics
 import cli_util
+import family_dsp
+import families
 
 SR = 44100
 
@@ -718,7 +721,7 @@ def render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=None
         _return_slot()
 
 
-VELOCITY_TIMBRE_KEYS = ('points', 'bands', 'order')
+VELOCITY_TIMBRE_KEYS = ('points', 'bands', 'order', 'zones', 'attack_ms')
 
 
 def _velocity_timbre(tr):
@@ -744,6 +747,14 @@ def _velocity_timbre(tr):
                          f'two or more, in rising velocity order (got {pts!r})')
     if int(blk.get('bands', 4)) < 2:
         raise ValueError(f'track "{name}": velocity_timbre.bands must be 2 or more')
+    if 'zones' in blk and not (2 <= int(blk['zones']) <= 16):
+        raise ValueError(f'track "{name}": velocity_timbre.zones is the number of fixed velocity zones, 2 to 16 (got {blk["zones"]!r})')
+    att = blk.get('attack_ms')
+    if att is not None and (not isinstance(att, list) or len(att) < 2 or any(not isinstance(p, (list, tuple)) or len(p) != 2 for p in att)
+                            or any(not (0 <= float(p[0]) <= 127 and 0.0 <= float(p[1]) <= 120.0) for p in att)
+                            or [float(p[0]) for p in att] != sorted(float(p[0]) for p in att)):
+        raise ValueError(f'track "{name}": velocity_timbre.attack_ms is a list of [velocity 0-127, onset ramp 0-120 ms] pairs, two or more, '
+                         f'in rising velocity order (got {att!r})')
     return blk
 
 
@@ -758,22 +769,40 @@ def _render_velocity_layers(tr, vt, tm, sfpath, global_dyn, cfg, seed, ts, swing
     if not notes:
         return _render_track({k: v for k, v in tr.items() if k != 'velocity_timbre'}, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead)
     vels = np.array([float(n.get('v', 80)) for n in notes])
-    nb = int(vt.get('bands', 4))
-    edges = np.quantile(vels, np.linspace(0.0, 1.0, nb + 1)[1:-1]) if len(set(vels)) > 1 else []
-    idx = np.searchsorted(np.asarray(edges), vels, side='right') if len(edges) else np.zeros(len(vels), int)
+    unit = 127.0 if vels.max() <= 1.0 else 1.0           # a score writes velocity 0-1 or 1-127; the preset's points are 0-127 (a 0-1 part was read as velocity 1: always the darkest cutoff)
+    if vt.get('zones'):
+        # fixed velocity zones, as an SFZ library lays out its layers (lovel/hivel): a note's layer depends on its own velocity only,
+        # never on how the rest of the part is written, and a dense set of zones steps the cutoff by about a semitone or two, so no
+        # crossfade is needed (the Renoise forum remark that dense layers are similar enough not to be abrupt; see the research note)
+        nz = int(vt['zones'])
+        v127 = np.clip(vels * unit, 1.0, 127.0)
+        idx = np.minimum(((v127 - 1.0) / 127.0 * nz).astype(int), nz - 1)
+    else:
+        nb = int(vt.get('bands', 4))
+        edges = np.quantile(vels, np.linspace(0.0, 1.0, nb + 1)[1:-1]) if len(set(vels)) > 1 else []
+        idx = np.searchsorted(np.asarray(edges), vels, side='right') if len(edges) else np.zeros(len(vels), int)
     pts = vt['points']
     xs, fs = np.array([float(p[0]) for p in pts]), np.log([float(p[1]) for p in pts])
     layers, info = [], []
     for b in sorted(set(idx.tolist())):
         sub = [n for n, i in zip(notes, idx) if i == b]
-        mv = float(np.mean([float(n.get('v', 80)) for n in sub]))
+        mv = float(np.mean([float(n.get('v', 80)) for n in sub])) * unit
         lp = float(np.exp(np.interp(mv, xs, fs)))
         t2 = {k: v for k, v in tr.items() if k != 'velocity_timbre'}
         t2['notes'] = sub
+        att_ms = None
+        if vt.get('attack_ms'):
+            # a soft note begins more slowly (SFZ `ampeg_vel2attack`: attack time = attack + vel2attack * velocity / 127, a rise over the
+            # velocity range); the ramp is the onset fade the renderer already has, forced on for a sustained part
+            ap = vt['attack_ms']
+            att_ms = float(np.interp(mv, [float(p[0]) for p in ap], [float(p[1]) for p in ap]))
+            t2['onset_fade_ms'] = att_ms
+            t2['onset_fade_all'] = True
         x = _render_track(t2, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead)
         x = dsp.slope_filter(x, sr=SR, f=lp, kind='lp', order=int(vt.get('order', 2)))
         layers.append(x)
-        info.append(dict(band=b, notes=len(sub), mean_vel=round(mv, 1), lowpass_hz=round(lp)))
+        info.append(dict(band=b, notes=len(sub), mean_vel=round(mv, 1), lowpass_hz=round(lp),
+                         **({} if att_ms is None else dict(attack_ms=round(att_ms, 1)))))
     _record(tr.get('name', 'track'), velocity_layers=info)
     n = max(len(x) for x in layers)
     out = np.zeros((n, layers[0].shape[1] if layers[0].ndim > 1 else 1), np.float32)
@@ -986,6 +1015,9 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
                 calls.setdefault(p, []).append((e['t'] - 0.013, 'off', p, 0))
                 rels.setdefault(p, []).append(e['t'] - 0.013)
             calls.setdefault(p, []).append((e['t'], 'on', p, int(np.clip(round(v), 1, 127))))
+            # The synth is told to release the hit at `rel` as well as the stem being faded there: without a note-off every hit keeps its voice,
+            # and a part of a few hundred hits (a kick in a long cue) runs out of voices and goes silent from some point on, with no error.
+            calls.setdefault(p, []).append((rel[i], 'off', p, 0))
             rels.setdefault(p, []).append(rel[i])
         # One buffer per pitch, each ramped and released on its own, then summed. A drum sample starts at full level,
         # so its first sample is a step; the ramp removes it. On a shared buffer that ramp cannot work: it multiplies
@@ -1018,7 +1050,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
                 elif len(part) < n:
                     part = np.pad(part, ((0, n - len(part)), (0, 0)))
                 hit = hit + part
-        return dsp.enhance_sf2_dynamics(hit, sr=SR, role=role, velocity=_mean_vel(ev))
+        return family_dsp.apply(dsp.enhance_sf2_dynamics(hit, sr=SR, role=role, velocity=_mean_vel(ev)), inst_cfg, tr, SR, seed)
 
     # note-off times: let a plucked body ring past the written note-off, but never into a re-strike of the same pitch
     # (a note-off on a shared channel cuts every sounding instance of that pitch, including the new one).
@@ -1062,6 +1094,9 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
     if expr_kind is None:
         expr_kind = 'bow' if inst in BOWED else ('flat' if inst in _world.PLUCKED else ('breath' if per_note else 'flat'))
     step = 0.006
+    _bloom = (families.effective(inst_cfg, tr) or {}).get('bloom') or {}
+    bloom_ramp_s = float(_bloom.get('ramp_s', 0.35))        # no declared family or bloom: the ramp it always had
+    bloom_start = float(_bloom.get('start_depth', 0.0))
 
     if per_note:
         pool = [c for c in range(16) if c != 9]
@@ -1135,7 +1170,9 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
                 age = t - e['t']
                 slide = glide * (1 - min(age / gs, 1.0)) ** 2 if glide else 0.0
                 if depth > 0 and dur > 0.30 and age > delay * 0.5:
-                    ramp = np.clip((age - delay * 0.5) / 0.35, 0, 1)
+                    ramp = np.clip((age - delay * 0.5) / bloom_ramp_s, 0, 1)
+                    if bloom_start:                     # a family bloom: pure at the start, the vibrato warms up to full depth
+                        ramp = bloom_start + (1.0 - bloom_start) * ramp
                     osc = np.sin(2 * np.pi * rate * age + phase) if vph is None else vdep[k] * np.sin(vph[k])
                     cents = (micro + slide + depth * ramp * osc
                              + jitter_cents * np.sin(2 * np.pi * 0.9 * age + phase * 1.7))
@@ -1156,7 +1193,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
         if fade_ms > 0:   # the preset's own 2-3 ms ramp, for sampled patches that start on a step
             stem = dsp.soften_onsets(stem, sr=SR, times=[e['t'] for e in ev], ms=fade_ms,
                                      skip_sounding=skip_sounding)
-        return dsp.enhance_sf2_dynamics(stem, sr=SR, role=role, velocity=_mean_vel(ev))
+        return family_dsp.apply(dsp.enhance_sf2_dynamics(stem, sr=SR, role=role, velocity=_mean_vel(ev)), inst_cfg, tr, SR, seed)
 
     # shared channel (piano, guitar, plucked, mallets)
     vox.program(0, bank, preset)
@@ -1183,7 +1220,7 @@ def _render_track(tr, tm, sfpath, global_dyn, cfg, seed, ts, swing, key_lead=Non
     fade_ms = float(tr.get('onset_fade_ms') or (inst_cfg or {}).get('onset_fade_ms') or 0.0)
     if fade_ms > 0:   # the preset's own 2-3 ms ramp, for sampled patches that start on a step
         stem = dsp.soften_onsets(stem, sr=SR, times=[e['t'] for e in ev], ms=fade_ms)
-    return dsp.enhance_sf2_dynamics(stem, sr=SR, role=role, velocity=_mean_vel(ev))
+    return family_dsp.apply(dsp.enhance_sf2_dynamics(stem, sr=SR, role=role, velocity=_mean_vel(ev)), inst_cfg, tr, SR, seed)
 
 
 def _track_cache_dir():
@@ -1209,7 +1246,9 @@ _CODE_HASH = None
 _RENDER_CODE = ('render_natural.py', 'dsp.py', 'sfz_render.py', 'environment.py', 'humanize.py', 'vocals.py',
                 'sound_model.py', 'clone_instrument.py', 'spatial.py', 'airabs.py', 'mechanics.py', 'world.py',
                 'soundbank.py', 'presets.py', 'mix_schema.py', 'cli_util.py', 'sfz_libs.py')
-_RENDER_PACKAGES = ('vocal_engine', 'phys_core', 'env_engine', 'sfx_engine', 'spatial_hrtf', 'spatial_engine',
+# `spatial_engine` is not here: nothing the stem renderer imports reaches it (checked by search over every module and package listed), and it holds the
+# loudspeaker, object and ambisonic deliverables, so a fix to one of them used to throw away every cached stem of every project
+_RENDER_PACKAGES = ('vocal_engine', 'phys_core', 'env_engine', 'sfx_engine', 'spatial_hrtf',
                     'humanize_engine')
 
 
@@ -1522,6 +1561,34 @@ def _align_onset(name, stem, tr, tm, bpm=None, limit_ms=25.0, max_ms=200.0):
     return out
 
 
+def _is_sustained(tr):
+    """A voice that holds a note until told to stop: a bowed, blown or sung instrument or a pad. A struck, plucked or
+    one-shot sound has its own decay and is not cut (its release is the sound)."""
+    raw = str((tr or {}).get('instrument', ''))
+    if raw.startswith(('sfx:', 'env:', 'clone:')) or (tr or {}).get('role') in ('environment', 'fx', 'drum'):
+        return False
+    try:
+        if rolelib.canonical((tr or {}).get('role'), default='') in ('pad', 'drone', 'texture'):
+            return True
+    except rolelib.UnknownRole:
+        pass
+    cfg = (presets.find_instrument(raw) if raw else None) or {}
+    names = {_name(raw)} | {_name(cfg[k]) for k in ('gm', 'instrument') if isinstance(cfg.get(k), str)}
+    return bool(names & (SUSTAINED | BOWED))
+
+
+def _apply_hard_cuts(name, stem, tr, tm, cuts):
+    """The stem with a 15 ms micro-ramp and then silence at every hard cut, for a sustained voice only. The ramp is the
+    only edit: nothing before it moves, and the voice comes back at its next written note (less a 30 ms guard for the
+    humanizer's early starts). Recorded in the render report, so a cut is never silent."""
+    if not cuts or not _is_sustained(tr):
+        return stem
+    onsets = [float(tm.sec(n['t'])) - 0.03 for n in (tr or {}).get('notes') or [] if 't' in n]
+    out = dsp.hard_cut(stem, SR, cuts=cuts, resume=onsets, ramp_ms=cut_windows.RAMP_MS)
+    _record(name, hard_cuts=[round(float(c), 3) for c in cuts if 0 < c * SR < len(stem)], hard_cut_ramp_ms=cut_windows.RAMP_MS)
+    return out
+
+
 def build_stems(score, sfpath=None, seed=None, verbose=True):
     """Humanize + render every track. Returns (stems dict name->(N,2) float32, meta, tempo map)."""
     _PIECE['score'] = score                            # an environment track's ecology reads the piece it sits in
@@ -1565,6 +1632,14 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
     keys = {name: sb.bank_key(tr, presets.find_instrument(str(tr.get('instrument', 'piano')))
                               or presets.find_instrument(_name(str(tr.get('instrument', 'piano')))))
             for i, name, tr in other_jobs}
+    if verbose and keys:                       # which bank each part plays, so "it is a one-layer GM bank" is never hidden
+        import families as _fam
+        by_bank = {}
+        for i, name, tr in other_jobs:
+            inst = presets.find_instrument(str(tr.get('instrument', 'piano'))) or presets.find_instrument(_name(str(tr.get('instrument', 'piano'))))
+            by_bank.setdefault(keys[name], []).append(f"{name}({_fam.family_of(inst, tr) or '-'})")
+        for bank_name, parts in by_bank.items():
+            print(f'  [bank] {bank_name}: {", ".join(parts)}', flush=True)
     extra = sb.bank_paths([k for k in keys.values() if k != sb.DEFAULT_BANK])
     paths = dict(extra, **{sb.DEFAULT_BANK: sfpath})
     order = list(dict.fromkeys([sb.DEFAULT_BANK] + [keys[name] for i, name, tr in other_jobs]))
@@ -1646,13 +1721,16 @@ def build_stems(score, sfpath=None, seed=None, verbose=True):
     # with `dc_hp_hz` on its track; everything else keeps the shared 5 Hz block.
     hp_by_name = {tr.get('name'): float(tr.get('dc_hp_hz') or 0.0) for tr in score.get('tracks', [])}
     tr_by_name = {tr.get('name'): tr for tr in score.get('tracks', [])}
+    hard_cuts = cut_windows.cuts_of(score)        # the direction sheet's hard cuts, attached by the pipeline; none = no change
 
     def _finish(name):
         stem = stems.pop(name)                 # dropped as soon as it is processed: the post-pass used to hold a second
         tr = tr_by_name.get(name) or {}        # full copy of the piece while it rebuilt every stem from the first
-        return name, dsp.trim_digital_lead(dsp.repair_clicks(
+        out = dsp.trim_digital_lead(dsp.repair_clicks(
             _dc_block(_align_onset(name, stem, tr, tm, score.get('bpm')),
                       cutoff_hz=(hp_by_name.get(name) or 5.0), order=(4 if hp_by_name.get(name) else 2))))
+        # last, on the final timeline: the lead trim and the onset alignment above move the stem, and a cut is a time
+        return name, _apply_hard_cuts(name, out, tr, tm, hard_cuts)
 
     names = list(stems)
     post_workers = _stem_workers(len(names)) if names else 1

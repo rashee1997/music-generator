@@ -1,0 +1,71 @@
+{
+  "row": "section.energy",
+  "stage": "mix",
+  "stem": null,
+  "level": "PASS",
+  "value": 0.8333333333333335,
+  "unit": "rho",
+  "threshold": 0.5,
+  "margin": 0.3333333333333335,
+  "worst_times_s": [],
+  "calibrated": false,
+  "detail": "Spearman rho 0.83 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
+  "table": [
+    {
+      "name": "the_stakeout",
+      "start_s": 0.0,
+      "end_s": 11.25,
+      "energy": 0.3,
+      "level_db": -27.342806900728768
+    },
+    {
+      "name": "spotted",
+      "start_s": 11.25,
+      "end_s": 22.328,
+      "energy": 0.45,
+      "level_db": -26.14959568661171
+    },
+    {
+      "name": "the_avenue",
+      "start_s": 22.328,
+      "end_s": 46.865,
+      "energy": 0.7,
+      "level_db": -19.14156153085316
+    },
+    {
+      "name": "the_turn",
+      "start_s": 46.865,
+      "end_s": 73.961,
+      "energy": 0.85,
+      "level_db": -20.07698059504246
+    },
+    {
+      "name": "under_the_bridge",
+      "start_s": 73.961,
+      "end_s": 96.361,
+      "energy": 0.9,
+      "level_db": -18.70473071701253
+    },
+    {
+      "name": "the_roadblock",
+      "start_s": 96.361,
+      "end_s": 127.859,
+      "energy": 1.0,
+      "level_db": -19.033453517544064
+    },
+    {
+      "name": "the_bridge",
+      "start_s": 127.859,
+      "end_s": 149.686,
+      "energy": 0.95,
+      "level_db": -19.717060861565844
+    },
+    {
+      "name": "the_cliff",
+      "start_s": 149.686,
+      "end_s": 171.05,
+      "energy": 0.2,
+      "level_db": -40.262498104296114
+    }
+  ]
+}

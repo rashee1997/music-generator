@@ -1,0 +1,25 @@
+{
+  "name": "dream_chorus",
+  "character": "A wide, slow chorus into a long room: a soft, unfocused halo.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "pedalboard",
+      "plugin": "Chorus",
+      "params": {
+        "rate_hz": 0.25,
+        "depth": 0.5,
+        "mix": 0.5
+      }
+    },
+    {
+      "type": "pedalboard",
+      "plugin": "Reverb",
+      "params": {
+        "room_size": 0.85,
+        "wet_level": 0.3,
+        "dry_level": 0.8
+      }
+    }
+  ]
+}

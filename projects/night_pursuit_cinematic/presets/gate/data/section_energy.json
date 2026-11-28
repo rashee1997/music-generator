@@ -1,0 +1,71 @@
+{
+  "row": "section.energy",
+  "stage": "mix",
+  "stem": null,
+  "level": "PASS",
+  "value": 0.8556058190999849,
+  "unit": "rho",
+  "threshold": 0.5,
+  "margin": 0.3556058190999849,
+  "worst_times_s": [],
+  "calibrated": false,
+  "detail": "Spearman rho 0.86 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
+  "table": [
+    {
+      "name": "the_race",
+      "start_s": 0.0,
+      "end_s": 25.077,
+      "energy": 0.9,
+      "level_db": -17.38330749028573
+    },
+    {
+      "name": "spotted",
+      "start_s": 25.077,
+      "end_s": 38.892,
+      "energy": 0.8,
+      "level_db": -21.817347788800106
+    },
+    {
+      "name": "the_chase",
+      "start_s": 38.892,
+      "end_s": 72.228,
+      "energy": 0.9,
+      "level_db": -19.82487882136971
+    },
+    {
+      "name": "the_tunnel",
+      "start_s": 72.228,
+      "end_s": 95.085,
+      "energy": 0.8,
+      "level_db": -20.379050115742896
+    },
+    {
+      "name": "the_helicopter",
+      "start_s": 95.085,
+      "end_s": 117.636,
+      "energy": 0.8,
+      "level_db": -19.12178221096585
+    },
+    {
+      "name": "the_bumps",
+      "start_s": 117.636,
+      "end_s": 139.888,
+      "energy": 1.0,
+      "level_db": -16.115576947905954
+    },
+    {
+      "name": "the_flyover",
+      "start_s": 139.888,
+      "end_s": 165.785,
+      "energy": 0.8,
+      "level_db": -23.84212307627918
+    },
+    {
+      "name": "the_escape",
+      "start_s": 165.785,
+      "end_s": 192.648,
+      "energy": 0.5,
+      "level_db": -29.662025228394988
+    }
+  ]
+}

@@ -137,7 +137,8 @@ class Baseline(unittest.TestCase):
         del man['items'][names[1]]
         path.write_text(json.dumps(man), encoding='utf-8')
         rows = {s for s, _, _ in baseline.verify(self.dir, only=self.ONLY, quiet=True)}
-        self.assertEqual(rows, {'CHANGED', 'NEW'})
+        # `only` selects by name prefix, so a further preset whose name starts with 'sfx:impact' (impact_cinematic) is frozen too and verifies as PASS
+        self.assertEqual(rows, {'CHANGED', 'NEW'} | ({'PASS'} if len(names) > 2 else set()))
 
     def test_verify_reports_missing_only_when_the_target_is_gone(self):
         orig = baseline.targets

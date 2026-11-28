@@ -1,0 +1,12 @@
+{
+  "name": "tape_stop_out",
+  "character": "The tape runs down to a halt over a second: a cut-out on a sustained part, the sound of a power failure or a rewind.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "tape_stop",
+      "start_s": 0.0,
+      "dur_s": 1.2
+    }
+  ]
+}

@@ -50,7 +50,17 @@ COVERAGE = {
     'pattern.flat_dynamics': ('stage2', 'pattern_audit.audit'),
     'pattern.four_on_floor': ('stage2', 'pattern_audit.audit'),
     'pattern.flags_max': ('stage2', 'pattern_audit.audit'),
+    'pattern.track_flags_max': ('stage2', 'pattern_audit.audit_detail'),
+    'shape.contrast': ('stage2', 'pattern_audit.shape_contrast'),
     'roughness': ('preflight', ['preflight.roughness', 'preflight.unison']),
+    # the scene rows: emitted only for a profile with a `scene` block, so none of them can be caught by a pre-render rule
+    'scene.arc_step': ('score', 'Chew strain per section from the notes, compared across the sheet\'s own build and peak windows'),
+    'scene.hit_surprise': ('score', 'IDyOM information content of the figure lines at the hit time; a level delta is added when a render is measured'),
+    'scene.release_delta': ('score', 'Chew strain fall from the peak windows into the release window'),
+    'scene.dialogue_mask': (A, 'ERB collisions inside the declared dialogue windows are measured on the stems by quality_gate.masking_rows'),
+    'scene.silence_honoured': (A, 'the level inside a declared rest window of the finished mix'),
+    'scene.bed_stability': (A, 'the environment stems\' level inside a declared rest window'),
+    'scene.macro_contrast': (A, 'dynamic range and roughness contrast of the rendered sections; the tension variance half is score-side'),
     'ambient_bed': (A, 'the level of a rendered bed against the mix; the tempo-map bug is covered by tests/test_gate_clock.py'),
     'modulation_flutter': (A, 'amplitude modulation of rendered stems'),
     'note_collision': ('stage2', 'pattern_audit.note_collision'),
@@ -59,6 +69,10 @@ COVERAGE = {
     'machine_gun_percussion': ('stage2', 'pattern_audit.machine_gun_percussion'),
     'percussion_flam': ('stage2', 'pattern_audit.percussion_flam'),
     'low_interval_mud': ('stage2', 'pattern_audit.low_interval_mud'),
+    'orch.range': ('stage2', 'orch_rows.range_rows'),
+    'orch.voice_leading': ('stage2', 'orch_rows.voice_leading_rows'),
+    'orch.playable': ('stage2', 'orch_rows.playable_rows'),
+    'orch.legato': ('stage2', 'orch_rows.legato_rows'),
     'balance.vs_lead': (A, 'stem levels after gain staging'),
     'focus.declared': ('score', 'quality_gate.focus_rows, run in stage 2'),
     'intent.vocabulary': ('score', 'quality_gate.intent_rows, run in stage 2'),
@@ -124,7 +138,7 @@ for _name in ('imm.decode_uniformity', 'masking.excess', 'master.micro_dynamics'
 COVERAGE['imm.kinematics'] = ('score', 'the trajectories are in the presets and the score; checked by the immersive config')
 
 PREFLIGHT_ROWS = (
-    'preflight.range', 'preflight.sfx_length', 'preflight.section_edge', 'preflight.unison', 'preflight.figure_level', 'preflight.placement',
+    'preflight.range', 'preflight.sfx_length', 'preflight.fx', 'preflight.section_edge', 'preflight.unison', 'preflight.figure_level', 'preflight.placement',
     'preflight.stem_level', 'preflight.arc', 'preflight.tempo', 'preflight.roughness', 'preflight.roughness_partials',
     'probe.silent', 'probe.clip', 'probe.start', 'probe.tail', 'probe.dc',
 )
@@ -133,6 +147,14 @@ PREFLIGHT_ROWS = (
 def missing(rows):
     """Rows with no entry."""
     return sorted(r for r in rows if r not in COVERAGE)
+
+
+def tier_problems():
+    """Rows with no tier, or a row listed in two: the tier map is data (scripts/gate_tiers.py reads
+    references/data/presets/gate/tiers.json). Checked with the coverage, so a new row needs both an entry here and a
+    tier there before it can ship."""
+    import gate_tiers
+    return gate_tiers.problems()
 
 
 def unknown_rules():

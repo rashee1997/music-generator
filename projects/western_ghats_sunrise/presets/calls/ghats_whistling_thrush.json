@@ -1,0 +1,122 @@
+{
+  "name": "ghats_whistling_thrush",
+  "character": "A mellow, meandering human-like whistle: a rising slide, a long held note with a slow vibrato, a falling slide and a quick flutter, answered by the same line.",
+  "elements": {
+    "up": {
+      "f0_hz": [
+        [
+          0,
+          1500
+        ],
+        [
+          0.45,
+          2350
+        ],
+        [
+          1,
+          2050
+        ]
+      ],
+      "ms": [
+        500,
+        700
+      ],
+      "harmonics": 3,
+      "rolloff": 2.4,
+      "vibrato_hz": 5.5,
+      "vibrato_cents": 35,
+      "attack": 0.15,
+      "release": 0.3
+    },
+    "hold": {
+      "f0_hz": [
+        [
+          0,
+          2000
+        ],
+        [
+          0.5,
+          2060
+        ],
+        [
+          1,
+          1950
+        ]
+      ],
+      "ms": [
+        700,
+        1000
+      ],
+      "harmonics": 2,
+      "rolloff": 2.8,
+      "vibrato_hz": 6.0,
+      "vibrato_cents": 55,
+      "attack": 0.2,
+      "release": 0.35
+    },
+    "down": {
+      "f0_hz": [
+        [
+          0,
+          2900
+        ],
+        [
+          0.6,
+          1900
+        ],
+        [
+          1,
+          1350
+        ]
+      ],
+      "ms": [
+        380,
+        520
+      ],
+      "harmonics": 3,
+      "rolloff": 2.4,
+      "attack": 0.1,
+      "release": 0.3
+    },
+    "flutter": {
+      "f0_hz": [
+        [
+          0,
+          2300
+        ],
+        [
+          1,
+          2500
+        ]
+      ],
+      "ms": [
+        260,
+        380
+      ],
+      "harmonics": 3,
+      "rolloff": 2.2,
+      "pulse_hz": 16,
+      "pulse_duty": 0.6
+    }
+  },
+  "sequence": [
+    "up",
+    "hold",
+    "down",
+    [
+      "flutter",
+      1,
+      2
+    ],
+    "up",
+    "hold",
+    "down"
+  ],
+  "gap_ms": [
+    90,
+    220
+  ],
+  "sources": [
+    "ESTIMATE: pitch contours, element lengths and pulse rates are written from the qualitative descriptions cited in the fauna block, not measured; replace from xeno-canto spectrograms (analysed only, not kept)"
+  ]
+}

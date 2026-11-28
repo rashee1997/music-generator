@@ -6,10 +6,14 @@
 
 """The engine split and the features added with it, measured rather than trusted.
 
-The first test class is a parity gate: the five hashes were taken from the single-module humanizer
-before it was split, so a refactor that changes a single float fails here.
+The first test class is a parity gate: the five hashes freeze what the engine emits for one score, preset, role and
+seed, so a refactor that changes a single float fails here. Re-freeze them only for a deliberate change to how the
+engine plays, and say in the commit which change it was:
+
+    .venv/bin/python tests/test_humanize_engine.py --update-parity
 """
 import hashlib
+import io
 import json
 import os
 import re
@@ -26,13 +30,63 @@ import humanize as hz                    # noqa: E402
 from humanize_engine import config as engine_config   # noqa: E402
 from humanize_engine import timemap as engine_timemap  # noqa: E402
 
+# Hashes of the events with every float rounded to PARITY_DECIMALS. The first freeze hashed the raw floats, and those
+# differ in the last bits between platforms (libm and SIMD paths): it never matched on Linux, even at the commit that
+# froze it. Re-frozen on 26 November 2026 after checking that the split commit (1e6546a) and the tip give identical
+# values for all five cases, so the rounding hides platform noise and not a change of behaviour.
+PARITY_DECIMALS = 6
 PARITY = {
-    'natural-melody': 'edee05c05422ee7402b657f60ad61195ce602c8885dc4f703a83656dd9dfb0b3',
-    'natural-chord': '65fb54995a49f95b1322558fe191b704e8c00ba830d4168982f35712bce9ae76',
-    'loose-bass': '1f3e3c39781505a8662cbded7f647024c2ebe7f234e1cbcf2a1a08300fa4f62f',
-    'tight-drums': '9c9f87bf268ce6a47f5f25e374fbc1e919da30560759f8ea8234388cf197fbb9',
-    'rubato-pad': '2e8c23d8071d13a6507244936d2cb21fc7a80ba50623d946a6a2990888f655c0',
+    'natural-melody': '89dfa7ec6de3fe99a381c6b9fd52e665e21e11d1f8e992b62b09d49121806a7f',
+    'natural-chord': 'b5346d5a4d77358d8874d24b545e8d71dc127d1fe3d0145779f42e5f04b26d30',
+    'loose-bass': '5f8272b5d6d39144a2fb1190e904deb8d5463e9fb797210189a88e5e8e4b90e2',
+    'tight-drums': '502f1e9f3481d27c4520141fa65aaa7817b865f875d5f5f612f92f95626521bf',
+    'rubato-pad': '9dc94aba7e4c9e43be8929e0cbfa9a5aa1a8232a13ed244d9467ed1d06f71359',
 }
+
+
+def _parity_combos():
+    return [
+        ('natural-melody', 'natural', 'melody', dict(bpm=96, seed=7), 3),
+        ('natural-chord', 'natural', 'chord', dict(bpm=96, seed=7), 4),
+        ('loose-bass', 'loose', 'bass', dict(bpm=72, seed=11, rubato=0.02), 5),
+        ('tight-drums', 'tight', 'drum', dict(bpm=128, seed=3), 2),
+        ('rubato-pad', dict(dict(hz.PRESETS['rubato']), mood='tender'), 'pad',
+         dict(bpm=60, seed=9, elastic=dict(amount=0.03, corr_beats=8)), 3),
+    ]
+
+
+def _parity_hashes():
+    out = {}
+    for name, cfg, role, sc, seed in _parity_combos():
+        tm = hz.tempo_map_for(dict(sc, key='D', tracks=[]), seed=seed)
+        notes = _line(24, 0.5)
+        if role == 'drum':
+            notes = [dict(t=i * 0.25, d=0.2, p=[36, 38, 42, 42][i % 4], v=0.8) for i in range(32)]
+        ev = hz.humanize_track(notes, tm, cfg, role=role, seed=seed, key='D')
+        out[name] = hashlib.sha256(json.dumps(_canonical(ev), sort_keys=True).encode()).hexdigest()
+    return out
+
+
+def update_parity():
+    """Re-freeze the hashes. Only for a deliberate change to how the engine plays: say which one in the commit."""
+    got = _parity_hashes()
+    src = io.open(os.path.abspath(__file__), encoding='utf-8').read()
+    for name, h in got.items():
+        src = re.sub(r"(?m)^(    '%s': )'[0-9a-f]{64}'," % re.escape(name), r"\1'%s'," % h, src)
+    with io.open(os.path.abspath(__file__), 'w', encoding='utf-8', newline='') as fh:
+        fh.write(src)
+    print('re-froze', ', '.join(sorted(got)))
+
+
+def _canonical(obj):
+    """The events with every float rounded: a value that differs only below the 6th decimal is the same performance."""
+    if isinstance(obj, float):
+        return round(obj, PARITY_DECIMALS)
+    if isinstance(obj, dict):
+        return {k: _canonical(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_canonical(v) for v in obj]
+    return obj
 
 FLAT = dict(timing_ms=4, drum_ms=0, lead_ms=0, drift_ms=0, vel_sigma=0, rubato=0.0, wander=0.0,
             strum_ms=0, ritard=0.0, accent=0.0, note_lag1=0.0, vel_dur=0.0, tune_drift_cents=0.0,
@@ -50,21 +104,7 @@ class ParityTests(unittest.TestCase):
     """The split changed no behaviour: same score, preset, role and seed -> the same events."""
 
     def test_the_five_frozen_outputs(self):
-        combos = [
-            ('natural-melody', 'natural', 'melody', dict(bpm=96, seed=7), 3),
-            ('natural-chord', 'natural', 'chord', dict(bpm=96, seed=7), 4),
-            ('loose-bass', 'loose', 'bass', dict(bpm=72, seed=11, rubato=0.02), 5),
-            ('tight-drums', 'tight', 'drum', dict(bpm=128, seed=3), 2),
-            ('rubato-pad', dict(dict(hz.PRESETS['rubato']), mood='tender'), 'pad',
-             dict(bpm=60, seed=9, elastic=dict(amount=0.03, corr_beats=8)), 3),
-        ]
-        for name, cfg, role, sc, seed in combos:
-            tm = hz.tempo_map_for(dict(sc, key='D', tracks=[]), seed=seed)
-            notes = _line(24, 0.5)
-            if role == 'drum':
-                notes = [dict(t=i * 0.25, d=0.2, p=[36, 38, 42, 42][i % 4], v=0.8) for i in range(32)]
-            ev = hz.humanize_track(notes, tm, cfg, role=role, seed=seed, key='D')
-            got = hashlib.sha256(json.dumps(ev, sort_keys=True).encode()).hexdigest()
+        for name, got in _parity_hashes().items():
             self.assertEqual(got, PARITY[name], f'{name}: the engine output changed')
 
 
@@ -239,4 +279,7 @@ class ReportTests(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    if '--update-parity' in sys.argv:
+        update_parity()
+    else:
+        unittest.main()

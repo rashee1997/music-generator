@@ -1,0 +1,302 @@
+{
+  "name": "np_street_canyon",
+  "kind": "spaces",
+  "character": "A wet city street between brick and glass fronts under open sky; each camera is a room scene: a dry cabin, the street, a tunnel with a long tail, open air high over the city and a steel flyover deck.",
+  "room": {
+    "rt60": 1.1,
+    "pre_delay_ms": 10,
+    "hf_decay": 0.5,
+    "early_level": 0.45
+  },
+  "reflections": {
+    "path_physics": true,
+    "ref_m": 1.5,
+    "ground_delay_ms": 5.0,
+    "ground_gain": 0.5,
+    "ground_cutoff_hz": 5000,
+    "lateral_delay_ms": 11.0,
+    "lateral_gain": 0.55,
+    "lateral_cutoff_hz": 4200,
+    "ceiling_delay_ms": 18.0,
+    "ceiling_gain": 0.05,
+    "rear_delay_ms": 30.0,
+    "rear_gain": 0.3,
+    "geometry": {
+      "width_m": 18.0,
+      "depth_m": 140.0,
+      "height_m": 45.0,
+      "listener": {
+        "x": 9.0,
+        "y": 60.0,
+        "z": 1.2
+      },
+      "materials": {
+        "floor": "asphalt_wet",
+        "ceiling": "open",
+        "walls": "brick_facade"
+      },
+      "material_set": "np_street",
+      "max_order": 3,
+      "max_taps": 14,
+      "min_level_db": -34.0
+    },
+    "late": {
+      "enabled": true,
+      "rt60_s": 1.1,
+      "hf_decay": 0.5,
+      "level_db": -21.0,
+      "count": 8,
+      "spread_deg": 90.0,
+      "rise_s": 0.02,
+      "seed": 2611
+    }
+  },
+  "scenes": [
+    {
+      "anchor": {
+        "section": "the_race"
+      },
+      "transition_s": 0.5,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 1.7,
+          "depth_m": 2.6,
+          "height_m": 1.2,
+          "listener": {
+            "x": 0.85,
+            "y": 1.3,
+            "z": 0.6
+          },
+          "materials": {
+            "floor": "asphalt_wet",
+            "ceiling": "underpass_concrete",
+            "walls": "glass_front"
+          }
+        },
+        "late": {
+          "rt60_s": 0.12,
+          "level_db": -34.0,
+          "hf_decay": 0.4
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "spotted"
+      },
+      "transition_s": 1.0,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 18.0,
+          "depth_m": 140.0,
+          "height_m": 45.0,
+          "listener": {
+            "x": 9.0,
+            "y": 60.0,
+            "z": 1.2
+          },
+          "materials": {
+            "floor": "asphalt_wet",
+            "ceiling": "open",
+            "walls": "brick_facade"
+          },
+          "material_set": "np_street",
+          "max_order": 3,
+          "max_taps": 14,
+          "min_level_db": -34.0
+        },
+        "late": {
+          "rt60_s": 1.1,
+          "level_db": -21.0,
+          "hf_decay": 0.5
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_chase"
+      },
+      "transition_s": 2.0,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 18.0,
+          "depth_m": 140.0,
+          "height_m": 45.0,
+          "listener": {
+            "x": 9.0,
+            "y": 60.0,
+            "z": 1.6
+          },
+          "materials": {
+            "floor": "asphalt_wet",
+            "ceiling": "open",
+            "walls": "brick_facade"
+          },
+          "material_set": "np_street",
+          "max_order": 3,
+          "max_taps": 14,
+          "min_level_db": -34.0
+        },
+        "late": {
+          "rt60_s": 1.1,
+          "level_db": -22.0,
+          "hf_decay": 0.5
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_tunnel"
+      },
+      "transition_s": 6.0,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 12.0,
+          "depth_m": 140.0,
+          "height_m": 6.0,
+          "materials": {
+            "floor": "asphalt_wet",
+            "ceiling": "underpass_concrete",
+            "walls": "underpass_concrete"
+          }
+        },
+        "late": {
+          "rt60_s": 2.5,
+          "level_db": -15.0,
+          "hf_decay": 0.45
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_helicopter"
+      },
+      "transition_s": 4.0,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 120.0,
+          "depth_m": 300.0,
+          "height_m": 300.0,
+          "listener": {
+            "x": 60.0,
+            "y": 150.0,
+            "z": 60.0
+          },
+          "materials": {
+            "floor": "asphalt_wet",
+            "ceiling": "open",
+            "walls": "open"
+          }
+        },
+        "late": {
+          "rt60_s": 0.5,
+          "level_db": -30.0,
+          "hf_decay": 0.6
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_bumps"
+      },
+      "transition_s": 3.0,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 1.7,
+          "depth_m": 2.6,
+          "height_m": 1.2,
+          "listener": {
+            "x": 0.85,
+            "y": 1.3,
+            "z": 0.6
+          },
+          "materials": {
+            "floor": "asphalt_wet",
+            "ceiling": "underpass_concrete",
+            "walls": "glass_front"
+          }
+        },
+        "late": {
+          "rt60_s": 0.12,
+          "level_db": -34.0,
+          "hf_decay": 0.4
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_flyover"
+      },
+      "transition_s": 3.0,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 24.0,
+          "depth_m": 140.0,
+          "height_m": 45.0,
+          "materials": {
+            "floor": "steel_deck",
+            "ceiling": "open",
+            "walls": "open"
+          }
+        },
+        "late": {
+          "rt60_s": 0.6,
+          "level_db": -26.0,
+          "hf_decay": 0.6
+        }
+      }
+    },
+    {
+      "anchor": {
+        "section": "the_escape"
+      },
+      "transition_s": 4.0,
+      "space_overrides": {
+        "geometry": {
+          "width_m": 18.0,
+          "depth_m": 140.0,
+          "height_m": 45.0,
+          "listener": {
+            "x": 9.0,
+            "y": 60.0,
+            "z": 1.2
+          },
+          "materials": {
+            "floor": "asphalt_wet",
+            "ceiling": "open",
+            "walls": "brick_facade"
+          },
+          "material_set": "np_street",
+          "max_order": 3,
+          "max_taps": 14,
+          "min_level_db": -34.0
+        },
+        "late": {
+          "rt60_s": 1.3,
+          "level_db": -19.0,
+          "hf_decay": 0.5
+        }
+      }
+    }
+  ],
+  "distance": {
+    "ref_m": 1.5,
+    "falloff": 0.18,
+    "air_damping": 0.4,
+    "min_cutoff_hz": 3200,
+    "reverb_exponent": 0.65,
+    "pre_delay_law": {
+      "base_ms": 12.0,
+      "per_m": 1.5,
+      "max_ms": 30.0
+    }
+  },
+  "binaural": {
+    "bed": false,
+    "spot": true
+  },
+  "sources": [
+    "research note: Real-world references: tunnel_air (rt60 of an underpass about 2.5 s is a starting value between a street and a long tunnel; a facade absorbs 0.10-0.19)",
+    "ESTIMATE: the cabin (1.7 x 2.6 x 1.2 m, rt60 0.12 s, no figure in the research), the aerial volume and the deck are starting values; the street is 18 m between the fronts, 45 m high, open to the sky, with the listener at the centre 1.2 m up (a driver)"
+  ]
+}

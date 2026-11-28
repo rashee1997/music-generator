@@ -1,0 +1,103 @@
+{
+  "duration_s": 62.1343537414966,
+  "sections": [
+    {
+      "name": "mist",
+      "start_s": 0.0,
+      "end_s": 4.615,
+      "dyn": 0.3
+    },
+    {
+      "name": "groove",
+      "start_s": 4.615,
+      "end_s": 20.769,
+      "dyn": 0.55
+    },
+    {
+      "name": "sunrise",
+      "start_s": 20.769,
+      "end_s": 30.0,
+      "dyn": 0.8
+    },
+    {
+      "name": "piper",
+      "start_s": 30.0,
+      "end_s": 39.231,
+      "dyn": 0.75
+    },
+    {
+      "name": "crest",
+      "start_s": 39.231,
+      "end_s": 48.462,
+      "dyn": 1.0
+    },
+    {
+      "name": "morning",
+      "start_s": 48.462,
+      "end_s": 60.0,
+      "dyn": 0.4
+    }
+  ],
+  "flags": [
+    [
+      0.0348,
+      "stem.tick",
+      "ambience",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "choir",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "tanpura",
+      "PASS"
+    ],
+    [
+      2.3104,
+      "stem.tick",
+      "violins_long",
+      "PASS"
+    ],
+    [
+      4.6324,
+      "stem.tick",
+      "bass",
+      "PASS"
+    ],
+    [
+      4.6556,
+      "stem.tick",
+      "sitar",
+      "PASS"
+    ],
+    [
+      11.5403,
+      "stem.tick",
+      "violas",
+      "PASS"
+    ],
+    [
+      13.8739,
+      "stem.tick",
+      "guitar_clean",
+      "PASS"
+    ],
+    [
+      16.4629,
+      "stem.tick",
+      "santoor",
+      "PASS"
+    ],
+    [
+      20.7935,
+      "stem.tick",
+      "guitar_drive",
+      "PASS"
+    ]
+  ]
+}

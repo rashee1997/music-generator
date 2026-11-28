@@ -158,6 +158,26 @@ def range_rows(score, lookup, patch_range, project_dir):
     return out
 
 
+def fx_rows(score, lookup):
+    """An `fx` chain (on the track or in its preset) with an unknown effect, a key it does not have or a number out of range, found
+    before the render that would otherwise raise it at the mix, after every stem was drawn."""
+    import fx_engine
+    out = []
+    for t in score.get('tracks') or []:
+        kind, name = _kind_name(t)
+        preset = _preset(lookup, kind, name) or {}
+        chain = t.get('fx') or preset.get('fx')
+        if not chain:
+            continue
+        found = fx_engine.problems(chain)
+        label = t.get('name', name)
+        if found:
+            out.append(('FAIL', 'preflight.fx', f'"{label}": ' + ' | '.join(found)))
+        else:
+            out.append(('PASS', 'preflight.fx', f'"{label}": the fx chain is valid ({len(fx_engine.resolve(chain))} effect(s))'))
+    return out
+
+
 def sfx_length_rows(score, lookup):
     sec = _clock(score)
     out = []
@@ -344,6 +364,99 @@ def _shared_seconds(sa, sb):
     return total
 
 
+def inst_eq_rows(score):
+    """`preflight.inst_eq`: an entry of the mix preset's `inst_eq` that names no instrument of the score is never applied. It is silent
+    (a table lookup that misses), and it cost two renders on a project that keyed a trim by track name instead of by instrument."""
+    try:
+        import presets
+        from mix_engine import chains
+        mix = presets.load('mix').get(str(score.get('mix_preset') or ''))
+        table = (mix or {}).get('inst_eq') or {}
+        if not table:
+            return []
+        insts = [str(t.get('instrument', '')) for t in _tracks(score)]
+        names = {n for inst in insts for n in chains.base_names(inst)}
+        dead = sorted(k for k in table if k not in names)
+    except Exception:
+        return []
+    if not dead:
+        return [('PASS', 'preflight.inst_eq', f'every inst_eq entry ({len(table)}) names an instrument of the score')]
+    return [('WARN', 'preflight.inst_eq', f'{len(dead)} inst_eq entr{"y" if len(dead) == 1 else "ies"} of the mix preset name no instrument of the score and '
+             f'will never be applied: {", ".join(dead[:5])}. Key it by the instrument (e.g. the preset name), not by the track name')]
+
+
+def choir_layer_rows(score, lookup=None):
+    """`preflight.choir_layers`: a choir that is one block of identical singers sings the same choir at every dynamic, which a listener
+    hears as "always the same choir". A synthesised vocal part of three or more voices needs `ensemble.layers` (sections that enter with
+    the dynamics) or a second voice part; a sampled choir (family voice) needs at least two parts."""
+    try:
+        import families
+        import presets
+        lookup = lookup or default_lookup
+        vocal, sampled = [], []
+        for t in _tracks(score):
+            inst = str(t.get('instrument', ''))
+            cfg = presets.find_vocal(inst) or lookup('inst', inst) or {}
+            ens = dict(cfg.get('ensemble') or {})
+            ens.update((t.get('vocal') or {}).get('ensemble') or {})
+            if t.get('role') == 'environment':
+                continue
+            if cfg.get('synthesis') == 'formant' or presets.find_vocal(inst) or t.get('vocal'):
+                vocal.append((t.get('name'), int(ens.get('voices', t.get('voices', 5))), bool(ens.get('layers'))))
+            elif families.family_of(cfg, t) == 'voice':
+                sampled.append(t.get('name'))
+    except Exception:
+        return []
+    rows = []
+    flat = [n for n, v, layered in vocal if v >= 3 and not layered]
+    if flat and len(vocal) + len(sampled) < 2:
+        rows.append(('WARN', 'preflight.choir_layers', f'{", ".join(flat)}: a block of identical singers with no `ensemble.layers` and no other voice part. '
+                     'Give the preset sections (high air, women, men, tutti) with `vel` bands so the choir changes make-up as it swells '
+                     '(references/data/presets/vocals/vocal_choir_cinematic.json)'))
+    if len(sampled) == 1 and not vocal:
+        rows.append(('WARN', 'preflight.choir_layers', f'{sampled[0]}: one sampled choir part. Write two or more voice parts (different programs or '
+                     'registers, different velocity bands) so the choir is not one block'))
+    if not rows and (vocal or sampled):
+        rows.append(('PASS', 'preflight.choir_layers', f'{len(vocal) + len(sampled)} voice part(s), layered or more than one'))
+    return rows
+
+
+def clock_rows(score):
+    """The plan's section times against the tempo map the renderer will play. A plan (and every preset curve and trigger that was
+    written from it) built on another clock is wrong by seconds, and the audio rows find it only after a render: one project's plan
+    was ten seconds off because its map was sized for the default 64 beats, not for its notes."""
+    secs = (score.get('plan') or {}).get('sections') or []
+    if not secs or not score.get('tempo_points'):
+        return []
+    sec = _clock(score)
+    ts = score.get('ts') or [4, 4]
+    bpb = float(ts[0]) * 4.0 / float(ts[1])
+    worst, where = 0.0, None
+    for s in secs:
+        if 'start_bar' in s and 'start_s' in s:
+            d = abs(float(sec((float(s['start_bar']) - 1) * bpb)) - float(s['start_s']))
+            if d > worst:
+                worst, where = d, s.get('name')
+    if worst > 0.25:
+        return [('FAIL', 'preflight.clock', f'section "{where}" starts {worst:.2f} s away from where the renderer\'s tempo map puts its bar: the plan, '
+                 f'the direction sheet and every time written from it use another clock. Build the plan from hz.tempo_map_for(score) on the full score')]
+    return [('PASS', 'preflight.clock', f'every section starts within {worst:.2f} s of the renderer\'s tempo map')]
+
+
+def full_checks(score, project_dir=None, **kw):
+    """The rows the pipeline's stage 2 runs, in one call: the acoustic and cognitive laws, the score-against-presets rows, the focus and
+    the intent rows. The pipeline and the command line both use it, so a score cannot pass here and fail the same rows at render time."""
+    import pattern_audit
+    import quality_gate as qg
+    rows = list(pattern_audit.acoustic_checks(score))
+    rows += [r for r in checks(score, project_dir, **kw) if r[0] in ('FAIL', 'WARN')]
+    extra = []
+    qg.focus_rows(score, extra)
+    qg.intent_rows(score, extra)
+    rows += [r for r in extra if r[0] in ('FAIL', 'WARN')]
+    return rows
+
+
 def checks(score, project_dir=None, lookup=None, patch_range=None, probe=True, render=None):
     """Every preflight row for this score. `lookup(kind, name)`, `patch_range(block, project)` and `render(name, seconds, sr, seed)`
     are injectable for tests; `probe=False` skips the one-shot renders of preset_probe."""
@@ -352,10 +465,14 @@ def checks(score, project_dir=None, lookup=None, patch_range=None, probe=True, r
     rows = []
     rows += range_rows(score, lookup, patch_range, project_dir)
     rows += sfx_length_rows(score, lookup)
+    rows += fx_rows(score, lookup)
     rows += section_edge_rows(score)
     rows += unison_rows(score)
     rows += figure_level_rows(score)
     rows += placement_rows(score, lookup)
+    rows += clock_rows(score)
+    rows += inst_eq_rows(score)
+    rows += choir_layer_rows(score, lookup)
     import preflight_levels
     rows += preflight_levels.checks(score)
     import roughness_forecast
@@ -375,6 +492,6 @@ if __name__ == '__main__':
     if proj:
         import presets
         presets.add_project(proj)
-    for lvl, name, detail in checks(json.load(open(path, encoding='utf-8')), proj):
+    for lvl, name, detail in full_checks(json.load(open(path, encoding='utf-8')), proj):
         if lvl != 'PASS':
             print(f'[{lvl}] {name}: {detail}')

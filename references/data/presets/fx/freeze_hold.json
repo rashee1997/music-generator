@@ -1,0 +1,13 @@
+{
+  "name": "freeze_hold",
+  "character": "The sound at the start of the range held as a still wash: time stopping on the frame.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "freeze",
+      "start_s": 0.0,
+      "hold_s": 4.0,
+      "fft": 4096
+    }
+  ]
+}

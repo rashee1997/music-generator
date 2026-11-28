@@ -1,0 +1,33 @@
+{
+ "name": "rca",
+ "findings": [
+  {
+   "row": "dropout",
+   "stem": null,
+   "verdict": "fault",
+   "cause": "rest",
+   "evidence": [
+    "40 ms at 54.390 s (6.32 s before the end); master -60.4 dB there, floor -63.2 dB; carried by taiko -41 dB, bass_drum -55 dB, basses_pizz -97 dB, timpani -110 dB",
+    "  -> rest: no stem in the score sounds there: a gap between phrases the row reads as a hole",
+    "165 ms at 54.440 s (6.27 s before the end); master -60.7 dB there, floor -63.2 dB; carried by taiko -41 dB, bass_drum -56 dB, basses_pizz -99 dB, timpani -112 dB",
+    "  -> rest: no stem in the score sounds there: a gap between phrases the row reads as a hole"
+   ],
+   "where": [
+    "the score: a rest the row reads as a hole; fill it or make it a declared silence"
+   ],
+   "tolerance": "bounded relaxation exists: min_ms 20.0 (range 5.0..50.0), max_ms 1000.0 (range 500.0..2000.0), floor_below_db 45.0 (range 30.0..60.0), honour_rests True (choices [True])",
+   "do_next": "a stem or the mix falls to nothing outside a declared rest: check the note durations against the section edge (the renderer clips a note at the bar line), and check the reverb tail",
+   "cost": "render",
+   "holes": [
+    {
+     "start_s": 54.39,
+     "length_ms": 40.0
+    },
+    {
+     "start_s": 54.44,
+     "length_ms": 165.0
+    }
+   ]
+  }
+ ]
+}

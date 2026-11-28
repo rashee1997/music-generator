@@ -1,0 +1,55 @@
+Realism report  62.13 s, 44100 Hz, 17 dry stem(s)
+[WARN] timbre loudness value 0.43  (hf_shift_db=-4.56, centroid_quiet_hz=902.8, centroid_loud_hz=948.3)
+         loud and quiet differ mainly in volume
+         target: loud passages at least 0.8 dB brighter (centroid) and 0.5 dB more 2-8 kHz energy than quiet ones
+[PASS] ensemble       value 17  (tracks=6)
+         17 player(s) across 6 section part(s)
+         target: a section part declares 2+ players; a solo declares none
+[PASS] transient      value 0.953  (onsets=106)
+         attacks vary
+         target: repeated attacks are not sample-identical: 60 ms spectral similarity <= 0.995
+[PASS] depth          value 0.1  (wet_share=0.4945)
+         detail sits in front of the room
+         target: direct-to-reverberant ratio -6..+18 dB: detail in front of a hall, not inside it
+[PASS] low mid        value -5.51  (low_mid_over_sub_db=12.51, low_mid_growth_db=6.68, sub_growth_db=5.89)
+         lean low-mids, sub carries the weight
+         target: 180-450 Hz stays below the 500-2000 Hz band and does not grow faster than the sub at a peak
+[PASS] distance       value 19  (far=4, missing_model=0, predicted_4k_loss_db=0.45)
+         every far source has an air model (the score's medium, ISO 9613-1)
+         target: a source beyond 4 m uses the ISO 9613-1 air model or says why not
+[WARN] openness       value -8.6
+         the top closes in at density
+         target: the 8-16 kHz share does not fall by more than 1 dB at the loudest 10 % of the piece
+[WARN] phrasing       value 0.0  (peak_pct=0.0)
+         metronomic at the bar
+         target: bar-scale tempo deviation 1-8 % over the body, excluding the final ritardando
+[PASS] vibrato        value 0.97  (parts={'celli': 0.89, 'choir': 0.94, 'pipes_drone': 1.0, 'violins_long': 1.0})
+         every sustained part moves in pitch
+         target: a sustained part moves 3-9 Hz by 10 cents or more in 30 % of its stable held windows (starting value)
+[WARN] repetition     value 0.5  (parts={'bansuri': 0.0, 'bass': 0.0, 'celli': 0.0, 'choir': 0.0, 'guitar_clean': 0.0, 'guitar_drive': 0.0, 'kit': 0.0, 'pipes': 0.0, 'santoor': 0.0, 'sitar': 0.0, 'tabla': 0.5, 'tanpura': 0.0, 'violas': 0.0, 'violins_counter': 0.0, 'violins_long': 0.0})
+         1 part(s) repeat a pitch with the same attack: tabla
+         target: under 40 % of a part's same-pitch attacks are the same sample twice (spectral similarity 0.995, starting value)
+[WARN] velocity response value 0.44  (parts={'bansuri': 0.54, 'pipes': 0.18, 'violas': 0.78, 'violins_counter': 0.34}, centroid_spread_octaves={'bansuri': 0.181, 'pipes': 0.098, 'violas': 0.308, 'violins_counter': 0.449})
+         1 part(s) get louder but not brighter with velocity (a one-sample layer): pipes
+         target: brightness follows written velocity, correlation 0.30 or more once pitch is removed (starting value; the literature reads 0.62 for loudness)
+[PASS] coherence      value 0.31  (mid=0.56)
+         the top of the mix is decorrelated between the channels
+         target: inter-channel coherence 2-8 kHz at most 0.85 (starting value)
+[PASS] sub weight     value -29.5  (carriers=0)
+         no stem carries a sub, so none can be lost
+         target: the 20-60 Hz share the stems carry reaches the master (loss at most 6 dB while the master is thin), starting value
+[PASS] air            value -35.6  (band_limited=3)
+         the top octave is present
+         target: 8-16 kHz share of the master at least -40 dB; parts with no air in their samples are named (starting value)
+[PASS] dynamic scale  value 17.9  (basis=section means)
+         a wide gap between the quiet and the loud passages
+         target: loudest section mean at least 10 dB above the quietest (starting value)
+[PASS] impact attack  value 3.7  (parts=3, soft_attack=0)
+         struck onsets rise fast or carry a click
+         target: a struck part rises in 30 ms or less or carries a click above -18 dB (starting value)
+[PASS] foreground     value 0  (declared=2)
+         every declared voice is within reach of the loudest part
+         target: a voice the score declares in `foreground` is within 12 dB of the loudest part while it plays (starting value)
+[PASS] harmonic motion value 2  (sections=6, moving_bass_sections=6)
+         2 pitch-class change(s) between sections; 6 section(s) move the bass
+         target: a section over 20 s moves the bass or declares a `pedal` (starting value)

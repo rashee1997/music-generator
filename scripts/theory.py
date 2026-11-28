@@ -632,7 +632,7 @@ def _avoid_semitone_rub(key, deg, chord, lo, hi):
     return deg
 
 
-def make_phrase(rng, key, chords, bb, style='medium', center_deg=4, span=(-3, 11), rest_p=0.1, leap_p=0.06,
+def make_phrase(rng, key, chords, bb, style='medium', center_deg=4, span=(-3, 11), rest_p=0.1, leap_p=0.09,
                 start_deg=None, end_deg=None, contour='arch', bars=None, vel=0.6, strict_beats=False):
     """One phrase over `chords` (one chord per bar). Returns (notes, degrees_list, rhythm_cells).
     Strong beats land on chord tones; leaps are followed by a step back; the last note is the cadence.
@@ -667,11 +667,14 @@ def make_phrase(rng, key, chords, bb, style='medium', center_deg=4, span=(-3, 11
             else:
                 r = rng.random()
                 if r < leap_p and ni > 0:
-                    step = int(rng.choice([-4, -3, 3, 4, 5]))
-                    # prefer the leap toward the target
+                    pool = [-4, -3, 3, 4, 5]
+                    if abs(tgt - cur) > 3:
+                        pool += [6, 7]          # a phrase that has to travel gets a real interval, not three steps
+                    step = int(rng.choice(pool))
+                    # the leap goes toward the target: a contour is a direction before it is a shape
                     step = abs(step) * (1 if tgt > cur else -1)
                 else:
-                    pull = np.clip((tgt - cur) / 3.0, -1, 1) * 0.5
+                    pull = np.clip((tgt - cur) / 2.5, -1.5, 1.5)
                     step = int(rng.choice([-2, -1, 0, 1, 2], p=_step_probs(pull, prev_dir)))
                 nd = cur + step
             nd = int(np.clip(nd, lo + 0, hi))
@@ -702,10 +705,17 @@ def make_phrase(rng, key, chords, bb, style='medium', center_deg=4, span=(-3, 11
 
 
 def _step_probs(pull, prev_dir):
-    """probabilities for steps [-2,-1,0,+1,+2]: mostly stepwise, gentle pull toward the contour target,
-    gap-fill (after moving one way, slightly prefer coming back)."""
-    base = np.array([0.10, 0.32, 0.14, 0.32, 0.10])
-    base[0] *= (1 - pull); base[1] *= (1 - pull); base[3] *= (1 + pull); base[4] *= (1 + pull)
+    """probabilities for steps [-2,-1,0,+1,+2]: a stepwise walk that COMMITS to the contour target, with
+    gap-fill after a leap.
+
+    The pull used to be a 1.5x nudge on +-1 against a table with 14 % repeats, so a four-bar phrase spent its
+    length wandering and arrived wherever it happened to be: the contour was a suggestion, not a shape, and the
+    written theme was a random walk that sounded like one. The pull is exponential in the step now, so a note
+    far from the target takes the interval that closes the distance and a note at the target is free to leave
+    it. At full pull a step away from the target is ~4x less likely than a step toward it."""
+    base = np.array([0.09, 0.30, 0.11, 0.30, 0.09])
+    steps = np.array([-2.0, -1.0, 0.0, 1.0, 2.0])
+    base *= np.exp(np.clip(steps * pull * 0.9, -2.5, 2.5))
     if prev_dir > 0:
         base[:2] *= 1.15
     elif prev_dir < 0:
@@ -714,22 +724,39 @@ def _step_probs(pull, prev_dir):
     return base / base.sum()
 
 
-def vary_phrase(rng, key, phrase_notes, new_chords, bb, shift=0, cadence_deg=None, bars_per_phrase=None, span=None):
-    """Re-use a phrase over different chords (the 'A' returns): same degrees & rhythm, strong beats re-snapped
-    to the new chords, optional transposition by `shift` scale degrees, new cadence note.
+def vary_phrase(rng, key, phrase_notes, new_chords, bb, shift=0, cadence_deg=None, bars_per_phrase=None, span=None,
+                transform='transpose'):
+    """Re-use a phrase over different chords (the 'A' returns): same rhythm, strong beats re-snapped to the new
+    chords, optional transposition by `shift` scale degrees, new cadence note.
+
+    `transform` decides what stays and what moves, because an A that returns as a copy is the reason a theme
+    never develops (the audit's "one cell, not a theme that develops" flag):
+      'transpose' (default) - the same contour, moved `shift` degrees; the old behaviour, kept for callers that
+                               want a literal repeat in a new key;
+      'invert'              - the contour mirrored around the phrase's first degree, rhythm untouched: the shape
+                               is developed rather than restated;
+      'displace'            - the same pitches and rhythm, the phrase moved a beat or half a beat inside its bars,
+                               so it sits across the barline the first statement sat on.
     `span` = (lo, hi) in scale degrees, the span make_phrase wrote the phrase in: a shifted, re-snapped or
     de-rubbed note stays inside it (the cadence note is the caller's choice and is left as given)."""
+    if transform not in ('transpose', 'invert', 'displace'):
+        raise ValueError(f'vary_phrase: unknown transform {transform!r}; use transpose, invert or displace')
     out = []
     lo, hi = span if span is not None else (None, None)
+    axis = phrase_notes[0]['deg'] if (transform == 'invert' and phrase_notes) else None
+    disp = float(rng.choice([-1.0, 0.5, 1.0])) if transform == 'displace' else 0.0
     for n in phrase_notes:
         bi = int(n['t'] // bb)
         ch = new_chords[min(bi, len(new_chords) - 1)]
-        d = n['deg'] + shift
+        d = 2 * axis - n['deg'] if axis is not None else n['deg'] + shift
         if span is not None:
             d = int(np.clip(d, lo, hi))
-        t_in = n['t'] - bi * bb
+        at = n['t'] - bi * bb
+        off = disp if 0.0 <= at + disp < bb else 0.0     # never move a note across a barline
+        t_in = at + off
         # the stored length is d*0.97, so a 1.5-beat note is 1.455: use the flag make_phrase stored when there is one
-        strong = n['strong'] if 'strong' in n else (abs(t_in) < 1e-6 or n['d'] >= 1.4 or (bb == 4 and abs(t_in - 2) < 1e-6))
+        strong = (n['strong'] if 'strong' in n else (abs(at) < 1e-6 or n['d'] >= 1.4 or (bb == 4 and abs(at - 2) < 1e-6))) \
+            if not off else (abs(t_in) < 1e-6 or n['d'] >= 1.4 or (bb == 4 and abs(t_in - 2) < 1e-6))
         if strong:
             d = _snap(key, d, ch, 2)
             if span is not None and not lo <= d <= hi:      # the nearest chord tone INSIDE the span
@@ -741,7 +768,7 @@ def vary_phrase(rng, key, phrase_notes, new_chords, bb, shift=0, cadence_deg=Non
         if n['d'] >= 0.97:
             d = _avoid_semitone_rub(key, d, ch, d - 3 if span is None else max(d - 3, lo),
                                     d + 3 if span is None else min(d + 3, hi))
-        out.append(dict(n, p=key.pitch(d), deg=d))
+        out.append(dict(n, t=n['t'] + off, p=key.pitch(d), deg=d))
     if cadence_deg is not None and out:
         out[-1] = dict(out[-1], p=key.pitch(cadence_deg), deg=cadence_deg)
     return out

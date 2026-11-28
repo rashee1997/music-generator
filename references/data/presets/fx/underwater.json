@@ -1,0 +1,28 @@
+{
+  "name": "underwater",
+  "character": "Heard from under the surface: a closed low-pass, a slow chorus and a swell of the room.",
+  "provenance": "starting value: an example chain, not a measurement; set the times to the cue",
+  "chain": [
+    {
+      "type": "pedalboard",
+      "plugin": "LowpassFilter",
+      "params": {
+        "cutoff_frequency_hz": 700.0
+      }
+    },
+    {
+      "type": "pedalboard",
+      "plugin": "Chorus",
+      "params": {
+        "rate_hz": 0.3,
+        "depth": 0.6,
+        "mix": 0.5
+      }
+    },
+    {
+      "type": "tape_wobble",
+      "wow_cents": 14.0,
+      "flutter_cents": 2.0
+    }
+  ]
+}

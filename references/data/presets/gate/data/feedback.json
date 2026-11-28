@@ -1,0 +1,57 @@
+{
+  "_source": "docs/DYNAMIC-GATE-PLAN.md P3. One home for 'this row failed, so do this': read by scripts/gate_feedback.py, rca.py, gate_report.py and debug_audio.py --feedback. A row entry wins over its tier's default, and the tier default wins over the fallback. `cost` is what the fix costs: none (a note in the report), render (re-run the mix), session (re-perform or re-record), code (a bug in the engine, not the piece).",
+  "tiers": {
+    "1": {
+      "do_next": "fix this before anything below it: it is a broken file, a broken delivery or a broken decode, and no musical decision makes it acceptable",
+      "cost": "render"
+    },
+    "2": {
+      "do_next": "this row is the piece's own promise: change the notes, the arrangement or the direction sheet that made the promise - do not relax the number unless rca.py shows the piece was right and the row was wrong",
+      "cost": "session"
+    },
+    "3": {
+      "do_next": "telemetry, not a verdict: note the number, decide with your ears, and do not chase it",
+      "cost": "none"
+    }
+  },
+  "rows": {
+    "clipping": {"do_next": "find the loudest 20 ms with rca.py (it names the band and the stem), then either drop that stem's peak 1-3 dB, shorten the transient with a 2-5 ms attack, or let the limiter take it: the master must not carry samples at 0 dBFS", "where": ["mixer.py master bus", "mastering limiter"], "cost": "render"},
+    "true_peak": {"do_next": "set the limiter ceiling so the true peak (oversampled, not the sample peak) lands under the target: leave 1 dB of inter-sample headroom, or oversample the limiter 4x", "where": ["mixer.py limiter", "spatial_gate.py delivery"], "cost": "render"},
+    "loudness": {"do_next": "the integrated loudness misses the delivery target: change the master gain, not the mix balance; if the target and the piece disagree, the target is a delivery decision to record in `gate`", "where": ["mixer.py master gain", "render_targets.py"], "cost": "render"},
+    "silence": {"do_next": "a silent gap sits inside the piece where the sheet did not declare one: either fill it (a held pad, a tail) or declare the rest on the hit (`silence_after_s`) so the row and the scene agree", "where": ["direction sheet hits", "arrangement"], "cost": "session"},
+    "dropout": {"do_next": "a stem or the mix falls to nothing outside a declared rest: check the note durations against the section edge (the renderer clips a note at the bar line), and check the reverb tail", "where": ["score notes at the section edge", "mixer.py tail"], "cost": "render"},
+    "cut.hard": {"do_next": "a waveform step: fade the cut over 5-20 ms, or move the cut to a zero crossing; a hard cut is only right on a hit the sheet declares", "where": ["mixer.py", "sfx"], "cost": "render"},
+    "clicks": {"do_next": "find the click time in rca.py; it is usually a one-shot cut short or a DC step: fade it, or fix the sample start", "where": ["preflight.sfx_length", "sfx render"], "cost": "render"},
+    "stem.dead": {"do_next": "a stem carries no signal: the track has notes the renderer dropped (an unknown instrument, a mute, a zero velocity) - fix the track, not the mix", "where": ["presets instruments", "score track velocities"], "cost": "code"},
+    "stem.dropout": {"do_next": "a stem goes silent mid-phrase: a note shorter than the phrase, a rest written in the wrong beat, or an instrument release that ends before the next note", "where": ["score notes", "preset release"], "cost": "session"},
+    "stem.clipping": {"do_next": "the stem itself clips before the mix: lower that instrument's velocity or its preset gain, do not fix it in the master", "where": ["preset gain", "score velocities"], "cost": "render"},
+    "channel.bars": {"do_next": "a channel is out of phase or silent for whole bars: check the pan and the width of that stem; a mono-sum cancellation shows here before the fold rows do", "where": ["mixer.py pan/width", "spatial_gate"], "cost": "render"},
+    "natural.aliasing": {"do_next": "inharmonic energy above the fundamental: raise the oversampling on that instrument, or lower the top partial with a filter; a synth patch with a hard edge aliases when the note is high", "where": ["preset oversample", "instrument filter"], "cost": "render"},
+    "roughness": {"do_next": "clashing partials through the whole piece: separate the chord voices by at least a minor third in the register where they collide, or notch the clashing frequency; a scene role may waive this ceiling inside its own windows (`waive_ceiling`)", "where": ["voicing", "EQ notch", "scene role waive_ceiling"], "cost": "session"},
+    "masking.vs_melody": {"do_next": "the figure loses its ERB band to a bed: notch the bed 2-4 dB at the collision frequency, pan the two apart, or thin the bed while the figure plays; inside a declared dialogue window the margin is tighter on purpose", "where": ["EQ", "pan", "arrangement"], "cost": "render"},
+    "feel.contour": {"do_next": "the line leaps more than the idiom does: reshape the phrase so most moves are steps and the leaps land on the strong beat; a role may waive this ceiling for a peak (`waive_ceiling: [feel.contour]`)", "where": ["melody line", "scene role waive_ceiling"], "cost": "session"},
+    "feel.resolution": {"do_next": "tension notes are left unresolved against the piece's own gravity: resolve them at the phrase end, or declare the role that is allowed to leave them open (`huron_resolution_gravity: RELAX`)", "where": ["harmony", "scene role gravity"], "cost": "session"},
+    "feel.witek": {"do_next": "the bar-level syncopation sits in the WARN band (4.8-5.5) or over the fail limit: move one accent off the beat, or make the pocket plainly on-beat; a rupture role is judged by its own floor (`bsi_min`)", "where": ["drum pattern", "accent placement"], "cost": "session"},
+    "feel.groove": {"do_next": "the parts do not lock: align the bass and drum onsets to the same grid, or write the counter-rhythm a subdivision away from the kick instead of a few ticks", "where": ["bass line", "drum grid"], "cost": "session"},
+    "feel.spiral": {"do_next": "the tension does not spiral: the piece holds one harmonic state, or teleports to another - change the chord under the build, not the notes above it", "where": ["harmony", "section plan"], "cost": "session"},
+    "shape.contrast": {"do_next": "the sections do not differ: change velocity, density or register between them; a piece whose sections are the same section is one section", "where": ["arrangement", "score velocities"], "cost": "session"},
+    "section.energy": {"do_next": "the rendered level does not follow the declared section energy: either the parts playing do not match the sheet's energy number, or the mix is riding the master - fix the arrangement or the declared energy, in that order", "where": ["arrangement", "direction sheet energy"], "cost": "session"},
+    "scene.arc_step": {"do_next": "the peak does not stand above its build: add a register, a harmony or a density step at the peak, or lower the build; a suspense cue carried by pulse alone fails this honestly", "where": ["arrangement", "harmony"], "cost": "session"},
+    "scene.hit_surprise": {"do_next": "a hard hit lands with nothing new on it: put the leap, the register change or the impact ON the hit, not a beat after it", "where": ["melody at the hit", "percussion"], "cost": "session"},
+    "scene.release_delta": {"do_next": "the release does not release: move the harmony home, thin the texture or slow the pulse in the release window; a cut in the picture is not a resolution in the music", "where": ["harmony", "arrangement"], "cost": "session"},
+    "scene.dialogue_mask": {"do_next": "the figure collides with a voice while it speaks: thin or notch the figure inside the dialogue window, or move the figure out of that register for the line", "where": ["EQ", "arrangement", "dialogue windows"], "cost": "render"},
+    "scene.silence_honoured": {"do_next": "the sheet declares a rest and the master is not silent there: stop the sustained voices on the hit, and do not glide into the rest", "where": ["note durations", "direction sheet hits"], "cost": "session"},
+    "scene.bed_stability": {"do_next": "a bed keeps sounding through a declared rest: gate the ambience on the hit, or declare the rest ends where the bed actually comes back", "where": ["environment stem", "direction sheet"], "cost": "session"},
+    "scene.macro_contrast": {"do_next": "the piece has no range: change the quietest and the loudest section so they differ by the floor, or set `min_sections` honestly for a one-section cue", "where": ["arrangement", "mix levels"], "cost": "session"},
+    "pattern.loop_short": {"do_next": "a part repeats without change for the whole piece: write a second bar, or let the part drop out for a section", "where": ["score notes"], "cost": "session"},
+    "tempo.audio": {"do_next": "the measured tempo disagrees with the declared one: either the tempo map is wrong or the beat tracker locked onto a subdivision - if it is the tracker, record a measured skip with its reason in the score `gate`", "where": ["tempo map", "score gate"], "cost": "code"},
+    "outputs": {"do_next": "a delivery format was not produced or failed its own measurement: check the ffmpeg build and the target's spec before re-rendering", "where": ["render_targets.py", "spatial_gate.py"], "cost": "code"},
+    "expression.preset": {"do_next": "the piece asks for an expression profile this project does not have: add it under the project's presets, or declare the piece's own figures in the score", "where": ["presets/expression", "score expression"], "cost": "code"},
+    "scene.preset": {"do_next": "the `scene` block does not validate: the message names the role, the key and its range - fix the block or the role contract, never both at once", "where": ["references/data/presets/gate/data/scene_roles.json"], "cost": "code"}
+  },
+  "fallback": {
+    "do_next": "read the row's detail: it names the measurement and the value. If the cause is not obvious, run `python3 scripts/rca.py <project> --row <name>` before changing anything",
+    "where": [],
+    "cost": "render"
+  }
+}

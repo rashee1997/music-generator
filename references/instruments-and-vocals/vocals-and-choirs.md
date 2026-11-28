@@ -135,3 +135,17 @@ All three read their numbers from the `dsp` section (`references/data/vocal-engi
 - Mono input returns `(N, 2)`; pass `keep_shape=True` for the input's shape.
 
 ---
+
+## 6. Choir layers: a choir that changes make-up with the dynamics
+
+One `ensemble.voices: N` is N singers of one kind singing the same notes the same way at every dynamic: the same choir every time.
+`ensemble.layers` (code: `scripts/vocal_engine/layers.py`) makes it sections. Each section has `voices`, `select` (all, highest, lowest,
+middle of a chord), `shift` (semitones, 12 = octave), `vowel`, `vel` (the MIDI velocity band it sings in), `level_db`, `pan_width`,
+`distance_m`, and `overrides` (any vocal block: `tract.formant_scale` 0.86 for men, `source.register`, `technique.singer_formant`,
+`vibrato`, `dynamics.timbre_follow`). A section below its band is silent, so a crescendo written as velocities adds sections.
+
+Shipped example: `references/data/presets/vocals/vocal_choir_cinematic.json` (breathy high air at pp, women, altos, men in octaves,
+a forte tutti with the singer's formant). Measured on a three-note chord at velocities 30, 70 and 120: the singer count grows 10, 21, 25,
+the level range is wider than a flat 12-voice choir by more than 3 dB, and the share above 1.5 kHz rises 4.4 dB (flat: 2.9 dB); starting values.
+Sampled choirs: write two or more parts (different programs, registers and velocity bands); `preflight.choir_layers` warns on one block.
+Write the choir's dynamics in the score's velocities and `dynamics` curve, not in a mix gain. Whether it sounds like a choir has not been listened to.

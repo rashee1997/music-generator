@@ -52,6 +52,7 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
     """
     c = resolve(cfg)
     rng = np.random.default_rng(seed)
+    breathed = set()               # beats of the notes that let go before a bar line: legato must not close that gap
     if not role:                    # a role-less track still plays as a chord part, but it is said, not assumed
         print('[WARN] humanize_track: no role given, humanized as a chord part. Set the track role (scripts/roles.py).',
               file=sys.stderr)
@@ -192,6 +193,31 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
                 rise = float(p[i] - p[i - 1])
                 if rise > 0:
                     start_boost[i] -= min(fu, 0.35 * rise) / 1000.0
+        # Anticipation: a note that sits just before a strong beat (the next bar line or the middle of the bar) and is not on a beat
+        # itself leans into it, a few ms early; and the last note of a bar lets go before the bar line so the bar breathes. Both are
+        # opt-in per track (`anticipate_ms`, `bar_breath_ms`) and draw from the generator only when asked, so a track that names
+        # neither plays exactly as before. Ensemble studies find push and pull of the beat in every performance (Danielsen et al.).
+        an = float(c.get('anticipate_ms', 0.0) or 0.0)
+        bb = float(c.get('bar_breath_ms', 0.0) or 0.0)
+        if (an > 0 or bb > 0) and base_role in FIG + ('counter', 'arp', 'chord', 'ostinato'):
+            bar = float(ts[0]) * 4.0 / float(ts[1])
+            half = bar / 2.0 if ts[0] % 2 == 0 else None
+            for i in range(n):
+                pos = t_beats[i] % bar
+                to_bar = bar - pos
+                to_half = (half - (pos % half)) if half else None
+                near = min(x for x in (to_bar, to_half) if x is not None)
+                frac_pos = t_beats[i] - np.floor(t_beats[i] + 1e-9)
+                if an > 0 and frac_pos > 1e-6 and 0 < near <= 0.76:
+                    start_boost[i] -= an / 1000.0 * (0.6 + 0.8 * rng.random())
+                end_off = (t_beats[i] + d_beats[i]) % bar
+                if bb > 0 and (end_off < 0.06 or bar - end_off < 0.06):
+                    d_beats[i] = max(0.5 * d_beats[i], d_beats[i] - bb * ms2b)
+                    breathed.add(float(t_beats[i]))
+                    for j in range(i + 1, n):
+                        if t_beats[j] >= t_beats[i] + d_beats[i] - 1e-6 and t_beats[j] % bar < 0.06:
+                            start_boost[j] += 0.35 * bb / 1000.0
+                            break
         # Punctuation: a micro-phrase comma - a fragment that departs at least a whole tone and then turns back -
         # is lengthened on its last note and the next gesture waits for it
         pu = float(c.get('punctuation_ms', 0.0))
@@ -231,10 +257,15 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
                 start_boost[i] += 0.003 if i % 2 else -0.003
 
     # ---- tonal tension: KTH melodic charge and harmonic charge --------------------------------
+    # Every velocity-shaping term is expressed on the same level scale as the phrase arch (dynamics.shape_velocity),
+    # so a phrase the score wrote louder gets a proportionally larger charge and expectation instead of having its
+    # expression diluted by a bigger arch. `gain` is that scale: the level clamp times the preset's arch size.
+    lvl = float(np.clip(float(np.mean(v)) / 90.0, 0.45, 1.35)) if n else 1.0
+    gain = lvl * (float(c.get('vel_arch', 7.0)) / 7.0)      # the arch's scale, so every term keeps its share of it
     tonic = key_tonic(key) if key is not None else getattr(tm, 'key', None)
     roots = chord_roots if chord_roots is not None else getattr(tm, 'chord_roots', None)
-    mc_v, mc_d = float(c.get('melodic_charge_vel', 0.0)), float(c.get('melodic_charge_dur', 0.0))
-    hc_v, hc_d = float(c.get('harmonic_charge_vel', 0.0)), float(c.get('harmonic_charge_dur', 0.0))
+    mc_v, mc_d = float(c.get('melodic_charge_vel', 0.0)) * gain, float(c.get('melodic_charge_dur', 0.0))
+    hc_v, hc_d = float(c.get('harmonic_charge_vel', 0.0)) * gain, float(c.get('harmonic_charge_dur', 0.0))
     if tonic is not None:
         if (mc_v or mc_d) and roots is not None and len(roots[0]):
             rb, rp = np.asarray(roots[0], float), np.asarray(roots[1], int)
@@ -262,6 +293,7 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
 
     # ---- expectation -> expression: hesitation before a surprise, a breath before an uncertain note ---------------
     ic_ms, ic_v, h_ms = (float(c.get(k, 0.0)) for k in ('ic_agogic_ms', 'ic_vel', 'h_breath_ms'))
+    ic_v *= gain                                   # the expectation's velocity share keeps its weight as the arch grows
     if (ic_ms or ic_v or h_ms) and base_role in FIG + ('counter',) and tonic is not None:
         z_ic, z_h = expectation.note_z(ns, tonic)
         start_boost += ic_ms / 1000.0 * z_ic + h_ms / 1000.0 * np.maximum(z_h - 0.5, 0.0)
@@ -355,7 +387,7 @@ def humanize_track(notes, tm, cfg='natural', role=None, seed=0, ts=(4, 4), swing
         mono = sorted(ev, key=lambda e_: e_['t'])
         for a, b in zip(mono[:-1], mono[1:]):
             gap = b['t'] - (a['t'] + a['dur'])
-            if a.get('art') == 'staccato' or b['t'] <= a['t'] + 0.05:   # staccato or a chord tone: leave alone
+            if a.get('art') == 'staccato' or b['t'] <= a['t'] + 0.05 or a['beat'] in breathed:   # staccato, a chord tone or a bar breath: leave alone
                 continue
             if -0.001 < gap < 0.20:
                 a['dur'] = (b['t'] - a['t']) + legato_overlap_ms / 1000.0
