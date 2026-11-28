@@ -1,7 +1,7 @@
 {
   "name": "effects",
   "character": "The effect library of scripts/fx_engine: every effect's parameters, their ranges and their defaults. A chain in an instrument preset (`fx`) names effects from here.",
-  "provenance": "starting value: every default and range below is a working figure chosen so the effect is audible and safe on a stem, not a measurement. Physical relations (the Doppler delay is path length over the speed of sound, a wow depth in cents follows from the delay swing) are derived in the code from the parameters; the numbers are not. Replace one with a measured or cited value in a project's own `fx` preset and say so there. Automation and recipes: starting values drawn from practitioner guidance (ramping an LFO's rate and depth together on a riser, automating distortion or filter for movement, saving the biggest impacts for the climax; Ableton 'Learn How to Make High-Impact Sounds for Movies and Trailers', Violet Recording 'Sound Design for Trailers'); not measurements.",
+  "provenance": "starting value: every default and range below is a working figure chosen so the effect is audible and safe on a stem, not a measurement. Physical relations (the Doppler delay is path length over the speed of sound, a wow depth in cents follows from the delay swing) are derived in the code from the parameters; the numbers are not. Replace one with a measured or cited value in a project's own `fx` preset and say so there. Automation and recipes: starting values drawn from practitioner guidance (ramping an LFO's rate and depth together on a riser, automating distortion or filter for movement, saving the biggest impacts for the climax; Ableton 'Learn How to Make High-Impact Sounds for Movies and Trailers', Violet Recording 'Sound Design for Trailers'); not measurements. Mixing techniques (saturator ... ping_delay): the techniques are conventional or documented practice (parallel compression, de-essing in the 4-7 kHz band, ducking by the dry signal, mid-side processing with mono lows; MusicRadar, iZotope, Sonarworks - knowledgebase/sound-design/mixing-techniques.md); every number is a starting value, not a measurement.",
   "common": {
     "mix": {
       "default": 1.0,
@@ -555,6 +555,403 @@
         }
       },
       "automatable": true
+    },
+    "saturator": {
+      "character": "Waveshaping with a character: tube, tape, soft clip, hard clip, wavefolder or diode, four times oversampled, level-matched so only the colour changes.",
+      "automatable": true,
+      "params": {
+        "mode": {
+          "default": "tube",
+          "choices": [
+            "tube",
+            "tape",
+            "soft_clip",
+            "hard_clip",
+            "fold",
+            "diode"
+          ],
+          "text": "the shape: tube is asymmetric (even harmonics), tape is symmetric (odd, rolled off), fold turns the signal back on itself"
+        },
+        "drive_db": {
+          "default": 12.0,
+          "text": "how hard the stem is pushed into the shaper, against its own peak",
+          "min": 0.0,
+          "max": 40.0,
+          "unit": "dB"
+        },
+        "bias": {
+          "default": 0.15,
+          "text": "offset before a tube curve: more even harmonics",
+          "min": 0.0,
+          "max": 0.6
+        },
+        "ceiling_db": {
+          "default": -1.0,
+          "text": "the level a clip mode stops at",
+          "min": -24.0,
+          "max": 0.0,
+          "unit": "dB"
+        },
+        "tone_hz": {
+          "default": 14000.0,
+          "text": "a one-pole low-pass after the shaper that rolls the new harmonics off",
+          "min": 500.0,
+          "max": 20000.0,
+          "unit": "Hz"
+        },
+        "match_level": {
+          "default": "yes",
+          "choices": [
+            "yes",
+            "no"
+          ],
+          "text": "scale the result back to the stem's own RMS, so the saturation is not a volume change"
+        }
+      }
+    },
+    "de_esser": {
+      "character": "A split-band de-esser: only the sibilant band is turned down, and only while it is louder than the threshold.",
+      "params": {
+        "freq_hz": {
+          "default": 6500.0,
+          "text": "centre of the sibilant band",
+          "min": 3000.0,
+          "max": 12000.0,
+          "unit": "Hz"
+        },
+        "q": {
+          "default": 2.0,
+          "text": "how narrow the band is",
+          "min": 0.5,
+          "max": 8.0
+        },
+        "threshold_db": {
+          "default": -30.0,
+          "text": "the band level above which it is reduced",
+          "min": -60.0,
+          "max": 0.0,
+          "unit": "dB"
+        },
+        "ratio": {
+          "default": 4.0,
+          "text": "reduction of what is over the threshold",
+          "min": 1.0,
+          "max": 20.0
+        },
+        "release_ms": {
+          "default": 40.0,
+          "text": "how fast the band returns after a sibilant",
+          "min": 5.0,
+          "max": 500.0,
+          "unit": "ms"
+        },
+        "max_cut_db": {
+          "default": 12.0,
+          "text": "the most the band is ever cut",
+          "min": 1.0,
+          "max": 30.0,
+          "unit": "dB"
+        }
+      }
+    },
+    "gate": {
+      "character": "A downward expander or gate: quiet between the notes is turned down, with a hold so a note is not chopped.",
+      "params": {
+        "threshold_db": {
+          "default": -45.0,
+          "text": "the level under which the stem is turned down",
+          "min": -80.0,
+          "max": -10.0,
+          "unit": "dB"
+        },
+        "ratio": {
+          "default": 20.0,
+          "text": "expansion: 100 is a gate",
+          "min": 1.5,
+          "max": 100.0
+        },
+        "range_db": {
+          "default": 40.0,
+          "text": "the most it turns down",
+          "min": 3.0,
+          "max": 80.0,
+          "unit": "dB"
+        },
+        "attack_ms": {
+          "default": 1.0,
+          "text": "how fast it opens",
+          "min": 0.1,
+          "max": 50.0,
+          "unit": "ms"
+        },
+        "hold_ms": {
+          "default": 40.0,
+          "text": "how long it stays open after the level drops",
+          "min": 0.0,
+          "max": 500.0,
+          "unit": "ms"
+        },
+        "release_ms": {
+          "default": 120.0,
+          "text": "how fast it closes",
+          "min": 5.0,
+          "max": 1500.0,
+          "unit": "ms"
+        },
+        "sidechain_hp_hz": {
+          "default": 80.0,
+          "text": "high-pass of the detector, so a rumble does not hold it open",
+          "min": 20.0,
+          "max": 2000.0,
+          "unit": "Hz"
+        }
+      }
+    },
+    "parallel_comp": {
+      "character": "New York compression: a hard-squashed copy added under the original, so quiet detail comes up and the transients are left alone. `mix` is the blend.",
+      "params": {
+        "threshold_db": {
+          "default": -30.0,
+          "text": "the level above which the copy is compressed",
+          "min": -60.0,
+          "max": 0.0,
+          "unit": "dB"
+        },
+        "ratio": {
+          "default": 8.0,
+          "text": "compression ratio of the copy",
+          "min": 1.5,
+          "max": 40.0
+        },
+        "attack_ms": {
+          "default": 3.0,
+          "text": "attack of the copy",
+          "min": 0.1,
+          "max": 100.0,
+          "unit": "ms"
+        },
+        "release_ms": {
+          "default": 80.0,
+          "text": "release of the copy",
+          "min": 5.0,
+          "max": 1000.0,
+          "unit": "ms"
+        },
+        "knee_db": {
+          "default": 6.0,
+          "text": "soft knee width",
+          "min": 0.0,
+          "max": 24.0,
+          "unit": "dB"
+        },
+        "makeup_db": {
+          "default": 6.0,
+          "text": "level of the copy before it is added",
+          "min": 0.0,
+          "max": 24.0,
+          "unit": "dB"
+        },
+        "hp_hz": {
+          "default": 120.0,
+          "text": "high-pass of the copy so the low end is not doubled (0 is off)",
+          "min": 0.0,
+          "max": 1000.0,
+          "unit": "Hz"
+        }
+      }
+    },
+    "upward_comp": {
+      "character": "Upward compression: what is under the threshold is lifted, up to a limit, and nothing under the floor is lifted.",
+      "params": {
+        "threshold_db": {
+          "default": -35.0,
+          "text": "the level under which the stem is lifted",
+          "min": -70.0,
+          "max": -5.0,
+          "unit": "dB"
+        },
+        "ratio": {
+          "default": 3.0,
+          "text": "how much of the distance under the threshold is lifted",
+          "min": 1.2,
+          "max": 20.0
+        },
+        "attack_ms": {
+          "default": 10.0,
+          "text": "how fast the lift is taken away under a loud note",
+          "min": 0.5,
+          "max": 200.0,
+          "unit": "ms"
+        },
+        "release_ms": {
+          "default": 250.0,
+          "text": "how slowly the lift comes back",
+          "min": 20.0,
+          "max": 3000.0,
+          "unit": "ms"
+        },
+        "max_gain_db": {
+          "default": 12.0,
+          "text": "the most it lifts",
+          "min": 1.0,
+          "max": 30.0,
+          "unit": "dB"
+        },
+        "floor_db": {
+          "default": -60.0,
+          "text": "nothing quieter than this is lifted (a noise floor is not detail)",
+          "min": -90.0,
+          "max": -30.0,
+          "unit": "dB"
+        }
+      }
+    },
+    "band_width": {
+      "character": "A stereo field that depends on frequency: mono below a corner, the side signal scaled above it.",
+      "automatable": true,
+      "params": {
+        "mono_below_hz": {
+          "default": 140.0,
+          "text": "below this the signal is summed to the centre",
+          "min": 20.0,
+          "max": 500.0,
+          "unit": "Hz"
+        },
+        "width": {
+          "default": 1.4,
+          "text": "side level above the corner: 1 leaves it, 0 is mono, over 1 widens",
+          "min": 0.0,
+          "max": 3.0
+        }
+      }
+    },
+    "tilt_eq": {
+      "character": "A spectral tilt about a pivot: brighter or darker without a peak or a notch.",
+      "automatable": true,
+      "params": {
+        "tilt_db": {
+          "default": 3.0,
+          "text": "the difference between the highs and the lows (half up, half down)",
+          "min": -12.0,
+          "max": 12.0,
+          "unit": "dB"
+        },
+        "pivot_hz": {
+          "default": 1000.0,
+          "text": "where the tilt balances",
+          "min": 200.0,
+          "max": 4000.0,
+          "unit": "Hz"
+        }
+      }
+    },
+    "freq_shift": {
+      "character": "A frequency shifter: every partial moves by the same number of hertz, so harmonic sounds turn inharmonic and a slight shift thickens a pad.",
+      "automatable": true,
+      "params": {
+        "shift_hz": {
+          "default": 5.0,
+          "text": "the shift",
+          "min": -500.0,
+          "max": 500.0,
+          "unit": "Hz"
+        },
+        "spread": {
+          "default": 1.0,
+          "text": "1 shifts the two channels in opposite directions (wide, beating); 0 shifts both the same way",
+          "min": 0.0,
+          "max": 1.0
+        }
+      }
+    },
+    "resonator_bank": {
+      "character": "A bank of narrow resonances tuned to the piece's notes: the air in a stem rings in the key.",
+      "automatable": true,
+      "params": {
+        "pitches": {
+          "default": [
+            57,
+            64,
+            69
+          ],
+          "type": "list",
+          "min": 24,
+          "max": 108,
+          "text": "the MIDI notes the bank is tuned to (the piece's tonic, fifth and octave, say)"
+        },
+        "q": {
+          "default": 40.0,
+          "text": "how narrow each resonance is",
+          "min": 5.0,
+          "max": 120.0
+        },
+        "level_db": {
+          "default": -18.0,
+          "text": "the resonated signal against the stem",
+          "min": -40.0,
+          "max": 0.0,
+          "unit": "dB"
+        },
+        "partials": {
+          "default": 3,
+          "text": "how many harmonics of each note are tuned",
+          "min": 1,
+          "max": 6
+        }
+      }
+    },
+    "ping_delay": {
+      "character": "An echo that stays out of the way: filtered, ping-ponged between the channels, and ducked by the dry signal so it comes up in the gaps.",
+      "automatable": true,
+      "params": {
+        "time_ms": {
+          "default": 375.0,
+          "text": "time between repeats (375 ms is a dotted eighth at 120 BPM)",
+          "min": 10.0,
+          "max": 2000.0,
+          "unit": "ms"
+        },
+        "feedback": {
+          "default": 0.35,
+          "text": "how loud each repeat is against the one before",
+          "min": 0.0,
+          "max": 0.95
+        },
+        "hp_hz": {
+          "default": 300.0,
+          "text": "high-pass of the echoes",
+          "min": 20.0,
+          "max": 2000.0,
+          "unit": "Hz"
+        },
+        "lp_hz": {
+          "default": 5500.0,
+          "text": "low-pass of the echoes",
+          "min": 1000.0,
+          "max": 20000.0,
+          "unit": "Hz"
+        },
+        "spread": {
+          "default": 1.0,
+          "text": "1 sends the repeats alternately to the two channels",
+          "min": 0.0,
+          "max": 1.0
+        },
+        "duck_db": {
+          "default": 9.0,
+          "text": "how far the dry signal turns the echoes down while it plays",
+          "min": 0.0,
+          "max": 24.0,
+          "unit": "dB"
+        },
+        "wet_db": {
+          "default": -9.0,
+          "text": "the echoes against the stem",
+          "min": -40.0,
+          "max": 6.0,
+          "unit": "dB"
+        }
+      }
     }
   }
 }

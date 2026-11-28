@@ -1,0 +1,14 @@
+{
+  "name": "mix_fold_grit",
+  "character": "An unconventional grit: a wavefolder blended in under the part, level-matched, for a metallic bite on a bass or a pulse.",
+  "provenance": "starting value, not a measurement. Sources: knowledgebase/sound-design/mixing-techniques.md (parallel compression, de-essing 4-7 kHz, ducking by the dry signal, mid-side with mono lows, distortion on a return, gates with hold; MusicRadar, iZotope, Sonarworks, Fiveable). ",
+  "chain": [
+    {
+      "type": "saturator",
+      "mode": "fold",
+      "drive_db": 14.0,
+      "tone_hz": 7000.0,
+      "mix": 0.25
+    }
+  ]
+}

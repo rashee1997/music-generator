@@ -34,7 +34,7 @@ deterministic: the same chain, stem and seed give the same samples.
 """
 import numpy as np
 
-from . import core, host, modfx, spacefx, spec, timefx
+from . import core, host, mixfx, modfx, spacefx, spec, timefx
 from . import spec as spec_mod
 
 # type -> (function, mode, window). mode "ranged": blended in inside the window from `window(p, n, sr)` (default: start_s..end_s);
@@ -56,6 +56,16 @@ EFFECTS = {
     'air': (modfx.air, 'ranged', None),
     'reverse_swell': (spacefx.reverse_swell, 'ranged', None),
     'shimmer': (spacefx.shimmer, 'ranged', None),
+    'saturator': (mixfx.saturator, 'ranged', None),
+    'de_esser': (mixfx.de_esser, 'ranged', None),
+    'gate': (mixfx.gate, 'ranged', None),
+    'parallel_comp': (mixfx.parallel_comp, 'ranged', None),
+    'upward_comp': (mixfx.upward_comp, 'ranged', None),
+    'band_width': (mixfx.band_width, 'ranged', None),
+    'tilt_eq': (mixfx.tilt_eq, 'ranged', None),
+    'freq_shift': (mixfx.freq_shift, 'ranged', None),
+    'resonator_bank': (mixfx.resonator_bank, 'ranged', None),
+    'ping_delay': (mixfx.ping_delay, 'ranged', None),
     'pedalboard': (host.pedalboard, 'ranged', None),
     'external': (host.external, 'ranged', None),
 }

@@ -184,7 +184,7 @@ def basses():
         out.append(note(b(bar), 3.7, base, v))
         if r == 'peak':
             out.append(note(b(bar, 2), 1.7, base + 7, round(v * 0.8, 3)))
-    out.append(note(b(32, 2), 3.7, root_pitch(32, 24, 35), 0.5))
+    out.append(note(b(32, 2.25), 3.45, root_pitch(32, 24, 35), 0.5))
     return out
 
 
@@ -208,8 +208,9 @@ def tuba():
         if role_of(bar) != 'peak':
             continue
         x = root_pitch(bar, 38, 49)
-        out.append(note(b(bar), 0.9, x, vel(bar, 0.9)))
-        out.append(note(b(bar, 2.5), 0.9, x - 5, vel(bar, 0.76)))
+        phrase = (bar % 4) / 3.0                       # the fourth bar of a phrase leans, the first sets down
+        out.append(note(b(bar), 0.9, x, vel(bar, 0.78 + 0.22 * (1.0 - phrase))))
+        out.append(note(b(bar, 2.5), 0.9, x - 5, vel(bar, 0.6 + 0.3 * phrase)))
     return out
 
 
@@ -335,7 +336,9 @@ def trombones():
         x = tone(bar, 0, 52, 63)
         third = 4 if PLAN[bar] == 'C' else 3
         for idx, off in enumerate((0, third, 7)):
-            out.append(note(b(bar, idx * 0.02), 0.55, x + off, round(vel(bar, 0.95) * 0.74 * (0.88 + 0.06 * idx), 3)))
+            out.append(note(b(bar, idx * 0.02), 0.55, x + off, round(vel(bar, 0.95) * (0.5 + 0.34 * ((bar % 4) / 3.0)) * (0.88 + 0.06 * idx), 3)))
+    out.append(note(b(53), 1.5, 53, 0.8))          # the dropout's hit: one low brass note as the music leaves
+    out.append(note(b(53, 0.02), 1.5, 57, 0.76))
     return out
 
 
@@ -363,7 +366,7 @@ def low_swell():
     # five long swells, one into each act turn (the stem gate reads many short isolated notes as a tick train)
     for bar, d in ((6, 5.0), (18, 5.0), (30, 3.0), (44, 5.0)):
         out.append(note(b(bar, 2), d, root_pitch(bar, 41, 52) - 12, 0.8))     # F1 and up: below it the sample flutters
-    out.append(note(b(32, 2.0), b(33) - b(32, 2.0), root_pitch(33, 41, 52) - 12, 0.5))
+    out.append(note(b(32, 2.25), b(33) - b(32, 2.25), root_pitch(33, 41, 52) - 12, 0.5))        # a quarter after the rest ends: the humanizer cannot leak into it
     out.append(note(b(53), 8.0, 29, 0.42))
     return out
 
@@ -372,6 +375,11 @@ def timpani():
     out = []
     for bar in (7, 13, 19, 27, 33, 45, 49, 53):
         out.append(note(b(bar), 1.2, root_pitch(bar, 38, 49), vel(bar, 0.95)))
+    for bar in range(19, 53):                      # the peaks: a pitch change and a pickup so the part is not four hits repeated
+        if role_of(bar) == 'peak' and active(bar):
+            out.append(note(b(bar, 2.0), 0.7, root_pitch(bar, 38, 49) + (7 if bar % 2 == 0 else 0), vel(bar, 0.8)))
+            if bar % 4 == 0:
+                out.append(note(b(bar, 3.5), 0.4, root_pitch(bar, 38, 49), vel(bar, 0.7)))
     for bar in (18, 26, 44, 52):                   # a roll into the next section
         for i in range(8):
             out.append(note(b(bar, 2.0 + i * 0.25), 0.22, root_pitch(bar, 38, 49), round(vel(bar) * (0.66 + 0.34 * (i / 7.0) ** 1.6), 3)))
@@ -405,6 +413,12 @@ def bass_drum():
             pattern = ((0.0, 1.0), (1.0, 0.7), (1.5, 0.8), (2.0, 0.95), (2.75, 0.66), (3.5, 0.84))
         else:
             pattern = ((0.0, 1.0), (1.5, 0.8), (1.75, 0.74), (2.0, 0.95), (3.0, 0.86), (3.5, 0.8))
+        if bar % 8 == 7:                           # a fill into the next phrase: the last beat in sixteenths, rising
+            pattern = tuple(p for p in pattern if p[0] < 3.0) + tuple((3.0 + 0.25 * k, 0.55 + 0.12 * k) for k in range(4))
+        elif bar % 4 == 2:                         # a ghost before the third beat
+            pattern = pattern + ((1.75, 0.38),)
+        elif bar % 6 == 5:                         # a hit left out: the pulse stumbles
+            pattern = tuple(p for p in pattern if p[0] != 1.5)
         for bb, a in pattern:
             out.append(note(b(bar, bb), 0.3, 36, round(v * a, 3)))
     for bar in range(7, 13):                       # the take: a slow pulse like a heart, one a bar then two
@@ -422,8 +436,15 @@ def snare():
             out.append(note(b(bar, i * 0.25), 0.2, 38, round(0.40 + 0.5 * (i / 15.0) ** 1.6 + (0.04 if i % 2 == 0 else -0.04), 3)))
     for bar in range(19, 53):
         if role_of(bar) == 'peak':
-            for bb in (1.0, 3.0):
-                out.append(note(b(bar, bb), 0.25, 38, vel(bar, 0.85)))
+            beats = [(1.0, 0.85), (3.0, 0.85)]
+            if bar % 2 == 0:
+                beats.append((2.5, 0.3))           # a ghost note before the backbeat
+            if bar % 3 == 0:
+                beats = [(0.75, 0.4)] + beats      # a pickup
+            if bar % 4 == 3:
+                beats += [(3.5, 0.55), (3.75, 0.7)]    # a drag into the next bar
+            for bb, sc in beats:
+                out.append(note(b(bar, bb), 0.25, 38, vel(bar, sc)))
     return out
 
 
@@ -439,6 +460,11 @@ def cymbals():
     out = []
     for bar in (7, 13, 19, 27, 33, 45, 49):
         out.append(note(b(bar, 0.0), 2.4, 49, round(vel(bar, 0.85), 3)))
+    for bar in range(19, 53):                        # a china on the off-beat of every fourth bar, a splash pickup into each section
+        if role_of(bar) == 'peak' and bar % 4 == 0:
+            out.append(note(b(bar, 2.0), 1.5, 52, vel(bar, 0.5)))
+    for bar in (12, 18, 26, 32, 44):
+        out.append(note(b(bar, 3.5), 0.6, 55, 0.5))
     for bar in (19, 33, 45):                         # a second crash 25 ms behind, brighter
         out.append(note(b(bar, 0.0) + 0.05, 3.0, 57, 0.85))
     out.append(note(b(53, 0.0), b(56) - b(53), 49, 0.4))     # a bloom into the empty room
@@ -725,6 +751,7 @@ def main():
                    'tensions': ['ostinato', 'pedal', 'cluster', 'silence_before', 'unresolved_dominant'], 'avoid': ['joyful', 'playful']},
         'mix_intent': {'hero': 'horns', 'leave_free_hz': []},
         'medium': {'model': 'iso9613', 'state': {'temperature_k': 291.15, 'pressure_pa': 101325, 'rh_percent': 70}},
+        'gate': {'tempo.audio': {'mode': 'skip', 'reason': 'measured on the render (attempt 1): the beat tracker reads 59.9 BPM against the declared 120 (the half-time octave of the same pulse: 60 BPM is the heart, the engines and the half-bar the cycles shift against); the chase pulse is a set of odd-length cycles moved bar by bar on purpose, so no tracker locks onto the written beat'}},
         'plan': {'sections': sections_json()},
         'tracks': tracks, 'mix': {'tracks': {}},
     }

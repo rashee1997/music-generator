@@ -92,7 +92,7 @@ SPECTRAL_PROFILES = DEFAULTS['spectral']['profiles']
 # legacy mix-preset keys the engine reads directly (they are not in DEFAULTS because they are flat)
 LEGACY_KEYS = {'lead_band_hz', 'carve_db', 'max_boost_db', 'active_db', 'lead_db_margin', 'inst_eq',
                'seating', 'level_by_role', 'widen_by_role', 'saturation', 'spatial', 'env_target_lufs',
-               'immersive', 'name', 'character', 'note', '_source', 'role_chains', 'spectral_profiles'}
+               'immersive', 'name', 'character', 'note', '_source', 'role_chains', 'spectral_profiles', 'fx'}
 
 # (section, key) -> (kind, low, high) for every number with a meaningful range
 RANGES = {
@@ -182,6 +182,35 @@ def section(mix, name):
     return _merge(DEFAULTS.get(name, {}), got)
 
 
+def fx_problems(mix):
+    """The mix preset's two effect chains: `fx` (a table: an instrument name, `@role` or `*` -> a chain, run on that stem after its EQ and
+    dynamics, after the instrument preset's own chain) and `mastering.fx` (a chain on the summed master). Checked with the fx engine's own
+    spec, so an unknown effect, key or out-of-range number is reported with the effect it belongs to."""
+    out = []
+    try:
+        import fx_engine
+    except Exception as exc:                          # the fx engine is optional for a caller that only validates ranges
+        return [f'mix.fx: the fx engine could not be imported to check the chains ({type(exc).__name__})']
+    table = mix.get('fx')
+    if table is not None:
+        if not isinstance(table, dict):
+            out.append('mix.fx: expected an object {instrument | @role | *: chain}')
+        else:
+            for key, chain in table.items():
+                if not isinstance(chain, (list, str)):
+                    out.append(f'mix.fx.{key}: expected a chain (a list of effects or a chain preset name)')
+                    continue
+                out += [f'mix.fx.{key}: {w}' for w in fx_engine.problems(chain)]
+    m = mix.get('mastering')
+    chain = m.get('fx') if isinstance(m, dict) else None
+    if chain:
+        if not isinstance(chain, (list, str)):
+            out.append('mix.mastering.fx: expected a chain (a list of effects or a chain preset name)')
+        else:
+            out += [f'mix.mastering.fx: {w}' for w in fx_engine.problems(chain)]
+    return out
+
+
 def validate(mix):
     """Problems with a mix preset: unknown keys, bad types, out-of-range numbers, malformed EQ bands.
     Returns a list of strings (empty = good). Never raises."""
@@ -200,6 +229,7 @@ def validate(mix):
             if key not in defaults:
                 problems.append(f'mix.{sec}.{key}: unknown key (the engine would ignore it); '
                                 f'known: {", ".join(sorted(defaults))}')
+    problems += fx_problems(mix)
     th = mix.get('theatrical')
     if isinstance(th, dict):
         for key in th:

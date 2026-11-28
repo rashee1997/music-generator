@@ -1,0 +1,133 @@
+{
+  "duration_s": 120.71995464852608,
+  "sections": [
+    {
+      "name": "the_lab",
+      "start_s": 0.0,
+      "end_s": 12.0,
+      "dyn": 0.25
+    },
+    {
+      "name": "the_take",
+      "start_s": 12.0,
+      "end_s": 24.0,
+      "dyn": 0.45
+    },
+    {
+      "name": "the_alert",
+      "start_s": 24.0,
+      "end_s": 36.0,
+      "dyn": 0.65
+    },
+    {
+      "name": "the_chase",
+      "start_s": 36.0,
+      "end_s": 52.0,
+      "dyn": 0.9
+    },
+    {
+      "name": "the_flyover",
+      "start_s": 52.0,
+      "end_s": 58.0,
+      "dyn": 0.8
+    },
+    {
+      "name": "the_truck",
+      "start_s": 58.0,
+      "end_s": 64.0,
+      "dyn": 0.6
+    },
+    {
+      "name": "the_escalation",
+      "start_s": 64.0,
+      "end_s": 88.0,
+      "dyn": 0.95
+    },
+    {
+      "name": "the_wall",
+      "start_s": 88.0,
+      "end_s": 104.0,
+      "dyn": 1.0
+    },
+    {
+      "name": "the_dropout",
+      "start_s": 104.0,
+      "end_s": 110.0,
+      "dyn": 0.35
+    },
+    {
+      "name": "the_signal",
+      "start_s": 110.0,
+      "end_s": 120.0,
+      "dyn": 0.3
+    }
+  ],
+  "flags": [
+    [
+      0.0348,
+      "stem.tick",
+      "basses",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "piano_theme",
+      "PASS"
+    ],
+    [
+      4.0287,
+      "stem.tick",
+      "violins_long",
+      "PASS"
+    ],
+    [
+      11.0411,
+      "stem.tick",
+      "low_swell",
+      "PASS"
+    ],
+    [
+      16.045,
+      "stem.tick",
+      "choir",
+      "PASS"
+    ],
+    [
+      24.0094,
+      "stem.tick",
+      "basses_pizz",
+      "PASS"
+    ],
+    [
+      24.021,
+      "stem.tick",
+      "celli",
+      "PASS"
+    ],
+    [
+      35.9561,
+      "stem.tick",
+      "trombones",
+      "PASS"
+    ],
+    [
+      35.9677,
+      "stem.tick",
+      "tuba",
+      "PASS"
+    ],
+    [
+      36.3276,
+      "stem.tick",
+      "violas",
+      "PASS"
+    ],
+    [
+      64.029,
+      "stem.tick",
+      "violins_staccato",
+      "PASS"
+    ]
+  ]
+}

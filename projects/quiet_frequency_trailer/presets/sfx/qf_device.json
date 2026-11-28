@@ -3,7 +3,7 @@
  "kind": "sfx",
  "character": "The device that controls people, heard once in the lab and once at the end: a sub pulse under a thin carrier near 3 kHz that wobbles at 7.5 Hz and creeps upward, never resolving.",
  "seconds": 111.5,
- "note": "A 41 Hz tone with a slow 1 Hz swell, and a carrier at 3.15 kHz amplitude-modulated at 7.5 Hz; the carrier rises by a third of an octave over the last nine seconds; the cue is not a signal to any real system. ESTIMATE: the pulse and carrier frequencies and the levels are starting values",
+ "note": "A 41 Hz tone with a slow 1 Hz swell, and a carrier at 1.85 kHz amplitude-modulated at 7.5 Hz; the carrier rises by a third of an octave over the last nine seconds; the cue is not a signal to any real system. ESTIMATE: the pulse and carrier frequencies and the levels are starting values",
  "model": {
   "seconds": 111.5,
   "voices": [
@@ -4503,7 +4503,7 @@
     "gain_db": -14.0,
     "excite": {
      "kind": "periodic",
-     "f0": 3150.0,
+     "f0": 1850.0,
      "harmonics": 3,
      "jitter": 0.002,
      "am_hz": 7.5,

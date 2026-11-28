@@ -1,0 +1,18 @@
+{
+  "name": "mix_key_air",
+  "character": "The air in a stem rings in the key: a resonator bank on the tonic, fifth and octave, quiet and narrow.",
+  "provenance": "starting value, not a measurement. Sources: knowledgebase/sound-design/mixing-techniques.md (parallel compression, de-essing 4-7 kHz, ducking by the dry signal, mid-side with mono lows, distortion on a return, gates with hold; MusicRadar, iZotope, Sonarworks, Fiveable). ",
+  "chain": [
+    {
+      "type": "resonator_bank",
+      "pitches": [
+        45,
+        52,
+        57
+      ],
+      "q": 50.0,
+      "level_db": -22.0,
+      "partials": 3
+    }
+  ]
+}

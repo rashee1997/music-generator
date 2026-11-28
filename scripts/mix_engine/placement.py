@@ -12,6 +12,27 @@ from .dsp_utils import _air_absorb, _direct_gain, _pan_inplace, _proximity, _spa
 from .chains import from_table
 
 
+
+def _as_chain(chain):
+    """A chain as a list (a chain preset name is one entry)."""
+    if not chain:
+        return []
+    return [chain] if isinstance(chain, str) else list(chain)
+
+
+def _mix_fx_for(inst, role):
+    """The mix preset's `fx` table for a stem, in this order: `*`, `@<role>`, the instrument's own name (or a base name of it). Every match
+    runs, in that order, so a piece can say "all parts", "all drums" and "this snare" in one table."""
+    table = _mix().get('fx') or {}
+    out = []
+    for key in ('*', '@' + str(role)):
+        if key in table:
+            out += _as_chain(table[key])
+    named = from_table({k: v for k, v in table.items() if k != '*' and not str(k).startswith('@')}, inst)
+    if named:
+        out += _as_chain(named)
+    return out
+
 def _imm():
     """The active mix preset's immersive block when it is switched on, else None."""
     c = _mix().get('immersive') or {}
@@ -96,6 +117,9 @@ def default_spec(tr):
     except Exception as e:
         print(f'  [WARN] preset lookup for {inst!r} failed, using role defaults: {e}')
 
+    mix_fx = _mix_fx_for(inst, role)
+    if mix_fx:                                           # the piece's own mix adds to the instrument preset's chain, after it
+        d['fx'] = _as_chain(d.get('fx')) + mix_fx
     sat = from_table(_mix().get('saturation') or {}, inst)
     if sat is not None:
         d['saturation'] = sat

@@ -32,6 +32,7 @@ Read one file at a time. `scripts/research_kb.py` pulls the file a piece needs.
 | `media/game-sfx.md` | Hit variation, impact stages, footstep surfaces and interface tones | unverified |
 | `media/video-scoring.md` | Frame-locked tempo, hit windows and voice-over ducking bands | unverified |
 | `sound-design/low-end-and-virtual-bass.md` | Where a theatrical low end goes missing (master high-pass, the sub row), virtual bass for headphones and small speakers, the theatrical tone | unverified |
+| `sound-design/mixing-techniques.md` | Mixing techniques (parallel and upward compression, de-essing, gates, saturation, mid-side width, ducked delays, resonators) and where each is in the engine | unverified |
 | `sound-design/sample-realism-equations.md` | Why a SoundFont part sounds like MIDI and the per-note laws (brightness and attack follow velocity) that fix part of it, with ensemble-timing and vibrato figures | unverified |
 | `sound-design/audio-cloning.md` | Pitch, timbre, groove and room values read from a recording | unverified |
 | `sound-design/click-detection.md` | The click-detection methods the gate and the debug engine rest on: noise-power and MAD thresholds, high-pass residual, autoregressive prediction error, sham intervention | partly-sourced |

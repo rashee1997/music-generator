@@ -1,0 +1,16 @@
+{
+  "name": "mix_ducked_echo",
+  "character": "A dotted-eighth ping-pong echo that stays under the part and comes up in its gaps.",
+  "provenance": "starting value, not a measurement. Sources: knowledgebase/sound-design/mixing-techniques.md (parallel compression, de-essing 4-7 kHz, ducking by the dry signal, mid-side with mono lows, distortion on a return, gates with hold; MusicRadar, iZotope, Sonarworks, Fiveable). ",
+  "chain": [
+    {
+      "type": "ping_delay",
+      "time_ms": 375.0,
+      "feedback": 0.38,
+      "hp_hz": 350.0,
+      "lp_hz": 5000.0,
+      "duck_db": 10.0,
+      "wet_db": -10.0
+    }
+  ]
+}

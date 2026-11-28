@@ -355,7 +355,7 @@ write('qf_walkie', dict(
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -8.0 + tx_gate(t), 0.04))])),
         dict(name='static', gain_db=-14.0, excite=dict(kind='noise', color='white'), resonator=dict(kind='bandpass', band=[800, 3400], order=2), events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -10.0 + tx_gate(t, 0.18), 0.04))])),
-        dict(name='squelch', gain_db=-8.0, excite=dict(kind='burst', tau=0.06, color='white'), resonator=dict(kind='bandpass', band=[500, 3400], order=2),
+        dict(name='squelch', gain_db=-8.0, excite=dict(kind='noise', color='white', attack=0.006, tau=0.06), resonator=dict(kind='bandpass', band=[500, 3400], order=2),
              events=dict(kind='sequence', times=squelch_times(), levels=[1.0] * len(squelch_times()))),
         dict(name='roger_beep', gain_db=-9.0, excite=dict(kind='periodic', f0=1200.0, harmonics=2), resonator=dict(kind='none'), events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -4.0 + beep_gate(t), 0.01))])),
@@ -450,11 +450,11 @@ def dev_pitch(t):
 write('qf_device', dict(
     character='The device that controls people, heard once in the lab and once at the end: a sub pulse under a thin carrier near 3 kHz that wobbles at 7.5 Hz and creeps upward, never resolving.',
     seconds=SECONDS,
-    note='A 41 Hz tone with a slow 1 Hz swell, and a carrier at 3.15 kHz amplitude-modulated at 7.5 Hz; the carrier rises by a third of an octave over the last nine seconds; the cue is not a signal to any real system.',
+    note='A 41 Hz tone with a slow 1 Hz swell, and a carrier at 1.85 kHz amplitude-modulated at 7.5 Hz; the carrier rises by a third of an octave over the last nine seconds; the cue is not a signal to any real system.',
     model=dict(seconds=SECONDS, voices=[
         dict(name='sub', gain_db=-6.0, excite=dict(kind='periodic', f0=41.0, harmonics=3, jitter=0.0, am_hz=1.0, am_depth=0.5), resonator=dict(kind='none'),
              events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: dev_gain(t) - 4.0, 0.1))])),
-        dict(name='carrier', gain_db=-14.0, excite=dict(kind='periodic', f0=3150.0, harmonics=3, jitter=0.002, am_hz=7.5, am_depth=0.6), resonator=dict(kind='none'),
+        dict(name='carrier', gain_db=-14.0, excite=dict(kind='periodic', f0=1850.0, harmonics=3, jitter=0.002, am_hz=7.5, am_depth=0.6), resonator=dict(kind='none'),
              events=dict(kind='continuous'),
              control=dict(pitch=[dict(kind='curve', points=sample(dev_pitch, 0.1))], gain_db=[dict(kind='curve', points=sample(dev_gain, 0.1))])),
     ]),

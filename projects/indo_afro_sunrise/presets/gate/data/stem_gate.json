@@ -6,10 +6,10 @@
     "warns": 0,
     "rows": 122,
     "profile": "indo_afro_sunrise",
-    "total_ms": 2066.1384559998623,
+    "total_ms": 240.27258299975074,
     "timings": {
       "bansuri": 0.0,
-      "bass": 1877.3317670002143,
+      "bass": 0.0,
       "canopy": 0.0,
       "djembe": 0.0,
       "guitar": 0.0,
@@ -2345,8 +2345,8 @@
       }
     ],
     "duration_s": 72.25702947845805,
-    "cached_stems": 13,
-    "measured_stems": 1
+    "cached_stems": 14,
+    "measured_stems": 0
   },
   "rows": [
     {

@@ -3,7 +3,7 @@
  "character": "An upbeat Indo-Afro groove in a rainforest: the bamboo flute is the hero over a round bass and an afrobeat kit, the tabla and djembe trade strokes wide of centre, and the canopy is a 40-degree dome that steps back for the figure.",
  "carve_db": -4.0,
  "max_boost_db": 12.0,
- "note": "Slimmed for the latest implementation (2026-11-28): only what this piece changes; every other key is the shipped default in references/data/mix_defaults.json. dynamics.comp holds the compressor values (ratio, attack and release were written outside it and the engine ignored them).",
+ "note": "Slimmed for the latest implementation (2026-11-28): only what this piece changes; every other key is the shipped default in references/data/mix_defaults.json. dynamics.comp holds the compressor values (ratio, attack and release were written outside it and the engine ignored them). 2026-11-28 render 1 (clicks 21 events, ambient_bed 4.3 dB jump at 33.5 s): the kit's peaks are soft-clipped (60 % blend) and the shekere's 7 kHz hash de-essed and tilted down 3 dB; the bed's ducker attack is 120 ms with 0.8 s smoothing, so the canopy no longer drops at the crash.",
  "dynamics": {
   "engine": "dsp",
   "knee_db": 6.0,
@@ -34,7 +34,14 @@
   "band_hz": [
    200.0,
    3800.0
-  ]
+  ],
+  "timing": {
+   "environment": {
+    "attack_ms": 120.0,
+    "release_ms": 1600.0,
+    "smooth_s": 0.8
+   }
+  }
  },
  "mastering": {
   "profile": "stream",
@@ -149,6 +156,31 @@
     "f": 5500.0,
     "gain": -3.0,
     "q": 0.7
+   }
+  ]
+ },
+ "fx": {
+  "kit": [
+   {
+    "type": "saturator",
+    "mode": "soft_clip",
+    "drive_db": 6.0,
+    "ceiling_db": -1.0,
+    "tone_hz": 16000.0,
+    "mix": 0.6
+   }
+  ],
+  "shekere": [
+   {
+    "type": "de_esser",
+    "freq_hz": 7000.0,
+    "threshold_db": -38.0,
+    "ratio": 6.0
+   },
+   {
+    "type": "tilt_eq",
+    "tilt_db": -3.0,
+    "pivot_hz": 3000.0
    }
   ]
  }

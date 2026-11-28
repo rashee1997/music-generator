@@ -17,3 +17,4 @@
 {"stamp": "2026-11-25T07:13:05", "lever": "hf.shekere", "row": "clicks::-", "delta": -6.0, "outcome": "cleared", "note": "settled automatically against the next render; the replay had predicted 0 event(s)", "target": -9.0}
 {"stamp": "2026-11-25T07:13:05", "lever": "hf.shekere", "row": "clicks::-", "outcome": "settled", "ref": "2026-11-25T07:10:51.029738", "target": -9.0}
 {"stamp": "2026-11-27T10:53:48.514119", "lever": "hf.kit", "row": "clicks::-", "delta": 3.0, "outcome": "proposed", "baseline": -3.0, "rows": {"clicks::-": -15.0}, "predicted": null, "baseline_value": null, "stem": "kit", "stem_hash": "9dff0ee815f5f8c5", "note": "proposed by the autopsy (partial)"}
+{"stamp": "2026-11-28T06:40:33.917415", "lever": "hf.kit", "row": "clicks::-", "delta": 3.0, "outcome": "proposed", "baseline": -3.0, "rows": {"clicks::-": -21.0}, "predicted": null, "baseline_value": null, "stem": "kit", "stem_hash": "013332b873267770", "note": "proposed by the autopsy (partial)"}

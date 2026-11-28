@@ -1,5 +1,5 @@
 {
-  "duration_s": 69.43428571428572,
+  "duration_s": 69.44092970521542,
   "sections": [
     {
       "name": "dawn",
@@ -28,49 +28,85 @@
   ],
   "flags": [
     [
-      8.5485,
+      0.0348,
+      "stem.tick",
+      "canopy",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "tanpura",
+      "PASS"
+    ],
+    [
+      0.0348,
+      "stem.tick",
+      "vocal_group",
+      "PASS"
+    ],
+    [
+      4.5743,
+      "stem.tick",
+      "guitar",
+      "PASS"
+    ],
+    [
+      8.5566,
+      "stem.tick",
+      "bass",
+      "PASS"
+    ],
+    [
+      13.4013,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      18.497,
+      13.9104,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      18.6252,
+      17.1479,
+      "stem.tick",
+      "marimba",
+      "PASS"
+    ],
+    [
+      17.4157,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      19.0125,
+      18.2313,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      20.0856,
+      19.1504,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      35.5246,
+      19.8259,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      36.5825,
+      23.4646,
       "clicks",
       "master",
       "FAIL"
     ],
     [
-      36.8698,
+      30.5968,
       "clicks",
       "master",
       "FAIL"

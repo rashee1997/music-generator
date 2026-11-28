@@ -21292,9 +21292,10 @@
     "name": "squelch",
     "gain_db": -8.0,
     "excite": {
-     "kind": "burst",
-     "tau": 0.06,
-     "color": "white"
+     "kind": "noise",
+     "color": "white",
+     "attack": 0.006,
+     "tau": 0.06
     },
     "resonator": {
      "kind": "bandpass",

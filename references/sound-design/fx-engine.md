@@ -159,3 +159,11 @@ Both are keys in a chain, checked before the render like every other key, and ne
 
 Where the shapes come from: practitioner guidance, not measurement. Ramping an LFO's speed and depth together on a riser and automating distortion or filter for movement (Ableton, "Learn How to Make High-Impact Sounds for Movies and Trailers"); build and release tension, the largest impacts at the climax, near-silence before a hit (Violet Recording, "Sound Design for Trailers"); modest transient-shaper attack boosts to bring short strings forward (Soundfly, "Mixing and Processing a Virtual Orchestra"). Every figure is a starting value; none says it sounds good. Sources disagree on tape saturation and heavy compression for orchestral material, so none ships on by default.
 
+## Mixing techniques in the same engine
+
+`saturator`, `de_esser`, `gate`, `parallel_comp`, `upward_comp`, `band_width`, `tilt_eq`, `freq_shift`, `resonator_bank` and `ping_delay` are effects like the
+rest (`scripts/fx_engine/mixfx.py`): ranges, `mix`, `start_s`/`end_s`, `automate` (where the library says `automatable`) and recipes all apply. A piece can also
+put a chain in the mix preset itself (`fx`, `mastering.fx`): `references/mixing/mixing-and-mastering.md` section 13, and the sources and the table of what
+each one does are `knowledgebase/sound-design/mixing-techniques.md`. `resonator_bank` takes a list (`pitches`, MIDI numbers), the one list-valued parameter
+in the library.
+

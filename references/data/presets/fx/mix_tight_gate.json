@@ -1,0 +1,16 @@
+{
+  "name": "mix_tight_gate",
+  "character": "A gated drum or ostinato: the room between the notes turned down by 30 dB, a short hold so no note is chopped.",
+  "provenance": "starting value, not a measurement. Sources: knowledgebase/sound-design/mixing-techniques.md (parallel compression, de-essing 4-7 kHz, ducking by the dry signal, mid-side with mono lows, distortion on a return, gates with hold; MusicRadar, iZotope, Sonarworks, Fiveable). ",
+  "chain": [
+    {
+      "type": "gate",
+      "threshold_db": -48.0,
+      "ratio": 30.0,
+      "range_db": 30.0,
+      "attack_ms": 0.5,
+      "hold_ms": 35.0,
+      "release_ms": 90.0
+    }
+  ]
+}

@@ -52,6 +52,15 @@ def _check_value(label, meta, value):
         return None if value in meta['choices'] else f'{label}: {value!r} is not one of {meta["choices"]}'
     if meta.get('type') == 'object':
         return None if isinstance(value, dict) else f'{label}: expected an object'
+    if meta.get('type') == 'list':
+        if not isinstance(value, (list, tuple)) or not value:
+            return f'{label}: expected a non-empty list of numbers'
+        for item in value:
+            if not _is_number(item):
+                return f'{label}: {item!r} is not a number'
+            if meta.get('min') is not None and float(item) < float(meta['min']) or meta.get('max') is not None and float(item) > float(meta['max']):
+                return f'{label}: {item} is outside {meta.get("min")}..{meta.get("max")}'
+        return None
     if meta.get('type') == 'string':
         return None if isinstance(value, str) and value else f'{label}: expected a non-empty string'
     if not _is_number(value):
