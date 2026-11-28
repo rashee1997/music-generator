@@ -165,7 +165,6 @@ $$J(C_t, C_{t-1}, m_t) = w_{\text{vl}} \sum_{k=1}^{4} |c_{t,k} - c_{t-1,k}| + w_
 
 ## Real-world references: engine
 
-_TODO: at least two sources of the REAL sound: a paper (drop sizes, call rates, spectra), the page of a field recording (place, equipment, conditions), or a measured spectrum. One URL per line, with the value taken from it._
 
 - URL: https://autos.maxabout.com/yamaha/r15/r15-v3-metallic-red (gear ratios listed per gear)
 - URL: https://en.wikipedia.org/wiki/Quickshifter (what a quickshifter and auto-blipper do)
@@ -174,7 +173,6 @@ Measured: No measurement found: ESTIMATE no recording of the engine was analysed
 
 ## Real-world references: tyre_squeal
 
-_TODO: at least two sources of the REAL sound: a paper (drop sizes, call rates, spectra), the page of a field recording (place, equipment, conditions), or a measured spectrum. One URL per line, with the value taken from it._
 
 - URL: https://eprints.soton.ac.uk/421407/1/P246_Thompson_A_state_of_the_art_review_of_curve_squeal_noise_FINAL.pdf (squeal as stick-slip; a review of railway curve squeal, the closest source found)
 - URL: https://eprints.soton.ac.uk/430344/1/Phd_thesis_Bo_Ding_27001024_2018_.pdf (lateral creep as the trigger)
@@ -183,7 +181,6 @@ Measured: No measurement found: ESTIMATE no tyre recording was analysed and no s
 
 ## Real-world references: walkie_talkie
 
-_TODO: at least two sources of the REAL sound: a paper (drop sizes, call rates, spectra), the page of a field recording (place, equipment, conditions), or a measured spectrum. One URL per line, with the value taken from it._
 
 - URL: https://www.windytan.com/2019/03/beeps-and-melodies-in-two-way-radio.html (roger beep, squelch tail, CTCSS)
 - URL: https://support.uniden.com/support/solutions/articles/153000214682-beneficial-scanner-radio-terms (squelch)

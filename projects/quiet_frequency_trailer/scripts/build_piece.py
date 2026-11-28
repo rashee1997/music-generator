@@ -536,6 +536,18 @@ def sheet():
     secs = sections_json()
     base.update({
         'title': 'Quiet Frequency',
+        'project': 'Quiet Frequency (working title): a 30-minute action short; this is its 120 s theatrical trailer',
+        'medium': 'film trailer',
+        'brief': ("Add cinematic trailer fx, a Yamaha R15 engine sound with gearshifts, drift SFX, the hero rides a bike and the villain chases him; "
+                  "make a 120 sec full trailer; the hero took something bad from earth that can be used to control people and managed to take it out "
+                  "from the villain, who found it in the lab and started to chase; full chasing, escape, near misses, riding under the trailer by smooth "
+                  "ducking; it is a trailer so no happy endings, the end should make the viewers curious; no funky jumping, big-budget Hollywood style; "
+                  "SFX and music blended in one space, dynamic camera motion, room physics, a walkie-talkie SFX, a different vehicle for the villain, "
+                  "realistic gear shifting; 7.1 8-channel delivery; loudness stays at -16 LUFS"),
+        'audience': 'cinema and online trailer viewers who have not seen the film and want to know what the device does',
+        'story': 'a thief takes a mind-control device from a lab, the owner hunts him down a highway, and the last image is the case being opened',
+        'gate_reason': 'a trailer judged on its own acts: a sound-design opening, a dense chase, one declared second of silence, a second peak and an unresolved last act',
+        'notes': 'no dialogue is synthesised; the walkie-talkie is squelch, carrier and beeps only. The end is deliberately unresolved (Bb minor over an F pedal).',
         'job': 'a 120 s theatrical trailer for a 30-minute action short: the Hero steals a device that can control people, the Villain finds the '
                'case empty and hunts him down a highway, there are near misses and no rescue, and the last image is a case being opened',
         'purpose': 'make the viewer want to know what the device does and who else is listening, with no resolution',
