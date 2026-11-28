@@ -1,52 +1,58 @@
 {
- "description": "Amazon rainforest canopy with exotic birds, insect texture, warm canopy breeze, and light rain drips (example: copy into your project's presets/environments/ and tune it)",
- "character": "A humid rainforest canopy at first light: a steady leaf-and-air bed with a wide insect hum, scattered drips and a few bird calls placed off to the left, so the listener is inside the trees rather than in front of a recording.",
- "layers": [
-  {
-   "name": "canopy_air",
-   "primitive": "noise_bed",
-   "kind": "bed",
-   "gain_db": -14.0,
-   "low_hz": 120,
-   "high_hz": 2600,
-   "pan": 0.0
+  "description": "Amazon rainforest canopy with exotic birds, insect texture, warm canopy breeze, and light rain drips (example: copy into your project's presets/environments/ and tune it)",
+  "character": "A humid rainforest canopy at first light: a steady leaf-and-air bed with a wide insect hum, scattered drips and a few bird calls placed off to the left, so the listener is inside the trees rather than in front of a recording.",
+  "layers": [
+    {
+      "name": "canopy_air",
+      "primitive": "noise_bed",
+      "kind": "bed",
+      "gain_db": -14.0,
+      "low_hz": 120,
+      "high_hz": 2600,
+      "pan": 0.0
+    },
+    {
+      "name": "insects",
+      "primitive": "stridulation_bed",
+      "kind": "bed",
+      "gain_db": -18.0,
+      "pan": 0.55
+    },
+    {
+      "name": "drips",
+      "primitive": "impulse_cluster",
+      "kind": "spot",
+      "gain_db": -19.0,
+      "event_rate": 10.0,
+      "decorrelate": 0.6,
+      "pan": 0.25
+    },
+    {
+      "name": "birds",
+      "primitive": "fm_chirp_cluster",
+      "kind": "spot",
+      "gain_db": -16.0,
+      "event_rate": 0.5,
+      "spatial": {
+        "azimuth": -25,
+        "distance": 6
+      }
+    }
+  ],
+  "blending": {
+    "overall_gain_db": -9.0,
+    "high_pass_hz": 110.0,
+    "vocal_pocket_notch_hz": 2400.0,
+    "vocal_pocket_notch_db": -3.0
   },
-  {
-   "name": "insects",
-   "primitive": "stridulation_bed",
-   "kind": "bed",
-   "gain_db": -18.0,
-   "pan": 0.55
-  },
-  {
-   "name": "drips",
-   "primitive": "impulse_cluster",
-   "kind": "spot",
-   "gain_db": -19.0,
-   "event_rate": 10.0,
-   "decorrelate": 0.6,
-   "pan": 0.25
-  },
-  {
-   "name": "birds",
-   "primitive": "fm_chirp_cluster",
-   "kind": "spot",
-   "gain_db": -16.0,
-   "event_rate": 0.5,
-   "spatial": {
-    "azimuth": -25,
-    "distance": 6
-   }
+  "name": "amazon_rainforest",
+  "sources": [
+    "amazon_canopy"
+  ],
+  "spatial": {
+    "azimuth": -40.0,
+    "elevation": 40.0,
+    "kind": "spot",
+    "space": "indo_afro_sunrise_room"
   }
- ],
- "blending": {
-  "overall_gain_db": -9.0,
-  "high_pass_hz": 110.0,
-  "vocal_pocket_notch_hz": 2400.0,
-  "vocal_pocket_notch_db": -3.0
- },
- "name": "amazon_rainforest",
- "sources": [
-  "amazon_canopy"
- ]
 }

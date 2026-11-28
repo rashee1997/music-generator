@@ -1,0 +1,65 @@
+{
+  "synthesis": "formant",
+  "hum": false,
+  "expression_intensity": 1.0,
+  "source": {
+    "register": "modal",
+    "breathiness": 0.05
+  },
+  "performance": {
+    "portamento_ms": 40.0,
+    "pitch_stability": 1.0
+  },
+  "breathing": {
+    "capacity_s": 6.0,
+    "inhale_gain": 0.5
+  },
+  "name": "indo_afro_happy_lead",
+  "character": "A bright wordless lead voice calling in short syllables (la, na, ha, ho) over the groove, forward and a little right of centre, answering the bansuri and answered by the group.",
+  "description": "a happy call: open vowels, quick onsets, a light vibrato, one singer doubled by a second",
+  "vowel": "a",
+  "expression": "hopeful",
+  "formants": [
+    850,
+    1250,
+    2850
+  ],
+  "bandwidths": [
+    85.0,
+    95.0,
+    130.0
+  ],
+  "vibrato": {
+    "depth_cents": 22.0,
+    "rate_hz": 5.6,
+    "delay_s": 0.18
+  },
+  "articulation": {
+    "mode": "legato",
+    "attack_ms": 45.0,
+    "release_ms": 140.0
+  },
+  "ensemble": {
+    "voices": 2,
+    "cohesion": 0.6,
+    "pitch_spread_cents": 8.0,
+    "timing_spread_ms": 14.0,
+    "pan_width": 0.3,
+    "diversity": 1.0
+  },
+  "spatial": {
+    "azimuth": 38.0,
+    "elevation": 0.0,
+    "distance": 2.0,
+    "space": "indo_afro_sunrise_room"
+  },
+  "gain_db": -6.0,
+  "reverb": 0.22,
+  "sources": [
+    "indian-film-fusion",
+    "african",
+    "https://books.openedition.org/ifra/522 (Afrobeat: chants and call and response are its vocal core)",
+    "https://flypaper.soundfly.com/write/afrobeat-songs-are-long-and-repetitive-how-are-they-so-irresistibly-compelling/ (call and response runs through the backing vocals and the band)",
+    "ESTIMATE: formants, vibrato and levels are starting values for a bright female voice; no recording was analysed and nothing was listened to"
+  ]
+}

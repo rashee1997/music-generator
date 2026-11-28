@@ -1,0 +1,43 @@
+{
+  "name": "brass_section",
+  "description": "what it is and how it is played",
+  "gm": "acoustic_guitar",
+  "role": "melody",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 4.0
+  },
+  "spatial": {
+    "azimuth": 55.0,
+    "distance": 4.0,
+    "elevation": 22.0,
+    "space": "indo_afro_sunrise_room"
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 120.0
+    },
+    {
+      "type": "lp",
+      "f": 11000.0
+    }
+  ],
+  "gain_db": -2.0,
+  "reverb": 0.25,
+  "articulation": {
+    "overlap_ms": 30.0,
+    "gate": 1.0,
+    "release_ms": 180.0
+  },
+  "mechanics_class": "keys",
+  "family": "blown_brass",
+  "character": "A small brass section that punches the turn of a section: short stabs on the chorus, a bar of rest before them.",
+  "sources": [
+    "indian-film-fusion",
+    "african",
+    "Scaffolded for the latest implementation (2026-11-28): the preset declares its sound family so the family laws (velocity brightness, attack) apply, and carries its own placement. Levels and EQ are starting values for this piece."
+  ]
+}

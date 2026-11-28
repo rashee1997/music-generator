@@ -1,36 +1,39 @@
 {
- "name": "tabla",
- "description": "tabla strokes played on GM percussion keys (named stand-ins from scripts/world.py)",
- "gm": "standard",
- "role": "percussion",
- "humanize": {
-  "preset": "natural",
-  "timing_ms": 3.0,
-  "drift_ms": 4.0,
-  "vel_sigma": 6.0
- },
- "spatial": {
-  "azimuth": 60.0,
-  "distance": 4.5,
-  "space": "indo_afro_sunrise_room"
- },
- "eq": [
-  {
-   "type": "hp",
-   "f": 120.0
+  "name": "tabla",
+  "description": "tabla strokes played on GM percussion keys (named stand-ins from scripts/world.py)",
+  "gm": "standard",
+  "role": "percussion",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 3.0,
+    "drift_ms": 4.0,
+    "vel_sigma": 6.0
   },
-  {
-   "type": "peak",
-   "f": 2200.0,
-   "gain": -1.5,
-   "q": 1.0
+  "spatial": {
+    "azimuth": 60.0,
+    "distance": 4.5,
+    "space": "indo_afro_sunrise_room",
+    "elevation": 0.0
   },
-  {
-   "type": "lp",
-   "f": 9500.0
-  }
- ],
- "gain_db": -3.5,
- "reverb": 0.14,
- "mechanics_class": "percussion"
+  "eq": [
+    {
+      "type": "hp",
+      "f": 120.0
+    },
+    {
+      "type": "peak",
+      "f": 2200.0,
+      "gain": -1.5,
+      "q": 1.0
+    },
+    {
+      "type": "lp",
+      "f": 9500.0
+    }
+  ],
+  "gain_db": -3.5,
+  "reverb": 0.14,
+  "mechanics_class": "percussion",
+  "family": "struck_membrane",
+  "character": "tabla strokes played on GM percussion keys (named stand-ins from scripts/world.py)"
 }

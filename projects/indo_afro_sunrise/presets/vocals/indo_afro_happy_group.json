@@ -1,0 +1,64 @@
+{
+  "synthesis": "formant",
+  "hum": false,
+  "expression_intensity": 1.0,
+  "source": {
+    "register": "modal",
+    "breathiness": 0.05
+  },
+  "performance": {
+    "portamento_ms": 40.0,
+    "pitch_stability": 1.0
+  },
+  "breathing": {
+    "capacity_s": 6.0,
+    "inhale_gain": 0.5
+  },
+  "name": "indo_afro_happy_group",
+  "character": "A group of six answering the call: short chanted hei and ha on the beat, then long open oohs in the last section, wide and a little behind the lead.",
+  "description": "a happy crowd: more voices, looser timing, a wide spread, shorter notes in the chant",
+  "vowel": "a",
+  "expression": "powerful",
+  "formants": [
+    780,
+    1180,
+    2750
+  ],
+  "bandwidths": [
+    90.0,
+    100.0,
+    140.0
+  ],
+  "vibrato": {
+    "depth_cents": 16.0,
+    "rate_hz": 5.2,
+    "delay_s": 0.3
+  },
+  "articulation": {
+    "mode": "staccato",
+    "attack_ms": 25.0,
+    "release_ms": 110.0
+  },
+  "ensemble": {
+    "voices": 6,
+    "cohesion": 0.35,
+    "pitch_spread_cents": 14.0,
+    "timing_spread_ms": 28.0,
+    "pan_width": 0.8,
+    "diversity": 1.0
+  },
+  "spatial": {
+    "azimuth": -62.0,
+    "elevation": 0.0,
+    "distance": 2.9,
+    "space": "indo_afro_sunrise_room"
+  },
+  "gain_db": -8.0,
+  "reverb": 0.28,
+  "sources": [
+    "indian-film-fusion",
+    "african",
+    "https://books.openedition.org/ifra/522 (Afrobeat: a chorus sung by a group answers the lead)",
+    "ESTIMATE: voice count, spread and levels are starting values; nothing was listened to"
+  ]
+}

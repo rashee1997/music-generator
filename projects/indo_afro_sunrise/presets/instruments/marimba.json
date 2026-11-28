@@ -1,0 +1,64 @@
+{
+  "name": "marimba",
+  "description": "what it is and how it is played",
+  "gm": "acoustic_guitar",
+  "role": "melody",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 4.0
+  },
+  "spatial": {
+    "azimuth": -45.0,
+    "distance": 3.5,
+    "elevation": 10.0,
+    "space": "indo_afro_sunrise_room",
+    "trajectory": {
+      "spatial_role": "mover",
+      "doppler_strength": 0.6,
+      "keyframes": [
+        {
+          "bar": 9,
+          "azimuth": -45,
+          "distance": 3.5
+        },
+        {
+          "bar": 16,
+          "azimuth": -80,
+          "distance": 3.2
+        },
+        {
+          "bar": 24,
+          "azimuth": -100,
+          "distance": 3.8
+        }
+      ]
+    }
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 120.0
+    },
+    {
+      "type": "lp",
+      "f": 11000.0
+    }
+  ],
+  "gain_db": -2.0,
+  "reverb": 0.25,
+  "articulation": {
+    "overlap_ms": 30.0,
+    "gate": 1.0,
+    "release_ms": 180.0
+  },
+  "mechanics_class": "keys",
+  "family": "struck_pitched",
+  "character": "A wooden marimba doubling the groove in short bright figures between the guitar and the flute, a little right of centre.",
+  "sources": [
+    "indian-film-fusion",
+    "african",
+    "Scaffolded for the latest implementation (2026-11-28): the preset declares its sound family so the family laws (velocity brightness, attack) apply, and carries its own placement. Levels and EQ are starting values for this piece."
+  ]
+}

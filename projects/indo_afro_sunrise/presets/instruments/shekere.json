@@ -1,36 +1,39 @@
 {
- "name": "shekere",
- "description": "shekere strokes played on GM percussion keys (named stand-ins from scripts/world.py)",
- "gm": "standard",
- "role": "percussion",
- "humanize": {
-  "preset": "natural",
-  "timing_ms": 3.0,
-  "drift_ms": 4.0,
-  "vel_sigma": 6.0
- },
- "spatial": {
-  "azimuth": 90.0,
-  "distance": 4.0,
-  "space": "indo_afro_sunrise_room"
- },
- "eq": [
-  {
-   "type": "hp",
-   "f": 400.0
+  "name": "shekere",
+  "description": "shekere strokes played on GM percussion keys (named stand-ins from scripts/world.py)",
+  "gm": "standard",
+  "role": "percussion",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 3.0,
+    "drift_ms": 4.0,
+    "vel_sigma": 6.0
   },
-  {
-   "type": "peak",
-   "f": 3536.0,
-   "gain": -9.0,
-   "q": 1.0
+  "spatial": {
+    "azimuth": 90.0,
+    "distance": 4.0,
+    "space": "indo_afro_sunrise_room",
+    "elevation": 4.0
   },
-  {
-   "type": "lp",
-   "f": 7000.0
-  }
- ],
- "gain_db": -6.0,
- "reverb": 0.14,
- "mechanics_class": "percussion"
+  "eq": [
+    {
+      "type": "hp",
+      "f": 400.0
+    },
+    {
+      "type": "peak",
+      "f": 3536.0,
+      "gain": -9.0,
+      "q": 1.0
+    },
+    {
+      "type": "lp",
+      "f": 7000.0
+    }
+  ],
+  "gain_db": -6.0,
+  "reverb": 0.14,
+  "mechanics_class": "percussion",
+  "family": "struck_membrane",
+  "character": "shekere strokes played on GM percussion keys (named stand-ins from scripts/world.py)"
 }
