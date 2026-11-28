@@ -325,8 +325,8 @@ def horns():
     for p in (53, 58, 60):
         out.append(note(b(31, 2.7), 2.2, p, 0.66))
     # the two hits the scene gate reads on the figure line: a leap up on the cut into the declared silence, a drop of register on the dropout
-    out.append(note(b(31, 3.6), 0.35, 73, 0.9))
-    out.append(note(b(53), 3.0, 48, 0.7))
+    out.append(note(b(31, 3.6), 0.35, 77, 0.95))
+    out.append(note(b(53), 3.0, 40, 0.8))
     base = near(root_pitch(57, 55, 64))            # the end: the first two notes of the cell, then silence
     out.append(note(b(57), 3.6, base, 0.42))
     out.append(note(b(58, 1.0), 3.2, base + 3, 0.38))
@@ -370,7 +370,7 @@ def piano_theme():
 def low_swell():
     out = []
     # five long swells, one into each act turn (the stem gate reads many short isolated notes as a tick train)
-    for bar, d in ((6, 5.0), (18, 5.0), (30, 3.0), (44, 5.0)):
+    for bar, d in ((6, 2.0), (18, 2.0), (30, 3.0), (44, 2.0)):          # each swell ends at the bar line: a swell on the old chord under the new one beats against it
         out.append(note(b(bar, 2), d, root_pitch(bar, 41, 52) - 12, 0.8))     # F1 and up: below it the sample flutters
     out.append(note(b(32, 2.25), b(33) - b(32, 2.25), root_pitch(33, 41, 52) - 12, 0.5))        # a quarter after the rest ends: the humanizer cannot leak into it
     out.append(note(b(53), 8.0, 29, 0.42))
@@ -751,7 +751,7 @@ def main():
     score = {
         'title': 'Quiet Frequency', 'bpm': BPM, 'ts': TS, 'seed': 6061, 'humanize': 'natural', 'key': 'F', 'mode': 'minor',
         'space': 'quiet_frequency_room', 'mix_preset': 'quiet_frequency_mix', 'output_targets': ['stereo', 'immersive_7_1'],
-        'master': {'lufs': LOUDNESS, 'true_peak': -1.5, 'tone': 'theatrical', 'fade_out': 0.6},
+        'master': {'lufs': LOUDNESS, 'true_peak': -1.5, 'tone': 'theatrical', 'fade_out': 1.5},
         'piece_type': 'quiet_frequency', 'focus': 'melody',
         'intent': {'emotions': ['tense', 'dark_epic'], 'registers': ['cinematic', 'hybrid'], 'scenes': ['establish', 'build', 'chase', 'dread'],
                    'tensions': ['ostinato', 'pedal', 'cluster', 'silence_before', 'unresolved_dominant'], 'avoid': ['joyful', 'playful']},

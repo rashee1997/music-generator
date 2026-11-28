@@ -1,5 +1,5 @@
 {
- "stamp": "20261128T082843",
+ "stamp": "20261128T084614",
  "project": "quiet_frequency_trailer",
  "level": "FAIL",
  "sources": {
@@ -18,18 +18,18 @@
   ],
   "stems": "28 processed stems from .cache/mix",
   "master": "out/_draft_quiet_frequency_trailer.wav",
-  "verdict": "2026-11-28T07:14:18Z"
+  "verdict": "2026-11-28T08:28:43Z"
  },
  "binding": [
   {
    "row": "dropout",
    "stem": null,
    "level": "FAIL",
-   "value": 24.999999999991473,
+   "value": 39.99999999999204,
    "threshold": 20.0,
    "unit": "ms",
-   "safety": -0.25,
-   "detail": "longest hole 25 ms (limit 20-1000 ms), floor -64.6 dBFS; 1 hole(s)"
+   "safety": -1.0,
+   "detail": "longest hole 40 ms (limit 20-1000 ms), floor -64.6 dBFS; 1 hole(s)"
   }
  ],
  "advisory": [
@@ -633,8 +633,8 @@
   "clearing": {},
   "predicted": {
    "dropout::-": [
-    -0.24999999999957367,
-    -0.24999999999957367
+    -0.9999999999996021,
+    -0.9999999999996021
    ],
    "clicks::-": [
     0.0,
@@ -645,8 +645,8 @@
     0.02
    ],
    "true peak::-": [
-    0.00024962847927671267,
-    0.00024962847927671267
+    0.0002494233580594418,
+    0.0002494233580594418
    ],
    "cut.hard::-": [
     2.0,
@@ -661,8 +661,8 @@
     0.0
    ],
    "master.dc::-": [
-    0.09849163202079424,
-    0.09849163202079424
+    0.09812484454060723,
+    0.09812484454060723
    ]
   },
   "conflicts": [],
@@ -675,6 +675,6 @@
  },
  "forensics": [],
  "notes": [
-  "dropout has 1 event(s) at 120.310s; the transient is violins_long 59%, sfx_impacts 40%, timpani 1%"
+  "dropout has 1 event(s) at 120.310s; the transient is violins_long 67%, sfx_impacts 33%, timpani 0%"
  ]
 }

@@ -6,50 +6,50 @@
         {
           "section": "the_take",
           "start_s": 12.0,
-          "measured_db": -20.23,
-          "expected_db": -25.19,
+          "measured_db": -20.93,
+          "expected_db": -24.77,
           "dyn": 0.45
         },
         {
           "section": "the_alert",
           "start_s": 24.0,
-          "measured_db": -22.21,
-          "expected_db": -22.0,
+          "measured_db": -21.89,
+          "expected_db": -21.58,
           "dyn": 0.65
         },
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -20.2,
-          "expected_db": -19.17,
+          "measured_db": -20.53,
+          "expected_db": -18.75,
           "dyn": 0.9
         },
         {
           "section": "the_flyover",
           "start_s": 52.0,
-          "measured_db": -21.66,
-          "expected_db": -20.2,
+          "measured_db": -19.78,
+          "expected_db": -19.78,
           "dyn": 0.8
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -19.59,
-          "expected_db": -18.7,
+          "measured_db": -19.1,
+          "expected_db": -18.28,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -18.32,
-          "expected_db": -18.26,
+          "measured_db": -17.98,
+          "expected_db": -17.84,
           "dyn": 1.0
         },
         {
           "section": "the_signal",
           "start_s": 110.0,
-          "measured_db": -16.32,
-          "expected_db": -28.72,
+          "measured_db": -16.18,
+          "expected_db": -28.3,
           "dyn": 0.3
         }
       ]
@@ -60,71 +60,71 @@
         {
           "section": "the_lab",
           "start_s": 0.0,
-          "measured_db": -32.67,
-          "expected_db": -35.46,
+          "measured_db": -34.95,
+          "expected_db": -36.5,
           "dyn": 0.25
         },
         {
           "section": "the_take",
           "start_s": 12.0,
-          "measured_db": -28.48,
-          "expected_db": -30.35,
+          "measured_db": -29.42,
+          "expected_db": -31.4,
           "dyn": 0.45
         },
         {
           "section": "the_alert",
           "start_s": 24.0,
-          "measured_db": -26.97,
-          "expected_db": -27.16,
+          "measured_db": -28.76,
+          "expected_db": -28.2,
           "dyn": 0.65
         },
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -23.48,
-          "expected_db": -24.33,
+          "measured_db": -24.71,
+          "expected_db": -25.38,
           "dyn": 0.9
         },
         {
           "section": "the_flyover",
           "start_s": 52.0,
-          "measured_db": -24.75,
-          "expected_db": -25.35,
+          "measured_db": -25.89,
+          "expected_db": -26.4,
           "dyn": 0.8
         },
         {
           "section": "the_truck",
           "start_s": 58.0,
-          "measured_db": -28.02,
-          "expected_db": -27.85,
+          "measured_db": -28.32,
+          "expected_db": -28.9,
           "dyn": 0.6
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -23.7,
-          "expected_db": -23.86,
+          "measured_db": -23.91,
+          "expected_db": -24.91,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -22.96,
-          "expected_db": -23.42,
+          "measured_db": -23.39,
+          "expected_db": -24.46,
           "dyn": 1.0
         },
         {
           "section": "the_dropout",
           "start_s": 104.0,
-          "measured_db": -30.9,
-          "expected_db": -32.53,
+          "measured_db": -30.48,
+          "expected_db": -33.58,
           "dyn": 0.35
         },
         {
           "section": "the_signal",
           "start_s": 110.0,
-          "measured_db": -31.16,
-          "expected_db": -33.87,
+          "measured_db": -32.52,
+          "expected_db": -34.92,
           "dyn": 0.3
         }
       ]
@@ -135,36 +135,36 @@
         {
           "section": "the_alert",
           "start_s": 24.0,
-          "measured_db": -28.42,
-          "expected_db": -29.94,
+          "measured_db": -28.49,
+          "expected_db": -29.77,
           "dyn": 0.65
         },
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -27.04,
-          "expected_db": -27.11,
+          "measured_db": -26.83,
+          "expected_db": -26.94,
           "dyn": 0.9
         },
         {
           "section": "the_flyover",
           "start_s": 52.0,
-          "measured_db": -28.63,
-          "expected_db": -28.13,
+          "measured_db": -28.64,
+          "expected_db": -27.96,
           "dyn": 0.8
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -27.11,
-          "expected_db": -26.64,
+          "measured_db": -26.94,
+          "expected_db": -26.47,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -25.23,
-          "expected_db": -26.19,
+          "measured_db": -25.24,
+          "expected_db": -26.02,
           "dyn": 1.0
         }
       ]
@@ -175,43 +175,43 @@
         {
           "section": "the_alert",
           "start_s": 24.0,
-          "measured_db": -34.57,
-          "expected_db": -34.1,
+          "measured_db": -34.07,
+          "expected_db": -32.9,
           "dyn": 0.65
         },
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -31.28,
-          "expected_db": -31.27,
+          "measured_db": -30.38,
+          "expected_db": -30.07,
           "dyn": 0.9
         },
         {
           "section": "the_flyover",
           "start_s": 52.0,
-          "measured_db": -33.37,
-          "expected_db": -32.29,
+          "measured_db": -33.91,
+          "expected_db": -31.1,
           "dyn": 0.8
         },
         {
           "section": "the_truck",
           "start_s": 58.0,
-          "measured_db": -17.54,
-          "expected_db": -34.79,
+          "measured_db": -19.56,
+          "expected_db": -33.6,
           "dyn": 0.6
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -32.25,
-          "expected_db": -30.8,
+          "measured_db": -30.76,
+          "expected_db": -29.6,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -30.22,
-          "expected_db": -30.36,
+          "measured_db": -28.72,
+          "expected_db": -29.16,
           "dyn": 1.0
         }
       ]
@@ -223,21 +223,21 @@
           "section": "the_take",
           "start_s": 12.0,
           "measured_db": -43.0,
-          "expected_db": -40.95,
+          "expected_db": -40.59,
           "dyn": 0.45
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -31.65,
-          "expected_db": -34.01,
+          "measured_db": -30.92,
+          "expected_db": -33.65,
           "dyn": 1.0
         },
         {
           "section": "the_signal",
           "start_s": 110.0,
-          "measured_db": -40.95,
-          "expected_db": -44.47,
+          "measured_db": -40.59,
+          "expected_db": -44.11,
           "dyn": 0.3
         }
       ]
@@ -248,64 +248,64 @@
         {
           "section": "the_take",
           "start_s": 12.0,
-          "measured_db": -41.41,
-          "expected_db": -38.95,
+          "measured_db": -39.76,
+          "expected_db": -39.6,
           "dyn": 0.45
         },
         {
           "section": "the_alert",
           "start_s": 24.0,
-          "measured_db": -32.12,
-          "expected_db": -35.75,
+          "measured_db": -34.42,
+          "expected_db": -36.41,
           "dyn": 0.65
         },
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -35.06,
-          "expected_db": -32.93,
+          "measured_db": -35.53,
+          "expected_db": -33.58,
           "dyn": 0.9
         },
         {
           "section": "the_flyover",
           "start_s": 52.0,
-          "measured_db": -36.13,
-          "expected_db": -33.95,
+          "measured_db": -36.82,
+          "expected_db": -34.6,
           "dyn": 0.8
         },
         {
           "section": "the_truck",
           "start_s": 58.0,
-          "measured_db": -30.76,
-          "expected_db": -36.45,
+          "measured_db": -33.48,
+          "expected_db": -37.1,
           "dyn": 0.6
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -35.75,
-          "expected_db": -32.46,
+          "measured_db": -36.41,
+          "expected_db": -33.11,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -34.86,
-          "expected_db": -32.01,
+          "measured_db": -34.47,
+          "expected_db": -32.67,
           "dyn": 1.0
         },
         {
           "section": "the_dropout",
           "start_s": 104.0,
-          "measured_db": -43.0,
-          "expected_db": -41.13,
+          "measured_db": -43.33,
+          "expected_db": -41.78,
           "dyn": 0.35
         },
         {
           "section": "the_signal",
           "start_s": 110.0,
-          "measured_db": -38.38,
-          "expected_db": -42.47,
+          "measured_db": -38.63,
+          "expected_db": -43.12,
           "dyn": 0.3
         }
       ]
@@ -316,43 +316,50 @@
         {
           "section": "the_alert",
           "start_s": 24.0,
-          "measured_db": -24.59,
-          "expected_db": -20.27,
+          "measured_db": -23.23,
+          "expected_db": -18.63,
           "dyn": 0.65
         },
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -18.87,
-          "expected_db": -17.44,
+          "measured_db": -18.63,
+          "expected_db": -15.81,
           "dyn": 0.9
         },
         {
           "section": "the_truck",
           "start_s": 58.0,
-          "measured_db": -13.62,
-          "expected_db": -20.97,
+          "measured_db": -14.93,
+          "expected_db": -19.33,
           "dyn": 0.6
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -18.09,
-          "expected_db": -16.97,
+          "measured_db": -18.24,
+          "expected_db": -15.34,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -18.61,
-          "expected_db": -16.53,
+          "measured_db": -18.33,
+          "expected_db": -14.89,
           "dyn": 1.0
+        },
+        {
+          "section": "the_dropout",
+          "start_s": 104.0,
+          "measured_db": -20.73,
+          "expected_db": -24.01,
+          "dyn": 0.35
         },
         {
           "section": "the_signal",
           "start_s": 110.0,
-          "measured_db": -26.38,
-          "expected_db": -26.99,
+          "measured_db": -25.76,
+          "expected_db": -25.35,
           "dyn": 0.3
         }
       ]
@@ -363,57 +370,57 @@
         {
           "section": "the_lab",
           "start_s": 0.0,
-          "measured_db": -28.46,
-          "expected_db": -36.02,
+          "measured_db": -28.0,
+          "expected_db": -35.73,
           "dyn": 0.25
         },
         {
           "section": "the_take",
           "start_s": 12.0,
-          "measured_db": -25.82,
-          "expected_db": -30.91,
+          "measured_db": -25.38,
+          "expected_db": -30.62,
           "dyn": 0.45
         },
         {
           "section": "the_alert",
           "start_s": 24.0,
-          "measured_db": -27.79,
-          "expected_db": -27.72,
+          "measured_db": -27.54,
+          "expected_db": -27.43,
           "dyn": 0.65
         },
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -25.83,
-          "expected_db": -24.89,
+          "measured_db": -25.66,
+          "expected_db": -24.6,
           "dyn": 0.9
         },
         {
           "section": "the_truck",
           "start_s": 58.0,
-          "measured_db": -29.19,
-          "expected_db": -28.41,
+          "measured_db": -29.08,
+          "expected_db": -28.12,
           "dyn": 0.6
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -28.33,
-          "expected_db": -24.42,
+          "measured_db": -28.43,
+          "expected_db": -24.13,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -26.31,
-          "expected_db": -23.98,
+          "measured_db": -26.39,
+          "expected_db": -23.69,
           "dyn": 1.0
         },
         {
           "section": "the_dropout",
           "start_s": 104.0,
-          "measured_db": -32.15,
-          "expected_db": -33.1,
+          "measured_db": -32.28,
+          "expected_db": -32.81,
           "dyn": 0.35
         }
       ]
@@ -424,50 +431,50 @@
         {
           "section": "the_lab",
           "start_s": 0.0,
-          "measured_db": -50.81,
-          "expected_db": -56.27,
+          "measured_db": -51.08,
+          "expected_db": -56.7,
           "dyn": 0.25
         },
         {
           "section": "the_alert",
           "start_s": 24.0,
-          "measured_db": -48.12,
-          "expected_db": -47.97,
+          "measured_db": -47.97,
+          "expected_db": -48.4,
           "dyn": 0.65
         },
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -44.74,
-          "expected_db": -45.14,
+          "measured_db": -45.16,
+          "expected_db": -45.57,
           "dyn": 0.9
         },
         {
           "section": "the_flyover",
           "start_s": 52.0,
-          "measured_db": -46.17,
-          "expected_db": -46.17,
+          "measured_db": -46.6,
+          "expected_db": -46.6,
           "dyn": 0.8
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -44.97,
-          "expected_db": -44.67,
+          "measured_db": -44.57,
+          "expected_db": -45.1,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -43.44,
-          "expected_db": -44.23,
+          "measured_db": -44.62,
+          "expected_db": -44.66,
           "dyn": 1.0
         },
         {
           "section": "the_signal",
           "start_s": 110.0,
-          "measured_db": -51.14,
-          "expected_db": -54.69,
+          "measured_db": -50.99,
+          "expected_db": -55.12,
           "dyn": 0.3
         }
       ]
@@ -478,8 +485,8 @@
         {
           "section": "the_lab",
           "start_s": 0.0,
-          "measured_db": -26.43,
-          "expected_db": -26.43,
+          "measured_db": -26.42,
+          "expected_db": -26.42,
           "dyn": 0.25
         }
       ]
@@ -490,8 +497,8 @@
         {
           "section": "the_take",
           "start_s": 12.0,
-          "measured_db": -32.6,
-          "expected_db": -32.6,
+          "measured_db": -33.22,
+          "expected_db": -33.22,
           "dyn": 0.45
         }
       ]
@@ -502,8 +509,8 @@
         {
           "section": "the_lab",
           "start_s": 0.0,
-          "measured_db": -31.5,
-          "expected_db": -31.5,
+          "measured_db": -31.53,
+          "expected_db": -31.53,
           "dyn": 0.25
         }
       ]
@@ -526,36 +533,36 @@
         {
           "section": "the_take",
           "start_s": 12.0,
-          "measured_db": -12.53,
-          "expected_db": -18.6,
+          "measured_db": -11.73,
+          "expected_db": -18.53,
           "dyn": 0.45
         },
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -13.48,
-          "expected_db": -12.58,
+          "measured_db": -12.65,
+          "expected_db": -12.51,
           "dyn": 0.9
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -13.54,
-          "expected_db": -12.11,
+          "measured_db": -13.56,
+          "expected_db": -12.04,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -12.58,
-          "expected_db": -11.67,
+          "measured_db": -12.51,
+          "expected_db": -11.6,
           "dyn": 1.0
         },
         {
           "section": "the_signal",
           "start_s": 110.0,
-          "measured_db": -12.19,
-          "expected_db": -22.12,
+          "measured_db": -11.87,
+          "expected_db": -22.06,
           "dyn": 0.3
         }
       ]
@@ -566,8 +573,8 @@
         {
           "section": "the_take",
           "start_s": 12.0,
-          "measured_db": -40.78,
-          "expected_db": -40.78,
+          "measured_db": -39.96,
+          "expected_db": -39.96,
           "dyn": 0.45
         }
       ]
@@ -578,8 +585,8 @@
         {
           "section": "the_truck",
           "start_s": 58.0,
-          "measured_db": -43.63,
-          "expected_db": -43.63,
+          "measured_db": -43.74,
+          "expected_db": -43.74,
           "dyn": 0.6
         }
       ]
@@ -590,8 +597,8 @@
         {
           "section": "the_take",
           "start_s": 12.0,
-          "measured_db": -16.95,
-          "expected_db": -16.95,
+          "measured_db": -16.85,
+          "expected_db": -16.85,
           "dyn": 0.45
         }
       ]
@@ -602,8 +609,8 @@
         {
           "section": "the_flyover",
           "start_s": 52.0,
-          "measured_db": -12.61,
-          "expected_db": -12.61,
+          "measured_db": -12.99,
+          "expected_db": -12.99,
           "dyn": 0.8
         }
       ]
@@ -614,8 +621,8 @@
         {
           "section": "the_alert",
           "start_s": 24.0,
-          "measured_db": -23.86,
-          "expected_db": -23.86,
+          "measured_db": -22.73,
+          "expected_db": -22.73,
           "dyn": 0.65
         }
       ]
@@ -626,8 +633,8 @@
         {
           "section": "the_lab",
           "start_s": 0.0,
-          "measured_db": -20.3,
-          "expected_db": -20.3,
+          "measured_db": -19.47,
+          "expected_db": -19.47,
           "dyn": 0.25
         }
       ]
@@ -638,29 +645,29 @@
         {
           "section": "the_alert",
           "start_s": 24.0,
-          "measured_db": -23.86,
-          "expected_db": -38.9,
+          "measured_db": -23.14,
+          "expected_db": -40.81,
           "dyn": 0.65
         },
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -46.56,
-          "expected_db": -36.08,
+          "measured_db": -47.01,
+          "expected_db": -37.98,
           "dyn": 0.9
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -45.08,
-          "expected_db": -35.61,
+          "measured_db": -45.54,
+          "expected_db": -37.51,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -26.6,
-          "expected_db": -35.16,
+          "measured_db": -29.95,
+          "expected_db": -37.07,
           "dyn": 1.0
         }
       ]
@@ -671,29 +678,29 @@
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -22.84,
-          "expected_db": -21.58,
+          "measured_db": -21.5,
+          "expected_db": -21.24,
           "dyn": 0.9
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -22.17,
-          "expected_db": -21.11,
+          "measured_db": -21.34,
+          "expected_db": -20.77,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -20.52,
-          "expected_db": -20.67,
+          "measured_db": -20.33,
+          "expected_db": -20.32,
           "dyn": 1.0
         },
         {
           "section": "the_signal",
           "start_s": 110.0,
-          "measured_db": -19.99,
-          "expected_db": -31.12,
+          "measured_db": -20.66,
+          "expected_db": -30.78,
           "dyn": 0.3
         }
       ]
@@ -704,64 +711,64 @@
         {
           "section": "the_take",
           "start_s": 12.0,
-          "measured_db": -21.19,
-          "expected_db": -28.41,
+          "measured_db": -22.2,
+          "expected_db": -27.94,
           "dyn": 0.45
         },
         {
           "section": "the_alert",
           "start_s": 24.0,
-          "measured_db": -21.62,
-          "expected_db": -25.21,
+          "measured_db": -21.16,
+          "expected_db": -24.75,
           "dyn": 0.65
         },
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -25.92,
-          "expected_db": -22.39,
+          "measured_db": -25.5,
+          "expected_db": -21.92,
           "dyn": 0.9
         },
         {
           "section": "the_flyover",
           "start_s": 52.0,
-          "measured_db": -28.32,
-          "expected_db": -23.41,
+          "measured_db": -28.2,
+          "expected_db": -22.95,
           "dyn": 0.8
         },
         {
           "section": "the_truck",
           "start_s": 58.0,
-          "measured_db": -23.87,
-          "expected_db": -25.91,
+          "measured_db": -24.75,
+          "expected_db": -25.45,
           "dyn": 0.6
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -27.96,
-          "expected_db": -21.92,
+          "measured_db": -27.28,
+          "expected_db": -21.45,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -26.17,
-          "expected_db": -21.47,
+          "measured_db": -23.88,
+          "expected_db": -21.01,
           "dyn": 1.0
         },
         {
           "section": "the_dropout",
           "start_s": 104.0,
-          "measured_db": -21.25,
-          "expected_db": -30.59,
+          "measured_db": -21.86,
+          "expected_db": -30.13,
           "dyn": 0.35
         },
         {
           "section": "the_signal",
           "start_s": 110.0,
-          "measured_db": -25.21,
-          "expected_db": -31.93,
+          "measured_db": -25.68,
+          "expected_db": -31.47,
           "dyn": 0.3
         }
       ]
@@ -772,29 +779,29 @@
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -15.96,
-          "expected_db": -15.22,
+          "measured_db": -15.52,
+          "expected_db": -15.12,
           "dyn": 0.9
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -15.02,
-          "expected_db": -14.75,
+          "measured_db": -15.18,
+          "expected_db": -14.65,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -14.95,
-          "expected_db": -14.31,
+          "measured_db": -14.58,
+          "expected_db": -14.2,
           "dyn": 1.0
         },
         {
           "section": "the_dropout",
           "start_s": 104.0,
-          "measured_db": -11.84,
-          "expected_db": -23.43,
+          "measured_db": -12.43,
+          "expected_db": -23.32,
           "dyn": 0.35
         }
       ]
@@ -805,22 +812,22 @@
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -16.57,
-          "expected_db": -16.85,
+          "measured_db": -17.01,
+          "expected_db": -17.26,
           "dyn": 0.9
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -16.38,
-          "expected_db": -16.38,
+          "measured_db": -16.79,
+          "expected_db": -16.79,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -15.56,
-          "expected_db": -15.93,
+          "measured_db": -15.93,
+          "expected_db": -16.34,
           "dyn": 1.0
         }
       ]
@@ -831,36 +838,36 @@
         {
           "section": "the_chase",
           "start_s": 36.0,
-          "measured_db": -34.01,
-          "expected_db": -34.34,
+          "measured_db": -34.72,
+          "expected_db": -35.53,
           "dyn": 0.9
         },
         {
           "section": "the_flyover",
           "start_s": 52.0,
-          "measured_db": -38.25,
-          "expected_db": -35.36,
+          "measured_db": -39.61,
+          "expected_db": -36.55,
           "dyn": 0.8
         },
         {
           "section": "the_truck",
           "start_s": 58.0,
-          "measured_db": -37.07,
-          "expected_db": -37.86,
+          "measured_db": -40.84,
+          "expected_db": -39.05,
           "dyn": 0.6
         },
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -34.34,
-          "expected_db": -33.87,
+          "measured_db": -35.53,
+          "expected_db": -35.06,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -32.71,
-          "expected_db": -33.42,
+          "measured_db": -32.86,
+          "expected_db": -34.62,
           "dyn": 1.0
         }
       ]
@@ -871,36 +878,36 @@
         {
           "section": "the_lab",
           "start_s": 0.0,
-          "measured_db": -50.77,
-          "expected_db": -47.21,
+          "measured_db": -50.48,
+          "expected_db": -45.38,
           "dyn": 0.25
         },
         {
           "section": "the_take",
           "start_s": 12.0,
-          "measured_db": -42.61,
-          "expected_db": -42.11,
+          "measured_db": -41.59,
+          "expected_db": -40.27,
           "dyn": 0.45
         },
         {
           "section": "the_alert",
           "start_s": 24.0,
-          "measured_db": -37.68,
-          "expected_db": -38.91,
+          "measured_db": -37.4,
+          "expected_db": -37.08,
           "dyn": 0.65
         },
         {
           "section": "the_dropout",
           "start_s": 104.0,
-          "measured_db": -44.29,
-          "expected_db": -44.29,
+          "measured_db": -42.46,
+          "expected_db": -42.46,
           "dyn": 0.35
         },
         {
           "section": "the_signal",
           "start_s": 110.0,
-          "measured_db": -45.3,
-          "expected_db": -45.63,
+          "measured_db": -44.04,
+          "expected_db": -43.8,
           "dyn": 0.3
         }
       ]
@@ -911,15 +918,15 @@
         {
           "section": "the_escalation",
           "start_s": 64.0,
-          "measured_db": -36.31,
-          "expected_db": -35.34,
+          "measured_db": -36.33,
+          "expected_db": -35.28,
           "dyn": 0.95
         },
         {
           "section": "the_wall",
           "start_s": 88.0,
-          "measured_db": -33.92,
-          "expected_db": -34.9,
+          "measured_db": -33.77,
+          "expected_db": -34.83,
           "dyn": 1.0
         }
       ]

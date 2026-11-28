@@ -1,5 +1,5 @@
 file: /home/user/music-generator/projects/quiet_frequency_trailer/out/_draft_quiet_frequency_trailer.wav
-duration_s: 120.645
+duration_s: 120.634
 sample_rate: 44100
 sections:
   the_lab: 0.00-12.00 s, dyn 0.25
@@ -20,8 +20,8 @@ flagged times: 12
   16.045s stem.tick [PASS] choir
   24.009s stem.tick [PASS] basses_pizz
   24.021s stem.tick [PASS] celli
-  35.968s stem.tick [PASS] trombones
+  35.956s stem.tick [PASS] trombones
   35.968s stem.tick [PASS] tuba
   36.328s stem.tick [PASS] violas
-  64.029s stem.tick [PASS] violins_staccato
+  64.052s stem.tick [PASS] violins_staccato
   120.310s dropout [FAIL] master
