@@ -25,7 +25,7 @@
     },
     {
       "type": "lp",
-      "f": 9000.0
+      "f": 14000.0
     }
   ],
   "gain_db": -9.0,
@@ -34,7 +34,8 @@
     "KB cinematic-hybrid-scoring (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising device)",
     "KB orchestral-writing (playable ranges, section sizes and note rates of the instrument)",
     "KB theatrical-realism (a section is several players; colour follows loudness)",
-    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render",
+    "v05 director note: a held SF2 chord freezes after about a second; a 0.25 Hz chorus moves its partials. Starting value; not auditioned."
   ],
   "ensemble": {
     "players": 6,
@@ -65,5 +66,19 @@
       ]
     ],
     "zones": 8
-  }
+  },
+  "fx": [
+    {
+      "type": "pedalboard",
+      "plugin": "Chorus",
+      "params": {
+        "rate_hz": 0.25,
+        "depth": 0.25,
+        "centre_delay_ms": 9.0,
+        "feedback": 0.0,
+        "mix": 0.5
+      },
+      "mix": 0.3
+    }
+  ]
 }

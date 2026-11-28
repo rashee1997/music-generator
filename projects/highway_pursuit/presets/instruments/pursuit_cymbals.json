@@ -24,18 +24,27 @@
     },
     {
       "type": "lp",
-      "f": 13000.0
+      "f": 18000.0
     }
   ],
-  "gain_db": -8.0,
+  "gain_db": -5.0,
   "reverb": 0.2,
   "sources": [
     "KB cinematic-hybrid-scoring (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising device)",
     "KB soundfont-velocity-and-realism (a General MIDI SoundFont has one sample per key: velocity moves level, so the colour is added by velocity_timbre and the section by ensemble)",
-    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render"
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render",
+    "v05 director note: the downbeats had no crash cutting over the brass; lowpass opened 13 -> 18 kHz, an air exciter added above 8 kHz (fx air, measured by realism.air), level -8 -> -5 dB. Starting values; not auditioned."
   ],
   "gm": "orchestral",
   "mechanics_class": "drum",
   "onset_fade_ms": 0.3,
-  "onset_fade_all": true
+  "onset_fade_all": true,
+  "fx": [
+    {
+      "type": "air",
+      "corner_hz": 8000.0,
+      "drive": 3.0,
+      "amount_db": -20.0
+    }
+  ]
 }

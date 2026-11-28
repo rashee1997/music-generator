@@ -3,7 +3,7 @@
  "character": "A night highway chase: the ostinato and the low end carry the front, the percussion sits behind the listener, the tunnel is loud and dry, the flyover opens the room. Stereo and a fifth-order field from the same mix.",
  "carve_db": -4.0,
  "max_boost_db": 12.0,
- "note": "Written for Night Pursuit Cinematic; the scaffold copy of the default was replaced. v04 low-end ownership: basses, basses_pizz, bass_drum, taiko and timpani own 40-160 Hz; the celli ostinato, the horns and the trombones are high-passed at 110-130 Hz (their attack lives above it), the beds duck from 110 Hz under the first drum track, and the reverb return starts at 220 Hz so the room tail does not carry the low ostinato.",
+ "note": "Written for Night Pursuit Cinematic; the scaffold copy of the default was replaced. v04 low-end ownership: basses, basses_pizz, bass_drum, taiko and timpani own 40-160 Hz; the celli ostinato, the horns and the trombones are high-passed at 110-130 Hz (their attack lives above it), the beds duck from 110 Hz under the first drum track, and the reverb return starts at 220 Hz so the room tail does not carry the low ostinato. v05: the reverb return opens to 14 kHz (was the 7.5 kHz default); the pads, chords and piano take a small 450 Hz and 2 kHz pocket under the horn; the kick gains 100 Hz body and a 2.8 kHz beater; the taiko gives up 120 Hz to the basses; the snare's -12 dB top shelf eased to -4.",
  "gain_staging": {
   "strategy": "legacy",
   "ref_lufs": -22.0,
@@ -264,7 +264,8 @@
    "target_db": 0.0
   },
   "return": {
-   "highpass_hz": 220.0
+   "highpass_hz": 220.0,
+   "lowpass_hz": 14000.0
   }
  },
  "sidechain": {
@@ -830,6 +831,18 @@
     "f": 300,
     "gain": -2.5,
     "q": 0.9
+   },
+   {
+    "type": "peak",
+    "f": 450,
+    "gain": -2.0,
+    "q": 0.9
+   },
+   {
+    "type": "peak",
+    "f": 2000,
+    "gain": -1.5,
+    "q": 0.9
    }
   ],
   "pursuit_horns": [
@@ -856,6 +869,18 @@
     "f": 300,
     "gain": -2.5,
     "q": 0.9
+   },
+   {
+    "type": "peak",
+    "f": 450,
+    "gain": -2.0,
+    "q": 0.9
+   },
+   {
+    "type": "peak",
+    "f": 2000,
+    "gain": -1.5,
+    "q": 0.9
    }
   ],
   "pursuit_tuba": [
@@ -876,8 +901,72 @@
    {
     "type": "highshelf",
     "f": 5500,
-    "gain": -12.0,
+    "gain": -4.0,
     "q": 0.7
+   }
+  ],
+  "pursuit_violins_long": [
+   {
+    "type": "peak",
+    "f": 450,
+    "gain": -2.0,
+    "q": 0.9
+   },
+   {
+    "type": "peak",
+    "f": 2000,
+    "gain": -1.5,
+    "q": 0.9
+   }
+  ],
+  "pursuit_choir": [
+   {
+    "type": "peak",
+    "f": 450,
+    "gain": -2.0,
+    "q": 0.9
+   },
+   {
+    "type": "peak",
+    "f": 2000,
+    "gain": -1.5,
+    "q": 0.9
+   }
+  ],
+  "pursuit_piano_theme": [
+   {
+    "type": "peak",
+    "f": 450,
+    "gain": -2.0,
+    "q": 0.9
+   },
+   {
+    "type": "peak",
+    "f": 2000,
+    "gain": -1.5,
+    "q": 0.9
+   }
+  ],
+  "pursuit_bass_drum": [
+   {
+    "type": "peak",
+    "f": 100,
+    "gain": 2.0,
+    "q": 1.0
+   },
+   {
+    "type": "peak",
+    "f": 2800,
+    "gain": 3.0,
+    "q": 1.0
+   }
+  ],
+  "pursuit_taiko": [
+   {
+    "type": "peak",
+    "f": 120,
+    "gain": -2.5,
+    "q": 0.9
    }
   ]
  },
