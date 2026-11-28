@@ -298,3 +298,11 @@ quiet ones without a louder cue. Off by default. It collides with nothing protec
 - `mastering.tones.theatrical` is a low shelf (+3 dB at 70 Hz) and a high shelf (+1 dB at 9 kHz); a master picks it with `master.tone`.
 - `mastering.virtual_bass` adds harmonics of the 30-90 Hz band at 80-240 Hz, scaled to the sub's own level, so bass is heard on headphones
   and small speakers. It is off unless the preset enables it. Equations and sources: `knowledgebase/sound-design/low-end-and-virtual-bass.md`.
+
+## 12. Where the mixer's numbers live
+
+The shipped defaults are `references/data/mix_defaults.json` (gain staging, dynamics, spectral profiles, space, sidechain, the master chain,
+role chains; each section has a provenance line, the loudness profiles are `references/data/master_targets.json`). `scripts/mix_schema.py`
+keeps the ranges, the enums and `validate()`. A piece's mix is the project's own preset (`presets.py scaffold mix <name> --project <dir>`): it
+lists only what the piece changes, a key it leaves out is the default, and `project_gate` requires the preset to be the project's, not the
+shipped one, and described. `presets.py show mix default` prints every key with its shipped value; `scaffold mix --full` writes them all out.

@@ -303,7 +303,7 @@ def soundfont_problems(p):
     return out
 
 
-def scaffold(kind, name, project_dir, from_name=None):
+def scaffold(kind, name, project_dir, from_name=None, full=False):
     """Write a template preset with every key of the kind, so the user can see and change each value."""
     if not name:
         if kind != 'mix':
@@ -322,8 +322,8 @@ def scaffold(kind, name, project_dir, from_name=None):
                     # strings that ring with the music (references/mixing/mixing-and-mastering.md, section 8b)
                     sympathetic_resonance=dict(enabled=False, sources=[], tuning='score_scale', low_hz=110.0,
                                                strings=7, partials=3, q=300.0, level_db=-26.0, width=0.5, spatial={}),
-                    note='every key is written out, including role_chains and spectral.profiles: change the ones this piece needs. '
-                         'An unlisted key comes from references/data/presets/mix/default.json',
+                    note='write only what this piece changes: a key left out is the shipped default (references/data/mix_defaults.json), so nothing has to be restated. '
+                         '`presets.py scaffold mix --full` writes every section and role chain out as a starting point.',
                     # the strategies (references/mixing/mixing-and-mastering.md, section 8b). The defaults are what this engine
                     # always did; switch one on per piece rather than loosening a gate row.
                     gain_staging=dict(strategy='legacy', ref_lufs=-24.0, block_s=0.4, max_cut_db=24.0,
@@ -540,7 +540,10 @@ def scaffold(kind, name, project_dir, from_name=None):
             body['character'] = templates[kind]['character']
         if kind == 'gate':        # inherit rather than copy: the new type writes only what differs
             body = dict(name=name, character=body['character'], extends=_norm(from_name), flags=[], detect=dict(keywords=[]), rows={})
-    if kind == 'mix':         # the whole starting set, written out: every role chain and spectral profile visible and editable
+    if kind == 'mix' and not full:   # a project states what it changes: every section the shipped defaults already hold is left out
+        import mix_schema
+        body = {k: v for k, v in body.items() if k not in mix_schema.DEFAULTS}
+    if kind == 'mix' and full:   # `--full`: the whole starting set written out, every role chain and spectral profile visible and editable
         import mix_schema
         body.setdefault('render', copy.deepcopy(mix_schema.DEFAULTS.get('render') or {}))
         body.setdefault('role_chains', copy.deepcopy(mix_schema.ROLE_CHAINS))
@@ -572,6 +575,7 @@ def main():
     ap.add_argument('name', nargs='?')
     ap.add_argument('--project', default=None)
     ap.add_argument('--from', dest='from_name', default=None, help='scaffold: start from this existing preset of the same kind')
+    ap.add_argument('--full', action='store_true', help='scaffold mix: write every role chain and spectral profile out (default: only what the project changes; the rest is references/data/mix_defaults.json)')
     a = ap.parse_args()
     if a.project:
         add_project(a.project)
@@ -590,7 +594,7 @@ def main():
         print('\n'.join(probs) if probs else 'all presets have their required keys')
         sys.exit(1 if probs else 0)
     elif a.cmd == 'scaffold':
-        print('wrote', scaffold(a.kind, a.name, a.project or '.', a.from_name))
+        print('wrote', scaffold(a.kind, a.name, a.project or '.', a.from_name, full=a.full))
     elif a.cmd == 'ingest':
         print('ingested', ingest(a.kind, a.project or '.'))
 

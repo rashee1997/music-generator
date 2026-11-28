@@ -1,5 +1,5 @@
 {
- "stamp": "20261128T012452",
+ "stamp": "20261128T020350",
  "project": "highway_pursuit",
  "level": "WARN",
  "sources": {
@@ -18,8 +18,9 @@
    "waveform.json"
   ],
   "stems": "18 processed stems from .cache/mix",
-  "master": "out/_draft_highway_pursuit.wav",
-  "verdict": "2026-11-28T01:18:57Z"
+  "master": "out/highway_pursuit.wav",
+  "verdict": "2026-11-28T01:59:19Z",
+  "drift": "the presets or score changed after this master was rendered: presets/mix/highway_pursuit_mix.json - the autopsy describes the previous mix until you re-render"
  },
  "binding": [],
  "advisory": [

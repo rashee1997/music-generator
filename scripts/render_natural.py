@@ -1246,7 +1246,7 @@ _CODE_HASH = None
 _RENDER_CODE = ('render_natural.py', 'dsp.py', 'sfz_render.py', 'environment.py', 'humanize.py', 'vocals.py',
                 'sound_model.py', 'clone_instrument.py', 'spatial.py', 'airabs.py', 'mechanics.py', 'world.py',
                 'soundbank.py', 'presets.py', 'mix_schema.py', 'cli_util.py', 'sfz_libs.py',
-                'family_dsp.py', 'families.py', '../references/data/presets/families/families.json')   # a family's behaviour is code and data of the stem
+                'family_dsp.py', 'families.py', '../references/data/presets/families/families.json', '../references/data/mix_defaults.json')   # a family's behaviour is code and data of the stem
 # `spatial_engine` is not here: nothing the stem renderer imports reaches it (checked by search over every module and package listed), and it holds the
 # loudspeaker, object and ambisonic deliverables, so a fix to one of them used to throw away every cached stem of every project
 _RENDER_PACKAGES = ('vocal_engine', 'phys_core', 'env_engine', 'sfx_engine', 'spatial_hrtf',

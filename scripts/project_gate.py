@@ -413,6 +413,25 @@ def reference_problems(score, project):
     return out
 
 
+def mix_preset_problems(score, project):
+    """The piece's mix must be a mix preset of THIS project (kind "mix"), written for the piece, not the shipped default.
+
+    Only the requirement that the preset is the project's own and described is enforced. What it contains is its own business: a key
+    it leaves out is the shipped default (references/data/mix_defaults.json), and nothing is forced to be restated. A score that names
+    no `mix_preset` is judged as `default`, which is the shipped one unless the project has its own file of that name."""
+    presets.add_project(str(project))
+    name = score.get('mix_preset') or 'default'
+    cfg = presets.exact('mix', name)
+    if cfg is None:
+        return [f'score mix_preset "{name}" has no preset; create it: presets.py scaffold mix {_norm(name)} --project <dir>']
+    if not _owned(cfg):
+        return [f'score mix_preset "{name}" is the shipped default mix, not this project\'s: a piece has its own mix preset. '
+                f'Create it: presets.py scaffold mix <name> --project <dir> (it lists only what the piece changes), and name it in the score\'s "mix_preset"']
+    if _placeholder(cfg.get('character')):
+        return [f'mix/{_norm(name)}.json: "character" is empty or still the placeholder; write one sentence on what the mix is for']
+    return []
+
+
 def space_problems(score, project):
     """The piece's room must be a space preset of this project (kind "spaces"), written from the research."""
     presets.add_project(str(project))
@@ -678,7 +697,7 @@ def problems(score, project):
     out = [f'missing folder {d}/ (run: setup_project.py --new-project <dir>)' for d in SCAFFOLD if not (project / d).is_dir()]
     out += research_problems(project) + direction_problems(project) + preset_file_problems(project)
     if score is not None:
-        out += track_problems(score, project) + stage_problems(score, project) + ambience_problems(score, project) + reference_problems(score, project) + space_problems(score, project) + immersive_problems(score, project)
+        out += track_problems(score, project) + stage_problems(score, project) + ambience_problems(score, project) + reference_problems(score, project) + space_problems(score, project) + mix_preset_problems(score, project) + immersive_problems(score, project)
         out += gate_problems(score, project) + output_problems(score)
     return out
 

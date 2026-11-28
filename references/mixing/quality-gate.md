@@ -392,6 +392,7 @@ never loosened.
 |---|---|---|
 | What a row judges a piece by | `references/data/presets/gate/data/rows.json` (default, range, source) | the project profile's `rows`, with a reason (`gate_profiles.py relax`) |
 | A window or cut-off a measurement is made with (breath gap, masking window, click step, unison length, roughness spike ratio) | `references/data/presets/gate/data/constants.json` | `<project>/presets/gate/constants.json`, `{"name": value}` |
+| The mixer's defaults (gain staging, dynamics, spectral profiles, space, sidechain, master chain, role chains) | `references/data/mix_defaults.json` (every section with its provenance); `mix_schema.py` holds the ranges, enums and validation | the project's own mix preset lists only what the piece changes; `project_gate.mix_preset_problems` requires that preset to be the project's, with a written `character` |
 | The master's loudness | score `master.lufs`, the mix preset's profile, the declared registers, then `references/data/master_targets.json` (`default`, `profiles`, per-genre `genres`, `voiceover`) | each step overrides the next |
 | A game or film-scene score's states, families and mixing | `references/data/media/game_score.json`, `film_scene_score.json` (read with `scripts/media_profile.py`) | the sheet states the choice |
 

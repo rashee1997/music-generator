@@ -7,10 +7,10 @@
       "stems": 18
     },
     "1_timbre_loudness": {
-      "value": -1.5,
-      "hf_shift_db": 4.98,
-      "centroid_quiet_hz": 178.0,
-      "centroid_loud_hz": 149.7,
+      "value": -1.51,
+      "hf_shift_db": 5.03,
+      "centroid_quiet_hz": 177.5,
+      "centroid_loud_hz": 149.2,
       "verdict": "WARN",
       "note": "loud and quiet differ mainly in volume"
     },
@@ -21,14 +21,14 @@
       "note": "35 player(s) across 12 section part(s)"
     },
     "3_transient": {
-      "value": 0.9909,
-      "onsets": 112,
+      "value": 0.9911,
+      "onsets": 108,
       "verdict": "PASS",
       "note": "attacks vary"
     },
     "4_depth": {
-      "value": -0.74,
-      "wet_share": 0.5426,
+      "value": -0.82,
+      "wet_share": 0.5472,
       "verdict": "PASS",
       "note": "detail sits in front of the room"
     },
@@ -41,7 +41,7 @@
       "note": "every far source has an air model (the score's medium, ISO 9613-1)"
     },
     "7_openness": {
-      "value": 20.94,
+      "value": 21.04,
       "verdict": "PASS",
       "note": "air survives the peak"
     },
@@ -53,10 +53,10 @@
       "note": "unstable at the bar"
     },
     "5_low_mid": {
-      "value": 2.98,
-      "low_mid_over_sub_db": -4.18,
-      "low_mid_growth_db": 1.93,
-      "sub_growth_db": 3.14,
+      "value": 2.95,
+      "low_mid_over_sub_db": -4.27,
+      "low_mid_growth_db": 1.91,
+      "sub_growth_db": 3.1,
       "verdict": "WARN",
       "note": "low-mids thicken or grow into the peak"
     },
@@ -124,7 +124,7 @@
     },
     "12_coherence": {
       "value": 0.64,
-      "mid": 0.45,
+      "mid": 0.44,
       "verdict": "PASS",
       "note": "the top of the mix is decorrelated between the channels"
     },

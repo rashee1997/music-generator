@@ -343,28 +343,12 @@ def scaffold_project(proj_path, title="New Composition", ambience=False, genre=N
     shipped_hall.pop('kind', None)
     with open(spaces_dir / f'{slug}_room.json', 'w', encoding='utf-8') as f:
         json.dump(shipped_hall, f, indent=2)
-    import mix_schema              # stdlib-only, like this file: the role chains and spectral profiles are data a project edits
+    # This project's own mix preset. It states only what the piece decides (a key left out is the shipped default of
+    # references/data/mix_defaults.json, so nothing has to be restated to be enforced); `presets.py scaffold mix --full` writes every
+    # section out as a starting point. The gate requires the score to name a mix preset of the project with a written `character`.
     mix_preset = {"name": f"{slug}_mix", "character": "ONE SENTENCE: what this music is (genre, mood, density) and why the mix below suits it",
                   "carve_db": -4.0, "max_boost_db": 12.0,
-                  "note": "only list what differs: everything else comes from references/data/presets/mix/default.json",
-                  # the strategies (references/mixing/mixing-and-mastering.md, section 8b); the defaults are the old behaviour
-                  "gain_staging": {"strategy": "legacy", "ref_lufs": -24.0, "block_s": 0.4,
-                                   "max_cut_db": 24.0, "peak_headroom_db": -1.0},
-                  "dynamics": {"engine": "pedalboard", "knee_db": 0.0, "detector": "peak",
-                               "stereo_link": True, "lookahead_ms": 0.0, "parallel": 1.0},
-                  "spectral": {"max_auto_cut_db": 0.0, "preserve_spectrum_roles": ["environment"],
-                               "profiles": copy.deepcopy(mix_schema.SPECTRAL_PROFILES)},   # rain, wind, water, voice, strings, ...
-                  "space": {"auto_env_blend": {"enabled": True},
-                            # the room send each role starts with (starting values: a dry bass, a wet pad)
-                            "send_by_role": {"default": 0.18, "bass": 0.0, "drum": 0.08, "percussion": 0.08, "pad": 0.30,
-                                             "texture": 0.30, "drone": 0.26, "melody": 0.22, "lead": 0.22, "vocal": 0.22,
-                                             "environment": 0.20},
-                            "drr": {"enabled": False, "target_db": 0.0}},
-                  "sidechain": {"mode": "legacy", "band_hz": [250.0, 3800.0], "residual": 0.3,
-                                "env_plateau": True},
-                  "automation": {"curve": "linear"},
-                  "mastering": {"profile": "default"},
-                  "role_chains": copy.deepcopy(mix_schema.ROLE_CHAINS)}    # the EQ + compression each role starts with
+                  "note": "list only what differs from references/data/mix_defaults.json; mastering.highpass_hz stays the shipped 24 Hz unless a measured row asks for more"}
     with open(mix_dir / f'{slug}_mix.json', 'w', encoding='utf-8') as f:
         json.dump(mix_preset, f, indent=2)
 

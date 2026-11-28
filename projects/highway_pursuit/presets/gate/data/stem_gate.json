@@ -6,7 +6,7 @@
     "warns": 0,
     "rows": 161,
     "profile": "highway_pursuit",
-    "total_ms": 222.00789199996507,
+    "total_ms": 1128.6608939999496,
     "timings": {
       "bass_clarinet": 0.0,
       "bass_drum": 0.0,
@@ -1875,10 +1875,10 @@
         "margin": -0.000998690031072246,
         "worst_times_s": [],
         "calibrated": false,
-        "detail": "stem \"snare\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
+        "detail": "stem \"snare\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)",
         "channel_means": [
-          -1.2872398484532274e-07,
-          -1.3040069541301952e-07
+          5.035889763223701e-09,
+          3.35917915936696e-09
         ],
         "drift": 1.309968927754099e-06
       },
@@ -3717,7 +3717,7 @@
     {
       "level": "PASS",
       "row": "stem.dc",
-      "detail": "stem \"snare\": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
+      "detail": "stem \"snare\": channel mean(s) 0.00000, 0.00000 FS, 1 s drift 0.00000 (limit 0.001)"
     },
     {
       "level": "PASS",
