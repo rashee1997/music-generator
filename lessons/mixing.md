@@ -37,4 +37,13 @@ lessons:
   cause: master.lufs in the score wins over the register band and the shipped default
   fix: write the user's figure in the score and the sheet; state it in the report
   evidence: trailer -16 LUFS
+- id: Y06
+  title: SFX stems sit above the music in the mix
+  keywords: [sfx level, sfx over music, balance, stem rms, fx table, Gain, engine bed]
+  symptom: listener hears the SFX over the music; stem RMS shows SFX +3.3 dB over music overall and +6 to +14 dB in quiet sections and the end
+  cause: continuous beds (engines, road, tyres) were left at their preset level while the orchestra was trimmed
+  check: sum stem power of sfx_* against the rest per 8 s window before touching a preset
+  fix: 'per-sfx Gain in the mix preset fx table: engines -5 dB, road and tyres -4, device and alarm -3; leave impacts, horn, walkie (the cut-scene hits) alone'
+  avoid: 'one cut on the whole fx role: it also lowers the hits the brief wants loud'
+  evidence: quiet_frequency_trailer, 2026-11-28, unrendered, unheard
 ---

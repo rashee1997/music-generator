@@ -6,7 +6,7 @@
     "warns": 0,
     "rows": 238,
     "profile": "quiet_frequency",
-    "total_ms": 9329.430332999891,
+    "total_ms": 3725.7526209996286,
     "timings": {
       "bass_drum": 0.0,
       "basses": 0.0,
@@ -17,17 +17,17 @@
       "horns": 0.0,
       "low_swell": 0.0,
       "piano_theme": 0.0,
-      "sfx_alarm": 3637.677602999929,
-      "sfx_bike": 844.6899959999428,
-      "sfx_device": 848.3615380000629,
+      "sfx_alarm": 0.0,
+      "sfx_bike": 0.0,
+      "sfx_device": 0.0,
       "sfx_heartbeat": 0.0,
       "sfx_impacts": 0.0,
-      "sfx_road": 670.160893000002,
-      "sfx_truck": 2053.396833000079,
-      "sfx_tyres_bike": 1149.9902580001162,
-      "sfx_tyres_v8": 1257.267628999898,
-      "sfx_v8": 708.572231000062,
-      "sfx_walkie": 830.6918180001048,
+      "sfx_road": 0.0,
+      "sfx_truck": 0.0,
+      "sfx_tyres_bike": 0.0,
+      "sfx_tyres_v8": 0.0,
+      "sfx_v8": 0.0,
+      "sfx_walkie": 0.0,
       "snare": 0.0,
       "taiko": 0.0,
       "timpani": 0.0,
@@ -4693,8 +4693,8 @@
       }
     ],
     "duration_s": 123.28598639455782,
-    "cached_stems": 19,
-    "measured_stems": 9
+    "cached_stems": 28,
+    "measured_stems": 0
   },
   "rows": [
     {
