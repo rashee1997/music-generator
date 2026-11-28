@@ -1,0 +1,48 @@
+{
+ "kind": "sfx",
+ "character": "The sub-boom tail of the last hit: a falling sub under the room, long enough to carry the fade.",
+ "seconds": 3.4,
+ "spec": {
+  "seconds": 3.4,
+  "layers": [
+   {
+    "kind": "glide",
+    "f0": 46.0,
+    "f1": 29.0,
+    "harmonics": 1,
+    "gain": 1.0,
+    "env": {
+     "attack": 0.01,
+     "tau": 1.6
+    }
+   },
+   {
+    "kind": "noise",
+    "band": [
+     40,
+     220
+    ],
+    "gain": 0.35,
+    "env": {
+     "attack": 0.01,
+     "tau": 1.2
+    }
+   }
+  ]
+ },
+ "sources": [
+  "engine"
+ ],
+ "note": "ESTIMATE: the sub frequencies sit above the 24 Hz master high-pass and are starting values.",
+ "name": "qf_boom",
+ "role": "fx",
+ "gain_db": 0.0,
+ "spatial": {
+  "azimuth": 0.0,
+  "elevation": 0.0,
+  "distance": 6.0,
+  "space": "quiet_frequency_room",
+  "binaural": true,
+  "kind": "spot"
+ }
+}

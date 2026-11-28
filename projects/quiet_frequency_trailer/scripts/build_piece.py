@@ -496,6 +496,7 @@ SFX = [  # (track, preset, start_s, length_s)
     ('sfx_device', 'qf_device', 8.4, 111.5), ('sfx_bike', 'qf_bike', 13.8, 104.2), ('sfx_tyres_bike', 'qf_tyres_bike', 21.65, 76.85),
     ('sfx_road', 'qf_road', 21.5, 97.5), ('sfx_v8', 'qf_v8', 24.0, 94.0), ('sfx_tyres_v8', 'qf_tyres_v8', 55.35, 41.95),
     ('sfx_truck', 'qf_truck', 58.5, 3.5),
+    ('sfx_suck', 'qf_suck', 116.4, 0.6), ('sfx_boom', 'qf_boom', 117.0, 3.4),
 ]
 HIT_TIMES = [TL.T['take'], TL.T['chase'], TL.T['back'], TL.T['wall'], TL.T['mid_wall'], TL.T['last']]
 # the music's own clock is beats: seconds / 0.5 at 120 BPM

@@ -350,6 +350,8 @@ def squelch_events():
 
 
 SQ_T, SQ_L = squelch_events()
+SNAP_T = rel([b + 0.16 for _a, b, _lv, _v in TX])
+SNAP_L = [round(10 ** ((lv - 4.0) / 20.0), 3) for _a, _b, lv, _v in TX]
 write('qf_walkie', dict(
     character='A hand-held two-way radio on the Villain\'s side of the story: a squelch pop opening each transmission, a band-limited carrier of static that is never words, a roger beep and a squelch tail closing it; the five transmissions differ in level, length and tone.',
     seconds=SECONDS,
@@ -365,6 +367,8 @@ write('qf_walkie', dict(
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -4.0 + tx_level(t, None, 0.18), 0.04))])),
         dict(name='squelch', gain_db=-9.0, excite=dict(kind='noise', color='white', attack=0.006, tau=0.06), resonator=dict(kind='bandpass', band=[500, 2600], order=2),
              events=dict(kind='sequence', times=SQ_T, levels=SQ_L)),
+        dict(name='snap_sub', gain_db=-14.0, excite=dict(kind='impact', tau=0.01), resonator=dict(kind='modal', law='membrane', f1=58.0, n=2, t60=0.2),
+             events=dict(kind='sequence', times=SNAP_T, levels=SNAP_L)),
         dict(name='roger_beep', gain_db=-9.0, excite=dict(kind='periodic', f0=1200.0, harmonics=2), resonator=dict(kind='none'), events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(beep_level, 0.01))])),
     ]),

@@ -31983,6 +31983,38 @@
     }
    },
    {
+    "name": "snap_sub",
+    "gain_db": -14.0,
+    "excite": {
+     "kind": "impact",
+     "tau": 0.01
+    },
+    "resonator": {
+     "kind": "modal",
+     "law": "membrane",
+     "f1": 58.0,
+     "n": 2,
+     "t60": 0.2
+    },
+    "events": {
+     "kind": "sequence",
+     "times": [
+      2.36,
+      22.56,
+      26.76,
+      101.56,
+      105.36
+     ],
+     "levels": [
+      0.501,
+      0.224,
+      0.15,
+      0.251,
+      0.112
+     ]
+    }
+   },
+   {
     "name": "roger_beep",
     "gain_db": -9.0,
     "excite": {

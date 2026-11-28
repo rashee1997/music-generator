@@ -13008,6 +13008,34 @@
       ]
     },
     {
+      "name": "sfx_suck",
+      "instrument": "sfx:qf_suck",
+      "role": "fx",
+      "dc_hp_hz": 20.0,
+      "notes": [
+        {
+          "t": 232.8,
+          "d": 1.2,
+          "p": 60,
+          "v": 1.0
+        }
+      ]
+    },
+    {
+      "name": "sfx_boom",
+      "instrument": "sfx:qf_boom",
+      "role": "fx",
+      "dc_hp_hz": 20.0,
+      "notes": [
+        {
+          "t": 234.0,
+          "d": 6.8,
+          "p": 60,
+          "v": 1.0
+        }
+      ]
+    },
+    {
       "name": "sfx_impacts",
       "instrument": "sfx:qf_impact",
       "role": "fx",

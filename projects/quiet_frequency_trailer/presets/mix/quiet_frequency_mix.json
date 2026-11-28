@@ -247,16 +247,16 @@
    "bass": 0.0,
    "drum": 0.08,
    "percussion": 0.08,
-   "pad": 0.16,
-   "texture": 0.12,
-   "melody": 0.12,
-   "lead": 0.12,
-   "counter": 0.1,
-   "chord": 0.1,
-   "ostinato": 0.08,
-   "arp": 0.12,
-   "drone": 0.1,
-   "fx": 0.12,
+   "pad": 0.24,
+   "texture": 0.16,
+   "melody": 0.2,
+   "lead": 0.2,
+   "counter": 0.16,
+   "chord": 0.18,
+   "ostinato": 0.15,
+   "arp": 0.16,
+   "drone": 0.14,
+   "fx": 0.16,
    "environment": 0.08
   },
   "drr": {
@@ -265,7 +265,7 @@
   },
   "return": {
    "highpass_hz": 220.0,
-   "lowpass_hz": 14000.0
+   "lowpass_hz": 9000.0
   }
  },
  "sidechain": {
@@ -1153,6 +1153,25 @@
    }
   ],
   "sfx:qf_alarm": [
+   {
+    "type": "pedalboard",
+    "plugin": "PeakFilter",
+    "params": {
+     "cutoff_frequency_hz": 3500.0,
+     "gain_db": -5.0,
+     "q": 0.8
+    }
+   },
+   {
+    "type": "ping_delay",
+    "time_ms": 375.0,
+    "feedback": 0.35,
+    "hp_hz": 400.0,
+    "lp_hz": 3000.0,
+    "spread": 1.0,
+    "duck_db": 12.0,
+    "wet_db": -14.0
+   },
    {
     "type": "pedalboard",
     "plugin": "Gain",
