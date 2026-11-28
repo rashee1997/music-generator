@@ -1,7 +1,7 @@
 {
  "meta": {
   "stage": "rows",
-  "rows": 241,
+  "rows": 257,
   "metrics": [
    {
     "row": "stem.dc",
@@ -2005,6 +2005,133 @@
    {
     "row": "stem.dc",
     "stage": "stem",
+    "stem": "sfx_boom",
+    "level": "INFO",
+    "value": 0.0,
+    "unit": "",
+    "threshold": 0.0,
+    "margin": 0.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "skipped": true,
+    "detail": "stem \"sfx_boom\": not applied: a one-shot effect stem has no sustained baseline to drift"
+   },
+   {
+    "row": "stem.clipping",
+    "stage": "stem",
+    "stem": "sfx_boom",
+    "level": "PASS",
+    "value": 0.0,
+    "unit": "samples",
+    "threshold": 0.0,
+    "margin": 0.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "detail": "stem \"sfx_boom\": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)",
+    "flat_runs": 0
+   },
+   {
+    "row": "stem.clicks",
+    "stage": "stem",
+    "stem": "sfx_boom",
+    "level": "PASS",
+    "value": 0.0,
+    "unit": "events",
+    "threshold": 0.0,
+    "margin": 0.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "detail": "stem \"sfx_boom\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms",
+    "mad_count": 0,
+    "lpc_count": 0,
+    "rejected": 0,
+    "attacks_ignored": 0,
+    "max_cluster_span_ms": 0.0
+   },
+   {
+    "row": "stem.dropout",
+    "stage": "stem",
+    "stem": "sfx_boom",
+    "level": "PASS",
+    "value": 0.0,
+    "unit": "ms",
+    "threshold": 20.0,
+    "margin": -20.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "detail": "stem \"sfx_boom\": longest hole 0 ms (limit 20-1000 ms), floor -285.0 dBFS; 0 hole(s)",
+    "holes": []
+   },
+   {
+    "row": "stem.cut",
+    "stage": "stem",
+    "stem": "sfx_boom",
+    "level": "PASS",
+    "value": 0.0,
+    "unit": "dB",
+    "threshold": 12.0,
+    "margin": -12.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "detail": "stem \"sfx_boom\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
+    "drops": [],
+    "exempted": []
+   },
+   {
+    "row": "stem.edge",
+    "stage": "stem",
+    "stem": "sfx_boom",
+    "level": "INFO",
+    "value": 0.0,
+    "unit": "",
+    "threshold": 0.0,
+    "margin": 0.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "skipped": true,
+    "detail": "stem \"sfx_boom\": not applied: a one-shot effect note length is a trigger, not a sound length"
+   },
+   {
+    "row": "stem.tick",
+    "stage": "stem",
+    "stem": "sfx_boom",
+    "level": "INFO",
+    "value": 0.0,
+    "unit": "",
+    "threshold": 0.0,
+    "margin": 0.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "skipped": true,
+    "detail": "stem \"sfx_boom\": not applied: a one-shot effect stem is a sequence of triggers, not a pulse to hold still"
+   },
+   {
+    "row": "stem.dead",
+    "stage": "stem",
+    "stem": "sfx_boom",
+    "level": "PASS",
+    "value": 0.0,
+    "unit": "dB",
+    "threshold": 12.0,
+    "margin": -12.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "detail": "stem \"sfx_boom\": own median -5.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+    "fail": false,
+    "table": [
+     {
+      "section": "the_signal",
+      "start_s": 110.0,
+      "measured_db": -5.49,
+      "expected_db": -5.49,
+      "dyn": 0.3
+     }
+    ],
+    "dead": false
+   },
+   {
+    "row": "stem.dc",
+    "stage": "stem",
     "stem": "sfx_device",
     "level": "INFO",
     "value": 0.0,
@@ -2553,6 +2680,136 @@
       "measured_db": -39.37,
       "expected_db": -39.37,
       "dyn": 0.45
+     }
+    ],
+    "dead": false
+   },
+   {
+    "row": "stem.dc",
+    "stage": "stem",
+    "stem": "sfx_suck",
+    "level": "INFO",
+    "value": 0.0,
+    "unit": "",
+    "threshold": 0.0,
+    "margin": 0.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "skipped": true,
+    "detail": "stem \"sfx_suck\": not applied: a one-shot effect stem has no sustained baseline to drift"
+   },
+   {
+    "row": "stem.clipping",
+    "stage": "stem",
+    "stem": "sfx_suck",
+    "level": "PASS",
+    "value": 0.0,
+    "unit": "samples",
+    "threshold": 0.0,
+    "margin": 0.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "detail": "stem \"sfx_suck\": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)",
+    "flat_runs": 0
+   },
+   {
+    "row": "stem.clicks",
+    "stage": "stem",
+    "stem": "sfx_suck",
+    "level": "PASS",
+    "value": 0.0,
+    "unit": "events",
+    "threshold": 0.0,
+    "margin": 0.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "detail": "stem \"sfx_suck\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 11 event(s) rejected as a dense burst, 1 as a steep attack; max cluster span 1.497 ms",
+    "mad_count": 0,
+    "lpc_count": 0,
+    "rejected": 11,
+    "attacks_ignored": 1,
+    "max_cluster_span_ms": 1.4965986394557824
+   },
+   {
+    "row": "stem.dropout",
+    "stage": "stem",
+    "stem": "sfx_suck",
+    "level": "PASS",
+    "value": 0.0,
+    "unit": "ms",
+    "threshold": 20.0,
+    "margin": -20.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "detail": "stem \"sfx_suck\": longest hole 0 ms (limit 20-1000 ms), floor -285.0 dBFS; 0 hole(s)",
+    "holes": []
+   },
+   {
+    "row": "stem.cut",
+    "stage": "stem",
+    "stem": "sfx_suck",
+    "level": "PASS",
+    "value": 0.0,
+    "unit": "dB",
+    "threshold": 12.0,
+    "margin": -12.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "detail": "stem \"sfx_suck\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
+    "drops": [
+     40.2,
+     37.0
+    ],
+    "exempted": []
+   },
+   {
+    "row": "stem.edge",
+    "stage": "stem",
+    "stem": "sfx_suck",
+    "level": "INFO",
+    "value": 0.0,
+    "unit": "",
+    "threshold": 0.0,
+    "margin": 0.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "skipped": true,
+    "detail": "stem \"sfx_suck\": not applied: a one-shot effect note length is a trigger, not a sound length"
+   },
+   {
+    "row": "stem.tick",
+    "stage": "stem",
+    "stem": "sfx_suck",
+    "level": "INFO",
+    "value": 0.0,
+    "unit": "",
+    "threshold": 0.0,
+    "margin": 0.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "skipped": true,
+    "detail": "stem \"sfx_suck\": not applied: a one-shot effect stem is a sequence of triggers, not a pulse to hold still"
+   },
+   {
+    "row": "stem.dead",
+    "stage": "stem",
+    "stem": "sfx_suck",
+    "level": "PASS",
+    "value": 0.0,
+    "unit": "dB",
+    "threshold": 12.0,
+    "margin": -12.0,
+    "worst_times_s": [],
+    "calibrated": false,
+    "detail": "stem \"sfx_suck\": own median -19.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+    "fail": false,
+    "table": [
+     {
+      "section": "the_signal",
+      "start_s": 110.0,
+      "measured_db": -19.37,
+      "expected_db": -19.37,
+      "dyn": 0.3
      }
     ],
     "dead": false
@@ -4604,17 +4861,17 @@
     "margin": 0.0,
     "worst_times_s": [],
     "calibrated": true,
-    "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 247 event(s) rejected as a dense burst, 27 as a steep attack; max cluster span 1.497 ms"
+    "detail": "0 clustered impulse event(s) (MAD), 0 LPC frame(s); 285 event(s) rejected as a dense burst, 32 as a steep attack; max cluster span 1.497 ms"
    },
    {
     "row": "loudness",
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -16.252707147359004,
+    "value": -16.307453266981707,
     "unit": "LUFS",
     "threshold": -16.0,
-    "margin": -2.247292852640996,
+    "margin": -2.1925467330182933,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-16.3 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -4636,14 +4893,16 @@
     "row": "dropout",
     "stage": "mix",
     "stem": null,
-    "level": "PASS",
-    "value": 0.0,
+    "level": "FAIL",
+    "value": 69.99999999999318,
     "unit": "ms",
     "threshold": 20.0,
-    "margin": -20.0,
-    "worst_times_s": [],
+    "margin": 49.99999999999318,
+    "worst_times_s": [
+     120.3
+    ],
     "calibrated": false,
-    "detail": "longest hole 0 ms (limit 20-1000 ms), floor -64.3 dBFS; 0 hole(s)"
+    "detail": "longest hole 70 ms (limit 20-1000 ms), floor -64.6 dBFS; 1 hole(s)"
    },
    {
     "row": "cut.hard",
@@ -4663,13 +4922,13 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 66.53320178897854,
+    "value": 70.03227943548559,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -54.533201788978545,
+    "margin": -58.03227943548559,
     "worst_times_s": [],
     "calibrated": false,
-    "detail": "end level -124.5 dBFS (limit -45), decay over final 300 ms 66.5 dB (limit 12); natural release"
+    "detail": "end level -129.7 dBFS (limit -45), decay over final 300 ms 70.0 dB (limit 12); natural release"
    },
    {
     "row": "clipping",
@@ -4689,10 +4948,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 2.2321077435167716e-05,
+    "value": 2.0587603918959157e-05,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009776789225648323,
+    "margin": -0.0009794123960810408,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00002 (limit 0.001)"
@@ -4715,70 +4974,70 @@
       "start_s": 0.0,
       "end_s": 12.0,
       "energy": 0.25,
-      "level_db": -28.02428346000296
+      "level_db": -28.388857401556916
      },
      {
       "name": "the_take",
       "start_s": 12.0,
       "end_s": 24.0,
       "energy": 0.45,
-      "level_db": -27.35404930808012
+      "level_db": -27.073248245810994
      },
      {
       "name": "the_alert",
       "start_s": 24.0,
       "end_s": 36.0,
       "energy": 0.65,
-      "level_db": -20.522006464366672
+      "level_db": -20.705004765701098
      },
      {
       "name": "the_chase",
       "start_s": 36.0,
       "end_s": 52.0,
       "energy": 0.9,
-      "level_db": -17.85011759711773
+      "level_db": -17.926226303380062
      },
      {
       "name": "the_flyover",
       "start_s": 52.0,
       "end_s": 58.0,
       "energy": 0.8,
-      "level_db": -19.90079945018713
+      "level_db": -20.527292208799256
      },
      {
       "name": "the_truck",
       "start_s": 58.0,
       "end_s": 64.0,
       "energy": 0.6,
-      "level_db": -38.257113150833746
+      "level_db": -38.80634785685703
      },
      {
       "name": "the_escalation",
       "start_s": 64.0,
       "end_s": 88.0,
       "energy": 0.95,
-      "level_db": -17.08469530225258
+      "level_db": -17.25206855491502
      },
      {
       "name": "the_wall",
       "start_s": 88.0,
       "end_s": 104.0,
       "energy": 1.0,
-      "level_db": -16.254823347700043
+      "level_db": -16.486352051410776
      },
      {
       "name": "the_dropout",
       "start_s": 104.0,
       "end_s": 110.0,
       "energy": 0.35,
-      "level_db": -22.295622978231634
+      "level_db": -22.625039549956874
      },
      {
       "name": "the_signal",
       "start_s": 110.0,
       "end_s": 120.0,
       "energy": 0.3,
-      "level_db": -25.58333550950467
+      "level_db": -26.768926801143714
      }
     ]
    }

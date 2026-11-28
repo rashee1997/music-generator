@@ -4,9 +4,9 @@
     "mode": "full",
     "fails": 0,
     "warns": 0,
-    "rows": 238,
+    "rows": 254,
     "profile": "quiet_frequency",
-    "total_ms": 3725.7526209996286,
+    "total_ms": 7229.202982000061,
     "timings": {
       "bass_drum": 0.0,
       "basses": 0.0,
@@ -19,15 +19,17 @@
       "piano_theme": 0.0,
       "sfx_alarm": 0.0,
       "sfx_bike": 0.0,
+      "sfx_boom": 928.3541019999575,
       "sfx_device": 0.0,
       "sfx_heartbeat": 0.0,
       "sfx_impacts": 0.0,
       "sfx_road": 0.0,
+      "sfx_suck": 965.563819999943,
       "sfx_truck": 0.0,
       "sfx_tyres_bike": 0.0,
       "sfx_tyres_v8": 0.0,
       "sfx_v8": 0.0,
-      "sfx_walkie": 0.0,
+      "sfx_walkie": 703.5599450000518,
       "snare": 0.0,
       "taiko": 0.0,
       "timpani": 0.0,
@@ -2041,6 +2043,133 @@
       {
         "row": "stem.dc",
         "stage": "stem",
+        "stem": "sfx_boom",
+        "level": "INFO",
+        "value": 0.0,
+        "unit": "",
+        "threshold": 0.0,
+        "margin": 0.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "skipped": true,
+        "detail": "stem \"sfx_boom\": not applied: a one-shot effect stem has no sustained baseline to drift"
+      },
+      {
+        "row": "stem.clipping",
+        "stage": "stem",
+        "stem": "sfx_boom",
+        "level": "PASS",
+        "value": 0.0,
+        "unit": "samples",
+        "threshold": 0.0,
+        "margin": 0.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "detail": "stem \"sfx_boom\": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)",
+        "flat_runs": 0
+      },
+      {
+        "row": "stem.clicks",
+        "stage": "stem",
+        "stem": "sfx_boom",
+        "level": "PASS",
+        "value": 0.0,
+        "unit": "events",
+        "threshold": 0.0,
+        "margin": 0.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "detail": "stem \"sfx_boom\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms",
+        "mad_count": 0,
+        "lpc_count": 0,
+        "rejected": 0,
+        "attacks_ignored": 0,
+        "max_cluster_span_ms": 0.0
+      },
+      {
+        "row": "stem.dropout",
+        "stage": "stem",
+        "stem": "sfx_boom",
+        "level": "PASS",
+        "value": 0.0,
+        "unit": "ms",
+        "threshold": 20.0,
+        "margin": -20.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "detail": "stem \"sfx_boom\": longest hole 0 ms (limit 20-1000 ms), floor -285.0 dBFS; 0 hole(s)",
+        "holes": []
+      },
+      {
+        "row": "stem.cut",
+        "stage": "stem",
+        "stem": "sfx_boom",
+        "level": "PASS",
+        "value": 0.0,
+        "unit": "dB",
+        "threshold": 12.0,
+        "margin": -12.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "detail": "stem \"sfx_boom\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
+        "drops": [],
+        "exempted": []
+      },
+      {
+        "row": "stem.edge",
+        "stage": "stem",
+        "stem": "sfx_boom",
+        "level": "INFO",
+        "value": 0.0,
+        "unit": "",
+        "threshold": 0.0,
+        "margin": 0.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "skipped": true,
+        "detail": "stem \"sfx_boom\": not applied: a one-shot effect note length is a trigger, not a sound length"
+      },
+      {
+        "row": "stem.tick",
+        "stage": "stem",
+        "stem": "sfx_boom",
+        "level": "INFO",
+        "value": 0.0,
+        "unit": "",
+        "threshold": 0.0,
+        "margin": 0.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "skipped": true,
+        "detail": "stem \"sfx_boom\": not applied: a one-shot effect stem is a sequence of triggers, not a pulse to hold still"
+      },
+      {
+        "row": "stem.dead",
+        "stage": "stem",
+        "stem": "sfx_boom",
+        "level": "PASS",
+        "value": 0.0,
+        "unit": "dB",
+        "threshold": 12.0,
+        "margin": -12.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "detail": "stem \"sfx_boom\": own median -5.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "fail": false,
+        "table": [
+          {
+            "section": "the_signal",
+            "start_s": 110.0,
+            "measured_db": -5.49,
+            "expected_db": -5.49,
+            "dyn": 0.3
+          }
+        ],
+        "dead": false
+      },
+      {
+        "row": "stem.dc",
+        "stage": "stem",
         "stem": "sfx_device",
         "level": "INFO",
         "value": 0.0,
@@ -2589,6 +2718,136 @@
             "measured_db": -39.37,
             "expected_db": -39.37,
             "dyn": 0.45
+          }
+        ],
+        "dead": false
+      },
+      {
+        "row": "stem.dc",
+        "stage": "stem",
+        "stem": "sfx_suck",
+        "level": "INFO",
+        "value": 0.0,
+        "unit": "",
+        "threshold": 0.0,
+        "margin": 0.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "skipped": true,
+        "detail": "stem \"sfx_suck\": not applied: a one-shot effect stem has no sustained baseline to drift"
+      },
+      {
+        "row": "stem.clipping",
+        "stage": "stem",
+        "stem": "sfx_suck",
+        "level": "PASS",
+        "value": 0.0,
+        "unit": "samples",
+        "threshold": 0.0,
+        "margin": 0.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "detail": "stem \"sfx_suck\": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)",
+        "flat_runs": 0
+      },
+      {
+        "row": "stem.clicks",
+        "stage": "stem",
+        "stem": "sfx_suck",
+        "level": "PASS",
+        "value": 0.0,
+        "unit": "events",
+        "threshold": 0.0,
+        "margin": 0.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "detail": "stem \"sfx_suck\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 11 event(s) rejected as a dense burst, 1 as a steep attack; max cluster span 1.497 ms",
+        "mad_count": 0,
+        "lpc_count": 0,
+        "rejected": 11,
+        "attacks_ignored": 1,
+        "max_cluster_span_ms": 1.4965986394557824
+      },
+      {
+        "row": "stem.dropout",
+        "stage": "stem",
+        "stem": "sfx_suck",
+        "level": "PASS",
+        "value": 0.0,
+        "unit": "ms",
+        "threshold": 20.0,
+        "margin": -20.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "detail": "stem \"sfx_suck\": longest hole 0 ms (limit 20-1000 ms), floor -285.0 dBFS; 0 hole(s)",
+        "holes": []
+      },
+      {
+        "row": "stem.cut",
+        "stage": "stem",
+        "stem": "sfx_suck",
+        "level": "PASS",
+        "value": 0.0,
+        "unit": "dB",
+        "threshold": 12.0,
+        "margin": -12.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "detail": "stem \"sfx_suck\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end",
+        "drops": [
+          40.2,
+          37.0
+        ],
+        "exempted": []
+      },
+      {
+        "row": "stem.edge",
+        "stage": "stem",
+        "stem": "sfx_suck",
+        "level": "INFO",
+        "value": 0.0,
+        "unit": "",
+        "threshold": 0.0,
+        "margin": 0.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "skipped": true,
+        "detail": "stem \"sfx_suck\": not applied: a one-shot effect note length is a trigger, not a sound length"
+      },
+      {
+        "row": "stem.tick",
+        "stage": "stem",
+        "stem": "sfx_suck",
+        "level": "INFO",
+        "value": 0.0,
+        "unit": "",
+        "threshold": 0.0,
+        "margin": 0.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "skipped": true,
+        "detail": "stem \"sfx_suck\": not applied: a one-shot effect stem is a sequence of triggers, not a pulse to hold still"
+      },
+      {
+        "row": "stem.dead",
+        "stage": "stem",
+        "stem": "sfx_suck",
+        "level": "PASS",
+        "value": 0.0,
+        "unit": "dB",
+        "threshold": 12.0,
+        "margin": -12.0,
+        "worst_times_s": [],
+        "calibrated": false,
+        "detail": "stem \"sfx_suck\": own median -19.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve",
+        "fail": false,
+        "table": [
+          {
+            "section": "the_signal",
+            "start_s": 110.0,
+            "measured_db": -19.37,
+            "expected_db": -19.37,
+            "dyn": 0.3
           }
         ],
         "dead": false
@@ -4693,8 +4952,8 @@
       }
     ],
     "duration_s": 123.28598639455782,
-    "cached_stems": 28,
-    "measured_stems": 0
+    "cached_stems": 27,
+    "measured_stems": 3
   },
   "rows": [
     {
@@ -5165,6 +5424,46 @@
     {
       "level": "INFO",
       "row": "stem.dc",
+      "detail": "stem \"sfx_boom\": not applied: a one-shot effect stem has no sustained baseline to drift"
+    },
+    {
+      "level": "PASS",
+      "row": "stem.clipping",
+      "detail": "stem \"sfx_boom\": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)"
+    },
+    {
+      "level": "PASS",
+      "row": "stem.clicks",
+      "detail": "stem \"sfx_boom\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms"
+    },
+    {
+      "level": "PASS",
+      "row": "stem.dropout",
+      "detail": "stem \"sfx_boom\": longest hole 0 ms (limit 20-1000 ms), floor -285.0 dBFS; 0 hole(s)"
+    },
+    {
+      "level": "PASS",
+      "row": "stem.cut",
+      "detail": "stem \"sfx_boom\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end"
+    },
+    {
+      "level": "INFO",
+      "row": "stem.edge",
+      "detail": "stem \"sfx_boom\": not applied: a one-shot effect note length is a trigger, not a sound length"
+    },
+    {
+      "level": "INFO",
+      "row": "stem.tick",
+      "detail": "stem \"sfx_boom\": not applied: a one-shot effect stem is a sequence of triggers, not a pulse to hold still"
+    },
+    {
+      "level": "PASS",
+      "row": "stem.dead",
+      "detail": "stem \"sfx_boom\": own median -5.5 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+    },
+    {
+      "level": "INFO",
+      "row": "stem.dc",
       "detail": "stem \"sfx_device\": not applied: a one-shot effect stem has no sustained baseline to drift"
     },
     {
@@ -5321,6 +5620,46 @@
       "level": "PASS",
       "row": "stem.dead",
       "detail": "stem \"sfx_road\": own median -39.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
+    },
+    {
+      "level": "INFO",
+      "row": "stem.dc",
+      "detail": "stem \"sfx_suck\": not applied: a one-shot effect stem has no sustained baseline to drift"
+    },
+    {
+      "level": "PASS",
+      "row": "stem.clipping",
+      "detail": "stem \"sfx_suck\": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)"
+    },
+    {
+      "level": "PASS",
+      "row": "stem.clicks",
+      "detail": "stem \"sfx_suck\": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 11 event(s) rejected as a dense burst, 1 as a steep attack; max cluster span 1.497 ms"
+    },
+    {
+      "level": "PASS",
+      "row": "stem.dropout",
+      "detail": "stem \"sfx_suck\": longest hole 0 ms (limit 20-1000 ms), floor -285.0 dBFS; 0 hole(s)"
+    },
+    {
+      "level": "PASS",
+      "row": "stem.cut",
+      "detail": "stem \"sfx_suck\": largest un-recovered step 0.0 dB over ~10 ms (limit 12 dB), 0 location(s) near a boundary/end"
+    },
+    {
+      "level": "INFO",
+      "row": "stem.edge",
+      "detail": "stem \"sfx_suck\": not applied: a one-shot effect note length is a trigger, not a sound length"
+    },
+    {
+      "level": "INFO",
+      "row": "stem.tick",
+      "detail": "stem \"sfx_suck\": not applied: a one-shot effect stem is a sequence of triggers, not a pulse to hold still"
+    },
+    {
+      "level": "PASS",
+      "row": "stem.dead",
+      "detail": "stem \"sfx_suck\": own median -19.4 dBFS, worst section shortfall 0.0 dB (limit 12 dB), active sections 1; follows the curve"
     },
     {
       "level": "INFO",

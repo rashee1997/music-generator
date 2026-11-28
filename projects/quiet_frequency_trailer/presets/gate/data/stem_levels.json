@@ -483,6 +483,18 @@
       ]
     },
     {
+      "stem": "sfx_boom",
+      "table": [
+        {
+          "section": "the_signal",
+          "start_s": 110.0,
+          "measured_db": -5.49,
+          "expected_db": -5.49,
+          "dyn": 0.3
+        }
+      ]
+    },
+    {
       "stem": "sfx_device",
       "table": [
         {
@@ -555,6 +567,18 @@
           "measured_db": -39.37,
           "expected_db": -39.37,
           "dyn": 0.45
+        }
+      ]
+    },
+    {
+      "stem": "sfx_suck",
+      "table": [
+        {
+          "section": "the_signal",
+          "start_s": 110.0,
+          "measured_db": -19.37,
+          "expected_db": -19.37,
+          "dyn": 0.3
         }
       ]
     },

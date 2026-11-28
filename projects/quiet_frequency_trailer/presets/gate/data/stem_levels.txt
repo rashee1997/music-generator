@@ -60,6 +60,7 @@ piano_theme,the_wall,-43.95,-43.86,1.0
 piano_theme,the_signal,-50.81,-54.32,0.3
 sfx_alarm,the_lab,-28.35,-28.35,0.25
 sfx_bike,the_take,-33.34,-33.34,0.45
+sfx_boom,the_signal,-5.49,-5.49,0.3
 sfx_device,the_lab,-32.45,-32.45,0.25
 sfx_heartbeat,the_lab,-19.45,-19.45,0.25
 sfx_impacts,the_take,-11.73,-18.53,0.45
@@ -68,6 +69,7 @@ sfx_impacts,the_escalation,-13.56,-12.04,0.95
 sfx_impacts,the_wall,-12.51,-11.6,1.0
 sfx_impacts,the_signal,-11.87,-22.06,0.3
 sfx_road,the_take,-39.37,-39.37,0.45
+sfx_suck,the_signal,-19.37,-19.37,0.3
 sfx_truck,the_truck,-43.3,-43.3,0.6
 sfx_tyres_bike,the_take,-17.62,-17.62,0.45
 sfx_tyres_v8,the_flyover,-13.04,-13.04,0.8

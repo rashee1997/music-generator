@@ -1,5 +1,5 @@
 {
- "stamp": "20261128T150452",
+ "stamp": "20261128T152358",
  "project": "quiet_frequency_trailer",
  "level": "FAIL",
  "sources": {
@@ -18,20 +18,19 @@
    "waveform.json"
   ],
   "stems": "30 processed stems from .cache/mix",
-  "master": "out/quiet_frequency_trailer.wav",
-  "verdict": "2026-11-28T12:40:40Z",
-  "drift": "the presets or score changed after this master was rendered: presets/instruments/qf_bass_drum.json, presets/instruments/qf_basses.json, presets/instruments/qf_basses_pizz.json, presets/instruments/qf_celli.json - the autopsy describes the previous mix until you re-render"
+  "master": "out/_draft_quiet_frequency_trailer.wav",
+  "verdict": "2026-11-28T15:04:52Z"
  },
  "binding": [
   {
-   "row": "clicks",
+   "row": "dropout",
    "stem": null,
    "level": "FAIL",
-   "value": 2.0,
-   "threshold": 0.0,
-   "unit": "events",
-   "safety": -2.0,
-   "detail": "2 clustered impulse event(s) (MAD), 1 LPC frame(s); 239 event(s) rejected as a dense burst, 17 as a steep attack; max cluster span 1.474 ms"
+   "value": 69.99999999999318,
+   "threshold": 20.0,
+   "unit": "ms",
+   "safety": -2.5,
+   "detail": "longest hole 70 ms (limit 20-1000 ms), floor -64.6 dBFS; 1 hole(s)"
   }
  ],
  "advisory": [
@@ -651,16 +650,40 @@
     "text": "master oversampling before the limiter"
    },
    {
-    "id": "hf.cymbals",
+    "id": "inst_eq.violins_long.0",
     "domain": "master",
-    "kind": "hf_shelf",
-    "stem": "cymbals",
-    "current": 0.0,
-    "lo": -12.0,
-    "hi": 0.0,
+    "kind": "eq",
+    "stem": "violins_long",
+    "current": -2.0,
+    "lo": -14.0,
+    "hi": 10.0,
     "step": 0.5,
     "unit": "dB",
-    "text": "cymbals high shelf at 5500 Hz: inst_eq[\"qf_cymbals\"]"
+    "text": "violins_long peak 450 Hz q0.9"
+   },
+   {
+    "id": "inst_eq.violins_long.1",
+    "domain": "master",
+    "kind": "eq",
+    "stem": "violins_long",
+    "current": -1.5,
+    "lo": -13.5,
+    "hi": 10.5,
+    "step": 0.5,
+    "unit": "dB",
+    "text": "violins_long peak 2000 Hz q0.9"
+   },
+   {
+    "id": "note.violins_long.d",
+    "domain": "master",
+    "kind": "note_len",
+    "stem": "violins_long",
+    "current": 3.7,
+    "lo": 3.64,
+    "hi": 3.7600000000000002,
+    "step": 0.010416666666666666,
+    "unit": "beats",
+    "text": "violins_long written note length (mean 3.7 beats)"
    }
   ]
  },
@@ -670,21 +693,21 @@
   "deltas": {},
   "clearing": {},
   "predicted": {
+   "dropout::-": [
+    -2.499999999999659,
+    -2.499999999999659
+   ],
    "clicks::-": [
-    -2.0,
-    -2.0
+    0.0,
+    0.0
    ],
    "loudness::-": [
     0.02,
     0.02
    ],
    "true peak::-": [
-    7.774199542061784e-05,
-    7.774199542061784e-05
-   ],
-   "dropout::-": [
-    1.0,
-    1.0
+    0.0002498336005085644,
+    0.0002498336005085644
    ],
    "cut.hard::-": [
     2.0,
@@ -699,128 +722,20 @@
     0.0
    ],
    "master.dc::-": [
-    0.0972299337236522,
-    0.0972299337236522
+    0.09794123960810408,
+    0.09794123960810408
    ]
   },
   "conflicts": [],
-  "closed": [],
-  "burned": [],
-  "notes": [
-   "the best candidate comes from a model that failed its sham test, so it is not adopted as a plan"
+  "closed": [
+   "dropout"
   ],
-  "experiments": [
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 0,
-    "baseline": 2,
-    "margin_db": 2.0,
-    "unverified": true,
-    "resolution_db": 69.0,
-    "moves": {
-     "hf.cymbals": -3.0
-    },
-    "times": [],
-    "verdict": "clears",
-    "robust": 1.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 0,
-    "baseline": 2,
-    "margin_db": 2.0,
-    "unverified": true,
-    "resolution_db": 69.0,
-    "moves": {
-     "hf.cymbals": -6.0
-    },
-    "times": [],
-    "verdict": "clears",
-    "robust": 1.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 0,
-    "baseline": 2,
-    "margin_db": 2.0,
-    "unverified": true,
-    "resolution_db": 69.0,
-    "moves": {
-     "hf.cymbals": -9.0
-    },
-    "times": [],
-    "verdict": "clears",
-    "robust": 1.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 0,
-    "baseline": 2,
-    "margin_db": 2.0,
-    "unverified": true,
-    "resolution_db": 69.0,
-    "moves": {
-     "hf.cymbals": -12.0
-    },
-    "times": [],
-    "verdict": "clears",
-    "robust": 1.0
-   }
-  ]
+  "burned": [],
+  "notes": [],
+  "experiments": []
  },
- "forensics": [
-  {
-   "t": 36.4303,
-   "step": 0.01059,
-   "threshold": 0.02,
-   "over_threshold_db": -5.53,
-   "z": 48.6,
-   "kind": "single source",
-   "trusted": false,
-   "fit_ratio": -0.0,
-   "owners": [
-    {
-     "stem": "cymbals",
-     "share": 0.844,
-     "signed": -3e-05
-    }
-   ],
-   "raw_step_fs": 0.0183,
-   "notes": []
-  },
-  {
-   "t": 87.6579,
-   "step": 0.03279,
-   "threshold": 0.02,
-   "over_threshold_db": 4.29,
-   "z": 150.6,
-   "kind": "single source",
-   "trusted": false,
-   "fit_ratio": -0.0,
-   "owners": [
-    {
-     "stem": "cymbals",
-     "share": 0.888,
-     "signed": 8e-05
-    }
-   ],
-   "raw_step_fs": 0.0304,
-   "notes": []
-  }
- ],
+ "forensics": [],
  "notes": [
-  "clicks: the sham replay does NOT reproduce the gate (model 0 vs gate 2; missing at [36.4289, 87.6585], extra at []): every candidate below is UNVERIFIED and is shown for direction only",
-  "clicks: model resolution 69.0 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
-  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.00); gains basses -0.16, basses_pizz 3.42, choir 0.21, low_swell -1.22, piano_theme -0.20, sfx_alarm -0.14, sfx_boom -0.30, taiko -0.07, timpani -2.92, trombones 0.43, tuba 2.10, violas -0.07",
-  "event 36.430s [single source] cymbals 84%; step 0.0106 vs threshold 0.0200 (-5.5 dB over)  (fit unreliable)",
-  "event 87.658s [single source] cymbals 89%; step 0.0328 vs threshold 0.0200 (+4.3 dB over)  (fit unreliable)"
+  "dropout has 1 event(s) at 120.300s; the transient is violins_long 63%, sfx_impacts 31%, sfx_boom 5%"
  ]
 }

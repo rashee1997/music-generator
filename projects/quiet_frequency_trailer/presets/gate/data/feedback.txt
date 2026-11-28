@@ -1,2 +1,2 @@
 failing rows -> the next change
-  clicks (render): find the click time in rca.py; it is usually a one-shot cut short or a DC step: fade it, or fix the sample start
+  dropout (render): a stem or the mix falls to nothing outside a declared rest: check the note durations against the section edge (the renderer clips a note at the bar line), and check the reverb tail
