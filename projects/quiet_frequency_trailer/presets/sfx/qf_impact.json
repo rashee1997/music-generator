@@ -1,0 +1,83 @@
+{
+  "character": "A trailer hit heard over the whole orchestra: a click, a falling low body and a sub, and a tail, high and to the right so it sits above the engines and the brass.",
+  "seconds": 2.6,
+  "spec": {
+    "seconds": 2.6,
+    "layers": [
+      {
+        "kind": "glide",
+        "f0": 62.0,
+        "f1": 31.0,
+        "harmonics": 1,
+        "gain": 1.0,
+        "env": {
+          "attack": 0.002,
+          "tau": 0.9
+        }
+      },
+      {
+        "kind": "glide",
+        "f0": 150.0,
+        "f1": 52.0,
+        "harmonics": 3,
+        "gain": 0.7,
+        "env": {
+          "attack": 0.001,
+          "tau": 0.22
+        }
+      },
+      {
+        "kind": "noise",
+        "band": [
+          2000,
+          8000
+        ],
+        "gain": 0.8,
+        "env": {
+          "attack": 0.0,
+          "tau": 0.012
+        }
+      },
+      {
+        "kind": "noise",
+        "band": [
+          60,
+          300
+        ],
+        "gain": 0.5,
+        "env": {
+          "attack": 0.001,
+          "tau": 0.12
+        }
+      },
+      {
+        "kind": "noise",
+        "band": [
+          80,
+          1200
+        ],
+        "gain": 0.22,
+        "env": {
+          "attack": 0.004,
+          "tau": 1.1
+        }
+      }
+    ]
+  },
+  "sources": [
+    "cinematic-hybrid-scoring",
+    "ESTIMATE: copied from the shipped impact_cinematic default; its layers are starting values and were not re-measured for this cue"
+  ],
+  "note": "Layer split after trailer-impact practice (click, body, sub, tail; bass under 200 Hz, mids to 2 kHz, highs above), vendor blogs, opinion. Every frequency and time constant is a starting value: tune against the render with realism.sub_weight and realism.impact_attack.",
+  "name": "qf_impact",
+  "role": "fx",
+  "gain_db": -2.0,
+  "spatial": {
+    "azimuth": 130.0,
+    "elevation": 30.0,
+    "distance": 8.0,
+    "space": "quiet_frequency_room",
+    "binaural": true,
+    "kind": "spot"
+  }
+}

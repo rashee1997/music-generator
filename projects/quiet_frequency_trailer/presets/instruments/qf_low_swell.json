@@ -1,0 +1,74 @@
+{
+  "name": "qf_low_swell",
+  "character": "The cinematic drop: a single low double-bass note that swells and rings, struck only at the snap of the slow motion and at the crash.",
+  "description": "The cinematic drop: a single low double-bass note that swells and rings, struck only at the snap of the slow motion and at the crash.",
+  "instrument": "double_bass",
+  "role": "texture",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 4.0
+  },
+  "spatial": {
+    "azimuth": 0.0,
+    "elevation": 45.0,
+    "distance": 1.0,
+    "space": "quiet_frequency_room",
+    "binaural": true,
+    "kind": "spot"
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 34.0
+    },
+    {
+      "type": "lp",
+      "f": 1200.0
+    }
+  ],
+  "gain_db": -4.0,
+  "reverb": 0.06,
+  "sources": [
+    "KB cinematic-hybrid-scoring (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising device)",
+    "KB orchestral-writing (playable ranges, section sizes and note rates of the instrument)",
+    "web research: slow-motion sound design pairs a pitched-down low end with a stretched tail (see the research note)",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render",
+    "Quiet Frequency: copied from the Highway Pursuit preset of the same part and renamed; placement, level and EQ are starting values for this cue and are re-measured on its render."
+  ],
+  "soundfont": "muse_general",
+  "per_note_channels": true,
+  "expression": "bow",
+  "velocity_timbre": {
+    "points": [
+      [
+        25,
+        125
+      ],
+      [
+        55,
+        250
+      ],
+      [
+        100,
+        2000
+      ],
+      [
+        127,
+        4000
+      ]
+    ],
+    "zones": 6,
+    "attack_ms": [
+      [
+        25,
+        60
+      ],
+      [
+        127,
+        20
+      ]
+    ]
+  }
+}

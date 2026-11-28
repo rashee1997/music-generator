@@ -1,0 +1,586 @@
+{
+  "title": "Quiet Frequency",
+  "project": "TODO: the client, film, album or game this cue belongs to",
+  "version": 1,
+  "medium": "TODO: film, ad, game, album, social or installation",
+  "brief": "TODO: the words the client actually used, verbatim",
+  "audience": "TODO: who hears it, where, and what they already know",
+  "purpose": "make the viewer want to know what the device does and who else is listening, with no resolution",
+  "point_of_view": "the Hero's, and the Villain's closing in from behind: the viewer is on the bike, hearing the car in the mirror",
+  "job": "a 120 s theatrical trailer for a 30-minute action short: the Hero steals a device that can control people, the Villain finds the case empty and hunts him down a highway, there are near misses and no rescue, and the last image is a case being opened",
+  "story": "TODO: the cue in one sentence, from its first moment to its last",
+  "duration_s": 45.0,
+  "in_point_s": 0.0,
+  "out_point_s": 45.0,
+  "ending": "combination",
+  "feel": [
+    "relentless",
+    "dangerous",
+    "curious"
+  ],
+  "avoid_feel": [
+    "triumphant",
+    "playful",
+    "comic"
+  ],
+  "sections": [
+    {
+      "name": "the_lab",
+      "role": "establish",
+      "start_bar": 1,
+      "end_bar": 6,
+      "start_s": 0.0,
+      "end_s": 12.0,
+      "energy": 0.25,
+      "camera": "a sealed lab at night: an alarm, a radio, a case on a bench"
+    },
+    {
+      "name": "the_take",
+      "role": "transition",
+      "start_bar": 7,
+      "end_bar": 12,
+      "start_s": 12.0,
+      "end_s": 24.0,
+      "energy": 0.45,
+      "camera": "the Hero takes the device and runs for the bike; the gate opens"
+    },
+    {
+      "name": "the_alert",
+      "role": "build",
+      "start_bar": 13,
+      "end_bar": 18,
+      "start_s": 24.0,
+      "end_s": 36.0,
+      "energy": 0.65,
+      "camera": "the Villain finds the empty case; the Hero is already on the highway"
+    },
+    {
+      "name": "the_chase",
+      "role": "peak",
+      "start_bar": 19,
+      "end_bar": 26,
+      "start_s": 36.0,
+      "end_s": 52.0,
+      "energy": 0.9,
+      "camera": "a tunnel bore and open road: the black car closes, the bike drifts"
+    },
+    {
+      "name": "the_flyover",
+      "role": "build",
+      "start_bar": 27,
+      "end_bar": 29,
+      "start_s": 52.0,
+      "end_s": 58.0,
+      "energy": 0.8,
+      "camera": "high angle over the flyover deck: the car alongside"
+    },
+    {
+      "name": "the_truck",
+      "role": "rupture",
+      "start_bar": 30,
+      "end_bar": 32,
+      "start_s": 58.0,
+      "end_s": 64.0,
+      "energy": 0.6,
+      "camera": "a truck, an air horn, one second of nothing"
+    },
+    {
+      "name": "the_escalation",
+      "role": "peak",
+      "start_bar": 33,
+      "end_bar": 44,
+      "start_s": 64.0,
+      "end_s": 88.0,
+      "energy": 0.95,
+      "camera": "handheld, low to the road: a hard drift, the car tries to ram"
+    },
+    {
+      "name": "the_wall",
+      "role": "peak",
+      "start_bar": 45,
+      "end_bar": 52,
+      "start_s": 88.0,
+      "end_s": 104.0,
+      "energy": 1.0,
+      "camera": "the widest shot and the loudest bars: the barrier, the tunnel again"
+    },
+    {
+      "name": "the_dropout",
+      "role": "release",
+      "start_bar": 53,
+      "end_bar": 55,
+      "start_s": 104.0,
+      "end_s": 110.0,
+      "energy": 0.35,
+      "camera": "the music leaves: two engines idling, a radio, a breath"
+    },
+    {
+      "name": "the_signal",
+      "role": "button",
+      "start_bar": 56,
+      "end_bar": 60,
+      "start_s": 110.0,
+      "end_s": 120.0,
+      "energy": 0.3,
+      "camera": "the bike stops; the case opens; the device pulses; cut to black"
+    }
+  ],
+  "motifs": [
+    {
+      "name": "the_cell",
+      "instrument": "horns",
+      "shape": "root, minor 3rd, fourth falling to the third, fifth: two bars; fragmented at the alert, whole in the chase, inverted in the escalation, two notes at the end",
+      "why": "four notes survive engine noise, a radio and a cut"
+    }
+  ],
+  "instruments": [
+    "lead_flute",
+    "warm_piano",
+    "acoustic_bass"
+  ],
+  "avoid_sounds": [
+    "police siren",
+    "dialogue",
+    "stunt whooshes",
+    "comic effects"
+  ],
+  "pulse": "steady",
+  "tempo_bpm": [
+    78,
+    92
+  ],
+  "key": "F minor",
+  "mode": "dorian",
+  "energy": 0.9,
+  "space": "quiet_frequency_room",
+  "hits_at": [
+    12.0,
+    24.0,
+    36.0,
+    52.0,
+    62.0,
+    64.0,
+    88.0,
+    96.0,
+    104.0,
+    110.0,
+    117.0
+  ],
+  "hits": [
+    {
+      "t": 12.0,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the Hero takes the device: the pulse starts, a low timpani and a crash",
+      "why": "the story turns on this frame; the bike is a floor away"
+    },
+    {
+      "t": 24.0,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the V8 wakes: timpani and the first ostinato bar",
+      "why": "the Villain finds the empty case; the pursuit has not started yet"
+    },
+    {
+      "t": 36.0,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "full orchestra, a crash and the cinematic impact on the wide shot",
+      "why": "the chase begins on the tunnel cut"
+    },
+    {
+      "t": 52.0,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the high angle: the room opens, a crash",
+      "why": "the camera climbs over the flyover"
+    },
+    {
+      "t": 62.0,
+      "kind": "cut",
+      "sync": "hard",
+      "sound": "the truck: the music, the engines and the room stop for a second",
+      "silence_after_s": 1.0,
+      "why": "the near miss: silence is the effect and the room is what sounds"
+    },
+    {
+      "t": 64.0,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "everything returns on one downbeat: crash, impact, ostinato",
+      "why": "the cut after the truck"
+    },
+    {
+      "t": 88.0,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "the loudest bar of the cue: the barrier and the tunnel again",
+      "why": "the widest shot and the second peak, louder than the first"
+    },
+    {
+      "t": 96.0,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the car rams: timpani, crash and a lunge",
+      "why": "the Villain closes to a metre"
+    },
+    {
+      "t": 104.0,
+      "kind": "cut",
+      "sync": "hard",
+      "sound": "the music leaves: two engines idle, the radio, a breath",
+      "why": "the pursuit stops without a winner"
+    },
+    {
+      "t": 110.0,
+      "kind": "musical",
+      "sync": "soft",
+      "sound": "the bike has stopped; the case opens; the device pulses",
+      "why": "the question the trailer ends on"
+    },
+    {
+      "t": 117.0,
+      "kind": "musical",
+      "sync": "hard",
+      "sound": "one low hit, a bark of timpani and taiko on the front, then the ring",
+      "why": "the cut to black: nothing after the hit but the room and the device"
+    }
+  ],
+  "mix_intent": {
+    "hero": "horns",
+    "leave_free_hz": []
+  },
+  "loudness_lufs": -16.0,
+  "true_peak_max": -1.5,
+  "delivery": {
+    "format": "wav",
+    "sample_rate": 48000,
+    "bit_depth": 24,
+    "stage": "master"
+  },
+  "references": [
+    "the Highway Pursuit cue: the same chase grammar, rewritten as a trailer with sound design in the arrangement"
+  ],
+  "spatial_staging": {
+    "front": [
+      "horns",
+      "violins_staccato"
+    ],
+    "mid": [
+      "violas",
+      "celli",
+      "trombones",
+      "piano_theme"
+    ],
+    "low_front": [
+      "basses",
+      "basses_pizz",
+      "tuba",
+      "bass_drum"
+    ],
+    "overhead": [
+      "cymbals",
+      "choir"
+    ],
+    "rear": [
+      "taiko",
+      "timpani"
+    ],
+    "sound": [
+      "the bike ahead of the camera, the V8 behind and beside it, the radio at the left ear"
+    ],
+    "why": "the bike is in front of the viewer and the car is in the mirror: that is what makes the seat uncomfortable rather than loud"
+  },
+  "immersive": {
+    "why": "the chase surrounds the listener: the car comes up from behind and alongside, the truck passes through the field, the tunnel closes it, the flyover opens it",
+    "anchors": [
+      {
+        "part": "basses",
+        "why": "the road is fixed under the viewer"
+      },
+      {
+        "part": "horns",
+        "why": "the Hero is ahead of the camera for the whole cue"
+      }
+    ],
+    "movers": [
+      {
+        "part": "sfx_v8",
+        "why": "the Villain closes from behind and alongside",
+        "path": "behind and far, to behind and near, to the right side, to a metre at the ram"
+      },
+      {
+        "part": "sfx_truck",
+        "why": "the near miss",
+        "path": "from far behind, past the right ear, to far in front"
+      }
+    ],
+    "height_plan": {
+      "overhead": [
+        "cymbals",
+        "choir"
+      ],
+      "low": [
+        "basses",
+        "bass_drum"
+      ],
+      "why": "height is for the shot, not for decoration"
+    },
+    "room_changes": [
+      {
+        "at_section": "the_lab",
+        "why": "a small hard room: the alarm and the radio are close and bright"
+      },
+      {
+        "at_section": "the_take",
+        "why": "the yard and the gate: the room opens"
+      },
+      {
+        "at_section": "the_chase",
+        "why": "a tunnel bore: loud, long, dark"
+      },
+      {
+        "at_section": "the_flyover",
+        "why": "the deck: the tail opens and the percussion lifts"
+      },
+      {
+        "at_section": "the_truck",
+        "why": "open road, a long dry tail for the one second of nothing"
+      },
+      {
+        "at_section": "the_wall",
+        "why": "the tunnel again, longer"
+      },
+      {
+        "at_section": "the_dropout",
+        "why": "open air: nothing near, the engines idle"
+      },
+      {
+        "at_section": "the_signal",
+        "why": "back to a small room: the case is open"
+      }
+    ],
+    "deliverables": [
+      "stereo",
+      "immersive_7_1"
+    ]
+  },
+  "focus": "melody",
+  "intent": {
+    "emotions": [
+      "tense",
+      "dark_epic"
+    ],
+    "registers": [
+      "cinematic",
+      "hybrid"
+    ],
+    "scenes": [
+      "establish",
+      "build",
+      "chase",
+      "dread"
+    ],
+    "tensions": [
+      "ostinato",
+      "pedal",
+      "cluster",
+      "silence_before",
+      "unresolved_dominant"
+    ],
+    "avoid": [
+      "joyful",
+      "playful"
+    ]
+  },
+  "piece_type": "quiet_frequency",
+  "gate_reason": "TODO: one line on why this gate profile fits this piece; the gate runs it. `quiet_frequency` is this project's own profile (presets/gate/quiet_frequency.json, cloned from melodic); a shipped name is blocked by the project gate",
+  "notes": "TODO: anything in the brief that has no field of its own",
+  "tempo": {
+    "bpm": 120,
+    "note": "120 BPM: a bar is two seconds, so every hit lands on a whole second and the clock needs no tempo map"
+  },
+  "ending_note": "a low hit, a bark of timpani, a dominant C with a b9 that never resolves, and the device still pulsing: no fade, a cut to black",
+  "avoid_feel_note": "no victory, no joke, no stunt: heavy, cold and plain, the way a large studio trailer plays a chase",
+  "palette": [
+    "strings: 16th ostinato in cellos and violas, staccato violins in the peaks",
+    "brass: horns on the cell, trombone stabs, tuba pedal",
+    "percussion: bass drum, timpani, taiko, snare, crashes",
+    "piano: a low pulse",
+    "choir: open fifths",
+    "sound design: a single-cylinder bike and a V8 car, tyres, a truck horn, a radio, a lab alarm, a heartbeat, a device"
+  ],
+  "harmony_plan": [
+    {
+      "section": "the_lab",
+      "root": "Fm",
+      "move": "pedal F, a hint of Db at the end of the bar 6",
+      "why": "each harmonic event is a picture event"
+    },
+    {
+      "section": "the_take",
+      "root": "Fm",
+      "move": "Fm Db Ab Eb then the dominant C",
+      "why": "each harmonic event is a picture event"
+    },
+    {
+      "section": "the_alert",
+      "root": "Fm",
+      "move": "Neapolitan Gb over F, then C",
+      "why": "each harmonic event is a picture event"
+    },
+    {
+      "section": "the_chase",
+      "root": "Fm",
+      "move": "Fm Db Ab Eb / Fm Db Bbm C",
+      "why": "each harmonic event is a picture event"
+    },
+    {
+      "section": "the_flyover",
+      "root": "Fm",
+      "move": "F and Gb alternate, a cluster at the end",
+      "why": "each harmonic event is a picture event"
+    },
+    {
+      "section": "the_truck",
+      "root": "Gb",
+      "move": "a semitone cluster, then nothing",
+      "why": "each harmonic event is a picture event"
+    },
+    {
+      "section": "the_escalation",
+      "root": "Fm",
+      "move": "the chase progression again, a fourth tighter",
+      "why": "each harmonic event is a picture event"
+    },
+    {
+      "section": "the_wall",
+      "root": "Fm",
+      "move": "Neapolitan Gb before the dominant",
+      "why": "each harmonic event is a picture event"
+    },
+    {
+      "section": "the_dropout",
+      "root": "Fm",
+      "move": "a bare F pedal",
+      "why": "each harmonic event is a picture event"
+    },
+    {
+      "section": "the_signal",
+      "root": "Fm",
+      "move": "Fm Db Bbm C with a b9: unresolved",
+      "why": "each harmonic event is a picture event"
+    }
+  ],
+  "expression": {
+    "sonic_picture": {
+      "first_10s": "a lab at night: an alarm, a radio squelch, a pulse that speeds up, one low F",
+      "middle": "the chase: a 16th ostinato that never stops, a V8 behind and a bike ahead, a second of nothing, a second peak louder than the first",
+      "last_note": "one low hit and a ring, the device still pulsing on a dominant with a b9"
+    },
+    "performer": "a session orchestra playing to picture and a sound-design team riding the engines: the music is conducted from a click, the engines from the rpm",
+    "producer_moves": [
+      "carve the music where the engines live and the engines where the horn lives, so both are heard",
+      "the engines duck 2-4 dB smoothly under the drums and come back over a second",
+      "leave a real second of nothing before the second peak"
+    ],
+    "anti_generic": "no riser-impact formula and no stunt gags: the opening is sound design, the middle is a chase, the silence is written, and the end is a question",
+    "theme": {
+      "name": "the_cell",
+      "shape": "up a third, a fourth that falls to the third, leap a fifth, settle on the third",
+      "variation_plan": "fragmented in the alert, whole in the chase, inverted in the escalation, two notes at the end"
+    },
+    "cues": [
+      {
+        "section": "the_lab",
+        "arousal": 0.25,
+        "mode": "F minor with Gb and a dominant C",
+        "tempo": "120",
+        "dynamics": "mean velocity 0.39",
+        "articulation": "spiccato strings, marcato brass, rolled timpani before a cut",
+        "timbre": "cold, close, a dry low end"
+      },
+      {
+        "section": "the_take",
+        "arousal": 0.45,
+        "mode": "F minor with Gb and a dominant C",
+        "tempo": "120",
+        "dynamics": "mean velocity 0.55",
+        "articulation": "spiccato strings, marcato brass, rolled timpani before a cut",
+        "timbre": "cold, close, a dry low end"
+      },
+      {
+        "section": "the_alert",
+        "arousal": 0.65,
+        "mode": "F minor with Gb and a dominant C",
+        "tempo": "120",
+        "dynamics": "mean velocity 0.71",
+        "articulation": "spiccato strings, marcato brass, rolled timpani before a cut",
+        "timbre": "cold, close, a dry low end"
+      },
+      {
+        "section": "the_chase",
+        "arousal": 0.9,
+        "mode": "F minor with Gb and a dominant C",
+        "tempo": "120",
+        "dynamics": "mean velocity 0.92",
+        "articulation": "spiccato strings, marcato brass, rolled timpani before a cut",
+        "timbre": "cold, close, a dry low end"
+      },
+      {
+        "section": "the_flyover",
+        "arousal": 0.8,
+        "mode": "F minor with Gb and a dominant C",
+        "tempo": "120",
+        "dynamics": "mean velocity 0.84",
+        "articulation": "spiccato strings, marcato brass, rolled timpani before a cut",
+        "timbre": "cold, close, a dry low end"
+      },
+      {
+        "section": "the_truck",
+        "arousal": 0.6,
+        "mode": "F minor with Gb and a dominant C",
+        "tempo": "120",
+        "dynamics": "mean velocity 0.67",
+        "articulation": "spiccato strings, marcato brass, rolled timpani before a cut",
+        "timbre": "cold, close, a dry low end"
+      },
+      {
+        "section": "the_escalation",
+        "arousal": 0.95,
+        "mode": "F minor with Gb and a dominant C",
+        "tempo": "120",
+        "dynamics": "mean velocity 0.96",
+        "articulation": "spiccato strings, marcato brass, rolled timpani before a cut",
+        "timbre": "cold, close, a dry low end"
+      },
+      {
+        "section": "the_wall",
+        "arousal": 1.0,
+        "mode": "F minor with Gb and a dominant C",
+        "tempo": "120",
+        "dynamics": "mean velocity 1.00",
+        "articulation": "spiccato strings, marcato brass, rolled timpani before a cut",
+        "timbre": "cold, close, a dry low end"
+      },
+      {
+        "section": "the_dropout",
+        "arousal": 0.35,
+        "mode": "F minor with Gb and a dominant C",
+        "tempo": "120",
+        "dynamics": "mean velocity 0.47",
+        "articulation": "spiccato strings, marcato brass, rolled timpani before a cut",
+        "timbre": "cold, close, a dry low end"
+      },
+      {
+        "section": "the_signal",
+        "arousal": 0.3,
+        "mode": "F minor with Gb and a dominant C",
+        "tempo": "120",
+        "dynamics": "mean velocity 0.43",
+        "articulation": "spiccato strings, marcato brass, rolled timpani before a cut",
+        "timbre": "cold, close, a dry low end"
+      }
+    ]
+  }
+}

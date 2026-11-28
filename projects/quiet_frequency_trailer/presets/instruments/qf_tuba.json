@@ -1,0 +1,71 @@
+{
+  "name": "qf_tuba",
+  "character": "The floor under the stabs: a tuba doubling the basses on the turning points, never a sustained part.",
+  "description": "The floor under the stabs: a tuba doubling the basses on the turning points, never a sustained part.",
+  "instrument": "tuba",
+  "role": "chord",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 4.0
+  },
+  "spatial": {
+    "azimuth": 150.0,
+    "elevation": 0.0,
+    "distance": 1.8,
+    "space": "quiet_frequency_room",
+    "binaural": true,
+    "kind": "spot"
+  },
+  "eq": [
+    {
+      "type": "hp",
+      "f": 34.0
+    },
+    {
+      "type": "lp",
+      "f": 2500.0
+    }
+  ],
+  "gain_db": -5.0,
+  "reverb": 0.06,
+  "sources": [
+    "KB cinematic-hybrid-scoring (a pulse that does not stop, low brass and sub weight at the turning points, constant percussion, a rising device)",
+    "KB orchestral-writing (playable ranges, section sizes and note rates of the instrument)",
+    "ESTIMATE: azimuth, distance, level and EQ are starting values for this piece, not measured; trim and balance are set after the first measured render",
+    "Quiet Frequency: copied from the Highway Pursuit preset of the same part and renamed; placement, level and EQ are starting values for this cue and are re-measured on its render."
+  ],
+  "soundfont": "muse_general",
+  "velocity_timbre": {
+    "points": [
+      [
+        25,
+        150
+      ],
+      [
+        55,
+        300
+      ],
+      [
+        100,
+        2400
+      ],
+      [
+        127,
+        4800
+      ]
+    ],
+    "zones": 8,
+    "attack_ms": [
+      [
+        25,
+        30
+      ],
+      [
+        127,
+        8
+      ]
+    ]
+  }
+}

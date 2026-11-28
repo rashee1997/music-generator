@@ -125,6 +125,16 @@ def canonical(name, strict=False, default='chord'):
                       f'Add a synonym to roles.ALIASES if it means one of them')
 
 
+SOUND_EFFECT_PREFIXES = ('sfx:', 'env:')
+
+
+def is_sound_effect(track):
+    """True for a track whose instrument is a sound-effect or environment preset (`sfx:` / `env:`). Its notes are triggers (one note, a
+    pitch of 60, held for the effect's whole length), not harmony: a pitch or tonal-tension audit must not read them."""
+    inst = str((track or {}).get('instrument') or '')
+    return inst.startswith(SOUND_EFFECT_PREFIXES)
+
+
 def family(name):
     """figure | harmony | rhythm | colour."""
     return FAMILY_OF[canonical(name)]
