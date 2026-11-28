@@ -38,6 +38,16 @@ What 3.0 added: rendered mono (`MonoBus`); BS.1770 loudness and a linked true-pe
 
 Running a real 38-track cue through all six formats showed that a head-filtered stereo master adds up 4-5 dB low at 450-1500 Hz, so `fold.mono` failed until it was decoded for loudspeakers. It also showed that a green gate does not mean the cue has the pressure its brief asked for; `scripts/helpers/arc_report.py` prints the loudness arc per section for that check.
 
+## What's new
+
+* **An effects engine in JSON.** 27 effects (`scripts/fx_engine/`) cover creative treatments (riser, tape stop, reverse swell, freeze, grain cloud, shimmer, Doppler) and mixing tools (saturator with six modes at 4x oversampling, de-esser, gate, parallel and upward compression, band-dependent width, tilt EQ, frequency shifter, resonator bank, a ducked ping-pong delay). Parameters can move over time with `automate`, ready shapes are recipes (`{"chain": "build_riser", "start_s": a, "end_s": b}`), and 34 chains ship in `references/data/presets/fx/`. A new shape is a JSON file, never a script. Ranges are checked by `mix_schema.fx_problems` and stage 2 (`preflight.fx`). `references/sound-design/fx-engine.md`
+* **Mixing as preset data.** A mix preset's `fx` table (`*`, `@role`, or an instrument or `sfx:<preset>` name) and `mastering.fx` carry any effect. A preset lists only what the piece changes; every other key is the shipped default in `references/data/mix_defaults.json`. `references/mixing/mixing-and-mastering.md` section 13
+* **Sound-model effects with engine physics.** SFX are parameter sets in `presets/sfx/`, built from an excitation, a resonator and control curves. A vehicle's firing frequency follows rpm and cylinder count, a gear shift multiplies the rpm by the ratio of the new gear to the old, with a power gap on an upshift and a blip on a downshift. Doppler comes from the trajectory, and a shared room preset with scenes per section puts music and effects in one space. Sound effects are excluded from the harmony and drone audits (`roles.is_sound_effect`).
+* **Gate rows read the piece's own scenes.** Every threshold is data with its source in `references/data/presets/gate/data/rows.json`; a declared rest or stinger silence is honoured by `dropout`, `stem.dead` and `scene.silence_honoured`; what a failing row asks you to change is data too (`feedback.json`). Genre starting profiles ship: `orchestral`, `rock_band`, `hiphop`, `jazz_ensemble`, `world_percussion`, `game_loop`.
+* **Root cause before any tolerance.** `scripts/rca.py` names the time, the stems and a verdict (`fault`, `mismatch`, `unknown`) for a failing row; `scripts/debug_audio.py` reports which lever moves it. Relaxing a row that matters to the piece is the user's decision (AGENTS.md rule 20), and revising a certified piece follows the checklist in rule 21.
+* **A lessons-learnt system.** `lessons/` holds what went wrong before as YAML front matter, one file per kind of problem (stem rows, master rows, sound effects, mixing, arrangement, engine notes, process). `python scripts/lessons.py find "<symptom>"` and `suggest --log <pipeline log>` return the matching entries (symptom, cause, what to measure first, fix, what to avoid) before any fix; `add`, `update` and `check` keep it small and free of duplicates. Reading it before research and updating it after every fix is mandatory (AGENTS.md step 3.0, rule 22).
+* **Two finished pieces to read.** `projects/quiet_frequency_trailer/` is a 120 s action-trailer cue with a gear-by-gear motorcycle, a V8, radio, a story clock shared by score and sound models, and stereo plus 8-channel 7.1 delivery. `projects/indo_afro_sunrise/` is a stereo piece on the instrument families, with lead and group vocals. Both were certified by the gate; neither was auditioned by the author of this note.
+
 ## Installation
 
 Needs **Node.js 22.20+**. Install the skill for your agent, then clone the repository for the DSP engine.
@@ -92,7 +102,7 @@ Citations are as the code and its docs state them; page numbers were not re-chec
 
 ## Repository structure
 
-`SKILL.md`, `AGENTS.md` (agent entry point and rules) · `scripts/` (pipeline, mixing, gates; `spatial_engine/`, `spatial_hrtf/`, `vocal_engine/`, `helpers/`) · `references/` (guides and JSON presets) · `knowledgebase/` (sourced facts) · `templates/` · `video-mixer/` · `docs/` · `tests/` (about 1,100, each gate row with a passing and a failing control).
+`SKILL.md`, `AGENTS.md` (agent entry point and rules) · `lessons/` (what went wrong before, searched by `scripts/lessons.py`) · `scripts/` (pipeline, mixing, gates; `spatial_engine/`, `spatial_hrtf/`, `vocal_engine/`, `helpers/`) · `references/` (guides and JSON presets) · `knowledgebase/` (sourced facts) · `templates/` · `video-mixer/` · `docs/` · `tests/` (about 1,100, each gate row with a passing and a failing control).
 
 ## Limits
 
