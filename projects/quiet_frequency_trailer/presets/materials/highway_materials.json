@@ -1,0 +1,75 @@
+{
+  "name": "highway_materials",
+  "kind": "materials",
+  "character": "A night national highway: wet asphalt, sealed concrete barriers, a concrete tunnel bore, a steel flyover deck and open air above.",
+  "note": "Absorption coefficients per octave band. The facade value follows the reported facade reflection coefficient of 0.9-0.95 (energy absorption 1 - R^2 = 0.10-0.19); asphalt, concrete, glass and the steel deck are starting values. Quiet Frequency: the same asphalt, barrier, underpass and steel-deck materials as the Highway Pursuit cue, copied into this project.",
+  "bands_hz": [
+    125,
+    250,
+    500,
+    1000,
+    2000,
+    4000,
+    8000
+  ],
+  "surfaces": {
+    "brick_facade": [
+      0.14,
+      0.13,
+      0.12,
+      0.12,
+      0.12,
+      0.13,
+      0.15
+    ],
+    "glass_front": [
+      0.18,
+      0.06,
+      0.04,
+      0.03,
+      0.02,
+      0.02,
+      0.02
+    ],
+    "asphalt_wet": [
+      0.02,
+      0.02,
+      0.03,
+      0.03,
+      0.03,
+      0.04,
+      0.05
+    ],
+    "underpass_concrete": [
+      0.01,
+      0.01,
+      0.02,
+      0.02,
+      0.02,
+      0.03,
+      0.04
+    ],
+    "steel_deck": [
+      0.02,
+      0.02,
+      0.02,
+      0.02,
+      0.03,
+      0.04,
+      0.05
+    ],
+    "open": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "sources": [
+    "research note: Real-world references: tunnel_air (a street canyon facade reflects 0.9-0.95 of the sound; an underpass rings longer than a street)",
+    "ESTIMATE: wet asphalt, steel deck, glass and painted concrete are starting values; the library values for glass and concrete are from Everest & Pohlmann (room_materials)"
+  ]
+}
