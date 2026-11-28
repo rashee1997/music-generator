@@ -1088,6 +1088,13 @@
     "type": "tilt_eq",
     "tilt_db": -3.0,
     "pivot_hz": 900.0
+   },
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -5.0
+    }
    }
   ],
   "sfx:qf_bike": [
@@ -1095,6 +1102,13 @@
     "type": "tilt_eq",
     "tilt_db": -3.0,
     "pivot_hz": 900.0
+   },
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -5.0
+    }
    }
   ],
   "sfx:qf_road": [
@@ -1102,6 +1116,58 @@
     "type": "tilt_eq",
     "tilt_db": -4.0,
     "pivot_hz": 600.0
+   },
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -4.0
+    }
+   }
+  ],
+  "sfx:qf_tyres_v8": [
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -4.0
+    }
+   }
+  ],
+  "sfx:qf_tyres_bike": [
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -4.0
+    }
+   }
+  ],
+  "sfx:qf_device": [
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -3.0
+    }
+   }
+  ],
+  "sfx:qf_alarm": [
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -3.0
+    }
+   }
+  ],
+  "sfx:qf_heartbeat": [
+   {
+    "type": "pedalboard",
+    "plugin": "Gain",
+    "params": {
+     "gain_db": -2.0
+    }
    }
   ]
  }
