@@ -11,7 +11,7 @@ lessons:
   check: take the event times from gate_checks.check_clicks on the draft, high-pass each stem at 5 kHz and take the largest sample step at those times; the biggest stem is the owner
   fix: onset_fade_ms 3 and a 25 ms stagger on a double crash; noise excite with attack 6 ms, not burst; band-limited noise with a smooth gain curve for a tone-like swell; de-ess the hat band then soft-clip the kit; move a pickup off a drum hit
   avoid: loosening the row (protected)
-  evidence: trailer 87.8 s splash, device 112-119 s (35 of 37), indo kit 18.5/32.8/36.3 s
+  evidence: trailer 87.8 s splash, device 112-119 s (35 of 37), indo kit 18.5/32.8/36.3 s, trailer qf_suck 116.4 s (tau decay on a swell)
 - id: M02
   title: scene.silence_honoured at -40 to -48 dBFS
   keywords: [scene.silence_honoured, declared silence, rest_dip, tail, release, humanizer jitter, hit silence_after_s]
