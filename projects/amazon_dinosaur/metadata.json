@@ -1,0 +1,9 @@
+{
+  "overrides": {},
+  "derive_from_score": {
+    "title": true,
+    "genre": true,
+    "comment": true,
+    "year": true
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "row": "section.energy",
+  "stage": "mix",
+  "stem": null,
+  "level": "PASS",
+  "value": 0.9999999999999999,
+  "unit": "rho",
+  "threshold": 0.5,
+  "margin": 0.4999999999999999,
+  "worst_times_s": [],
+  "calibrated": false,
+  "detail": "Spearman rho 1.00 between promised energy and measured section level (FAIL < 0.5, WARN < 0.7)",
+  "table": [
+    {
+      "name": "first sight",
+      "start_s": 0.0,
+      "end_s": 32.0,
+      "energy": 0.25,
+      "level_db": -31.111040778698626
+    },
+    {
+      "name": "herd rises",
+      "start_s": 32.0,
+      "end_s": 64.0,
+      "energy": 0.55,
+      "level_db": -24.056666220488115
+    },
+    {
+      "name": "predator dread",
+      "start_s": 64.0,
+      "end_s": 85.3,
+      "energy": 0.7,
+      "level_db": -17.355449774345995
+    },
+    {
+      "name": "chase",
+      "start_s": 85.3,
+      "end_s": 106.7,
+      "energy": 0.9,
+      "level_db": -16.749656216035874
+    },
+    {
+      "name": "awe finale",
+      "start_s": 106.7,
+      "end_s": 117.3,
+      "energy": 1.0,
+      "level_db": -14.201951439997854
+    }
+  ]
+}

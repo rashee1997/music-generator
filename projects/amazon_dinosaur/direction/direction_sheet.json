@@ -1,0 +1,429 @@
+{
+ "title": "Amazon Dinosaur - Giants Walking",
+ "project": "Original cinematic cue: Jurassic Park in the Amazon forest, Hans Zimmer-style orchestral",
+ "version": 1,
+ "medium": "film",
+ "brief": "create scoring for cinematic Jurassic Park in Amazon forest, Hans Zimmer like orchestra, not funky, immersive 7.1",
+ "audience": "Cinema audience hearing a 2-minute adventure cue on 7.1 and stereo; they should feel wonder then dread then triumph",
+ "purpose": "A 117-second orchestral adventure cue: wonder at giants in the green, dread of the predator, chase, and awe finale. Pressure from ostinato, braam and constant percussion, not from a funk groove.",
+ "point_of_view": "Narrator/cinema: camera floats over canopy then walks with the herd; no character POV, no diegetic music",
+ "job": [
+  "establish the Amazon as a vast living place before any dinosaur",
+  "state an original heroic horn theme the ear can remember",
+  "build pressure with a pulse that does not stop, then cut to silence before the predator",
+  "chase with the same ostinato faster and denser, not a new groove",
+  "finale: theme full orchestra, braam, choir, then a cliff silence and last D chord"
+ ],
+ "story": "First sight of giants in the green, herd rises, predator dread on a D pedal, chase, awe finale where the theme returns biggest and ends unresolved-but-triumphant on D.",
+ "duration_s": 117.3,
+ "in_point_s": 0.0,
+ "out_point_s": 117.3,
+ "ending": "tail_out",
+ "feel": [
+  "wonder",
+  "epic",
+  "majestic",
+  "scary",
+  "triumphant"
+ ],
+ "avoid_feel": [
+  "funky",
+  "groovy",
+  "synthetic",
+  "robotic",
+  "busy",
+  "campy",
+  "pop"
+ ],
+ "sections": [
+  {
+   "name": "first sight",
+   "start_s": 0.0,
+   "end_s": 32.0,
+   "energy": 0.25,
+   "action": "camera pushes over canopy, first giant shape in mist",
+   "music": "horns alone state theme over low piano D pedal and soft choir; strings enter bar 5",
+   "role": "establish"
+  },
+  {
+   "name": "herd rises",
+   "start_s": 32.0,
+   "end_s": 64.0,
+   "energy": 0.55,
+   "action": "herd moves, ground trembles",
+   "music": "cello ostinato enters, timpani root/fifth, trombone braam at bar 16, theme answered by strings",
+   "role": "build"
+  },
+  {
+   "name": "predator dread",
+   "start_s": 64.0,
+   "end_s": 85.3,
+   "energy": 0.7,
+   "action": "predator off-screen, forest goes quiet",
+   "music": "D pedal, tremolo strings, taiko pulse, tuba braam, silence 2 beats before bar 32",
+   "role": "build"
+  },
+  {
+   "name": "chase",
+   "start_s": 85.3,
+   "end_s": 106.7,
+   "energy": 0.9,
+   "action": "chase through trees, no rests",
+   "music": "ostinato thickens to eighths in celli+violas, brass marcato, timpani+taiko constant, piano hammering root",
+   "role": "peak"
+  },
+  {
+   "name": "awe finale",
+   "start_s": 106.7,
+   "end_s": 117.3,
+   "energy": 1.0,
+   "action": "giants return, camera pulls back",
+   "music": "theme full orchestra, choir, trumpet fanfare, braam, orchestra hit then cliff silence, last D chord in room",
+   "role": "peak"
+  }
+ ],
+ "motifs": [
+  {
+   "name": "giants theme",
+   "first_at_s": 0.0,
+   "shape": "hymn in D major: D-F#-A-D (fifth leaps), C#-B-A stepwise fall, long half notes",
+   "returns": "strings answer at 10.7s, full orchestra at 106.7s, horns alone on last D"
+  },
+  {
+   "name": "ostinato cell",
+   "first_at_s": 32.0,
+   "shape": "D-A-D-F# repeated eighths, a few notes changed each 2 bars",
+   "returns": "thickens in chase, hammered in finale"
+  }
+ ],
+ "instruments": [
+  "dino_horns",
+  "dino_strings",
+  "dino_violas",
+  "dino_celli",
+  "dino_basses",
+  "dino_trombones",
+  "dino_tuba",
+  "dino_trumpets",
+  "dino_timpani",
+  "dino_taiko",
+  "dino_choir",
+  "dino_tremolo"
+ ],
+ "avoid_sounds": [
+  "drum kit",
+  "guitar",
+  "bass guitar",
+  "synth arpeggio",
+  "funk syncopation",
+  "swing",
+  "wah",
+  "slap bass",
+  "pop beat",
+  "flute lead",
+  "harp gliss"
+ ],
+ "pulse": "orchestral: cello ostinato eighths + timpani/taiko on beat 1, straight, never syncopated",
+ "tempo_bpm": [
+  90,
+  90
+ ],
+ "key": "D",
+ "mode": "major",
+ "energy": 0.65,
+ "space": "amazon_dinosaur_room",
+ "hits_at": [
+  42.7,
+  64.0,
+  85.3,
+  106.7
+ ],
+ "hits": [
+  {
+   "t": 42.7,
+   "kind": "musical",
+   "sync": "hard",
+   "sound": "trombone + tuba braam D root/octave",
+   "why": "herd turning point, first braam"
+  },
+  {
+   "t": 64.0,
+   "kind": "musical",
+   "sync": "hard",
+   "sound": "tuba braam on D pedal, tremolo enters",
+   "why": "predator dread entry"
+  },
+  {
+   "t": 85.3,
+   "kind": "musical",
+   "sync": "hard",
+   "sound": "full brass marcato + timpani hit, after 2-beat silence",
+   "why": "chase launch, silence before makes it larger"
+  },
+  {
+   "t": 106.7,
+   "kind": "musical",
+   "sync": "hard",
+   "sound": "theme full orchestra, choir, trumpet fanfare",
+   "why": "finale awe"
+  }
+ ],
+ "mix_intent": {
+  "hero": "dino_horns",
+  "support": [
+   "dino_strings",
+   "dino_celli",
+   "dino_choir"
+  ],
+  "sits_under": [],
+  "must_hear": [
+   "horn theme first 10s",
+   "ostinato from 32s never stops",
+   "braam at 42.7, 64, 85.3, 106.7",
+   "cliff silence before finale"
+  ],
+  "leave_free_hz": [
+   300,
+   3500
+  ],
+  "executed_by": "score carries mix_intent and mix preset lead_carve enabled from_intent"
+ },
+ "loudness_lufs": -14.0,
+ "true_peak_max": -1.5,
+ "delivery": {
+  "format": "wav",
+  "sample_rate": 44100,
+  "bit_depth": 24,
+  "stage": "film",
+  "output_targets": [
+   "stereo",
+   "immersive_7_1"
+  ],
+  "played_on": "cinema 7.1, stereo headphones, living room stereo; stereo first so fold rows compare 7.1"
+ },
+ "references": [
+  "in words: a hymn horn theme over low strings, a repeating low ostinato that never stops, low brass blasts, timpani and taiko, wordless choir - the Zimmer epic tropes, original theme",
+  "Jurassic wonder: low/middle orchestra first, choir added later, reverent, not a copy of Williams"
+ ],
+ "spatial_staging": {
+  "dino_horns": {
+   "azimuth": 0,
+   "elevation": 0,
+   "distance": 3.0,
+   "space": "amazon_dinosaur_room"
+  },
+  "dino_strings": {
+   "azimuth": -30,
+   "elevation": 0,
+   "distance": 4.0,
+   "space": "amazon_dinosaur_room"
+  },
+  "dino_violas": {
+   "azimuth": -55,
+   "elevation": 0,
+   "distance": 3.0,
+   "space": "amazon_dinosaur_room"
+  },
+  "dino_celli": {
+   "azimuth": 30,
+   "elevation": 20.0,
+   "distance": 2.5,
+   "space": "amazon_dinosaur_room"
+  },
+  "dino_basses": {
+   "azimuth": 0,
+   "elevation": -20.0,
+   "distance": 5.0,
+   "space": "amazon_dinosaur_room"
+  },
+  "dino_trombones": {
+   "azimuth": 40,
+   "elevation": 0,
+   "distance": 4.5,
+   "space": "amazon_dinosaur_room"
+  },
+  "dino_tuba": {
+   "azimuth": -30,
+   "elevation": 25.0,
+   "distance": 5.0,
+   "space": "amazon_dinosaur_room"
+  },
+  "dino_trumpets": {
+   "azimuth": 85,
+   "elevation": 0,
+   "distance": 3.5,
+   "space": "amazon_dinosaur_room"
+  },
+  "dino_timpani": {
+   "azimuth": -85,
+   "elevation": 0,
+   "distance": 5.0,
+   "space": "amazon_dinosaur_room"
+  },
+  "dino_taiko": {
+   "azimuth": -60,
+   "elevation": 0,
+   "distance": 6.0,
+   "space": "amazon_dinosaur_room"
+  },
+  "dino_choir": {
+   "azimuth": 35,
+   "elevation": 0.0,
+   "distance": 7.0,
+   "space": "amazon_dinosaur_room"
+  },
+  "dino_tremolo": {
+   "azimuth": 70,
+   "elevation": 0,
+   "distance": 4.5,
+   "space": "amazon_dinosaur_room"
+  }
+ },
+ "immersive": {
+  "enabled": true,
+  "why": "the field carries the geography of the forest: herd left, predator right, theme centre, finale all around",
+  "engine": "hoa_bus",
+  "anchors": [
+   "dino_basses",
+   "dino_timpani",
+   "dino_taiko"
+  ],
+  "movers": [
+   {
+    "part": "dino_horns",
+    "why": "theme stays centre as the herd moves around it",
+    "path": "centre throughout, choir opens wide in finale"
+   }
+  ],
+  "height": {
+   "dino_strings": 10,
+   "dino_choir": 15
+  },
+  "room_changes": [
+   {
+    "at_section": "awe finale",
+    "why": "forest opens, room grows",
+    "transition_s": 4.0
+   }
+  ],
+  "must_hear": [
+   "horn theme centre",
+   "ostinato left",
+   "braam centre-low"
+  ],
+  "deliverables": [
+   "stereo",
+   "immersive_7_1"
+  ],
+  "notes": "numbers in presets, section names match score plan"
+ },
+ "focus": "melody",
+ "intent": {
+  "emotions": [
+   "wonder",
+   "epic",
+   "majestic",
+   "triumphant"
+  ],
+  "registers": [
+   "cinematic"
+  ],
+  "scenes": [
+   "establish",
+   "build",
+   "arrival"
+  ],
+  "tensions": [
+   "ostinato",
+   "silence_before",
+   "rising_line"
+  ],
+  "avoid": [
+   "joyful",
+   "playful"
+  ]
+ },
+ "piece_type": "cinematic",
+ "gate_reason": "Film cue with a horn melody figure, ostinato pulse and braam hits: cinematic profile judged like melodic, focus melody declares the horns+choir figure",
+ "video": {
+  "enabled": false,
+  "source": null,
+  "fps": null,
+  "cuts": [],
+  "cut_source": null,
+  "cut_sync": {
+   "early_ms": 45,
+   "late_ms": 125
+  },
+  "dialogue": {
+   "present": false,
+   "duck_db": -9.0,
+   "snr_min_db": 15.0
+  },
+  "master_profile": null,
+  "deliverable": null,
+  "preset": "default",
+  "notes": "music-only piece: leave enabled false. For a cue against a cut, run scripts/video_score.py and it fills this block."
+ },
+ "notes": "Original theme, not Williams. No ambience asked, none added. No kit/guitar/synth.",
+ "expression": {
+  "sonic_picture": "First 10s: solo horns hymn over low piano D and soft choir in a big hall. Middle: cello ostinato never stops, timpani/taiko pulse, braams at turning points. Last note: full orchestra D chord hanging in the room after a hit and silence.",
+  "performer": "Horns play hymn-like, breathing between phrases, swelling into long notes. Strings lean on beat 1, eighths are bowed straight, not funky. Brass marcato is short and straight. Timpani/taiko are large and slow.",
+  "producer_moves": "Silence 2 beats before chase and finale, reverb throw on last chord, filter opening is the dynamics arc in the score, not a mix trick.",
+  "anti_generic": "Generic version is a drum-kit groove, bass guitar, synth arp and flute tune; what stops it is one D pedal, one ostinato cell that never stops, and a horn theme made of fifths and long notes.",
+  "cues": [
+   {
+    "section": "first sight",
+    "arousal": "low",
+    "mode_register": "D major, mid",
+    "tempo_trend": "steady 90",
+    "dynamics": "pp to mp",
+    "articulation": "legato, tenuto",
+    "timbre": "warm, soft attack"
+   },
+   {
+    "section": "herd rises",
+    "arousal": "rising",
+    "mode_register": "D major",
+    "tempo_trend": "steady 90",
+    "dynamics": "mp to mf",
+    "articulation": "marcato, ostinato eighths",
+    "timbre": "brighter, braam"
+   },
+   {
+    "section": "predator dread",
+    "arousal": "high tension",
+    "mode_register": "D pedal, Bb colour",
+    "tempo_trend": "steady 90",
+    "dynamics": "mf, drop before hit",
+    "articulation": "tremolo, staccato brass",
+    "timbre": "dark, unresolved"
+   },
+   {
+    "section": "chase",
+    "arousal": "very high",
+    "mode_register": "D minor colour",
+    "tempo_trend": "steady 90",
+    "dynamics": "f",
+    "articulation": "ostinato, marcato",
+    "timbre": "aggressive, full"
+   },
+   {
+    "section": "awe finale",
+    "arousal": "peak then cliff",
+    "mode_register": "D major",
+    "tempo_trend": "steady 90 then stop",
+    "dynamics": "ff to silence to pp chord",
+    "articulation": "legato theme, hit",
+    "timbre": "vast, reverent"
+   }
+  ],
+  "theme": {
+   "contour": "arch: D-F#-A-D up fifths, then C#-B-A fall",
+   "interval_character": "perfect fifths and steps, no funk leaps",
+   "rhythm_cell": "half, half, dotted half, quarter, half, half, whole",
+   "why_memorable": "fifth leaps land on beat 1, long notes, never syncopated",
+   "variation_plan": "strings answer, chase fragment in brass, full orchestra finale, horns alone last D"
+  }
+ }
+}

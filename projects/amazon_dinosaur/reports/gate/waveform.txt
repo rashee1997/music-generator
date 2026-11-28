@@ -1,0 +1,16 @@
+file: /workspace/chats/66bf2d40b14be20d219fbb8e/projects/amazon_dinosaur/out/_draft_master.wav
+duration_s: 118.470
+sample_rate: 44100
+sections:
+  first sight: 0.00-32.00 s, dyn 0.25
+  herd rises: 32.00-64.00 s, dyn 0.55
+  predator dread: 64.00-85.30 s, dyn 0.70
+  chase: 85.30-106.70 s, dyn 0.90
+  awe finale: 106.70-117.30 s, dyn 1.00
+flagged times: 6
+  0.035s stem.tick [PASS] choir_pad
+  10.704s stem.tick [PASS] strings_pad
+  32.044s stem.tick [PASS] celli_ostinato
+  42.725s stem.tick [PASS] trombones_braam
+  42.725s stem.tick [PASS] tuba_braam
+  106.591s stem.tick [PASS] trumpets_fanfare
