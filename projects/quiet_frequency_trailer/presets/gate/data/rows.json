@@ -4618,10 +4618,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": -16.16673636446201,
+    "value": -16.16675334452209,
     "unit": "LUFS",
     "threshold": -16.0,
-    "margin": -2.333263635537989,
+    "margin": -2.333246655477911,
     "worst_times_s": [],
     "calibrated": true,
     "detail": "-16.2 LUFS vs target -16.0 (tolerance 2.5 LU)"
@@ -4670,10 +4670,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 66.9144396525671,
+    "value": 66.91511812028929,
     "unit": "dB",
     "threshold": 12.0,
-    "margin": -54.9144396525671,
+    "margin": -54.91511812028929,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "end level -127.6 dBFS (limit -45), decay over final 300 ms 66.9 dB (limit 12); natural release"
@@ -4696,10 +4696,10 @@
     "stage": "mix",
     "stem": null,
     "level": "PASS",
-    "value": 1.6175349484970254e-05,
+    "value": 1.620033150796054e-05,
     "unit": "FS",
     "threshold": 0.001,
-    "margin": -0.0009838246505150298,
+    "margin": -0.0009837996684920395,
     "worst_times_s": [],
     "calibrated": false,
     "detail": "channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00002 (limit 0.001)"
@@ -4722,70 +4722,70 @@
       "start_s": 0.0,
       "end_s": 12.0,
       "energy": 0.25,
-      "level_db": -25.39404408724469
+      "level_db": -25.394057286047175
      },
      {
       "name": "the_take",
       "start_s": 12.0,
       "end_s": 24.0,
       "energy": 0.45,
-      "level_db": -25.679097817262594
+      "level_db": -25.679122759909998
      },
      {
       "name": "the_alert",
       "start_s": 24.0,
       "end_s": 36.0,
       "energy": 0.65,
-      "level_db": -18.420604197227647
+      "level_db": -18.42062426389322
      },
      {
       "name": "the_chase",
       "start_s": 36.0,
       "end_s": 52.0,
       "energy": 0.9,
-      "level_db": -18.654589361436134
+      "level_db": -18.654603096123825
      },
      {
       "name": "the_flyover",
       "start_s": 52.0,
       "end_s": 58.0,
       "energy": 0.8,
-      "level_db": -19.987212130276127
+      "level_db": -19.98721495377146
      },
      {
       "name": "the_truck",
       "start_s": 58.0,
       "end_s": 64.0,
       "energy": 0.6,
-      "level_db": -37.98233463233074
+      "level_db": -37.98234522145995
      },
      {
       "name": "the_escalation",
       "start_s": 64.0,
       "end_s": 88.0,
       "energy": 0.95,
-      "level_db": -18.45936720411888
+      "level_db": -18.45938028387296
      },
      {
       "name": "the_wall",
       "start_s": 88.0,
       "end_s": 104.0,
       "energy": 1.0,
-      "level_db": -18.02769699404026
+      "level_db": -18.02770962072375
      },
      {
       "name": "the_dropout",
       "start_s": 104.0,
       "end_s": 110.0,
       "energy": 0.35,
-      "level_db": -18.66775389897162
+      "level_db": -18.667772084007403
      },
      {
       "name": "the_signal",
       "start_s": 110.0,
       "end_s": 120.0,
       "energy": 0.3,
-      "level_db": -25.133336214425206
+      "level_db": -25.13333968811656
      }
     ]
    }

@@ -1,4 +1,4 @@
-stem gate: 0 FAIL, 0 WARN, 237 rows, profile quiet_frequency, 1979 ms
+stem gate: 0 FAIL, 0 WARN, 238 rows, profile quiet_frequency, 28217 ms
 [PASS] stem.dc: stem "bass_drum": channel mean(s) -0.00000, -0.00000 FS, 1 s drift 0.00001 (limit 0.001)
 [PASS] stem.clipping: stem "bass_drum": 0 sample(s) at/above 0.999 FS, 0 flat-top run(s)
 [PASS] stem.clicks: stem "bass_drum": 0 clustered impulse event(s) (MAD), 0 LPC frame(s); 0 event(s) rejected as a dense burst, 0 as a steep attack; max cluster span 0.000 ms
@@ -234,5 +234,6 @@ stem gate: 0 FAIL, 0 WARN, 237 rows, profile quiet_frequency, 1979 ms
 [INFO] piece_type: quiet_frequency (declared)
 [INFO] focus: judged around the cell on the horns
 [INFO] focus: the cue is defined by a figure: four horns state it at each camera
+[INFO] gate_relax: channel.bars: balance_db=6.5 (measured on the immersive_7_1 render (two renders, identical): bar 10 (18-20 s) left/right +4.9 dB (+4.2 dB against -0.7 dB in both neighbours) and bar 14 (26-28 s) front/back -5.8 dB (-9.4 dB against -3.6 dB); channel energy FL -23.8, FR -25.2, BL -22.1, BR -27.7 dB. rca verdict mismatch: the swings follow the writing. Bar 10 is the quiet take where the kick (placed left, 25 degrees from the basses) is the only loud part; bar 14 is the Villain V8 waking behind the camera (172 degrees), which is the picture. The stereo master is certified without it. Bounded: balance_db 4.0 -> 6.5 (range 1-12).)
 [INFO] gate_relax: pattern.loop_short: min_distinct_frac=0.06 (a cue holds a pad, a drone or an ostinato for a whole section on purpose; 6 % of the bars differing is the floor, so a part that never changes is still flagged while a section-level bed is not)
 [INFO] gate_skip: SKIP tempo.audio: measured on the render (attempt 1): the beat tracker reads 59.9 BPM against the declared 120 (the half-time octave of the same pulse: 60 BPM is the heart, the engines and the half-bar the cycles shift against); the chase pulse is a set of odd-length cycles moved bar by bar on purpose, so no tracker locks onto the written beat
