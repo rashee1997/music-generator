@@ -362,8 +362,8 @@ def low_swell():
     out = []
     # five long swells, one into each act turn (the stem gate reads many short isolated notes as a tick train)
     for bar, d in ((6, 5.0), (18, 5.0), (30, 3.0), (44, 5.0)):
-        out.append(note(b(bar, 2), d, root_pitch(bar, 36, 47) - 12, 0.8))
-    out.append(note(b(32, 2.0), b(33) - b(32, 2.0), root_pitch(33, 36, 47) - 12, 0.5))
+        out.append(note(b(bar, 2), d, root_pitch(bar, 41, 52) - 12, 0.8))     # F1 and up: below it the sample flutters
+    out.append(note(b(32, 2.0), b(33) - b(32, 2.0), root_pitch(33, 41, 52) - 12, 0.5))
     out.append(note(b(53), 8.0, 29, 0.42))
     return out
 
