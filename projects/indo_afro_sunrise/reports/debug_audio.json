@@ -1,5 +1,5 @@
 {
- "stamp": "20261128T070022",
+ "stamp": "20261128T070605",
  "project": "indo_afro_sunrise",
  "level": "FAIL",
  "sources": {
@@ -18,18 +18,18 @@
   ],
   "stems": "14 processed stems from .cache/mix",
   "master": "out/_draft_indo_afro_sunrise.wav",
-  "verdict": "2026-11-28T06:40:34Z"
+  "verdict": "2026-11-28T07:00:23Z"
  },
  "binding": [
   {
    "row": "clicks",
    "stem": null,
    "level": "FAIL",
-   "value": 9.0,
+   "value": 3.0,
    "threshold": 0.0,
    "unit": "events",
-   "safety": -9.0,
-   "detail": "9 clustered impulse event(s) (MAD), 7 LPC frame(s); 368 event(s) rejected as a dense burst, 149 as a steep attack; max cluster span 1.497 ms"
+   "safety": -3.0,
+   "detail": "3 clustered impulse event(s) (MAD), 2 LPC frame(s); 180 event(s) rejected as a dense burst, 105 as a steep attack; max cluster span 1.474 ms"
   }
  ],
  "advisory": [
@@ -280,24 +280,27 @@
   ]
  },
  "plan": {
-  "status": "partial",
-  "worst_safety": -8.666666666666666,
+  "status": "replay",
+  "worst_safety": -2.6666666666666665,
   "deltas": {
    "hf.kit": 3.0
   },
-  "clearing": {},
+  "clearing": {
+   "hf.kit": -6.0,
+   "layer.canopy.insects": -3.0
+  },
   "predicted": {
    "clicks::-": [
-    -9.0,
-    -8.666666666666666
+    -3.0,
+    -2.6666666666666665
    ],
    "loudness::-": [
     0.02,
     0.02
    ],
    "true peak::-": [
-    0.0002498336005085644,
-    0.0002498336005085644
+    0.0002494233580594418,
+    0.0002494233580594418
    ],
    "dropout::-": [
     1.0,
@@ -316,8 +319,8 @@
     0.0
    ],
    "master.dc::-": [
-    0.09936494472930889,
-    0.09936494472930889
+    0.0993622345716182,
+    0.0993622345716182
    ],
    "stem.dc::kit": [
     0.09961443102919039,
@@ -342,7 +345,7 @@
     "text": "kit high shelf at 5500 Hz: inst_eq[\"kit\"]",
     "unit": "dB",
     "feasible": [
-     81.0,
+     27.0,
      3.0
     ],
     "bounds": [
@@ -352,8 +355,8 @@
     "rows": [
      {
       "row": "clicks",
-      "needs": 81.0,
-      "safety": -9.0
+      "needs": 27.0,
+      "safety": -3.0
      }
     ],
     "why": "kit high shelf at 5500 Hz: inst_eq[\"kit\"] cannot satisfy clicks at once: the moves that pass one row fail the other, and the bounds leave no value between"
@@ -377,8 +380,8 @@
    }
   ],
   "notes": [
-   "no admissible combination clears clicks; the best set leaves it at safety -8.67. The rows that limit it have no lever here - fix those first, or change the piece rather than the knob",
-   "the best candidate comes from a model that failed its sham test, so it is not adopted as a plan"
+   "no admissible combination clears clicks; the best set leaves it at safety -2.67. The rows that limit it have no lever here - fix those first, or change the piece rather than the knob",
+   "clearing set read from a replay through the gate's own checker, not from the linear model; the next render is the measurement"
   ],
   "experiments": [
    {
@@ -386,59 +389,29 @@
     "key": "clicks::-",
     "kind": "iterative",
     "value": 0,
-    "baseline": 9,
-    "near3": 0,
-    "margin_db": 3.0,
-    "unverified": true,
-    "resolution_db": 0.97,
+    "baseline": 3,
+    "near3": 4,
+    "margin_db": 2.0,
+    "unverified": false,
+    "resolution_db": 1.0,
     "times": [],
     "verdict": "clears",
     "moves": {
-     "hf.kit": -9.0
+     "hf.kit": -6.0,
+     "layer.canopy.insects": -3.0
     },
-    "robust": 1.0
+    "robust": 0.0,
+    "proved": true
    },
    {
     "row": "clicks",
     "key": "clicks::-",
     "kind": "hf_shelf",
     "value": 0,
-    "baseline": 9,
-    "margin_db": 3.0,
-    "unverified": true,
-    "resolution_db": 0.97,
-    "moves": {
-     "hf.kit": -9.0
-    },
-    "times": [],
-    "verdict": "clears",
-    "robust": 1.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 0,
-    "baseline": 9,
-    "margin_db": 0.0,
-    "unverified": true,
-    "resolution_db": 0.97,
-    "moves": {
-     "hf.kit": -12.0
-    },
-    "times": [],
-    "verdict": "clears",
-    "robust": 1.0
-   },
-   {
-    "row": "clicks",
-    "key": "clicks::-",
-    "kind": "hf_shelf",
-    "value": 0,
-    "baseline": 9,
-    "margin_db": 0.0,
-    "unverified": true,
-    "resolution_db": 0.97,
+    "baseline": 3,
+    "margin_db": 2.0,
+    "unverified": false,
+    "resolution_db": 1.0,
     "moves": {
      "hf.kit": -6.0
     },
@@ -450,16 +423,48 @@
     "row": "clicks",
     "key": "clicks::-",
     "kind": "hf_shelf",
+    "value": 0,
+    "baseline": 3,
+    "margin_db": 0.0,
+    "unverified": false,
+    "resolution_db": 1.0,
+    "moves": {
+     "hf.kit": -9.0
+    },
+    "times": [],
+    "verdict": "clears",
+    "robust": 1.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
+    "value": 0,
+    "baseline": 3,
+    "margin_db": 0.0,
+    "unverified": false,
+    "resolution_db": 1.0,
+    "moves": {
+     "hf.kit": -12.0
+    },
+    "times": [],
+    "verdict": "clears",
+    "robust": 1.0
+   },
+   {
+    "row": "clicks",
+    "key": "clicks::-",
+    "kind": "hf_shelf",
     "value": 1,
-    "baseline": 9,
+    "baseline": 3,
     "margin_db": null,
-    "unverified": true,
-    "resolution_db": 0.97,
+    "unverified": false,
+    "resolution_db": 1.0,
     "moves": {
      "hf.kit": -3.0
     },
     "times": [
-     18.497
+     18.752
     ],
     "verdict": "better",
     "robust": 1.0
@@ -469,21 +474,21 @@
  "forensics": [
   {
    "t": 18.497,
-   "step": 0.06608,
-   "threshold": 0.05658,
-   "over_threshold_db": 1.35,
-   "z": 9.3,
+   "step": 0.05981,
+   "threshold": 0.05853,
+   "over_threshold_db": 0.19,
+   "z": 8.2,
    "kind": "single source",
    "trusted": true,
-   "fit_ratio": 1.01,
+   "fit_ratio": 0.9,
    "owners": [
     {
      "stem": "kit",
-     "share": 0.838,
-     "signed": 0.06211
+     "share": 0.863,
+     "signed": 0.05718
     }
    ],
-   "raw_step_fs": 0.0774,
+   "raw_step_fs": 0.0735,
    "notes": [
     {
      "track": "kit",
@@ -496,206 +501,70 @@
    ]
   },
   {
-   "t": 24.3695,
-   "step": 0.0589,
-   "threshold": 0.05658,
-   "over_threshold_db": 0.35,
-   "z": 8.3,
+   "t": 32.8281,
+   "step": 0.06325,
+   "threshold": 0.05853,
+   "over_threshold_db": 0.67,
+   "z": 8.6,
    "kind": "single source",
    "trusted": true,
-   "fit_ratio": 1.0,
+   "fit_ratio": 0.78,
    "owners": [
     {
      "stem": "kit",
-     "share": 0.987,
-     "signed": 0.05962
+     "share": 0.866,
+     "signed": 0.04318
     }
    ],
-   "raw_step_fs": 0.0754,
-   "notes": []
-  },
-  {
-   "t": 30.7055,
-   "step": 0.05965,
-   "threshold": 0.05658,
-   "over_threshold_db": 0.46,
-   "z": 8.4,
-   "kind": "single source",
-   "trusted": true,
-   "fit_ratio": 1.02,
-   "owners": [
-    {
-     "stem": "kit",
-     "share": 0.998,
-     "signed": 0.06087
-    }
-   ],
-   "raw_step_fs": 0.0681,
-   "notes": [
-    {
-     "track": "kit",
-     "pitch": 36,
-     "velocity": 0.685,
-     "onset_s": 30.5,
-     "after_onset_ms": 205.5,
-     "written_len": 0.45
-    }
-   ]
-  },
-  {
-   "t": 47.3366,
-   "step": 0.07487,
-   "threshold": 0.05658,
-   "over_threshold_db": 2.43,
-   "z": 10.6,
-   "kind": "single source",
-   "trusted": true,
-   "fit_ratio": 0.61,
-   "owners": [
-    {
-     "stem": "kit",
-     "share": 0.993,
-     "signed": -0.04562
-    }
-   ],
-   "raw_step_fs": 0.1961,
+   "raw_step_fs": 0.0756,
    "notes": [
     {
      "track": "kit",
      "pitch": 54,
-     "velocity": 0.674,
-     "onset_s": 47.25,
-     "after_onset_ms": 86.6,
+     "velocity": 0.617,
+     "onset_s": 32.75,
+     "after_onset_ms": 78.1,
      "written_len": 0.25
     }
    ]
   },
   {
-   "t": 54.4217,
-   "step": 0.05953,
-   "threshold": 0.05658,
-   "over_threshold_db": 0.44,
-   "z": 8.4,
+   "t": 36.3222,
+   "step": 0.06256,
+   "threshold": 0.05853,
+   "over_threshold_db": 0.58,
+   "z": 8.6,
    "kind": "single source",
    "trusted": true,
-   "fit_ratio": 0.98,
+   "fit_ratio": 1.09,
    "owners": [
     {
      "stem": "kit",
-     "share": 0.998,
-     "signed": 0.05826
+     "share": 0.894,
+     "signed": 0.06161
     }
    ],
-   "raw_step_fs": 0.0581,
+   "raw_step_fs": 0.0722,
    "notes": [
     {
      "track": "kit",
      "pitch": 54,
-     "velocity": 0.649,
-     "onset_s": 54.25,
-     "after_onset_ms": 171.7,
+     "velocity": 0.608,
+     "onset_s": 36.25,
+     "after_onset_ms": 72.2,
      "written_len": 0.25
-    }
-   ]
-  },
-  {
-   "t": 56.1453,
-   "step": 0.05947,
-   "threshold": 0.05658,
-   "over_threshold_db": 0.43,
-   "z": 8.4,
-   "kind": "single source",
-   "trusted": true,
-   "fit_ratio": 1.05,
-   "owners": [
-    {
-     "stem": "kit",
-     "share": 0.998,
-     "signed": 0.06249
-    }
-   ],
-   "raw_step_fs": 0.0612,
-   "notes": [
-    {
-     "track": "kit",
-     "pitch": 36,
-     "velocity": 0.864,
-     "onset_s": 56.0,
-     "after_onset_ms": 145.3,
-     "written_len": 0.45
-    }
-   ]
-  },
-  {
-   "t": 60.0255,
-   "step": 0.06154,
-   "threshold": 0.05658,
-   "over_threshold_db": 0.73,
-   "z": 8.7,
-   "kind": "single source",
-   "trusted": true,
-   "fit_ratio": 1.02,
-   "owners": [
-    {
-     "stem": "kit",
-     "share": 0.907,
-     "signed": -0.05683
-    }
-   ],
-   "raw_step_fs": 0.066,
-   "notes": [
-    {
-     "track": "kit",
-     "pitch": 36,
-     "velocity": 0.864,
-     "onset_s": 60.0,
-     "after_onset_ms": 25.5,
-     "written_len": 0.45
-    }
-   ]
-  },
-  {
-   "t": 62.067,
-   "step": 0.05975,
-   "threshold": 0.05658,
-   "over_threshold_db": 0.47,
-   "z": 8.4,
-   "kind": "single source",
-   "trusted": true,
-   "fit_ratio": 1.0,
-   "owners": [
-    {
-     "stem": "kit",
-     "share": 0.98,
-     "signed": 0.05868
-    }
-   ],
-   "raw_step_fs": 0.0616,
-   "notes": [
-    {
-     "track": "kit",
-     "pitch": 36,
-     "velocity": 0.864,
-     "onset_s": 62.0,
-     "after_onset_ms": 67.0,
-     "written_len": 0.45
     }
    ]
   }
  ],
  "notes": [
-  "clicks: the sham replay does NOT reproduce the gate (model 9 vs gate 8; missing at [], extra at [64.734]): every candidate below is UNVERIFIED and is shown for direction only",
+  "clicks: sham replay (no change) reproduces the gate's 3 event(s) exactly (decomposition R^2 0.952); counterfactuals below are priced on a model that passes its own test",
   "clicks: model resolution 1.0 dB (90th percentile error of its steps against the master's); a candidate counts as proved only when it clears with at least that margin",
-  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.95); gains bansuri -0.06, bass 0.63, canopy 5.72, djembe 1.32, guitar 1.94, horns 1.39, kit 1.19, marimba -0.17, shekere 1.31, sitar 0.06, tabla 1.56, tanpura -0.06, vocal_group 2.84, vocal_lead 3.42",
-  "event 18.497s [single source] kit 84%; step 0.0661 vs threshold 0.0566 (+1.4 dB over); nearest onset kit p54 v0.519 -3 ms",
-  "event 24.369s [single source] kit 99%; step 0.0589 vs threshold 0.0566 (+0.3 dB over)",
-  "event 30.706s [single source] kit 100%; step 0.0597 vs threshold 0.0566 (+0.5 dB over); nearest onset kit p36 v0.685 +206 ms",
-  "event 47.337s [single source] kit 99%; step 0.0749 vs threshold 0.0566 (+2.4 dB over); nearest onset kit p54 v0.674 +87 ms",
-  "event 54.422s [single source] kit 100%; step 0.0595 vs threshold 0.0566 (+0.4 dB over); nearest onset kit p54 v0.649 +172 ms",
-  "event 56.145s [single source] kit 100%; step 0.0595 vs threshold 0.0566 (+0.4 dB over); nearest onset kit p36 v0.864 +145 ms",
-  "event 60.026s [single source] kit 91%; step 0.0615 vs threshold 0.0566 (+0.7 dB over); nearest onset kit p36 v0.864 +26 ms",
-  "event 62.067s [single source] kit 98%; step 0.0597 vs threshold 0.0566 (+0.5 dB over); nearest onset kit p36 v0.864 +67 ms",
-  "clicks: iterative replay, profile (events at 0/1/2/3 dB tighter) (9, 9, 9, 10) -> (0, 0, 0, 0) after kit -9 dB",
+  "decomposition: master ~ sum of gain x stem in the click band (R^2 0.95); gains bansuri -0.06, bass 0.67, canopy 3.91, djembe 1.30, guitar 1.89, horns 1.35, kit 1.18, marimba -0.16, shekere 1.27, tabla 1.51, tanpura 0.12, vocal_group 2.69, vocal_lead 3.44",
+  "event 18.497s [single source] kit 86%; step 0.0598 vs threshold 0.0585 (+0.2 dB over); nearest onset kit p54 v0.519 -3 ms",
+  "event 32.828s [single source] kit 87%; step 0.0633 vs threshold 0.0585 (+0.7 dB over); nearest onset kit p54 v0.617 +78 ms",
+  "event 36.322s [single source] kit 89%; step 0.0626 vs threshold 0.0585 (+0.6 dB over); nearest onset kit p54 v0.608 +72 ms",
+  "clicks: iterative replay, profile (events at 0/1/2/3 dB tighter) (3, 5, 8, 6) -> (0, 0, 0, 4) after kit -6 dB, canopy/insects -3 dB",
   "kit: the tightest gap in the score is 122 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
   "kit: the tightest gap in the score is 122 ms at beat spacing 0.536 s (112 bpm sixteenths); the note lengths and the ramp share this number, so they cannot be moved independently",
   "risk closure: the levers that move this row belong to kit, so every row of those stems was loaded as a constraint before the plan was solved"

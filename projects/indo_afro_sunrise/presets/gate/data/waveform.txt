@@ -1,12 +1,12 @@
 file: /home/user/music-generator/projects/indo_afro_sunrise/out/_draft_indo_afro_sunrise.wav
-duration_s: 69.441
+duration_s: 69.485
 sample_rate: 44100
 sections:
   dawn: 0.00-17.14 s, dyn 0.32
   grove: 17.14-34.29 s, dyn 0.70
   high_sun: 34.29-51.43 s, dyn 0.95
   golden_hour: 51.43-68.57 s, dyn 0.60
-flagged times: 14
+flagged times: 9
   0.035s stem.tick [PASS] canopy
   0.035s stem.tick [PASS] tanpura
   0.035s stem.tick [PASS] vocal_group
@@ -14,10 +14,5 @@ flagged times: 14
   8.557s stem.tick [PASS] bass
   17.148s stem.tick [PASS] marimba
   18.497s clicks [FAIL] master
-  24.369s clicks [FAIL] master
-  30.706s clicks [FAIL] master
-  47.337s clicks [FAIL] master
-  54.422s clicks [FAIL] master
-  56.145s clicks [FAIL] master
-  60.025s clicks [FAIL] master
-  62.067s clicks [FAIL] master
+  32.828s clicks [FAIL] master
+  36.322s clicks [FAIL] master

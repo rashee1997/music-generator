@@ -171,19 +171,29 @@ def accent_vel(pos, n, v):
 
 # ---- parts -----------------------------------------------------------------------------------------------------------------------------
 def basses():
+    """One long note per run of bars that share a root, held a little past the last bar so it meets the next note: the humanizer plays 90 % of
+    a written length, and a note that ends at the bar line leaves a hole the stem gate reads as a dropout."""
     out = []
-    for bar in range(1, 61):
-        r = role_of(bar)
-        if not active(bar) or r == 'button' and bar >= 58:
-            continue
+    bars = [b_ for b_ in range(1, 61) if active(b_) and not (role_of(b_) == 'button' and b_ >= 58)]
+    i = 0
+    while i < len(bars):
+        bar = bars[i]
         base = root_pitch(bar, 24, 35)
+        j = i
+        while (j + 1 < len(bars) and bars[j + 1] == bars[j] + 1 and root_pitch(bars[j + 1], 24, 35) == base
+               and bars[j + 1] != 31 and bar != 31):
+            j += 1
         v = vel(bar, 0.95 if bar >= 7 else 0.8)
         if bar == 31:
             out.append(note(b(bar), 1.9, base, v))      # stops at the cut (62 s)
-            continue
-        out.append(note(b(bar), 3.7, base, v))
-        if r == 'peak':
-            out.append(note(b(bar, 2), 1.7, base + 7, round(v * 0.8, 3)))
+        else:
+            last = bars[j]
+            nxt_continues = last + 1 in bars
+            out.append(note(b(bar), (last - bar + 1) * 4.0 + (0.45 if nxt_continues else -0.3), base, v))
+        for k in range(i, j + 1):
+            if role_of(bars[k]) == 'peak' and bars[k] != 31:
+                out.append(note(b(bars[k], 2), 1.7, base + 7, round(vel(bars[k], 0.95) * 0.8, 3)))
+        i = j + 1
     out.append(note(b(32, 2.25), 3.45, root_pitch(32, 24, 35), 0.5))
     return out
 
