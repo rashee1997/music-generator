@@ -1,0 +1,2 @@
+failing rows -> the next change
+  clicks (render): find the click time in rca.py; it is usually a one-shot cut short or a DC step: fade it, or fix the sample start

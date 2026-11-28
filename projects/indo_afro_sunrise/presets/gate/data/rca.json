@@ -1,0 +1,20 @@
+{
+ "name": "rca",
+ "findings": [
+  {
+   "row": "clicks",
+   "stem": null,
+   "verdict": "unknown",
+   "cause": "no analyzer for this row yet",
+   "evidence": [
+    "21 clustered impulse event(s) (MAD), 17 LPC frame(s); 782 event(s) rejected as a dense burst, 185 as a steep attack; max cluster span 1.497 ms"
+   ],
+   "where": [
+    "measure the row's own inputs before editing; add an analyzer to scripts/rca.py when you learn the cause"
+   ],
+   "tolerance": "protected: no profile or score can change it, so the audio is the only fix",
+   "do_next": "find the click time in rca.py; it is usually a one-shot cut short or a DC step: fade it, or fix the sample start",
+   "cost": "render"
+  }
+ ]
+}

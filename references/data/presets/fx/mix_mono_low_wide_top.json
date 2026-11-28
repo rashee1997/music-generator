@@ -1,0 +1,12 @@
+{
+  "name": "mix_mono_low_wide_top",
+  "character": "The classic stereo shape: the lows summed to the centre, the top 40 per cent wider.",
+  "provenance": "starting value, not a measurement. Sources: knowledgebase/sound-design/mixing-techniques.md (parallel compression, de-essing 4-7 kHz, ducking by the dry signal, mid-side with mono lows, distortion on a return, gates with hold; MusicRadar, iZotope, Sonarworks, Fiveable). ",
+  "chain": [
+    {
+      "type": "band_width",
+      "mono_below_hz": 160.0,
+      "width": 1.4
+    }
+  ]
+}

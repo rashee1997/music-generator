@@ -709,7 +709,7 @@ def _spiral_series(score):
     from scipy.spatial.distance import pdist
     num = _beats_per_bar(score)
     w_len = 2 * num
-    all_notes = [n for t in score.get('tracks', []) if _role(t) not in ('drum', 'environment')
+    all_notes = [n for t in score.get('tracks', []) if _role(t) not in ('drum', 'environment') and not roles.is_sound_effect(t)
                  for n in t.get('notes', []) if isinstance(n.get('p'), (int, float))]
     if not all_notes:
         return None
@@ -1087,7 +1087,7 @@ def cognitive_metrics(score):
 
         CE_key = _helix_point(float(tonic_pc), tonic_pc)
         num, _ = score.get('ts', [4, 4])
-        all_notes = [n for t in score.get('tracks', []) if _role(t) not in ('drum', 'environment')
+        all_notes = [n for t in score.get('tracks', []) if _role(t) not in ('drum', 'environment') and not roles.is_sound_effect(t)
                      for n in t.get('notes', []) if isinstance(n.get('p'), (int, float))]
         if all_notes:
             total_beats = max(n['t'] + n.get('d', 1.0) for n in all_notes)

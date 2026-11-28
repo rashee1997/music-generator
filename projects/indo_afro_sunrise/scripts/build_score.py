@@ -76,6 +76,63 @@ def v(bar, base, accent=1.0):
     return base * gain(bar) * accent
 
 
+# ---- the voices: a lead that calls and a group that answers (call and response is the vocal core of Afrobeat) ----------------------------------
+SCALE7 = [69, 71, 73, 74, 76, 78, 79, 81, 83, 85]                      # A mixolydian from A4: the lead walks it by step
+LEAD_CALL = [  # (beat, duration, scale step, syllable, accent): a conjunct arch, E F# E D C#
+    (0.0, 0.5, 4, 'la', 1.0), (0.5, 0.5, 5, 'la', 0.72), (1.0, 0.75, 4, 'na', 0.86), (2.0, 1.25, 3, 'ha', 0.9), (3.5, 0.5, 2, 'ho', 0.7)]
+LEAD_CALL_B = [  # F# E D E F#
+    (0.0, 0.75, 5, 'la', 0.95), (1.0, 0.5, 4, 'na', 0.7), (1.5, 0.5, 3, 'la', 0.78), (2.5, 1.0, 4, 'ha', 0.88), (3.5, 0.5, 5, 'ho', 0.74)]
+GROUP_HEY = [(0.0, 0.3, 0, 'hei', 1.0), (0.75, 0.3, 1, 'ha', 0.7), (1.5, 0.3, 0, 'hei', 0.86), (2.5, 0.3, 2, 'ha', 0.72), (3.0, 0.5, 0, 'hei', 0.95)]
+GROUP_HEY_B = [(0.0, 0.3, 1, 'hei', 0.95), (1.0, 0.3, 0, 'ha', 0.68), (1.75, 0.3, 2, 'hei', 0.84), (3.0, 0.3, 0, 'ha', 0.74), (3.5, 0.3, 1, 'hei', 0.9)]
+
+
+def chord_pitch(chord, idx, lo):
+    """The idx-th tone of the chord, counted upward from `lo` (an index past the fourth tone wraps into the next octave)."""
+    pcs = sorted({p % 12 for p in CHORDS[chord]}, key=lambda pc: (pc - lo) % 12)
+    return lo + ((pcs[idx % len(pcs)] - lo) % 12) + 12 * (idx // len(pcs))
+
+
+def lead_pitch(chord, step, dur):
+    """A step of the scale; a note held a beat or more is a chord tone (the nearest one), as AGENTS 7.5 asks."""
+    p = SCALE7[step]
+    if dur >= 1.0:
+        tones = [c + 12 * o for c in CHORDS[chord] for o in (-1, 0, 1)]
+        p = min(tones, key=lambda x: (abs(x - p), x))
+    return p
+
+
+def voices():
+    lead, group = [], []
+    for b in range(1, BARS + 1):
+        t, chord = bar_time(b), chord_at(b)
+        first_of_pair = (b - 1) % 2 == 0
+        if b in (7, 8):                                   # dawn: the group hums an open vowel, the first sign that people are here
+            for i, idx in enumerate((0, 2)):
+                group.append(dict(note(t, 3.8 * BEAT, chord_pitch(chord, idx, 62), v(b, 0.5 - 0.05 * i)), vowel='u'))
+            continue
+        if b in (11, 15):                                 # grove: the lead calls on the third bar of each phrase
+            for beat, dur, idx, syl, acc in (LEAD_CALL if b == 11 else LEAD_CALL_B):
+                lead.append(dict(note(t + beat * BEAT, dur * BEAT, lead_pitch(chord, idx, dur), v(b, 0.6, acc)), syl=syl))
+        if b in (12, 16):                                 # and the group answers on the next bar
+            for beat, dur, idx, syl, acc in (GROUP_HEY if b == 12 else GROUP_HEY_B):
+                group.append(dict(note(t + beat * BEAT, dur * BEAT, chord_pitch(chord, idx, 57), v(b, 0.62, acc)), syl=syl))
+        if 17 <= b <= 24:                                 # high sun: the call every two bars, the answer on the bar after, a shout on the call's last off-beat
+            if first_of_pair:
+                for beat, dur, idx, syl, acc in (LEAD_CALL if (b // 2) % 2 else LEAD_CALL_B):
+                    lead.append(dict(note(t + beat * BEAT, dur * BEAT, lead_pitch(chord, idx, dur), v(b, 0.64, acc)), syl=syl))
+                group.append(dict(note(t + 3.5 * BEAT, 0.3 * BEAT, chord_pitch(chord, 0, 57), v(b, 0.6, 0.9)), syl='hei'))
+            else:
+                for beat, dur, idx, syl, acc in (GROUP_HEY_B if (b // 2) % 2 else GROUP_HEY):
+                    group.append(dict(note(t + beat * BEAT, dur * BEAT, chord_pitch(chord, idx, 57), v(b, 0.66, acc)), syl=syl))
+        if b in (25, 27):                                 # golden hour: the lead sings it softer and slower
+            for beat, dur, idx, syl, acc in LEAD_CALL[:3] + [(2.0, 1.75, 3, 'la', 0.8)]:
+                lead.append(dict(note(t + beat * BEAT, dur * BEAT * 1.1, lead_pitch(chord, idx, dur), v(b, 0.5, acc)), syl=syl))
+        if 25 <= b < 32 and b % 2 == 0:                   # and the group holds the vowel under it
+            for i, idx in enumerate((0, 1, 2)):
+                group.append(dict(note(t, 4.0 * BEAT, chord_pitch(chord, idx, 57), v(b, 0.5 - 0.03 * i)), vowel='u'))
+    return lead, group
+
+
 def tracks():
     out = []
 
@@ -93,7 +150,6 @@ def tracks():
         tan.append(note(t, dur, root + 7, v(b, 0.30 * lift + (0.04 if b in (25, 29) else 0.0))))
         tan.append(note(t + 0.5 * BEAT, dur * 0.9, root + 12, v(b, 0.26 * lift)))
     out.append({'name': 'tanpura', 'instrument': 'tambura', 'role': 'drone', 'notes': tan,
-                'spatial': {'azimuth': 0.0, 'elevation': 0.0, 'distance': 4.0},
                 'fade_in_s': 2.0, 'fade_out_s': 3.0})
 
     # 2. bass: one owner of the low end. Three written bars - a statement, a pushed statement, and a
@@ -125,8 +181,7 @@ def tracks():
             if b >= 29 and which in ('5', '8'):
                 p += 12
             bass.append(note(t + beat * BEAT, min(dur * 1.12, 4.0 - beat) * BEAT, p, v(b, 0.72, acc)))
-    out.append({'name': 'bass', 'instrument': 'finger_bass', 'role': 'bass', 'notes': bass,
-                'spatial': {'azimuth': -25.0, 'elevation': 0.0, 'distance': 3.0}})
+    out.append({'name': 'bass', 'instrument': 'finger_bass', 'role': 'bass', 'notes': bass})
 
     # 3. guitar: highlife skank, the Afro half of the rhythm guitar. Four strum shapes rotate with the
     # four-bar phrase, and the driving one only arrives with the full band.
@@ -155,8 +210,7 @@ def tracks():
                 lean = 1.12 if b % 2 else 0.92
                 acc = (1.15 if beat in (0.5, 2.5) else 0.62) + 0.08 * j + 0.05 * (i % 2)
                 gtr.append(note(t + beat * BEAT + j * 0.02 * BEAT, 0.22 * BEAT, p, v(b, 0.5, acc * lean)))
-    out.append({'name': 'guitar', 'instrument': 'highlife_guitar', 'role': 'chord', 'notes': gtr,
-                'spatial': {'azimuth': -25.0, 'elevation': 4.0, 'distance': 3.0}})
+    out.append({'name': 'guitar', 'instrument': 'highlife_guitar', 'role': 'chord', 'notes': gtr})
 
     # 4. marimba: the arpeggio that keeps the groove moving, moving through the field. Four shapes, and
     # the last section drops to every second sixteenth so the field has room.
@@ -180,12 +234,7 @@ def tracks():
             # the mallet hits the first of each group, the rest are the run it leaves behind
             acc = (1.22 if step in (0, 4) else 0.7) + (0.06 if step % 3 == 2 else 0.0)
             mar.append(note(t + step * 0.5 * BEAT, 0.3 * BEAT, p, v(b, 0.44, acc)))
-    out.append({'name': 'marimba', 'instrument': 'marimba', 'role': 'arp', 'notes': mar,
-                'spatial': {'azimuth': -45.0, 'elevation': 10.0, 'distance': 3.5,
-                            'trajectory': {'spatial_role': 'mover', 'doppler_strength': 0.6,
-                                           'keyframes': [{'bar': 9, 'azimuth': -45, 'distance': 3.5},
-                                                         {'bar': 16, 'azimuth': -80, 'distance': 3.2},
-                                                         {'bar': 24, 'azimuth': -100, 'distance': 3.8}]}}})
+    out.append({'name': 'marimba', 'instrument': 'marimba', 'role': 'arp', 'notes': mar})
 
     # 5. bansuri: the melody. Motif A rises, motif B answers, the chorus lifts it an octave.
     # A flute line is mostly conjunct: the intervals here are 2-3 semitones stepping through the raga,
@@ -219,12 +268,7 @@ def tracks():
         phrase(b, motif_a, 0, 0.0, 0.55)
     phrase(29, motif_b, 0, 0.0, 0.6)
     flu.append(note(bar_time(30), 2 * BAR, SCALE[0], v(30, 0.5)))   # A4 held to the end
-    out.append({'name': 'bansuri', 'instrument': 'bansuri', 'role': 'melody', 'notes': flu,
-                'spatial': {'azimuth': 8.0, 'elevation': 12.0, 'distance': 2.2,
-                            'trajectory': {'spatial_role': 'mover', 'doppler_strength': 0.4,
-                                           'keyframes': [{'bar': 1, 'azimuth': 8, 'distance': 2.4},
-                                                         {'bar': 17, 'azimuth': -10, 'distance': 2.0},
-                                                         {'bar': 24, 'azimuth': 14, 'distance': 2.3}]}}})
+    out.append({'name': 'bansuri', 'instrument': 'bansuri', 'role': 'melody', 'notes': flu})
 
     # 6. sitar: the Indian answer. Sixteenths through the chorus, then a wide arc - and each four-bar
     # phrase closes on a held note, so the part has two lengths instead of one machine-gun value.
@@ -251,12 +295,7 @@ def tracks():
             sit.append(note(t + step * 0.25 * BEAT, 0.22 * BEAT, p, v(b, 0.34, acc)))
         if b % 4 == 0:                               # the phrase closes held: the arc the line was building
             sit.append(note(t + 3.0 * BEAT, 1.5 * BEAT, tones[0] + 12, v(b, 0.44)))
-    out.append({'name': 'sitar', 'instrument': 'sitar', 'role': 'counter', 'notes': sit,
-                'spatial': {'azimuth': 95.0, 'elevation': 0.0, 'distance': 3.0,
-                            'trajectory': {'spatial_role': 'mover', 'doppler_strength': 0.8,
-                                           'keyframes': [{'bar': 17, 'azimuth': 95, 'distance': 3.0},
-                                                         {'bar': 21, 'azimuth': 108, 'distance': 2.6},
-                                                         {'bar': 24, 'azimuth': 120, 'distance': 3.2}]}}})
+    out.append({'name': 'sitar', 'instrument': 'sitar', 'role': 'counter', 'notes': sit})
 
     # 7. horns: the Afro brass stab that makes the chorus lift. A stab, a held answer and one long swell
     # closing the section - a brass section phrases, it does not fire one fixed length.
@@ -273,8 +312,7 @@ def tracks():
                 swell = 0.78 + 0.35 * (b - 17) / 6.0 + (0.12 if dur >= 0.75 else 0.0)
                 acc = swell * (0.86 + 0.1 * j) + (0.1 if (beat, dur) == (0.0, 0.35) else 0.0)
                 hor.append(note(t + beat * BEAT + j * 0.015 * BEAT, dur * BEAT, p + 12, v(b, 0.6, acc)))
-    out.append({'name': 'horns', 'instrument': 'brass_section', 'role': 'counter', 'notes': hor,
-                'spatial': {'azimuth': 55.0, 'elevation': 22.0, 'distance': 4.0}})
+    out.append({'name': 'horns', 'instrument': 'brass_section', 'role': 'counter', 'notes': hor})
 
     # 8. kit: afrobeat kick (1, 2&, 3, 4), snare on 2 and 4, shaker-driven hats. The last bar of each
     # four is a fill, and the hats change shape between sections.
@@ -309,8 +347,7 @@ def tracks():
         kit.append(note(t + 14 * 0.25 * BEAT, 0.7 * BEAT, DRUM_KEYS['hat_open'], v(b, 0.62)))
         if b in (9, 17, 25):
             kit.append(note(t, 0.5 * BEAT, DRUM_KEYS['crash'], v(b, 0.72)))
-    out.append({'name': 'kit', 'instrument': 'kit', 'role': 'drum', 'notes': kit,
-                'spatial': {'azimuth': 0.0, 'elevation': 0.0, 'distance': 5.0}})
+    out.append({'name': 'kit', 'instrument': 'kit', 'role': 'drum', 'notes': kit})
 
     # 9. djembe: the West African hand layer. Eight stroke rotations, a fill every fourth bar and a
     # ghost-stroke pair, so no two bars of the hand layer are the same bar.
@@ -332,8 +369,7 @@ def tracks():
             elif step in (7, 15):
                 acc = 0.34                             # a quiet ghost stroke, not an accent
             dje.append(note(t + step * 0.25 * BEAT, 0.5 * BEAT, DRUM_KEYS[key], v(b, 0.5, acc)))
-    out.append({'name': 'djembe', 'instrument': 'djembe', 'role': 'percussion', 'notes': dje,
-                'spatial': {'azimuth': -110.0, 'elevation': 0.0, 'distance': 4.5}})
+    out.append({'name': 'djembe', 'instrument': 'djembe', 'role': 'percussion', 'notes': dje})
 
     # 10. tabla: the Indian hand layer, named world-drum keys (GM stand-ins, not a sampled tabla).
     # Eight theka variants and a tihai every eighth bar, with three stroke lengths (ge held, na, ti short).
@@ -355,8 +391,7 @@ def tracks():
             if b % 8 == 0 and step >= 12:            # tihai: three strokes and a rest, repeated into the cadence
                 key, dur, acc = 'tabla_ti', 0.25, 0.86
             tab.append(note(t + step * 0.25 * BEAT, dur * BEAT, DRUM_KEYS[key], v(b, 0.46, acc)))
-    out.append({'name': 'tabla', 'instrument': 'tabla', 'role': 'percussion', 'notes': tab,
-                'spatial': {'azimuth': 60.0, 'elevation': 0.0, 'distance': 4.5}})
+    out.append({'name': 'tabla', 'instrument': 'tabla', 'role': 'percussion', 'notes': tab})
 
     # 11. shekere: the shaker that never stops once the groove starts - but it has four hands, and the
     # hand changes with the bar, so the 16ths are not one written bar thirty-two times.
@@ -386,14 +421,17 @@ def tracks():
             if (b - 1) % 8 in (3, 7) and step in (5, 13):
                 acc -= 0.08                       # a ghost hand in the second half of each eight
             shek.append(note(t + step * 0.25 * BEAT, 0.5 * BEAT, DRUM_KEYS['shaker'], v(b, 0.34, acc)))
-    out.append({'name': 'shekere', 'instrument': 'shekere', 'role': 'percussion', 'notes': shek,
-                'spatial': {'azimuth': 90.0, 'elevation': 4.0, 'distance': 4.0}})
+    out.append({'name': 'shekere', 'instrument': 'shekere', 'role': 'percussion', 'notes': shek})
 
-    # 12. canopy: the rainforest bed, one long event, faded at both ends
+    # 12. the voices: a lead that calls, a group that answers
+    lead_notes, group_notes = voices()
+    out.append({'name': 'vocal_lead', 'instrument': 'indo_afro_happy_lead', 'role': 'counter', 'notes': lead_notes})
+    out.append({'name': 'vocal_group', 'instrument': 'indo_afro_happy_group', 'role': 'chord', 'notes': group_notes})
+
+    # 13. canopy: the rainforest bed, one long event, faded at both ends
     canopy = [note(0.0, 70.0, 60, 0.5)]
     out.append({'name': 'canopy', 'instrument': 'env:amazon_rainforest', 'role': 'environment',
                 'notes': canopy,
-                'spatial': {'azimuth': -40.0, 'elevation': 40.0, 'kind': 'spot'},
                 'fade_in_s': 4.0, 'fade_out_s': 5.0})
     return out
 
@@ -418,7 +456,7 @@ def score():
         'dynamics': dynamics,
         'space': 'indo_afro_sunrise_room',
         'mix_preset': 'indo_afro_sunrise_mix',
-        'output_targets': ['stereo', 'immersive_7_1'],
+        'output_targets': ['stereo'],
         'master': {'lufs': -14.0, 'true_peak': -1.5, 'tone': 'warm', 'fade_out': 2.5},
         'piece_type': 'indo_afro_sunrise',
         'focus': 'melody',

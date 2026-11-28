@@ -306,3 +306,34 @@ role chains; each section has a provenance line, the loudness profiles are `refe
 keeps the ranges, the enums and `validate()`. A piece's mix is the project's own preset (`presets.py scaffold mix <name> --project <dir>`): it
 lists only what the piece changes, a key it leaves out is the default, and `project_gate` requires the preset to be the project's, not the
 shipped one, and described. `presets.py show mix default` prints every key with its shipped value; `scaffold mix --full` writes them all out.
+
+## 13. Mixing techniques as effects (parallel compression, de-essing, gates, saturation, width, delays, resonators)
+
+The mix preset has two effect chains next to the EQ and dynamics. They use the fx engine (`references/sound-design/fx-engine.md`), so every number
+has a range and a sentence in `references/data/presets/fx/effects.json` and an unknown effect, key or out-of-range value is a `mix_schema.validate`
+problem naming it.
+
+- `"fx": {"*": chain, "@drum": chain, "qf_snare": chain}` in the mix preset: a chain run on a stem after its EQ and dynamics and after the instrument
+  preset's own `fx`. `*` is every stem, `@<role>` a role, anything else an instrument name (or one of its base names). All that match run, in that order.
+- `"mastering": {"fx": [ ... ]}`: a chain on the summed master, after the tone curve, the glue compressor and the width, before the rest dip, the
+  virtual bass and the limiter. Empty by default, so an older master is unchanged.
+
+The effects: `saturator` (tube, tape, soft_clip, hard_clip, fold, diode), `de_esser`, `gate`, `parallel_comp`, `upward_comp`, `band_width`, `tilt_eq`,
+`freq_shift`, `resonator_bank`, `ping_delay`; eleven shipped chain presets (`mix_vocal_air`, `mix_new_york_drums`, `mix_tape_glue`,
+`mix_mono_low_wide_top`, `mix_ducked_echo`, `mix_key_air`, `mix_tight_gate`, `mix_lift_tails`, `mix_inharmonic_pad`, `mix_fold_grit`, `mix_pulse_dark`)
+are starting points to name in a chain. Which to use for which problem:
+
+| Problem | Technique | Not |
+|---|---|---|
+| A sampled drum is thin and the hits are fine | `parallel_comp` at `mix` 0.3-0.5, `hp_hz` 120-200 | a compressor on the whole part (it flattens the hits) |
+| A sparse part's tails and quiet notes disappear | `upward_comp`, `max_gain_db` 6-12 | raising the part's `gain_db` (the peaks go too) |
+| A voice or a bright sample is harsh at 4-8 kHz | `de_esser`, then `tilt_eq` or a shelf | an EQ notch over the whole part |
+| The room between notes (sample hiss, a reverb tail, a ring) fills the gaps | `gate` with a hold, `sidechain_hp_hz` 80+ | a fade (it takes the notes too) |
+| A bed or pad is flat | `saturator` tape or tube at `mix` 0.3-0.6, `freq_shift` 2-4 Hz with `spread` 1, a `resonator_bank` on the key | an EQ boost |
+| The low end is wide and fights the mono fold | `band_width` `mono_below_hz` 120-200, `width` 1.2-1.5 above | narrowing the whole part |
+| An echo that must not cover the part | `ping_delay` with `duck_db` 8-12 | a send at a fixed level |
+
+Rules: a technique can move a stem's level (the gain staging ran before it), so read the balance and loudness rows after adding one and lower the
+effect's `mix` instead of loosening a row; only add one a measured row or a written intent asks for. Research and sources:
+`knowledgebase/sound-design/mixing-techniques.md`. Tests: `tests/test_mixfx.py`. Nothing here has been listened to.
+

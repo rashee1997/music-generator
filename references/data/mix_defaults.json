@@ -15,7 +15,8 @@
   "immersive": "starting values for the ambisonic bus (references/spatial/immersive-spatial.md)",
   "sympathetic_resonance": "starting values",
   "render": "starting values: worker counts and cache settings",
-  "role_chains": "starting values: the EQ and compressor each role starts with (references/mixing/mixing-and-mastering.md section 3)"
+  "role_chains": "starting values: the EQ and compressor each role starts with (references/mixing/mixing-and-mastering.md section 3)",
+  "mastering.fx": "mastering.fx (2026-11-28): an fx chain run on the summed master after the tone, glue and width and before the rest dip, virtual bass and limiter; empty by default, so every older master is unchanged."
  },
  "gain_staging": {
   "strategy": "legacy",
@@ -571,7 +572,8 @@
   "crest_floor_db": 0.0,
   "true_peak_write_guard_db": 0.001,
   "validate_export": true,
-  "report": true
+  "report": true,
+  "fx": []
  },
  "theatrical": {
   "enabled": false,

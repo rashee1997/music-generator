@@ -1,36 +1,39 @@
 {
- "name": "djembe",
- "description": "djembe strokes played on GM percussion keys (named stand-ins from scripts/world.py)",
- "gm": "standard",
- "role": "percussion",
- "humanize": {
-  "preset": "natural",
-  "timing_ms": 3.0,
-  "drift_ms": 4.0,
-  "vel_sigma": 6.0
- },
- "spatial": {
-  "azimuth": -110.0,
-  "distance": 4.5,
-  "space": "indo_afro_sunrise_room"
- },
- "eq": [
-  {
-   "type": "hp",
-   "f": 70.0
+  "name": "djembe",
+  "description": "djembe strokes played on GM percussion keys (named stand-ins from scripts/world.py)",
+  "gm": "standard",
+  "role": "percussion",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 3.0,
+    "drift_ms": 4.0,
+    "vel_sigma": 6.0
   },
-  {
-   "type": "peak",
-   "f": 380.0,
-   "gain": 1.0,
-   "q": 1.0
+  "spatial": {
+    "azimuth": -110.0,
+    "distance": 4.5,
+    "space": "indo_afro_sunrise_room",
+    "elevation": 0.0
   },
-  {
-   "type": "lp",
-   "f": 8000.0
-  }
- ],
- "gain_db": -3.0,
- "reverb": 0.14,
- "mechanics_class": "percussion"
+  "eq": [
+    {
+      "type": "hp",
+      "f": 70.0
+    },
+    {
+      "type": "peak",
+      "f": 380.0,
+      "gain": 1.0,
+      "q": 1.0
+    },
+    {
+      "type": "lp",
+      "f": 8000.0
+    }
+  ],
+  "gain_db": -3.0,
+  "reverb": 0.14,
+  "mechanics_class": "percussion",
+  "family": "struck_membrane",
+  "character": "djembe strokes played on GM percussion keys (named stand-ins from scripts/world.py)"
 }

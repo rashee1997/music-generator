@@ -1,0 +1,13 @@
+{
+  "name": "mix_inharmonic_pad",
+  "character": "An unconventional thickener for a pad: a slow frequency shift of the two channels in opposite directions, so the pad shimmers and beats.",
+  "provenance": "starting value, not a measurement. Sources: knowledgebase/sound-design/mixing-techniques.md (parallel compression, de-essing 4-7 kHz, ducking by the dry signal, mid-side with mono lows, distortion on a return, gates with hold; MusicRadar, iZotope, Sonarworks, Fiveable). ",
+  "chain": [
+    {
+      "type": "freq_shift",
+      "shift_hz": 3.0,
+      "spread": 1.0,
+      "mix": 0.35
+    }
+  ]
+}

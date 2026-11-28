@@ -203,3 +203,15 @@ _TODO: which scale/mode, tempo, rhythm pattern, instruments and formants the pre
    audible without masking the figure; `mix_intent` carries this to the mix through `lead_carve.from_intent`.
 5. Tabla and djembe strokes are played on GM percussion keys as the named stand-ins from `scripts/world.py`; there is no
    sampled tabla in this render path, and that limit is repeated in STATUS.md and the final report.
+
+
+## Web research: the happy vocals (2026-11-28)
+
+Results are search-result summaries, not fetched pages; every figure is a starting value.
+
+- Afrobeat's vocal style centres on chants and call and response; a chorus is often sung by a group (https://books.openedition.org/ifra/522; https://en.wikipedia.org/wiki/AfroBeat). Call and response runs through the backing vocals and between instruments (https://flypaper.soundfly.com/write/afrobeat-songs-are-long-and-repetitive-how-are-they-so-irresistibly-compelling/). Takeaway: a lead that calls and a group that answers on the bar after.
+- Highlife and Akan call and response alternate a solo singer and a chorus (https://thequietus.com/?p=28532, https://nerd.wwnorton.com/ebooks/epub/soundscapes3/OPS/xhtml/Chapter2-1.xhtml). Takeaway: the chorus is wide and loose, the solo is forward.
+- Wordless alap-style vocals appear in Indian fusion libraries as a lead voice with breath ad-libs over a groove (https://us.audionetwork.com/browse/m/track/alaap-fusion_64083); the Indian classical alap can be sung on syllables (bol alap) (https://www.open.edu/openlearn/history-the-arts/music/indian-raga-music?trackno=4). Takeaway: syllables, not words (la, na, ha, ho, hei).
+- **Gaps:** no source stated a range or vowel recipe for a bright happy voice; the formants (850, 1250, 2850 Hz for the lead), the vibrato and the voice counts are starting values. Nothing was listened to.
+
+Decisions taken: `indo_afro_happy_lead` (two voices, hopeful, legato, a scale-step arch so the line is conjunct) as a counter-line that answers the bansuri; `indo_afro_happy_group` (six voices, powerful, staccato chant on hei and ha, long open oo in the last section); both placed in their presets, not in the score; the lead walks A mixolydian by step and holds only chord tones.

@@ -1,0 +1,16 @@
+{
+  "name": "mix_lift_tails",
+  "character": "Upward compression for a sparse, sampled part: the tails and the quiet notes lifted by up to 9 dB, the peaks untouched.",
+  "provenance": "starting value, not a measurement. Sources: knowledgebase/sound-design/mixing-techniques.md (parallel compression, de-essing 4-7 kHz, ducking by the dry signal, mid-side with mono lows, distortion on a return, gates with hold; MusicRadar, iZotope, Sonarworks, Fiveable). ",
+  "chain": [
+    {
+      "type": "upward_comp",
+      "threshold_db": -38.0,
+      "ratio": 3.0,
+      "max_gain_db": 9.0,
+      "floor_db": -62.0,
+      "attack_ms": 10.0,
+      "release_ms": 300.0
+    }
+  ]
+}

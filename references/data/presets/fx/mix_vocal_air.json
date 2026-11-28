@@ -1,0 +1,25 @@
+{
+  "name": "mix_vocal_air",
+  "character": "A voice made brighter without the harshness: a de-esser first, then a slight tilt up and a touch of tape.",
+  "provenance": "starting value, not a measurement. Sources: knowledgebase/sound-design/mixing-techniques.md (parallel compression, de-essing 4-7 kHz, ducking by the dry signal, mid-side with mono lows, distortion on a return, gates with hold; MusicRadar, iZotope, Sonarworks, Fiveable). ",
+  "chain": [
+    {
+      "type": "de_esser",
+      "freq_hz": 6500.0,
+      "threshold_db": -34.0,
+      "ratio": 5.0
+    },
+    {
+      "type": "tilt_eq",
+      "tilt_db": 2.5,
+      "pivot_hz": 1500.0
+    },
+    {
+      "type": "saturator",
+      "mode": "tape",
+      "drive_db": 4.0,
+      "tone_hz": 12000.0,
+      "mix": 0.4
+    }
+  ]
+}

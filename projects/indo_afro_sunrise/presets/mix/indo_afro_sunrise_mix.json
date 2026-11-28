@@ -1,848 +1,223 @@
 {
-  "name": "indo_afro_sunrise_mix",
-  "character": "An upbeat Indo-Afro groove in a rainforest: the bamboo flute is the hero over a round bass and an afrobeat kit, the tabla and djembe trade strokes wide of centre, and the canopy is a 40-degree dome that steps back for the figure.",
-  "carve_db": -4.0,
-  "max_boost_db": 12.0,
-  "note": "only list what differs: everything else comes from references/data/presets/mix/default.json",
-  "gain_staging": {
-    "strategy": "legacy",
-    "ref_lufs": -24.0,
-    "block_s": 0.4,
-    "max_cut_db": 24.0,
-    "peak_headroom_db": -1.0
-  },
-  "dynamics": {
-    "engine": "dsp",
-    "ratio": 2.0,
-    "attack_ms": 18.0,
-    "release_ms": 140.0,
-    "knee_db": 6.0,
-    "detector": "rms",
-    "lookahead_ms": 5.0,
-    "stereo_link": true
-  },
-  "spectral": {
-    "max_auto_cut_db": 0.0,
-    "preserve_spectrum_roles": [
-      "environment"
-    ],
-    "profiles": {
-      "rain": {
-        "eq": [
-          {
-            "type": "hp",
-            "f": 300
-          },
-          {
-            "type": "peak",
-            "f": 450,
-            "gain": -2.0,
-            "q": 1.0
-          },
-          {
-            "type": "peak",
-            "f": 4200,
-            "gain": 1.0,
-            "q": 1.0
-          },
-          {
-            "type": "lp",
-            "f": 7500
-          }
-        ],
-        "comp": null
-      },
-      "water": {
-        "eq": [
-          {
-            "type": "hp",
-            "f": 280
-          },
-          {
-            "type": "peak",
-            "f": 520,
-            "gain": -2.0,
-            "q": 1.0
-          },
-          {
-            "type": "lp",
-            "f": 7000
-          }
-        ],
-        "comp": null
-      },
-      "wind": {
-        "eq": [
-          {
-            "type": "hp",
-            "f": 120
-          },
-          {
-            "type": "peak",
-            "f": 300,
-            "gain": -2.0,
-            "q": 1.0
-          },
-          {
-            "type": "peak",
-            "f": 2500,
-            "gain": -2.0,
-            "q": 0.9
-          },
-          {
-            "type": "lp",
-            "f": 6000
-          }
-        ],
-        "comp": null
-      },
-      "foliage": {
-        "eq": [
-          {
-            "type": "hp",
-            "f": 200
-          },
-          {
-            "type": "peak",
-            "f": 400,
-            "gain": -1.5,
-            "q": 1.0
-          },
-          {
-            "type": "peak",
-            "f": 3000,
-            "gain": -2.0,
-            "q": 1.0
-          },
-          {
-            "type": "lp",
-            "f": 8500
-          }
-        ],
-        "comp": null
-      },
-      "insect": {
-        "eq": [
-          {
-            "type": "hp",
-            "f": 900
-          },
-          {
-            "type": "peak",
-            "f": 5000,
-            "gain": 1.0,
-            "q": 1.0
-          },
-          {
-            "type": "lp",
-            "f": 15000
-          }
-        ],
-        "comp": null
-      },
-      "voice": {
-        "eq": [
-          {
-            "type": "hp",
-            "f": 80
-          },
-          {
-            "type": "peak",
-            "f": 500,
-            "gain": -1.5,
-            "q": 1.0
-          },
-          {
-            "type": "peak",
-            "f": 3000,
-            "gain": 1.0,
-            "q": 0.9
-          },
-          {
-            "type": "peak",
-            "f": 7000,
-            "gain": -1.5,
-            "q": 1.2
-          }
-        ],
-        "comp": {
-          "thr": -22,
-          "ratio": 2.0,
-          "attack": 10,
-          "release": 120
-        }
-      },
-      "strings": {
-        "eq": [
-          {
-            "type": "hp",
-            "f": 70
-          },
-          {
-            "type": "peak",
-            "f": 330,
-            "gain": -1.5,
-            "q": 1.0
-          },
-          {
-            "type": "peak",
-            "f": 4500,
-            "gain": 1.0,
-            "q": 1.0
-          }
-        ],
-        "comp": null
-      },
-      "flute": {
-        "eq": [
-          {
-            "type": "hp",
-            "f": 220
-          },
-          {
-            "type": "peak",
-            "f": 3200,
-            "gain": -2.0,
-            "q": 1.0
-          }
-        ],
-        "comp": null
-      },
-      "bed": {
-        "eq": [
-          {
-            "type": "hp",
-            "f": 280
-          },
-          {
-            "type": "peak",
-            "f": 450,
-            "gain": -2.5,
-            "q": 1.0
-          },
-          {
-            "type": "peak",
-            "f": 2400,
-            "gain": -3.5,
-            "q": 0.9
-          },
-          {
-            "type": "lp",
-            "f": 7200
-          }
-        ],
-        "comp": {
-          "thr": -24,
-          "ratio": 2.0,
-          "attack": 30,
-          "release": 250
-        }
-      }
-    }
-  },
-  "space": {
-    "auto_env_blend": {
-      "enabled": true
-    },
-    "send_by_role": {
-      "default": 0.18,
-      "bass": 0.0,
-      "drum": 0.12,
-      "percussion": 0.16,
-      "drone": 0.24,
-      "arp": 0.2,
-      "chord": 0.16,
-      "counter": 0.2,
-      "melody": 0.22,
-      "environment": 0.16,
-      "fx": 0.1
-    },
-    "drr": {
-      "enabled": false,
-      "target_db": 0.0
-    }
-  },
-  "sidechain": {
-    "mode": "legacy",
-    "band_hz": [
-      200.0,
-      3800.0
-    ],
-    "residual": 0.3,
-    "env_plateau": true
-  },
-  "automation": {
-    "curve": "linear"
-  },
-  "mastering": {
-    "profile": "stream",
-    "profiles": {
-      "stream": {
-        "lufs": -15.0,
-        "true_peak": -1.5,
-        "tone": "warm",
-        "glue": true
-      }
-    },
-    "highpass_hz": 30.0,
-    "crest_floor_db": 8.0
-  },
-  "role_chains": {
-    "melody": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 90
-        },
-        {
-          "type": "peak",
-          "f": 280,
-          "gain": -2.0,
-          "q": 1.0
-        },
-        {
-          "type": "peak",
-          "f": 3500,
-          "gain": 1.5,
-          "q": 0.8
-        },
-        {
-          "type": "highshelf",
-          "f": 10000,
-          "gain": 1.5,
-          "q": 0.7
-        }
-      ],
-      "comp": {
-        "thr": -22,
-        "ratio": 2.2,
-        "attack": 18,
-        "release": 160
-      }
-    },
-    "counter": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 110
-        },
-        {
-          "type": "peak",
-          "f": 300,
-          "gain": -2.0,
-          "q": 1.0
-        },
-        {
-          "type": "peak",
-          "f": 2800,
-          "gain": 0.8,
-          "q": 0.9
-        }
-      ],
-      "comp": {
-        "thr": -24,
-        "ratio": 2.0,
-        "attack": 20,
-        "release": 160
-      }
-    },
-    "chord": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 90
-        },
-        {
-          "type": "peak",
-          "f": 350,
-          "gain": -2.5,
-          "q": 1.0
-        },
-        {
-          "type": "peak",
-          "f": 2600,
-          "gain": -2.0,
-          "q": 1.0
-        }
-      ],
-      "comp": {
-        "thr": -24,
-        "ratio": 2.0,
-        "attack": 25,
-        "release": 180
-      }
-    },
-    "pad": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 160
-        },
-        {
-          "type": "peak",
-          "f": 300,
-          "gain": -3.0,
-          "q": 0.9
-        },
-        {
-          "type": "peak",
-          "f": 3000,
-          "gain": -3.0,
-          "q": 0.9
-        },
-        {
-          "type": "lp",
-          "f": 9500
-        }
-      ],
-      "comp": {
-        "thr": -26,
-        "ratio": 1.8,
-        "attack": 40,
-        "release": 300
-      }
-    },
-    "bass": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 32
-        },
-        {
-          "type": "lowshelf",
-          "f": 90,
-          "gain": 1.5,
-          "q": 0.7
-        },
-        {
-          "type": "peak",
-          "f": 250,
-          "gain": -3.0,
-          "q": 1.0
-        },
-        {
-          "type": "peak",
-          "f": 900,
-          "gain": 1.5,
-          "q": 0.9
-        },
-        {
-          "type": "lp",
-          "f": 5000
-        }
-      ],
-      "comp": {
-        "thr": -24,
-        "ratio": 3.0,
-        "attack": 22,
-        "release": 130
-      }
-    },
-    "arp": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 200
-        },
-        {
-          "type": "peak",
-          "f": 3000,
-          "gain": -2.0,
-          "q": 1.0
-        },
-        {
-          "type": "lp",
-          "f": 12000
-        }
-      ],
-      "comp": {
-        "thr": -24,
-        "ratio": 2.0,
-        "attack": 15,
-        "release": 120
-      }
-    },
-    "drum": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 30
-        },
-        {
-          "type": "lowshelf",
-          "f": 80,
-          "gain": 1.2,
-          "q": 0.7
-        },
-        {
-          "type": "peak",
-          "f": 380,
-          "gain": -2.0,
-          "q": 1.1
-        },
-        {
-          "type": "peak",
-          "f": 5000,
-          "gain": 1.5,
-          "q": 0.9
-        }
-      ],
-      "comp": {
-        "thr": -18,
-        "ratio": 2.8,
-        "attack": 28,
-        "release": 90
-      }
-    },
-    "environment": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 280
-        },
-        {
-          "type": "peak",
-          "f": 450,
-          "gain": -2.5,
-          "q": 1.0
-        },
-        {
-          "type": "peak",
-          "f": 2400,
-          "gain": -3.5,
-          "q": 0.9
-        },
-        {
-          "type": "lp",
-          "f": 7200
-        }
-      ],
-      "comp": {
-        "thr": -24,
-        "ratio": 2.0,
-        "attack": 30,
-        "release": 250
-      }
-    },
-    "fx": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 100
-        }
-      ],
-      "comp": null
-    },
-    "lead": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 90
-        },
-        {
-          "type": "peak",
-          "f": 280,
-          "gain": -2.0,
-          "q": 1.0
-        },
-        {
-          "type": "peak",
-          "f": 3500,
-          "gain": 1.5,
-          "q": 0.8
-        },
-        {
-          "type": "highshelf",
-          "f": 10000,
-          "gain": 1.5,
-          "q": 0.7
-        }
-      ],
-      "comp": {
-        "thr": -22,
-        "ratio": 2.2,
-        "attack": 18,
-        "release": 160
-      }
-    },
-    "texture": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 160
-        },
-        {
-          "type": "peak",
-          "f": 300,
-          "gain": -3.0,
-          "q": 0.9
-        },
-        {
-          "type": "peak",
-          "f": 3000,
-          "gain": -3.0,
-          "q": 0.9
-        },
-        {
-          "type": "lp",
-          "f": 9500
-        }
-      ],
-      "comp": {
-        "thr": -26,
-        "ratio": 1.8,
-        "attack": 40,
-        "release": 300
-      }
-    },
-    "ostinato": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 200
-        },
-        {
-          "type": "peak",
-          "f": 3000,
-          "gain": -2.0,
-          "q": 1.0
-        },
-        {
-          "type": "lp",
-          "f": 12000
-        }
-      ],
-      "comp": {
-        "thr": -24,
-        "ratio": 2.0,
-        "attack": 15,
-        "release": 120
-      }
-    },
-    "percussion": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 30
-        },
-        {
-          "type": "lowshelf",
-          "f": 80,
-          "gain": 1.2,
-          "q": 0.7
-        },
-        {
-          "type": "peak",
-          "f": 380,
-          "gain": -2.0,
-          "q": 1.1
-        },
-        {
-          "type": "peak",
-          "f": 5000,
-          "gain": 1.5,
-          "q": 0.9
-        }
-      ],
-      "comp": {
-        "thr": -18,
-        "ratio": 2.8,
-        "attack": 28,
-        "release": 90
-      }
-    },
-    "drone": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 28
-        },
-        {
-          "type": "peak",
-          "f": 220,
-          "gain": -1.5,
-          "q": 0.8
-        },
-        {
-          "type": "peak",
-          "f": 2600,
-          "gain": -2.0,
-          "q": 0.9
-        },
-        {
-          "type": "lp",
-          "f": 7000
-        }
-      ],
-      "comp": {
-        "thr": -30,
-        "ratio": 1.4,
-        "attack": 60,
-        "release": 400
-      }
-    },
-    "vocal": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 75
-        },
-        {
-          "type": "peak",
-          "f": 500,
-          "gain": -1.5,
-          "q": 1.0
-        },
-        {
-          "type": "peak",
-          "f": 3000,
-          "gain": 1.0,
-          "q": 0.9
-        },
-        {
-          "type": "peak",
-          "f": 7000,
-          "gain": -1.5,
-          "q": 1.2
-        }
-      ],
-      "comp": {
-        "thr": -22,
-        "ratio": 2.0,
-        "attack": 12,
-        "release": 140
-      }
-    },
-    "default": {
-      "eq": [
-        {
-          "type": "hp",
-          "f": 90
-        },
-        {
-          "type": "peak",
-          "f": 350,
-          "gain": -2.5,
-          "q": 1.0
-        },
-        {
-          "type": "peak",
-          "f": 2600,
-          "gain": -2.0,
-          "q": 1.0
-        }
-      ],
-      "comp": {
-        "thr": -24,
-        "ratio": 2.0,
-        "attack": 25,
-        "release": 180
-      }
-    }
-  },
-  "lead_carve": {
-    "enabled": true,
-    "from_intent": true,
-    "roles": [
-      "pad",
-      "texture",
-      "chord",
-      "arp",
-      "counter",
-      "environment"
-    ],
-    "ratio": 2.0,
-    "threshold_db": -34.0
-  },
-  "immersive": {
-    "enabled": true,
-    "engine": "hoa_bus",
-    "order": 4,
-    "anchor_max_span_deg": 6.0,
-    "max_deg_per_sec": {
-      "anchor": 10.0,
-      "mover": 120.0
-    },
-    "height_by_role": {
-      "melody": 12.0,
-      "lead": 12.0,
-      "vocal": 6.0,
-      "pad": 20.0,
-      "texture": 20.0,
-      "environment": 40.0,
-      "chord": 4.0,
-      "bass": 0.0,
-      "drum": 0.0,
-      "percussion": 2.0,
-      "drone": 0.0,
-      "ostinato": 0.0,
-      "arp": 10.0,
-      "counter": 8.0,
-      "fx": 10.0
-    },
-    "max_elevation": 60.0,
-    "min_height_tracks": 3,
-    "stereo_decode": "speakers"
-  },
-  "render": {
-    "oversample": 4
-  },
-  "inst_eq": {
-    "shekere": [
-      {
-        "type": "peak",
-        "f": 900.0,
-        "gain": 6.0,
-        "q": 0.5
-      },
-      {
-        "type": "peak",
-        "f": 4000.0,
-        "gain": -13.0,
-        "q": 0.6
-      },
-      {
-        "type": "lp",
-        "f": 7000.0
-      },
-      {
-        "type": "highshelf",
-        "f": 5500.0,
-        "gain": -9.0,
-        "q": 0.7
-      }
-    ],
-    "env:amazon_rainforest": [
-      {
-        "type": "highshelf",
-        "f": 5500.0,
-        "gain": -3.0,
-        "q": 0.7
-      }
-    ],
-    "tabla": [
-      {
-        "type": "highshelf",
-        "f": 5500.0,
-        "gain": -3.0,
-        "q": 0.7
-      }
-    ],
-    "djembe": [
-      {
-        "type": "highshelf",
-        "f": 5500.0,
-        "gain": -3.0,
-        "q": 0.7
-      }
-    ],
-    "kit": [
-      {
-        "type": "highshelf",
-        "f": 5500.0,
-        "gain": -3.0,
-        "q": 0.7
-      }
-    ]
+ "name": "indo_afro_sunrise_mix",
+ "character": "An upbeat Indo-Afro groove in a rainforest: the bamboo flute is the hero over a round bass and an afrobeat kit, the tabla and djembe trade strokes wide of centre, and the canopy is a 40-degree dome that steps back for the figure.",
+ "carve_db": -4.0,
+ "max_boost_db": 12.0,
+ "note": "Slimmed for the latest implementation (2026-11-28): only what this piece changes; every other key is the shipped default in references/data/mix_defaults.json. dynamics.comp holds the compressor values (ratio, attack and release were written outside it and the engine ignored them). 2026-11-28 render 1 (clicks 21 events, ambient_bed 4.3 dB jump at 33.5 s): the kit's peaks are soft-clipped (60 % blend) and the shekere's 7 kHz hash de-essed and tilted down 3 dB; the bed's ducker attack is 120 ms with 0.8 s smoothing, so the canopy no longer drops at the crash. Render 2 (clicks 21 -> 9; the 4.3 dB canopy jump unchanged, so it was in the bed, not the ducker): the bed's loud calls (8 dB over its floor at 32, 34 and 35 s) are rounded by a tape saturator driven 4 dB into its own peak, and the percussion's top is tilted further down. Render 3 (clicks 9 -> 3, every one a kit hit at 18.5, 32.8 and 36.3 s where kick, snare and hat land together): the kit's 9 kHz hat band is de-essed before the soft clip, and the kit's top tilted a further 2 dB.",
+ "dynamics": {
+  "engine": "dsp",
+  "knee_db": 6.0,
+  "detector": "rms",
+  "lookahead_ms": 5.0,
+  "comp": {
+   "thr": -22,
+   "ratio": 2.0,
+   "attack": 18.0,
+   "release": 140.0
   }
+ },
+ "space": {
+  "send_by_role": {
+   "bass": 0.0,
+   "drum": 0.12,
+   "percussion": 0.16,
+   "drone": 0.24,
+   "arp": 0.2,
+   "chord": 0.16,
+   "counter": 0.2,
+   "melody": 0.22,
+   "environment": 0.16,
+   "fx": 0.1
+  }
+ },
+ "sidechain": {
+  "band_hz": [
+   200.0,
+   3800.0
+  ],
+  "timing": {
+   "environment": {
+    "attack_ms": 120.0,
+    "release_ms": 1600.0,
+    "smooth_s": 0.8
+   }
+  }
+ },
+ "mastering": {
+  "profile": "stream",
+  "profiles": {
+   "stream": {
+    "lufs": -15.0,
+    "true_peak": -1.5,
+    "tone": "warm",
+    "glue": true
+   }
+  },
+  "crest_floor_db": 8.0
+ },
+ "lead_carve": {
+  "enabled": true,
+  "from_intent": true,
+  "roles": [
+   "pad",
+   "texture",
+   "chord",
+   "arp",
+   "counter",
+   "environment"
+  ],
+  "threshold_db": -34.0
+ },
+ "immersive": {
+  "enabled": true,
+  "engine": "hoa_bus",
+  "order": 4,
+  "anchor_max_span_deg": 6.0,
+  "max_deg_per_sec": {
+   "anchor": 10.0,
+   "mover": 120.0
+  },
+  "height_by_role": {
+   "melody": 12.0,
+   "lead": 12.0,
+   "vocal": 6.0,
+   "pad": 20.0,
+   "texture": 20.0,
+   "environment": 40.0,
+   "chord": 4.0,
+   "bass": 0.0,
+   "drum": 0.0,
+   "percussion": 2.0,
+   "drone": 0.0,
+   "ostinato": 0.0,
+   "arp": 10.0,
+   "counter": 8.0,
+   "fx": 10.0
+  },
+  "max_elevation": 60.0,
+  "min_height_tracks": 3,
+  "stereo_decode": "speakers"
+ },
+ "render": {
+  "oversample": 4
+ },
+ "inst_eq": {
+  "shekere": [
+   {
+    "type": "peak",
+    "f": 900.0,
+    "gain": 6.0,
+    "q": 0.5
+   },
+   {
+    "type": "peak",
+    "f": 4000.0,
+    "gain": -13.0,
+    "q": 0.6
+   },
+   {
+    "type": "lp",
+    "f": 7000.0
+   },
+   {
+    "type": "highshelf",
+    "f": 5500.0,
+    "gain": -9.0,
+    "q": 0.7
+   }
+  ],
+  "env:amazon_rainforest": [
+   {
+    "type": "highshelf",
+    "f": 5500.0,
+    "gain": -3.0,
+    "q": 0.7
+   }
+  ],
+  "tabla": [
+   {
+    "type": "highshelf",
+    "f": 5500.0,
+    "gain": -3.0,
+    "q": 0.7
+   }
+  ],
+  "djembe": [
+   {
+    "type": "highshelf",
+    "f": 5500.0,
+    "gain": -3.0,
+    "q": 0.7
+   }
+  ],
+  "kit": [
+   {
+    "type": "highshelf",
+    "f": 5500.0,
+    "gain": -3.0,
+    "q": 0.7
+   }
+  ]
+ },
+ "fx": {
+  "kit": [
+   {
+    "type": "de_esser",
+    "freq_hz": 9000.0,
+    "q": 1.0,
+    "threshold_db": -38.0,
+    "ratio": 8.0,
+    "max_cut_db": 12.0
+   },
+   {
+    "type": "saturator",
+    "mode": "soft_clip",
+    "drive_db": 12.0,
+    "ceiling_db": -2.0,
+    "tone_hz": 14000.0,
+    "mix": 0.85
+   },
+   {
+    "type": "tilt_eq",
+    "tilt_db": -2.0,
+    "pivot_hz": 4000.0
+   }
+  ],
+  "shekere": [
+   {
+    "type": "de_esser",
+    "freq_hz": 7000.0,
+    "threshold_db": -40.0,
+    "ratio": 8.0
+   },
+   {
+    "type": "tilt_eq",
+    "tilt_db": -5.0,
+    "pivot_hz": 3000.0
+   }
+  ],
+  "tabla": [
+   {
+    "type": "tilt_eq",
+    "tilt_db": -2.0,
+    "pivot_hz": 3000.0
+   }
+  ],
+  "djembe": [
+   {
+    "type": "tilt_eq",
+    "tilt_db": -2.0,
+    "pivot_hz": 3000.0
+   }
+  ],
+  "env:amazon_rainforest": [
+   {
+    "type": "saturator",
+    "mode": "tape",
+    "drive_db": 4.0,
+    "tone_hz": 20000.0,
+    "match_level": "no"
+   }
+  ]
+ }
 }

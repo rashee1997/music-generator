@@ -1,0 +1,17 @@
+{
+  "name": "mix_new_york_drums",
+  "character": "New York compression on a drum or percussion part: a hard-squashed copy at about 40 per cent under the original, the low end of the copy left out.",
+  "provenance": "starting value, not a measurement. Sources: knowledgebase/sound-design/mixing-techniques.md (parallel compression, de-essing 4-7 kHz, ducking by the dry signal, mid-side with mono lows, distortion on a return, gates with hold; MusicRadar, iZotope, Sonarworks, Fiveable). ",
+  "chain": [
+    {
+      "type": "parallel_comp",
+      "threshold_db": -34.0,
+      "ratio": 10.0,
+      "attack_ms": 5.0,
+      "release_ms": 70.0,
+      "makeup_db": 8.0,
+      "hp_hz": 150.0,
+      "mix": 0.4
+    }
+  ]
+}

@@ -158,6 +158,9 @@ def master_chain(x, m, sr=SR, ctx=None):
     if cfg.get('width'):
         x = width_ms(x, cfg['width'])
     x = _run(pb.Pedalboard(chain), x, sr)
+    if mm.get('fx'):                                      # the master's own effects chain (parallel compression, saturation, width ...)
+        import fx_engine
+        x = fx_engine.apply(x, sr, mm['fx'], seed=7)
     if rests and mm.get('rest_dip'):
         dip = rest_gain(len(x), sr, rests, **mm['rest_dip'])
         if dip is not None:

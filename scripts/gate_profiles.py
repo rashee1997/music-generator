@@ -577,7 +577,7 @@ def _merge_profile(name, allp):
 
 
 def _drone_ratio(score):
-    tr = [t for t in score.get('tracks', []) if t.get('role') not in ('drum', 'environment') and 'notes' in t]
+    tr = [t for t in score.get('tracks', []) if t.get('role') not in ('drum', 'environment') and 'notes' in t and not rolelib.is_sound_effect(t)]
     if not tr:
         return 0.0
     return sum(1 for t in tr if t.get('is_drone') or t.get('allow_ostinato') or t.get('role') in ('drone', 'pad')) / len(tr)

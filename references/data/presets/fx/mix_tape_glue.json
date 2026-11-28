@@ -1,0 +1,19 @@
+{
+  "name": "mix_tape_glue",
+  "character": "A subtle tape on a bus-like part: a symmetric saturator, level-matched, and a hint of top rolled off.",
+  "provenance": "starting value, not a measurement. Sources: knowledgebase/sound-design/mixing-techniques.md (parallel compression, de-essing 4-7 kHz, ducking by the dry signal, mid-side with mono lows, distortion on a return, gates with hold; MusicRadar, iZotope, Sonarworks, Fiveable). ",
+  "chain": [
+    {
+      "type": "saturator",
+      "mode": "tape",
+      "drive_db": 6.0,
+      "tone_hz": 11000.0,
+      "mix": 0.6
+    },
+    {
+      "type": "tilt_eq",
+      "tilt_db": -1.0,
+      "pivot_hz": 2000.0
+    }
+  ]
+}

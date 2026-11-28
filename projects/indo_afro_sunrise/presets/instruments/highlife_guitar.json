@@ -1,48 +1,50 @@
 {
- "name": "highlife_guitar",
- "description": "A clean electric guitar playing the highlife skank: short three-note chords on the off-beats, a light palm mute on the release and no distortion, so it reads as interlocking rhythm rather than a strummed accompaniment (highlife_guitar in knowledgebase/cultures/african.md).",
- "gm": "clean_guitar",
- "role": "chord",
- "humanize": {
-  "preset": "natural",
-  "timing_ms": 6.0,
-  "drift_ms": 6.0,
-  "vel_sigma": 4.0
- },
- "spatial": {
-  "azimuth": -25.0,
-  "elevation": 4.0,
-  "distance": 3.0,
-  "space": "indo_afro_sunrise_room"
- },
- "eq": [
-  {
-   "type": "hp",
-   "f": 150.0
+  "name": "highlife_guitar",
+  "description": "A clean electric guitar playing the highlife skank: short three-note chords on the off-beats, a light palm mute on the release and no distortion, so it reads as interlocking rhythm rather than a strummed accompaniment (highlife_guitar in knowledgebase/cultures/african.md).",
+  "gm": "clean_guitar",
+  "role": "chord",
+  "humanize": {
+    "preset": "natural",
+    "timing_ms": 6.0,
+    "drift_ms": 6.0,
+    "vel_sigma": 4.0
   },
-  {
-   "type": "peak",
-   "f": 2500.0,
-   "gain": 1.5,
-   "q": 1.2
+  "spatial": {
+    "azimuth": -25.0,
+    "elevation": 4.0,
+    "distance": 3.0,
+    "space": "indo_afro_sunrise_room"
   },
-  {
-   "type": "peak",
-   "f": 500.0,
-   "gain": -1.5,
-   "q": 1.0
+  "eq": [
+    {
+      "type": "hp",
+      "f": 150.0
+    },
+    {
+      "type": "peak",
+      "f": 2500.0,
+      "gain": 1.5,
+      "q": 1.2
+    },
+    {
+      "type": "peak",
+      "f": 500.0,
+      "gain": -1.5,
+      "q": 1.0
+    },
+    {
+      "type": "lp",
+      "f": 9000.0
+    }
+  ],
+  "gain_db": -4.0,
+  "reverb": 0.18,
+  "articulation": {
+    "overlap_ms": 8.0,
+    "gate": 0.55,
+    "release_ms": 60.0
   },
-  {
-   "type": "lp",
-   "f": 9000.0
-  }
- ],
- "gain_db": -4.0,
- "reverb": 0.18,
- "articulation": {
-  "overlap_ms": 8.0,
-  "gate": 0.55,
-  "release_ms": 60.0
- },
- "mechanics_class": "keys"
+  "mechanics_class": "keys",
+  "family": "plucked",
+  "character": "A clean electric guitar playing the highlife skank: short three-note chords on the off-beats, a light palm mute on the release and no distortion, so it reads as interlocking rhythm rather than a strummed accompaniment (highlife_guitar in knowledgebase/cultures/african.md)."
 }
