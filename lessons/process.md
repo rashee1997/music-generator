@@ -58,4 +58,13 @@ lessons:
   cause: the note names times, not parts
   fix: list the events at those times from the story clock (TX, hits, passes) and the continuous beds in the stems; say the mapping to the user, then change only those
   evidence: trailer notes at 0:06, 0:25, 0:31, 1:45, 1:49
+- id: P09
+  title: Hand-written YAML or an untested writer corrupts a data file
+  keywords: [yaml, front matter, colon, unquoted, closing ---, safe_dump, append, duplicate check, writer]
+  symptom: 'a data file full of prose fails to parse ('': '' or ''@'' inside an unquoted value, no closing ---); an ''add'' command appended a mis-indented entry and the duplicate check let a copy through'
+  cause: values typed by hand are not quoted, and a writer that edits text instead of loading and dumping the structure was never run against a real file
+  check: run the tool's own check and one add/update on a scratch copy before committing data files
+  fix: write data files only with yaml.safe_dump (load, change, dump); compare duplicates by overlap on the smaller keyword set, not Jaccard
+  avoid: committing a data file or its writer before a round trip (write, check, find) has passed
+  evidence: lessons system, 2026-11-28
 ---
