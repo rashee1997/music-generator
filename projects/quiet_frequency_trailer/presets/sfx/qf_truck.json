@@ -335,7 +335,7 @@
    },
    {
     "name": "tyres",
-    "gain_db": -10.0,
+    "gain_db": -12.0,
     "excite": {
      "kind": "noise",
      "color": "pink"
@@ -343,8 +343,8 @@
     "resonator": {
      "kind": "bandpass",
      "band": [
-      200,
-      3500
+      150,
+      2200
      ],
      "order": 2
     },

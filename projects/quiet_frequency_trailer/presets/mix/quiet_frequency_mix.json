@@ -3,7 +3,7 @@
  "character": "A hybrid-orchestral action trailer in one room: the ostinato and the low end carry the front, two engines and a radio sit inside the same space scenes as the strings, and the music and the sound effects are carved in each other's bands so both are heard.",
  "carve_db": -4.0,
  "max_boost_db": 12.0,
- "note": "Started from the Highway Pursuit mix and re-measured for this cue. SFX and music share one room (space.send_by_role gives the fx role the same send as the orchestra). The engines (role fx) duck smoothly under the drums with a 25 ms attack and a 1.6 s release (the sidechain's environment timing), the music is carved around the horn's formant, and the bed of engines is high-passed at 40 Hz in its presets so the sub belongs to the basses. The declared second of silence is dipped by -42 dB with a 25 ms release. 2026-11-28 listening note: the music is at 75 % (-2.5 dB on every music role, `fx` table); the effects keep their level, so at the -16 LUFS target they come forward at the hits, the passes and the cuts; the continuous road and wind are 10 dB lower; the engines, tyres, radio, alarm and device are noisier and less tonal, as real ones are.",
+ "note": "Started from the Highway Pursuit mix and re-measured for this cue. SFX and music share one room (space.send_by_role gives the fx role the same send as the orchestra). The engines (role fx) duck smoothly under the drums with a 25 ms attack and a 1.6 s release (the sidechain's environment timing), the music is carved around the horn's formant, and the bed of engines is high-passed at 40 Hz in its presets so the sub belongs to the basses. The declared second of silence is dipped by -42 dB with a 25 ms release. 2026-11-28 listening note: the music is at 75 % (-2.5 dB on every music role, `fx` table); the effects keep their level, so at the -16 LUFS target they come forward at the hits, the passes and the cuts; the continuous road and wind are 10 dB lower; the engines, tyres, radio, alarm and device are noisier and less tonal, as real ones are. v05 (listening note: the roar at 48-60 s and 85-104 s masked the strings and brass): the road and wind beds are band-limited to under 1.4 kHz and quieter, the engines' intake noise is narrowed and 3 dB lower and the engines and the road are tilted down about their 1 kHz; the five radio transmissions differ in level, length and tone; section_levels (6 dB) restores the plan's energy order that the louder effects had flattened (section.energy rho 0.38 in v04).",
  "gain_staging": {
   "strategy": "legacy",
   "ref_lufs": -22.0,
@@ -338,6 +338,10 @@
    "depth_db": -42.0,
    "attack_ms": 15.0,
    "release_ms": 25.0
+  },
+  "section_levels": {
+   "range_db": 6.0,
+   "ramp_s": 1.5
   }
  },
  "role_chains": {
@@ -1077,6 +1081,27 @@
     "params": {
      "gain_db": -2.5
     }
+   }
+  ],
+  "sfx:qf_v8": [
+   {
+    "type": "tilt_eq",
+    "tilt_db": -3.0,
+    "pivot_hz": 900.0
+   }
+  ],
+  "sfx:qf_bike": [
+   {
+    "type": "tilt_eq",
+    "tilt_db": -3.0,
+    "pivot_hz": 900.0
+   }
+  ],
+  "sfx:qf_road": [
+   {
+    "type": "tilt_eq",
+    "tilt_db": -4.0,
+    "pivot_hz": 600.0
    }
   ]
  }

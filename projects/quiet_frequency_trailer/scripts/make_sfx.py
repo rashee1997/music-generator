@@ -130,7 +130,7 @@ write('qf_bike', dict(
              control=dict(pitch=[dict(kind='curve', points=sample(bike_pitch, 0.05))], gain_db=[dict(kind='curve', points=sample(bike_gain_db, 0.05))])),
         dict(name='exhaust_body', gain_db=-13.0, excite=dict(kind='noise', color='brown'), resonator=dict(kind='bandpass', band=[60, 500], order=2),
              events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: bike_gain_db(t) - 5.0, 0.1))])),
-        dict(name='intake_rasp', gain_db=-27.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[1200, 4200], order=2),
+        dict(name='intake_rasp', gain_db=-33.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[700, 2200], order=2),
              events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: bike_aux_db(-38.0, 30.0, t), 0.1))])),
         dict(name='valvetrain', gain_db=-30.0, excite=dict(kind='impact', tau=0.0006), resonator=dict(kind='modal', law='bar', f1=2400.0, n=4, t60=0.05),
              events=dict(kind='poisson', rate=45.0, start=0.2),
@@ -184,7 +184,7 @@ write('qf_v8', dict(
              control=dict(pitch=[dict(kind='curve', points=sample(car_pitch, 0.05))], gain_db=[dict(kind='curve', points=sample(car_gain_db, 0.05))])),
         dict(name='exhaust_body', gain_db=-12.0, excite=dict(kind='noise', color='brown'), resonator=dict(kind='bandpass', band=[40, 420], order=2),
              events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: car_gain_db(t) - 3.0, 0.1))])),
-        dict(name='intake', gain_db=-22.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[700, 2600], order=2),
+        dict(name='intake', gain_db=-28.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[500, 1800], order=2),
              events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: car_aux_db(-40.0, 34.0, t), 0.1))])),
         dict(name='shift_clunk', gain_db=-16.0, excite=dict(kind='impact', tau=0.005), resonator=dict(kind='modal', law='bar', f1=120.0, n=4, t60=0.16),
              events=dict(kind='sequence', times=rel([s[0] for s in CAR.shifts if OFF < s[0] < OFF + SECONDS]),
@@ -234,7 +234,7 @@ def tyre_preset(name, squeals, f0, character, track_points, az, dist, hp):
                  resonator=dict(kind='formant', formants=[[f0 * 0.85, 300, 1.0], [f0 * 2.2, 600, 0.5]]), events=dict(kind='continuous'),
                  control=dict(pitch=[dict(kind='curve', points=sample(lambda t: squeal_pitch(squeals, t), 0.04))],
                               gain_db=[dict(kind='curve', points=sample(lambda t: squeal_env_db(squeals, t), 0.04))])),
-            dict(name='scrub', gain_db=-12.0, excite=dict(kind='noise', color='white'), resonator=dict(kind='bandpass', band=[1500, 6500], order=2),
+            dict(name='scrub', gain_db=-14.0, excite=dict(kind='noise', color='white'), resonator=dict(kind='bandpass', band=[1500, 5000], order=2),
                  events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: squeal_env_db(squeals, t) - 4.0, 0.04))])),
         ]),
         role='fx', gain_db=-4.0, reverb=0.05,
@@ -262,11 +262,11 @@ write('qf_road', dict(
     seconds=SECONDS,
     note='The level follows the bike\'s relative road speed (rpm over gear ratio); the wind is a band of noise and the road a lower band; both stop in the second of silence.',
     model=dict(seconds=SECONDS, voices=[
-        dict(name='road', gain_db=-14.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[200, 3000], order=2),
+        dict(name='road', gain_db=-16.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[100, 1400], order=2),
              events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: (-48.0 + 32.0 * speed_rel(BIKE, t) ** 0.9 if t < 107.5 else -48.0 + 14.0 * smooth(1 - (t - 107.5) / 3.0))
                                                                       + window(t, 21.5, 118.6, 0.15) + in_silence(t), 0.2))])),
-        dict(name='wind', gain_db=-20.0, excite=dict(kind='noise', color='white'), resonator=dict(kind='bandpass', band=[400, 6000], order=2),
+        dict(name='wind', gain_db=-24.0, excite=dict(kind='noise', color='brown'), resonator=dict(kind='bandpass', band=[120, 1200], order=2),
              events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: (-56.0 + 40.0 * speed_rel(BIKE, t) ** 1.8 if t < 107.5 else -56.0)
                                                                       + window(t, 21.5, 118.6, 0.15) + in_silence(t), 0.2))])),
@@ -302,7 +302,7 @@ write('qf_truck', dict(
         dict(name='diesel', gain_db=-4.0, excite=dict(kind='periodic', f0=70.0, harmonics=30, jitter=0.02),
              resonator=dict(kind='formant', formants=[[90, 60, 1.0], [250, 100, 0.7], [800, 300, 0.4]]), events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(truck_gain, 0.05))])),
-        dict(name='tyres', gain_db=-10.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[200, 3500], order=2), events=dict(kind='continuous'),
+        dict(name='tyres', gain_db=-12.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[150, 2200], order=2), events=dict(kind='continuous'),
              control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: truck_gain(t) - 6.0, 0.05))])),
         dict(name='horn_low', gain_db=-5.0, excite=dict(kind='periodic', f0=311.0, harmonics=16, jitter=0.004, noise_mix=0.08),
              resonator=dict(kind='formant', formants=[[400, 150, 1.0], [1100, 300, 0.6], [2400, 700, 0.25]]), events=dict(kind='continuous'),
@@ -319,52 +319,60 @@ write('qf_truck', dict(
 
 # ================================================================================================ the radio
 # (start, end): transmissions. Each has a squelch pop at the start, a carrier of unintelligible band-limited sound, a roger beep and a squelch tail at the end.
-TX = [(6.4, 8.6), (25.6, 28.4), (31.2, 33.0), (105.6, 107.4), (109.0, 111.6)]
+# (start, end, level dB, voice): every transmission has its own level, length and tone, so no two repeat: a close, bright one in the lab, a far and dark pair
+# in the alert, a bright one and a tired, quiet one at the end (listening note: five identical bursts were abrasive at 1-4 kHz).
+TX = [(6.4, 8.2, -2.0, 'a'), (25.6, 28.4, -9.0, 'b'), (31.2, 32.6, -12.5, 'b'), (105.6, 107.4, -8.0, 'a'), (109.0, 111.2, -15.0, 'b')]
 RADIO_ON, RADIO_OFF = 6.0, 112.0
 begin(RADIO_ON, RADIO_OFF)
 
 
-def tx_gate(t, pad=0.0):
-    for a, b in TX:
-        if a - pad <= t <= b + pad:
-            return 0.0
+def tx_level(t, voice=None, pad=0.0):
+    """The level (dB) of the transmission that holds t, -90 outside; `voice` picks the carrier colour."""
+    for a, b, lv, v in TX:
+        if (voice is None or v == voice) and a - pad <= t <= b + pad:
+            return lv
     return -90.0
 
 
-def beep_gate(t):
-    for _a, b in TX:
+def beep_level(t):
+    for _a, b, lv, _v in TX:
         if b + 0.05 <= t <= b + 0.14:
-            return 0.0
+            return lv - 4.0
     return -90.0
 
 
-def squelch_times():
-    out = []
-    for a, b in TX:
-        out += [a, b + 0.16]
-    return rel(out)
+def squelch_events():
+    times, levels = [], []
+    for a, b, lv, _v in TX:
+        times += [a, b + 0.16]
+        levels += [round(10 ** ((lv + 2.0) / 20.0), 3)] * 2
+    return rel(times), levels
 
 
+SQ_T, SQ_L = squelch_events()
 write('qf_walkie', dict(
-    character='A hand-held two-way radio on the Villain\'s side of the story: a squelch pop opening each transmission, a clipped band-limited carrier that is voice-like but never words, a roger beep and a squelch tail closing it.',
+    character='A hand-held two-way radio on the Villain\'s side of the story: a squelch pop opening each transmission, a band-limited carrier of static that is never words, a roger beep and a squelch tail closing it; the five transmissions differ in level, length and tone.',
     seconds=SECONDS,
-    note='No speech is synthesised. The carrier is a pulse train near 140 Hz amplitude-modulated at 5.5 Hz (a syllable rate) with noise, through three formant bands and the telephone band, then driven hard; the squelch tail is the burst of static after a transmission ends; the beep is 1.2 kHz for 90 ms.',
+    note='No speech is synthesised. The carrier is noise (a pulse train with 95 % noise) amplitude-modulated at 5.5 Hz through two sets of formant bands (a bright one and a darker, farther one) and the telephone band, driven lightly; the squelch tail is the burst of static after a transmission ends; the beep is 1.2 kHz for 90 ms.',
     model=dict(seconds=SECONDS, voices=[
-        dict(name='carrier', gain_db=-3.0, excite=dict(kind='periodic', f0=140.0, harmonics=8, jitter=0.12, noise_mix=0.95, am_hz=5.5, am_depth=0.85),
+        dict(name='carrier_a', gain_db=-3.0, excite=dict(kind='periodic', f0=140.0, harmonics=8, jitter=0.12, noise_mix=0.95, am_hz=5.5, am_depth=0.85),
              resonator=dict(kind='formant', formants=[[500, 130, 1.0], [1500, 300, 0.6], [2500, 500, 0.3]]), events=dict(kind='continuous'),
-             control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -8.0 + tx_gate(t), 0.04))])),
-        dict(name='static', gain_db=-14.0, excite=dict(kind='noise', color='white'), resonator=dict(kind='bandpass', band=[800, 3400], order=2), events=dict(kind='continuous'),
-             control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -10.0 + tx_gate(t, 0.18), 0.04))])),
-        dict(name='squelch', gain_db=-8.0, excite=dict(kind='noise', color='white', attack=0.006, tau=0.06), resonator=dict(kind='bandpass', band=[500, 3400], order=2),
-             events=dict(kind='sequence', times=squelch_times(), levels=[1.0] * len(squelch_times()))),
+             control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -4.0 + tx_level(t, 'a'), 0.04))])),
+        dict(name='carrier_b', gain_db=-3.0, excite=dict(kind='periodic', f0=120.0, harmonics=8, jitter=0.15, noise_mix=0.95, am_hz=4.2, am_depth=0.8),
+             resonator=dict(kind='formant', formants=[[420, 120, 1.0], [1000, 260, 0.7], [1800, 380, 0.25]]), events=dict(kind='continuous'),
+             control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -4.0 + tx_level(t, 'b'), 0.04))])),
+        dict(name='static', gain_db=-18.0, excite=dict(kind='noise', color='white'), resonator=dict(kind='bandpass', band=[600, 2600], order=2), events=dict(kind='continuous'),
+             control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -4.0 + tx_level(t, None, 0.18), 0.04))])),
+        dict(name='squelch', gain_db=-9.0, excite=dict(kind='noise', color='white', attack=0.006, tau=0.06), resonator=dict(kind='bandpass', band=[500, 2600], order=2),
+             events=dict(kind='sequence', times=SQ_T, levels=SQ_L)),
         dict(name='roger_beep', gain_db=-9.0, excite=dict(kind='periodic', f0=1200.0, harmonics=2), resonator=dict(kind='none'), events=dict(kind='continuous'),
-             control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: -4.0 + beep_gate(t), 0.01))])),
+             control=dict(gain_db=[dict(kind='curve', points=sample(beep_level, 0.01))])),
     ]),
     role='fx', gain_db=-5.0, reverb=0.12,
     spatial=dict(azimuth=-155.0, elevation=0.0, distance=1.4, space=SPACE, binaural=True, kind='spot'),
-    eq=[dict(type='hp', f=300.0), dict(type='lp', f=3400.0)],
-    fx=[dict(type='pedalboard', plugin='Distortion', params=dict(drive_db=16.0))],
-    sources=['walkie_talkie', 'ESTIMATE: the 300-3400 Hz band is the telephone band (no source gave the radio passband); every level and formant is a starting value']))
+    eq=[dict(type='hp', f=300.0), dict(type='lp', f=2800.0)],
+    fx=[dict(type='pedalboard', plugin='Distortion', params=dict(drive_db=9.0))],
+    sources=['walkie_talkie', 'ESTIMATE: the 300-3400 Hz band is the telephone band (no source gave the radio passband), narrowed to 2.8 kHz after a listening note; every level and formant is a starting value']))
 
 # ================================================================================================ the lab: alarm, hum, heartbeat
 begin(0.0, 12.0)
@@ -378,7 +386,9 @@ def alarm_pitch(t):
 def alarm_gain(t):
     """A lab alarm: three short beeps a second (0.12 s on, 0.12 off), in the window the story gives it, fading as the Hero leaves."""
     ph = t % 1.0
-    beep = 0.0 if (ph < 0.12 or 0.24 <= ph < 0.36 or 0.48 <= ph < 0.60) else -90.0
+    edge = 0.008
+    on = max((smooth(min((ph - a0) / edge, (a0 + 0.12 - ph) / edge)) for a0 in (0.0, 0.24, 0.48)), default=0.0)
+    beep = -90.0 + 90.0 * on
     return max(-90.0, -12.0 + beep + window(t, ALARM_ON, ALARM_OFF, 0.05) - 14.0 * smooth((t - 8.0) / 2.6))
 
 
@@ -457,9 +467,9 @@ write('qf_device', dict(
     model=dict(seconds=SECONDS, voices=[
         dict(name='sub', gain_db=-6.0, excite=dict(kind='periodic', f0=41.0, harmonics=3, jitter=0.0, am_hz=1.0, am_depth=0.5), resonator=dict(kind='none'),
              events=dict(kind='continuous'), control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: dev_gain(t) - 4.0, 0.1))])),
-        dict(name='carrier', gain_db=-14.0, excite=dict(kind='periodic', f0=1850.0, harmonics=4, jitter=0.08, noise_mix=0.85, am_hz=7.5, am_depth=0.6), resonator=dict(kind='none'),
+        dict(name='carrier', gain_db=-14.0, excite=dict(kind='noise', color='pink'), resonator=dict(kind='bandpass', band=[1300, 2300], order=2),
              events=dict(kind='continuous'),
-             control=dict(gain_db=[dict(kind='curve', points=sample(dev_gain, 0.1))])),
+             control=dict(gain_db=[dict(kind='curve', points=sample(lambda t: dev_gain(t) + 20.0 * math.log10(0.55 + 0.45 * (0.5 + 0.5 * math.cos(2 * math.pi * 7.5 * t))), 0.02))])),
     ]),
     role='fx', gain_db=-6.0, reverb=0.25,
     spatial=dict(azimuth=-30.0, elevation=45.0, distance=3.0, space=SPACE, binaural=True, kind='spot'),

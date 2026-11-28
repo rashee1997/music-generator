@@ -12,7 +12,7 @@ sections:
   the_wall: 88.00-104.00 s, dyn 1.00
   the_dropout: 104.00-110.00 s, dyn 0.35
   the_signal: 110.00-120.00 s, dyn 0.30
-flagged times: 11
+flagged times: 19
   0.035s stem.tick [PASS] basses
   0.035s stem.tick [PASS] piano_theme
   4.029s stem.tick [PASS] violins_long
@@ -23,4 +23,12 @@ flagged times: 11
   35.956s stem.tick [PASS] trombones
   35.968s stem.tick [PASS] tuba
   36.328s stem.tick [PASS] violas
+  63.623s clicks [FAIL] master
   64.052s stem.tick [PASS] violins_staccato
+  64.306s clicks [FAIL] master
+  112.182s clicks [FAIL] master
+  112.217s clicks [FAIL] master
+  112.513s clicks [FAIL] master
+  112.648s clicks [FAIL] master
+  113.148s clicks [FAIL] master
+  113.187s clicks [FAIL] master

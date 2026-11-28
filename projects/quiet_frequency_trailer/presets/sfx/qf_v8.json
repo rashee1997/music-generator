@@ -18911,7 +18911,7 @@
    },
    {
     "name": "intake",
-    "gain_db": -22.0,
+    "gain_db": -28.0,
     "excite": {
      "kind": "noise",
      "color": "pink"
@@ -18919,8 +18919,8 @@
     "resonator": {
      "kind": "bandpass",
      "band": [
-      700,
-      2600
+      500,
+      1800
      ],
      "order": 2
     },

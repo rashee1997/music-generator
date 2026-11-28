@@ -20944,7 +20944,7 @@
    },
    {
     "name": "intake_rasp",
-    "gain_db": -27.0,
+    "gain_db": -33.0,
     "excite": {
      "kind": "noise",
      "color": "pink"
@@ -20952,8 +20952,8 @@
     "resonator": {
      "kind": "bandpass",
      "band": [
-      1200,
-      4200
+      700,
+      2200
      ],
      "order": 2
     },

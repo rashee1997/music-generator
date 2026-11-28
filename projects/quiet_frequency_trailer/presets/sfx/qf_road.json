@@ -9,7 +9,7 @@
   "voices": [
    {
     "name": "road",
-    "gain_db": -14.0,
+    "gain_db": -16.0,
     "excite": {
      "kind": "noise",
      "color": "pink"
@@ -17,8 +17,8 @@
     "resonator": {
      "kind": "bandpass",
      "band": [
-      200,
-      3000
+      100,
+      1400
      ],
      "order": 2
     },
@@ -1993,16 +1993,16 @@
    },
    {
     "name": "wind",
-    "gain_db": -20.0,
+    "gain_db": -24.0,
     "excite": {
      "kind": "noise",
-     "color": "white"
+     "color": "brown"
     },
     "resonator": {
      "kind": "bandpass",
      "band": [
-      400,
-      6000
+      120,
+      1200
      ],
      "order": 2
     },

@@ -15430,7 +15430,7 @@
    },
    {
     "name": "scrub",
-    "gain_db": -12.0,
+    "gain_db": -14.0,
     "excite": {
      "kind": "noise",
      "color": "white"
@@ -15439,7 +15439,7 @@
      "kind": "bandpass",
      "band": [
       1500,
-      6500
+      5000
      ],
      "order": 2
     },
