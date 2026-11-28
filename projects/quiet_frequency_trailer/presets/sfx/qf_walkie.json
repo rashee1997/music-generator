@@ -3,7 +3,7 @@
  "kind": "sfx",
  "character": "A hand-held two-way radio on the Villain's side of the story: a squelch pop opening each transmission, a band-limited carrier of static that is never words, a roger beep and a squelch tail closing it; the five transmissions differ in level, length and tone.",
  "seconds": 106.0,
- "note": "No speech is synthesised. The carrier is noise (a pulse train with 95 % noise) amplitude-modulated at 5.5 Hz through two sets of formant bands (a bright one and a darker, farther one) and the telephone band, driven lightly; the squelch tail is the burst of static after a transmission ends; the beep is 1.2 kHz for 90 ms. ESTIMATE: the 300-3400 Hz band is the telephone band (no source gave the radio passband), narrowed to 2.8 kHz after a listening note; every level and formant is a starting value",
+ "note": "No speech is synthesised. The carrier is noise (a pulse train with 95 % noise) amplitude-modulated at 5.5 Hz through two sets of formant bands (a bright one and a darker, farther one) and the telephone band, driven lightly; the squelch tail is the burst of static after a transmission ends; the beep is 1.2 kHz for 90 ms. ESTIMATE: the 58 Hz snap_sub is a sound-design sweetener (a radio has no sub), sized by trailer practice; the 300-3400 Hz band is the telephone band (no source gave the radio passband), narrowed to 2.8 kHz after a listening note; every level and formant is a starting value",
  "model": {
   "seconds": 106.0,
   "voices": [
@@ -74475,6 +74475,7 @@
   }
  ],
  "sources": [
-  "walkie_talkie"
+  "walkie_talkie",
+  "trailer_hit_sub"
  ]
 }

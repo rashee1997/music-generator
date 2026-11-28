@@ -376,7 +376,7 @@ write('qf_walkie', dict(
     spatial=dict(azimuth=-155.0, elevation=0.0, distance=1.4, space=SPACE, binaural=True, kind='spot'),
     eq=[dict(type='hp', f=300.0), dict(type='lp', f=2800.0)],
     fx=[dict(type='pedalboard', plugin='Distortion', params=dict(drive_db=9.0))],
-    sources=['walkie_talkie', 'ESTIMATE: the 300-3400 Hz band is the telephone band (no source gave the radio passband), narrowed to 2.8 kHz after a listening note; every level and formant is a starting value']))
+    sources=['walkie_talkie', 'trailer_hit_sub', 'ESTIMATE: the 58 Hz snap_sub is a sound-design sweetener (a radio has no sub), sized by trailer practice; the 300-3400 Hz band is the telephone band (no source gave the radio passband), narrowed to 2.8 kHz after a listening note; every level and formant is a starting value']))
 
 # ================================================================================================ the lab: alarm, hum, heartbeat
 begin(0.0, 12.0)

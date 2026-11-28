@@ -13,8 +13,7 @@
     ],
     "gain": 0.7,
     "env": {
-     "attack": 0.5,
-     "tau": 0.03
+     "attack": 0.97
     }
    },
    {
@@ -24,16 +23,15 @@
     "harmonics": 2,
     "gain": 0.5,
     "env": {
-     "attack": 0.5,
-     "tau": 0.03
+     "attack": 0.97
     }
    }
   ]
  },
  "sources": [
-  "engine"
+  "reverse_riser"
  ],
- "note": "ESTIMATE: a reverse swell is a rising envelope then silence; levels are starting values and nothing was measured against a recording.",
+ "note": "A rising envelope with no decay, cut by the hit. ESTIMATE: levels, band and glide are starting values; no recording was analysed.",
  "name": "qf_suck",
  "role": "fx",
  "gain_db": -3.0,
