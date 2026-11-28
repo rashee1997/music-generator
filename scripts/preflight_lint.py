@@ -32,17 +32,41 @@ import re
 
 import numpy as np
 
-SFX_MIN_FRACTION = 0.75          # a one-shot must be allowed this much of its length before the next onset or its own end
-UNISON_MIN_BEATS = 3.0           # both notes this long, overlapping this long
-UNISON_MIN_PITCH = 60            # below middle C a unison is a doubling, not a beat
-QUIET_ENERGY = 0.5               # a section is quiet when its declared energy is under this share of the loudest section's
-QUIET_SHARE = 0.7                # a figure part is a quiet-section part when this share of its note time is in quiet sections
 AZ_MIN_DEG, EL_MIN_DEG = 25.0, 15.0      # the gate's own z-separation limits (quality gate row spatial.z_separation)
-PLACEMENT_MIN_SHARED = 0.3       # share of the shorter part's playing time that the two parts share
-SPARSE_MAX_BEATS = 16.0          # an event longer than this is a bed, not a sparse sound
 
 
 # ------------------------------------------------------------------ helpers
+import gate_constants
+
+
+def k_SFX_MIN_FRACTION():
+    return gate_constants.get("preflight.sfx_min_fraction")
+
+
+def k_UNISON_MIN_BEATS():
+    return gate_constants.get("preflight.unison_min_beats")
+
+
+def k_UNISON_MIN_PITCH():
+    return gate_constants.get("preflight.unison_min_pitch")
+
+
+def k_QUIET_ENERGY():
+    return gate_constants.get("preflight.quiet_energy")
+
+
+def k_QUIET_SHARE():
+    return gate_constants.get("preflight.quiet_share")
+
+
+def k_PLACEMENT_MIN_SHARED():
+    return gate_constants.get("preflight.placement_min_shared")
+
+
+def k_SPARSE_MAX_BEATS():
+    return gate_constants.get("preflight.sparse_max_beats")
+
+
 def _clock(score):
     """beats -> seconds, on the tempo map the renderer plays (a flat bpm looked at the wrong place)."""
     import gate_clock
@@ -196,14 +220,14 @@ def sfx_length_rows(score, lookup):
             end = sec(float(n['t']) + float(n.get('d') or 0.0))
             if i + 1 < len(notes):
                 end = min(end, sec(float(notes[i + 1]['t'])))
-            if end - a < SFX_MIN_FRACTION * length:
+            if end - a < k_SFX_MIN_FRACTION() * length:
                 short.append((round(a, 1), round(end - a, 2)))
         if short:
             out.append(('FAIL', 'preflight.sfx_length', f'"{t["name"]}" ({name}, {length:g} s): {len(short)} event(s) get under '
-                        f'{int(SFX_MIN_FRACTION * 100)} % of the sound before the next onset or the event end (at {short[0][0]} s, {short[0][1]} s): '
+                        f'{int(k_SFX_MIN_FRACTION() * 100)} % of the sound before the next onset or the event end (at {short[0][0]} s, {short[0][1]} s): '
                         'a one-shot cut mid-ring is a click. Lengthen `d` in beats or space the events'))
         else:
-            out.append(('PASS', 'preflight.sfx_length', f'"{t["name"]}": every event plays at least {int(SFX_MIN_FRACTION * 100)} % of its {length:g} s sound'))
+            out.append(('PASS', 'preflight.sfx_length', f'"{t["name"]}": every event plays at least {int(k_SFX_MIN_FRACTION() * 100)} % of its {length:g} s sound'))
     return out
 
 
@@ -228,7 +252,7 @@ def section_edge_rows(score):
             continue
         for n in t['notes']:
             a, b = float(n['t']), float(n['t']) + float(n.get('d') or 0.0)
-            if b - a > SPARSE_MAX_BEATS:       # a bed that runs through the piece is meant to cross the lines
+            if b - a > k_SPARSE_MAX_BEATS():       # a bed that runs through the piece is meant to cross the lines
                 continue
             home = [s for s in secs if s['a'] <= a < s['b']]
             if not home:
@@ -260,13 +284,13 @@ def unison_rows(score):
                 continue                  # two parts of one family (violins_tremolo and violins_sustain) double each other on purpose
             for na in a['notes']:
                 da = float(na.get('d') or 0.0)
-                if da < UNISON_MIN_BEATS or int(na['p']) < UNISON_MIN_PITCH:
+                if da < k_UNISON_MIN_BEATS() or int(na['p']) < k_UNISON_MIN_PITCH():
                     continue
                 for nb in b['notes']:
-                    if int(nb['p']) != int(na['p']) or float(nb.get('d') or 0.0) < UNISON_MIN_BEATS:
+                    if int(nb['p']) != int(na['p']) or float(nb.get('d') or 0.0) < k_UNISON_MIN_BEATS():
                         continue
                     ov = min(float(na['t']) + da, float(nb['t']) + float(nb['d'])) - max(float(na['t']), float(nb['t']))
-                    if ov >= UNISON_MIN_BEATS:
+                    if ov >= k_UNISON_MIN_BEATS():
                         found.append((ov, a['name'], b['name'], int(na['p']), float(max(na['t'], nb['t']))))
     if not found:
         return [('PASS', 'preflight.unison', 'no two instruments hold the same pitch above middle C for three beats or more')]
@@ -283,7 +307,7 @@ def figure_level_rows(score):
     if len(secs) < 2 or not energies:
         return [('INFO', 'preflight.figure_level', 'no section energies: not checked')]
     top = max(energies)
-    quiet = [s for s in secs if s.get('energy') is not None and float(s['energy']) < QUIET_ENERGY * top]
+    quiet = [s for s in secs if s.get('energy') is not None and float(s['energy']) < k_QUIET_ENERGY() * top]
     out = []
     for t in _tracks(score):
         try:
@@ -300,9 +324,9 @@ def figure_level_rows(score):
             if any(s['a'] <= mid < s['b'] for s in quiet):
                 quiet_t += d
         share = quiet_t / total if total > 0 else 0.0
-        if share >= QUIET_SHARE and total > 0:
+        if share >= k_QUIET_SHARE() and total > 0:
             out.append(('WARN', 'preflight.figure_level', f'"{t["name"]}" has role "{t.get("role")}" but {100 * share:.0f} % of its note time is in sections under '
-                        f'{int(QUIET_ENERGY * 100)} % of the peak energy: the mixer lifts every figure-family part to full level, so it will play as loud as the '
+                        f'{int(k_QUIET_ENERGY() * 100)} % of the peak energy: the mixer lifts every figure-family part to full level, so it will play as loud as the '
                         'loudest part. Give it the role "counter" (or set its target level in the mix preset) to keep it quiet'))
     if not out:
         out.append(('PASS', 'preflight.figure_level', 'no figure-family part plays only the quiet sections'))
@@ -341,7 +365,7 @@ def placement_rows(score, lookup):
                 continue
             shared = _shared_seconds(sa, sb)
             shorter = min(sum(b - a for a, b in sa), sum(b - a for a, b in sb))
-            if shorter > 0 and shared / shorter >= PLACEMENT_MIN_SHARED:
+            if shorter > 0 and shared / shorter >= k_PLACEMENT_MIN_SHARED():
                 bad.append((daz, abs(ela - elb), na, nb))
     if not bad:
         return [('PASS', 'preflight.placement', 'no two parts that play together sit closer than the z-separation limit')]

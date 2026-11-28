@@ -50,7 +50,16 @@ def master_targets():
         doc = json.load(f)
     keep = ('lufs', 'true_peak', 'tone', 'glue')
     clean = lambda e: {k: v for k, v in e.items() if k in keep}
-    return {'default': clean(doc['default']), 'profiles': {n: clean(e) for n, e in (doc.get('profiles') or {}).items()}}
+    return {'default': clean(doc['default']), 'profiles': {n: clean(e) for n, e in (doc.get('profiles') or {}).items()},
+            'voiceover': {k: v for k, v in (doc.get('voiceover') or {}).items() if k != 'source'}}
+
+
+def genre_lufs(genre):
+    """The loudness a compose.py genre recipe asks for: references/data/master_targets.json `genres`, else the shipped default."""
+    with open(MASTER_TARGETS_PATH, encoding='utf-8') as f:
+        doc = json.load(f)
+    g = (doc.get('genres') or {}).get(str(genre))
+    return float(g) if g is not None else float(doc['default']['lufs'])
 
 
 def _master_profiles():

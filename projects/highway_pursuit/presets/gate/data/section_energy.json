@@ -16,56 +16,56 @@
       "start_s": 0.0,
       "end_s": 6.8433,
       "energy": 0.72,
-      "level_db": -22.4201892512674
+      "level_db": -22.42019171521052
     },
     {
       "name": "the_twist",
       "start_s": 6.8433,
       "end_s": 17.1355,
       "energy": 0.82,
-      "level_db": -21.291735543332017
+      "level_db": -21.291733256788852
     },
     {
       "name": "the_drift",
       "start_s": 17.1355,
       "end_s": 22.2882,
       "energy": 0.55,
-      "level_db": -23.320711777878927
+      "level_db": -23.32070942407205
     },
     {
       "name": "the_chase",
       "start_s": 22.2882,
       "end_s": 32.5552,
       "energy": 0.95,
-      "level_db": -18.177232636266293
+      "level_db": -18.177230345445714
     },
     {
       "name": "the_slow_motion",
       "start_s": 32.5552,
       "end_s": 42.1625,
       "energy": 0.5,
-      "level_db": -20.321941330615306
+      "level_db": -20.321939095137132
     },
     {
       "name": "the_swerve",
       "start_s": 42.1625,
       "end_s": 52.9717,
       "energy": 1.0,
-      "level_db": -16.94852937602732
+      "level_db": -16.948527051498807
     },
     {
       "name": "the_near_miss",
       "start_s": 52.9717,
       "end_s": 56.3815,
       "energy": 0.65,
-      "level_db": -32.791626697373005
+      "level_db": -32.79162472209227
     },
     {
       "name": "the_escape",
       "start_s": 56.3815,
       "end_s": 60.0954,
       "energy": 0.3,
-      "level_db": -23.519913822934463
+      "level_db": -23.519911538854867
     }
   ]
 }

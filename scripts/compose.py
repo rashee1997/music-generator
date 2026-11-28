@@ -49,6 +49,7 @@ your own score from scratch (see references/workflow/custom-scripts.md); compose
 """
 import argparse
 import copy
+import mix_schema
 import json
 import os
 import re
@@ -251,13 +252,13 @@ ARCS = {   # intensity per 4-bar phrase, resampled to the piece length (0..1)
 # kind: chords | bass | melody | harmony | pad | sparkle | drums | ostinato
 # ------------------------------------------------------------------------------------------------
 GENRES = {
-    'piano': dict(room='hall', swing=0.5, humanize='rubato', tone='neutral', lufs=-16, layers=[
+    'piano': dict(room='hall', swing=0.5, humanize='rubato', tone='neutral', layers=[
         dict(name='piano', instrument='piano', kind='chords', tex_low='sparse', tex_mid='arp8', tex_hi='arp8', lo=48, hi=70, min=0.0, role='chord'),
         dict(name='lead', instrument='piano', kind='melody', oct=0, min=0.15, role='melody', gain_db=-2),
         dict(name='strings', instrument='slow_strings', kind='pad', lo=45, hi=69, min=0.45, role='pad', gain_db=-3),
         dict(name='cello', instrument='cello', kind='bass', bass='whole', lo=36, hi=52, min=0.5, role='bass', gain_db=-1),
         dict(name='counter', instrument='violin', kind='harmony', min=0.75, role='counter', oct=0)]),
-    'cinematic': dict(room='large_hall', swing=0.5, humanize='natural', tone='warm', lufs=-16, layers=[
+    'cinematic': dict(room='large_hall', swing=0.5, humanize='natural', tone='warm', layers=[
         dict(name='strings', instrument='slow_strings', kind='pad', lo=45, hi=72, min=0.0, role='pad'),
         dict(name='piano', instrument='piano', kind='chords', tex_low='sparse', tex_mid='arp8', tex_hi='arp16', lo=50, hi=72, min=0.12, role='chord'),
         dict(name='lead', instrument='cello', kind='melody', oct=0, min=0.2, role='melody', gain_db=-1),
@@ -267,24 +268,24 @@ GENRES = {
         dict(name='harp', instrument='harp', kind='sparkle', lo=72, hi=96, min=0.3, role='arp', gain_db=-4),
         dict(name='drums', instrument='orchestral', kind='drums', min=0.6, role='drum', gain_db=-3),
         dict(name='timpani', instrument='timpani', kind='bass', bass='half', lo=38, hi=52, min=0.85, role='bass', gain_db=-6)]),
-    'ambient': dict(room='cathedral', swing=0.5, humanize='rubato', tone='warm', lufs=-18, layers=[
+    'ambient': dict(room='cathedral', swing=0.5, humanize='rubato', tone='warm', layers=[
         dict(name='pad', instrument='warm_pad', kind='pad', lo=48, hi=72, min=0.0, role='pad', gain_db=-1),
         dict(name='strings', instrument='slow_strings', kind='pad', lo=40, hi=67, min=0.35, role='pad', gain_db=-3),
         dict(name='lead', instrument='celesta', kind='melody', oct=1, min=0.2, role='melody', gain_db=-2),
         dict(name='piano', instrument='piano', kind='chords', tex_low='sparse', tex_mid='sparse', tex_hi='arp8', lo=55, hi=76, min=0.25, role='chord'),
         dict(name='sparkle', instrument='glockenspiel', kind='sparkle', lo=79, hi=100, min=0.3, role='arp', gain_db=-6)]),
-    'acoustic': dict(room='chamber', swing=0.5, humanize='natural', tone='warm', lufs=-15, layers=[
+    'acoustic': dict(room='chamber', swing=0.5, humanize='natural', tone='warm', layers=[
         dict(name='guitar', instrument='nylon_guitar', kind='chords', tex_low='fingerpick', tex_mid='fingerpick', tex_hi='strum', lo=45, hi=69, min=0.0, role='chord'),
         dict(name='lead', instrument='flute', kind='melody', oct=1, min=0.2, role='melody', gain_db=-1),
         dict(name='bass', instrument='acoustic_bass', kind='bass', bass='half', lo=33, hi=48, min=0.3, role='bass'),
         dict(name='strings', instrument='slow_strings', kind='pad', lo=45, hi=69, min=0.6, role='pad', gain_db=-4),
         dict(name='drums', instrument='brush', kind='drums', min=0.45, role='drum', gain_db=-5)]),
-    'lofi': dict(room='room_warm', swing=0.58, humanize='loose', tone='warm', lufs=-14, groove='boom_bap', bpm=(68, 88), layers=[
+    'lofi': dict(room='room_warm', swing=0.58, humanize='loose', tone='warm', groove='boom_bap', bpm=(68, 88), layers=[
         dict(name='rhodes', instrument='epiano', kind='chords', tex_low='comp', tex_mid='comp', tex_hi='comp', lo=50, hi=72, min=0.0, role='chord', color='seventh'),
         dict(name='lead', instrument='vibraphone', kind='melody', oct=0, min=0.25, role='melody', gain_db=-2),
         dict(name='bass', instrument='finger_bass', kind='bass', bass='sync', lo=33, hi=48, min=0.2, role='bass'),
         dict(name='drums', instrument='808', kind='drums', min=0.15, role='drum', gain_db=-4)]),
-    'orchestral': dict(room='hall', swing=0.5, humanize='natural', tone='warm', lufs=-16, layers=[
+    'orchestral': dict(room='hall', swing=0.5, humanize='natural', tone='warm', layers=[
         dict(name='strings', instrument='string_ensemble', kind='pad', lo=45, hi=72, min=0.0, role='pad'),
         dict(name='lead', instrument='violin', kind='melody', oct=0, min=0.15, role='melody', gain_db=-1),
         dict(name='woodwind', instrument='oboe', kind='harmony', min=0.4, role='counter', oct=0, gain_db=-3),
@@ -293,24 +294,24 @@ GENRES = {
         dict(name='horns', instrument='french_horn', kind='pad', lo=43, hi=65, min=0.65, role='pad', gain_db=-3),
         dict(name='drums', instrument='orchestral', kind='drums', min=0.6, role='drum', gain_db=-4),
         dict(name='timpani', instrument='timpani', kind='bass', bass='half', lo=38, hi=52, min=0.8, role='bass', gain_db=-6)]),
-    'folk': dict(room='room_warm', swing=0.5, humanize='loose', tone='warm', lufs=-15, layers=[
+    'folk': dict(room='room_warm', swing=0.5, humanize='loose', tone='warm', layers=[
         dict(name='guitar', instrument='acoustic_guitar', kind='chords', tex_low='fingerpick', tex_mid='strum', tex_hi='strum', lo=45, hi=69, min=0.0, role='chord'),
         dict(name='lead', instrument='fiddle', kind='melody', oct=0, min=0.2, role='melody', gain_db=-1),
         dict(name='bass', instrument='acoustic_bass', kind='bass', bass='half', lo=33, hi=48, min=0.3, role='bass'),
         dict(name='whistle', instrument='flute', kind='harmony', min=0.65, role='counter', oct=1, gain_db=-4),
         dict(name='drums', instrument='brush', kind='drums', min=0.4, role='drum', gain_db=-5)]),
-    'jazz': dict(room='room_warm', swing=0.62, humanize='loose', tone='warm', lufs=-15, layers=[
+    'jazz': dict(room='room_warm', swing=0.62, humanize='loose', tone='warm', layers=[
         dict(name='piano', instrument='piano', kind='chords', tex_low='comp', tex_mid='comp', tex_hi='comp', lo=48, hi=70, min=0.0, role='chord', color='seventh'),
         dict(name='lead', instrument='muted_trumpet', kind='melody', oct=0, min=0.2, role='melody', gain_db=-1),
         dict(name='bass', instrument='acoustic_bass', kind='bass', bass='walk', lo=31, hi=48, min=0.0, role='bass'),
         dict(name='drums', instrument='brush', kind='drums', min=0.1, role='drum', gain_db=-5)]),
-    'pop': dict(room='studio', swing=0.5, humanize='natural', tone='neutral', lufs=-14, groove='synthpop', bpm=(100, 124), layers=[
+    'pop': dict(room='studio', swing=0.5, humanize='natural', tone='neutral', groove='synthpop', bpm=(100, 124), layers=[
         dict(name='synth', instrument='polysynth', kind='chords', tex_low='arp8', tex_mid='pulse', tex_hi='pulse', lo=50, hi=74, min=0.0, role='chord', gain_db=-3),
         dict(name='piano', instrument='piano', kind='chords', tex_low='pulse', tex_mid='pulse', tex_hi='pulse', lo=48, hi=70, min=0.2, role='chord', gain_db=-3),
         dict(name='lead', instrument='saw_lead', kind='melody', oct=0, min=0.2, role='melody', gain_db=-4),
         dict(name='bass', instrument='synth_bass', kind='bass', bass='sync', lo=31, hi=46, min=0.1, role='bass'),
         dict(name='drums', instrument='electronic', kind='drums', min=0.0, role='drum', gain_db=-3)]),
-    'dark': dict(room='cave', swing=0.5, humanize='rubato', tone='warm', lufs=-18, layers=[
+    'dark': dict(room='cave', swing=0.5, humanize='rubato', tone='warm', layers=[
         dict(name='drone', instrument='tremolo_strings', kind='pad', lo=36, hi=60, min=0.0, role='pad', gain_db=-2),
         dict(name='pulse', instrument='piano', kind='ostinato', lo=36, hi=55, min=0.25, role='chord', gain_db=-4),
         dict(name='bass', instrument='contrabass', kind='bass', bass='pedal', lo=28, hi=43, min=0.2, role='bass'),
@@ -318,190 +319,190 @@ GENRES = {
         dict(name='sparkle', instrument='music_box', kind='sparkle', lo=72, hi=96, min=0.2, role='arp', gain_db=-5),
         dict(name='choir', instrument='voice_oohs', kind='pad', lo=48, hi=72, min=0.75, role='pad', gain_db=-4),
         dict(name='drums', instrument='orchestral', kind='drums', min=0.55, role='drum', gain_db=-3)]),
-    'electronic': dict(room='plate', swing=0.5, humanize='tight', tone='bright', lufs=-14, layers=[
+    'electronic': dict(room='plate', swing=0.5, humanize='tight', tone='bright', layers=[
         dict(name='pad', instrument='warm_pad', kind='pad', lo=48, hi=72, min=0.0, role='pad'),
         dict(name='arp', instrument='piano', kind='chords', tex_low='arp16', tex_mid='arp16', tex_hi='arp16', lo=55, hi=79, min=0.15, role='arp'),
         dict(name='lead', instrument='saw_lead', kind='melody', oct=0, min=0.3, role='melody', gain_db=-4),
         dict(name='bass', instrument='synth_bass', kind='bass', bass='pulse8', lo=31, hi=46, min=0.2, role='bass'),
         dict(name='drums', instrument='electronic', kind='drums', min=0.2, role='drum', gain_db=-3)]),
-    'hiphop': dict(room='room_warm', swing=0.55, humanize='natural', tone='warm', lufs=-14, groove='boom_bap', bpm=(84, 100), layers=[
+    'hiphop': dict(room='room_warm', swing=0.55, humanize='natural', tone='warm', groove='boom_bap', bpm=(84, 100), layers=[
         dict(name='keys', instrument='epiano', kind='chords', tex_low='comp', tex_mid='comp', tex_hi='comp', lo=50, hi=72, min=0.0, role='chord', color='seventh'),
         dict(name='lead', instrument='vibraphone', kind='melody', oct=0, min=0.2, role='melody', gain_db=-3),
         dict(name='bass', instrument='finger_bass', kind='bass', bass='sync', lo=33, hi=48, min=0.0, role='bass'),
         dict(name='strings', instrument='string_ensemble', kind='pad', lo=48, hi=72, min=0.5, role='pad', gain_db=-6),
         dict(name='drums', instrument='808', kind='drums', min=0.0, role='drum', gain_db=-3)]),
-    'trap': dict(room='room', swing=0.5, humanize='tight', tone='bright', lufs=-14, groove='trap', bpm=(66, 80), layers=[
+    'trap': dict(room='room', swing=0.5, humanize='tight', tone='bright', groove='trap', bpm=(66, 80), layers=[
         dict(name='pad', instrument='warm_pad', kind='pad', lo=48, hi=72, min=0.0, role='pad', gain_db=-4),
         dict(name='bell', instrument='glockenspiel', kind='melody', oct=1, min=0.2, role='melody', gain_db=-4),
         dict(name='sub', instrument='synth_bass_2', kind='bass', bass='pedal', lo=24, hi=40, min=0.0, role='bass'),
         dict(name='sparkle', instrument='music_box', kind='sparkle', lo=76, hi=96, min=0.4, role='arp', gain_db=-8),
         dict(name='drums', instrument='808', kind='drums', min=0.0, role='drum', gain_db=-3)]),
-    'dubstep': dict(room='hall', swing=0.5, humanize='tight', tone='bright', lufs=-12, groove='halftime', bpm=(138, 144), layers=[
+    'dubstep': dict(room='hall', swing=0.5, humanize='tight', tone='bright', groove='halftime', bpm=(138, 144), layers=[
         dict(name='pad', instrument='sweep_pad', kind='pad', lo=48, hi=72, min=0.0, role='pad', gain_db=-6),
         dict(name='wobble', instrument='synth_bass', kind='bass', bass='pulse8', lo=28, hi=45, min=0.0, role='bass', gain_db=-1),
         dict(name='lead', instrument='saw_lead', kind='melody', oct=0, min=0.45, role='melody', gain_db=-5),
         dict(name='drums', instrument='electronic', kind='drums', min=0.0, role='drum', gain_db=-3)]),
-    'dnb': dict(room='plate', swing=0.5, humanize='tight', tone='bright', lufs=-13, groove='breakbeat', bpm=(166, 176), layers=[
+    'dnb': dict(room='plate', swing=0.5, humanize='tight', tone='bright', groove='breakbeat', bpm=(166, 176), layers=[
         dict(name='pad', instrument='choir_aahs', kind='pad', lo=48, hi=72, min=0.0, role='pad', gain_db=-6),
         dict(name='keys', instrument='epiano', kind='chords', tex_low='comp', tex_mid='comp', tex_hi='comp', lo=52, hi=76, min=0.2, role='chord', gain_db=-3),
         dict(name='reese', instrument='synth_bass_2', kind='bass', bass='pulse8', lo=26, hi=42, min=0.0, role='bass'),
         dict(name='lead', instrument='voice_oohs', kind='melody', oct=0, min=0.35, role='melody', gain_db=-3),
         dict(name='drums', instrument='electronic', kind='drums', min=0.0, role='drum', gain_db=-2)]),
-    'reggae': dict(room='room_warm', swing=0.5, humanize='loose', tone='warm', lufs=-15, groove='one_drop', bpm=(66, 84), layers=[
+    'reggae': dict(room='room_warm', swing=0.5, humanize='loose', tone='warm', groove='one_drop', bpm=(66, 84), layers=[
         dict(name='skank', instrument='clean_guitar', kind='chords', tex_low='skank', tex_mid='skank', tex_hi='skank', lo=48, hi=69, min=0.0, role='chord', gain_db=-1),
         dict(name='organ', instrument='organ', kind='chords', tex_low='skank', tex_mid='skank', tex_hi='skank', lo=55, hi=76, min=0.3, role='chord', gain_db=-6),
         dict(name='bass', instrument='finger_bass', kind='bass', bass='half', lo=31, hi=48, min=0.0, role='bass', gain_db=-1),
         dict(name='lead', instrument='harmonica', kind='melody', oct=0, min=0.25, role='melody', gain_db=-3),
         dict(name='drums', instrument='room', kind='drums', min=0.0, role='drum', gain_db=-3)]),
-    'funk': dict(room='studio', swing=0.52, humanize='tight', tone='bright', lufs=-14, groove='funk', bpm=(96, 112), layers=[
+    'funk': dict(room='studio', swing=0.52, humanize='tight', tone='bright', groove='funk', bpm=(96, 112), layers=[
         dict(name='clav', instrument='clavinet', kind='chords', tex_low='chop', tex_mid='chop', tex_hi='chop', lo=52, hi=76, min=0.0, role='chord', gain_db=-1),
         dict(name='gtr', instrument='muted_guitar', kind='chords', tex_low='chop', tex_mid='chop', tex_hi='chop', lo=45, hi=67, min=0.2, role='chord', gain_db=-3),
         dict(name='bass', instrument='finger_bass', kind='bass', bass='sync', lo=30, hi=48, min=0.0, role='bass', gain_db=-1),
         dict(name='horns', instrument='brass_section', kind='harmony', min=0.4, role='counter', oct=0, gain_db=-5),
         dict(name='drums', instrument='standard', kind='drums', min=0.0, role='drum', gain_db=-3)]),
-    'rock': dict(room='studio', swing=0.5, humanize='natural', tone='neutral', lufs=-13, groove='rock', bpm=(110, 140), layers=[
+    'rock': dict(room='studio', swing=0.5, humanize='natural', tone='neutral', groove='rock', bpm=(110, 140), layers=[
         dict(name='guitar', instrument='distortion_guitar', kind='chords', tex_low='strum', tex_mid='strum', tex_hi='strum', lo=40, hi=64, min=0.0, role='chord', gain_db=-3),
         dict(name='lead', instrument='overdrive_guitar', kind='melody', oct=0, min=0.3, role='melody', gain_db=-2),
         dict(name='bass', instrument='pick_bass', kind='bass', bass='pulse8', lo=28, hi=48, min=0.1, role='bass'),
         dict(name='organ', instrument='rock_organ', kind='pad', lo=52, hi=72, min=0.6, role='pad', gain_db=-8),
         dict(name='drums', instrument='power', kind='drums', min=0.0, role='drum', gain_db=-3)]),
-    'metal': dict(room='studio', swing=0.5, humanize='tight', tone='bright', lufs=-12, groove='metal', bpm=(160, 180), layers=[
+    'metal': dict(room='studio', swing=0.5, humanize='tight', tone='bright', groove='metal', bpm=(160, 180), layers=[
         dict(name='gtr', instrument='distortion_guitar', kind='chords', tex_low='pulse', tex_mid='pulse', tex_hi='pulse', lo=36, hi=58, min=0.0, role='chord', gain_db=-2),
         dict(name='gtr2', instrument='distortion_guitar', kind='chords', tex_low='pulse', tex_mid='pulse', tex_hi='pulse', lo=48, hi=70, min=0.2, role='chord', gain_db=-5),
         dict(name='bass', instrument='pick_bass', kind='bass', bass='pulse8', lo=24, hi=40, min=0.0, role='bass', gain_db=-1),
         dict(name='lead', instrument='distortion_guitar', kind='melody', oct=1, min=0.4, role='melody', gain_db=-3),
         dict(name='drums', instrument='power', kind='drums', min=0.0, role='drum', gain_db=-2)]),
-    'rnb': dict(room='room_warm', swing=0.56, humanize='loose', tone='warm', lufs=-14, groove='rnb', bpm=(66, 92), layers=[
+    'rnb': dict(room='room_warm', swing=0.56, humanize='loose', tone='warm', groove='rnb', bpm=(66, 92), layers=[
         dict(name='keys', instrument='epiano', kind='chords', tex_low='comp', tex_mid='comp', tex_hi='comp', lo=50, hi=72, min=0.0, role='chord', color='seventh'),
         dict(name='pad', instrument='slow_strings', kind='pad', lo=48, hi=72, min=0.5, role='pad', gain_db=-6),
         dict(name='lead', instrument='alto_sax', kind='melody', oct=0, min=0.25, role='melody', gain_db=-2),
         dict(name='bass', instrument='finger_bass', kind='bass', bass='sync', lo=33, hi=48, min=0.1, role='bass'),
         dict(name='drums', instrument='808', kind='drums', min=0.0, role='drum', gain_db=-4)]),
-    'bossa': dict(room='chamber', swing=0.5, humanize='natural', tone='warm', lufs=-15, groove='bossa', bpm=(112, 132), layers=[
+    'bossa': dict(room='chamber', swing=0.5, humanize='natural', tone='warm', groove='bossa', bpm=(112, 132), layers=[
         dict(name='guitar', instrument='nylon_guitar', kind='chords', tex_low='fingerpick', tex_mid='fingerpick', tex_hi='fingerpick', lo=45, hi=69, min=0.0, role='chord', color='seventh'),
         dict(name='bass', instrument='acoustic_bass', kind='bass', bass='half', lo=33, hi=48, min=0.0, role='bass'),
         dict(name='lead', instrument='flute', kind='melody', oct=1, min=0.2, role='melody', gain_db=-2),
         dict(name='drums', instrument='brush', kind='drums', min=0.0, role='drum', gain_db=-6)]),
-    'samba': dict(room='studio', swing=0.5, humanize='tight', tone='bright', lufs=-14, groove='samba', bpm=(96, 116), layers=[
+    'samba': dict(room='studio', swing=0.5, humanize='tight', tone='bright', groove='samba', bpm=(96, 116), layers=[
         dict(name='guitar', instrument='nylon_guitar', kind='chords', tex_low='strum', tex_mid='strum', tex_hi='strum', lo=45, hi=69, min=0.0, role='chord'),
         dict(name='bass', instrument='acoustic_bass', kind='bass', bass='half', lo=33, hi=48, min=0.0, role='bass'),
         dict(name='lead', instrument='trumpet', kind='melody', oct=0, min=0.3, role='melody', gain_db=-3),
         dict(name='drums', instrument='standard', kind='drums', min=0.0, role='drum', gain_db=-4)]),
-    'house': dict(room='plate', swing=0.5, humanize='tight', tone='bright', lufs=-14, groove='four_floor', bpm=(118, 128), layers=[
+    'house': dict(room='plate', swing=0.5, humanize='tight', tone='bright', groove='four_floor', bpm=(118, 128), layers=[
         dict(name='pad', instrument='warm_pad', kind='pad', lo=48, hi=72, min=0.2, role='pad', gain_db=-6),
         dict(name='stabs', instrument='epiano', kind='chords', tex_low='comp', tex_mid='comp', tex_hi='comp', lo=52, hi=76, min=0.0, role='chord', gain_db=-2),
         dict(name='bass', instrument='synth_bass', kind='bass', bass='pulse8', lo=31, hi=46, min=0.0, role='bass'),
         dict(name='lead', instrument='saw_lead', kind='melody', oct=0, min=0.5, role='melody', gain_db=-7),
         dict(name='drums', instrument='electronic', kind='drums', min=0.0, role='drum', gain_db=-3)]),
-    'techno': dict(room='plate', swing=0.5, humanize='tight', tone='bright', lufs=-14, groove='four_floor', bpm=(124, 134), layers=[
+    'techno': dict(room='plate', swing=0.5, humanize='tight', tone='bright', groove='four_floor', bpm=(124, 134), layers=[
         dict(name='pad', instrument='polysynth', kind='pad', lo=48, hi=72, min=0.3, role='pad', gain_db=-7),
         dict(name='stab', instrument='synth_bass', kind='ostinato', lo=36, hi=55, min=0.0, role='chord', gain_db=-3),
         dict(name='bass', instrument='synth_bass', kind='bass', bass='pulse8', lo=28, hi=40, min=0.2, role='bass'),
         dict(name='lead', instrument='square_lead', kind='melody', oct=0, min=0.5, role='melody', gain_db=-8),
         dict(name='drums', instrument='electronic', kind='drums', min=0.0, role='drum', gain_db=-3)]),
-    'corporate': dict(room='studio', swing=0.5, humanize='natural', tone='bright', lufs=-14, groove='pop', bpm=(112, 126), layers=[
+    'corporate': dict(room='studio', swing=0.5, humanize='natural', tone='bright', groove='pop', bpm=(112, 126), layers=[
         dict(name='piano', instrument='piano', kind='chords', tex_low='pulse', tex_mid='pulse', tex_hi='pulse', lo=48, hi=72, min=0.0, role='chord'),
         dict(name='guitar', instrument='clean_guitar', kind='chords', tex_low='strum', tex_mid='strum', tex_hi='strum', lo=45, hi=67, min=0.3, role='chord', gain_db=-3),
         dict(name='lead', instrument='vibraphone', kind='melody', oct=0, min=0.2, role='melody', gain_db=-2),
         dict(name='bass', instrument='finger_bass', kind='bass', bass='sync', lo=33, hi=48, min=0.15, role='bass'),
         dict(name='strings', instrument='string_ensemble', kind='pad', lo=48, hi=72, min=0.6, role='pad', gain_db=-6),
         dict(name='drums', instrument='standard', kind='drums', min=0.2, role='drum', gain_db=-4)]),
-    'indie': dict(room='studio', swing=0.5, humanize='natural', tone='neutral', lufs=-14, groove='rock', bpm=(100, 140), layers=[
+    'indie': dict(room='studio', swing=0.5, humanize='natural', tone='neutral', groove='rock', bpm=(100, 140), layers=[
         dict(name='guitar', instrument='clean_guitar', kind='chords', tex_low='fingerpick', tex_mid='strum', tex_hi='strum', lo=45, hi=69, min=0.0, role='chord'),
         dict(name='lead', instrument='overdrive_guitar', kind='melody', oct=0, min=0.3, role='melody', gain_db=-3),
         dict(name='bass', instrument='finger_bass', kind='bass', bass='pulse8', lo=31, hi=48, min=0.1, role='bass'),
         dict(name='keys', instrument='piano', kind='chords', tex_low='sparse', tex_mid='pulse', tex_hi='pulse', lo=52, hi=72, min=0.5, role='chord', gain_db=-6),
         dict(name='drums', instrument='room', kind='drums', min=0.1, role='drum', gain_db=-4)]),
-    'futurebass': dict(room='plate', swing=0.5, humanize='tight', tone='bright', lufs=-13, groove='halftime', bpm=(140, 160), layers=[
+    'futurebass': dict(room='plate', swing=0.5, humanize='tight', tone='bright', groove='halftime', bpm=(140, 160), layers=[
         dict(name='chords', instrument='synth_strings', kind='chords', tex_low='block', tex_mid='half', tex_hi='half', lo=52, hi=76, min=0.0, role='chord', gain_db=-3),
         dict(name='pad', instrument='warm_pad', kind='pad', lo=48, hi=72, min=0.2, role='pad', gain_db=-6),
         dict(name='sub', instrument='synth_bass_2', kind='bass', bass='half', lo=26, hi=40, min=0.0, role='bass'),
         dict(name='vox', instrument='choir_aahs', kind='melody', oct=1, min=0.3, role='melody', gain_db=-3),
         dict(name='drums', instrument='electronic', kind='drums', min=0.0, role='drum', gain_db=-3)]),
-    'halloween': dict(room='cave', swing=0.5, humanize='rubato', tone='warm', lufs=-17, groove='heartbeat', bpm=(80, 110), layers=[
+    'halloween': dict(room='cave', swing=0.5, humanize='rubato', tone='warm', groove='heartbeat', bpm=(80, 110), layers=[
         dict(name='strings', instrument='tremolo_strings', kind='pad', lo=40, hi=64, min=0.0, role='pad', gain_db=-3),
         dict(name='box', instrument='music_box', kind='melody', oct=1, min=0.1, role='melody', gain_db=-1),
         dict(name='celesta', instrument='celesta', kind='sparkle', lo=72, hi=96, min=0.2, role='arp', gain_db=-5),
         dict(name='bass', instrument='contrabass', kind='bass', bass='pedal', lo=28, hi=43, min=0.2, role='bass'),
         dict(name='choir', instrument='voice_oohs', kind='pad', lo=48, hi=72, min=0.7, role='pad', gain_db=-5),
         dict(name='drums', instrument='orchestral', kind='drums', min=0.5, role='drum', gain_db=-4)]),
-    'trance': dict(room='plate', swing=0.5, humanize='tight', tone='bright', lufs=-13, groove='four_floor', bpm=(134, 142), layers=[
+    'trance': dict(room='plate', swing=0.5, humanize='tight', tone='bright', groove='four_floor', bpm=(134, 142), layers=[
         dict(name='pad', instrument='warm_pad', kind='pad', lo=48, hi=72, min=0.0, role='pad', gain_db=-5),
         dict(name='pluck', instrument='polysynth', kind='chords', tex_low='arp16', tex_mid='arp16', tex_hi='arp16', lo=55, hi=79, min=0.1, role='arp', gain_db=-3),
         dict(name='bass', instrument='synth_bass', kind='bass', bass='pulse8', lo=28, hi=43, min=0.2, role='bass'),
         dict(name='lead', instrument='saw_lead', kind='melody', oct=1, min=0.4, role='melody', gain_db=-5),
         dict(name='drums', instrument='electronic', kind='drums', min=0.0, role='drum', gain_db=-3)]),
-    'hardstyle': dict(room='plate', swing=0.5, humanize='tight', tone='bright', lufs=-12, groove='four_floor', bpm=(150, 165), layers=[
+    'hardstyle': dict(room='plate', swing=0.5, humanize='tight', tone='bright', groove='four_floor', bpm=(150, 165), layers=[
         dict(name='stab', instrument='synth_brass', kind='chords', tex_low='pulse', tex_mid='pulse', tex_hi='pulse', lo=48, hi=72, min=0.0, role='chord', gain_db=-3),
         dict(name='gtr', instrument='distortion_guitar', kind='chords', tex_low='pulse', tex_mid='pulse', tex_hi='pulse', lo=40, hi=60, min=0.2, role='chord', gain_db=-5),
         dict(name='bass', instrument='synth_bass', kind='bass', bass='pulse8', lo=26, hi=40, min=0.0, role='bass', gain_db=-1),
         dict(name='lead', instrument='sweep_pad', kind='melody', oct=1, min=0.4, role='melody', gain_db=-5),
         dict(name='drums', instrument='power', kind='drums', min=0.0, role='drum', gain_db=-2)]),
-    'synthpop': dict(room='plate', swing=0.5, humanize='natural', tone='bright', lufs=-14, groove='synthpop', bpm=(100, 125), layers=[
+    'synthpop': dict(room='plate', swing=0.5, humanize='natural', tone='bright', groove='synthpop', bpm=(100, 125), layers=[
         dict(name='pad', instrument='polysynth', kind='pad', lo=48, hi=72, min=0.0, role='pad', gain_db=-5),
         dict(name='arp', instrument='epiano', kind='chords', tex_low='arp8', tex_mid='arp16', tex_hi='arp16', lo=52, hi=76, min=0.2, role='arp', gain_db=-3),
         dict(name='bass', instrument='synth_bass', kind='bass', bass='pulse8', lo=31, hi=46, min=0.1, role='bass'),
         dict(name='lead', instrument='saw_lead', kind='melody', oct=0, min=0.3, role='melody', gain_db=-4),
         dict(name='drums', instrument='electronic', kind='drums', min=0.0, role='drum', gain_db=-3)]),
-    'deep_house': dict(room='room_warm', swing=0.52, humanize='natural', tone='warm', lufs=-15, groove='four_floor', bpm=(118, 124), layers=[
+    'deep_house': dict(room='room_warm', swing=0.52, humanize='natural', tone='warm', groove='four_floor', bpm=(118, 124), layers=[
         dict(name='pad', instrument='warm_pad', kind='pad', lo=48, hi=72, min=0.0, role='pad', gain_db=-5),
         dict(name='chords', instrument='epiano', kind='chords', tex_low='comp', tex_mid='comp', tex_hi='comp', lo=50, hi=74, min=0.0, role='chord', color='seventh', gain_db=-2),
         dict(name='bass', instrument='finger_bass', kind='bass', bass='sync', lo=31, hi=46, min=0.1, role='bass'),
         dict(name='lead', instrument='vibraphone', kind='melody', oct=0, min=0.45, role='melody', gain_db=-6),
         dict(name='drums', instrument='room', kind='drums', min=0.0, role='drum', gain_db=-4)]),
-    'darksynth': dict(room='plate', swing=0.5, humanize='tight', tone='bright', lufs=-14, groove='halftime', bpm=(100, 125), layers=[
+    'darksynth': dict(room='plate', swing=0.5, humanize='tight', tone='bright', groove='halftime', bpm=(100, 125), layers=[
         dict(name='pad', instrument='sweep_pad', kind='pad', lo=40, hi=64, min=0.0, role='pad', gain_db=-5),
         dict(name='arp', instrument='saw_lead', kind='ostinato', lo=40, hi=60, min=0.2, role='chord', gain_db=-5),
         dict(name='bass', instrument='synth_bass_2', kind='bass', bass='pulse8', lo=26, hi=42, min=0.0, role='bass'),
         dict(name='lead', instrument='synth_brass', kind='melody', oct=0, min=0.4, role='melody', gain_db=-4),
         dict(name='drums', instrument='electronic', kind='drums', min=0.1, role='drum', gain_db=-3)]),
-    'motown': dict(room='room_warm', swing=0.52, humanize='natural', tone='warm', lufs=-14, groove='motown', bpm=(108, 128), layers=[
+    'motown': dict(room='room_warm', swing=0.52, humanize='natural', tone='warm', groove='motown', bpm=(108, 128), layers=[
         dict(name='piano', instrument='piano', kind='chords', tex_low='pulse', tex_mid='pulse', tex_hi='pulse', lo=48, hi=70, min=0.0, role='chord'),
         dict(name='bass', instrument='finger_bass', kind='bass', bass='pulse8', lo=31, hi=48, min=0.0, role='bass'),
         dict(name='lead', instrument='trumpet', kind='melody', oct=0, min=0.25, role='melody', gain_db=-3),
         dict(name='strings', instrument='string_ensemble', kind='pad', lo=48, hi=72, min=0.5, role='pad', gain_db=-5),
         dict(name='drums', instrument='standard', kind='drums', min=0.0, role='drum', gain_db=-3)]),
-    'reggaeton': dict(room='studio', swing=0.5, humanize='tight', tone='bright', lufs=-14, groove='dembow', bpm=(90, 98), layers=[
+    'reggaeton': dict(room='studio', swing=0.5, humanize='tight', tone='bright', groove='dembow', bpm=(90, 98), layers=[
         dict(name='pluck', instrument='muted_guitar', kind='chords', tex_low='comp', tex_mid='comp', tex_hi='comp', lo=48, hi=72, min=0.0, role='chord', gain_db=-1),
         dict(name='bass', instrument='synth_bass_2', kind='bass', bass='sync', lo=24, hi=40, min=0.0, role='bass', gain_db=0),
         dict(name='lead', instrument='synth_voice', kind='melody', oct=0, min=0.3, role='melody', gain_db=-3),
         dict(name='bell', instrument='glockenspiel', kind='sparkle', lo=79, hi=100, min=0.4, role='arp', gain_db=-7),
         dict(name='drums', instrument='808', kind='drums', min=0.0, role='drum', gain_db=0)]),
-    'cumbia': dict(room='studio', swing=0.5, humanize='loose', tone='warm', lufs=-14, groove='cumbia', bpm=(84, 100), layers=[
+    'cumbia': dict(room='studio', swing=0.5, humanize='loose', tone='warm', groove='cumbia', bpm=(84, 100), layers=[
         dict(name='accordion', instrument='accordion', kind='melody', oct=0, min=0.1, role='melody', gain_db=-2),
         dict(name='guitar', instrument='nylon_guitar', kind='chords', tex_low='strum', tex_mid='strum', tex_hi='strum', lo=45, hi=69, min=0.0, role='chord', gain_db=-2),
         dict(name='bass', instrument='acoustic_bass', kind='bass', bass='half', lo=31, hi=48, min=0.0, role='bass'),
         dict(name='drums', instrument='standard', kind='drums', min=0.0, role='drum', gain_db=-5)]),
-    'salsa': dict(room='studio', swing=0.5, humanize='natural', tone='bright', lufs=-14, groove='salsa', bpm=(170, 200), layers=[
+    'salsa': dict(room='studio', swing=0.5, humanize='natural', tone='bright', groove='salsa', bpm=(170, 200), layers=[
         dict(name='piano', instrument='piano', kind='chords', tex_low='comp', tex_mid='comp', tex_hi='comp', lo=48, hi=72, min=0.0, role='chord', gain_db=-1),
         dict(name='bass', instrument='acoustic_bass', kind='bass', bass='sync', lo=31, hi=48, min=0.0, role='bass'),
         dict(name='brass', instrument='trumpet', kind='melody', oct=0, min=0.2, role='melody', gain_db=-2),
         dict(name='horns', instrument='trombone', kind='harmony', min=0.5, role='counter', oct=-1, gain_db=-4),
         dict(name='drums', instrument='standard', kind='drums', min=0.0, role='drum', gain_db=-5)]),
-    'forro': dict(room='studio', swing=0.5, humanize='loose', tone='warm', lufs=-14, groove='forro', bpm=(108, 130), layers=[
+    'forro': dict(room='studio', swing=0.5, humanize='loose', tone='warm', groove='forro', bpm=(108, 130), layers=[
         dict(name='accordion', instrument='accordion', kind='melody', oct=0, min=0.1, role='melody', gain_db=-2),
         dict(name='guitar', instrument='acoustic_guitar', kind='chords', tex_low='strum', tex_mid='strum', tex_hi='strum', lo=45, hi=69, min=0.0, role='chord', gain_db=-3),
         dict(name='bass', instrument='acoustic_bass', kind='bass', bass='half', lo=31, hi=48, min=0.0, role='bass'),
         dict(name='drums', instrument='standard', kind='drums', min=0.0, role='drum', gain_db=-5)]),
-    'afrobeat': dict(room='studio', swing=0.54, humanize='loose', tone='warm', lufs=-14, groove='afrobeat', bpm=(98, 112), layers=[
+    'afrobeat': dict(room='studio', swing=0.54, humanize='loose', tone='warm', groove='afrobeat', bpm=(98, 112), layers=[
         dict(name='guitar', instrument='clean_guitar', kind='chords', tex_low='comp', tex_mid='comp', tex_hi='comp', lo=48, hi=72, min=0.0, role='chord'),
         dict(name='bass', instrument='finger_bass', kind='bass', bass='sync', lo=31, hi=48, min=0.0, role='bass'),
         dict(name='lead', instrument='marimba', kind='melody', oct=0, min=0.2, role='melody', gain_db=-2),
         dict(name='horns', instrument='brass_section', kind='harmony', min=0.5, role='counter', oct=0, gain_db=-5),
         dict(name='drums', instrument='standard', kind='drums', min=0.0, role='drum', gain_db=-4)]),
-    'percussion': dict(room='large_hall', swing=0.5, humanize='tight', tone='warm', lufs=-14, groove='percussion_drive', bpm=(92, 120), layers=[
+    'percussion': dict(room='large_hall', swing=0.5, humanize='tight', tone='warm', groove='percussion_drive', bpm=(92, 120), layers=[
         dict(name='drums', instrument='orchestral', kind='drums', min=0.0, role='drum', gain_db=-1),
         dict(name='timpani', instrument='timpani', kind='bass', bass='half', lo=38, hi=52, min=0.0, role='bass', gain_db=-3),
         dict(name='strings', instrument='tremolo_strings', kind='pad', lo=40, hi=64, min=0.3, role='pad', gain_db=-5),
         dict(name='brass', instrument='brass_section', kind='pad', lo=43, hi=65, min=0.5, role='pad', gain_db=-5),
         dict(name='lead', instrument='trumpet', kind='melody', oct=0, min=0.6, role='melody', gain_db=-4)]),
-    'comedy': dict(room='room_warm', swing=0.5, humanize='loose', tone='neutral', lufs=-15, groove='march', bpm=(110, 130), layers=[
+    'comedy': dict(room='room_warm', swing=0.5, humanize='loose', tone='neutral', groove='march', bpm=(110, 130), layers=[
         dict(name='pizz', instrument='pizzicato_strings', kind='chords', tex_low='pulse', tex_mid='pulse', tex_hi='pulse', lo=48, hi=72, min=0.0, role='chord'),
         dict(name='lead', instrument='bassoon', kind='melody', oct=0, min=0.1, role='melody', gain_db=-2),
         dict(name='tuba', instrument='tuba', kind='bass', bass='half', lo=28, hi=46, min=0.0, role='bass'),
         dict(name='xylo', instrument='xylophone', kind='sparkle', lo=72, hi=96, min=0.3, role='arp', gain_db=-6),
         dict(name='drums', instrument='standard', kind='drums', min=0.2, role='drum', gain_db=-6)]),
-    'kids': dict(room='room_warm', swing=0.5, humanize='natural', tone='bright', lufs=-15, groove='shaker', bpm=(100, 118), layers=[
+    'kids': dict(room='room_warm', swing=0.5, humanize='natural', tone='bright', groove='shaker', bpm=(100, 118), layers=[
         dict(name='uke', instrument='nylon_guitar', kind='chords', tex_low='strum', tex_mid='strum', tex_hi='strum', lo=55, hi=76, min=0.0, role='chord', gain_db=-1),
         dict(name='lead', instrument='xylophone', kind='melody', oct=1, min=0.1, role='melody', gain_db=-2),
         dict(name='bass', instrument='acoustic_bass', kind='bass', bass='half', lo=33, hi=48, min=0.1, role='bass'),
@@ -865,7 +866,8 @@ def compose(brief):
     E = EMOTIONS[emo]
     g_name = str(brief.get('genre') or E['genres'][0]).lower().replace(' ', '_')
     g_name = g_name if g_name in GENRES else GENRE_ALIASES.get(g_name, g_name)     # a real genre name beats an alias
-    G = copy.deepcopy(GENRES[g_name if g_name in GENRES else E['genres'][0]])
+    g_key = g_name if g_name in GENRES else E['genres'][0]
+    G = copy.deepcopy(GENRES[g_key])
     if emo in EPIC_EMOTIONS:
         G = epic_recipe(brief, G, g_name)
     if fp:
@@ -1165,7 +1167,7 @@ def compose(brief):
     score = dict(title=brief.get('title', f'{emo} {g_name}'), bpm=bpm, ts=[bb, 4], key=f'{tonic} {mode}', seed=seed,
                  humanize=brief.get('humanize', G['humanize']), swing=G['swing'], room=room,
                  dynamics=dyn_pts, tracks=tracks,
-                 master=dict(lufs=brief.get('lufs', -18 if voiceover else G['lufs']), true_peak=-1.5, tone=G['tone']),
+                 master=dict(lufs=brief.get('lufs', mix_schema.master_targets()['voiceover']['lufs'] if voiceover else mix_schema.genre_lufs(g_key)), true_peak=-1.5, tone=G['tone']),
                  meta=dict(emotion=emo, genre=g_name, mode=mode, tonic=tonic, bars=n_bars, progression=prog_text,
                            form=''.join(form), arc=arc, intensity_per_bar=[round(float(x), 2) for x in inten],
                            focus=focus, energy=round(float(intensity), 2), room=room, mood_notes=mood_notes,
@@ -1190,7 +1192,7 @@ def compose(brief):
         for tr in score['tracks']:        # leave the speech band (2-4 kHz) clear; keep everything modest
             tr.setdefault('eq', [])
             tr['eq'].append(dict(type='peak', f=3000, gain=-3.0, q=0.9))
-        score['master']['lufs'] = brief.get('lufs', -20)
+        score['master']['lufs'] = brief.get('lufs', mix_schema.master_targets()['voiceover']['bed_lufs'])
     add_hit_points(score, hits, bpm, bb, key, rng)
     return score
 

@@ -136,7 +136,18 @@
     "loops": [["gestures", "steady_pulse"]],
     "sparse": [["emotions", "calm"]],
     "stripped_back": [["emotions", "calm"]],
-    "click_track": [["gestures", "steady_pulse"]]
+    "click_track": [["gestures", "steady_pulse"]],
+    "game": [["registers", "game_console"]],
+    "console_game": [["registers", "game_console"]],
+    "pc_game": [["registers", "game_console"]],
+    "mobile_game": [["registers", "game_mobile"]],
+    "handheld": [["registers", "game_mobile"]],
+    "vr_game": [["registers", "game_vr"]],
+    "headset": [["registers", "game_vr"]],
+    "underscore": [["registers", "film_underscore"]],
+    "scene_score": [["registers", "film_underscore"]],
+    "background_score": [["registers", "film_underscore"]],
+    "bg_score": [["registers", "film_underscore"]]
   },
   "provenance": {
     "words": "starting value: the everyday words a brief uses, each pointing at one concept. A word that is not here is an error at resolve time and is added here, never guessed inside a score",

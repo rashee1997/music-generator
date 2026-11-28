@@ -204,7 +204,8 @@ class Engine(unittest.TestCase):
             master.resolved(dict(master=dict(profile='definitely_not_a_profile')))
         r = master.resolved({})
         self.assertGreater(r['highpass_hz'], 0.0)
-        self.assertEqual(r['lufs'], -14.0)
+        import mix_schema
+        self.assertEqual(r['lufs'], mix_schema.master_targets()['default']['lufs'])      # data, not a compiled -14
         y = np.ones((SR, 2)) * 0.2                                # a DC offset: the block removes it at the given cutoff
         a = master._dc_block(y, 'stereo', SR, 24.0)
         b = master._dc_block(y, 'stereo', SR, 0.0)

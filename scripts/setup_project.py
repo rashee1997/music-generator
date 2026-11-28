@@ -40,6 +40,14 @@ import sys
 from pathlib import Path
 
 SKILL = Path(__file__).resolve().parent.parent
+
+
+def _master_targets():
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import mix_schema as _ms
+    return _ms.master_targets()
+
+
 TINYSOUNDFONT = 'tinysoundfont==0.3.7'
 TORCH = 'torch==2.14.1'
 TORCH_INDEX = 'https://download.pytorch.org/whl/cpu'
@@ -75,7 +83,7 @@ def install(venv, uv, *args):
         run([venv_python(venv), '-m', 'pip', 'install', *args])
 
 
-def scaffold_project(proj_path, title="New Composition", ambience=False, genre=None):
+def scaffold_project(proj_path, title="New Composition", ambience=False, genre=None, media=None, platform=None):
     """ambience=False (default): no environment preset or track. Ambience is added only when the user asked for it."""
     proj_dir = Path(proj_path).resolve()
     direction_dir = proj_dir / 'direction'
@@ -186,7 +194,7 @@ def scaffold_project(proj_path, title="New Composition", ambience=False, genre=N
         ],
         "mix_intent": {"hero": "lead_flute", "support": ["warm_piano", "acoustic_bass"], "sits_under": [],
                        "must_hear": ["TODO: what has to be audible, and by when"], "leave_free_hz": []},
-        "loudness_lufs": -16.0,
+        "loudness_lufs": _master_targets()['default']['lufs'],    # references/data/master_targets.json; a piece with registers is levelled to its register instead (intent.register_loudness)
         "true_peak_max": -1.5,
         "delivery": {"format": "wav", "sample_rate": 48000, "bit_depth": 24,
                      "stage": "TODO: web, broadcast or cinema", "output_targets": ["stereo"]},
@@ -227,6 +235,19 @@ def scaffold_project(proj_path, title="New Composition", ambience=False, genre=N
                   "notes": "music-only piece: leave enabled false. For a cue against a cut, run scripts/video_score.py and it fills this block."},
         "notes": "TODO: anything in the brief that has no field of its own"
     }
+    if media:        # a game or a film scene score: the register carries the platform's loudness (intent.register_loudness)
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import media_profile
+        reg = media_profile.default_register(media, platform)
+        direction_content["intent"]["registers"] = [reg]
+        import intent as _intent
+        direction_content["loudness_lufs"] = _intent.register_loudness([reg])
+        if media == "film":
+            lo, hi = media_profile.state("film", "dialogue_underscore")["duck_db"]
+            direction_content["video"]["dialogue"]["duck_db"] = -round((lo + hi) / 2.0, 1)
+        direction_content["notes"] = (f"{media} score: register {reg}; read `python scripts/media_profile.py show {media} <"
+                                      f"{'state' if media == 'game' else 'scene'}>` and `rules {media}` before choosing instruments and mixing. "
+                                      "TODO: anything in the brief that has no field of its own")
     with open(direction_dir / "direction_sheet.json", "w", encoding="utf-8") as f:
         json.dump(direction_content, f, indent=2)
 
@@ -684,6 +705,8 @@ def main():
     ap.add_argument('--fps', type=float, default=25.0, help='with --new-film: the picture rate (default 25)')
     ap.add_argument('--cues', default=None, help='with --new-film: comma-separated cue ids (default M01_open)')
     ap.add_argument('--genre', default=None, help='with --new-project: start the piece\'s own gate profile from a shipped genre profile (python scripts/gate_profiles.py list), e.g. orchestral, rock_band, hiphop, jazz_ensemble, world_percussion, game_loop, dance, ambient, cinematic')
+    ap.add_argument('--media', choices=['game', 'film'], default=None, help='with --new-project: a game score or a film scene score; seeds the sheet\'s register (the master\'s loudness) from references/data/media/ (scripts/media_profile.py)')
+    ap.add_argument('--platform', choices=['console', 'mobile', 'vr', 'underscore'], default=None, help='with --media game: console (default), mobile or vr')
     ap.add_argument('--title', default='New Composition', help='title of the piece when scaffolding a new project')
     ap.add_argument('--ears', action='store_true', help='also install earshot and download its models (about 1 GB)')
     ap.add_argument('--soundfonts', nargs='?', const='all', default=None, metavar='NAMES',
@@ -695,7 +718,7 @@ def main():
     args = ap.parse_args()
 
     if args.new_project:
-        scaffold_project(args.new_project, title=args.title, ambience=args.ambience, genre=args.genre)
+        scaffold_project(args.new_project, title=args.title, ambience=args.ambience, genre=args.genre, media=args.media, platform=args.platform)
         return
 
     if args.new_film:

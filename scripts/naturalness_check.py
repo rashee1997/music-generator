@@ -35,20 +35,17 @@ from scipy import ndimage, signal
 
 import auditory
 
-PEAK_PROMINENCE_DB = 15.0   # a roughness peak must stand this far above its local spectral floor (random noise peaks reach about 11 dB)
 PEAK_FLOOR_BINS = 101       # width of the local floor (median) in bins; the frames are 1 s, so 101 Hz
 # Roughness is measured where the ear is actually sensitive to it. Below 200 Hz a fifth of two fundamentals scores as "rough"
 # in the Plomp-Levelt kernel (they are ~1.6 quarter-bands apart) although no one hears a low D-A as harsh; that dominated
 # every orchestral render. Above 4 kHz the partials are too far apart in Hz for the kernel to fire.
 ROUGHNESS_BAND_HZ = (200.0, 4000.0)
-ROUGHNESS_AUDIBLE_DB = -40.0    # a partial this far under the frame's loudest cannot make roughness audible
 # The per-frame value is the MEAN OF THE THREE STRONGEST PAIR CONTRIBUTIONS, not a sum over all pairs: a sum counts how many
 # partials are present, so a 6-part consonant chord scored 2x the fail threshold while a semitone dyad scored less (both
 # measured, see tests/test_gate_profiles.py::Roughness). Calibrated on 6 real masters (median 0.029-0.047) and a synthetic
 # anchor set (consonant triad/4-part/8-part 0.041-0.062; semitone at 262/500/1000 Hz and a 3-semitone cluster 0.073-0.099).
-ROUGHNESS_MEDIAN = 0.070       # fallback when no profile resolves; the row parameter roughness.median_legacy (rows.json) is the figure a piece is judged by
-ROUGHNESS_RELATIVE = 1.6        # a spike must also stand this far above the piece's own median
-ROUGHNESS_OUTRO_RATIO = 1.2     # the last 3 s must not be rougher than the piece's median by more than this
+import gate_profiles
+ROUGHNESS_MEDIAN = gate_profiles.defaults('roughness')['median_legacy']   # fallback when no profile resolves; the row parameter roughness.median_legacy (rows.json) is the figure a piece is judged by
 # Level-aware model (roughness.model = "level_aware"). Every value below is a profile parameter of the `roughness`
 # row (scripts/gate_profiles.py); these are its defaults. Sources and the argument for each:
 # knowledgebase/sound-design/roughness.md. The legacy computation is untouched and still reported for comparison.
@@ -68,6 +65,29 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 BANDS = [('sub <60', 20, 60), ('bass 60-250', 60, 250), ('low-mid 250-500', 250, 500), ('mid 0.5-2k', 500, 2000),
          ('presence 2-6k', 2000, 6000), ('air >6k', 6000, 16000)]
+
+
+import gate_constants
+
+
+def k_ROUGHNESS_RELATIVE():
+    return gate_constants.get("roughness.relative")
+
+
+def k_ROUGHNESS_OUTRO_RATIO():
+    return gate_constants.get("roughness.outro_ratio")
+
+
+def k_PEAK_PROMINENCE_DB():
+    return gate_constants.get("roughness.peak_prominence_db")
+
+
+def k_ROUGHNESS_AUDIBLE_DB():
+    return gate_constants.get("roughness.audible_db")
+
+
+def k_CHROMA_SOUNDING_DB():
+    return gate_constants.get("chroma.sounding_db")
 
 
 def load(path):
@@ -124,7 +144,6 @@ def band_shares(x, sr):
 CHROMA_SR = 22050          # a pitch class is a low-frequency question: half the rate is half the work, and nothing lost
 CHROMA_HOP = 2048
 CHROMA_FMIN_HZ = 65.41     # C2: the lowest note the 36-bin-per-octave CQT resolves to about a semitone
-CHROMA_SOUNDING_DB = -40.0  # a frame this far under the loudest frame is not sounding
 # A pitch class only means something on a frame with resolved harmonics: noise spreads over all twelve classes, so it
 # can read as a clash by accident, and the awkward case is BAND-LIMITED noise (rain, wind): spectral flatness over the
 # whole band calls it tonal because its energy sits in one part of the spectrum (measured 0.30-0.45 on rain against
@@ -140,7 +159,7 @@ def _tonal_frames(mag, floor_bins=CHROMA_PEAK_FLOOR_BINS):
     peaks_mask = np.zeros(mag.shape, dtype=bool)
     peaks_mask[1:-1] = (mag[1:-1] > mag[:-2]) & (mag[1:-1] > mag[2:])
     floor = ndimage.median_filter(mag, size=(floor_bins, 1), mode='nearest')
-    peaks_mask &= mag >= floor * 10.0 ** (PEAK_PROMINENCE_DB / 20.0)
+    peaks_mask &= mag >= floor * 10.0 ** (k_PEAK_PROMINENCE_DB() / 20.0)
     tonal_energy = np.sum(np.where(peaks_mask, mag ** 2, 0.0), axis=0)
     total = np.sum(mag ** 2, axis=0) + 1e-30
     return (tonal_energy / total) >= TONAL_MIN_FRACTION
@@ -177,7 +196,7 @@ def chroma_analysis(x, sr=44100):
     peak = float(energy.max())
     if peak <= 0.0:
         return out
-    sounding = energy >= peak * 10.0 ** (CHROMA_SOUNDING_DB / 20.0)
+    sounding = energy >= peak * 10.0 ** (k_CHROMA_SOUNDING_DB() / 20.0)
     tonal = sounding & _tonal_frames(S)
     out.update(sounding_frames=int(sounding.sum()), tonal_frames=int(tonal.sum()),
                tonal_fraction=float(tonal.sum() / max(int(sounding.sum()), 1)),
@@ -436,9 +455,9 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None, model=None):
 
         sig_peaks = peaks[mag[peaks] >= 0.03 * max_a]
         # Plomp-Levelt roughness is about beating between partials. A bin of noise is not a partial, and noise (water, wind, rain)
-        # throws up random peaks that would score as clashes; keep only peaks that stand PEAK_PROMINENCE_DB above the local floor.
+        # throws up random peaks that would score as clashes; keep only peaks that stand k_PEAK_PROMINENCE_DB() above the local floor.
         floor = ndimage.median_filter(mag, size=PEAK_FLOOR_BINS, mode='nearest')
-        sig_peaks = sig_peaks[mag[sig_peaks] >= floor[sig_peaks] * 10 ** (PEAK_PROMINENCE_DB / 20.0)]
+        sig_peaks = sig_peaks[mag[sig_peaks] >= floor[sig_peaks] * 10 ** (k_PEAK_PROMINENCE_DB() / 20.0)]
         if len(sig_peaks) < 2:
             roughness.append(np.nan)
             roughness_legacy.append(np.nan)
@@ -451,7 +470,7 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None, model=None):
             continue
 
         top_idx = sig_peaks[np.argsort(mag[sig_peaks])[-10:]]
-        top_idx = top_idx[mag[top_idx] >= max_a * 10 ** (ROUGHNESS_AUDIBLE_DB / 20.0)]
+        top_idx = top_idx[mag[top_idx] >= max_a * 10 ** (k_ROUGHNESS_AUDIBLE_DB() / 20.0)]
         if len(top_idx) < 2:
             roughness.append(np.nan)
             roughness_legacy.append(np.nan)
@@ -552,7 +571,7 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None, model=None):
 
     median_base = median_legacy if model_name == 'legacy' else median_la
     abs_thresh = median_base * scale            # `scale` applied once, here
-    rel_thresh = max(abs_thresh, ROUGHNESS_RELATIVE * r_med)
+    rel_thresh = max(abs_thresh, k_ROUGHNESS_RELATIVE() * r_med)
 
     rows = []
     clause = (f' ({excluded} frame(s) inside a scene window that waives this ceiling not judged)' if excluded else '')
@@ -612,7 +631,7 @@ def cochlear_roughness_check(path_or_audio, sr=44100, score=None, model=None):
             outro_r = float(np.mean(outro_vals))
             # Relative to the piece, with a floor so a very quiet tail is not judged on rounding noise. There is no absolute
             # ceiling here: "does it resolve" is a comparison with this piece, and a full ensemble cadence is not a defect.
-            target_outro = max(r_med * ROUGHNESS_OUTRO_RATIO, abs_thresh * 0.6)
+            target_outro = max(r_med * k_ROUGHNESS_OUTRO_RATIO(), abs_thresh * 0.6)
             if outro_r > target_outro:
                 rows.append(('FAIL', 'cochlear_roughness',
                              f"Sensory roughness does not resolve at outro (final 3s roughness {outro_r:.3f} > {target_outro:.3f}). "
