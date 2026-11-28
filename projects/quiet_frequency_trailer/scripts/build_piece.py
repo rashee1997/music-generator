@@ -531,8 +531,7 @@ def hits():
 
 
 def sheet():
-    base = json.load(open(os.path.join(PROJ, 'direction', 'direction_sheet.json'), encoding='utf-8')) if os.path.exists(
-        os.path.join(PROJ, 'direction', 'direction_sheet.json')) else {}
+    base = json.load(open(os.path.join(HERE, 'sheet_base.json'), encoding='utf-8'))      # the scaffold's field list; every value is overwritten below
     base.pop('video', None)
     secs = sections_json()
     base.update({

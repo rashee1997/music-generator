@@ -65,10 +65,9 @@
     ]
   },
   "sources": [
-    "cinematic-hybrid-scoring",
-    "ESTIMATE: copied from the shipped impact_cinematic default; its layers are starting values and were not re-measured for this cue"
+    "engine"
   ],
-  "note": "Layer split after trailer-impact practice (click, body, sub, tail; bass under 200 Hz, mids to 2 kHz, highs above), vendor blogs, opinion. Every frequency and time constant is a starting value: tune against the render with realism.sub_weight and realism.impact_attack.",
+  "note": "Copied from the shipped impact_cinematic default. ESTIMATE: its layers (a falling glide, a body, noise and a tail) and every level are starting values and were not re-measured for this cue; no recording of an impact was analysed.",
   "name": "qf_impact",
   "role": "fx",
   "gain_db": -2.0,
