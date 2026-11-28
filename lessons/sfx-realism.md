@@ -38,4 +38,13 @@ lessons:
   cause: see S02
   fix: begin() at the first event; fades of 0.15 s or less
   evidence: S02
+- id: X06
+  title: SFX bursts and the opening pulse sit dry and sharp on top
+  keywords: [dry sfx, walkie, burst, opening pulse, alarm, 3-4 kHz, reverb send, ping-pong, sub snap, reverse suck]
+  symptom: 'listening note: stutters sit dry above the booms, the opening pulse is sharp on headphones, the last hit lacks weight'
+  cause: fx role send 0.12 and no EQ on the alarm; the last hit had no lead-in or sub tail
+  check: list the events at the noted times from the story clock (P08), then read the part's send and EQ
+  fix: raise orchestral and fx sends and darken the return (9 kHz); PeakFilter -5 dB at 3.5 kHz plus ducked ping_delay on the alarm; 58 Hz sub snap on each walkie close; reverse suck then sub boom into the last hit
+  avoid: claiming it works before a render and a listen
+  evidence: quiet_frequency_trailer v06, 2026-11-28, unrendered, unheard
 ---
