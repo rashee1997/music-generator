@@ -1,0 +1,36 @@
+{
+  "name": "breathing_sustain",
+  "character": "A held chord that stops freezing after its first second: a slow wobble in pitch and level whose depth grows, so the partials seem to move.",
+  "relative": true,
+  "intent": [
+    "sustain",
+    "texture",
+    "realism"
+  ],
+  "provenance": "starting value, not a measurement: the shape follows practitioner guidance - Ableton, 'Learn How to Make High-Impact Sounds for Movies and Trailers' (pitch and filter automation to climb, ramp an LFO's speed and depth together on a riser, automate distortion for movement); Violet Recording, 'Sound Design for Trailers' (build and release tension, the biggest impacts at the climax, near-silence before a hit); native Instruments blog, 'Epic movie trailer impacts' (layer, deconstruct, resample). Times are fractions of the span the recipe is placed in ({\"chain\": \"breathing_sustain\", \"start_s\": a, \"end_s\": b}).",
+  "chain": [
+    {
+      "type": "tape_wobble",
+      "from": 0.05,
+      "to": 1.0,
+      "wow_hz": 0.3,
+      "flutter_hz": 5.0,
+      "mix": 0.6,
+      "automate": {
+        "wow_cents": {
+          "from": 2.0,
+          "to": 9.0
+        }
+      },
+      "steps": 8
+    },
+    {
+      "type": "tremolo",
+      "from": 0.1,
+      "to": 1.0,
+      "rate_hz": 0.22,
+      "depth": 0.08,
+      "mix": 0.8
+    }
+  ]
+}

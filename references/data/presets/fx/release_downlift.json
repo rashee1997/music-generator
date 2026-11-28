@@ -1,0 +1,30 @@
+{
+  "name": "release_downlift",
+  "character": "The exhale after a peak: the pitch sinks and the top closes together.",
+  "relative": true,
+  "intent": [
+    "release",
+    "downlifter"
+  ],
+  "provenance": "starting value, not a measurement: the shape follows practitioner guidance - Ableton, 'Learn How to Make High-Impact Sounds for Movies and Trailers' (pitch and filter automation to climb, ramp an LFO's speed and depth together on a riser, automate distortion for movement); Violet Recording, 'Sound Design for Trailers' (build and release tension, the biggest impacts at the climax, near-silence before a hit); native Instruments blog, 'Epic movie trailer impacts' (layer, deconstruct, resample). Times are fractions of the span the recipe is placed in ({\"chain\": \"release_downlift\", \"start_s\": a, \"end_s\": b}).",
+  "chain": [
+    {
+      "type": "pitch_glide",
+      "semitones": -5.0,
+      "curve": 2.0,
+      "from": 0.0,
+      "to": 1.0,
+      "mix": 0.5
+    },
+    {
+      "type": "filter_sweep",
+      "kind": "lowpass",
+      "f_start_hz": 12000.0,
+      "f_end_hz": 700.0,
+      "q": 0.9,
+      "from": 0.0,
+      "to": 1.0,
+      "after": "hold"
+    }
+  ]
+}

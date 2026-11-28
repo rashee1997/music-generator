@@ -1,0 +1,28 @@
+{
+  "name": "drifting_pan_pad",
+  "character": "A bed that drifts across the field: a slow auto-pan whose width grows over the span.",
+  "relative": true,
+  "intent": [
+    "space",
+    "movement",
+    "pad"
+  ],
+  "provenance": "starting value, not a measurement: the shape follows practitioner guidance - Ableton, 'Learn How to Make High-Impact Sounds for Movies and Trailers' (pitch and filter automation to climb, ramp an LFO's speed and depth together on a riser, automate distortion for movement); Violet Recording, 'Sound Design for Trailers' (build and release tension, the biggest impacts at the climax, near-silence before a hit); native Instruments blog, 'Epic movie trailer impacts' (layer, deconstruct, resample). Times are fractions of the span the recipe is placed in ({\"chain\": \"drifting_pan_pad\", \"start_s\": a, \"end_s\": b}).",
+  "chain": [
+    {
+      "type": "tremolo",
+      "from": 0.0,
+      "to": 1.0,
+      "rate_hz": 0.15,
+      "depth": 0.0,
+      "pan_depth": 0.3,
+      "automate": {
+        "pan_depth": {
+          "from": 0.1,
+          "to": 0.6
+        }
+      },
+      "steps": 10
+    }
+  ]
+}

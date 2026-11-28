@@ -35,6 +35,7 @@ deterministic: the same chain, stem and seed give the same samples.
 import numpy as np
 
 from . import core, host, modfx, spacefx, spec, timefx
+from . import spec as spec_mod
 
 # type -> (function, mode, window). mode "ranged": blended in inside the window from `window(p, n, sr)` (default: start_s..end_s);
 # "timed": the function's output is the result (it handles its own times). The window of an effect with its own length
@@ -75,6 +76,53 @@ def _seed(base, index, own):
     return (int(base) * 1000003 + index * 7919 + (int(own) if own is not None else 0)) % (2 ** 32)
 
 
+def _value_at(points, frac, curve):
+    """The automated value at `frac` of the range: piecewise linear through the keyframes; `exp` interpolates a from/to pair in the log domain."""
+    if frac <= points[0][0]:
+        return points[0][1]
+    for (t0, v0), (t1, v1) in zip(points, points[1:]):
+        if frac <= t1:
+            u = (frac - t0) / max(t1 - t0, 1e-9)
+            if curve == 'exp' and v0 > 0 and v1 > 0:
+                return v0 * (v1 / v0) ** u
+            return v0 + (v1 - v0) * u
+    return points[-1][1]
+
+
+def _automated(fn, y, sr, p, rng):
+    """An effect whose parameters move over its range: the range is cut into `steps` slices, each slice runs the effect with that
+    slice's parameter values (taken at its centre), and the slices are cross-faded where they meet. Generic: it knows no effect."""
+    n = len(y)
+    i0, i1 = core.span(p, n, sr)
+    if i1 <= i0:
+        return y
+    steps = max(2, int(p.get('steps') or 8))
+    auto = p['automate']
+    out = y.copy()
+    edges = np.linspace(i0, i1, steps + 1).astype(int)
+    xf = max(2, int(0.5 * (edges[1] - edges[0])))
+    weight = np.zeros(n, dtype=np.float32)
+    acc = np.zeros_like(y)
+    for k in range(steps):
+        a, b = int(edges[k]), int(edges[k + 1])
+        if b <= a:
+            continue
+        frac = ((a + b) / 2.0 - i0) / float(i1 - i0)
+        q = dict(p, start_s=a / sr, end_s=b / sr, automate=None, edge_ms=0.0)
+        for key, spec_ in auto.items():
+            pts = spec_mod.automation_points(spec_)
+            curve = spec_.get('curve', 'linear') if isinstance(spec_, dict) else 'linear'
+            q[key] = _value_at(pts, frac, curve)
+        lo, hi = max(i0, a - xf), min(i1, b + xf)
+        seg = fn(y, sr, dict(q, start_s=lo / sr, end_s=hi / sr), rng)
+        w = core.range_mask(n, lo, hi, xf)
+        acc += w[:, None] * seg
+        weight += w
+    inside = weight > 1e-6
+    out[inside] = acc[inside] / weight[inside, None]
+    return out
+
+
 def apply(x, sr, chain, seed=0):
     """`x` through the chain. Returns (n, 2) float32. An empty or missing chain returns the input as float32 (n, 2). A
     non-finite result raises ValueError naming the effect that made it."""
@@ -85,7 +133,10 @@ def apply(x, sr, chain, seed=0):
         kind, p = entry['type'], entry['params']
         fn, mode, window = EFFECTS[kind]
         rng = np.random.default_rng(_seed(seed, i, p.get('seed')))
-        out = fn(y, sr, p, rng)
+        if p.get('automate'):
+            out = _automated(fn, y, sr, p, rng)
+        else:
+            out = fn(y, sr, p, rng)
         if mode == 'ranged':
             n = len(y)
             i0, i1 = window(p, n, sr) if window else core.span(p, n, sr)
@@ -116,6 +167,18 @@ class Board:
             out = out[:1]
         out = np.ascontiguousarray(out)
         return out[0] if mono else out
+
+
+def recipes(intent=None):
+    """The shipped and project recipes: {name: {"character", "intent"}}, optionally only those tagged with `intent`
+    (build, release, impact, sustain, space, climax, ...). A recipe is placed with {"chain": name, "start_s": a, "end_s": b}."""
+    import presets
+    out = {}
+    for name, p in presets.load('fx').items():
+        if isinstance(p, dict) and p.get('relative') and isinstance(p.get('chain'), list):
+            if intent is None or intent in (p.get('intent') or []):
+                out[name] = {'character': p.get('character', ''), 'intent': list(p.get('intent') or [])}
+    return out
 
 
 def describe():

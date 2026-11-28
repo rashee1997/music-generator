@@ -441,6 +441,8 @@ def timpani():
             out.append(note(beat_of(bar, 2.7), 1.0, b, 0.8))
         elif r == 'button':
             out.append(note(beat_of(bar), 2.0, b, vel(bar)))
+            if bar == 32:                        # the bark: a timpani crack on the front of the last low D
+                out.append(note(beat_of(bar), 0.5, b + 12, 1.0))
     return out
 
 
@@ -457,6 +459,8 @@ def taiko():
         elif bar in (30, 31):                    # after the near miss: two hits, then the room
             if bar == 31:
                 out.append(note(beat_of(bar, 2.9), 0.3, 36, 0.42))
+        elif bar == 32:                          # the iron door: a taiko strike on the front of the last low D
+            out.append(note(beat_of(bar), 0.4, 36, 1.0))
     return out
 
 
@@ -482,7 +486,7 @@ def bass_drum():
 def snare():
     out = []
     for bar in (12, 13):
-        for i in range(16):
+        for i in range(0, 16, 2):                # the right stick: even sixteenths on this part
             out.append(note(beat_of(bar, i * 0.25), 0.2, 38, round(0.42 + 0.02 * i + 0.03 * (bar - 12), 3)))
     for bar in range(14, BARS + 1):
         r = role_of(bar)
@@ -494,10 +498,22 @@ def snare():
     return out
 
 
+def snare_b():
+    """The left stick of the roll: the odd sixteenths, a second part with its own pan, pitch and top."""
+    out = []
+    for bar in (12, 13):
+        for i in range(1, 16, 2):
+            out.append(note(beat_of(bar, i * 0.25), 0.2, 38, round(0.40 + 0.02 * i + 0.03 * (bar - 12), 3)))
+    return out
+
+
 def cymbals():
     out = []
     for bar in (1, 5, 11, 14, 20, 24, 31, 32):
         out.append(note(beat_of(bar, 2.7 if bar == 31 else 0.0), 2.4, 49, round(vel(bar, 0.85), 3)))
+    for bar in (14, 24):                         # a second crash 25 ms behind the first (two players never hit together): no stacked attack
+        out.append(note(beat_of(bar, 0.0) + 0.025, 3.0, 57, 0.85))
+    out.append(note(beat_of(20, 0.0), beat_of(24) - beat_of(20, 0.0), 49, 0.42))   # the bloom into the empty room
     for bar in (18, 19):                         # the swell into the slow motion
         for i in range(8):
             key = 52 if i % 2 else 49
@@ -513,7 +529,7 @@ def low_swell():
     # the near miss: the sheet declares one second of nothing (hit at the section start, silence_after_s 1.0), then the
     # room. The notes used to leave about 2.9 s of nothing, so the master read a 165 ms hole at 54.4 s (rca: "no stem in the
     # score sounds there"). A low swell enters when the declared rest ends and runs into the escape.
-    out.append(note(beat_of(30, 2.5), beat_of(32) - beat_of(30, 2.5), root_pitch(31, 36, 47) - 12, 0.5))
+    out.append(note(beat_of(30, 2.75), beat_of(32) - beat_of(30, 2.75), root_pitch(31, 36, 47) - 12, 0.5))
     return out
 
 
@@ -525,6 +541,7 @@ TRACKS = [
     ('timpani', 'pursuit_timpani', 'drum', timpani),
     ('taiko', 'pursuit_taiko', 'drum', taiko),
     ('snare', 'pursuit_snare', 'drum', snare),
+    ('snare_b', 'pursuit_snare_b', 'drum', snare_b),
     ('cymbals', 'pursuit_cymbals', 'texture', cymbals),
     ('low_swell', 'pursuit_low_swell', 'texture', low_swell),
     ('violas', 'pursuit_violas', 'ostinato', violas),
